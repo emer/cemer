@@ -341,6 +341,7 @@ NameVar_PArray  taMisc::arg_names;
 NameVar_PArray  taMisc::arg_name_descs;
 NameVar_PArray  taMisc::args;
 String_PArray   taMisc::args_tmp;
+int_PArray      taMisc::args_used;
 
 ////////////////////////////////////////////////////////
 //      DMEM: Distributed Memory
@@ -697,8 +698,6 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 }
 
 #ifdef TA_NO_GUI
-// we put the no-gui versions here, to avoid dragging in all the gui stuff
-// the gui versions are in ta_type_qt.cc
 
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
@@ -1598,6 +1597,7 @@ void taMisc::UpdateArgs() {
     }
     args.Add(nv);
   }
+  args_used.SetSize(args.size); // always start out w/ 0 -- don't reset b/c called multiple times
 }
 
 void taMisc::AddArgName(const String& flag, const String& nm) {
@@ -1678,11 +1678,14 @@ String taMisc::FullArgStringName(bool exclude_flags, const String& exclude_names
 
 
 bool taMisc::CheckArgByName(const String& nm) {
-  if(args.FindName(nm) < 0) return false;
+  int idx = args.FindName(nm);
+  if(idx < 0) return false;
+  args_used.SafeEl(idx)++;
   return true;
 }
 
 String taMisc::FindArgByName(const String& nm) {
+  if(!CheckArgByName(nm)) return _nilString; // updates use count..
   Variant vl = args.GetVal(nm);
   if(vl.isNull()) return _nilString;
   return vl.toString();
@@ -1695,13 +1698,36 @@ bool taMisc::GetAllArgsNamed(const String& nm, String_PArray& vals) {
 bool taMisc::CheckArgValContains(const String& vl) {
   int idx = args.FindValueContains(vl);
   if(idx < 0) return false;
+  args_used.SafeEl(idx)++;
   return true;
 }
 
 String taMisc::FindArgValContains(const String& vl) {
   int idx = args.FindValueContains(vl);
   if(idx < 0) return _nilString;
+  args_used.SafeEl(idx)++;
   return args.FastEl(idx).value.toString();
+}
+
+bool taMisc::ReportUnusedArgs(bool err) {
+  String_PArray unused;
+  for(int i=1; i<args.size; i++) {
+    int used = args_used.SafeEl(i);
+    if(used > 0) continue;
+    String nm = args.SafeEl(i).name;
+    String val = args.SafeEl(i).value.toString();
+    if(val.contains(".proj")) continue;
+    unused.Add(nm + " = " + val);
+  }
+  if(unused.size == 0) return false;
+  String uns = unused.AsString(" ");
+  if(err) {
+    taMisc::Error("Some Args were Unused -- check for typos:", uns);
+  }
+  else {
+    taMisc::Warning("Some Args were Unused -- check for typos:", uns);
+  }
+  return true;
 }
 
 #endif // NO_TA_BASE for all startup/args functions

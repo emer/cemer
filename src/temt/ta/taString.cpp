@@ -1375,10 +1375,33 @@ taString& taString::xml_esc() {
   return *this;
 }
 
+taString& taString::xml_unesc() {
+  makeUnique();
+  gsub("&amp;" , "&");
+  gsub("&lt;"  , "<");
+  gsub("&gt;"  , ">");
+  gsub("&apos;", "'");
+  gsub("&quot;", "\"");
+  return *this;
+}
+
 taString& taString::quote_esc() {
   makeUnique();
   gsub("\\", "\\\\");
   gsub("\"", "\\\"");
+  gsub("\n", "\\n");
+  gsub("\r", "\\r");
+  gsub("\t", "\\t");
+  return *this;
+}
+
+taString& taString::quote_unesc() {
+  makeUnique();
+  gsub("\\\\", "\\");
+  gsub("\\\"", "\"");
+  gsub("\\n", "\n");
+  gsub("\\r", "\r");
+  gsub("\\t", "\t");
   return *this;
 }
 

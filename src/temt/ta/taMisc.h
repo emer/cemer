@@ -396,6 +396,8 @@ public:
   // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args descriptions of arg names for help -- name is canonical functional name (e.g., CssScript) and value is string describing what this arg does
   static NameVar_PArray args;
   // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args startup arguments processed by arg_names into name/value pairs -- this is the list that should be used!
+  static int_PArray     args_used;
+  // #READ_ONLY #NO_SAVE #HIDDEN #CAT_Args counter for when args were actually used used -- warn about unused args
   static String_PArray  args_tmp;
   // #NO_SAVE #HIDDEN #CAT_Args temporary list of args; can be passed to GetAllArgsNamed in scripts..
 
@@ -668,15 +670,17 @@ public:
   // #CAT_Args return user-provided args as a concatenation of name_value pairs, in a form suitable for use as a file name -- exclude_flags = do not include args that didn't have a value passed (tend to be system control flags) -- exclude_names is a comma-separated list of name strings that will be exlcuded (uses contains, so can be part of a name) -- lots of options to control output, including shortening arg names (see ShortName for meaning of max_len and seg_len, and rm_vowels_thr), separators between name and value, and between args (note: for obscure reasons, the separator for an empty string is actually the pound sign), and what to replace spaces, periods and slashes (either direction) with (these are important file-system separators)
 
   static bool   CheckArgByName(const String& nm);
-  // #CAT_Args was the given arg name set?
+  // #CAT_Args was the given arg name set?  updates arg used count
   static String FindArgByName(const String& nm);
-  // #CAT_Args get the value for given named argument (argv[x] for unnamed args)
+  // #CAT_Args get the value for given named argument (argv[x] for unnamed args) -- updates arg used count
   static bool   GetAllArgsNamed(const String& nm, String_PArray& vals);
-  // #CAT_Args get the values for all args with given name tag
+  // #CAT_Args get the values for all args with given name tag -- does NOT update arg used count
   static bool   CheckArgValContains(const String& vl);
-  // #CAT_Args check if there is an arg that contains string fragment in its value
+  // #CAT_Args check if there is an arg that contains string fragment in its value -- updates arg used count
   static String FindArgValContains(const String& vl);
-  // #CAT_Args get full arg value that contains string fragment
+  // #CAT_Args get full arg value that contains string fragment -- updates arg used count
+  static bool   ReportUnusedArgs(bool err = true);
+  // #CAT_Args report all the args that have a used count of 0 -- very helpful to determine if args were passed that were not processed -- returns true if some args were unused -- if err then report using a taMisc::Error (else taMisc::Warning)
   static void   AddUserDataSchema(const String& type_name, UserDataItemBase* item);
   // #CAT_UserData adds the item as schema, putting on deferred list if type not avail yet
   static void   AddDeferredUserDataSchema(); // #IGNORE call during init to resolve

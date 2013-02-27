@@ -1273,6 +1273,10 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
   StructUpdate(true);
   int idx;
   DataCol* rval = NewCol_impl(val_type, col_nm, idx);
+  if(!rval) {
+    StructUpdate(false);
+    return NULL;
+  }
   rval->Init(); // asserts geom
   rval->EnforceRows(rows);      // new guys always get same # of rows as current table
   StructUpdate(false);
@@ -1336,7 +1340,8 @@ DataCol* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
   int idx;
   if (cs->isMatrix()) {
     rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom(), idx);
-  } else {
+  }
+  else {
     rval = NewCol(cs->val_type, cs->name);
   }
   if (rval) cs->chan_num = cols() - 1;
@@ -1381,6 +1386,10 @@ DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type,
   if (!NewColValid(col_nm, &cell_geom)) return NULL;
   StructUpdate(true);
   DataCol* rval = NewCol_impl(val_type, col_nm, col_idx);
+  if(!rval) {
+    StructUpdate(false);
+    return NULL;
+  }
   rval->is_matrix = true;
   rval->cell_geom = cell_geom;
   rval->Init(); // asserts geom
@@ -1407,6 +1416,7 @@ DataCol* DataTable::NewColFmMatrix(taMatrix* mat, const String& col_nm) {
   MatrixGeom geom(mat->dims(), mat->dim(0), mat->dim(1), mat->dim(2), mat->dim(3), mat->dim(4), mat->dim(5), mat->dim(6));
   int idx;
   DataCol* rval = NewColMatrixN(val_type, col_nm, geom, idx);
+  if(!rval) return NULL;
   if(rows == 0) AddRows();
   SetValAsMatrix(mat, idx, 0);
   return rval;
@@ -1466,19 +1476,25 @@ DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
     if(da->valType() != (ValType)val_type) {
       StructUpdate(true);
       DataCol* nda = NewColMatrixN(val_type, col_nm, cell_geom, col_idx);
+      if(!nda) {
+        StructUpdate(false);
+        return NULL;
+      }
       data.MoveIdx(data.size-1, col_idx);
       data.RemoveEl(da);        // get rid of that guy
       da = nda;
       nda->EnforceRows(rows);   // keep row-constant
       StructUpdate(false);
-    } else if ((!da->cell_geom.Equal(cell_geom)) || (!da->is_matrix)) {
+    }
+    else if ((!da->cell_geom.Equal(cell_geom)) || (!da->is_matrix)) {
       StructUpdate(true);
       da->cell_geom = cell_geom;
       da->is_matrix = true;
       da->Init();               // asserts geom
       da->EnforceRows(rows);    // keep row-constant
       StructUpdate(false);
-    } else {
+    }
+    else {
       if (cell_geom != da->cell_geom) {
         StructUpdate(true);
         da->cell_geom = cell_geom;
@@ -1509,10 +1525,15 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
         da = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
       else
         da = NewCol(val_type, col_nm);
+      if(!da) {
+        StructUpdate(false);
+        return NULL;
+      }
       data.MoveIdx(data.size-1, col_idx);
       da->EnforceRows(rows);    // keep row-constant
       StructUpdate(false);
-    } else if(da->cell_dims() != dims) {
+    }
+    else if(da->cell_dims() != dims) {
       StructUpdate(true);
       da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
       if(dims == 0)
@@ -1522,7 +1543,8 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       da->Init();               // asserts geom
       da->EnforceRows(rows);    // keep row-constant
       StructUpdate(false);
-    } else {
+    }
+    else {
       MatrixGeom mg(dims, d0, d1, d2, d3, d4, d5, d6);
       if(mg != da->cell_geom) {
         StructUpdate(true);
@@ -1560,9 +1582,18 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
   int tmp_idx;
   if (g.dims() == 0) {
     new_col = NewCol(new_type, col_nm);
+    if(!new_col) {
+      StructUpdate(false);
+      return;
+    }
     tmp_idx = new_col->GetIndex();
-  } else {
+  }
+  else {
     new_col = NewColMatrixN(new_type, col_nm, g, tmp_idx);
+    if(!new_col) {
+      StructUpdate(false);
+      return;
+    }
   }
   // copy all data -- the generic copy dude copies user data, and robustly copies data
   new_col->CopyFromCol_Robust(*src);
@@ -1995,10 +2026,9 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
         if (j > 0)
           strm << cdlm;
         String val = da->GetValAsStringM(row, j);
-        //TODO: 1) need to check for Variant.String type
-        // 2) prob need to use fully escaped format, or at least escape "
+        // TODO: 1) need to check for Variant.String type -- this is very difficult.. 
         if(quote_str && (da->valType() == VT_STRING))
-          strm << "\"" << val << "\"";
+          strm << "\"" << val.quote_esc() << "\"";
         else
           strm << val;
       }
@@ -2007,7 +2037,7 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
       String val = da->GetValAsString(row);
       //TODO: see above in mat
       if(quote_str && (da->valType() == VT_STRING))
-        strm << "\"" << val << "\"";
+        strm << "\"" << val.quote_esc() << "\"";
       else
         strm << val;
     }
@@ -2140,11 +2170,23 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
     strm.get();
     depth++;
   }
-  while(((c = strm.get()) != EOF) && (c != '\n') && (c != '\r') && !((c == delim) && (depth <= 0))) {
-    if(quote_str && (depth > 0) && (c == '\"'))
+  bool bs = false;
+  while(((c = strm.get()) != EOF) &&
+        !(((c == delim) || (c == '\n') || (c == '\a') || (c == '\r')) && (depth <= 0))) {
+    if(c == '\\') {
+      if(!bs) {                  // actual bs
+        bs = true;
+        continue;
+      }
+    }
+    if(bs && c == 'n') c = '\n';
+    if(bs && c == 'r') c = '\r';
+    if(bs && c == 't') c = '\t';
+    if(quote_str && (depth > 0) && !bs && (c == '\"'))
       depth--;
     else
       str += (char)c;
+    bs = false;                 // no longer true
   }
   // consume lf of crlf-pair for Windows files
   if ((c == '\r') && (strm.peek() == '\n'))

@@ -44,7 +44,7 @@ public:
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use
 
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
-  String        repo_url;       // svn repository url to use for file exchange with the cluster
+  String        repo_url;       // svn repository url to use for file exchange with the cluster -- this should be the name of a cluster as listed in the Preferences / Options settings
   String        cluster;        // name of cluster to run job on
   String        queue;          // if specified, indicate a particular queue on the computing resource
   String        run_time;       // how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate

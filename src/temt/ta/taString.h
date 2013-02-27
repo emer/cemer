@@ -498,8 +498,12 @@ public:
   // #CAT_Modify capitalize the first letter of each word of this string (NOTE: modifies this string, and also returns the resulting string value)
   taString&               xml_esc();
   // #CAT_Modify xml escape, ex & to &amp; of this string (NOTE: modifies this string, and also returns the resulting string value)
+  taString&               xml_unesc();
+  // #CAT_Modify xml un-escape -- undoes xml_exc (NOTE: modifies this string, and also returns the resulting string value)
   taString&               quote_esc();
   // #CAT_Modify quote escape, replacing double quotes " and back-slashes with their safely quoted forms (just adds a backslash) -- makes the string safe to print or save (NOTE: modifies this string, and also returns the resulting string value)
+  taString&               quote_unesc();
+  // #CAT_Modify quote un-escape, replacing escaped double quotes " and back-slashes with their original forms (just removes a backslash) (NOTE: modifies this string, and also returns the resulting string value)
 
   void                  truncate(uint new_len);
   // #CAT_Modify shortens the string to new_len (if less than curr)

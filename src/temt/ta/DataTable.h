@@ -307,7 +307,7 @@ public:
   // #CAT_Columns create new scalar column of data of specified type
   virtual DataCol*      NewCol_gui(DataCol::ValType val_type,
                                    const String& col_nm);
-  // #BUTTON #MENU #MENU_ON_Columns #LABEL_NewCol #CAT_Columns create new scalar column of data of specified type
+  // #BUTTON #MENU #MENU_ON_Columns #LABEL_NewCol #CAT_Columns create new scalar column of data of specified type -- void* is NOT currently supported and will fail
   virtual DataCol*      NewColMatrix(DataCol::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
