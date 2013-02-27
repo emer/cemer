@@ -1,14 +1,23 @@
 #!/usr/bin/env python
-import datetime, os, re, subprocess, sys, time, traceback, ConfigParser
+import datetime, os, re, subprocess, sys, time, traceback, ConfigParser, socket
 import xml.etree.ElementTree as ET
 
 #############################################################################
 # STANDARD USER CONFIGURABLE PARAMETERS
 
 # full path to single processor job submission script
-# STRONGLY recommend using 
+# STRONGLY recommend using the pyqsub based commands avail in 
+# emergent/cluster_run/ directory (where this script lives as well)
+#
+# the sp_qsub_cmd takes args of <n_threads> <run_time> <full_command>
+sp_qsub_cmd = '/usr/local/bin/sp_qsub_q'
 
+# the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
+dm_qsub_cmd = '/usr/local/bin/dm_qsub_q'
 
+# it is essential that these scripts return the cluster job number in the format
+# created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
+# further (you can of course do this in some other way by editing code below)
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################
@@ -82,9 +91,12 @@ class ClusterConfig(object):
 
     def get_clustername(self):
         # Get the name of this cluster.
+        host = socket.gethostname()
+        if host.find('.'):
+            host = host.split('.')[0]
         return self._prompt_for_field(
             self.user_section, 'clustername',
-            'Enter the name of this cluster:', os.environ['HOSTNAME'])
+            'Enter the name of this cluster:', host)
 
     def get_poll_interval(self):
         # Get the amount of time between polling the subversion server.
@@ -508,7 +520,7 @@ class SubversionPoller(object):
                '--accept', 'theirs-full', '--non-interactive', self.repo_dir]
         svn_update = check_output(cmd)
 
-        print svn_update
+        # print svn_update
 
         # 'svn up' does not allow an '--xml' parameter, so we need to
         # scrape the textual output it produces.
@@ -517,11 +529,6 @@ class SubversionPoller(object):
                                    for m in [self.sub_re_comp.match(l)] if m]
         self.model_files = [m.group(1) for l in svn_update.splitlines()
                                    for m in [self.mod_re_comp.match(l)] if m]
-
-        print self.submit_files
-
-        print self.model_files
-
         return self.submit_files
 
     def _get_commit_info(self, filename):
@@ -560,74 +567,62 @@ class SubversionPoller(object):
             print 'Continuing to poll the Subversion server ' \
                   '(hit Ctrl-C to quit) ...'
 
-    def _start_or_cancel_jobs(self, filename, rev):
-        # TODO:
-        # 1. Load the new 'submit' table from the working copy.  Also
-        # load the 'running' table, since we'll be adding new jobs to it.
-        # Cancelled jobs don't get moved to the 'done' table until after
-        # querying the scheduler and determining that they have in fact
-        # completed, so there's no need to load the 'done' table here.
+    def _start_job(self, filename, rev, row):
+        if len(self.model_files) != 1:   # no project committed!
+            print "\nNo project file was submitted along with job submit commit -- unable to run"
+            return
 
+        proj = self.model_files[0]  
+        proj = os.path.abspath(proj)
+        cmd = self.jobs_submit.get_val(row, "command")
+        run_time = self.jobs_submit.get_val(row, "run_time")
+        n_threads = self.jobs_submit.get_val(row, "n_threads")
+        mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
+        model_svn = str(rev)
+        submit_svn = str(rev)
+        submit_job = str(row)
+        tag = '_' + '_'.join((submit_svn, submit_job))
+
+        cmd = cmd.replace("<TAG>", tag)
+        cmd = cmd.replace("<PROJ_FILENAME>", proj)
+
+        cmdsub = []
+        if mpi_nodes <= 1:
+            cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd]
+        else:
+            cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd]
+        print 'command: %s' % cmdsub
+
+        result = check_output(cmdsub)
+        print "result: %s" % result
+
+        re_job = re.compile('created: JOB')
+
+        job_id = ''
+        for l in result.splitlines():
+#            print l
+            if re_job.match(l):
+                job_id = l.split('JOB.')[1].split('.sh')[0]
+
+        print "job_id: %s" % job_id
+
+        status = 'SUBMITTED'
+
+    def _cancel_job(self, filename, rev, row):
+        pass
+
+    def _start_or_cancel_jobs(self, filename, rev):
+        # 1. Load the new 'submit' table from the working copy.
         self.jobs_submit.load_from_file(filename)
 
-        # Then,
-        # 2. Start jobs
-        # 3. Write the jobs_running.dat DataTable to disk.
-        # 4. Don't commit anything here, since other functions may need
-        #    to modify it as well.
 
-        # todo: should cd to results directory somehow??  need to put job.out files there..
+        for row in range(self.jobs_submit.get_n_rows()):
+            status = self.jobs_submit.get_val(row, "status")
 
-        proj = self.model_files[0]  # must be one!
-        projabs = os.path.abspath(proj)
-
-        for i in range(self.jobs_submit.get_n_rows()):
-            cmd = self.jobs_submit.get_val(i, "command")
-            run_time = self.jobs_submit.get_val(i, "run_time")
-            n_threads = self.jobs_submit.get_val(i, "n_threads")
-            mpi_nodes = self.jobs_submit.get_val(i, "mpi_nodes")
-
-            model_svn = str(rev)
-            submit_svn = str(rev)
-            submit_job = str(i)
-            tag = '_' + '_'.join((submit_svn, submit_job))
-
-            cmdtg = cmd.replace("<TAG>", tag)
-            cmdfl = cmdtg.replace("<PROJ_FILENAME>", projabs)
-
-            # todo: should have config strings at start of file with replacable 
-            # params that just get filled in here..
-            cmdsub = []
-            if mpi_nodes <= 1:
-                cmdsub = ["/usr/local/bin/sp_qsub_q", str(n_threads), run_time, cmdfl]
-            else:
-                cmdsub = ["/usr/local/bin/dm_qsub_q", str(mpi_nodes), '1', str(n_threads), run_time, cmdfl]
-            print 'command: %s' % cmdsub
-
-            subprocess.call(cmdsub)
-
-            status = 'SUBMITTED'
-
-        # To start a job:
-        # The 'command' column in jobs_submit contains only the emergent
-        # command line.  This script needs to modify it in three ways:
-        # 1. Change '<PROJ_FILENAME>' to the correct relative filename
-        #    for the project file in this working copy.
-        # 2. Change '<TAG>' to the tag value.
-        # 3. Prepend the job submission command (sp_qsub_q or dm_qsub_q)
-        #    and its arguments taken from datatable columns.
-        #    This step will vary depending on the cluster.
-
-        # Columns written to jobs_running after submitting the job:
-        #     (will be updated to QUEUED by _query_submitted_jobs())
-        # # Start job using scheduler.  Capture stdout+stderr to job_out_file.
-        # job_out_file = tag + '.out'
-        # job_out = first 2048 chars of job_out_file.
-        # job_no = job number assigned by scheduler, scraped from job_out_file.
-        # dat_files = committed results files matching tag_*.out
-        # command, notes, repo_url, cluster, queue, run_time, ram_gb,
-        #   n_threads, mpi_nodes = copied from jobs_submit.dat
-        pass
+            if status == 'REQUESTED':
+                self._start_job(filename, rev, row)
+            elif status == 'CANCELLED':
+                self._cancel_job(filename, rev, row)
 
     def _unexpected_file(self, filename, rev):
         print 'Ignoring file committed to "submit" folder ' \
@@ -689,8 +684,10 @@ def main():
     poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
     revision = poller.get_initial_wc()
 
-    run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
-    if not run_nohup or run_nohup in 'yY':
+#    run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
+#    if not run_nohup or run_nohup in 'yY':
+    run_nohup = raw_input('\nRun in the background using nohup? [N/y] ')
+    if run_nohup and run_nohup in 'yY':
         cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay),
                str(check_user)]
         subprocess.Popen(cmd)

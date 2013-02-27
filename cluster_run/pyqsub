@@ -1,0 +1,165 @@
+#!/usr/bin/python
+import sys,os,time,optparse,re,copy 
+from pyqsublib import *
+                            
+def submitJob(jm, opts, args):
+    # create job based on command-line args
+    save_file = os.getcwd()+"/"
+    if opts.jobtype.find("dm") != -1:
+        #if args[0].find("dm") != -1:
+        job = DMJob()
+        if len(args) < 4:
+            print job.usage()
+            return False
+        else:
+            save_file += "dm_last_cmd"
+            # save command line for later writing to file
+            save_cmd = opts.jobtype + " "
+            if opts.queue:
+                save_cmd = save_cmd + "-q " + opts.queue + " "
+            if opts.memory:
+                save_cmd = save_cmd + "-m " + opts.memory + " "
+            if opts.tasks:
+                save_cmd = save_cmd + "-t " + opts.tasks + " "
+                if opts.throttle:
+                    save_cmd = save_cmd + "-r " + opts.throttle + " "
+            save_cmd = save_cmd + " ".join(args)
+            if opts.threaded:
+                job.enableThreaded()
+            if opts.queue != None:
+                job.setQueue(opts.queue)
+            if opts.memory != None:
+                 if False == job.setMemory( opts.memory ):
+                     print job.lastErr()
+                     print job.usage()
+                     return False
+            if opts.tasks:
+                r=re.compile(r'[-:%]')
+                job.setTaskStart( int(r.split(opts.tasks)[0]) )
+                job.setNumTasks( int(r.split(opts.tasks)[1]) )
+                job.setTaskStep(1)
+                #job.setTaskStep( int(r.split(args[1])[2]) )
+                if opts.throttle:
+                    job.setTaskThrottle( int(opts.throttle) )
+            if False == job.setNumNodes(int(args[0])):
+                print job.lastErr()
+                print job.usage()
+                return False
+            if False == job.setNumCores(int(args[1])):
+                print job.lastErr()
+                print job.usage()
+                return False
+            if False == job.setWallTime(args[2]):
+                print job.lastErr()
+                print job.usage()
+                return False
+            if False == job.setUserCmd(args[3:]):
+                print job.lastErr()
+                print job.usage()
+                return False
+    elif opts.jobtype.find("sp") != -1:
+        #elif args[0].find("sp") != -1:
+        job = SPJob()
+        if len(args) < 3:
+            print job.usage()
+            return False
+        else:
+            save_file += "sp_last_cmd"
+            # save command line for later writing to file
+            save_cmd = opts.jobtype + " "
+            if opts.queue:
+                save_cmd = save_cmd + "-q " + opts.queue + " "
+            if opts.memory:
+                save_cmd = save_cmd + "-m " + opts.memory + " "
+            if opts.tasks:
+                save_cmd = save_cmd + "-t " + opts.tasks + " "
+                if opts.throttle:
+                    save_cmd = save_cmd + "-r " + opts.throttle + " "
+            save_cmd = save_cmd + " ".join(args)
+            if opts.threaded:
+                job.enableThreaded()
+            if opts.queue != None:
+                job.setQueue(opts.queue)
+            if opts.memory != None:
+                 if False == job.setMemory( opts.memory ):
+                     print job.lastErr()
+                     print job.usage()
+                     return False
+            if opts.tasks:
+                r=re.compile(r'[-:%]')
+                job.setTaskStart( int(r.split(opts.tasks)[0]) )
+                job.setNumTasks( int(r.split(opts.tasks)[1]) )
+                job.setTaskStep(1)
+                #job.setTaskStep( int(r.split(args[1])[2]) )
+                if opts.throttle:
+                    job.setTaskThrottle( int(opts.throttle) )
+            if False == job.setNumCores(int(args[0])):
+                print job.lastErr()
+                print job.usage()
+                return False
+            if False == job.setWallTime(args[1]):
+                print job.lastErr()
+                print job.usage()
+                return False
+            if False == job.setUserCmd(args[2:]):
+                print job.lastErr()
+                print job.usage()
+                return False
+    else:
+        print "unrecognized job type"
+        return False
+
+    # generate job submission script and submit job to scheduler
+    if False == (jm.generateJobScript(job) and jm.submitJob(job)):    
+        print jm.lastErr()
+        return False
+
+    # save command line to file
+    file = open(save_file, "w")
+    if job.isArrayJob():
+        # replace $ with \$ and surround those args in quotes so users can eval the saved command
+        r=re.compile(r'[$]+')
+        save_cmd = r.subn('\$',save_cmd)[0]
+        r=re.compile(r'([^ ]*[$]+[^ ]*)')
+        save_cmd=r.subn(r'"\1"',save_cmd)[0]
+    file.write(save_cmd + "\n")
+    file.close()
+
+    return True
+
+if __name__ == "__main__":
+    ''' Main function - generates and submits a job to PBS or SGE for Emergent-like jobs'''
+    p = optparse.OptionParser( description="Cluster job submission program",
+                               prog="pyqsub",
+                               version="0.1a",
+                               usage="%prog [options] jobtype jobarguments")
+    p.disable_interspersed_args()
+    p.add_option("--jobtype", action="store", help="specify job type (e.g. dm or sp)", default='')
+    p.add_option("--queue","-q", action="store", help="specify queue name", default=None)
+    p.add_option("--memory","-m", action="store", help="specify memory in mb or gb", default=None)
+    p.add_option("--quick", action="store_true", help="enables quick/quiet output", default=False)
+    p.add_option("--verbose", "-v", action="store_true", help="enables verbose output", default=False)
+    p.add_option("--threaded", action="store_true", help="enables proper accounting for threaded programs", default=False)
+    p.add_option("--tasks", "-t", action="store", help="specify array job tasks", default=None)
+    p.add_option("--throttle", "-r", action="store", help="specify throttle for array job tasks", default=None)
+    opts, args = p.parse_args()
+
+
+    ###############################################################################
+    ## DISABLE ARRAY TASKS UNTIL RESOLVE RENAMING JOB AND OUTPUT FILES
+    #opts.tasks = None
+    #opts.throttle = None
+    ###############################################################################
+    
+    #print "Opts: %s" % opts
+    #print "Args: %s" % args
+
+    # create the proper job manager (PBS or SGE)        
+    if ( os.environ.get("SGE_ROOT") ):
+        jm = SGEJobManager( opts.verbose, opts.quick )
+    else:
+        jm = PBSJobManager( opts.verbose, opts.quick )
+
+    # create job script and submit to job manager
+    if False == submitJob(jm, opts, args):
+        sys.exit(1)

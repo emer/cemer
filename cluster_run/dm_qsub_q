@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pyqsub --threaded --quick --jobtype $(basename $0) $*
