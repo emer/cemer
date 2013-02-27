@@ -262,6 +262,14 @@ class DataTable(object):
             row_str += '%s%s' % (self.DELIMITER, val)
             
         return row_str
+
+    # number of rows
+    def get_n_rows(self):
+        return len(self._rows)
+    
+    # number of cols
+    def get_n_cols(self):
+        return len(self._header)
     
     # returns a row of the data table given its row index
     def get_row(self, row_num):
@@ -396,7 +404,10 @@ class SubversionPoller(object):
         self.delay      = delay
         self.check_user = check_user
 
+        self.submit_files = ""
+        self.model_files = ""
         self.all_submit_files = set()
+        self.all_model_files = set()
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
@@ -407,8 +418,10 @@ class SubversionPoller(object):
         # The RE captures the whole (relative) filename to be retrieved
         # later in a m.group(1) call.
         esc_repo_dir = re.escape(self.repo_dir)
-        self.re_comp = re.compile(
+        self.sub_re_comp = re.compile(
             r'^\s*[AUGR]\s+(%s/[^/]+/submit/.*)' % esc_repo_dir)
+        self.mod_re_comp = re.compile(
+            r'^\s*[AUGR]\s+(%s/[^/]+/models/.*)' % esc_repo_dir)
 
     def get_initial_wc(self):
         # Either checkout or update the directory.
@@ -448,13 +461,13 @@ class SubversionPoller(object):
 
             # Update the working copy and get the list of files updated in
             # the 'submit'-folder (typically only one file at a time).
-            submit_files = self._check_for_updates()
+            sub_files = self._check_for_updates()
 
             # Things to do each poll cycle, in order:
             # 1. Cancel existing jobs and submit new jobs as requested in
             #    any submission files that were committed.  Those files
             #    will be added to the self.all_submit_files set.
-            for filename in submit_files:
+            for filename in sub_files:
                 print '\nProcessing %s' % filename
                 self._process_new_submission(filename)
 
@@ -484,12 +497,21 @@ class SubversionPoller(object):
                '--accept', 'theirs-full', '--non-interactive', self.repo_dir]
         svn_update = check_output(cmd)
 
+        print svn_update
+
         # 'svn up' does not allow an '--xml' parameter, so we need to
         # scrape the textual output it produces.
         # The 'm' MatchObject iterates over a list of length 1.
-        submit_files = [m.group(1) for l in svn_update.splitlines()
-                                   for m in [self.re_comp.match(l)] if m]
-        return submit_files
+        self.submit_files = [m.group(1) for l in svn_update.splitlines()
+                                   for m in [self.sub_re_comp.match(l)] if m]
+        self.model_files = [m.group(1) for l in svn_update.splitlines()
+                                   for m in [self.mod_re_comp.match(l)] if m]
+
+        print self.submit_files
+
+        print self.model_files
+
+        return self.submit_files
 
     def _get_commit_info(self, filename):
         """Get the commit revision and author for the given filename."""
@@ -535,11 +557,45 @@ class SubversionPoller(object):
         # querying the scheduler and determining that they have in fact
         # completed, so there's no need to load the 'done' table here.
 
+        self.jobs_submit.load_from_file(filename)
+
         # Then,
         # 2. Start jobs
         # 3. Write the jobs_running.dat DataTable to disk.
         # 4. Don't commit anything here, since other functions may need
         #    to modify it as well.
+
+        # todo: should cd to results directory somehow??  need to put job.out files there..
+
+        proj = self.model_files[0]  # must be one!
+        projabs = os.path.abspath(proj)
+
+        for i in range(self.jobs_submit.get_n_rows()):
+            cmd = self.jobs_submit.get_val(i, "command")
+            run_time = self.jobs_submit.get_val(i, "run_time")
+            n_threads = self.jobs_submit.get_val(i, "n_threads")
+            mpi_nodes = self.jobs_submit.get_val(i, "mpi_nodes")
+
+            model_svn = str(rev)
+            submit_svn = str(rev)
+            submit_job = str(i)
+            tag = '_' + '_'.join((submit_svn, submit_job))
+
+            cmdtg = cmd.replace("<TAG>", tag)
+            cmdfl = cmdtg.replace("<PROJ_FILENAME>", projabs)
+
+            # todo: should have config strings at start of file with replacable 
+            # params that just get filled in here..
+            cmdsub = []
+            if mpi_nodes <= 1:
+                cmdsub = ["/usr/local/bin/sp_qsub_q", str(n_threads), run_time, cmdfl]
+            else:
+                cmdsub = ["/usr/local/bin/dm_qsub_q", str(mpi_nodes), '1', str(n_threads), run_time, cmdfl]
+            print 'command: %s' % cmdsub
+
+            subprocess.call(cmdsub)
+
+            status = 'SUBMITTED'
 
         # To start a job:
         # The 'command' column in jobs_submit contains only the emergent
@@ -552,11 +608,6 @@ class SubversionPoller(object):
         #    This step will vary depending on the cluster.
 
         # Columns written to jobs_running after submitting the job:
-        # model_svn = str(rev)
-        # submit_svn = str(rev)
-        # submit_job = str(row number)
-        # tag = '_'.join((submit_svn, submit_job))
-        # status = 'SUBMITTED'
         #     (will be updated to QUEUED by _query_submitted_jobs())
         # # Start job using scheduler.  Capture stdout+stderr to job_out_file.
         # job_out_file = tag + '.out'
