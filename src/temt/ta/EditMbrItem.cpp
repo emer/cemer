@@ -70,6 +70,11 @@ Variant EditMbrItem::PSearchCurVal() {
   return mbr->type->GetValVar(mbr->GetOff(base), mbr);
 }
 
+String EditMbrItem::CurValAsString() {
+  if(!mbr) return _nilString;
+  return mbr->type->GetValStr(mbr->GetOff(base), NULL, mbr, TypeDef::SC_STREAMING, true);
+}
+
 bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);

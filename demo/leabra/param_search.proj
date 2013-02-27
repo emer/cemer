@@ -2196,7 +2196,7 @@ When it has finished, open the objs within the param search grid program to see 
      mbr=LeabraConSpec::lrate;
      is_numeric=1;
      param_search {
-      search=0;
+      search=1;
       min_val=0.05;
       max_val=0.2;
       next_val=0.05;
@@ -2211,11 +2211,11 @@ When it has finished, open the objs within the param search grid program to see 
      mbr=LearnMixSpec::hebb;
      is_numeric=1;
      param_search {
-      search=0;
+      search=1;
       min_val=0;
-      max_val=1;
+      max_val=0.1;
       next_val=0;
-      incr=0.1000000014901161;
+      incr=0.01;
      };
     };
     EditMbrItem @[2] {
@@ -2226,11 +2226,11 @@ When it has finished, open the objs within the param search grid program to see 
      mbr=KWTASpec::pct;
      is_numeric=1;
      param_search {
-      search=0;
-      min_val=0;
-      max_val=1;
+      search=1;
+      min_val=0.1;
+      max_val=0.3;
       next_val=0;
-      incr=0.1000000014901161;
+      incr=0.05;
      };
     };
    };
@@ -2261,7 +2261,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["submit_svn"] {
       name="submit_svn";
@@ -2277,7 +2277,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["submit_job"] {
       name="submit_job";
@@ -2293,7 +2293,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["job_no"] {
       name="job_no";
@@ -2309,7 +2309,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["tag"] {
       name="tag";
@@ -2325,11 +2325,11 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["status"] {
       name="status";
-      desc="status of job: SUBMITTED, WAITING, RUNNING, DONE, KILLED";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
@@ -2341,7 +2341,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] "REQUESTED";      };
      };
      String_Data @["job_out"] {
       name="job_out";
@@ -2357,7 +2357,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["job_out_file"] {
       name="job_out_file";
@@ -2373,7 +2373,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["dat_files"] {
       name="dat_files";
@@ -2389,7 +2389,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      int_Data @["command_id"] {
       UserDataItem_List @*(.user_data_) {
@@ -2406,7 +2406,7 @@ When it has finished, open the objs within the param search grid program to see 
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2415,7 +2415,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
      String_Data @["command"] {
       name="command";
@@ -2431,7 +2431,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] "emergent -nogui -ni -p <PROJ_FILENAME> tag=<TAG> --n_threads 1 LeabraConSpec_0_lrate=0.04 hebb=0.001 pct=0.25";      };
      };
      String_Data @["notes"] {
       name="notes";
@@ -2447,7 +2447,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["repo_url"] {
       name="repo_url";
@@ -2463,7 +2463,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] "http://grey.colorado.edu/svn/ccnlab/sims";      };
      };
      String_Data @["cluster"] {
       name="cluster";
@@ -2479,7 +2479,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] "dream";      };
      };
      String_Data @["queue"] {
       name="queue";
@@ -2495,7 +2495,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["run_time"] {
       name="run_time";
@@ -2511,7 +2511,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] "1h";      };
      };
      int_Data @["ram_gb"] {
       UserDataItem_List @*(.user_data_) {
@@ -2537,7 +2537,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
      int_Data @["n_threads"] {
       UserDataItem_List @*(.user_data_) {
@@ -2563,7 +2563,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 1;      };
      };
      int_Data @["mpi_nodes"] {
       UserDataItem_List @*(.user_data_) {
@@ -2589,7 +2589,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2686,7 +2686,7 @@ When it has finished, open the objs within the param search grid program to see 
      };
      String_Data @["status"] {
       name="status";
-      desc="status of job: SUBMITTED, WAITING, RUNNING, DONE, KILLED";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
@@ -2763,7 +2763,7 @@ When it has finished, open the objs within the param search grid program to see 
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3043,7 +3043,7 @@ When it has finished, open the objs within the param search grid program to see 
      };
      String_Data @["status"] {
       name="status";
-      desc="status of job: SUBMITTED, WAITING, RUNNING, DONE, KILLED";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
@@ -3120,7 +3120,7 @@ When it has finished, open the objs within the param search grid program to see 
       desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -3321,13 +3321,13 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   notes=;
-   repo_url=;
-   cluster=;
+   notes="test5";
+   repo_url="http://grey.colorado.edu/svn/ccnlab/sims";
+   cluster="dream";
    queue=;
-   run_time=;
-   ram_gb=-1;
-   n_threads=2;
+   run_time="1h";
+   ram_gb=0;
+   n_threads=1;
    use_mpi=0;
    mpi_nodes=10;
   };
@@ -4017,7 +4017,7 @@ When it has finished, open the objs within the param search grid program to see 
      object_type=ClusterRun;
      object_val=.projects["param_search"].edits["ClusterRun"]$$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -12650,7 +12650,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=30: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -12663,7 +12663,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   on=1;
 	   axis=Z;
 	   col_name="batch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -13482,7 +13482,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.05;
+       lrate=0.04;
        cur_lrate=0.05;
        lrs_value=EPOCH;
        lrate_sched {
@@ -13518,7 +13518,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      wt_scale_p {abs=1: rel=1: sem_extra=2: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
-     lrate=0.05;
+     lrate=0.04;
      cur_lrate=0.05;
      lrs_value=EPOCH;
      lrate_sched {

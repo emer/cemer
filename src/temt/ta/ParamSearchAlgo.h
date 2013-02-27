@@ -37,12 +37,10 @@ public:
   SIMPLE_CUTLINKS(ParamSearchAlgo);
   virtual void InitLinks();
 
-  // TODO: These APIs should be pure virtual but how to make maketa understand?
   virtual void Reset();
   virtual bool CreateJobs();
   virtual void ProcessResults();
 protected:
-  String BuildCommand();
   ClusterRun *m_cluster_run;
 private:
   void Initialize();

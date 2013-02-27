@@ -32,20 +32,20 @@ class TA_API GridSearch : public ParamSearchAlgo {
 public:
   int max_jobs; // The maximum number of jobs that may be run concurrently on the cluster.
 
-private:
+  TA_BASEFUNS_NOCOPY(GridSearch)
+  override void Reset();
+  override bool CreateJobs();
+  override void ProcessResults();
+protected:
   String_PArray m_names;
   int_PArray m_counts;
   int_PArray m_iter;
   int m_cmd_id;
   bool m_all_jobs_created;
 
-public:
-  TA_BASEFUNS_NOCOPY(GridSearch)
-  override void Reset();
-  override bool CreateJobs();
-  override void ProcessResults();
+  virtual bool nextParamCombo();
+
 private:
-  bool nextParamCombo();
   void Initialize();
   void Destroy() { }
 };

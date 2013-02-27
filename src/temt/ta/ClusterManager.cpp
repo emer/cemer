@@ -389,7 +389,9 @@ void
 ClusterManager::runSearchAlgo()
 {
   if (!m_cluster_run.cur_search_algo) {
-    throw Exception("No search algorithm chosen.");
+    taMisc::Info(m_cluster_run.name, "no search algorithm set -- running on current values");
+    m_cluster_run.CreateCurJob(); // just run on current values
+    return;
   }
 
   // Tell the chosen search algorithm to populate the jobs_submit table

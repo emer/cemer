@@ -192,6 +192,7 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
 void
 ClusterRun::AddJobRow(const String &cmd, int cmd_id)
 {
+  // todo: need to add notes and a timestamp here so that it is always unique!
   int row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REQUESTED", "status",     row);
   jobs_submit.SetVal(cmd_id,      "command_id", row);
@@ -203,7 +204,10 @@ ClusterRun::AddJobRow(const String &cmd, int cmd_id)
   jobs_submit.SetVal(run_time,    "run_time",   row);
   jobs_submit.SetVal(ram_gb,      "ram_gb",     row);
   jobs_submit.SetVal(n_threads,   "n_threads",  row);
-  jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
+  if(use_mpi)
+    jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
+  else
+    jobs_submit.SetVal(0,   "mpi_nodes",  row);
 }
 
 void
@@ -225,6 +229,47 @@ ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
     if (status.contains(re)) ++count;
   }
   return count;
+}
+
+String ClusterRun::RunCommand(bool use_cur_vals) {
+  // Start command with either "emergent" or "emergent_mpi".
+  String cmd(taMisc::app_name);
+  if (use_mpi) {
+    cmd.cat("_mpi");
+  }
+
+  // The cluster script needs to substitute the correct relative
+  // filename for the project file in its working copy.  It also
+  // needs to substitute the tag, which is based on the revision
+  // and row number.
+  cmd.cat(" -nogui -ni -p <PROJ_FILENAME> tag=<TAG>");
+
+  // Note: cluster script sets number of mpi nodes
+
+  if (n_threads > 0) {
+    cmd.cat(" --n_threads ").cat(String(n_threads));
+  }
+
+  // Add a name=val term for each parameter in the search.
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
+    const EditParamSearch &ps = mbr->param_search;
+    if (ps.search) {
+      cmd.cat(" ").cat(mbr->GetName()).cat("=");
+      if(use_cur_vals) {
+        cmd.cat(mbr->CurValAsString());
+      }
+      else {
+        cmd.cat(String(ps.next_val));
+      }
+    }
+  }
+
+  return cmd;
+}
+
+void ClusterRun::CreateCurJob(int cmd_id) {
+  String cmd = RunCommand(true); // use cur vals
+  AddJobRow(cmd, cmd_id);
 }
 
 iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {

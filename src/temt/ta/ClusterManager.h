@@ -24,12 +24,9 @@ class ClusterRun;
 class DataTable;
 class taProject;
 
-// The ClusterManager class handles all Subversion operations and
-// doesn't know anything about the contents of the job DataTables.
-// The ClusterRun class (and its search algorithm) take care of everything
-// DataTable related and for the most part do no Subversion operations.
-class TA_API ClusterManager
-{
+
+class TA_API ClusterManager {
+  // The ClusterManager class handles all Subversion operations and doesn't know anything about the contents of the job DataTables. The ClusterRun class (and its search algorithm) take care of everything DataTable related and for the most part do no Subversion operations.
 public:
   ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
@@ -40,10 +37,9 @@ public:
   String GetWcSubmitFilename() const;
   int GetLastChangedRevision(const String &path, bool quiet = false);
 
-private:
+protected:
   // This exception class only used internally.
-  class Exception : public std::runtime_error
-  {
+  class Exception : public std::runtime_error {
   public:
     explicit Exception(const char *msg);
   };

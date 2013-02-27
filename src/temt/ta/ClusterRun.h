@@ -74,9 +74,17 @@ public:
   virtual void  FormatTables(); // format all the jobs tables to contain proper columns
 
   // These APIs are mainly for the search algos to use.
-  void AddJobRow(const String &cmd, int cmd_id);
-  void CancelJob(int running_row);
-  int CountJobs(const DataTable &table, const String &status_regexp);
+  virtual void  AddJobRow(const String &cmd, int cmd_id);
+  // add a new job row with given command and arbitrary id number, which is typically the iteration of the search algorithm
+  virtual void  CancelJob(int running_row);
+  // cancel a job at the given row of the jobs_running data table
+  virtual int   CountJobs(const DataTable &table, const String &status_regexp);
+  // count the number of jobs in given table with given status value 
+
+  virtual String RunCommand(bool use_cur_vals = false);
+  // get the run command based on the currently selected search args in this select edit, and other parameters -- if use_cur_vals, then it passes the current values of the items, otherwise it uses the next_val setting, which should be set by the search algorithm prior to calling this function
+  virtual void  CreateCurJob(int cmd_id = 0);
+  // AddJobRow for the current parameter values as listed in the select edit, optionally with given command id number
 
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);

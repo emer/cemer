@@ -42,6 +42,8 @@ public:
   // #CAT_ParamSearch test if parameter searching is valid on this item -- emits error if not
   virtual Variant       PSearchCurVal();
   // #CAT_ParamSearch get current value of item, as a variant
+  virtual String        CurValAsString();
+  // #CAT_ParamSearch get current value of item, as a string -- not subject to validity for parameter searching
   virtual bool          PSearchCurVal_Set(const Variant& cur_val);
   // #CAT_ParamSearch set current value of item from a variant
   virtual bool          PSearchMinToCur();
