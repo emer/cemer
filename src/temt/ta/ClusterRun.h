@@ -37,7 +37,8 @@ class TA_API ClusterRun : public SelectEdit {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
   INHERITED(SelectEdit)
 public:
-  DataTable     jobs_submit;    // current set of jobs to submit
+  DataTable     jobs_submit;    // #NO_SAVE current set of jobs to submit
+  DataTable     jobs_submitted; // #NO_SAVE jobs submitted -- just a local copy of jobs_submit
   DataTable     jobs_running;   // #SHOW_TREE jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE jobs that have finished running
   ParamSearchAlgo_List search_algos; // #SHOW_TREE Possible search algorithms to run on the cluster

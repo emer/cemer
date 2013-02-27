@@ -20,6 +20,7 @@
 #include <iPanelOfDataTable>
 #include <iDataTableView>
 #include <taDateTime>
+#include <taDataProc>
 
 #include <taMisc>
 
@@ -70,6 +71,8 @@ void ClusterRun::Run() {
         jobs_submit.SetValColName(model_rev, "model_svn", row);
         jobs_submit.SetValColName(submit_rev, "submit_svn", row);
       }
+      // move them over to submitted now!
+      taDataProc::AppendRows(&jobs_submitted, &jobs_submit);
     }
   }
 }
@@ -117,10 +120,12 @@ void ClusterRun::ImportData() {
 
 void ClusterRun::FormatTables() {
   jobs_submit.name = "jobs_submit";
+  jobs_submitted.name = "jobs_submitted";
   jobs_running.name = "jobs_running";
   jobs_done.name = "jobs_done";
 
   FormatTables_impl(jobs_submit);
+  FormatTables_impl(jobs_submitted);
   FormatTables_impl(jobs_running);
   FormatTables_impl(jobs_done);
 }
@@ -199,11 +204,16 @@ ClusterRun::AddJobRow(const String &cmd, int cmd_id) {
   last_submit_time = curtime.toString("dd_MM_yyyy_hh_mm_ss");
 
   int row = jobs_submit.AddBlankRow();
+  // model_svn and submit_svn both filled in later -- not avail now
+  jobs_submit.SetVal(last_submit_time, "submit_time",   row);
+  jobs_submit.SetVal(String(row), "submit_job", row); // = row!
+  // job_no will be filled in on cluster
+  // tag will be filled in on cluster
   jobs_submit.SetVal("REQUESTED", "status",     row);
+  // job_out, job_out_file, dat_files all generated on cluster
   jobs_submit.SetVal(cmd_id,      "command_id", row);
   jobs_submit.SetVal(cmd,         "command",    row);
   jobs_submit.SetVal(notes,       "notes",   row);
-  jobs_submit.SetVal(last_submit_time, "submit_time",   row);
 
   jobs_submit.SetVal(repo_url,    "repo_url",   row);
   jobs_submit.SetVal(cluster,     "cluster",    row);
