@@ -2230,6 +2230,11 @@ bool taMisc::RemoveFile(const String& fn) {
   return d.remove(fn);
 }
 
+bool taMisc::DirExists(const String& fn) {
+  QDir d(fn);
+  return d.exists();
+}
+
 bool taMisc::MakeDir(const String& fn) {
   QDir d;
   return d.mkdir(fn);

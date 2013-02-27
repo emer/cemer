@@ -1164,25 +1164,35 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
   if(!proj) return _nilString;
   String proj_base_nm = proj->file_name;
   if(proj_base_nm.contains(".proj"))
-    proj_base_nm = proj_base_nm.before(".proj");
-  String sd = subdir;
-  if(!sd.empty()) {
-    if(sd.lastchar() != '/')
-      sd += '/';
-    if(proj_base_nm.contains('/')) {
-      String base_dir = proj_base_nm.before('/',-1);
-      String fnm = proj_base_nm.after('/',-1);
-      proj_base_nm = base_dir + "/" + sd + fnm;
-    }
-    else {
-      proj_base_nm = sd + proj_base_nm;
+    proj_base_nm = proj_base_nm.before(".proj",-1);
+  String base_dir = taMisc::NoFinalPathSep(proj->proj_dir);
+  String fnm = taMisc::GetFileFmPath(proj_base_nm);
+  // this is special support for the ClusterRun system -- checks for 
+  // a ../results directory if we're in a ../models directory, and uses that
+  // if this is true, we ignore the subdir thing because it will get in the way
+  bool clust_run = false;
+  if(base_dir.endsWith("/models")) {
+    String oneup = taMisc::GetDirFmPath(base_dir);
+    String resultspath = oneup + taMisc::path_sep + "results";
+    if(taMisc::DirExists(resultspath)) {
+      base_dir = resultspath;
+      clust_run = true;
     }
   }
+  if(!clust_run) {
+    if(subdir.nonempty()) {
+      if(base_dir.nonempty())
+        base_dir = base_dir + taMisc::path_sep + subdir;
+      else
+        base_dir = subdir;
+    }
+  }
+  taMisc::MakePath(base_dir);   // make sure path exists!
   String dms;
   if(dmem_proc_no && (taMisc::dmem_nprocs > 1)) {
     dms = ".p" + taMisc::LeadingZeros(taMisc::dmem_proc, 2);
   }
-  String rval = proj_base_nm + tag + dms + ext;
+  String rval = base_dir + taMisc::path_sep + fnm + tag + dms + ext;
   return rval;
 }
 

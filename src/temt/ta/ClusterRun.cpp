@@ -19,6 +19,7 @@
 #include <iDataTableEditor>
 #include <iPanelOfDataTable>
 #include <iDataTableView>
+#include <taDateTime>
 
 #include <taMisc>
 
@@ -134,6 +135,8 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc->desc = "svn revision for the model";
   dc = dt.FindMakeCol("submit_svn", VT_STRING);
   dc->desc = "svn revision for the job submission commands";
+  dc = dt.FindMakeCol("submit_time", VT_STRING);
+  dc->desc = "svn revision for the model";
 
   // Cluster script populates.
   dc = dt.FindMakeCol("submit_job", VT_STRING);
@@ -190,13 +193,17 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
 }
 
 void
-ClusterRun::AddJobRow(const String &cmd, int cmd_id)
-{
-  // todo: need to add notes and a timestamp here so that it is always unique!
+ClusterRun::AddJobRow(const String &cmd, int cmd_id) {
+  taDateTime curtime;
+  curtime.currentDateTime();
+  last_submit_time = curtime.toString("dd_MM_yyyy_hh_mm_ss");
+
   int row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REQUESTED", "status",     row);
   jobs_submit.SetVal(cmd_id,      "command_id", row);
   jobs_submit.SetVal(cmd,         "command",    row);
+  jobs_submit.SetVal(notes,       "notes",   row);
+  jobs_submit.SetVal(last_submit_time, "submit_time",   row);
 
   jobs_submit.SetVal(repo_url,    "repo_url",   row);
   jobs_submit.SetVal(cluster,     "cluster",    row);

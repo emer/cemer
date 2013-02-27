@@ -43,6 +43,7 @@ public:
   ParamSearchAlgo_List search_algos; // #SHOW_TREE Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use
 
+  String        last_submit_time; // #READ_ONLY #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
   String        repo_url;       // svn repository url to use for file exchange with the cluster -- this should be the name of a cluster as listed in the Preferences / Options settings
   String        cluster;        // name of cluster to run job on

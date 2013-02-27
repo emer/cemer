@@ -765,7 +765,7 @@ public:
   // #CAT_File true if the fname is already an absolute or qualified relative path
 
   static bool   FileExists(const String& filename);
-  // #CAT_File returns true if the file exists in current working directory (or absolute path)
+  // #CAT_File returns true if the file exists in current working directory (or absolute path) -- see also DirExists for checking on directories
   static String GetTemporaryPath();
   // #CAT_File return path to system temporary file directory (e.g., /tmp) that user can write to
 
@@ -787,6 +787,8 @@ public:
   // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success
   static bool   RemoveFile(const String& filename);
   // #CAT_File remove file with given name in current working directory (or absolute path) -- returns success
+  static bool   DirExists(const String& dir);
+  // #CAT_File does the directory (either full path or relative to current working directory) exist?
   static bool   MakeDir(const String& dir);
   // #CAT_File make new subdirectory in current working directory -- returns success
   static bool   MakePath(const String& path);
