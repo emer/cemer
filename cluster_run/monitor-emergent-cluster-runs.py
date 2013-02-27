@@ -272,6 +272,11 @@ class DataTable(object):
     # output: list, the header of data table with this format [{'name': col name, 'type': col type}, ...]
     def get_header(self):
         return self._header
+
+    # copy columns from another table -- resets row data too!
+    def copy_cols(self, other_table):
+        self._header = other_table._header
+        self._rows = []  # reset
     
     # returns a row as string
     # input: row_idx = int; the index of the row
@@ -394,6 +399,11 @@ class DataTable(object):
         else:    
             self._rows.append(vals)
         return True
+
+    # append row from another table
+    def append_row_from(self, other, other_row):
+        vals = other.get_row(other_row)
+        self.set_row(vals)
     
     # loads a .dat file into memoory
     # input: path = string, path to the .dat file
@@ -429,8 +439,8 @@ class SubversionPoller(object):
 
         self.submit_files = ""
         self.model_files = ""
-        self.all_submit_files = set()
-        self.all_model_files = set()
+        self.all_running_files = set()
+        self.cur_running_file = ""
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
@@ -494,11 +504,8 @@ class SubversionPoller(object):
                 print '\nProcessing %s' % filename
                 self._process_new_submission(filename)
 
-            # Remaining steps are done on *all* submit files seen so far.
-            # This is necessary for two reasons:
-            # a. There may not have been any new job submissions this cycle.
-            # b. This script may be monitoring multple parameter searches.
-            for filename in self.all_submit_files:
+            # Remaining steps are done on *all* running files seen so far.
+            for filename in self.all_running_files:
                 # 2. Query the status of submitted jobs.  Any cancellations
                 #    or new submissions have already been made, so we won't
                 #    query cancelled jobs (or when we do, their status will
@@ -556,7 +563,6 @@ class SubversionPoller(object):
             else:
                 # Start jobs for any 'jobs_submit.dat' files.
                 if os.path.basename(filename) == 'jobs_submit.dat':
-                    self.all_submit_files.add(filename)
                     self._start_or_cancel_jobs(filename, rev)
                 else:
                     self._unexpected_file(filename, rev)
@@ -591,30 +597,44 @@ class SubversionPoller(object):
             cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd]
         else:
             cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd]
-        print 'command: %s' % cmdsub
+        # print 'command: %s' % cmdsub
 
         result = check_output(cmdsub)
-        print "result: %s" % result
+        # print "result: %s" % result
 
         re_job = re.compile('created: JOB')
 
-        job_id = ''
+        job_no = ''
         for l in result.splitlines():
-#            print l
             if re_job.match(l):
-                job_id = l.split('JOB.')[1].split('.sh')[0]
+                job_no = l.split('JOB.')[1].split('.sh')[0]
 
-        print "job_id: %s" % job_id
+        # print "job_no: %s" % job_no
+        job_out_file = "JOB." + job_no + ".out"
 
         status = 'SUBMITTED'
+
+        if self.jobs_running.get_n_cols() == 0:
+            self.jobs_running.copy_cols(self.jobs_submit)
+
+        # grab current submit info
+        self.jobs_running.append_row_from(self.jobs_submit, row)
+        run_row = self.jobs_running.get_n_rows()-1
+        self.jobs_running.set_val(run_row, "submit_svn", submit_svn)
+        self.jobs_running.set_val(run_row, "submit_job", submit_job)
+        self.jobs_running.set_val(run_row, "job_no", job_no)
+        self.jobs_running.set_val(run_row, "command", cmd)
+        self.jobs_running.set_val(run_row, "tag", tag)
+        self.jobs_running.set_val(run_row, "status", status)
+        self.jobs_running.set_val(run_row, "job_out_file", job_out_file)
 
     def _cancel_job(self, filename, rev, row):
         pass
 
     def _start_or_cancel_jobs(self, filename, rev):
-        # 1. Load the new 'submit' table from the working copy.
+        # Load the new 'submit' table from the working copy.
         self.jobs_submit.load_from_file(filename)
-
+        self.cur_running_file = os.path.dirname(filename) + '/jobs_running.dat'
 
         for row in range(self.jobs_submit.get_n_rows()):
             status = self.jobs_submit.get_val(row, "status")
@@ -624,22 +644,68 @@ class SubversionPoller(object):
             elif status == 'CANCELLED':
                 self._cancel_job(filename, rev, row)
 
+        # write the new jobs running status
+        self.jobs_running.write(self.cur_running_file)
+        self._svn_add_cur_running()
+
     def _unexpected_file(self, filename, rev):
         print 'Ignoring file committed to "submit" folder ' \
               'in revision %s: %s' % (rev, filename)
 
-    def _query_submitted_jobs(self, filename):
+    def _query_job_queue(self, row):
+        # first load job_out info
         # TODO: Query the status of submitted jobs.
         # qstat -j <cluster_job_number> is the actual command to get status.
         # There is a lot of info there that we might want to extract at some
         # point.
         # Filter the qstat command on $USER (os.environ['USER']).
+            
+       
         pass
+
+    def _update_running_job(self, row):
+        # first load job_out info
+        job_out_file = self.jobs_running.get_val(row, "job_out_file")
+        with open(job_out_file, 'r') as f:
+            lines = f.readlines()
+            linestr = '\n'.join(lines[:12])  # just get start of file
+            self.jobs_running.set_val(row, "job_out", linestr)
+
+        # next look for output files
+        results_dir = os.path.dirname(filename)
+        results_dir = os.path.dirname(results_dir) + "/results/"
+        print results_dir
+        
+        pass
+
+    def _query_submitted_jobs(self, filename):
+        # Load running into current
+        self.jobs_running.load_from_file(filename)
+        self.cur_running_file = filename
+
+        for row in range(self.jobs_running.get_n_rows()):
+            status = self.jobs_running.get_val(row, "status")
+
+            if status == 'SUBMITTED' or status == 'QUEUED':
+                self._query_job_queue(row)
+            elif status == 'RUNNING':
+                self._update_running_job(row)
+
+        # write the new jobs running status
+        self.jobs_running.write(self.cur_running_file)
 
     def _move_completed_jobs(self, filename):
         # TODO: Move any completed jobs to the 'done' table.
         # If it makes more sense, merge into _query_submitted_jobs().
         pass
+
+    def _svn_add_cur_running(self):
+        if self.cur_running_file not in self.all_running_files:
+            self.all_running_files.add(self.cur_running_file)
+            cmd = ['svn', 'add', '--username', self.username,
+                   '--non-interactive', self.cur_running_file]
+            # Don't check_output, just dump it to stdout (or nohup.out).
+            subprocess.call(cmd)
 
     def _commit_changes(self, message='Updates from cluster'):
         # Commit the whole repo (should only be files under 'submit').
