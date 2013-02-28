@@ -26,6 +26,15 @@ dm_qsub_cmd = '/usr/local/bin/dm_qsub_q'
 qstat_cmd = "qstat"
 qstat_args = "-j"  # here is where you put the -j if needed
 
+# regexp for output of qstat that tells you that the job is running
+qstat_running_re = r"^usage"
+# use this for "split" command to get misc running info
+qstat_running_info_split = "usage"
+# regexp for output of qstat that tells you that the job is still queued
+qstat_queued_re = r"^scheduling info:"
+# use this for "split" command to get misc queued info
+qstat_queued_info_split = "scheduling info:"
+
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
 job_update_window = 5
@@ -198,7 +207,8 @@ class DataTable(object):
         escape_map = [('\\', '\\\\'),     # \ --> \\  (must be first)
                       ("'",  "\\'"),      # ' --> \'
                       ('"',  '\\"'),      # " --> \"
-                      ('\t', ' ')]        # (tab) --> (space)
+                      ('\t', ' '),        # (tab) --> (space)
+                      ('\n', '\\n')]      # 
         if not space_allowed:
             escape_map.append((' ', '_')) # (space) --> _  (must be last)
 
@@ -401,15 +411,15 @@ class DataTable(object):
     #        val = the new value of the cell 
     def set_val(self, row_num, col_name, val):
         col_idx = self.get_col_idx(col_name)
-        if col_idx and self.get_typed_val(val, self.get_col_type(col_idx)):
+        if col_idx >= 0: #and self.get_typed_val(val, self.get_col_type(col_idx)):
             try:
                 self._rows[row_num][col_idx] = str(val)
                 return True
             except:
-                print "Row number %s doesn't exist." % row_num
+                print "Row number %s doesn't exist, col_idx: %s." % (row_num, col_idx)
                 return False
         else:
-            print "Row number %s doesn't exist." % row_num
+            print "Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx)
             return False
         
     def set_header(self, header):
@@ -645,13 +655,15 @@ class SubversionPoller(object):
         # check if we don't have one yet -- if not, load any existing first, or copy from submit
         if self.jobs_running.get_n_cols() == 0:
             if os.path.exists(self.cur_running_file):
-                self.jobs_running.load_from_file(filename)
+                print "loading previous running file: %s" % self.cur_running_file
+                self.jobs_running.load_from_file(self.cur_running_file)
             else:
                 self.jobs_running.copy_cols(self.jobs_submit)
 
         # grab current submit info
         self.jobs_running.append_row_from(self.jobs_submit, row)
         run_row = self.jobs_running.get_n_rows()-1
+        self.jobs_running.set_val(run_row, "model_svn", model_svn)
         self.jobs_running.set_val(run_row, "submit_svn", submit_svn)
         self.jobs_running.set_val(run_row, "submit_job", submit_job)
         self.jobs_running.set_val(run_row, "job_no", job_no)
@@ -686,30 +698,42 @@ class SubversionPoller(object):
 
     def _query_job_queue(self, row):
         job_no = self.jobs_running.get_val(row, "job_no")
+        tag = self.jobs_running.get_val(row, "tag")
         if qstat_args != '':
             cmd = [qstat_cmd, qstat_args, job_no]
         else:
             cmd = [qstat_cmd, job_no]
         q_out = check_output(cmd)
 
-        # todo: parameterize and generalize this!
-        re_usage = re.compile(r'^usage')
-        re_sched = re.compile(r'^scheduling info:')
+        re_running = re.compile(qstat_running_re)
+        re_queued = re.compile(qstat_queued_re)
+
+        got_status = False
 
         for l in q_out.splitlines():
-            if re_usage.match(l):
-                status = 'RUNNING'
-                stdt = datetime.datetime.now()
-                start_time = stdt.strftime(time_format)
-                self.jobs_running.set_val(row, "status", status)
-                self.jobs_running.set_val(row, "start_time", start_time)
+            if re_running.match(l):
+                if status != 'RUNNING':
+                    status = 'RUNNING'
+                    stdt = datetime.datetime.now()
+                    start_time = stdt.strftime(time_format)
+                    self.jobs_running.set_val(row, "status", status)
+                    self.jobs_running.set_val(row, "start_time", start_time)
+                    # print "qstat job status update -- tag: %s now: %s start: %s info: %s" % (tag, status, start_time, status_info)
+                status_info = l.split(qstat_running_info_split)[1]
+                self.jobs_running.set_val(row, "status_info", status_info)
+                got_status = True
                 break
-            if re_sched.match(l):
+            if re_queued.match(l):
                 status = 'QUEUED'
-                status_info = l.split('scheduling info:')[1]
+                status_info = l.split(qstat_queued_info_split)[1]
                 self.jobs_running.set_val(row, "status", status)
                 self.jobs_running.set_val(row, "status_info", status_info)
+                # print "qstat job status update -- tag: %s now: %s info: %s" % (tag, status, status_info)
+                got_status = True
                 break
+        if not got_status:
+            print "job qstat status not found: %s" % job_no
+            # todo update status
         # done
 
     def _get_job_out(self, job_out_file):
@@ -717,15 +741,19 @@ class SubversionPoller(object):
         with open(job_out_file, 'r') as f:
             lines = f.readlines()
             job_out = '\n'.join(lines[:12])  # just get start of file
+        job_out = DataTable.escape_chars(job_out)
+        if len(job_out) > 1024:
+            job_out = job_out[0:1024]
+        # print "from out file: %s got job out: %s" % (job_out_file, job_out)
         return job_out
 
     def _get_dat_files(self, tag):
         # next look for output files
         results_dir = os.path.dirname(self.cur_running_file)
         results_dir = os.path.dirname(results_dir) + "/results/"
-        print "results dir: %s" % results_dir
+        # print "results dir: %s" % results_dir
 
-        re_tag_dat = re.compile(r"%s.*\.dat" % tag)
+        re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
 
         dat_files_set = set()
         resfiles = os.listdir(results_dir)
@@ -733,8 +761,9 @@ class SubversionPoller(object):
             if not os.path.isfile(os.path.join(results_dir,f)):
                 continue
             if re_tag_dat.match(f):
-                dat_files.add(f)
+                dat_files_set.add(f)
         dat_files = ' '.join(dat_files_set)
+        # print "tag: %s got dat files: %s" % (tag, dat_files)
         return dat_files
 
     def _update_running_job(self, row):
@@ -742,14 +771,12 @@ class SubversionPoller(object):
         start_time = self.jobs_running.get_val(row, "start_time")
         job_out_file = self.jobs_running.get_val(row, "job_out_file")
         tag = self.jobs_running.get_val(row, "tag")
-#        job_out = self.jobs_running.get_val(row, "job_out")
-#        dat_files = self.jobs_running.get_val(row, "dat_files")
 
         stdt = datetime.datetime.strptime(start_time, time_format)
         runtime = datetime.datetime.now() - stdt
         
         if runtime.seconds < job_update_window * 60:
-            print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
+            # print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
             job_out = self._get_job_out(job_out_file)
             self.jobs_running.set_val(row, "job_out", job_out)
 
@@ -763,10 +790,13 @@ class SubversionPoller(object):
 
         for row in range(self.jobs_running.get_n_rows()):
             status = self.jobs_running.get_val(row, "status")
+            tag = self.jobs_running.get_val(row, "tag")
+            # print "updating status of job tag: %s status: %s" % (tag, status)
 
             if status == 'SUBMITTED' or status == 'QUEUED':
                 self._query_job_queue(row)
             elif status == 'RUNNING':
+                self._query_job_queue(row)   # always update status!
                 self._update_running_job(row)
 
         # write the new jobs running status
