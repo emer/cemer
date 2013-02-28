@@ -141,7 +141,11 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc = dt.FindMakeCol("submit_svn", VT_STRING);
   dc->desc = "svn revision for the job submission commands";
   dc = dt.FindMakeCol("submit_time", VT_STRING);
-  dc->desc = "svn revision for the model";
+  dc->desc = "when was the job submitted (tracks time from emergent client submission)";
+  dc = dt.FindMakeCol("start_time", VT_STRING);
+  dc->desc = "when did the job actually start running";
+  dc = dt.FindMakeCol("end_time", VT_STRING);
+  dc->desc = "when did the job finish running";
 
   // Cluster script populates.
   dc = dt.FindMakeCol("submit_job", VT_STRING);
@@ -201,7 +205,7 @@ void
 ClusterRun::AddJobRow(const String &cmd, int cmd_id) {
   taDateTime curtime;
   curtime.currentDateTime();
-  last_submit_time = curtime.toString("dd_MM_yyyy_hh_mm_ss");
+  last_submit_time = curtime.toString("yyyy_MM_dd_hh_mm_ss");
 
   int row = jobs_submit.AddBlankRow();
   // model_svn and submit_svn both filled in later -- not avail now
