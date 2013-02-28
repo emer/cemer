@@ -168,6 +168,9 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc = dt.FindMakeCol("status", VT_STRING);
   dc->desc = "status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
 
+  dc = dt.FindMakeCol("status_info", VT_STRING);
+  dc->desc = "more detailed information about status";
+
   // Cluster script populates.
   dc = dt.FindMakeCol("job_out", VT_STRING);
   dc->desc = "job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";

@@ -172,7 +172,8 @@ void DataTable::ScrollEditorsToBottom() {
     taSigLinkItr itr;
     iPanelOfDataTable* el;
     FOR_DLC_EL_OF_TYPE(iPanelOfDataTable, el, dl, itr) {
-      el->dte->ScrollToBottom();
+      if(el->dte)
+        el->dte->ScrollToBottom();
     }
   }
 }

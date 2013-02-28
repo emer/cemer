@@ -28,7 +28,7 @@ LeabraProject .projects["param_search"] {
       EditMthItem_Group @.mths = [0] {
       };
 
-      DataTableCols @.data = [22] {
+      DataTableCols @.data = [23] {
 	String_Data @["model_svn"] { };
 	String_Data @["submit_svn"] { };
 	String_Data @["submit_time"] { };
@@ -38,6 +38,7 @@ LeabraProject .projects["param_search"] {
 	String_Data @["job_no"] { };
 	String_Data @["tag"] { };
 	String_Data @["status"] { };
+	String_Data @["status_info"] { };
 	String_Data @["job_out"] { };
 	String_Data @["job_out_file"] { };
 	String_Data @["dat_files"] { };
@@ -69,7 +70,7 @@ LeabraProject .projects["param_search"] {
 };
       };
 
-      DataTableCols @.data = [22] {
+      DataTableCols @.data = [23] {
 	String_Data @["model_svn"] { };
 	String_Data @["submit_svn"] { };
 	String_Data @["submit_time"] { };
@@ -79,6 +80,7 @@ LeabraProject .projects["param_search"] {
 	String_Data @["job_no"] { };
 	String_Data @["tag"] { };
 	String_Data @["status"] { };
+	String_Data @["status_info"] { };
 	String_Data @["job_out"] { };
 	String_Data @["job_out_file"] { };
 	String_Data @["dat_files"] { };
@@ -2223,7 +2225,7 @@ When it has finished, open the objs within the param search grid program to see 
      mbr=ProgVar::int_val;
      is_numeric=1;
      param_search {
-      search=0;
+      search=1;
       min_val=0;
       max_val=1;
       next_val=0;
@@ -2231,14 +2233,14 @@ When it has finished, open the objs within the param search grid program to see 
      };
     };
     EditMbrItem @[4] {
-     label="LeabraStartup_epochs";
+     label="epochs";
      desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
      cust_desc=1;
      base=.projects["param_search"].programs["LeabraStartup"].vars["epochs"]$$;
      mbr=ProgVar::int_val;
      is_numeric=1;
      param_search {
-      search=0;
+      search=1;
       min_val=0;
       max_val=1;
       next_val=0;
@@ -2289,11 +2291,11 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [1] "402593";      };
+	    [1] "402622";      };
      };
      String_Data @["submit_time"] {
       name="submit_time";
-      desc="svn revision for the model";
+      desc="when was the job submitted (tracks time from emergent client submission)";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
@@ -2305,14 +2307,14 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [1] "27_02_2013_14_10_37";      };
+	    [1] "2013_02_28_00_58_39";      };
      };
      String_Data @["start_time"] {
       name="start_time";
       desc="when did the job actually start running";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2321,14 +2323,14 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["end_time"] {
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2337,7 +2339,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      String_Data @["submit_job"] {
       name="submit_job";
@@ -2369,7 +2371,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [1] "2905113";      };
+	    [1] "2905628";      };
      };
      String_Data @["tag"] {
       name="tag";
@@ -2385,7 +2387,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [1] "_402593_0";      };
+	    [1] "_402622_0";      };
      };
      String_Data @["status"] {
       name="status";
@@ -2402,6 +2404,22 @@ When it has finished, open the objs within the param search grid program to see 
       ar {
        name=;
 	    [1] "SUBMITTED";      };
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [1] ;      };
      };
      String_Data @["job_out"] {
       name="job_out";
@@ -2433,7 +2451,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [1] ;      };
+	    [1] "JOB.2905628.out";      };
      };
      String_Data @["dat_files"] {
       name="dat_files";
@@ -2491,7 +2509,7 @@ When it has finished, open the objs within the param search grid program to see 
 	    [0]       };
       ar {
        name=;
-	    [1] "emergent -nogui -ni -p <PROJ_FILENAME> tag=<TAG> n_threads=1 LeabraConSpec_0_lrate=0.04 hebb=0.001 pct=0.25";      };
+	    [1] "emergent -nogui -ni -p /dreamio/home/oreilly/emergent/cluster_run/emergent-cluster-runs/grey_sims/param_search/models/param_search.proj tag=_402622_0 n_threads=1 LeabraConSpec_0_lrate=0.04 hebb=0.001 pct=0.25 batches=100 epochs=10000";      };
      };
      String_Data @["notes"] {
       name="notes";
@@ -2698,7 +2716,7 @@ When it has finished, open the objs within the param search grid program to see 
      };
      String_Data @["submit_time"] {
       name="submit_time";
-      desc="svn revision for the model";
+      desc="when was the job submitted (tracks time from emergent client submission)";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
@@ -2717,7 +2735,7 @@ When it has finished, open the objs within the param search grid program to see 
       desc="when did the job actually start running";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2733,7 +2751,7 @@ When it has finished, open the objs within the param search grid program to see 
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
@@ -2795,6 +2813,22 @@ When it has finished, open the objs within the param search grid program to see 
      String_Data @["status"] {
       name="status";
       desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{       };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+      ar {
+       name=;
+	    [0]       };
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{       };
@@ -3072,7 +3106,7 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="27_02_2013_14_19_54";
+   last_submit_time="2013_02_28_01_47_00";
    notes="test5";
    repo_url="http://grey.colorado.edu/svn/ccnlab/sims";
    cluster="dream";
@@ -6861,7 +6895,7 @@ When it has finished, open the objs within the param search grid program to see 
      var_type=T_Int;
      int_val=100;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
      init_from=NULL;
@@ -6871,7 +6905,7 @@ When it has finished, open the objs within the param search grid program to see 
      var_type=T_Int;
      int_val=10000;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
      init_from=NULL;
