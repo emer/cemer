@@ -19,8 +19,32 @@ dm_qsub_cmd = '/usr/local/bin/dm_qsub_q'
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
 # further (you can of course do this in some other way by editing code below)
 
+# qstat-like command -- for quering a specific job_no 
+# sge = qstat -j <job_no>
+# moab = checkjob is better, but otherwise qstat <job_no>
+# job_no will automatically be appended to end of command
+qstat_cmd = "qstat"
+qstat_args = "-j"  # here is where you put the -j if needed
+
+# number of runtime minutes during which the script will continue to update the 
+# output info from the job (job_out, dat_files)
+job_update_window = 5
+
+
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################
+
+# NOTE: this is not currently used:
+# showq-like command -- this should return overall status of all users jobs
+# user name will be appended to end of command
+# moab = showq -w user=<username>
+# pyshowq for SGE (checked into emergent/cluster_run showq <username>
+# showq_cmd = "/usr/local/bin/showq"
+# showq_args = ""  # for moab, use '-w user='
+
+# this is NOT user configurable but is a global setting that should agree with 
+# how time is formatted in emergent
+time_format = "%Y_%m_%d_%H_%M_%S"
 
 def make_dir(dir):
     try: os.makedirs(dir)
@@ -273,10 +297,13 @@ class DataTable(object):
     def get_header(self):
         return self._header
 
+    def reset_data(self):
+        self._rows = []  # reset
+        
     # copy columns from another table -- resets row data too!
     def copy_cols(self, other_table):
         self._header = other_table._header
-        self._rows = []  # reset
+        self.reset_data()
     
     # returns a row as string
     # input: row_idx = int; the index of the row
@@ -408,6 +435,7 @@ class DataTable(object):
     # loads a .dat file into memoory
     # input: path = string, path to the .dat file
     def load_from_file(self, path):
+        self.reset_data()
         with open(path, 'r') as f:
             lines = f.readlines()
             header = lines[0]
@@ -614,8 +642,12 @@ class SubversionPoller(object):
 
         status = 'SUBMITTED'
 
+        # check if we don't have one yet -- if not, load any existing first, or copy from submit
         if self.jobs_running.get_n_cols() == 0:
-            self.jobs_running.copy_cols(self.jobs_submit)
+            if os.path.exists(self.cur_running_file):
+                self.jobs_running.load_from_file(filename)
+            else:
+                self.jobs_running.copy_cols(self.jobs_submit)
 
         # grab current submit info
         self.jobs_running.append_row_from(self.jobs_submit, row)
@@ -653,30 +685,76 @@ class SubversionPoller(object):
               'in revision %s: %s' % (rev, filename)
 
     def _query_job_queue(self, row):
-        # first load job_out info
-        # TODO: Query the status of submitted jobs.
-        # qstat -j <cluster_job_number> is the actual command to get status.
-        # There is a lot of info there that we might want to extract at some
-        # point.
-        # Filter the qstat command on $USER (os.environ['USER']).
-            
-       
-        pass
+        job_no = self.jobs_running.get_val(row, "job_no")
+        if qstat_args != '':
+            cmd = [qstat_cmd, qstat_args, job_no]
+        else:
+            cmd = [qstat_cmd, job_no]
+        q_out = check_output(cmd)
+
+        # todo: parameterize and generalize this!
+        re_usage = re.compile(r'^usage')
+        re_sched = re.compile(r'^scheduling info:')
+
+        for l in q_out.splitlines():
+            if re_usage.match(l):
+                status = 'RUNNING'
+                stdt = datetime.datetime.now()
+                start_time = stdt.strftime(time_format)
+                self.jobs_running.set_val(row, "status", status)
+                self.jobs_running.set_val(row, "start_time", start_time)
+                break
+            if re_sched.match(l):
+                status = 'QUEUED'
+                status_info = l.split('scheduling info:')[1]
+                self.jobs_running.set_val(row, "status", status)
+                self.jobs_running.set_val(row, "status_info", status_info)
+                break
+        # done
+
+    def _get_job_out(self, job_out_file):
+        job_out = ''
+        with open(job_out_file, 'r') as f:
+            lines = f.readlines()
+            job_out = '\n'.join(lines[:12])  # just get start of file
+        return job_out
+
+    def _get_dat_files(self, tag):
+        # next look for output files
+        results_dir = os.path.dirname(self.cur_running_file)
+        results_dir = os.path.dirname(results_dir) + "/results/"
+        print "results dir: %s" % results_dir
+
+        re_tag_dat = re.compile(r"%s.*\.dat" % tag)
+
+        dat_files_set = set()
+        resfiles = os.listdir(results_dir)
+        for f in resfiles:
+            if not os.path.isfile(os.path.join(results_dir,f)):
+                continue
+            if re_tag_dat.match(f):
+                dat_files.add(f)
+        dat_files = ' '.join(dat_files_set)
+        return dat_files
 
     def _update_running_job(self, row):
         # first load job_out info
+        start_time = self.jobs_running.get_val(row, "start_time")
         job_out_file = self.jobs_running.get_val(row, "job_out_file")
-        with open(job_out_file, 'r') as f:
-            lines = f.readlines()
-            linestr = '\n'.join(lines[:12])  # just get start of file
-            self.jobs_running.set_val(row, "job_out", linestr)
+        tag = self.jobs_running.get_val(row, "tag")
+#        job_out = self.jobs_running.get_val(row, "job_out")
+#        dat_files = self.jobs_running.get_val(row, "dat_files")
 
-        # next look for output files
-        results_dir = os.path.dirname(filename)
-        results_dir = os.path.dirname(results_dir) + "/results/"
-        print results_dir
+        stdt = datetime.datetime.strptime(start_time, time_format)
+        runtime = datetime.datetime.now() - stdt
         
-        pass
+        if runtime.seconds < job_update_window * 60:
+            print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
+            job_out = self._get_job_out(job_out_file)
+            self.jobs_running.set_val(row, "job_out", job_out)
+
+            dat_files = self._get_dat_files(tag)
+            self.jobs_running.set_val(row, "dat_files", dat_files)
 
     def _query_submitted_jobs(self, filename):
         # Load running into current
