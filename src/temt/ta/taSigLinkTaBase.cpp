@@ -415,7 +415,7 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
       MemberDef* md = td->members[m];
       if (!(sd->options() & iDialogSearch::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       if (md->is_static) continue;
-      if (md->HasOption("NO_SEARCH")) continue;
+      if (md->HasOption("NO_FIND")) continue;
       if (md->type->IsNotPtr()) {
         // a list or greater is never a "value"
         if (md->type->InheritsFrom(TA_taList_impl)) continue;

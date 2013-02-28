@@ -38,10 +38,10 @@ INHERITED(taOBase)
 public:
 
   String        expr;           // #EDIT_DIALOG enter the expression here -- column value will be set to this.\nyou can just type in names of other columns (value is corresponding row's value) or literal values, or math expressions, etc.\nenclose strings in double quotes.\ncolumn names will be checked and automatically updated
-  DataCol* col_lookup;  // #NULL_OK #NO_EDIT #NO_SAVE #FROM_GROUP_data_cols #NO_UPDATE_POINTER lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  DataCol* col_lookup;  // #NULL_OK #NO_EDIT #NO_SAVE #FROM_GROUP_data_cols #NO_UPDATE_POINTER #NO_FIND lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   DataTableCols*        data_cols;
-  // #READ_ONLY #HIDDEN #NO_SAVE data table columns (set from owner field)
+  // #READ_ONLY #HIDDEN #NO_SAVE #NO_FIND data table columns (set from owner field)
 
   virtual bool  SetExpr(const String& ex);
   // set to use given expression -- use this interface for future compatibility

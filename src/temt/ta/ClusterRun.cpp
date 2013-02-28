@@ -264,7 +264,7 @@ String ClusterRun::RunCommand(bool use_cur_vals) {
   // Note: cluster script sets number of mpi nodes
 
   if (n_threads > 0) {
-    cmd.cat(" --n_threads ").cat(String(n_threads));
+    cmd.cat(" n_threads=").cat(String(n_threads));
   }
 
   // Add a name=val term for each parameter in the search.

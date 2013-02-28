@@ -37,14 +37,14 @@ class TA_API ClusterRun : public SelectEdit {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
   INHERITED(SelectEdit)
 public:
-  DataTable     jobs_submit;    // #NO_SAVE current set of jobs to submit
-  DataTable     jobs_submitted; // #NO_SAVE jobs submitted -- just a local copy of jobs_submit
-  DataTable     jobs_running;   // #SHOW_TREE jobs that are currently running
-  DataTable     jobs_done;      // #SHOW_TREE jobs that have finished running
-  ParamSearchAlgo_List search_algos; // #SHOW_TREE Possible search algorithms to run on the cluster
+  DataTable     jobs_submit;    // #NO_SAVE #EXPERT current set of jobs to submit
+  DataTable     jobs_submitted; // #NO_SAVE #EXPERT jobs submitted -- just a local copy of jobs_submit
+  DataTable     jobs_running;   // #SHOW_TREE #EXPERT jobs that are currently running
+  DataTable     jobs_done;      // #SHOW_TREE #EXPERT jobs that have finished running
+  ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use
 
-  String        last_submit_time; // #READ_ONLY #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
+  String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
   String        repo_url;       // svn repository url to use for file exchange with the cluster -- this should be the name of a cluster as listed in the Preferences / Options settings
   String        cluster;        // name of cluster to run job on

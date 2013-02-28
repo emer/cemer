@@ -1462,11 +1462,13 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     if (sc == SC_STREAMING) {
       if (!md->DumpMember(base))
         continue;
-    } else if (sc == SC_DISPLAY) {
+    }
+    else if (sc == SC_DISPLAY) {
       if (!md->ShowMember(TypeItem::USE_SHOW_GUI_DEF, SC_EDIT, TypeItem::SHOW_CHECK_MASK))
         continue;
-    } else {
-      if(md->HasOption("NO_SAVE"))
+    }
+    else {
+      if(md->is_static || md->HasOption("NO_SAVE"))
         continue;
     }
     if(sc == SC_DISPLAY) {
@@ -1495,7 +1497,14 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     else {
       rval += md->name + "=";
       if(md->type->IsString())     rval += "\"";
-      rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
+      void* m_base = md->GetOff(base);
+      if(m_base == base && md->type == this) {
+        taMisc::Warning("self-pointer in:", md->name, "of type", md->type->name,
+                        "in class of type:", name);
+      }
+      else {
+        rval += md->type->GetValStr(m_base, base, md, sc, force_inline);
+      }
       if(md->type->IsString())     rval += "\"";
       rval += ": ";
     }
