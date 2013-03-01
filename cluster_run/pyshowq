@@ -1,0 +1,40 @@
+#!/usr/bin/python
+from subprocess import Popen,PIPE
+import os, optparse, string, signal
+
+# fix broken pipe error when using shell pipe to head
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+if __name__ == "__main__":
+    '''Mimics some of the functionality of Torque/Maui's 'showq' but for SGE'''
+    p = optparse.OptionParser( description="Cluster job reporting program",
+                               prog="pyshowq",
+                               version="0.1a",
+                               usage="%prog [options] username..")
+    p.disable_interspersed_args()
+    p.add_option("--verbose", "-v", action="store_true", help="enables verbose output", default=False)
+    opts, args = p.parse_args()
+
+    #print "Opts: %s" % opts
+    #print "Args: %s" % args
+
+    if ( os.environ.get("SGE_ROOT") ):
+        if len(args) > 0:
+            users = ""
+            for i in range(0,len(args)):
+                #test for user
+                id = os.popen("id "+args[i]).read()[:-1]
+                if "id" == id[:2]: print id
+                users += args[i]+","
+        else:
+            users = '"*"'
+        #users = "*"
+        
+        # print out cluster load and job status
+        print os.popen("qstat -g c").read()[:-1]
+        print ""
+        print os.popen('qstat -s a -u '+users).read()[:-1]
+    else:
+        # Torque/Maui showq
+        print Popen(['showq']).communicate()[0]
+    

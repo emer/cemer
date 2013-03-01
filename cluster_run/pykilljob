@@ -1,0 +1,78 @@
+#!/usr/bin/python
+import os, sys, optparse, string, time, re
+
+def killjob(job_id, isArray=False):
+    if isArray:
+        print os.popen("qdel " + job_id + "[]").read()[:-1]
+    else:
+        print os.popen("qdel " + job_id).read()[:-1]
+    time.sleep(1)
+    os.system("/bin/rm -f JOB." + job_id + ".*")
+
+def usage( caller ):
+    print "usage: %s <jobID>... | JOB.<jobID>.[out,sh]... | <arrayJobID>[]... " % caller
+    print "\nExamples:"
+    print "\t%s 123456\t\t\t#non-array job" % caller
+    print "\t%s JOB.123456.sh\t\t#non-array job" % caller
+    print "\t%s JOB.123456.out\t\t#non-array job" % caller
+    print "\t%s 123456[]\t\t#array job" % caller
+
+if __name__ == "__main__":
+
+    p = optparse.OptionParser( description="Cluster job info program",
+                               prog="pyjobinfo",
+                               version="0.1a",
+                               usage="%prog [options] <jobid> | JOB.<jobid>.sh ")
+    p.disable_interspersed_args()
+    p.add_option("--caller", "-c", action="store", help="name of the original calling program", default='pykilljob')
+    p.add_option("--force", "-f", action="store_true", help="kills job without requiring confirmation", default=False)
+    opts, args = p.parse_args()
+
+    #print "Opts: %s" % opts
+    #print "Args: %s" % args
+    
+    isArray = False
+    if len(args) < 1:
+        usage(opts.caller)
+        sys.exit(-2)
+
+    for i in range(0,len(args)):
+        if args[i].isdigit():
+            job_id = args[i]
+    	elif len( args[i].split(".") ) > 1 and args[i].split(".")[1].isdigit():
+            job_id = args[i].split(".")[1]
+        elif args[i][-2:] == '[]':
+            job_id = args[i][:-2]
+            isArray = True
+        else:
+            print "unrecognized argument %s" % args[i]
+            usage(opts.caller)
+       	    sys.exit(-2)
+
+        if opts.force:
+            killjob(job_id, isArray)
+        else:
+	    try:
+		    file = open("JOB."+job_id+".sh", "r")
+	    except IOError:
+	            pass
+	    else:
+		    lines = file.readlines()
+                    file.close()
+
+                    pattern = re.compile('^mpirun')
+                    for i, line in enumerate(lines):
+                        if pattern.search(line):
+                            lineNumber = i
+
+                    print "Job %s is:" % job_id 
+                    print "%s\n" % " ".join(lines[lineNumber].split())
+                    
+            
+	    ans = raw_input("Are you sure? (y/n) ")
+            if ans == 'y' or ans == 'Y':
+                killjob(job_id, isArray)
+            else:
+                print "Job NOT killed!"
+            
+           
