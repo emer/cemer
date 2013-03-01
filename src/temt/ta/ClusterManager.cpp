@@ -102,6 +102,11 @@ ClusterManager::BeginSearch(bool prompt_user)
 
     updateWorkingCopy(); // creates the working copy if needed.
     runSearchAlgo();
+
+    int tot_jobs_req = m_cluster_run.jobs_submit.rows;
+    if(!m_cluster_run.ValidateJob(tot_jobs_req))
+      return false;
+
     saveSubmitTable();
     saveCopyOfProject();
     commitFiles("Ready to run on cluster: " + m_cluster_run.notes);
@@ -604,11 +609,25 @@ ClusterManager::showRepoDialog()
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("mpiLbl", widget, row, "label=Use MPI: ;");
   dlg.AddBoolCheckbox(&m_cluster_run.use_mpi, "usempi", widget, row,
-    "tooltip=Use MPI on the cluster.;");
+    "tooltip=Use MPI (message-passing-inteface distributed memory executable to run across multiple nodes) on the cluster?;");
   dlg.AddStretch(row);
-  dlg.AddLabel("nodesLbl", widget, row, "label=Number of nodes: ;");
+  dlg.AddLabel("nodesLbl", widget, row, "label=MPI nodes: ;");
   dlg.AddIntField(&m_cluster_run.mpi_nodes, "numnodes", widget, row,
-    "tooltip=The number of MPI nodes to use.;");
+    "tooltip=The number of MPI nodes to use per each model.;");
+
+  row = "pb";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("pbLbl", widget, row, "label=Use parallel_batch: ;");
+  dlg.AddBoolCheckbox(&m_cluster_run.parallel_batch, "usepb", widget, row,
+                      "tooltip=use parallel batch processing -- run multiple runs of the same model in parallel across nodes or cpus (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights).;");
+  dlg.AddStretch(row);
+  dlg.AddLabel("batchesLbl", widget, row, "label=pb_batches: ;");
+  dlg.AddIntField(&m_cluster_run.pb_batches, "numbatches", widget, row,
+    "tooltip=The number of parallel batches to run.;");
+  dlg.AddLabel("pbnodesLbl", widget, row, "label=pb_nodes: ;");
+  dlg.AddIntField(&m_cluster_run.pb_nodes, "numpbnodes", widget, row,
+    "tooltip=if the cluster uses alloc_by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);

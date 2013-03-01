@@ -35,10 +35,13 @@ void ClusterRun::InitLinks() {
 }
 
 void ClusterRun::Initialize() {
-  ram_gb = -1;
+  ram_gb = 0;
   n_threads = taMisc::thread_defaults.n_threads;
   use_mpi = false;
   mpi_nodes = 10;
+  parallel_batch = false;
+  pb_batches = 10;
+  pb_nodes = 0;
   m_cm = 0;
 }
 
@@ -305,6 +308,10 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc->desc = "number of parallel threads to use for running";
   dc = dt.FindMakeCol("mpi_nodes", VT_INT);
   dc->desc = "number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+  dc = dt.FindMakeCol("pb_batches", VT_INT);
+  dc->desc = "if > 0, use parallel batch mode with this number of batches";
+  dc = dt.FindMakeCol("pb_nodes", VT_INT);
+  dc->desc = "if doing parallel batch mode, and cluster has alloc_by_node policy, then this is the number of nodes to allocate to the overall job";
   
   // these two comprise the tag -- internal stuff user doesn't need to see
   dc = dt.FindMakeCol("submit_svn", VT_STRING);
@@ -318,6 +325,101 @@ ClusterRun::CurTimeStamp() {
   taDateTime curtime;
   curtime.currentDateTime();
   return curtime.toString("yyyy_MM_dd_hh_mm_ss");
+}
+
+bool
+ClusterRun::ValidateJob(int n_jobs_to_sub) {
+  int csi = taMisc::clusters.FindName(cluster);
+  if(csi < 0) {
+    taMisc::Error("Can't find cluster named:", cluster);
+    return false;
+  }
+  ClusterSpecs& cs = taMisc::clusters[csi];
+
+  if(run_time.empty()) {
+    taMisc::Error("run_time is blank -- you MUST specify a run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
+    return false;
+  }
+  int rth;                      // run time in hours
+  if(run_time.endsWith('m')) {
+    rth = (int)run_time.before('m');
+    if(rth == 0) {
+      taMisc::Error("run_time in minutes is 0 -- you MUST specify a non-zero run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
+      return false;
+    }
+    rth /= 60;
+    if(rth < 1) rth = 1;
+  }
+  else if(run_time.endsWith('h')) {
+    rth = (int)run_time.before('h');
+  }
+  else if(run_time.endsWith('d')) {
+    rth = (int)run_time.before('d') * 24;
+  }
+  if(rth == 0) {
+    taMisc::Error("run_time is 0 -- you MUST specify a non-zero run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
+    return false;
+  }
+
+  if(cs.max_time > 0 && rth > cs.max_time)  {
+    int chs = taMisc::Choice("You are requesting to run more than listed max run time on cluster: " + cluster + " -- run time in hours requested: " + String(rth) + " max: " +
+                             String(cs.max_time), "Continue Anyway (NOT recommended)", "Cancel");
+    if(chs == 1) return false;
+  }
+
+  if(use_mpi) {
+    if(!cs.mpi) {
+      taMisc::Error("Job requests to use MPI but cluster says mpi is NOT available!");
+      return false;
+    }
+    if(mpi_nodes <= 1) {
+      taMisc::Error("Job requests to use MPI but mpi_nodes is <= 1", String(mpi_nodes));
+      return false;
+    }
+  }
+  if(parallel_batch) {
+    if(pb_batches <= 1) {
+      taMisc::Error("Job requests to use parallel_batches but pb_batches is <= 1",
+                    String(pb_batches));
+      return false;
+    }
+  }
+  if(cs.alloc_by_node && cs.procs_per_node <= 1) {
+    taMisc::Error("Cluster:", cluster, "says allocate by node but procs_per_node is not set -- must set this parameter in Preferences / Options settings");
+    return false;
+  }
+  if(cs.alloc_by_node && cs.procs_per_node > 4 && !(use_mpi || parallel_batch)) {
+    taMisc::Error("Cluster:", cluster, "has allocate by node policy, but you are not requesting either an mpi or a parallel batch job -- this will waste compute allocations -- please use a cluster that is more appropriate for single-shot single-processor jobs");
+    return false;
+  }
+  if(cs.max_jobs > 0) {
+    if(n_jobs_to_sub > cs.max_jobs) {
+      int chs = taMisc::Choice("You are requesting to run more than listed max number of jobs on cluster: " + cluster + " -- jobs: " + String(n_jobs_to_sub) + " max: " +
+                               String(cs.max_jobs), "Continue Anyway", "Cancel");
+      if(chs == 1) return false;
+    }
+  }
+  int tot_procs = n_jobs_to_sub * n_threads;
+  if(use_mpi) tot_procs *= mpi_nodes;
+  if(parallel_batch) tot_procs *= pb_batches;
+
+  taMisc::Info("total procs requested for this job:", String(tot_procs));
+
+  if(cs.max_procs > 0) {
+    if(tot_procs > cs.max_procs) {
+      int chs = taMisc::Choice("You are requesting to run more than listed max number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " max: " +
+                               String(cs.max_procs), "Continue Anyway", "Cancel");
+      if(chs == 1) return false;
+    }
+  }
+
+  if(cs.max_ram > 0 && ram_gb > 0 && ram_gb > cs.max_ram)  {
+    int chs = taMisc::Choice("You are requesting to run more than listed max ram on cluster: " + cluster + " -- ram in Gb requested: " + String(ram_gb) + " max: " +
+                             String(cs.max_ram), "Continue Anyway (NOT recommended)", "Cancel");
+    if(chs == 1) return false;
+  }
+  
+  return true;
 }
 
 void
@@ -348,6 +450,34 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int cmd_id) {
     jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
   else
     jobs_submit.SetVal(0,   "mpi_nodes",  row);
+  if(parallel_batch && pb_batches > 0) {
+    jobs_submit.SetVal(pb_batches,   "pb_batches",  row);
+    int eff_nodes = pb_nodes;
+    int csi = taMisc::clusters.FindName(cluster);
+    if(pb_nodes == 0) {
+      int procs_per_node = 1;
+      if(csi < 0) {
+        taMisc::Error("can't find cluster named:", cluster);
+      }
+      else {
+        procs_per_node = taMisc::clusters[csi].procs_per_node;
+      }
+      if(procs_per_node <= 0) {
+        taMisc::Error("cluster named:", cluster, "has procs_per_node <= 0", String(procs_per_node));
+        procs_per_node = 1;
+      }
+      int tot_procs = pb_batches * n_threads;
+      if(use_mpi)
+        tot_procs *= mpi_nodes;
+      eff_nodes = tot_procs / procs_per_node;
+      if(eff_nodes * procs_per_node < tot_procs)
+        eff_nodes++;
+    }
+    jobs_submit.SetVal(eff_nodes,   "pb_nodes",  row);
+  }
+  else {
+    jobs_submit.SetVal(0,   "pb_batches",  row);
+  }
 }
 
 void

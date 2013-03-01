@@ -289,14 +289,20 @@ NamedURL        taMisc::wiki6_url;
 
 NameVar_PArray  taMisc::wikis;
 
-String          taMisc::cluster1_name;
-String          taMisc::cluster2_name;
-String          taMisc::cluster3_name;
-String          taMisc::cluster4_name;
-String          taMisc::cluster5_name;
-String          taMisc::cluster6_name;
+#ifndef NO_TA_BASE
+ClusterSpecs          taMisc::cluster1;
+ClusterSpecs          taMisc::cluster2;
+ClusterSpecs          taMisc::cluster3;
+ClusterSpecs          taMisc::cluster4;
+ClusterSpecs          taMisc::cluster5;
+ClusterSpecs          taMisc::cluster6;
+ClusterSpecs          taMisc::cluster7;
+ClusterSpecs          taMisc::cluster8;
+ClusterSpecs          taMisc::cluster9;
 
-String_PArray   taMisc::cluster_names;
+String_PArray         taMisc::cluster_names;
+ClusterSpecs_PArray   taMisc::clusters;
+#endif
 
 NamedURL        taMisc::svn_repo1_url;
 NamedURL        taMisc::svn_repo2_url;
@@ -479,12 +485,52 @@ void taMisc::UpdateAfterEdit() {
   addUrl(wikis, wiki6_url);
 
   cluster_names.Reset();
-  if (cluster1_name.nonempty()) cluster_names.Add(taMisc::cluster1_name);
-  if (cluster2_name.nonempty()) cluster_names.Add(taMisc::cluster2_name);
-  if (cluster3_name.nonempty()) cluster_names.Add(taMisc::cluster3_name);
-  if (cluster4_name.nonempty()) cluster_names.Add(taMisc::cluster4_name);
-  if (cluster5_name.nonempty()) cluster_names.Add(taMisc::cluster5_name);
-  if (cluster6_name.nonempty()) cluster_names.Add(taMisc::cluster6_name);
+  clusters.Reset();
+  if (cluster1.name.nonempty()) {
+    cluster1.UpdateProcs();
+    cluster_names.Add(taMisc::cluster1.name);
+    clusters.Add(taMisc::cluster1);
+  }
+  if (cluster2.name.nonempty()) {
+    cluster2.UpdateProcs();
+    cluster_names.Add(taMisc::cluster2.name);
+    clusters.Add(taMisc::cluster2);
+  }
+  if (cluster3.name.nonempty()) {
+    cluster3.UpdateProcs();
+    cluster_names.Add(taMisc::cluster3.name);
+    clusters.Add(taMisc::cluster3);
+  }
+  if (cluster4.name.nonempty()) {
+    cluster4.UpdateProcs();
+    cluster_names.Add(taMisc::cluster4.name);
+    clusters.Add(taMisc::cluster4);
+  }
+  if (cluster5.name.nonempty()) {
+    cluster5.UpdateProcs();
+    cluster_names.Add(taMisc::cluster5.name);
+    clusters.Add(taMisc::cluster5);
+  }
+  if (cluster6.name.nonempty()) {
+    cluster6.UpdateProcs();
+    cluster_names.Add(taMisc::cluster6.name);
+    clusters.Add(taMisc::cluster6);
+  }
+  if (cluster7.name.nonempty()) {
+    cluster7.UpdateProcs();
+    cluster_names.Add(taMisc::cluster7.name);
+    clusters.Add(taMisc::cluster7);
+  }
+  if (cluster8.name.nonempty()) {
+    cluster8.UpdateProcs();
+    cluster_names.Add(taMisc::cluster8.name);
+    clusters.Add(taMisc::cluster8);
+  }
+  if (cluster9.name.nonempty()) {
+    cluster9.UpdateProcs();
+    cluster_names.Add(taMisc::cluster9.name);
+    clusters.Add(taMisc::cluster9);
+  }
 
   svn_repos.Reset();
   addUrl(svn_repos, svn_repo1_url);

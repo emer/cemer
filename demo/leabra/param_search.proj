@@ -2180,16 +2180,19 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_01_00_37_10";
+   last_submit_time="2013_03_01_13_32_15";
    notes="test5";
    repo_url="http://grey.colorado.edu/svn/ccnlab/sims";
    cluster="dream";
    queue=;
-   run_time="1h";
-   ram_gb=0;
+   run_time="1d";
+   ram_gb=100;
    n_threads=1;
    use_mpi=0;
    mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
   };
  };
  data {

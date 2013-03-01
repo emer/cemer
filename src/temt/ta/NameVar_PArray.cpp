@@ -33,7 +33,7 @@ const String NameVar_PArray::AsString(const String& sep) const {
 int NameVar_PArray::FindName(const String& op, int start) const {
   int i;
   if(start < 0) {               // search backwards if start < 0
-    for(i=size-1; i>=0; i--) {
+    for(i=size-start; i>=0; i--) {
       if(FastEl(i).name == op)
         return i;
     }
@@ -50,7 +50,7 @@ int NameVar_PArray::FindName(const String& op, int start) const {
 int NameVar_PArray::FindNameContains(const String& op, int start) const {
   int i;
   if(start < 0) {               // search backwards if start < 0
-    for(i=size-1; i>=0; i--) {
+    for(i=size-start; i>=0; i--) {
       if(FastEl(i).name.contains(op))
         return i;
     }
@@ -67,7 +67,7 @@ int NameVar_PArray::FindNameContains(const String& op, int start) const {
 int NameVar_PArray::FindValue(const Variant& op, int start) const {
   int i;
   if(start < 0) {               // search backwards if start < 0
-    for(i=size-1; i>=0; i--) {
+    for(i=size-start; i>=0; i--) {
       if(FastEl(i).value == op)
         return i;
     }
@@ -84,7 +84,7 @@ int NameVar_PArray::FindValue(const Variant& op, int start) const {
 int NameVar_PArray::FindValueContains(const String& op, int start) const {
   int i;
   if(start < 0) {               // search backwards if start < 0
-    for(i=size-1; i>=0; i--) {
+    for(i=size-start; i>=0; i--) {
       if(FastEl(i).value.toString().contains(op))
         return i;
     }

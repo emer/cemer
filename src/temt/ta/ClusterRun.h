@@ -47,14 +47,17 @@ public:
 
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
-  String        repo_url;       // svn repository url to use for file exchange with the cluster -- this should be the name of a cluster as listed in the Preferences / Options settings
-  String        cluster;        // name of cluster to run job on
+  String        repo_url;       // svn repository url to use for file exchange with the cluster -- this should be the name of a cluster as listed in the Preferences / Options settings (when you Run a job you can pick from a dropdown list)
+  String        cluster;        // name of cluster to run job on -- see Preferences / Options settings for list of valid names  (when you Run a job you can pick from a dropdown list)
   String        queue;          // if specified, indicate a particular queue on the computing resource
   String        run_time;       // how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
-  int           ram_gb;         // how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources
+  int           ram_gb;         // how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past
   int           n_threads;      // number of parallel threads to use for running
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
+  bool          parallel_batch; // use parallel batch processing -- run multiple runs of the same model in parallel across nodes or procs (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights)
+  int           pb_batches;     // #CONDSHOW_ON_parallel_batch number of parallel batches to run
+  int           pb_nodes;       // #CONDSHOW_ON_parallel_batch if the cluster uses alloc_by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / procs_per_node -- setting this value to 0 will default to this allocation number
 
 protected:
   void initClusterManager();
@@ -85,6 +88,8 @@ public:
   virtual void  FormatTables(); // format all the jobs tables to contain proper columns
 
   // These APIs are mainly for the search algos to use.
+  virtual bool  ValidateJob(int n_jobs_to_sub = 1);
+  // validate all the current parameters and ensure that they make sense for selected cluster, etc -- arg is number of jobs that will be submitted of this form
   virtual String CurTimeStamp();
   // get a timestamp string for the current time 
   virtual void  AddJobRow(const String& cmd, const String& params, int cmd_id);

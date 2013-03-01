@@ -71,6 +71,7 @@ set(ta_HEADS_MAKETA_NOMOC
   taLicense.h
   taThreadDefaults.h
   NamedURL.h
+  ClusterSpecs.h
   DumpFileCvt.h
   DumpFileCvtList.h
   ContextFlag.h
@@ -1125,6 +1126,7 @@ set(ta_SRCS_MAKETA
   taLicense.cpp
   taThreadDefaults.cpp
   NamedURL.cpp
+  ClusterSpecs.cpp
   DumpFileCvt.cpp
   DumpFileCvtList.cpp
   ContextFlag.cpp

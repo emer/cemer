@@ -30,6 +30,7 @@
 
 #ifndef NO_TA_BASE
 #include <taLicense>
+#include <ClusterSpecs>
 #endif
 
 #ifndef __MAKETA__
@@ -342,13 +343,19 @@ public:
   static NameVar_PArray wikis;
   // #NO_SAVE #READ_ONLY #HIDDEN the non-empty wiki names and urls from the above set of wikis -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
 
-  static String         cluster1_name; // #SAVE #CAT_File the name of a cluster
-  static String         cluster2_name; // #SAVE #CAT_File the name of a cluster
-  static String         cluster3_name; // #SAVE #CAT_File the name of a cluster
-  static String         cluster4_name; // #SAVE #CAT_File the name of a cluster
-  static String         cluster5_name; // #SAVE #CAT_File the name of a cluster
-  static String         cluster6_name; // #SAVE #CAT_File the name of a cluster
+#ifndef NO_TA_BASE
+  static ClusterSpecs   cluster1; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster2; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster3; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster4; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster5; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster6; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster7; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster8; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
+  static ClusterSpecs   cluster9; // #SAVE #CAT_File specifications for an available compute cluster or other similar remote computing resource
   static String_PArray  cluster_names; // #NO_SAVE #READ_ONLY #HIDDEN non-empty cluster names
+  static ClusterSpecs_PArray  clusters; // #NO_SAVE #READ_ONLY #HIDDEN non-empty cluster specs
+#endif
 
   static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository.
   static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository.
@@ -745,7 +752,7 @@ public:
   //    File Paths etc
 
   static const String   path_sep;
-  // #CAT_File normal file path separator character, ex / -- use this for construction of paths only (use qt parsing routines to parse paths)
+  // #CAT_File #READ_ONLY #NO_SAVE normal file path separator character, ex / -- use this for construction of paths only (use qt parsing routines to parse paths)
   static String FinalPathSep(const String& in);
   // #CAT_File return string that has a valid final path separator
   static String NoFinalPathSep(const String& in);
