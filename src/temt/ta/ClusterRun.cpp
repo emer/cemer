@@ -188,6 +188,7 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
     if(!dat) {
       dat = dgp->NewEl(1);
       dat->name = dnm;
+      dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
     }
     dat->LoadData(res_path + "/" + fl);
     AddParamsToTable(dat, params);
