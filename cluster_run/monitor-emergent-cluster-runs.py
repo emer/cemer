@@ -68,6 +68,8 @@ time_format = "%Y_%m_%d_%H_%M_%S"
 # The client sets this field in the jobs_submit table to:
 #   REQUESTED to request the job be submitted.
 #   CANCELLED to request the job indicated by job_no or tag be cancelled.
+#   PROBE     just a null probe to get cluster script to process current status
+#   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
 #   QUEUED    when the job is known to be in the cluster queue.
@@ -455,6 +457,22 @@ class DataTable(object):
             print "Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx)
             return False
         
+    # find the (first) index of item incol name (-1 if not found)
+    # input: col_name = the column name of the cell to update
+    #        val = value to find
+    def find_val(self, col_name, val):
+        col_idx = self.get_col_idx(col_name)
+        if col_idx >= 0: 
+            for i in range(len(self._rows)):
+                str_val = self._rows[i][col_idx]
+                cval = self.get_typed_val(str_val, self.get_col_type(col_idx))
+                if cval == val:
+                    return i
+            return -1    # not found
+        else:
+            print "Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx)
+        return -1
+
     def set_header(self, header):
         self._header = header
     
@@ -511,6 +529,7 @@ class SubversionPoller(object):
         self.submit_files = ""
         self.model_files = ""
         self.all_running_files = set()
+        self.cur_proj_root = ""  # current project root directory (parent of subdirs)
         self.cur_submit_file = ""
         self.cur_running_file = ""
         self.cur_done_file = ""
@@ -655,10 +674,11 @@ class SubversionPoller(object):
 
     # setup current table filenames based on any given filename in status
     def _get_cur_jobs_files(self, filename):
-        dir = os.path.dirname(filename)
-        self.cur_submit_file = dir + '/jobs_submit.dat'
-        self.cur_running_file = dir + '/jobs_running.dat'
-        self.cur_done_file = dir + '/jobs_done.dat'
+        self.cur_proj_root = os.path.dirname(filename)
+        self.cur_proj_root = os.path.dirname(self.cur_proj_root)
+        self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
+        self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
+        self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
  
     def _get_commit_info(self, filename):
         """Get the commit revision and author for the given filename."""
@@ -702,12 +722,18 @@ class SubversionPoller(object):
 
             if status == 'REQUESTED':
                 self._start_job(filename, rev, row)
+                # write the new jobs running status
+                self.jobs_running.write(self.cur_running_file)
+                self._svn_add_cur_running()   # could be first time -- checkin if necc
             elif status == 'CANCELLED':
                 self._cancel_job(filename, rev, row)
-
-        # write the new jobs running status
-        self.jobs_running.write(self.cur_running_file)
-        self._svn_add_cur_running()
+                self._add_cur_running_to_list()  # monitor us going forward
+            elif status == 'GETDATA':
+                self._getdata_job(filename, rev, row)
+                self._add_cur_running_to_list() # monitor us going forward
+            elif status == 'PROBE':
+                self._add_cur_running_to_list()  # monitor us going forward
+                print "probed for project root %s" % self.cur_proj_root
 
     def _start_job(self, filename, rev, row):
         if len(self.model_files) != 1:   # no project committed!
@@ -718,10 +744,10 @@ class SubversionPoller(object):
         proj = os.path.abspath(proj)
 
         cmd = self.jobs_submit.get_val(row, "command")
+        params = self.jobs_submit.get_val(row, "params")
         run_time = self.jobs_submit.get_val(row, "run_time")
         n_threads = self.jobs_submit.get_val(row, "n_threads")
         mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
-        model_svn = str(rev)
         submit_svn = str(rev)
         submit_job = str(row)
         tag = '_' + '_'.join((submit_svn, submit_job))
@@ -731,9 +757,9 @@ class SubversionPoller(object):
 
         cmdsub = []
         if mpi_nodes <= 1:
-            cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd]
+            cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd, params]
         else:
-            cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd]
+            cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd, params]
         # print 'command: %s' % cmdsub
 
         result = check_output(cmdsub)
@@ -757,11 +783,11 @@ class SubversionPoller(object):
         # grab current submit info
         self.jobs_running.append_row_from(self.jobs_submit, row)
         run_row = self.jobs_running.get_n_rows()-1
-        self.jobs_running.set_val(run_row, "model_svn", model_svn)
         self.jobs_running.set_val(run_row, "submit_svn", submit_svn)
         self.jobs_running.set_val(run_row, "submit_job", submit_job)
         self.jobs_running.set_val(run_row, "job_no", job_no)
         self.jobs_running.set_val(run_row, "command", cmd)
+        self.jobs_running.set_val(run_row, "params", params)
         self.jobs_running.set_val(run_row, "tag", tag)
         self.jobs_running.set_val(run_row, "status", status)
         self.jobs_running.set_val(run_row, "job_out_file", job_out_file)
@@ -776,6 +802,37 @@ class SubversionPoller(object):
         print "killed job: %s output: %s" % (job_no, del_out)
         # we don't actually do anything with this output..
         # could try to update the jobs_running table right now, but not really needed
+
+    def _getdata_job(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        self._init_jobs_running()  # make sure we have the running files.. this is a submit path
+        runrow = self.jobs_running.find_val("tag", tag)
+        if runrow >= 0:
+            dat_files = self.jobs_running.get_val(runrow, "dat_files")
+            self._svn_add_dat_files(tag, dat_files)
+        else:
+            self._init_jobs_done() # make sure we have the done files loaded
+            donerow = self.jobs_done.find_val("tag", tag)
+            if donerow >= 0:
+                dat_files = self.jobs_done.get_val(donerow, "dat_files")
+                self._svn_add_dat_files(tag, dat_files)
+            else:
+                print "getdata_job: tag %s not found in either jobs running or done" % tag
+
+    def _svn_add_dat_files(self, tag, dat_files):
+        if len(dat_files) == 0:
+            print "tag: %s has no dat files (yet)" % tag
+            return
+        dats = dat_files.split(' ')
+        resdir = self.cur_proj_root + "/results/"
+        for df in dats:
+            fdf = resdir + df
+            print "dat file: %s" % fdf
+            if os.path.exists(fdf):
+                cmd = ['svn', 'add', '--username', self.username,
+                       '--non-interactive', fdf]
+                # Don't check_output, just dump it to stdout (or nohup.out).
+                subprocess.call(cmd)
 
     def _unexpected_file(self, filename, rev):
         print 'Ignoring file committed to "submit" folder ' \
@@ -842,8 +899,9 @@ class SubversionPoller(object):
 
     def _get_job_out(self, job_out_file):
         job_out = ''
-        with open(job_out_file, 'r') as f:
-            lines = f.readlines()
+        if os.path.exists(job_out_file):
+            with open(job_out_file, 'r') as f:
+                lines = f.readlines()
             job_out = ''.join(lines[:12])  # just get start of file
         if len(job_out) > 1024:
             job_out = job_out[0:1024]
@@ -852,9 +910,7 @@ class SubversionPoller(object):
 
     def _get_dat_files(self, tag):
         # next look for output files
-        results_dir = os.path.dirname(self.cur_running_file)
-        results_dir = os.path.dirname(results_dir) + "/results/"
-        # print "results dir: %s" % results_dir
+        results_dir = self.cur_proj_root + "/results/"
 
         re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
 
@@ -892,6 +948,10 @@ class SubversionPoller(object):
         self.jobs_running.remove_row(row)
         self.jobs_done.write(self.cur_done_file)
         self._svn_add_cur_done()
+
+    def _add_cur_running_to_list(self):
+        if self.cur_running_file not in self.all_running_files:
+            self.all_running_files.add(self.cur_running_file)
 
     def _svn_add_cur_running(self):
         if self.cur_running_file not in self.all_running_files:
