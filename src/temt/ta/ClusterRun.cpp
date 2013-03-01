@@ -369,11 +369,15 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
 
   if(use_mpi) {
     if(!cs.mpi) {
-      taMisc::Error("Job requests to use MPI but cluster says mpi is NOT available!");
+      taMisc::Error("Job requests to use MPI but cluster says mpi is NOT available on cluster:", cluster);
       return false;
     }
     if(mpi_nodes <= 1) {
       taMisc::Error("Job requests to use MPI but mpi_nodes is <= 1", String(mpi_nodes));
+      return false;
+    }
+    if(mpi_nodes > cs.n_nodes) {
+      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes requested:", String(mpi_nodes), "avail on cluster:", String(cs.n_nodes));
       return false;
     }
   }
@@ -411,6 +415,12 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
                                String(cs.max_procs), "Continue Anyway", "Cancel");
       if(chs == 1) return false;
     }
+  }
+
+  if(tot_procs > cs.n_procs) {
+    taMisc::Error("You are requesting to run more than listed TOTAL number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " n_procs: " +
+                  String(cs.n_procs));
+    return false;
   }
 
   if(cs.max_ram > 0 && ram_gb > 0 && ram_gb > cs.max_ram)  {
