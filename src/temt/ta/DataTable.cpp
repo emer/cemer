@@ -2593,22 +2593,14 @@ void DataTable::DetermineLoadDataParams(istream& strm,
 
   // note: we guess the delims and quotes so we can warn if override seems wrong
   // if it has TABS or COMMA then almost guaranteed that is delim, else assume SPACE
-  int tabfreq = 0;
-  int commafreq = 0;
-  int spacefreq = 0;
-  bool useln1 = false;
-  if(ln1.nonempty()) {          // use 2nd line if poss because header can have weird stuff
-    tabfreq = ln1.freq('\t');
-    commafreq = ln1.freq(',');
-    spacefreq = ln1.freq(' ');
-    useln1 = true;
-  }
-  else {
-    useln1 = false;                                      // actually not good
-    tabfreq = ln0.freq('\t');
-    commafreq = ln0.freq(',');
-    spacefreq = ln0.freq(' ');
-  }
+  // don't use ln1 because it could have a lot of spaces but that doesn't mean they are
+  // delimters -- string fields with a lot of spaces CAN happen, and if it does,
+  // that totally messes with the results here -- headers never have this problem and
+  // SHOULD use the same delimiters as the rest, so let's use them always..
+  
+  int tabfreq = ln0.freq('\t');
+  int commafreq = ln0.freq(',');
+  int spacefreq = ln0.freq(' ');
 
   if(tabfreq > commafreq && tabfreq > spacefreq)
     delim = TAB;
@@ -2636,7 +2628,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   // OpenOffice puts quotes around everything by default
   // Excel 2004 (Mac) doesn't quote headers, and only quotes data sometimes, ex. when it has a comma
   int quotefreq = 0;
-  if(useln1) {                  // rely on delimiter parsing for where to look for quotes
+  if(ln1.nonempty()) {                  // rely on delimiter parsing for where to look for quotes
     quotefreq = ln1.freq('"');
   }
   else {

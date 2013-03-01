@@ -68,6 +68,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
     return;
   }
 
+  setPaths();                   // always get paths
   m_valid = true;
 }
 
@@ -175,6 +176,30 @@ ClusterManager::UpdateTables()
     handleException(ex);
   }
   return false;
+}
+
+String
+ClusterManager::GetWcProjPath() const
+{
+  return m_wc_proj_path;
+}
+
+String
+ClusterManager::GetWcResultsPath() const
+{
+  return m_wc_results_path;
+}
+
+String
+ClusterManager::GetWcSubmitPath() const
+{
+  return m_wc_submit_path;
+}
+
+String
+ClusterManager::GetWcModelsPath() const
+{
+  return m_wc_models_path;
 }
 
 String
@@ -422,6 +447,7 @@ void
 ClusterManager::saveSubmitTable()
 {
   // Save the datatable and add it to source control (if not already).
+  setPaths();
   deleteFile(m_submit_dat_filename);
   m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
   m_svn_client->Add(m_submit_dat_filename.chars());

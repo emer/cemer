@@ -94,8 +94,10 @@ GridSearch::CreateJobs()
   m_cluster_run->jobs_submit.ResetData();
   for (int idx = 0; idx < num_jobs || create_all; ++idx, ++m_cmd_id) {
     // Add the current job.
-    String cmd = m_cluster_run->RunCommand(false); // use next vals
-    m_cluster_run->AddJobRow(cmd, m_cmd_id);
+    String cmd;
+    String params;
+    m_cluster_run->RunCommand(cmd, params, false); // use next vals
+    m_cluster_run->AddJobRow(cmd, params, m_cmd_id);
 
     // Cycle parameters for the next job.
     if (!nextParamCombo()) {

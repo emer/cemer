@@ -21,6 +21,8 @@
 #include <iDataTableView>
 #include <taDateTime>
 #include <taDataProc>
+#include <DataTable_Group>
+#include <taProject>
 
 #include <taMisc>
 
@@ -68,7 +70,6 @@ void ClusterRun::Run() {
       // Put those revisions into the datatable just committed.
       // (There's no way to put them in *before* committing.)
       for (int row = 0; row < jobs_submit.rows; ++row) {
-        jobs_submit.SetValColName(model_rev, "model_svn", row);
         jobs_submit.SetValColName(submit_rev, "submit_svn", row);
       }
       // move them over to submitted now!
@@ -113,9 +114,117 @@ void ClusterRun::Kill() {
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
   }
+  else {
+    taMisc::Warning("No rows selected -- no jobs were killed");
+  }
 }
 
-void ClusterRun::ImportData() {
+void ClusterRun::GetData() {
+  initClusterManager(); // ensure it has been created.
+
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(jobs_running, st_row, end_row)) {
+    jobs_submit.ResetData();
+    for (int row = st_row; row <= end_row; ++row) {
+      GetDataJob(jobs_running, row); 
+    }
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
+  }
+  else if (SelectedRows(jobs_done, st_row, end_row)) {
+    jobs_submit.ResetData();
+    for (int row = st_row; row <= end_row; ++row) {
+      GetDataJob(jobs_done, row); 
+    }
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
+  }
+  else {
+    taMisc::Warning("No rows selected -- no data fetched");
+  }
+}
+
+void ClusterRun::ImportData(bool remove_existing) {
+  initClusterManager(); // ensure it has been created.
+  // note: can't call Update here because it unselects the rows in jobs_ tables!
+
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return;
+  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
+  if(remove_existing) {
+    dgp->Reset();
+  }
+  int st_row, end_row;
+  if (SelectedRows(jobs_running, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      ImportData_impl(dgp, jobs_running, row); 
+    }
+  }
+  else if (SelectedRows(jobs_done, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      ImportData_impl(dgp, jobs_done, row); 
+    }
+  }
+  else {
+    taMisc::Warning("No rows selected -- no data fetched");
+  }
+}
+
+void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
+  String tag = table.GetVal("tag", row).toString();
+  String dat_files = table.GetVal("dat_files", row).toString();
+  String params = table.GetVal("params", row).toString();
+  if(TestError(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
+    return;
+  String res_path = m_cm->GetWcResultsPath();
+  String_Array files;
+  files.FmDelimString(dat_files, " ");
+  for(int i=0; i< files.size; i++) {
+    String fl = files[i];
+    String dnm = fl.before(".dat", -1);
+    dnm = taMisc::StringCVar(dnm);
+    DataTable* dat = dgp->FindName(dnm);
+    if(!dat) {
+      dat = dgp->NewEl(1);
+      dat->name = dnm;
+    }
+    dat->LoadData(res_path + "/" + fl);
+    AddParamsToTable(dat, params);
+  }
+}
+
+void ClusterRun::AddParamsToTable(DataTable* dat, const String& params) {
+  if(params.empty()) return;
+  String_Array pars;
+  pars.FmDelimString(params, " ");
+  for(int i=0; i<pars.size; i++) {
+    String pv = pars[i];
+    String nm = pv.before('=');
+    String vl = pv.after('=');
+    if(nm.empty()) {
+      taMisc::Warning("AddParamsToTable: name empty in param element:", pv, "from list:", params);
+      continue;
+    }
+    if(vl.empty()) {
+      taMisc::Warning("AddParamsToTable: value empty in param element:", pv, "from list:", params);
+      continue;
+    }
+    // todo: we need to figure out what type of data these guys really are..
+    DataCol* cl = dat->FindMakeCol(nm, VT_FLOAT);
+    cl->InitVals((float)vl);
+  }
+}
+
+void ClusterRun::Probe() {
+  initClusterManager(); // ensure it has been created.
+
+  jobs_submit.ResetData();
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("PROBE", "status", dst_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+  // Commit the table.
+  m_cm->CommitJobSubmissionTable();
 }
 
 void ClusterRun::FormatTables() {
@@ -133,31 +242,16 @@ void ClusterRun::FormatTables() {
 void ClusterRun::FormatTables_impl(DataTable& dt) {
   DataCol* dc;
 
-  // The cluster script populates these fields in the running/done tables.
-  // The client (this code) can set them in the submit table, but there's not
-  // much point since they can't be set until *after* the table is committed.
-  dc = dt.FindMakeCol("model_svn", VT_STRING);
-  dc->desc = "svn revision for the model";
-  dc = dt.FindMakeCol("submit_svn", VT_STRING);
-  dc->desc = "svn revision for the job submission commands";
-  dc = dt.FindMakeCol("submit_time", VT_STRING);
-  dc->desc = "when was the job submitted (tracks time from emergent client submission)";
-  dc = dt.FindMakeCol("start_time", VT_STRING);
-  dc->desc = "when did the job actually start running";
-  dc = dt.FindMakeCol("end_time", VT_STRING);
-  dc->desc = "when did the job finish running";
-
-  // Cluster script populates.
-  dc = dt.FindMakeCol("submit_job", VT_STRING);
-  dc->desc = "index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-  dc = dt.FindMakeCol("job_no", VT_STRING);
-  dc->desc = "job number on cluster -- assigned once the job is submitted to the cluster";
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
+  dc = dt.FindMakeCol("notes", VT_STRING);
+  dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
 
   // The client sets this field in the jobs_submit table to:
   //   REQUESTED to request the job be submitted.
   //   CANCELLED to request the job indicated by job_no or tag be cancelled.
+  //   PROBE     just a null probe to get the cluster to track this project
+  //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -171,7 +265,15 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc = dt.FindMakeCol("status_info", VT_STRING);
   dc->desc = "more detailed information about status";
 
-  // Cluster script populates.
+  dc = dt.FindMakeCol("submit_time", VT_STRING);
+  dc->desc = "when was the job submitted (tracks time from emergent client submission)";
+  dc = dt.FindMakeCol("start_time", VT_STRING);
+  dc->desc = "when did the job actually start running";
+  dc = dt.FindMakeCol("end_time", VT_STRING);
+  dc->desc = "when did the job finish running";
+
+  dc = dt.FindMakeCol("job_no", VT_STRING);
+  dc->desc = "job number on cluster -- assigned once the job is submitted to the cluster";
   dc = dt.FindMakeCol("job_out", VT_STRING);
   dc->desc = "job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
   dc = dt.FindMakeCol("job_out_file", VT_STRING);
@@ -183,11 +285,11 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc = dt.FindMakeCol("command_id", VT_INT);
   dc->desc = "id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
   dc = dt.FindMakeCol("command", VT_STRING);
-  dc->desc = "emergent command line";
+  dc->desc = "emergent command line, up to point of parameters";
+  dc = dt.FindMakeCol("params", VT_STRING);
+  dc->desc = "emergent parameters based on currently selected items in the ClusterRun";
 
   // Populated from values the user enters/chooses.
-  dc = dt.FindMakeCol("notes", VT_STRING);
-  dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
   dc = dt.FindMakeCol("repo_url", VT_STRING);
   dc->desc = "name of repository to run job on";
   dc = dt.FindMakeCol("cluster", VT_STRING);
@@ -202,16 +304,28 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc->desc = "number of parallel threads to use for running";
   dc = dt.FindMakeCol("mpi_nodes", VT_INT);
   dc->desc = "number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+  
+  // these two comprise the tag -- internal stuff user doesn't need to see
+  dc = dt.FindMakeCol("submit_svn", VT_STRING);
+  dc->desc = "svn revision for the original job submission";
+  dc = dt.FindMakeCol("submit_job", VT_STRING);
+  dc->desc = "index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+}
+
+String
+ClusterRun::CurTimeStamp() {
+  taDateTime curtime;
+  curtime.currentDateTime();
+  return curtime.toString("yyyy_MM_dd_hh_mm_ss");
 }
 
 void
-ClusterRun::AddJobRow(const String &cmd, int cmd_id) {
-  taDateTime curtime;
-  curtime.currentDateTime();
-  last_submit_time = curtime.toString("yyyy_MM_dd_hh_mm_ss");
+ClusterRun::AddJobRow(const String& cmd, const String& params, int cmd_id) {
+  // this will trigger a guaranteed commit of the project and the log file
+  last_submit_time = CurTimeStamp();
 
   int row = jobs_submit.AddBlankRow();
-  // model_svn and submit_svn both filled in later -- not avail now
+  // submit_svn filled in later -- not avail now
   jobs_submit.SetVal(last_submit_time, "submit_time",   row);
   jobs_submit.SetVal(String(row), "submit_job", row); // = row!
   // job_no will be filled in on cluster
@@ -220,7 +334,8 @@ ClusterRun::AddJobRow(const String &cmd, int cmd_id) {
   // job_out, job_out_file, dat_files all generated on cluster
   jobs_submit.SetVal(cmd_id,      "command_id", row);
   jobs_submit.SetVal(cmd,         "command",    row);
-  jobs_submit.SetVal(notes,       "notes",   row);
+  jobs_submit.SetVal(params,      "params",     row);
+  jobs_submit.SetVal(notes,       "notes",      row);
 
   jobs_submit.SetVal(repo_url,    "repo_url",   row);
   jobs_submit.SetVal(cluster,     "cluster",    row);
@@ -241,6 +356,17 @@ ClusterRun::CancelJob(int running_row)
   jobs_submit.SetVal("CANCELLED", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", running_row);
   jobs_submit.CopyCell("tag", dst_row, jobs_running, "tag", running_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::GetDataJob(const DataTable& table, int tab_row)
+{
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("GETDATA", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
 }
 
 int
@@ -255,9 +381,9 @@ ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
   return count;
 }
 
-String ClusterRun::RunCommand(bool use_cur_vals) {
+void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   // Start command with either "emergent" or "emergent_mpi".
-  String cmd(taMisc::app_name);
+  cmd = taMisc::app_name;
   if (use_mpi) {
     cmd.cat("_mpi");
   }
@@ -274,26 +400,32 @@ String ClusterRun::RunCommand(bool use_cur_vals) {
     cmd.cat(" n_threads=").cat(String(n_threads));
   }
 
+  params="";
   // Add a name=val term for each parameter in the search.
+  bool first = true;
   FOREACH_ELEM_IN_GROUP(EditMbrItem, mbr, mbrs) {
     const EditParamSearch &ps = mbr->param_search;
     if (ps.search) {
-      cmd.cat(" ").cat(mbr->GetName()).cat("=");
+      if(!first)
+        params.cat(" "); // sep
+      else
+        first = false;
+      params.cat(mbr->GetName()).cat("=");
       if(use_cur_vals) {
-        cmd.cat(mbr->CurValAsString());
+        params.cat(mbr->CurValAsString());
       }
       else {
-        cmd.cat(String(ps.next_val));
+        params.cat(String(ps.next_val));
       }
     }
   }
-
-  return cmd;
 }
 
 void ClusterRun::CreateCurJob(int cmd_id) {
-  String cmd = RunCommand(true); // use cur vals
-  AddJobRow(cmd, cmd_id);
+  String cmd;
+  String params;
+  RunCommand(cmd, params, true); // use cur vals
+  AddJobRow(cmd, params, cmd_id);
 }
 
 iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {

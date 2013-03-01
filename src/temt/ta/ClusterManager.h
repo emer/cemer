@@ -30,11 +30,25 @@ class TA_API ClusterManager {
 public:
   ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
+
   bool BeginSearch(bool prompt_user);
+  // starts a run and pulls up the dialog to fill in parameters based on ClustRun obj
   bool CommitJobSubmissionTable();
+  // commit the jobs_submit.dat file with latest changes
   bool UpdateTables();
+  // update the jobs_running and jobs_done data tables from repo
+  String GetWcProjPath() const;
+  // full path to user_app_dir/clustername/username/projname/ -- root of the svn repo for this project
+  String GetWcResultsPath() const;
+  // full path to user_app_dir/clustername/username/projname/results 
+  String GetWcSubmitPath() const;
+  // full path to user_app_dir/clustername/username/projname/submit
+  String GetWcModelsPath() const;
+  // full path to user_app_dir/clustername/username/projname/models
   String GetWcProjFilename() const;
+  // full path to user_app_dir/clustername/username/projname/models/projname.proj
   String GetWcSubmitFilename() const;
+  // full path to user_app_dir/clustername/username/projname/submit/jobs_submit.dat
   int GetLastChangedRevision(const String &path, bool quiet = false);
 
 protected:
