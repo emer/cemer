@@ -47,6 +47,8 @@ qdel_args = ""
 # output info from the job (job_out, dat_files)
 job_update_window = 3
 
+# set to true for more debugging info
+debug = False
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################
@@ -159,7 +161,7 @@ class ClusterConfig(object):
         # Get the amount of time between polling the subversion server.
         return self._prompt_for_int_field(
             self.user_section, 'poll_interval',
-            'Enter the polling interval, in seconds:')
+            'Enter the polling interval, in seconds (10-20 recommended):')
 
     def get_check_user(self):
         # Should the script only start jobs committed by the selected user?
@@ -594,7 +596,8 @@ class SubversionPoller(object):
             #    any submission files that were committed.  Those files
             #    will be added to the self.all_submit_files set.
             for filename in sub_files:
-                print '\nProcessing %s' % filename
+                if debug:
+                    print '\nProcessing %s' % filename
                 self._process_new_submission(filename)
 
             # Remaining steps are done on *all* running files seen so far.
@@ -666,6 +669,8 @@ class SubversionPoller(object):
             elif status == 'RUNNING':
                 self._query_job_queue(row, status)   # always update status!
                 self._update_running_job(row)
+            elif status == 'CANCELLED':
+                self._query_job_queue(row, status)   # always update status!
             elif status == 'DONE' or status == 'KILLED':
                 self._move_job_to_done(row)
 
@@ -699,7 +704,8 @@ class SubversionPoller(object):
     def _init_jobs_running(self):
         if self.jobs_running.get_n_cols() == 0:
             if os.path.exists(self.cur_running_file):
-                print "loading previous running file: %s" % self.cur_running_file
+                if debug:
+                    print "loading previous running file: %s" % self.cur_running_file
                 self.jobs_running.load_from_file(self.cur_running_file)
             else:
                 self.jobs_running.copy_cols(self.jobs_submit)
@@ -708,7 +714,8 @@ class SubversionPoller(object):
     def _init_jobs_done(self):
         if self.jobs_done.get_n_cols() == 0:
             if os.path.exists(self.cur_done_file):
-                print "loading previous done file: %s" % self.cur_done_file
+                if debug:
+                    print "loading previous done file: %s" % self.cur_done_file
                 self.jobs_done.load_from_file(self.cur_done_file)
             else:
                 self.jobs_done.copy_cols(self.jobs_running)
@@ -727,13 +734,15 @@ class SubversionPoller(object):
                 self._svn_add_cur_running()   # could be first time -- checkin if necc
             elif status == 'CANCELLED':
                 self._cancel_job(filename, rev, row)
+                self.jobs_running.write(self.cur_running_file)
                 self._add_cur_running_to_list()  # monitor us going forward
             elif status == 'GETDATA':
                 self._getdata_job(filename, rev, row)
                 self._add_cur_running_to_list() # monitor us going forward
             elif status == 'PROBE':
                 self._add_cur_running_to_list()  # monitor us going forward
-                print "probed for project root %s" % self.cur_proj_root
+                if debug:
+                    print "probed for project root %s" % self.cur_proj_root
 
     def _start_job(self, filename, rev, row):
         if len(self.model_files) != 1:   # no project committed!
@@ -750,9 +759,9 @@ class SubversionPoller(object):
         mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
         submit_svn = str(rev)
         submit_job = str(row)
-        tag = '_' + '_'.join((submit_svn, submit_job))
+        tag = '_'.join((submit_svn, submit_job))
 
-        cmd = cmd.replace("<TAG>", tag)
+        cmd = cmd.replace("<TAG>", "_" + tag)  # leading ubar added here only
         cmd = cmd.replace("<PROJ_FILENAME>", proj)
 
         cmdsub = []
@@ -799,9 +808,16 @@ class SubversionPoller(object):
         else:
             cmd = [qdel_cmd, job_no]
         del_out = check_output(cmd)
-        print "killed job: %s output: %s" % (job_no, del_out)
+        if debug:
+            print "killed job: %s output: %s" % (job_no, del_out)
+        # update jobs running so that job is correctly marked at KILLED instead of DONE
+        self._init_jobs_running()
+        runrow = self.jobs_running.find_val("job_no", job_no)
+        if runrow >= 0:
+            status = 'CANCELLED'
+            self.jobs_running.set_val(row, "status", status)
         # we don't actually do anything with this output..
-        # could try to update the jobs_running table right now, but not really needed
+
 
     def _getdata_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
@@ -827,7 +843,7 @@ class SubversionPoller(object):
         resdir = self.cur_proj_root + "/results/"
         for df in dats:
             fdf = resdir + df
-            print "dat file: %s" % fdf
+            # print "dat file: %s" % fdf
             if os.path.exists(fdf):
                 cmd = ['svn', 'add', '--username', self.username,
                        '--non-interactive', fdf]
@@ -844,7 +860,8 @@ class SubversionPoller(object):
         end_time = stdt.strftime(time_format)
         self.jobs_running.set_val(row, "status", status)
         self.jobs_running.set_val(row, "end_time", end_time)
-        print "job: %s ended with status: %s at time: %s" % (tag, status, end_time)
+        if debug:
+            print "job: %s ended with status: %s at time: %s" % (tag, status, end_time)
 
     def _query_job_queue(self, row, status):
         job_no = self.jobs_running.get_val(row, "job_no")
@@ -1010,10 +1027,17 @@ def main():
     poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
     revision = poller.get_initial_wc()
 
-#    run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
-#    if not run_nohup or run_nohup in 'yY':
-    run_nohup = raw_input('\nRun in the background using nohup? [N/y] ')
-    if run_nohup and run_nohup in 'yY':
+    do_hup = False
+    if debug:
+        run_nohup = raw_input('\nRun in the background using nohup? [N/y] ')
+        if run_nohup and run_nohup in 'yY':
+            do_hup = True
+    else:
+        run_nohup = raw_input('\nRun in the background using nohup? [Y/n] ')
+        if not run_nohup or run_nohup in 'yY':
+            do_hup = True
+
+    if do_hup:
         cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay),
                str(check_user)]
         subprocess.Popen(cmd)
