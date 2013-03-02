@@ -42,6 +42,7 @@ void ClusterRun::Initialize() {
   parallel_batch = false;
   pb_batches = 10;
   pb_nodes = 0;
+  nowin_x = false;
   m_cm = 0;
 }
 
@@ -49,8 +50,25 @@ void ClusterRun::Destroy() {
   delete m_cm; m_cm = 0;
 }
 
+void ClusterRun::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(svn_repo.nonempty()) {
+    Variant rep = taMisc::svn_repos.GetVal(svn_repo);
+    if(rep.isNull()) {
+      taMisc::Warning("ClusterRun: svn_repo:", svn_repo,
+                      "not found in list of registered svn repositories in Preferences / Options");
+    }
+    else {
+      repo_url = rep.toString();
+    }
+  }
+}
+
 void ClusterRun::initClusterManager() {
-  m_cm = new ClusterManager(*this);
+  if(!m_cm)
+    m_cm = new ClusterManager(*this);
+  else
+    m_cm->Init();
 }
 
 void ClusterRun::NewSearchAlgo(TypeDef *type) {
@@ -311,7 +329,7 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc = dt.FindMakeCol("pb_batches", VT_INT);
   dc->desc = "if > 0, use parallel batch mode with this number of batches";
   dc = dt.FindMakeCol("pb_nodes", VT_INT);
-  dc->desc = "if doing parallel batch mode, and cluster has alloc_by_node policy, then this is the number of nodes to allocate to the overall job";
+  dc->desc = "if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
   
   // these two comprise the tag -- internal stuff user doesn't need to see
   dc = dt.FindMakeCol("submit_svn", VT_STRING);
@@ -376,11 +394,17 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
       taMisc::Error("Job requests to use MPI but mpi_nodes is <= 1", String(mpi_nodes));
       return false;
     }
-    if(mpi_nodes > cs.n_nodes) {
-      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes requested:", String(mpi_nodes), "avail on cluster:", String(cs.n_nodes));
+    if(mpi_nodes > cs.nodes) {
+      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes requested:", String(mpi_nodes), "avail on cluster:", String(cs.nodes));
       return false;
     }
   }
+
+  if(nowin_x && cs.gpus <= 0) {
+    taMisc::Error("Job requests to use -nowin and XWindows, but this requires GPUs on the cluster nodes -- currently it is listed as having none -- either fix the cluster config or select a different config");
+    return false;
+  }
+
   if(parallel_batch) {
     if(pb_batches <= 1) {
       taMisc::Error("Job requests to use parallel_batches but pb_batches is <= 1",
@@ -388,11 +412,11 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
       return false;
     }
   }
-  if(cs.alloc_by_node && cs.procs_per_node <= 1) {
+  if(cs.by_node && cs.procs_per_node <= 1) {
     taMisc::Error("Cluster:", cluster, "says allocate by node but procs_per_node is not set -- must set this parameter in Preferences / Options settings");
     return false;
   }
-  if(cs.alloc_by_node && cs.procs_per_node > 4 && !(use_mpi || parallel_batch)) {
+  if(cs.by_node && cs.procs_per_node > 4 && !(use_mpi || parallel_batch)) {
     taMisc::Error("Cluster:", cluster, "has allocate by node policy, but you are not requesting either an mpi or a parallel batch job -- this will waste compute allocations -- please use a cluster that is more appropriate for single-shot single-processor jobs");
     return false;
   }
@@ -417,9 +441,17 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
     }
   }
 
-  if(tot_procs > cs.n_procs) {
-    taMisc::Error("You are requesting to run more than listed TOTAL number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " n_procs: " +
-                  String(cs.n_procs));
+  if(cs.min_procs > 0) {
+    if(tot_procs < cs.min_procs) {
+      int chs = taMisc::Choice("You are requesting to run LESS than listed min number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " min: " +
+                               String(cs.min_procs), "Continue Anyway", "Cancel");
+      if(chs == 1) return false;
+    }
+  }
+
+  if(tot_procs > cs.procs) {
+    taMisc::Error("You are requesting to run more than listed TOTAL number of processors on cluster: " + cluster + " -- procs requested: " + String(tot_procs) + " procs: " +
+                  String(cs.procs));
     return false;
   }
 
@@ -432,10 +464,11 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
   return true;
 }
 
+
 void
-ClusterRun::AddJobRow(const String& cmd, const String& params, int cmd_id) {
-  // this will trigger a guaranteed commit of the project and the log file
-  last_submit_time = CurTimeStamp();
+ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) {
+  int csi = taMisc::clusters.FindName(cluster);
+  ClusterSpecs& cs = taMisc::clusters[csi];
 
   int row = jobs_submit.AddBlankRow();
   // submit_svn filled in later -- not avail now
@@ -460,33 +493,53 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int cmd_id) {
     jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
   else
     jobs_submit.SetVal(0,   "mpi_nodes",  row);
+
   if(parallel_batch && pb_batches > 0) {
     jobs_submit.SetVal(pb_batches,   "pb_batches",  row);
-    int eff_nodes = pb_nodes;
-    int csi = taMisc::clusters.FindName(cluster);
-    if(pb_nodes == 0) {
-      int procs_per_node = 1;
-      if(csi < 0) {
-        taMisc::Error("can't find cluster named:", cluster);
+    if(cs.by_node) {
+      int eff_nodes = pb_nodes;
+      if(pb_nodes == 0) {
+        int tot_procs = pb_batches * n_threads;
+        if(use_mpi)
+          tot_procs *= mpi_nodes;
+        eff_nodes = tot_procs / cs.procs_per_node;
+        if(eff_nodes * cs.procs_per_node < tot_procs)
+          eff_nodes++;
       }
-      else {
-        procs_per_node = taMisc::clusters[csi].procs_per_node;
-      }
-      if(procs_per_node <= 0) {
-        taMisc::Error("cluster named:", cluster, "has procs_per_node <= 0", String(procs_per_node));
-        procs_per_node = 1;
-      }
-      int tot_procs = pb_batches * n_threads;
-      if(use_mpi)
-        tot_procs *= mpi_nodes;
-      eff_nodes = tot_procs / procs_per_node;
-      if(eff_nodes * procs_per_node < tot_procs)
-        eff_nodes++;
+      jobs_submit.SetVal(eff_nodes,   "pb_nodes",  row);
     }
-    jobs_submit.SetVal(eff_nodes,   "pb_nodes",  row);
+    else {
+      jobs_submit.SetVal(0,   "pb_nodes",  row);
+    }
   }
   else {
     jobs_submit.SetVal(0,   "pb_batches",  row);
+    jobs_submit.SetVal(0,   "pb_nodes",  row);
+  }
+}
+
+void
+ClusterRun::AddJobRow(const String& cmd, const String& params, int& cmd_id) {
+  // this will trigger a guaranteed commit of the project and the log file
+  last_submit_time = CurTimeStamp();
+
+  int csi = taMisc::clusters.FindName(cluster);
+  if(csi < 0) {
+    taMisc::Error("Can't find cluster named:", cluster); // shouldn't happen
+    return;
+  }
+  ClusterSpecs& cs = taMisc::clusters[csi];
+
+  if(parallel_batch && pb_batches > 0 && !cs.by_node) {
+    // we stream off the jobs ourselves
+    for(int i=0; i<pb_batches; i++) {
+      // only support single-increment pb, assume the two args per existing convention
+      String cmd_pb = cmd + " b_start=" + String(i) + " b_end=" + String(i+1);
+      AddJobRow_impl(cmd_pb, params, cmd_id++);
+    }
+  }
+  else {
+    AddJobRow_impl(cmd, params, cmd_id++);
   }
 }
 
@@ -525,6 +578,8 @@ ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
 void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   // Start command with either "emergent" or "emergent_mpi".
   cmd = taMisc::app_name;
+  if(nowin_x)
+    cmd += "_x";
   if (use_mpi) {
     cmd.cat("_mpi");
   }
@@ -533,7 +588,11 @@ void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   // filename for the project file in its working copy.  It also
   // needs to substitute the tag, which is based on the revision
   // and row number.
-  cmd.cat(" -nogui -ni -p <PROJ_FILENAME> tag=<TAG>");
+  if(nowin_x)
+    cmd.cat(" -nowin");
+  else
+    cmd.cat(" -nogui");
+  cmd.cat(" -ni -p <PROJ_FILENAME> tag=<TAG>");
 
   // Note: cluster script sets number of mpi nodes
 

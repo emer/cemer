@@ -304,6 +304,8 @@ String_PArray         taMisc::cluster_names;
 ClusterSpecs_PArray   taMisc::clusters;
 #endif
 
+String          taMisc::cluster_svn_path = "~/svn_clusterun";
+
 NamedURL        taMisc::svn_repo1_url;
 NamedURL        taMisc::svn_repo2_url;
 NamedURL        taMisc::svn_repo3_url;
@@ -330,7 +332,7 @@ String          taMisc::record_script;
 //NOTE: Notepad could possibly really screw up files, because of crlf
 // 'start' is the Windows equivalent of '&'.
 String  taMisc::edit_cmd = "start Notepad.exe \"%s\"";
-String  taMisc::plugin_make_env_cmd = "call \"C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\vcvarsall.bat\" x86";
+String  taMisc::plugin_make_env_cmd = "call \"C:\\Program Files\\Microsoft Visual Studio ta9.0\\VC\\vcvarsall.bat\" x86";
 #else
 #ifdef TA_OS_MAC
 String  taMisc::edit_cmd = "emacs \"%s\" &";

@@ -105,6 +105,58 @@ LeabraProject .projects["param_search"] {
     };
     DataTable_Group @.gp["AnalysisData"] { 
     };
+    DataTable_Group @.gp["ClusterRun"] = [2] { 
+      DataTable @["param_search_18_0_00_epc"] { 
+	DataTableCols @.data = [13] {
+	  int_Data @["batch"] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @["NARROW"] { };
+      };
+};
+	  int_Data @["epoch"] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @["NARROW"] { };
+      };
+};
+	  float_Data @["avg_sse"] { };
+	  float_Data @["cnt_err"] { };
+	  float_Data @["avg_ext_rew"] { };
+	  float_Data @["avg_cycles"] { };
+	  float_Data @["epoch_time_tot"] { };
+	  float_Data @["epoch_time_usr"] { };
+	  float_Data @["LeabraConSpec_0_lrate"] { };
+	  float_Data @["hebb"] { };
+	  float_Data @["pct"] { };
+	  float_Data @["batches"] { };
+	  float_Data @["epochs"] { };
+	};
+      };
+      DataTable @["param_search_18_1_01_epc"] { 
+	DataTableCols @.data = [13] {
+	  int_Data @["batch"] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @["NARROW"] { };
+      };
+};
+	  int_Data @["epoch"] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @["NARROW"] { };
+      };
+};
+	  float_Data @["avg_sse"] { };
+	  float_Data @["cnt_err"] { };
+	  float_Data @["avg_ext_rew"] { };
+	  float_Data @["avg_cycles"] { };
+	  float_Data @["epoch_time_tot"] { };
+	  float_Data @["epoch_time_usr"] { };
+	  float_Data @["LeabraConSpec_0_lrate"] { };
+	  float_Data @["hebb"] { };
+	  float_Data @["pct"] { };
+	  float_Data @["batches"] { };
+	  float_Data @["epochs"] { };
+	};
+      };
+    };
   };
 
   taBase_Group @.data_proc = [4] {
@@ -2180,19 +2232,21 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_01_13_32_15";
+   last_submit_time="2013_03_02_01_41_49";
    notes="test5";
-   repo_url="http://grey.colorado.edu/svn/ccnlab/sims";
+   svn_repo="grey_run";
+   repo_url="http://grey.colorado.edu/svn/clusterun";
    cluster="dream";
    queue=;
    run_time="1d";
-   ram_gb=100;
+   ram_gb=0;
    n_threads=1;
-   use_mpi=0;
-   mpi_nodes=10;
+   use_mpi=1;
+   mpi_nodes=2;
    parallel_batch=0;
-   pb_batches=10;
+   pb_batches=2;
    pb_nodes=0;
+   nowin_x=0;
   };
  };
  data {
@@ -5833,6 +5887,389 @@ When it has finished, open the objs within the param search grid program to see 
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+  };
+  DataTable_Group @.gp["ClusterRun"] {
+   name="ClusterRun";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @["param_search_18_0_00_epc"] {
+    name="param_search_18_0_00_epc";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @["batch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_48";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="batch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     int_Data @["epoch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_49";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="epoch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["avg_sse"] {
+      name="avg_sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["cnt_err"] {
+      name="cnt_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["avg_ext_rew"] {
+      name="avg_ext_rew";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["avg_cycles"] {
+      name="avg_cycles";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["epoch_time_tot"] {
+      name="epoch_time_tot";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["epoch_time_usr"] {
+      name="epoch_time_usr";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["LeabraConSpec_0_lrate"] {
+      name="LeabraConSpec_0_lrate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["hebb"] {
+      name="hebb";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["pct"] {
+      name="pct";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["batches"] {
+      name="batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["epochs"] {
+      name="epochs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @["param_search_18_1_01_epc"] {
+    name="param_search_18_1_01_epc";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @["batch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_50";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="batch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     int_Data @["epoch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_51";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="epoch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["avg_sse"] {
+      name="avg_sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["cnt_err"] {
+      name="cnt_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["avg_ext_rew"] {
+      name="avg_ext_rew";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["avg_cycles"] {
+      name="avg_cycles";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["epoch_time_tot"] {
+      name="epoch_time_tot";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["epoch_time_usr"] {
+      name="epoch_time_usr";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["LeabraConSpec_0_lrate"] {
+      name="LeabraConSpec_0_lrate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["hebb"] {
+      name="hebb";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["pct"] {
+      name="pct";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["batches"] {
+      name="batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+     float_Data @["epochs"] {
+      name="epochs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
   };
  };
  data_proc {

@@ -357,6 +357,8 @@ public:
   static ClusterSpecs_PArray  clusters; // #NO_SAVE #READ_ONLY #HIDDEN non-empty cluster specs
 #endif
 
+  static String         cluster_svn_path; // #SAVE #CAT_File path to the local directory where cluster run svn repositories should be checked out -- typically ~/svn_clusterun/ or something like that -- ~/ will be replaced by user's home directory -- this is where all the local copies of cluster data in the svn repository will reside
+
   static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository.
   static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository.
   static NamedURL       svn_repo3_url; // #SAVE #CAT_File short name and url for Subversion repository.

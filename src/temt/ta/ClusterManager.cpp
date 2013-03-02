@@ -78,6 +78,11 @@ ClusterManager::~ClusterManager()
   m_svn_client = 0;
 }
 
+
+void ClusterManager::Init() {
+  setPaths();
+}
+
 // Run the model on a cluster using the parameters of the ClusterRun
 // provided in the constructor.
 bool
@@ -307,6 +312,14 @@ ClusterManager::getClusterName()
 }
 
 const String &
+ClusterManager::getSvnRepo()
+{
+  return promptForString(
+    m_cluster_run.svn_repo,
+    "A valid svn repository name is required.");
+}
+
+const String &
 ClusterManager::getRepoUrl()
 {
   return promptForString(
@@ -335,6 +348,7 @@ ClusterManager::setPaths()
   const String &username = getUsername();
   const String &filename = getFilename();
   const String &cluster = getClusterName();
+  const String &svn_repo = getSvnRepo();
   const String &repo_url = getRepoUrl();
 
   // Create a URL to the user's directory in the repo.
@@ -342,7 +356,8 @@ ClusterManager::setPaths()
   m_repo_user_url = repo_url + opt_slash + cluster + '/' + username;
 
   // Create paths for files/directories in the working copy:
-  //   user_app_dir/
+  // taMisc::cluster_svn_path/
+  //   repo_name/
   //     clustername/
   //       username/                    # m_wc_path
   //         projname/                  # m_wc_proj_path
@@ -355,7 +370,12 @@ ClusterManager::setPaths()
   //           results/                 # m_wc_results_path
 
   // Set the working copy path and get a canonicalized version back.
-  m_wc_path = taMisc::user_app_dir + '/' + cluster + '/' + username;
+  String clust_svn = taMisc::cluster_svn_path;
+  clust_svn.gsub("~/", taMisc::GetHomePath() + "/");
+  taMisc::MakePath(clust_svn);  // ensure good..
+
+  m_wc_path = clust_svn + '/' + svn_repo + '/' + cluster + '/' + username;
+
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
 
@@ -377,7 +397,7 @@ ClusterManager::setPaths()
   m_done_dat_filename = m_wc_submit_path + "/jobs_done.dat";
   m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
 
-  taMisc::Info("Repository is at", m_repo_user_url);
+  taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
 }
 
 void
@@ -505,6 +525,8 @@ ClusterManager::showRepoDialog()
   taGuiDialog dlg;
   dlg.win_title = "Run on cluster";
   dlg.prompt = "Enter parameters";
+  dlg.width = 300;
+  dlg.height = 500;
 
   String widget("main");
   String vbox("mainv");
@@ -562,7 +584,7 @@ ClusterManager::showRepoDialog()
     }
     hbox->addWidget(combo2);
   }
-  int idx2 = combo2->findData(m_cluster_run.repo_url.toQString());
+  int idx2 = combo2->findText(m_cluster_run.svn_repo.toQString());
   if (idx2 >= 0) combo2->setCurrentIndex(idx2);
   dlg.AddStretch(row);
 
@@ -571,7 +593,7 @@ ClusterManager::showRepoDialog()
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("notesLbl", widget, row, "label=* Notes: ;");
   dlg.AddStringField(&m_cluster_run.notes, "notes", widget, row,
-    "tooltip=Notes about this run, used as a checkin comment.;");
+    "tooltip=Notes about this run, used as a checkin comment and visible in job lists -- very good idea to be specific here.;");
 
   row = "queueRow";
   dlg.AddSpace(space, vbox);
@@ -585,21 +607,20 @@ ClusterManager::showRepoDialog()
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("runtimeLbl", widget, row, "label=Run time: ;");
   dlg.AddStringField(&m_cluster_run.run_time, "runtime", widget, row,
-    "tooltip=How long each job will take to run, e.g., 30m, 12h, or 2d. "
-    "Do not underestimate!;");
+    "tooltip=how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!;");
 
   row = "ramRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("ramLbl", widget, row, "label=RAM (in GB): ;");
   dlg.AddIntField(&m_cluster_run.ram_gb, "ram", widget, row,
-    "tooltip=Required RAM, in gigabytes, or -1 for unspecified.;");
+    "tooltip=how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past.;");
   dlg.AddStretch(row);
 
   row = "threadsRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("threadsLbl", widget, row, "label=Number of hreads: ;");
+  dlg.AddLabel("threadsLbl", widget, row, "label=Number of threads: ;");
   dlg.AddIntField(&m_cluster_run.n_threads, "threads", widget, row,
     "tooltip=Number of parallel threads to use for running.;");
   dlg.AddStretch(row);
@@ -627,7 +648,7 @@ ClusterManager::showRepoDialog()
     "tooltip=The number of parallel batches to run.;");
   dlg.AddLabel("pbnodesLbl", widget, row, "label=pb_nodes: ;");
   dlg.AddIntField(&m_cluster_run.pb_nodes, "numpbnodes", widget, row,
-    "tooltip=if the cluster uses alloc_by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;");
+    "tooltip=if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;");
 
   bool modal = true;
   int drval = dlg.PostDialog(modal);
@@ -637,7 +658,7 @@ ClusterManager::showRepoDialog()
   }
 
   m_cluster_run.cluster = combo1->itemText(combo1->currentIndex());
-  m_cluster_run.repo_url =
-    combo2->itemData(combo2->currentIndex()).toString();
+  m_cluster_run.svn_repo = combo2->itemText(combo2->currentIndex());
+  m_cluster_run.UpdateAfterEdit();
   return true;
 }

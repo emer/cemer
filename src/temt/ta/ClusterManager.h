@@ -31,6 +31,9 @@ public:
   ClusterManager(ClusterRun &cluster_run);
   ~ClusterManager();
 
+  void  Init();
+  // initialize state for current ClusterRun settings, etc..
+
   bool BeginSearch(bool prompt_user);
   // starts a run and pulls up the dialog to fill in parameters based on ClustRun obj
   bool CommitJobSubmissionTable();
@@ -63,6 +66,7 @@ protected:
   const String & getFilename();
   const String & getUsername();
   const String & getClusterName();
+  const String & getSvnRepo();
   const String & getRepoUrl();
   const String & promptForString(const String &str, const char *msg);
   bool showRepoDialog();
@@ -79,6 +83,7 @@ protected:
   bool m_valid;
   SubversionClient *m_svn_client;
   taProject *m_proj;
+
   String m_username;
   String m_wc_path;
   String m_repo_user_url;
