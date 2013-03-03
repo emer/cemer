@@ -70,8 +70,9 @@ time_format = "%Y_%m_%d_%H_%M_%S"
 # The client sets this field in the jobs_submit table to:
 #   REQUESTED to request the job be submitted.
 #   CANCELLED to request the job indicated by job_no or tag be cancelled.
-#   PROBE     just a null probe to get cluster script to process current status
+#   PROBE     probe to get the cluster to track this project, and update all running
 #   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
+#   GETFILES  tell cluster to check in all files listed in this other_files entry
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
 #   QUEUED    when the job is known to be in the cluster queue.
@@ -538,6 +539,7 @@ class SubversionPoller(object):
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
+        self.file_list = DataTable()
 
         # The repo directory only includes the working copy root and
         # repo_name (as defined by the user and stored in config.ini).
@@ -652,7 +654,7 @@ class SubversionPoller(object):
             print 'Continuing to poll the Subversion server ' \
                   '(hit Ctrl-C to quit) ...'
 
-    def _query_submitted_jobs(self, filename):
+    def _query_submitted_jobs(self, filename, force_updt = False):
         self._get_cur_jobs_files(filename) # get all the file names for this dir
         # Load running into current
         self.jobs_running.load_from_file(filename)
@@ -668,9 +670,12 @@ class SubversionPoller(object):
                 self._query_job_queue(row, status)
             elif status == 'RUNNING':
                 self._query_job_queue(row, status)   # always update status!
-                self._update_running_job(row)
+                self._update_running_job(row, force_updt)
             elif status == 'CANCELLED':
                 self._query_job_queue(row, status)   # always update status!
+                status = self.jobs_running.get_val(row, "status") # check right away
+                if status == 'KILLED':
+                    self._move_job_to_done(row)
             elif status == 'DONE' or status == 'KILLED':
                 self._move_job_to_done(row)
 
@@ -739,8 +744,12 @@ class SubversionPoller(object):
             elif status == 'GETDATA':
                 self._getdata_job(filename, rev, row)
                 self._add_cur_running_to_list() # monitor us going forward
+            elif status == 'GETFILES':
+                self._getfiles_job(filename, rev, row)
+                self._add_cur_running_to_list() # monitor us going forward
             elif status == 'PROBE':
                 self._add_cur_running_to_list()  # monitor us going forward
+                self._query_submitted_jobs(self.cur_running_file, True)  # True = force updt
                 if debug:
                     print "probed for project root %s" % self.cur_proj_root
 
@@ -835,9 +844,14 @@ class SubversionPoller(object):
             else:
                 print "getdata_job: tag %s not found in either jobs running or done" % tag
 
+    def _getfiles_job(self, filename, rev, row):
+        other_files = self.jobs_submit.get_val(row, "other_files")
+        self._svn_add_dat_files("no tag", other_files)
+
     def _svn_add_dat_files(self, tag, dat_files):
         if len(dat_files) == 0:
-            print "tag: %s has no dat files (yet)" % tag
+            if debug:
+                print "tag: %s has no dat files (yet)" % tag
             return
         dats = dat_files.split(' ')
         resdir = self.cur_proj_root + "/results/"
@@ -882,7 +896,7 @@ class SubversionPoller(object):
 
         for l in q_out.splitlines():
             if re_running.match(l):
-                if status != 'RUNNING':
+                if status != 'RUNNING' and status != 'CANCELLED':
                     status = 'RUNNING'
                     stdt = datetime.datetime.now()
                     start_time = stdt.strftime(time_format)
@@ -895,12 +909,14 @@ class SubversionPoller(object):
                 got_status = True
                 break
             if re_queued.match(l):
-                status = 'QUEUED'
-                status_info = l.split(qstat_queued_info_split)[1]
-                status_info = status_info.strip(' \t\n\r')
-                self.jobs_running.set_val(row, "status", status)
-                self.jobs_running.set_val(row, "status_info", status_info)
-                # print "qstat job status update -- tag: %s now: %s info: %s" % (tag, status, status_info)
+                # cannot go from running or cancelled back to queued.. 
+                if status != 'RUNNING' and status != 'CANCELLED':
+                    status = 'QUEUED'
+                    status_info = l.split(qstat_queued_info_split)[1]
+                    status_info = status_info.strip(' \t\n\r')
+                    self.jobs_running.set_val(row, "status", status)
+                    self.jobs_running.set_val(row, "status_info", status_info)
+                    # print "qstat job status update -- tag: %s now: %s info: %s" % (tag, status, status_info)
                 got_status = True
                 break
         if not got_status:
@@ -930,19 +946,24 @@ class SubversionPoller(object):
         results_dir = self.cur_proj_root + "/results/"
 
         re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
+        re_tag = re.compile(r".*%s.*" % tag)
 
         dat_files_set = set()
+        other_files_set = set()
         resfiles = os.listdir(results_dir)
         for f in resfiles:
             if not os.path.isfile(os.path.join(results_dir,f)):
                 continue
             if re_tag_dat.match(f):
                 dat_files_set.add(f)
+            elif re_tag.match(f):
+                other_files_set.add(f)
         dat_files = ' '.join(dat_files_set)
+        other_files = ' '.join(other_files_set)
         # print "tag: %s got dat files: %s" % (tag, dat_files)
-        return dat_files
+        return (dat_files, other_files)
 
-    def _update_running_job(self, row):
+    def _update_running_job(self, row, force_updt = False):
         # first load job_out info
         start_time = self.jobs_running.get_val(row, "start_time")
         job_out_file = self.jobs_running.get_val(row, "job_out_file")
@@ -951,13 +972,14 @@ class SubversionPoller(object):
         stdt = datetime.datetime.strptime(start_time, time_format)
         runtime = datetime.datetime.now() - stdt
         
-        if runtime.seconds < job_update_window * 60:
+        if force_updt or runtime.seconds < job_update_window * 60:
             # print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
             job_out = self._get_job_out(job_out_file)
             self.jobs_running.set_val(row, "job_out", job_out)
 
-            dat_files = self._get_dat_files(tag)
-            self.jobs_running.set_val(row, "dat_files", dat_files)
+            all_files = self._get_dat_files(tag)
+            self.jobs_running.set_val(row, "dat_files", all_files[0])
+            self.jobs_running.set_val(row, "other_files", all_files[1])
 
     def _move_job_to_done(self, row):
         self._init_jobs_done()
