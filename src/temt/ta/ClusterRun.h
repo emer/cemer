@@ -38,10 +38,13 @@ class TA_API ClusterRun : public SelectEdit {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
   INHERITED(SelectEdit)
 public:
+  static String timestamp_fmt;  // #NO_SAVE #HIDDEN time stamp format string -- yyyy_MM_dd_hh_mm_ss
+
   DataTable     jobs_submit;    // #NO_SAVE #EXPERT current set of jobs to submit
   DataTable     jobs_submitted; // #NO_SAVE #EXPERT jobs submitted -- just a local copy of jobs_submit
   DataTable     jobs_running;   // #SHOW_TREE #EXPERT #NO_SAVE jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE #EXPERT #NO_SAVE jobs that have finished running
+  DataTable     file_list;      // #SHOW_TREE #EXPERT #NO_SAVE list of files -- used for various operations -- transferring and deleting
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
 
@@ -66,10 +69,14 @@ protected:
   ClusterManager *m_cm;
 
 public:
+
+  ////////////////////////////////////////////
+  // main user GUI
+
   virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
   // #BUTTON #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
   virtual void  Run();
-  // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository.
+  // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository -- if cur_search_algo is selected then this will launch a parameter search process -- otherwise it will just run with current parameters
   virtual bool  Update();
   // #BUTTON updates jobs_running and jobs_done tables based on latest results from the cluster -- returns true if new data or status was available -- cluster will only send updates if a job was Run or a Probe was sent from this project, while the script is running
   virtual void  Cont();
@@ -77,19 +84,43 @@ public:
   virtual void  Kill();
   // #BUTTON #CONFIRM kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  GetData();
-  // #BUTTON tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do ImportData after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval)
+  // #BUTTON tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do Update to get data locally after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval) -- then do ImportData on selected jobs to import data into project
   virtual void  ImportData(bool remove_existing = true);
   // #BUTTON import the data for the selected rows in the jobs_running or jobs_done data table -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
-    virtual void ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row);
-    // #IGNORE actually do the import
-    static void AddParamsToTable(DataTable* dat, const String& params);
-    // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs
   virtual void  Probe();
-  // #BUTTON probe the currently-set cluster to trigger updating on current current status -- this is necessary if the cluster script has been restarted since the last job was run on this project
+  // #BUTTON probe the currently-set cluster to update the current status of all the jobs for this project, and triggers continued updating on status going forward -- this is necessary for example if the cluster script has been restarted since the last job was run on this project -- this will also fill in the job_out, dat_files, and other_files fields for all running jobs -- this information is only automatically recorded for the first few minutes that a job has been running, so it will miss other files generated later
 
-  virtual void  FormatTables(); // format all the jobs tables to contain proper columns
+  virtual void  SelectFiles(bool include_data = false);
+  // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
+  virtual void  ListAllFiles();
+  // #MENU_BUTTON #MENU_ON_Files list all the files currently in the results subdirectory of this project's svn repository -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
+  virtual void  GetFiles();
+  // #MENU_BUTTON #MENU_ON_Files tell the cluster to check in the files selected in file_list tab -- you can then do Update after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval), and then access the files as you wish
+  virtual void  RemoveFiles();
+  // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the files selected in the file_list tab -- this does an svn remove and also removes the files locally -- for cleaning up stuff you are done with
+  virtual void  RemoveJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done data table, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
+  virtual void  RemoveKilledJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
 
-  // These APIs are mainly for the search algos to use.
+  ////////////////////////////////////////////
+  // useful helper routines for above
+
+  virtual void ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row);
+  // #IGNORE actually do the import -- row is row in given table (jobs_running or jobs_done) with info for data files
+  virtual void SelectFiles_impl(DataTable& table, int row, bool include_data);
+  // #IGNORE add files from row in table to file_list
+
+  static void AddParamsToTable(DataTable* dat, const String& params);
+  // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs
+
+
+  ////////////////////////////////////////////
+  //  These APIs are mainly for the search algos to use to run jobs
+
+  virtual void  FormatTables();
+  // format all the jobs tables to contain proper columns
+
   virtual bool  ValidateJob(int n_jobs_to_sub = 1);
   // validate all the current parameters and ensure that they make sense for selected cluster, etc -- arg is number of jobs that will be submitted of this form
   virtual String CurTimeStamp();
@@ -101,7 +132,9 @@ public:
   virtual void  CancelJob(int running_row);
   // cancel a job at the given row of the jobs_running data table
   virtual void  GetDataJob(const DataTable& table, int running_row);
-  // get data for job at the given row of the given table
+  // add to jobs_submit for get data for job at the given row of the given table
+  virtual void  GetFilesJob(const String& files);
+  // add to jobs_submit for get files for given list of files (space separated)
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);
   // count the number of jobs in given table with given status value 
 
@@ -117,8 +150,10 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
 
-  virtual void FormatTables_impl(DataTable& dt);
+  virtual void  FormatTables_impl(DataTable& dt);
   // all tables have the same format -- this ensures it
+  virtual void  FormatFileListTable(DataTable& dt);
+  // for file_list table
   virtual iDataTableEditor* DataTableEditor(DataTable& dt);
   // get editor for data table
   virtual bool  SelectedRows(DataTable& dt, int& st_row, int& end_row);

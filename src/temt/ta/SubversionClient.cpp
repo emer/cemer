@@ -911,6 +911,43 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
   }
 }
 
+void
+SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local)
+{
+  m_cancelled = false;
+
+  // create an array containing a single path to be created
+  apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
+  for(int i=0; i< files.size; i++) {
+    APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
+  }
+
+  svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
+
+  svn_boolean_t svn_force = force;
+  svn_boolean_t svn_keep_local = keep_local;
+
+  // don not add files or dirs that match ignore patterns
+  svn_boolean_t no_ignore = false;
+
+  // We don't need to set any custom revision properties, so null.
+  const apr_hash_t *revprop_table = 0;
+
+  // Not implementing the 1.7 API -- see rationale in Checkin().
+  if (svn_error_t *error = svn_client_delete3
+      (
+       &commit_info_p,
+       paths,
+       force,
+       keep_local,
+       revprop_table,
+       m_ctx,
+       m_pool))
+  {
+    throw Exception("Subversion error removing files", error);
+  }
+}
+
 bool
 SubversionClient::MakeDir(const char *new_dir, bool make_parents)
 {

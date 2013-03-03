@@ -21,6 +21,8 @@
 #include <stdexcept>
 #include <string>
 
+class String_PArray; //
+
 // TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
 //#include <apr_pools.h>
 extern "C" {
@@ -104,6 +106,8 @@ public:
   // Add files to the working copy and schedule for future commit.
   // Does not throw if file is already versioned.
   void Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
+  // Delete listed files (or directories) from the repository, with force and keep_local options
+  void Delete(const String_PArray& files, bool force, bool keep_local);
 
   // Create a directory in the working copy or in the repository.
   // The "Try" versions politely ignore cases where the directory

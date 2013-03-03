@@ -27,6 +27,9 @@
 #include <taMisc>
 
 #include <QRegExp>
+#include <QDir>
+
+String ClusterRun::timestamp_fmt = "yyyy_MM_dd_hh_mm_ss";
 
 void ClusterRun::InitLinks() {
   inherited::InitLinks();
@@ -122,6 +125,7 @@ void ClusterRun::Cont() {
 
 void ClusterRun::Kill() {
   initClusterManager(); // ensure it has been created.
+  FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to kill.
   int st_row, end_row;
@@ -142,6 +146,7 @@ void ClusterRun::Kill() {
 
 void ClusterRun::GetData() {
   initClusterManager(); // ensure it has been created.
+  FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
@@ -240,6 +245,7 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& params) {
 
 void ClusterRun::Probe() {
   initClusterManager(); // ensure it has been created.
+  FormatTables();               // ensure tables are formatted properly
 
   jobs_submit.ResetData();
   int dst_row = jobs_submit.AddBlankRow();
@@ -247,6 +253,203 @@ void ClusterRun::Probe() {
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
   // Commit the table.
   m_cm->CommitJobSubmissionTable();
+}
+
+void ClusterRun::SelectFiles(bool include_data) {
+  initClusterManager(); // ensure it has been created.
+
+  file_list.ResetData();
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(jobs_running, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      SelectFiles_impl(jobs_running, row, include_data); 
+    }
+  }
+  else if (SelectedRows(jobs_done, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      SelectFiles_impl(jobs_done, row, include_data); 
+    }
+  }
+  else {
+    taMisc::Warning("No rows selected -- no files selected");
+  }
+}
+
+void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) {
+  String tag = table.GetVal("tag", row).toString();
+  String dat_files = table.GetVal("dat_files", row).toString();
+  String other_files = table.GetVal("other_files", row).toString();
+  String wc_res_path = m_cm->GetWcResultsPath();
+  String repo_path = wc_res_path.from(svn_repo + "/");
+  if(TestError(other_files.empty(), "SelectFiles", "other_files is empty for tag:", tag))
+    return;
+  {                             // other files
+    String_Array files;
+    files.FmDelimString(other_files, " ");
+    for(int i=0; i< files.size; i++) {
+      String fl = files[i];
+      int frow = file_list.AddBlankRow();
+      file_list.SetVal(fl, "FileName",  frow);
+      file_list.SetVal(tag, "Tag",  frow);
+      file_list.SetVal(wc_res_path + "/" + fl, "FilePath",  frow);
+      file_list.SetVal(repo_path + "/" + fl, "SVNFilePath",  frow);
+      file_list.SetVal("results/" + fl, "ProjFilePath",  frow);
+    }
+  }
+  if(include_data) {
+    String_Array files;
+    files.FmDelimString(dat_files, " ");
+    for(int i=0; i< files.size; i++) {
+      String fl = files[i];
+      int frow = file_list.AddBlankRow();
+      file_list.SetVal(fl, "FileName",  frow);
+      file_list.SetVal(tag, "Tag",  frow);
+      file_list.SetVal("Data", "Kind",  frow);
+      file_list.SetVal(wc_res_path + "/" + fl, "FilePath",  frow);
+      file_list.SetVal(repo_path + "/" + fl, "SVNFilePath",  frow);
+      file_list.SetVal("results/" + fl, "ProjFilePath",  frow);
+    }
+  }
+}
+
+void ClusterRun::ListAllFiles() {
+  FormatTables();               // ensure tables are formatted properly
+  file_list.ResetData();
+
+  String wc_res_path = m_cm->GetWcResultsPath();
+  String repo_path = wc_res_path.from(svn_repo + "/");
+
+  const int gb = 1073741824;
+  const int mb = 1048576;
+  const int kb = 1024;
+
+  QDir dir(wc_res_path);
+  dir.setFilter(QDir::Files);
+  QFileInfoList files = dir.entryInfoList();
+  if(files.size() == 0) {
+    taMisc::Warning("No files in results directory:", wc_res_path);
+    return;
+  }
+  for(int i=0;i<files.size();i++) {
+    QFileInfo fli = files[i];
+    String fl = fli.fileName();
+    if(fli.isFile()) {
+      int frow = file_list.AddBlankRow();
+      file_list.SetVal(fl, "FileName",  frow);
+      if(fl.endsWith(".dat") || fl.endsWith(".dat.gz"))
+        file_list.SetVal("Data", "Kind",  frow);
+      file_list.SetVal(wc_res_path + "/" + fl, "FilePath",  frow);
+      file_list.SetVal(repo_path + "/" + fl, "SVNFilePath",  frow);
+      file_list.SetVal("results/" + fl, "ProjFilePath",  frow);
+      QDateTime dc = fli.created();
+      QDateTime dm = fli.lastModified();
+      int64_t sz = fli.size();
+      
+      String szstr;
+      if(sz > gb)
+        szstr = String((float)sz / (float)gb) + " GB";
+      else if(sz > mb)
+        szstr = String((float)sz / (float)mb) + " MB";
+      else if(sz > kb)
+        szstr = String((float)sz / (float)kb) + " KB";
+      else 
+        szstr = String(sz) + " B";
+
+      String dcstr = dc.toString(timestamp_fmt);
+      String dmstr = dm.toString(timestamp_fmt);
+
+      file_list.SetVal(szstr, "Size",  frow);
+      file_list.SetVal(dcstr, "DateCreated",  frow);
+      file_list.SetVal(dmstr, "DateModified",  frow);
+    }
+  }
+}
+
+void ClusterRun::GetFiles() {
+  initClusterManager(); // ensure it has been created.
+  FormatTables();               // ensure tables are formatted properly
+
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(file_list, st_row, end_row)) {
+    String_Array files;
+    for (int row = st_row; row <= end_row; ++row) {
+      String fl = file_list.GetVal("FileName", row).toString();
+      files.Add(fl);
+    }
+    String files_str = files.ToDelimString(" ");
+    jobs_submit.ResetData();
+    GetFilesJob(files_str);
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
+  }
+  else {
+    taMisc::Warning("No rows selected -- no files fetched");
+  }
+}
+
+void ClusterRun::RemoveFiles() {
+  initClusterManager(); // ensure it has been created.
+
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(file_list, st_row, end_row)) {
+    String_PArray files;
+    for (int row = end_row; row >= st_row; --row) {
+      String fpath = file_list.GetVal("FilePath", row).toString();
+      files.Add(fpath);
+      file_list.RemoveRows(row);
+    }
+    m_cm->RemoveFiles(files, true, false); // force, keep_local
+  }
+  else {
+    taMisc::Warning("No rows selected -- no files fetched");
+  }
+}
+
+void ClusterRun::RemoveJobs() {
+  initClusterManager(); // ensure it has been created.
+
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SelectFiles_impl(jobs_done, row, true); // include data
+      jobs_done.RemoveRows(row);
+    }
+    String_PArray files;
+    for(int i=0;i<file_list.rows; i++) {
+      String fpath = file_list.GetVal("FilePath", i).toString();
+      files.Add(fpath);
+    }
+    file_list.ResetData();
+    if(files.size > 0)
+      m_cm->RemoveFiles(files, true, false); // force, keep_local
+  }
+  else {
+    taMisc::Warning("No rows selected -- no jobs removed");
+  }
+}
+
+void ClusterRun::RemoveKilledJobs() {
+  initClusterManager(); // ensure it has been created.
+
+  file_list.ResetData();
+  for (int row = jobs_done.rows-1; row >= 0; --row) {
+    String status = jobs_done.GetVal("status", row).toString();
+    if(status != "KILLED") continue;
+    SelectFiles_impl(jobs_done, row, true); // include data
+    jobs_done.RemoveRows(row);
+  }
+  String_PArray files;
+  for(int i=0;i<file_list.rows; i++) {
+    String fpath = file_list.GetVal("FilePath", i).toString();
+    files.Add(fpath);
+  }
+  file_list.ResetData();
+  if(files.size > 0)
+    m_cm->RemoveFiles(files, true, false); // force, keep_local
 }
 
 void ClusterRun::FormatTables() {
@@ -259,6 +462,9 @@ void ClusterRun::FormatTables() {
   FormatTables_impl(jobs_submitted);
   FormatTables_impl(jobs_running);
   FormatTables_impl(jobs_done);
+
+  file_list.name = "file_list";
+  FormatFileListTable(file_list);
 }
 
 void ClusterRun::FormatTables_impl(DataTable& dt) {
@@ -272,8 +478,9 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   // The client sets this field in the jobs_submit table to:
   //   REQUESTED to request the job be submitted.
   //   CANCELLED to request the job indicated by job_no or tag be cancelled.
-  //   PROBE     just a null probe to get the cluster to track this project
+  //   PROBE     probe to get the cluster to track this project, and update all running
   //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
+  //   GETFILES  tell cluster to check in all files listed in this other_files entry
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -301,7 +508,9 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc = dt.FindMakeCol("job_out_file", VT_STRING);
   dc->desc = "job output file -- file name containing full job output information -- file name should be tag.out";
   dc = dt.FindMakeCol("dat_files", VT_STRING);
-  dc->desc = "list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
+  dc->desc = "list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+  dc = dt.FindMakeCol("other_files", VT_STRING);
+  dc->desc = "list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
 
   // Search algo populates these fields.
   dc = dt.FindMakeCol("command_id", VT_INT);
@@ -338,11 +547,43 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
   dc->desc = "index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
 }
 
+void ClusterRun::FormatFileListTable(DataTable& dt) {
+  DataCol* dc;
+
+  dc = dt.FindMakeCol("FileName", VT_STRING);
+  dc->desc = "name of file -- does not include any path information";
+
+  dc = dt.FindMakeCol("Tag", VT_STRING);
+  dc->desc = "job tag associated with this file";
+
+  dc = dt.FindMakeCol("Size", VT_STRING);
+  dc->desc = "size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
+
+  dc = dt.FindMakeCol("Kind", VT_STRING);
+  dc->desc = "type of file";
+
+  dc = dt.FindMakeCol("DateModified", VT_STRING);
+  dc->desc = "timestamp for when the file was last modified";
+
+  dc = dt.FindMakeCol("DateCreated", VT_STRING);
+  dc->desc = "timestamp for when the file was first created";
+
+  dc = dt.FindMakeCol("SVNFilePath", VT_STRING);
+  dc->desc = "path to file in SVN repository, relative to root of svn_repo repository";
+
+  dc = dt.FindMakeCol("ProjFilePath", VT_STRING);
+  dc->desc = "path to file relative to the parent project directory -- e.g., results/filename.dat";
+
+  dc = dt.FindMakeCol("FilePath", VT_STRING);
+  dc->desc = "full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
+
+}
+
 String
 ClusterRun::CurTimeStamp() {
   taDateTime curtime;
   curtime.currentDateTime();
-  return curtime.toString("yyyy_MM_dd_hh_mm_ss");
+  return curtime.toString(timestamp_fmt);
 }
 
 bool
@@ -563,6 +804,13 @@ ClusterRun::GetDataJob(const DataTable& table, int tab_row)
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
 }
 
+void ClusterRun::GetFilesJob(const String& files) {
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("GETFILES", "status", dst_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+  jobs_submit.SetVal(files, "other_files",  dst_row); 
+}
+
 int
 ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
 {
@@ -650,9 +898,9 @@ bool ClusterRun::SelectedRows(DataTable& dt, int& st_row, int& end_row) {
   if(!ed || !ed->tvTable) return false;
   bool rval = ed->tvTable->SelectedRows(st_row, end_row);
   if(!rval) {
-    taMisc::Info("no items selected");
+    // taMisc::Info("no items selected");
     return false;
   }
-  taMisc::Info("start row:", String(st_row), "end row:", String(end_row));
+  // taMisc::Info("start row:", String(st_row), "end row:", String(end_row));
   return true;
 }

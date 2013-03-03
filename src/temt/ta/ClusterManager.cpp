@@ -188,6 +188,26 @@ ClusterManager::UpdateTables()
   return false;
 }
 
+bool
+ClusterManager::RemoveFiles(String_PArray& files, bool force, bool keep_local)
+{
+  if (!m_valid) return false; // Ensure proper construction.
+
+  try {
+    updateWorkingCopy();
+    m_svn_client->Delete(files, force, keep_local);
+    commitFiles("removing files");
+    return true;
+  }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not remove files:", ex.what());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    handleException(ex);
+  }
+  return false;
+}
+
 String
 ClusterManager::GetWcProjPath() const
 {
