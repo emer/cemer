@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import datetime, os, re, subprocess, sys, time, traceback, ConfigParser, socket
-import xml.etree.ElementTree as ET
+#import xml.etree.ElementTree as ET
 
 #############################################################################
 # STANDARD USER CONFIGURABLE PARAMETERS
@@ -120,9 +120,14 @@ class ClusterConfig(object):
 
     def _write_config(self):
         # Write any changes (username, new repo) to the config file.
-        with open(self.config_filename, 'wb') as f:
+        #        with open(self.config_filename, 'wb') as f:
+        #            self.config.write(f)
+        try:
+            f = open(self.config_filename, 'wb')
             self.config.write(f)
-
+        except:
+            pass
+            
     def _prompt_for_field(self, section, field, message, default=""):
         # Get the cached value (if any) otherwise use the default.
         try:    value = self.config.get(section, field)
@@ -185,13 +190,13 @@ class ClusterConfig(object):
         if repos:
             print '\nChoose a repository to monitor:'
             print '  0. New repo...'
-            for i, (name, url) in enumerate(repos, start=1):
-                print '  %d. %s = %s' % (i, name, url)
+            for i, (name, url) in enumerate(repos):
+                print '  %d. %s = %s' % (i+1, name, url)
 
             print ''
             while True:
                 choice = self.get_repo_choice()
-                if choice <= i: break
+                if choice <= i+1: break
 
             if choice > 0:
                 return repos[int(choice) - 1]
@@ -444,7 +449,10 @@ class DataTable(object):
     def validate_val(self, val, col_name):
         col_idx = self.get_col_idx(col_name)
         col_type = self.get_col_type(col_idx)
-        return True if self.get_typed_val(val, col_type) else False
+        if self.get_typed_val(val, col_type):
+            return True
+        else:
+            return False
 
     # returns the value of a single cell
     # input: row_num = the row index of the cell to update
@@ -526,9 +534,15 @@ class DataTable(object):
     # input: path = string, path to the .dat file
     def load_from_file(self, path):
         self.reset_data()
-        with open(path, 'r') as f:
+        # with open(path, 'r') as f:
+        #    lines = f.readlines()
+        #    header = lines[0]
+        try:
+            f = open(path, 'r')
             lines = f.readlines()
             header = lines[0]
+        except:
+            pass
         rows = lines[1:]
         self._load_header(header)
         self._load_data(rows)
@@ -537,13 +551,19 @@ class DataTable(object):
     # input: path = string, path of the destination .dat file
     #        append(optional) = boolean, if True append, otherwise overwrite
     def write(self, path, append=False):
-        # mode = 'a' append, mode = 'w' overwrite 
-        mode = 'a' if append else 'w'
-        with open(path, mode) as f:
+        # mode = 'a' append, mode = 'w' overwrite
+        if append:
+            mode = 'a'
+        else:
+            mode = 'w'
+        try:
+            f = open(path, mode)
             if len(self._header) and not append:
                 f.write(self.get_header_str() + '\n')
             for i in range(len(self._rows)):
                 f.write(self.get_row_str(i) + '\n')
+        except:
+            pass
 
 #############################################################################
 
@@ -986,8 +1006,11 @@ class SubversionPoller(object):
     def _get_job_out(self, job_out_file):
         job_out = ''
         if os.path.exists(job_out_file):
-            with open(job_out_file, 'r') as f:
+            try:
+                f = open(job_out_file, 'r')
                 lines = f.readlines()
+            except:
+                pass
             nlines = len(lines)
             if nlines > 12:
                 if nlines > 18:
@@ -1190,7 +1213,6 @@ class SubversionPoller(object):
                 self.cluster_info.set_val(row, "queue", queue)
                 self.cluster_info.set_val(row, "state", "<summary>")
                 self.cluster_info.set_val(row, "procs", proc_sum)
-            else:
         if self.cluster_info.n_rows() > 0:
             self.cluster_info.write(self.cluster_info_file)
         # done
@@ -1260,8 +1282,11 @@ def main_background():
     check_user  = sys.argv[5] == 'True'
 
     poller = SubversionPoller(username, repo_dir, repo_url, delay, check_user)
-    with open(nohup_filename, 'w') as f:
+    try:
+        f = open(nohup_filename, 'w')
         f.write('delete this file to stop the backgrounded script.')
+    except:
+        pass
     poller.poll(nohup_filename) # Infinite loop.
 
     print '\nStopping background run at %s' % datetime.datetime.now()
