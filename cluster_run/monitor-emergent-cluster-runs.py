@@ -40,26 +40,27 @@ qstat_queued_info_split = "scheduling info:"
 # be sure to use the _f version that does not prompt!
 # in emergent/cluster_run directory
 # job_no will automatically be appended to end of command
-qdel_cmd = "killjob_f"
+qdel_cmd = "/usr/local/bin/killjob_f"
 qdel_args = ""
+
+# showq-like command -- this should return overall status of all users jobs
+# and general info on status of cluster
+# moab = showq 
+# pyshowq for SGE (checked into emergent/cluster_run showq)
+showq_cmd = "/usr/local/bin/showq"
+showq_args = ""
+
 
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
 job_update_window = 3
 
 # set to true for more debugging info
-debug = False
+#debug = False
+debug = True
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################
-
-# NOTE: this is not currently used:
-# showq-like command -- this should return overall status of all users jobs
-# user name will be appended to end of command
-# moab = showq -w user=<username>
-# pyshowq for SGE (checked into emergent/cluster_run showq <username>
-# showq_cmd = "/usr/local/bin/showq"
-# showq_args = ""  # for moab, use '-w user='
 
 # this is NOT user configurable but is a global setting that should agree with 
 # how time is formatted in emergent
@@ -152,7 +153,7 @@ class ClusterConfig(object):
     def get_clustername(self):
         # Get the name of this cluster.
         host = socket.gethostname()
-        if host.find('.'):
+        if host.find('.') >= 0:
             host = host.split('.')[0]
         return self._prompt_for_field(
             self.user_section, 'clustername',
@@ -268,7 +269,7 @@ class DataTable(object):
     def encode_val(val, col_type):
         encoded_val = ''
         if col_type is DataTable.ColumnType.STRING:
-            encoded_val = '"%s"' % DataTable.escape_chars(val)
+            encoded_val = '"%s"' % DataTable.escape_chars(str(val))
         elif col_type is DataTable.ColumnType.INT:
             encoded_val = val
         elif col_type is DataTable.ColumnType.FLOAT:
@@ -278,7 +279,7 @@ class DataTable(object):
             return False
             
         return encoded_val
-    
+
     @staticmethod
     def decode_val(val, col_type):
         decoded_val = ''
@@ -291,9 +292,22 @@ class DataTable(object):
         else:
             print "Column type '%s' is not supported and cannot be decoded." % col_type
             return False                    
-            
         return decoded_val
             
+    @staticmethod
+    def blank_val(col_type):
+        val = ''
+        if col_type is DataTable.ColumnType.STRING:
+            val = ''
+        elif col_type is DataTable.ColumnType.INT:
+            val = int(0)
+        elif col_type is DataTable.ColumnType.FLOAT:
+            val = float(0)
+        else:
+            print "Column type '%s' is not supported and cannot be blank." % col_type
+            return False
+        return val
+    
     # takes the first line of a .dat file and sets up self._header
     # input: header_str = string, the first row of a .dat file    
     def _load_header(self, header_str):
@@ -361,11 +375,11 @@ class DataTable(object):
         return row_str
 
     # number of rows
-    def get_n_rows(self):
+    def n_rows(self):
         return len(self._rows)
     
     # number of cols
-    def get_n_cols(self):
+    def n_cols(self):
         return len(self._header)
     
     # returns a row of the data table given its row index
@@ -491,6 +505,15 @@ class DataTable(object):
             self._rows.append(vals)
         return True
 
+    def add_blank_row(self):
+        row = []
+        for i in range(len(self._header)):
+            col_type = self.get_col_type(i)
+            bval = DataTable.blank_val(col_type)
+            row.append(bval)
+        self.set_row(row)
+        return self.n_rows()-1
+
     # append row from another table
     def append_row_from(self, other, other_row):
         vals = other.get_row(other_row)
@@ -536,10 +559,14 @@ class SubversionPoller(object):
         self.cur_submit_file = ""
         self.cur_running_file = ""
         self.cur_done_file = ""
+        self.cluster_info_file = ""
+        self.got_submit = False     # got a jobs_submit submission 
+        self.status_change = False  # some jobs changed status
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
         self.file_list = DataTable()
+        self.cluster_info = DataTable()
 
         # The repo directory only includes the working copy root and
         # repo_name (as defined by the user and stored in config.ini).
@@ -589,6 +616,10 @@ class SubversionPoller(object):
             sys.stdout.write('.') # TODO: remove, or create spinner...?
             sys.stdout.flush()
 
+            # reset status counters
+            self.got_submit = False
+            self.status_change = False
+
             # Update the working copy and get the list of files updated in
             # the 'submit'-folder (typically only one file at a time).
             sub_files = self._check_for_updates()
@@ -609,7 +640,11 @@ class SubversionPoller(object):
                 #    query cancelled jobs (or when we do, their status will
                 #    be "KILLED") and so we get (possibly) updated status
                 #    of jobs just submitted.
-                self._query_submitted_jobs(filename)
+                self._query_submitted_jobs(filename, False)  # don't force updates
+
+            # anytime we issue a command or the status of a job changes 
+            if self.got_submit or self.status_change:
+                self._get_cluster_info() 
 
             # 3. Commit the changes.
             self._commit_changes()
@@ -643,8 +678,11 @@ class SubversionPoller(object):
             else:
                 # Start jobs for any 'jobs_submit.dat' files.
                 if os.path.basename(filename) == 'jobs_submit.dat':
+                    self.got_submit = True
                     self._get_cur_jobs_files(filename)
                     self._start_or_cancel_jobs(filename, rev)
+                elif os.path.basename(filename) == 'jobs_done.dat': # grab new file
+                    self.jobs_done.load_from_file(filename)
                 else:
                     self._unexpected_file(filename, rev)
         except:
@@ -661,18 +699,18 @@ class SubversionPoller(object):
         self.cur_running_file = filename
 
         # go backward because we can delete from running.. also newest to oldest
-        for row in reversed(range(self.jobs_running.get_n_rows())):
+        for row in reversed(range(self.jobs_running.n_rows())):
             status = self.jobs_running.get_val(row, "status")
             tag = self.jobs_running.get_val(row, "tag")
             # print "updating status of job tag: %s status: %s" % (tag, status)
 
             if status == 'SUBMITTED' or status == 'QUEUED':
-                self._query_job_queue(row, status)
+                self._query_job_queue(row, status, force_updt)
             elif status == 'RUNNING':
-                self._query_job_queue(row, status)   # always update status!
+                self._query_job_queue(row, status, force_updt)   # always update status!
                 self._update_running_job(row, force_updt)
             elif status == 'CANCELLED':
-                self._query_job_queue(row, status)   # always update status!
+                self._query_job_queue(row, status, force_updt)   # always update status!
                 status = self.jobs_running.get_val(row, "status") # check right away
                 if status == 'KILLED':
                     self._move_job_to_done(row)
@@ -689,6 +727,7 @@ class SubversionPoller(object):
         self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
         self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
         self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
+        self.cluster_info_file = os.path.dirname(self.cur_proj_root) + '/cluster_info.dat'
  
     def _get_commit_info(self, filename):
         """Get the commit revision and author for the given filename."""
@@ -707,7 +746,7 @@ class SubversionPoller(object):
 
     # initialize the jobs_running table -- either load from file or init from submit
     def _init_jobs_running(self):
-        if self.jobs_running.get_n_cols() == 0:
+        if self.jobs_running.n_cols() == 0:
             if os.path.exists(self.cur_running_file):
                 if debug:
                     print "loading previous running file: %s" % self.cur_running_file
@@ -717,7 +756,7 @@ class SubversionPoller(object):
         
     # initialize the jobs_done table -- either load from file or init from running
     def _init_jobs_done(self):
-        if self.jobs_done.get_n_cols() == 0:
+        if self.jobs_done.n_cols() == 0:
             if os.path.exists(self.cur_done_file):
                 if debug:
                     print "loading previous done file: %s" % self.cur_done_file
@@ -729,7 +768,7 @@ class SubversionPoller(object):
         # Load the new 'submit' table from the working copy.
         self.jobs_submit.load_from_file(filename)
 
-        for row in range(self.jobs_submit.get_n_rows()):
+        for row in range(self.jobs_submit.n_rows()):
             status = self.jobs_submit.get_val(row, "status")
 
             if status == 'REQUESTED':
@@ -800,7 +839,7 @@ class SubversionPoller(object):
 
         # grab current submit info
         self.jobs_running.append_row_from(self.jobs_submit, row)
-        run_row = self.jobs_running.get_n_rows()-1
+        run_row = self.jobs_running.n_rows()-1
         self.jobs_running.set_val(run_row, "submit_svn", submit_svn)
         self.jobs_running.set_val(run_row, "submit_job", submit_job)
         self.jobs_running.set_val(run_row, "job_no", job_no)
@@ -824,7 +863,7 @@ class SubversionPoller(object):
         runrow = self.jobs_running.find_val("job_no", job_no)
         if runrow >= 0:
             status = 'CANCELLED'
-            self.jobs_running.set_val(row, "status", status)
+            self.jobs_running.set_val(runrow, "status", status)
         # we don't actually do anything with this output..
 
 
@@ -877,7 +916,7 @@ class SubversionPoller(object):
         if debug:
             print "job: %s ended with status: %s at time: %s" % (tag, status, end_time)
 
-    def _query_job_queue(self, row, status):
+    def _query_job_queue(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
         tag = self.jobs_running.get_val(row, "tag")
         if qstat_args != '':
@@ -896,17 +935,23 @@ class SubversionPoller(object):
 
         for l in q_out.splitlines():
             if re_running.match(l):
+                got_status = True
+                just_started = False
                 if status != 'RUNNING' and status != 'CANCELLED':
+                    just_started = True
+                    self.status_change = True
                     status = 'RUNNING'
                     stdt = datetime.datetime.now()
                     start_time = stdt.strftime(time_format)
                     self.jobs_running.set_val(row, "status", status)
                     self.jobs_running.set_val(row, "start_time", start_time)
                     # print "qstat job status update -- tag: %s now: %s start: %s info: %s" % (tag, status, start_time, status_info)
-                status_info = l.split(qstat_running_info_split)[1]
-                status_info = status_info.strip(' \t\n\r')
-                self.jobs_running.set_val(row, "status_info", status_info)
-                got_status = True
+                # don't get status_info all the time, because it always changes
+                # and leads to excessive checkins of jobs_running table
+                if just_started or force_updt:
+                    status_info = l.split(qstat_running_info_split)[1]
+                    status_info = status_info.strip(' \t\n\r')
+                    self.jobs_running.set_val(row, "status_info", status_info)
                 break
             if re_queued.match(l):
                 # cannot go from running or cancelled back to queued.. 
@@ -920,6 +965,11 @@ class SubversionPoller(object):
                 got_status = True
                 break
         if not got_status:
+            # always check the job out file to see what happened to it..
+            job_out_file = self.jobs_running.get_val(row, "job_out_file")
+            job_out = self._get_job_out(job_out_file)
+            if len(job_out) > 0:
+                self.jobs_running.set_val(row, "job_out", job_out)
             if status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
                 pass    # don't do anything
             elif status == 'RUNNING':
@@ -935,9 +985,16 @@ class SubversionPoller(object):
         if os.path.exists(job_out_file):
             with open(job_out_file, 'r') as f:
                 lines = f.readlines()
-            job_out = ''.join(lines[:12])  # just get start of file
-        if len(job_out) > 1024:
-            job_out = job_out[0:1024]
+            nlines = len(lines)
+            if nlines > 12:
+                if nlines > 18:
+                    nlines = 18
+                fmend = 11 - nlines
+                job_out = ''.join(lines[:11]) + "...<truncated>...\n" + ''.join(lines[fmend:])
+            else:
+                job_out = ''.join(lines)
+        if len(job_out) > 4096:
+            job_out = job_out[0:4096]
         # print "from out file: %s got job out: %s" % (job_out_file, job_out)
         return job_out
 
@@ -982,6 +1039,7 @@ class SubversionPoller(object):
             self.jobs_running.set_val(row, "other_files", all_files[1])
 
     def _move_job_to_done(self, row):
+        self.status_change = True
         self._init_jobs_done()
         self.jobs_done.append_row_from(self.jobs_running, row)
         self.jobs_running.remove_row(row)
@@ -1013,6 +1071,65 @@ class SubversionPoller(object):
 
         # Don't check_output, just dump it to stdout (or nohup.out).
         subprocess.call(cmd)
+
+    def _get_cluster_info(self):
+        if showq_args != '':
+            cmd = [showq_cmd, showq_args]
+        else:
+            cmd = [showq_cmd]
+        show_out = check_output(cmd)
+        
+        # always read from file to get current format, then reset
+        self.cluster_info.load_from_file(self.cluster_info_file)
+        self.cluster_info.reset_data();
+
+        for l in show_out.splitlines():
+            scols = l.split()   # splits on whitespace anyway
+            # exclude headers and other things
+            if len(scols) < 6:
+                continue
+            if scols[0] in ('CLUSTER', 'job-ID'):
+                continue
+            if scols[0].find('.q') >= 0:  # summary queue info
+                queue = scols[0].split('.q',1)[0]
+                used = scols[2]
+                res = scols[3]
+                avail = scols[4]
+                total = scols[5]
+                proc_sum = '%s of %s (%.4g pct)' % (used, total, 100.0 * float(used) / float(total))
+                row = self.cluster_info.add_blank_row()
+                self.cluster_info.set_val(row, "queue", queue)
+                self.cluster_info.set_val(row, "state", "<summary>")
+                self.cluster_info.set_val(row, "procs", proc_sum)
+            else:
+                job_no = scols[0]
+                user = scols[3]
+                state = scols[4]
+                start_dt = scols[5]
+                start_tm = scols[6]
+                start_str = start_dt + " " + start_tm
+
+                stdt = datetime.datetime.strptime(start_str, "%m/%d/%Y %H:%M:%S")
+                start_time = stdt.strftime(time_format)
+
+                queue = ""
+                procs = ""
+                if len(scols) >= 9:
+                    queue = scols[7]
+                    procs = scols[8]
+                else:
+                    procs = scols[7]
+                row = self.cluster_info.add_blank_row()
+                self.cluster_info.set_val(row, "queue", queue)
+                self.cluster_info.set_val(row, "job_no", job_no)
+                self.cluster_info.set_val(row, "user", user)
+                self.cluster_info.set_val(row, "state", state)
+                self.cluster_info.set_val(row, "procs", procs)
+                self.cluster_info.set_val(row, "start_time", start_time)
+        if self.cluster_info.n_rows() > 0:
+            self.cluster_info.write(self.cluster_info_file)
+        # done
+
 
 #############################################################################
 
