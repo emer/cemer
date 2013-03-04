@@ -179,7 +179,8 @@ void MemberDefBase::ShowMember_CalcCache() const {
   ShowMember_CalcCache_impl(show_edit, "_EDIT");
 
 #ifndef NO_TA_BASE
-  show_tree = show_any;
+  //  show_tree = show_any;
+  show_tree = TypeItem::IS_NORMAL;
   // for trees, we only browse lists/groups by default
   if (!type->DerivesFrom(&TA_taList_impl))
     show_tree &= ~TypeItem::NO_NORMAL;

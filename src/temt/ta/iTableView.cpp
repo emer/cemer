@@ -270,9 +270,13 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
     act->setEnabled(false);
     
   menu->AddSep();
-   menu->AddItem("Select &All", iAction::action,
+  menu->AddItem("Select &All", iAction::action,
                  this, SLOT(selectAll()),_nilVariant,
                  QKeySequence("Ctrl+A"));
+
+  act = menu->AddItem("&View", taiWidgetMenu::normal,
+      iAction::int_act, this, SLOT(ViewAction(int)), 1);
+
 }
 
 void iTableView::RowColOp(int op_code) {

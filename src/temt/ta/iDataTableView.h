@@ -44,6 +44,8 @@ public: // cliphandler i/f
   override void         EditAction(int ea);
   override void         GetEditActionsEnabled(int& ea);
 
+  override void         ViewAction(int ea);
+
 #ifndef __MAKETA__
 signals:
   void                  sig_currentChanged(const QModelIndex& current);

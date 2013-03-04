@@ -87,6 +87,8 @@ signals:
 public slots: // cliphandler i/f
   virtual void          EditAction(int ea) {}
   virtual void          GetEditActionsEnabled(int& ea) {}
+
+  virtual void          ViewAction(int va) {}
 #ifndef __MAKETA__
 signals:
   void                  UpdateUi();

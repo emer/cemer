@@ -44,6 +44,10 @@ void taiViewTypeOfSelectEdit::CreateDataPanel_impl(taiSigLink* dl_)
       iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
       DataPanelCreated(dp);
     }
+    if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->cluster_info.GetSigLink())) {
+      iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
+      DataPanelCreated(dp);
+    }
   }
 
   inherited::CreateDataPanel_impl(dl_);

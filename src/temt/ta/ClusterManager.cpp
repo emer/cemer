@@ -135,15 +135,33 @@ ClusterManager::CommitJobSubmissionTable()
   if (!m_valid) return false; // Ensure proper construction.
 
   try {
-    // Not necessary to update the working copy here; if it doesn't exist,
-    // the user should do an Update first before trying to Kill jobs.
-    //updateWorkingCopy();
+    initClusterInfoTable();
     saveSubmitTable();
     commitFiles("Submitting new jobs_submit.dat: " + m_cluster_run.notes);
     return true;
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::Error("Could not submit jobs table:", ex.what());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    handleException(ex);
+  }
+  return false;
+}
+
+bool
+ClusterManager::CommitJobsDoneTable()
+{
+  if (!m_valid) return false; // Ensure proper construction.
+
+  try {
+    initClusterInfoTable();
+    saveDoneTable();
+    commitFiles("Submitting new jobs_done.dat");
+    return true;
+  }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not submit jobs done table:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
     handleException(ex);
@@ -174,6 +192,7 @@ ClusterManager::UpdateTables()
 
     bool ok1 = loadTable(m_running_dat_filename, m_cluster_run.jobs_running);
     bool ok2 = loadTable(m_done_dat_filename, m_cluster_run.jobs_done);
+    bool ok3 = loadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
 
     // Return true as long as one of the files was updated and loaded --
     // in that case, the search algo will probably want to do something.
@@ -242,6 +261,12 @@ String
 ClusterManager::GetWcSubmitFilename() const
 {
   return m_submit_dat_filename;
+}
+
+String
+ClusterManager::GetWcClusterInfoFilename() const
+{
+  return m_cluster_info_filename;
 }
 
 int
@@ -380,6 +405,7 @@ ClusterManager::setPaths()
   //   repo_name/
   //     clustername/
   //       username/                    # m_wc_path
+  //         cluster_info.dat             # m_cluster_info_filename
   //         projname/                  # m_wc_proj_path
   //           submit/                  # m_wc_submit_path
   //             jobs_submit.dat        # m_submit_dat_filename
@@ -398,6 +424,8 @@ ClusterManager::setPaths()
 
   m_svn_client->SetWorkingCopyPath(m_wc_path.chars());
   m_wc_path = m_svn_client->GetWorkingCopyPath().c_str();
+
+  m_cluster_info_filename = m_wc_path + "/cluster_info.dat";
 
   // Make a directory named based on the name of the project, without
   // any path, and without the final ".proj" extension.
@@ -447,6 +475,8 @@ ClusterManager::updateWorkingCopy()
     taMisc::Info("Working copy was updated to revision", String(rev));
   }
 
+  initClusterInfoTable();
+  
   // We could check if these directories already exist, but it's easier
   // to just try to create them all and ignore any creation errors.
   m_svn_client->TryMakeDir(m_wc_proj_path);
@@ -496,6 +526,28 @@ ClusterManager::saveSubmitTable()
   deleteFile(m_submit_dat_filename);
   m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
   m_svn_client->Add(m_submit_dat_filename.chars());
+}
+
+void
+ClusterManager::saveDoneTable()
+{
+  // Save the datatable and add it to source control (if not already).
+  setPaths();
+  deleteFile(m_done_dat_filename);
+  m_cluster_run.jobs_done.SaveData(m_done_dat_filename);
+  m_svn_client->Add(m_done_dat_filename.chars());
+}
+
+void
+ClusterManager::initClusterInfoTable()
+{
+  // Save a cluster info table to get format into server
+  setPaths();
+  QFileInfo fi_wc(m_cluster_info_filename.chars());
+  if(!fi_wc.exists()) {
+    m_cluster_run.cluster_info.SaveData(m_cluster_info_filename);
+    m_svn_client->Add(m_cluster_info_filename.chars());
+  }
 }
 
 void

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6137
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6146
 LeabraProject .projects["param_search"] { 
   taBase_Group @.templates = [0] {
   };
@@ -106,7 +106,7 @@ LeabraProject .projects["param_search"] {
     DataTable_Group @.gp["AnalysisData"] { 
     };
     DataTable_Group @.gp["ClusterRun"] = [1] { 
-      DataTable @["param_search_84_0_epc"] { 
+      DataTable @["param_search_131_0_epc"] { 
 	DataTableCols @.data = [13] {
 	  int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
@@ -2207,7 +2207,7 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_03_02_35_52";
+   last_submit_time="2013_03_04_01_19_10";
    notes="test5";
    svn_repo="grey_run";
    repo_url="http://grey.colorado.edu/svn/clusterun";
@@ -2215,8 +2215,8 @@ When it has finished, open the objs within the param search grid program to see 
    queue=;
    run_time="1d";
    ram_gb=0;
-   n_threads=1;
-   use_mpi=0;
+   n_threads=2;
+   use_mpi=1;
    mpi_nodes=2;
    parallel_batch=0;
    pb_batches=2;
@@ -5867,8 +5867,8 @@ When it has finished, open the objs within the param search grid program to see 
    name="ClusterRun";
    el_typ=DataTable;
    el_def=0;
-   DataTable @["param_search_84_0_epc"] {
-    name="param_search_84_0_epc";
+   DataTable @["param_search_131_0_epc"] {
+    name="param_search_131_0_epc";
     desc=;
     data {
      name="data";

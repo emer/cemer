@@ -87,6 +87,26 @@ void iDataTableView::EditAction(int ea) {
   gui_edit_op = false;
 }
 
+void iDataTableView::ViewAction(int ea) {
+  // only one action -- ignore arg
+  DataTable* tab = this->dataTable(); // may not exist
+  if (!tab || !selectionModel()) return;
+  CellRange sel(selectionModel()->selectedIndexes());
+  String str;
+  for (int col = sel.col_fr; col <= sel.col_to; ++col) {
+    DataCol* da = tab->GetColData(col, true); // quiet
+    if (!da) continue;
+    int cell_size = da->cell_size();
+    for (int row = sel.row_fr; row <= sel.row_to; ++row) {
+      for (int cell = 0; cell < cell_size; ++cell) {
+        str += tab->GetValAsStringM(col, row, cell);
+      }
+    }
+  }
+  // todo: could do more
+  taMisc::Confirm("contents of cell(s):\n", str);
+}
+
 void iDataTableView::GetEditActionsEnabled(int& ea) {
   int allowed = 0;
   int forbidden = 0;

@@ -45,6 +45,7 @@ public:
   DataTable     jobs_running;   // #SHOW_TREE #EXPERT #NO_SAVE jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE #EXPERT #NO_SAVE jobs that have finished running
   DataTable     file_list;      // #SHOW_TREE #EXPERT #NO_SAVE list of files -- used for various operations -- transferring and deleting
+  DataTable     cluster_info;   // #SHOW_TREE #EXPERT #NO_SAVE cluster status information and list of jobs currently running, etc
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
 
@@ -108,8 +109,17 @@ public:
 
   virtual void ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row);
   // #IGNORE actually do the import -- row is row in given table (jobs_running or jobs_done) with info for data files
+  virtual void GetFileInfo(const String& path, DataTable& table, int row);
+  // #IGNORE get file info from given full path to file into file_list formatted data table at given row
   virtual void SelectFiles_impl(DataTable& table, int row, bool include_data);
   // #IGNORE add files from row in table to file_list
+  virtual void  RemoveAllFilesInList();
+  // #IGNORE svn remove all the files listed in file_list
+
+  // statics -- should move to a more central location 
+
+  static String GetSizeString(int64_t size_in_bytes, bool power_of_two = true);
+  // returns a human-readable size value for given raw size number in bytes -- e.g., 3.2 GB for a 3.2 gigabyte size value -- if power_of_two then uses 2^n definitions of GB, MB, KB -- else uses standard SI power of ten definitions
 
   static void AddParamsToTable(DataTable* dat, const String& params);
   // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs
@@ -143,21 +153,26 @@ public:
   virtual void  CreateCurJob(int cmd_id = 0);
   // AddJobRow for the current parameter values as listed in the select edit, optionally with given command id number
 
+  // MISC impl
+
+  virtual void  FormatJobTable(DataTable& dt);
+  // all job tables have the same format -- this ensures it
+  virtual void  FormatFileListTable(DataTable& dt);
+  // for file_list table
+  virtual void  FormatClusterInfoTable(DataTable& dt);
+  // for cluster_info table
+  virtual iDataTableEditor* DataTableEditor(DataTable& dt);
+  // get editor for data table
+  virtual bool  SelectedRows(DataTable& dt, int& st_row, int& end_row);
+  // get selected rows in editor
+
+
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);
   void InitLinks();
   TA_BASEFUNS(ClusterRun);
 protected:
   override void UpdateAfterEdit_impl();
-
-  virtual void  FormatTables_impl(DataTable& dt);
-  // all tables have the same format -- this ensures it
-  virtual void  FormatFileListTable(DataTable& dt);
-  // for file_list table
-  virtual iDataTableEditor* DataTableEditor(DataTable& dt);
-  // get editor for data table
-  virtual bool  SelectedRows(DataTable& dt, int& st_row, int& end_row);
-  // get selected rows in editor
 
 private:
   void  Initialize();

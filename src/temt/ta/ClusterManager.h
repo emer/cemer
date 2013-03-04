@@ -42,6 +42,12 @@ public:
   // update the jobs_running and jobs_done data tables from repo
   bool RemoveFiles(String_PArray& files, bool force = true, bool keep_local = false);
   // remove given files from repository, with given options -- does the commit too
+  bool CommitJobsDoneTable();
+  // commit the jobs_done.dat file with latest changes -- for cleaning up list
+
+  void commitFiles(const String &commit_msg);
+  // commit current working copy files
+
   String GetWcProjPath() const;
   // full path to cluster_svn_path/svn_repo/clustername/username/projname/ -- root of the svn repo for this project
   String GetWcResultsPath() const;
@@ -54,6 +60,8 @@ public:
   // full path to cluster_svn_path/svn_repo/clustername/username/projname/models/projname.proj
   String GetWcSubmitFilename() const;
   // full path to cluster_svn_path/svn_repo/clustername/username/projname/submit/jobs_submit.dat
+  String GetWcClusterInfoFilename() const;
+  // full path to cluster_svn_path/svn_repo/clustername/username/cluster_info.dat
   int GetLastChangedRevision(const String &path, bool quiet = false);
 
 protected:
@@ -71,14 +79,16 @@ protected:
   const String & getSvnRepo();
   const String & getRepoUrl();
   const String & promptForString(const String &str, const char *msg);
+
   bool showRepoDialog();
   void setPaths();
   void updateWorkingCopy();
   void runSearchAlgo();
+  void initClusterInfoTable();
   bool loadTable(const String &filename, DataTable &table);
   void saveSubmitTable();
   void saveCopyOfProject();
-  void commitFiles(const String &commit_msg);
+  void saveDoneTable();
   void deleteFile(const String &filename);
 
   ClusterRun &m_cluster_run;
@@ -96,6 +106,7 @@ protected:
   String m_proj_copy_filename;
   String m_submit_dat_filename;
   String m_running_dat_filename;
+  String m_cluster_info_filename;
   String m_done_dat_filename;
 };
 

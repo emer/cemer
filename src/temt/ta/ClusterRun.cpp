@@ -107,6 +107,7 @@ bool ClusterRun::Update() {
 
   // Update the working copy and load the running/done tables.
   bool has_updates = m_cm->UpdateTables();
+  cluster_info.Sort("state", true);
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
@@ -280,8 +281,6 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
   String tag = table.GetVal("tag", row).toString();
   String dat_files = table.GetVal("dat_files", row).toString();
   String other_files = table.GetVal("other_files", row).toString();
-  String wc_res_path = m_cm->GetWcResultsPath();
-  String repo_path = wc_res_path.from(svn_repo + "/");
   if(TestError(other_files.empty(), "SelectFiles", "other_files is empty for tag:", tag))
     return;
   {                             // other files
@@ -290,11 +289,8 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
     for(int i=0; i< files.size; i++) {
       String fl = files[i];
       int frow = file_list.AddBlankRow();
-      file_list.SetVal(fl, "FileName",  frow);
-      file_list.SetVal(tag, "Tag",  frow);
-      file_list.SetVal(wc_res_path + "/" + fl, "FilePath",  frow);
-      file_list.SetVal(repo_path + "/" + fl, "SVNFilePath",  frow);
-      file_list.SetVal("results/" + fl, "ProjFilePath",  frow);
+      GetFileInfo(fl, file_list, frow);
+      file_list.SetVal(tag, "tag",  frow);
     }
   }
   if(include_data) {
@@ -303,12 +299,8 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
     for(int i=0; i< files.size; i++) {
       String fl = files[i];
       int frow = file_list.AddBlankRow();
-      file_list.SetVal(fl, "FileName",  frow);
-      file_list.SetVal(tag, "Tag",  frow);
-      file_list.SetVal("Data", "Kind",  frow);
-      file_list.SetVal(wc_res_path + "/" + fl, "FilePath",  frow);
-      file_list.SetVal(repo_path + "/" + fl, "SVNFilePath",  frow);
-      file_list.SetVal("results/" + fl, "ProjFilePath",  frow);
+      GetFileInfo(fl, file_list, frow);
+      file_list.SetVal(tag, "tag",  frow);
     }
   }
 }
@@ -318,11 +310,6 @@ void ClusterRun::ListAllFiles() {
   file_list.ResetData();
 
   String wc_res_path = m_cm->GetWcResultsPath();
-  String repo_path = wc_res_path.from(svn_repo + "/");
-
-  const int gb = 1073741824;
-  const int mb = 1048576;
-  const int kb = 1024;
 
   QDir dir(wc_res_path);
   dir.setFilter(QDir::Files);
@@ -333,38 +320,79 @@ void ClusterRun::ListAllFiles() {
   }
   for(int i=0;i<files.size();i++) {
     QFileInfo fli = files[i];
-    String fl = fli.fileName();
     if(fli.isFile()) {
       int frow = file_list.AddBlankRow();
-      file_list.SetVal(fl, "FileName",  frow);
-      if(fl.endsWith(".dat") || fl.endsWith(".dat.gz"))
-        file_list.SetVal("Data", "Kind",  frow);
-      file_list.SetVal(wc_res_path + "/" + fl, "FilePath",  frow);
-      file_list.SetVal(repo_path + "/" + fl, "SVNFilePath",  frow);
-      file_list.SetVal("results/" + fl, "ProjFilePath",  frow);
-      QDateTime dc = fli.created();
-      QDateTime dm = fli.lastModified();
-      int64_t sz = fli.size();
-      
-      String szstr;
-      if(sz > gb)
-        szstr = String((float)sz / (float)gb) + " GB";
-      else if(sz > mb)
-        szstr = String((float)sz / (float)mb) + " MB";
-      else if(sz > kb)
-        szstr = String((float)sz / (float)kb) + " KB";
-      else 
-        szstr = String(sz) + " B";
-
-      String dcstr = dc.toString(timestamp_fmt);
-      String dmstr = dm.toString(timestamp_fmt);
-
-      file_list.SetVal(szstr, "Size",  frow);
-      file_list.SetVal(dcstr, "DateCreated",  frow);
-      file_list.SetVal(dmstr, "DateModified",  frow);
+      GetFileInfo(files[i].filePath(), file_list, frow);
     }
   }
 }
+
+String ClusterRun::GetSizeString(int64_t size_in_bytes, bool power_of_two) {
+  double gb;
+  double mb;
+  double kb;
+  if(power_of_two) {
+    gb = 1073741824.0;
+    mb = 1048576.0;
+    kb = 1024.0;
+  }
+  else {
+    gb = 1000000000.0;
+    mb = 1000000.0;
+    kb = 1000.0;
+  }
+
+  String szstr;
+  if(size_in_bytes > gb)
+    szstr = String((double)size_in_bytes / gb) + " GB";
+  else if(size_in_bytes > mb)
+    szstr = String((double)size_in_bytes / mb) + " MB";
+  else if(size_in_bytes > kb)
+    szstr = String((double)size_in_bytes / kb) + " KB";
+  else 
+    szstr = String(size_in_bytes) + " B";
+  return szstr;
+}
+
+void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row) {
+  String fl = taMisc::GetFileFmPath(path);
+  String wc_res_path = m_cm->GetWcResultsPath();
+  String repo_path = wc_res_path.from(svn_repo + "/");
+
+  String flpath = wc_res_path + "/" + fl;
+
+  table.SetVal(fl, "file_name",  row);
+  table.SetVal(flpath, "file_path",  row);
+  table.SetVal(repo_path + "/" + fl, "svn_file_path",  row);
+  table.SetVal("results/" + fl, "proj_file_path",  row);
+
+  if(fl.endsWith(".dat") || fl.endsWith(".dat.gz"))
+    table.SetVal("Data", "kind",  row);
+  else if(fl.endsWith(".args"))
+    table.SetVal("Startup Args", "kind",  row);
+  else if(fl.endsWith(".wts") || fl.endsWith(".wts.gz"))
+    table.SetVal("Weights", "kind",  row);
+  
+  if(!taMisc::FileExists(flpath)) {
+    table.SetVal("<not local>", "size",  row);
+    return;
+  }
+
+  QFileInfo fli(flpath);
+  
+  QDateTime dc = fli.created();
+  QDateTime dm = fli.lastModified();
+  int64_t sz = fli.size();
+
+  String szstr = GetSizeString(sz, true);
+  String dcstr = dc.toString(timestamp_fmt);
+  String dmstr = dm.toString(timestamp_fmt);
+
+  table.SetVal(szstr, "size",  row);
+  table.SetVal(dcstr, "date_created",  row);
+  table.SetVal(dmstr, "date_modified",  row);
+}
+
 
 void ClusterRun::GetFiles() {
   initClusterManager(); // ensure it has been created.
@@ -375,7 +403,7 @@ void ClusterRun::GetFiles() {
   if (SelectedRows(file_list, st_row, end_row)) {
     String_Array files;
     for (int row = st_row; row <= end_row; ++row) {
-      String fl = file_list.GetVal("FileName", row).toString();
+      String fl = file_list.GetVal("file_name", row).toString();
       files.Add(fl);
     }
     String files_str = files.ToDelimString(" ");
@@ -397,7 +425,9 @@ void ClusterRun::RemoveFiles() {
   if (SelectedRows(file_list, st_row, end_row)) {
     String_PArray files;
     for (int row = end_row; row >= st_row; --row) {
-      String fpath = file_list.GetVal("FilePath", row).toString();
+      String fpath = file_list.GetVal("file_path", row).toString();
+      if(!taMisc::FileExists(fpath))
+        continue;               // skip any files that don't actually exist locally
       files.Add(fpath);
       file_list.RemoveRows(row);
     }
@@ -418,14 +448,8 @@ void ClusterRun::RemoveJobs() {
       SelectFiles_impl(jobs_done, row, true); // include data
       jobs_done.RemoveRows(row);
     }
-    String_PArray files;
-    for(int i=0;i<file_list.rows; i++) {
-      String fpath = file_list.GetVal("FilePath", i).toString();
-      files.Add(fpath);
-    }
-    file_list.ResetData();
-    if(files.size > 0)
-      m_cm->RemoveFiles(files, true, false); // force, keep_local
+    RemoveAllFilesInList();
+    m_cm->CommitJobsDoneTable();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs removed");
@@ -442,9 +466,16 @@ void ClusterRun::RemoveKilledJobs() {
     SelectFiles_impl(jobs_done, row, true); // include data
     jobs_done.RemoveRows(row);
   }
+  RemoveAllFilesInList();
+  m_cm->CommitJobsDoneTable();
+}
+
+void ClusterRun::RemoveAllFilesInList() {
   String_PArray files;
   for(int i=0;i<file_list.rows; i++) {
-    String fpath = file_list.GetVal("FilePath", i).toString();
+    String fpath = file_list.GetVal("file_path", i).toString();
+    if(!taMisc::FileExists(fpath))
+      continue;               // skip any files that don't actually exist locally
     files.Add(fpath);
   }
   file_list.ResetData();
@@ -458,16 +489,19 @@ void ClusterRun::FormatTables() {
   jobs_running.name = "jobs_running";
   jobs_done.name = "jobs_done";
 
-  FormatTables_impl(jobs_submit);
-  FormatTables_impl(jobs_submitted);
-  FormatTables_impl(jobs_running);
-  FormatTables_impl(jobs_done);
+  FormatJobTable(jobs_submit);
+  FormatJobTable(jobs_submitted);
+  FormatJobTable(jobs_running);
+  FormatJobTable(jobs_done);
 
   file_list.name = "file_list";
   FormatFileListTable(file_list);
+
+  cluster_info.name = "cluster_info";
+  FormatClusterInfoTable(cluster_info);
 }
 
-void ClusterRun::FormatTables_impl(DataTable& dt) {
+void ClusterRun::FormatJobTable(DataTable& dt) {
   DataCol* dc;
 
   dc = dt.FindMakeCol("tag", VT_STRING);
@@ -550,32 +584,55 @@ void ClusterRun::FormatTables_impl(DataTable& dt) {
 void ClusterRun::FormatFileListTable(DataTable& dt) {
   DataCol* dc;
 
-  dc = dt.FindMakeCol("FileName", VT_STRING);
+  dc = dt.FindMakeCol("file_name", VT_STRING);
   dc->desc = "name of file -- does not include any path information";
 
-  dc = dt.FindMakeCol("Tag", VT_STRING);
+  dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "job tag associated with this file";
 
-  dc = dt.FindMakeCol("Size", VT_STRING);
+  dc = dt.FindMakeCol("size", VT_STRING);
   dc->desc = "size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
 
-  dc = dt.FindMakeCol("Kind", VT_STRING);
+  dc = dt.FindMakeCol("kind", VT_STRING);
   dc->desc = "type of file";
 
-  dc = dt.FindMakeCol("DateModified", VT_STRING);
+  dc = dt.FindMakeCol("date_modified", VT_STRING);
   dc->desc = "timestamp for when the file was last modified";
 
-  dc = dt.FindMakeCol("DateCreated", VT_STRING);
+  dc = dt.FindMakeCol("date_created", VT_STRING);
   dc->desc = "timestamp for when the file was first created";
 
-  dc = dt.FindMakeCol("SVNFilePath", VT_STRING);
+  dc = dt.FindMakeCol("svn_file_path", VT_STRING);
   dc->desc = "path to file in SVN repository, relative to root of svn_repo repository";
 
-  dc = dt.FindMakeCol("ProjFilePath", VT_STRING);
+  dc = dt.FindMakeCol("proj_file_path", VT_STRING);
   dc->desc = "path to file relative to the parent project directory -- e.g., results/filename.dat";
 
-  dc = dt.FindMakeCol("FilePath", VT_STRING);
+  dc = dt.FindMakeCol("file_path", VT_STRING);
   dc->desc = "full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
+
+}
+
+void ClusterRun::FormatClusterInfoTable(DataTable& dt) {
+  DataCol* dc;
+
+  dc = dt.FindMakeCol("queue", VT_STRING);
+  dc->desc = "queue that this info relates to";
+
+  dc = dt.FindMakeCol("job_no", VT_STRING);
+  dc->desc = "job number or total number of actve jobs";
+
+  dc = dt.FindMakeCol("user", VT_STRING);
+  dc->desc = "user name";
+
+  dc = dt.FindMakeCol("state", VT_STRING);
+  dc->desc = "current scheduler state -- or description of global state info";
+
+  dc = dt.FindMakeCol("procs", VT_STRING);
+  dc->desc = "number of processors for this job or for global state info";
+
+  dc = dt.FindMakeCol("start_time", VT_STRING);
+  dc->desc = "timestamp for when the job was submitted or started running";
 
 }
 

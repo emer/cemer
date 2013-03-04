@@ -52,6 +52,22 @@ void iMatrixTableView::EditAction(int ea) {
   }
 }
 
+void iMatrixTableView::ViewAction(int ea) {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return;
+  CellRange sel;
+  GetSel(sel);
+  String str;
+  for (int row = sel.row_fr; row <= sel.row_to; ++row) {
+    for (int col = sel.col_fr; col <= sel.col_to; ++col) {
+      int idx = mat->FastElIndex2D(col, row);
+      str += mat->SafeElAsVar_Flat(idx).toString();
+    }
+  }
+  // todo: could do more
+  taMisc::Confirm("contents of cell(s):\n", str);
+}
+
 void iMatrixTableView::GetEditActionsEnabled(int& ea) {
   int allowed = 0;
   int forbidden = 0;
