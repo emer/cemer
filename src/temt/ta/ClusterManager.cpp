@@ -385,10 +385,8 @@ ClusterManager::promptForString(const String &str, const char *msg)
 }
 
 void
-ClusterManager::setPaths()
-{
-  // If already set, just return.
-  if (!m_wc_path.empty()) return;
+ClusterManager::setPaths() {
+  String prv_path = m_wc_path;
 
   const String &username = getUsername();
   const String &filename = getFilename();
@@ -445,7 +443,11 @@ ClusterManager::setPaths()
   m_done_dat_filename = m_wc_submit_path + "/jobs_done.dat";
   m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
 
-  taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
+  if(m_wc_path != prv_path) {
+    taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
+    // make sure we've got a complete working copy here..
+    updateWorkingCopy();
+  }
 }
 
 void

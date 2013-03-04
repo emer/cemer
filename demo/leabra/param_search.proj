@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6146
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6152
 LeabraProject .projects["param_search"] { 
   taBase_Group @.templates = [0] {
   };
@@ -2207,16 +2207,16 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_04_01_19_10";
+   last_submit_time="2013_03_04_16_14_08";
    notes="test5";
    svn_repo="grey_run";
    repo_url="http://grey.colorado.edu/svn/clusterun";
-   cluster="dream";
+   cluster="janus_long";
    queue=;
-   run_time="1d";
+   run_time="1h";
    ram_gb=0;
    n_threads=2;
-   use_mpi=1;
+   use_mpi=0;
    mpi_nodes=2;
    parallel_batch=0;
    pb_batches=2;
