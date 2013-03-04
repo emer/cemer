@@ -49,7 +49,8 @@ qdel_args = ""
 # pyshowq for SGE (checked into emergent/cluster_run showq)
 showq_cmd = "/usr/local/bin/showq"
 showq_args = ""
-
+# parser function to use for showq output -- complex enough that this is most efficient way to do it
+showq_parser = "pyshowq"
 
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
@@ -1073,6 +1074,10 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _get_cluster_info(self):
+        if showq_parser == 'pyshowq':
+            self._get_cluster_info_pyshowq()
+
+    def _get_cluster_info_pyshowq(self):
         if showq_args != '':
             cmd = [showq_cmd, showq_args]
         else:
