@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-import datetime, os, re, subprocess, sys, time, traceback, ConfigParser, socket
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket
+from datetime import datetime
+# requires this package, included with python 2.5 and above -- otherwise get
+# from http://effbot.org/downloads
+sys.path.append('/projects/oreillyr/python/site-packages')
+import etree.ElementTree as ET
 #import xml.etree.ElementTree as ET
 
 #############################################################################
@@ -11,9 +16,14 @@ import datetime, os, re, subprocess, sys, time, traceback, ConfigParser, socket
 #
 # the sp_qsub_cmd takes args of <n_threads> <run_time> <full_command>
 sp_qsub_cmd = 'sp_qsub_q'
+# can add an automatic -q <queue> arg here to specify a queue
+# in general it is best to have a different script for each queue
+# because the emergent preferences have relevant settings for them
+sp_qsub_args = "-q janus-short"
 
 # the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
 dm_qsub_cmd = 'dm_qsub_q'
+sp_qsub_args = "-q janus-short"
 
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
@@ -837,9 +847,15 @@ class SubversionPoller(object):
 
         cmdsub = []
         if mpi_nodes <= 1:
-            cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd, params]
+            if sp_qsub_args:
+                cmdsub = [sp_qsub_cmd, sp_qsub_args, str(n_threads), run_time, cmd, params]
+            else:
+                cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd, params]
         else:
-            cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd, params]
+            if dm_qsub_args:
+                cmdsub = [dm_qsub_cmd, dm_qsub_args, str(mpi_nodes), str(n_threads), run_time, cmd, params]
+            else:
+                cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd, params]
         # print 'command: %s' % cmdsub
 
         result = check_output(cmdsub)
@@ -932,7 +948,7 @@ class SubversionPoller(object):
 
     def _job_is_done(self, row, status):
         tag = self.jobs_running.get_val(row, "tag")
-        stdt = datetime.datetime.now()
+        stdt = datetime.now()
         end_time = stdt.strftime(time_format)
         self.jobs_running.set_val(row, "status", status)
         self.jobs_running.set_val(row, "end_time", end_time)
@@ -964,7 +980,7 @@ class SubversionPoller(object):
                     just_started = True
                     self.status_change = True
                     status = 'RUNNING'
-                    stdt = datetime.datetime.now()
+                    stdt = datetime.now()
                     start_time = stdt.strftime(time_format)
                     self.jobs_running.set_val(row, "status", status)
                     self.jobs_running.set_val(row, "start_time", start_time)
@@ -1052,8 +1068,10 @@ class SubversionPoller(object):
         job_out_file = self.jobs_running.get_val(row, "job_out_file")
         tag = self.jobs_running.get_val(row, "tag")
 
-        stdt = datetime.datetime.strptime(start_time, time_format)
-        runtime = datetime.datetime.now() - stdt
+        # datetime.strptime is only in 2.5
+        # datetime.strptime(start_time, time_format)
+        stdt = datetime(*(time.strptime(start_time, time_format)[0:6]))
+        runtime = datetime.now() - stdt
         
         if force_updt or runtime.seconds < job_update_window * 60:
             # print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
@@ -1141,7 +1159,7 @@ class SubversionPoller(object):
                 start_tm = scols[6]
                 start_str = start_dt + " " + start_tm
 
-                stdt = datetime.datetime.strptime(start_str, "%m/%d/%Y %H:%M:%S")
+                stdt = datetime(*(time.strptime(start_str, "%m/%d/%Y %H:%M:%S")[0:6]))
                 start_time = stdt.strftime(time_format)
 
                 queue = ""
@@ -1191,7 +1209,7 @@ class SubversionPoller(object):
                 start_tm = scols[8]
                 start_str = start_mo + " " + start_day + " " + start_tm
 
-                stdt = datetime.datetime.strptime(start_str, "%b %d %H:%M:%S")
+                stdt = datetime(*(time.strptime(start_str, "%b %d %H:%M:%S")[0:6]))
                 start_time = stdt.strftime(time_format)
 
                 queue = ""
@@ -1273,7 +1291,7 @@ def main():
         poller.poll() # Infinite loop.
 
 def main_background():
-    print '\nStarting background run at %s' % datetime.datetime.now()
+    print '\nStarting background run at %s' % datetime.now()
 
     username    = sys.argv[1]
     repo_dir    = sys.argv[2]
@@ -1289,7 +1307,7 @@ def main_background():
         pass
     poller.poll(nohup_filename) # Infinite loop.
 
-    print '\nStopping background run at %s' % datetime.datetime.now()
+    print '\nStopping background run at %s' % datetime.now()
 
 #############################################################################
 
