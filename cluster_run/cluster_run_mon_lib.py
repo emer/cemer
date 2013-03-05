@@ -880,11 +880,11 @@ class SubversionPoller(object):
                 cmdsub = [dm_qsub_cmd, args_eff, str(mpi_nodes), str(n_threads), run_time, cmd, params]
             else:
                 cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd, params]
-        # print 'command: %s' % cmdsub
 
         # if pb, put a wrapper on it!
         if pb_batches > 0 and pb_nodes > 0:
-            cmdsub = [pb_qsub_cmd, str(pb_batches), str(pb_nodes)] + cmdsub
+            cmdsub = [pb_qsub_cmd, "--node_pool " + str(pb_nodes), str(pb_batches), "1"] + cmdsub
+            print 'command: %s' % cmdsub
 
         result = check_output(cmdsub)
         # print "result: %s" % result
