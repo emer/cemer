@@ -15,17 +15,17 @@ clust_queue = "janus-short"
 # emergent/cluster_run/ directory (where this script lives as well)
 #
 # the sp_qsub_cmd takes args of <n_threads> <run_time> <full_command>
-sp_qsub_cmd = 'sp_qsub_q'
+cluster_run_mon_lib.sp_qsub_cmd = 'sp_qsub_q'
 # can add an automatic -q <queue> arg here to specify a queue
 # in general it is best to have a different script for each queue
 # because the emergent preferences have relevant settings for them
 # sp_qsub_args = ""
-sp_qsub_args = "-q " + clust_queue
+cluster_run_mon_lib.sp_qsub_args = "-q " + clust_queue
 
 # the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
-dm_qsub_cmd = 'dm_qsub_q'
-# dm_qsub_args = ""
-dm_qsub_args = "-q " + clust_queue
+cluster_run_mon_lib.dm_qsub_cmd = 'dm_qsub_q'
+# cluster_run_mon_lib.dm_qsub_args = ""
+cluster_run_mon_lib.dm_qsub_args = "-q " + clust_queue
 
 # it is essential that these scripts return the cluster job number in the format
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
@@ -35,39 +35,39 @@ dm_qsub_args = "-q " + clust_queue
 # sge = qstat -j <job_no>
 # moab = qstat <job_no>
 # job_no will automatically be appended to end of command
-qstat_cmd = "qstat"
-qstat_args = ""  # here is where you put the -j if needed
+cluster_run_mon_lib.qstat_cmd = "qstat"
+cluster_run_mon_lib.qstat_args = ""  # here is where you put the -j if needed
 
 # parser for qstat output -- output is different so need diff parsers
 # options are sge for sge, moab for moab/torque
-qstat_parser = "moab"
+cluster_run_mon_lib.qstat_parser = "moab"
 
 # qdel-like command -- for killing a job
 # killjob is a special command that also deletes the JOB.* files -- see pykilljob
 # be sure to use the _f version that does not prompt!
 # in emergent/cluster_run directory
 # job_no will automatically be appended to end of command
-qdel_cmd = "killjob_f"
-qdel_args = ""
+cluster_run_mon_lib.qdel_cmd = "killjob_f"
+cluster_run_mon_lib.qdel_args = ""
 
 # showq-like command -- this should return overall status of all users jobs
 # and general info on status of cluster
 # moab = showq 
 # pyshowq for SGE (checked into emergent/cluster_run showq)
-showq_cmd = "showq"
-showq_args = ""
+cluster_run_mon_lib.showq_cmd = "showq"
+cluster_run_mon_lib.showq_args = ""
 # parser function to use for showq output -- complex enough that this is most
 # efficient way to do it
 # options are pyshowq, moab
-showq_parser = "moab"
+cluster_run_mon_lib.showq_parser = "moab"
 
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
-job_update_window = 3
+cluster_run_mon_lib.job_update_window = 3
 
 # set to true for more debugging info
-debug = False
-#debug = True
+cluster_run_mon_lib.debug = False
+# cluster_run_mon_lib.debug = True
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################

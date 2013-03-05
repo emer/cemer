@@ -1324,7 +1324,7 @@ class SubversionPoller(object):
 # The polling loop will exit if the file is subsequently deleted.  The user
 # may delete the file manually, or simply re-running this script will delete
 # the file.
-nohup_filename = 'nohup-running-monitor-emergent-cluster-runs.txt'
+nohup_filename = 'nohup_running_cluster_run_mon.txt'
 
 def main():
     # Delete the nohup file, if it exists.
@@ -1336,7 +1336,7 @@ def main():
 
     # Read the config file, allow the user to add a new repo, get
     # the repo they'd like to use, and write it all back to disk.
-    wc_root = 'emergent-cluster-runs'
+    wc_root = 'cluster_run_mon_wc_root'
     config = ClusterConfig(wc_root)
     username = config.get_username()
     clustername = config.get_clustername()
