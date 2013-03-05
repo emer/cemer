@@ -36,6 +36,10 @@ sp_qsub_args = "-q janus-short"
 qstat_cmd = "qstat"
 qstat_args = ""  # here is where you put the -j if needed
 
+# parser for qstat output -- different qstat output sufficiently diff
+# options are sgeqstat, moabqstat
+qstat_parser = "moabqstat"
+
 # regexp for output of qstat that tells you that the job is running
 qstat_running_re = r"^usage"
 # use this for "split" command to get misc running info
@@ -955,7 +959,77 @@ class SubversionPoller(object):
         if debug:
             print "job: %s ended with status: %s at time: %s" % (tag, status, end_time)
 
+
     def _query_job_queue(self, row, status, force_updt = False):
+        if qstat_parser == "moabqstat":
+            self._query_job_queue_moabqstat(row, status, force_updt)
+        elif qstat_parser == "sgeqstat":
+            self._query_job_queue_sgeqstat(row, status, force_updt)
+
+    def _query_job_queue_moabqstat(self, row, status, force_updt = False):
+        job_no = self.jobs_running.get_val(row, "job_no")
+        tag = self.jobs_running.get_val(row, "tag")
+        if qstat_args != '':
+            cmd = [qstat_cmd, qstat_args, job_no]
+        else:
+            cmd = [qstat_cmd, job_no]
+        q_out = check_output(cmd)
+
+        got_status = False
+
+        lastln = ''
+        if q_out:
+            lastln = q_out.splitlines()[-1]
+
+        if not lastln.find("Unknown Job Id") >= 0:
+            qcols = lastln.split()  # splits on whitespace
+            if len(qcols) >= 6:
+                got_status = True
+                just_started = False
+                stat = qcols[4]  # should be R, Q, C
+                if stat == 'R':
+                    if status != 'RUNNING' and status != 'CANCELLED':
+                        just_started = True
+                        self.status_change = True
+                        status = 'RUNNING'
+                        stdt = datetime.now()
+                        start_time = stdt.strftime(time_format)
+                        self.jobs_running.set_val(row, "status", status)
+                        self.jobs_running.set_val(row, "start_time", start_time)
+                        # print "qstat job status update -- tag: %s now: %s start: %s info: %s" % (tag, status, start_time, status_info)
+                        # don't get status_info all the time, because it always changes
+                        # and leads to excessive checkins of jobs_running table
+                    if just_started or force_updt:
+                        status_info = qcols[3]
+                        status_info = status_info.strip(' \t\n\r')
+                        self.jobs_running.set_val(row, "status_info", status_info)
+                elif stat == 'C':
+                    got_status = False  # effectively dead
+                else:
+                    if status != 'RUNNING' and status != 'CANCELLED':
+                        status = 'QUEUED'
+                        status_info = stat + " " + qcols[3]
+                        status_info = status_info.strip(' \t\n\r')
+                        self.jobs_running.set_val(row, "status", status)
+                        self.jobs_running.set_val(row, "status_info", status_info)
+                        # print "qstat job status update -- tag: %s now: %s info: %s" % (tag, status, status_info)
+        if not got_status:
+            # always check the job out file to see what happened to it..
+            job_out_file = self.jobs_running.get_val(row, "job_out_file")
+            job_out = self._get_job_out(job_out_file)
+            if len(job_out) > 0:
+                self.jobs_running.set_val(row, "job_out", job_out)
+            if status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
+                pass    # don't do anything
+            elif status == 'RUNNING':
+                self._job_is_done(row, 'DONE')
+            elif status == 'CANCELLED':
+                self._job_is_done(row, 'KILLED')
+            elif status == 'QUEUED':
+                self._job_is_done(row, 'KILLED')
+        # done
+
+    def _query_job_queue_sgeqstat(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
         tag = self.jobs_running.get_val(row, "tag")
         if qstat_args != '':
