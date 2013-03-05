@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import cluster_run_mon_lib as runmon
 # get all the base code -- this file should be on the python path or 
 # (more simply) just copied over to same directory where this runs
