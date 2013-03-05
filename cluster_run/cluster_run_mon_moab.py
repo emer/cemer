@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from cluster_run_mon_lib import *
+import cluster_run_mon_lib as runmon
 # get all the base code -- this file should be on the python path or 
 # (more simply) just copied over to same directory where this runs
 # suggest putting both in ~/cluster_run_<cluster_name>
@@ -75,8 +75,8 @@ cluster_run_mon_lib.debug = False
 if __name__ == '__main__':
     try:
         if len(sys.argv) == 1:
-            main()
+            runmon.main()
         else:
-            main_background()
+            runmon.main_background()
     except KeyboardInterrupt:
         print '\n\nQuitting at user request (Ctrl-C).'
