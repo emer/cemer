@@ -1158,7 +1158,8 @@ class SubversionPoller(object):
         if force_updt or runtime.seconds < job_update_window * 60:
             # print "job %s running for %d seconds -- updating" % (tag, runtime.seconds)
             job_out = self._get_job_out(job_out_file)
-            self.jobs_running.set_val(row, "job_out", job_out)
+            if len(job_out) > 0:
+                self.jobs_running.set_val(row, "job_out", job_out)
 
             all_files = self._get_dat_files(tag)
             self.jobs_running.set_val(row, "dat_files", all_files[0])
