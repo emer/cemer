@@ -106,7 +106,7 @@ LeabraProject .projects["param_search"] {
     DataTable_Group @.gp["AnalysisData"] { 
     };
     DataTable_Group @.gp["ClusterRun"] = [1] { 
-      DataTable @["param_search_131_0_epc"] { 
+      DataTable @["param_search_236_0_epc"] { 
 	DataTableCols @.data = [13] {
 	  int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
@@ -2207,11 +2207,11 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_04_16_14_08";
+   last_submit_time="2013_03_04_17_04_48";
    notes="test5";
    svn_repo="grey_run";
    repo_url="http://grey.colorado.edu/svn/clusterun";
-   cluster="janus_long";
+   cluster="janus_short";
    queue=;
    run_time="1h";
    ram_gb=0;
@@ -5867,8 +5867,8 @@ When it has finished, open the objs within the param search grid program to see 
    name="ClusterRun";
    el_typ=DataTable;
    el_def=0;
-   DataTable @["param_search_131_0_epc"] {
-    name="param_search_131_0_epc";
+   DataTable @["param_search_236_0_epc"] {
+    name="param_search_236_0_epc";
     desc=;
     data {
      name="data";
