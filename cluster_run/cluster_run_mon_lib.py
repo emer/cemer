@@ -884,7 +884,7 @@ class SubversionPoller(object):
 
         # if pb, put a wrapper on it!
         if pb_batches > 0 and pb_nodes > 0:
-            cmdsub = [pb_qsub_cmd, str(pb_batches), str(pb_node)] + cmdsub
+            cmdsub = [pb_qsub_cmd, str(pb_batches), str(pb_nodes)] + cmdsub
 
         result = check_output(cmdsub)
         # print "result: %s" % result

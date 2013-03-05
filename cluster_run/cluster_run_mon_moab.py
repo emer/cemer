@@ -32,6 +32,9 @@ runmon.dm_qsub_args = "-q " + clust_queue
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
 # further (you can of course do this in some other way if necessary)
 
+# for bynode pb_qsub commands -- if pb_batches and pb_nodes > 0
+runmon.pb_qsub_cmd = 'pb_qsub.bynode'
+
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
 # moab = qstat <job_no>
