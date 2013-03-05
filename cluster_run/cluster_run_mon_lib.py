@@ -38,6 +38,9 @@ dm_qsub_args = ""
 # created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
 # further (you can of course do this in some other way if necessary)
 
+# for bynode pb_qsub commands -- if pb_batches and pb_nodes > 0
+pb_qsub_cmd = 'pb_qsub.bynode'
+
 # qstat-like command -- for quering a specific job_no 
 # sge = qstat -j <job_no>
 # moab = qstat <job_no>
@@ -850,6 +853,9 @@ class SubversionPoller(object):
         run_time = self.jobs_submit.get_val(row, "run_time")
         n_threads = self.jobs_submit.get_val(row, "n_threads")
         mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
+        ram_gb = self.jobs_submit.get_val(row, "ram_gb")
+        pb_batches = self.jobs_submit.get_val(row, "pb_batches")
+        pb_nodes = self.jobs_submit.get_val(row, "pb_nodes")
         submit_svn = str(rev)
         submit_job = str(row)
         tag = '_'.join((submit_svn, submit_job))
@@ -859,16 +865,26 @@ class SubversionPoller(object):
 
         cmdsub = []
         if mpi_nodes <= 1:
-            if sp_qsub_args:
-                cmdsub = [sp_qsub_cmd, sp_qsub_args, str(n_threads), run_time, cmd, params]
+            args_eff = sp_qsub_args
+            if ram_gb > 0:
+                args_eff = args_eff + " -m " + ram_gb + "GB"
+            if args_eff:
+                cmdsub = [sp_qsub_cmd, args_eff, str(n_threads), run_time, cmd, params]
             else:
                 cmdsub = [sp_qsub_cmd, str(n_threads), run_time, cmd, params]
         else:
-            if dm_qsub_args:
-                cmdsub = [dm_qsub_cmd, dm_qsub_args, str(mpi_nodes), str(n_threads), run_time, cmd, params]
+            args_eff = dm_qsub_args
+            if ram_gb > 0:
+                args_eff = args_eff + " -m " + ram_gb + "GB"
+            if args_eff:
+                cmdsub = [dm_qsub_cmd, args_eff, str(mpi_nodes), str(n_threads), run_time, cmd, params]
             else:
                 cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd, params]
         # print 'command: %s' % cmdsub
+
+        # if pb, put a wrapper on it!
+        if pb_batches > 0 and pb_nodes > 0:
+            cmdsub = [pb_qsub_cmd, str(pb_batches), str(pb_node)] + cmdsub
 
         result = check_output(cmdsub)
         # print "result: %s" % result

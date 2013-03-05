@@ -45,6 +45,9 @@ public:
   bool CommitJobsDoneTable();
   // commit the jobs_done.dat file with latest changes -- for cleaning up list
 
+  String ChooseCluster(const String& prompt);
+  // prompt the user to choose a cluster name -- just pulls up a simple combo-edit chooser dialog
+
   void commitFiles(const String &commit_msg);
   // commit current working copy files
   void updateWorkingCopy();
@@ -66,6 +69,12 @@ public:
   // full path to cluster_svn_path/svn_repo/clustername/username/cluster_info.dat
   int GetLastChangedRevision(const String &path, bool quiet = false);
 
+  const String & getUsername();
+  const String & getFilename();
+  const String & getClusterName();
+  const String & getSvnRepo();
+  const String & getRepoUrl();
+
 protected:
   // This exception class only used internally.
   class Exception : public std::runtime_error {
@@ -75,11 +84,6 @@ protected:
 
   void handleException(const SubversionClient::Exception &ex);
   void saveProject();
-  const String & getFilename();
-  const String & getUsername();
-  const String & getClusterName();
-  const String & getSvnRepo();
-  const String & getRepoUrl();
   const String & promptForString(const String &str, const char *msg);
 
   bool showRepoDialog();

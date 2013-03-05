@@ -106,8 +106,8 @@ LeabraProject .projects["param_search"] {
     DataTable_Group @.gp["AnalysisData"] { 
     };
     DataTable_Group @.gp["ClusterRun"] = [1] { 
-      DataTable @["param_search_236_0_epc"] { 
-	DataTableCols @.data = [13] {
+      DataTable @["param_search_359_0_epc"] { 
+	DataTableCols @.data = [8] {
 	  int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
 	      UserDataItem @["NARROW"] { };
@@ -124,11 +124,6 @@ LeabraProject .projects["param_search"] {
 	  float_Data @["avg_cycles"] { };
 	  float_Data @["epoch_time_tot"] { };
 	  float_Data @["epoch_time_usr"] { };
-	  float_Data @["LeabraConSpec_0_lrate"] { };
-	  float_Data @["hebb"] { };
-	  float_Data @["pct"] { };
-	  float_Data @["batches"] { };
-	  float_Data @["epochs"] { };
 	};
       };
     };
@@ -2207,7 +2202,7 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_04_23_07_52";
+   last_submit_time="2013_03_05_02_30_28";
    notes="test5";
    svn_repo="grey_run";
    repo_url="http://grey.colorado.edu/svn/clusterun";
@@ -5867,8 +5862,8 @@ When it has finished, open the objs within the param search grid program to see 
    name="ClusterRun";
    el_typ=DataTable;
    el_def=0;
-   DataTable @["param_search_236_0_epc"] {
-    name="param_search_236_0_epc";
+   DataTable @["param_search_359_0_epc"] {
+    name="param_search_359_0_epc";
     desc=;
     data {
      name="data";
@@ -5980,66 +5975,6 @@ When it has finished, open the objs within the param search grid program to see 
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @["LeabraConSpec_0_lrate"] {
-      name="LeabraConSpec_0_lrate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @["hebb"] {
-      name="hebb";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @["pct"] {
-      name="pct";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @["batches"] {
-      name="batches";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @["epochs"] {
-      name="epochs";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };

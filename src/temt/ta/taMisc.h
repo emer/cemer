@@ -712,6 +712,9 @@ public:
 
   static String LeadingZeros(int num, int len);
   // #CAT_Utility returns num converted to a string with leading zeros up to len
+  static String GetSizeString(int64_t size_in_bytes, int precision = 3,
+                              bool power_of_two = true);
+  // #CAT_Utility returns a human-readable size value for given raw size number in bytes -- e.g., 3.2 GB for a 3.2 gigabyte size value -- if power_of_two then uses 2^n definitions of GB, MB, KB -- else uses standard SI power of ten definitions
 
   static String FormatValue(float val, int width, int precision);
   // #CAT_Utility format output of value according to width and precision

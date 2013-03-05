@@ -107,11 +107,26 @@ bool ClusterRun::Update() {
 
   // Update the working copy and load the running/done tables.
   bool has_updates = m_cm->UpdateTables();
-  cluster_info.Sort("state", true);
+  SortClusterInfoTable();
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
   return has_updates;
+}
+
+void ClusterRun::SortClusterInfoTable() {
+  String usrname = m_cm->getUsername();
+  if(usrname.nonempty()) {
+    for(int i=0; i<cluster_info.rows; i++) {
+      String usr = cluster_info.GetValAsString("user", i);
+      if(usr.contains(usrname) || usrname.contains(usr)) {
+        String state = cluster_info.GetValAsString("state", i);
+        state = "<usr> " + state;
+        cluster_info.SetValAsString(state, "state", i);
+      }
+    }
+  }
+  cluster_info.Sort("state", true);
 }
 
 void ClusterRun::Cont() {
@@ -193,16 +208,39 @@ void ClusterRun::ImportData(bool remove_existing) {
       ImportData_impl(dgp, jobs_done, row); 
     }
   }
+  else if (SelectedRows(file_list, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      ImportData_impl(dgp, file_list, row); 
+    }
+  }
   else {
     taMisc::Warning("No rows selected -- no data fetched");
   }
 }
 
 void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
-  String tag = table.GetVal("tag", row).toString();
-  String dat_files = table.GetVal("dat_files", row).toString();
-  String params = table.GetVal("params", row).toString();
-  if(TestError(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
+  String tag = table.GetValAsString("tag", row);
+  String dat_files;
+  String params;
+  if(table.name == "file_list") {
+    dat_files = table.GetValAsString("file_name", row);
+    if(!dat_files.contains(".dat")) return; // not a dat file!
+    int lkup = jobs_done.FindVal(tag, "tag");
+    if(lkup >= 0) {
+      params = jobs_done.GetValAsString("params", lkup);
+    }
+    else {
+      lkup = jobs_running.FindVal(tag, "tag");
+      if(lkup >= 0) {
+        params = jobs_running.GetValAsString("params", lkup);
+      } 
+    }
+  }
+  else {
+    dat_files = table.GetValAsString("dat_files", row);
+    params = table.GetValAsString("params", row);
+  }
+  if(TestWarning(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
     return;
   String res_path = m_cm->GetWcResultsPath();
   String_Array files;
@@ -246,8 +284,12 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& params) {
 
 void ClusterRun::Probe() {
   initClusterManager(); // ensure it has been created.
+  String clust = m_cm->ChooseCluster("Choose a cluster to probe");
+  if(clust.empty()) return;
+  cluster = clust;
+  initClusterManager(); // re-init with new cluster info!
   FormatTables();               // ensure tables are formatted properly
-
+  
   jobs_submit.ResetData();
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("PROBE", "status", dst_row);
@@ -287,8 +329,7 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
     for(int i=0; i< files.size; i++) {
       String fl = files[i];
       int frow = file_list.AddBlankRow();
-      GetFileInfo(fl, file_list, frow);
-      file_list.SetVal(tag, "tag",  frow);
+      GetFileInfo(fl, file_list, frow, tag);
     }
   }
   if(include_data) {
@@ -297,8 +338,7 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
     for(int i=0; i< files.size; i++) {
       String fl = files[i];
       int frow = file_list.AddBlankRow();
-      GetFileInfo(fl, file_list, frow);
-      file_list.SetVal(tag, "tag",  frow);
+      GetFileInfo(fl, file_list, frow, tag);
     }
   }
 }
@@ -320,39 +360,13 @@ void ClusterRun::ListAllFiles() {
     QFileInfo fli = files[i];
     if(fli.isFile()) {
       int frow = file_list.AddBlankRow();
-      GetFileInfo(files[i].filePath(), file_list, frow);
+      String tag;
+      GetFileInfo(files[i].filePath(), file_list, frow, tag);
     }
   }
 }
 
-String ClusterRun::GetSizeString(int64_t size_in_bytes, bool power_of_two) {
-  double gb;
-  double mb;
-  double kb;
-  if(power_of_two) {
-    gb = 1073741824.0;
-    mb = 1048576.0;
-    kb = 1024.0;
-  }
-  else {
-    gb = 1000000000.0;
-    mb = 1000000.0;
-    kb = 1000.0;
-  }
-
-  String szstr;
-  if(size_in_bytes > gb)
-    szstr = String((double)size_in_bytes / gb) + " GB";
-  else if(size_in_bytes > mb)
-    szstr = String((double)size_in_bytes / mb) + " MB";
-  else if(size_in_bytes > kb)
-    szstr = String((double)size_in_bytes / kb) + " KB";
-  else 
-    szstr = String(size_in_bytes) + " B";
-  return szstr;
-}
-
-void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row) {
+void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, String& tag) {
   String fl = taMisc::GetFileFmPath(path);
   String wc_res_path = m_cm->GetWcResultsPath();
   String repo_path = wc_res_path.from(svn_repo + "/");
@@ -370,6 +384,15 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row) {
     table.SetVal("Startup Args", "kind",  row);
   else if(fl.endsWith(".wts") || fl.endsWith(".wts.gz"))
     table.SetVal("Weights", "kind",  row);
+
+  if(tag.empty()) {
+    String fnm = taMisc::GetFileFmPath(m_cm->getFilename());
+    if(fnm.contains(".proj"))
+      fnm = fnm.before(".proj", -1);
+    tag = fl.between(fnm, String(".")); // this usually works..
+    if(tag.startsWith('_')) tag = tag.after('_');
+  }
+  table.SetVal(tag, "tag",  row);
   
   if(!taMisc::FileExists(flpath)) {
     table.SetVal("<not local>", "size",  row);
@@ -382,7 +405,7 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row) {
   QDateTime dm = fli.lastModified();
   int64_t sz = fli.size();
 
-  String szstr = GetSizeString(sz, true);
+  String szstr = taMisc::GetSizeString(sz, 3, true); // 3 prec, power of 2
   String dcstr = dc.toString(timestamp_fmt);
   String dmstr = dm.toString(timestamp_fmt);
 
@@ -569,7 +592,7 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   dc = dt.FindMakeCol("run_time", VT_STRING);
   dc->desc = "how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
   dc = dt.FindMakeCol("ram_gb", VT_INT);
-  dc->desc = "how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+  dc->desc = "how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
   dc = dt.FindMakeCol("n_threads", VT_INT);
   dc->desc = "number of parallel threads to use for running";
   dc = dt.FindMakeCol("mpi_nodes", VT_INT);

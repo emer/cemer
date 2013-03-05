@@ -74,8 +74,8 @@ public:
   ////////////////////////////////////////////
   // main user GUI
 
-  virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
-  // #BUTTON #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
+  virtual void  Probe();
+  // #BUTTON probe the cluster you select to update the current status of the cluster, and of all the jobs for this project, and triggers continued updating on status going forward -- a good idea to run this when opening a project before submitting jobs -- this is necessary for example if the cluster script has been restarted since the last job was run on this project -- this will also fill in the job_out, dat_files, and other_files fields for all running jobs -- this information is only automatically recorded for the first few minutes that a job has been running, so it will miss other files generated later
   virtual void  Run();
   // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository -- if cur_search_algo is selected then this will launch a parameter search process -- otherwise it will just run with current parameters
   virtual bool  Update();
@@ -87,9 +87,7 @@ public:
   virtual void  GetData();
   // #BUTTON tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do Update to get data locally after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval) -- then do ImportData on selected jobs to import data into project
   virtual void  ImportData(bool remove_existing = true);
-  // #BUTTON import the data for the selected rows in the jobs_running or jobs_done data table -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
-  virtual void  Probe();
-  // #BUTTON probe the currently-set cluster to update the current status of all the jobs for this project, and triggers continued updating on status going forward -- this is necessary for example if the cluster script has been restarted since the last job was run on this project -- this will also fill in the job_out, dat_files, and other_files fields for all running jobs -- this information is only automatically recorded for the first few minutes that a job has been running, so it will miss other files generated later
+  // #BUTTON import the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
   virtual void  SelectFiles(bool include_data = false);
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
@@ -103,23 +101,24 @@ public:
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done data table, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
   virtual void  RemoveKilledJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
+  virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
+  // #MENU_BUTTON #MENU_ON_Jobs #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
 
   ////////////////////////////////////////////
   // useful helper routines for above
 
   virtual void ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row);
   // #IGNORE actually do the import -- row is row in given table (jobs_running or jobs_done) with info for data files
-  virtual void GetFileInfo(const String& path, DataTable& table, int row);
-  // #IGNORE get file info from given full path to file into file_list formatted data table at given row
+  virtual void GetFileInfo(const String& path, DataTable& table, int row, String& tag);
+  // #IGNORE get file info from given full path to file into file_list formatted data table at given row -- if tag is empty it will attempt to set it from the file name, and set it, also returning it
   virtual void SelectFiles_impl(DataTable& table, int row, bool include_data);
   // #IGNORE add files from row in table to file_list
   virtual void  RemoveAllFilesInList();
   // #IGNORE svn remove all the files listed in file_list
+  void SortClusterInfoTable();
+  // #IGNORE sort the cluster_info table putting user's jobs and summary info at the top
 
   // statics -- should move to a more central location 
-
-  static String GetSizeString(int64_t size_in_bytes, bool power_of_two = true);
-  // returns a human-readable size value for given raw size number in bytes -- e.g., 3.2 GB for a 3.2 gigabyte size value -- if power_of_two then uses 2^n definitions of GB, MB, KB -- else uses standard SI power of ten definitions
 
   static void AddParamsToTable(DataTable* dat, const String& params);
   // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs

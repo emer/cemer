@@ -736,3 +736,58 @@ ClusterManager::showRepoDialog()
   m_cluster_run.UpdateAfterEdit();
   return true;
 }
+
+String
+ClusterManager::ChooseCluster(const String& prompt) {
+  // Make sure there's at least one repository defined.
+  if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
+    taMisc::Error(
+      "Please define at least one cluster and repository in "
+      "preferences/options");
+    return false;
+  }
+
+  taGuiDialog dlg;
+  dlg.win_title = "Choose a Cluster";
+  dlg.prompt = prompt;
+  dlg.width = 200;
+  dlg.height = 100;
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row = "clustRow";
+  int space = 5;
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("clustLbl", widget, row, "label=* Cluster: ;");
+
+  QComboBox *combo1 = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+
+    for (int idx = 0; idx < taMisc::cluster_names.size; ++idx) {
+      combo1->addItem(taMisc::cluster_names[idx].chars());
+    }
+    hbox->addWidget(combo1);
+  }
+  int idx1 = combo1->findText(m_cluster_run.cluster.toQString());
+  if (idx1 >= 0) combo1->setCurrentIndex(idx1);
+  dlg.AddStretch(row);
+  dlg.AddSpace(space, vbox);
+
+  bool modal = true;
+  int drval = dlg.PostDialog(modal);
+  if (drval == 0) {
+    return _nilString;
+  }
+  
+  String rval = combo1->itemText(combo1->currentIndex());
+  return rval;
+}

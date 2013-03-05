@@ -1835,6 +1835,40 @@ String taMisc::LeadingZeros(int num, int len) {
   return lead_zeros + rval;
 }
 
+String taMisc::GetSizeString(int64_t size_in_bytes, int precision, bool power_of_two) {
+  double gb;
+  double mb;
+  double kb;
+  if(power_of_two) {
+    gb = 1073741824.0;
+    mb = 1048576.0;
+    kb = 1024.0;
+  }
+  else {
+    gb = 1000000000.0;
+    mb = 1000000.0;
+    kb = 1000.0;
+  }
+
+  String fmt = "%." + String(precision) + "g";
+  String szstr;
+  if(size_in_bytes > gb) {
+    szstr.convert((double)size_in_bytes / gb, fmt);
+    szstr += " GB";
+  }
+  else if(size_in_bytes > mb) {
+    szstr.convert((double)size_in_bytes / mb, fmt);
+    szstr += " MB";
+  }
+  else if(size_in_bytes > kb) {
+    szstr.convert((double)size_in_bytes / kb, fmt);
+    szstr += " KB";
+  }
+  else 
+    szstr = String(size_in_bytes) + " B";
+  return szstr;
+}
+
 String taMisc::FormatValue(float val, int width, int precision) {
   stringstream ss;
   ss.precision(precision);
