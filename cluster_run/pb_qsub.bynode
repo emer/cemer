@@ -1,0 +1,329 @@
+#!/usr/bin/env python
+from subprocess import call,Popen,PIPE
+import os, sys, time, re, string, math
+import optparse
+import socket
+
+DEBUG = False
+#DEBUG = True
+
+def timeInMinutes( t ):
+    '''convert a walltime specified in d|m|h (e.g. 2d or 12h or 35m) to number of minutes'''
+    #check that it's of format: Nd|m|h (e.g. 2d or 12h or 35m)
+    wt = t.lower()
+    if ( wt.endswith("d") and int(wt[:-1]) > 0 ):
+        time =(24*int(wt[:-1]))*60
+    elif ( wt.endswith("h") and int(wt[:-1]) > 0 ):
+        time =60*(int(wt[:-1]))
+    elif ( wt.endswith("m") and int(wt[:-1]) > 0 ):
+        time =int(wt[:-1])
+    else:
+        time = 0
+    return time
+
+def walltime(time_in_minutes):
+    '''convert time, in number of minutes,to a walltime string (e.g. DD:HH:MM:SS)'''
+    days = 0
+    hours = 0
+    min = 0
+    t_min = time_in_minutes
+
+    # extract days
+    if t_min >= 1440:
+        days = int(math.floor(t_min/1440.0))
+        t_min = t_min - days*1440
+
+    # extract hours
+    if t_min >= 60:
+        hours = int(math.floor(t_min/60.0))
+        t_min = t_min - hours*60
+
+    # remaining minutes
+    min = t_min
+    
+    # generate walltime in string
+    if days < 10:
+        sd = "0" + str(days)
+    else:
+        sd = str(days)
+
+    if hours < 10:
+        hd= "0" + str(hours)
+    else:
+        hd = str(hours)
+
+    if min < 10 :
+        md = "0" + str(min)
+    else:
+        md = str(min)
+
+    time = sd + ":" + hd + ":" + md + ":00"
+    return time
+
+    
+def submitDMBatch():
+    '''Submit dm_qsub batch jobs in the usual way'''
+    numBatches = float(args[0])
+    numBatchesPerJob = float(args[1])
+    
+    if DEBUG:
+        print "Batches requested: %d\n" % numBatches
+        print "Batches per task: %d\n" % numBatchesPerJob
+        print "\n"
+
+    batch=0;
+    for n in range(0,int(numBatches)):
+        cmd = args[2:]
+        print "Batches: %d - %d\n" % (batch, batch + numBatchesPerJob)
+        b_start = "b_start=%d" % (batch)
+        b_end = "b_end=%d" % (batch + numBatchesPerJob)
+        cmd.extend([b_start,b_end])
+        batch += numBatchesPerJob
+        print "Executing: %s\n" % " ".join(cmd)
+        stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+        print stdoutstr
+        time.sleep(1)
+            
+def submitSPBatch():
+    CMDS_FILE = "PB_CMDS.TMP.txt"
+    SCRIPT_FILE = "JOB.TMP.SH"
+
+    # number of threads per command/task (i.e. per sp_qsub)
+    numCoresPerTask = float(args[3])
+    # number of batches requested
+    numBatches = float(args[0])
+    # number of batches per command/task
+    numBatchesPerTask = float(args[1])
+    # number of tasks (i.e. sp_qsub jobs)
+    numTasks = math.ceil(numBatches/numBatchesPerTask)
+    # max tasks that can be run on a node given max_cores and task threads
+    maxTasksPerNode = math.floor(float(MAX_CORES_PER_NODE)/numCoresPerTask)
+    # max tasks that can be running on node pool at once
+    maxTasksConcurrent = float(NUM_NODES) * maxTasksPerNode
+    # number of node iterations to complete all tasks
+    numIters = math.ceil(numTasks / maxTasksConcurrent)
+        
+    # calculate a new walltime equal to the walltime for an sp_qsub 
+    # multiplied by the number of "iterations" to do all sp_qsub tasks
+    t = timeInMinutes(args[4]) # walltime per sp_qsub command in minutes
+    t = int(math.ceil(t * numIters)) # new walltime in minutes
+    wall_time= walltime(t) # new walltime as string DD:HH:MM format
+
+    # write the job script
+    file = open(SCRIPT_FILE,"w")
+    file.write("#!/bin/sh\n")
+    file.write("#PBS -N pb_qsub\n")
+    if ALLOCATION != "":
+        file.write("#PBS -A %s\n" % (ALLOCATION))
+    file.write("#PBS -S /bin/bash\n")
+    file.write("#PBS -j oe\n")
+    file.write("#PBS -l nodes=%d:ppn=%d\n" % (NUM_NODES, MAX_CORES_PER_NODE))
+    file.write("#PBS -q %s\n" % QUEUE)
+    file.write("#PBS -l walltime=%s\n" % wall_time)
+    file.write("\n")
+    file.write("cd $PBS_O_WORKDIR\n")
+    file.write(". /curc/tools/utils/dkinit\n")
+    file.write("reuse /projects/oreillyr/bin/emergent\n")
+    file.write("reuse LoadBalance\n")
+    file.write("\n")
+    # insert pb commands
+    batch=0;
+    file.write("# make a tmp file with batch commands\n")
+    file.write("# since load_balance only reads from file\n")
+    file.write("cat > $PBS_JOBID.txt << PB_CMDS_LIST\n")
+    for n in range(0,int(numTasks)):
+        pb_cmd = subArgs[2:]
+        b_start = "b_start=%d" % (batch)
+        b_end = "b_end=%d" % (batch + numBatchesPerTask)
+        pb_cmd.extend([b_start,b_end])
+        batch += numBatchesPerTask    
+        file.write("%s\n" % " ".join(pb_cmd))
+        if DEBUG:
+            print "%s\n" % " ".join(pb_cmd)
+    file.write("PB_CMDS_LIST\n")
+    file.write("\n")
+    file.write("mpirun load_balance -f $PBS_JOBID.txt\n")
+    file.write("\n")
+    file.write("# cleanup tmp file\n")
+    file.write("rm $PBS_JOBID.txt\n")
+    file.close()        
+    
+    if DEBUG:
+        print "#"  * 50
+        print "Max cores on Janus: %d" % MAX_CORES_PER_NODE
+        print "Num nodes requested: %d" % NUM_NODES
+        print "Cores per task (accounting for threads): %d" % numCoresPerTask
+        print "Batches requested: %d" % numBatches
+        print "Batches per task: %d" % numBatchesPerTask
+        print "Total tasks: %d" % numTasks
+        print "Max tasks per node: %d" % maxTasksPerNode
+        print "Max iterations: %d" %numIters
+        print "#" * 50        
+
+    # submit the job
+    submitJob(SCRIPT_FILE, CMDS_FILE)
+
+def submitJob(script_file, cmds_file):
+    ''' submit the job to batch the scheduler'''
+    # make the script executable
+    cmd = ['chmod','a+x', script_file]
+    if DEBUG:
+        print cmd
+    Popen(cmd)
+    
+    # submit the job with a user hold...so we can make changes based on jobid
+    cmd = ['qsub', '-h', script_file]
+    if DEBUG:
+        print cmd
+    stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+
+    # grab the jobid
+    jobID = re.search('([0-9]+)', stdoutstr).group()
+    #jobID = "123456"
+
+    # rename the job script file
+    cmd = ['mv',script_file,'JOB.'+ jobID + '.sh']
+    if DEBUG:
+        print cmd
+    Popen(cmd)
+
+    # rename the job output file and job name
+    cmd = ['qalter', '-o', 'JOB.'+ jobID + '.out', '-N', 'JOB.' + jobID + '.sh', jobID]
+    if DEBUG:
+        print cmd
+    Popen(cmd)
+
+    # wait for scheduler database to settle...this is REQUIRED or Torque will crash!
+    time.sleep(5)
+
+    # release the user hold
+    cmd = ['qrls', jobID]
+    if DEBUG:
+        print cmd
+    Popen(cmd)
+    print "created: JOB.%s.sh" % (jobID)
+
+    
+            
+
+def usage():
+            return '''usage:
+pb_qsub.janus [--node_pool nodes] <bats> <perjob> <cmd>
+     <nodes>  number of nodes in the node pool to use to run batches, default = 2 (for sp_qsub jobs only) 
+     <bats>   is number of batches total to run
+     <perjob> is number of batches per job (per processor)
+     <cmd>    is command to start job: MUST INCLUDE sp_qsub_q or dm_qsub_q!
+              and MUST USE a special startup program that processes args from pb_qsub!
+              see LeabraStartup_pb as example
+              you will likely have to modify this to suit your project.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+NOTE:         In this version of pb_qsub, for sp_qsub batch commands, a pool of nodes 
+              is requested and batch commands are issued to the node(s) of the node 
+              pool until all cores are occupied. When cores free up, futher batch 
+              commands are issued until all batch commands have been issued. To run 
+              more batches in parallel (i.e. at the same time) request a larger node 
+              pool using the --node_pool option to pb_qsub (note this may result in 
+              a longer job queued time). 
+
+              Array job tasks (specified in sp_qsub with -t 1-<tasks>) ARE NOT SUPPORTED 
+              in this version of pb_qsub.
+
+              THIS VERSION OF PB_QSUB ONLY RUNS IN THE RC ENVIRONMENT. NOT ON DREAM!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+See also:     https://www.rc.colorado.edu/tutorials/LoadBalance
+
+Examples:
+pb_qsub.janus 10 2 sp_qsub_q 1 30m emergent -nogui -ni -p my.proj epochs=100
+              (runs 10 batches total, 2 per job, across 5 jobs in
+              parallel (up to number of cores/nodes available in node pool),
+              each job runs on one proc and takes roughly 30
+              minutes, note that you only specify 100 epochs NOT the
+              batches!  using the _q version to start jobs quickly)
+pb_qsub.janus 5 1 dm_qsub_q 2 1d emergent_mpi -nogui -p my.proj epochs=100
+              (runs 5 batches, 1 per job, 5 jobs in parallel and each
+              job uses 2 processors for dmem/mpi, taking 24 hrs (1 day)
+'''
+    
+if __name__ == "__main__" :
+    
+    if len(sys.argv) < 4:
+        print "%s\n" % usage()
+        sys.exit(1)
+
+    # make sure we're not on Dream
+    if socket.gethostname() == "dream" or socket.gethostname() == "dream.colorado.edu":
+        print "%s only supported on Janus\n" % os.path.basename(sys.argv[0])
+        sys.exit(1)
+
+    # make sure first two arguments are valid 
+    nBats = re.search('([0-9]+)',sys.argv[1])
+    perJob = re.search('([0-9]+])',sys.argv[2])
+    if type(nBats) == None or type(perJob) == None:
+        print "%s\n" % usage()
+        sys.exit(1)
+
+    # pb_qsub command line parser
+    # batch_nodes option let's user specify size of node pool to use for running batch tasks'
+    p = optparse.OptionParser()
+    p.add_option("--node_pool", action="store", default='2')
+    p.disable_interspersed_args()
+    opts, args = p.parse_args()
+
+    # dm_qsub/sp_qsub sub-command line parser
+    # we need some of these values, so we need to parse to have them
+    # subOpts will contain dm_qsub or sp_qsub program option values
+    # subArgs contains dm_qsub or sp_qsub command line arguments
+    p = optparse.OptionParser()
+    p.disable_interspersed_args()
+    p.add_option("--jobtype", action="store", help="specify job type (e.g. dm or sp)", default='')
+    p.add_option("--allocation","-a","-A", action="store", help="specify allocation name", default=None)
+    p.add_option("--queue","-q", action="store", help="specify queue name", default=None)
+    p.add_option("--nopacking", action="store_true", help="disables launching  multiple MPI processes per node", default=False)
+    p.add_option("--memory","-m", action="store", help="specify memory in mb or gb", default=None)
+    p.add_option("--quick", action="store_true", help="enables quick/quiet output", default=False)
+    p.add_option("--verbose", "-v", action="store_true", help="enables verbose output", default=False)
+    p.add_option("--threaded", action="store_true", help="enables proper accounting for threaded programs", default=False)
+    p.add_option("--tasks", "-t", action="store", help="specify array job tasks", default=None)
+    p.add_option("--throttle", "-r", action="store", help="specify throttle for array job tasks", default=None)
+    subOpts, subArgs = p.parse_args(args[3:])
+
+    if DEBUG:
+        print "OPTS: %s" % opts
+        print "ARGS: %s" % args
+        print "SUBOPTS: %s" % subOpts
+        print "SUBARGS: %s" % subArgs
+
+    
+        
+    # set key GLOBAL variables
+    MAX_CORES_PER_NODE = 12  # on Janus
+    NUM_BATS = args[0]
+    BATS_PER_NODE = args[1]
+    NUM_NODES = int(opts.node_pool)
+    NUM_CORES_PER_JOB = subArgs[0]
+    JOB_TYPE = args[2]
+    JOB_CMD_LINE = args[2:]
+    WALLTIME = subArgs[1]
+    QUEUE = "janus-small"
+    if subOpts.queue:
+        QUEUE = subOpts.queue
+    ALLOCATION = ""
+    if subOpts.allocation:
+       ALLOCATION = subOpts.allocation
+
+
+    # handle sp_qsub differently than dm_qsub
+    m = re.search('(sp_qsub)', JOB_TYPE)
+    if type(m) != type(None):
+        # do sp_qsub
+        submitSPBatch()
+    else:
+        # do dm_qsub
+        submitDMBatch()
+    
+   # save command line to file
+    file = open("pb_last_cmd","w")
+    file.write("%s\n" % " ".join(sys.argv) )
+    file.close()
