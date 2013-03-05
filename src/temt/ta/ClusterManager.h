@@ -47,6 +47,8 @@ public:
 
   void commitFiles(const String &commit_msg);
   // commit current working copy files
+  void updateWorkingCopy();
+  // update current working copy files
 
   String GetWcProjPath() const;
   // full path to cluster_svn_path/svn_repo/clustername/username/projname/ -- root of the svn repo for this project
@@ -82,7 +84,6 @@ protected:
 
   bool showRepoDialog();
   void setPaths();
-  void updateWorkingCopy();
   void runSearchAlgo();
   void initClusterInfoTable();
   bool loadTable(const String &filename, DataTable &table);

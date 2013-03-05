@@ -281,8 +281,6 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
   String tag = table.GetVal("tag", row).toString();
   String dat_files = table.GetVal("dat_files", row).toString();
   String other_files = table.GetVal("other_files", row).toString();
-  if(TestError(other_files.empty(), "SelectFiles", "other_files is empty for tag:", tag))
-    return;
   {                             // other files
     String_Array files;
     files.FmDelimString(other_files, " ");
@@ -443,6 +441,10 @@ void ClusterRun::RemoveJobs() {
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
+    // avoid conflict in writing this table -- can be written by host so we need to 
+    // get in and out quickly -- grab current now -- won't affect selection!
+    m_cm->UpdateTables();
+
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
       SelectFiles_impl(jobs_done, row, true); // include data
@@ -458,6 +460,9 @@ void ClusterRun::RemoveJobs() {
 
 void ClusterRun::RemoveKilledJobs() {
   initClusterManager(); // ensure it has been created.
+  // avoid conflict in writing this table -- can be written by host so we need to 
+  // get in and out quickly -- grab current now -- won't affect selection!
+  m_cm->UpdateTables();
 
   file_list.ResetData();
   for (int row = jobs_done.rows-1; row >= 0; --row) {

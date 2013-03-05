@@ -83,6 +83,13 @@ debug = False
 # how time is formatted in emergent
 time_format = "%Y_%m_%d_%H_%M_%S"
 
+# how many total lines to get from job_out file:
+job_out_lines_total = 40
+# how many to get from the top of the file:
+job_out_lines_top = 20
+# how many total bytes to get in job_out file:
+job_out_bytes_total = 4096
+
 # status docs:
 # The client sets this field in the jobs_submit table to:
 #   REQUESTED to request the job be submitted.
@@ -214,8 +221,8 @@ class ClusterConfig(object):
             if choice > 0:
                 return repos[int(choice) - 1]
 
-        repo_name = raw_input('\nEnter name of new repository: ')
-        repo_url  = raw_input(  'Enter URL of new repository:  ')
+        repo_name = raw_input('\nEnter name of svn repository (must match exactly one used in emergent preferences): ')
+        repo_url  = raw_input(  'Enter URL of new repository (must match corresponding svn_url in emergent preferences):  ')
         self.config.set(self.repo_section, repo_name, repo_url)
         self._write_config()
         return (repo_name, repo_url)
@@ -1112,15 +1119,13 @@ class SubversionPoller(object):
             except:
                 pass
             nlines = len(lines)
-            if nlines > 12:
-                if nlines > 18:
-                    nlines = 18
-                fmend = 11 - nlines
-                job_out = ''.join(lines[:11]) + "...<truncated>...\n" + ''.join(lines[fmend:])
-            else:
+            if nlines <= job_out_lines_total:
                 job_out = ''.join(lines)
-        if len(job_out) > 4096:
-            job_out = job_out[0:4096]
+            else:
+                fmend = job_out_lines_top - job_out_lines_total
+                job_out = ''.join(lines[:job_out_lines_top-1]) + "=== ...<truncated>... === \n" + ''.join(lines[fmend:])
+        if len(job_out) > job_out_bytes_total:
+            job_out = job_out[0:job_out_bytes_total]
         # print "from out file: %s got job out: %s" % (job_out_file, job_out)
         return job_out
 
