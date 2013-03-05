@@ -3,86 +3,15 @@ import os, re, subprocess, sys, time, traceback, ConfigParser, socket
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
-sys.path.append('/projects/oreillyr/python/site-packages')
-import etree.ElementTree as ET
-#import xml.etree.ElementTree as ET
-
-#############################################################################
-# STANDARD USER CONFIGURABLE PARAMETERS
-
-# full path to single processor job submission script
-# STRONGLY recommend using the pyqsub based commands avail in 
-# emergent/cluster_run/ directory (where this script lives as well)
-#
-# the sp_qsub_cmd takes args of <n_threads> <run_time> <full_command>
-sp_qsub_cmd = 'sp_qsub_q'
-# can add an automatic -q <queue> arg here to specify a queue
-# in general it is best to have a different script for each queue
-# because the emergent preferences have relevant settings for them
-sp_qsub_args = "-q janus-short"
-
-# the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
-dm_qsub_cmd = 'dm_qsub_q'
-sp_qsub_args = "-q janus-short"
-
-# it is essential that these scripts return the cluster job number in the format
-# created: JOB.<jobid>.sh -- we parse that return val to get the jobid to monitor
-# further (you can of course do this in some other way by editing code below)
-
-# qstat-like command -- for quering a specific job_no 
-# sge = qstat -j <job_no>
-# moab = checkjob is better, but otherwise qstat <job_no>
-# job_no will automatically be appended to end of command
-qstat_cmd = "qstat"
-qstat_args = ""  # here is where you put the -j if needed
-
-# parser for qstat output -- different qstat output sufficiently diff
-# options are sgeqstat, moabqstat
-qstat_parser = "moabqstat"
-
-# regexp for output of qstat that tells you that the job is running
-qstat_running_re = r"^usage"
-# use this for "split" command to get misc running info
-qstat_running_info_split = "usage"
-# regexp for output of qstat that tells you that the job is still queued
-qstat_queued_re = r"^scheduling info:"
-# use this for "split" command to get misc queued info
-qstat_queued_info_split = "scheduling info:"
-
-# qdel-like command -- for killing a job
-# killjob is a special command that also deletes the JOB.* files -- see pykilljob
-# be sure to use the _f version that does not prompt!
-# in emergent/cluster_run directory
-# job_no will automatically be appended to end of command
-qdel_cmd = "killjob_f"
-qdel_args = ""
-
-# showq-like command -- this should return overall status of all users jobs
-# and general info on status of cluster
-# moab = showq 
-# pyshowq for SGE (checked into emergent/cluster_run showq)
-showq_cmd = "showq"
-showq_args = ""
-# parser function to use for showq output -- complex enough that this is most
-# efficient way to do it
-# options are pyshowq, moabshowq
-showq_parser = "moabshowq"
-
-# number of runtime minutes during which the script will continue to update the 
-# output info from the job (job_out, dat_files)
-job_update_window = 3
-
-# set to true for more debugging info
-#debug = False
-debug = True
-
-# END OF STANDARD USER CONFIGURABLE PARAMETERS
-#############################################################################
+import xml.etree.ElementTree as ET
+# if you need to install locally, non-root, this kind of thing should work:
+# put it in the wrapper function
+# sys.path.append('/projects/oreillyr/python/site-packages')
+# import etree.ElementTree as ET
 
 # this is NOT user configurable but is a global setting that should agree with 
 # how time is formatted in emergent
 time_format = "%Y_%m_%d_%H_%M_%S"
-
 
 # status docs:
 # The client sets this field in the jobs_submit table to:
@@ -98,7 +27,6 @@ time_format = "%Y_%m_%d_%H_%M_%S"
 #   RUNNING   when the job has begun.
 #   DONE      if the job completed successfully.
 #   KILLED    if the job was cancelled.
-
 
 def make_dir(dir):
     try: os.makedirs(dir)
@@ -134,6 +62,7 @@ class ClusterConfig(object):
 
     def _write_config(self):
         # Write any changes (username, new repo) to the config file.
+        # with syntax not avail in python 2.4.. -- use try/except -- never fails anyway
         #        with open(self.config_filename, 'wb') as f:
         #            self.config.write(f)
         try:
@@ -961,12 +890,12 @@ class SubversionPoller(object):
 
 
     def _query_job_queue(self, row, status, force_updt = False):
-        if qstat_parser == "moabqstat":
-            self._query_job_queue_moabqstat(row, status, force_updt)
-        elif qstat_parser == "sgeqstat":
-            self._query_job_queue_sgeqstat(row, status, force_updt)
+        if qstat_parser == "moab":
+            self._query_job_queue_moab(row, status, force_updt)
+        elif qstat_parser == "sge":
+            self._query_job_queue_sge(row, status, force_updt)
 
-    def _query_job_queue_moabqstat(self, row, status, force_updt = False):
+    def _query_job_queue_moab(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
         tag = self.jobs_running.get_val(row, "tag")
         if qstat_args != '':
@@ -1029,7 +958,7 @@ class SubversionPoller(object):
                 self._job_is_done(row, 'KILLED')
         # done
 
-    def _query_job_queue_sgeqstat(self, row, status, force_updt = False):
+    def _query_job_queue_sge(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
         tag = self.jobs_running.get_val(row, "tag")
         if qstat_args != '':
@@ -1037,6 +966,15 @@ class SubversionPoller(object):
         else:
             cmd = [qstat_cmd, job_no]
         q_out = check_output(cmd)
+
+        # regexp for output of qstat that tells you that the job is running
+        qstat_running_re = r"^usage"
+        # use this for "split" command to get misc running info
+        qstat_running_info_split = "usage"
+        # regexp for output of qstat that tells you that the job is still queued
+        qstat_queued_re = r"^scheduling info:"
+        # use this for "split" command to get misc queued info
+        qstat_queued_info_split = "scheduling info:"
 
         re_running = re.compile(qstat_running_re)
         re_queued = re.compile(qstat_queued_re)
@@ -1193,8 +1131,8 @@ class SubversionPoller(object):
     def _get_cluster_info(self):
         if showq_parser == 'pyshowq':
             self._get_cluster_info_pyshowq()
-        elif showq_parser == 'moabshowq':
-            self._get_cluster_info_moabshowq()
+        elif showq_parser == 'moab':
+            self._get_cluster_info_moab()
 
     def _get_cluster_info_pyshowq(self):
         if showq_args != '':
@@ -1254,7 +1192,7 @@ class SubversionPoller(object):
             self.cluster_info.write(self.cluster_info_file)
         # done
 
-    def _get_cluster_info_moabshowq(self):
+    def _get_cluster_info_moab(self):
         if showq_args != '':
             cmd = [showq_cmd, showq_args]
         else:
@@ -1384,12 +1322,3 @@ def main_background():
     print '\nStopping background run at %s' % datetime.now()
 
 #############################################################################
-
-if __name__ == '__main__':
-    try:
-        if len(sys.argv) == 1:
-            main()
-        else:
-            main_background()
-    except KeyboardInterrupt:
-        print '\n\nQuitting at user request (Ctrl-C).'
