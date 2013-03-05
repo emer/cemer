@@ -756,8 +756,9 @@ class SubversionPoller(object):
         for row in reversed(range(self.jobs_done.n_rows())):
             self._update_done_job(row, force_updt)
 
-        # write the new jobs running status
+        # write the new jobs status
         self.jobs_running.write(self.cur_running_file)
+        self.jobs_done.write(self.cur_done_file)
 
     # setup current table filenames based on any given filename in status
     def _get_cur_jobs_files(self, filename):
