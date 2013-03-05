@@ -85,6 +85,11 @@ public:
   
   float_Matrix  targ_lens; // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
   float_Matrix  forces; // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
+  float_Matrix  max_lens; // #EXPERT maximum muscle lengths, initialized by ConfigArm, used to normalize lengths
+  float_Matrix  min_lens;  // #EXPERT minimum muscle lengths, initialized by ConfigArm 
+  float_Matrix  rest_lens;  // #EXPERT resting muscle lengths, initialized by ConfigArm 
+  float_Matrix  norm_lengths; // #READ_ONLY #SHOW normalized muscle lengths
+  float_Matrix  spans;	// #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
 
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
@@ -112,7 +117,7 @@ public:
   // #EXPERT Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
 
   virtual bool UpdateIPs();
-  // #BUTTON Setting the muscle IPs to the values in the xxxIP matrices
+  // #BUTTON Set the muscle IPs to the values in the rotated xxxIP matrices, and update norm_lengths
 
   virtual bool Lengths(float_Matrix &Len);
   // Put the current lengths of all muscles in the given matrix
@@ -125,6 +130,9 @@ public:
 
   virtual bool VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs);
   // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. This will calculate the activation (multiplying both errors by the gain), calculate (and store) the resulting forces, and apply them. It does not take a step of the VEWorld, and does not udpate the muscle insertion points.
+
+  virtual bool AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma, float delta);
+  // #BUTTON Given the four angles describing arm position, calculate the muscle lengths at that position
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc
