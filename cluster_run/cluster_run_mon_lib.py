@@ -884,7 +884,8 @@ class SubversionPoller(object):
         # if pb, put a wrapper on it!
         if pb_batches > 0 and pb_nodes > 0:
             cmdsub = [pb_qsub_cmd, "--node_pool", str(pb_nodes), str(pb_batches), "1"] + cmdsub
-            print 'command: %s' % cmdsub
+            if debug:
+                print 'command: %s' % cmdsub
 
         result = check_output(cmdsub)
         # print "result: %s" % result
@@ -959,7 +960,7 @@ class SubversionPoller(object):
             if debug:
                 print "tag: %s has no dat files (yet)" % tag
             return
-        dats = dat_files.split(' ')
+        dats = dat_files.split()
         resdir = self.cur_proj_root + "/results/"
         for df in dats:
             fdf = resdir + df
