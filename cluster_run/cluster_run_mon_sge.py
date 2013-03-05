@@ -64,8 +64,8 @@ showq_parser = "pyshowq"
 job_update_window = 3
 
 # set to true for more debugging info
-#debug = False
-debug = True
+debug = False
+#debug = True
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################

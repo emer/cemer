@@ -4,11 +4,6 @@ from cluster_run_mon_lib import *
 # (more simply) just copied over to same directory where this runs
 # suggest putting both in ~/cluster_run_<cluster_name>
 
-# this is a workaround for python 2.4 or earlier to get ET package
-# see cluster_run_mon_lib file for more info
-sys.path.append('/projects/oreillyr/python/site-packages')
-import etree.ElementTree as ET
-
 #############################################################################
 # STANDARD USER CONFIGURABLE PARAMETERS
 
@@ -71,8 +66,8 @@ showq_parser = "moab"
 job_update_window = 3
 
 # set to true for more debugging info
-#debug = False
-debug = True
+debug = False
+#debug = True
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################
