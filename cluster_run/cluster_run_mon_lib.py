@@ -670,13 +670,9 @@ class SubversionPoller(object):
                 self._process_new_submission(filename)
 
             # Remaining steps are done on *all* running files seen so far.
+            # 2. Query the status of all running jobs
             for filename in self.all_running_files:
-                # 2. Query the status of submitted jobs.  Any cancellations
-                #    or new submissions have already been made, so we won't
-                #    query cancelled jobs (or when we do, their status will
-                #    be "KILLED") and so we get (possibly) updated status
-                #    of jobs just submitted.
-                self._query_submitted_jobs(filename, False)  # don't force updates
+                self._query_running_jobs(filename, False)  # don't force updates
 
             # anytime we issue a command or the status of a job changes 
             if self.got_submit or self.status_change:
@@ -728,12 +724,15 @@ class SubversionPoller(object):
             print 'Continuing to poll the Subversion server ' \
                   '(hit Ctrl-C to quit) ...'
 
-    def _query_submitted_jobs(self, filename, force_updt = False):
+    def _query_running_jobs(self, filename, force_updt = False):
         self._get_cur_jobs_files(filename) # get all the file names for this dir
         # Load running into current
         self.jobs_running.load_from_file(filename)
         self.cur_running_file = filename
-
+        # Load done into current
+        self._init_jobs_done()
+        
+        # first go over the running jobs
         # go backward because we can delete from running.. also newest to oldest
         for row in reversed(range(self.jobs_running.n_rows())):
             status = self.jobs_running.get_val(row, "status")
@@ -752,6 +751,10 @@ class SubversionPoller(object):
                     self._move_job_to_done(row)
             elif status == 'DONE' or status == 'KILLED':
                 self._move_job_to_done(row)
+
+        # next, go over the done jobs, just to get some job out info if still in window
+        for row in reversed(range(self.jobs_done.n_rows())):
+            self._update_done_job(row, force_updt)
 
         # write the new jobs running status
         self.jobs_running.write(self.cur_running_file)
@@ -782,23 +785,21 @@ class SubversionPoller(object):
 
     # initialize the jobs_running table -- either load from file or init from submit
     def _init_jobs_running(self):
-        if self.jobs_running.n_cols() == 0:
-            if os.path.exists(self.cur_running_file):
-                if debug:
-                    print "loading previous running file: %s" % self.cur_running_file
-                self.jobs_running.load_from_file(self.cur_running_file)
-            else:
-                self.jobs_running.copy_cols(self.jobs_submit)
+        if os.path.exists(self.cur_running_file):
+            if debug:
+                print "loading existing running file: %s" % self.cur_running_file
+            self.jobs_running.load_from_file(self.cur_running_file)
+        else:
+            self.jobs_running.copy_cols(self.jobs_submit)
         
     # initialize the jobs_done table -- either load from file or init from running
     def _init_jobs_done(self):
-        if self.jobs_done.n_cols() == 0:
-            if os.path.exists(self.cur_done_file):
-                if debug:
-                    print "loading previous done file: %s" % self.cur_done_file
-                self.jobs_done.load_from_file(self.cur_done_file)
-            else:
-                self.jobs_done.copy_cols(self.jobs_running)
+        if os.path.exists(self.cur_done_file):
+            if debug:
+                print "loading existing done file: %s" % self.cur_done_file
+            self.jobs_done.load_from_file(self.cur_done_file)
+        else:
+            self.jobs_done.copy_cols(self.jobs_running)
 
     def _start_or_cancel_jobs(self, filename, rev):
         # Load the new 'submit' table from the working copy.
@@ -824,7 +825,7 @@ class SubversionPoller(object):
                 self._add_cur_running_to_list() # monitor us going forward
             elif status == 'PROBE':
                 self._add_cur_running_to_list()  # monitor us going forward
-                self._query_submitted_jobs(self.cur_running_file, True)  # True = force updt
+                self._query_running_jobs(self.cur_running_file, True)  # True = force updt
                 if debug:
                     print "probed for project root %s" % self.cur_proj_root
 
@@ -1164,6 +1165,25 @@ class SubversionPoller(object):
             all_files = self._get_dat_files(tag)
             self.jobs_running.set_val(row, "dat_files", all_files[0])
             self.jobs_running.set_val(row, "other_files", all_files[1])
+
+    def _update_done_job(self, row, force_updt = False):
+        # first load job_out info
+        end_time = self.jobs_done.get_val(row, "end_time")
+        job_out_file = self.jobs_done.get_val(row, "job_out_file")
+        tag = self.jobs_done.get_val(row, "tag")
+
+        eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
+        deadtime = datetime.now() - eddt
+        
+        if force_updt or deadtime.seconds < job_update_window * 60:
+            # print "job %s running for %d seconds -- updating" % (tag, deadtime.seconds)
+            job_out = self._get_job_out(job_out_file)
+            if len(job_out) > 0:
+                self.jobs_done.set_val(row, "job_out", job_out)
+
+            all_files = self._get_dat_files(tag)
+            self.jobs_done.set_val(row, "dat_files", all_files[0])
+            self.jobs_done.set_val(row, "other_files", all_files[1])
 
     def _move_job_to_done(self, row):
         self.status_change = True
