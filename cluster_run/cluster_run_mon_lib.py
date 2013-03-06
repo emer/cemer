@@ -557,18 +557,15 @@ class DataTable(object):
     # input: path = string, path to the .dat file
     def load_from_file(self, path):
         self.reset_data()
-        # with open(path, 'r') as f:
-        #    lines = f.readlines()
-        #    header = lines[0]
         try:
             f = open(path, 'r')
             lines = f.readlines()
             header = lines[0]
+            rows = lines[1:]
+            self._load_header(header)
+            self._load_data(rows)
         except:
             pass
-        rows = lines[1:]
-        self._load_header(header)
-        self._load_data(rows)
         
     # writes the data table into a .dat file
     # input: path = string, path of the destination .dat file
@@ -1133,14 +1130,14 @@ class SubversionPoller(object):
             try:
                 f = open(job_out_file, 'r')
                 lines = f.readlines()
+                nlines = len(lines)
+                if nlines <= job_out_lines_total:
+                    job_out = ''.join(lines)
+                else:
+                    fmend = job_out_lines_top - job_out_lines_total
+                    job_out = ''.join(lines[:job_out_lines_top-1]) + "=== ...<truncated>... === \n" + ''.join(lines[fmend:])
             except:
                 pass
-            nlines = len(lines)
-            if nlines <= job_out_lines_total:
-                job_out = ''.join(lines)
-            else:
-                fmend = job_out_lines_top - job_out_lines_total
-                job_out = ''.join(lines[:job_out_lines_top-1]) + "=== ...<truncated>... === \n" + ''.join(lines[fmend:])
         if len(job_out) > job_out_bytes_total:
             job_out = job_out[0:job_out_bytes_total]
         # print "from out file: %s got job out: %s" % (job_out_file, job_out)
