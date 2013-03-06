@@ -15,7 +15,7 @@
 
 #include "EditMbrItem.h"
 #include <BuiltinTypeDefs>
-
+#include <DynEnum>
 
 void EditMbrItem::Initialize() {
   mbr = NULL;
@@ -72,6 +72,12 @@ Variant EditMbrItem::PSearchCurVal() {
 
 String EditMbrItem::CurValAsString() {
   if(!mbr) return _nilString;
+  
+  if(base && base->InheritsFrom(&TA_DynEnum)) {
+    String nmval = ((DynEnum*)base)->NameVal();
+    if(nmval.nonempty())
+      return nmval;             // special case for program enum -- use string
+  }
   return mbr->type->GetValStr(mbr->GetOff(base), NULL, mbr, TypeDef::SC_STREAMING, true);
 }
 
