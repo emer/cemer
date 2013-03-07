@@ -23,8 +23,10 @@
 #include <VEBody>
 #include <float_Matrix>
 #include <VEMuscle_List>
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
+// class DataTable;
 
 
 taTypeDef_Of(VEArm);
@@ -132,7 +134,10 @@ public:
   // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. This will calculate the activation (multiplying both errors by the gain), calculate (and store) the resulting forces, and apply them. It does not take a step of the VEWorld, and does not udpate the muscle insertion points.
 
   virtual bool AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma, float delta);
-  // #BUTTON Given the four angles describing arm position, calculate the muscle lengths at that position
+  // Given the four angles describing arm position, calculate the muscle lengths at that position
+
+  virtual bool NormLengthsToTable(DataTable len_table);
+  // #BUTTON Write the normalized muscle lengths into a datatable
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc

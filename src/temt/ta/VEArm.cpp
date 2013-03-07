@@ -16,6 +16,8 @@
 #include "VEArm.h"
 #include <VEWorld>
 #include <taMath_float>
+#include <DataTable>
+#include <DataCol>
 
 #include <VELinearMuscle>
 #include <VEHillMuscle>
@@ -1518,11 +1520,11 @@ bool VEArm::AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma
   // rotating the humerus' insertion points
   float_Matrix RotArmIP;
   taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT);
-
+/*
   String out;
   RotArmIP.Print(out);
   taMisc::Info("rotated ArmIP:\n", out);
-
+*/
 // rotating the ulna's insertion points
   float UlnaShift_f[9] = {0.0f}; // initializes all zeros
   float T_elbowRot_f[9] = {0.0f};
@@ -1628,11 +1630,21 @@ bool VEArm::AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma
     c1.z = RotArmIP.FastElAsFloat(2,7+k+i) - RotFarmIP.FastElAsFloat(2,i);
     Len.Set(c1.Mag(),8+k+i);
   }
-
+/*
   String trLout;
   Len.Print(trLout);
   taMisc::Info("resulting lengths: ", trLout, "\n");
- 
+*/
+  return true;
+}
+
+bool VEArm::NormLengthsToTable(DataTable len_table) {
+
+  DataCol *DC;  
+  char col_name[] = "lengths"; 
+  DC = len_table.FindMakeColMatrix(col_name, VT_FLOAT,2,1,16);
+  DC->SetMatrixVal(norm_lengths.FastEl(0),0,0,0);
+
   return true;
 }
 
