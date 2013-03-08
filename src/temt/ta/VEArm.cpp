@@ -1638,13 +1638,15 @@ bool VEArm::AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma
   return true;
 }
 
-bool VEArm::NormLengthsToTable(DataTable len_table) {
-
-  DataCol *DC;  
+bool VEArm::NormLengthsToTable(DataTable* len_table) {
   char col_name[] = "lengths"; 
-  DC = len_table.FindMakeColMatrix(col_name, VT_FLOAT,2,1,16);
-  DC->SetMatrixVal(norm_lengths.FastEl(0),0,0,0);
-
+  DataCol* dc = len_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  if(len_table->rows == 0)       // empty table, make sure we have at least 1 row
+    dc->EnforceRows(1);
+  for(int i=0; i<n_musc; i++) {
+    dc->SetMatrixVal(norm_lengths.SafeEl(i),-1, // -1 = last row
+                     0,0,0,i);
+  }
   return true;
 }
 

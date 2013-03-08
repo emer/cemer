@@ -93,6 +93,7 @@ protected:
   bool loadTable(const String &filename, DataTable &table);
   void saveSubmitTable();
   void saveCopyOfProject();
+  void saveExtraFiles();
   void saveDoneTable();
   void deleteFile(const String &filename);
 

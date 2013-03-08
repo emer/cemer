@@ -114,6 +114,7 @@ ClusterManager::BeginSearch(bool prompt_user)
 
     saveSubmitTable();
     saveCopyOfProject();
+    saveExtraFiles();
     commitFiles("Ready to run on cluster: " + m_cluster_run.notes);
     return true;
   }
@@ -563,6 +564,23 @@ ClusterManager::saveCopyOfProject()
   deleteFile(m_proj_copy_filename);
   QFile::copy(m_proj->file_name, m_proj_copy_filename);
   m_svn_client->Add(m_proj_copy_filename.chars());
+}
+
+void
+ClusterManager::saveExtraFiles()
+{
+  String_Array files;
+  files.FmDelimString(m_cluster_run.extra_files);
+  for(int i=0; i < files.size; i++) {
+    // Copy the project from its local path to our cluster working copy.
+    // Delete first, since QFile::copy() won't overwrite.
+    String srcfn = files[i];
+    String fnm = taMisc::GetFileFmPath(srcfn); // just get the file name
+    String wc_fnm = m_wc_submit_path + "/" + fnm;
+    deleteFile(wc_fnm);
+    QFile::copy(srcfn, wc_fnm);
+    m_svn_client->Add(wc_fnm.chars());
+  }
 }
 
 void

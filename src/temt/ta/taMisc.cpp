@@ -54,6 +54,7 @@ taTypeDef_Of(EnumDef);
 #include "ta_type_constr.h"
 
 #include <ViewColor_List> 
+#include <QFile>
 #include <QDir>
 #include <QPointer>
 #include <QMainWindow>
@@ -2325,6 +2326,14 @@ bool taMisc::MakeDir(const String& fn) {
 bool taMisc::MakePath(const String& fn) {
   QDir d;
   return d.mkpath(fn);
+}
+
+bool taMisc::MakeSymLink(const String& file_name, const String& link_name) {
+  String fnm = file_name;
+  if(fnm.startsWith('~')) {
+    fnm = GetHomePath() + fnm.after('~');
+  }
+  return QFile::link(fnm, link_name);
 }
 
 bool taMisc::RemoveDir(const String& fn) {

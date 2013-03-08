@@ -136,8 +136,8 @@ public:
   virtual bool AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma, float delta);
   // Given the four angles describing arm position, calculate the muscle lengths at that position
 
-  virtual bool NormLengthsToTable(DataTable len_table);
-  // #BUTTON Write the normalized muscle lengths into a datatable
+  virtual bool NormLengthsToTable(DataTable* len_table);
+  // #BUTTON Write the normalized muscle lengths into a datatable, in column named "lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc

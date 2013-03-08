@@ -51,6 +51,7 @@ public:
 
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
+  String        extra_files;    // space separated list of extra files to check into the repository along with this project
   String        svn_repo;       // svn repository to use for file exchange with the cluster -- this should be the name of a svn_repo as listed in the Preferences / Options settings (when you Run a job you can pick from a dropdown list)
   String        repo_url;       // #READ_ONLY #SHOW svn repository url to use for file exchange with the cluster -- this is looked up from svn_repo name from options listed in the Preferences / Options settings
   String        cluster;        // name of cluster to run job on -- see Preferences / Options settings for list of valid names  (when you Run a job you can pick from a dropdown list)
