@@ -37,10 +37,21 @@ class TA_API taCanvas : public taImage {
   // ##CAT_Data provides a mechanism for drawing onto an image buffer
 INHERITED(taImage)
 public:
-  enum CoordType {
-    PIXELS,			// raw pixels
-    NORMALIZED,			// normalized 0-1 values
+
+  enum PenStyles {
+    NO_PEN,		// no line at all. For example, QPainter::drawRect() fills but does not draw any boundary line.
+    SOLID_LINE,		// A plain line.
+    DASH_LINE,		// Dashes separated by a few pixels.
+    DOT_LINE,		// Dots separated by a few pixels.
+    DASH_DOT_LINE,	// Alternate dots and dashes.
+    DASH_DOTDOT_LINE,	// One dash, two dots, one dash, two dots.
+    CUSTOM_DASH_LINE,	// A custom pattern defined using QPainterPathStroker::setDashPattern().
   };
+
+  enum CoordType {
+      PIXELS,			// raw pixels
+      NORMALIZED,			// normalized 0-1 values
+    };
 
   CoordType 	coord_type;	// type of coordinates to use in drawing (0,0 is lower left)
 
@@ -119,6 +130,9 @@ public:
   // #CAT_Draw values are from 0-1 in proportion to amount of each given color, a is alpha transparency value, 0=transparent, 1=opaque
   virtual void	FillColorName(const String& name);
   // #CAT_Draw 
+//  virtual void	PenStyle(int style);
+  virtual void	PenStyle(PenStyles style);
+  // #CAT_Draw
 
   void	Copy_(const taCanvas& cp);
   TA_BASEFUNS(taCanvas);

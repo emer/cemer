@@ -204,6 +204,38 @@ void taCanvas::ClipRect(float l, float b, float r, float t) {
   if(!CheckInit()) return;
 }
 
+void taCanvas::PenStyle(PenStyles style) {
+    if(!CheckInit()) return;
+    QPen pen = q_painter.pen();
+
+    switch (style)
+    {
+      case NO_PEN:
+    	  pen.setStyle(Qt::NoPen);
+         break;
+      case SOLID_LINE:
+          pen.setStyle(Qt::SolidLine);
+          break;
+      case DASH_LINE:
+          pen.setStyle(Qt::DashLine);
+          break;
+      case DOT_LINE:
+          pen.setStyle(Qt::DotLine);
+          break;
+      case DASH_DOT_LINE:
+          pen.setStyle(Qt::DashDotLine);
+          break;
+      case DASH_DOTDOT_LINE:
+          pen.setStyle(Qt::DashDotDotLine);
+          break;
+      case CUSTOM_DASH_LINE:
+          pen.setStyle(Qt::CustomDashLine);
+          break;
+    }
+
+    q_painter.setPen(pen);
+}
+
 void taCanvas::PenColorRGBA(float r, float g, float b, float a) {
   if(!CheckInit()) return;
   QColor clr;
