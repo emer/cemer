@@ -94,6 +94,6 @@ void taiEditOfDefaultDataHost::GetValue() {
 //       taiEditOfDefault       //
 ////////////////////////////////
 
-taiEditorOfClass* taiEditOfDefault::CreateDataHost(void* base, bool readonly) {
-  return new taiEditOfDefaultDataHost(base, typ, readonly);
+taiEditorOfClass* taiEditOfDefault::CreateDataHost(void* base, bool readonly, bool modal) {
+  return new taiEditOfDefaultDataHost(base, typ, readonly, modal);
 }

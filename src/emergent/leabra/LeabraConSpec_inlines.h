@@ -171,13 +171,12 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
 //	Compute_Weights_CtLeabraXCAL
 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn) {
-  // always do soft bounding, at this point (post agg across processors, etc)
-  float lin_wt = LinFmSigWt(cn->wt);
-  // always do soft bounding
-  if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
-  else			cn->dwt *= lin_wt;
-
   if(cn->dwt != 0.0f) {
+    // always do soft bounding, at this point (post agg across processors, etc)
+    float lin_wt = LinFmSigWt(cn->wt);
+    // always do soft bounding
+    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
+    else		cn->dwt *= lin_wt;
     cn->wt = SigFmLinWt(lin_wt + cn->dwt);
   }
   cn->pdw = cn->dwt;

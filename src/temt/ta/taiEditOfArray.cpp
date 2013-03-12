@@ -25,6 +25,7 @@ int taiEditOfArray::BidForEdit(TypeDef* td){
   return 0;
 }
 
-taiEditorOfClass* taiEditOfArray::CreateDataHost(void* base, bool readonly) {
-  return new taiEditorOfArray(base, typ, readonly);
+
+taiEditorOfClass* taiEditOfArray::CreateDataHost(void* base, bool readonly, bool modal) {
+  return new taiEditorOfArray(base, typ, readonly, modal);
 }

@@ -58,7 +58,8 @@ public:
   void                  Destroy() {}
 
 protected:
-  virtual taiEditorOfClass* CreateDataHost(void* base, bool readonly); // called when we need a new instance, overridden by subclasses
+  virtual taiEditorOfClass* CreateDataHost(void* base, bool readonly, bool modal);
+  // called when we need a new instance, overridden by subclasses
 };
 
 #endif // taiEdit_h

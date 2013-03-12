@@ -24,6 +24,6 @@ int taiEditOfSArg::BidForEdit(TypeDef* td){
   return 0;
 }
 
-taiEditorOfClass* taiEditOfSArg::CreateDataHost(void* base, bool readonly) {
-  return new taiEditorOfSArg(base, typ, readonly);
+taiEditorOfClass* taiEditOfSArg::CreateDataHost(void* base, bool readonly, bool modal) {
+  return new taiEditorOfSArg(base, typ, readonly, modal);
 }

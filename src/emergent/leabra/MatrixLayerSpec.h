@@ -30,6 +30,7 @@ class E_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(SpecMemberBase)
 public:
+  bool          trace_learn;    // use trace-based learning of gating instead of LV DA-modulated learning snrthal activity multiplies da value -- this should be true for LV-modulated PBWM, but false for new trace_learn version (see MatrixConSpec parameter)
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
   float		nogo_wtscale_inc; // multiplier on effective weight scale for projections into the winning stripe's nogo units in the second half of the minus phase, after gating -- the weight scale for all other stripes goes to 0 -- only the winning stripe is allowed to become active
   float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win

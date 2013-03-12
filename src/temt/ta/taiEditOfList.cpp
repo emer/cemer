@@ -26,7 +26,7 @@ int taiEditOfList::BidForEdit(TypeDef* td) {
   return 0;
 }
 
-taiEditorOfClass* taiEditOfList::CreateDataHost(void* base, bool readonly) {
+taiEditorOfClass* taiEditOfList::CreateDataHost(void* base, bool readonly, bool modal) {
   // compact is either specified explicitly,
   // or we must use it if the base_type of the list requires inline
   bool use_compact = false;
@@ -38,7 +38,7 @@ taiEditorOfClass* taiEditOfList::CreateDataHost(void* base, bool readonly) {
     }
   }
   if (use_compact)
-    return new taiEditorOfListCompact(base, typ, readonly);
+    return new taiEditorOfListCompact(base, typ, readonly, modal);
   else
-    return new taiEditorOfList(base, typ, readonly);
+    return new taiEditorOfList(base, typ, readonly, modal);
 }

@@ -68,24 +68,8 @@ public:
 				float su_act_delta_eff) { };
   override float Compute_Netin(RecvCons* cg, Unit* ru) { return 0.0f; }
 
-
+  // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt;
-    if(ti_learn_pred) {
-      dwt = (ru->act_p - ru->act_ctxt) * su->p_act_p;
-    }
-    else {
-      dwt = (ru->act_p - ru->act_m) * su->p_act_p;
-    }
-    if(lmix.err_sb) {
-      float lin_wt = LinFmSigWt(cn->wt);
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-    }
-    cn->dwt += cur_lrate * dwt;
-  }
-
-  inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float dwt;
     if(ti_learn_pred) {
       dwt = (ru->act_p - ru->act_ctxt) * su->p_act_p;
@@ -109,7 +93,7 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_CAL(cn, ru, su);  
+      C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
@@ -117,8 +101,14 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_CAL(cn, ru, su);  
+      C_Compute_dWt_Delta(cn, ru, su);  
     }
+  }
+
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    // CHL uses XCAL with aggregate soft weight bounding, b/c no hebbian term
+    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
   TA_SIMPLE_BASEFUNS(LeabraTICtxtConSpec);

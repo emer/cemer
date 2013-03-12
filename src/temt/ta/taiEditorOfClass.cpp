@@ -622,6 +622,9 @@ void taiEditorOfClass::GetValue_impl(const Member_List* ms, const taiWidget_List
   for (int i = 0; i < ms->size; ++i) {
     MemberDef* md = ms->FastEl(i);
     taiWidget* mb_dat = dl.SafeEl(i);
+    if(md->name == "verbose_load") {
+      taMisc::Info("verbose_load get value");
+    }
     if (mb_dat == NULL)
       taMisc::Error("taiEditorOfClass::GetValue_impl(): unexpected dl=NULL at i ", String(i), "\n");
     else {

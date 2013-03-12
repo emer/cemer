@@ -755,7 +755,9 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
   }
   int tot_procs = n_jobs_to_sub * n_threads;
   if(use_mpi) tot_procs *= mpi_nodes;
-  if(parallel_batch) tot_procs *= pb_batches;
+  if(parallel_batch && cs.by_node) { // note: regular non-by-node pb already reflected in n_jobs_to_sub!
+    tot_procs *= pb_batches;
+  }
 
   taMisc::Info("total procs requested for this job:", String(tot_procs));
 

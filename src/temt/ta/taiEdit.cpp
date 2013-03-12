@@ -24,8 +24,8 @@ void taiEdit::AddEdit(TypeDef* td) {
   InsertThisIntoBidList(td->ie);
 }
 
-taiEditorOfClass* taiEdit::CreateDataHost(void* base, bool read_only) {
-  return new taiEditorOfClass(base, typ, read_only);
+taiEditorOfClass* taiEdit::CreateDataHost(void* base, bool read_only, bool modal) {
+  return new taiEditorOfClass(base, typ, read_only, modal);
 }
 
 int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
@@ -33,7 +33,7 @@ int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
   taiEditorOfClass* host = taiMisc::FindEdit(base, cur_win);
   if (!host) {
-    host = CreateDataHost(base, readonly);
+    host = CreateDataHost(base, readonly, false);
 
     if (typ->HasOption("NO_OK"))
       host->no_ok_but = true;
@@ -69,7 +69,7 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
       return 2;
     }
   }
-  host = CreateDataHost(base, read_only);
+  host = CreateDataHost(base, read_only, modal);
   if (taMisc::color_hints & taMisc::CH_EDITS) {
     if (&bgcol == &def_color) {
       bool ok = false;
@@ -90,7 +90,7 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
 iPanelOfEditor* taiEdit::EditNewPanel(taiSigLink* link, void* base,
    bool read_only, const iColor& bgcol)
 {
-  taiEditorOfClass* host = CreateDataHost(base, read_only);
+  taiEditorOfClass* host = CreateDataHost(base, read_only, false); // not modal
   if (taMisc::color_hints & taMisc::CH_EDITS) {
     if (&bgcol == &def_color) {
       bool ok = false;

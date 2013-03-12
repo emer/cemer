@@ -30,6 +30,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 }
 
 void MatrixMiscSpec::Initialize() {
+  trace_learn = false;
   da_gain = 0.05f;
   nogo_wtscale_inc = 2.0f;
   nogo_inhib = 0.2f;
@@ -180,6 +181,12 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                   cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
+    }
+    if(lay->CheckError(cs->trace_learn != matrix.trace_learn, quiet, rval,
+                  "requires trace_learn param on MatrixConSpec to be the same as on MatrixLayerSpec -- I just updated the con spec:",
+                       cs->name, "to be:", (String)matrix.trace_learn)) {
+      //      cs->SetUnique("wt_limits", true);
+      cs->trace_learn = matrix.trace_learn;
     }
   }
   if(lay->CheckError(da_lay == NULL, quiet, rval,
@@ -483,8 +490,13 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 							 snr_st_idx + gi);
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
     float snrthal_act = 0.0f;
-    if(!snr_u->lesioned())
-      snrthal_act = matrix.da_gain * snr_u->act_mid;
+    if(matrix.trace_learn) {
+      snrthal_act = matrix.da_gain; // no snr act
+    }
+    else {
+      if(!snr_u->lesioned())
+        snrthal_act = matrix.da_gain * snr_u->act_mid;
+    }
 
     if(go_nogo == NOGO) {
       for(int i=0;i<nunits;i++) {

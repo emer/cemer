@@ -71,8 +71,12 @@ void taiWidget::applyNow() {
   else if (host) {
     //note: we need to use the Async because things like seledit rebuild
     // during the call, clobbering the ctrl while its sig/slot stuff still ongoing
-    if(!host->isModal())
+    if(host->isModal()) {
+      host->Changed();          // just tell it that things have changed
+    }
+    else {                      // do full apply if non-modal
       host->Apply_Async();
+    }
   }
 }
 
