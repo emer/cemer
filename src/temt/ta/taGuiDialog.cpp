@@ -58,6 +58,7 @@ void taGuiDialog::Reset() {
 }
 
 int taGuiDialog::PostDialog(bool modal) {
+  data_host->modal = modal;
   data_host->Constr(prompt, win_title);
   int rval = data_host->Edit(modal, width, height);
   return rval;
