@@ -121,8 +121,10 @@ public:
 
   // statics -- should move to a more central location 
 
-  static void AddParamsToTable(DataTable* dat, const String& params);
-  // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs
+  static void AddParamsToTable(DataTable* dat, 
+                               const String& tag, const String& tag_svn, 
+                               const String& tag_job, const String& params);
+  // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs -- also adds the tag and two separate sub-tag columns: tag_svn, tag_job
 
 
   ////////////////////////////////////////////
@@ -141,8 +143,10 @@ public:
     // #IGNORE impl
   virtual void  CancelJob(int running_row);
   // cancel a job at the given row of the jobs_running data table
-  virtual void  GetDataJob(const DataTable& table, int running_row);
+  virtual void  GetDataJob(const DataTable& table, int row);
   // add to jobs_submit for get data for job at the given row of the given table
+  virtual void  GetRemoveJob(const DataTable& table, int row);
+  // add to jobs_submit for remove job for job at the given row of the given table
   virtual void  GetFilesJob(const String& files);
   // add to jobs_submit for get files for given list of files (space separated)
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);

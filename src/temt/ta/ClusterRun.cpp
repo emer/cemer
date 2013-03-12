@@ -108,6 +108,7 @@ bool ClusterRun::Update() {
   // Update the working copy and load the running/done tables.
   bool has_updates = m_cm->UpdateTables();
   SortClusterInfoTable();
+  jobs_done.Sort("tag", true);  // also sort jobs done by tag
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
@@ -220,6 +221,9 @@ void ClusterRun::ImportData(bool remove_existing) {
 
 void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
   String tag = table.GetValAsString("tag", row);
+  if(TestWarning(tag.empty(), "ImportData", "tag is empty for row:", String(row),
+                 "in table", table.name))
+    return;
   String dat_files;
   String params;
   if(table.name == "file_list") {
@@ -242,6 +246,10 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
   }
   if(TestWarning(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
     return;
+  if(TestWarning(params.empty(), "ImportData", "params is empty for tag:", tag))
+    return;
+  String tag_svn = tag.before("_");
+  String tag_job = tag.after("_");
   String res_path = m_cm->GetWcResultsPath();
   String_Array files;
   files.FmDelimString(dat_files, " ");
@@ -256,14 +264,32 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
       dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
     }
     dat->LoadData(res_path + "/" + fl);
-    AddParamsToTable(dat, params);
+    AddParamsToTable(dat, tag, tag_svn, tag_job, params);
   }
 }
 
-void ClusterRun::AddParamsToTable(DataTable* dat, const String& params) {
+void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
+                                  const String& tag_svn, const String& tag_job,
+                                  const String& params) {
   if(params.empty()) return;
   String_Array pars;
   pars.FmDelimString(params, " ");
+  { 
+    DataCol* cl = dat->FindMakeCol("tag", VT_STRING);
+    cl->InitVals(tag);
+  }
+  { 
+    DataCol* cl = dat->FindMakeCol("tag_svn", VT_STRING);
+    cl->InitVals(tag_svn);
+  }
+  { 
+    DataCol* cl = dat->FindMakeCol("tag_job", VT_STRING);
+    cl->InitVals(tag_job);
+  }
+  { // first add the params as a whole string -- useful for grouping..
+    DataCol* cl = dat->FindMakeCol("params", VT_STRING);
+    cl->InitVals(params);
+  }
   for(int i=0; i<pars.size; i++) {
     String pv = pars[i];
     String nm = pv.before('=');
@@ -464,17 +490,14 @@ void ClusterRun::RemoveJobs() {
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
-    // avoid conflict in writing this table -- can be written by host so we need to 
-    // get in and out quickly -- grab current now -- won't affect selection!
-    m_cm->UpdateTables();
-
+    jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
       SelectFiles_impl(jobs_done, row, true); // include data
-      jobs_done.RemoveRows(row);
+      GetRemoveJob(jobs_done, row);
     }
     RemoveAllFilesInList();
-    m_cm->CommitJobsDoneTable();
+    m_cm->CommitJobSubmissionTable();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs removed");
@@ -483,19 +506,17 @@ void ClusterRun::RemoveJobs() {
 
 void ClusterRun::RemoveKilledJobs() {
   initClusterManager(); // ensure it has been created.
-  // avoid conflict in writing this table -- can be written by host so we need to 
-  // get in and out quickly -- grab current now -- won't affect selection!
-  m_cm->UpdateTables();
-
+  jobs_submit.ResetData();
   file_list.ResetData();
   for (int row = jobs_done.rows-1; row >= 0; --row) {
     String status = jobs_done.GetVal("status", row).toString();
     if(status != "KILLED") continue;
     SelectFiles_impl(jobs_done, row, true); // include data
-    jobs_done.RemoveRows(row);
+    GetRemoveJob(jobs_done, row);
   }
   RemoveAllFilesInList();
-  m_cm->CommitJobsDoneTable();
+  if(jobs_submit.rows > 0)
+    m_cm->CommitJobSubmissionTable();
 }
 
 void ClusterRun::RemoveAllFilesInList() {
@@ -543,6 +564,7 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   //   PROBE     probe to get the cluster to track this project, and update all running
   //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
   //   GETFILES  tell cluster to check in all files listed in this other_files entry
+  //   REMOVEJOB tell cluster to remove given tags from jobs_done
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -892,6 +914,16 @@ ClusterRun::GetDataJob(const DataTable& table, int tab_row)
 {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("GETDATA", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::GetRemoveJob(const DataTable& table, int tab_row)
+{
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("REMOVEJOB", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
   jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit

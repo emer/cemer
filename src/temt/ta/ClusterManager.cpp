@@ -516,8 +516,10 @@ ClusterManager::loadTable(const String &filename, DataTable &table)
   }
 
   // Clear the table and reload data from the file.
+  table.StructUpdate(true);
   table.ResetData();
   table.LoadAnyData(filename);
+  table.StructUpdate(false);
   return true;
 }
 

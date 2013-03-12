@@ -73,13 +73,23 @@ void taiArgTypeOfFromGroup::GetImage_impl(taiWidget* dat, const void* base) {
       taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
+  else {
+    if(meth->arg_defs.size > arg_idx) {
+      String arg_def = meth->arg_defs[arg_idx];
+      if(arg_def.nonempty()) {
+        if(arg_def.contains("NULL") || arg_def.contains("null"))
+          taBase::SetPointer((taBase**)arg_base, NULL);
+      }
+    }
+  }
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)  return;
   taList_impl* lst = GetList(from_md, base);
   if (typ->InheritsFrom(TA_taGroup_impl)) {
     taiWidgetGroupElChooser* els = (taiWidgetGroupElChooser*)dat;
     els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
-  } else {
+  }
+  else {
     taiWidgetListElChooser* els = (taiWidgetListElChooser*)dat;
     els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
   }
