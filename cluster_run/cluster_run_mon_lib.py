@@ -834,6 +834,8 @@ class SubversionPoller(object):
             elif status == 'PROBE':
                 self._add_cur_running_to_list()  # monitor us going forward
                 self._query_running_jobs(self.cur_running_file, True)  # True = force updt
+                self._svn_add_cur_running()   # make sure everything checked in
+                self._svn_add_cur_done()
                 if debug:
                     print "probed for project root %s" % self.cur_proj_root
 
@@ -1218,12 +1220,11 @@ class SubversionPoller(object):
             self.all_running_files.add(self.cur_running_file)
 
     def _svn_add_cur_running(self):
-        if self.cur_running_file not in self.all_running_files:
-            self.all_running_files.add(self.cur_running_file)
-            cmd = ['svn', 'add', '--username', self.username,
-                   '--non-interactive', self.cur_running_file]
-            # Don't check_output, just dump it to stdout (or nohup.out).
-            subprocess.call(cmd)
+        self._add_cur_running_to_list()
+        cmd = ['svn', 'add', '--username', self.username,
+               '--non-interactive', self.cur_running_file]
+        # Don't check_output, just dump it to stdout (or nohup.out).
+        subprocess.call(cmd)
 
     def _svn_add_cur_done(self):
         cmd = ['svn', 'add', '--username', self.username,
