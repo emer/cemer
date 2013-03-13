@@ -350,15 +350,14 @@ bool iTableView::SelectedRows(int& st_row, int& end_row) {
 }
 
 bool iTableView::SelectRows(int st_row, int end_row) {
-  QModelIndex index = model()->index(st_row, 0, rootIndex());
-  if(!index.isValid()) return false;
-  selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-
-  for(int i = st_row+1; i<= end_row; i++) {
-    QModelIndex index = model()->index(i, 0, rootIndex());
-    if(index.isValid())
-      selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
-  }
+  int maxcol = model()->columnCount(rootIndex())-1;
+  int maxrow = model()->rowCount(rootIndex())-1;
+  QModelIndex tl = model()->index(st_row, 0, rootIndex());
+  if(!tl.isValid()) return false;
+  end_row = MIN(maxrow, end_row);
+  QModelIndex br = model()->index(end_row, maxcol, rootIndex());
+  if(!br.isValid()) return false;
+  selectionModel()->select(QItemSelection(tl,br), QItemSelectionModel::ClearAndSelect);
   return true;
 }
 

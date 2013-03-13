@@ -106,10 +106,24 @@ bool ClusterRun::Update() {
   initClusterManager(); // ensure it has been created.
 
   // Update the working copy and load the running/done tables.
+  // save current selection information and restore at end
+  int st_row_done, end_row_done;
+  bool has_sel_done = SelectedRows(jobs_done, st_row_done, end_row_done);
+  int st_row_archive, end_row_archive;
+  bool has_sel_archive = SelectedRows(jobs_archive, st_row_archive, end_row_archive);
+
   bool has_updates = m_cm->UpdateTables();
   SortClusterInfoTable();
   jobs_done.Sort("tag", true);  // also sort jobs done by tag
   jobs_archive.Sort("tag", true);  // also sort jobs done by tag
+
+  if(has_sel_done && st_row_done >= 0 && end_row_done >= st_row_done) {
+    SelectRows(jobs_done, st_row_done, end_row_done);
+  }
+  if(has_sel_archive && st_row_archive >= 0 && end_row_archive >= st_row_archive) {
+    SelectRows(jobs_archive, st_row_archive, end_row_archive);
+  }
+
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
@@ -536,8 +550,8 @@ void ClusterRun::RemoveJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SelectFiles_impl(jobs_done, row, true); // include data
-      GetArchiveJob(jobs_archive, row);
+      SelectFiles_impl(jobs_archive, row, true); // include data
+      GetRemoveJob(jobs_archive, row);
     }
     RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
