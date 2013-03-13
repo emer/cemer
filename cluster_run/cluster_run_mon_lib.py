@@ -1312,7 +1312,8 @@ class SubversionPoller(object):
         for row in range(self.jobs_done.n_rows()):
             pb_batches = self.jobs_done.get_val(row, "pb_batches")
             status = self.jobs_done.get_val(row, "status")
-            if pb_batches == 0 or status != "DONE" continue
+            if pb_batches == 0 or status != "DONE":
+                continue
 
             submit_svn = self.jobs_done.get_val(row, "submit_svn")
             tidx = pb_tags.find(submit_svn)
@@ -1330,12 +1331,15 @@ class SubversionPoller(object):
             trg_svn = comb_tags[tidx]
             trg_tag = trg_svn + "_0"   # target to consolidate is 0 guy
             trg_row = self.jobs_done.find_val("tag", trg_tag)
-            if trg_row < 0 continue  # this should not happen
+            if trg_row < 0:
+                continue  # this should not happen
             for row in reversed(range(self.jobs_done.n_rows())):
                 submit_svn = self.jobs_done.get_val(row, "submit_svn")
-                if submit_svn != trg_svn continue
+                if submit_svn != trg_svn:
+                    continue
                 submit_job = self.jobs_done.get_val(row, "submit_job")
-                if submit_job == 0 continue # skip 0 guy
+                if submit_job == 0:
+                    continue # skip 0 guy
 
                 dat_files = self.jobs_done.get_val(row, "dat_files")
                 other_files = self.jobs_done.get_val(row, "other_files")
