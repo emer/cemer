@@ -1322,7 +1322,7 @@ class SubversionPoller(object):
                 n_per_tag.add(1)  # got one
                 pb_per_tag.add(pb_batches)
             else:
-                n_per_tag[tidx]++
+                n_per_tag[tidx] += 1
         comb_tags = []
         for tidx in range(pb_tags):
             if n_per_tag[tidx] == pb_per_tag[tidx]:  # got them all
