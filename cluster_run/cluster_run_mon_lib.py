@@ -1283,6 +1283,11 @@ class SubversionPoller(object):
         end_time = self.jobs_done.get_val(row, "end_time")
         job_out_file = self.jobs_done.get_val(row, "job_out_file")
         tag = self.jobs_done.get_val(row, "tag")
+        pb_batches = self.jobs_done.get_val(row, "pb_batches")
+        status = self.jobs_done.get_val(row, "status")
+        submit_job = self.jobs_done.get_val(row, "submit_job")
+        if pb_batches > 1 and status == "DONE" and submit_job == "0":
+            return   # don't overwrite consolidated batch guy
 
         eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
         deadtime = datetime.now() - eddt
@@ -1312,39 +1317,38 @@ class SubversionPoller(object):
         for row in range(self.jobs_done.n_rows()):
             pb_batches = self.jobs_done.get_val(row, "pb_batches")
             status = self.jobs_done.get_val(row, "status")
-            if pb_batches == 0 or status != "DONE":
+            if pb_batches <= 1 or status != "DONE":
                 continue
 
             submit_svn = self.jobs_done.get_val(row, "submit_svn")
-            tidx = pb_tags.find(submit_svn)
-            if tidx < 0:
-                pb_tags.add(submit_svn)
-                n_per_tag.add(1)  # got one
-                pb_per_tag.add(pb_batches)
+   
+            if not submit_svn in pb_tags:
+                pb_tags.append(submit_svn)
+                n_per_tag.append(1)  # got one
+                pb_per_tag.append(pb_batches)
             else:
+                tidx = pb_tags.index(submit_svn)
                 n_per_tag[tidx] += 1
         comb_tags = []
-        for tidx in range(pb_tags):
+        for tidx in range(len(pb_tags)):
             if n_per_tag[tidx] == pb_per_tag[tidx]:  # got them all
-                comb_tags.add(pb_tags[tidx])
-        for tidx in range(comb_tags):
+                comb_tags.append(pb_tags[tidx])
+        for tidx in range(len(comb_tags)):
             trg_svn = comb_tags[tidx]
             trg_tag = trg_svn + "_0"   # target to consolidate is 0 guy
             trg_row = self.jobs_done.find_val("tag", trg_tag)
             if trg_row < 0:
                 continue  # this should not happen
-            for row in reversed(range(self.jobs_done.n_rows())):
+
+            # get all the files into one
+            all_dat_files = ""
+            all_other_files = ""
+            for row in range(self.jobs_done.n_rows()):
                 submit_svn = self.jobs_done.get_val(row, "submit_svn")
                 if submit_svn != trg_svn:
                     continue
-                submit_job = self.jobs_done.get_val(row, "submit_job")
-                if submit_job == 0:
-                    continue # skip 0 guy
-
                 dat_files = self.jobs_done.get_val(row, "dat_files")
                 other_files = self.jobs_done.get_val(row, "other_files")
-                all_dat_files = self.jobs_done.get_val(trg_row, "dat_files")
-                all_other_files = self.jobs_done.get_val(trg_row, "other_files")
                 if len(all_dat_files) > 0:
                     all_dat_files += " " + dat_files
                 else:
@@ -1353,8 +1357,18 @@ class SubversionPoller(object):
                     all_other_files += " " + other_files
                 else:
                     all_other_files = other_files
-                self.jobs_done.set_val(trg_row, "dat_files", all_dat_files)
-                self.jobs_done.set_val(trg_row, "other_files", all_other_files)
+
+            self.jobs_done.set_val(trg_row, "dat_files", all_dat_files)
+            self.jobs_done.set_val(trg_row, "other_files", all_other_files)
+
+            # then remove all the non-tag guys
+            for row in reversed(range(self.jobs_done.n_rows())):
+                submit_svn = self.jobs_done.get_val(row, "submit_svn")
+                if submit_svn != trg_svn:
+                    continue
+                tag = self.jobs_done.get_val(row, "tag")
+                if tag == trg_tag:
+                    continue  # skip the target guy
                 self.jobs_done.remove_row(row) # done with it!
 
     def _add_cur_running_to_list(self):
