@@ -193,11 +193,12 @@ ClusterManager::UpdateTables()
 
     bool ok1 = loadTable(m_running_dat_filename, m_cluster_run.jobs_running);
     bool ok2 = loadTable(m_done_dat_filename, m_cluster_run.jobs_done);
-    bool ok3 = loadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
+    bool ok3 = loadTable(m_archive_dat_filename, m_cluster_run.jobs_archive);
+    bool ok4 = loadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
 
     // Return true as long as one of the files was updated and loaded --
     // in that case, the search algo will probably want to do something.
-    return updated && (ok1 || ok2);
+    return updated && (ok1 || ok2 || ok3 || ok4);
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::Error("Could not update working copy:", ex.what());
@@ -410,6 +411,7 @@ ClusterManager::setPaths() {
   //             jobs_submit.dat        # m_submit_dat_filename
   //             jobs_running.dat       # m_running_dat_filename
   //             jobs_done.dat          # m_done_dat_filename
+  //             jobs_archive.dat       # m_archive_dat_filename
   //           models/                  # m_wc_models_path
   //             projname.proj          # m_proj_copy_filename
   //           results/                 # m_wc_results_path
@@ -442,6 +444,7 @@ ClusterManager::setPaths() {
   m_submit_dat_filename = m_wc_submit_path + "/jobs_submit.dat";
   m_running_dat_filename = m_wc_submit_path + "/jobs_running.dat";
   m_done_dat_filename = m_wc_submit_path + "/jobs_done.dat";
+  m_archive_dat_filename = m_wc_submit_path + "/jobs_archive.dat";
   m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
 
   if(m_wc_path != prv_path) {
@@ -515,11 +518,16 @@ ClusterManager::loadTable(const String &filename, DataTable &table)
     return false;
   }
 
-  // Clear the table and reload data from the file.
+  // Clear the table and reload data from the file -- always try to preserve selections
+  int st_row, end_row;
+  bool has_sel = m_cluster_run.SelectedRows(table, st_row, end_row);
   table.StructUpdate(true);
   table.ResetData();
   table.LoadAnyData(filename);
   table.StructUpdate(false);
+  if(has_sel && st_row >= 0 && end_row >= st_row) {
+    m_cluster_run.SelectRows(table, st_row, end_row);
+  }
   return true;
 }
 

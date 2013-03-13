@@ -44,6 +44,7 @@ public:
   DataTable     jobs_submitted; // #NO_SAVE #EXPERT jobs submitted -- just a local copy of jobs_submit
   DataTable     jobs_running;   // #SHOW_TREE #EXPERT #NO_SAVE jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE #EXPERT #NO_SAVE jobs that have finished running
+  DataTable     jobs_archive;   // #SHOW_TREE #EXPERT #NO_SAVE jobs that have been archived -- already analyzed but possibly still relevant to look at
   DataTable     file_list;      // #SHOW_TREE #EXPERT #NO_SAVE list of files -- used for various operations -- transferring and deleting
   DataTable     cluster_info;   // #SHOW_TREE #EXPERT #NO_SAVE cluster status information and list of jobs currently running, etc
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
@@ -91,15 +92,17 @@ public:
   // #BUTTON import the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
   virtual void  SelectFiles(bool include_data = false);
-  // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
+  // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  ListAllFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the files currently in the results subdirectory of this project's svn repository -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  GetFiles();
   // #MENU_BUTTON #MENU_ON_Files tell the cluster to check in the files selected in file_list tab -- you can then do Update after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval), and then access the files as you wish
   virtual void  RemoveFiles();
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the files selected in the file_list tab -- this does an svn remove and also removes the files locally -- for cleaning up stuff you are done with
+  virtual void  ArchiveJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done data table, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done or jobs_archive data tables, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
   virtual void  RemoveKilledJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
   virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
@@ -147,6 +150,8 @@ public:
   // add to jobs_submit for get data for job at the given row of the given table
   virtual void  GetRemoveJob(const DataTable& table, int row);
   // add to jobs_submit for remove job for job at the given row of the given table
+  virtual void  GetArchiveJob(const DataTable& table, int row);
+  // add to jobs_submit for move job to archive for job at the given row of the given table
   virtual void  GetFilesJob(const String& files);
   // add to jobs_submit for get files for given list of files (space separated)
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);
@@ -169,7 +174,8 @@ public:
   // get editor for data table
   virtual bool  SelectedRows(DataTable& dt, int& st_row, int& end_row);
   // get selected rows in editor
-
+  virtual bool  SelectRows(DataTable& dt, int st_row, int end_row);
+  // select range of rows in given data table
 
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);

@@ -109,6 +109,7 @@ bool ClusterRun::Update() {
   bool has_updates = m_cm->UpdateTables();
   SortClusterInfoTable();
   jobs_done.Sort("tag", true);  // also sort jobs done by tag
+  jobs_archive.Sort("tag", true);  // also sort jobs done by tag
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
@@ -209,6 +210,11 @@ void ClusterRun::ImportData(bool remove_existing) {
       ImportData_impl(dgp, jobs_done, row); 
     }
   }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      ImportData_impl(dgp, jobs_archive, row); 
+    }
+  }
   else if (SelectedRows(file_list, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
       ImportData_impl(dgp, file_list, row); 
@@ -237,7 +243,13 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
       lkup = jobs_running.FindVal(tag, "tag");
       if(lkup >= 0) {
         params = jobs_running.GetValAsString("params", lkup);
-      } 
+      }
+      else {
+        lkup = jobs_archive.FindVal(tag, "tag");
+        if(lkup >= 0) {
+          params = jobs_archive.GetValAsString("params", lkup);
+        } 
+      }
     }
   }
   else {
@@ -338,6 +350,11 @@ void ClusterRun::SelectFiles(bool include_data) {
   else if (SelectedRows(jobs_done, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
       SelectFiles_impl(jobs_done, row, include_data); 
+    }
+  }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      SelectFiles_impl(jobs_archive, row, include_data); 
     }
   }
   else {
@@ -485,6 +502,22 @@ void ClusterRun::RemoveFiles() {
   }
 }
 
+void ClusterRun::ArchiveJobs() {
+  initClusterManager(); // ensure it has been created.
+
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    jobs_submit.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      GetArchiveJob(jobs_done, row);
+    }
+    m_cm->CommitJobSubmissionTable();
+  }
+  else {
+    taMisc::Warning("No rows selected -- no jobs archived");
+  }
+}
+
 void ClusterRun::RemoveJobs() {
   initClusterManager(); // ensure it has been created.
 
@@ -495,6 +528,16 @@ void ClusterRun::RemoveJobs() {
     for (int row = end_row; row >= st_row; --row) {
       SelectFiles_impl(jobs_done, row, true); // include data
       GetRemoveJob(jobs_done, row);
+    }
+    RemoveAllFilesInList();
+    m_cm->CommitJobSubmissionTable();
+  }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    jobs_submit.ResetData();
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SelectFiles_impl(jobs_done, row, true); // include data
+      GetArchiveJob(jobs_archive, row);
     }
     RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
@@ -537,11 +580,13 @@ void ClusterRun::FormatTables() {
   jobs_submitted.name = "jobs_submitted";
   jobs_running.name = "jobs_running";
   jobs_done.name = "jobs_done";
+  jobs_archive.name = "jobs_archive";
 
   FormatJobTable(jobs_submit);
   FormatJobTable(jobs_submitted);
   FormatJobTable(jobs_running);
   FormatJobTable(jobs_done);
+  FormatJobTable(jobs_archive);
 
   file_list.name = "file_list";
   FormatFileListTable(file_list);
@@ -565,6 +610,7 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
   //   GETFILES  tell cluster to check in all files listed in this other_files entry
   //   REMOVEJOB tell cluster to remove given tags from jobs_done
+  //   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
   //   QUEUED    when the job is known to be in the cluster queue.
@@ -572,6 +618,16 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   //   RUNNING   when the job has begun.
   //   DONE      if the job completed successfully.
   //   KILLED    if the job was cancelled.
+
+  // NOTE: it is essential that we only ever send jobs_submit to cluster, and it
+  // sends back jobs_running, jobs_done, jobs_archive, etc -- if we attempt
+  // to manipulate one of those other tables, we run the very real risk of 
+  // stepping on each others toes and creating svn conflicts.. 
+  // this means we have to rely on cluster to do simple things like moving to 
+  // archive.  it owns all the jobs files..
+  // we can however directly control the data files, as they are not routinely
+  // updated
+
   dc = dt.FindMakeCol("status", VT_STRING);
   dc->desc = "status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
 
@@ -929,7 +985,18 @@ ClusterRun::GetRemoveJob(const DataTable& table, int tab_row)
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
 }
 
-void ClusterRun::GetFilesJob(const String& files) {
+void
+ClusterRun::GetArchiveJob(const DataTable& table, int tab_row)
+{
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("ARCHIVEJOB", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::GetFilesJob(const String& files) {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("GETFILES", "status", dst_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
@@ -1028,4 +1095,11 @@ bool ClusterRun::SelectedRows(DataTable& dt, int& st_row, int& end_row) {
   }
   // taMisc::Info("start row:", String(st_row), "end row:", String(end_row));
   return true;
+}
+
+bool ClusterRun::SelectRows(DataTable& dt, int st_row, int end_row) {
+  iDataTableEditor* ed = DataTableEditor(dt);
+  if(!ed || !ed->tvTable) return false;
+  bool rval = ed->tvTable->SelectRows(st_row, end_row);
+  return rval;
 }

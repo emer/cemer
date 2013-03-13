@@ -101,6 +101,7 @@ job_out_bytes_total = 4096
 #   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
 #   GETFILES  tell cluster to check in all files listed in this other_files entry
 #   REMOVEJOB remove given tag job from the jobs done list
+#   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
 #   QUEUED    when the job is known to be in the cluster queue.
@@ -108,6 +109,15 @@ job_out_bytes_total = 4096
 #   RUNNING   when the job has begun.
 #   DONE      if the job completed successfully.
 #   KILLED    if the job was cancelled.
+
+# NOTE: it is essential that we only ever send jobs_submit to cluster, and it
+# sends back jobs_running, jobs_done, jobs_archive, etc -- if we attempt
+# to manipulate one of those other tables, we run the very real risk of 
+# stepping on each others toes and creating svn conflicts.. 
+# this means we have to rely on cluster to do simple things like moving to 
+# archive.  it owns all the jobs files..
+# we can however directly control the data files, as they are not routinely
+# updated
 
 def make_dir(dir):
     try: os.makedirs(dir)
@@ -603,12 +613,14 @@ class SubversionPoller(object):
         self.cur_submit_file = ""
         self.cur_running_file = ""
         self.cur_done_file = ""
+        self.cur_archive_file = ""
         self.cluster_info_file = ""
         self.got_submit = False     # got a jobs_submit submission 
         self.status_change = False  # some jobs changed status
         self.jobs_submit = DataTable()
         self.jobs_running = DataTable()
         self.jobs_done = DataTable()
+        self.jobs_archive = DataTable()
         self.file_list = DataTable()
         self.cluster_info = DataTable()
 
@@ -757,6 +769,9 @@ class SubversionPoller(object):
         for row in reversed(range(self.jobs_done.n_rows())):
             self._update_done_job(row, force_updt)
 
+        # see if we can combine all parallel batch separate jobs into one meta job
+        self._combine_pb_jobs()
+
         # write the new jobs status
         self._save_cur_files()
 
@@ -767,6 +782,7 @@ class SubversionPoller(object):
         self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
         self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
         self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
+        self.cur_archive_file = self.cur_proj_root + '/submit/jobs_archive.dat'
         self.cluster_info_file = os.path.dirname(self.cur_proj_root) + '/cluster_info.dat'
 
     # load running and done files if they exist -- they should..
@@ -779,10 +795,15 @@ class SubversionPoller(object):
             self.jobs_done.load_from_file(self.cur_done_file)
         else:
             print "ERROR: jobs done file should exist at this point! %s" % self.cur_done_file
+        if os.path.exists(self.cur_archive_file):    # Load done into current
+            self.jobs_archive.load_from_file(self.cur_archive_file)
+        else:
+            print "ERROR: jobs archive file should exist at this point! %s" % self.cur_archive_file
 
     def _save_cur_files(self):
         self.jobs_running.write(self.cur_running_file)
         self.jobs_done.write(self.cur_done_file)
+        self.jobs_archive.write(self.cur_archive_file)
  
     def _get_commit_info(self, filename):
         """Get the commit revision and author for the given filename."""
@@ -803,6 +824,7 @@ class SubversionPoller(object):
     def _init_jobs_files(self):
         self._init_jobs_running()
         self._init_jobs_done()
+        self._init_jobs_archive()
 
     # initialize the jobs_running table -- either load from file or init from submit
     def _init_jobs_running(self):
@@ -828,6 +850,18 @@ class SubversionPoller(object):
             self.jobs_done.write(self.cur_done_file)
             self._svn_add_cur_done()
 
+    # initialize the jobs_done table -- either load from file or init from running
+    def _init_jobs_archive(self):
+        if os.path.exists(self.cur_archive_file):
+            if debug:
+                print "loading existing archive file: %s" % self.cur_archive_file
+            self.jobs_archive.load_from_file(self.cur_archive_file)
+        else:
+            # create new and save and add to svn
+            self.jobs_archive.copy_cols(self.jobs_done)
+            self.jobs_archive.write(self.cur_archive_file)
+            self._svn_add_cur_archive()
+
     def _svn_add_cur_running(self):
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_running_file]
@@ -837,6 +871,12 @@ class SubversionPoller(object):
     def _svn_add_cur_done(self):
         cmd = ['svn', 'add', '--username', self.username,
                '--non-interactive', self.cur_done_file]
+        # Don't check_output, just dump it to stdout (or nohup.out).
+        subprocess.call(cmd)
+
+    def _svn_add_cur_archive(self):
+        cmd = ['svn', 'add', '--username', self.username,
+               '--non-interactive', self.cur_archive_file]
         # Don't check_output, just dump it to stdout (or nohup.out).
         subprocess.call(cmd)
 
@@ -863,6 +903,8 @@ class SubversionPoller(object):
                 self._getfiles_job(filename, rev, row)
             elif status == 'REMOVEJOB':
                 self._remove_job(filename, rev, row)
+            elif status == 'ARCHIVEJOB':
+                self._move_job_to_archive(filename, rev, row)
             elif status == 'PROBE':
                 self._query_running_jobs(self.cur_running_file, True)  # True = force updt
                 if debug:
@@ -960,15 +1002,29 @@ class SubversionPoller(object):
             self.jobs_running.set_val(runrow, "status", status)
         # we don't actually do anything with this output..
 
-    # remove given tag from jobs done
+    # remove given tag from jobs done or archive
     def _remove_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
         donerow = self.jobs_done.find_val("tag", tag)
         if donerow >= 0:
             self.jobs_done.remove_row(donerow)
         else:
-            print "remove_job: tag %s not found in jobs done" % tag
-    
+            archrow = self.jobs_archive.find_val("tag", tag)
+            if archrow >= 0:
+                self.jobs_archive.remove_row(archrow)
+            else:
+                print "remove_job: tag %s not found in jobs done or archive" % tag
+
+    # move job from done to archive
+    def _move_job_to_archive(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        donerow = self.jobs_done.find_val("tag", tag)
+        if donerow >= 0:
+            self.jobs_archive.append_row_from(self.jobs_done, donerow)
+            self.jobs_done.remove_row(donerow)
+        else:
+            print "move_job_to_archive: tag %s not found in jobs done" % tag
+
     # get data files for given job
     def _getdata_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
@@ -1245,6 +1301,57 @@ class SubversionPoller(object):
         self.status_change = True
         self.jobs_done.append_row_from(self.jobs_running, row)
         self.jobs_running.remove_row(row)
+
+    # go through all the jobs in jobs_done and if all the items from 
+    # a pb_batches run are done, with status DONE, then they can be
+    # consolidated
+    def _combine_pb_jobs(self):
+        pb_tags = []
+        n_per_tag = []
+        pb_per_tag = []
+        for row in range(self.jobs_done.n_rows()):
+            pb_batches = self.jobs_done.get_val(row, "pb_batches")
+            status = self.jobs_done.get_val(row, "status")
+            if pb_batches == 0 or status != "DONE" continue
+
+            submit_svn = self.jobs_done.get_val(row, "submit_svn")
+            tidx = pb_tags.find(submit_svn)
+            if tidx < 0:
+                pb_tags.add(submit_svn)
+                n_per_tag.add(1)  # got one
+                pb_per_tag.add(pb_batches)
+            else:
+                n_per_tag[tidx]++
+        comb_tags = []
+        for tidx in range(pb_tags):
+            if n_per_tag[tidx] == pb_per_tag[tidx]:  # got them all
+                comb_tags.add(pb_tags[tidx])
+        for tidx in range(comb_tags):
+            trg_svn = comb_tags[tidx]
+            trg_tag = trg_svn + "_0"   # target to consolidate is 0 guy
+            trg_row = self.jobs_done.find_val("tag", trg_tag)
+            if trg_row < 0 continue  # this should not happen
+            for row in reversed(range(self.jobs_done.n_rows())):
+                submit_svn = self.jobs_done.get_val(row, "submit_svn")
+                if submit_svn != trg_svn continue
+                submit_job = self.jobs_done.get_val(row, "submit_job")
+                if submit_job == 0 continue # skip 0 guy
+
+                dat_files = self.jobs_done.get_val(row, "dat_files")
+                other_files = self.jobs_done.get_val(row, "other_files")
+                all_dat_files = self.jobs_done.get_val(trg_row, "dat_files")
+                all_other_files = self.jobs_done.get_val(trg_row, "other_files")
+                if len(all_dat_files) > 0:
+                    all_dat_files += " " + dat_files
+                else:
+                    all_dat_files = dat_files
+                if len(all_other_files) > 0:
+                    all_other_files += " " + other_files
+                else:
+                    all_other_files = other_files
+                self.jobs_done.set_val(trg_row, "dat_files", all_dat_files)
+                self.jobs_done.set_val(trg_row, "other_files", all_other_files)
+                self.jobs_done.remove_row(row) # done with it!
 
     def _add_cur_running_to_list(self):
         if self.cur_running_file not in self.all_running_files:

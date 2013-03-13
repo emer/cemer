@@ -36,11 +36,13 @@ void taQuaternion::FromAxisAngle(const taAxisAngle& axa) {
 }
 
 void taQuaternion::ToAxisAngle(taAxisAngle& axa) const {
+  const float tol = 1.0e-4f;     // tolerance
   axa.rot = acosf(s);
   float sinangi = sinf(axa.rot);
-  if(sinangi == 0.0f) {	// can't convert
-    axa.rot = 0.0f;
-    axa.x = 0.0f; axa.y = 0.0f; axa.z = 1.0f;
+  if(sinangi == 0.0f) {	// singularity -- angle == 0
+    if(fabsf(axa.Mag() - 1.0f) > tol) { // only if it doesn't already have a valid axis
+      axa.x = 0.0f; axa.y = 1.0f; axa.z = 0.0f; // provide a default axis..
+    }
     return;
   }
   sinangi = 1.0f / sinangi;

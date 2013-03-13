@@ -349,3 +349,16 @@ bool iTableView::SelectedRows(int& st_row, int& end_row) {
   return true;
 }
 
+bool iTableView::SelectRows(int st_row, int end_row) {
+  QModelIndex index = model()->index(st_row, 0, rootIndex());
+  if(!index.isValid()) return false;
+  selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+
+  for(int i = st_row+1; i<= end_row; i++) {
+    QModelIndex index = model()->index(i, 0, rootIndex());
+    if(index.isValid())
+      selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+  }
+  return true;
+}
+

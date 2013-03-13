@@ -81,14 +81,14 @@ void VEBody::UpdateAfterEdit_impl() {
   if(HasBodyFlag(EULER_ROT)) {
     init_quat = init_euler;
     init_quat.Normalize();
-    init_quat.ToEulerVec(init_euler);
     init_rot = init_quat;
+    // don't go back and update init_euler
   }
   else {
     init_quat = init_rot;
     init_quat.Normalize();
-    init_rot = init_quat;
     init_quat.ToEulerVec(init_euler);
+    // don't go back and update init_rot
   }
 
   if(!taMisc::is_loading) {

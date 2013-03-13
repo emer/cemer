@@ -40,6 +40,10 @@ void taiViewTypeOfSelectEdit::CreateDataPanel_impl(taiSigLink* dl_)
       iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
       DataPanelCreated(dp);
     }
+    if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->jobs_archive.GetSigLink())) {
+      iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
+      DataPanelCreated(dp);
+    }
     if (taiSigLink *datatableLink = dynamic_cast<taiSigLink *>(cr->file_list.GetSigLink())) {
       iPanelOfDataTable_Mbr* dp = new iPanelOfDataTable_Mbr(datatableLink);
       DataPanelCreated(dp);
