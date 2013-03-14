@@ -531,7 +531,7 @@ void VEArm::InitMuscles() {
       max_lens.Set(tlens.FastEl(i)+0.003f,i);
 
       AngToLengths(tlens,alpham[i],betam[i],gammam[i],deltam[i]);
-      min_lens.Set(tlens.FastEl(i)-0.003f,i);
+      min_lens.Set(tlens.FastEl(i)-0.004f,i);
     }
   } else { // musc_geo == NEW_GEO
     // these are the angles at which muscles attain their maximum length for right arms
@@ -1646,6 +1646,40 @@ bool VEArm::NormLengthsToTable(DataTable* len_table) {
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(norm_lengths.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
+  }
+  return true;
+}
+
+bool VEArm::NormSpeedsToTable(DataTable* vel_table) {
+  char col_name[] = "speeds"; 
+  DataCol* dc = vel_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  if(vel_table->rows == 0)       // empty table, make sure we have at least 1 row
+    dc->EnforceRows(1);
+  
+  float_Matrix vels(1,n_musc);
+  Speeds(vels);
+  for(int i=0; i<n_musc; i++) {
+    dc->SetMatrixVal(1/(1+exp(-15.0f*vels.SafeEl(i))),-1, // -1 = last row
+                     0,0,0,i); // normalizing using the logistic function
+  }
+  return true;
+}
+
+bool VEArm::SetTargetLengths(DataTable* len_table) {
+  char col_name[] = "lengths";
+  DataCol* dc = len_table->FindColName(col_name, true); // find the "lengths" column, error msg if not found
+  MatrixGeom std_geom(4,1,1,1,n_musc);
+
+  if(TestWarning(dc->cell_geom != std_geom, "","The geometry of the table provided to GetTargetLengths() is incorrect \n"))
+    return false;
+
+  taMatrix* cell_mat = dc->GetValAsMatrix(-1); // -1 = last row
+
+  for(int i=0; i++; i<n_musc) { // recovering unnormalized values
+    targ_lens.Set(((cell_mat->SafeElAsFloat(0,0,0,i))/spans.SafeEl(i))+min_lens.SafeEl(i),i);
+
+    //targ_lens.Set(((float)(dc->GetMatrixVal(-1,0,0,0,i))/spans.SafeEl(i))+min_lens.SafeEl(i),i);
+    // -1 = last row. spans = 1/(max_lens-min_lens).
   }
   return true;
 }
