@@ -16,6 +16,6 @@
 #include "LeabraTICtxtConSpec.h"
 
 void LeabraTICtxtConSpec::Initialize() {
-  ti_learn_pred = true;
+  ti_learn_pred = false;
 }
 

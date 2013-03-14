@@ -39,6 +39,7 @@ void VEArm::Initialize() {
   wrist_gap = 0.03f;
   
   gain = 30.0f;
+  vel_norm_gain = 15.0f;
 
   float CT_f[] = {-1.0f, 0,    0,
                       0, 0,    1.0f,
@@ -276,11 +277,15 @@ bool VEArm::UpdateIPs() {
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
 //......... updating the normalized lengths ..........
-  Lengths(norm_lengths);  // setting the unnormalized lengths in norm_lengths
-  norm_lengths -= min_lens;
-  norm_lengths *= spans;  // normalizing lengths (spans is initialized in InitMuscles) 
+  Lengths(norm_lens);  // setting the unnormalized lengths in norm_lens
+  norm_lens -= min_lens;
+  norm_lens *= spans;  // normalizing lengths (spans is initialized in InitMuscles) 
 
-
+  norm_vels.SetGeom(1,n_musc);
+  Speeds(norm_vels);
+  for(int i=0; i<n_musc; i++) {
+    norm_vels.FastEl(i) = 1.0f / (1.0f + expf(-vel_norm_gain * norm_vels.FastEl(i)));
+  }
   return true;
 }
 
@@ -583,7 +588,6 @@ bool VEArm::ConfigArm(const String& name_prefix,
                       float ulna_length, float ulna_radius,
                       float hand_length, float hand_radius, 
                       float elbowGap, float wristGap,
-                      float tor_cmX, float tor_cmY, float tor_cmZ,
                       float sh_offX, float sh_offY, float sh_offZ) {
                       
   // tor_cm are the coordinates of the torso's center of mass
@@ -591,6 +595,12 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   if(TestError(!torso, "ConfigArm", "torso not set -- must specify a body in another object to serve as the torso before running ConfigArm"))
     return false;
+
+  float tor_cmX = torso->init_pos.x;
+  float tor_cmY = torso->init_pos.y;
+  float tor_cmZ = torso->init_pos.z;
+
+  // TODO: compute sh_off directoy from torso!!
 
   float CT_f[] = {-1.0f, 0,    0,
                       0, 0,    1.0f,
@@ -770,7 +780,9 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   InitMuscles();  // Initializes insertion point matrices and the VEMuscle_List
  
-  norm_lengths.SetGeom(1,n_musc); // setting the size of the normalized lengths float_Matrix
+  norm_lens.SetGeom(1,n_musc); // setting the size of the normalized lengths float_Matrix
+  norm_targ_lens.SetGeom(1,n_musc);
+  norm_vels.SetGeom(1,n_musc);
 
   UpdateIPs(); // attaching muscles to their corresponding insertion points
 
@@ -786,19 +798,19 @@ bool VEArm::ConfigArm(const String& name_prefix,
   ulna->SetAngularDampingThreshold(0.05f);
 
   //---------- Init all created objects and update ODE -----------
-  Init();                       // this will attempt to init everything just created..
-  
+  // NO: you can't count on ODE being initialized at this point -- that should happen later
+  // Init();                       // this will attempt to init everything just created..
   // sending the values of the bodies to ODE
-  CurToODE();
+  // CurToODE();
 
   SigEmitUpdated(); // this will in theory update the display
 
   // displaying damping parameters for humerus
-  dBodyID hbid = (dBodyID)humerus->body_id;
-  float handamp = dBodyGetAngularDamping(hbid);
-  float hantre = dBodyGetAngularDampingThreshold(hbid);
-  taMisc::Info("humerus angular damping: ", String(handamp), "\n");
-  taMisc::Info("humerus angular damping threshold: ", String(hantre), "\n");
+  // dBodyID hbid = (dBodyID)humerus->body_id;
+  // float handamp = dBodyGetAngularDamping(hbid);
+  // float hantre = dBodyGetAngularDampingThreshold(hbid);
+  // taMisc::Info("humerus angular damping: ", String(handamp), "\n");
+  // taMisc::Info("humerus angular damping threshold: ", String(hantre), "\n");
 
   return true;
 }
@@ -945,7 +957,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
     String erout;
     elbow_rot.Print(erout);
-    taMisc::Info("elbow rotation matrix :\n", erout);
+    // taMisc::Info("elbow rotation matrix :\n", erout);
 
     float_Matrix Rot1UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot1UlnaCM, &elbow_rot, &UlnaCM);
@@ -954,14 +966,14 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
     String ruout;
     Rot1UlnaCM.Print(ruout);
-    taMisc::Info("rotated ulna before translation:\n", ruout);
+    // taMisc::Info("rotated ulna before translation:\n", ruout);
 
     Rot1UlnaCM.Set(Rot1UlnaCM.FastEl(2)-La,2); // setting origin at shoulder
     //Rot1Wrist.Set(Rot1Wrist.FastEl(2)-La,2);
 
     String rudout;
     Rot1UlnaCM.Print(rudout);
-    taMisc::Info("rotated ulna after translation:\n", rudout);
+    // taMisc::Info("rotated ulna after translation:\n", rudout);
 
     float_Matrix Rot2UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
@@ -1010,20 +1022,20 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
     String erout;
     elbow_rot.Print(erout);
-    taMisc::Info("elbow rotation matrix :\n", erout);
+    // taMisc::Info("elbow rotation matrix :\n", erout);
 
     float_Matrix Rot1UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot1UlnaCM, &elbow_rot, &UlnaCM);
 
     String ruout;
     Rot1UlnaCM.Print(ruout);
-    taMisc::Info("rotated ulna before translation:\n", ruout);
+    // taMisc::Info("rotated ulna before translation:\n", ruout);
 
     Rot1UlnaCM.Set(Rot1UlnaCM.FastEl(1)-La,1); // setting origin at shoulder
 
     String rudout;
     Rot1UlnaCM.Print(rudout);
-    taMisc::Info("rotated ulna after translation:\n", rudout);
+    // taMisc::Info("rotated ulna after translation:\n", rudout);
 
     float_Matrix Rot2UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
@@ -1064,10 +1076,10 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   String smax1, smax2, smanch;
   max1.InitFromFloats(ax1); max2.InitFromFloats(ax2); manch.InitFromFloats(anch);
   max1.Print(smax1); max2.Print(smax2); manch.Print(smanch);
-  taMisc::Info("elbow angle: ", String(angl), "\n");
-  taMisc::Info("elbow anchor: ", smanch, "\n");
-  taMisc::Info("elbow axis1: ", smax1, "\n");
-  taMisc::Info("elbow axis2: ", smax2, "\n");
+  // taMisc::Info("elbow angle: ", String(angl), "\n");
+  // taMisc::Info("elbow anchor: ", smanch, "\n");
+  // taMisc::Info("elbow axis1: ", smax1, "\n");
+  // taMisc::Info("elbow axis2: ", smax2, "\n");
   //elbow->Init_Anchor();
   //CurFromODE(true);
 
@@ -1169,7 +1181,11 @@ bool VEArm::Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, ta
 }
 
 bool VEArm::TargetLengths(float trg_x, float trg_y, float trg_z) {
-  return TargetLengths_impl(targ_lens, trg_x, trg_y, trg_z);
+  bool rval = TargetLengths_impl(targ_lens, trg_x, trg_y, trg_z);
+  norm_targ_lens = targ_lens;
+  norm_targ_lens -= min_lens;
+  norm_targ_lens *= spans;
+  return rval;
 }
 
 bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z) {
@@ -1274,9 +1290,9 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
   float_Matrix RotArmIP;
   taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT);
 
-  String out;
-  RotArmIP.Print(out);
-  taMisc::Info("rotated ArmIP:\n", out);
+  // String out;
+  // RotArmIP.Print(out);
+  // taMisc::Info("rotated ArmIP:\n", out);
 
 // rotating the ulna's insertion points
   float UlnaShift_f[9] = {0.0f}; // initializes all zeros
@@ -1341,9 +1357,9 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
   float_Matrix RotFarmIP(2,3,3);
   taMath_float::mat_mult(&RotFarmIP, &ReshiftedIP, &RT);
 
-  String ripout;
-  RotFarmIP.Print(ripout);
-  taMisc::Info("rotated ulna IPs:\n", ripout);
+  // String ripout;
+  // RotFarmIP.Print(ripout);
+  // taMisc::Info("rotated ulna IPs:\n", ripout);
 
 // next we obtain the distance between the proximal IPs and the distal IPs
 // this code is dependent on the muscle geometry
@@ -1384,9 +1400,9 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
     trgLen.Set(c1.Mag(),8+k+i);
   }
 
-  String trLout;
-  trgLen.Print(trLout);
-  taMisc::Info("target lengths: ", trLout, "\n");
+  // String trLout;
+  // trgLen.Print(trLout);
+  // taMisc::Info("target lengths: ", trLout, "\n");
   return true;
 }
 
@@ -1588,9 +1604,9 @@ bool VEArm::AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma
   float_Matrix RotFarmIP(2,3,3);
   taMath_float::mat_mult(&RotFarmIP, &ReshiftedIP, &RT);
 
-  String ripout;
-  RotFarmIP.Print(ripout);
-  taMisc::Info("rotated ulna IPs:\n", ripout);
+  // String ripout;
+  // RotFarmIP.Print(ripout);
+  // taMisc::Info("rotated ulna IPs:\n", ripout);
 
 // next we obtain the distance between the proximal IPs and the distal IPs
 // this code is dependent on the muscle geometry
@@ -1644,7 +1660,19 @@ bool VEArm::NormLengthsToTable(DataTable* len_table) {
   if(len_table->rows == 0)       // empty table, make sure we have at least 1 row
     dc->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_lengths.SafeEl(i),-1, // -1 = last row
+    dc->SetMatrixVal(norm_lens.SafeEl(i),-1, // -1 = last row
+                     0,0,0,i);
+  }
+  return true;
+}
+
+bool VEArm::NormTargLengthsToTable(DataTable* len_table) {
+  char col_name[] = "targ_lengths"; 
+  DataCol* dc = len_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  if(len_table->rows == 0)       // empty table, make sure we have at least 1 row
+    dc->EnforceRows(1);
+  for(int i=0; i<n_musc; i++) {
+    dc->SetMatrixVal(norm_targ_lens.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
   }
   return true;
@@ -1656,31 +1684,34 @@ bool VEArm::NormSpeedsToTable(DataTable* vel_table) {
   if(vel_table->rows == 0)       // empty table, make sure we have at least 1 row
     dc->EnforceRows(1);
   
-  float_Matrix vels(1,n_musc);
-  Speeds(vels);
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(1/(1+exp(-15.0f*vels.SafeEl(i))),-1, // -1 = last row
+    dc->SetMatrixVal(norm_vels.SafeEl(i),-1, // -1 = last row
                      0,0,0,i); // normalizing using the logistic function
   }
   return true;
 }
 
-bool VEArm::SetTargetLengths(DataTable* len_table) {
-  char col_name[] = "lengths";
+bool VEArm::ArmStateToTable(DataTable* table) {
+  NormLengthsToTable(table);
+  NormTargLengthsToTable(table);
+  NormSpeedsToTable(table);
+  return true;
+}
+
+bool VEArm::SetTargetLengthsFmTable(DataTable* len_table) {
+  char col_name[] = "targ_lengths";
   DataCol* dc = len_table->FindColName(col_name, true); // find the "lengths" column, error msg if not found
   MatrixGeom std_geom(4,1,1,1,n_musc);
 
-  if(TestWarning(dc->cell_geom != std_geom, "","The geometry of the table provided to GetTargetLengths() is incorrect \n"))
+  if(TestError(dc->cell_geom != std_geom, "SetTargetLengthsFmTable","The geometry of the table provided to GetTargetLengths() is incorrect \n"))
     return false;
 
   taMatrix* cell_mat = dc->GetValAsMatrix(-1); // -1 = last row
 
-  for(int i=0; i++; i<n_musc) { // recovering unnormalized values
-    targ_lens.Set(((cell_mat->SafeElAsFloat(0,0,0,i))/spans.SafeEl(i))+min_lens.SafeEl(i),i);
-
-    //targ_lens.Set(((float)(dc->GetMatrixVal(-1,0,0,0,i))/spans.SafeEl(i))+min_lens.SafeEl(i),i);
-    // -1 = last row. spans = 1/(max_lens-min_lens).
-  }
+  norm_targ_lens.CopyFrom(cell_mat);
+  targ_lens = norm_targ_lens;
+  targ_lens /= spans;
+  targ_lens += min_lens;
   return true;
 }
 

@@ -31,7 +31,7 @@
 
 taTypeDef_Of(VEArm);
 
-class TA_API VEArm : public VEObject{
+class TA_API VEArm : public VEObject {
   // a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
 INHERITED(VEObject)
 public:
@@ -70,6 +70,7 @@ public:
   MuscGeo       musc_geo;       // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
   MuscType      musc_type;      // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998)
   float         gain;           // gain factor for multiplying forces
+  float         vel_norm_gain;  // speed normalization gain factor for a sigmoidal compression function
 
   float 	La;     // #READ_ONLY #SHOW the length of the humerus
   float 	Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
@@ -85,13 +86,18 @@ public:
   taVector3f    should_loc; // #READ_ONLY #SHOW the location of the shoulder in World coordinates
   int           n_musc;  // #READ_ONLY the total number of muscles, as implied by the IP matrices
   
-  float_Matrix  targ_lens; // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
-  float_Matrix  forces; // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
-  float_Matrix  max_lens; // #EXPERT maximum muscle lengths, initialized by ConfigArm, used to normalize lengths
-  float_Matrix  min_lens;  // #EXPERT minimum muscle lengths, initialized by ConfigArm 
+  float_Matrix  targ_lens;  // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
+  float_Matrix  forces;     // #EXPERT forces, computed by the TargetLengths function for a given 3D target location
+
+  float_Matrix  max_lens;   // #EXPERT maximum muscle lengths, initialized by ConfigArm, used to normalize lengths
+  float_Matrix  min_lens;   // #EXPERT minimum muscle lengths, initialized by ConfigArm 
   float_Matrix  rest_lens;  // #EXPERT resting muscle lengths, initialized by ConfigArm 
-  float_Matrix  norm_lengths; // #READ_ONLY #SHOW normalized muscle lengths
-  float_Matrix  spans;	// #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
+  float_Matrix  spans;      // #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
+
+  // overall state variables for the arm
+  float_Matrix  norm_lens;      // #READ_ONLY #SHOW normalized current muscle lengths
+  float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW normalized target muscle lengths
+  float_Matrix  norm_vels;      // #READ_ONLY #SHOW normalized muscle velocities
 
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
@@ -106,7 +112,6 @@ public:
                           float ulna_length = 0.24, float ulna_radius = 0.02,
                           float hand_length = 0.08, float hand_radius = 0.03,
                           float elbowGap = 0.03,   float wristGap = 0.03,
-                          float tor_cmX = -0.25, float tor_cmY = -0.2, float tor_cmZ = 0,
                           float sh_offX = 0.25, float sh_offY = 0.2, float sh_offZ = 0);
   // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
 
@@ -137,13 +142,16 @@ public:
   // Given the four angles describing arm position, calculate the muscle lengths at that position
 
   virtual bool NormLengthsToTable(DataTable* len_table);
-  // #BUTTON Write the normalized muscle lengths into a datatable, in column named "lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-
+  // Write the normalized muscle lengths into a datatable, in column named "lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
+  virtual bool NormTargLengthsToTable(DataTable* len_table);
+  // Write the normalized target muscle lengths into a datatable, in column named "targ_lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
   virtual bool NormSpeedsToTable(DataTable* len_table);
-  // #BUTTON Write the normalized muscle contraction speeds into a datatable, in column named "speeds", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
+  // Write the normalized muscle contraction speeds into a datatable, in column named "speeds", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
+  virtual bool ArmStateToTable(DataTable* len_table);
+  // Write normalized lengths, speeds, and target lengths to a datatable -- calls above functions -- all are formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
 
-  virtual bool SetTargetLengths(DataTable* len_table);
-  // Update the unnormalized target lengths (targ_lens) using normalized values from a DataTable. The received DataTable must contain a column named "lengths" with 4 dimensional cell geometry 1 x 1 by 1 x n_musc.
+  virtual bool SetTargetLengthsFmTable(DataTable* len_table);
+  // Update the unnormalized target lengths (targ_lens) using normalized values from a DataTable. The received DataTable must contain a float column named "targ_lengths" with 4 dimensional cell geometry 1 x 1 by 1 x n_musc.
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc
