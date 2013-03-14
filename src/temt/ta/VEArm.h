@@ -98,6 +98,7 @@ public:
   float_Matrix  norm_lens;      // #READ_ONLY #SHOW normalized current muscle lengths
   float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW normalized target muscle lengths
   float_Matrix  norm_vels;      // #READ_ONLY #SHOW normalized muscle velocities
+  float         avg_vel_mag;    // #READ_ONLY #SHOW average of normalized velocity magnitude (absolute value) -- useful to determine how much the arm is currently moving overall
 
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
@@ -122,15 +123,16 @@ public:
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
   virtual bool TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
   // #EXPERT Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
+  virtual void GetRandomTarget(float& trg_x, float& trg_y, float& trg_z);
+  // generate a random target location that is actually reachable by this arm
 
   virtual bool UpdateIPs();
   // #BUTTON Set the muscle IPs to the values in the rotated xxxIP matrices, and update norm_lengths
 
-  virtual bool Lengths(float_Matrix &Len);
-  // Put the current lengths of all muscles in the given matrix
-
-  virtual bool Speeds(float_Matrix &Vel);
-  // Put the muscle contraction speeds of the last time step in the given matrix
+  virtual bool Lengths(float_Matrix& len, bool normalize);
+  // Put the current lengths of all muscles in the given matrix (if normalize is true, return normalized 0..1) -- sets len geom to 1,n_musc
+  virtual bool Speeds(float_Matrix& vel, bool normalize);
+  // Put the muscle contraction speeds of the last time step in the given matrix (if normalize is true, return normalized 0..1) -- sets vel geom to 1,n_musc
 
   virtual bool ApplyStim(const float_Matrix& stims, float_Matrix &fs);
   // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns.

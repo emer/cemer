@@ -118,7 +118,7 @@ void taiArgTypeOfTypePtr::GetImage_impl(taiWidget* dat, const void* base) {
       if(arg_def.nonempty()) {
         if(arg_def.contains("&TA_"))
           arg_def = arg_def.after("&TA_");
-        TypeDef* tdlkup = TypeDef::FindGlobalTypeName(arg_def);
+        TypeDef* tdlkup = TypeDef::FindGlobalTypeName(arg_def, false);
         if(tdlkup)
           *((TypeDef**)arg_base) = tdlkup;
       }

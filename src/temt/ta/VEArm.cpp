@@ -18,6 +18,7 @@
 #include <taMath_float>
 #include <DataTable>
 #include <DataCol>
+#include <Random>
 
 #include <VELinearMuscle>
 #include <VEHillMuscle>
@@ -274,18 +275,17 @@ bool VEArm::UpdateIPs() {
       muscles[9+i]->bend = false;
     }
   }
-//-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+  //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
-//......... updating the normalized lengths ..........
-  Lengths(norm_lens);  // setting the unnormalized lengths in norm_lens
-  norm_lens -= min_lens;
-  norm_lens *= spans;  // normalizing lengths (spans is initialized in InitMuscles) 
+  //......... updating the normalized lengths ..........
+  Lengths(norm_lens, true); // true = normalize
 
-  norm_vels.SetGeom(1,n_musc);
-  Speeds(norm_vels);
-  for(int i=0; i<n_musc; i++) {
-    norm_vels.FastEl(i) = 1.0f / (1.0f + expf(-vel_norm_gain * norm_vels.FastEl(i)));
+  Speeds(norm_vels, true); // true = normalize
+  avg_vel_mag = 0.0f;
+  for(int i=0; i<norm_vels.size; i++) {
+    avg_vel_mag += fabsf(norm_vels.FastEl(i) - 0.5f); // offset from .5
   }
+  avg_vel_mag /= (float)norm_vels.size;
   return true;
 }
 
@@ -1180,6 +1180,29 @@ bool VEArm::Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, ta
   //()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
 }
 
+void VEArm::GetRandomTarget(float& trg_x, float& trg_y, float& trg_z) {
+  // todo: make this more general in terms of orientation etc -- makes a lot of assumptions
+  taVector3f euler_rot;
+  euler_rot.x = Random::UniformMinMax(0.0f, taMath_float::pi*.45f);
+  euler_rot.z = Random::UniformMinMax(-taMath_float::pi*.9f, taMath_float::pi*.9f);
+
+  float max_len = (La + Lf) * .95f;
+  float min_len = max_len * .2f;
+
+  taVector3f vec;
+  vec.x = 0;
+  vec.y = 0;
+  vec.z = Random::UniformMinMax(min_len, max_len);
+
+  taQuaternion quat;
+  quat.FromEulerVec(euler_rot);
+  quat.RotateVec(vec);
+  vec += should_loc;
+  trg_x = vec.x;
+  trg_y = vec.y;
+  trg_z = vec.z;
+}
+
 bool VEArm::TargetLengths(float trg_x, float trg_y, float trg_z) {
   bool rval = TargetLengths_impl(targ_lens, trg_x, trg_y, trg_z);
   norm_targ_lens = targ_lens;
@@ -1406,22 +1429,26 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
   return true;
 }
 
-bool VEArm::Lengths(float_Matrix &Len) {
-  if(TestWarning(Len.count() != n_musc, "","The matrix provided to Lengts() doesn't match the number of muscles \n"))
-    return false;
-
+bool VEArm::Lengths(float_Matrix& len, bool normalize) {
+  // note: please follow coding conventions of using lower-case for variables
+  len.SetGeom(1, n_musc);       // far better to enforce geom than warn about it
   for(int i=0; i<n_musc; i++) {
-    Len.Set(muscles[i]->Length(),i);
+    len.Set(muscles[i]->Length(),i);
+  }
+  if(normalize) {
+    len -= min_lens;
+    len *= spans;  // normalizing lengths (spans is initialized in InitMuscles) 
   }
   return true;
 }
 
-bool VEArm::Speeds(float_Matrix &Vel) {
-  if(TestWarning(Vel.count() != n_musc, "","The matrix provided to Speeds() doesn't match the number of muscles \n"))
-    return false;
-
+bool VEArm::Speeds(float_Matrix& vel, bool normalize) {
+  vel.SetGeom(1, n_musc);       // far better to enforce geom than warn about it
   for(int i=0; i<n_musc; i++) {
-    Vel.Set(muscles[i]->Speed(),i);
+    vel.Set(muscles[i]->Speed(),i);
+    if(normalize) {
+      vel.FastEl(i) = 1.0f / (1.0f + expf(-vel_norm_gain * vel.FastEl(i)));
+    }
   }
   return true;
 }
@@ -1474,8 +1501,8 @@ bool VEArm::VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs
 
   if(musc_type == LINEAR) {
     float_Matrix lens(1,n_musc), vels(1,n_musc); 
-    Lengths(lens);  // storing the lengths and speeds in lens and vels respectively
-    Speeds(vels);
+    Lengths(lens, false);  // storing the lengths and speeds in lens and vels respectively
+    Speeds(vels, false);
     len_error = lens - trg_lens;
     len_error *= gain;
     vel_error = len_error + vels;
