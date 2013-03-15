@@ -33,8 +33,8 @@
 
 
 ClusterManager::Exception::Exception(const char *msg)
-  : std::runtime_error(msg)
-{
+  : std::runtime_error(msg) {
+  taMisc::Error(msg);
 }
 
 ClusterManager::ClusterManager(ClusterRun &cluster_run)
@@ -83,12 +83,27 @@ void ClusterManager::Init() {
   setPaths();
 }
 
+bool ClusterManager::CheckPrefs() {
+  if(taMisc::cluster_svn_path.empty()) {
+    taMisc::Error("preferences/options setting of cluster_svn_path is empty -- must contain a valid path to local svn checkout directory");
+    return false;
+  }
+  if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
+    taMisc::Error(
+      "Please define at least one cluster and repository in "
+      "preferences/options");
+    return false;
+  }
+  return true;
+}
+
 // Run the model on a cluster using the parameters of the ClusterRun
 // provided in the constructor.
 bool
 ClusterManager::BeginSearch(bool prompt_user)
 {
   if (!m_valid) return false; // Ensure proper construction.
+  if(!CheckPrefs()) return false;
 
   try {
     saveProject();
@@ -134,6 +149,7 @@ bool
 ClusterManager::CommitJobSubmissionTable()
 {
   if (!m_valid) return false; // Ensure proper construction.
+  if(!CheckPrefs()) return false;
 
   try {
     initClusterInfoTable();
@@ -151,29 +167,10 @@ ClusterManager::CommitJobSubmissionTable()
 }
 
 bool
-ClusterManager::CommitJobsDoneTable()
-{
-  if (!m_valid) return false; // Ensure proper construction.
-
-  try {
-    initClusterInfoTable();
-    saveDoneTable();
-    commitFiles("Submitting new jobs_done.dat");
-    return true;
-  }
-  catch (const ClusterManager::Exception &ex) {
-    taMisc::Error("Could not submit jobs done table:", ex.what());
-  }
-  catch (const SubversionClient::Exception &ex) {
-    handleException(ex);
-  }
-  return false;
-}
-
-bool
 ClusterManager::UpdateTables()
 {
   if (!m_valid) return false; // Ensure proper construction.
+  if (!CheckPrefs()) return false;
 
   try {
     // Get old revisions of the two tables in the working copy.
@@ -213,6 +210,7 @@ bool
 ClusterManager::RemoveFiles(String_PArray& files, bool force, bool keep_local)
 {
   if (!m_valid) return false; // Ensure proper construction.
+  if(!CheckPrefs()) return false;
 
   try {
     updateWorkingCopy();
@@ -379,9 +377,9 @@ ClusterManager::promptForString(const String &str, const char *msg)
 {
   if (str.empty()) {
     showRepoDialog();
-    if (str.empty()) {
-      throw Exception(msg);
-    }
+    // if (str.empty()) {
+    //   throw Exception(msg);
+    // }
   }
   return str;
 }
@@ -389,6 +387,8 @@ ClusterManager::promptForString(const String &str, const char *msg)
 void
 ClusterManager::setPaths() {
   String prv_path = m_wc_path;
+
+  if(!CheckPrefs()) return;
 
   const String &username = getUsername();
   const String &filename = getFilename();
@@ -616,14 +616,6 @@ ClusterManager::deleteFile(const String &filename)
 bool
 ClusterManager::showRepoDialog()
 {
-  // Make sure there's at least one repository defined.
-  if (taMisc::svn_repos.size == 0 || taMisc::cluster_names.size == 0) {
-    taMisc::Error(
-      "Please define at least one cluster and repository in "
-      "preferences/options");
-    return false;
-  }
-
   taGuiDialog dlg;
   dlg.win_title = "Run on cluster";
   dlg.prompt = "Enter parameters";

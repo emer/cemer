@@ -67,11 +67,14 @@ void ClusterRun::UpdateAfterEdit_impl() {
   }
 }
 
-void ClusterRun::initClusterManager() {
+bool ClusterRun::initClusterManager() {
+  if(!ClusterManager::CheckPrefs())
+    return false;
   if(!m_cm)
     m_cm = new ClusterManager(*this);
   else
     m_cm->Init();
+  return true;
 }
 
 void ClusterRun::NewSearchAlgo(TypeDef *type) {
@@ -79,7 +82,8 @@ void ClusterRun::NewSearchAlgo(TypeDef *type) {
 }
 
 void ClusterRun::Run() {
-  initClusterManager();         // ensure it has been created.
+  if(!initClusterManager())
+    return;
   FormatTables();               // ensure tables are formatted properly
   jobs_submit.ResetData();      // clear the submission table
   bool prompt_user = true;      // always prompt the user on a new run.
@@ -103,7 +107,8 @@ void ClusterRun::Run() {
 }
 
 bool ClusterRun::Update() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return false;
 
   // Update the working copy and load the running/done tables.
   // save current selection information and restore at end
@@ -113,6 +118,7 @@ bool ClusterRun::Update() {
   bool has_sel_archive = SelectedRows(jobs_archive, st_row_archive, end_row_archive);
 
   bool has_updates = m_cm->UpdateTables();
+  if(!has_updates) return false;
   SortClusterInfoTable();
   jobs_done.Sort("tag", true);  // also sort jobs done by tag
   jobs_archive.Sort("tag", true);  // also sort jobs done by tag
@@ -146,7 +152,8 @@ void ClusterRun::SortClusterInfoTable() {
 }
 
 void ClusterRun::Cont() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
 
   // Create the next batch of jobs.
   if (cur_search_algo && cur_search_algo->CreateJobs()) {
@@ -156,7 +163,8 @@ void ClusterRun::Cont() {
 }
 
 void ClusterRun::Kill() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
   FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to kill.
@@ -177,7 +185,8 @@ void ClusterRun::Kill() {
 }
 
 void ClusterRun::GetData() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
   FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to process
@@ -204,7 +213,8 @@ void ClusterRun::GetData() {
 }
 
 void ClusterRun::ImportData(bool remove_existing) {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
   // note: can't call Update here because it unselects the rows in jobs_ tables!
 
   taProject* proj = GET_MY_OWNER(taProject);
@@ -335,7 +345,8 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
 }
 
 void ClusterRun::Probe() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
   String clust = m_cm->ChooseCluster("Choose a cluster to probe");
   if(clust.empty()) return;
   cluster = clust;
@@ -351,7 +362,8 @@ void ClusterRun::Probe() {
 }
 
 void ClusterRun::SelectFiles(bool include_data) {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
 
   file_list.ResetData();
   // Get the (inclusive) range of rows to process
@@ -473,7 +485,8 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, Stri
 
 
 void ClusterRun::GetFiles() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
   FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to process
@@ -496,7 +509,8 @@ void ClusterRun::GetFiles() {
 }
 
 void ClusterRun::RemoveFiles() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
 
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
@@ -517,7 +531,8 @@ void ClusterRun::RemoveFiles() {
 }
 
 void ClusterRun::ArchiveJobs() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
@@ -533,7 +548,8 @@ void ClusterRun::ArchiveJobs() {
 }
 
 void ClusterRun::RemoveJobs() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
@@ -562,7 +578,8 @@ void ClusterRun::RemoveJobs() {
 }
 
 void ClusterRun::RemoveKilledJobs() {
-  initClusterManager(); // ensure it has been created.
+  if(!initClusterManager())
+    return;
   jobs_submit.ResetData();
   file_list.ResetData();
   for (int row = jobs_done.rows-1; row >= 0; --row) {
@@ -765,6 +782,19 @@ ClusterRun::CurTimeStamp() {
 
 bool
 ClusterRun::ValidateJob(int n_jobs_to_sub) {
+  if(cluster.empty()) {
+    taMisc::Error("cluster name is empty -- must specify a cluster to run on");
+    return false;
+  }
+  if(svn_repo.empty()) {
+    taMisc::Error("svn_repo name is empty -- must specify an svn repository to use");
+    return false;
+  }
+  if(repo_url.empty()) {
+    taMisc::Error("repo_url is empty -- must specify an svn repository to use with a valid path");
+    return false;
+  }
+
   int csi = taMisc::clusters.FindName(cluster);
   if(csi < 0) {
     taMisc::Error("Can't find cluster named:", cluster);

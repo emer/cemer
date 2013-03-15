@@ -39,7 +39,9 @@ void VEArm::Initialize() {
   elbow_gap = 0.03f; // space left between bodies so joint can rotate
   wrist_gap = 0.03f;
   
-  gain = 30.0f;
+  gain = 20.0f;
+  damping = 0.1f;
+  damping_thr = 0.05f;
   vel_norm_gain = 15.0f;
 
   float CT_f[] = {-1.0f, 0,    0,
@@ -792,10 +794,10 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
 
   //----------- Setting damping --------------
-  humerus->SetAngularDamping(0.1f);
-  humerus->SetAngularDampingThreshold(0.05f);
-  ulna->SetAngularDamping(0.1f);
-  ulna->SetAngularDampingThreshold(0.05f);
+  humerus->SetAngularDamping(damping);
+  humerus->SetAngularDampingThreshold(damping_thr);
+  ulna->SetAngularDamping(damping);
+  ulna->SetAngularDampingThreshold(damping_thr);
 
   //---------- Init all created objects and update ODE -----------
   // NO: you can't count on ODE being initialized at this point -- that should happen later
@@ -1180,14 +1182,20 @@ bool VEArm::Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, ta
   //()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
 }
 
-void VEArm::GetRandomTarget(float& trg_x, float& trg_y, float& trg_z) {
+void VEArm::GetRandomTarget(float& trg_x, float& trg_y, float& trg_z,
+                            float x_ang_min, float x_ang_max,
+                            float y_ang_min, float y_ang_max,
+                            float z_ang_min, float z_ang_max,
+                            float min_dist, float max_dist) {
   // todo: make this more general in terms of orientation etc -- makes a lot of assumptions
   taVector3f euler_rot;
-  euler_rot.x = Random::UniformMinMax(0.0f, taMath_float::pi*.45f);
-  euler_rot.z = Random::UniformMinMax(-taMath_float::pi*.9f, taMath_float::pi*.9f);
+  euler_rot.x = Random::UniformMinMax(x_ang_min, x_ang_max);
+  euler_rot.y = Random::UniformMinMax(y_ang_min, y_ang_max);
+  euler_rot.z = Random::UniformMinMax(z_ang_min, z_ang_max);
 
-  float max_len = (La + Lf) * .95f;
-  float min_len = max_len * .2f;
+  float tot_len = (La + Lf);
+  float max_len = tot_len * max_dist;
+  float min_len = tot_len * min_dist;
 
   taVector3f vec;
   vec.x = 0;

@@ -33,6 +33,8 @@ public:
 
   void  Init();
   // initialize state for current ClusterRun settings, etc..
+  static bool CheckPrefs();
+  // check state of options/preferences 
 
   bool BeginSearch(bool prompt_user);
   // starts a run and pulls up the dialog to fill in parameters based on ClustRun obj
@@ -42,9 +44,7 @@ public:
   // update the jobs_running and jobs_done data tables from repo
   bool RemoveFiles(String_PArray& files, bool force = true, bool keep_local = false);
   // remove given files from repository, with given options -- does the commit too
-  bool CommitJobsDoneTable();
-  // commit the jobs_done.dat file with latest changes -- for cleaning up list
-
+ 
   String ChooseCluster(const String& prompt);
   // prompt the user to choose a cluster name -- just pulls up a simple combo-edit chooser dialog
 

@@ -70,6 +70,8 @@ public:
   MuscGeo       musc_geo;       // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
   MuscType      musc_type;      // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998)
   float         gain;           // gain factor for multiplying forces
+  float         damping;        // angular damping factor
+  float         damping_thr;    // angular damping threshold 
   float         vel_norm_gain;  // speed normalization gain factor for a sigmoidal compression function
 
   float 	La;     // #READ_ONLY #SHOW the length of the humerus
@@ -123,8 +125,12 @@ public:
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
   virtual bool TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
   // #EXPERT Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
-  virtual void GetRandomTarget(float& trg_x, float& trg_y, float& trg_z);
-  // generate a random target location that is actually reachable by this arm
+  virtual void GetRandomTarget(float& trg_x, float& trg_y, float& trg_z,
+                               float x_ang_min = 0.0f, float x_ang_max = 1.5f,
+                               float y_ang_min = 0.0f, float y_ang_max = 0.0f,
+                               float z_ang_min = -3.14159, float z_ang_max = 3.14159,
+                               float min_dist = 0.2f, float max_dist = 0.9f);
+  // generate a random target location that is actually reachable by this arm, by projecting a point out from the shoulder along a randomly generated angle within min/max range for each euler angle direction (x,y,z), with a distance randomly selected within normalized min/max range (1.0 = full length of arm) -- defaults work well for generating points in front of a typical arm configuration
 
   virtual bool UpdateIPs();
   // #BUTTON Set the muscle IPs to the values in the rotated xxxIP matrices, and update norm_lengths
