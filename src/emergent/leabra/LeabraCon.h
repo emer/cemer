@@ -27,7 +27,7 @@
 eTypeDef_Of(LeabraCon);
 
 class E_API LeabraCon : public Connection {
-  // #STEM_BASE ##CAT_Leabra Leabra connection
+  // #STEM_BASE ##CAT_Leabra #AKA_MatrixCon Leabra connection
 public:
   float		pdw;		// #VIEW_HOT #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
   

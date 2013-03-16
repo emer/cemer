@@ -31,8 +31,6 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active before the mid minus cycle will actually fire
-  int		gate_cycle; 		// cycle to compute gating signal on -- this is a fixed cycle count, which should be delayed enough to allow striatum to receive all the information it needs and neurons to get sufficiently activated, but also enough before the end of the minus phase to allow deep layer activations to produce whatever effects they might have
-  bool		force;			// if nobody has fired by min_go_cycle, pick top unit by netin value (or at random if all netin == 0) to fire go
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -73,9 +71,9 @@ public:
   // compute gating activations -- called at gate_cycle
   virtual void	Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // update layer user data gating statistics which are useful to monitor for overall performance -- called at gate_cycle
-  override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
-  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
+  // we compute gating in postsettle pre stage of plus phase
+  override void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net);
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
 

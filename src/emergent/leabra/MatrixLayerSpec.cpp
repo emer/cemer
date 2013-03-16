@@ -30,14 +30,10 @@ void MatrixGoNogoGainSpec::Initialize() {
 }
 
 void MatrixMiscSpec::Initialize() {
-  trace_learn = false;
-  da_gain = 0.05f;
-  nogo_wtscale_inc = 2.0f;
+  da_gain = 0.1f;
   nogo_inhib = 0.2f;
-  pvr_inhib = 0.8f;
-  refract_inhib = 0.5f;
-  no_pfc_thr = 0.0f;
-  no_pfc_inhib = 0.2f;
+  pvr_inhib = 0.0f;
+  refract_inhib = 0.0f;
 }
 
 /////////////////////////////////////////////////////
@@ -53,7 +49,6 @@ void MatrixLayerSpec::Defaults_init() {
   // todo: sync with above
   matrix.nogo_inhib = 0.0f; // 0.2f;
   matrix.da_gain = 0.1f;
-  matrix.no_pfc_thr = 0.0f;
 
   //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
@@ -182,12 +177,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       cs->SetUnique("wt_limits", true);
       cs->wt_limits.sym = false;
     }
-    if(lay->CheckError(cs->trace_learn != matrix.trace_learn, quiet, rval,
-                  "requires trace_learn param on MatrixConSpec to be the same as on MatrixLayerSpec -- I just updated the con spec:",
-                       cs->name, "to be:", (String)matrix.trace_learn)) {
-      //      cs->SetUnique("wt_limits", true);
-      cs->trace_learn = matrix.trace_learn;
-    }
   }
   if(lay->CheckError(da_lay == NULL, quiet, rval,
                 "Could not find DA layer (PVLVDaLayerSpec) -- must receive MarkerConSpec projection from one!")) {
@@ -277,33 +266,6 @@ void MatrixLayerSpec::NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // nop -- don't do the default thing -- already done by call to MidMinusAct
-}
-
-void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
-                                              Layer::AccessMode acc_md, int gpidx,
-                                              LeabraNetwork* net) {
-  MatrixUnitSpec* us = (MatrixUnitSpec*)lay->GetUnitSpec();
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    us->Compute_MidMinusAct(u, net);
-  }
-}
-
-void MatrixLayerSpec::Compute_ZeroMidMinusAct_ugp(LeabraLayer* lay,
-                                              Layer::AccessMode acc_md, int gpidx,
-                                              LeabraNetwork* net) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    u->act_mid = 0.0f;
-  }
-}
-
 float MatrixLayerSpec::Compute_NoGoInhibGo_ugp(LeabraLayer* lay,
 					       Layer::AccessMode acc_md, int gpidx,
 					       LeabraNetwork* net) {
@@ -315,31 +277,6 @@ float MatrixLayerSpec::Compute_NoGoInhibGo_ugp(LeabraLayer* lay,
   float nogo_i = matrix.nogo_inhib * nogo_gpd->acts.avg;
   if(nogo_i > 1.0f) nogo_i = 1.0f;
   return nogo_i;
-}
-
-float MatrixLayerSpec::Compute_GoPfcThrInhib_ugp(LeabraLayer* lay,
-						 Layer::AccessMode acc_md, int gpidx,
-						 LeabraNetwork* net) {
-  if(matrix.no_pfc_thr == 0.0f || matrix.no_pfc_inhib == 0.0f) return 0.0f;
-
-  float noact_i = 0.0f;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    if(!fmlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) continue;
-    PFCLayerSpec* pfcls = (PFCLayerSpec*)fmlay->GetLayerSpec();
-    if(pfcls->pfc_layer != PFCLayerSpec::SUPER) continue; // only super matters..
-    if(pfcls->pfc_type != gating_type) continue; // only same type matters!
-    if(gpidx < fmlay->gp_geom.n) {
-      LeabraUnGpData* fm_gpd = (LeabraUnGpData*)fmlay->ungp_data.FastEl(gpidx);
-      if(fm_gpd->acts.avg < matrix.no_pfc_thr) {
-	noact_i = matrix.no_pfc_inhib;
-	break;
-      }
-    }
-  }
-  return noact_i;
 }
 
 float MatrixLayerSpec::Compute_RefractInhib_ugp(LeabraLayer* lay,
@@ -356,6 +293,7 @@ float MatrixLayerSpec::Compute_RefractInhib_ugp(LeabraLayer* lay,
 float MatrixLayerSpec::Compute_PVrInhib_ugp(LeabraLayer* lay,
 					    Layer::AccessMode acc_md, int gpidx,
 					    LeabraNetwork* net) {
+  // todo: this will be off by one trial now...
   if(matrix.pvr_inhib == 0.0f) return 0.0f;
   float pvr_i = 0.0f;
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
@@ -370,43 +308,53 @@ float MatrixLayerSpec::Compute_PVrInhib_ugp(LeabraLayer* lay,
   return pvr_i;
 }
 
+void MatrixLayerSpec::Compute_NetinMods(LeabraLayer* lay, LeabraNetwork* net) {
+  if(go_nogo != GO) return;     // only Go gets mods
 
-void MatrixLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
-  if(go_nogo == GO) {
-    for(int gi=0; gi<lay->gp_geom.n; gi++) {
-      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+  for(int gi=0; gi<lay->gp_geom.n; gi++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
 
-      float nogo_i = Compute_NoGoInhibGo_ugp(lay, acc_md, gi, net);
-      float noact_i = Compute_GoPfcThrInhib_ugp(lay, acc_md, gi, net);
-      float refract_i = Compute_RefractInhib_ugp(lay, acc_md, gi, net);
-      float pvr_i = Compute_PVrInhib_ugp(lay, acc_md, gi, net);
+    float nogo_i = Compute_NoGoInhibGo_ugp(lay, acc_md, gi, net);
+    float refract_i = Compute_RefractInhib_ugp(lay, acc_md, gi, net);
+    float pvr_i = Compute_PVrInhib_ugp(lay, acc_md, gi, net);
 
-      gpd->nogo_inhib = nogo_i;
-      gpd->no_pfc_inhib = noact_i;
-      gpd->refract_inhib = refract_i;
-      gpd->pvr_inhib = pvr_i;
+    gpd->nogo_inhib = nogo_i;
+    gpd->refract_inhib = refract_i;
+    gpd->pvr_inhib = pvr_i;
       
-      float mult_fact = 1.0f;
-      if(nogo_i > 0.0f) mult_fact *= (1.0f - nogo_i);
-      if(noact_i > 0.0f) mult_fact *= (1.0f - noact_i);
-      if(refract_i > 0.0f) mult_fact *= (1.0f - refract_i);
-      if(pvr_i > 0.0f) mult_fact *= (1.0f - pvr_i);
+    float mult_fact = 1.0f;
+    if(nogo_i > 0.0f) mult_fact *= (1.0f - nogo_i);
+    if(refract_i > 0.0f) mult_fact *= (1.0f - refract_i);
+    if(pvr_i > 0.0f) mult_fact *= (1.0f - pvr_i);
 
-      if(mult_fact != 1.0f) {
-	for(int j=0;j<nunits;j++) {
-	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
-	  if(u->lesioned()) continue;
-	  u->net *= mult_fact;
-	  u->i_thr = u->Compute_IThresh(net);
-	}
+    if(mult_fact != 1.0f) {
+      for(int j=0;j<nunits;j++) {
+        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
+        if(u->lesioned()) continue;
+        u->net *= mult_fact;
+        u->i_thr = u->Compute_IThresh(net);
       }
     }
   }
+}
 
+void MatrixLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_NetinMods(lay, net);
   inherited::Compute_NetinStats(lay, net);
+}
+
+void MatrixLayerSpec::Compute_ZeroGatingAct_ugp(LeabraLayer* lay,
+                                                Layer::AccessMode acc_md, int gpidx,
+                                                LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    u->act_eq = u->act = u->act_p = 0.0f;
+  }
 }
 
 void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
@@ -415,63 +363,20 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
   int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
   LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
   SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-  int gate_cycle = snr_ls->snrthal.gate_cycle;
 
   PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   gpd->CopyPBWMData(*snr_gpd);	// always grab from snr
-  if(net->ct_cycle == gate_cycle) {
-    if(snr_gpd->go_fired_trial) {
-      Compute_MidMinusAct_ugp(lay, acc_md, gpidx, net); // grab our mid minus
-    }
-    else {
-      Compute_ZeroMidMinusAct_ugp(lay, acc_md, gpidx, net); // zero our mid minus
-    }
+  if(!snr_gpd->go_fired_trial) {
+    Compute_ZeroGatingAct_ugp(lay, acc_md, gpidx, net); // zero our act values
   }
 }
 
-void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
+void MatrixLayerSpec::Compute_GatingActs(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
     Compute_GatingActs_ugp(lay, acc_md, gpidx, net);
   }
-  ModulateNoGoPrjns(lay, net);
-  inherited::Compute_CycleStats(lay, net);
-}
-
-void MatrixLayerSpec::ModulateNoGoPrjns(LeabraLayer* lay, LeabraNetwork* net) {
-  if(go_nogo == MatrixLayerSpec::GO) return;
-
-  LeabraLayer* snr_lay = SNrThalLayer(lay);
-  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-  int gate_cycle = snr_ls->snrthal.gate_cycle;
-  if(net->ct_cycle != gate_cycle) return; // only on this one cycle
-
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-
-  for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-
-    for(int j=0;j<nunits;j++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
-      if(u->lesioned()) continue;
-
-      for(int g=0; g<u->recv.size; g++) {
-	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-	if(from->lesioned() || !recv_gp->size)       continue;
-
-	if(gpd->go_fired_trial) {
-	  recv_gp->scale_eff *= matrix.nogo_wtscale_inc;
-	}
-	else {
-	  recv_gp->scale_eff = 0.0f; // turn off completely
-	}
-      }
-    }
-  }
-  net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
 }
 
 // this is called at end of plus phase, to establish a da value for driving learning
@@ -482,27 +387,12 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
-  int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
-
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    LeabraUnit* snr_u = (LeabraUnit*)snr_lay->UnitAccess(Layer::ACC_GP, 0,
-							 snr_st_idx + gi);
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-    float snrthal_act = 0.0f;
-    if(matrix.trace_learn) {
-      snrthal_act = matrix.da_gain; // no snr act
-    }
-    else {
-      if(!snr_u->lesioned())
-        snrthal_act = matrix.da_gain * snr_u->act_mid;
-    }
-
     if(go_nogo == NOGO) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
-	u->dav *= snrthal_act;
+	u->dav *= -matrix.da_gain; // inverting the da at this point -- uses same learning rule as GO otherwise
 	if(go_nogo_gain.on) {
 	  if(u->dav >= 0.0f)
 	    u->dav *= go_nogo_gain.nogo_p;
@@ -515,7 +405,7 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
-	u->dav *= snrthal_act;
+	u->dav *= matrix.da_gain;
 	if(go_nogo_gain.on) {
 	  if(u->dav >= 0.0f)
 	    u->dav *= go_nogo_gain.go_p;
@@ -532,7 +422,10 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 
   if(net->phase_no == 1) {
     // end of plus -- compute da value used for learning
+    Compute_GatingActs(lay, net);
     Compute_LearnDaVal(lay, net);
   }
 }
 
+
+// note: MatrixUnitSpec has Compute_Weights which only calls on pv trials

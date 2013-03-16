@@ -309,14 +309,8 @@ public:
     TF_ALL	= 0xFF,	// #NO_BIT all thread flags set
   };
 
-  enum TIMode {
-    NO_TI,                      // don't use optimized single-layer temporal integration mode
-    TI_CTXT_PRED,               // use bio-inspired mode where the context activation is trained to predict the outcome by itself, and it uses kwta activation dynamics to set the activation value
-    TI_SRN,                     // context activation remains just a straight net input, and learning happens based on the regular hidden unit activation delta -- mathematically equivalent to an SRN
-  };
-
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
-  TIMode        ti_mode;        // controls special LeabraTI (temporal integration) processing and learning mechanisms -- if used, requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase
+  bool          ti_mode;        // turn on LeabraTI (temporal integration) processing and learning mechanisms -- if used, requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase -- must have this flag on for TI to work!
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
@@ -383,6 +377,7 @@ public:
 
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
+  bool          unlearnable_trial; // #CAT_Learning this trial is flagged as being unlearnable -- blocks Compute_dWt and error stats from being computed -- particularly relevant for TI, where the prior context provides no basis for prediction (see also cos_err_lrn_thr) -- flag is automatically reset at start of trial -- must be actively set every trial
 
   float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see off_errs to exclude latter)
   float		avg_norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average normalized binary error value (computed over previous epoch)
@@ -558,14 +553,14 @@ public:
   //	LeabraTI Special code
 
   virtual void TI_CtxtUpdate();
-  // #CAT_SettleFinal called if ti_on is true -- updates context activation at end of plus phase (called from PostSettle())
+  // #CAT_TI called if ti_mode is true -- updates context activation at end of plus phase (called from PostSettle())
     virtual void TI_Send_CtxtNetin();
-    // #CAT_SettleFinal send context netinput
-    virtual void TI_Compute_CtxtInhib();
-    // #CAT_SettleFinal compute kwta inhib on context netins
+    // #CAT_TI send context netinput
     virtual void TI_Compute_CtxtAct();
-    // #CAT_SettleFinal compute context activations from context netinput and inhib
+    // #CAT_TI compute context activations from context netinput
 
+  virtual void TI_ClearContext();
+  // #CAT_TI clear the TI context state from all units in the network -- can be useful to do at clear discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

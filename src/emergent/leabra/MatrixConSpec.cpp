@@ -16,9 +16,6 @@
 #include "MatrixConSpec.h"
 
 void MatrixConSpec::Initialize() {
-  min_obj_type = &TA_MatrixCon;
-
-  trace_learn = false;
   Defaults_init();
 }
 

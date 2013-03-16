@@ -18,26 +18,22 @@
 void PBWMUnGpData::Initialize() {
   go_fired_now = false;
   go_fired_trial = false;
-  go_forced = false;
   go_cycle = -1;
   mnt_count = -1;		// empty
   prv_mnt_count = -1;
   nogo_inhib = 0.0f;
   refract_inhib = 0.0f;
-  no_pfc_inhib = 0.0f;
   pvr_inhib = 0.0f;
 }
 
 void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
   go_fired_now = cp.go_fired_now;
   go_fired_trial = cp.go_fired_trial;
-  go_forced = cp.go_forced;
   go_cycle = cp.go_cycle;
   mnt_count = cp.mnt_count;
   prv_mnt_count = cp.prv_mnt_count;
   nogo_inhib = cp.nogo_inhib;
   refract_inhib = cp.refract_inhib;
-  no_pfc_inhib = cp.no_pfc_inhib;
   pvr_inhib = cp.pvr_inhib;
 }
 

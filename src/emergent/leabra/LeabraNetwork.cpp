@@ -186,7 +186,7 @@ void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
 
   learn_rule = CTLEABRA_XCAL;
-  ti_mode = NO_TI;
+  ti_mode = false;
   prv_learn_rule = -1;
   phase_order = MINUS_PLUS;
   no_plus_test = true;
@@ -241,6 +241,7 @@ void LeabraNetwork::Initialize() {
 
   on_errs = true;
   off_errs = true;
+  unlearnable_trial = false;
 
   norm_err = 0.0f;
   avg_norm_err = 1.0f;
@@ -473,6 +474,7 @@ void LeabraNetwork::BuildUnits_Threads() {
 //      TrialInit -- at start of trial
 
 void LeabraNetwork::Trial_Init() {
+  unlearnable_trial = false;
   cycle = -1;
   Trial_Init_Phases();
   SetCurLrate();
@@ -907,7 +909,7 @@ void LeabraNetwork::PostSettle() {
     if(!lay->lesioned())
       lay->PostSettle(this);
   }
-  if(ti_mode != NO_TI) {
+  if(ti_mode) {
     TI_CtxtUpdate();
   }
 }
@@ -974,9 +976,6 @@ void LeabraNetwork::TI_CtxtUpdate() {
   }
   if(do_updt) {
     TI_Send_CtxtNetin();
-    if(ti_mode == TI_CTXT_PRED) {
-      TI_Compute_CtxtInhib();
-    }
     TI_Compute_CtxtAct();
   }
 }
@@ -1005,13 +1004,6 @@ void LeabraNetwork::TI_Send_CtxtNetin() {
 // #endif
 }
 
-void LeabraNetwork::TI_Compute_CtxtInhib() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->TI_Compute_CtxtInhib(this);
-  }
-}
-
 void LeabraNetwork::TI_Compute_CtxtAct() {
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Compute_CtxtAct);
   if(thread_flags & ACT)
@@ -1019,6 +1011,15 @@ void LeabraNetwork::TI_Compute_CtxtAct() {
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
+
+void LeabraNetwork::TI_ClearContext() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->TI_ClearContext(this);
+  }
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////
 //      Trial Update and Final
@@ -1293,6 +1294,7 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
   if(cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
     if(cos_err < cos_err_lrn_thr) return; // didn't make threshold
   }
+  if(unlearnable_trial) return;
 
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
@@ -1532,9 +1534,18 @@ bool LeabraNetwork::Compute_TrialStats_Test() {
 }
 
 void LeabraNetwork::Compute_TrialStats() {
-  inherited::Compute_TrialStats();
-  Compute_NormErr();
-  Compute_CosErr();
+  if(unlearnable_trial) {
+    sse = 0.0f;                 // ignore errors..
+    norm_err = 0.0f;
+    cos_err = 0.0f;
+  }
+  else {
+    Compute_SSE(sse_unit_avg, sse_sqrt);
+    if(compute_prerr)
+      Compute_PRerr();
+    Compute_NormErr();
+    Compute_CosErr();
+  }
   Compute_MinusCycles();
   minus_output_name = output_name; // grab and hold..
 }

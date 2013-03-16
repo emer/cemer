@@ -32,7 +32,7 @@ INHERITED(LeabraBiasSpec)
 public:
 
   inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
-    float err = ru->act_mid * ru->dav;
+    float err = ru->act_p * ru->dav;
     if(fabsf(err) >= dwt_thresh)
       cn->dwt += cur_lrate * err;
   }

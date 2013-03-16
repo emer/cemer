@@ -63,15 +63,6 @@ void LeabraActFunExSpec::Defaults_init() {
   avg_init = 0.15f;
 }
 
-void TIActSpec::Initialize() {
-  Defaults_init();
-}
-
-void TIActSpec::Defaults_init() {
-  ctxt_gain_m = 1.0f;
-  ctxt_gain_p = 1.0f;
-}
-
 void SpikeFunSpec::Initialize() {
   g_gain = 9.0f;
   rise = 0.0f;
@@ -309,7 +300,6 @@ void LeabraUnitSpec::Initialize() {
   Defaults_init();
 
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
-  CreateNXX1Fun(ti, ti_nxx1_fun, ti_noise_conv);
 }
 
 void LeabraUnitSpec::Defaults_init() {
@@ -379,7 +369,6 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   act_avg.UpdateAfterEdit_NoGui();
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
-  CreateNXX1Fun(ti, ti_nxx1_fun, ti_noise_conv);
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
@@ -568,7 +557,6 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->davg = 0.0f;
   lu->dav = 0.0f;
   lu->noise = 0.0f;
-  lu->maint_h = 0.0f;
 
   lu->i_thr = 0.0f;
   if(depress.on)
@@ -754,11 +742,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   // this is all receiver-based and done only at beginning of each settle
   u->net_scale = 0.0f;  // total of scale values for this unit's inputs
   float inhib_net_scale = 0.0f;
-  float ti_net_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
   bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
-  bool ti_sep = true;
-  if(net->ti_mode == LeabraNetwork::TI_SRN) ti_sep = false; // srn-mode -- just integrate
   // possible dependence on recv_gp->size is why this cannot be computed in Projection
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -771,10 +756,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
       rel_scale = cs->wt_scale_p.rel;
     else
       rel_scale = cs->wt_scale.rel;
-    if(ti_sep && cs->IsTICtxtCon()) {
-      ti_net_scale += rel_scale;
-    }
-    else if(cs->inhib) {
+    if(cs->inhib) {
       inhib_net_scale += rel_scale;
     }
     else {
@@ -797,11 +779,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
     if(from->lesioned() || !recv_gp->size)     continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(ti_sep && cs->IsTICtxtCon()) {
-      if(ti_net_scale > 0.0f)
-        recv_gp->scale_eff /= ti_net_scale;
-    }
-    else if(cs->inhib) {
+    if(cs->inhib) {
       if(inhib_net_scale > 0.0f)
         recv_gp->scale_eff /= inhib_net_scale;
     }
@@ -1004,13 +982,8 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     tot_net += u->ext * ls->clamp.gain;
   }
 
-  if(net->ti_mode != LeabraNetwork::NO_TI) {
-    if(net->phase_no == 0) {
-      tot_net += ti.ctxt_gain_m * u->act_ctxt;
-    }
-    else {
-      tot_net += ti.ctxt_gain_p * u->act_ctxt;
-    }
+  if(net->ti_mode) {
+    tot_net += u->act_ctxt;
   }
 
   u->net_delta = 0.0f;  // clear for next use
@@ -1199,15 +1172,15 @@ void LeabraUnitSpec::Compute_DaMod_PlusCont(LeabraUnit* u, LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     if(u->dav > 0.0f) {
       u->vcb.g_a = 0.0f;
-      u->vcb.g_h = u->maint_h + da_mod.gain * u->dav * u->act_m; // increase in proportion to participation in minus phase
+      u->vcb.g_h = da_mod.gain * u->dav * u->act_m; // increase in proportion to participation in minus phase
     }
     else {
-      u->vcb.g_h = u->maint_h;
+      u->vcb.g_h = 0.0f;
       u->vcb.g_a = -da_mod.gain * u->dav * u->act_m; // decrease in proportion to participation in minus phase
     }
   }
   else {
-    u->vcb.g_h = u->maint_h;
+    u->vcb.g_h = 0.0f;
     u->vcb.g_a = 0.0f;  // clear in minus phase!
   }
 }
@@ -1642,6 +1615,7 @@ void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
       if(!send_gp->size || send_gp->prjn->off)      continue;
       if(!((LeabraConSpec*)send_gp->GetConSpec())->IsTICtxtCon()) continue;
       LeabraTICtxtConSpec* sp = (LeabraTICtxtConSpec*)send_gp->GetConSpec();
+      if(!tol->TI_UpdateContextTest(net)) continue;
       sp->Send_CtxtNetin(send_gp, net, thread_no, act_ts);
     }
   }
@@ -1656,22 +1630,15 @@ void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
     }
     u->net_ctxt = nw_nt;
   }
-
-  float net_save = u->net;
-  u->net = u->net_ctxt;
-  u->i_thr = Compute_IThreshNoAHB(u, net); // note: this clobbers prior i_thr, but we shouldn't care much at this point..
-  u->net = net_save;
 }
 
 void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
-  if(net->ti_mode == LeabraNetwork::TI_SRN) {
-    u->act_ctxt = u->net_ctxt;  // straight pass-through, just for vis purposes
-  }
-  else {
-    // use straight new gelin, no time constants or anything..
-    float g_e_thr = Compute_EThresh(u); // has gc.i from compute inhib
-    u->act_ctxt = Compute_ActValFmVmVal_rate_impl(u->net_ctxt - g_e_thr, ti, ti_nxx1_fun);
-  }
+  u->act_ctxt = u->net_ctxt;  // straight pass-through -- gating will need to modulate this
+}
+
+void LeabraUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
+  u->act_ctxt = 0.0f;
+  u->net_ctxt = 0.0f;
 }
 
 

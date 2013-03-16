@@ -83,22 +83,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(TIActSpec);
-
-class E_API TIActSpec : public LeabraActFunSpec {
-  // TI temporal integration activation specs -- specifies activation function and context gain
-INHERITED(LeabraActFunSpec)
-public:
-  float         ctxt_gain_m; // how much the act_ctxt contributes to net input during the minus phase
-  float         ctxt_gain_p; // how much the act_ctxt contributes to net input during the plus phase
-
-  TA_SIMPLE_BASEFUNS(TIActSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();
-};
-
 eTypeDef_Of(SpikeFunSpec);
 
 class E_API SpikeFunSpec : public SpecMemberBase {
@@ -501,7 +485,6 @@ public:
   LeabraActFunExSpec act;		// #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
-  TIActSpec	ti;		// #CAT_Activation TI temporal integration activation  parameters -- how context activation is computed and impacts regular unit activations
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
@@ -524,8 +507,6 @@ public:
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
-  FunLookup	ti_nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table, for ti
-  FunLookup	ti_noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution, for ti
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -712,6 +693,8 @@ public:
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
   virtual void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_LeabraTI compute context activations
+  virtual void	TI_ClearContext(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_TI clear the act_ctxt and net_ctxt context variables -- can be useful to do at clear discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

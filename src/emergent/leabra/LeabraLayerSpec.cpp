@@ -1731,15 +1731,14 @@ void LeabraLayerSpec::Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
-
 ///////////////////////////////////////////////////////////////////////
-//      LeabraTI
+//      TI
 
-void LeabraLayerSpec::TI_Compute_CtxtInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  // context netin drove i_thr computation previously -- this is what now drives inhib
-  // just use regular kwta machinery here..
-  Compute_Inhib(lay, net);
-  Compute_ApplyInhib(lay, net);
+void LeabraLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    u->TI_ClearContext(net);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////

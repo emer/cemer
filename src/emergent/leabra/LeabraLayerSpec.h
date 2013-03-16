@@ -535,8 +535,11 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
-  virtual void	TI_Compute_CtxtInhib(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute context inhibition
+  virtual bool  TI_UpdateContextTest(LeabraLayer* lay, LeabraNetwork* net)
+  { return true; }
+  // #CAT_TI test whether TI context should be updated for this layer or not -- for gated layers (e.g., PFCLayerSpec), this is modulated by gating signal
+  virtual void  TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_TI clear the act_ctxt and net_ctxt context variables -- can be useful to do at clear discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialFinal

@@ -53,14 +53,10 @@ void MatrixUnitSpec::InitLinks() {
   bias_spec.type = &TA_MatrixBiasSpec;
 }
 
-void MatrixUnitSpec::Compute_MidMinusAct(LeabraUnit* u, LeabraNetwork* net) {
-  u->act_mid = u->act_eq;
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->InheritsFrom(&TA_MatrixConSpec)) {
-      ((MatrixConSpec*)cs)->Compute_MidMinusAct(recv_gp, u);
-    }
-  }
+void MatrixUnitSpec::Compute_Weights(Unit* u, Network* nt, int thread_no) {
+  LeabraNetwork* net = (LeabraNetwork*)nt;
+  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
+  if(!er_avail) return; // ONLY update weights on pv trials!!
+  inherited::Compute_Weights(u, net, thread_no);
 }
 

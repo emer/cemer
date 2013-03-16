@@ -24,23 +24,12 @@
 void PFCGateSpec::Initialize() {
   in_mnt = 1;
   out_mnt = 0;
-  maint_pct = 0.9f;
   maint_decay = 0.02f;
   maint_thr = 0.2f;
-  clear_decay = 0.0f;
-
-  maint_pct_c = 1.0f - maint_pct;
-}
-
-void PFCGateSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  maint_pct_c = 1.0f - maint_pct;
 }
 
 void PFCLayerSpec::Initialize() {
   pfc_type = SNrThalLayerSpec::IN_MNT;
-  pfc_layer = SUPER;
-
   Defaults_init();
 }
 
@@ -140,186 +129,34 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   // SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
 
-  if(pfc_layer == DEEP) {
-    LeabraLayer* snr_lay = SNrThalLayer(lay);
-    if(lay->CheckError(!snr_lay, quiet, rval,
-		       "no projection from SNrThal Layer found: must exist with MarkerConSpec connection")) {
-      return false;
-    }
-
-    if(lay->CheckError(u->recv.size < 2, quiet, rval,
-		       "Must receive at least 2 projections (0 = from superficial pfc, other from SNrThal")) {
-      return false;
-    }
-    if(lay->CheckError(u->recv.size < 2, quiet, rval,
-		       "Must receive at least 2 projections (0 = from superficial pfc, other from SNrThal")) {
-      return false;
-    }
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
-    if(lay->CheckError(recv_gp->size == 0, quiet, rval,
-		       "first projection from superficial pfc does not have a connection")) {
-      return false;
-    }
-    if(lay->CheckError(recv_gp->size > 1, quiet, rval,
-		       "warning: first projection from superficial pfc has more than 1 connection -- should just be a single one-to-one projection from superficial to deep!")) {
-    }
-
-//     if((pfc_type != SNrThalLayerSpec::OUTPUT) || (pfc_type != SNrThalLayerSpec::OUT_MNT)) {
-//       LeabraLayer* lve_lay = LVeLayer(lay);
-//       if(lay->CheckError(!lve_lay, quiet, rval,
-// 			 "LVe layer not found -- PFC deep layers must project to LVe")) {
-//       }
-//     }
-    if(pfc_type == SNrThalLayerSpec::IN_MNT) {
-      LeabraLayer* lve_lay = LVeLayer(lay);
-      if(lay->CheckError(!lve_lay, quiet, rval,
-			 "LVe layer not found -- PFCd_in_mnt deep layers must project to LVe")) {
-      }
-    }    
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  if(lay->CheckError(!snr_lay, quiet, rval,
+                     "no projection from SNrThal Layer found: must exist with MarkerConSpec connection")) {
+    return false;
   }
-  else {			// SUPER
-    LeabraLayer* deep = DeepLayer(lay);
-    if(lay->CheckError(!deep, quiet, rval,
-		       "Corresponding Deep layer not found -- PFC SUPER layers must project sending one-to-one prjn to DEEP layers")) {
-    }
 
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-      if(from->lesioned() || !recv_gp->size)       continue;
-      if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
-	PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
-	if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
-	  LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-	  if(lay->CheckError(!cs->InheritsFrom(&TA_PFCDeepGatedConSpec), quiet, rval,
-					       "Connection from DEEP PFC to SUPER PFC is not using a PFCDeepGatedConSpec -- this will not work properly with the gating of these connections!  con from layer:", from->name)) {
-	  }
-	}
-      }
-    }
-  }
+  // for(int g=0; g<u->recv.size; g++) {
+  //   LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  //   LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+  //   if(from->lesioned() || !recv_gp->size)       continue;
+  //   if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
+  //     PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
+  //     if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
+  //       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+  //       if(lay->CheckError(!cs->InheritsFrom(&TA_PFCDeepGatedConSpec), quiet, rval,
+  //                          "Connection from DEEP PFC to SUPER PFC is not using a PFCDeepGatedConSpec -- this will not work properly with the gating of these connections!  con from layer:", from->name)) {
+  //       }
+  //     }
+  //   }
+  // }
 
   return true;
 }
 
-// super accesses snrthal etc via deep -- everything there is indirect!
-
-LeabraLayer* PFCLayerSpec::DeepLayer(LeabraLayer* lay) {
-  if(TestError(pfc_layer != SUPER, "DeepLayer",
-	       "Programmer error: trying to get deep layer from deep layer!"))
-    return NULL;
-  LeabraLayer* deep = NULL;
-  for(int i=0; i< lay->send_prjns.size; i++) {
-    Projection* prj = lay->send_prjns[i];
-    LeabraLayer* play = (LeabraLayer*)prj->layer;
-    if(play->GetLayerSpec()->GetTypeDef() != &TA_PFCLayerSpec) continue;
-    PFCLayerSpec* pfcls = (PFCLayerSpec*)play->GetLayerSpec();
-    if(pfcls->pfc_layer == DEEP) {
-      deep = play;
-      break;
-    }
-  }
-  return deep;
-}  
-
 LeabraLayer* PFCLayerSpec::SNrThalLayer(LeabraLayer* lay) {
-  if(pfc_layer == SUPER) {
-    LeabraLayer* deep = DeepLayer(lay);
-    if(!deep) return NULL;
-    PFCLayerSpec* dls = (PFCLayerSpec*)deep->GetLayerSpec();
-    return dls->SNrThalLayer(deep);
-  }
   int snr_prjn_idx = 0; // actual arg value doesn't matter
   LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
   return snr_lay;
-}
-
-LeabraLayer* PFCLayerSpec::LVeLayer(LeabraLayer* lay) {
-  if(pfc_layer == SUPER) {
-    LeabraLayer* deep = DeepLayer(lay);
-    if(!deep) return NULL;
-    return LVeLayer(deep);
-  }
-  // find the LVe layer that we drive
-  LeabraLayer* lve = NULL;
-  for(int i=0; i< lay->send_prjns.size; i++) {
-    Projection* prj = lay->send_prjns[i];
-    LeabraLayer* play = (LeabraLayer*)prj->layer;
-    if(play->GetLayerSpec()->GetTypeDef() != &TA_LVeLayerSpec) continue;
-    lve = play;
-    break;
-  }
-  return lve;
-}
-
-LeabraLayer* PFCLayerSpec::LViLayer(LeabraLayer* lay) {
-  if(pfc_layer == SUPER) {
-    LeabraLayer* deep = DeepLayer(lay);
-    if(!deep) return NULL;
-    return LViLayer(deep);
-  }
-  // find the Lvi layer that we drive
-  LeabraLayer* lvi = NULL;
-  for(int i=0; i< lay->send_prjns.size; i++) {
-    Projection* prj = lay->send_prjns[i];
-    LeabraLayer* play = (LeabraLayer*)prj->layer;
-    if(play->GetLayerSpec()->GetTypeDef() != &TA_LViLayerSpec) continue;
-    lvi = play;
-    break;
-  }
-  return lvi;
-}
-
-void PFCLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) {
-  if(pfc_layer != DEEP) return;
-  int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
-  for(int g=0; g < lay->gp_geom.n; g++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
-    PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
-    gpd->CopyPBWMData(*snr_gpd);
-  }
-}
-
-void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Trial_Init_Layer(lay, net);
-  Compute_TrialInitGates(lay, net);
-}
-
-void PFCLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // do NOT do this -- triggered by the snrthal gating signal
-}
-
-void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
-                                           Layer::AccessMode acc_md, int gpidx,
-                                           LeabraNetwork* net) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    u->act_mid = u->act_eq;
-  }
-}
-
-void PFCLayerSpec::Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no) {
-  if(pfc_layer != DEEP) return;
-  if(lay->lesioned()) return;
-  Compute_MaintUpdt(lay, net, CLEAR, stripe_no);
-}
-
-void PFCLayerSpec::Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
-				     MaintUpdtAct updt_act, int stripe_no) {
-  if(pfc_layer != DEEP) return;
-  if(lay->lesioned()) return;
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  if(stripe_no < 0) {
-    for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
-      Compute_MaintUpdt_ugp(lay, acc_md, gpidx, updt_act, net);
-    }
-  }
-  else if(stripe_no < lay->gp_geom.n) {
-    Compute_MaintUpdt_ugp(lay, acc_md, stripe_no, updt_act, net);
-  }
 }
 
 LeabraLayer* PFCLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
@@ -331,191 +168,73 @@ LeabraLayer* PFCLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
   return snr_lay;
 }
 
-void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-				 int gpidx, MaintUpdtAct updt_act, LeabraNetwork* net) {
-
+void PFCLayerSpec::CopySNrThalGpData(LeabraLayer* lay, LeabraNetwork* net) {
   int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
   LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
-  PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
-  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-
-  for(int j=0;j<nunits;j++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-    if(u->lesioned()) continue;
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
-    LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
-    switch(updt_act) {
-    case STORE: {
-      u->vcb.g_h = u->maint_h = super_u->act_eq; // note: store current superficial act
-      super_u->vcb.g_h = super_u->maint_h = super_u->act_eq;
-      break;
-    }
-    case CLEAR: {
-      u->vcb.g_h = u->maint_h = 0.0f;
-      super_u->vcb.g_h = super_u->maint_h = 0.0f;
-      gpd->mnt_count = -1;	// indication of empty
-      snr_gpd->mnt_count = -1;
-      break;
-    }
-    case CLEAR_DECAY: {
-      u->v_m -= gate.clear_decay * (u->v_m - us->v_m_init.mean);
-      u->net -= gate.clear_decay * u->net;
-      
-      super_u->v_m -= gate.clear_decay * (super_u->v_m - us->v_m_init.mean);
-      super_u->net -= gate.clear_decay * super_u->net;
-      break;
-    }
-    case DECAY: {
-      u->maint_h -= u->maint_h * gate.maint_decay;
-      if(u->maint_h < 0.0f) u->maint_h = 0.0f;
-      u->vcb.g_h = u->maint_h;
-      super_u->vcb.g_h = super_u->maint_h = u->maint_h;
-      break;
-    }
-    }
-    us->Compute_Conduct(u, net); // update displayed conductances!
+  for(int g=0; g < lay->gp_geom.n; g++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
+    PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
+    gpd->CopyPBWMData(*snr_gpd);
   }
 }
 
-void PFCLayerSpec::Compute_MaintAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-					    int gpidx, LeabraNetwork* net) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
-
-  if(pfc_layer == DEEP) {
-    for(int j=0;j<nunits;j++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-      if(u->lesioned()) continue;
-      float dact = 0.0f;
-      if(gpd->mnt_count >= 0) {
-	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(0);
-	LeabraUnit* super_u = (LeabraUnit*)recv_gp->Un(0);
-	dact = super_u->act;
-      }
-      u->act = u->act_eq = u->act_nd = dact;
-      u->da = 0.0f;
-    }
-  }
-  // super is now done exclusively in unit spec!
+void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Trial_Init_Layer(lay, net);
+  CopySNrThalGpData(lay, net);
 }
 
-void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-				      int gpidx,LeabraNetwork* net) {
-  if(pfc_layer != SUPER) return;
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-
-  for(int j=0;j<nunits;j++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-    if(u->lesioned()) continue;
-
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-      if(from->lesioned() || !recv_gp->size)       continue;
-      if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
-	PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
-	if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
-	  LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-	  cs->Compute_NetinScale(recv_gp, from);
-	  recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale (prev computed)
-	}
-      }
-    }
-  }
-  net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
-}
-
-void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
-
-  int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
-  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-
-  int gate_cycle = snrls->snrthal.gate_cycle;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + mg);
-    gpd->CopyPBWMData(*snr_gpd);		// always grab from snr, which is the source
-
-    if(net->ct_cycle == gate_cycle) {
-      Compute_MidMinusAct_ugp(lay, acc_md, mg, net); // mid minus reflects gating time activations in any case for all trials
+    if(gpd->mnt_count != 1) {   // override if didn't just gate prior timestep
+      for(int i=0;i<nunits;i++) {
+        LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+        if(ru->lesioned()) continue;
+        ru->act = 0.0f;
+        ru->act_eq = ru->act_nd = ru->act;
+        ru->da = 0.0f;            // I'm fully settled!
+        ru->AddToActBuf(rus->syn_delay);
+      }      
     }
-
-    if(pfc_layer == DEEP && net->ct_cycle >= gate_cycle) {
-      if(gpd->go_fired_trial) {	// continuously update on trial itself
-	if(net->ct_cycle == gate_cycle) {
-	  if(gpd->prv_mnt_count > 0)	  // currently maintaining, clear act
-	    Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR_DECAY, net);
-	}
-	Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);
-      }
-    }
-    
-    if(pfc_layer == SUPER && gpd->go_fired_trial) {
-      if(net->ct_cycle == gate_cycle) {
-	GateOnDeepPrjns_ugp(lay, acc_md, mg, net); // gate on the deep prjns
-      }
-    }
-
-    // always update activations regardless
-    Compute_MaintAct_ugp(lay, acc_md, mg, net);
   }
 }
 
 void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_Gating(lay, net);   // continuously during whole trial
+  if(pfc_type & SNrThalLayerSpec::OUTPUT) {
+    Compute_OutGatedAct(lay, net);
+  }
   inherited::Compute_CycleStats(lay, net);
 }
 
-void PFCLayerSpec::Compute_ClearNonMnt(LeabraLayer* lay, LeabraNetwork* net) {
-  if((pfc_type == SNrThalLayerSpec::IN_MNT) || (pfc_type == SNrThalLayerSpec::MNT_OUT) || (pfc_type == SNrThalLayerSpec::OUT_MNT)) return;	// no clear
-  if(pfc_layer != DEEP) return;
+// void PFCLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
+//   if((pfc_type != SNrThalLayerSpec::IN_MNT) && (pfc_type != SNrThalLayerSpec::MNT_OUT) && (pfc_type != SNrThalLayerSpec::OUT_MNT)) {
+//     Compute_ClearNonMnt(lay, net); 
+//     return;
+//   }
 
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-//     if(pfc_type == SNrThalLayerSpec::INPUT && gpd->mnt_count == gate.in_mnt) {
-//       Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
-    if(pfc_type == SNrThalLayerSpec::INPUT && gpd->mnt_count >= gate.in_mnt) {
-      Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);  
-    }
-//     if(pfc_type == SNrThalLayerSpec::OUTPUT && gpd->mnt_count == gate.out_mnt) {
-//       Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
-    if(pfc_type == SNrThalLayerSpec::OUTPUT && gpd->mnt_count >= gate.out_mnt) {
-      Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);  
-    }
-  }
-}
+//   Layer::AccessMode acc_md = Layer::ACC_GP;
+//   for(int mg=0; mg<lay->gp_geom.n; mg++) {
+//     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
 
-void PFCLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
-  if(pfc_layer != DEEP) return;
-  if((pfc_type != SNrThalLayerSpec::IN_MNT) && (pfc_type != SNrThalLayerSpec::MNT_OUT) && (pfc_type != SNrThalLayerSpec::OUT_MNT)) {
-    Compute_ClearNonMnt(lay, net); 
-    return;
-  }
-
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-
-    if(gpd->mnt_count >= 1) {
-      if(gpd->acts.max < gate.maint_thr) { // below thresh, nuke!
-	Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
-      }
-      else {			// continue to decay..
-	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
-      }
-    }
-  }
-}
+//     if(gpd->mnt_count >= 1) {
+//       if(gpd->acts.max < gate.maint_thr) { // below thresh, nuke!
+// 	Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
+//       }
+//       else {			// continue to decay..
+// 	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
+//       }
+//     }
+//   }
+// }
 
 void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
   if(net->phase_no == 1) {
-    Compute_FinalGating(lay, net);     // final gating
+    // Compute_FinalGating(lay, net);     // final gating
+    CopySNrThalGpData(lay, net);
   }
 }
 

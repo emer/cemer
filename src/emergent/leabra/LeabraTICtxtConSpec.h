@@ -30,8 +30,6 @@ class E_API LeabraTICtxtConSpec : public LeabraConSpec {
   // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning -- only uses the wt_scale.abs to control magnitude of context netinput, and doesn't compete with other prjns for relative wt scale at all
 INHERITED(LeabraConSpec)
 public:
-  bool          ti_learn_pred;  // learns to train context to predict outcome -- see also ti_mode on network -- this is NOT tied to that setting -- can intermix the two, though it doesn't really make sense
-
   // special!
   override bool  IsTICtxtCon() { return true; }
 
@@ -70,13 +68,7 @@ public:
 
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt;
-    if(ti_learn_pred) {
-      dwt = (ru->act_p - ru->act_ctxt) * su->p_act_p;
-    }
-    else {
-      dwt = (ru->act_p - ru->act_m) * su->p_act_p;
-    }
+    float dwt = (ru->act_p - ru->act_m) * su->p_act_p;
     cn->dwt += cur_lrate * dwt;
     // soft bounding is managed in the weight update phase, not in dwt
   }

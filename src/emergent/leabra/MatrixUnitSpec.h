@@ -29,8 +29,9 @@ class E_API MatrixUnitSpec : public LeabraUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void Compute_MidMinusAct(LeabraUnit* u, LeabraNetwork* net);
-  // save the effective mid-minus (gating) activation state for subsequent learning
+
+  // only call compute weights on pv trials!
+  override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
   void	InitLinks();
   SIMPLE_COPY(MatrixUnitSpec);

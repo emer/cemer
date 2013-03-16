@@ -23,8 +23,6 @@
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
-  gate_cycle = 25;
-  force = false;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -134,12 +132,6 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  // some kind of check on cycle??
-
-  // if(lay->CheckError(net->mid_minusmax_go_cycle <= snrthal.min_go_cycle, quiet, rval,
-  //               "min go cycle not before max go cycle -- adjusting min_go_cycle -- you should double check")) {
-  // }
-
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
                 "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
     lay->unit_groups = true;
@@ -173,7 +165,6 @@ void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->mnt_count++;	// more maint
     gpd->go_fired_now = false;
     gpd->go_fired_trial = false;
-    gpd->go_forced = false;
     gpd->go_cycle = -1;
 
     for(int i=0;i<nunits;i++) {
@@ -188,9 +179,6 @@ void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->ct_cycle < snrthal.gate_cycle)
-    return;			// nothing to do before gating starts
-
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
 
@@ -202,49 +190,20 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
     if(u->lesioned()) continue;
 
-    if(net->ct_cycle == snrthal.gate_cycle) {
-      if(u->act_eq >= snrthal.go_thr) {
-	n_fired_trial++;
-	n_fired_now++;
-	gpd->go_fired_now = true;
-	gpd->go_fired_trial = true;
-	gpd->go_cycle = net->ct_cycle;
-	gpd->prv_mnt_count = gpd->mnt_count;
-	gpd->mnt_count = 0;	// reset
-	u->act_mid = u->act_eq;	// gating act
-      }
-    }
-    else {
-      gpd->go_fired_now = false; // turn it off after one cycle
-      u->act = u->act_eq = u->act_nd = u->act_mid; // activity is always gating signal
+    if(u->act_eq >= snrthal.go_thr) {
+      n_fired_trial++;
+      n_fired_now++;
+      gpd->go_fired_now = true;
+      gpd->go_fired_trial = true;
+      gpd->go_cycle = net->ct_cycle;
+      gpd->prv_mnt_count = gpd->mnt_count;
+      gpd->mnt_count = 0;	// reset
     }
   }
 
-  // no stripe has fired yet -- force max go firing
-  if(net->ct_cycle == snrthal.gate_cycle && snrthal.force && n_fired_trial == 0) {
-    int go_idx = lay->netin.max_i;
-    if(go_idx < 0) {		// this really shouldn't happen, but if it does..
-      go_idx = Random::IntZeroN(lay->units.leaves);
-    }
-    int gp_idx = go_idx / nunits;
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gp_idx); // assuming one unit
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx);
-    n_fired_trial++;
-    n_fired_now++;
-    gpd->go_fired_now = true;
-    gpd->go_fired_trial = true;
-    gpd->go_forced = true;	// yes this is forced
-    gpd->go_cycle = net->ct_cycle;
-    gpd->prv_mnt_count = gpd->mnt_count;
-    gpd->mnt_count = 0;	// reset
-    u->act_mid = snrthal.go_thr; // must be at least at threshold -- otherwise won't gate for pbwm!
-  }
-
-  if(net->ct_cycle == snrthal.gate_cycle) {
-    Compute_GateStats(lay, net); // update overall stats at this point
-    lay->SetUserData("n_fired_trial", n_fired_trial);
-    lay->SetUserData("n_fired_now", n_fired_now);
-  }
+  Compute_GateStats(lay, net); // update overall stats at this point
+  lay->SetUserData("n_fired_trial", n_fired_trial);
+  lay->SetUserData("n_fired_now", n_fired_now);
 }
 
 
@@ -259,7 +218,6 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
 
   const int n_stats = 4;	// 0 = global, 1 = in, 2 = mnt, 3 = out
   int	n_gated[n_stats] = {0,0,0,0};
-  int	n_forced[n_stats] = {0,0,0,0};
   int	min_mnt_count[n_stats] = {0,0,0,0};
   int	max_mnt_count[n_stats] = {0,0,0,0};
 
@@ -270,12 +228,6 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
       else if(mg >= mnt_st && mg < out_st) n_gated[2]++;
       else if(mg >= out_st) n_gated[3]++;
       n_gated[0]++;		// global
-    }
-    if(gpd->go_forced) {
-      if(mg < n_in) n_forced[1]++;
-      else if(mg >= mnt_st && mg < out_st) n_forced[2]++;
-      else if(mg >= out_st) n_forced[3]++;
-      n_forced[0]++;		// global
     }
 
     // only mnt layers contribute to this!
@@ -290,26 +242,17 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(n_in_mnt > 0) lay->SetUserData("n_gated_in_mnt", (float)n_gated[2]);
   if(n_out > 0) lay->SetUserData("n_gated_out", (float)n_gated[3]);
 
-  if(snrthal.force) {
-    lay->SetUserData("n_forced_all", (float)n_forced[0]);
-    if(n_in > 0) lay->SetUserData("n_forced_in", (float)n_forced[1]);
-    if(n_in_mnt > 0) lay->SetUserData("n_forced_in_mnt", (float)n_forced[2]);
-    if(n_out > 0) lay->SetUserData("n_forced_out", (float)n_forced[3]);
-  }
-
   if(n_in_mnt > 0) {
     lay->SetUserData("min_mnt_count", (float)min_mnt_count[2]);
     lay->SetUserData("max_mnt_count", (float)max_mnt_count[2]);
   }
 }
 
-void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_GateActs(lay, net);
-  inherited::Compute_CycleStats(lay, net);
-}
-
-void SNrThalLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // nop -- don't do the default thing -- already done by GatedActs
+void SNrThalLayerSpec::PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::PostSettle_Pre(lay, net);
+  if(net->phase_no == 1) {
+    Compute_GateActs(lay, net);
+  }
 }
 
 void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
@@ -321,13 +264,6 @@ void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetUserData("n_gated_in",  0.0f);
   lay->SetUserData("n_gated_in_mnt", 0.0f);
   lay->SetUserData("n_gated_out", 0.0f);
-
-  if(snrthal.force) {
-    lay->SetUserData("n_forced_all", 0.0f);
-    lay->SetUserData("n_forced_in",  0.0f);
-    lay->SetUserData("n_forced_in_mnt", 0.0f);
-    lay->SetUserData("n_forced_out", 0.0f);
-  }
 
   lay->SetUserData("min_mnt_count", 0.0f);
   lay->SetUserData("max_mnt_count", 0.0f);

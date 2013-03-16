@@ -67,8 +67,7 @@ set(leabra_HEADS_MAKETA
   LeabraLinUnitSpec.h
   LeabraExtOnlyUnitSpec.h
 
-  LeabraTILayerSpec.h
-  LeabraContextLayerSpec.h
+    LeabraContextLayerSpec.h
   LeabraMultCopyLayerSpec.h
   ScalarValLayerSpec.h
   MotorForceLayerSpec.h
@@ -115,14 +114,12 @@ set(leabra_HEADS_MAKETA
 
   PBWMUnGpData.h
   SNrThalLayerSpec.h
-  MatrixCon.h
-  MatrixConSpec.h
-  MatrixNoGoConSpec.h
-  MatrixBiasSpec.h
+    MatrixConSpec.h
+    MatrixBiasSpec.h
   MatrixUnitSpec.h
   MatrixLayerSpec.h
   PFCDeepGatedConSpec.h
-  PFCsUnitSpec.h
+  PFCUnitSpec.h
   PFCLayerSpec.h
 
   GpCustomPrjnSpecBase.h
@@ -211,8 +208,7 @@ set(leabra_SRCS
   LeabraLinUnitSpec.cpp
   LeabraExtOnlyUnitSpec.cpp
 
-  LeabraTILayerSpec.cpp
-  LeabraContextLayerSpec.cpp
+    LeabraContextLayerSpec.cpp
   LeabraMultCopyLayerSpec.cpp
   ScalarValLayerSpec.cpp
   MotorForceLayerSpec.cpp
@@ -259,14 +255,12 @@ set(leabra_SRCS
 
   PBWMUnGpData.cpp
   SNrThalLayerSpec.cpp
-  MatrixCon.cpp
-  MatrixConSpec.cpp
-  MatrixNoGoConSpec.cpp
-  MatrixBiasSpec.cpp
+    MatrixConSpec.cpp
+    MatrixBiasSpec.cpp
   MatrixUnitSpec.cpp
   MatrixLayerSpec.cpp
   PFCDeepGatedConSpec.cpp
-  PFCsUnitSpec.cpp
+  PFCUnitSpec.cpp
   PFCLayerSpec.cpp
 
   GpCustomPrjnSpecBase.cpp

@@ -16,6 +16,6 @@
 #include "LeabraTICtxtConSpec.h"
 
 void LeabraTICtxtConSpec::Initialize() {
-  ti_learn_pred = false;
+  wt_sig.dwt_norm = false;      // probably not great to be dwt norming -- explore this!
 }
 

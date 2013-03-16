@@ -13,5 +13,32 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "MatrixCon.h"
+#ifndef PFCUnitSpec_h
+#define PFCUnitSpec_h 1
 
+// parent includes:
+#include <LeabraUnitSpec>
+
+// member includes:
+
+// declare all other types mentioned but not required to include:
+
+eTypeDef_Of(PFCUnitSpec);
+
+class E_API PFCUnitSpec : public LeabraUnitSpec {
+  // superficial layer PFC unit spec -- drives maintenance activation values
+INHERITED(LeabraUnitSpec)
+public:
+
+  override void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
+
+  TA_SIMPLE_BASEFUNS(PFCUnitSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init();
+};
+
+#endif // PFCUnitSpec_h

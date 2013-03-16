@@ -48,7 +48,6 @@ void LeabraUnit::Initialize() {
   v_m = 0.0f;
   noise = 0.0f;
   dav = 0.0f;
-  maint_h = 0.0f;
 
   in_subgp = false;
   net_scale = 0.0f;
@@ -140,7 +139,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   v_m = cp.v_m;
   noise = cp.noise;
   dav = cp.dav;
-  maint_h = cp.maint_h;
   // not: in_subgp
   net_scale = cp.net_scale;
   bias_scale = cp.bias_scale;
