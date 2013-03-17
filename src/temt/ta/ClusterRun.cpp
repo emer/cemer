@@ -118,7 +118,6 @@ bool ClusterRun::Update() {
   bool has_sel_archive = SelectedRows(jobs_archive, st_row_archive, end_row_archive);
 
   bool has_updates = m_cm->UpdateTables();
-  if(!has_updates) return false;
   SortClusterInfoTable();
   jobs_done.Sort("tag", true);  // also sort jobs done by tag
   jobs_archive.Sort("tag", true);  // also sort jobs done by tag
@@ -528,6 +527,36 @@ void ClusterRun::RemoveFiles() {
   else {
     taMisc::Warning("No rows selected -- no files fetched");
   }
+}
+
+void ClusterRun::GetProjAtRev() {
+  if(!initClusterManager())
+    return;
+
+  int svn_rev = -1;
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(jobs_running, st_row, end_row)) {
+    if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
+      return;
+    svn_rev = jobs_running.GetVal("submit_svn", st_row).toInt();
+  }
+  else if (SelectedRows(jobs_done, st_row, end_row)) {
+    if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
+      return;
+    svn_rev = jobs_done.GetVal("submit_svn", st_row).toInt();
+  }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
+      return;
+    svn_rev = jobs_archive.GetVal("submit_svn", st_row).toInt();
+  }
+  else {
+    taMisc::Warning("No rows selected -- project not loaded");
+  }
+  if(TestError(svn_rev < 0, "GetProjAtRev", "valid svn revision not found"))
+    return;
+  m_cm->GetProjectAtRev(svn_rev);
 }
 
 void ClusterRun::ArchiveJobs() {

@@ -227,6 +227,32 @@ ClusterManager::RemoveFiles(String_PArray& files, bool force, bool keep_local)
   return false;
 }
 
+bool
+ClusterManager::GetProjectAtRev(int rev) {
+  if (!m_valid) return false; // Ensure proper construction.
+  if(!CheckPrefs()) return false;
+
+  String_PArray files;
+  files.Add(m_proj_copy_filename);
+  try {
+    m_svn_client->UpdateFiles(files, rev);
+    String nwfnm = m_proj_copy_filename.before(".proj");
+    nwfnm += "_" + String(rev) + ".proj";
+    nwfnm = taMisc::GetFileFmPath(nwfnm);
+    nwfnm = taMisc::GetDirFmPath(m_proj->file_name) + "/" + nwfnm; // use orig proj dir
+    QFile::copy(m_proj_copy_filename, nwfnm);
+    m_svn_client->UpdateFiles(files, -1); // go back to current
+  }
+  catch (const ClusterManager::Exception &ex) {
+    taMisc::Error("Could not get project at revision:", ex.what());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    handleException(ex);
+  }
+  return false;
+}
+
+
 String
 ClusterManager::GetWcProjPath() const
 {

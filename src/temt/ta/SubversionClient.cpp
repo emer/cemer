@@ -881,6 +881,80 @@ SubversionClient::Update(int rev)
   return updateRev;
 }
 
+int
+SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
+  m_cancelled = false;
+
+  if(files.size == 0) {
+    return Update(rev);
+  }
+
+  // The value of the revision(s) checked out from the repository will be
+  // populated into this array.
+  apr_array_header_t *result_revs = 0;
+
+  // create an array containing a single element which is the input path to be updated
+  apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
+  for(int i=0; i< files.size; i++) {
+    APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
+  }
+
+  // Set the revision number, if provided. Otherwise get HEAD revision.
+  svn_opt_revision_t revision;
+  if (rev < 0) {
+    revision.kind = svn_opt_revision_head;
+  }
+  else {
+    revision.kind = svn_opt_revision_number;
+    revision.value.number = rev;
+  }
+
+  // Get all files.
+  svn_depth_t depth = svn_depth_infinity;
+
+  // Set advanced options we don't care about.
+  svn_boolean_t ignore_externals = false;
+  svn_boolean_t allow_unver_obstructions = true;
+  svn_boolean_t depth_is_sticky = true;
+
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+  if (svn_error_t *error = svn_client_update3(
+        &result_revs,
+        paths,
+        &revision,
+        depth,
+        depth_is_sticky,
+        ignore_externals,
+        allow_unver_obstructions,
+        m_ctx,
+        m_pool))
+#else
+  svn_boolean_t adds_as_modification = true;
+  svn_boolean_t make_parents = false;
+
+  if (svn_error_t *error = svn_client_update4(
+        &result_revs,
+        paths,
+        &revision,
+        depth,
+        depth_is_sticky,
+        ignore_externals,
+        allow_unver_obstructions,
+        adds_as_modification,
+        make_parents,
+        m_ctx,
+        m_pool))
+#endif
+  {
+    throw Exception("Subversion update error", error);
+  }
+
+  // Should only be one element updated since we just provided one path.
+  taMisc::Info("Number of elements updated:", String(result_revs->nelts));
+  svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
+  return updateRev;
+}
+
 void
 SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
 {
@@ -1015,28 +1089,65 @@ SubversionClient::TryMakeUrlDir(const char *url, const char *comment, bool make_
 // Commits files and returns the new revision number.
 // Throws on error; returns -1 if there was nothing to commit.
 int
-SubversionClient::Checkin(const char *comment, const char *files)
-{
+SubversionClient::Checkin(const char *comment) {
   m_cancelled = false;
   m_commit_message = comment;
 
   // 'files' is a comma or newline separated list of files and/or directories.
   // If empty, the whole working copy will be committed.
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
-  if (files && *files) {
-    // TODO: this path hasn't been tested.
-    QStringList list = QString(files).split(QRegExp("[\\n,]+"));
-    foreach (const QString &str, list) {
-      // Docs say we don't need to canonicalize, but we at least need to
-      // make a copy of the string, since otherwise it would go out of
-      // scope outside this loop.
-      APR_ARRAY_PUSH(paths, const char *) =
-        apr_pstrdup(m_pool, qPrintable(str));
-    }
+  // create an array containing a single element which is the path path to be committed
+  APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
+
+  // commit changes to the children of the paths
+  svn_depth_t depth = svn_depth_infinity;
+
+  // unlock paths in the repository after commit
+  svn_boolean_t keep_locks = false;
+
+  // no need to changelist filtering
+  svn_boolean_t keep_changelists = false;
+  const apr_array_header_t *changelists =
+    apr_array_make(m_pool, 0, sizeof(const char *));
+
+  // We don't need to set any custom revision properties, so null.
+  const apr_hash_t *revprop_table = 0;
+
+  // Subversion 1.7 has a function svn_client_commit5(), but for now the
+  // 1.6 API svn_client_commit4() works just fine for us.  Implementing
+  // in terms of the 1.7 API would mean duplicating the logic in the 1.7
+  // version of svn_client_commit4(), which is just a wrapper around the
+  // new svn_client_commit5().
+  svn_commit_info_t *commit_info_p = 0; // out param.
+  if (svn_error_t *error = svn_client_commit4(
+        &commit_info_p,
+        paths,
+        depth,
+        keep_locks,
+        keep_changelists,
+        changelists,
+        revprop_table,
+        m_ctx,
+        m_pool))
+  {
+    throw Exception("Subversion error committing files", error);
   }
-  else {
-    // create an array containing a single element which is the path path to be committed
-    APR_ARRAY_PUSH(paths, const char *) = m_wc_path;
+
+  return commit_info_p ? commit_info_p->revision : SVN_INVALID_REVNUM;
+}
+
+int
+SubversionClient::CheckinFiles(const String_PArray& files, const char *comment) {
+  m_cancelled = false;
+  m_commit_message = comment;
+
+  if(files.size == 0) {
+    return Checkin(comment);
+  }
+
+  apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
+  for(int i=0; i< files.size; i++) {
+    APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
   }
 
   // commit changes to the children of the paths

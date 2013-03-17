@@ -97,35 +97,38 @@ public:
   std::string GetWorkingCopyPath() const;
   std::string GetUsername(const char *url, UsernameSource source) const;
 
-  // Checkout a working copy and return the revision checked out.
   int Checkout(const char *url, int rev = -1, bool recurse = true);
+  // Checkout a working copy and return the revision checked out.
 
-  // Update the working copy and return the revision.
   int Update(int rev = -1);
+  // Update the working copy and return the revision.
+  int UpdateFiles(const String_PArray& files, int rev = -1);
+  // Update specific list of files and return the revision -- if files empty upates the entire working copy
 
-  // Add files to the working copy and schedule for future commit.
-  // Does not throw if file is already versioned.
   void Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
-  // Delete listed files (or directories) from the repository, with force and keep_local options
-  void Delete(const String_PArray& files, bool force, bool keep_local);
+  // Add files to the working copy and schedule for future commit -- Does not throw if file is already versioned.
 
-  // Create a directory in the working copy or in the repository.
-  // The "Try" versions politely ignore cases where the directory
-  // already exists.  Other errors will throw exceptions.
+  void Delete(const String_PArray& files, bool force, bool keep_local);
+  // Delete listed files (or directories) from the repository, with force and keep_local options
+
   // All functions return true if a new directory was created.
   bool MakeDir(const char *new_dir, bool make_parents = true);
-  bool TryMakeDir(const char *new_dir, bool make_parents = true); // returns no error if the dir already exists.
+  // Create a directory in the working copy -- returns true if directory created
+  bool TryMakeDir(const char *new_dir, bool make_parents = true);
+  // Create a directory in the working copy -- returns true if directory created -- no error if the dir already exists
   bool MakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
-  bool TryMakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true); // returns no error if the dir already exists.
+  // Create a directory in the repository -- returns true if directory created
+  bool TryMakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
+  // Create a directory in the repository -- returns true if directory created -- no error if the dir already exists.
 
-  // Checkin 'files': a comma or newline separated list of files/dirs.
-  // If empty or null, the whole working copy will be committed.
-  // Returns the new revision number or -1 if nothing to commit.
-  int Checkin(const char *comment = 0, const char *files = 0);
+  int Checkin(const char *comment = 0);
+  // Checkin (commit) working copy -- returns the new revision number or -1 if nothing to commit.
+  int CheckinFiles(const String_PArray& files, const char *comment = 0);
+  // Checkin specific list of files in given array -- if empty, the whole working copy will be committed -- returns the new revision number or -1 if nothing to commit.
   int GetLastChangedRevision(const char *path);
 
-  // Call to cancel current operation in progress.
   void Cancel();
+  // Call to cancel current operation in progress.
 
 private:
   svn_client_ctx_t * createContext();

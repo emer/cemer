@@ -21,13 +21,15 @@
 
 // This class provides emergent programs with static functions that wrap
 // the SubversionClient API.
+
+// todo: many of the SubversionClient guys require a working directory path
+// much better to have a persistent client here..
+
 taTypeDef_Of(Subversion);
 
-class TA_API Subversion : public taNBase
-{
+class TA_API Subversion : public taNBase {
   // ##INLINE ##NO_TOKENS Subversion interface -- static functions for working with Subversion repositories.
   INHERITED(taNBase)
-
 public:
   static String GetUsername(const String &url, bool prompt = true);
   // #CAT_Subversion Get the cached username for the given URL.  If no username cached and prompt=true, prompt the user with a dialog.  Otherwise returns empty string.
@@ -47,8 +49,11 @@ public:
   static bool MakeUrlDir(const String &url, const String &comment, bool make_parents = true);
   // #CAT_Subversion Create a directory in the repository.  Returns true if the directory was created or already exists.
 
-  static int Checkin(const String &paths, const String &comment);
+  static int Checkin(const String &comment);
   // #CAT_Subversion Checkin files under the given path(s) (comma or newline separated list of files/dirs).  Returns the new revision number or -1 if nothing to commit.  Returns -2 on error.
+
+  static int CheckinFiles(const String &paths, const String &comment);
+  // #CAT_Subversion Checkin files under the given path(s) (comma separated list of files/dirs).  Returns the new revision number or -1 if nothing to commit.  Returns -2 on error.
 
   static int GetLastChangedRevision(const String &path);
   // #CAT_Subversion Get the last revision in which the passed path was changed, according to the working copy.  Returns -1 on error.

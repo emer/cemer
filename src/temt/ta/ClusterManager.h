@@ -44,6 +44,8 @@ public:
   // update the jobs_running and jobs_done data tables from repo
   bool RemoveFiles(String_PArray& files, bool force = true, bool keep_local = false);
   // remove given files from repository, with given options -- does the commit too
+  bool GetProjectAtRev(int rev);
+  // do an svn update -r rev on the project file from the given svn revision number -- copies the project file to projname_rev.proj in original project directory (visible to user) and then does an update back to current revision so as to not mess up anything else
  
   String ChooseCluster(const String& prompt);
   // prompt the user to choose a cluster name -- just pulls up a simple combo-edit chooser dialog

@@ -40,6 +40,7 @@ public:
 
   const String  AsString(const String& sep = def_sep) const;
   void          SetFromString(String str, const String& sep = def_sep);
+
   void  operator=(const String_PArray& cp)      { Copy_Duplicate(cp); }
   String_PArray()                               { };
   String_PArray(const String_PArray& cp)        { Copy_Duplicate(cp); }

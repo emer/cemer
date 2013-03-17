@@ -127,14 +127,32 @@ Subversion::MakeUrlDir(const String &url, const String &comment, bool make_paren
 }
 
 int
-Subversion::Checkin(const String &paths, const String &comment)
+Subversion::Checkin(const String &comment)
 {
   // Checkin files under the given paths (comma or newline separated list of
   // files/dirs).  Returns the new revision number or -1 if nothing to commit.
   // Returns -2 on error.
   try {
     SubversionClient client;
-    return client.Checkin(comment.chars(), paths.chars());
+    return client.Checkin(comment.chars());
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Could not check in files.\n", ex.what());
+    return -2;
+  }
+}
+
+int
+Subversion::CheckinFiles(const String &paths, const String &comment)
+{
+  // Checkin files under the given paths (comma or newline separated list of
+  // files/dirs).  Returns the new revision number or -1 if nothing to commit.
+  // Returns -2 on error.
+  try {
+    String_PArray pary;
+    pary.SetFromString(paths, ",");
+    SubversionClient client;
+    return client.CheckinFiles(pary, comment.chars());
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Could not check in files.\n", ex.what());

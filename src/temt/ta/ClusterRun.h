@@ -99,6 +99,8 @@ public:
   // #MENU_BUTTON #MENU_ON_Files tell the cluster to check in the files selected in file_list tab -- you can then do Update after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval), and then access the files as you wish
   virtual void  RemoveFiles();
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the files selected in the file_list tab -- this does an svn remove and also removes the files locally -- for cleaning up stuff you are done with
+  virtual void  GetProjAtRev();
+  // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();
