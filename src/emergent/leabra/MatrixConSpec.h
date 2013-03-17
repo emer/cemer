@@ -27,7 +27,7 @@
 eTypeDef_Of(MatrixConSpec);
 
 class E_API MatrixConSpec : public LeabraConSpec {
-  // #AKA_MatrixNoGoConSpec Learning of matrix input connections based on dopamine modulation of activation -- for both Matrix_Go and NoGo connections
+  // Learning of matrix input connections based on dopamine modulation of activation -- for both Matrix_Go and NoGo connections
 INHERITED(LeabraConSpec)
 public:
 
@@ -39,7 +39,7 @@ public:
   inline void C_Compute_dWt_Matrix_Trace(LeabraCon* cn, float lin_wt, 
                                          float mtx_act, float su_act) {
     float dwt = mtx_act * su_act;
-    cn->dwt += cur_lrate * dwt;
+    cn->dwt = cur_lrate * dwt;  // always learn last gating action
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
@@ -69,16 +69,18 @@ public:
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
       cn->wt = SigFmLinWt(lin_wt + dwt);
+      cn->pdw = dwt;
     }
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
+    // note: dwt NOT reset at this point -- allows multiple PV dav mods of same dwt
   }
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_Weights_Matrix_Trace(cn, ru->dav);
+      if(ru->dav != 0.0f) {
+        LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+        C_Compute_Weights_Matrix_Trace(cn, ru->dav);
+      }
       //  ApplyLimits(cg, ru); limits are automatically enforced anyway
     }
   }
