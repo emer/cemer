@@ -1786,8 +1786,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       net->FindMakePrjn(matrix_nogo_in, pfc_in, topomatrixpfc_self, matrix_cons_nogo);
     }
     else {
-      net->FindMakePrjn(matrix_go_in, pfc_in, fullprjn, matrix_cons);
-      net->FindMakePrjn(matrix_nogo_in, pfc_in, fullprjn, matrix_cons_nogo);
+      net->FindMakePrjn(matrix_go_in, pfc_in, gponetoone, matrix_cons);
+      net->FindMakePrjn(matrix_nogo_in, pfc_in, gponetoone, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_in, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(pfc_in, pfc_in, fullprjn, pfc_ctxt_cons);
@@ -1840,8 +1840,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
                         matrix_cons_nogo);
     }
     else {
-      net->FindMakePrjn(matrix_go_in_mnt, pfc_in_mnt, fullprjn, matrix_cons);
-      net->FindMakePrjn(matrix_nogo_in_mnt, pfc_in_mnt, fullprjn,
+      net->FindMakePrjn(matrix_go_in_mnt, pfc_in_mnt, gponetoone, matrix_cons);
+      net->FindMakePrjn(matrix_nogo_in_mnt, pfc_in_mnt, gponetoone,
                         matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_in_mnt, snrthal, snr_prjn, marker_cons);
@@ -1880,8 +1880,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       net->FindMakePrjn(matrix_nogo_out, pfc_out, topomatrixpfc_self, matrix_cons_nogo);
     }
     else {
-      net->FindMakePrjn(matrix_go_out, pfc_out, fullprjn, matrix_cons);
-      net->FindMakePrjn(matrix_nogo_out, pfc_out, fullprjn, matrix_cons_nogo);
+      net->FindMakePrjn(matrix_go_out, pfc_out, gponetoone, matrix_cons);
+      net->FindMakePrjn(matrix_nogo_out, pfc_out, gponetoone, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_out, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(pfc_out, pfc_out, fullprjn, pfc_ctxt_cons);
@@ -2404,9 +2404,10 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   // different PVLV defaults
 
   lvesp->lv.min_lvi = 0.4f;
-  
-  lvesp->lv.no_y_dot = true;
-  pvisp->pv.no_y_dot = true;
+
+  // actually no_y_dot not better at this point..
+  // lvesp->lv.no_y_dot = true;
+  // pvisp->pv.no_y_dot = true;
   
   nvsp->nv.da_gain = 0.0f;
   dasp->da.da_gain = 1.0f;

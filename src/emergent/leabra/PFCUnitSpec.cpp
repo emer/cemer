@@ -26,19 +26,30 @@ void PFCUnitSpec::Defaults_init() {
   g_bar.h = 0.0f;		// don't use it by default -- use mix
 }
 
-void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
+bool PFCUnitSpec::PFCStripeGated(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* rlay = u->own_lay();
-  if(rlay->lesioned()) return;
-  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return;
+  if(rlay->lesioned()) return true; // default is true..
+  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return true;
   PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
   int rgpidx = u->UnitGpIdx();
   PBWMUnGpData* gpd = (PBWMUnGpData*)rlay->ungp_data.FastEl(rgpidx);
+  return gpd->go_fired_trial;
+}
 
-  int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  LeabraLayer* snr_lay = ls->SNrThalStartIdx(rlay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
-  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + rgpidx);
-
-  if(snr_gpd->go_fired_trial) { // only update if gated.. that's all there is to it..
+void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
+  bool gated = PFCStripeGated(u, net);
+  if(gated) {
     u->act_ctxt = u->net_ctxt;
+  }
+}
+
+void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
+  float save_p_act_p = u->p_act_p;
+  inherited::PostSettle(u, net);
+  if(net->phase_no == 1) {
+    bool gated = PFCStripeGated(u, net);
+    if(!gated) {
+      u->p_act_p = save_p_act_p; // do not update -- we didn't update!
+    }
   }
 }

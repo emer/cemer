@@ -231,11 +231,12 @@ void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 // }
 
 void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
+  // make sure we have all the gating info from SNrThal before we do our own guys
   if(net->phase_no == 1) {
     // Compute_FinalGating(lay, net);     // final gating
     CopySNrThalGpData(lay, net);
   }
+  inherited::PostSettle(lay, net);
 }
 
 
