@@ -593,7 +593,7 @@ bool VEArm::ConfigArm(const String& name_prefix,
                       float sh_offX, float sh_offY, float sh_offZ) {
                       
   // tor_cm are the coordinates of the torso's center of mass
-  // sh_off are the coordinates of the shoulder's anchor point wrt the torso's CM
+  // sh_off are the coordinates of the shoulder's anchor point wrt default position
 
   if(TestError(!torso, "ConfigArm", "torso not set -- must specify a body in another object to serve as the torso before running ConfigArm"))
     return false;
@@ -602,7 +602,34 @@ bool VEArm::ConfigArm(const String& name_prefix,
   float tor_cmY = torso->init_pos.y;
   float tor_cmZ = torso->init_pos.z;
 
-  // TODO: compute sh_off directoy from torso!!
+  // Assuming that torso is a box!
+  // changing sh_off variables so they are wrt torso's CM
+  if(arm_side == RIGHT_ARM) 
+  {
+    if(up_axis == Y) 
+    {
+      sh_offY = sh_offY + (torso->box.y)/2.0f;
+      sh_offX = sh_offX - (torso->box.x)/2.0f - 0.07f;
+    } 
+    else 
+    { // up_axis == Z
+      sh_offZ = sh_offZ + (torso->box.z)/2.0f;
+      sh_offX = sh_offX + (torso->box.x)/2.0f + 0.07f;
+    }
+  } 
+  else 
+  {  // arm_side == LEFT
+    if(up_axis == Y) 
+    {
+      sh_offY = sh_offY + (torso->box.y)/2.0f;
+      sh_offX = sh_offX + (torso->box.x)/2.0f + 0.07f;
+    } 
+    else 
+    { // up_axis == Z
+      sh_offZ = sh_offZ + (torso->box.z)/2.0f;
+      sh_offX = sh_offX - (torso->box.x)/2.0f - 0.07f;
+    }
+  }
 
   float CT_f[] = {-1.0f, 0,    0,
                       0, 0,    1.0f,
@@ -637,10 +664,11 @@ bool VEArm::ConfigArm(const String& name_prefix,
   // torso.box.x = 0.35; torso.box.y = 0.1; torso.box.z = 0.4;
   // torso.SetValsToODE();
 
-  float shX, shY, shZ;  // shoulder coordiantes wrt the World coordinate system
+  float shX, shY, shZ;  // shoulder coordinates wrt the World coordinate system
   shX = tor_cmX + sh_offX; // The sh variables are here because the name is shorter than should_loc
   shY = tor_cmY + sh_offY;
   shZ = tor_cmZ + sh_offZ;
+
   should_loc.x = shX;
   should_loc.y = shY;
   should_loc.z = shZ;
@@ -694,7 +722,9 @@ bool VEArm::ConfigArm(const String& name_prefix,
     wrist->body1 = ulna; wrist->body2 = hand;
 
     // the shoulder anchor is wrt to torso's CM
-    shoulder->anchor.x = sh_offX; shoulder->anchor.y = sh_offY; shoulder->anchor.z = sh_offZ;
+    shoulder->anchor.x = sh_offX; 
+    shoulder->anchor.y = sh_offY; 
+    shoulder->anchor.z = sh_offZ;
 
     elbow->anchor.x = 0;  // set elbow joint's anchor point wrt humerus' CM
     elbow->anchor.y = 0;
@@ -892,7 +922,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
     }
   }
 
-  taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma));
+  // taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma));
 
   // Now we'll rotate the insertion points by the Euler angles in reverse order
   // This magic R matrix (from (42)) does it all in one step

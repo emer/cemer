@@ -115,7 +115,7 @@ public:
                           float ulna_length = 0.24, float ulna_radius = 0.02,
                           float hand_length = 0.08, float hand_radius = 0.03,
                           float elbowGap = 0.03,   float wristGap = 0.03,
-                          float sh_offX = 0.25, float sh_offY = 0.2, float sh_offZ = 0);
+                          float sh_offX = 0, float sh_offY = 0, float sh_offZ = 0);
   // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
 
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
