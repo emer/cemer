@@ -40,9 +40,9 @@ void PFCLayerSpec::Defaults_init() {
 
   // SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
-  gp_kwta.pct = 0.25f;
+  gp_kwta.pct = 0.15f;
 
-  unit_gp_inhib.on = true;
+  unit_gp_inhib.on = false;
   unit_gp_inhib.gp_g = 0.5f;
   unit_gp_inhib.diff_act_pct = true;
   unit_gp_inhib.pct_fm_frac = true;

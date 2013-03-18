@@ -37,11 +37,11 @@ void SNrThalLayerSpec::Defaults_init() {
 
   // SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .8f;
+  inhib.kwta_pt = .7f;
 
   // SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 1;
+  kwta.k = 4;
 
   // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -80,6 +80,7 @@ void SNrThalLayerSpec::GatingTypesNStripes(LeabraLayer* lay,
   for(int g=0; g<lay->projections.size; g++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections.FastEl(g);
     LeabraLayer* fmlay = (LeabraLayer*)prjn->from.ptr();
+    if(fmlay->lesioned()) continue;
     if(!fmlay->GetLayerSpec()->InheritsFrom(TA_MatrixLayerSpec)) continue;
     MatrixLayerSpec* mls = (MatrixLayerSpec*)fmlay->GetLayerSpec();
     if(mls->go_nogo != MatrixLayerSpec::GO) continue;

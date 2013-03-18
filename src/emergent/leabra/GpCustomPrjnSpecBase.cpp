@@ -84,6 +84,7 @@ void GpCustomPrjnSpecBase::Connect_Gp(Projection* prjn, Layer::AccessMode racc_m
 
   for(int rui=0; rui < ru_nunits; rui++) {
     Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+    if(!ru) continue;
     for(int sui=0; sui < su_nunits; sui++) {
       Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
       if(su && (self_con || (ru != su)))

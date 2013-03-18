@@ -353,7 +353,7 @@ void MatrixLayerSpec::Compute_ZeroGatingAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->act_eq = u->act = u->act_p = 0.0f;
+    u->act_eq = u->act_p = 0.0f;
   }
 }
 

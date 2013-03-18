@@ -1557,6 +1557,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   MatrixConSpec* matrix_cons_topo_weak = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoWeak", &TA_MatrixConSpec);
   MatrixConSpec* matrix_cons_topo_strong = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoStrong", &TA_MatrixConSpec);
   MatrixConSpec* matrix_cons_nogo = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixConsNoGo", &TA_MatrixConSpec);
+  MatrixConSpec* matrix_cons_nogofmgo = (MatrixConSpec*)matrix_cons_nogo->FindMakeChild("MatrixConsNoGoFmGo", &TA_MatrixConSpec);
   MatrixConSpec* matrix_cons_fmpvr = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPvr", &TA_MatrixConSpec);
 
   LeabraConSpec* fmpfcd_out = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFCd_out", &TA_LeabraConSpec);
@@ -1756,6 +1757,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
     net->FindMakePrjn(matrix_nogo_in, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_in, vta, fullprjn, marker_cons);
+    net->FindMakePrjn(matrix_nogo_in, matrix_go_in, gponetoone, matrix_cons_nogofmgo);
   }
   if(mnt_stripes > 0) {
     net->FindMakePrjn(snrthal, matrix_go_in_mnt, snr_prjn, matrix_to_snrthal);
@@ -1766,6 +1768,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
     net->FindMakePrjn(matrix_nogo_in_mnt, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_in_mnt, vta, fullprjn, marker_cons);
+    net->FindMakePrjn(matrix_nogo_in_mnt, matrix_go_in_mnt, gponetoone, matrix_cons_nogofmgo);
   }
   if(out_stripes > 0) {
     net->FindMakePrjn(snrthal, matrix_go_out, snr_prjn, matrix_to_snrthal);
@@ -1776,6 +1779,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
     net->FindMakePrjn(matrix_nogo_out, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_out, vta, fullprjn, marker_cons);
+    net->FindMakePrjn(matrix_nogo_out, matrix_go_out, gponetoone, matrix_cons_nogofmgo);
   }
 
   // matrix <-> pfc and pfc <-> pfc
@@ -1790,7 +1794,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       net->FindMakePrjn(matrix_nogo_in, pfc_in, gponetoone, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_in, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_in, pfc_in, fullprjn, pfc_ctxt_cons);
+    net->FindMakePrjn(pfc_in, pfc_in, gponetoone, pfc_ctxt_cons);
 
     // if(mnt_stripes > 0) { // default is for input gating to be straight input, no maint
     //   if(topo_prjns) {
@@ -1845,7 +1849,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
                         matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_in_mnt, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_in_mnt, pfc_in_mnt, fullprjn, pfc_ctxt_cons);
+    net->FindMakePrjn(pfc_in_mnt, pfc_in_mnt, gponetoone, pfc_ctxt_cons);
 
     if(in_stripes > 0) {
       if(topo_prjns) {
@@ -1884,7 +1888,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       net->FindMakePrjn(matrix_nogo_out, pfc_out, gponetoone, matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_out, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_out, pfc_out, fullprjn, pfc_ctxt_cons);
+    net->FindMakePrjn(pfc_out, pfc_out, gponetoone, pfc_ctxt_cons);
 
     if(in_stripes > 0) {
       if(topo_prjns) {
@@ -2322,6 +2326,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   MatrixConSpec* matrix_cons_topo_weak = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoWeak", &TA_MatrixConSpec);
   MatrixConSpec* matrix_cons_topo_strong = (MatrixConSpec*)matrix_cons_topo->FindMakeChild("MatrixConsTopoStrong", &TA_MatrixConSpec);
   MatrixConSpec* matrix_cons_nogo = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixConsNoGo", &TA_MatrixConSpec);
+  MatrixConSpec* matrix_cons_nogofmgo = (MatrixConSpec*)matrix_cons_nogo->FindMakeChild("MatrixConsNoGoFmGo", &TA_MatrixConSpec);
   MatrixConSpec* matrix_cons_fmpvr = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPvr", &TA_MatrixConSpec);
 
   LeabraConSpec* fmpfcd_out = (LeabraConSpec*)learn_cons->FindMakeChild("FmPFCd_out", &TA_LeabraConSpec);
@@ -2425,7 +2430,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   // slow learning rate on to pfc cons!
   topfc_cons->SetUnique("lrate", true);
   topfc_cons->learn = true;
-  topfc_cons->lrate = .005f;
+  topfc_cons->lrate = .002f;
   topfc_cons->SetUnique("rnd", false);
   topfc_cons->rnd.var = 0.25f;
 
@@ -2461,7 +2466,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   }
 
   topfcfmout_cons->SetUnique("wt_scale", true);
-  topfcfmout_cons->wt_scale.rel = 0.2f;
+  topfcfmout_cons->wt_scale.rel = 0.5f;
 
   if(topo_prjns) {
     matrix_cons->SetUnique("rnd", true);
@@ -2472,7 +2477,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
     matrix_cons->SetUnique("rnd", false);
   }
   matrix_cons->SetUnique("lrate", true);
-  matrix_cons->lrate = .005f;
+  matrix_cons->lrate = .002f;
   matrix_cons->SetUnique("wt_sig", true);
   matrix_cons->wt_sig.gain = 6.0f;
   matrix_cons->wt_sig.off = 1.25f;
@@ -2499,7 +2504,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
     matrix_cons_nogo->SetUnique("rnd", false);
   }
   matrix_cons_nogo->SetUnique("wt_scale", true);
-  matrix_cons_nogo->wt_scale.abs = .5f;
+  matrix_cons_nogo->wt_scale.abs = 1.0f;
   matrix_cons_nogo->SetUnique("wt_sig", false);
   matrix_cons_nogo->SetUnique("lmix", false);
 
