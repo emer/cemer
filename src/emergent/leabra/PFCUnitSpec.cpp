@@ -26,19 +26,28 @@ void PFCUnitSpec::Defaults_init() {
   g_bar.h = 0.0f;		// don't use it by default -- use mix
 }
 
-bool PFCUnitSpec::PFCStripeGated(LeabraUnit* u, LeabraNetwork* net) {
+///////////////////////////////////////////////////////////
+//      time course of p_act_p updates vs. ctxt updates
+//      issue is that learning at time t relies on p_act_p reflecting
+//      acts at t-1, and yet it gets updated at time t
+// time         0       1       2       3       4
+// gate         n       g       n       g       g
+// ctxt         -       1       1       3       4
+// p_act_p      -       -       1       1       3
+
+PBWMUnGpData* PFCUnitSpec::PFCUnGpData(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* rlay = u->own_lay();
-  if(rlay->lesioned()) return true; // default is true..
-  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return true;
+  if(rlay->lesioned()) return NULL;
+  if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return NULL;
   PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
   int rgpidx = u->UnitGpIdx();
   PBWMUnGpData* gpd = (PBWMUnGpData*)rlay->ungp_data.FastEl(rgpidx);
-  return gpd->go_fired_trial;
+  return gpd;
 }
 
 void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
-  bool gated = PFCStripeGated(u, net);
-  if(gated) {
+  PBWMUnGpData* gpd = PFCUnGpData(u, net);
+  if(gpd && gpd->go_fired_trial) {
     u->act_ctxt = u->net_ctxt;
   }
 }
@@ -47,9 +56,15 @@ void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   float save_p_act_p = u->p_act_p;
   inherited::PostSettle(u, net);
   if(net->phase_no == 1) {
-    bool gated = PFCStripeGated(u, net);
-    if(!gated) {
-      u->p_act_p = save_p_act_p; // do not update -- we didn't update!
+    PBWMUnGpData* gpd = PFCUnGpData(u, net);
+    if(gpd) {
+      bool gated_last_trial = (gpd->mnt_count == 1) ||
+        (gpd->mnt_count == 0 && gpd->prv_mnt_count == 1);
+      // either we gated last trial and are still maintaining, or just gated and last guy
+      // maintained for 1 trial (note: mnt_count updated at start of trial so will be 1)
+      if(!gated_last_trial) {
+        u->p_act_p = save_p_act_p; // if we didn't gate last trial, don't update this..
+      }
     }
   }
 }

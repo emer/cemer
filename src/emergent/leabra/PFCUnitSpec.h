@@ -22,6 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class PBWMUnGpData; //
 
 eTypeDef_Of(PFCUnitSpec);
 
@@ -30,7 +31,7 @@ class E_API PFCUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
 
-  virtual bool  PFCStripeGated(LeabraUnit* u, LeabraNetwork* net);
+  virtual PBWMUnGpData*  PFCUnGpData(LeabraUnit* u, LeabraNetwork* net);
   // returns true if my stripe gated this trial -- this is only valid in PostSettle for phase_no == 1 or thereafter (TI_ComputeCtxtAct)
 
   override void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);

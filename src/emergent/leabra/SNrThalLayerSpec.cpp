@@ -167,16 +167,15 @@ void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
     gpd->go_fired_now = false;
     gpd->go_fired_trial = false;
     gpd->go_cycle = -1;
-
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
-      if(u->lesioned()) continue;
-      u->act_mid = 0.0f;	// reset gating act
-    }
   }
 
   lay->SetUserData("n_fired_trial", 0);
   lay->SetUserData("n_fired_now", 0);
+}
+
+void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Trial_Init_Layer(lay, net);
+  Init_GateStats(lay, net);
 }
 
 void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
@@ -197,8 +196,11 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->go_fired_now = true;
       gpd->go_fired_trial = true;
       gpd->go_cycle = net->ct_cycle;
-      gpd->prv_mnt_count = gpd->mnt_count;
+      gpd->prv_mnt_count = gpd->mnt_count; 
       gpd->mnt_count = 0;	// reset
+    }
+    else {
+      u->act_eq = u->act_p = 0.0f; // turn off non-gated guys
     }
   }
 
@@ -270,7 +272,3 @@ void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetUserData("max_mnt_count", 0.0f);
 }
 
-void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Trial_Init_Layer(lay, net);
-  Init_GateStats(lay, net);
-}
