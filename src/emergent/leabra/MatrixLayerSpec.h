@@ -108,10 +108,14 @@ public:
   // this is hook for modulating netinput according to above inhib factors
   override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
 
-  virtual void Compute_ZeroGatingAct_ugp(LeabraLayer* lay,
-                                         Layer::AccessMode acc_md, int gpidx,
-                                         LeabraNetwork* net);
-  // set the act_p (gating) activation state to zero for subsequent learning -- for specific unit group (stripe) -- for stripes that did not gate at all this time around (enforces strong credit assignment)
+  virtual void Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
+                                           Layer::AccessMode acc_md, int gpidx,
+                                           LeabraNetwork* net);
+  // set the act_p (gating) activation state to zero and misc_1 flag to zero for subsequent learning -- for specific unit group (stripe) -- for stripes that did not gate at all this time around (enforces strong credit assignment)
+  virtual void Compute_GoGatingAct_ugp(LeabraLayer* lay,
+                                       Layer::AccessMode acc_md, int gpidx,
+                                       LeabraNetwork* net);
+  // set the misc_1 flag to 1.0 for subsequent learning -- for specific unit group (stripe) -- for stripes that did gate this time around
 
   virtual void 	Compute_GatingActs(LeabraLayer* lay, LeabraNetwork* net);
   // zero out the 

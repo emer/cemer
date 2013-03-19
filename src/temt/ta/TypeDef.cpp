@@ -878,7 +878,8 @@ TypeDef* TypeDef::AddParentName(const char* nm, int p_off) {
 }
 
 void TypeDef::AddParentData() {
-  for(int i=0; i< parents.size; i++) {
+  for(int i=parents.size-1; i >= 0; i--) {
+    // go in reverse order so the first parent gets stuff put in first per below
     TypeDef* par = parents[i];
     if(!par->HasInitFlag(IF_PARENT_DATA_ADDED)) {
       par->AddParentData();

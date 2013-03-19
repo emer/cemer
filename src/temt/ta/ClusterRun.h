@@ -128,8 +128,9 @@ public:
 
   static void AddParamsToTable(DataTable* dat, 
                                const String& tag, const String& tag_svn, 
-                               const String& tag_job, const String& params);
-  // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs -- also adds the tag and two separate sub-tag columns: tag_svn, tag_job
+                               const String& tag_job, const String& params,
+                               const String& notes);
+  // add parameter values to data table as extra columns -- params is space-separated list of name=value pairs -- also adds the tag and two separate sub-tag columns: tag_svn, tag_job, notes
 
 
   ////////////////////////////////////////////

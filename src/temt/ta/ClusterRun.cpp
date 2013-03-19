@@ -255,22 +255,26 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
     return;
   String dat_files;
   String params;
+  String notes;
   if(table.name == "file_list") {
     dat_files = table.GetValAsString("file_name", row);
     if(!dat_files.contains(".dat")) return; // not a dat file!
     int lkup = jobs_done.FindVal(tag, "tag");
     if(lkup >= 0) {
       params = jobs_done.GetValAsString("params", lkup);
+      notes = jobs_done.GetValAsString("notes", lkup);
     }
     else {
       lkup = jobs_running.FindVal(tag, "tag");
       if(lkup >= 0) {
         params = jobs_running.GetValAsString("params", lkup);
+        notes = jobs_running.GetValAsString("notes", lkup);
       }
       else {
         lkup = jobs_archive.FindVal(tag, "tag");
         if(lkup >= 0) {
           params = jobs_archive.GetValAsString("params", lkup);
+          notes = jobs_archive.GetValAsString("notes", lkup);
         } 
       }
     }
@@ -278,6 +282,7 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
   else {
     dat_files = table.GetValAsString("dat_files", row);
     params = table.GetValAsString("params", row);
+    notes = table.GetValAsString("notes", row);
   }
   if(TestWarning(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
     return;
@@ -299,13 +304,13 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
       dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
     }
     dat->LoadData(res_path + "/" + fl);
-    AddParamsToTable(dat, tag, tag_svn, tag_job, params);
+    AddParamsToTable(dat, tag, tag_svn, tag_job, params, notes);
   }
 }
 
 void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
                                   const String& tag_svn, const String& tag_job,
-                                  const String& params) {
+                                  const String& params, const String& notes) {
   if(params.empty()) return;
   String_Array pars;
   pars.FmDelimString(params, " ");
@@ -324,6 +329,10 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
   { // first add the params as a whole string -- useful for grouping..
     DataCol* cl = dat->FindMakeCol("params", VT_STRING);
     cl->InitVals(params);
+  }
+  { 
+    DataCol* cl = dat->FindMakeCol("notes", VT_STRING);
+    cl->InitVals(notes);
   }
   for(int i=0; i<pars.size; i++) {
     String pv = pars[i];

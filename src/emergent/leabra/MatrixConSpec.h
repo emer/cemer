@@ -39,14 +39,14 @@ public:
   inline void C_Compute_dWt_Matrix_Trace(LeabraCon* cn, float lin_wt, 
                                          float mtx_act, float su_act) {
     float dwt = mtx_act * su_act;
-    cn->dwt = cur_lrate * dwt;  // always learn last gating action
+    cn->dwt = cur_lrate * dwt;  // note: =, not += -- always learn last gating action
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      if(ru->act_p == 0.0f) continue;
+      if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
       C_Compute_dWt_Matrix_Trace(cn, LinFmSigWt(cn->wt), ru->act_p, su->act_p);
     }
   }

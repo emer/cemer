@@ -346,14 +346,27 @@ void MatrixLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_NetinStats(lay, net);
 }
 
-void MatrixLayerSpec::Compute_ZeroGatingAct_ugp(LeabraLayer* lay,
-                                                Layer::AccessMode acc_md, int gpidx,
-                                                LeabraNetwork* net) {
+void MatrixLayerSpec::Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
+                                                  Layer::AccessMode acc_md, int gpidx,
+                                                  LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_eq = u->act_p = 0.0f;
+    u->misc_1 = 0.0f;           // signal of non gating
+  }
+}
+
+void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
+                                              Layer::AccessMode acc_md, int gpidx,
+                                              LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    // just leave the activations as-is
+    u->misc_1 = 1.0f;           // signal of gating
   }
 }
 
@@ -367,8 +380,11 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
   PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   gpd->CopyPBWMData(*snr_gpd);	// always grab from snr
+  if(snr_gpd->go_fired_trial) {
+    Compute_GoGatingAct_ugp(lay, acc_md, gpidx, net); // set gating flag
+  }
   if(!snr_gpd->go_fired_trial) {
-    Compute_ZeroGatingAct_ugp(lay, acc_md, gpidx, net); // zero our act values
+    Compute_NoGatingZeroAct_ugp(lay, acc_md, gpidx, net); // zero our act values
   }
 }
 
