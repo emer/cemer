@@ -591,6 +591,8 @@ void ClusterRun::RemoveJobs() {
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
+    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_done list?", "Ok", "Cancel");
+    if(chs == 1) return;
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
@@ -601,6 +603,8 @@ void ClusterRun::RemoveJobs() {
     m_cm->CommitJobSubmissionTable();
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
+    if(chs == 1) return;
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
