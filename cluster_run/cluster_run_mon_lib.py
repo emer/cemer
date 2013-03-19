@@ -1020,6 +1020,9 @@ class SubversionPoller(object):
         tag = self.jobs_submit.get_val(row, "tag")
         donerow = self.jobs_done.find_val("tag", tag)
         if donerow >= 0:
+            job_out_file = self.jobs_done.get_val(donerow, "job_out_file")
+            job_no = self.jobs_done.get_val(donerow, "job_no")
+            self._remove_job_files(job_out_file, job_no)
             self.jobs_archive.append_row_from(self.jobs_done, donerow)
             self.jobs_done.remove_row(donerow)
         else:
@@ -1235,6 +1238,13 @@ class SubversionPoller(object):
         # print "from out file: %s got job out: %s" % (job_out_file, job_out)
         return job_out
 
+    def _remove_job_files(self, job_out_file, job_no):
+        if os.path.exists(job_out_file):
+            os.remove(job_out_file)
+        jsh = "JOB." + job_no + ".sh"   # another likely suspect
+        if os.path.exists(jsh):
+            os.remove(jsh)
+
     def _get_dat_files(self, tag):
         # next look for output files
         results_dir = self.cur_proj_root + "/results/"
@@ -1282,6 +1292,7 @@ class SubversionPoller(object):
         # first load job_out info
         end_time = self.jobs_done.get_val(row, "end_time")
         job_out_file = self.jobs_done.get_val(row, "job_out_file")
+        job_no = self.jobs_done.get_val(row, "job_no")
         tag = self.jobs_done.get_val(row, "tag")
         pb_batches = self.jobs_done.get_val(row, "pb_batches")
         status = self.jobs_done.get_val(row, "status")
@@ -1301,6 +1312,8 @@ class SubversionPoller(object):
             all_files = self._get_dat_files(tag)
             self.jobs_done.set_val(row, "dat_files", all_files[0])
             self.jobs_done.set_val(row, "other_files", all_files[1])
+        elif deadtime.seconds > job_update_window * 60: # dead long enough to cleanup
+            self._remove_job_files(job_out_file, job_no)
 
     def _move_job_to_done(self, row):
         self.status_change = True
@@ -1366,6 +1379,9 @@ class SubversionPoller(object):
                 submit_svn = self.jobs_done.get_val(row, "submit_svn")
                 if submit_svn != trg_svn:
                     continue
+                job_out_file = self.jobs_done.get_val(row, "job_out_file")
+                job_no = self.jobs_done.get_val(row, "job_no")
+                self._remove_job_files(job_out_file, job_no)  # nuke now!
                 tag = self.jobs_done.get_val(row, "tag")
                 if tag == trg_tag:
                     continue  # skip the target guy
