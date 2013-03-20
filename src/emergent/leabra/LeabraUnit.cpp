@@ -31,6 +31,7 @@ void LeabraUnit::Initialize() {
   bias.con_type = &TA_LeabraCon;
 
   act_eq = 0.0f;
+  act_lrn = 0.0f;
   act_nd = 0.0f;
   act_avg = 0.15f;
   avg_ss = 0.15f;
@@ -116,6 +117,7 @@ void LeabraUnit::GetInSubGp() {
 
 void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_eq = cp.act_eq;
+  act_lrn = cp.act_lrn;
   act_nd = cp.act_nd;
   act_avg = cp.act_avg;
   avg_s = cp.avg_s;

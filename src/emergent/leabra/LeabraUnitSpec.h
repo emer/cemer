@@ -482,7 +482,8 @@ public:
   };
 
   ActFun	act_fun;	// #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
-  LeabraActFunExSpec act;		// #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  LeabraActFunExSpec act;       // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  LeabraActFunSpec   act_lrn;   // #CAT_Activation learning activations -- potentially different parameters for activations that drive learning vs. those that drive processing -- allows learning to be higher contrast while processing is lower processing -- more graded -- these act_lrn activations only participate in XCAL learning, not in CHL
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
@@ -507,6 +508,8 @@ public:
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
+  FunLookup	lrn_nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
+  FunLookup	lrn_noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -632,9 +635,11 @@ public:
       // #CAT_Activation #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
 
     virtual void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation Act Step 2: compute the activation from membrane potential
+    // #CAT_Activation Act Step 2: compute the activation from membrane potential (actually g_e in case of gelin)
       virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation from membrane potential -- rate code functions
+      // #CAT_Activation compute the activation from membrane potential (actually g_e in case of gelin) -- rate code functions
+      virtual void Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the act_lrn learning value from membrane potential (actually g_e in case of gelin) -- rate code functions
       virtual float Compute_ActValFmVmVal_rate_impl(float val_sub_thr,
                          LeabraActFunSpec& act_spec, FunLookup& nxx1_fl);
         // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value

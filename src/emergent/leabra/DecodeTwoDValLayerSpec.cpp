@@ -37,6 +37,7 @@ void DecodeTwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
     u->act = su->act;
     u->act_eq = su->act_eq;
     u->act_nd = su->act_nd;
+    u->act_lrn = su->act_lrn;
   }
   inherited::ReadValue_ugp(lay, acc_md, gpidx, net);
 }

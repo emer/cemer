@@ -194,7 +194,7 @@ void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;
         ru->act = 0.0f;
-        ru->act_eq = ru->act_nd = ru->act;
+        ru->act_lrn = ru->act_eq = ru->act_nd = ru->act;
         ru->da = 0.0f;            // I'm fully settled!
         ru->AddToActBuf(rus->syn_delay);
       }      

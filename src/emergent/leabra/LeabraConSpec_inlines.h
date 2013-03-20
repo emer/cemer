@@ -228,11 +228,11 @@ inline void LeabraConSpec::C_Compute_SRAvg_ms(LeabraSRAvgCon* cn, float ru_act, 
 inline void LeabraConSpec::Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
   if(do_s) {
     CON_GROUP_LOOP(cg, C_Compute_SRAvg_ms((LeabraSRAvgCon*)cg->OwnCn(i),
-					  ((LeabraUnit*)cg->Un(i))->act_nd, su->act_nd));
+					  ((LeabraUnit*)cg->Un(i))->act_lrn, su->act_lrn));
   }
   else {
     CON_GROUP_LOOP(cg, C_Compute_SRAvg_m((LeabraSRAvgCon*)cg->OwnCn(i), 
-					 ((LeabraUnit*)cg->Un(i))->act_nd, su->act_nd));
+					 ((LeabraUnit*)cg->Un(i))->act_lrn, su->act_lrn));
   }
 }
 

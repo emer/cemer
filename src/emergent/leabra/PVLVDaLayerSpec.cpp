@@ -175,7 +175,7 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     if(u->lesioned()) continue;
     u->dav = net_da;
     u->ext = da.tonic_da + u->dav;
-    u->act_eq = u->act_nd = u->act = u->net = u->ext;
+    u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
   }
 }
 

@@ -300,6 +300,7 @@ void LeabraUnitSpec::Initialize() {
   Defaults_init();
 
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
+  CreateNXX1Fun(act_lrn, lrn_nxx1_fun, lrn_noise_conv);
 }
 
 void LeabraUnitSpec::Defaults_init() {
@@ -369,6 +370,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   act_avg.UpdateAfterEdit_NoGui();
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
+  CreateNXX1Fun(act_lrn, lrn_nxx1_fun, lrn_noise_conv);
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
@@ -807,6 +809,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraNetwork*) {
   u->net = u->prv_net = u->ext;
   u->act_eq = clamp_range.Clip(u->ext);
   u->act_nd = u->act_eq;
+  u->act_lrn = u->act_eq;
   u->act = u->act_eq;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
@@ -1239,10 +1242,12 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE) {
     Compute_ActFmVm_spike(u, net);
+    Compute_ActLrnFmVm_rate(u, net); // todo: use rate-coded learning here???
     Compute_ActAdapt_spike(u, net);
   }
   else {
     Compute_ActFmVm_rate(u, net);
+    Compute_ActLrnFmVm_rate(u, net);
     Compute_ActAdapt_rate(u, net);
   }
 }
@@ -1334,6 +1339,32 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   u->act_eq = u->act;
   if(!depress.on)
     u->act_nd = u->act_eq;
+}
+
+void LeabraUnitSpec::Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
+  float new_act_lrn;
+  if(act.gelin) {
+    if(u->v_m <= act.thr) {
+      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->v_m - act.thr, act_lrn,
+                                                    lrn_nxx1_fun);
+    }
+    else {
+      float g_e_thr = Compute_EThresh(u); // note: uses act.thr -- should use lrn_act.thr
+      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->net - g_e_thr, act_lrn, 
+                                                    lrn_nxx1_fun);
+    }
+    if(net->cycle < dt.vm_eq_cyc) {
+      new_act_lrn = u->act_lrn + dt.vm_eq_dt * (new_act_lrn - u->act_lrn); // eq dt
+    }
+    else {
+      new_act_lrn = u->act_lrn + dt.vm * (new_act_lrn - u->act_lrn);
+    }
+  }
+  else {
+    new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->v_m - act_lrn.thr, act_lrn,
+                                                  lrn_nxx1_fun);
+  }
+  u->act_lrn = act_range.Clip(new_act_lrn);
 }
 
 void LeabraUnitSpec::Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net) {
@@ -1657,7 +1688,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
     ru_act = u->act_nd;
   }
   else {
-    ru_act = u->act;
+    ru_act = u->act_lrn;        // note: using lrn here..
     LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
     if(rus->act_fun == LeabraUnitSpec::SPIKE)
       ru_act *= rus->spike.eq_gain;

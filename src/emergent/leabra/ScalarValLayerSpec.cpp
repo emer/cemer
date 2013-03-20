@@ -509,6 +509,7 @@ float ScalarValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   u->act_eq = u->act_nd = avg;
+  u->act_lrn = 0.0f;          // no learning
   u->act = 0.0f;                // very important to clamp act to 0: don't send!
   u->da = 0.0f;                 // don't contribute to change in act
   return u->act_eq;
@@ -564,6 +565,7 @@ void ScalarValLayerSpec::ResetAfterClamp_ugp(LeabraLayer* lay,
   if(nunits > 2) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
     u->act = 0.0f;              // must reset so it doesn't contribute!
+    u->act_lrn = 0.0f;
     u->act_eq = u->act_nd = u->ext;     // avoid clamp_range!
   }
 }

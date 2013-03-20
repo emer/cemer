@@ -39,4 +39,6 @@ void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
     new_act += Compute_Noise(u, net);
   }
   u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
+  // note: keeping act_lrn based on sigmoidal function.. 
+  Compute_ActLrnFmVm_rate(u, net);
 }

@@ -89,7 +89,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
       inval *= clmp;            // downscale
     }
     ru->act = rus->clamp_range.Clip(inval);
-    ru->act_eq = ru->act_nd = ru->act;
+    ru->act_lrn = ru->act_eq = ru->act_nd = ru->act;
     ru->da = 0.0f;              // I'm fully settled!
     ru->AddToActBuf(rus->syn_delay);
   }

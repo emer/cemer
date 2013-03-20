@@ -133,7 +133,7 @@ void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     u->act = u->ext;
-    u->act_eq = u->act_nd = u->act;
+    u->act_lrn = u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;               // I'm fully settled!
   }
   inherited::Compute_CycleStats(lay, net);

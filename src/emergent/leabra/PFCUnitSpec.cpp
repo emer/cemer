@@ -62,7 +62,12 @@ void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
         (gpd->mnt_count == 0 && gpd->prv_mnt_count == 1);
       // either we gated last trial and are still maintaining, or just gated and last guy
       // maintained for 1 trial (note: mnt_count updated at start of trial so will be 1)
-      if(!gated_last_trial) {
+      if(gated_last_trial) {
+        u->misc_1 = 1.0f;
+        // p_act_p was just encoded as previous act_p value..
+      }
+      else {
+        u->misc_1 = 0.0f;
         u->p_act_p = save_p_act_p; // if we didn't gate last trial, don't update this..
       }
     }

@@ -55,6 +55,7 @@
 #include <MatrixBiasSpec>
 #include <PFCUnitSpec>
 #include <PFCLayerSpec>
+#include <PFCConSpec>
 #include <PFCDeepGatedConSpec>
 
 #include <SNrPrjnSpec>
@@ -1524,32 +1525,32 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
 
-  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
+  PFCConSpec* topfc_cons = (PFCConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
 
   LeabraTICtxtConSpec* pfc_ctxt_cons =
     (LeabraTICtxtConSpec*)topfc_cons->FindMakeChild("PfcTICtxt", &TA_LeabraTICtxtConSpec);
 
-  LeabraConSpec* pfcintomnt_cons =
-    (LeabraConSpec*)topfc_cons->FindMakeChild("PFCInToMnt", &TA_LeabraConSpec);
+  PFCConSpec* pfcintomnt_cons =
+    (PFCConSpec*)topfc_cons->FindMakeChild("PFCInToMnt", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcintoout_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCInToOut", &TA_LeabraConSpec);
+  PFCConSpec* pfcintoout_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCInToOut", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcmnttoout_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToOut", &TA_LeabraConSpec);
+  PFCConSpec* pfcmnttoout_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToOut", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcmnttoin_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToIn", &TA_LeabraConSpec);
+  PFCConSpec* pfcmnttoin_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToIn", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcouttoin_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToIn", &TA_LeabraConSpec);
+  PFCConSpec* pfcouttoin_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToIn", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcouttomnt_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToMnt", &TA_LeabraConSpec);
+  PFCConSpec* pfcouttomnt_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToMnt", &TA_PFCConSpec);
 
-  LeabraConSpec* topfcfmin_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_LeabraConSpec);
-  LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
+  PFCConSpec* topfcfmin_cons = (PFCConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_PFCConSpec);
+  PFCConSpec* topfcfmout_cons = (PFCConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_PFCConSpec);
 
   MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
@@ -2293,32 +2294,32 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
 
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
 
-  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
+  PFCConSpec* topfc_cons = (PFCConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_PFCConSpec);
   LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
 
   LeabraTICtxtConSpec* pfc_ctxt_cons =
     (LeabraTICtxtConSpec*)topfc_cons->FindMakeChild("PfcTICtxt", &TA_LeabraTICtxtConSpec);
 
-  LeabraConSpec* pfcintomnt_cons =
-    (LeabraConSpec*)topfc_cons->FindMakeChild("PFCInToMnt", &TA_LeabraConSpec);
+  PFCConSpec* pfcintomnt_cons =
+    (PFCConSpec*)topfc_cons->FindMakeChild("PFCInToMnt", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcintoout_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCInToOut", &TA_LeabraConSpec);
+  PFCConSpec* pfcintoout_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCInToOut", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcmnttoout_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToOut", &TA_LeabraConSpec);
+  PFCConSpec* pfcmnttoout_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToOut", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcmnttoin_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToIn", &TA_LeabraConSpec);
+  PFCConSpec* pfcmnttoin_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCMntToIn", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcouttoin_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToIn", &TA_LeabraConSpec);
+  PFCConSpec* pfcouttoin_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToIn", &TA_PFCConSpec);
 
-  LeabraConSpec* pfcouttomnt_cons =
-    (LeabraConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToMnt", &TA_LeabraConSpec);
+  PFCConSpec* pfcouttomnt_cons =
+    (PFCConSpec*)pfcintomnt_cons->FindMakeChild("PFCOutToMnt", &TA_PFCConSpec);
 
-  LeabraConSpec* topfcfmin_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_LeabraConSpec);
-  LeabraConSpec* topfcfmout_cons = (LeabraConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_LeabraConSpec);
+  PFCConSpec* topfcfmin_cons = (PFCConSpec*)topfc_cons->FindMakeChild("ToPFCFmInput", &TA_PFCConSpec);
+  PFCConSpec* topfcfmout_cons = (PFCConSpec*)topfc_cons->FindMakeChild("ToPFCFmOutput", &TA_PFCConSpec);
 
   MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
   MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);

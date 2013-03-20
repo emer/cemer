@@ -136,6 +136,7 @@ set(leabra_HEADS_MAKETA
   SubiculumLayerSpec.h
   HippoEncoderConSpec.h
   XCalCHLConSpec.h
+  PFCConSpec.h
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -277,4 +278,5 @@ set(leabra_SRCS
   SubiculumLayerSpec.cpp
   HippoEncoderConSpec.cpp
   XCalCHLConSpec.cpp
+  PFCConSpec.cpp
 )
