@@ -109,6 +109,9 @@ inline void LeabraConSpec::C_Compute_dWt(LeabraCon* cn, LeabraUnit*,
 // }
 
 inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+  if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
   Compute_SAvgCor(cg, su);
   if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
@@ -155,6 +158,9 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+  if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
   float su_avg_s = su->avg_s;
   float su_avg_m = su->avg_m;
 
@@ -252,8 +258,10 @@ inline void LeabraConSpec::C_Compute_dWt_CtLeabraCAL(LeabraSRAvgCon* cn,
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
   // note: not doing all the checks for layers/groups inactive in plus phase: not needed since no hebb stuff
+  LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+  if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
   CON_GROUP_LOOP(cg,
 		 C_Compute_dWt_CtLeabraCAL((LeabraSRAvgCon*)cg->OwnCn(i),
 			   rlay->sravg_vals.s_nrm, rlay->sravg_vals.m_nrm));

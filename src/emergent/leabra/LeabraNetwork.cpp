@@ -1294,7 +1294,6 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
   if(cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
     if(cos_err < cos_err_lrn_thr) return; // didn't make threshold
   }
-  if(unlearnable_trial) return;
 
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);

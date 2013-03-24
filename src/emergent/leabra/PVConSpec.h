@@ -47,6 +47,9 @@ public:
   }
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
     float su_act;
     if(send_act == ACT_P)
       su_act = su->act_p;

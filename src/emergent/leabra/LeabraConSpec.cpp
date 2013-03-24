@@ -151,6 +151,8 @@ void LeabraConSpec::Initialize() {
   diff_scale_p = false;
   
   learn = true;
+  
+  ignore_unlearnable = true;
 
   wt_sig_fun.x_range.min = 0.0f;
   wt_sig_fun.x_range.max = 1.0f;

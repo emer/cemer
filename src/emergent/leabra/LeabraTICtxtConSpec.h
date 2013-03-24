@@ -74,6 +74,9 @@ public:
   }
 
   override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
@@ -82,6 +85,9 @@ public:
   }
 
   override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
@@ -90,6 +96,9 @@ public:
   }
 
   override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);

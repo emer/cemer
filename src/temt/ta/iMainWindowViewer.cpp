@@ -1020,6 +1020,15 @@ void iMainWindowViewer::filePublishProjectOnWeb()
 }
 
 void iMainWindowViewer::fileClose() {
+  if(taMisc::is_saving) {
+    taMisc::Warning("Cannot close: currently saving -- try again later");
+  }
+  if(taMisc::is_undo_loading || taMisc::is_undo_saving) {
+    taMisc::Warning("Cannot close: currently undoing -- try again later");
+  }
+  if(taMisc::is_loading) {
+    taMisc::Warning("Cannot close: currently loading -- try again later");
+  }
   taProject* proj = curProject();
   if (!proj) return;
   // Check for dirty/save

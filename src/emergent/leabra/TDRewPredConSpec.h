@@ -48,6 +48,9 @@ public:
 
   // this computes weight changes based on sender at time t-1
   inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
     LeabraTdUnit* lsu = (LeabraTdUnit*)su;
     for(int i=0; i<cg->size; i++) {
       LeabraTdUnit* ru = (LeabraTdUnit*)cg->Un(i);
@@ -57,6 +60,9 @@ public:
   }
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
+    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+
     LeabraTdUnit* lsu = (LeabraTdUnit*)su;
     for(int i=0; i<cg->size; i++) {
       LeabraTdUnit* ru = (LeabraTdUnit*)cg->Un(i);
