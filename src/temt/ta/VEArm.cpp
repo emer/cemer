@@ -808,7 +808,7 @@ bool VEArm::ConfigArm(const String& name_prefix,
   }
 
   //--------- Initializing muscles and insertion points -------------
-  // the order of the next three instructions is important
+  // the order of the next instructions is important
 
   InitMuscles();  // Initializes insertion point matrices and the VEMuscle_List
  
@@ -1755,6 +1755,28 @@ bool VEArm::NormSpeedsToTable(DataTable* vel_table) {
   }
   return true;
 }
+
+bool VEArm::NormHandCoordsToTable(DataTable* coords_table) {
+  char col_name[] = "hand_coords"; 
+  DataCol* dc = coords_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,3);
+  if(coords_table->rows == 0)       // empty table, make sure we have at least 1 row
+    dc->EnforceRows(1);
+  
+  VEBody* hand = bodies[HAND];
+  float maxl = La+Lf;
+
+  if(up_axis == Y) {
+    dc->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0); // -1 = last row
+    dc->SetMatrixVal(0.5f+(hand->cur_pos.y-should_loc.y)/(1.9f*maxl),-1, 0,0,0,1); // -1 = last row
+    dc->SetMatrixVal(0.1f+(hand->cur_pos.z-should_loc.z)/(maxl),-1, 0,0,0,2); // can't reach behind
+  } else {
+    dc->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0); // -1 = last row
+    dc->SetMatrixVal(0.1f+(hand->cur_pos.y-should_loc.y)/(maxl),-1, 0,0,0,1); // can't reach behind
+    dc->SetMatrixVal(0.5f+(hand->cur_pos.z-should_loc.z)/(1.9f*maxl),-1, 0,0,0,2); // -1 = last row
+  } 
+  return true;
+}
+
 
 bool VEArm::ArmStateToTable(DataTable* table) {
   NormLengthsToTable(table);
