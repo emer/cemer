@@ -35,6 +35,7 @@ public:
   // returns true if my stripe gated this trial -- this is only valid in PostSettle for phase_no == 1 or thereafter (TI_ComputeCtxtAct)
 
   override void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
+  override void	TI_ClearContext(LeabraUnit* u, LeabraNetwork* net);
   override void PostSettle(LeabraUnit* u, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(PFCUnitSpec);

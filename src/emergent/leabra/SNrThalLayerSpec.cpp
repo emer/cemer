@@ -23,6 +23,7 @@
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
+  min_cycle = 10;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -178,7 +179,7 @@ void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   Init_GateStats(lay, net);
 }
 
-void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
+void SNrThalLayerSpec::Compute_GateActs_Maint(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
 
@@ -201,6 +202,45 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
     }
     else {
       u->act_eq = u->act_p = 0.0f; // turn off non-gated guys
+    }
+  }
+
+  Compute_GateStats(lay, net); // update overall stats at this point
+  lay->SetUserData("n_fired_trial", n_fired_trial);
+  lay->SetUserData("n_fired_now", n_fired_now);
+}
+
+void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
+
+  // gating window
+  if(net->ct_cycle < snrthal.min_cycle || net->ct_cycle > net->mid_minus_cycle) return;
+
+  int n_fired_trial = 0;
+  int n_fired_now = 0;
+
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
+    if(u->lesioned()) continue;
+
+    if(gpd->go_fired_trial) {
+      n_fired_trial++;
+    }
+    else {
+      if(u->act_eq >= snrthal.go_thr) {
+        n_fired_trial++;
+        n_fired_now++;
+        gpd->go_fired_now = true;
+        gpd->go_fired_trial = true;
+        gpd->go_cycle = net->ct_cycle;
+        gpd->prv_mnt_count = gpd->mnt_count; 
+        gpd->mnt_count = 0;	// reset
+      }
+      else {
+        u->act_eq = u->act_p = 0.0f; // turn off non-gated guys
+      }
     }
   }
 
@@ -251,10 +291,19 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
+  if(gating_types & OUTPUT) { // everything else is maint gating 
+    Compute_GateActs_Output(lay, net);
+  }
+}
+
 void SNrThalLayerSpec::PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle_Pre(lay, net);
   if(net->phase_no == 1) {
-    Compute_GateActs(lay, net);
+    if(!(gating_types & OUTPUT)) { // everything else is maint gating 
+      Compute_GateActs_Maint(lay, net);
+    }
   }
 }
 

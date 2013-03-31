@@ -32,8 +32,7 @@ INHERITED(SpecMemberBase)
 public:
   int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
   int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
-  float		maint_decay;	// #MIN_0 #MAX_1 #DEF_0:0.05 how much maintenance activation decays every trial
-  float		maint_thr;	// #MIN_0 #DEF_0.2 when max activity in layer falls below this threshold, activations are no longer maintained and stripe is cleared
+  float		out_nogate_gain; // #MIN_0 #MAX_1 how active are output gating units in absence of gating?
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 

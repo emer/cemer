@@ -52,6 +52,14 @@ void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
+void PFCUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::TI_ClearContext(u, net);
+  PBWMUnGpData* gpd = PFCUnGpData(u, net);
+  if(gpd) {
+    gpd->Init_State();          // restart
+  }  
+}
+
 void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   float save_p_act_p = u->p_act_p;
   inherited::PostSettle(u, net);

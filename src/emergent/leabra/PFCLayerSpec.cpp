@@ -24,8 +24,7 @@
 void PFCGateSpec::Initialize() {
   in_mnt = 1;
   out_mnt = 0;
-  maint_decay = 0.02f;
-  maint_thr = 0.2f;
+  out_nogate_gain = 0.1f;
 }
 
 void PFCLayerSpec::Initialize() {
@@ -184,16 +183,17 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
+  CopySNrThalGpData(lay, net);
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    if(gpd->mnt_count != 1) {   // override if didn't just gate prior timestep
+    if(!gpd->go_fired_trial) {  // reset activation after 
       for(int i=0;i<nunits;i++) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;
-        ru->act = 0.0f;
+        ru->act *= gate.out_nogate_gain;
         ru->act_lrn = ru->act_eq = ru->act_nd = ru->act;
         ru->da = 0.0f;            // I'm fully settled!
         ru->AddToActBuf(rus->syn_delay);

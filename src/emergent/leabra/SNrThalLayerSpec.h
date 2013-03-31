@@ -31,6 +31,7 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active before the mid minus cycle will actually fire
+  int           min_cycle;              // minimum cycle for output gating -- cannot gate before this cycle
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -67,12 +68,15 @@ public:
 
   virtual void	Init_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // initialize the gating stats in the group data -- called by Trial_Init_Layer
-  virtual void	Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Compute_GateActs_Maint(LeabraLayer* lay, LeabraNetwork* net);
+  // compute gating activations -- called at final plus phase for maint gating
+  virtual void	Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* net);
   // compute gating activations -- called at gate_cycle
   virtual void	Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // update layer user data gating statistics which are useful to monitor for overall performance -- called at gate_cycle
 
-  // we compute gating in postsettle pre stage of plus phase
+  // we compute maint gating in postsettle pre stage of plus phase, output gating in cycle
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net);
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
