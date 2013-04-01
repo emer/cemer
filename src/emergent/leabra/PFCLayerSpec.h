@@ -73,6 +73,7 @@ public:
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  override void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);
 
   override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
 

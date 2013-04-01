@@ -72,7 +72,7 @@ void MatrixLayerSpec::Defaults_init() {
   gp_kwta.pct = 0.25f;
   unit_gp_inhib.on = true;
   unit_gp_inhib.gp_g = 1.0f;
-  lay_gp_inhib.on = true;
+  lay_gp_inhib.on = false;      // off now by default!
   lay_gp_inhib.gp_g = 1.0f;
 
   //  SetUnique("tie_brk", true);        // turn on tie breaking by default

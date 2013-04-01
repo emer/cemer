@@ -209,6 +209,21 @@ void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_CycleStats(lay, net);
 }
 
+void PFCLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    gpd->Init_State();          // restart
+    for(int i=0;i<nunits;i++) {
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+      if(u->lesioned()) continue;
+      u->TI_ClearContext(net);
+    }
+  }
+}
+
 // void PFCLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
 //   if((pfc_type != SNrThalLayerSpec::IN_MNT) && (pfc_type != SNrThalLayerSpec::MNT_OUT) && (pfc_type != SNrThalLayerSpec::OUT_MNT)) {
 //     Compute_ClearNonMnt(lay, net); 
