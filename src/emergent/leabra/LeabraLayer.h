@@ -219,6 +219,9 @@ public:
   bool	TI_UpdateContextTest(LeabraNetwork* net)
   { return spec->TI_UpdateContextTest(this, net); }
   // #CAT_TI test whether TI context should be updated for this layer or not -- for gated layers (e.g., PFCLayerSpec), this is modulated by gating signal
+  void	TI_Compute_CtxtAct(LeabraNetwork* net)
+  { spec->TI_Compute_CtxtAct(this, net); }
+  // #CAT_TI compute context activations from context netinput
   void	TI_ClearContext(LeabraNetwork* net)
   { spec->TI_ClearContext(this, net); }
   // #CAT_TI clear the act_ctxt and net_ctxt context variables -- can be useful to do at clear discontinuities of experience

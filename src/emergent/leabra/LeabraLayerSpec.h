@@ -520,8 +520,6 @@ public:
     // #CAT_Activation get plus phase act stats
     virtual void PostSettle_GetMinus2(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get 2nd minus phase act stats
-    virtual void PostSettle_GetPlus2(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation get 2nd plus phase act stats
     virtual void PostSettle_GetPhaseDifRatio(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get phase dif ratio from minus to plus
     virtual void AdaptGBarI(LeabraLayer* lay, LeabraNetwork* net);
@@ -531,6 +529,8 @@ public:
   // #CAT_Activation compute acts_m AvgMaxVals from act_m -- not currently used
   virtual void	Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute acts_p AvgMaxVals from act_p -- not currently used
+  virtual void	Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute acts_ctxt AvgMaxVals from act_ctxt
 
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
@@ -538,6 +538,8 @@ public:
   virtual bool  TI_UpdateContextTest(LeabraLayer* lay, LeabraNetwork* net)
   { return true; }
   // #CAT_TI test whether TI context should be updated for this layer or not -- for gated layers (e.g., PFCLayerSpec), this is modulated by gating signal
+  virtual void  TI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_TI compute TI context activation -- act_ctxt from net_ctxt
   virtual void  TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TI clear the act_ctxt and net_ctxt context variables -- can be useful to do at clear discontinuities of experience
 

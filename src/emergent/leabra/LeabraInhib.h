@@ -113,8 +113,8 @@ public:
   AvgMaxVals	acts_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
+  AvgMaxVals	acts_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation TI act_ctxt activation stats for the layer
   float		phase_dif_ratio; // #NO_SAVE #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
-  AvgMaxVals	acts_p2;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation second plus-phase activation stats for the layer
   AvgMaxVals	acts_m2;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation second minus-phase activation stats for the layer
  
   KWTAVals	kwta;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!

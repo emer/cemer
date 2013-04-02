@@ -111,8 +111,8 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   acts = cp.acts;
   acts_p = cp.acts_p;
   acts_m = cp.acts_m;
-  acts_p2 = cp.acts_p2;
   acts_m2 = cp.acts_m2;
+  acts_ctxt = cp.acts_ctxt;
   phase_dif_ratio = cp.phase_dif_ratio;
   kwta = cp.kwta;
   i_val = cp.i_val;

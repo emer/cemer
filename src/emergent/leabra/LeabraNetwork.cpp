@@ -1005,11 +1005,10 @@ void LeabraNetwork::TI_Send_CtxtNetin() {
 }
 
 void LeabraNetwork::TI_Compute_CtxtAct() {
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Compute_CtxtAct);
-  if(thread_flags & ACT)
-    threads.Run(&un_call, 0.4f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->TI_Compute_CtxtAct(this);
+  }
 }
 
 void LeabraNetwork::TI_ClearContext() {
