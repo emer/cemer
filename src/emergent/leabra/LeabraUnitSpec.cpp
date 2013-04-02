@@ -293,6 +293,8 @@ void LeabraUnitSpec::Initialize() {
 
   act_fun = NOISY_XX1;
 
+  act_lrn_on = false;
+
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
   noise.var = .001f;
@@ -338,6 +340,14 @@ void LeabraUnitSpec::Defaults_init() {
   thr_sub_e_rev_i = (act.thr - e_rev.i);
   thr_sub_e_rev_e = (act.thr - e_rev.e);
 
+  e_rev_sub_thr_lrn.e = e_rev.e - act_lrn.thr;
+  e_rev_sub_thr_lrn.l = e_rev.l - act_lrn.thr;
+  e_rev_sub_thr_lrn.i = e_rev.i - act_lrn.thr;
+  e_rev_sub_thr_lrn.h = e_rev.h - act_lrn.thr;
+  e_rev_sub_thr_lrn.a = e_rev.a - act_lrn.thr;
+
+  lrn_thr_sub_e_rev_e = (act_lrn.thr - e_rev.e);
+
   hyst.b_inc_dt = .05f;
   hyst.b_dec_dt = .05f;
   hyst.a_thr = .8f;
@@ -379,6 +389,13 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   //  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
   thr_sub_e_rev_i = (act.thr - e_rev.i);
   thr_sub_e_rev_e = (act.thr - e_rev.e);
+
+  e_rev_sub_thr_lrn.e = e_rev.e - act_lrn.thr;
+  e_rev_sub_thr_lrn.l = e_rev.l - act_lrn.thr;
+  e_rev_sub_thr_lrn.i = e_rev.i - act_lrn.thr;
+  e_rev_sub_thr_lrn.h = e_rev.h - act_lrn.thr;
+  e_rev_sub_thr_lrn.a = e_rev.a - act_lrn.thr;
+  lrn_thr_sub_e_rev_e = (act_lrn.thr - e_rev.e);
 }
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1342,14 +1359,18 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
+  if(!act_lrn_on) {
+    u->act_lrn = u->act_eq;
+    return;
+  }
   float new_act_lrn;
-  if(act.gelin) {
-    if(u->v_m <= act.thr) {
-      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->v_m - act.thr, act_lrn,
+  if(act_lrn.gelin) {
+    if(u->v_m <= act_lrn.thr) {
+      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->v_m - act_lrn.thr, act_lrn,
                                                     lrn_nxx1_fun);
     }
     else {
-      float g_e_thr = Compute_EThresh(u); // note: uses act.thr -- should use lrn_act.thr
+      float g_e_thr = Compute_EThreshLrn(u);
       new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->net - g_e_thr, act_lrn, 
                                                     lrn_nxx1_fun);
     }

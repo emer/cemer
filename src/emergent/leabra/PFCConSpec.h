@@ -27,10 +27,9 @@
 eTypeDef_Of(PFCConSpec);
 
 class E_API PFCConSpec : public LeabraConSpec {
-  // for connections into PFC units -- modulates learning as function of gating
+  // for connections into PFC units -- currently equivalent to regular LeabraConSpec but could have some specialized functionality in the future
 INHERITED(LeabraConSpec)
 public:
-  bool  lrn_gate_only;          // learn only on gating (actually trial after gating)
 
 #if 0                           // use this if we end up with stripe-specific scale_eff
   override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
@@ -66,43 +65,6 @@ public:
     }
   }
 #endif
-
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
-
-    float su_avg_s = su->avg_s;
-    float su_avg_m = su->avg_m;
-
-    float su_act_mult = xcal.thr_l_mix * su->avg_m;
-
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      if(lrn_gate_only && ru->misc_1 == 0.0f) continue; // no learn outside of gating
-      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
-                                       su_act_mult);
-    }
-  }
-
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
-
-    Compute_SAvgCor(cg, su);
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
-
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      if(lrn_gate_only && ru->misc_1 == 0.0f) continue; // no learn outside of gating
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      float lin_wt = LinFmSigWt(cn->wt);
-      C_Compute_dWt(cn, ru, 
-                    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-                    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m,
-                                            su->act_p, su->act_m));  
-    }
-  }
-
 
   TA_SIMPLE_BASEFUNS(PFCConSpec);
 protected:

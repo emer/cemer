@@ -1346,8 +1346,11 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
   set_n_stripes(net, "Matrix_Go_out",  out_stripes, n_matrix_units, true);
   set_n_stripes(net, "Matrix_NoGo_out",out_stripes, n_matrix_units, true);
 
-  int snr_stripes = in_stripes + mnt_stripes + out_stripes;
+  int snr_stripes = in_stripes + mnt_stripes;
   set_n_stripes(net, "SNrThal", snr_stripes, 1, false, snr_stripes, 1); // default is n x 1
+  if(out_stripes > 0) {
+    set_n_stripes(net, "SNrThal_out", out_stripes, 1, false, out_stripes, 1); // default   is n x 1
+  }
 
   set_n_stripes(net, "LVe", 1, -1, false, 1, 1);
   set_n_stripes(net, "LVi", 1, -1, false, 1, 1);
@@ -1420,7 +1423,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   // new gets full update, otherwise more just params
   bool matrix_new =   false; 
   bool pfc_new = false; 
-  bool snrthal_new =     false; 
+  bool snrthal_new = false; 
+  bool snrthal_out_new = false; 
 
   LeabraLayer* pfc_in_mnt = NULL;
   LeabraLayer* pfc_out = NULL;
@@ -1433,6 +1437,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraLayer* matrix_nogo_in_mnt = NULL;
   LeabraLayer* matrix_nogo_out = NULL;
   LeabraLayer* snrthal = NULL;
+  LeabraLayer* snrthal_out = NULL;
 
   // stick this in go -- must be first!
   snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal", NULL, snrthal_new);
@@ -1459,6 +1464,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_out = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_out", NULL,
 								  matrix_new);
     pfc_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFC_out", NULL, pfc_new);
+
+    snrthal_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal_out", NULL,
+                                                             snrthal_out_new);
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1474,7 +1482,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
     if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
        && lay != lve && lay != lvi && lay != nv && lay != vta
-       && lay != snrthal
+       && lay != snrthal && lay != snrthal_out 
        && lay != matrix_go_in && lay != matrix_go_in_mnt && lay != matrix_go_out
        && lay != matrix_nogo_in && lay != matrix_nogo_in_mnt && lay != matrix_nogo_out
        && lay != pfc_in_mnt && lay != pfc_out && lay != pfc_in) {
@@ -1739,6 +1747,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
 
     pfc_out->SetLayerSpec(pfc_out_sp);  pfc_out->SetUnitSpec(pfc_units);
+    snrthal_out->SetLayerSpec(snrthalsp); snrthal_out->SetUnitSpec(snrthal_units);
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1772,13 +1781,13 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     net->FindMakePrjn(matrix_nogo_in_mnt, matrix_go_in_mnt, gponetoone, matrix_cons_nogofmgo);
   }
   if(out_stripes > 0) {
-    net->FindMakePrjn(snrthal, matrix_go_out, snr_prjn, matrix_to_snrthal);
+    net->FindMakePrjn(snrthal_out, matrix_go_out, snr_prjn, matrix_to_snrthal);
     net->FindMakePrjn(matrix_go_out, matrix_nogo_out, gponetoone, marker_cons);
-    net->FindMakePrjn(matrix_go_out, snrthal, snr_prjn, marker_cons);
+    net->FindMakePrjn(matrix_go_out, snrthal_out, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_go_out, vta, fullprjn, marker_cons);
     // net->FindMakePrjn(matrix_go_out, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
 
-    net->FindMakePrjn(matrix_nogo_out, snrthal, snr_prjn, marker_cons);
+    net->FindMakePrjn(matrix_nogo_out, snrthal_out, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_out, vta, fullprjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_out, matrix_go_out, gponetoone, matrix_cons_nogofmgo);
   }
@@ -1888,7 +1897,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       net->FindMakePrjn(matrix_go_out, pfc_out, gponetoone, matrix_cons);
       net->FindMakePrjn(matrix_nogo_out, pfc_out, gponetoone, matrix_cons_nogo);
     }
-    net->FindMakePrjn(pfc_out, snrthal, snr_prjn, marker_cons);
+    net->FindMakePrjn(pfc_out, snrthal_out, snr_prjn, marker_cons);
     net->FindMakePrjn(pfc_out, pfc_out, gponetoone, pfc_ctxt_cons);
 
     if(in_stripes > 0) {
@@ -1992,6 +2001,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   // set positions & geometries
 
   snrthal->brain_area = ".*/.*/.*/.*/Substantia Nigra";
+  if(snrthal_out)
+    snrthal_out->brain_area = ".*/.*/.*/.*/Substantia Nigra";
   // these are just random suggestions:
   if(in_stripes > 0) {
     if(matrix_go_in->brain_area.empty()) 
@@ -2139,11 +2150,18 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   ///////////////	Now SNrThal
 
-  int snr_stripes = in_stripes + mnt_stripes + out_stripes;
+  int snr_stripes = in_stripes + mnt_stripes;
   lay_set_geom(snrthal, snr_stripes, 1);
+
+  if(snrthal_out) {
+    lay_set_geom(snrthal_out, out_stripes, 1);
+  }
 
   if(snrthal_new) { // put at front of go
     snrthal->pos.SetXYZ(0, 0, mtx_z);
+  }
+  if(snrthal_out_new) {
+    snrthal_out->pos.SetXYZ(snr_stripes + lay_spc, 0, mtx_z);
   }
 
   // here to allow it to get disp_geom for laying out the pfc and matrix guys!

@@ -22,10 +22,16 @@
 #include <taMisc>
 
 void PFCGateSpec::Initialize() {
-  in_mnt = 1;
-  out_mnt = 0;
-  out_nogate_gain = 0.1f;
+  ctxt_decay = 0.0f;
+  ctxt_decay_c = 1.0f - ctxt_decay;
+  out_nogate_gain = 0.0f;
 }
+
+void PFCGateSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ctxt_decay_c = 1.0f - ctxt_decay;
+}
+
 
 void PFCLayerSpec::Initialize() {
   pfc_type = SNrThalLayerSpec::IN_MNT;
@@ -134,21 +140,6 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     return false;
   }
 
-  // for(int g=0; g<u->recv.size; g++) {
-  //   LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-  //   LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-  //   if(from->lesioned() || !recv_gp->size)       continue;
-  //   if(from->GetLayerSpec()->GetTypeDef() == &TA_PFCLayerSpec) {
-  //     PFCLayerSpec* fmls = (PFCLayerSpec*)from->GetLayerSpec();
-  //     if(fmls->pfc_layer == PFCLayerSpec::DEEP) {
-  //       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-  //       if(lay->CheckError(!cs->InheritsFrom(&TA_PFCDeepGatedConSpec), quiet, rval,
-  //                          "Connection from DEEP PFC to SUPER PFC is not using a PFCDeepGatedConSpec -- this will not work properly with the gating of these connections!  con from layer:", from->name)) {
-  //       }
-  //     }
-  //   }
-  // }
-
   return true;
 }
 
@@ -224,31 +215,9 @@ void PFCLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-// void PFCLayerSpec::Compute_FinalGating(LeabraLayer* lay, LeabraNetwork* net) {
-//   if((pfc_type != SNrThalLayerSpec::IN_MNT) && (pfc_type != SNrThalLayerSpec::MNT_OUT) && (pfc_type != SNrThalLayerSpec::OUT_MNT)) {
-//     Compute_ClearNonMnt(lay, net); 
-//     return;
-//   }
-
-//   Layer::AccessMode acc_md = Layer::ACC_GP;
-//   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-//     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-
-//     if(gpd->mnt_count >= 1) {
-//       if(gpd->acts.max < gate.maint_thr) { // below thresh, nuke!
-// 	Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);
-//       }
-//       else {			// continue to decay..
-// 	Compute_MaintUpdt_ugp(lay, acc_md, mg, DECAY, net);
-//       }
-//     }
-//   }
-// }
-
 void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   // make sure we have all the gating info from SNrThal before we do our own guys
   if(net->phase_no == 1) {
-    // Compute_FinalGating(lay, net);     // final gating
     CopySNrThalGpData(lay, net);
   }
   inherited::PostSettle(lay, net);

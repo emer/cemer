@@ -16,6 +16,8 @@
 #include "LeabraTICtxtConSpec.h"
 
 void LeabraTICtxtConSpec::Initialize() {
-  wt_sig.dwt_norm = false;      // probably not great to be dwt norming -- explore this!
+  //  wt_sig.dwt_norm = false;      // probably not great to be dwt norming -- explore this!
+  SetUnique("wt_scale", true);
+  wt_scale.rel = 3.0;           // good default
 }
 

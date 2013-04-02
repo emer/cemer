@@ -30,16 +30,17 @@ class E_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(SpecMemberBase)
 public:
-  int		in_mnt;		// #DEF_1 #MIN_0 how many trials INPUT layers maintain after initial gating trial
-  int		out_mnt;	// #DEF_0 #MIN_0 how many trials OUTPUT layers maintain after initial gating trial
-  float		out_nogate_gain; // #MIN_0 #MAX_1 how active are output gating units in absence of gating?
+  float         ctxt_decay;     // #MIN_0 #MAX_1 decay rate for context, per trial when no updating occurs
+  float		out_nogate_gain; // #MIN_0 #MAX_1 #DEF_0 how active are output gating units in absence of gating?
+
+  float         ctxt_decay_c;   // #READ_ONLY #HIDDEN 1-ctxt_decay
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
 protected:
   SPEC_DEFAULTS;
-  //  void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };

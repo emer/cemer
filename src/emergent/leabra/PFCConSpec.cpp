@@ -16,7 +16,6 @@
 #include "PFCConSpec.h"
 
 void PFCConSpec::Initialize() {
-  lrn_gate_only = false;
   Defaults_init();
 }
 

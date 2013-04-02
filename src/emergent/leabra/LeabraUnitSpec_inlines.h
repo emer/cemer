@@ -103,6 +103,13 @@ inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
 	  thr_sub_e_rev_e);
 } 
 
+inline float LeabraUnitSpec::Compute_EThreshLrn(LeabraUnit* u) {
+  // including the ga and gh terms -- only way to affect anything
+  return ((u->gc.i * e_rev_sub_thr_lrn.i + u->gc.l * e_rev_sub_thr_lrn.l
+	   + u->gc.a * e_rev_sub_thr_lrn.a + u->gc.h * e_rev_sub_thr_lrn.h - u->adapt) /
+	  lrn_thr_sub_e_rev_e);
+} 
+
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
   float new_v_m = (((u->net * e_rev.e) + (u->gc.l * e_rev.l) + (u->gc.i * e_rev.i) +
 		   (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a) - u->adapt) / 

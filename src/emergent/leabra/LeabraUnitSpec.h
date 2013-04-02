@@ -483,7 +483,8 @@ public:
 
   ActFun	act_fun;	// #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
   LeabraActFunExSpec act;       // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
-  LeabraActFunSpec   act_lrn;   // #CAT_Activation learning activations -- potentially different parameters for activations that drive learning vs. those that drive processing -- allows learning to be higher contrast while processing is lower processing -- more graded -- these act_lrn activations only participate in XCAL learning, not in CHL
+  bool               act_lrn_on; // #CAT_Activation use different activation function parameters for the variables that enter into learning equations, compared to what is used for processing (enables act_lrn params on next line)
+  LeabraActFunSpec   act_lrn;   // #CONDSHOW_ON_act_lrn_on #CAT_Activation learning activations -- potentially different parameters for activations that drive learning vs. those that drive processing -- allows learning to be higher contrast while processing is lower processing -- more graded -- these act_lrn activations only participate in XCAL learning, not in CHL
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
@@ -606,6 +607,8 @@ public:
 
   inline float Compute_EThresh(LeabraUnit* u);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
+  inline float Compute_EThreshLrn(LeabraUnit* u);
+  // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold -- uses act_lrn.thr
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -774,8 +777,10 @@ protected:
   void 	CheckThisConfig_impl(bool quiet, bool& rval);
 
   LeabraChannels e_rev_sub_thr;	// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
+  LeabraChannels e_rev_sub_thr_lrn; // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act_lrn.thr for each item -- used for compute_ithresh
   float		thr_sub_e_rev_i;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh
   float		thr_sub_e_rev_e;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
+  float		lrn_thr_sub_e_rev_e;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act_lrn.thr - e_rev.e) used for compute_ethreshlrn
 
 private:
   void 	Initialize();

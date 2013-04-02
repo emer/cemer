@@ -35,20 +35,27 @@ void PFCUnitSpec::Defaults_init() {
 // ctxt         -       1       1       3       4
 // p_act_p      -       -       1       1       3
 
-PBWMUnGpData* PFCUnitSpec::PFCUnGpData(LeabraUnit* u, LeabraNetwork* net) {
+PBWMUnGpData* PFCUnitSpec::PFCUnGpData(LeabraUnit* u, LeabraNetwork* net,
+                                       PFCLayerSpec*& pfcls) {
+  pfcls = NULL;
   LeabraLayer* rlay = u->own_lay();
   if(rlay->lesioned()) return NULL;
   if(!rlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) return NULL;
-  PFCLayerSpec* ls = (PFCLayerSpec*) rlay->GetLayerSpec();
+  pfcls = (PFCLayerSpec*) rlay->GetLayerSpec();
   int rgpidx = u->UnitGpIdx();
   PBWMUnGpData* gpd = (PBWMUnGpData*)rlay->ungp_data.FastEl(rgpidx);
   return gpd;
 }
 
 void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
-  PBWMUnGpData* gpd = PFCUnGpData(u, net);
-  if(gpd && gpd->go_fired_trial) {
+  PFCLayerSpec* pfcls = NULL;
+  PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
+  if(!gpd) return;
+  if(gpd->go_fired_trial) {
     u->act_ctxt = u->net_ctxt;
+  }
+  else {
+    u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
   }
 }
 
@@ -56,7 +63,8 @@ void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   float save_p_act_p = u->p_act_p;
   inherited::PostSettle(u, net);
   if(net->phase_no == 1) {
-    PBWMUnGpData* gpd = PFCUnGpData(u, net);
+    PFCLayerSpec* pfcls = NULL;
+    PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
     if(gpd) {
       bool gated_last_trial = (gpd->mnt_count == 1) ||
         (gpd->mnt_count == 0 && gpd->prv_mnt_count == 1);
