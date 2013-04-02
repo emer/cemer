@@ -736,6 +736,7 @@ set(ta_HEADS_MAKETA_MOC
 
   iAction.h
   taiWidget.h
+  taiWidgetItemChooser.h
   iMethodButtonMgr.h
 
   taiEditor.h
@@ -884,7 +885,6 @@ set(ta_HEADS_NOMAKETA_MOC
   taiWidgetDimEdit.h
   taiWidgetVariantBase.h
   taiWidgetVariant.h
-  taiWidgetItemChooser.h
   taiWidgetEditButton.h
   taiWidgetFileButton.h
   taiWidgetProgStepButton.h

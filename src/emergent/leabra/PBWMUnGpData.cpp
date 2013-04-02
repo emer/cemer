@@ -24,6 +24,7 @@ void PBWMUnGpData::Initialize() {
   nogo_inhib = 0.0f;
   refract_inhib = 0.0f;
   pvr_inhib = 0.0f;
+  nogo_deep = 0.0f;
 }
 
 void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
@@ -35,6 +36,7 @@ void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
   nogo_inhib = cp.nogo_inhib;
   refract_inhib = cp.refract_inhib;
   pvr_inhib = cp.pvr_inhib;
+  nogo_deep = cp.nogo_deep;
 }
 
 void PBWMUnGpData::Init_State() {

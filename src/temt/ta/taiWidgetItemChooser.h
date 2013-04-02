@@ -32,6 +32,8 @@ class QTreeWidgetItem; //
 typedef bool (*item_filter_fun)(void*, void*); // optional filter, spec'ed in ITEM_FILTER_xxx
 typedef bool (*cust_chooser_fun)(taBase*, taiWidgetItemChooser*); // optional custom config, spec'ed in CUST_CHOOSER_xxx
 
+taTypeDef_Of(taiWidgetItemChooser);
+
 class TA_API taiWidgetItemChooser : public taiWidget {
   // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
   Q_OBJECT

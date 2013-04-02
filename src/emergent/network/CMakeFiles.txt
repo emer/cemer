@@ -69,6 +69,7 @@ set(network_HEADS_MAKETA
   ProgramPrjnSpec.h
   CustomPrjnSpec.h
   GpOneToOnePrjnSpec.h
+  MarkerGpOneToOnePrjnSpec.h
   RndGpOneToOnePrjnSpec.h
   GpOneToManyPrjnSpec.h
   GpRndTesselPrjnSpec.h
@@ -240,6 +241,7 @@ set(network_SRCS
   ProgramPrjnSpec.cpp
   CustomPrjnSpec.cpp
   GpOneToOnePrjnSpec.cpp
+  MarkerGpOneToOnePrjnSpec.cpp
   RndGpOneToOnePrjnSpec.cpp
   GpOneToManyPrjnSpec.cpp
   GpRndTesselPrjnSpec.cpp

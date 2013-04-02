@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6155
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6179
 LeabraProject .projects["param_search"] { 
   taBase_Group @.templates = [0] {
   };
@@ -17,12 +17,13 @@ LeabraProject .projects["param_search"] {
 
   SelectEdit_Group @.edits = [1] {
     ClusterRun @["ClusterRun"] { 
-      EditMbrItem_Group @.mbrs = [5] {
+      EditMbrItem_Group @.mbrs = [6] {
 	EditMbrItem @[0] { };
 	EditMbrItem @[1] { };
 	EditMbrItem @[2] { };
 	EditMbrItem @[3] { };
 	EditMbrItem @[4] { };
+	EditMbrItem @[5] { };
       };
 
       EditMthItem_Group @.mths = [0] {
@@ -2185,6 +2186,21 @@ When it has finished, open the objs within the param search grid program to see 
       incr=0.1;
      };
     };
+    EditMbrItem @[5] {
+     label="std_nvar";
+     desc="[Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function";
+     cust_desc=0;
+     base=.projects["param_search"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$$;
+     mbr=LeabraActFunSpec::nvar;
+     is_numeric=1;
+     param_search {
+      search=1;
+      min_val=0.001;
+      max_val=0.01;
+      next_val=0;
+      incr=0.001;
+     };
+    };
    };
    mths {
     name=;
@@ -2202,11 +2218,11 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_05_03_40_19";
-   notes="test5";
+   last_submit_time="2013_03_05_14_11_28";
+   notes="demo in lab";
    svn_repo="grey_run";
    repo_url="http://grey.colorado.edu/svn/clusterun";
-   cluster="janus_small";
+   cluster="dream";
    queue=;
    run_time="1h";
    ram_gb=0;
@@ -15510,7 +15526,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=0: thr=0.25: gain=50: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act {gelin=0: thr=0.25: gain=50: nvar=0.002: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;

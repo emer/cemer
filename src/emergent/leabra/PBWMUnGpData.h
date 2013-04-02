@@ -37,6 +37,7 @@ public:
   float		nogo_inhib;	// #CAT_Activation amount of nogo inhibition for this stripe -- only valid in Matrix Go layers
   float		refract_inhib;	// #CAT_Activation amount of refractory inhibition for this stripe -- only valid in Matrix Go layers
   float		pvr_inhib;	// #CAT_Activation amount of pvr activity inhibition for this stripe -- only valid in Matrix Go layers
+  float		nogo_deep;	// #CAT_Activation amount of enhanced netinput gain from PFC deep layers onto NoGo units to bias nogo for continued maintenance
 
   override void	Init_State();
 

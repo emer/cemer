@@ -34,6 +34,7 @@ void MatrixMiscSpec::Initialize() {
   nogo_inhib = 0.2f;
   pvr_inhib = 0.0f;
   refract_inhib = 0.0f;
+  nogo_deep_gain = 0.0f;
 }
 
 /////////////////////////////////////////////////////
@@ -308,9 +309,7 @@ float MatrixLayerSpec::Compute_PVrInhib_ugp(LeabraLayer* lay,
   return pvr_i;
 }
 
-void MatrixLayerSpec::Compute_NetinMods(LeabraLayer* lay, LeabraNetwork* net) {
-  if(go_nogo != GO) return;     // only Go gets mods
-
+void MatrixLayerSpec::Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
@@ -341,8 +340,50 @@ void MatrixLayerSpec::Compute_NetinMods(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+float MatrixLayerSpec::Compute_NoGoDeepGain_ugp(LeabraLayer* lay,
+					       Layer::AccessMode acc_md, int gpidx,
+					       LeabraNetwork* net) {
+  if(matrix.nogo_deep_gain == 0.0f) return 0.0f;
+
+  int pfc_prjn_idx = 0; // actual arg value doesn't matter
+  LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
+  PBWMUnGpData* pfc_gpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(gpidx);
+  float nogo_deep = matrix.nogo_deep_gain * pfc_gpd->acts_ctxt.avg;
+  return nogo_deep;
+}
+
+void MatrixLayerSpec::Compute_NoGoNetinMods(LeabraLayer* lay, LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+
+  for(int gi=0; gi<lay->gp_geom.n; gi++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+
+    float nogo_deep = Compute_NoGoDeepGain_ugp(lay, acc_md, gi, net);
+
+    gpd->nogo_deep = nogo_deep;
+      
+    float mult_fact = 1.0f;
+    if(nogo_deep > 0.0f) mult_fact *= (1.0f + nogo_deep);
+
+    if(mult_fact != 1.0f) {
+      for(int j=0;j<nunits;j++) {
+        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
+        if(u->lesioned()) continue;
+        u->net *= mult_fact;
+        u->i_thr = u->Compute_IThresh(net);
+      }
+    }
+  }
+}
+
 void MatrixLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
-  Compute_NetinMods(lay, net);
+  if(go_nogo == GO) {
+    Compute_GoNetinMods(lay, net);
+  }
+  else {
+    Compute_NoGoNetinMods(lay, net);
+  }
   inherited::Compute_NetinStats(lay, net);
 }
 

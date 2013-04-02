@@ -111,7 +111,7 @@ public:
                                        const String& mbr_name, int& new_pos);
 
   // Signature must match that of the item_filter_fun typedef.
-  static bool   ExprLookupVarFilter(void* base, void* var); // #IGNORE special filter used in ExprLookupFun
+  static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
 
   void  InitLinks();
   void  CutLinks();

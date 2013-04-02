@@ -34,6 +34,7 @@ public:
   float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
   float		pvr_inhib;	// #DEF_0;0.8 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
   float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
+  float		nogo_deep_gain;	// #MIN_0 if matrix NoGo recv's a marker con from PFC layer, this will drive excitation with this gain factor from average act_ctxt to NoGo to bias continued maintenance once information has been gated
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -102,8 +103,13 @@ public:
   virtual float	Compute_RefractInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 					 int gpidx, LeabraNetwork* net);
   // compute refract inhib
-  virtual void	Compute_NetinMods(LeabraLayer* lay, LeabraNetwork* net);
-  // compute netinput modulations 
+  virtual void	Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net);
+  // compute Go netinput modulations 
+  virtual float	Compute_NoGoDeepGain_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+					 int gpidx, LeabraNetwork* net);
+  // compute nogo gain from pfc stripes 
+  virtual void	Compute_NoGoNetinMods(LeabraLayer* lay, LeabraNetwork* net);
+  // compute NoGo netinput modulations 
 
   // this is hook for modulating netinput according to above inhib factors
   override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);

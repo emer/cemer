@@ -22,6 +22,7 @@
 #include <OneToOnePrjnSpec>
 #include <ScalarValLayerSpec>
 #include <GpOneToOnePrjnSpec>
+#include <MarkerGpOneToOnePrjnSpec>
 #include <TesselPrjnSpec>
 #include <UniformRndPrjnSpec>
 
@@ -1611,6 +1612,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
   ProjectionSpec* gponetoone = (ProjectionSpec*)prjns->FindMakeSpec("GpOneToOne", &TA_GpOneToOnePrjnSpec);
+  ProjectionSpec* markergponetoone = (ProjectionSpec*)prjns->FindMakeSpec("MarkerGpOneToOne", &TA_MarkerGpOneToOnePrjnSpec);
 
   SNrPrjnSpec* snr_prjn = (SNrPrjnSpec*)prjns->FindMakeSpec("SNrPrjn", &TA_SNrPrjnSpec);
   PVrToMatrixGoPrjnSpec* pvr_to_mtx_prjn = (PVrToMatrixGoPrjnSpec*)prjns->FindMakeSpec("PVrToMatrixGoPrjn", &TA_PVrToMatrixGoPrjnSpec);
@@ -1760,7 +1762,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   // matrix <-> snrthal
   if(in_stripes > 0) {
     net->FindMakePrjn(snrthal, matrix_go_in, snr_prjn, matrix_to_snrthal);
-    net->FindMakePrjn(matrix_go_in, matrix_nogo_in, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_in, matrix_nogo_in, markergponetoone, marker_cons);
     net->FindMakePrjn(matrix_go_in, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_go_in, vta, fullprjn, marker_cons);
     // net->FindMakePrjn(matrix_go_in, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
@@ -1771,18 +1773,19 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   }
   if(mnt_stripes > 0) {
     net->FindMakePrjn(snrthal, matrix_go_in_mnt, snr_prjn, matrix_to_snrthal);
-    net->FindMakePrjn(matrix_go_in_mnt, matrix_nogo_in_mnt, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_in_mnt, matrix_nogo_in_mnt, markergponetoone, marker_cons);
     net->FindMakePrjn(matrix_go_in_mnt, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_go_in_mnt, vta, fullprjn, marker_cons);
     // net->FindMakePrjn(matrix_go_in_mnt, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
 
     net->FindMakePrjn(matrix_nogo_in_mnt, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_in_mnt, vta, fullprjn, marker_cons);
-    net->FindMakePrjn(matrix_nogo_in_mnt, matrix_go_in_mnt, gponetoone, matrix_cons_nogofmgo);
+    net->FindMakePrjn(matrix_nogo_in_mnt, matrix_go_in_mnt, gponetoone,
+		      matrix_cons_nogofmgo);
   }
   if(out_stripes > 0) {
     net->FindMakePrjn(snrthal_out, matrix_go_out, snr_prjn, matrix_to_snrthal);
-    net->FindMakePrjn(matrix_go_out, matrix_nogo_out, gponetoone, marker_cons);
+    net->FindMakePrjn(matrix_go_out, matrix_nogo_out, markergponetoone, marker_cons);
     net->FindMakePrjn(matrix_go_out, snrthal_out, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_go_out, vta, fullprjn, marker_cons);
     // net->FindMakePrjn(matrix_go_out, pvr, pvr_to_mtx_prjn, matrix_cons_fmpvr);
@@ -1855,8 +1858,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     }
     else {
       net->FindMakePrjn(matrix_go_in_mnt, pfc_in_mnt, gponetoone, matrix_cons);
-      net->FindMakePrjn(matrix_nogo_in_mnt, pfc_in_mnt, gponetoone,
-                        matrix_cons_nogo);
+      net->FindMakePrjn(matrix_nogo_in_mnt, pfc_in_mnt, markergponetoone,
+                        marker_cons);
     }
     net->FindMakePrjn(pfc_in_mnt, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(pfc_in_mnt, pfc_in_mnt, gponetoone, pfc_ctxt_cons);
@@ -2393,6 +2396,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
   ProjectionSpec* gponetoone = (ProjectionSpec*)prjns->FindMakeSpec("GpOneToOne", &TA_GpOneToOnePrjnSpec);
+  ProjectionSpec* markergponetoone = (ProjectionSpec*)prjns->FindMakeSpec("MarkerGpOneToOne", &TA_MarkerGpOneToOnePrjnSpec);
 
   SNrPrjnSpec* snr_prjn = (SNrPrjnSpec*)prjns->FindMakeSpec("SNrPrjn", &TA_SNrPrjnSpec);
   PVrToMatrixGoPrjnSpec* pvr_to_mtx_prjn = (PVrToMatrixGoPrjnSpec*)prjns->FindMakeSpec("PVrToMatrixGoPrjn", &TA_PVrToMatrixGoPrjnSpec);
