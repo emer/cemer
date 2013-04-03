@@ -788,10 +788,12 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
       if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
       if(lay->layer_type == Layer::HIDDEN)
         hidden_lays.Link(lay);
-      else if(lay->layer_type == Layer::INPUT)
+      else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
         input_lays.Link(lay);
-      else
+      else if(lay->name.contains("Out"))
         output_lays.Link(lay);
+      else
+        input_lays.Link(lay);   // default to input -- many are now TARGET in TI
     }
   }
 
@@ -1498,8 +1500,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
         hidden_lays.Link(lay);
       else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
         input_lays.Link(lay);
-      else
+      else if(lay->name.contains("Out"))
         output_lays.Link(lay);
+      else
+        input_lays.Link(lay);   // default to input -- many are now TARGET in TI
     }
   }
 
@@ -1573,22 +1577,55 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
 
-  PFCLayerSpec* pfc_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFC_mnt", &TA_PFCLayerSpec);
 
-  PFCLayerSpec* pfc_in_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_in", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFC_mnt",
+                                                                 &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_in_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_in",
+                                                                     &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out",
+                                                                      &TA_PFCLayerSpec);
 
-  MatrixLayerSpec* matrix_go_mnt_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go_mnt", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_in_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_in", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_out_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_mnt_out_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_mnt_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_out_mnt_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out_mnt", &TA_MatrixLayerSpec);  
+  MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
+  MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
 
-  MatrixLayerSpec* matrix_nogo_mnt_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_NoGo_mnt", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_in_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_in", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_out_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out", &TA_MatrixLayerSpec);  MatrixLayerSpec* matrix_nogo_mnt_out_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_mnt_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_out_mnt_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out_mnt", &TA_MatrixLayerSpec);
-     
+  MatrixLayerSpec* matrix_nogo_mnt_out_sp = NULL;
+  MatrixLayerSpec* matrix_nogo_out_mnt_sp = NULL;
+
+  MatrixLayerSpec* matrix_go_mnt_sp =
+    (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go_mnt", &TA_MatrixLayerSpec);
+
+  MatrixLayerSpec* matrix_go_in_sp =
+      (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_in",
+                                                        &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_go_out_sp =
+    (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out",
+                                                      &TA_MatrixLayerSpec);
+  if(topo_prjns) {
+    matrix_go_mnt_out_sp =
+      (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_mnt_out",
+                                                        &TA_MatrixLayerSpec);
+    matrix_go_out_mnt_sp =
+      (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out_mnt",
+                                                        &TA_MatrixLayerSpec);  
+  }
+
+  MatrixLayerSpec* matrix_nogo_mnt_sp =
+    (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_NoGo_mnt",
+                                                      &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_nogo_in_sp =
+      (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_in",
+                                                          &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_nogo_out_sp =
+    (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out",
+                                                        &TA_MatrixLayerSpec);
+  if(topo_prjns) {
+    matrix_nogo_mnt_out_sp =
+      (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_mnt_out",
+                                                          &TA_MatrixLayerSpec);
+    matrix_nogo_out_mnt_sp =
+      (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out_mnt",
+                                                          &TA_MatrixLayerSpec);
+  }
 
   SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)layers->FindMakeSpec("SNrThalLayer", &TA_SNrThalLayerSpec);
   SNrThalLayerSpec* snrthalsp_out = (SNrThalLayerSpec*)snrthalsp->FindMakeChild("SNrThalLayer_out", &TA_SNrThalLayerSpec);
@@ -2325,25 +2362,55 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
 
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
 
-  PFCLayerSpec* pfc_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFC_mnt", &TA_PFCLayerSpec);
 
-  PFCLayerSpec* pfc_in_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_in", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out", &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_mnt_sp = (PFCLayerSpec*)layers->FindMakeSpec("PFC_mnt",
+                                                                 &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_in_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_in",
+                                                                     &TA_PFCLayerSpec);
+  PFCLayerSpec* pfc_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out",
+                                                                      &TA_PFCLayerSpec);
 
-  PFCLayerSpec* pfc_mnt_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_mnt_out", &TA_PFCLayerSpec);
-  PFCLayerSpec* pfc_out_mnt_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out_mnt", &TA_PFCLayerSpec);
+  MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
+  MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
 
-  MatrixLayerSpec* matrix_go_mnt_sp = (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go_mnt", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_in_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_in", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_out_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_mnt_out_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_mnt_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_go_out_mnt_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out_mnt", &TA_MatrixLayerSpec);  
+  MatrixLayerSpec* matrix_nogo_mnt_out_sp = NULL;
+  MatrixLayerSpec* matrix_nogo_out_mnt_sp = NULL;
 
-  MatrixLayerSpec* matrix_nogo_mnt_sp = (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_NoGo_mnt", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_in_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_in", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_out_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_mnt_out_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_mnt_out", &TA_MatrixLayerSpec);
-  MatrixLayerSpec* matrix_nogo_out_mnt_sp = (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out_mnt", &TA_MatrixLayerSpec);  
+  MatrixLayerSpec* matrix_go_mnt_sp =
+    (MatrixLayerSpec*)layers->FindMakeSpec("Matrix_Go_mnt", &TA_MatrixLayerSpec);
+
+  MatrixLayerSpec* matrix_go_in_sp =
+      (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_in",
+                                                        &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_go_out_sp =
+    (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out",
+                                                      &TA_MatrixLayerSpec);
+  if(topo_prjns) {
+    matrix_go_mnt_out_sp =
+      (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_mnt_out",
+                                                        &TA_MatrixLayerSpec);
+    matrix_go_out_mnt_sp =
+      (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_Go_out_mnt",
+                                                        &TA_MatrixLayerSpec);  
+  }
+
+  MatrixLayerSpec* matrix_nogo_mnt_sp =
+    (MatrixLayerSpec*)matrix_go_mnt_sp->FindMakeChild("Matrix_NoGo_mnt",
+                                                      &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_nogo_in_sp =
+      (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_in",
+                                                          &TA_MatrixLayerSpec);
+  MatrixLayerSpec* matrix_nogo_out_sp =
+    (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out",
+                                                        &TA_MatrixLayerSpec);
+  if(topo_prjns) {
+    matrix_nogo_mnt_out_sp =
+      (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_mnt_out",
+                                                          &TA_MatrixLayerSpec);
+    matrix_nogo_out_mnt_sp =
+      (MatrixLayerSpec*)matrix_nogo_mnt_sp->FindMakeChild("Matrix_NoGo_out_mnt",
+                                                          &TA_MatrixLayerSpec);
+  }
 
   SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)layers->FindMakeSpec("SNrThalLayer", &TA_SNrThalLayerSpec);
   SNrThalLayerSpec* snrthalsp_out = (SNrThalLayerSpec*)snrthalsp->FindMakeChild("SNrThalLayer_out", &TA_SNrThalLayerSpec);
@@ -2517,10 +2584,14 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   matrix_go_in_sp->gating_type = SNrThalLayerSpec::INPUT;
   matrix_go_out_sp->SetUnique("gating_type",true);
   matrix_go_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
-  matrix_go_mnt_out_sp->SetUnique("gating_type",true);
-  matrix_go_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;
-  matrix_go_out_mnt_sp->SetUnique("gating_type",true);
-  matrix_go_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  if(matrix_go_mnt_out_sp) {
+    matrix_go_mnt_out_sp->SetUnique("gating_type",true);
+    matrix_go_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;
+  }
+  if(matrix_go_out_mnt_sp) {
+    matrix_go_out_mnt_sp->SetUnique("gating_type",true);
+    matrix_go_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  }
 
   matrix_nogo_mnt_sp->SetUnique("go_nogo",true);
   matrix_nogo_mnt_sp->go_nogo = MatrixLayerSpec::NOGO;
@@ -2529,11 +2600,14 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   matrix_nogo_in_sp->gating_type = SNrThalLayerSpec::INPUT;
   matrix_nogo_out_sp->SetUnique("gating_type",true);
   matrix_nogo_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
-  matrix_nogo_mnt_out_sp->SetUnique("gating_type",true);
-  matrix_nogo_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;  
-  matrix_nogo_out_mnt_sp->SetUnique("gating_type",true);
-  matrix_nogo_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
-  
+  if(matrix_nogo_mnt_out_sp) {
+    matrix_nogo_mnt_out_sp->SetUnique("gating_type",true);
+    matrix_nogo_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;  
+  }
+  if(matrix_nogo_out_mnt_sp) {
+    matrix_nogo_out_mnt_sp->SetUnique("gating_type",true);
+    matrix_nogo_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  }
 
   pfc_mnt_sp->pfc_type = SNrThalLayerSpec::MNT;
 
@@ -2547,11 +2621,11 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   pfc_out_sp->gp_kwta.diff_act_pct = true;
   pfc_out_sp->gp_kwta.act_pct = 0.05f;
 
-  pfc_mnt_out_sp->SetUnique("pfc_type",true);
-  pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
+  // pfc_mnt_out_sp->SetUnique("pfc_type",true);
+  // pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
 
-  pfc_out_mnt_sp->SetUnique("pfc_type",true);
-  pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
+  // pfc_out_mnt_sp->SetUnique("pfc_type",true);
+  // pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
 
   // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
 

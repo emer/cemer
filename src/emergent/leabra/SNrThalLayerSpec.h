@@ -54,10 +54,9 @@ public:
     NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
     INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in SNrThal layer
     MNT = 0x02,		        // Gating of maintenance in PFC_mnt layers -- if active, these are next units in SNrThal layer 
-    MNT_OUT = 0x04,		// Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after MNT and before OUTPUT in SNrThal layer
-    OUTPUT = 0x08,		// Gating of output in PFC_out layers -- if active, these are typically the last units in SNrThal layer (unless OUT_MNT used)
-    OUT_MNT = 0x10,		// Gating of a fixation-like rep in PFC_out_mnt layers -- if active, these are last units in SNrThal layer
-    
+    OUTPUT = 0x04,		// Gating of output in PFC_out layers -- these have to be in their own separate SNrThal layer, because output gating occurs at different time
+    MNT_OUT = 0x08,		// Less commonly used: Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after MNT and before OUTPUT in SNrThal layer
+    OUT_MNT = 0x10,		// Less commonly used: Gating of a fixation-like rep in PFC_out_mnt layers -- if active, these are last units in SNrThal layer
 #ifndef __MAKETA__
     IN_MNT_OUT = INPUT | MNT | OUTPUT,// #NO_BIT input mnt output -- typical default
 #endif
