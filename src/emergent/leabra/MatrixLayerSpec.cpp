@@ -31,16 +31,15 @@ void MatrixGoNogoGainSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
-  nogo_inhib = 0.2f;
-  pvr_inhib = 0.0f;
+  nogo_inhib = 0.5f;
   refract_inhib = 0.0f;
-  nogo_deep_gain = 0.0f;
+  nogo_deep_gain = 0.5f;
 }
 
 /////////////////////////////////////////////////////
 
 void MatrixLayerSpec::Initialize() {
-  gating_type = SNrThalLayerSpec::IN_MNT;
+  gating_type = SNrThalLayerSpec::MNT;
   go_nogo = GO;
 
   Defaults_init();
@@ -48,8 +47,9 @@ void MatrixLayerSpec::Initialize() {
 
 void MatrixLayerSpec::Defaults_init() {
   // todo: sync with above
-  matrix.nogo_inhib = 0.0f; // 0.2f;
+  matrix.nogo_inhib = 0.5f;
   matrix.da_gain = 0.1f;
+  matrix.nogo_deep_gain = 0.5f;
 
   //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
@@ -70,7 +70,7 @@ void MatrixLayerSpec::Defaults_init() {
   // new default..
   //  SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_PCT;
-  gp_kwta.pct = 0.25f;
+  gp_kwta.pct = 0.15f;
   unit_gp_inhib.on = true;
   unit_gp_inhib.gp_g = 1.0f;
   lay_gp_inhib.on = false;      // off now by default!
@@ -221,11 +221,11 @@ LeabraLayer* MatrixLayerSpec::PVLVDaLayer(LeabraLayer* lay) {
 }
 
 LeabraLayer* MatrixLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-					      int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt) {
+					      int& n_in, int& n_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt) {
   snr_st_idx = 0;
   LeabraLayer* snr_lay = SNrThalLayer(lay);
   SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-  snr_st_idx = snr_ls->SNrThalStartIdx(snr_lay, gating_type, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
+  snr_st_idx = snr_ls->SNrThalStartIdx(snr_lay, gating_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
   return snr_lay;
 }
 
@@ -243,7 +243,7 @@ void MatrixLayerSpec::NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net) {
   case SNrThalLayerSpec::INPUT:
     nm = "i";
     break;
-  case SNrThalLayerSpec::IN_MNT:
+  case SNrThalLayerSpec::MNT:
     nm = "m";
     break;
   case SNrThalLayerSpec::OUTPUT:
@@ -291,24 +291,6 @@ float MatrixLayerSpec::Compute_RefractInhib_ugp(LeabraLayer* lay,
   return 0.0f;
 }
 
-float MatrixLayerSpec::Compute_PVrInhib_ugp(LeabraLayer* lay,
-					    Layer::AccessMode acc_md, int gpidx,
-					    LeabraNetwork* net) {
-  // todo: this will be off by one trial now...
-  if(matrix.pvr_inhib == 0.0f) return 0.0f;
-  float pvr_i = 0.0f;
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  if(er_avail) {
-    if((gating_type != SNrThalLayerSpec::OUTPUT) && (gating_type != SNrThalLayerSpec::OUT_MNT))
-      pvr_i = matrix.pvr_inhib;
-  }
-  else {
-    if((gating_type == SNrThalLayerSpec::OUTPUT) || (gating_type == SNrThalLayerSpec::OUT_MNT))
-      pvr_i = matrix.pvr_inhib;
-  }
-  return pvr_i;
-}
-
 void MatrixLayerSpec::Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
@@ -318,16 +300,13 @@ void MatrixLayerSpec::Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net) 
 
     float nogo_i = Compute_NoGoInhibGo_ugp(lay, acc_md, gi, net);
     float refract_i = Compute_RefractInhib_ugp(lay, acc_md, gi, net);
-    float pvr_i = Compute_PVrInhib_ugp(lay, acc_md, gi, net);
 
     gpd->nogo_inhib = nogo_i;
     gpd->refract_inhib = refract_i;
-    gpd->pvr_inhib = pvr_i;
       
     float mult_fact = 1.0f;
     if(nogo_i > 0.0f) mult_fact *= (1.0f - nogo_i);
     if(refract_i > 0.0f) mult_fact *= (1.0f - refract_i);
-    if(pvr_i > 0.0f) mult_fact *= (1.0f - pvr_i);
 
     if(mult_fact != 1.0f) {
       for(int j=0;j<nunits;j++) {
@@ -347,6 +326,10 @@ float MatrixLayerSpec::Compute_NoGoDeepGain_ugp(LeabraLayer* lay,
 
   int pfc_prjn_idx = 0; // actual arg value doesn't matter
   LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
+  if(!pfc_lay) return 0.0f;
+  Projection* prjn = lay->projections.SafeEl(pfc_prjn_idx);
+  if(!prjn) return 0.0f;
+  if(!prjn->con_spec->InheritsFrom(&TA_MarkerConSpec)) return 0.0f;
   PBWMUnGpData* pfc_gpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(gpidx);
   float nogo_deep = matrix.nogo_deep_gain * pfc_gpd->acts_ctxt.avg;
   return nogo_deep;
@@ -414,8 +397,8 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
 void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
                                        Layer::AccessMode acc_md, int gpidx,
                                        LeabraNetwork* net) {
-  int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
+  int snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
+  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
   SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
 
   PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);

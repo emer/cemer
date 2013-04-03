@@ -31,10 +31,9 @@ class E_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
-  float		nogo_inhib;	// #DEF_0:0.1 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
-  float		pvr_inhib;	// #DEF_0;0.8 #MIN_0 #MAX_1 amount of inhibition to apply to Go units based on pvr status -- inhibits output gating when no reward is expected, and otherwise inhibits input & maint when reward is expected -- net inputs are rescaled downward by (1 - pvr_inhib) -- reshapes the competition so other stripes will win
+  float		nogo_inhib;	// #DEF_0:0.5 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
   float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
-  float		nogo_deep_gain;	// #MIN_0 if matrix NoGo recv's a marker con from PFC layer, this will drive excitation with this gain factor from average act_ctxt to NoGo to bias continued maintenance once information has been gated
+  float		nogo_deep_gain;	// #DEF_0:0.5 #MIN_0 if matrix NoGo recv's a marker con from PFC layer, this will drive excitation with this gain factor from average act_ctxt to NoGo to bias continued maintenance once information has been gated
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -91,15 +90,12 @@ public:
   virtual LeabraLayer* 	PVLVDaLayer(LeabraLayer* lay);
   // find the PVLVDaLayerSpec layer that this matrix layer interacts with
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-					int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
+		int& n_in, int& n_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of matrix stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   virtual float	Compute_NoGoInhibGo_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 					int gpidx, LeabraNetwork* net);
   // compute nogo layer stripes inhibition onto go layer units -- called in ApplyInhib
-  virtual float	Compute_PVrInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
-					 int gpidx, LeabraNetwork* net);
-  // compute pvr inhib
   virtual float	Compute_RefractInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
 					 int gpidx, LeabraNetwork* net);
   // compute refract inhib

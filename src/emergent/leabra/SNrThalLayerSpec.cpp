@@ -33,6 +33,8 @@ void SNrThalLayerSpec::Initialize() {
 }
 
 void SNrThalLayerSpec::Defaults_init() {
+  SetUnique("gating_types", true); // always unique
+
   // SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
 
@@ -69,9 +71,9 @@ void SNrThalLayerSpec::HelpConfig() {
 }
 
 void SNrThalLayerSpec::GatingTypesNStripes(LeabraLayer* lay, 
-					   int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt) {
+					   int& n_in, int& n_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt) {
   n_in = 0;
-  n_in_mnt = 0;
+  n_mnt = 0;
   n_out = 0;
   n_mnt_out = 0;
   n_out_mnt = 0; 
@@ -88,7 +90,7 @@ void SNrThalLayerSpec::GatingTypesNStripes(LeabraLayer* lay,
 
     gating_types = (GatingTypes)(gating_types | mls->gating_type);
     if(mls->gating_type == INPUT) n_in += fmlay->gp_geom.n;
-    if(mls->gating_type == IN_MNT) n_in_mnt += fmlay->gp_geom.n;
+    if(mls->gating_type == MNT) n_mnt += fmlay->gp_geom.n;
     if(mls->gating_type == OUTPUT) n_out += fmlay->gp_geom.n;
     if(mls->gating_type == MNT_OUT) n_mnt_out += fmlay->gp_geom.n;
     if(mls->gating_type == OUT_MNT) n_out_mnt += fmlay->gp_geom.n;
@@ -97,24 +99,24 @@ void SNrThalLayerSpec::GatingTypesNStripes(LeabraLayer* lay,
 }
 
 int SNrThalLayerSpec::SNrThalStartIdx(LeabraLayer* lay, GatingTypes gating_type,
-				      int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt) {
-  GatingTypesNStripes(lay, n_in, n_in_mnt, n_out, n_mnt_out, n_out_mnt);
+				      int& n_in, int& n_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt) {
+  GatingTypesNStripes(lay, n_in, n_mnt, n_out, n_mnt_out, n_out_mnt);
   int snr_st_idx = -1;
   switch(gating_type) {
   case INPUT:
     snr_st_idx = 0;
     break;
-  case IN_MNT:
+  case MNT:
     snr_st_idx = n_in;
     break;
   case MNT_OUT:
-    snr_st_idx = n_in + n_in_mnt;
+    snr_st_idx = n_in + n_mnt;
     break;
   case OUTPUT:
-    snr_st_idx = n_in + n_in_mnt + n_mnt_out;
+    snr_st_idx = n_in + n_mnt + n_mnt_out;
     break;
   case OUT_MNT:
-    snr_st_idx = n_in + n_in_mnt + n_mnt_out + n_out;
+    snr_st_idx = n_in + n_mnt + n_mnt_out + n_out;
     break; 
   default:			// compiler food
     break;
@@ -140,9 +142,9 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;
   }
 
-  int n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  GatingTypesNStripes(lay, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
-  int snr_stripes = n_in + n_in_mnt + n_mnt_out + n_out + n_out_mnt;
+  int n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
+  GatingTypesNStripes(lay, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
+  int snr_stripes = n_in + n_mnt + n_mnt_out + n_out + n_out_mnt;
   
   if(lay->CheckError(snr_stripes != lay->gp_geom.n, quiet, rval,
 		     "SNrThalLayer does not have an appropriate number of unit groups given the inputs receiving from the Matrix. Should be:", String(snr_stripes), "is:", 
@@ -254,10 +256,10 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
 
-  int n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  GatingTypesNStripes(lay, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
+  int n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
+  GatingTypesNStripes(lay, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
   int mnt_st = n_in;
-  int out_st = n_in + n_in_mnt;
+  int out_st = n_in + n_mnt;
 
   const int n_stats = 4;	// 0 = global, 1 = in, 2 = mnt, 3 = out
   int	n_gated[n_stats] = {0,0,0,0};
@@ -282,10 +284,10 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
 
   lay->SetUserData("n_gated_all", (float)n_gated[0]);
   if(n_in > 0) lay->SetUserData("n_gated_in", (float)n_gated[1]);
-  if(n_in_mnt > 0) lay->SetUserData("n_gated_in_mnt", (float)n_gated[2]);
+  if(n_mnt > 0) lay->SetUserData("n_gated_mnt", (float)n_gated[2]);
   if(n_out > 0) lay->SetUserData("n_gated_out", (float)n_gated[3]);
 
-  if(n_in_mnt > 0) {
+  if(n_mnt > 0) {
     lay->SetUserData("min_mnt_count", (float)min_mnt_count[2]);
     lay->SetUserData("max_mnt_count", (float)max_mnt_count[2]);
   }
@@ -314,7 +316,7 @@ void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
 
   lay->SetUserData("n_gated_all", 0.0f);
   lay->SetUserData("n_gated_in",  0.0f);
-  lay->SetUserData("n_gated_in_mnt", 0.0f);
+  lay->SetUserData("n_gated_mnt", 0.0f);
   lay->SetUserData("n_gated_out", 0.0f);
 
   lay->SetUserData("min_mnt_count", 0.0f);

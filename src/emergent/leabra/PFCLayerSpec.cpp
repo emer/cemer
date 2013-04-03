@@ -34,7 +34,7 @@ void PFCGateSpec::UpdateAfterEdit_impl() {
 
 
 void PFCLayerSpec::Initialize() {
-  pfc_type = SNrThalLayerSpec::IN_MNT;
+  pfc_type = SNrThalLayerSpec::MNT;
   Defaults_init();
 }
 
@@ -150,17 +150,17 @@ LeabraLayer* PFCLayerSpec::SNrThalLayer(LeabraLayer* lay) {
 }
 
 LeabraLayer* PFCLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-						   int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt) {
+						   int& n_in, int& n_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt) {
   snr_st_idx = 0;
   LeabraLayer* snr_lay = SNrThalLayer(lay);
   SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-  snr_st_idx = snr_ls->SNrThalStartIdx(snr_lay, pfc_type, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
+  snr_st_idx = snr_ls->SNrThalStartIdx(snr_lay, pfc_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
   return snr_lay;
 }
 
 void PFCLayerSpec::CopySNrThalGpData(LeabraLayer* lay, LeabraNetwork* net) {
-  int snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt;
-  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_in_mnt, n_mnt_out, n_out, n_out_mnt);
+  int snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
+  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
   for(int g=0; g < lay->gp_geom.n; g++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
     PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);

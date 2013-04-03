@@ -53,13 +53,13 @@ public:
   enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, IN_MNT, OUTPUT, etc. gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
     NO_GATE_TYPE = 0x00,	// #NO_BIT no type set
     INPUT = 0x01,		// Gating of input to PFC_in layers -- if active, these are first units in SNrThal layer
-    IN_MNT = 0x02,		// Gating of maintenance in PFC_in_mnt layers -- if active, these are next units in SNrThal layer 
-    MNT_OUT = 0x04,		// Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after IN_MNT and before OUTPUT in SNrThal layer
+    MNT = 0x02,		        // Gating of maintenance in PFC_mnt layers -- if active, these are next units in SNrThal layer 
+    MNT_OUT = 0x04,		// Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after MNT and before OUTPUT in SNrThal layer
     OUTPUT = 0x08,		// Gating of output in PFC_out layers -- if active, these are typically the last units in SNrThal layer (unless OUT_MNT used)
     OUT_MNT = 0x10,		// Gating of a fixation-like rep in PFC_out_mnt layers -- if active, these are last units in SNrThal layer
     
 #ifndef __MAKETA__
-    IN_MNT_OUT = INPUT | IN_MNT | OUTPUT,// #NO_BIT input in_mnt output -- typical default
+    IN_MNT_OUT = INPUT | MNT | OUTPUT,// #NO_BIT input mnt output -- typical default
 #endif
   };
 
@@ -89,10 +89,10 @@ public:
   override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
   { return false; }
 
-  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt);
+  virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt);
   // get the number of stripes associated with each gating type, based on matrix projections into the snrthal layer -- also updates the gating_types to reflect actual connectivity
   virtual int  SNrThalStartIdx(LeabraLayer* lay, GatingTypes gating_type, 
-			       int& n_in, int& n_in_mnt, int& n_out, int& n_mnt_out, 
+			       int& n_in, int& n_mnt, int& n_out, int& n_mnt_out, 
 			       int& n_out_mnt);
   // returns the starting index for a given gating type within the SNrThal, and also returns the number of each type of stripe.  returns -1 if snrthal does not have that kind of stripe
 

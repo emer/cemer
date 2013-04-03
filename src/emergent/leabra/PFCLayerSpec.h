@@ -62,7 +62,7 @@ public:
   // find the SNrThal layer that this pfc deep layer receives from
 
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
-	int& n_in, int& n_in_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
+	int& n_in, int& n_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of pfc stripes within the snrthal gating layer -- returns the snrthal layer and starting index
 
   virtual void CopySNrThalGpData(LeabraLayer* lay, LeabraNetwork* net);

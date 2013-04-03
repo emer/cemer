@@ -46,7 +46,7 @@ void PVrToMatrixGoPrjnSpec::Connect_impl(Projection* prjn) {
   case SNrThalLayerSpec::INPUT:
     pvr_su = pvr_lay->units.SafeEl(2); // .5 middle value unit
     break;
-  case SNrThalLayerSpec::IN_MNT:
+  case SNrThalLayerSpec::MNT:
     pvr_su = pvr_lay->units.SafeEl(2); // .5 middle value unit
     break;
   case SNrThalLayerSpec::OUTPUT:
