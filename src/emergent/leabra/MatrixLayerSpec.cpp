@@ -53,7 +53,7 @@ void MatrixLayerSpec::Defaults_init() {
 
   //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .5f;
+  inhib.kwta_pt = .6f;
 
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -407,7 +407,7 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
   if(snr_gpd->go_fired_trial) {
     Compute_GoGatingAct_ugp(lay, acc_md, gpidx, net); // set gating flag
   }
-  if(!snr_gpd->go_fired_trial) {
+  else {
     Compute_NoGatingZeroAct_ugp(lay, acc_md, gpidx, net); // zero our act values
   }
 }

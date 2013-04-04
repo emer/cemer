@@ -38,7 +38,7 @@ void MatrixUnitSpec::Defaults_init() {
   maxda.val = MaxDaSpec::NO_MAX_DA;
 
   // SetUnique("noise_type", true);
-  noise_type = NETIN_NOISE;
+  noise_type = NO_NOISE;        // NETIN_NOISE
 
   // SetUnique("noise", true);
   noise.var = 0.0005f;

@@ -23,7 +23,7 @@
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
-  min_cycle = 10;
+  min_cycle = 20;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -44,7 +44,7 @@ void SNrThalLayerSpec::Defaults_init() {
 
   // SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 4;
+  kwta.k = 3;
 
   // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -217,7 +217,8 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
 
   // gating window
-  if(net->ct_cycle < snrthal.min_cycle || net->ct_cycle > net->mid_minus_cycle) return;
+  if(net->ct_cycle < snrthal.min_cycle)
+    return;
 
   int n_fired_trial = 0;
   int n_fired_now = 0;
@@ -227,8 +228,15 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
     if(u->lesioned()) continue;
 
+    if(net->ct_cycle > net->mid_minus_cycle) {
+      if(!gpd->go_fired_trial)
+        u->act_eq = 0.0f;
+      continue;
+    }
+
     if(gpd->go_fired_trial) {
       n_fired_trial++;
+      gpd->go_fired_now = false;
     }
     else {
       if(u->act_eq >= snrthal.go_thr) {
@@ -240,10 +248,11 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
         gpd->prv_mnt_count = gpd->mnt_count; 
         gpd->mnt_count = 0;	// reset
       }
-      else {
-        u->act_eq = u->act_p = 0.0f; // turn off non-gated guys
-      }
     }
+  }
+
+  if(net->ct_cycle > net->mid_minus_cycle) {
+    return;
   }
 
   Compute_GateStats(lay, net); // update overall stats at this point
