@@ -1056,7 +1056,8 @@ set(ta_HEADS_MAKETA
 
 # all heads
 set(ta_HEADS
-  ${ta_HEADS_MAKETA_LOCAL}
+  ${ta_HEADS_MAKETA_NOMOC}
+  ${ta_HEADS_MAKETA_MOC}
   ${ta_HEADS_NOMAKETA_NOMOC}
   ${ta_HEADS_NOMAKETA_MOC}
 )

@@ -534,7 +534,23 @@ void ClusterRun::RemoveFiles() {
     m_cm->RemoveFiles(files, true, false); // force, keep_local
   }
   else {
-    taMisc::Warning("No rows selected -- no files fetched");
+    if (SelectedRows(jobs_done, st_row, end_row)) {
+      file_list.ResetData();
+      for (int row = end_row; row >= st_row; --row) {
+        SelectFiles_impl(jobs_done, row, true); // include data
+      }
+      RemoveAllFilesInList();
+    }
+    else if (SelectedRows(jobs_archive, st_row, end_row)) {
+      file_list.ResetData();
+      for (int row = end_row; row >= st_row; --row) {
+        SelectFiles_impl(jobs_archive, row, true); // include data
+      }
+      RemoveAllFilesInList();
+    }
+    else {
+      taMisc::Warning("No rows selected in either file_list or jobs_done or jobs_archive -- no files removed");
+    }
   }
 }
 

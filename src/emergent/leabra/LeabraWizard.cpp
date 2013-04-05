@@ -2506,7 +2506,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   }
 
   pfctopfc_cons->SetUnique("wt_scale", true);
-  pfctopfc_cons->wt_scale.rel = 0.5f;
+  pfctopfc_cons->wt_scale.rel = 0.2f;
 
   if(topo_prjns) {
     topfcfmin_cons->SetUnique("rnd", true);
@@ -2644,6 +2644,9 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
 
   snrthal_units->SetUnique("maxda", true);
   snrthal_units->maxda.val = MaxDaSpec::NO_MAX_DA;
+
+  snrthalsp_out->SetUnique("kwta", true);
+  snrthalsp_out->kwta.k = 2;
 
   fullprjn->self_con = true;
 

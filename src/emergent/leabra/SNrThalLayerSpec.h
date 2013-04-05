@@ -31,7 +31,7 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active before the mid minus cycle will actually fire
-  int           min_cycle;              // minimum cycle for output gating -- cannot gate before this cycle
+  int           min_cycle;              // #DEF_10:25 #MIN_0 minimum cycle for output gating -- cannot gate before this cycle
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 

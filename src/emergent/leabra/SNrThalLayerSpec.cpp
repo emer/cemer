@@ -23,7 +23,7 @@
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
-  min_cycle = 20;
+  min_cycle = 15;
 }
 
 void SNrThalLayerSpec::Initialize() {
