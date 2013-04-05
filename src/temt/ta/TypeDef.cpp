@@ -2825,7 +2825,7 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
     own_typ.cat(ot->name).cat("::");
   }
   if(IsClass()) {
-    // todo: not yet supported by maketa..
+    // todo: now supported by maketa..
   }
   else if(IsEnum()) {
     if(short_fmt) {
@@ -2863,7 +2863,7 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
 }
 
 String TypeDef::GetHTML(bool gendoc) const {
-  if(!IsActualClassNoEff()) return GetHTMLLink(gendoc);
+  if(!IsActualClass()) return GetHTMLLink(gendoc);
 
   STRING_BUF(rval, 9096); // extends if needed
 

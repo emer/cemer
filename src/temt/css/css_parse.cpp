@@ -756,11 +756,11 @@ static const yytype_uint16 yyrline[] =
     1403,  1407,  1412,  1413,  1414,  1415,  1418,  1421,  1430,  1434,
     1437,  1440,  1444,  1445,  1446,  1447,  1448,  1449,  1450,  1451,
     1452,  1453,  1454,  1457,  1458,  1459,  1463,  1464,  1465,  1480,
-    1496,  1497,  1505,  1506,  1512,  1517,  1534,  1536,  1554,  1578,
-    1582,  1584,  1586,  1588,  1592,  1596,  1602,  1604,  1608,  1612,
-    1616,  1617,  1618,  1619,  1620,  1621,  1624,  1625,  1628,  1629,
-    1632,  1633,  1636,  1637,  1638,  1641,  1644,  1647,  1648,  1649,
-    1652,  1655
+    1496,  1497,  1505,  1506,  1512,  1517,  1534,  1536,  1555,  1580,
+    1584,  1586,  1588,  1590,  1594,  1598,  1604,  1606,  1610,  1614,
+    1618,  1619,  1620,  1621,  1622,  1623,  1626,  1627,  1630,  1631,
+    1634,  1635,  1638,  1639,  1640,  1643,  1646,  1649,  1650,  1651,
+    1654,  1657
 };
 #endif
 
@@ -4428,10 +4428,11 @@ yyreduce:
   case 307:
 #line 1536 "css_parse.y"
     { (yyval.el_ival).el.Reset();
-	    int mbno = (yyvsp[(1) - (4)].el).El()->GetMethodNo((const char*)*((yyvsp[(3) - (4)].el).El()));
+            String mbnm = (const char*)*((yyvsp[(3) - (4)].el).El());
+	    int mbno = (yyvsp[(1) - (4)].el).El()->GetMethodNo(mbnm);
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!(yyvsp[(1) - (4)].el).El()->MembersDynamic())
-		cssMisc::Warning(NULL, "Member Function:",(const char*)*((yyvsp[(3) - (4)].el).El()),
+		cssMisc::Warning(NULL, "Member Function:",mbnm,
 				 "not found in parent object, will be resolved dynamically");
 	      (yyval.el_ival).ival = Code3((yyvsp[(1) - (4)].el), (yyvsp[(3) - (4)].el), cssBI::member_fun); }
 	    else {
@@ -4441,20 +4442,21 @@ yyreduce:
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMethodFmName((const char*)*((yyvsp[(3) - (4)].el).El()));
+		cssEl* fun = ths->GetMethodFmName(mbnm);
 		if(fun->GetType() != cssEl::T_MbrCFun)
 		  (yyval.el_ival).el.SetDirect(fun);
 	      } } }
     break;
 
   case 308:
-#line 1554 "css_parse.y"
+#line 1555 "css_parse.y"
     {
 	    cssMisc::cur_scope = NULL; (yyval.el_ival).el.Reset();
-	    int mbno = (yyvsp[(1) - (3)].el).El()->GetMethodNo((const char*)*((yyvsp[(2) - (3)].el).El()));
+            String mbnm = (const char*)*((yyvsp[(2) - (3)].el).El());
+	    int mbno = (yyvsp[(1) - (3)].el).El()->GetMethodNo(mbnm);
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!(yyvsp[(1) - (3)].el).El()->MembersDynamic())
-		cssMisc::Warning(NULL, "Member Function:",(const char*)*((yyvsp[(2) - (3)].el).El()),
+		cssMisc::Warning(NULL, "Member Function:",mbnm,
 				 "not found in parent object, will be resolved dynamically");
 	      (yyval.el_ival).ival = Code3((yyvsp[(1) - (3)].el), (yyvsp[(2) - (3)].el), cssBI::member_fun); }
 	    else {
@@ -4464,38 +4466,38 @@ yyreduce:
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMethodFmName((const char*)*((yyvsp[(2) - (3)].el).El()));
+		cssEl* fun = ths->GetMethodFmName(mbnm);
 		if(fun->GetType() != cssEl::T_MbrCFun)
 		  (yyval.el_ival).el.SetDirect(fun);
 	      } } }
     break;
 
   case 309:
-#line 1578 "css_parse.y"
+#line 1580 "css_parse.y"
     {
             (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].nm))); }
     break;
 
   case 310:
-#line 1582 "css_parse.y"
+#line 1584 "css_parse.y"
     {
             (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].nm))); }
     break;
 
   case 311:
-#line 1584 "css_parse.y"
-    {
-	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName())); }
-    break;
-
-  case 312:
 #line 1586 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName())); }
     break;
 
-  case 313:
+  case 312:
 #line 1588 "css_parse.y"
+    {
+	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName())); }
+    break;
+
+  case 313:
+#line 1590 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
@@ -4503,7 +4505,7 @@ yyreduce:
     break;
 
   case 314:
-#line 1592 "css_parse.y"
+#line 1594 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
@@ -4511,7 +4513,7 @@ yyreduce:
     break;
 
   case 315:
-#line 1596 "css_parse.y"
+#line 1598 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
@@ -4519,19 +4521,19 @@ yyreduce:
     break;
 
   case 316:
-#line 1602 "css_parse.y"
+#line 1604 "css_parse.y"
     { /* these are treated identically in parsing */
            cssMisc::cur_top->parse_path_expr = true; }
     break;
 
   case 317:
-#line 1604 "css_parse.y"
+#line 1606 "css_parse.y"
     {
            cssMisc::cur_top->parse_path_expr = true; }
     break;
 
   case 318:
-#line 1608 "css_parse.y"
+#line 1610 "css_parse.y"
     {
    	   String tmpstr = String((yyvsp[(1) - (1)].nm));
            (yyval.el) = cssMisc::cur_top->AddLiteral(tmpstr);
@@ -4539,71 +4541,71 @@ yyreduce:
     break;
 
   case 319:
-#line 1612 "css_parse.y"
+#line 1614 "css_parse.y"
     {
            cssMisc::cur_top->parse_path_expr = false; }
     break;
 
   case 326:
-#line 1624 "css_parse.y"
+#line 1626 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 327:
-#line 1625 "css_parse.y"
+#line 1627 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 1; }
     break;
 
   case 329:
-#line 1629 "css_parse.y"
+#line 1631 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 330:
-#line 1632 "css_parse.y"
+#line 1634 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 331:
-#line 1633 "css_parse.y"
+#line 1635 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 1; }
     break;
 
   case 333:
-#line 1637 "css_parse.y"
+#line 1639 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 334:
-#line 1638 "css_parse.y"
+#line 1640 "css_parse.y"
     { 
 	  String tmpstr = String((yyvsp[(1) - (1)].nm));
 	  (yyval.ival) = Code1(cssMisc::cur_top->AddLiteral(tmpstr)); }
     break;
 
   case 335:
-#line 1641 "css_parse.y"
+#line 1643 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 336:
-#line 1644 "css_parse.y"
+#line 1646 "css_parse.y"
     { (yyval.ival) = Code1(cssMisc::VoidElPtr); }
     break;
 
   case 340:
-#line 1652 "css_parse.y"
+#line 1654 "css_parse.y"
     { Code1(cssBI::pop); }
     break;
 
   case 341:
-#line 1655 "css_parse.y"
+#line 1657 "css_parse.y"
     { Code1(cssInst::Stop); (yyval.ival) = cssMisc::cur_top->Prog()->size; }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 4607 "y.tab.c"
+#line 4609 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -4817,7 +4819,7 @@ yyreturn:
 }
 
 
-#line 1659 "css_parse.y"
+#line 1661 "css_parse.y"
 
 
 	/* end of grammar */

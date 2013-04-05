@@ -2602,6 +2602,10 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   int commafreq = ln0.freq(',');
   int spacefreq = ln0.freq(' ');
 
+  if(ln1.nonempty()) {          // commas can occur in _H headers -- use ln1 where possible
+    commafreq = ln1.freq(',');
+  }
+
   if(tabfreq > commafreq && tabfreq > spacefreq)
     delim = TAB;
   else if (commafreq > tabfreq && commafreq > spacefreq)

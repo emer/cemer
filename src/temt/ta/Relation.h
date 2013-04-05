@@ -43,7 +43,7 @@ public:
   Relations     rel;            // #LABEL_ relationship to evaluate
   double        val;            // #LABEL_ comparison value
   bool          use_var;        // if true, use a program variable to specify the relation value
-  ProgVarRef    var;            // #CONDSHOW_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element) -- variable must be a top-level (.args or .vars) variable and not a local one
+  ProgVarRef    var;            // #CONDSHOW_ON_use_var:true variable that contains the comparison value -- variable must be a top-level (.args or .vars) variable and not a local one
 
   bool          CacheVar(Relation& tmp_rel);
   // copy rel and cache the variable value in new Relation object (tmp_rel), or copy val -- optimizes repeated actions using same relation object so they don't have to keep getting the variable

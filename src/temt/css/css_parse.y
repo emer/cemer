@@ -1534,10 +1534,11 @@ memb_expr:
 membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
                                                   $$.ival = $1; $$.el.Reset(); }
         | primitive getmemb membname '('	{ $$.el.Reset();
-	    int mbno = $1.El()->GetMethodNo((const char*)*($3.El()));
+            String mbnm = (const char*)*($3.El());
+	    int mbno = $1.El()->GetMethodNo(mbnm);
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!$1.El()->MembersDynamic())
-		cssMisc::Warning(NULL, "Member Function:",(const char*)*($3.El()),
+		cssMisc::Warning(NULL, "Member Function:",mbnm,
 				 "not found in parent object, will be resolved dynamically");
 	      $$.ival = Code3($1, $3, cssBI::member_fun); }
 	    else {
@@ -1547,16 +1548,17 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMethodFmName((const char*)*($3.El()));
+		cssEl* fun = ths->GetMethodFmName(mbnm);
 		if(fun->GetType() != cssEl::T_MbrCFun)
 		  $$.el.SetDirect(fun);
 	      } } }
         | scopetype membname '(' 		{
 	    cssMisc::cur_scope = NULL; $$.el.Reset();
-	    int mbno = $1.El()->GetMethodNo((const char*)*($2.El()));
+            String mbnm = (const char*)*($2.El());
+	    int mbno = $1.El()->GetMethodNo(mbnm);
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!$1.El()->MembersDynamic())
-		cssMisc::Warning(NULL, "Member Function:",(const char*)*($2.El()),
+		cssMisc::Warning(NULL, "Member Function:",mbnm,
 				 "not found in parent object, will be resolved dynamically");
 	      $$.ival = Code3($1, $2, cssBI::member_fun); }
 	    else {
@@ -1566,7 +1568,7 @@ membfun:  comb_expr getmemb membname '(' 	{ Code2($3, cssBI::member_fun);
 	      if(ths->GetType() == cssEl::T_Ptr)
 		ths = ((cssPtr*)ths)->el_type;
 	      if((ths != NULL) && ((ths->GetType() == cssEl::T_Class) || (ths->GetType() == cssEl::T_ClassType))) {
-		cssEl* fun = ths->GetMethodFmName((const char*)*($2.El()));
+		cssEl* fun = ths->GetMethodFmName(mbnm);
 		if(fun->GetType() != cssEl::T_MbrCFun)
 		  $$.el.SetDirect(fun);
 	      } } }

@@ -1948,8 +1948,13 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_median(vec);
   case Aggregate::MODE:
     return taMath_double::vec_mode(vec);
-  case Aggregate::QUANTILE:
-    return taMath_double::vec_quantile(vec, agg.rel.val);
+  case Aggregate::QUANTILE: {
+    double relval = agg.rel.val;
+    if(agg.rel.use_var && (bool)agg.rel.var) {
+      relval = agg.rel.var->GetVar().toDouble();
+    }
+    return taMath_double::vec_quantile(vec, relval);
+  }
   case Aggregate::NONE:
     return 0.0;
   }

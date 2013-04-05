@@ -1764,8 +1764,13 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_median(vec);
   case Aggregate::MODE:
     return taMath_float::vec_mode(vec);
-  case Aggregate::QUANTILE:
-    return taMath_float::vec_quantile(vec, agg.rel.val);
+  case Aggregate::QUANTILE: {
+    float relval = agg.rel.val;
+    if(agg.rel.use_var && (bool)agg.rel.var) {
+      relval = agg.rel.var->GetVar().toDouble();
+    }
+    return taMath_float::vec_quantile(vec, relval);
+  }
   case Aggregate::NONE:
     return 0.0;
   }
