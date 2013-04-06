@@ -1399,13 +1399,13 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   iMainWindowViewer* iproj_brow = NULL;
   if (proj_brow)
     iproj_brow = proj_brow->widget();
-/*nn  iMainWindowViewer* iproj_view = NULL;
-  if (proj_view)
+  /*nn  iMainWindowViewer* iproj_view = NULL;
+    if (proj_view)
     iproj_view = proj_view->widget(); */
 
-//IMPORTANT NOTE: You *must* check ALL objects for NULL in the following
-// cascades, because there are conditions under which it is possible for
-// something not to have a value
+  //IMPORTANT NOTE: You *must* check ALL objects for NULL in the following
+  // cascades, because there are conditions under which it is possible for
+  // something not to have a value
   if(path.startsWith(".T3Tab.")) {
     String tbnm = path.after(".T3Tab.");
     if(!proj_view || !proj_view->SelectT3ViewTabName(tbnm)) {
@@ -1449,8 +1449,12 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     }
     else {
       taiSigLink* link = (taiSigLink*)tab->GetSigLink();
-      if (!link || !iproj_brow) {
-        taMisc::Warning("ta: URL",path,"not found as a path to an object!");
+      if (!link) {
+        taMisc::Warning("ta: URL",path,"does not have a valid SigLink -- cannot select in browser!");
+        return;
+      }
+      if(!iproj_brow) {
+        taMisc::Warning("ta: URL",path,"could not find project browser to select item");
         return;
       }
       Program* prg = (Program*)tab->GetThisOrOwner(&TA_Program);
@@ -2005,7 +2009,6 @@ bool taBase::BrowserSelectMe() {
   // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
-    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;
@@ -2026,7 +2029,6 @@ bool taBase::BrowserExpandAll() {
   // iterate to find all Browsers
   for (int i = 0; i < proj->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
-    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (!(vwr && vwr->isProjBrowser())) continue;
     iMainWindowViewer* imwv = vwr->widget();
     if(!imwv) continue;

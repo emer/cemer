@@ -2564,8 +2564,15 @@ bool taBase::EditDialog(bool modal) {
   return false;
 }
 
+MainWindowViewer* taBase::GetMyBrowser() {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return NULL;
+  return proj->GetDefaultProjectBrowser();
+}
+
 #ifndef TA_GUI
-// see ta_qtviewer.cpp
+
+// see iMainWindowViewer.cpp
 bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   return false;
 }

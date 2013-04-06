@@ -93,7 +93,7 @@ void MatrixLayerSpec::HelpConfig() {
  \nMatrixLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure.\n\
  - Units must have a MatrixUnitSpec and must recv from PVLVDaLayerSpec layer\
- (calld DA typically) to get da modulation for learning signal\n\
+ (calld VTA typically) to get da modulation for learning signal\n\
  - Must recv from SNrThalLayerSpec to get final Go signal\n\
  - Go layer recv marker cons from NoGo, gets inhibition in proportion to avg NoGo act\n\
  - Other Recv conns are MatrixConSpec for learning based on the da-signal.\n\

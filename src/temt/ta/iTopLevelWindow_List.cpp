@@ -44,15 +44,23 @@ void iTopLevelWindow_List::GotFocus_DockWindow(iDockViewer* idv) {
 }
 
 iMainWindowViewer* iTopLevelWindow_List::Peek_MainWindow() {
-  for (int i = 0; i < size; ++i) {
+  for (int i = size-1; i >= 0; --i) {
     iMainWindowViewer* rval = SafeElAsMainWindow(i);
     if (rval) return rval;
   }
   return NULL;
 }
 
+iMainWindowViewer* iTopLevelWindow_List::Peek_ProjBrowser() {
+  for (int i = size-1; i >= 0; --i) {
+    iMainWindowViewer* rval = SafeElAsMainWindow(i);
+    if(rval && rval->isProjBrowser()) return rval;
+  }
+  return NULL;
+}
+
 iDockViewer* iTopLevelWindow_List::Peek_DockWindow() {
-  for (int i = 0; i < size; ++i) {
+  for (int i = size-1; i >= 0; --i) {
     iDockViewer* rval = SafeElAsDockWindow(i);
     if (rval) return rval;
   }

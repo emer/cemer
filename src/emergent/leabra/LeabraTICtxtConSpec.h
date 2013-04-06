@@ -27,7 +27,7 @@
 eTypeDef_Of(LeabraTICtxtConSpec);
 
 class E_API LeabraTICtxtConSpec : public LeabraConSpec {
-  // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning -- only uses the wt_scale.abs to control magnitude of context netinput, and doesn't compete with other prjns for relative wt scale at all
+  // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning -- control relative contribution to net input by setting wt_scale.rel, just like regular connections
 INHERITED(LeabraConSpec)
 public:
   // special!

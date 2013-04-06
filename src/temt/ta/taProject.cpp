@@ -206,29 +206,21 @@ taDoc* taProject::FindMakeDoc(const String& nm, const String& wiki_nm, const Str
 }
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
-//NOTE: doesn't really work properly in 2x2
-  // try official default first
-//  MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl());
-//  if (vwr) return vwr;
-
-//TODO: this is not really that good, becaus
   MainWindowViewer* vwr = NULL;
   // iterate to find 1st Browser -- will actually be 2nd item in 2x2
   for (int i = 0; i < viewers.size; ++i) {
     vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (vwr && vwr->isProjBrowser()) return vwr;
   }
   return NULL;
 }
 
 MainWindowViewer* taProject::GetDefaultProjectViewer() {
-// get the default T3 guy
+  // get the default T3 guy
   MainWindowViewer* vwr = NULL;
   // iterate to find 1st Viewer -- will actually be 1st item in 2x2
   for (int i = 0; i < viewers.size; ++i) {
     vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
     if (vwr && vwr->isProjViewer()) return vwr;
   }
   return NULL;

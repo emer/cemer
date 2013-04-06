@@ -36,6 +36,7 @@ public:
   iDockViewer*          SafeElAsDockWindow(int i);
     // returns item cast as requested, or NULL if not of that type
   iMainWindowViewer*    Peek_MainWindow(); // finds the topmost main window, NULL if none
+  iMainWindowViewer*    Peek_ProjBrowser(); // finds the topmost main window that is a project browser, NULL if none
   iDockViewer*          Peek_DockWindow(); // finds the topmost undocked dock win, NULL if none
   void                  GotFocus_MainWindow(iMainWindowViewer* imw); // puts to top of list
   void                  GotFocus_DockWindow(iDockViewer* idv); // puts to top of list

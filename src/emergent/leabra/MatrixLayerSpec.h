@@ -32,8 +32,8 @@ INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
   float		nogo_inhib;	// #DEF_0:0.5 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
-  float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
   float		nogo_deep_gain;	// #DEF_0:0.5 #MIN_0 if matrix NoGo recv's a marker con from PFC layer, this will drive excitation with this gain factor from average act_ctxt to NoGo to bias continued maintenance once information has been gated
+  float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -72,7 +72,7 @@ private:
 eTypeDef_Of(MatrixLayerSpec);
 
 class E_API MatrixLayerSpec : public LeabraLayerSpec {
-  // basal ganglia matrix layer -- one for Go pathway and another for NoGo pathway -- Go recv marker con from NoGo, both recv from SNrThal to get final go signal -- gating acts are act_p values at end of plus phase -- set to 0 for stripes that did not fire Go
+  // basal ganglia matrix layer -- one for Go pathway and another for NoGo pathway -- Go recv marker con from NoGo, both recv from SNrThal to get final go signal -- for maint gating acts are act_p values at end of plus phase, output gating happens in first half of minus phase -- acts are set to 0 for stripes that did not fire Go
 INHERITED(LeabraLayerSpec)
 public:
   enum GoNoGo {

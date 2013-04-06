@@ -59,14 +59,11 @@ void SNrThalLayerSpec::Defaults_init() {
 
 void SNrThalLayerSpec::HelpConfig() {
   String help = "SNrThalLayerSpec Computation:\n\
- - net = Go if no NoGo, else Go / (Go + nogo_gain * NoGo + leak)\n\
- - act = raw activation from netin\n\
- - act_mid = winner-filtered gating activations -- drives learning in Matrix\n\
+ - Computes activation as standard Leabra only from Matrix Go layer -- NoGo only affects Go.\n\
  - No learning, wt init variance, in afferent cons\n\
  \nSNrThalLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure.\n\
- - Matrix_Go now projects using regular leabra cons (non-MarkerCons) to create basic standard netinput\n\
- - optional NoGo projection with MarkerCons to provide divisive renorm of signal\n";
+ - Matrix_Go projects using regular leabra cons (non-MarkerCons) to create basic standard netinput.";
   taMisc::Confirm(help);
 }
 

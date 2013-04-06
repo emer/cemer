@@ -21,6 +21,7 @@
 //#include <iHelpBrowser>
 #include <iTextBrowser>
 #include <taiSigLink>
+#include <taProject>
 
 #include <taMisc>
 #include <taiMisc>
@@ -325,7 +326,15 @@ void iDialogSearch::RenderItem(int level, const String& headline,
   STRING_BUF(b, 200);
   b += "<tr><td>" + String(level) + "</td><td>";
   // item
-  b += "<a href=\"" + href + "\">" + headline + "</a>";
+  b += "<a href=\"" + href;
+  if(link() && link()->taData()) {
+    taBase* tab = link()->taData();
+    MainWindowViewer* mwv = tab->GetMyBrowser();
+    if(mwv && mwv->widget()) {
+      b += "#" + String(mwv->widget()->uniqueId()); // mark our project window!
+    }
+  }
+  b += "\">" + headline + "</a>";
   if (desc.nonempty()) {
   //TODO: need to somehow escape html nasties in this!!!
     b += "<br>" + desc ;

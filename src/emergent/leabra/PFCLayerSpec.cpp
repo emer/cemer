@@ -67,17 +67,14 @@ void PFCLayerSpec::UpdateAfterEdit_impl() {
 
 void PFCLayerSpec::HelpConfig() {
   String help = "PFCLayerSpec Computation:\n\
- The PFC deep layers are gated by thalamocortical prjns from SNrThal.\n\
- They maintain activation over time (activation-based working memory) via \
- excitatory intracelluar ionic mechanisms (implemented in hysteresis channels, gc.h),\
- and excitatory connections with superficial pfc layers, which is toggled by SNrThal.\n\
- Updating occurs by mid_minus_cycle, based on SNrThal act_mid activations.\n\
+ PFC maintenance functions just like LeabraTI, except updating of deep context\n\
+ depends on BG Gating.\n\
+ PFC output layers are gated by mid_minus_cycle, which enables units to get fully active.\n\
  \nPFCLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure layers.\n\
- - First prjn must be from PFC superficial layer (can be any spec type)\n\
- - Units must be organized into groups so that the sum of the number of all\
-   groups across all PFC deep layers must correspond to the number of matrix.\
-   groups (stripes).";
+ - Must recv SNrThalLayerSpec marker connection\n\
+ - Maint layer must have LeabraTICtxtConSpec self projection (typically unit group based)\n\
+ - Units must be organized into unit groups (stripes).";
   taMisc::Confirm(help);
 }
 
