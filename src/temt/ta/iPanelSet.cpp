@@ -17,10 +17,7 @@
 #include <iPanel>
 #include <iPanelSetButton>
 #include <taiViewType>
-#include <Program>
 #include <taSigLinkItr>
-#include <iPanelOfProgramScript>
-#include <iNumberedTextView>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -206,64 +203,4 @@ QWidget* iPanelSet::firstTabFocusWidget() {
   return NULL;
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//      Program specific browser guys!
-
-
-iPanelSet* Program::FindMyDataPanelSet() {
-  if(!taMisc::gui_active) return NULL;
-  taSigLink* link = sig_link();
-  if(!link) return NULL;
-  taSigLinkItr itr;
-  iPanelSet* el;
-  FOR_DLC_EL_OF_TYPE(iPanelSet, el, link, itr) {
-//     if (el->data() == this) {
-      return el;
-//     }
-  }
-  return NULL;
-}
-
-bool Program::ViewCtrlPanel() {
-  iPanelSet* dps = FindMyDataPanelSet();
-  if(!dps) return false;
-  dps->setCurrentPanelId(0);
-  return true;
-}
-
-bool Program::ViewProgEditor() {
-  iPanelSet* dps = FindMyDataPanelSet();
-  if(!dps) return false;
-  dps->setCurrentPanelId(1);
-  return true;
-}
-
-bool Program::ViewCssScript() {
-  iPanelSet* dps = FindMyDataPanelSet();
-  if(!dps) return false;
-  dps->setCurrentPanelId(2);
-  return true;
-}
-
-bool Program::ViewProperties() {
-  iPanelSet* dps = FindMyDataPanelSet();
-  if(!dps) return false;
-  dps->setCurrentPanelId(3);
-  return true;
-}
-
-bool Program::ViewScriptEl(taBase* pel) {
-  iPanelSet* dps = FindMyDataPanelSet();
-  if(!dps) return false;
-  dps->setCurrentPanelId(2);
-  iPanelOfProgramScript* pnl = dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
-  if(!pnl || !pnl->vs) return false;
-  int start_ln, end_ln;
-  if(!ScriptLinesEl(pel, start_ln, end_ln))
-    return false;
-
-  pnl->vs->setHighlightLines(start_ln, (end_ln - start_ln)+1);
-  return true;
-}
 

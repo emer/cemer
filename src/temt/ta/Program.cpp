@@ -20,12 +20,19 @@
 #include <taiEditorOfString>
 #include <iDialogChoice>
 
+#include <iPanelOfProgramScript>
+#include <iNumberedTextView>
+
 taTypeDef_Of(LocalVars);
 taTypeDef_Of(ProgCode);
 
 #include <SigLinkSignal>
+#include <taSigLinkItr>
+#include <iPanelSet>
+
 #include <taMisc>
 #include <taiMisc>
+#include <tabMisc>
 
 #include <css_machine.h>
 
@@ -702,6 +709,20 @@ void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
   ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetWarning();
+}
+
+void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& prognm,
+                            const String& topnm, const String& src_ln) {
+  global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
+  String fh;
+  fh << "Program: " << name << " Stopped on breakpoint number: " << bpno
+     << " at css source line: " << src_ln_no << " in prog: "
+     << prognm << " pc: " << pc << " css top: " << topnm << "\n"
+     << src_ln;
+  if(taMisc::gui_active) {
+    iDialogChoice::ConfirmDialog(NULL, fh);
+    ViewProgEditor(src_ln_no);
+  }
 }
 
 void Program::taError(int src_ln_no, bool running, const String& err_msg) {
@@ -1411,7 +1432,7 @@ String Program::RenderGlobalTrace(bool html) {
       taProject* proj = GET_OWNER(sp->own_program, taProject);
       if(html) {
 	rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
-	     << "#" << ln << "\">"
+	     << "#progln_" << ln << "\">"
 	     << sp->own_program->name << "</a></td>";
       }
       else {
@@ -1605,7 +1626,7 @@ bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_labe
 }
 
 #ifndef TA_GUI
-// see ta_program_qt.cpp
+// see iPanelOfProgram.cpp
 iPanelOfProgram* Program::FindMyProgramPanel() {
   return NULL;
 }
@@ -1619,3 +1640,77 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   return false;
 }
 #endif
+
+///////////////////////////////////////////////////////////////////////
+//      Program specific browser guys!
+
+
+iPanelSet* Program::FindMyDataPanelSet() {
+  if(!taMisc::gui_active) return NULL;
+  taSigLink* link = sig_link();
+  if(!link) return NULL;
+  taSigLinkItr itr;
+  iPanelSet* el;
+  FOR_DLC_EL_OF_TYPE(iPanelSet, el, link, itr) {
+//     if (el->data() == this) {
+      return el;
+//     }
+  }
+  return NULL;
+}
+
+bool Program::ViewCtrlPanel() {
+  iPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(0);
+  return true;
+}
+
+bool Program::ViewProgEditor(int src_ln_no) {
+  iPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(1);
+  if(src_ln_no >= 0) {
+    ProgLine* pl = script_list.SafeEl(src_ln_no);
+    if(pl && pl->prog_el) {
+      tabMisc::DelayedFunCall_gui(pl->prog_el, "BrowserSelectMe");
+    }
+  }
+  return true;
+}
+
+bool Program::ViewCssScript(int src_ln_no) {
+  iPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(2);
+  if(src_ln_no >= 0) {
+    iPanelOfProgramScript* pnl =
+      dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
+    if(pnl && pnl->vs) {
+      pnl->vs->setHighlightLines(src_ln_no, 1);
+    }
+  }
+  return true;
+}
+
+bool Program::ViewProperties() {
+  iPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(3);
+  return true;
+}
+
+bool Program::ViewScriptEl(taBase* pel) {
+  iPanelSet* dps = FindMyDataPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(2);
+  iPanelOfProgramScript* pnl = dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
+  if(!pnl || !pnl->vs) return false;
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return false;
+
+  pnl->vs->setHighlightLines(start_ln, (end_ln - start_ln)+1);
+  return true;
+}
+

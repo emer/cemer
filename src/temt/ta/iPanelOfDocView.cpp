@@ -198,7 +198,7 @@ void iPanelOfDocView::doc_linkClicked(const QUrl& url) {
   // handle it internally
   if (!new_url.hasFragment()) {
     if (viewerWindow())
-      new_url.setFragment("#" + QString::number(viewerWindow()->uniqueId()));
+      new_url.setFragment("#winid_" + QString::number(viewerWindow()->uniqueId()));
   }
   // goes to: iMainWindowViewer::taUrlHandler  in ta_qtviewer.cpp
   QDesktopServices::openUrl(new_url);

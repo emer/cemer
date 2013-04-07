@@ -331,7 +331,7 @@ void iDialogSearch::RenderItem(int level, const String& headline,
     taBase* tab = link()->taData();
     MainWindowViewer* mwv = tab->GetMyBrowser();
     if(mwv && mwv->widget()) {
-      b += "#" + String(mwv->widget()->uniqueId()); // mark our project window!
+      b += "#winid_" + String(mwv->widget()->uniqueId()); // mark our project window!
     }
   }
   b += "\">" + headline + "</a>";

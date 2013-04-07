@@ -266,6 +266,9 @@ public:
   // #IGNORE an error was triggered by css -- this is callback from css Error handling routine for program to update gui with relevant info
   virtual void  CssWarning(int src_ln_no, bool running, const String& err_msg);
   // #IGNORE a warning was triggered by css -- this is callback from css Warning handling routine for program to update gui with relevant info
+  virtual void  CssBreakpoint(int src_ln_no, int bpno, int pc, const String& prognm,
+                              const String& topnm, const String& src_ln);
+  // #IGNORE a breakpoint was triggered by css -- this is callback from css breakpoint handling routine for program to update gui with relevant info
   virtual void  taError(int src_ln_no, bool running, const String& err_msg);
   // #IGNORE a general (ta) error was triggered -- this is callback from taMisc::Error handling routine for program to update gui with relevant info
   virtual void  taWarning(int src_ln_no, bool running, const String& err_msg);
@@ -366,10 +369,10 @@ public: // XxxGui versions provide feedback to the user
 
   virtual bool          ViewCtrlPanel();
   // #CAT_Display select the edit/middle panel view of this object to be for the control panel
-  virtual bool          ViewProgEditor();
-  // #CAT_Display select the edit/middle panel view of this object to be for the program editor
-  virtual bool          ViewCssScript();
-  // #CAT_Display select the edit/middle panel view of this object to be for the program css script view
+  virtual bool          ViewProgEditor(int select_src_line = -1);
+  // #CAT_Display select the edit/middle panel view of this object to be for the program editor, and optionally select program element at given source code line if passed
+  virtual bool          ViewCssScript(int view_src_line = -1);
+  // #CAT_Display select the edit/middle panel view of this object to be for the program css script view, and optionally scroll to source code line if passed
   virtual bool          ViewProperties();
   // #CAT_Display select the edit/middle panel view of this object to be for the program properties
 

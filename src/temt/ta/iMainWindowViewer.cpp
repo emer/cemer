@@ -1352,11 +1352,11 @@ bool iMainWindowViewer::AssertPanel(taiSigLink* link,
 // this is only for internally-generated ta:// links
 
 void iMainWindowViewer::taUrlHandler(const QUrl& url) {
-// URLs are usually suffixed with a "#Xxx" where Xxx is the uniqueId()
-// of the window in which is embedded the doc viewer
-// if no WinId (ex. Find) then we use that of the topmost window
+  // URLs are usually suffixed with a "#winid_xxx" where xxx is the uniqueId()
+  // of the window in which is embedded the doc viewer
+  // if no WinId then we use that of the topmost window
 
-  //NOTE: URLs only open in the main project browser for that project
+  // NOTE: URLs only open in the main project browser for that project
   String path = url.path(); // will only be part before #, if any
 
   // TypeBrowser invocations are dependency-free so we check them first
@@ -1365,26 +1365,28 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     return;
   }
 
+  int win_id = 0;
+  iMainWindowViewer* top_win = NULL;
+
   // we usually embed the uniqueId of the win that had the invoking url
-  String win_id_str = String(url.fragment()).after("#");
-  int win_id = win_id_str.toInt(); // 0 if empty or not an int
-  if (win_id == 0) {
-    iMainWindowViewer* top_win = taiMisc::active_wins.Peek_MainWindow();
+  String frag_str;
+  if(url.hasFragment())
+    frag_str = String(url.fragment());
+  if(frag_str.startsWith("winid_")) {
+    win_id = frag_str.after("winid_").toInt(); // 0 if empty or not an int
+    top_win = taiMisc::active_wins.FindMainWindowById(win_id);
+  }
+
+  if(top_win == NULL) {         // fallback
+    top_win = taiMisc::active_wins.Peek_MainWindow();
     if (top_win)
       win_id = top_win->uniqueId();
   }
 
-  iMainWindowViewer* idoc_win = NULL; // win from which url was invoked
-  if (win_id != 0) { // problem if not found!!!
-    idoc_win = taiMisc::active_wins.FindMainWindowById(win_id);
-  }
-//NOTE: if idoc_win is NULL, then the only really valid thing after this
-// is a WIKI or Web url...
-
   // get the project -- should be able to get from any viewer/browser
   taProject* proj = NULL;
-  if (idoc_win) {
-    proj = idoc_win->myProject();
+  if (top_win) {
+    proj = top_win->myProject();
   }
 
   // for uniformity and simplicity, we look up the canonical windows
@@ -1403,7 +1405,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     if (proj_view)
     iproj_view = proj_view->widget(); */
 
-  //IMPORTANT NOTE: You *must* check ALL objects for NULL in the following
+  // IMPORTANT NOTE: You *must* check ALL objects for NULL in the following
   // cascades, because there are conditions under which it is possible for
   // something not to have a value
   if(path.startsWith(".T3Tab.")) {
@@ -1461,13 +1463,11 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
       if(prg) {
         prg->BrowserSelectMe();
         taMisc::RunPending();
-        if(url.hasFragment()) {
-          prg->ViewCssScript();
-          // todo: could do something with this!
-          // int lno = (int)url.fragment();
-          // if(lno > 0) {
-          //   ProgLine* pl = prg->script_list->SafeEl(lno);
-          // }
+        if(url.hasFragment() && frag_str.startsWith("progln_")) {
+          // this is for the GlobalTrace listing in Programs that renders line numbers
+          // in fragment
+          int lno = (int)frag_str.after("progln_");
+          prg->ViewCssScript(lno);
         }
         else {
           prg->ViewProgEditor();

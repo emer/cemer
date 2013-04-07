@@ -3356,15 +3356,18 @@ bool cssProg::IsBreak(css_progdx pcval) {
       top->last_bp_pc = -1;
       return false;             // don't break again!
     }
-    String fh;
-    fh << "\nStopped on breakpoint: " << idx << " pc: " << pcval << " in prog: "
-       << name << " of: " << top->name << "\n";
     cssInst* nxt = insts[Frame()->pc];
-    nxt->PrintSrc(fh);
-    taMisc::ConsoleOutput(fh, true, false);
-    if(top->own_program) {
-      // hasn't stopped yet so buttons are not updated -- must wait
-      tabMisc::DelayedFunCall_gui(top->own_program, "BrowserSelectMe");
+    String srcln;
+    nxt->PrintSrc(srcln);
+    if(top->own_program) {      // let program handle it
+      top->own_program->CssBreakpoint(nxt->line, idx, pcval, name, top->name,
+                                      srcln);
+    }
+    else {
+      String fh;
+      fh << "\nStopped on breakpoint: " << idx << " pc: " << pcval << " in prog: "
+         << name << " of: " << top->name << "\n";
+      taMisc::ConsoleOutput(fh + srcln, true, false);
     }
     return true;
   }
