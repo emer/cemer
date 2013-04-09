@@ -39,7 +39,7 @@ void ClusterRun::InitLinks() {
 
 void ClusterRun::Initialize() {
   ram_gb = 0;
-  n_threads = taMisc::thread_defaults.n_threads;
+  n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
   mpi_nodes = 10;
   parallel_batch = false;

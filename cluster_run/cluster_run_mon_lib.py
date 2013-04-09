@@ -939,7 +939,7 @@ class SubversionPoller(object):
         if mpi_nodes <= 1:
             args_eff = sp_qsub_args.split()
             if ram_gb > 0:
-                args_eff = args_eff + [" -m", ram_gb + "GB"]
+                args_eff = args_eff + [" -m ", ram_gb + "GB"]
             if len(args_eff) > 0:
                 cmdsub = [sp_qsub_cmd] + args_eff + [str(n_threads), run_time, cmd, params]
             else:
@@ -947,7 +947,7 @@ class SubversionPoller(object):
         else:
             args_eff = dm_qsub_args.split()
             if ram_gb > 0:
-                args_eff = args_eff + [" -m", ram_gb + "GB"]
+                args_eff = args_eff + [" -m ", ram_gb + "GB"]
             if len(args_eff) > 0:
                 cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(n_threads), run_time, cmd, params]
             else:
