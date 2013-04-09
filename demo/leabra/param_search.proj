@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6179
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6225
 LeabraProject .projects["param_search"] { 
   taBase_Group @.templates = [0] {
   };
@@ -2218,18 +2218,19 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2013_03_05_14_11_28";
+   last_submit_time="2013_04_09_00_19_14";
    notes="demo in lab";
+   extra_files=;
    svn_repo="grey_run";
    repo_url="http://grey.colorado.edu/svn/clusterun";
    cluster="dream";
    queue=;
    run_time="1h";
-   ram_gb=0;
+   ram_gb=2;
    n_threads=2;
    use_mpi=0;
    mpi_nodes=2;
-   parallel_batch=1;
+   parallel_batch=0;
    pb_batches=10;
    pb_nodes=1;
    nowin_x=0;
@@ -15527,6 +15528,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {gelin=0: thr=0.25: gain=50: nvar=0.002: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act_lrn_on=0;
+     act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
@@ -15539,7 +15542,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       vm_dend_dt=0.16;
       vm_dend_time=6.25;
      };
-     ti {gelin=1: thr=0.5: gain=100: nvar=0.005: ctxt_gain_m=1: ctxt_gain_p=1: };
      opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
@@ -15714,6 +15716,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	default_val=1;
 	interpolate=0;
        };
+       ignore_unlearnable=1;
        wt_sig {gain=6: off=1.25: dwt_norm=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        xcal {thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
@@ -15750,6 +15753,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       default_val=1;
       interpolate=0;
      };
+     ignore_unlearnable=1;
      wt_sig {gain=6: off=1.25: dwt_norm=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      xcal {thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
@@ -16086,7 +16090,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size {x=42: y=20: z=3: };
    max_disp_size2d {x=20: y=55: };
    learn_rule=LEABRA_CHL;
-   ti_mode=NO_TI;
+   ti_mode=0;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
    sequence_init=DO_NOTHING;

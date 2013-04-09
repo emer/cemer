@@ -269,7 +269,7 @@ public:
   //	LeabraTI
 
   void	TI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
   void	TI_Send_CtxtNetin_Post(LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin_Post(this, net); }
