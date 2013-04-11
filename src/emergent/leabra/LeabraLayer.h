@@ -52,6 +52,8 @@ public:
   int		avg_netin_n;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   float		cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer
+  float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, for activations on previous trial (p_act_p) -- computed automatically during ti_mode
+  float		cos_err_vs_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for ti_mode
   int		da_updt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for kwta computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
   int_Array	unit_idxs;	// #NO_SAVE #HIDDEN #CAT_Activation -- set of unit indexes typically used for permuted selection of units (e.g., k_pos_noise) -- can be used by other functions too

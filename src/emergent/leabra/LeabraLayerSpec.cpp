@@ -1921,14 +1921,18 @@ float LeabraLayerSpec::Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net,
 float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
 				     int& n_vals) {
   lay->cos_err = 0.0f;
+  lay->cos_err_prv = 0.0f;
+  lay->cos_err_vs_prv = 0.0f;
   n_vals = 0;
-  float cosv = 0.0f;
   if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
 			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
     return 0.0f;
   }
+  float cosv = 0.0f;
+  float cosvp = 0.0f;
   float ssm = 0.0f;
+  float ssp = 0.0f;
   float sst = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
@@ -1937,12 +1941,24 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
     cosv += u->targ * u->act_m;
     ssm += u->act_m * u->act_m;
     sst += u->targ * u->targ;
+    if(net->ti_mode) {
+      cosvp += u->targ * u->p_act_p;
+      ssp += u->p_act_p * u->p_act_p;
+    }
   }
   if(n_vals == 0) return 0.0f;
   float dist = sqrtf(ssm * sst);
   if(dist != 0.0f)
     cosv /= dist;
   lay->cos_err = cosv;
+  if(net->ti_mode) {
+    float pdist = sqrtf(ssp * sst);
+    if(pdist != 0.0f) {
+      cosvp /= pdist;
+    }
+    lay->cos_err_prv = cosvp;
+    lay->cos_err_vs_prv = lay->cos_err - lay->cos_err_prv;
+  }
   return cosv;
 }
 
