@@ -137,6 +137,7 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
       ProgVar* pv = pvl->FastEl(i);
       if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
       MemberDef* md = pv->GetValMemberDef();
+      if(!md) continue;
       memb_el(j).Add(md);
       taiWidget* mb_dat;
       int flags_ = 0;
