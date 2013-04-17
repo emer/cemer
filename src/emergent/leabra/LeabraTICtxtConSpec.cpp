@@ -21,3 +21,6 @@ void LeabraTICtxtConSpec::Initialize() {
   wt_scale.rel = 3.0;           // good default
 }
 
+void LeabraTICtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
+  nm = "Ctxt_" + nm;
+}

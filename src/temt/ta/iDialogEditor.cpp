@@ -80,6 +80,12 @@ bool iDialogEditor::post(bool modal) {
   }
 }
 
+void iDialogEditor::accept() {
+  if(owner)
+    owner->Ok_impl();
+  inherited::accept();
+}
+
 void iDialogEditor::dismiss(bool accept_) {
   if (accept_)
     accept();

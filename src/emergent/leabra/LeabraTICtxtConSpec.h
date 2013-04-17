@@ -112,6 +112,8 @@ public:
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
+  override void  GetPrjnName(Projection& prjn, String& nm);
+
   TA_SIMPLE_BASEFUNS(LeabraTICtxtConSpec);
 private:
   void Initialize();

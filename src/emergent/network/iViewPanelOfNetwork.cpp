@@ -123,6 +123,15 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
 
+  lblConType = taiM->NewLabel("Con\nType:", widg, font_spec);
+  lblConType->setToolTip("Display only selected types of connections?");
+  layFontsEtc->addWidget(lblConType);
+  cmbConType = dl.Add(new taiWidgetComboBox(true, 
+		TA_NetView.sub_types.FindName("ConType"),
+                               this, NULL, widg, taiWidget::flgAutoApply));
+  layFontsEtc->addWidget(cmbConType->GetRep());
+  layFontsEtc->addSpacing(taiM->hsep_c);
+
   chkShowIconified = new QCheckBox("Show\nIcon", widg);
   chkShowIconified->setToolTip("Show iconified layers -- if this is off, then iconified layers are not displayed at all -- otherwise they are displayed with their name and optional iconified value, but projections are not displayed in any case");
   connect(chkShowIconified, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -472,6 +481,7 @@ void iViewPanelOfNetwork::UpdatePanel_impl() {
   chkNetText->setChecked(nv->net_text);
   // fldTextRot->GetImage((String)nv->net_text_rot);
   cmbLayLayout->GetEnumImage(nv->lay_layout);
+  cmbConType->GetEnumImage(nv->con_type);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
   cmbDispMode->GetEnumImage(nv->unit_disp_mode);
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
@@ -556,6 +566,10 @@ void iViewPanelOfNetwork::GetValue_impl() {
   nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)pd;
 
   nv->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
+
+  int ct;
+  cmbConType->GetEnumValue(ct);
+  nv->con_type = (NetView::ConType)ct;
 
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
   nv->font_sizes.unit = (float)fldUnitFont->GetValue();

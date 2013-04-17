@@ -175,17 +175,36 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
     String nm = disp_md->name.before(".");
     if(nm.empty()) { // direct unit member
       UpdateUnitViewBase_Unit_impl(midx, disp_md);
-    } else if ((nm=="s") || (nm == "r")) {
-      UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u);
-    } else if (nm=="bias") {
+    }
+    else if ((nm=="s") || (nm == "r")) {
+      UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u,
+                                  nv->con_type);
+    }
+    else if (nm=="bias") {
       UpdateUnitViewBase_Bias_impl(midx, disp_md);
-    } else { // sub-member of unit
+    }
+    else { // sub-member of unit
       UpdateUnitViewBase_Sub_impl(midx, disp_md);
     }
   }
 }
 
-void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {
+void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm,
+                                                Unit* src_u, int con_type) {
+  String prjn_starts_with;
+  switch(con_type) {
+  case NetView::STD_CON:
+    prjn_starts_with = "Fm_";
+    break;
+  case NetView::CTXT_CON:
+    prjn_starts_with = "Ctxt_";
+    break;
+  case NetView::THAL_CON:
+    prjn_starts_with = "Thal_";
+    break;
+  }
+  bool check_prjn = (prjn_starts_with.nonempty());
+    
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   taVector2i coord;
@@ -199,6 +218,8 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
       if (is_send) {
         for(int g=0;g<unit->recv.size;g++) {
           RecvCons* tcong = unit->recv.FastEl(g);
+          if(check_prjn && tcong->prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
+            continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;
           Connection* con = tcong->FindConFrom(src_u);
@@ -210,6 +231,8 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
       else {
         for(int g=0;g<unit->send.size;g++) {
           SendCons* tcong = unit->send.FastEl(g);
+          if(check_prjn && tcong->prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
+            continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;
           Connection* con = tcong->FindConFrom(src_u);

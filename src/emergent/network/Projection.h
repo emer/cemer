@@ -53,6 +53,7 @@ public:
 #endif
 
   bool                  off;            // #DEF_false turn this projection off -- useful for experimenting with projections while being able to keep the specifications in place
+  bool                  disp;           // display this projection in the network view display
   Layer*                layer;          // #READ_ONLY #NO_SAVE #HIDDEN #NO_SET_POINTER layer this prjn is in
   PrjnSource            from_type;      // #CAT_Structure Source of the projections
   LayerRef              from;           // #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)

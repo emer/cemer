@@ -317,6 +317,7 @@ void NetView::Initialize() {
   net_text_rot = -90.0f;
 
   unit_con_md = false;
+  con_type = ANY_CON;
   unit_disp_md = NULL;
   unit_disp_idx = -1;
   n_counters = 0;
@@ -567,7 +568,7 @@ void NetView::BuildAll() { // populates all T3 guys
     if(lay->lesioned() || lay->Iconified()) continue;
     FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
       if((prjn->from.ptr() == NULL) || prjn->from->lesioned()
-         || prjn->from->Iconified()) continue;
+         || prjn->from->Iconified() || prjn->off || !prjn->disp) continue;
       PrjnView* pv = new PrjnView();
       pv->SetData(prjn);
       //nn prjns.Add(pv); // this is automatic from the childadding thing

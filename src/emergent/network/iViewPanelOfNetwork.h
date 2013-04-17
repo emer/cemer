@@ -69,6 +69,8 @@ public:
   taiWidgetComboBox*              cmbPrjnDisp;
 
   QHBoxLayout*            layFontsEtc;
+  QLabel*                   lblConType;
+  taiWidgetComboBox*              cmbConType;
   QCheckBox*                chkShowIconified;
   QLabel*                   lblPrjnWdth;
   taiWidgetField*                 fldPrjnWdth;

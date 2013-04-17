@@ -27,6 +27,7 @@ using namespace std;
 
 void Projection::Initialize() {
   off = false;
+  disp = true;
   layer = NULL;
   from_type = INIT; //was: PREV;
   con_type = &TA_Connection;
@@ -82,11 +83,7 @@ void Projection::InitLinks() {
     int myindex = mynet->layers.FindLeafEl(layer);
     if(!(myindex == 0) && (from_type == PREV)) { // is it not the first?
       SetFrom();
-      if((bool)from) {
-        String nwnm = "Fm_" + from->name;
-        if(!name.contains(nwnm))        // only change if necc -- keep if multiple
-          SetName(nwnm);                // setname ensures uniqueness
-      }
+      UpdateName();
     }
   }
   spec.SetDefaultSpec(this);
@@ -95,6 +92,7 @@ void Projection::InitLinks() {
 
 void Projection::Copy_(const Projection& cp) {
   off = cp.off;
+  disp = cp.disp;
   from_type = cp.from_type;
   from = cp.from;
   spec = cp.spec;
@@ -147,10 +145,7 @@ void Projection::UpdateAfterEdit_impl() {
         SetFrom();
       }
     }
-    String nwnm = "Fm_" + from->name;
-    // unique names are always _index so needs to at least fit that
-    if(!name.startsWith(nwnm) || !name.after(nwnm).startsWith('_'))
-      SetName(nwnm);            // setname ensures uniqueness
+    UpdateName();
   }
 
   UpdateConSpecs((bool)taMisc::is_loading);
@@ -163,8 +158,13 @@ void Projection::UpdateAfterEdit_impl() {
 void Projection::UpdateName() {
   if(from) {
     String nwnm = "Fm_" + from->name;
-    SetName(nwnm);              // setname ensures uniqueness
-    SigEmitUpdated();
+    if(con_spec.SPtr()) {
+      con_spec.SPtr()->GetPrjnName(*this, nwnm);
+    }
+    if(!name.startsWith(nwnm) || !name.after(nwnm).startsWith('_')) {
+      SetName(nwnm);            // setname ensures uniqueness
+      SigEmitUpdated();
+    }
   }
 }
 

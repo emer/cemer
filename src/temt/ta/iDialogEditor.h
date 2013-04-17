@@ -37,8 +37,9 @@ public:
   iDialogEditor(taiEditor* owner_, QWidget* parent = 0, int wflags = 0);
   ~iDialogEditor();
 
-  bool          post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
-  void          dismiss(bool accept_);
+  override bool          post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
+  override void          dismiss(bool accept_);
+  override void          accept();
 
   void          iconify();   // Iv compatibility routine
   void          deiconify(); // Iv compatibility routine

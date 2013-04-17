@@ -135,6 +135,13 @@ public:
     THREE_D                     // #LABEL_3D z = layer index, default skew
   };
 
+  // programmers: extend this as needed -- ConSpec::GetPrjnName sets custom names, and this value is decoded in UnitGroupView::UpdateUnitViewBase_Con_impl
+  enum ConType {                // where there are multiple types of connections between units, this allows selection of which type to display
+    ANY_CON,                    // #LABEL_Any just show the first connection shown -- don't select by name at all
+    STD_CON,                    // #LABEL_Std only show standard connections -- projection names start with FM_
+    CTXT_CON,                   // #LABEL_Ctxt only show context connections -- projection names start with CTXT_
+    THAL_CON,                   // #LABEL_Thal only show thalamic connections -- projection names start with THAL_
+  };
 
   static NetView*       New(Network* net, T3Panel*& fr); // create a new instance and add to viewer
 
@@ -150,6 +157,7 @@ public:
   UnitRef               unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
   bool                  unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
+  ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   MemberDef*            unit_disp_md;   // #NO_SAVE #NO_COPY #READ_ONLY memberdef (if any) of Unit (or Connection) to display
   int                   unit_disp_idx;  // #NO_SAVE #NO_COPY #READ_ONLY index of memberdef (if any) of Unit (or Connection) to display
   int                   n_counters;     // #NO_SAVE #NO_COPY #READ_ONLY number of counter variables on the network object

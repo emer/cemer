@@ -81,7 +81,8 @@ protected:
   LayerView*            m_lv;
   void          UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md); // for unit members
   void          UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md); // for unit submembers
-  void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u);
+  void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm,
+                                            Unit* src_u, int con_type);
   // for cons
   void          UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
   // for bias vals

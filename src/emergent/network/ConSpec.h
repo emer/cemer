@@ -30,6 +30,7 @@ class RecvCons; //
 class SendCons; //
 class Unit; //
 class Network; //
+class Projection; //
 
 // the ConSpec has 2 versions of every function: one to go through the group
 // and the other to apply to a single connection.
@@ -143,6 +144,9 @@ public:
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
+
+  virtual void          GetPrjnName(Projection& prjn, String& nm) { };
+  // add anything special for this type of connection to the projection name -- default name (FM_from) is provided as a nm value, which this function can modify in any way
 
   virtual bool          CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
