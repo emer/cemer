@@ -41,6 +41,7 @@ set(leabra_HEADS_MAKETA
   LeabraWizard.h
 
   LeabraTICtxtConSpec.h
+  LeabraTIThalConSpec.h
   MarkerConSpec.h
   XCalSRAvgConSpec.h
   XCalHebbConSpec.h
@@ -67,7 +68,7 @@ set(leabra_HEADS_MAKETA
   LeabraLinUnitSpec.h
   LeabraExtOnlyUnitSpec.h
 
-    LeabraContextLayerSpec.h
+  LeabraContextLayerSpec.h
   LeabraMultCopyLayerSpec.h
   ScalarValLayerSpec.h
   MotorForceLayerSpec.h
@@ -114,8 +115,8 @@ set(leabra_HEADS_MAKETA
 
   PBWMUnGpData.h
   SNrThalLayerSpec.h
-    MatrixConSpec.h
-    MatrixBiasSpec.h
+  MatrixConSpec.h
+  MatrixBiasSpec.h
   MatrixUnitSpec.h
   MatrixLayerSpec.h
   PFCDeepGatedConSpec.h
@@ -183,6 +184,7 @@ set(leabra_SRCS
   LeabraWizard.cpp
 
   LeabraTICtxtConSpec.cpp
+  LeabraTIThalConSpec.cpp
   MarkerConSpec.cpp
   XCalSRAvgConSpec.cpp
   XCalHebbConSpec.cpp

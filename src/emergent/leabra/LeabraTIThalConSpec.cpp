@@ -13,13 +13,14 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraTICtxtConSpec.h"
+#include "LeabraTIThalConSpec.h"
 
-void LeabraTICtxtConSpec::Initialize() {
-  SetUnique("wt_scale", true);
-  wt_scale.rel = 3.0;           // good default
+void LeabraTIThalConSpec::Initialize() {
+  // todo: set generally good params here!
+  // SetUnique("wt_scale", true);
+  // wt_scale.rel = 3.0;           // good default
 }
 
-void LeabraTICtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
-  nm = "Ctxt_" + nm;
+void LeabraTIThalConSpec::GetPrjnName(Projection& prjn, String& nm) {
+  nm = "Thal_" + nm;
 }
