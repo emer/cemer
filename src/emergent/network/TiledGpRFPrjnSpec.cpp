@@ -16,6 +16,7 @@
 #include "TiledGpRFPrjnSpec.h"
 #include <Network>
 #include <int_Array>
+#include <taMath_float>
 
 void TiledGpRFPrjnSpec::Initialize() {
   send_gp_size = 4;
@@ -298,4 +299,27 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
+void TiledGpRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
+                                    int cg_idx) {
+  float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
+  float wt_val = wt_range.min + gaus * wt_range.Range();
+  cg->Cn(cg_idx)->wt = wt_val;
+}
 
+void TiledGpRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru);
+
+  // Layer* recv_lay = (Layer*)prjn->layer;
+  // Layer* send_lay = (Layer*)prjn->from.ptr();
+
+  // for(int i=0; i<cg->size; i++) {
+  //   int su_x = i % rf_width.x;
+  //   int su_y = i / rf_width.x;
+
+  //   float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
+  //   float wt = expf(-0.5 * dst / sig_sq);
+
+  //   cg->Cn(i)->wt = wt;
+  // }
+
+}

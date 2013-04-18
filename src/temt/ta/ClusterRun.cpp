@@ -691,6 +691,8 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+  dc = dt.FindMakeCol("params", VT_STRING);
+  dc->desc = "emergent parameters based on currently selected items in the ClusterRun";
 
   // The client sets this field in the jobs_submit table to:
   //   REQUESTED to request the job be submitted.
@@ -746,8 +748,6 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   dc->desc = "id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
   dc = dt.FindMakeCol("command", VT_STRING);
   dc->desc = "emergent command line, up to point of parameters";
-  dc = dt.FindMakeCol("params", VT_STRING);
-  dc->desc = "emergent parameters based on currently selected items in the ClusterRun";
 
   // Populated from values the user enters/chooses.
   dc = dt.FindMakeCol("repo_url", VT_STRING);
