@@ -161,7 +161,7 @@ public:
   // Write normalized lengths, speeds, and target lengths to a datatable -- calls above functions -- all are formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
 
   virtual bool SetTargetLengthsFmTable(DataTable* len_table);
-  // Update the unnormalized target lengths (targ_lens) using normalized values from a DataTable. The received DataTable must contain a float column named "targ_lengths" with 4 dimensional cell geometry 1 x 1 by 1 x n_musc.
+  // Update the unnormalized target lengths (targ_lens) using normalized values from a DataTable. The received DataTable must contain a float column named "lengths" with 4 dimensional cell geometry n x 1 by 1 x n_musc. n_musc is the number of muscles, and n is an integer equal or greater than 1.
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc

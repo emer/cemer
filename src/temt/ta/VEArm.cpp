@@ -1786,16 +1786,22 @@ bool VEArm::ArmStateToTable(DataTable* table) {
 }
 
 bool VEArm::SetTargetLengthsFmTable(DataTable* len_table) {
-  char col_name[] = "targ_lengths";
+  char col_name[] = "lengths";
   DataCol* dc = len_table->FindColName(col_name, true); // find the "lengths" column, error msg if not found
-  MatrixGeom std_geom(4,1,1,1,n_musc);
+  MatrixGeom std_geom(4,12,1,1,n_musc);
 
-  if(TestError(dc->cell_geom != std_geom, "SetTargetLengthsFmTable","The geometry of the table provided to GetTargetLengths() is incorrect \n"))
-    return false;
+  if(TestError(dc->cell_geom != std_geom, "SetTargetLengthsFmTable","The geometry of the table provided to GetTargetLengths() is not standard\n"))
+  {
+    //return false;
+  }
 
   taMatrix* cell_mat = dc->GetValAsMatrix(-1); // -1 = last row
 
-  norm_targ_lens.CopyFrom(cell_mat);
+  for(int i=0; i<n_musc; i++)
+  {
+    norm_targ_lens.Set(cell_mat->SafeElAsFloat(0,0,0,i),i);
+  }
+  //norm_targ_lens.CopyFrom(cell_mat);
   targ_lens = norm_targ_lens;
   targ_lens /= spans;
   targ_lens += min_lens;
