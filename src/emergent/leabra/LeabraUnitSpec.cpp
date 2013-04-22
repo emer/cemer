@@ -1860,7 +1860,7 @@ void LeabraUnitSpec::Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net,
 
     // now find a matching prjn to copy from -- just based on size and connectivity
     for(int og = 0; og < u->send.size; og++) {
-      if(og == g) continue;
+      if(og == g || cs->IsTIThalCon() || cs->IsTICtxtCon()) continue;
       LeabraSendCons* osend_gp = (LeabraSendCons*)u->send.FastEl(og);
       if(osend_gp->size != send_gp->size || send_gp->prjn->layer != rlay)
         continue;
