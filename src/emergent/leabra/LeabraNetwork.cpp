@@ -404,6 +404,8 @@ void LeabraNetwork::Init_Weights() {
 
   lrn_trig.lrn_trig = 0.0f;
   lrn_trig.lrn = 0;
+
+  Compute_SleepSyncWts();       // need to sync whenver updated
 }
 
 void LeabraNetwork::Init_Netins() {
@@ -1343,6 +1345,14 @@ void LeabraNetwork::Compute_dWt_Norm() {
 
 void LeabraNetwork::Compute_Weights_impl() {
   ThreadUnitCall un_call(&Unit::Compute_Weights);
+  if(thread_flags & WEIGHTS)
+    threads.Run(&un_call, 1.0f);
+  else
+    threads.Run(&un_call, -1.0f); // -1 = always run localized
+}
+
+void LeabraNetwork::Compute_SleepSyncWts() {
+  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SleepSyncWts);
   if(thread_flags & WEIGHTS)
     threads.Run(&un_call, 1.0f);
   else

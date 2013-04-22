@@ -311,6 +311,9 @@ public:
   void 	Compute_dWt_Norm(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Norm(this, net, thread_no); }
   // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
+  void 	Compute_SleepSyncWts(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SleepSyncWts(this, net, thread_no); }
+  // #CAT_Learning compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
 
 
   ///////////////////////////////////////////////////////////////////////

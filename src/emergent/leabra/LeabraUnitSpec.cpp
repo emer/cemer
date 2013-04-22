@@ -1847,6 +1847,30 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   bspc->B_Compute_Weights((LeabraCon*)u->bias.OwnCn(0), lu);
 }
 
+void LeabraUnitSpec::Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net,
+                                          int thread_no) {
+  LeabraLayer* rlay = u->own_lay();
+  if(rlay->lesioned()) return;
+  for(int g = 0; g < u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
+    if(rlay->lesioned() || !send_gp->size) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+    if(!cs->IsTIThalCon()) continue;
+
+    // now find a matching prjn to copy from -- just based on size and connectivity
+    for(int og = 0; og < u->send.size; og++) {
+      if(og == g) continue;
+      LeabraSendCons* osend_gp = (LeabraSendCons*)u->send.FastEl(og);
+      if(osend_gp->size != send_gp->size || send_gp->prjn->layer != rlay)
+        continue;
+      // this should be our match
+      cs->Compute_CopyWeights(send_gp, osend_gp);
+    }
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////////////
 //      Stats
 

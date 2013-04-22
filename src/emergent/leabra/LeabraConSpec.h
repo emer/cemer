@@ -333,6 +333,8 @@ public:
   // compute recv_gp->scale_eff based on params in from layer
   virtual bool  IsTICtxtCon() { return false; }
   // is this a TI context connection (LeabraTICtctConSpec) -- optimized check for higher speed
+  virtual bool  IsTIThalCon() { return false; }
+  // is this a TI thalamic connection (LeabraTIThalConSpec) -- optimized check for higher speed
 
   inline void 	C_Send_NetinDelta_Thread(Connection* cn, float* send_netin_vec,
 				      LeabraUnit* ru, float su_act_delta_eff);
@@ -465,6 +467,9 @@ public:
 
   virtual void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) { };
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
+
+  inline void Compute_CopyWeights(LeabraSendCons* cg, LeabraSendCons* src_cg);
+  // #CAT_Learning #IGNORE copy weights from src_cg to cg -- typically used to compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
 
   virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
   // #CAT_Learning set current learning rate based on schedule given epoch (or error value)

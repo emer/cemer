@@ -19,6 +19,7 @@ void LeabraTIThalConSpec::Initialize() {
   // todo: set generally good params here!
   // SetUnique("wt_scale", true);
   // wt_scale.rel = 3.0;           // good default
+  plus_only = true;
 }
 
 void LeabraTIThalConSpec::GetPrjnName(Projection& prjn, String& nm) {

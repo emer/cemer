@@ -606,6 +606,9 @@ public:
 
   override void Compute_Weights_impl();
 
+  virtual void	Compute_SleepSyncWts();
+  // #CAT_Learning compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
+
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 

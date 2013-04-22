@@ -393,4 +393,12 @@ inline void LeabraConSpec::B_Compute_Leabra_dWt(LeabraCon* cn, LeabraUnit* ru, L
 }
 
 
+inline void LeabraConSpec::Compute_CopyWeights(LeabraSendCons* cg, LeabraSendCons* src_cg) {
+  int mx = MIN(cg->size, src_cg->size);
+  for(int i=0; i<mx; i++) {
+    cg->OwnCn(i)->wt = src_cg->OwnCn(i)->wt;
+  }
+}
+
+
 #endif // LeabraConSpec_inlines_h
