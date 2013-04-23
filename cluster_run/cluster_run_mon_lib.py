@@ -1045,18 +1045,16 @@ class SubversionPoller(object):
         re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
         re_tag = re.compile(r".*%s.*" % tag)
 
-        dat_files_set = set()
-        other_files_set = set()
         resfiles = os.listdir(results_dir)
         for f in resfiles:
             fullf = os.path.join(results_dir,f)
             if not os.path.isfile(fullf):
                 continue
             try:
-                if re_tag_dat.match(fullf):
-                    os.remove(f)
-                elif re_tag.match(fullf):
-                    os.remove(f)
+                if re_tag_dat.match(f):
+                    os.remove(fullf)
+                elif re_tag.match(f):
+                    os.remove(fullf)
             except:
                 pass
 
