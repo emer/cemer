@@ -1049,12 +1049,16 @@ class SubversionPoller(object):
         other_files_set = set()
         resfiles = os.listdir(results_dir)
         for f in resfiles:
-            if not os.path.isfile(os.path.join(results_dir,f)):
+            fullf = os.path.join(results_dir,f)
+            if not os.path.isfile(fullf):
                 continue
-            if re_tag_dat.match(f):
-                os.remove(f)
-            elif re_tag.match(f):
-                os.remove(f)
+            try:
+                if re_tag_dat.match(fullf):
+                    os.remove(f)
+                elif re_tag.match(fullf):
+                    os.remove(f)
+            except:
+                pass
 
     # get data files for given job
     def _getdata_job(self, filename, rev, row):

@@ -1862,7 +1862,7 @@ void LeabraUnitSpec::Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net,
     for(int og = 0; og < u->send.size; og++) {
       if(og == g || cs->IsTIThalCon() || cs->IsTICtxtCon()) continue;
       LeabraSendCons* osend_gp = (LeabraSendCons*)u->send.FastEl(og);
-      if(osend_gp->size != send_gp->size || send_gp->prjn->layer != rlay)
+      if(osend_gp->size != send_gp->size || osend_gp->prjn->layer != rlay)
         continue;
       // this should be our match
       cs->Compute_CopyWeights(send_gp, osend_gp);
