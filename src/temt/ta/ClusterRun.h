@@ -29,8 +29,9 @@ class TypeDef; //
 class iDataTableEditor; //
 class ClusterManager; //
 class DataTable_Group; //
-taTypeDef_Of(GridSearch);
+class iPanelSet; //
 
+taTypeDef_Of(GridSearch);
 
 taTypeDef_Of(ClusterRun);
 
@@ -91,7 +92,7 @@ public:
   virtual void  ImportData(bool remove_existing = true);
   // #BUTTON import the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
-  virtual void  SelectFiles(bool include_data = false);
+  virtual void  ListJobFiles(bool include_data = false);
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  ListAllFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the files currently in the results subdirectory of this project's svn repository -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
@@ -179,6 +180,13 @@ public:
   // get selected rows in editor
   virtual bool  SelectRows(DataTable& dt, int st_row, int end_row);
   // select range of rows in given data table
+
+  // view panel sets etc
+
+  virtual iPanelSet* FindMyPanelSet();
+  // #IGNORE find my panel set, which contains all the more specific view panels (diff data tables)
+  virtual bool       ViewPanelNumber(int panel_no);
+  // #CAT_Display select the edit/middle panel view of this object to be the given number (0 = SelectEdit, 1 = jobs_running, 2 = jobs_done, 3 = jobs_archive, 4 = file_list, 5 = cluster_info, 6 = Properties)
 
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);

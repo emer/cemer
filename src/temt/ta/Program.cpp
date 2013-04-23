@@ -1645,7 +1645,7 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
 //      Program specific browser guys!
 
 
-iPanelSet* Program::FindMyDataPanelSet() {
+iPanelSet* Program::FindMyPanelSet() {
   if(!taMisc::gui_active) return NULL;
   taSigLink* link = sig_link();
   if(!link) return NULL;
@@ -1660,14 +1660,14 @@ iPanelSet* Program::FindMyDataPanelSet() {
 }
 
 bool Program::ViewCtrlPanel() {
-  iPanelSet* dps = FindMyDataPanelSet();
+  iPanelSet* dps = FindMyPanelSet();
   if(!dps) return false;
   dps->setCurrentPanelId(0);
   return true;
 }
 
 bool Program::ViewProgEditor(int src_ln_no) {
-  iPanelSet* dps = FindMyDataPanelSet();
+  iPanelSet* dps = FindMyPanelSet();
   if(!dps) return false;
   dps->setCurrentPanelId(1);
   if(src_ln_no >= 0) {
@@ -1680,7 +1680,7 @@ bool Program::ViewProgEditor(int src_ln_no) {
 }
 
 bool Program::ViewCssScript(int src_ln_no) {
-  iPanelSet* dps = FindMyDataPanelSet();
+  iPanelSet* dps = FindMyPanelSet();
   if(!dps) return false;
   dps->setCurrentPanelId(2);
   if(src_ln_no >= 0) {
@@ -1694,14 +1694,14 @@ bool Program::ViewCssScript(int src_ln_no) {
 }
 
 bool Program::ViewProperties() {
-  iPanelSet* dps = FindMyDataPanelSet();
+  iPanelSet* dps = FindMyPanelSet();
   if(!dps) return false;
   dps->setCurrentPanelId(3);
   return true;
 }
 
 bool Program::ViewScriptEl(taBase* pel) {
-  iPanelSet* dps = FindMyDataPanelSet();
+  iPanelSet* dps = FindMyPanelSet();
   if(!dps) return false;
   dps->setCurrentPanelId(2);
   iPanelOfProgramScript* pnl = dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));

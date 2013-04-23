@@ -24,6 +24,9 @@
 #include <DataTable_Group>
 #include <taProject>
 
+#include <taSigLinkItr>
+#include <iPanelSet>
+
 #include <taMisc>
 
 #include <QRegExp>
@@ -369,7 +372,7 @@ void ClusterRun::Probe() {
   m_cm->CommitJobSubmissionTable();
 }
 
-void ClusterRun::SelectFiles(bool include_data) {
+void ClusterRun::ListJobFiles(bool include_data) {
   if(!initClusterManager())
     return;
 
@@ -394,6 +397,8 @@ void ClusterRun::SelectFiles(bool include_data) {
   else {
     taMisc::Warning("No rows selected -- no files selected");
   }
+  
+  ViewPanelNumber(4);
 }
 
 void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) {
@@ -441,6 +446,7 @@ void ClusterRun::ListAllFiles() {
       GetFileInfo(files[i].filePath(), file_list, frow, tag);
     }
   }
+  ViewPanelNumber(4);
 }
 
 void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, String& tag) {
@@ -1205,3 +1211,26 @@ bool ClusterRun::SelectRows(DataTable& dt, int st_row, int end_row) {
   bool rval = ed->tvTable->SelectRows(st_row, end_row);
   return rval;
 }
+
+///////////////////////////
+
+iPanelSet* ClusterRun::FindMyPanelSet() {
+  if(!taMisc::gui_active) return NULL;
+  taSigLink* link = sig_link();
+  if(!link) return NULL;
+  taSigLinkItr itr;
+  iPanelSet* el;
+  FOR_DLC_EL_OF_TYPE(iPanelSet, el, link, itr) {
+    return el;
+  }
+  return NULL;
+}
+
+bool ClusterRun::ViewPanelNumber(int panel_no) {
+  iPanelSet* dps = FindMyPanelSet();
+  if(!dps) return false;
+  dps->setCurrentPanelId(panel_no);
+  return true;
+}
+
+

@@ -559,10 +559,13 @@ class DataTable(object):
         self.set_row(row)
         return self.n_rows()-1
 
-    # append row from another table
+    # append row from another table -- robust to reorganization of cols
     def append_row_from(self, other, other_row):
-        vals = other.get_row(other_row)
-        self.set_row(vals)
+        new_row = self.add_blank_row()
+        for i in range(len(self._header)):
+            col_name = self.get_col_name(i)
+            oth_val = other.get_val(other_row, col_name)
+            self.set_val(new_row, col_name, oth_val)
     
     # loads a .dat file into memoory
     # input: path = string, path to the .dat file
@@ -1011,6 +1014,7 @@ class SubversionPoller(object):
     # remove given tag from jobs done or archive
     def _remove_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
+        self._remove_tag_files(tag) # remove everything
         donerow = self.jobs_done.find_val("tag", tag)
         if donerow >= 0:
             self.jobs_done.remove_row(donerow)
@@ -1033,6 +1037,24 @@ class SubversionPoller(object):
             self.jobs_done.remove_row(donerow)
         else:
             print "move_job_to_archive: tag %s not found in jobs done" % tag
+
+    # remove all files with given tag
+    def _remove_tag_files(self, tag):
+        results_dir = self.cur_proj_root + "/results/"
+
+        re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
+        re_tag = re.compile(r".*%s.*" % tag)
+
+        dat_files_set = set()
+        other_files_set = set()
+        resfiles = os.listdir(results_dir)
+        for f in resfiles:
+            if not os.path.isfile(os.path.join(results_dir,f)):
+                continue
+            if re_tag_dat.match(f):
+                os.remove(f)
+            elif re_tag.match(f):
+                os.remove(f)
 
     # get data files for given job
     def _getdata_job(self, filename, rev, row):

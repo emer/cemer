@@ -357,8 +357,8 @@ public: // XxxGui versions provide feedback to the user
 
   virtual iPanelOfProgram* FindMyProgramPanel();
   // #IGNORE find my program panel, which contains the program editor -- useful for browser-specific operations
-  virtual iPanelSet* FindMyDataPanelSet();
-  // #IGNORE find my data panel set, which contains all the more specific data panels
+  virtual iPanelSet* FindMyPanelSet();
+  // #IGNORE find my panel set, which contains all the more specific view panels (editor, script etc)
 
   virtual bool          BrowserSelectMe_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserSelectMe function for program sub-item (prog el, etc)
