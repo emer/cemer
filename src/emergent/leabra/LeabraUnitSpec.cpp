@@ -1849,8 +1849,8 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
 
 void LeabraUnitSpec::Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net,
                                           int thread_no) {
-  LeabraLayer* rlay = u->own_lay();
-  if(rlay->lesioned()) return;
+  LeabraLayer* olay = u->own_lay();
+  if(olay->lesioned()) return;
   for(int g = 0; g < u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
@@ -1860,8 +1860,10 @@ void LeabraUnitSpec::Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net,
 
     // now find a matching prjn to copy from -- just based on size and connectivity
     for(int og = 0; og < u->send.size; og++) {
-      if(og == g || cs->IsTIThalCon() || cs->IsTICtxtCon()) continue;
+      if(og == g) continue;
       LeabraSendCons* osend_gp = (LeabraSendCons*)u->send.FastEl(og);
+      LeabraConSpec* ocs = (LeabraConSpec*)osend_gp->GetConSpec();
+      if(ocs->IsTIThalCon() || ocs->IsTICtxtCon()) continue;
       if(osend_gp->size != send_gp->size || osend_gp->prjn->layer != rlay)
         continue;
       // this should be our match
