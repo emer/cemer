@@ -36,6 +36,7 @@ eTypeDef_Of(ProjectBase);
 #include <taMisc>
 #include <tabMisc>
 
+#include <iProgramToolBar>
 
 static void emergent_viewcolor_init() {
   if(!taMisc::view_colors) {
@@ -64,24 +65,28 @@ void EmergentRoot::Initialize() {
   projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
 }
 
-static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
-  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction(obj->GetToolbarName(), obj));
-}
+// fix for bug 1573 - (decoration/color not being set)
+// ptbp_add_widget now a static method of iProgramToolBar
+// - better to funnel all the adding of widgets through one method anyway
+//
+//static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
+//  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
+//  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction(obj->GetToolbarName(), obj));
+//}
 
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
-  ptbp_add_widget(tb, sec, &TA_InitNamedUnits);
-  ptbp_add_widget(tb, sec, &TA_SetUnitsLit);
-  ptbp_add_widget(tb, sec, &TA_SetUnitsVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_InitNamedUnits);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_SetUnitsLit);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_SetUnitsVar);
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_NetCounterInit);
-  ptbp_add_widget(tb, sec, &TA_NetCounterIncr);
-  ptbp_add_widget(tb, sec, &TA_NetUpdateView);
-  ptbp_add_widget(tb, sec, &TA_WtInitPrompt);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterInit);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetCounterIncr);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetUpdateView);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_WtInitPrompt);
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_NetDataLoop);
-  ptbp_add_widget(tb, sec, &TA_NetGroupedDataLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetDataLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_NetGroupedDataLoop);
 }
 
 ToolBoxRegistrar emergent_ptb(PDPProgramToolBoxProc);

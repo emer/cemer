@@ -132,7 +132,8 @@ static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
   }
 }
 
-static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
+//static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
+void iProgramToolBar::ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(td == &TA_ForLoop) {
     ((ForLoop*)obj)->init.expr = "_toolbox_tmp_"; // flag for auto-updating of for loop var
@@ -145,23 +146,23 @@ static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td) {
 void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
 
-  ptbp_add_widget(tb, sec, &TA_ForLoop);
-  ptbp_add_widget(tb, sec, &TA_ForeachLoop);
-  ptbp_add_widget(tb, sec, &TA_DoLoop);
-  ptbp_add_widget(tb, sec, &TA_WhileLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ForeachLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DoLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_WhileLoop);
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_IfElse);
-  ptbp_add_widget(tb, sec, &TA_IfContinue);
-  ptbp_add_widget(tb, sec, &TA_IfBreak);
-  ptbp_add_widget(tb, sec, &TA_IfReturn);
-  ptbp_add_widget(tb, sec, &TA_IfGuiPrompt);
-  ptbp_add_widget(tb, sec, &TA_Switch);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfElse);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfContinue);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfBreak);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfReturn);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfGuiPrompt);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Switch);
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_CodeBlock);
-  ptbp_add_widget(tb, sec, &TA_UserScript);
-  ptbp_add_widget(tb, sec, &TA_StopStepPoint);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_CodeBlock);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_UserScript);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_StopStepPoint);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Var/Fun
@@ -169,79 +170,79 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   QWidget* widg = tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("var",
                        tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
   ptbp_deco_widget(widg, tabMisc::root->GetTemplateInstance(&TA_ProgVar));
-  ptbp_add_widget(tb, sec, &TA_LocalVars);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_LocalVars);
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_AssignExpr);
-  ptbp_add_widget(tb, sec, &TA_VarIncr);
-  ptbp_add_widget(tb, sec, &TA_MemberAssign);
-  ptbp_add_widget(tb, sec, &TA_MethodCall);
-  ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
-  ptbp_add_widget(tb, sec, &TA_CssExpr);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AssignExpr);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_VarIncr);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberAssign);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MethodCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_CssExpr);
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_Function);
-  ptbp_add_widget(tb, sec, &TA_FunctionCall);
-  ptbp_add_widget(tb, sec, &TA_ReturnExpr);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Function);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_FunctionCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ReturnExpr);
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_ProgramCall);
-  ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
-  ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgramCallVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_OtherProgramVar);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Print/Misc
   sec = tb->AssertSection("Print/Args..");
-  ptbp_add_widget(tb, sec, &TA_PrintExpr);
-  ptbp_add_widget(tb, sec, &TA_PrintVar);
-  ptbp_add_widget(tb, sec, &TA_Comment);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintExpr);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintVar);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Comment);
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);
-  ptbp_add_widget(tb, sec, &TA_MemberFmArg);
-  ptbp_add_widget(tb, sec, &TA_DataColsFmArgs);
-  ptbp_add_widget(tb, sec, &TA_SelectEditsFmArgs);
-  ptbp_add_widget(tb, sec, &TA_RegisterArgs);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberFmArg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataColsFmArgs);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_SelectEditsFmArgs);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_RegisterArgs);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Misc Fun
   sec = tb->AssertSection("Misc Fun");
-  ptbp_add_widget(tb, sec, &TA_StaticMethodCall);
-  ptbp_add_widget(tb, sec, &TA_MathCall);
-  ptbp_add_widget(tb, sec, &TA_RandomCall);
-  ptbp_add_widget(tb, sec, &TA_MiscCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_StaticMethodCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MathCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_RandomCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MiscCall);
   // add other spec meth calls here..
 
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_DataProcCall);
-  ptbp_add_widget(tb, sec, &TA_DataAnalCall);
-  ptbp_add_widget(tb, sec, &TA_DataGenCall);
-  ptbp_add_widget(tb, sec, &TA_ImageProcCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataProcCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ImageProcCall);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Data processing
   sec = tb->AssertSection("Data"); //note: need to keep it short
-  ptbp_add_widget(tb, sec, &TA_DataLoop);
-  ptbp_add_widget(tb, sec, &TA_ResetDataRows);
-  ptbp_add_widget(tb, sec, &TA_AddNewDataRow);
-  ptbp_add_widget(tb, sec, &TA_DoneWritingDataRow);
-  ptbp_add_widget(tb, sec, &TA_DataVarProg);
-  ptbp_add_widget(tb, sec, &TA_DataVarProgMatrix);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ResetDataRows);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AddNewDataRow);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DoneWritingDataRow);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarProgMatrix);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Data processing
   sec = tb->AssertSection("Data Proc"); //note: need to keep it short
-  ptbp_add_widget(tb, sec, &TA_DataSortProg);
-  ptbp_add_widget(tb, sec, &TA_DataGroupProg);
-  ptbp_add_widget(tb, sec, &TA_DataSelectRowsProg);
-  ptbp_add_widget(tb, sec, &TA_DataSelectColsProg);
-  ptbp_add_widget(tb, sec, &TA_DataJoinProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataSortProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGroupProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataSelectRowsProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataSelectColsProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataJoinProg);
   tb->AddSeparator(sec);
-  ptbp_add_widget(tb, sec, &TA_DataCalcLoop);
-  ptbp_add_widget(tb, sec, &TA_DataCalcAddDestRow);
-  ptbp_add_widget(tb, sec, &TA_DataCalcSetDestRow);
-  ptbp_add_widget(tb, sec, &TA_DataCalcSetSrcRow);
-  ptbp_add_widget(tb, sec, &TA_DataCalcCopyCommonCols);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcLoop);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcAddDestRow);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcSetDestRow);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcSetSrcRow);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataCalcCopyCommonCols);
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);

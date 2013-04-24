@@ -33,6 +33,9 @@ INHERITED(iToolBar)
 public:
   iProgramToolBar(ToolBar* viewer, QWidget* parent = NULL)
   :iToolBar(viewer, parent){}
+
+  static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td);
+
 protected:
   override void         Constr_post();
 };
