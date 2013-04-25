@@ -727,8 +727,8 @@ public:
 
   override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
-  virtual void	Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
+  virtual void	Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Learning compute the stable weights for connections that have separate stable weights (see LeabraStableConSpec) -- simulates synaptic consolidation to gene-expression-dependent long term plasticity -- typically done after every epoch or multiple thereof
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats

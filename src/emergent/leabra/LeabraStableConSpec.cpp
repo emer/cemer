@@ -13,14 +13,27 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraTIThalConSpec.h"
+#include "LeabraStableConSpec.h"
 
-void LeabraTIThalConSpec::Initialize() {
-  // todo: set generally good params here!
-  // SetUnique("wt_scale", true);
-  // wt_scale.rel = 3.0;           // good default
+void StableMixSpec::Initialize() {
+  stable_pct = 0.5f;
+  learn_pct = 1.0f - stable_pct;
+  updt_to_lwt = true;
 }
 
-void LeabraTIThalConSpec::GetPrjnName(Projection& prjn, String& nm) {
-  nm = "Thal_" + nm;
+void StableMixSpec::Defaults_init() {
+}
+
+void StableMixSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  learn_pct = 1.0f - stable_pct;
+}
+
+void LeabraStableConSpec::Initialize() {
+  min_obj_type = &TA_LeabraStableCon;
+}
+
+void LeabraStableConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  stable_mix.UpdateAfterEdit_NoGui();
 }

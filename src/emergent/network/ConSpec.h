@@ -109,7 +109,8 @@ public:
   // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
   inline virtual void   Init_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
-  inline virtual void   C_Init_Weights_post(BaseCons*, Connection*, Unit*, Unit*) { };
+  inline virtual void   C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su)
+  { };
   inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void   C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)

@@ -17,6 +17,7 @@
 #include <LeabraNetwork>
 #include <LeabraBiasSpec>
 #include <LeabraTICtxtConSpec>
+#include <LeabraStableConSpec>
 #include <taProject>
 #include <taMath_double>
 
@@ -1847,28 +1848,17 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   bspc->B_Compute_Weights((LeabraCon*)u->bias.OwnCn(0), lu);
 }
 
-void LeabraUnitSpec::Compute_SleepSyncWts(LeabraUnit* u, LeabraNetwork* net,
-                                          int thread_no) {
+void LeabraUnitSpec::Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net,
+                                           int thread_no) {
   LeabraLayer* olay = u->own_lay();
   if(olay->lesioned()) return;
   for(int g = 0; g < u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-    if(!cs->IsTIThalCon()) continue;
-
-    // now find a matching prjn to copy from -- just based on size and connectivity
-    for(int og = 0; og < u->send.size; og++) {
-      if(og == g) continue;
-      LeabraSendCons* osend_gp = (LeabraSendCons*)u->send.FastEl(og);
-      LeabraConSpec* ocs = (LeabraConSpec*)osend_gp->GetConSpec();
-      if(ocs->IsTIThalCon() || ocs->IsTICtxtCon()) continue;
-      if(osend_gp->size != send_gp->size || osend_gp->prjn->layer != rlay)
-        continue;
-      // this should be our match
-      cs->Compute_CopyWeights(send_gp, osend_gp);
-    }
+    LeabraStableConSpec* cs = (LeabraStableConSpec*)send_gp->GetConSpec();
+    if(!cs->InheritsFrom(&TA_LeabraStableConSpec)) continue;
+    cs->Compute_StableWeights(send_gp, u);
   }
 }
 

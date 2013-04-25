@@ -138,6 +138,8 @@ set(leabra_HEADS_MAKETA
   HippoEncoderConSpec.h
   XCalCHLConSpec.h
   PFCConSpec.h
+  LeabraStableConSpec.h
+  LeabraStableCon.h
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -281,4 +283,6 @@ set(leabra_SRCS
   HippoEncoderConSpec.cpp
   XCalCHLConSpec.cpp
   PFCConSpec.cpp
+  LeabraStableConSpec.cpp
+  LeabraStableCon.cpp
 )

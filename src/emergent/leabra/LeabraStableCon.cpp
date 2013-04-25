@@ -13,14 +13,5 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraTIThalConSpec.h"
+#include "LeabraStableCon.h"
 
-void LeabraTIThalConSpec::Initialize() {
-  // todo: set generally good params here!
-  // SetUnique("wt_scale", true);
-  // wt_scale.rel = 3.0;           // good default
-}
-
-void LeabraTIThalConSpec::GetPrjnName(Projection& prjn, String& nm) {
-  nm = "Thal_" + nm;
-}

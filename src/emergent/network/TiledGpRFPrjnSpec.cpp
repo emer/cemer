@@ -23,6 +23,7 @@ void TiledGpRFPrjnSpec::Initialize() {
   send_gp_skip = 2;
   wrap = false;
   reciprocal = false;
+  gauss_sig = 1.0f;
 }
 
 void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
