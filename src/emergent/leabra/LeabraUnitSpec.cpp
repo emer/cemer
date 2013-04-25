@@ -17,7 +17,6 @@
 #include <LeabraNetwork>
 #include <LeabraBiasSpec>
 #include <LeabraTICtxtConSpec>
-#include <LeabraStableConSpec>
 #include <taProject>
 #include <taMath_double>
 
@@ -1856,10 +1855,12 @@ void LeabraUnitSpec::Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net,
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size) continue;
-    LeabraStableConSpec* cs = (LeabraStableConSpec*)send_gp->GetConSpec();
-    if(!cs->InheritsFrom(&TA_LeabraStableConSpec)) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
     cs->Compute_StableWeights(send_gp, u);
   }
+
+  LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
+  bspc->C_Compute_StableWeights((LeabraCon*)u->bias.OwnCn(0));
 }
 
 

@@ -17,18 +17,18 @@
 #define LeabraTICtxtConSpec_h 1
 
 // parent includes:
-#include <LeabraStableConSpec>
+#include <LeabraConSpec>
 
 // member includes:
-// #include <LeabraNetwork>
+#include <LeabraNetwork>
 
 // declare all other types mentioned but not required to include:
 
 eTypeDef_Of(LeabraTICtxtConSpec);
 
-class E_API LeabraTICtxtConSpec : public LeabraStableConSpec {
+class E_API LeabraTICtxtConSpec : public LeabraConSpec {
   // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning, and in projections to/from other layers -- control relative contribution to net input by setting wt_scale.rel, just like regular connections
-INHERITED(LeabraStableConSpec)
+INHERITED(LeabraConSpec)
 public:
   // special!
   override bool  IsTICtxtCon() { return true; }
@@ -108,7 +108,7 @@ public:
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     // CHL uses XCAL with aggregate soft weight bounding, b/c no hebbian term
-    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraStableCon*)cg->OwnCn(i)));
+    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->OwnCn(i)));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 

@@ -67,6 +67,12 @@ inline float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
 }
 
 
+inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su) {
+  for(int i=0; i<cg->size; i++) {
+    C_Compute_StableWeights((LeabraCon*)cg->OwnCn(i));
+  }
+}
+
 ////////////////////////////////////////////////////
 //     Computing dWt: LeabraCHL
 
@@ -118,7 +124,7 @@ inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit*
   for(int i=0; i<cg->size; i++) {
     LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
     LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-    float lin_wt = LinFmSigWt(cn->wt);
+    float lin_wt = LinFmSigWt(cn->lwt);
     C_Compute_dWt(cn, ru, 
 		  C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
 		  C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m,
@@ -132,7 +138,8 @@ inline void LeabraConSpec::Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit*
 inline void LeabraConSpec::C_Compute_Weights_LeabraCHL(LeabraCon* cn)
 {
   if(cn->dwt != 0.0f) {
-    cn->wt = SigFmLinWt(LinFmSigWt(cn->wt) + cn->dwt);
+    cn->lwt = SigFmLinWt(LinFmSigWt(cn->lwt) + cn->dwt);
+    Compute_EffWt(cn);
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -179,11 +186,12 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn) {
   if(cn->dwt != 0.0f) {
     // always do soft bounding, at this point (post agg across processors, etc)
-    float lin_wt = LinFmSigWt(cn->wt);
+    float lin_wt = LinFmSigWt(cn->lwt);
     // always do soft bounding
     if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
     else		cn->dwt *= lin_wt;
-    cn->wt = SigFmLinWt(lin_wt + cn->dwt);
+    cn->lwt = SigFmLinWt(lin_wt + cn->dwt);
+    Compute_EffWt(cn);
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -274,10 +282,11 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraSRAvgCon* cn)
 {
   if(cn->dwt != 0.0f) {
     // always do soft bounding, at this point (post agg across processors, etc)
-    float lin_wt = LinFmSigWt(cn->wt);
+    float lin_wt = LinFmSigWt(cn->lwt);
     if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
     else		cn->dwt *= lin_wt;
-    cn->wt = SigFmLinWt(lin_wt + cn->dwt);
+    cn->lwt = SigFmLinWt(lin_wt + cn->dwt);
+    Compute_EffWt(cn);
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -353,8 +362,11 @@ inline void LeabraConSpec::B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru
 // default is not to do anything tricky with the bias weights
 inline void LeabraConSpec::B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru) {
   if(!learn) return;
+  if(cn->dwt != 0.0f) {
+    cn->lwt += cn->dwt;
+    Compute_EffWt(cn);
+  }
   cn->pdw = cn->dwt;
-  cn->wt += cn->dwt;
   cn->dwt = 0.0f;
   C_ApplyLimits(cn, ru, NULL);
 }

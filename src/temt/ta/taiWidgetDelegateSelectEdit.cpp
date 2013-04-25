@@ -99,7 +99,8 @@ void taiWidgetDelegateSelectEdit::GetValue() const {
     dat->mbr->im->GetMbrValue(dat, base, first_diff);
     if (!first_diff)
       taiMember::EndScript(base);
-  } else { // no mbr, typically an inline taBase, esp for userdata
+  }
+  else { // no mbr, typically an inline taBase, esp for userdata
     dat->GetValue_(base);
   }
   if(ps_dat) {
@@ -114,6 +115,11 @@ void taiWidgetDelegateSelectEdit::GetValue() const {
     }
   }
   base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+  if(base->HasOption("INLINE")) { // inline classes should update their parents too
+    if(base->GetOwner() != NULL)
+      base->GetOwner()->UpdateAfterEdit();
+  }
+
   // update text of the cell, otherwise it usually ends up stale!
   edh->GetImage_Item(m_dat_row);
   edh->Unchanged();

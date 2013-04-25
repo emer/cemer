@@ -132,6 +132,31 @@ private:
   void	Defaults_init() { Initialize(); } // note: ConSpec defaults should modalize on learn_rule
 };
 
+eTypeDef_Of(StableMixSpec);
+
+class E_API StableMixSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra stable weight mixing specs
+INHERITED(SpecMemberBase)
+public:
+  float		stable_pct;	// #DEF_0.8 #MIN_0 #MAX_1 proportion (0..1) of the stable weight value contributing to the overall weight value
+
+  float         learn_pct;       // #READ_ONLY #SHOW proportion that learned weight contributes to the overall weight value -- automatically computed as 1 - stable_pct
+
+  inline float	EffWt(const float swt, const float lwt)
+  { return stable_pct * swt + learn_pct * lwt; }
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(StableMixSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(LearnMixSpec);
 
 class E_API LearnMixSpec : public SpecMemberBase {
@@ -301,6 +326,7 @@ public:
   bool          ignore_unlearnable; // #CAT_Learning ignore unlearnable trials
 
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  StableMixSpec stable_mix;     // #CAT_Learning #CONDSHOW_ON_learn mixing parameters for stable (swt) vs. learning weight (lwt) to compute the overall effective weight value (wt) -- stable wt reflects protein-synthesis dependent consolidated weight -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights!
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C&&learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
@@ -312,9 +338,9 @@ public:
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
 
-  float		SigFmLinWt(float lin_wt) { return wt_sig_fun.Eval(lin_wt);  }
+  inline float	SigFmLinWt(float lin_wt) { return wt_sig_fun.Eval(lin_wt);  }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
-  float		LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
+  inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
@@ -324,6 +350,24 @@ public:
     ConSpec::Init_Weights(cg, ru);
     if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
       wt_scale.rel = wt_scale_init.rel; } }
+
+  // note: following is called after loading weights too
+  inline void   C_Init_Weights_post(BaseCons* cg, Connection* pcn, Unit* ru, Unit* su) {
+    LeabraCon* cn = (LeabraCon*)pcn;
+    cn->swt = cn->lwt = cn->wt;    
+  }
+
+  inline void Compute_EffWt(LeabraCon* cn) {
+    cn->wt = stable_mix.EffWt(cn->swt, cn->lwt);
+  }
+  // compute the effective weight from the stable and learned weights
+
+  inline void C_Compute_StableWeights(LeabraCon* cn) {
+    cn->wt = cn->swt = cn->lwt; // once we set swt, wt also becomes equivalent
+  }
+
+  inline void Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su);
+  // #CAT_Learning #IGNORE compute the effective weight from the stable and learned weights -- simulates the effects of protein synthesis and potential sleep in consolidating the learned weight value
 
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported

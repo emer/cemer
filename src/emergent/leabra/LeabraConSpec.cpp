@@ -72,6 +72,19 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
+void StableMixSpec::Initialize() {
+  stable_pct = 0.8f;
+  learn_pct = 1.0f - stable_pct;
+}
+
+void StableMixSpec::Defaults_init() {
+}
+
+void StableMixSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  learn_pct = 1.0f - stable_pct;
+}
+
 void LearnMixSpec::Initialize() {
   hebb = .001f;
   err = 1.0f - hebb;
@@ -204,6 +217,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
 
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
+  stable_mix.UpdateAfterEdit_NoGui();
   lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   rel_net_adapt.UpdateAfterEdit_NoGui();

@@ -30,8 +30,10 @@ class E_API LeabraCon : public Connection {
   // #STEM_BASE ##CAT_Leabra #AKA_MatrixCon Leabra connection
 public:
   float		pdw;		// #VIEW_HOT #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
+  float         lwt;            // #NO_SAVE learning weight value -- adapts according to learning rules every trial in a dynamic online manner
+  float         swt;            // #NO_SAVE stable (protein-synthesis and potentially sleep dependent) weight value -- updated from lwt value periodically (e.g., at the end of an epoch) by Compute_StableWeight function
   
-  LeabraCon() { pdw = 0.0f; }
+  LeabraCon() { pdw = 0.0f; lwt = swt = 0.0f; }
 };
 
 #endif // LeabraCon_h
