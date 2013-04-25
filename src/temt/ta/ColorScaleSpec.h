@@ -29,7 +29,7 @@ class ColorScaleColor_List; //
 taTypeDef_Of(ColorScaleSpec);
 
 class TA_API ColorScaleSpec : public taNBase {
-  // ##CAT_Display Color Spectrum Data
+  // ##CAT_Display Color Spectrum Data #SCOPE_taRootBase
 INHERITED(taNBase)
 public:
   RGBA          background;     // background color
