@@ -112,6 +112,7 @@ void ClusterRun::Run() {
 bool ClusterRun::Update() {
   if(!initClusterManager())
     return false;
+  FormatTables();            // ensure data tables are formatted properly!
 
   // Update the working copy and load the running/done tables.
   // save current selection information and restore at end
@@ -167,7 +168,6 @@ void ClusterRun::Cont() {
 void ClusterRun::Kill() {
   if(!initClusterManager())
     return;
-  FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to kill.
   int st_row, end_row;
@@ -189,7 +189,6 @@ void ClusterRun::Kill() {
 void ClusterRun::GetData() {
   if(!initClusterManager())
     return;
-  FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
@@ -501,7 +500,6 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, Stri
 void ClusterRun::GetFiles() {
   if(!initClusterManager())
     return;
-  FormatTables();               // ensure tables are formatted properly
 
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
