@@ -138,7 +138,8 @@ class E_API StableMixSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra stable weight mixing specs
 INHERITED(SpecMemberBase)
 public:
-  float		stable_pct;	// #DEF_0.8 #MIN_0 #MAX_1 proportion (0..1) of the stable weight value contributing to the overall weight value
+  float		stable_pct;	// #DEF_0.8 #MIN_0 #MAX_1 proportion (0..1) of the stable weight value contributing to the overall weight value that is used for sending net inputs -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights if this value is > 0
+  bool          updt_to_lwt;    // #DEF_true update the stable swt values to the current lwt learned weight values -- otherwise updates to the current effective weights (which contain a component of the stable weights) -- updt to learn causes learning to be faster but more prone to positive feedback phenomena
 
   float         learn_pct;       // #READ_ONLY #SHOW proportion that learned weight contributes to the overall weight value -- automatically computed as 1 - stable_pct
 
@@ -363,7 +364,12 @@ public:
   // compute the effective weight from the stable and learned weights
 
   inline void C_Compute_StableWeights(LeabraCon* cn) {
-    cn->wt = cn->swt = cn->lwt; // once we set swt, wt also becomes equivalent
+    if(stable_mix.updt_to_lwt) {
+      cn->wt = cn->swt = cn->lwt; // once we set swt, wt also becomes equivalent
+    }
+    else {
+      cn->lwt = cn->swt = cn->wt; // keep lwt and swt coordinated to wt
+    }
   }
 
   inline void Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su);

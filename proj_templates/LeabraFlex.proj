@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6106
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6236
 LeabraProject .projects["LeabraFlex"] { 
   taBase_Group @.templates = [0] {
   };
@@ -34,120 +34,6 @@ LeabraProject .projects["LeabraFlex"] {
       };
 
       EditMthItem_Group @.mths = [0] {
-      };
-
-      DataTableCols @.data = [19] {
-	String_Data @["model_svn"] { };
-	String_Data @["submit_svn"] { };
-	String_Data @["submit_job"] { };
-	String_Data @["job_no"] { };
-	String_Data @["tag"] { };
-	String_Data @["status"] { };
-	String_Data @["job_out"] { };
-	String_Data @["job_out_file"] { };
-	String_Data @["dat_files"] { };
-	int_Data @["command_id"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	String_Data @["command"] { };
-	String_Data @["notes"] { };
-	String_Data @["repo_url"] { };
-	String_Data @["cluster"] { };
-	String_Data @["queue"] { };
-	String_Data @["run_time"] { };
-	int_Data @["ram_gb"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	int_Data @["n_threads"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	int_Data @["mpi_nodes"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-      };
-
-      DataTableCols @.data = [19] {
-	String_Data @["model_svn"] { };
-	String_Data @["submit_svn"] { };
-	String_Data @["submit_job"] { };
-	String_Data @["job_no"] { };
-	String_Data @["tag"] { };
-	String_Data @["status"] { };
-	String_Data @["job_out"] { };
-	String_Data @["job_out_file"] { };
-	String_Data @["dat_files"] { };
-	int_Data @["command_id"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	String_Data @["command"] { };
-	String_Data @["notes"] { };
-	String_Data @["repo_url"] { };
-	String_Data @["cluster"] { };
-	String_Data @["queue"] { };
-	String_Data @["run_time"] { };
-	int_Data @["ram_gb"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	int_Data @["n_threads"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	int_Data @["mpi_nodes"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-      };
-
-      DataTableCols @.data = [19] {
-	String_Data @["model_svn"] { };
-	String_Data @["submit_svn"] { };
-	String_Data @["submit_job"] { };
-	String_Data @["job_no"] { };
-	String_Data @["tag"] { };
-	String_Data @["status"] { };
-	String_Data @["job_out"] { };
-	String_Data @["job_out_file"] { };
-	String_Data @["dat_files"] { };
-	int_Data @["command_id"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	String_Data @["command"] { };
-	String_Data @["notes"] { };
-	String_Data @["repo_url"] { };
-	String_Data @["cluster"] { };
-	String_Data @["queue"] { };
-	String_Data @["run_time"] { };
-	int_Data @["ram_gb"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	int_Data @["n_threads"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
-	int_Data @["mpi_nodes"] { 
-     UserDataItem_List @*(.user_data_) {
-	    UserDataItem @["NARROW"] { };
-     };
-};
       };
 
       ParamSearchAlgo_List @.search_algos = [0] {
@@ -1718,10 +1604,11 @@ LeabraProject .projects["LeabraFlex"] {
 	  ProgVar @["network"] { };
 	};
 
-	ProgVar_List @.vars = [3] {
+	ProgVar_List @.vars = [4] {
 	  ProgVar @["adapt_rel_abs_netin"] { };
 	  ProgVar @["compute_rel_netin"] { };
 	  ProgVar @["save_wts_interval"] { };
+	  ProgVar @["stable_wt_update_interval"] { };
 	};
 
 	Function_List @.functions = [0] {
@@ -1730,12 +1617,23 @@ LeabraProject .projects["LeabraFlex"] {
 	ProgEl_List @.init_code = [0] {
 	};
 
-	ProgEl_List @.prog_code = [5] {
-	  MethodCall @[0] { 
+	ProgEl_List @.prog_code = [6] {
+	  IfElse @[0] { 
+	    ProgEl_List @.true_code = [1] {
+	      MethodCall @[0] { 
+		ProgArg_List @.meth_args = [0] {
+		};
+	      };
+	    };
+
+	    ProgEl_List @.false_code = [0] {
+	    };
+	  };
+	  MethodCall @[1] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
-	  IfElse @[1] { 
+	  IfElse @[2] { 
 	    ProgEl_List @.true_code = [2] {
 	      MethodCall @[0] { 
 		ProgArg_List @.meth_args = [0] {
@@ -1761,16 +1659,16 @@ LeabraProject .projects["LeabraFlex"] {
 	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MemberMethodCall @[2] { 
+	  MemberMethodCall @[3] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
-	  ProgramCall @[3] { 
+	  ProgramCall @[4] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  IfElse @[4] { 
+	  IfElse @[5] { 
 	    ProgEl_List @.true_code = [1] {
 	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [1] {
@@ -2513,6 +2411,8 @@ LeabraProject .projects["LeabraFlex"] {
 <meta charset=\"UTF-8\">
 <meta name=\"generator\" content=\"MediaWiki 1.20alpha\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/Drafts/Drafts.css?3\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/emergent/api.php?action=rsd\">
@@ -2526,24 +2426,31 @@ LeabraProject .projects["LeabraFlex"] {
 <link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/gumax_print.css?303\" media=\"print\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style type=\"text/css\">.js-messagebox{margin:1em 5%;padding:0.5em 2.5%;border:1px solid #ccc;background-color:#fcfcfc;font-size:0.8em}.js-messagebox .js-messagebox-group{margin:1px;padding:0.5em 2.5%;border-bottom:1px solid #ddd}.js-messagebox .js-messagebox-group:last-child{border-bottom:thin none transparent}
 
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:8b08bdc91c52a9ffba396dccfb5b473c */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
-<link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=gumaxdd&amp;*\">
-<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.editsection{display:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:8b08bdc91c52a9ffba396dccfb5b473c */.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
 
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:bbc2580de445604b1dcdb5561cbe4c3c */</style>
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */.ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute !important;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px)}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:before,.ui-helper-clearfix:after{content:\"\";display:table}.ui-helper-clearfix:after{clear:both}.ui-helper-clearfix{zoom:1}.ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:Verdana,Arial,sans-serif;font-size:1.1em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:Verdana,Arial,sans-serif;font-size:1em}.ui-widget-content{border:1px solid #aaaaaa;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_75_ffffff_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x;color:#222222}.ui-widget-content a{color:#222222}.ui-widget-header{border:1px solid #aaaaaa;background:#cccccc url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_highlight-soft_75_cccccc_1x100.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #d3d3d3;background:#e6e6e6 url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_75_e6e6e6_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;font-weight:normal;color:#555555}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#555555;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #999999;background:#dadada url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_75_dadada_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;font-weight:normal;color:#212121}.ui-state-hover a,.ui-state-hover a:hover{color:#212121;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #aaaaaa;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_65_ffffff_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;font-weight:normal;color:#212121}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#212121;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #fcefa1;background:#fbf9ee url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_55_fbf9ee_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#fef1ec url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_95_fef1ec_1x400.png?2011-10-27T17:31:40Z) 50% 50% repeat-x;color:#cd0a0a}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#cd0a0a}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#cd0a0a}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px;background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2011-10-27T17:31:40Z)}.ui-widget-content .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2011-10-27T17:31:40Z)}.ui-widget-header .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2011-10-27T17:31:40Z)}.ui-state-default .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_888888_256x240.png?2011-10-27T17:31:40Z)}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_454545_256x240.png?2011-10-27T17:31:40Z)}.ui-state-active .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_454545_256x240.png?2011-10-27T17:31:40Z)}.ui-state-highlight .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_2e83ff_256x240.png?2011-10-27T17:31:40Z)}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_cd0a0a_256x240.png?2011-10-27T17:31:40Z)} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-all,.ui-corner-top,.ui-corner-left,.ui-corner-tl{-moz-border-radius-topleft:4px;-webkit-border-top-left-radius:4px;-khtml-border-top-left-radius:4px;border-top-left-radius:4px}.ui-corner-all,.ui-corner-top,.ui-corner-right,.ui-corner-tr{-moz-border-radius-topright:4px;-webkit-border-top-right-radius:4px;-khtml-border-top-right-radius:4px;border-top-right-radius:4px}.ui-corner-all,.ui-corner-bottom,.ui-corner-left,.ui-corner-bl{-moz-border-radius-bottomleft:4px;-webkit-border-bottom-left-radius:4px;-khtml-border-bottom-left-radius:4px;border-bottom-left-radius:4px}.ui-corner-all,.ui-corner-bottom,.ui-corner-right,.ui-corner-br{-moz-border-radius-bottomright:4px;-webkit-border-bottom-right-radius:4px;-khtml-border-bottom-right-radius:4px;border-bottom-right-radius:4px} .ui-widget-overlay{background:#aaaaaa url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_0_aaaaaa_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x;opacity:.3;filter:Alpha(Opacity=30)}.ui-widget-shadow{margin:-8px 0 0 -8px;padding:8px;background:#aaaaaa url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_0_aaaaaa_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x;opacity:.3;filter:Alpha(Opacity=30);-moz-border-radius:8px;-khtml-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}
+
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:c65a731aaede2e94e158c557d080fbbb */.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
+
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:fdc78b432b6e24b0d7c2ca5fd4601f0c */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=gumaxdd&amp;*\">
+<style>a{text-decoration:none}
+
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:afff76ddf491b44c9c407be5f3445d9b */</style>
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20121215T200257Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgSearchNamespaces\":[0],\"sfgAutocompleteOnAllChars\":false,\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"sfgAutocompleteValues\":[],\"sfgShowOnSelect\":[],\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgFormErrorsHeader\":\"There were errors with your form input; see below.\",\"sfgBlankErrorStr\":\"cannot be blank\",\"sfgBadURLErrorStr\":\"must have the correct URL format, starting with \\\"http\\\"\",\"sfgBadEmailErrorStr\":\"must have a valid email address format\",\"sfgBadNumberErrorStr\":\"must be a valid number\",\"sfgBadDateErrorStr\":\"must be a valid date\",\"sfgAnonEditWarning\":\"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\",\"sfgSaveAndContinueSummary\":\"Saved using \\\"Save and continue\\\" button in form\",\"htTabIndexes\":[],\"wgVectorEnabledModules\":{\"collapsiblenav\":true,\"collapsibletabs\":true,\"editwarning\":false,\"expandablesearch\":false,\"footercleanup\":false,\"sectioneditlinks\":false,\"simplesearch\":true,\"experiments\":true},\"wgSVGEditEditor\":false,\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgSearchNamespaces\":[0],\"sfgAutocompleteOnAllChars\":false,\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"sfgAutocompleteValues\":[],\"sfgShowOnSelect\":[],\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgFormErrorsHeader\":\"There were errors with your form input; see below.\",\"sfgBlankErrorStr\":\"cannot be blank\",\"sfgBadURLErrorStr\":\"must have the correct URL format, starting with \\\"http\\\"\",\"sfgBadEmailErrorStr\":\"must have a valid email address format\",\"sfgBadNumberErrorStr\":\"must be a valid number\",\"sfgBadDateErrorStr\":\"must be a valid date\",\"sfgAnonEditWarning\":\"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\",\"sfgSaveAndContinueSummary\":\"Saved using \\\"Save and continue\\\" button in form\",\"htTabIndexes\":[],\"wgVectorEnabledModules\":{\"collapsiblenav\":true,\"collapsibletabs\":true,\"editwarning\":false,\"expandablesearch\":false,\"footercleanup\":false,\"sectioneditlinks\":false,\"simplesearch\":true,\"experiments\":true},\"wgSVGEditEditor\":false,\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
-mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":
-3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true});;},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"watchToken\":false});;},{},{});
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"40\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
+\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});;},{},{});mw.loader.
+implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"1a02bc4b75d26d0178be8464e2b4d1ca+\\\\\",\"watchToken\":\"e96f3e09cc52df407839d9b477be99e4+\\\\\"});;},{},{});
 
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:4031563f15ddd67cf30e5ad097c4d6dd */
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:daf5d3ce36ce899b8004266119b89896 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
-}</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.client%2Ccookie%2CmessageBox%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.page.startup%7Cmediawiki.util&amp;skin=gumaxdd&amp;version=20121215T200440Z&amp;*\"></script>
+}</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.client%2Ccookie%2CmessageBox%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.page.startup%7Cmediawiki.util&amp;skin=gumaxdd&amp;version=20130330T030410Z&amp;*\"></script>
 		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
 </head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd action-view\">
@@ -2571,7 +2478,12 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 		<div id=\"gumax-p-login\">
 				<!--li><a href=\"#\">My Accounts</a-->
 		<ul>
-			<li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\">Log in / create account</a></li>
+			<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\">Oreilly</a></li>
+			<li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\">My talk</a></li>
+			<li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\">My preferences</a></li>
+			<li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\">My watchlist</a></li>
+			<li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\">My contributions</a></li>
+			<li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlexProgs\">Log out</a></li>
 		</ul>
 	<!--/li-->
 		</div> <!-- end of Login Tools -->
@@ -2588,7 +2500,7 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 		<!--h5><label for=\"searchInput\">Search</label></h5-->
 		<div id=\"gumax-searchBody\">
 			<form action=\"/emergent/index.php/Special:Search\" id=\"searchform\"><div>
-				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\">
+				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\" autocomplete=\"off\">
 				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\">&nbsp;
 				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\">
 			</div></form>
@@ -2617,6 +2529,7 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 			<ul>
 				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
+<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
 <li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" title=\"Special:Browse/LeabraFlexProgs\">Browse properties</a></li>			</ul>
 			</li>
@@ -2633,8 +2546,13 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 
 			 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/LeabraFlexProgs\">Page</a></li>
 			 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\">Discussion</a></li>
-			 <li id=\"ca-viewsource\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">View source</a></li>
+			 <li id=\"ca-edit\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">Edit</a></li>
 			 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\">History</a></li>
+			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=delete\">Delete</a></li>
+			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlexProgs\">Move</a></li>
+			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=protect\">Protect</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=56b5b6abf274793aef1fa9a1c815a8f4%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=purge\">Refresh</a></li>
 		</ul>
 
 	</div>
@@ -2666,10 +2584,10 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 <li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
 </ul>
 </td></tr></tbody></table>
-<h1> <span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\"> ConfigData/ConfigTable </span></h1>
+<h1><span class=\"editsection\">[<a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a>]</span> <span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\"> ConfigData/ConfigTable </span></h1>
 <p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
 </p>
-<h1> <span class=\"mw-headline\" id=\"Program_Hierarchy\"> Program Hierarchy </span></h1>
+<h1><span class=\"editsection\">[<a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a>]</span> <span class=\"mw-headline\" id=\"Program_Hierarchy\"> Program Hierarchy </span></h1>
 <p>The call sequence is:
 </p>
 <ul><li> <b>MasterTrain</b>
@@ -2684,10 +2602,10 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 </dd></dl>
 </dd></dl>
 </dd></dl>
-<h1> <span class=\"mw-headline\" id=\"UtilProgs\"> UtilProgs </span></h1>
+<h1><span class=\"editsection\">[<a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a>]</span> <span class=\"mw-headline\" id=\"UtilProgs\"> UtilProgs </span></h1>
 <p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
 </p>
-<h1> <span class=\"mw-headline\" id=\"DMem_.28MPI.29\"> DMem (MPI) </span></h1>
+<h1><span class=\"editsection\">[<a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a>]</span> <span class=\"mw-headline\" id=\"DMem_.28MPI.29\"> DMem (MPI) </span></h1>
 <p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
 </p>
 <ul><li> After common weight initialization etc, the <b>TrainStart</b> program will generate a new random seed just before starting the Epoch -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.
@@ -2707,7 +2625,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20130214153758 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20130425163209 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -2731,6 +2649,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 			<ul>
 					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 					<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
+	<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
 	<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 					<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" title=\"Special:Browse/LeabraFlexProgs\">Browse properties</a></li>			</ul>
 		</div>
@@ -2741,13 +2660,13 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 4,943 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 6,039 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
 
 		<script>if(window.mw){
-mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.mwsuggest\",\"ext.headertabs\"], null, true);
+mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.watch.ajax\",\"mediawiki.legacy.mwsuggest\",\"ext.headertabs\"], null, true);
 }</script>
 <script type=\"text/javascript\" src=\"/emergent/extensions/Drafts/Drafts.js?3\"></script>
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
@@ -2768,14 +2687,14 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.m
 	<!-- end of gumax-f-list -->
 
 
-</div><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.headertabs%7Cjquery.checkboxShiftClick%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%7Cmediawiki.legacy.mwsuggest%7Cmediawiki.page.ready%7Cmediawiki.user&amp;skin=gumaxdd&amp;version=20121215T200442Z&amp;*\" type=\"text/javascript\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20121215T200248Z&amp;*\" type=\"text/javascript\"></script> <!-- ===== end of gumax-page ===== -->
+</div><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.headertabs%7Cjquery.checkboxShiftClick%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%7Cmediawiki.action.watch.ajax%7Cmediawiki.api%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.legacy.mwsuggest%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20130401T150454Z&amp;*\" type=\"text/javascript\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20130330T024858Z&amp;*\" type=\"text/javascript\"></script> <!-- ===== end of gumax-page ===== -->
 
 	<div style=\"clear:both\"></div>
 
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.205 secs. -->
+<!-- Served in 0.228 secs. -->
 
 
 
@@ -2896,1084 +2815,16 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.m
     el_def=0;
     group_type=GT_BUTTONS;
    };
-   jobs_submit {
-    name="jobs_submit";
-    desc=;
-    data {
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @["model_svn"] {
-      name="model_svn";
-      desc="svn revision for the model";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["submit_svn"] {
-      name="submit_svn";
-      desc="svn revision for the job submission commands";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["submit_job"] {
-      name="submit_job";
-      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_no"] {
-      name="job_no";
-      desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["tag"] {
-      name="tag";
-      desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_out"] {
-      name="job_out";
-      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_out_file"] {
-      name="job_out_file";
-      desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["dat_files"] {
-      name="dat_files";
-      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["command_id"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="command_id";
-      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["command"] {
-      name="command";
-      desc="emergent command line";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["repo_url"] {
-      name="repo_url";
-      desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["queue"] {
-      name="queue";
-      desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["run_time"] {
-      name="run_time";
-      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["ram_gb"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="ram_gb";
-      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["n_threads"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="n_threads";
-      desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["mpi_nodes"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-   };
-   jobs_running {
-    name="jobs_running";
-    desc=;
-    data {
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @["model_svn"] {
-      name="model_svn";
-      desc="svn revision for the model";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["submit_svn"] {
-      name="submit_svn";
-      desc="svn revision for the job submission commands";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["submit_job"] {
-      name="submit_job";
-      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_no"] {
-      name="job_no";
-      desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["tag"] {
-      name="tag";
-      desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_out"] {
-      name="job_out";
-      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_out_file"] {
-      name="job_out_file";
-      desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["dat_files"] {
-      name="dat_files";
-      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["command_id"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="command_id";
-      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["command"] {
-      name="command";
-      desc="emergent command line";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["repo_url"] {
-      name="repo_url";
-      desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["queue"] {
-      name="queue";
-      desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["run_time"] {
-      name="run_time";
-      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["ram_gb"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="ram_gb";
-      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["n_threads"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="n_threads";
-      desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["mpi_nodes"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-   };
-   jobs_done {
-    name="jobs_done";
-    desc=;
-    data {
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @["model_svn"] {
-      name="model_svn";
-      desc="svn revision for the model";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["submit_svn"] {
-      name="submit_svn";
-      desc="svn revision for the job submission commands";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["submit_job"] {
-      name="submit_job";
-      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_no"] {
-      name="job_no";
-      desc="job number on cluster -- assigned once the job is submitted to the cluster";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["tag"] {
-      name="tag";
-      desc="unique tag id for this job -- all files etc are named according to this tag";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_out"] {
-      name="job_out";
-      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["job_out_file"] {
-      name="job_out_file";
-      desc="job output file -- file name containing full job output information -- file name should be tag.out";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["dat_files"] {
-      name="dat_files";
-      desc="list of data table output files generated by model -- files are named as  tag_<extra>.out -- this list automatically generated by parsing the result files checked into svn";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["command_id"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="command_id";
-      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["command"] {
-      name="command";
-      desc="emergent command line";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["notes"] {
-      name="notes";
-      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["repo_url"] {
-      name="repo_url";
-      desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["queue"] {
-      name="queue";
-      desc="if specified, indicate a particular queue on the computing resource";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["run_time"] {
-      name="run_time";
-      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["ram_gb"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="ram_gb";
-      desc="how many gigabytes of ram is required?  -1 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["n_threads"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="n_threads";
-      desc="number of parallel threads to use for running";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["mpi_nodes"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="mpi_nodes";
-      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [0]       };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-   };
    search_algos {
     name=;
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
    cur_search_algo=NULL;
+   last_submit_time=;
    notes=;
+   extra_files=;
+   svn_repo=;
    repo_url=;
    cluster=;
    queue=;
@@ -3982,6 +2833,10 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.m
    n_threads=2;
    use_mpi=0;
    mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
+   nowin_x=0;
   };
  };
  data {
@@ -4279,7 +3134,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.m
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_20";
+       name="UserDataItem_List_57";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -4301,7 +3156,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.legacy.m
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_21";
+       name="UserDataItem_List_58";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -11169,6 +10024,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
      };
+     ProgVar @["stable_wt_update_interval"] {
+      name="stable_wt_update_interval";
+      var_type=T_Int;
+      int_val=1;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
+      init_from=NULL;
+     };
     };
     functions {
      name=;
@@ -11184,12 +10049,44 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=ProgCode;
      el_def=0;
-     MethodCall @[0] {
+     IfElse @[0] {
+      desc=;
+      flags=NEW_EL;
+      orig_prog_code="if(network.epoch % stable_wt_update_interval == 0)";
+      cond {
+       expr="network.epoch % stable_wt_update_interval == 0";
+      };
+      show_false_code=0;
+      true_code {
+       name="ProgEl_List_124";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc=;
+	flags=NEW_EL|CAN_REVERT_TO_CODE;
+	orig_prog_code="network.Compute_StableWeights()";
+	result_var=NULL;
+	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$$;
+	method=LeabraNetwork::Compute_StableWeights;
+	meth_args {
+	 name="ProgArg_List_0";
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+      };
+      false_code {
+       name="ProgEl_List_125";
+       el_typ=ProgCode;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=0;
       orig_prog_code=;
       result_var=NULL;
-      obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$$;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["EpochEnd"].args["network"]$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name=;
@@ -11197,9 +10094,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     IfElse @[1] {
+     IfElse @[2] {
       desc=;
-      flags=NEW_EL;
+      flags=0;
       orig_prog_code=;
       cond {
        expr="compute_rel_netin";
@@ -11274,7 +10171,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     MemberMethodCall @[2] {
+     MemberMethodCall @[3] {
       desc="start the epoch timer to record computation time per epoch";
       flags=0;
       orig_prog_code=;
@@ -11288,7 +10185,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     ProgramCall @[3] {
+     ProgramCall @[4] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -11310,7 +10207,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraEpochMonitor"]$$;
       targ_ld_init="*LeabraEpochMonitor*";
      };
-     IfElse @[4] {
+     IfElse @[5] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -13942,6 +12839,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
 	  unit_src_path=".layers[2].units[0]";
+	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
 	  hist_max=100;
@@ -14784,7 +13682,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: old_gelin=0: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
+     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act_lrn_on=0;
+     act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
@@ -14854,7 +13754,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        learn_rule=CTLEABRA_XCAL;
        inhib=0;
-       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+       wt_scale {abs=1: rel=1: sem_extra=2: };
+       diff_scale_p=0;
+       wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
        lrate=0.02;
@@ -14909,7 +13811,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 step=1;
 	};
        };
+       ignore_unlearnable=1;
        wt_sig {gain=6: off=1: dwt_norm=1: };
+       stable_mix {stable_pct=0.8: learn_pct=0.2: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
@@ -14930,7 +13834,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=CTLEABRA_XCAL;
      inhib=0;
-     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+     wt_scale {abs=1: rel=1: sem_extra=2: };
+     diff_scale_p=0;
+     wt_scale_p {abs=1: rel=1: sem_extra=2: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
      lrate=0.02;
@@ -14985,7 +13891,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        step=1;
       };
      };
+     ignore_unlearnable=1;
      wt_sig {gain=6: off=1: dwt_norm=1: };
+     stable_mix {stable_pct=0.8: learn_pct=0.2: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
@@ -15180,6 +14088,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraPrjn @["Fm_Input"] {
        name="Fm_Input";
        off=0;
+       disp=1;
        from_type=CUSTOM;
        from=.projects["LeabraFlex"].networks["Network_0"].layers["Input"]$$;
        spec {type=FullPrjnSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
@@ -15198,6 +14107,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraPrjn @["Fm_Output"] {
        name="Fm_Output";
        off=0;
+       disp=1;
        from_type=CUSTOM;
        from=.projects["LeabraFlex"].networks["Network_0"].layers["Output"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
@@ -15262,6 +14172,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraPrjn @["Fm_Hidden"] {
        name="Fm_Hidden";
        off=0;
+       disp=1;
        from_type=CUSTOM;
        from=.projects["LeabraFlex"].networks["Network_0"].layers["Hidden"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
@@ -15340,6 +14251,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
    learn_rule=CTLEABRA_XCAL;
+   ti_mode=0;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
    sequence_init=DO_NOTHING;

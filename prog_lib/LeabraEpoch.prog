@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6236
 Program .projects[0].programs.gp[0][2] { 
   ProgObjList @.objs = [0] {
   };
@@ -11,7 +11,7 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [8] {
+  ProgVar_List @.vars = [9] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -20,6 +20,7 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[5] { };
     ProgVar @[6] { };
     ProgVar @[7] { };
+    ProgVar @[8] { };
   };
 
   Function_List @.functions = [0] {
@@ -30,7 +31,7 @@ Program .projects[0].programs.gp[0][2] {
     AssignExpr @[1] { };
   };
 
-  ProgEl_List @.prog_code = [10] {
+  ProgEl_List @.prog_code = [11] {
     NetCounterInit @[0] { };
     AssignExpr @[1] { };
     MethodCall @[2] { 
@@ -71,11 +72,22 @@ Program .projects[0].programs.gp[0][2] {
       ProgEl_List @.false_code = [0] {
       };
     };
-    MethodCall @[6] { 
+    IfElse @[6] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+    };
+    MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
     };
-    IfElse @[7] { 
+    IfElse @[8] { 
       ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
@@ -101,11 +113,11 @@ Program .projects[0].programs.gp[0][2] {
       ProgEl_List @.false_code = [0] {
       };
     };
-    MethodCall @[8] { 
+    MethodCall @[9] { 
       ProgArg_List @.meth_args = [0] {
       };
     };
-    ProgramCall @[9] { 
+    ProgramCall @[10] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
@@ -243,6 +255,16 @@ Program .projects[0].programs.gp[0][2] {
    desc="use the computed rel and abs netin values to adapt the wt_scale.abs and wt_scale.rel params of network conspecs to match target values that are set on the projections -- see conspec rel_net_adapt and layerspec abs_net_adapt parmeters and comments for more information";
    init_from=NULL;
   };
+  ProgVar @[8] {
+   name="stable_wt_update_interval";
+   var_type=T_Int;
+   int_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
+   init_from=NULL;
+  };
  };
  functions {
   name=;
@@ -256,6 +278,7 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc="initialize trial counter (local variable and in the network)";
    flags=0;
+   orig_prog_code=;
    network_var=.projects[0].programs.gp[0][2].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$$;
    counter=Network::trial;
@@ -264,6 +287,7 @@ Program .projects[0].programs.gp[0][2] {
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
    flags=0;
+   orig_prog_code=;
    result_var=.projects[0].programs.gp[0][2].vars[4]$$;
    expr {
     expr="network.epoch_time";
@@ -277,6 +301,7 @@ Program .projects[0].programs.gp[0][2] {
   NetCounterInit @[0] {
    desc="initialize trial counter (local variable and in the network)";
    flags=0;
+   orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][2].args[0]$;
    local_ctr_var=$.projects[0].programs.gp[0][2].vars[1]$;
    counter=Network::trial;
@@ -285,6 +310,7 @@ Program .projects[0].programs.gp[0][2] {
   AssignExpr @[1] {
    desc="get pointer to epoch timer object on network";
    flags=0;
+   orig_prog_code=;
    result_var=$.projects[0].programs.gp[0][2].vars[4]$;
    expr {
     expr="network.epoch_time";
@@ -293,6 +319,7 @@ Program .projects[0].programs.gp[0][2] {
   MethodCall @[2] {
    desc="start the epoch timer to record computation time per epoch";
    flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][2].vars[4]$;
    method=TimeUsed::StartTimer;
@@ -315,6 +342,7 @@ Program .projects[0].programs.gp[0][2] {
   MethodCall @[3] {
    desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
    flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][2].vars[2]$$;
    method=DataTable::ResetData;
@@ -327,6 +355,7 @@ Program .projects[0].programs.gp[0][2] {
   NetDataLoop @[4] {
    desc="iterates over the events/rows of input_data, according to data_loop_order variable";
    flags=0;
+   orig_prog_code=;
    loop_code {
     name=;
     el_typ=ProgCode;
@@ -334,6 +363,7 @@ Program .projects[0].programs.gp[0][2] {
     ProgramCall @[0] {
      desc="run the trial program, passing network and input_data";
      flags=0;
+     orig_prog_code=;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -365,10 +395,11 @@ Program .projects[0].programs.gp[0][2] {
     IfElse @[1] {
      desc=;
      flags=0;
+     orig_prog_code=;
      cond {
       expr="step_on_err && network.sse > 0.0";
      };
-     show_false_code=1;
+     show_false_code=0;
      true_code {
       name="ProgEl_List_100";
       el_typ=ProgCode;
@@ -376,6 +407,7 @@ Program .projects[0].programs.gp[0][2] {
       StopStepPoint @[0] {
        desc=;
        flags=0;
+       orig_prog_code=;
       };
      };
      false_code {
@@ -402,6 +434,7 @@ Program .projects[0].programs.gp[0][2] {
   IfElse @[5] {
    desc="if full batch mode, update only at end of epoch";
    flags=0;
+   orig_prog_code=;
    cond {
     expr="network.wt_update == Network::BATCH";
    };
@@ -413,6 +446,7 @@ Program .projects[0].programs.gp[0][2] {
     MethodCall @[0] {
      desc="final update of weights based on accumulated changes";
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][2].args[0]$;
      method=Network::Compute_Weights;
@@ -429,9 +463,42 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  MethodCall @[6] {
+  IfElse @[6] {
+   desc=;
+   flags=NEW_EL;
+   orig_prog_code="if(network.epoch % stable_wt_update_interval == 0)";
+   cond {
+    expr="network.epoch % stable_wt_update_interval == 0";
+   };
+   show_false_code=1;
+   true_code {
+    name="ProgEl_List_124";
+    el_typ=ProgCode;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     orig_prog_code="network.Compute_StableWeights()";
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][2].args[0]$;
+     method=LeabraNetwork::Compute_StableWeights;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_125";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+  };
+  MethodCall @[7] {
    desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
    flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][2].args[0]$;
    method=LeabraNetwork::Compute_EpochStats;
@@ -441,9 +508,10 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  IfElse @[7] {
+  IfElse @[8] {
    desc=;
-   flags=NEW_EL;
+   flags=0;
+   orig_prog_code=;
    cond {
     expr="compute_rel_netin";
    };
@@ -455,6 +523,7 @@ Program .projects[0].programs.gp[0][2] {
     MethodCall @[0] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][2].args[0]$;
      method=LeabraNetwork::Compute_AvgAbsRelNetin;
@@ -467,6 +536,7 @@ Program .projects[0].programs.gp[0][2] {
     IfElse @[1] {
      desc=;
      flags=0;
+     orig_prog_code=;
      cond {
       expr="adapt_rel_abs_netin";
      };
@@ -478,6 +548,7 @@ Program .projects[0].programs.gp[0][2] {
       MethodCall @[0] {
        desc=;
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects[0].programs.gp[0][2].args[0]$;
        method=LeabraNetwork::Compute_AdaptRelNetin;
@@ -490,6 +561,7 @@ Program .projects[0].programs.gp[0][2] {
       MethodCall @[1] {
        desc=;
        flags=0;
+       orig_prog_code=;
        result_var=NULL;
        obj=$.projects[0].programs.gp[0][2].args[0]$;
        method=LeabraNetwork::Compute_AdaptAbsNetin;
@@ -513,9 +585,10 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  MethodCall @[8] {
+  MethodCall @[9] {
    desc="done with the computation in the epoch -- record time it took";
    flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][2].vars[4]$;
    method=TimeUsed::EndTimer;
@@ -525,9 +598,10 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  ProgramCall @[9] {
+  ProgramCall @[10] {
    desc="run program that records data from network and possibly other sources about the epoch";
    flags=0;
+   orig_prog_code=;
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -547,6 +621,6 @@ Program .projects[0].programs.gp[0][2] {
    targ_ld_init="*LeabraEpochMonitor*";
   };
  };
- step_prog=NULL;
+ step_prog=.projects[0].programs.gp[0][2]$$;
  step_n=1;
 };

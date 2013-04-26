@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.0.0.0 rev5535
+// ta_Dump File v3.0 -- code v6.2.0.0 rev6236
 LeabraProject .projects["LeabraBlank"] { 
   taBase_Group @.templates = [0] {
   };
@@ -14,7 +14,17 @@ LeabraProject .projects["LeabraBlank"] {
 };
   };
 
-  SelectEdit_Group @.edits = [0] {
+  SelectEdit_Group @.edits = [1] {
+    ClusterRun @["ClusterRun"] { 
+      EditMbrItem_Group @.mbrs = [0] {
+      };
+
+      EditMthItem_Group @.mths = [0] {
+      };
+
+      ParamSearchAlgo_List @.search_algos = [0] {
+      };
+    };
   };
 
   DataTable_Group @.data = [0] {
@@ -52,18 +62,18 @@ LeabraProject .projects["LeabraBlank"] {
   Program_Group @.programs = [0] {
   };
 
-  DataViewer_List @.viewers = [1] {
+  taViewer_List @.viewers = [1] {
     MainWindowViewer @["Browser2"] { 
       ToolBar_List @.toolbars = [1] {
 	ToolBar @["Application"] { };
       };
 
       FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @["Tree"] { };
+	BrowseViewerTaBase @["Tree"] { };
 	PanelViewer @["Panels"] { };
-	T3DataViewer @["T3Frames"] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @["Frame1"] { 
+	T3PanelViewer @["T3Frames"] { 
+	  T3Panel_List @.panels = [1] {
+	    T3Panel @["Frame1"] { 
 	      T3DataView_List @.children = [0] {
 	      };
 
@@ -141,8 +151,46 @@ LeabraProject .projects["LeabraBlank"] {
  };
  edits {
   name="SelectEdit_Group_0";
-  el_typ=SelectEdit;
+  el_typ=ClusterRun;
   el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=1;
+   desc=;
+   mbrs {
+    name=;
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name=;
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   search_algos {
+    name=;
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   last_submit_time=;
+   notes=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=0;
+   n_threads=1;
+   use_mpi=0;
+   mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
+   nowin_x=0;
+  };
  };
  data {
   name="DataTable_Group_0";
@@ -230,7 +278,7 @@ LeabraProject .projects["LeabraBlank"] {
  };
  viewers {
   name="DataViewer_List_0";
-  el_typ=TopLevelViewer;
+  el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
    name="Browser2";
@@ -255,9 +303,9 @@ LeabraProject .projects["LeabraBlank"] {
    };
    frames {
     name="FrameViewer_List_0";
-    el_typ=FrameViewer;
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @["Tree"] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
@@ -270,15 +318,15 @@ LeabraProject .projects["LeabraBlank"] {
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @["T3Frames"] {
+    T3PanelViewer @["T3Frames"] {
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
+     panels {
       name="T3DataViewFrame_List_0";
-      el_typ=T3DataViewFrame;
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @["Frame1"] {
+      T3Panel @["Frame1"] {
        name="Frame1";
        m_data=NULL;
        visible=1;
@@ -349,7 +397,7 @@ LeabraProject .projects["LeabraBlank"] {
    };
    docks {
     name="DockViewer_List_0";
-    el_typ=DockViewer;
+    el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
      name="Tools";
