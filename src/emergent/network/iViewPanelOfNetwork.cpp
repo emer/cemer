@@ -621,6 +621,7 @@ void iViewPanelOfNetwork::butSetColor_pressed() {
   if (NetView *nv = getNetView()) {
     nv->CallFun("SetColorSpec");
   }
+  repaint();
 }
 
 void iViewPanelOfNetwork::hist_back_all() {
