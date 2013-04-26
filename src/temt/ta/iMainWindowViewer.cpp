@@ -264,7 +264,7 @@ void iMainWindowViewer::raise() {
 
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
   QMainWindow::moveEvent(e);
-  taProject* prj = curProject();
+//  taProject* prj = curProject();
   AlignCssConsole();
 }
 
@@ -1111,7 +1111,7 @@ bool iMainWindowViewer::FocusLeftBrowser() {
 }
 
 bool iMainWindowViewer::FocusMiddlePanel() {
-  iTreeView* mtv = GetMainTreeView();
+//  iTreeView* mtv = GetMainTreeView();
   MainWindowViewer* db = viewer();
   if(!db) return false;
   PanelViewer* pv = db->GetMiddlePanel();

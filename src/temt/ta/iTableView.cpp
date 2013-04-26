@@ -107,7 +107,7 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
 
   // note: emacs nav keys have all been converted into basic arrow keys by this point..
 
-  QCoreApplication* app = QCoreApplication::instance();
+//  QCoreApplication* app = QCoreApplication::instance();
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   QPersistentModelIndex newCurrent;
   if(ctrl_pressed) {

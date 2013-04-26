@@ -919,7 +919,7 @@ void taiMisc::CenterOn_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidge
   int w_ht = widg->height();
   int top_in_vc = MapToAreaV_SA(sa, sa_main_widg, widg, 0);
   int ctr_pos = top_in_vc + w_ht / 2;
-  int vpt_ht = sa->viewport()->height();
+//  int vpt_ht = sa->viewport()->height();
   ScrollTo_SA(sa, ctr_pos);
 }
 
@@ -934,7 +934,7 @@ void taiMisc::KeepInView_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWid
 
   int vpt_ht = sa->viewport()->height();
   int scpos = sa->verticalScrollBar()->value();
-  int scbot = scpos + sa->viewport()->height();
+//  int scbot = scpos + sa->viewport()->height();
   if(ctr_pos < scpos) {         // closer to top
     int nwtop = MAX(top_in_vc-12,0);
     ScrollTo_SA(sa, nwtop); // scroll up to top, plus a bit of margin

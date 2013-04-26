@@ -772,7 +772,7 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
     return inherited::eventFilter(obj, event);
   }
 
-  QCoreApplication* app = QCoreApplication::instance();
+//  QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
   if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
     return true;

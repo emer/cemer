@@ -311,7 +311,7 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
   cssTA* sp = (cssTA*)s.GetNonRefObj();
   int sp_ptr_cnt = sp->GetNonRefPtrCnt();
   void* sp_ptr = sp->GetNonRefPtr();
-  TypeDef* sp_typ = sp->GetNonRefTypeDef();
+//  TypeDef* sp_typ = sp->GetNonRefTypeDef();
   if(ptr_cnt == sp_ptr_cnt) {
     ptr = sp_ptr;
 //     type_def = sp_typ;		// this prevents any form of casting!

@@ -304,7 +304,6 @@ bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
   else {                        // must be > 2
     for(int y=0; y<ht; y++) {
       for(int x=0; x< wd; x++) {
-        QRgb pix = q_img.pixel(x, y);
         if(isfloat) {
           int rval = (int)(mat->FastElAsFloat(x, y, 0) * 255.0f);
           int gval = (int)(mat->FastElAsFloat(x, y, 1) * 255.0f);

@@ -2197,7 +2197,7 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
                                  const char delim, bool quote_str, bool& got_quote) {
   got_quote = false;
-  int c;
+  int c = EOF;
   int depth = 0;
   int len = istr.length();
   if(idx >= len) return EOF;

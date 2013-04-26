@@ -1313,7 +1313,7 @@ static cssEl* cssElCFun_print_stub(int argc, cssEl* arg[]) {
   if(argc == 0) return &cssMisc::Void;
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
+//  cssCmdShell* csh = cp->top->cmd_shell;
   String fh = arg[1]->PrintStr();
   if(cp->top->debug > 1)
     fh << "\trefn: " << arg[1]->refn;
@@ -1938,7 +1938,7 @@ static cssEl* cssElCFun_fprintf_stub(int na, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_printf_stub(int na, cssEl* arg[]) {
-  cssProg* cp = arg[0]->prog;
+//  cssProg* cp = arg[0]->prog;
   String str;
   for(int i=1; i <= na; i++) {
     str << (arg[i])->PrintFStr();

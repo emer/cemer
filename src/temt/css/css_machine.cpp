@@ -150,6 +150,7 @@ String cssMisc::GetSourceLoc(cssProg* prog) {
     top = prog->top;
   else
     top = cssMisc::cur_top;
+  if(!top) return _nilString;
 
   if(top->state & (cssProg::State_Run)) {
     return top->CurFullRunSrc();

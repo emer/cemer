@@ -266,11 +266,11 @@ void Network::UpdateAfterEdit_impl(){
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
 
-  if(name.empty()) {
-    taMisc::Error("name should not be empty -- this indicates the dreaded null dialog bug!!  triggering div zero now -- please report the trace to Randy!");
-    int zero = 0;
-    String msg = String(1 / zero); // trigger error
-  }
+//  if(name.empty()) {
+//    taMisc::Error("name should not be empty -- this indicates the dreaded null dialog bug!!  triggering div zero now -- please report the trace to Randy!");
+//    int zero = 0;
+//    String msg = String(1 / zero); // trigger error
+//  }
 
   if(taMisc::is_loading) {
     brain_atlas = brain_atlases->FindName(brain_atlas_name);

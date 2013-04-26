@@ -588,7 +588,7 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
     
     double recall = tp / (tp + fn);
     double precision = tp / (tp + fp);
-    double fmeasure = 2*precision*recall/(precision+recall);
+    double fmeasure = 2.0*precision*recall/(precision+recall);
     double tpr = recall;
     double fpr = fp / (fp + tn);
  
@@ -601,7 +601,7 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
     dest_data->SetVal(fn, "FN", i);
     dest_data->SetVal(precision, "Precision", i);
     dest_data->SetVal(recall, "Recall", i);
-    dest_data->SetVal(recall, "Fmeasure", i);
+    dest_data->SetVal(fmeasure, "Fmeasure", i);
   }
 
   int obs = vec_signal->size;

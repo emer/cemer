@@ -870,7 +870,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
     taMisc::Error("run_time is blank -- you MUST specify a run time -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate!");
     return false;
   }
-  int rth;                      // run time in hours
+  int rth = 0;                      // run time in hours
   if(run_time.endsWith('m')) {
     rth = (int)run_time.before('m');
     if(rth == 0) {

@@ -40,7 +40,6 @@ int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
 }
 
 int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
-  int prj_sz = leaves;
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
   // note: used to do Dump_Load_post here but now it is done where it should be..
   return rval;

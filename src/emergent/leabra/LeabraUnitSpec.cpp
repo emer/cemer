@@ -405,7 +405,7 @@ void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
     SetUnique("act", true);
     act.i_thr = LeabraActFunExSpec::NO_AH; // key for dopamine effects
   }
-  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
+//  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
   // if(net) {
   // }
 }
@@ -700,7 +700,7 @@ void LeabraUnitSpec::Trial_NoiseInit(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraLayer* lay = u->own_lay();
+//  LeabraLayer* lay = u->own_lay();
 
   if(net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C) {
     float lval = u->avg_m;
@@ -2050,7 +2050,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
 
   lin->SetUserData("PLOT_2", true);
 
-  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
+//  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
   incr = MAX(0.001f, incr);	// must be pos
   float x;

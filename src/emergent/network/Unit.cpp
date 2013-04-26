@@ -134,7 +134,7 @@ int Unit::GetMyLeafIndex() {
   if(ug->owner->InheritsFrom(&TA_Layer))
     return idx; // simple: we're the only unit group
   // note: this assumes only one layer of subgroups, which is all that is supported anyway
-  Layer* lay = (Layer*)ug->own_lay;
+//  Layer* lay = (Layer*)ug->own_lay;
   return ug->idx * ug->size + idx; // our unit group index within its owning list, times number of items per group (presumably same throughout), plus our own index..
 }
 

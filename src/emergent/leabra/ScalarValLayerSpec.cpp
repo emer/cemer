@@ -368,6 +368,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(LeabraLayer* lay, Layer::AccessMo
       u->vcb.g_a = val;
     else if(bias_val.un == ScalarValBias::BWT)
       u->bias.OwnCn(0)->wt = -val;
+    val += incr;
   }
 }
 
@@ -384,6 +385,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(LeabraLayer* lay, Layer::AccessMo
       u->vcb.g_h = val;
     else if(bias_val.un == ScalarValBias::BWT)
       u->bias.OwnCn(0)->wt = val;
+    val += incr;
   }
 }
 

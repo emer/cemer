@@ -70,7 +70,7 @@ void taiTabularDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
   istr.str(string(ba.data(), ba.size()));
 
   String val; // each cell val
-  TsvSep sep; // sep after reading the cell val
+  TsvSep sep; // TODO: need to initialize here sep after reading the cell val
 
   // client needs to have adjust paste region if necessary; we take it literally
 

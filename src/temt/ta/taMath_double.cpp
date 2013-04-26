@@ -1771,8 +1771,9 @@ double taMath_double::scalar_dist(double v1, double v2,
     break;
   case INNER_PROD:
     rval = v1 * v2;
+    break;
   case CROSS_ENTROPY: {
-    double q = max(v2,0.000001); q = max(v2,0.999999);
+    double q = max(v2,0.000001); q = max(q,0.999999);
     if(v1 >= 1.0)
       rval = -log(q);
     else if(v1 <= 0.0)

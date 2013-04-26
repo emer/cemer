@@ -907,14 +907,14 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
         c = taMisc::skip_white(strm, true); // peek
         if(c == '=') {          // this means its a link
           strm.get();
-          c = taMisc::read_word(strm); // get type
+          taMisc::read_word(strm); // get type
           String typ_nm = taMisc::LexBuf;
           TypeDef* eltd = taMisc::FindTypeName(typ_nm);
           if(TestWarning((!eltd || !eltd->InheritsFrom(el_base)),
                          "Dump_Load_Value",
                          "Null or invalid type:",typ_nm,"to link into list of types:",
                          el_base->name)) return false;
-          c = taMisc::read_till_rb_or_semi(strm);
+          taMisc::read_till_rb_or_semi(strm);
           String lnk_path = taMisc::LexBuf;
           dumpMisc::path_subs.FixPath(eltd, tabMisc::root, lnk_path);
           MemberDef* md;

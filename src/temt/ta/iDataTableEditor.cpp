@@ -223,7 +223,7 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
     tvTable->m_window->FocusIsMiddlePanel();
   }
 
-  QCoreApplication* app = QCoreApplication::instance();
+//   QCoreApplication* app = QCoreApplication::instance();
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed) {

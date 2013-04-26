@@ -250,10 +250,11 @@ void VEJointView::Render_impl() {
 
 // callback for transformer dragger
 void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
-  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
-  T3VEJoint* obso = (T3VEJoint*)userData;
-  VEJointView* obv = static_cast<VEJointView*>(obso->dataView());
-  VEJoint* ob = obv->Joint();
-  VEWorldView* wv = obv->parent();
+  // TODO: write this
+//  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+//  T3VEJoint* obso = (T3VEJoint*)userData;
+//  VEJointView* obv = static_cast<VEJointView*>(obso->dataView());
+//  VEJoint* ob = obv->Joint();
+//  VEWorldView* wv = obv->parent();
 }
 

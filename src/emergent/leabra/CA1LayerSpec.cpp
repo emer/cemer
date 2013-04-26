@@ -48,7 +48,7 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
   int ca3_prjn_idx;
   LeabraLayer* ca3_lay = FindLayerFmSpec(lay, ca3_prjn_idx, &TA_CA3LayerSpec);
   if(!ca3_lay) return;
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+//  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
@@ -73,7 +73,7 @@ void CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool e
   int ecin_prjn_idx;
   LeabraLayer* ecin_lay = FindLayerFmSpec(lay, ecin_prjn_idx, &TA_ECinLayerSpec);
   if(!ecin_lay) return;
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+//  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;

@@ -130,7 +130,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   us->SetUnique("maxda", true);
   us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,

@@ -1098,7 +1098,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   //-------- looking at the values of the joints in ODE ---------
   dJointID ejid = (dJointID)elbow->joint_id;
   //dJointSetHinge2Anchor(ejid,   elbow->anchor.x, elbow->anchor.y, elbow->anchor.z);
-  float angl = (float)dJointGetHinge2Angle1(ejid);
+  float angl = (float)dJointGetHinge2Angle1(ejid); // NOTE: never used
   float ax1[] = {0.0f, 0.0f, 0.0f, 0.0f}, ax2[] = {0.0f, 0.0f, 0.0f, 0.0f};
   float anch[] = {0.0f, 0.0f, 0.0f, 0.0f};
   dJointGetHinge2Anchor(ejid, anch);
@@ -1271,9 +1271,9 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
     }
   }
 
-  VEBody* humerus = bodies[HUMERUS];
-  VEBody* ulna = bodies[ULNA];
-  VEBody* hand = bodies[HAND];
+//  VEBody* humerus = bodies[HUMERUS];
+//  VEBody* ulna = bodies[ULNA];
+//  VEBody* hand = bodies[HAND];
 
   // target coordinates
   float t_f[] = {trg_x, trg_y, trg_z};

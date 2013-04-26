@@ -45,7 +45,7 @@ public:
 
   virtual void		InitFromInts(int* vals, int n=-1)
   { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
-    for(int i=0;i<size;i++) FastEl_Flat(i) = vals[i]; }
+    for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
   // initialize values from an array of ints, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
 
   override bool         BinaryFile_Supported() { return true; }

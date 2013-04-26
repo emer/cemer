@@ -129,7 +129,7 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   }
 
   // SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+//  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
 
   LeabraLayer* snr_lay = SNrThalLayer(lay);
   if(lay->CheckError(!snr_lay, quiet, rval,
@@ -200,7 +200,7 @@ void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 void PFCLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+//  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
     gpd->Init_State();          // restart
