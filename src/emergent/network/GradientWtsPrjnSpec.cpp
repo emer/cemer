@@ -47,7 +47,7 @@ void GradientWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 
 void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
                                       int cg_idx) {
-  float wt_val;
+  float wt_val = wt_range.min;
   if(grad_type == LINEAR) {
     if(invert)
       wt_val = wt_range.min + dist * wt_range.Range();
