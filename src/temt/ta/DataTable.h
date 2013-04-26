@@ -95,6 +95,7 @@ public:
   String                auto_load_file;
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
+  int_Array             row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
 
   cssProgSpace*         calc_script;
   // #IGNORE script object for performing column calculations
@@ -417,6 +418,10 @@ public:
 
   /////////////////////////////////////////////////////////
   // rows
+
+  virtual void          ResetRowIndexes();
+  // #CAT_Rows reset the row indexes to be 0..rows-1 to reflect the full extent of the natural underlying data in the table
+  // TODO: Flatten -- 
 
   virtual bool          hasData(int col, int row);
   // #CAT_Rows true if data at that cell

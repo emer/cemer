@@ -74,12 +74,14 @@ void DataTable::InitLinks() {
   data.name = "data"; // for the viewspec routines
   inherited::InitLinks();
   taBase::Own(data, this);
+  taBase::Own(row_indexes, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
 
 void DataTable::CutLinks() {
   data.CutLinks();
+  row_indexes.CutLinks();
   if(log_file) {
     taRefN::unRefDone(log_file);
     log_file = NULL;
@@ -93,6 +95,7 @@ void DataTable::CutLinks() {
 
 void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;
+  row_indexes = cp.row_indexes;
   rows = cp.rows;
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
@@ -167,6 +170,11 @@ int DataTable::GetSpecialState() const {
 void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   data.CheckConfig(quiet, rval);
+}
+
+void DataTable::ResetRowIndexes() {
+  row_indexes.SetSize(rows);
+  row_indexes.FillSeq();        // 0...n-1
 }
 
 bool DataTable::AddRows(int n) {

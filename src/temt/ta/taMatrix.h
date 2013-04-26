@@ -181,8 +181,8 @@ public:
      MIN,                       // dest = MIN(dest, source)
    };
 
-  taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taArray matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
-  IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taArray what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
+  taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taMatrix matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
+  IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taMatrix what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
   ///////////////////////////////////////////////////////////////////
   // IMatrix i/f
