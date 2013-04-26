@@ -707,9 +707,9 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
       has_rval = false;
       if(!md->type->name.contains("void")) {
         if(add_typedefs) {
-          Warning(0, "non-void type is marked void in file:", cur_fname,
-                  "method:", md->name, "so I don't know how to handle return type:",
-                  md->type->name, "-- it will be ignored!");
+          Info(0, "non-void type is marked void in file:", cur_fname,
+               "method:", md->name, "so I don't know how to handle return type:",
+               md->type->name, "-- it will be ignored!");
         }
       }
     }
@@ -741,9 +741,9 @@ void MTA::MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int 
       // we don't know how to handle this rval -- not good!!!!
       has_rval = false;
       if(add_typedefs) {
-        Warning(0, "Warning: in file:", cur_fname, "method:",
-                md->name, "don't know how to handle return type:", md->type->name,
-                "so it will be ignored!");
+        Info(0, "Warning: in file:", cur_fname, "method:",
+             md->name, "don't know how to handle return type:", md->type->name,
+             "so it will be ignored!");
       }
     }
     if(!add_typedefs) {
