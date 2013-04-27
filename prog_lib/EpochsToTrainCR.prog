@@ -1,9 +1,9 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6186
-Program .projects[0].programs.gp[2][1] { 
+// ta_Dump File v3.0 -- code v6.3.0.0 rev6249
+Program .projects[0].programs[9] { 
   ProgObjList @.objs = [4] {
     Relation @[0] { };
     DataTable @[1] { 
-      DataTableCols @.data = [21] {
+      DataTableCols @.data = [17] {
 	int_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
 	    UserDataItem @[0] { };
@@ -20,19 +20,15 @@ Program .projects[0].programs.gp[2][1] {
 	float_Data @[5] { };
 	float_Data @[6] { };
 	float_Data @[7] { };
-	float_Data @[8] { };
-	float_Data @[9] { };
-	float_Data @[10] { };
-	float_Data @[11] { };
-	float_Data @[12] { };
-	String_Data @[13] { };
-	String_Data @[14] { };
-	String_Data @[15] { };
-	String_Data @[16] { };
-	float_Data @[17] { };
-	float_Data @[18] { };
-	float_Data @[19] { };
-	float_Data @[20] { };
+	String_Data @[8] { };
+	String_Data @[9] { };
+	String_Data @[10] { };
+	String_Data @[11] { };
+	String_Data @[12] { };
+	float_Data @[13] { };
+	float_Data @[14] { };
+	float_Data @[15] { };
+	float_Data @[16] { };
       };
     };
     DataTable @[2] { 
@@ -106,13 +102,15 @@ Program .projects[0].programs.gp[2][1] {
   ProgVar_List @.args = [0] {
   };
 
-  ProgVar_List @.vars = [6] {
+  ProgVar_List @.vars = [8] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
     ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
   };
 
   Function_List @.functions = [0] {
@@ -123,11 +121,9 @@ Program .projects[0].programs.gp[2][1] {
 
   ProgEl_List @.prog_code = [10] {
     LocalVars @[0] { 
-      ProgVar_List @.local_vars = [4] {
+      ProgVar_List @.local_vars = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
-	ProgVar @[2] { };
-	ProgVar @[3] { };
       };
     };
     MethodCall @[1] { 
@@ -208,7 +204,7 @@ Program .projects[0].programs.gp[2][1] {
     MemberAssign @[9] { };
   };
 };
-Program .projects[0].programs.gp[2][1] {
+Program .projects[0].programs[9] {
  name="EpochsToTrainCR";
  short_nm="EpchTTr";
  tags="Data, Analysis, Epoch, Training, ClusterRun";
@@ -319,18 +315,6 @@ Program .projects[0].programs.gp[2][1] {
 	  [0]      };
     };
     float_Data @[6] {
-     name="Leabra_cur_lrate";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name=;
-	  [0]      };
-    };
-    float_Data @[7] {
      name="epoch_time_tot";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -342,7 +326,7 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    float_Data @[8] {
+    float_Data @[7] {
      name="epoch_time_usr";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -354,55 +338,7 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    float_Data @[9] {
-     name="S_da";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name=;
-	  [0]      };
-    };
-    float_Data @[10] {
-     name="I_da";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name=;
-	  [0]      };
-    };
-    float_Data @[11] {
-     name="R_da";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name=;
-	  [0]      };
-    };
-    float_Data @[12] {
-     name="S_I_diff";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name=;
-	  [0]      };
-    };
-    String_Data @[13] {
+    String_Data @[8] {
      name="tag";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -414,7 +350,7 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    String_Data @[14] {
+    String_Data @[9] {
      name="tag_svn";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -426,7 +362,7 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    String_Data @[15] {
+    String_Data @[10] {
      name="tag_job";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -438,7 +374,7 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    String_Data @[16] {
+    String_Data @[11] {
      name="params";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -450,8 +386,8 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    float_Data @[17] {
-     name="pv_gain";
+    String_Data @[12] {
+     name="notes";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -462,8 +398,8 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    float_Data @[18] {
-     name="nogo_inhib";
+    float_Data @[13] {
+     name="it_v4_rel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -474,8 +410,8 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    float_Data @[19] {
-     name="nogo_wtscale_inc";
+    float_Data @[14] {
+     name="out_it_rel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -486,8 +422,20 @@ Program .projects[0].programs.gp[2][1] {
       name=;
 	  [0]      };
     };
-    float_Data @[20] {
-     name="pvr_inhib";
+    float_Data @[15] {
+     name="stable_pct";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[16] {
+     name="lrate";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -525,7 +473,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     int_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_205";
+      name="UserDataItem_List_114";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -547,7 +495,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_207";
+      name="UserDataItem_List_116";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -642,7 +590,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_201";
+      name="UserDataItem_List_110";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -664,7 +612,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_202";
+      name="UserDataItem_List_111";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -686,7 +634,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_203";
+      name="UserDataItem_List_112";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -708,7 +656,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[5] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_204";
+      name="UserDataItem_List_113";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -730,7 +678,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[6] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_205";
+      name="UserDataItem_List_114";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -752,7 +700,7 @@ Program .projects[0].programs.gp[2][1] {
     };
     float_Data @[7] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_206";
+      name="UserDataItem_List_115";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
@@ -926,7 +874,7 @@ Program .projects[0].programs.gp[2][1] {
    name="rel";
    var_type=T_Object;
    object_type=Relation;
-   object_val=.projects[0].programs.gp[2][1].objs[0]$$;
+   object_val=.projects[0].programs[9].objs[0]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -937,7 +885,7 @@ Program .projects[0].programs.gp[2][1] {
    name="AllData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[2][1].objs[1]$$;
+   object_val=.projects[0].programs[9].objs[1]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -948,7 +896,7 @@ Program .projects[0].programs.gp[2][1] {
    name="ByBatchData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[2][1].objs[2]$$;
+   object_val=.projects[0].programs[9].objs[2]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -959,9 +907,29 @@ Program .projects[0].programs.gp[2][1] {
    name="ByTagStats";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].programs.gp[2][1].objs[3]$$;
+   object_val=.projects[0].programs[9].objs[3]$$;
    objs_ptr=1;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="epoch_last_max";
+   var_type=T_Real;
+   real_val=99;
+   objs_ptr=0;
+   flags=SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="find_first_max";
+   var_type=T_Real;
+   real_val=28;
+   objs_ptr=0;
+   flags=SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -993,7 +961,7 @@ Program .projects[0].programs.gp[2][1] {
      name="dt";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[3][68]$$<DataTable,sir_new_792_9_09_epc>;
+     object_val=NULL;
      objs_ptr=0;
      flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
      reference=0;
@@ -1010,26 +978,6 @@ Program .projects[0].programs.gp[2][1] {
      desc=;
      init_from=NULL;
     };
-    ProgVar @[2] {
-     name="epoch_last_max";
-     var_type=T_Real;
-     real_val=499;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
-    ProgVar @[3] {
-     name="find_first_max";
-     var_type=T_Real;
-     real_val=249;
-     objs_ptr=0;
-     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-     reference=0;
-     desc=;
-     init_from=NULL;
-    };
    };
   };
   MethodCall @[1] {
@@ -1037,7 +985,7 @@ Program .projects[0].programs.gp[2][1] {
    flags=CAN_REVERT_TO_CODE;
    orig_prog_code="AllData.Reset()";
    result_var=NULL;
-   obj=.projects[0].programs.gp[2][1].vars[3]$$;
+   obj=.projects[0].programs[9].vars[3]$$;
    method=DataTable::ResetData;
    meth_args {
     name="ProgArg_List_0";
@@ -1070,7 +1018,7 @@ Program .projects[0].programs.gp[2][1] {
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="AllData.CopyFrom()";
        result_var=NULL;
-       obj=$.projects[0].programs.gp[2][1].vars[3]$;
+       obj=$.projects[0].programs[9].vars[3]$;
        method=taBase::CopyFrom;
        meth_args {
 	name="ProgArg_List_0";
@@ -1129,7 +1077,7 @@ Program .projects[0].programs.gp[2][1] {
      };
     };
    };
-   el_var=.projects[0].programs.gp[2][1].prog_code[0].local_vars[0]$$;
+   el_var=.projects[0].programs[9].prog_code[0].local_vars[0]$$;
    in {
     expr="ClusterRunData";
    };
@@ -1138,8 +1086,8 @@ Program .projects[0].programs.gp[2][1] {
    desc=;
    flags=0;
    orig_prog_code=;
-   src_data_var=$.projects[0].programs.gp[2][1].vars[3]$;
-   dest_data_var=.projects[0].programs.gp[2][1].vars[4]$$;
+   src_data_var=$.projects[0].programs[9].vars[3]$;
+   dest_data_var=.projects[0].programs[9].vars[4]$$;
    group_spec {
     name="group_spec";
     ops {
@@ -1160,7 +1108,7 @@ Program .projects[0].programs.gp[2][1] {
      };
      DataGroupEl @[3] {
       col_name="cnt_err";
-      agg {op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs.gp[2][1].vars[1]$$: }: name="": };
+      agg {op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[9].vars[1]$$: }: name="": };
      };
      DataGroupEl @[4] {
       col_name="cnt_err";
@@ -1178,7 +1126,7 @@ Program .projects[0].programs.gp[2][1] {
    desc="change type to float, to enable subsequent analysis operations";
    flags=0;
    orig_prog_code=;
-   obj=$.projects[0].programs.gp[2][1].vars[4]$;
+   obj=$.projects[0].programs[9].vars[4]$;
    path="data.epoch_last";
    result_var=NULL;
    method=DataCol::ChangeColType;
@@ -1202,7 +1150,7 @@ Program .projects[0].programs.gp[2][1] {
    desc=;
    flags=0;
    orig_prog_code=;
-   result_var=.projects[0].programs.gp[2][1].prog_code[0].local_vars[2]$$;
+   result_var=.projects[0].programs[9].vars[6]$$;
    object_type=taMath_float;
    method=taMath_float::vec_max;
    meth_args {
@@ -1235,7 +1183,7 @@ Program .projects[0].programs.gp[2][1] {
    desc=;
    flags=0;
    orig_prog_code=;
-   result_var=.projects[0].programs.gp[2][1].prog_code[0].local_vars[3]$$;
+   result_var=.projects[0].programs[9].vars[7]$$;
    object_type=taMath_float;
    method=taMath_float::vec_max;
    meth_args {
@@ -1268,8 +1216,8 @@ Program .projects[0].programs.gp[2][1] {
    desc=;
    flags=0;
    orig_prog_code=;
-   src_data_var=$.projects[0].programs.gp[2][1].vars[4]$;
-   dest_data_var=.projects[0].programs.gp[2][1].vars[5]$$;
+   src_data_var=$.projects[0].programs[9].vars[4]$;
+   dest_data_var=.projects[0].programs[9].vars[5]$$;
    group_spec {
     name="group_spec";
     ops {
@@ -1298,7 +1246,7 @@ Program .projects[0].programs.gp[2][1] {
      };
      DataGroupEl @[5] {
       col_name="epoch_last";
-      agg {op=COUNT: rel={name="": rel=EQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[2][1].prog_code[0].local_vars[2]$: }: name="": };
+      agg {op=COUNT: rel={name="": rel=EQUAL: val=0: use_var=1: var=$.projects[0].programs[9].vars[6]$: }: name="": };
      };
      DataGroupEl @[6] {
       col_name="epoch_last";
@@ -1310,23 +1258,23 @@ Program .projects[0].programs.gp[2][1] {
      };
      DataGroupEl @[8] {
       col_name="cnt_err_find_first";
-      agg {op=MIN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[2][1].vars[1]$: }: name="": };
+      agg {op=MIN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs[9].vars[1]$: }: name="": };
      };
      DataGroupEl @[9] {
       col_name="cnt_err_find_first";
-      agg {op=MAX: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[2][1].vars[1]$: }: name="": };
+      agg {op=MAX: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs[9].vars[1]$: }: name="": };
      };
      DataGroupEl @[10] {
       col_name="cnt_err_find_first";
-      agg {op=COUNT: rel={name="": rel=EQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[2][1].prog_code[0].local_vars[3]$: }: name="": };
+      agg {op=COUNT: rel={name="": rel=EQUAL: val=0: use_var=1: var=$.projects[0].programs[9].vars[7]$: }: name="": };
      };
      DataGroupEl @[11] {
       col_name="cnt_err_find_first";
-      agg {op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[2][1].vars[1]$: }: name="": };
+      agg {op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs[9].vars[1]$: }: name="": };
      };
      DataGroupEl @[12] {
       col_name="cnt_err_find_first";
-      agg {op=SEM: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs.gp[2][1].vars[1]$: }: name="": };
+      agg {op=SEM: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=$.projects[0].programs[9].vars[1]$: }: name="": };
      };
      DataGroupEl @[13] {
       col_name="cnt_err_min";
@@ -1352,7 +1300,7 @@ Program .projects[0].programs.gp[2][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    orig_prog_code="ByTagStats.data.epoch_last_count.name = \"epoch_last_n_at_max\"";
-   obj=$.projects[0].programs.gp[2][1].vars[5]$;
+   obj=$.projects[0].programs[9].vars[5]$;
    path="data.epoch_last_count.name";
    expr {
     expr="\"epoch_last_n_at_max\"";
@@ -1363,7 +1311,7 @@ Program .projects[0].programs.gp[2][1] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    orig_prog_code="ByTagStats.data.epoch_last_count.name = \"epoch_last_n_at_max\"";
-   obj=$.projects[0].programs.gp[2][1].vars[5]$;
+   obj=$.projects[0].programs[9].vars[5]$;
    path="data.cnt_err_find_first_count.name";
    expr {
     expr="\"cnt_err_find_first_n_at_max\"";

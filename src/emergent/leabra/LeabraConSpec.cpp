@@ -74,7 +74,6 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 
 void StableMixSpec::Initialize() {
   stable_pct = 0.8f;
-  updt_to_lwt = true;
   if(taMisc::is_loading) {
     taVersion v630(6, 3, 0);
     if(taMisc::loading_version < v630) { // default prior to 6.3.0 is stable off
