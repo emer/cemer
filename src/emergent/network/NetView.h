@@ -140,7 +140,6 @@ public:
     ANY_CON,                    // #LABEL_Any just show the first connection shown -- don't select by name at all
     STD_CON,                    // #LABEL_Std only show standard connections -- projection names start with FM_
     CTXT_CON,                   // #LABEL_Ctxt only show context connections -- projection names start with CTXT_
-    THAL_CON,                   // #LABEL_Thal only show thalamic connections -- projection names start with THAL_
   };
 
   static NetView*       New(Network* net, T3Panel*& fr); // create a new instance and add to viewer

@@ -199,9 +199,6 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
   case NetView::CTXT_CON:
     prjn_starts_with = "Ctxt_";
     break;
-  case NetView::THAL_CON:
-    prjn_starts_with = "Thal_";
-    break;
   }
   bool check_prjn = (prjn_starts_with.nonempty());
     
