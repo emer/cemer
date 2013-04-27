@@ -608,11 +608,11 @@ ClusterManager::saveExtraFiles()
   String_Array files;
   files.FmDelimString(m_cluster_run.extra_files);
   for(int i=0; i < files.size; i++) {
-    // Copy the project from its local path to our cluster working copy.
+    // Copy the extra files from local path to our cluster working copy.
     // Delete first, since QFile::copy() won't overwrite.
     String srcfn = files[i];
     String fnm = taMisc::GetFileFmPath(srcfn); // just get the file name
-    String wc_fnm = m_wc_submit_path + "/" + fnm;
+    String wc_fnm = m_wc_models_path + "/" + fnm;
     deleteFile(wc_fnm);
     QFile::copy(srcfn, wc_fnm);
     m_svn_client->Add(wc_fnm.chars());
