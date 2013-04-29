@@ -245,6 +245,12 @@ DataTable* DataCol::dataTable() {
   return rval;
 }
 
+const DataTable* DataCol::dataTable() {
+  // todo: fix to proper const cast syntax
+  const DataTable* rval = (const DataTable*)GET_MY_OWNER(DataTable);
+  return rval;
+}
+
 bool DataCol::EnforceRows(int rws) {
   RemoveHashTable();
   taMatrix* mat = AR();
@@ -457,18 +463,21 @@ String DataCol::GetDisplayName() const {
 int DataCol::IndexOfEl_Flat(int row, int cell) const {
   if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
                "cell index out of range")) return -1;
-  // DataTable* tab = dataTable();
-  // if(tab) {
-  //   const int idx_sz = tab->row_indexes.size;
-  //   if(row < 0) row = idx_sz + row; // abs row, if request was from end
-  //   if(TestError((row < 0 || row >= idx_sz), "IndexOfEl_Flat", "row out of range")) return -1;
-  //   return (tab->row_indexes[row] * cell_size()) + cell;
-  // }
-  // else {
+#ifndef OLD_DT_IDX_MODE
+  const DataTable* tab = dataTable();
+  if(tab) {
+    const int idx_sz = tab->row_indexes.size;
+    if(row < 0) row = idx_sz + row; // abs row, if request was from end
+    if(TestError((row < 0 || row >= idx_sz), "IndexOfEl_Flat", "row out of range")) return -1;
+    return (tab->row_indexes[row] * cell_size()) + cell;
+  }
+  else
+#endif
+ {
     if(row < 0) row = rows() + row; // abs row, if request was from end
     if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
     return (row * cell_size()) + cell;
-  // }
+ }
 }
 
 int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const {

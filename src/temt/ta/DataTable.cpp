@@ -159,6 +159,18 @@ void DataTable::UpdateAfterEdit_impl() {
   // the following is likely redundant:
   //  UpdateColCalcs();
   CheckForCalcs();
+
+#ifndef OLD_DT_IDX_MODE
+  if(taMisc::is_loading) {
+    taVersion v630(6, 3, 0);             // todo: increment this when new indexes go live!
+    if(taMisc::loading_version < v630) { // make sure old projects have indexes!
+      if(row_indexes.size == 0 && rows > 0) {load mode
+        ResetRowIndexes();
+      }
+    }
+  }
+#endif
+
 }
 
 int DataTable::GetSpecialState() const {
@@ -185,6 +197,11 @@ bool DataTable::AddRows(int n) {
     DataCol* ar = data.FastEl(i);
     ar->EnforceRows(ar->rows() + n);
   }
+#ifndef OLD_DT_IDX_MODE
+  for(int r=rows; r<rows+n; r++) {
+    row_indexes.Add(r);
+  }
+#endif
   RowsAdding(n, false);
   return true;
 }
@@ -1860,6 +1877,7 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
                "end row not in range:",String(end_row)))
     return false;
   DataUpdate(true);
+#if OLD_DT_IDX_MODE
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
     int act_row;
@@ -1867,6 +1885,9 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       ar->AR()->RemoveFrames(act_row, n_rows);
   }
   rows -= n_rows;
+#else
+  row_indexes.RemoveIdx(act_row, n_rows);
+#endif
   if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);
   return true;
@@ -1930,7 +1951,8 @@ void DataTable::ResetData() {
 void DataTable::RowsAdding(int n, bool begin) {
   if (begin) {
     DataUpdate(true);// only data because for views, no change in column structure
-  } else { // end
+  }
+  else { // end
     rows += n;
     DataUpdate(false);
   }

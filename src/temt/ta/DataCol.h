@@ -344,6 +344,8 @@ public:
 
   DataTable*            dataTable();
   // root data table this col belongs to
+  const DataTable*      dataTable();
+  // root data table this col belongs to
 
   String                EncodeHeaderName(const MatrixIndex& dims) const;
   // encode header information for saving to text files
