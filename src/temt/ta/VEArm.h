@@ -125,6 +125,11 @@ public:
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
   virtual bool TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
   // #EXPERT Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
+  virtual bool NoisyTargetLengths(float trg_x, float trg_y, float trg_z);
+  // Like TargetLengths, but noise is applied to the arm rotation (gamma angle). Useful to generate sensible muscle lengths for training purposes.
+  virtual bool NoisyTargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
+  // #EXPERT Implements the main functionality of NoisyTargetLengths
+
   virtual void GetRandomTarget(float& trg_x, float& trg_y, float& trg_z,
                                float x_ang_min = 0.0f, float x_ang_max = 1.5f,
                                float y_ang_min = 0.0f, float y_ang_max = 0.0f,

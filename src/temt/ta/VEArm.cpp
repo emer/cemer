@@ -1249,6 +1249,15 @@ bool VEArm::TargetLengths(float trg_x, float trg_y, float trg_z) {
   return rval;
 }
 
+bool VEArm::NoisyTargetLengths(float trg_x, float trg_y, float trg_z) {
+  bool rval = NoisyTargetLengths_impl(targ_lens, trg_x, trg_y, trg_z);
+  norm_targ_lens = targ_lens;
+  norm_targ_lens -= min_lens;
+  norm_targ_lens *= spans;
+  return rval;
+}
+
+
 bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z) {
   trgLen.SetGeom(1,n_musc);     // always set to be more robust
 
@@ -1466,6 +1475,230 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
   // taMisc::Info("target lengths: ", trLout, "\n");
   return true;
 }
+
+
+bool VEArm::NoisyTargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z) {
+  trgLen.SetGeom(1,n_musc);     // always set to be more robust
+
+  if(!CheckArm()) return false;
+
+// first we change the target coordinates to have the origin at the shoulder
+  trg_x = trg_x - should_loc.x;
+  trg_y = trg_y - should_loc.y;
+  trg_z = trg_z - should_loc.z;
+
+// Avoiding Gimble locks
+  if(up_axis == Z) {
+    if(trg_x == 0.0 && trg_y == 0.0) {
+      trg_y = 0.000001f;  // this is to avoid a Gimble lock
+    }
+  } 
+  else {  // up_axis == Y
+    if(trg_x == 0.0 && trg_z == 0.0) {
+      trg_z = 0.000001f;  // this is to avoid a Gimble lock
+    }
+  }
+
+//  VEBody* humerus = bodies[HUMERUS];
+//  VEBody* ulna = bodies[ULNA];
+//  VEBody* hand = bodies[HAND];
+
+  // target coordinates
+  float t_f[] = {trg_x, trg_y, trg_z};
+  float_Matrix T(1,3);
+  T.InitFromFloats(t_f);
+  float D = taMath_float::vec_norm(&T);
+
+// handling targets that are too far or too close
+  if(D < 0.1) {
+    taMisc::Info("Target too close \n");
+    // moving the target away, maintaining direction
+    float Lfactor = 0.15/D;
+    trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
+    T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
+    D = taMath_float::vec_norm(&T);
+  } else if( D >= (La+Lf) ) {
+      taMisc::Info("Target too far \n");
+    // bringing the target closer, maintaining direction
+      float Lfactor = (La+Lf-0.01)/D;
+      trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
+      T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
+      D = taMath_float::vec_norm(&T);
+  }
+
+// From coordinates to angles as in (44)
+  float alpha, beta, gamma, delta;
+
+  if(up_axis == Z) {
+    delta = taMath_float::pi - acos((La*La + Lf*Lf - D*D) / (2.0*La*Lf));
+    gamma = 0;
+    beta = acos(-trg_z/D) - acos((D*D + La*La - Lf*Lf)/(2.0*D*La));
+    alpha = asin(-trg_x/sqrt(trg_x*trg_x + trg_y*trg_y));
+
+    if(trg_y < 0) { // if the target is behind
+      alpha = taMath_float::pi - alpha;
+    }
+  }
+  else { // up_axis == Y
+    delta = taMath_float::pi - acos((La*La + Lf*Lf - D*D) / (2.0*La*Lf));
+    gamma = 0;
+    beta = acos(-trg_y/D) - acos((D*D + La*La - Lf*Lf)/(2.0*D*La));
+    alpha = asin(trg_x/sqrt(trg_x*trg_x + trg_z*trg_z));
+
+    if(trg_z < 0) { // if the target is behind
+      alpha = taMath_float::pi - alpha;
+    }
+  }
+
+  // Adding noise to gamma
+  gamma = gamma + Random::UniformMinMax(-3.14*.8, 3.14*.5);
+
+  //taMisc::Info("alpha:", String(alpha), "beta:", String(beta), "gamma:", String(gamma));
+
+// Now we'll rotate the insertion points by the Euler angles in reverse order
+  // This magic R matrix (from (42)) does it all in one step
+  float sa = sin(alpha); float ca = cos(alpha);
+  float sb = sin(beta);  float cb = cos(beta);
+  float sc = sin(gamma); float cc = cos(gamma);
+
+  float R_f[] = {ca*cc-sa*cb*sc, -ca*sc-sa*cb*cc, sa*sb,
+                 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
+                 sb*sc,           sb*cc,          cb};
+
+  float_Matrix R(2,3,3);
+  R.InitFromFloats(R_f);
+
+  if(up_axis == Y) {  // changing coordinates for R as a linear transformation
+                      // taking advantage of ct being autoinverse
+    float_Matrix cR = float_Matrix(2,3,3);
+    taMath_float::mat_mult(&cR, &R, &ct);
+    taMath_float::mat_mult(&R, &ct, &cR);
+  }
+
+  float_Matrix RT(2,3,3); // the transpose of R
+  taMath_float::mat_transpose(&RT, &R);
+
+  // rotating the humerus' insertion points
+  float_Matrix RotArmIP;
+  taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT);
+
+  // String out;
+  // RotArmIP.Print(out);
+  // taMisc::Info("rotated ArmIP:\n", out);
+
+// rotating the ulna's insertion points
+  float UlnaShift_f[9] = {0.0f}; // initializes all zeros
+  float T_elbowRot_f[9] = {0.0f};
+
+  if(up_axis == Z) {
+    /* The matrices we're defining are these:
+    float UlnaShift_f[] = {0, 0, -La,
+                           0, 0, -La,
+                           0, 0, -La}; // should have one row per forearm IP
+    float T_elbowRot_f[] = {1 , 0, 0,
+                    0, cos(delta),  sin(delta),
+                    0, -sin(delta), cos(delta)};
+    // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation
+    */
+    UlnaShift_f[2] = UlnaShift_f[5] = UlnaShift_f[8] = -La;
+    T_elbowRot_f[0] = 1;
+    T_elbowRot_f[4] = T_elbowRot_f[8] = cos(delta);
+    T_elbowRot_f[5] = sin(delta);
+    T_elbowRot_f[7] = -sin(delta);
+  }
+  else { // up_axis == Y 
+    /* The matrices we're defining are these:
+    float UlnaShift_f[] = {0, -La, 0,
+                           0, -La, 0,
+                           0, -La, 0}; // should have one row per forearm IP
+    float T_elbowRot_f[] = {1 , 0, 0,
+                    0, cos(delta), -sin(delta),
+                    0, sin(delta), cos(delta)};
+    // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation after the ct bilateral multiplication
+    */
+    UlnaShift_f[1] = UlnaShift_f[4] = UlnaShift_f[7] = -La;
+    T_elbowRot_f[0] = 1;
+    T_elbowRot_f[4] = T_elbowRot_f[8] = cos(delta);
+    T_elbowRot_f[5] = -sin(delta);
+    T_elbowRot_f[7] = sin(delta);
+  }
+
+  float_Matrix UlnaShift(2,3,3);
+  UlnaShift.InitFromFloats(UlnaShift_f);
+  float_Matrix T_elbowRot(2,3,3);
+  T_elbowRot.InitFromFloats(T_elbowRot_f);
+
+// first we shift the FarmIP's so the origin is at the elbow
+  float_Matrix ShiftedIP(2,3,3);
+  ShiftedIP = FarmIP - UlnaShift;
+
+// we rotate the shifted IPs by the elbow bend (delta rotation)
+  float_Matrix Rot1FarmIP(2,3,3);
+  taMath_float::mat_mult(&Rot1FarmIP, &ShiftedIP, &T_elbowRot);
+/*
+  String ruout;
+  Rot1FarmIP.Print(ruout);
+  taMisc::Info("rotated ulna before translation:\n", ruout);
+*/
+
+// now we set the origin at the shoulder
+  float_Matrix ReshiftedIP(2,3,3);
+  ReshiftedIP = Rot1FarmIP + UlnaShift;
+
+// finally we apply the shoulder rotation
+  float_Matrix RotFarmIP(2,3,3);
+  taMath_float::mat_mult(&RotFarmIP, &ReshiftedIP, &RT);
+
+  // String ripout;
+  // RotFarmIP.Print(ripout);
+  // taMisc::Info("rotated ulna IPs:\n", ripout);
+
+// next we obtain the distance between the proximal IPs and the distal IPs
+// this code is dependent on the muscle geometry
+  int k = 0;
+  if(musc_geo==NEW_GEO) k = 1; // offset to change assignments below
+
+  taVector3f c1, c2, shoulderIP, humerIP, pv1, pv2, p3;
+  for(int i=0; i<8+k; i++) { // the 8 or 9 shoulder to humerus muscles
+    shoulderIP.x =  ShouldIP.FastElAsFloat(0,i);
+    shoulderIP.y =  ShouldIP.FastElAsFloat(1,i);
+    shoulderIP.z =  ShouldIP.FastElAsFloat(2,i);
+    humerIP.x = RotArmIP.FastElAsFloat(0,i);
+    humerIP.y = RotArmIP.FastElAsFloat(1,i);
+    humerIP.z = RotArmIP.FastElAsFloat(2,i);
+    pv1.x = p1.FastElAsFloat(0,i); pv2.x = p2.FastElAsFloat(0,i);
+    pv1.y = p1.FastElAsFloat(1,i); pv2.y = p2.FastElAsFloat(1,i);
+    pv1.z = p1.FastElAsFloat(2,i); pv2.z = p2.FastElAsFloat(2,i);
+
+    if(Bender(p3,shoulderIP,humerIP,pv1,pv2) && i!=(2+k) && i!=(3+k)) {
+      // if muscle wraps around bending line (except for muscles 3(4) and 4(5))
+      c1 = shoulderIP - p3; c2 = p3 - humerIP;
+      trgLen.Set(c1.Mag()+c2.Mag(),i);
+    } else {
+      c1 = shoulderIP - humerIP;
+      trgLen.Set(c1.Mag(),i);
+    }
+  }
+  // next muscle is the biceps, from shoulder to forearm
+  c1.x = ShouldIP.FastElAsFloat(0,8+k) - RotFarmIP.FastElAsFloat(0,0);
+  c1.y = ShouldIP.FastElAsFloat(1,8+k) - RotFarmIP.FastElAsFloat(1,0);
+  c1.z = ShouldIP.FastElAsFloat(2,8+k) - RotFarmIP.FastElAsFloat(2,0);
+  trgLen.Set(c1.Mag(),8+k);
+  // the triceps and the brachialis connect from humerus to ulna
+  for(int i=1; i<=2; i++) {
+    c1.x = RotArmIP.FastElAsFloat(0,7+k+i) - RotFarmIP.FastElAsFloat(0,i);
+    c1.y = RotArmIP.FastElAsFloat(1,7+k+i) - RotFarmIP.FastElAsFloat(1,i);
+    c1.z = RotArmIP.FastElAsFloat(2,7+k+i) - RotFarmIP.FastElAsFloat(2,i);
+    trgLen.Set(c1.Mag(),8+k+i);
+  }
+
+  // String trLout;
+  // trgLen.Print(trLout);
+  // taMisc::Info("target lengths: ", trLout, "\n");
+  return true;
+}
+
+
 
 bool VEArm::Lengths(float_Matrix& len, bool normalize) {
   // note: please follow coding conventions of using lower-case for variables
