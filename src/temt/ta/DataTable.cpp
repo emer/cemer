@@ -164,7 +164,7 @@ void DataTable::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) {
     taVersion v630(6, 3, 0);             // todo: increment this when new indexes go live!
     if(taMisc::loading_version < v630) { // make sure old projects have indexes!
-      if(row_indexes.size == 0 && rows > 0) {load mode
+      if(row_indexes.size == 0 && rows > 0) {
         ResetRowIndexes();
       }
     }
