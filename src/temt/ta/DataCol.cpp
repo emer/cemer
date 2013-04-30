@@ -240,14 +240,8 @@ void DataCol::ChangeColMatToScalar() {
   //NOTE: no more code here, because we may have been deleted/replaced
 }
 
-DataTable* DataCol::dataTable() {
+DataTable* DataCol::dataTable() const {
   DataTable* rval = GET_MY_OWNER(DataTable);
-  return rval;
-}
-
-const DataTable* DataCol::dataTable() {
-  // todo: fix to proper const cast syntax
-  const DataTable* rval = (const DataTable*)GET_MY_OWNER(DataTable);
   return rval;
 }
 

@@ -342,10 +342,7 @@ public:
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return AR()->Elem(idx, mode); }
 
-  DataTable*            dataTable();
-  // root data table this col belongs to
-  const DataTable*      dataTable();
-  // root data table this col belongs to
+  DataTable*            dataTable() const; 	// root data table this col belongs to
 
   String                EncodeHeaderName(const MatrixIndex& dims) const;
   // encode header information for saving to text files
