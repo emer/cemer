@@ -33,10 +33,11 @@ public:
   float         decay;          // #MIN_0 amount to decay weight values every time they are updated, restoring some novelty (also multiplied by lrate to compute weight change, so it automtically takes that into account -- think of as a pct to decay)
 
   inline void C_Compute_Weights_LeabraCHL(LeabraCon* cn, float dkfact) {
-    float lin_wt = LinFmSigWt(cn->wt);
+    float lin_wt = LinFmSigWt(cn->lwt);
     cn->dwt -= dkfact * lin_wt;
     if(cn->dwt != 0.0f) {
-      cn->wt = SigFmLinWt(lin_wt + cn->dwt);
+      cn->lwt = SigFmLinWt(lin_wt + cn->dwt);
+      Compute_EffWt(cn);
     }
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;

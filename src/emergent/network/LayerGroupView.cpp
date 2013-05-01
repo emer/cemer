@@ -195,7 +195,7 @@ void LayerGroupView::Render_impl() {
 			 0.0f,
 			 -net_margin + ((float)-pos.y) / nv->eff_max_size.y);
 
-    node_so->setGeom(lgp->pos2d.x, lgp->pos2d.y, -.2f,
+    node_so->setGeom(lgp->pos2d.x, lgp->pos2d.y, 0,
 		     lgp->max_disp_size2d.x, lgp->max_disp_size2d.y, 1.0,
 		     nv->eff_max_size.x, nv->eff_max_size.y, 5.0f);
   }

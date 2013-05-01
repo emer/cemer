@@ -70,7 +70,7 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      float lin_wt = LinFmSigWt(cn->wt);
+      float lin_wt = LinFmSigWt(cn->lwt);
       C_Compute_dWt(cn, ru, 
 		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p, ru->act_avg),
 		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  

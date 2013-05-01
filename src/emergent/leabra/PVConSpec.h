@@ -59,7 +59,7 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->wt), ru, su_act);
+      C_Compute_dWt_Delta(cn, LinFmSigWt(cn->lwt), ru, su_act);
     }
   }
 

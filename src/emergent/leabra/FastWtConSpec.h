@@ -128,7 +128,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       FastWtCon* cn = (FastWtCon*)cg->OwnCn(i);
       C_Compute_FastDecay(cn, ru, su);
-      float lin_wt = LinFmSigWt(cn->wt);
+      float lin_wt = LinFmSigWt(cn->lwt);
       C_Compute_dWt(cn, ru, 
 		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
 		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
@@ -146,7 +146,8 @@ public:
     }
     if(cn->dwt != 0.0f) {
       // always do this because of the decay term..
-      cn->wt = SigFmLinWt(LinFmSigWt(cn->wt) + cn->dwt);
+      cn->lwt = SigFmLinWt(LinFmSigWt(cn->lwt) + cn->dwt);
+      Compute_EffWt(cn);
     }
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;

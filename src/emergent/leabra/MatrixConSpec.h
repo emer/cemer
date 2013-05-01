@@ -51,7 +51,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
-      C_Compute_dWt_Matrix_Trace(cn, LinFmSigWt(cn->wt), ru->act_p, su->act_p);
+      C_Compute_dWt_Matrix_Trace(cn, LinFmSigWt(cn->lwt), ru->act_p, su->act_p);
     }
   }
 
@@ -68,11 +68,12 @@ public:
       // always do soft bounding, at this point (post agg across processors, etc)
       // PV dav modulates the prior su product dwts -- skipping the LV middleman..
       float dwt = ru_dav * cn->dwt;
-      float lin_wt = LinFmSigWt(cn->wt);
+      float lin_wt = LinFmSigWt(cn->lwt);
       // always do soft bounding
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
-      cn->wt = SigFmLinWt(lin_wt + dwt);
+      cn->lwt = SigFmLinWt(lin_wt + dwt);
+      Compute_EffWt(cn);
       cn->pdw = dwt;
     }
     // note: dwt NOT reset at this point -- allows multiple PV dav mods of same dwt

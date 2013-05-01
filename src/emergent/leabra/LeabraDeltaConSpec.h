@@ -33,7 +33,7 @@ public:
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
     if(lmix.err_sb) {
-      float lin_wt = LinFmSigWt(cn->wt);
+      float lin_wt = LinFmSigWt(cn->lwt);
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
     }
