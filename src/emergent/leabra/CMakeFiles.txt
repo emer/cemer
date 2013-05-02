@@ -137,6 +137,7 @@ set(leabra_HEADS_MAKETA
   HippoEncoderConSpec.h
   XCalCHLConSpec.h
   PFCConSpec.h
+  CerebGranuleUnitSpec.h
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -279,4 +280,5 @@ set(leabra_SRCS
   HippoEncoderConSpec.cpp
   XCalCHLConSpec.cpp
   PFCConSpec.cpp
+  CerebGranuleUnitSpec.cpp
 )
