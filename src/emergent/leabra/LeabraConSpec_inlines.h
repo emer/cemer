@@ -68,6 +68,7 @@ inline float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
 
 
 inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su) {
+  if(!learn) return;
   for(int i=0; i<cg->size; i++) {
     C_Compute_StableWeights((LeabraCon*)cg->OwnCn(i));
   }

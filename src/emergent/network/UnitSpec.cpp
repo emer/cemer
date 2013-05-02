@@ -153,6 +153,9 @@ void UnitSpec::Init_Weights_post(Unit* u, Network* net) {
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
     recv_gp->Init_Weights_post(u);
   }
+  if(u->bias.size && u->bias.OwnCn(0)) {
+    bias_spec->C_Init_Weights_post(&u->bias, u->bias.OwnCn(0), u, NULL); // this is a virtual fun
+  }
 }
 
 void UnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {

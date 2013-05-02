@@ -2217,31 +2217,31 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   // first pass: just look at our guys
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->IsNotPtr()) {
-      if(md->type->IsActualTaBase()) {
-        taBase* obj = (taBase*)md->GetOff(this);
-        if(mbr_name) {
-          if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) {
-            items.Link(obj);
-            continue;
-          }
-          else if(type_desc) {
-            if(SearchTestStr_impl(srch, md->desc, contains, case_sensitive)) {
-              items.Link(obj);
-              continue;
-            }
-          }
-        }
-        if(SearchTestItem_impl(obj, srch, contains, case_sensitive, obj_name, obj_type,
-                               obj_desc, obj_val, mbr_name, type_desc)) {
-          items.Link(obj);
-        }
+    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")) continue;
+    if(md->type->IsActualTaBase()) {
+      taBase* obj = (taBase*)md->GetOff(this);
+      if(mbr_name) {
+	if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) {
+	  items.Link(obj);
+	  continue;
+	}
+	else if(type_desc) {
+	  if(SearchTestStr_impl(srch, md->desc, contains, case_sensitive)) {
+	    items.Link(obj);
+	    continue;
+	  }
+	}
+      }
+      if(SearchTestItem_impl(obj, srch, contains, case_sensitive, obj_name, obj_type,
+			     obj_desc, obj_val, mbr_name, type_desc)) {
+	items.Link(obj);
       }
     }
   }
   // second pass: recurse
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
+    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")) continue;
     if(md->type->IsActualTaBase()) {
       taBase* obj = (taBase*)md->GetOff(this);
       obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
