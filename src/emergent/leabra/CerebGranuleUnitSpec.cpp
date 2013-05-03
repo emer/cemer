@@ -24,6 +24,9 @@ void CerebGranuleSpecs::Initialize() {
   lrn_end_time = 150;
 }
 
+void CerebGranuleSpecs::Defaults_init() {
+}
+
 void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
                                            int       thread_no) {
   inherited::Compute_NetinInteg(u, net, thread_no);
