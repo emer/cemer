@@ -17,7 +17,7 @@
 #define RelationFloat_h 1
 
 // parent includes:
-#include <taNBase>
+#include <taINBase>
 
 // member includes:
 
@@ -26,9 +26,9 @@
 
 taTypeDef_Of(RelationFloat);
 
-class TA_API RelationFloat : public taNBase {
+class TA_API RelationFloat : public taINBase {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math counting criteria params
-  INHERITED(taNBase)
+  INHERITED(taINBase)
 public:
   enum Relations {
     EQUAL,              // #LABEL_=

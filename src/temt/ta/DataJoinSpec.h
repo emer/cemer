@@ -17,7 +17,7 @@
 #define DataJoinSpec_h 1
 
 // parent includes:
-#include <taNBase>
+#include <taINBase>
 
 // member includes:
 #include <DataOpEl>
@@ -28,9 +28,9 @@ class DataTable; //
 
 taTypeDef_Of(DataJoinSpec);
 
-class TA_API DataJoinSpec : public taNBase {
+class TA_API DataJoinSpec : public taINBase {
   // #STEM_BASE ##INLINE ##CAT_Data datatable join specification: combine two tables along matching column values -- tables are both sorted (internally) by join col, so results are in that sort order
-  INHERITED(taNBase)
+  INHERITED(taINBase)
 public:
   enum JoinType {
     LEFT,			// each row of the first table is included, with blanks for nonmatches

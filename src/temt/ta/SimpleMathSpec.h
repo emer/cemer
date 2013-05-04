@@ -17,7 +17,7 @@
 #define SimpleMathSpec_h 1
 
 // parent includes:
-#include <taNBase>
+#include <taINBase>
 
 // member includes:
 
@@ -26,9 +26,9 @@
 
 taTypeDef_Of(SimpleMathSpec);
 
-class TA_API SimpleMathSpec : public taNBase {
+class TA_API SimpleMathSpec : public taINBase {
   // #STEM_BASE ##INLINE ##INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
-  INHERITED(taNBase)
+  INHERITED(taINBase)
 public:
   enum MathOpr {
     NONE,                       // no function

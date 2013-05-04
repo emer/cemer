@@ -17,7 +17,7 @@
 #define Aggregate_h 1
 
 // parent includes:
-#include <taNBase>
+#include <taINBase>
 
 // member includes:
 #include <Relation>
@@ -27,9 +27,9 @@
 
 taTypeDef_Of(Aggregate);
 
-class TA_API Aggregate : public taNBase {
+class TA_API Aggregate : public taINBase {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Basic aggregation operations
-  INHERITED(taNBase)
+  INHERITED(taINBase)
 public:
   enum Operator {               // Aggregate Operators
     GROUP,                      // group by this field

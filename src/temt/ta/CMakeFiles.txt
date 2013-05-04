@@ -84,6 +84,7 @@ set(ta_HEADS_MAKETA_NOMOC
   taOBase.h
   taOABase.h
   taNBase.h
+  taINBase.h
   taFBase.h
 
   taSmartPtrT.h
@@ -1140,6 +1141,7 @@ set(ta_SRCS_MAKETA
   taOBase.cpp
   taOABase.cpp
   taNBase.cpp
+  taINBase.cpp
   taFBase.cpp
 
   taSmartPtrT.cpp

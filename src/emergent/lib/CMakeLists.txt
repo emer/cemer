@@ -51,6 +51,14 @@ SET_TA_PROPS(so ${PROJECT_SOURCE_DIR}/src/emergent/so)
 
 MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA} OPTIONS so)
 
+# actr
+include(${PROJECT_SOURCE_DIR}/src/emergent/actr/CMakeFiles.txt)
+ADD_PATH_TO_FILES(emergent_actr_SRCS ${mypath}/actr "${actr_SRCS}")
+ADD_PATH_TO_FILES(emergent_actr_HEADS_MAKETA ${mypath}/actr "${actr_HEADS_MAKETA}")
+SET_TA_PROPS(actr ${PROJECT_SOURCE_DIR}/src/emergent/actr)
+
+MAKETA_WRAP_H(emergent_actr_SRCS_MAKETA ${emergent_actr_HEADS_MAKETA} OPTIONS actr)
+
 if (QT_USE_5)
   qt5_wrap_cpp(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
 else (QT_USE_5)
@@ -65,6 +73,7 @@ set(emergentlib_SRCS
 	${emergent_leabra_SRCS} ${emergent_leabra_SRCS_MAKETA}
 	${emergent_cs_SRCS} ${emergent_cs_SRCS_MAKETA}
 	${emergent_so_SRCS} ${emergent_so_SRCS_MAKETA}
+	${emergent_actr_SRCS} ${emergent_actr_SRCS_MAKETA}
 )
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})

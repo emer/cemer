@@ -17,7 +17,7 @@
 #define Random_h 1
 
 // parent includes:
-#include <taNBase>
+#include <taINBase>
 
 // member includes:
 #include <MTRnd>
@@ -28,9 +28,9 @@
 
 taTypeDef_Of(Random);
 
-class TA_API Random : public taNBase {
+class TA_API Random : public taINBase {
   // #STEM_BASE #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Random Number Generation
-INHERITED(taNBase)
+INHERITED(taINBase)
 public:
   enum Type {
     UNIFORM,                    // uniform with var = range on either side of the mean

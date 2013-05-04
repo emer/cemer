@@ -171,6 +171,7 @@ add_subdirectory(src/emergent/bp)
 add_subdirectory(src/emergent/leabra)
 add_subdirectory(src/emergent/so)
 add_subdirectory(src/emergent/cs)
+add_subdirectory(src/emergent/actr)
 add_subdirectory(src/emergent/lib)
 add_subdirectory(src/emergent/bin)
 
@@ -316,7 +317,7 @@ include(CMakeModules/EmergentCPack.cmake)
 if (NOT WIN32)
   # use this to remove all ta files from source tree
   add_custom_target(clean_ta_emergent
-    DEPENDS clean_ta_network clean_ta_leabra clean_ta_bp clean_ta_cs clean_ta_so    
+    DEPENDS clean_ta_network clean_ta_leabra clean_ta_bp clean_ta_cs clean_ta_so clean_ta_actr   
     )
 
   ADD_CUSTOM_TARGET(clean_ta_all

@@ -17,7 +17,7 @@
 #define ClustNode_h 1
 
 // parent includes:
-#include <taNBase>
+#include <taINBase>
 
 // member includes:
 #include <taBase_List>
@@ -32,9 +32,9 @@ class DataTable; //
 
 taTypeDef_Of(ClustNode);
 
-class TA_API ClustNode : public taNBase {
+class TA_API ClustNode : public taINBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Math node in clustering algorithm use one with leaves as children as a root node for cluster
-INHERITED(taNBase)
+INHERITED(taINBase)
 public:
   taMatrix*	pat;		// pattern I point to (if leaf)
   int		leaf_idx;	// original leaf index, used for pointing into master distance table

@@ -1,0 +1,54 @@
+########### emergent actr files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the emergent/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+# although some attempt is made to keep track of gui-related files, a huge amount
+# of additional work would be required to fully split this out, and we need Qt
+# anyway, so there really isn't any point to it anymore
+
+# all headers that need maketa run on them
+set(actr_HEADS_MAKETA
+  ActrChunkType.h
+  ActrChunkType_List.h
+  ActrChunk.h
+  ActrChunk_List.h
+  ActrBuffer.h
+  ActrBuffer_List.h
+  ActrCondition.h
+  ActrCondition_List.h
+  ActrAction.h
+  ActrAction_List.h
+  ActrProduction.h
+  ActrProduction_Group.h
+  ActrModule_List.h
+  ActrModule.h
+  ActrDeclarativeModule.h
+  ActrModel.h
+)
+
+# all heads -- include maketa generated ones here
+set(actr_HEADS
+  ${actr_HEADS_MAKETA}
+)
+
+# all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
+set(actr_SRCS
+  ActrChunkType.cpp
+  ActrChunkType_List.cpp
+  ActrChunk.cpp
+  ActrChunk_List.cpp
+  ActrBuffer.cpp
+  ActrBuffer_List.cpp
+  ActrCondition.cpp
+  ActrCondition_List.cpp
+  ActrAction.cpp
+  ActrAction_List.cpp
+  ActrProduction.cpp
+  ActrProduction_Group.cpp
+  ActrModule_List.cpp
+  ActrModule.cpp
+  ActrDeclarativeModule.cpp
+  ActrModel.cpp
+)
