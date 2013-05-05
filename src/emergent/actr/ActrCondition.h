@@ -23,6 +23,8 @@
 #include <ActrChunk>
 
 // declare all other types mentioned but not required to include:
+class ActrProceduralModule; //
+class ActrModel; //
 
 eTypeDef_Of(ActrCondition);
 
@@ -31,7 +33,8 @@ class E_API ActrCondition : public taOBase {
 INHERITED(taOBase)
 public:
   enum CondSource {
-    BUFFER,                     // match against an ActR chunk in a buffer (for regular ActR model) 
+    BUFFER_EQ,                  // match against an ActR chunk in a buffer (for regular ActR model) 
+    BUFFER_QUERY,               // check state of buffer or module 
     PROG_VAR,                   // match against value of a program variable (for use in controlling system) -- must be a global (args or vars) variable, not a local var
     NET_UNIT,                   // match against unit activation in a network
     NET_LAYER,                  // match against layer-level state variable in a network
@@ -52,10 +55,18 @@ public:
   taBaseRef     src;           // #TYPE_ON_src_type the source object to obtain data to match against (e.g., buffer, etc)
   String        unit_name;     // #CONDSHOW_ON_cond_src:NET_UNIT name of unit within layer to obtain unit value from -- can only access named units
   Relations     rel;           // relationship between source value and comparison value -- only = and != are valid for BUFFER source
-  Variant       cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER comparison value
-  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
+  String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value
+  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
 
   // todo: config checking, matching etc
+
+  virtual bool  Matches();
+  // #CAT_ActR does this condition match?
+  virtual String WhyNot();
+  // #BUTTON #USE_RVAL #CAT_ActR report why this condition does not match
+
+  virtual void  SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
+  // #CAT_ActR send BUFFER-READ-ACTION events for all BUFFER_EQ cases
 
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 

@@ -32,6 +32,7 @@ class E_API ActrProduction : public taNBase {
 INHERITED(taNBase)
 public:
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this production -- what does it do?
+  bool                  off;   // turn this production off 
   float                 util;  // #READ_ONLY #SHOW current utility of this production, updated from rewards
   float                 rew;   // reward value associated with the firing of this production
   ActrCondition_List    conds; // conditions that must be matched to fire this production
@@ -42,14 +43,27 @@ public:
     return util;
   }
   // #CAT_ActR update the utility of this production from given reward value and learning rate
+
+  virtual bool          Matches();
+  // do the conditions match now or not? called by procedural module
+
+  virtual String        WhyNot();
+  // #BUTTON #USE_RVAL explain why this production does not match right now
+
+  virtual void          SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
+  // send BUFFER-READ-ACTION events to all the buffers we read when we fire, sent from procedural module to buffer owning module
  
   override String       GetDesc() const {return desc;}
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override int          GetEnabled() const;
+  override void         SetEnabled(bool value);
 
   TA_SIMPLE_BASEFUNS(ActrProduction);
 private:
   void Initialize();
   void Destroy()     { CutLinks(); }
 };
+
+SmartRef_Of(ActrProduction); // ActrProductionRef
 
 #endif // ActrProduction_h

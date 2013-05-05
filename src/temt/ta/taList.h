@@ -75,6 +75,9 @@ public:
   T*            FindNameType(const String& item_nm) const
   { return (T*)FindNameType_(item_nm); }
   // #CAT_Access Find element with given object name or type name (item_nm)
+  T*            FindMakeNameType(const String& item_nm, TypeDef* td, bool& made_new)
+  { return (T*)FindMakeNameType_(item_nm, td, made_new); }
+  // #CAT_Modify find an object with the given name and type (if not NULL) -- if not found or type was different, makes a new one and sets made_new = true -- in any case returns object
 
   T*            First() const                   { return (T*)First_(); }
   // #CAT_Access look at the first element; NULL if none

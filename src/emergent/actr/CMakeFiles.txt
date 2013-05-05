@@ -10,8 +10,14 @@
 
 # all headers that need maketa run on them
 set(actr_HEADS_MAKETA
+  ActrChunkTypeRef.h
+  ActrChunkRef.h
+  ActrSlotType.h
+  ActrSlotType_List.h
   ActrChunkType.h
   ActrChunkType_List.h
+  ActrSlot.h
+  ActrSlot_List.h
   ActrChunk.h
   ActrChunk_List.h
   ActrBuffer.h
@@ -22,9 +28,14 @@ set(actr_HEADS_MAKETA
   ActrAction_List.h
   ActrProduction.h
   ActrProduction_Group.h
-  ActrModule_List.h
+  ActrModuleRef.h
+  ActrEvent.h
+  ActrEvent_List.h
   ActrModule.h
+  ActrModule_List.h
   ActrDeclarativeModule.h
+  ActrProceduralModule.h
+  ActrGoalModule.h
   ActrModel.h
 )
 
@@ -35,8 +46,14 @@ set(actr_HEADS
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(actr_SRCS
+  ActrChunkTypeRef.cpp
+  ActrChunkRef.cpp
+  ActrSlotType.cpp
+  ActrSlotType_List.cpp
   ActrChunkType.cpp
   ActrChunkType_List.cpp
+  ActrSlot.cpp
+  ActrSlot_List.cpp
   ActrChunk.cpp
   ActrChunk_List.cpp
   ActrBuffer.cpp
@@ -47,8 +64,13 @@ set(actr_SRCS
   ActrAction_List.cpp
   ActrProduction.cpp
   ActrProduction_Group.cpp
-  ActrModule_List.cpp
+  ActrModuleRef.cpp
+  ActrEvent.cpp
+  ActrEvent_List.cpp
   ActrModule.cpp
+  ActrModule_List.cpp
   ActrDeclarativeModule.cpp
+  ActrProceduralModule.cpp
+  ActrGoalModule.cpp
   ActrModel.cpp
 )

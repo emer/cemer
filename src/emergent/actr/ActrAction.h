@@ -38,7 +38,7 @@ public:
   };
 
   ActType       action;         // what type of action to perform
-  ActrBuffer    buffer;         // what buffer to operate on
+  ActrBufferRef buffer;         // what buffer to operate on
   ActrChunk     chunk;          // chunk information for the action
 
   override String       GetTypeDecoKey() const { return "Function"; }
@@ -48,5 +48,7 @@ private:
   void Initialize();
   void Destroy()     { CutLinks(); }
 };
+
+SmartRef_Of(ActrAction); // ActrActionRef
 
 #endif // ActrAction_h

@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ActrAction_List.h"
+#include <ActrModule>
 
 void ActrAction_List::Initialize() {
   SetBaseType(&TA_ActrAction);

@@ -20,10 +20,12 @@
 #include <taNBase>
 
 // member includes:
+#include <ActrModuleRef>
 #include <ActrBuffer>
 
 // declare all other types mentioned but not required to include:
 class ActrModel; //
+class ActrEvent; //
 
 eTypeDef_Of(ActrModule);
 
@@ -31,24 +33,41 @@ class E_API ActrModule : public taNBase {
   // ##INSTANCE ##CAT_ActR base class for ACT-R modules
 INHERITED(taNBase)
 public:
+  enum ModuleState {
+    MS_FREE,                    // module is free to take on new tasks
+    MS_BUSY,                    // module is busy processing something
+    MS_ERROR,                   // module is in an error state
+  };
+ 
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this module
-  ActrBufferRef         buffer; // the buffer for this module
+  ActrBufferRef         buffer; // the main buffer for this module (can add other ones in subclasses)
+  ModuleState           state;  // #READ_ONLY #SHOW current state of the module
 
-  virtual void  InitBuffer(ActrModel& model) { };
-  // ensure we have our appropriate buffer in model, and set our buffer pointer
+  virtual void  InitModule() { };
+  // #CAT_ActR initialize the module -- ensure we have our appropriate buffer in model, and set our buffer pointer, etc
+  virtual void  ProcessEvent(ActrEvent& event) { };
+  // #CAT_ActR process a given event, defined in a module-specific way
+  virtual void  Init() { };
+  // #CAT_ActR perform run-time initialization at start of processing
 
-  virtual void  ProcessRequests(ActrModel& model) { };
-  // process any active requests from our buffer
+  //  virtual bool  ProcessEvent_State(ActrEvent& event);
+  // #CAT_ActR process events dealing with state of module or buffer
 
+  ActrModel*            Model() { return own_model; }
+  // #CAT_ActR get the model that owns me
   override String       GetDesc() const {return desc;}
   override String       GetTypeDecoKey() const { return "Program"; }
 
-  TA_SIMPLE_BASEFUNS(ActrModule);
+  void  InitLinks();
+  void  CutLinks();
+  TA_BASEFUNS(ActrModule);
+protected:
+  ActrModel*            own_model; // the model that owns us -- init in InitLinks
+  
 private:
+  SIMPLE_COPY(ActrModule);
   void Initialize();
   void Destroy()     { CutLinks(); }
 };
-
-SmartRef_Of(ActrModule); // ActrModuleRef
 
 #endif // ActrModule_h

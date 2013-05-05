@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ActrProduction_Group.h"
+#include <ActrModule>
 
 void ActrProduction_Group::Initialize() {
   SetBaseType(&TA_ActrProduction);

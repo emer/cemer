@@ -14,13 +14,15 @@
 //   GNU General Public License for more details.
 
 #include "ActrCondition.h"
-
 #include <ActrBuffer>
+#include <ActrModel>
+#include <ActrProceduralModule>
+
 #include <ProgVar>
 #include <Layer>
 
 void ActrCondition::Initialize() {
-  cond_src = BUFFER;
+  cond_src = BUFFER_EQ;
   src_type = &TA_ActrBuffer;
   rel = EQUAL;
 }
@@ -28,7 +30,8 @@ void ActrCondition::Initialize() {
 void ActrCondition::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   switch(cond_src) {
-  case BUFFER:
+  case BUFFER_EQ:
+  case BUFFER_QUERY:
     src_type = &TA_ActrBuffer;
     if(TestWarning(rel != EQUAL && rel != NOTEQUAL,
                    "UAE", "only equal or not-equal relationship allowed")) {
@@ -45,4 +48,59 @@ void ActrCondition::UpdateAfterEdit_impl() {
   case OBJ_MEMBER:
     break;
   }
+}
+
+bool ActrCondition::Matches() {
+  switch(cond_src) {
+  case BUFFER_EQ: {
+    if(TestError(!src, "Matches",
+                 "no buffer specified as the source to match against!"))
+      return false;
+    ActrBuffer* buf = (ActrBuffer*)src.ptr();
+    if(!buf->IsFull()) return false;
+    bool match = cmp_chunk.Matches(buf->CurChunk());
+    if(rel == NOTEQUAL) match = !match;
+    return match;
+    break;
+  }
+  case BUFFER_QUERY: {
+    if(TestError(!src, "Matches",
+                 "no buffer specified as the source to match against!"))
+      return false;
+    ActrBuffer* buf = (ActrBuffer*)src.ptr();
+    bool match = buf->Matches(cmp_val);
+    if(rel == NOTEQUAL) match = !match;
+    return match;
+    break;
+  }
+  case PROG_VAR:
+    return false;               // not yet
+    break;
+  case NET_UNIT:
+    return false;               // not yet
+    break;
+  case NET_LAYER:
+    return false;               // not yet
+    break;
+  case OBJ_MEMBER:
+    return false;               // not yet
+    break;
+  }
+  return false;
+}
+
+String ActrCondition::WhyNot() {
+  // todo write
+  return "not impl yet\n";
+}
+
+void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {
+  if(cond_src != BUFFER_EQ) return;
+  if(TestError(!src, "Matches",
+               "no buffer specified as the source to match against!"))
+    return;
+  ActrBuffer* buf = (ActrBuffer*)src.ptr();
+  // todo: not sure about pri here
+  model->ScheduleEvent(0.0f, ActrEvent::max_pri, proc_mod, buf->module, buf,
+                       "BUFFER-READ-ACTION", buf->name);
 }

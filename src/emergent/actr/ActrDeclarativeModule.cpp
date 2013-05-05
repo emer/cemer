@@ -21,11 +21,19 @@ void ActrDeclarativeModule::Initialize() {
 
 }
 
-void ActrDeclarativeModule::InitBuffer(ActrModel& model) {
+void ActrDeclarativeModule::InitModule() {
   if((bool)buffer) return;
-  buffer = model.buffers.FindName("declarative");
-  if(!buffer) {
-    buffer = (ActrBuffer*)model.buffers.New(1);
-    buffer->name = "declarative";
-  }
+  if(!Model()) return;
+  ActrModel* mod = Model();
+  bool made_new;
+  buffer = mod->buffers.FindMakeNameType("declarative", NULL, made_new);
+  buffer->module = this;
+}
+
+void ActrDeclarativeModule::ProcessEvent(ActrEvent& event) {
+}
+
+void ActrDeclarativeModule::Init() {
+  chunks.Reset();
+  chunks.CopyFrom(&init_chunks);
 }

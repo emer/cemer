@@ -23,8 +23,8 @@
 #include <ActrChunkType_List>
 #include <ActrModule_List>
 #include <ActrBuffer_List>
-#include <ActrProduction_Group>
-
+#include <ActrEvent_List>
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 
@@ -34,28 +34,73 @@ class E_API ActrModel : public taNBase {
   // ##INSTANCE ##CAT_ActR a complete ACT-R model, including productions, buffers, chunks, etc
 INHERITED(taNBase)
 public:
+  enum ModelFlags { // #BITS ActR model flags
+    MF_NONE             = 0, // #NO_BIT
+    SAVE_ALL_EVENTS     = 0x0001, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
+  };
+
+  enum RunState { // current run state for this model
+    DONE = 0,   // there is no program running or stopped; any previous run completed
+    RUN,        // model is currently running
+    STOP,       // the model is stopped (note: NOT the same as "DONE")
+    NOT_INIT,   // model has not yet been initialized
+  };
+
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this model
-  float                 util_lrate; // #DEF_0.2 production utility learning rate (alpha)
-  float                 util_noise; // noise value (sigma) for the production selection process
-  float                 prod_time;  // #DEF_0.050 how many seconds does one production take to fire -- default is 50ms
+  ModelFlags            flags; // misc flags for controlling behavior of the model
   float                 cur_time;   // #READ_ONLY #SHOW current time in the model
 
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
   ActrBuffer_List       buffers;      // buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
-  ActrProduction_Group  productions;  // all the productions defined for the model
+  ActrEvent_List        events;       // currently scheduled events
+  int                   cur_event_idx; // #READ_ONLY current event index in list of events
+  DataTableRef          log_table;     // data table to log events into
 
-  ActrBufferRef         goal_buf;     // #READ_ONLY our goal buffer
-  ActrModuleRef         decl_mod;     // #READ_ONLY our declarative module
+  RunState              run_state;
+  // #READ_ONLY #NO_SAVE this model's running state
 
-  virtual void          Init() { }; // #BUTTON initialize model at the start
-  virtual void          Step() { }; // #BUTTON run one step of processing
+  inline void           SetModelFlag(ModelFlags flg)   { flags = (ModelFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearModelFlag(ModelFlags flg) { flags = (ModelFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasModelFlag(ModelFlags flg) const { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetModelFlagState(ModelFlags flg, bool on)
+  { if(on) SetModelFlag(flg); else ClearModelFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleModelFlag(ModelFlags flg)
+  { SetModelFlagState(flg, !HasModelFlag(flg)); }
+  // #CAT_Flags toggle model flag
 
-  virtual ActrProduction* SelectNextProduction() { return NULL; }
-  // #CAT_ActR find next production to fire..
+
+  virtual void          Init();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run initialize model at the start
+  virtual void          Step();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run next step of processing
+  virtual void          Run();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run to completion or until Stop is pressed
+  virtual void          Stop();
+  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop running if currently running
+
+  virtual void          RunNextEvent();
+  // #IGNORE run the next event -- called by above processing functions
+
+
+  virtual ActrEvent*   ScheduleEvent(float time_fm_now, int priority,
+                                     ActrModule* src_module, ActrModule* dst_module,
+                                     ActrBuffer* dst_buffer, const String& action,
+                                     const String& params,
+                                     ActrAction* act = NULL, ActrChunk* chnk = NULL,
+                                     TypeDef* event_type = NULL);
+  // #CAT_ActR schedule an event -- creates event, adds in proper position to list of currently scheduled events, and returns pointer to new event -- called by modules -- must set dst_module as destination module to process event, unless it is action=!Stop! event -- rest are various optional args to be processed by destination module -- can create subtypes of ActrEvent with event_type arg
 
   virtual void          DefaultConfig();
-  // ensure that we have at least the basic default config
+  // #CAT_ActR ensure that we have at least the basic default config
+
+  virtual ActrModule*   FindMakeModule(const String& nm, TypeDef* td,
+                                       bool& made_new);
+  // #CAT_ActR find or make a module of the given name and type -- initializes the module if it makes a new one
 
   override String       GetDesc() const {return desc;}
 

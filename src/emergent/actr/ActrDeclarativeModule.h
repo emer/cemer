@@ -29,9 +29,12 @@ class E_API ActrDeclarativeModule : public ActrModule {
   // declarative memory module
 INHERITED(ActrModule)
 public:
+  ActrChunk_List        init_chunks; // initial chunks to start pre-loaded into declarative memory
   ActrChunk_List        chunks; // the current chunks in declarative memory
 
-  override void  InitBuffer(ActrModel& model);
+  override void  InitModule();
+  override void  ProcessEvent(ActrEvent& event);
+  override void  Init();
 
   TA_SIMPLE_BASEFUNS(ActrDeclarativeModule);
 private:

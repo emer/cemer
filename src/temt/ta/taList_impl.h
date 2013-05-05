@@ -184,6 +184,9 @@ public:
   virtual taBase* FindNameType_(const String& item_nm) const;
   // #IGNORE
 
+  virtual taBase* FindMakeNameType_(const String& item_nm, TypeDef* td, bool& made_new);
+  // #IGNORE find an object with the given name and type (if not NULL) -- if not found or type was different, makes a new one and sets made_new = true -- in any case returns object
+
   void  SetBaseType(TypeDef* it); // #CAT_Modify set base (and default) type to given td
 
   virtual bool  MakeElNamesUnique();

@@ -21,6 +21,7 @@
 
 // member includes:
 #include <ActrChunk_List>
+#include <ActrModuleRef>
 
 // declare all other types mentioned but not required to include:
 
@@ -30,11 +31,31 @@ class E_API ActrBuffer : public taNBase {
   // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel a named buffer in ActR -- holds active chunk(s)
 INHERITED(taNBase)
 public:
-  String                desc; // #EDIT_DIALOG #HIDDEN_INLINE description of this buffer
-  ActrChunk_List        active; // active chunk(s) in the buffer
-  ActrChunk_List        requests; // current pending requests in buffer
+  enum BufferState {
+    BS_EMPTY,                   // buffer is empty
+    BS_FULL,                    // buffer is full
+    BS_REQ,                     // buffer is requested
+    BS_UNREQ,                   // buffer is unrequested
+  };
+
+  String                desc;      // #EDIT_DIALOG #HIDDEN_INLINE description of this buffer
+  ActrChunk_List        active;    // active chunk(s) in the buffer
+  ActrModuleRef         module;    // module that this buffer belongs to
+  float                 act_total; // total activation that this buffer can contribute 
+  BufferState           state;     // #READ_ONLY #SHOW current state of the buffer
 
   // todo: figure out spreading activation stuff..
+
+  bool  IsEmpty()       { return state == BS_EMPTY; }
+  bool  IsFull()        { return state == BS_FULL && active.size >= 1; }
+  
+  ActrChunk*            CurChunk() 
+  { if(active.size == 0) return NULL; return active.FastEl(0); }
+
+  bool  Matches(const String& query);
+  // does state of buffer or owning module match given query value -- must be: buffers: full, empty, requested, unrequested  modules: busy, free, error
+
+  virtual void          UpdateState();
 
   override String       GetDesc() const {return desc;}
   override String 	GetTypeDecoKey() const { return "DataTable"; }
@@ -46,5 +67,9 @@ private:
 };
 
 SmartRef_Of(ActrBuffer); // ActrBufferRef
+
+#ifdef __TA_COMPILE__
+#include <ActrModule>
+#endif
 
 #endif // ActrBuffer_h

@@ -14,7 +14,21 @@
 //   GNU General Public License for more details.
 
 #include "ActrModule.h"
+#include <ActrModel>
+#include <ActrEvent>
 
 void ActrModule::Initialize() {
+  own_model = NULL;
 }
 
+void ActrModule::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ActrModule);
+  own_model = GET_MY_OWNER(ActrModel);
+}
+
+void ActrModule::CutLinks() {
+  own_model = NULL;
+  CutLinks_taAuto(&TA_ActrModule);
+  inherited::CutLinks();
+}

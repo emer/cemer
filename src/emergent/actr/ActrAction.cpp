@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ActrAction.h"
+#include <ActrModule>
 
 void ActrAction::Initialize() {
   action = UPDATE;

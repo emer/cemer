@@ -14,7 +14,17 @@
 //   GNU General Public License for more details.
 
 #include "ActrBuffer.h"
+#include <ActrModule>
 
 void ActrBuffer::Initialize() {
 
+}
+
+bool ActrBuffer::Matches(const String& query) {
+  // todo: write
+  return false;
+}
+
+void ActrBuffer::UpdateState() {
+  // todo: write, and call me!
 }

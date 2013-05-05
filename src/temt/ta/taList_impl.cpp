@@ -1126,6 +1126,27 @@ taBase* taList_impl::FindNameType_(const String& item_nm) const {
   return NULL;
 }
 
+taBase* taList_impl::FindMakeNameType_(const String& item_nm, TypeDef* td, bool& made_new) {
+  made_new = false;
+  taBase* rval = (taBase*)FindName_(item_nm);
+  if(rval) {
+    if(td && !rval->InheritsFrom(td)) {
+      taBase* nv = taBase::MakeToken(td);
+      if(nv) {
+        nv->SetName(item_nm);
+        ReplaceEl(rval, nv);
+        made_new = true;
+      }
+      return nv;
+    }
+    return rval;
+  }
+  made_new = true;
+  rval = New(1,td);
+  rval->SetName(item_nm);
+  return rval;
+}
+
 String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
   if ((((taBase*) this) == par_stop) && (ta == NULL))
     return ".";

@@ -18,10 +18,11 @@
 
 // parent includes:
 #include "network_def.h"
+#include <ActrChunkTypeRef>
 #include <taNBase>
 
 // member includes:
-#include <String_Array>
+#include <ActrSlotType_List>
 
 #ifdef slots
 #undef slots
@@ -35,9 +36,10 @@ class E_API ActrChunkType : public taNBase {
   // ##INSTANCE ##EDIT_INLINE ##CAT_ActR ##SCOPE_ActrModel a chunk type for defining ActR chunks
 INHERITED(taNBase)
 public:
-  String               desc; // #EDIT_DIALOG #HIDDEN_INLINE description of this buffer
-  String_Array         slots;  // the names of the slots within this chunk
+  String               desc; // #EDIT_DIALOG #HIDDEN_INLINE description of this chunk type
+  ActrSlotType_List    slots;  // the names and types of the slots within this chunk
 
+  override String       GetDesc() const {return desc;}
   override String       GetTypeDecoKey() const { return "ProgType"; }
 
   TA_SIMPLE_BASEFUNS(ActrChunkType);
@@ -45,7 +47,5 @@ private:
   void Initialize();
   void Destroy();
 };
-
-SmartRef_Of(ActrChunkType); // ActrChunkTypeRef
 
 #endif // ActrChunkType_h

@@ -14,6 +14,8 @@
 //   GNU General Public License for more details.
 
 #include "ActrChunk.h"
+#include <ActrSlotType>
+#include <ActrSlot>
 
 void ActrChunk::Initialize() {
   n_act = 0.0f;
@@ -27,11 +29,61 @@ void ActrChunk::Destroy() {
 
 void ActrChunk::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(!chunk_type) return;
-  // enforce size
-  vals.SetSize(chunk_type->slots.size);
-  for(int i=0; i<chunk_type->slots.size; i++) {
-    vals.labels[i] = chunk_type->slots[i];
-  }
+  UpdateFromType();
 }
 
+bool ActrChunk::UpdateFromType() {
+  if(!chunk_type) return false;
+
+  bool any_changes = false;
+  int i;  int ti;
+  ActrSlot* sv;
+  ActrSlotType* st;
+  // delete slots not in type; freshen those that are
+  for (i = slot_vals.size - 1; i >= 0; --i) {
+    sv = slot_vals.FastEl(i);
+    st = chunk_type->slots.FindName(sv->name);
+    if(st) {
+      any_changes |= sv->UpdateFromType(*st);
+    }
+    else {
+      slot_vals.RemoveIdx(i);
+      any_changes = true;
+    }
+  }
+  // add in type not in us, and put in the right order
+  for (ti = 0; ti < chunk_type->slots.size; ++ti) {
+    st = chunk_type->slots.FastEl(ti);
+    i = slot_vals.FindNameIdx(st->name);
+    if (i < 0) {
+      sv = new ActrSlot();
+      sv->UpdateFromType(*st);
+      slot_vals.Insert(sv, ti);
+      any_changes = true;
+    }
+    else if (i != ti) {
+      slot_vals.MoveIdx(i, ti);
+      any_changes = true;
+    }
+  }
+  return any_changes;
+}
+
+bool ActrChunk::Matches(ActrChunk* cmp) {
+  if(!cmp) return false;
+  if((bool)chunk_type && (bool)cmp->chunk_type) {
+    if(chunk_type != cmp->chunk_type) return false; // must be same type..
+    for(int i=0; i<slot_vals.size; i++) {
+      ActrSlot* sl = slot_vals.FastEl(i);
+      ActrSlot* os = cmp->slot_vals.SafeEl(i);
+      if(!sl->Matches(os)) return false;
+    }
+    return true;                // pass through -- all good!
+  }
+  // todo: what do we do here??  lookup by names or something?
+  return false;                 // not yet
+}
+
+String ActrChunk::WhyNot(ActrChunk* cmp) {
+  return "not impl\n";
+}

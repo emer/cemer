@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ActrBuffer_List.h"
+#include <ActrModule>
 
 void ActrBuffer_List::Initialize() {
   SetBaseType(&TA_ActrBuffer);
