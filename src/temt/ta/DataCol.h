@@ -185,7 +185,8 @@ public:
   bool          SetValAsVar(const Variant& val, int row)
   { return SetValAsVar_impl(val, row, 0);}
   // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
-  const String  GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
+  //  const String  GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
+    const String  GetValAsString(int row) const;
   // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool          SetValAsString(const String& val, int row)
   {return SetValAsString_impl(val, row, 0);}

@@ -27,7 +27,7 @@
 #include <DataTableCols>
 #include <int_Array>
 
-// this enables old datatable indexing mode (physical indexing)
+// this enables  datatable indexing mode (physical indexing)
 // once the new code is in place, we will remove this
 #define OLD_DT_IDX_MODE 1
 
@@ -432,9 +432,9 @@ public:
   virtual bool          hasData(int col, int row);
   // #CAT_Rows true if data at that cell
   bool                  idx(int row_num, int col_size, int& act_idx) const
-  { if (row_num < 0) row_num = rows + row_num;
-    act_idx = col_size - (rows - row_num); return (act_idx >= 0 && act_idx < col_size); }
-  // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
+   { if (row_num < 0) row_num = rows + row_num;
+     act_idx = col_size - (rows - row_num); return (act_idx >= 0 && act_idx < col_size); }
+   // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
   inline bool           idx_err(int row_num, int col_size, int& act_idx, bool quiet = false) const {
     bool rval = idx(row_num, col_size, act_idx);
     if(!quiet) TestError(!rval, "idx_err", "index out of range"); return rval; }

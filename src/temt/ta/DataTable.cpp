@@ -54,6 +54,7 @@ using namespace std;
 
 void DataTable::Initialize() {
   rows = 0;
+  rows_total = 0;
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   auto_load = NO_AUTO_LOAD;
   keygen.setType(Variant::T_Int64);
@@ -97,6 +98,7 @@ void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;
   row_indexes = cp.row_indexes;
   rows = cp.rows;
+  rows_total = cp.rows_total;
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
@@ -105,7 +107,7 @@ void DataTable::Copy_(const DataTable& cp) {
 
 void DataTable::Copy_NoData(const DataTable& cp) {
   // note: CANNOT just set rows=0, because we must reclaim mat space (ex strings)
-  // and must insure data model is sync'ed propery
+  // and must insure data model is sync'ed property
   //  ResetData();
   RemoveAllCols();
   // don't copy the flags!
@@ -118,6 +120,7 @@ void DataTable::Copy_DataOnly(const DataTable& cp) {
   SetBaseFlag(COPYING); // ala Copy__
   data = cp.data;
   rows = cp.rows;
+  rows_total = cp.rows_total;
   ClearBaseFlag(COPYING);
   StructUpdate(false);
 }
@@ -165,6 +168,7 @@ void DataTable::UpdateAfterEdit_impl() {
     taVersion v630(6, 3, 0);             // todo: increment this when new indexes go live!
     if(taMisc::loading_version < v630) { // make sure old projects have indexes!
       if(row_indexes.size == 0 && rows > 0) {
+        rows_total = rows;
         ResetRowIndexes();
       }
     }
@@ -185,6 +189,7 @@ void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void DataTable::ResetRowIndexes() {
+  rows = rows_total;
   row_indexes.SetSize(rows);
   row_indexes.FillSeq();        // 0...n-1
 }
@@ -229,7 +234,7 @@ int DataTable::AddBlankRow() {
 }
 
 void DataTable::EnforceRows(int nr) {
-  if(rows > nr) {
+if(rows > nr) {
     RemoveRows(nr, rows - nr);
   }
   else if(rows < nr) {
@@ -778,7 +783,7 @@ const String DataTable::GetValAsString(const Variant& col, int row) const {
 }
 
 const Variant DataTable::GetValAsVar(const Variant& col, int row) const {
-  DataCol* da = GetColData(col);
+	DataCol* da = GetColData(col);
   int i;
   if (da &&  idx_err(row, da->rows(), i))
     return da->GetValAsVar(i);
@@ -1303,7 +1308,7 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
     return NULL;
   }
   rval->Init(); // asserts geom
-  rval->EnforceRows(rows);      // new guys always get same # of rows as current table
+  rval->EnforceRows(rows_total);      // new guys always get same # of rows as current table
   StructUpdate(false);
   return rval;
 }
@@ -1850,6 +1855,7 @@ void DataTable::RemoveOrphanCols() {
   }
 }
 
+// jr 5/3 - still need to handle
 bool DataTable::InsertRows(int st_row, int n_rows) {
   if(st_row < 0) st_row = rows; // end
   if(TestError((st_row < 0 || st_row > rows), "InsertRows",
@@ -1867,7 +1873,9 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
 }
 
 bool DataTable::RemoveRows(int st_row, int n_rows) {
-  if(st_row < 0) st_row = rows-1;       // end
+  if(st_row < 0)
+	  st_row = rows-1;       // end
+
   if(TestError(!RowInRangeNormalize(st_row), "RemoveRows",
                "start row not in range:",String(st_row)))
     return false;
@@ -1877,7 +1885,7 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
                "end row not in range:",String(end_row)))
     return false;
   DataUpdate(true);
-#if OLD_DT_IDX_MODE
+#ifdef OLD_DT_IDX_MODE
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
     int act_row;
@@ -1885,14 +1893,17 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       ar->AR()->RemoveFrames(act_row, n_rows);
   }
   rows -= n_rows;
-#else
-  row_indexes.RemoveIdx(act_row, n_rows);
+#else	// not actually removing rows - just removing from this of visible rows
+  printf("st_row %d\n", st_row);
+  row_indexes.RemoveIdx(st_row, n_rows);
+  rows -= n_rows;
 #endif
   if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);
   return true;
 }
 
+// jr - 5/3 - goes thru row_indexes
 bool DataTable::DuplicateRow(int row_no, int n_copies) {
   if(TestError(!RowInRangeNormalize(row_no), "DuplicateRow",
                "row not in range:",String(row_no)))
@@ -1900,12 +1911,18 @@ bool DataTable::DuplicateRow(int row_no, int n_copies) {
   DataUpdate(true);// only data because for views, no change in column structure
   for(int k=0;k<n_copies;k++) {
     AddBlankRow();
+#ifdef OLD_DT_IDX_MODE
     data.CopyFromRow(-1, data, row_no);
+#else
+    data.CopyFromRow(-1, data, this->row_indexes.SafeEl(row_no));
+#endif
   }
   DataUpdate(false);
   return true;
 }
 
+// jr - 5/3 - this needs to be updated to use row_indexes - might want to just call duplicate row above
+// jr - 5/3 - I don't see any calls to this api
 bool DataTable::DuplicateRows(int st_row, int n_rows) {
   DataUpdate(true);// only data because for views, no change in column structure
   // first insert blank rows, then copy
@@ -1919,7 +1936,6 @@ bool DataTable::DuplicateRows(int st_row, int n_rows) {
   return rval;
 }
 
-
 bool DataTable::RowInRangeNormalize(int& row) {
   if (row < 0) row = rows + row;
   return ((row >= 0) && (row < rows));
@@ -1929,6 +1945,7 @@ void DataTable::Reset() {
   StructUpdate(true);
   data.Reset();
   rows = 0;
+  rows_total = 0;
   keygen.setInt64(0);
   StructUpdate(false);
 }
@@ -1941,6 +1958,7 @@ void DataTable::ResetData() {
     ar->AR()->Reset();
   }
   rows = 0;
+  rows_total = 0;
   keygen.setInt64(0);
   StructUpdate(false);
   // also update itrs in case using simple itr mode
@@ -1954,6 +1972,7 @@ void DataTable::RowsAdding(int n, bool begin) {
   }
   else { // end
     rows += n;
+    rows_total +=n;
     DataUpdate(false);
   }
 }

@@ -72,21 +72,21 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
   switch (role) {
   case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
   case Qt::EditRole: {
-    if (col->is_matrix)
-      return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
-    else {
-      int dx;
-      if(m_dt->idx(index.row(), col->rows(), dx))
-        return col->GetValAsString(dx);
-      else
-        return QVariant();      // nil
-    }
+	  if (col->is_matrix)
+		  return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
+	  else {
+		  int dx;
+		  if(m_dt->idx(index.row(), col->rows(), dx))
+			  return col->GetValAsString(dx);
+		  else
+			  return QVariant();      // nil
+	  }
   }
-// Qt::FontRole: //  QFont: font for the text
-//Qt::DecorationRole
-//Qt::ToolTipRole
-//Qt::StatusTipRole
-//Qt::WhatsThisRole
+  // Qt::FontRole: //  QFont: font for the text
+  //Qt::DecorationRole
+  //Qt::ToolTipRole
+  //Qt::StatusTipRole
+  //Qt::WhatsThisRole
 //Qt::SizeHintRole -- QSize
 //Qt::FontRole--  QFont: font for the text
   case Qt::TextAlignmentRole: {
