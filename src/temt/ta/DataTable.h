@@ -431,16 +431,17 @@ public:
 
   virtual bool          hasData(int col, int row);
   // #CAT_Rows true if data at that cell
-  bool                  idx(int row_num, int col_size, int& act_idx) const
+  bool                  idx(int row_num, int& act_idx) const
    { if (row_num < 0) row_num = rows + row_num;
-     act_idx = col_size - (rows - row_num); return (act_idx >= 0 && act_idx < col_size); }
-   // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
-  inline bool           idx_err(int row_num, int col_size, int& act_idx, bool quiet = false) const {
-    bool rval = idx(row_num, col_size, act_idx);
+     act_idx = row_num; return (act_idx >= 0 && act_idx < rows); }
+   // #CAT_Rows calculates an actual index for a col item, based on the current rows --  returns 'true' if act_idx in range (i.e., if there is a data item for that column)
+  inline bool           idx_err(int row_num, int& act_idx,
+                                bool quiet = false) const {
+    bool rval = idx(row_num, act_idx);
     if(!quiet) TestError(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
-  inline bool           idx_warn(int row_num, int col_size, int& act_idx, bool quiet = false) const {
-    bool rval = idx(row_num, col_size, act_idx);
+  inline bool           idx_warn(int row_num, int& act_idx, bool quiet = false) const {
+    bool rval = idx(row_num, act_idx);
     if(!quiet) TestWarning(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
   virtual bool          RowInRangeNormalize(int& row);

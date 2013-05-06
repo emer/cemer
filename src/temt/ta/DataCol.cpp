@@ -455,41 +455,30 @@ String DataCol::GetDisplayName() const {
 // Access Index
 
 int DataCol::IndexOfEl_Flat(int row, int cell) const {
-	if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
-			"cell index out of range")) return -1;
-	const DataTable* tab = dataTable();
-	if(tab) {
+  if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
+               "cell index out of range")) return -1;
+  const DataTable* tab = dataTable();
+  if(tab) {
 #ifdef OLD_DT_IDX_MODE
-		if(row < 0) row = rows() + row; // abs row, if request was from end
-		if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
-		return (row * cell_size()) + cell;
+    if(row < 0) row = rows() + row; // abs row, if request was from end
+    if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
+    return (row * cell_size()) + cell;
 #else
-		const int idx_sz = tab->row_indexes.size;
-		const int total_rows = tab->rows_total;
-		if(row < 0) row = idx_sz + row; // abs row, if request was from end
-		if(TestError((row < 0 || row >= total_rows), "IndexOfEl_Flat", "row out of range")) return -1;
-//		return (row * cell_size()) + cell;
-		return (tab->row_indexes[row] * cell_size()) + cell;
+    const int idx_sz = tab->row_indexes.size;
+    const int total_rows = tab->rows_total;
+    if(row < 0) row = idx_sz + row; // abs row, if request was from end
+    if(TestError((row < 0 || row >= total_rows), "IndexOfEl_Flat", "row out of range")) return -1;
+    //		return (row * cell_size()) + cell;
+    return (tab->row_indexes[row] * cell_size()) + cell;
 #endif
-	}
+  }
 }
 
-int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const {
-	if(row < 0) row = rows() + row; // abs row, if request was from end
-	if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
-	switch(cell_geom.dims()) {
-	case 0:
-		return AR()->SafeElIndex(row);
-	case 1:
-		return AR()->SafeElIndex(d0, row);
-	case 2:
-		return AR()->SafeElIndex(d0, d1, row);
-	case 3:
-		return AR()->SafeElIndex(d0, d1, d2, row);
-	case 4:
-		return AR()->SafeElIndex(d0, d1, d2, d3, row);
-	}
-	return -1;
+int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3, int d4) const {
+  // note: any extra args will be 0 and ignored.  we're just getting index into row 0
+  // so we don't care where the row appears
+  int cell = AR()->SafeElIndex(d0, d1, d2, d3, d4, 0);
+  return IndexOfEl_Flat(row, cell);
 }
 
 /////////////////////

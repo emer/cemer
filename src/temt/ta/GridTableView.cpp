@@ -859,7 +859,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
     //calculate the actual col row index, for the case of a jagged data table
     int act_idx; // <0 for null
-    dt->idx(data_row, dc->rows(), act_idx);
+    dt->idx(data_row, act_idx);
 
     // translate the col to proper location
     if (col_wd_lst > 0.0f) {
