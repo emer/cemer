@@ -33,5 +33,10 @@ void ActrGoalModule::ProcessEvent(ActrEvent& event) {
 }
 
 void ActrGoalModule::Init() {
+  InitModule();
+  buffer->active.Reset();
+  state = MS_FREE;
+  buffer->active.CopyFrom(&init_chunk);
+  buffer->UpdateState();
 }
 

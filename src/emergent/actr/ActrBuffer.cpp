@@ -16,15 +16,33 @@
 #include "ActrBuffer.h"
 #include <ActrModule>
 
-void ActrBuffer::Initialize() {
+#include <taMisc>
 
+void ActrBuffer::Initialize() {
+  act_total = 0.0f;
+  flags = BF_NONE;
 }
 
-bool ActrBuffer::Matches(const String& query) {
-  // todo: write
-  return false;
+bool ActrBuffer::Matches(const String& query, bool why_not) {
+  bool rval = false;
+  if(query == "full") {
+    rval = IsFull();
+  }
+  else if(query == "empty") {
+    rval = IsEmpty();
+  }
+  else if(query == "requested") {
+    rval = IsReq();
+  }
+  else if(query == "unrequested") {
+    rval = IsUnReq();
+  }
+  if(!rval && why_not) {
+    taMisc::Info("buffer:", GetDisplayName(), "query:", query, "returned false");
+  }
+  return rval;
 }
 
 void ActrBuffer::UpdateState() {
-  // todo: write, and call me!
+  SetBufferFlagState(FULL, active.size == 1);
 }

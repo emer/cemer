@@ -41,8 +41,15 @@ void ActrProceduralModule::ProcessEvent(ActrEvent& event) {
 }
 
 void ActrProceduralModule::Init() {
+  InitModule();
+  buffer->active.Reset();
+  state = MS_FREE;
   eligible.Reset();
   next_pr = NULL;
+  FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
+    if(pr->off) continue;
+    pr->Init();
+  }
 }
 
 void ActrProceduralModule::AddConflictResEvent() {
@@ -51,6 +58,7 @@ void ActrProceduralModule::AddConflictResEvent() {
 }
 
 void ActrProceduralModule::ConflictResolution() {
+  // todo: is state busy at this time??
   ActrModel* mod = Model();
   eligible.Reset();
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
@@ -69,6 +77,7 @@ void ActrProceduralModule::ConflictResolution() {
   }
   else {
     // todo: do utility-based selection of top guy
+    next_pr = eligible.FastEl(0); // just pick the first one for now!!
   }
   // todo: log that we selected a guy -- record name
   // "PRODUCTION-SELECTED"
@@ -81,4 +90,13 @@ void ActrProceduralModule::ConflictResolution() {
 
 void ActrProceduralModule::ProductionFired() {
   // now we process the actions!
+  // todo: is state busy at this time??
+  ActrModel* mod = Model();
+  if(TestError(!next_pr, "ProductionFired",
+               "Oooops -- production was reset somehow!")) {
+    mod->Stop();
+    return;
+  }
+  // todo: could double-check name given during action..
+  next_pr->DoActions(this, mod);
 }

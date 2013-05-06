@@ -118,6 +118,18 @@ void ActrModel::RunNextEvent() {
   }
 }
 
+int ActrModel::InsertEventInOrder(ActrEvent* ev) {
+  for(int i=cur_event_idx; i<events.size; i++) {
+    ActrEvent* oe = events.FastEl(i);
+    if(ev->time > oe->time) continue;
+    if(ev->priority < oe->priority) continue;
+    events.Insert(ev, i);              // this is our spot
+    return i;
+  }
+  events.Add(ev);
+  return events.size-1;
+}
+
 ActrEvent* ActrModel::ScheduleEvent(float time_fm_now, int priority,
                                     ActrModule* src_mod, ActrModule* dst_mod,
                                     ActrBuffer* dst_buf, const String& action,
@@ -127,6 +139,6 @@ ActrEvent* ActrModel::ScheduleEvent(float time_fm_now, int priority,
   ActrEvent* ev = ActrEvent::NewEvent(cur_time + time_fm_now, priority,
                                       src_mod, dst_mod, dst_buf, action,
                                       params, act, chnk, event_type);
-  events.InsertInOrder(ev);
+  InsertEventInOrder(ev);
   return ev;
 }

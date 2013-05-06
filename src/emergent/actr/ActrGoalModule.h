@@ -29,6 +29,7 @@ class E_API ActrGoalModule : public ActrModule {
   // goal module -- responsible for maintainence of the goal buffer
 INHERITED(ActrModule)
 public:
+  ActrChunk_List        init_chunk; // initial chunk to start pre-loaded into goal buffer
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);

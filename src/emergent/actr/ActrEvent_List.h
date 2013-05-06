@@ -31,9 +31,6 @@ class E_API ActrEvent_List : public taList<ActrEvent> {
 INHERITED(taList<ActrEvent>)
 public:
 
-  int   InsertInOrder(ActrEvent* ev);
-  // insert a new event in the correct sorted position according to time and priority
-
   override String       GetTypeDecoKey() const { return "Program"; }
 
   TA_BASEFUNS_NOCOPY(ActrEvent_List);

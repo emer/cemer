@@ -40,8 +40,9 @@ public:
   SlotValType           val_type;       // what type of value fills this slot
   ActrChunkTypeRef      val_chunk_type; // #CONDSHOW_ON_val_type:CHUNK what type of chunk should fill this slot
 
-  override String       GetDesc() const {return desc;}
-  override String       GetTypeDecoKey() const { return "ProgType"; }
+  override String GetDisplayName() const;
+  override String GetDesc() const {return desc;}
+  override String GetTypeDecoKey() const { return "ProgType"; }
 
   TA_SIMPLE_BASEFUNS(ActrSlotType);
 private:

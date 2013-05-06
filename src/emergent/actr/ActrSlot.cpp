@@ -16,9 +16,21 @@
 #include "ActrSlot.h"
 #include <ActrSlotType>
 #include <ActrChunk>
+#include <ActrProduction>
+#include <ActrModule>
+
+#include <taMisc>
 
 void ActrSlot::Initialize() {
+  flags = SF_NONE;
   val_type = LITERAL;
+}
+
+void ActrSlot::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(HasSlotFlag(COND)) {
+    val_type = LITERAL;
+  }
 }
 
 bool ActrSlot::UpdateFromType(const ActrSlotType& typ) {
@@ -27,9 +39,14 @@ bool ActrSlot::UpdateFromType(const ActrSlotType& typ) {
     name = typ.name;
     any_changes = true;
   }
-  if(val_type != (SlotValType)typ.val_type) {
-    val_type = (SlotValType)typ.val_type;
-    any_changes = true;
+  if(HasSlotFlag(COND)) {
+    val_type = LITERAL;
+  }
+  else {
+    if(val_type != (SlotValType)typ.val_type) {
+      val_type = (SlotValType)typ.val_type;
+      any_changes = true;
+    }
   }
   if(val_type == LITERAL) {
     if((bool)val_chunk) {
@@ -51,6 +68,40 @@ bool ActrSlot::UpdateFromType(const ActrSlotType& typ) {
   return any_changes;
 }
 
+String& ActrSlot::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << name << " ";
+  if(val_type == LITERAL) {
+    strm << val;
+  }
+  else {
+    if(!val_chunk) {
+      strm << "nil";
+    }
+    else {
+      if(val_chunk->name.nonempty()) {
+        strm << "*" << val_chunk->name;
+      }
+      else {
+        val_chunk->Print(strm, 0);
+      }
+    }
+  }
+  return strm;
+}
+
+String ActrSlot::GetDisplayName() const {
+  return PrintStr();            // calls Print above
+}
+
+String ActrSlot::GetVarName() {
+  if(!CondIsVar()) return _nilString;
+  String var = val.after('=');
+  if(CondIsNeg())
+    var = var.before('-',-1);
+  return var;
+}
+
 bool ActrSlot::IsNil() {
   if(val_type == LITERAL) {
     if(val.empty() || val == "nil") return true;
@@ -62,17 +113,48 @@ bool ActrSlot::IsNil() {
 }
 
 
-bool ActrSlot::Matches(ActrSlot* os) {
+bool ActrSlot::Matches(ActrProduction& prod, ActrSlot* os, bool why_not) {
   if(IsNil()) return true;      //  if we're empty we don't care
-  if(val_type == LITERAL && val.startsWith('=')) return true; // a variable always matches
-  if(!os) return false;         // we're not empty and other guy is..
-  if(val_type == LITERAL && os->val_type == LITERAL) {
-    return val == os->val;
+  if(CondIsVar()) {
+    if(!CondIsNeg()) {
+      ActrSlot* var = prod.vars.FindName(GetVarName());
+      if(var) {
+        var->CopyValFrom(*os);  // we are source for this right now
+      }
+    }
+    return true;  // a variable always matches at this stage
   }
-  // todo: not sure how matching works on chunk types -- must be recursive??
+  if(!os) {
+    if(why_not) {
+      taMisc::Info("slot:", GetDisplayName(), "other slot is null");
+    }
+    return false;         // we're not empty and other guy is..
+  }
+  if(os->val_type == LITERAL) {
+    bool rval = (val == os->val);
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for:", val, "got:", os->val);
+      }
+    }
+    return rval;
+  }
+  if(val == os->val_chunk->name)
+    return true;
+  // todo: not sure how matching works on chunk types -- name??
+  if(why_not) {
+    taMisc::Info("slot:", GetDisplayName(), "CHUNK type fall thru mismatch");
+  }
   return false;
 }
 
-String ActrSlot::WhyNot(ActrSlot* os) {
-  return "not impl\n";
+
+void ActrSlot::CopyValFrom(const ActrSlot& cp) {
+  val_type = cp.val_type;
+  if(val_type == LITERAL)
+    val = cp.val;
+  else
+    val_chunk = cp.val_chunk;
 }
+

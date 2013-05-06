@@ -31,31 +31,46 @@ class E_API ActrBuffer : public taNBase {
   // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel a named buffer in ActR -- holds active chunk(s)
 INHERITED(taNBase)
 public:
-  enum BufferState {
-    BS_EMPTY,                   // buffer is empty
-    BS_FULL,                    // buffer is full
-    BS_REQ,                     // buffer is requested
-    BS_UNREQ,                   // buffer is unrequested
+  enum BufferFlags { // #BITS ActR buffer flags
+    BF_NONE             = 0, // #NO_BIT
+    FULL                = 0x0001, // buffer is full (else empty)
+    REQ                 = 0x0002, // buffer has pending request (else not)
   };
 
   String                desc;      // #EDIT_DIALOG #HIDDEN_INLINE description of this buffer
+  BufferFlags           flags;     // #READ_ONLY #SHOW current state of the buffer
   ActrChunk_List        active;    // active chunk(s) in the buffer
   ActrModuleRef         module;    // module that this buffer belongs to
   float                 act_total; // total activation that this buffer can contribute 
-  BufferState           state;     // #READ_ONLY #SHOW current state of the buffer
 
   // todo: figure out spreading activation stuff..
 
-  bool  IsEmpty()       { return state == BS_EMPTY; }
-  bool  IsFull()        { return state == BS_FULL && active.size >= 1; }
+  inline void           SetBufferFlag(BufferFlags flg)   { flags = (BufferFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearBufferFlag(BufferFlags flg) { flags = (BufferFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasBufferFlag(BufferFlags flg) const { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetBufferFlagState(BufferFlags flg, bool on)
+  { if(on) SetBufferFlag(flg); else ClearBufferFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleBufferFlag(BufferFlags flg)
+  { SetBufferFlagState(flg, !HasBufferFlag(flg)); }
+  // #CAT_Flags toggle flag
+
+  bool  IsFull()        { return HasBufferFlag(FULL) && active.size >= 1; }
+  bool  IsEmpty()       { return !IsFull(); }
+  bool  IsReq()         { return HasBufferFlag(REQ); }
+  bool  IsUnReq()       { return !IsReq(); }
   
   ActrChunk*            CurChunk() 
   { if(active.size == 0) return NULL; return active.FastEl(0); }
 
-  bool  Matches(const String& query);
+  bool  Matches(const String& query, bool why_not = false);
   // does state of buffer or owning module match given query value -- must be: buffers: full, empty, requested, unrequested  modules: busy, free, error
 
   virtual void          UpdateState();
+  // #CAT_ActR update buffer state -- call this whenver anything changes!
 
   override String       GetDesc() const {return desc;}
   override String 	GetTypeDecoKey() const { return "DataTable"; }

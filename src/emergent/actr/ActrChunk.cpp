@@ -17,6 +17,8 @@
 #include <ActrSlotType>
 #include <ActrSlot>
 
+#include <taMisc>
+
 void ActrChunk::Initialize() {
   n_act = 0.0f;
   t_new = 0.0f;
@@ -69,14 +71,45 @@ bool ActrChunk::UpdateFromType() {
   return any_changes;
 }
 
-bool ActrChunk::Matches(ActrChunk* cmp) {
+
+String& ActrChunk::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << name;
+  if(chunk_type) {
+    strm << " ISA " << chunk_type->name;
+  }
+  strm << " (";
+  for(int i=0; i<slot_vals.size; i++) {
+    ActrSlot* sl = slot_vals.FastEl(i);
+    strm << " ";
+    sl->Print(strm, 0);
+    strm << ";";                // need some kind of sep!!
+  }
+  strm << " )";
+  return strm;
+}
+
+String ActrChunk::GetDisplayName() const {
+  return inherited::GetDisplayName();
+}
+
+String ActrChunk::GetDesc() const {
+  return PrintStr();            // calls Print above
+}
+
+bool ActrChunk::Matches(ActrProduction& prod, ActrChunk* cmp, bool why_not) {
   if(!cmp) return false;
   if((bool)chunk_type && (bool)cmp->chunk_type) {
-    if(chunk_type != cmp->chunk_type) return false; // must be same type..
+    if(chunk_type != cmp->chunk_type) {
+      if(why_not) {
+        taMisc::Info("chunk:", GetDisplayName(), "type mismatch");
+      }
+      return false; // must be same type..
+    }
     for(int i=0; i<slot_vals.size; i++) {
       ActrSlot* sl = slot_vals.FastEl(i);
       ActrSlot* os = cmp->slot_vals.SafeEl(i);
-      if(!sl->Matches(os)) return false;
+      if(!sl->Matches(prod, os, why_not)) return false;
     }
     return true;                // pass through -- all good!
   }
@@ -84,6 +117,3 @@ bool ActrChunk::Matches(ActrChunk* cmp) {
   return false;                 // not yet
 }
 
-String ActrChunk::WhyNot(ActrChunk* cmp) {
-  return "not impl\n";
-}

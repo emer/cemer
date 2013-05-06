@@ -17,9 +17,12 @@
 #include <ActrBuffer>
 #include <ActrModel>
 #include <ActrProceduralModule>
+#include <ActrSlot>
 
 #include <ProgVar>
 #include <Layer>
+
+#include <taMisc>
 
 void ActrCondition::Initialize() {
   cond_src = BUFFER_EQ;
@@ -33,10 +36,6 @@ void ActrCondition::UpdateAfterEdit_impl() {
   case BUFFER_EQ:
   case BUFFER_QUERY:
     src_type = &TA_ActrBuffer;
-    if(TestWarning(rel != EQUAL && rel != NOTEQUAL,
-                   "UAE", "only equal or not-equal relationship allowed")) {
-      rel = EQUAL;
-    }
     break;
   case PROG_VAR:
     src_type = &TA_ProgVar;
@@ -48,18 +47,96 @@ void ActrCondition::UpdateAfterEdit_impl() {
   case OBJ_MEMBER:
     break;
   }
+  for(int i=0; i< cmp_chunk.slot_vals.size; i++) {
+    ActrSlot* sl = cmp_chunk.slot_vals[i];
+    sl->SetSlotFlag(ActrSlot::COND); // must be in cond mode!
+    sl->val_type = ActrSlot::LITERAL;
+  }
 }
 
-bool ActrCondition::Matches() {
+String& ActrCondition::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
   switch(cond_src) {
   case BUFFER_EQ: {
+    if(!src) {
+      strm << "=<no buffer!>";
+    }
+    else {
+      strm << "=" << src->GetName() << " ";
+      cmp_chunk.Print(strm);
+    }
+    break;
+  }
+  case BUFFER_QUERY: {
+    if(!src) {
+      strm << "?<no buffer!>";
+    }
+    else {
+      strm << "?" << src->GetName() << " ";
+    }
+    break;
+  }
+  }
+  return strm;
+}
+
+String ActrCondition::GetDisplayName() const {
+  String strm;
+  switch(cond_src) {
+  case BUFFER_EQ: {
+    if(!src) {
+      strm << "=<no buffer!>";
+    }
+    else {
+      strm << "=" << src->GetName();
+    }
+    break;
+  }
+  case BUFFER_QUERY: {
+    if(!src) {
+      strm << "?<no buffer!>";
+    }
+    else {
+      strm << "?" << src->GetName();
+    }
+    break;
+  }
+  }
+  return strm;
+}
+
+String ActrCondition::GetDesc() const {
+  return PrintStr();
+}
+
+void ActrCondition::UpdateVars(ActrProduction& prod) {
+  if(cond_src != BUFFER_EQ) return;
+  for(int i=0; i< cmp_chunk.slot_vals.size; i++) {
+    ActrSlot* sl = cmp_chunk.slot_vals[i];
+    sl->SetSlotFlag(ActrSlot::COND); // must be in cond mode!
+    if(!sl->CondIsVar()) continue;
+    String var = sl->GetVarName();
+    bool made_new = false;
+    prod.vars.FindMakeNameType(var, NULL, made_new); // make sure one exists
+  }
+}
+
+bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
+  switch(cond_src) {
+  case BUFFER_EQ: {
+    // todo: should be dealt with in check config
     if(TestError(!src, "Matches",
                  "no buffer specified as the source to match against!"))
       return false;
     ActrBuffer* buf = (ActrBuffer*)src.ptr();
-    if(!buf->IsFull()) return false;
-    bool match = cmp_chunk.Matches(buf->CurChunk());
-    if(rel == NOTEQUAL) match = !match;
+    if(!buf->IsFull()) {
+      if(why_not) {
+        taMisc::Info("condition:", GetDisplayName(), "buffer:", buf->name, "is empty");
+      }
+      return false;
+    }
+    ActrChunk* bc =buf->CurChunk();
+    bool match = cmp_chunk.Matches(prod, bc, why_not);
     return match;
     break;
   }
@@ -68,8 +145,7 @@ bool ActrCondition::Matches() {
                  "no buffer specified as the source to match against!"))
       return false;
     ActrBuffer* buf = (ActrBuffer*)src.ptr();
-    bool match = buf->Matches(cmp_val);
-    if(rel == NOTEQUAL) match = !match;
+    bool match = buf->Matches(cmp_val, why_not);
     return match;
     break;
   }
@@ -89,9 +165,41 @@ bool ActrCondition::Matches() {
   return false;
 }
 
-String ActrCondition::WhyNot() {
-  // todo write
-  return "not impl yet\n";
+bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
+  if(cond_src != BUFFER_EQ) return true;
+  ActrBuffer* buf = (ActrBuffer*)src.ptr();
+  if(!buf->IsFull()) return true; // should not fail
+  if(why_not) {
+    taMisc::Info("condition:", GetDisplayName(),
+                 "starting variable-based matching, vars:", prod.vars.PrintStr());
+  }
+  ActrChunk* bc =buf->CurChunk();
+  for(int i=0; i< cmp_chunk.slot_vals.size; i++) {
+    ActrSlot* sl = cmp_chunk.slot_vals[i];
+    if(!sl->CondIsVar()) continue;
+    ActrSlot* var = prod.vars.FindName(sl->GetVarName());
+    if(var) {
+      ActrSlot* os = bc->slot_vals.SafeEl(i);
+      if(os) {
+        if(sl->CondIsNeg()) {
+          if(var->Matches(prod, os, false)) { // this report will be meaningless
+            if(why_not) {
+              taMisc::Info("condition:", GetDisplayName(),
+                           "negative variable test actually matches!",
+                           sl->GetDisplayName());
+            }
+            return false; // only nonmatch!
+          }
+        }
+        else {
+          if(!var->Matches(prod, os, why_not)) {
+            return false; // only nonmatch!
+          }
+        }
+      }
+    }
+  }
+  return true;
 }
 
 void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {

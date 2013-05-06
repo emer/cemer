@@ -37,6 +37,7 @@ public:
   float                 rew;   // reward value associated with the firing of this production
   ActrCondition_List    conds; // conditions that must be matched to fire this production
   ActrAction_List       acts;  // actions that this production causes when it fires
+  ActrSlot_List         vars;  // #READ_ONLY #NO_SAVE variable bindings used in matching and instantiating actions -- all the biologically implausible stuff happens here!
 
   float         Compute_Util(float rewval, float lrate) {
     util += lrate * (rewval - util);
@@ -44,14 +45,25 @@ public:
   }
   // #CAT_ActR update the utility of this production from given reward value and learning rate
 
-  virtual bool          Matches();
-  // do the conditions match now or not? called by procedural module
+  virtual void          Init();
+  // #CAT_ActR initialize production for start of a new run -- runs check config and updates vars etc
 
-  virtual String        WhyNot();
-  // #BUTTON #USE_RVAL explain why this production does not match right now
+  virtual void          UpdateVars();
+  // #CAT_ActR update the vars based on what shows up in the conditions -- called automatically in UAE
+  virtual void          UpdateNames();
+  // #CAT_ActR update names of chunks within conds and acts, based on name of production
+
+  virtual bool          Matches(bool why_not = false);
+  // #CAT_ActR do the conditions match now or not? called by procedural module
+
+  virtual bool          WhyNot();
+  // #BUTTON #CAT_ActR explain why this production does not match right now (report given on the css console output)
 
   virtual void          SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
-  // send BUFFER-READ-ACTION events to all the buffers we read when we fire, sent from procedural module to buffer owning module
+  // #CAT_ActR send BUFFER-READ-ACTION events to all the buffers we read when we fire, sent from procedural module to buffer owning module
+
+  virtual bool          DoActions(ActrProceduralModule* proc_mod, ActrModel* model);
+  // #CAT_ActR the production fired -- perform all the actions
  
   override String       GetDesc() const {return desc;}
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -59,6 +71,9 @@ public:
   override void         SetEnabled(bool value);
 
   TA_SIMPLE_BASEFUNS(ActrProduction);
+protected:
+  void  UpdateAfterEdit_impl();
+
 private:
   void Initialize();
   void Destroy()     { CutLinks(); }

@@ -26,7 +26,7 @@ void ActrDeclarativeModule::InitModule() {
   if(!Model()) return;
   ActrModel* mod = Model();
   bool made_new;
-  buffer = mod->buffers.FindMakeNameType("declarative", NULL, made_new);
+  buffer = mod->buffers.FindMakeNameType("retrieval", NULL, made_new);
   buffer->module = this;
 }
 
@@ -34,6 +34,9 @@ void ActrDeclarativeModule::ProcessEvent(ActrEvent& event) {
 }
 
 void ActrDeclarativeModule::Init() {
+  InitModule();
+  buffer->active.Reset();
+  state = MS_FREE;
   chunks.Reset();
   chunks.CopyFrom(&init_chunks);
 }

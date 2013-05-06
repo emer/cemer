@@ -87,7 +87,10 @@ public:
   // #IGNORE run the next event -- called by above processing functions
 
 
-  virtual ActrEvent*   ScheduleEvent(float time_fm_now, int priority,
+  virtual int           InsertEventInOrder(ActrEvent* ev);
+  // #CAT_ActR insert a new event in the correct sorted position according to time and priority
+
+  virtual ActrEvent*    ScheduleEvent(float time_fm_now, int priority,
                                      ActrModule* src_module, ActrModule* dst_module,
                                      ActrBuffer* dst_buffer, const String& action,
                                      const String& params,

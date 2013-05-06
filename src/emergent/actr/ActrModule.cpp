@@ -19,6 +19,7 @@
 
 void ActrModule::Initialize() {
   own_model = NULL;
+  state = MS_FREE;
 }
 
 void ActrModule::InitLinks() {

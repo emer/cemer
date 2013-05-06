@@ -33,16 +33,21 @@
 eTypeDef_Of(ActrChunkType);
 
 class E_API ActrChunkType : public taNBase {
-  // ##INSTANCE ##EDIT_INLINE ##CAT_ActR ##SCOPE_ActrModel a chunk type for defining ActR chunks
+  // ##INSTANCE ##EDIT_INLINE ##CAT_ActR ##SCOPE_ActrModel ##DEF_CHILD_slots ##DEF_CHILDNAME_Slots a chunk type for defining ActR chunks
 INHERITED(taNBase)
 public:
   String               desc; // #EDIT_DIALOG #HIDDEN_INLINE description of this chunk type
-  ActrSlotType_List    slots;  // the names and types of the slots within this chunk
+  ActrSlotType_List    slots;  // #SHOW_TREE the names and types of the slots within this chunk
 
+  override taList_impl*	children_() {return &slots;}	
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  { return slots.Elem(idx, mode); }
   override String       GetDesc() const {return desc;}
   override String       GetTypeDecoKey() const { return "ProgType"; }
 
   TA_SIMPLE_BASEFUNS(ActrChunkType);
+protected:
+  //  override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void Initialize();
   void Destroy();

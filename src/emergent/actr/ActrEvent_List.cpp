@@ -20,14 +20,3 @@ void ActrEvent_List::Initialize() {
   SetBaseType(&TA_ActrEvent);
 }
 
-int ActrEvent_List::InsertInOrder(ActrEvent* ev) {
-  for(int i=0; i<size; i++) {
-    ActrEvent* oe = FastEl(i);
-    if(ev->time > oe->time) continue;
-    if(ev->priority < oe->priority) continue;
-    Insert(ev, i);              // this is our spot
-    return i;
-  }
-  Add(ev);
-  return size-1;
-}

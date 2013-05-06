@@ -25,6 +25,7 @@
 // declare all other types mentioned but not required to include:
 class ActrProceduralModule; //
 class ActrModel; //
+class ActrProduction; //
 
 eTypeDef_Of(ActrCondition);
 
@@ -54,21 +55,27 @@ public:
   TypeDef*      src_type;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with source data to match against
   taBaseRef     src;           // #TYPE_ON_src_type the source object to obtain data to match against (e.g., buffer, etc)
   String        unit_name;     // #CONDSHOW_ON_cond_src:NET_UNIT name of unit within layer to obtain unit value from -- can only access named units
-  Relations     rel;           // relationship between source value and comparison value -- only = and != are valid for BUFFER source
+  Relations     rel;           // #CONDSHOW_OFF_cond_src:BUFFER_EQ relationship between source value and comparison value
   String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value
-  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
+  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
 
-  // todo: config checking, matching etc
+  // todo: config checking
 
-  virtual bool  Matches();
+  virtual void  UpdateVars(ActrProduction& prod);
+  // #CAT_ActR update the production variable list based on what shows up in the conditions 
+
+  virtual bool  Matches(ActrProduction& prod, bool why_not = false);
   // #CAT_ActR does this condition match?
-  virtual String WhyNot();
-  // #BUTTON #USE_RVAL #CAT_ActR report why this condition does not match
+  virtual bool  MatchVars(ActrProduction& prod, bool why_not = false);
+  // #CAT_ActR second pass on matching -- check for any tests against cur vars -- return true if OK and false if fails variable comparison test
 
   virtual void  SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR send BUFFER-READ-ACTION events for all BUFFER_EQ cases
 
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String  GetTypeDecoKey() const { return "ProgCtrl"; }
+  override String  GetDisplayName() const;
+  override String& Print(String& strm, int indent = 0) const;
+  override String  GetDesc() const;
 
   TA_SIMPLE_BASEFUNS(ActrCondition);
 protected:

@@ -32,8 +32,8 @@ class E_API ActrEvent : public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_ActR an ActR event -- how time is managed in the system
 INHERITED(taOBase)
 public:
-  static int            max_pri; // maximum scheduling priority
-  static int            min_pri;  // minimum scheduling priority
+  static int            max_pri; // #NO_SAVE #HIDDEN maximum scheduling priority
+  static int            min_pri;  // #NO_SAVE #HIDDEN minimum scheduling priority
 
   float                 time;   // time at which the event is to occur
   int                   priority; // priority for scheduling 0..max_pri

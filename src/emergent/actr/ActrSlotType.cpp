@@ -20,3 +20,15 @@
 void ActrSlotType::Initialize() {
   val_type = LITERAL;
 }
+
+String ActrSlotType::GetDisplayName() const {
+  if(val_type == LITERAL) {
+    return name + " (literal)";
+  }
+  if(!val_chunk_type) {
+    return name + " (chunk type not set)";
+  }
+  return name + " (" + val_chunk_type->name + ")";
+}
+
+
