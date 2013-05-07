@@ -25,6 +25,7 @@
 #include <taMisc>
 
 void ActrCondition::Initialize() {
+  flags = CF_NONE;
   cond_src = BUFFER_EQ;
   src_type = &TA_ActrBuffer;
   rel = EQUAL;
@@ -205,6 +206,7 @@ bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
 
 void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {
   if(cond_src != BUFFER_EQ) return;
+  if(HasCondFlag(BUF_UPDT_ACT)) return;
   if(TestError(!src, "Matches",
                "no buffer specified as the source to match against!"))
     return;

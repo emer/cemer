@@ -86,7 +86,7 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
 }
 
 void ActrDeclarativeModule::RetrievedChunk(ActrEvent& event) {
-  buffer->SetChunk(retrieved);
+  buffer->UpdateChunk(retrieved); // should be clear..
   ClearModuleFlag(BUSY);
   buffer->ClearReq();
 }

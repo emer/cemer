@@ -33,6 +33,11 @@ class E_API ActrCondition : public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_ActR one condition that must be met to fire an Act-R production
 INHERITED(taOBase)
 public:
+  enum CondFlags { // #BITS ActR condition flags
+    CF_NONE             = 0, // #NO_BIT
+    BUF_UPDT_ACT        = 0x0001, // for BUFFER_EQ, buffer has an update action, so don't send a BUFFER-READ-ACTION
+  };
+
   enum CondSource {
     BUFFER_EQ,                  // match against an ActR chunk in a buffer (for regular ActR model) 
     BUFFER_QUERY,               // check state of buffer or module 
@@ -51,6 +56,7 @@ public:
     GREATERTHANOREQUAL  // #LABEL_>=
   };
 
+  CondFlags     flags;          // current flags
   CondSource    cond_src;      // what is the source of the data to match against
   TypeDef*      src_type;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with source data to match against
   taBaseRef     src;           // #TYPE_ON_src_type the source object to obtain data to match against (e.g., buffer, etc)
@@ -58,6 +64,22 @@ public:
   Relations     rel;           // #CONDSHOW_OFF_cond_src:BUFFER_EQ relationship between source value and comparison value
   String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value
   ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
+
+  inline void           SetCondFlag(CondFlags flg)
+  { flags = (CondFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearCondFlag(CondFlags flg)
+  { flags = (CondFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasCondFlag(CondFlags flg) const
+  { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetCondFlagState(CondFlags flg, bool on)
+  { if(on) SetCondFlag(flg); else ClearCondFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleCondFlag(CondFlags flg)
+  { SetCondFlagState(flg, !HasCondFlag(flg)); }
+  // #CAT_Flags toggle flag
 
   // todo: config checking
 

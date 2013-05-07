@@ -46,9 +46,9 @@ bool ActrModule::ProcessEvent_std(ActrEvent& event) {
   }
   else if(event.action == "MOD-BUFFER-CHUNK") {
     if(event.dst_buffer)
-      event.dst_buffer->SetChunk(event.chunk_arg);
+      event.dst_buffer->UpdateChunk(event.chunk_arg);
     else
-      buffer->SetChunk(event.chunk_arg);   // use default
+      buffer->UpdateChunk(event.chunk_arg);   // use default
     handled = true;
   }
   return handled;

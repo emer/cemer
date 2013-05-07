@@ -144,3 +144,27 @@ bool ActrChunk::MatchesMem(ActrChunk* cmp, bool exact, bool why_not) {
   return false;                 // not yet
 }
 
+
+bool ActrChunk::MergeVals(ActrChunk* cmp) {
+  if(!cmp) return false;
+  if((bool)chunk_type && (bool)cmp->chunk_type) {
+    if(TestError(chunk_type != cmp->chunk_type,
+                 "MergeVals", "chunk type mismatch")) {
+      return false; // must be same type..
+    }
+    for(int i=0; i<slots.size; i++) {
+      ActrSlot* sl = slots.FastEl(i);
+      ActrSlot* os = cmp->slots.SafeEl(i);
+      if(!os->IsNil()) {
+        sl->CopyFrom(os);
+      }
+    }
+    return true;
+  }
+  // todo: what do we do here??  lookup by names or something?
+  return false;                 // not yet
+}
+
+void ActrChunk::CopyName(ActrChunk* cp) {
+  name = cp->name + "_0"; // todo: figure out name business
+}

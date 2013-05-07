@@ -60,6 +60,10 @@ public:
   // #CAT_ActR for production firing purposes: does this chunk match against the target comparison -- 'this' is assumed to be the production LHS 
   virtual bool          MatchesMem(ActrChunk* cmp, bool exact, bool why_not = false);
   // #CAT_ActR for memory matching purposes: does this chunk match against the target comparison
+  virtual bool          MergeVals(ActrChunk* ck);
+  // #CAT_ActR merge values from other chunk into this one (all non-nil from other chunk overwrite our values)
+  virtual void          CopyName(ActrChunk* cp);
+  // #CAT_ActR copy name from other chunk -- uses special new name for copy
 
   virtual bool  UpdateFromType();
   // ensure that this chunk is formatted properly based on the chunk_type -- automatically called in update-after-edit -- returns true if any changes were made -- preserves existing content even if slots change order etc, to greatest extent possible

@@ -47,6 +47,19 @@ void ActrProduction::UpdateVars() {
   for(int i=0; i<conds.size; i++) {
     ActrCondition* cnd = conds.FastEl(i);
     cnd->UpdateVars(*this);
+    
+    // set buf update act flag 
+    cnd->ClearCondFlag(ActrCondition::BUF_UPDT_ACT);
+    if(cnd->cond_src == ActrCondition::BUFFER_EQ) {
+      for(int j=0; j<acts.size; j++) {
+        ActrAction* act = acts.FastEl(j);
+        if(act->action != ActrAction::UPDATE) continue;
+        if(act->buffer.ptr() == cnd->src.ptr()) {
+          cnd->SetCondFlag(ActrCondition::BUF_UPDT_ACT); // we are going to update
+          break;
+        }
+      }
+    }
   }
 }
 

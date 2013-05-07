@@ -121,9 +121,14 @@ bool ActrSlot::MatchesProd(ActrProduction& prod, ActrSlot* os, bool exact, bool 
     return false;
   }
   if(IsNil()) {
-    if(!exact)
-      return true;      //  if we're empty we don't care
-    bool rval = os->IsNil(); // exact match: is other guy?
+    bool rval = false;
+    if(exact || val == "nil") {          // nil is explicit nil match
+      rval = os->IsNil();
+    }
+    else {
+      if(!exact)
+        return true;      //  if we're empty we don't care
+    }
     if(!rval) {
       if(why_not) {
         taMisc::Info("slot:", GetDisplayName(), "value mismatch",
@@ -171,9 +176,14 @@ bool ActrSlot::MatchesMem(ActrSlot* os, bool exact, bool why_not) {
     return false;
   }
   if(IsNil()) {
-    if(!exact)
-      return true;      //  if we're empty we don't care
-    bool rval = os->IsNil(); // exact match: is other guy?
+    bool rval = false;
+    if(exact || val == "nil") {          // nil is explicit nil match
+      rval = os->IsNil();
+    }
+    else {
+      if(!exact)
+        return true;      //  if we're empty we don't care
+    }
     if(!rval) {
       if(why_not) {
         taMisc::Info("slot:", GetDisplayName(), "value mismatch",
