@@ -496,11 +496,11 @@ public:
   // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name
 
   int           FindVal(const Variant& val, const Variant& col, int st_row = 0,
-			  bool not_found_err = false) const;
+        bool not_found_err = false) const;
   // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name.  returns -1 if not found, and issues error if not_found_err is true
   Variant       LookupVal(const Variant& find_val, const Variant& find_in_col,
-			  const Variant& value_col, int st_row = 0,
-			  bool not_found_err = true) const;
+        const Variant& value_col, int st_row = 0,
+        bool not_found_err = true) const;
   // #CAT_Access lookup value in a given row of table by finding value in another column -- uses row number from finding find_val in find_in_col column to access value in value_col, which is returned as a variant (must be a scalar).  starts at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name.  returns null (invalid) variant if find_val not found, and issues error if not_found_err is true
 
   int           FindMultiVal(int st_row, const Variant& val1, const Variant& col1,
