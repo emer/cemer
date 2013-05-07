@@ -120,13 +120,14 @@ String ActrAction::GetDesc() const {
   return PrintStr();
 }
 
-void ActrAction::SetVariables(ActrProduction& prod) {
+void ActrAction::SetVariables(ActrProduction& prod, ActrChunk* ck) {
   for(int i=0; i<chunk.slots.size; i++) {
     ActrSlot* sl = chunk.slots.FastEl(i);
     if(!sl->CondIsVar()) continue;
     ActrSlot* var = prod.vars.FindName(sl->GetVarName());
-    if(var) {
-      sl->CopyValFrom(*var); 
+    ActrSlot* cs = ck->slots.FastEl(i);
+    if(var && cs) {
+      cs->CopyValFrom(*var); 
     }
   }    
 }
@@ -135,18 +136,25 @@ bool ActrAction::DoAction(ActrProduction& prod,
                           ActrProceduralModule* proc_mod, ActrModel* model) {
   // todo: what priorities on these??
   switch(action) {
-  case UPDATE:
-    SetVariables(prod);
+  case UPDATE: {
+    // todo: add a flag to action if it has variables or not
+    ActrChunk* new_chunk = new ActrChunk;
+    new_chunk->CopyFrom(&chunk);
+    SetVariables(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
                          buffer,
-                         "MOD-BUFFER-CHUNK", buffer->name, this, &this->chunk);
+                         "MOD-BUFFER-CHUNK", buffer->name, this, new_chunk);
     break;
-  case REQUEST:
-    SetVariables(prod);
+  }
+  case REQUEST: {
+    ActrChunk* new_chunk = new ActrChunk;
+    new_chunk->CopyFrom(&chunk);
+    SetVariables(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
                          buffer,
-                         "MODULE-REQUEST", buffer->name, this, &this->chunk);
+                         "MODULE-REQUEST", buffer->name, this, new_chunk);
     break;
+  }
   case CLEAR:
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
                          buffer,
@@ -155,8 +163,11 @@ bool ActrAction::DoAction(ActrProduction& prod,
   case OUTPUT: {
     String out = val;
     if(chunk.chunk_type) {
-      SetVariables(prod);
-      chunk.Print(out);
+      ActrChunk* new_chunk = new ActrChunk;
+      new_chunk->CopyFrom(&chunk);
+      SetVariables(prod, new_chunk);
+      new_chunk->Print(out);
+      delete new_chunk;
     }
     taMisc::ConsoleOutput(out);
     break;

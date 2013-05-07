@@ -156,12 +156,11 @@ bool ActrChunk::MergeVals(ActrChunk* cmp) {
       ActrSlot* sl = slots.FastEl(i);
       ActrSlot* os = cmp->slots.SafeEl(i);
       if(!os->IsNil()) {
-        sl->CopyFrom(os);
+        sl->CopyValFrom(*os);
       }
     }
     return true;
   }
-  // todo: what do we do here??  lookup by names or something?
   return false;                 // not yet
 }
 

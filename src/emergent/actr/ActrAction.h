@@ -55,7 +55,7 @@ public:
   ProgramRef    program;        // #CONDSHOW_ON_action:PROG_RUN program to run -- does not set any arg variables prior to running -- just calls Run on it -- use prior actions to set program variables
 
 
-  virtual void     SetVariables(ActrProduction& prod);
+  virtual void     SetVariables(ActrProduction& prod, ActrChunk* ck);
   // #CAT_ActR set any variables from current vars in production 
 
   virtual bool     DoAction(ActrProduction& prod,

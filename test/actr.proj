@@ -2309,7 +2309,7 @@ LeabraProject .projects["actr"] {
        ar {
 	name=;
 	      [16] ;;;"+retrieval start_a1 ISA count_order ( first 2; second ; )";;"=goal start_a0 ISA count_from ( start ; end ; count 2; )";"+retrieval start_a1 ISA count_order ( first 2; second ; )";;;;
-;"+retrieval increment_a1 ISA count_order ( first 3; second ; )";;"=goal increment_a0 ISA count_from ( start ; end ; count 3; )";"+retrieval increment_a1 ISA count_order ( first 3; second ; )";;       };
+;"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;"=goal increment_a0 ISA count_from ( start ; end ; count =num2; )";"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;       };
       };
       String_Data @["chunk"] {
        UserDataItem_List @*(.user_data_) {
@@ -2335,8 +2335,8 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [16] ;;;"start_a1 ISA count_order ( first 2; second ; )";;"start_a0 ISA count_from ( start ; end ; count 2; )";"c ISA count_order ( first 2; second 3; )";;;;
-;"increment_a1 ISA count_order ( first 3; second ; )";;"increment_a0 ISA count_from ( start ; end ; count 3; )";"d ISA count_order ( first 3; second 4; )";;       };
+	      [16] ;;;"ActrChunk_27 ISA count_order ( first 2; second ; )";;"ActrChunk_26 ISA count_from ( start ; end ; count 2; )";"c ISA count_order ( first 2; second 3; )";;;;
+;"ActrChunk_29 ISA count_order ( first 3; second ; )";;"ActrChunk_28 ISA count_from ( start ; end ; count 3; )";"d ISA count_order ( first 3; second 4; )";;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
