@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.0.0 rev6272
+// ta_Dump File v3.0 -- code v6.3.0.0 rev6276
 LeabraProject .projects["actr"] { 
   taBase_Group @.templates = [0] {
   };
@@ -2584,7 +2584,7 @@ LeabraProject .projects["actr"] {
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=num1";
+	      val=;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2598,7 +2598,7 @@ LeabraProject .projects["actr"] {
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val=;
+	      val="=num1";
 	     };
 	    };
 	   };
