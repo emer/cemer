@@ -17,55 +17,66 @@
 #define ActrModule_h 1
 
 // parent includes:
-#include <taNBase>
+#include <ActrNBase>
 
 // member includes:
 #include <ActrModuleRef>
 #include <ActrBuffer>
 
 // declare all other types mentioned but not required to include:
-class ActrModel; //
 class ActrEvent; //
 
 eTypeDef_Of(ActrModule);
 
-class E_API ActrModule : public taNBase {
-  // ##INSTANCE ##CAT_ActR base class for ACT-R modules
-INHERITED(taNBase)
+class E_API ActrModule : public ActrNBase {
+  // base class for ACT-R modules
+INHERITED(ActrNBase)
 public:
-  enum ModuleState {
-    MS_FREE,                    // module is free to take on new tasks
-    MS_BUSY,                    // module is busy processing something
-    MS_ERROR,                   // module is in an error state
+  enum ModuleFlags { // #BITS ActR module flags
+    MF_NONE             = 0, // #NO_BIT
+    BUSY                = 0x0001,  // module is busy processing something
+    ERROR               = 0x0002,  // module is in an error state
   };
- 
+
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this module
   ActrBufferRef         buffer; // the main buffer for this module (can add other ones in subclasses)
-  ModuleState           state;  // #READ_ONLY #SHOW current state of the module
+  ModuleFlags           flags;  // flags for various settings of module
+
+  inline void           SetModuleFlag(ModuleFlags flg)
+  { flags = (ModuleFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearModuleFlag(ModuleFlags flg)
+  { flags = (ModuleFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasModuleFlag(ModuleFlags flg) const
+  { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetModuleFlagState(ModuleFlags flg, bool on)
+  { if(on) SetModuleFlag(flg); else ClearModuleFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleModuleFlag(ModuleFlags flg)
+  { SetModuleFlagState(flg, !HasModuleFlag(flg)); }
+  // #CAT_Flags toggle model flag
+
+  bool  IsBusy()        { return HasModuleFlag(BUSY); }
+  bool  IsFree()        { return !IsBusy(); }
+  bool  IsError()       { return HasModuleFlag(ERROR); }
 
   virtual void  InitModule() { };
   // #CAT_ActR initialize the module -- ensure we have our appropriate buffer in model, and set our buffer pointer, etc
   virtual void  ProcessEvent(ActrEvent& event) { };
   // #CAT_ActR process a given event, defined in a module-specific way
-  virtual void  Init() { };
-  // #CAT_ActR perform run-time initialization at start of processing
+  virtual void  Init();
+  // #CAT_ActR perform run-time initialization at start of processing -- derived classes should call parent which resets basic stuff including buffer and calls InitModule -- don't call that!
 
-  //  virtual bool  ProcessEvent_State(ActrEvent& event);
-  // #CAT_ActR process events dealing with state of module or buffer
+  virtual bool  ProcessEvent_std(ActrEvent& event);
+  // #CAT_ActR process standard events dealing with state of module or buffer: BUFFER-READ-ACTION, CLEAR-BUFFER, MOD-BUFFER-CHUNK
 
-  ActrModel*            Model() { return own_model; }
-  // #CAT_ActR get the model that owns me
   override String       GetDesc() const {return desc;}
   override String       GetTypeDecoKey() const { return "Program"; }
 
-  void  InitLinks();
-  void  CutLinks();
-  TA_BASEFUNS(ActrModule);
-protected:
-  ActrModel*            own_model; // the model that owns us -- init in InitLinks
-  
+  TA_SIMPLE_BASEFUNS(ActrModule);
 private:
-  SIMPLE_COPY(ActrModule);
   void Initialize();
   void Destroy()     { CutLinks(); }
 };

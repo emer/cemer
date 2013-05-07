@@ -24,19 +24,20 @@
 void ActrModel::Initialize() {
   cur_time = 0.0f;
   cur_event_idx = 0;
-  flags = MF_NONE;
+  flags = LOG_EVENTS;
   run_state = NOT_INIT;
 }
 
 void ActrModel::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   DefaultConfig();
+  FormatLogTable();
 }
 
 ActrModule* ActrModel::FindMakeModule(const String& nm, TypeDef* td,
                                       bool& made_new) {
   ActrModule* rval = modules.FindMakeNameType(nm, td, made_new);
-  if(made_new) {
+  if(made_new && rval) {
     rval->InitModule();
   }
   return rval;
@@ -50,6 +51,10 @@ void ActrModel::DefaultConfig() {
 }
 
 void ActrModel::Init() {
+  FormatLogTable();
+  if(log_table) {
+    log_table->ResetData();
+  }
   cur_event_idx = 0;
   events.Reset();
   cur_time = 0.0f;
@@ -64,6 +69,7 @@ void ActrModel::Step() {
     Init();
   }
   RunNextEvent();
+  run_state = STOP;
 }
  
 void ActrModel::Run() {
@@ -74,6 +80,7 @@ void ActrModel::Run() {
     RunNextEvent();
     taMisc::ProcessEvents();    // todo: optimize this!
   }
+  run_state = DONE;
 }
 
 void ActrModel::Stop() {
@@ -81,6 +88,7 @@ void ActrModel::Stop() {
 }
 
 void ActrModel::RunNextEvent() {
+  run_state = RUN;
   if(cur_event_idx >= events.size) {
     cur_event_idx = events.size; // make sure..
     // no more events!
@@ -92,7 +100,7 @@ void ActrModel::RunNextEvent() {
     proc->AddConflictResEvent(); // if nothing else, schedule some conflict resolution!!
   }
   ActrEvent* ev = events.SafeEl(cur_event_idx++); // should definitely work now..
-  if(!ev || ev->action == "!Stop!") {
+  if(!ev || ev->action == "!stop!") {
     Stop();
     return;
   }
@@ -103,7 +111,9 @@ void ActrModel::RunNextEvent() {
   }
 
   cur_time = ev->time;          // set current time to event time
-  // todo: log event before it is sent
+  if(HasModelFlag(LOG_EVENTS) && log_table) {
+    ev->LogEvent(*log_table.ptr());
+  }
   ev->dst_module->ProcessEvent(*ev);
 
   if(!HasModelFlag(SAVE_ALL_EVENTS)) {
@@ -141,4 +151,50 @@ ActrEvent* ActrModel::ScheduleEvent(float time_fm_now, int priority,
                                       params, act, chnk, event_type);
   InsertEventInOrder(ev);
   return ev;
+}
+
+void ActrModel::LogEvent(float time, const String& module,
+                         const String& action, const String& target, 
+                         const String& params, const String& dst_module,
+                         float priority, const String& prod_action,
+                         const String& chunk) {
+  if(!log_table) return;
+  DataTable* dt = log_table.ptr();
+  dt->AddBlankRow();
+  if(time < 0) time = cur_time;
+  dt->SetVal(time, "time", -1);
+  dt->SetVal(module, "module", -1);
+  dt->SetVal(action, "action", -1);
+  dt->SetVal(target, "target", -1);
+  dt->SetVal(params, "params", -1);
+  dt->SetVal(dst_module, "dst_module", -1);
+  dt->SetVal(priority, "priority", -1);
+  dt->SetVal(prod_action, "prod_action", -1);
+  dt->SetVal(chunk, "chunk", -1);
+  dt->WriteClose();
+}
+
+void ActrModel::FormatLogTable() {
+  if(!log_table) return;
+  DataTable* dt = log_table.ptr();
+
+  DataCol* dc;
+  dc = dt->FindMakeCol("time", VT_FLOAT);
+  dc->desc = "time in seconds when this event occurred";
+  dc = dt->FindMakeCol("module", VT_STRING);
+  dc->desc = "module that generated this event or action";
+  dc = dt->FindMakeCol("action", VT_STRING);
+  dc->desc = "name of action";
+  dc = dt->FindMakeCol("target", VT_STRING);
+  dc->desc = "name of buffer or module that is the target or destination for the action";
+  dc = dt->FindMakeCol("params", VT_STRING);
+  dc->desc = "extra parameters associated with the action";
+  dc = dt->FindMakeCol("dst_module", VT_STRING);
+  dc->desc = "destination module that will process this event or action";
+  dc = dt->FindMakeCol("priority", VT_FLOAT);
+  dc->desc = "event priority for scheduling";
+  dc = dt->FindMakeCol("prod_action", VT_STRING);
+  dc->desc = "extra detail on production action that created event";
+  dc = dt->FindMakeCol("chunk", VT_STRING);
+  dc->desc = "extra detail on chunk that is relevant to this event or action";
 }

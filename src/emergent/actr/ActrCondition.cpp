@@ -47,8 +47,8 @@ void ActrCondition::UpdateAfterEdit_impl() {
   case OBJ_MEMBER:
     break;
   }
-  for(int i=0; i< cmp_chunk.slot_vals.size; i++) {
-    ActrSlot* sl = cmp_chunk.slot_vals[i];
+  for(int i=0; i< cmp_chunk.slots.size; i++) {
+    ActrSlot* sl = cmp_chunk.slots[i];
     sl->SetSlotFlag(ActrSlot::COND); // must be in cond mode!
     sl->val_type = ActrSlot::LITERAL;
   }
@@ -111,8 +111,8 @@ String ActrCondition::GetDesc() const {
 
 void ActrCondition::UpdateVars(ActrProduction& prod) {
   if(cond_src != BUFFER_EQ) return;
-  for(int i=0; i< cmp_chunk.slot_vals.size; i++) {
-    ActrSlot* sl = cmp_chunk.slot_vals[i];
+  for(int i=0; i< cmp_chunk.slots.size; i++) {
+    ActrSlot* sl = cmp_chunk.slots[i];
     sl->SetSlotFlag(ActrSlot::COND); // must be in cond mode!
     if(!sl->CondIsVar()) continue;
     String var = sl->GetVarName();
@@ -136,7 +136,7 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
       return false;
     }
     ActrChunk* bc =buf->CurChunk();
-    bool match = cmp_chunk.Matches(prod, bc, why_not);
+    bool match = cmp_chunk.MatchesProd(prod, bc, false, why_not); // false = not exact
     return match;
     break;
   }
@@ -145,7 +145,7 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
                  "no buffer specified as the source to match against!"))
       return false;
     ActrBuffer* buf = (ActrBuffer*)src.ptr();
-    bool match = buf->Matches(cmp_val, why_not);
+    bool match = buf->QueryMatches(cmp_val, why_not);
     return match;
     break;
   }
@@ -171,18 +171,19 @@ bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
   if(!buf->IsFull()) return true; // should not fail
   if(why_not) {
     taMisc::Info("condition:", GetDisplayName(),
-                 "starting variable-based matching, vars:", prod.vars.PrintStr());
+                 "starting variable-based matching, vars:", prod.PrintVars());
   }
   ActrChunk* bc =buf->CurChunk();
-  for(int i=0; i< cmp_chunk.slot_vals.size; i++) {
-    ActrSlot* sl = cmp_chunk.slot_vals[i];
+  for(int i=0; i< cmp_chunk.slots.size; i++) {
+    ActrSlot* sl = cmp_chunk.slots[i];
     if(!sl->CondIsVar()) continue;
     ActrSlot* var = prod.vars.FindName(sl->GetVarName());
     if(var) {
-      ActrSlot* os = bc->slot_vals.SafeEl(i);
+      ActrSlot* os = bc->slots.SafeEl(i);
       if(os) {
         if(sl->CondIsNeg()) {
-          if(var->Matches(prod, os, false)) { // this report will be meaningless
+          // true = use exact match
+          if(var->MatchesProd(prod, os, true, false)) { // this report will be meaningless
             if(why_not) {
               taMisc::Info("condition:", GetDisplayName(),
                            "negative variable test actually matches!",
@@ -192,7 +193,7 @@ bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
           }
         }
         else {
-          if(!var->Matches(prod, os, why_not)) {
+          if(!var->MatchesProd(prod, os, true, why_not)) { // true = exact match
             return false; // only nonmatch!
           }
         }

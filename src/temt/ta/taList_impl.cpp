@@ -1143,7 +1143,9 @@ taBase* taList_impl::FindMakeNameType_(const String& item_nm, TypeDef* td, bool&
   }
   made_new = true;
   rval = New(1,td);
-  rval->SetName(item_nm);
+  if(rval) {
+    rval->SetName(item_nm);
+  }
   return rval;
 }
 

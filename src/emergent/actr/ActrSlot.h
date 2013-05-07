@@ -58,8 +58,11 @@ public:
   virtual String        GetVarName();
   // #CAT_ActR get variable name from val 
 
-  virtual bool          Matches(ActrProduction& prod, ActrSlot* os, bool why_not = false);
-  // #CAT_ActR does this match against other slot?  'this' is the LHS of production
+  virtual bool          MatchesProd(ActrProduction& prod, ActrSlot* os,
+                                    bool exact, bool why_not = false);
+  // #CAT_ActR for production condition matching: does this match against other slot?  'this' is the LHS of production or current value of a variable -- exact = require exact value match (e.g., for matching var values), else treat as first-pass match where nil and vars match anything 
+  virtual bool          MatchesMem(ActrSlot* os, bool exact, bool why_not = false);
+  // #CAT_ActR for memory matching: does this match against other slot?  exact = require exact value match (e.g., for matching var values), else nil matches anything 
 
   virtual void          CopyValFrom(const ActrSlot& cp);
   // #CAT_ActR copy slot value from other slot

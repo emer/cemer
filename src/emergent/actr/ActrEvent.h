@@ -53,7 +53,13 @@ public:
                                  TypeDef* event_type = NULL);
   // #CAT_ActR create a new event with given params
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  virtual void     LogEvent(DataTable& dt);
+  // #CAT_ActR log the event to a log_table configured by ActrModel with relevant columns
+
+  override String& Print(String& strm, int indent = 0) const;
+  override String  GetDisplayName() const;
+  override String  GetTypeDecoKey() const { return "Program"; }
+  override String  GetDesc() const;
 
   TA_SIMPLE_BASEFUNS(ActrEvent);
 private:

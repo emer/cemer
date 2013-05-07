@@ -15,6 +15,7 @@
 
 #include "ActrProduction.h"
 #include <ActrModule>
+#include <ActrSlot>
 
 #include <taMisc>
 
@@ -54,6 +55,19 @@ void ActrProduction::Init() {
   UpdateVars();
 }
 
+String ActrProduction::PrintVars() const {
+  String strm;
+  strm << name << " vars (";
+  for(int i=0; i<vars.size; i++) {
+    ActrSlot* sl = vars.FastEl(i);
+    strm << " ";
+    sl->Print(strm, 0);
+    strm << ";";                // need some kind of sep!!
+  }
+  strm << " )";
+  return strm;
+}
+
 int ActrProduction::GetEnabled() const {
   return !off;
 }
@@ -81,8 +95,10 @@ bool ActrProduction::Matches(bool why_not) {
 }
 
 bool ActrProduction::WhyNot() {
-  taMisc::Info("Why production: " + name + " did not match:\n");
-  return Matches(true);
+  taMisc::Info("Why production:",name,"did not match:");
+  bool rval = Matches(true);
+  taMisc::Info("Production:",name,"returned from match with:", (String)rval);
+  return rval;
 }
 
 void ActrProduction::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {

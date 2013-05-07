@@ -37,7 +37,7 @@ public:
   float                 rew;   // reward value associated with the firing of this production
   ActrCondition_List    conds; // conditions that must be matched to fire this production
   ActrAction_List       acts;  // actions that this production causes when it fires
-  ActrSlot_List         vars;  // #READ_ONLY #NO_SAVE variable bindings used in matching and instantiating actions -- all the biologically implausible stuff happens here!
+  ActrSlot_List         vars;  // #NO_SAVE #EXPERT variable bindings used in matching and instantiating actions -- all the biologically implausible stuff happens here!
 
   float         Compute_Util(float rewval, float lrate) {
     util += lrate * (rewval - util);
@@ -48,6 +48,8 @@ public:
   virtual void          Init();
   // #CAT_ActR initialize production for start of a new run -- runs check config and updates vars etc
 
+  virtual String        PrintVars() const;
+  // #CAT_ActR print current values of the variables
   virtual void          UpdateVars();
   // #CAT_ActR update the vars based on what shows up in the conditions -- called automatically in UAE
   virtual void          UpdateNames();

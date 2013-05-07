@@ -39,6 +39,9 @@ public:
   String               desc; // #EDIT_DIALOG #HIDDEN_INLINE description of this chunk type
   ActrSlotType_List    slots;  // #SHOW_TREE the names and types of the slots within this chunk
 
+  virtual ActrSlotType* NewSlot();
+  // #BUTTON make a new slot in this chunk
+
   override taList_impl*	children_() {return &slots;}	
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return slots.Elem(idx, mode); }

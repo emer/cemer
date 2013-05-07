@@ -17,7 +17,7 @@
 #define ActrBuffer_h 1
 
 // parent includes:
-#include <taNBase>
+#include <ActrNBase>
 
 // member includes:
 #include <ActrChunk_List>
@@ -27,18 +27,22 @@
 
 eTypeDef_Of(ActrBuffer);
 
-class E_API ActrBuffer : public taNBase {
-  // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel a named buffer in ActR -- holds active chunk(s)
-INHERITED(taNBase)
+class E_API ActrBuffer : public ActrNBase {
+  // a named buffer in ActR -- holds active chunk(s)
+INHERITED(ActrNBase)
 public:
   enum BufferFlags { // #BITS ActR buffer flags
     BF_NONE             = 0, // #NO_BIT
     FULL                = 0x0001, // buffer is full (else empty)
     REQ                 = 0x0002, // buffer has pending request (else not)
+    STRICT_HARVEST      = 0x0004, // when a production matches against chunk in this buffer, it is harvested (cleared)
+    DM_MERGE            = 0x0008, // when a chunk is cleared from harvesting or explicit clear event, does it merge into declarative memory?
+    
+    STD_FLAGS           = STRICT_HARVEST | DM_MERGE, // #NO_BIT standard buffer flags
   };
 
   String                desc;      // #EDIT_DIALOG #HIDDEN_INLINE description of this buffer
-  BufferFlags           flags;     // #READ_ONLY #SHOW current state of the buffer
+  BufferFlags           flags;     // current state of the buffer
   ActrChunk_List        active;    // active chunk(s) in the buffer
   ActrModuleRef         module;    // module that this buffer belongs to
   float                 act_total; // total activation that this buffer can contribute 
@@ -62,12 +66,27 @@ public:
   bool  IsEmpty()       { return !IsFull(); }
   bool  IsReq()         { return HasBufferFlag(REQ); }
   bool  IsUnReq()       { return !IsReq(); }
+  void  SetReq()        { SetBufferFlag(REQ); }
+  void  ClearReq()      { ClearBufferFlag(REQ); }
   
   ActrChunk*            CurChunk() 
   { if(active.size == 0) return NULL; return active.FastEl(0); }
+  // #CAT_ActR get the current chunk in buffer if there is one (returns NULL if not)
 
-  bool  Matches(const String& query, bool why_not = false);
-  // does state of buffer or owning module match given query value -- must be: buffers: full, empty, requested, unrequested  modules: busy, free, error
+  virtual bool          HarvestChunk();
+  // #CAT_ActR called in response to a BUFFER-READ-ACTION -- harvest (or not) any current chunk per flag settings for this buffer, merging into declarative if flagged
+  virtual bool          ClearChunk();
+  // #CAT_ActR called in response to a CLEAR-BUFFER -- clear any current chunk, merging into declarative if flagged
+  virtual bool          ClearChunk_impl(bool dm_merge = true);
+  // #CAT_ActR implementation function that does merge per arg, ignoring flags: clear any existing chunk from buffer, and merge into declarative memory (normal ACT-R behavior for any chunk that is cleared) -- also updates state -- returns false if error
+  virtual ActrChunk*    SetChunk(ActrChunk* chunk);
+  // #CAT_ActR set chunk as active one for buffer -- makes a *copy* of the chunk and updates state -- calls ClearChunk(true) (merge) if currently full -- returns new chunk
+
+  bool  QueryMatches(const String& query, bool why_not = false);
+  // #CAT_ActR for production matching: does state of buffer match given query value -- must be: buffer: full, empty, requested, unrequested, module: busy, free, error
+
+  virtual void          Init();
+  // #CAT_ActR initialize buffer at start of run
 
   virtual void          UpdateState();
   // #CAT_ActR update buffer state -- call this whenver anything changes!

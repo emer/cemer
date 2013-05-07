@@ -113,9 +113,29 @@ bool ActrSlot::IsNil() {
 }
 
 
-bool ActrSlot::Matches(ActrProduction& prod, ActrSlot* os, bool why_not) {
-  if(IsNil()) return true;      //  if we're empty we don't care
-  if(CondIsVar()) {
+bool ActrSlot::MatchesProd(ActrProduction& prod, ActrSlot* os, bool exact, bool why_not) {
+  if(!os) {
+    if(why_not) {
+      taMisc::Info("slot:", GetDisplayName(), "other slot is null");
+    }
+    return false;
+  }
+  if(IsNil()) {
+    if(!exact)
+      return true;      //  if we're empty we don't care
+    bool rval = os->IsNil(); // exact match: is other guy?
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for nil, got:", os->val);
+      }
+    }
+    return rval;
+  }
+  if(!exact && os->IsNil()) {             // presumably this is symmetrical?
+    return true; 
+  }
+  if(!exact && CondIsVar()) {
     if(!CondIsNeg()) {
       ActrSlot* var = prod.vars.FindName(GetVarName());
       if(var) {
@@ -123,12 +143,6 @@ bool ActrSlot::Matches(ActrProduction& prod, ActrSlot* os, bool why_not) {
       }
     }
     return true;  // a variable always matches at this stage
-  }
-  if(!os) {
-    if(why_not) {
-      taMisc::Info("slot:", GetDisplayName(), "other slot is null");
-    }
-    return false;         // we're not empty and other guy is..
   }
   if(os->val_type == LITERAL) {
     bool rval = (val == os->val);
@@ -143,6 +157,51 @@ bool ActrSlot::Matches(ActrProduction& prod, ActrSlot* os, bool why_not) {
   if(val == os->val_chunk->name)
     return true;
   // todo: not sure how matching works on chunk types -- name??
+  if(why_not) {
+    taMisc::Info("slot:", GetDisplayName(), "CHUNK type fall thru mismatch");
+  }
+  return false;
+}
+
+bool ActrSlot::MatchesMem(ActrSlot* os, bool exact, bool why_not) {
+  if(!os) {
+    if(why_not) {
+      taMisc::Info("slot:", GetDisplayName(), "other slot is null");
+    }
+    return false;
+  }
+  if(IsNil()) {
+    if(!exact)
+      return true;      //  if we're empty we don't care
+    bool rval = os->IsNil(); // exact match: is other guy?
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for nil, got:", os->val);
+      }
+    }
+    return rval;
+  }
+  if(!exact && os->IsNil()) {             // presumably this is symmetrical?
+    return true; 
+  }
+  if(os->val_type == LITERAL) {
+    bool rval = (val == os->val);
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for:", val, "got:", os->val);
+      }
+    }
+    return rval;
+  }
+  // note: not nil b/c that was dealt with above
+  if(val_chunk == os->val_chunk)
+    return true;
+  if(val_chunk->name == os->val_chunk->name)
+    return true;
+  if(val_chunk->MatchesMem(os->val_chunk, exact, why_not)) // full content match
+    return true;
   if(why_not) {
     taMisc::Info("slot:", GetDisplayName(), "CHUNK type fall thru mismatch");
   }

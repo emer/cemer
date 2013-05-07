@@ -19,17 +19,38 @@
 
 void ActrModule::Initialize() {
   own_model = NULL;
-  state = MS_FREE;
+  flags = MF_NONE;
 }
 
-void ActrModule::InitLinks() {
-  inherited::InitLinks();
-  InitLinks_taAuto(&TA_ActrModule);
-  own_model = GET_MY_OWNER(ActrModel);
+void ActrModule::Init() {
+  flags = MF_NONE;
+  InitModule();
+  buffer->Init();
 }
 
-void ActrModule::CutLinks() {
-  own_model = NULL;
-  CutLinks_taAuto(&TA_ActrModule);
-  inherited::CutLinks();
+bool ActrModule::ProcessEvent_std(ActrEvent& event) {
+  bool handled = false;
+  if(event.action == "BUFFER-READ-ACTION") {
+    if(event.dst_buffer)
+      event.dst_buffer->HarvestChunk();
+    else
+      buffer->HarvestChunk();   // use default
+    handled = true;
+  }
+  else if(event.action == "CLEAR-BUFFER") {
+    if(event.dst_buffer)
+      event.dst_buffer->ClearChunk();
+    else
+      buffer->ClearChunk();   // use default
+    handled = true;
+  }
+  else if(event.action == "MOD-BUFFER-CHUNK") {
+    if(event.dst_buffer)
+      event.dst_buffer->SetChunk(event.chunk_arg);
+    else
+      buffer->SetChunk(event.chunk_arg);   // use default
+    handled = true;
+  }
+  return handled;
 }
+

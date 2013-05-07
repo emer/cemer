@@ -37,7 +37,7 @@ public:
 
   ActrProduction_Group  productions;  // all the productions defined for the model
   ActrProduction_Group  eligible;     // #HIDDEN #NO_SAVE all the eligible productions for current conflict res stage
-  ActrProductionRef     next_pr;      // #HIDDEN #NO_SAVE next production to fire
+  ActrProductionRef     fired;          // #HIDDEN #NO_SAVE final selected production to fire
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);
@@ -48,7 +48,7 @@ public:
   virtual void  ConflictResolution();
   // perform conflict resolution and identify the current production to fire
   virtual void  ProductionFired();
-  // fire off the next_pr
+  // fire off the fired production
 
   TA_SIMPLE_BASEFUNS(ActrProceduralModule);
 private:

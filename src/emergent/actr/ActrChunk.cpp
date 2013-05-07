@@ -42,29 +42,29 @@ bool ActrChunk::UpdateFromType() {
   ActrSlot* sv;
   ActrSlotType* st;
   // delete slots not in type; freshen those that are
-  for (i = slot_vals.size - 1; i >= 0; --i) {
-    sv = slot_vals.FastEl(i);
+  for (i = slots.size - 1; i >= 0; --i) {
+    sv = slots.FastEl(i);
     st = chunk_type->slots.FindName(sv->name);
     if(st) {
       any_changes |= sv->UpdateFromType(*st);
     }
     else {
-      slot_vals.RemoveIdx(i);
+      slots.RemoveIdx(i);
       any_changes = true;
     }
   }
   // add in type not in us, and put in the right order
   for (ti = 0; ti < chunk_type->slots.size; ++ti) {
     st = chunk_type->slots.FastEl(ti);
-    i = slot_vals.FindNameIdx(st->name);
+    i = slots.FindNameIdx(st->name);
     if (i < 0) {
       sv = new ActrSlot();
       sv->UpdateFromType(*st);
-      slot_vals.Insert(sv, ti);
+      slots.Insert(sv, ti);
       any_changes = true;
     }
     else if (i != ti) {
-      slot_vals.MoveIdx(i, ti);
+      slots.MoveIdx(i, ti);
       any_changes = true;
     }
   }
@@ -79,8 +79,8 @@ String& ActrChunk::Print(String& strm, int indent) const {
     strm << " ISA " << chunk_type->name;
   }
   strm << " (";
-  for(int i=0; i<slot_vals.size; i++) {
-    ActrSlot* sl = slot_vals.FastEl(i);
+  for(int i=0; i<slots.size; i++) {
+    ActrSlot* sl = slots.FastEl(i);
     strm << " ";
     sl->Print(strm, 0);
     strm << ";";                // need some kind of sep!!
@@ -97,7 +97,12 @@ String ActrChunk::GetDesc() const {
   return PrintStr();            // calls Print above
 }
 
-bool ActrChunk::Matches(ActrProduction& prod, ActrChunk* cmp, bool why_not) {
+ActrSlot* ActrChunk::NewSlot() {
+  return (ActrSlot*)New(1);
+}
+
+bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact, 
+                            bool why_not) {
   if(!cmp) return false;
   if((bool)chunk_type && (bool)cmp->chunk_type) {
     if(chunk_type != cmp->chunk_type) {
@@ -106,10 +111,32 @@ bool ActrChunk::Matches(ActrProduction& prod, ActrChunk* cmp, bool why_not) {
       }
       return false; // must be same type..
     }
-    for(int i=0; i<slot_vals.size; i++) {
-      ActrSlot* sl = slot_vals.FastEl(i);
-      ActrSlot* os = cmp->slot_vals.SafeEl(i);
-      if(!sl->Matches(prod, os, why_not)) return false;
+    for(int i=0; i<slots.size; i++) {
+      ActrSlot* sl = slots.FastEl(i);
+      ActrSlot* os = cmp->slots.SafeEl(i);
+      if(!sl->MatchesProd(prod, os, exact, why_not))
+        return false;
+    }
+    return true;                // pass through -- all good!
+  }
+  // todo: what do we do here??  lookup by names or something?
+  return false;                 // not yet
+}
+
+bool ActrChunk::MatchesMem(ActrChunk* cmp, bool exact, bool why_not) {
+  if(!cmp) return false;
+  if((bool)chunk_type && (bool)cmp->chunk_type) {
+    if(chunk_type != cmp->chunk_type) {
+      if(why_not) {
+        taMisc::Info("chunk:", GetDisplayName(), "type mismatch");
+      }
+      return false; // must be same type..
+    }
+    for(int i=0; i<slots.size; i++) {
+      ActrSlot* sl = slots.FastEl(i);
+      ActrSlot* os = cmp->slots.SafeEl(i);
+      if(!sl->MatchesMem(os, exact, why_not))
+        return false;
     }
     return true;                // pass through -- all good!
   }

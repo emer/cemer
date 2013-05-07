@@ -28,15 +28,107 @@ void ActrDeclarativeModule::InitModule() {
   bool made_new;
   buffer = mod->buffers.FindMakeNameType("retrieval", NULL, made_new);
   buffer->module = this;
-}
-
-void ActrDeclarativeModule::ProcessEvent(ActrEvent& event) {
+  buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
 }
 
 void ActrDeclarativeModule::Init() {
-  InitModule();
-  buffer->active.Reset();
-  state = MS_FREE;
-  chunks.Reset();
-  chunks.CopyFrom(&init_chunks);
+  inherited::Init();
+  active.Reset();
+  active.CopyFrom(&init_chunks);
 }
+
+void ActrDeclarativeModule::ProcessEvent(ActrEvent& event) {
+  if(event.action == "MODULE-REQUEST") {
+    RetrievalRequest(event);
+  }
+  else if(event.action == "RETRIEVED-CHUNK") {
+    RetrievedChunk(event);
+  }
+  else if(event.action == "RETRIEVAL-FAILURE") {
+    RetrievalFailure(event);
+  }
+  else {
+    ProcessEvent_std(event);   // respond to regular requests
+  }
+}
+
+void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
+  ActrChunk* ck = event.chunk_arg;
+  if(TestError(!ck, "RetrievalRequest", "probe chunk is NULL")) {
+    return;
+  }
+  ActrModel* mod = Model();
+  mod->LogEvent(-1.0f, "declarative", "START-RETRIEVAL", "", "");
+  SetModuleFlag(BUSY);
+  buffer->SetReq();
+  buffer->ClearChunk();         // always clear before recall
+  bool got_some = FindMatching(ck);
+  if(!got_some) {
+    // todo: model retrieval time
+    mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
+                       "RETRIEVAL-FAILURE", "", event.act_arg);
+    return;
+  }
+  if(eligible.size == 1) {
+    retrieved = eligible.FastEl(0);
+  }
+  else {
+    // todo: do utility-based selection of top guy
+    retrieved = eligible.FastEl(0); // just pick the first one for now!!
+    TestWarning(true, "RetrievalRequest",
+                "activity-based selection not avail yet, using first element of:",
+                (String)eligible.size, "that matched");
+  }
+  // todo: model retrieval time
+  mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
+                     "RETRIEVED-CHUNK", retrieved->name, event.act_arg,
+                     retrieved);
+}
+
+void ActrDeclarativeModule::RetrievedChunk(ActrEvent& event) {
+  buffer->SetChunk(retrieved);
+  ClearModuleFlag(BUSY);
+  buffer->ClearReq();
+}
+
+void ActrDeclarativeModule::RetrievalFailure(ActrEvent& event) {
+  ClearModuleFlag(BUSY);
+  SetModuleFlag(ERROR);         // todo: when are errors cleared??
+  buffer->ClearReq();
+}
+
+bool ActrDeclarativeModule::AddChunk(ActrChunk* ck, bool merge) {
+  if(merge) {
+    bool match = FindMatching(ck);
+    if(!match || eligible.size > 1) { // none or too many
+      eligible.Reset();
+      AddChunk(ck, false);
+      return false;             // not merged
+    }
+    // todo: what to do to merge values??
+    ActrChunk* mck = eligible[0];
+    UpdateBaseAct(mck);
+  }
+  else {
+    active.Add(ck);             // todo: transfer?  some issues of ref counting here
+    UpdateBaseAct(ck);
+  }
+  return true;
+}
+
+bool ActrDeclarativeModule::FindMatching(ActrChunk* ck) {
+  eligible.Reset();
+  for(int i=0; i<active.size; i++) {
+    ActrChunk* oc = active.FastEl(i);
+    if(ck->MatchesMem(oc, false)) { // false = not exact..
+      eligible.Link(oc);
+    }
+  }
+  return (eligible.size > 0);
+}
+
+float ActrDeclarativeModule::UpdateBaseAct(ActrChunk* ck) {
+  // todo: write code for this
+  return 0.5f;
+}
+

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.0.0 rev6266
+// ta_Dump File v3.0 -- code v6.3.0.0 rev6272
 LeabraProject .projects["actr"] { 
   taBase_Group @.templates = [0] {
   };
@@ -117,7 +117,20 @@ LeabraProject .projects["actr"] {
 
   Program_Group @.programs = [1] {
     Program @["ActRTest"] { 
-      ProgObjList @.objs = [1] {
+      ProgObjList @.objs = [2] {
+	DataTable @["ActrLogTable"] { 
+	  DataTableCols @.data = [9] {
+	    float_Data @["time"] { };
+	    String_Data @["module"] { };
+	    String_Data @["action"] { };
+	    String_Data @["target"] { };
+	    String_Data @["params"] { };
+	    String_Data @["dst_module"] { };
+	    float_Data @["priority"] { };
+	    String_Data @["prod_action"] { };
+	    String_Data @["chunk"] { };
+	  };
+	};
 	ActrModel @["TestModel"] { 
 	  ActrChunkType_List @.chunk_types = [2] {
 	    ActrChunkType @["count_order"] { 
@@ -141,7 +154,7 @@ LeabraProject .projects["actr"] {
 		ActrProduction @["start"] { 
 		  ActrCondition_List @.conds = [1] {
 		    ActrCondition @[0] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
@@ -151,14 +164,14 @@ LeabraProject .projects["actr"] {
 
 		  ActrAction_List @.acts = [2] {
 		    ActrAction @[0] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrAction @[1] { 
-		      ActrSlot_List @.slot_vals = [2] {
+		      ActrSlot_List @.slots = [2] {
 			ActrSlot @["first"] { };
 			ActrSlot @["second"] { };
 		      };
@@ -168,14 +181,14 @@ LeabraProject .projects["actr"] {
 		ActrProduction @["increment"] { 
 		  ActrCondition_List @.conds = [2] {
 		    ActrCondition @[0] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrCondition @[1] { 
-		      ActrSlot_List @.slot_vals = [2] {
+		      ActrSlot_List @.slots = [2] {
 			ActrSlot @["first"] { };
 			ActrSlot @["second"] { };
 		      };
@@ -184,20 +197,20 @@ LeabraProject .projects["actr"] {
 
 		  ActrAction_List @.acts = [3] {
 		    ActrAction @[0] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrAction @[1] { 
-		      ActrSlot_List @.slot_vals = [2] {
+		      ActrSlot_List @.slots = [2] {
 			ActrSlot @["first"] { };
 			ActrSlot @["second"] { };
 		      };
 		    };
 		    ActrAction @[2] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
@@ -208,7 +221,7 @@ LeabraProject .projects["actr"] {
 		ActrProduction @["stop"] { 
 		  ActrCondition_List @.conds = [1] {
 		    ActrCondition @[0] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
@@ -218,11 +231,11 @@ LeabraProject .projects["actr"] {
 
 		  ActrAction_List @.acts = [2] {
 		    ActrAction @[0] { 
-		      ActrSlot_List @.slot_vals = [0] {
+		      ActrSlot_List @.slots = [0] {
 		      };
 		    };
 		    ActrAction @[1] { 
-		      ActrSlot_List @.slot_vals = [3] {
+		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
 			ActrSlot @["end"] { };
 			ActrSlot @["count"] { };
@@ -235,64 +248,64 @@ LeabraProject .projects["actr"] {
 	    ActrDeclarativeModule @["declarative"] { 
 	      ActrChunk_List @.init_chunks = [5] {
 		ActrChunk @["b"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["c"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["d"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["e"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["f"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 	      };
 
-	      ActrChunk_List @.chunks = [5] {
+	      ActrChunk_List @.active = [5] {
 		ActrChunk @["b"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["c"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["d"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["e"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
 		ActrChunk @["f"] { 
-		  ActrSlot_List @.slot_vals = [2] {
+		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
@@ -302,7 +315,7 @@ LeabraProject .projects["actr"] {
 	    ActrGoalModule @["goal"] { 
 	      ActrChunk_List @.init_chunk = [1] {
 		ActrChunk @["first_goal"] { 
-		  ActrSlot_List @.slot_vals = [3] {
+		  ActrSlot_List @.slots = [3] {
 		    ActrSlot @["start"] { };
 		    ActrSlot @["end"] { };
 		    ActrSlot @["count"] { };
@@ -318,13 +331,19 @@ LeabraProject .projects["actr"] {
 	      };
 	    };
 	    ActrBuffer @["retrieval"] { 
-	      ActrChunk_List @.active = [0] {
+	      ActrChunk_List @.active = [1] {
+		ActrChunk @["ActrChunk_26"] { 
+		  ActrSlot_List @.slots = [2] {
+		    ActrSlot @["first"] { };
+		    ActrSlot @["second"] { };
+		  };
+		};
 	      };
 	    };
 	    ActrBuffer @["goal"] { 
 	      ActrChunk_List @.active = [1] {
-		ActrChunk @["first_goal"] { 
-		  ActrSlot_List @.slot_vals = [3] {
+		ActrChunk @["ActrChunk_25"] { 
+		  ActrSlot_List @.slots = [3] {
 		    ActrSlot @["start"] { };
 		    ActrSlot @["end"] { };
 		    ActrSlot @["count"] { };
@@ -332,9 +351,6 @@ LeabraProject .projects["actr"] {
 		};
 	      };
 	    };
-	  };
-
-	  ActrEvent_List @.events = [0] {
 	  };
 	};
       };
@@ -345,8 +361,9 @@ LeabraProject .projects["actr"] {
       ProgVar_List @.args = [0] {
       };
 
-      ProgVar_List @.vars = [1] {
+      ProgVar_List @.vars = [2] {
 	ProgVar @["TestModel"] { };
+	ProgVar @["ActrLogTable"] { };
       };
 
       Function_List @.functions = [0] {
@@ -2035,11 +2052,169 @@ LeabraProject .projects["actr"] {
     name="ProgObjList_13";
     el_typ=ActrModel;
     el_def=0;
+    DataTable @["ActrLogTable"] {
+     name="ActrLogTable";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @["time"] {
+       name="time";
+       desc="time in seconds when this event occurred";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] 0;0;0;0.050000001;0.050000001;0.050000001;0.050000001;0.1;0.1;       };
+      };
+      String_Data @["module"] {
+       name="module";
+       desc="module that generated this event or action";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] "procedural";"procedural";"procedural";"procedural";"procedural";"declarative";"procedural";"declarative";"procedural";       };
+      };
+      String_Data @["action"] {
+       name="action";
+       desc="name of action";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] "CONFLICT-RESOLUTION";"PRODUCTION-SELECTED";"BUFFER-READ-ACTION";"PRODUCTION-FIRED";"MODULE-REQUEST";"START-RETRIEVAL";"MOD-BUFFER-CHUNK";"RETRIEVED-CHUNK";"CONFLICT-RESOLUTION";       };
+      };
+      String_Data @["target"] {
+       name="target";
+       desc="name of buffer or module that is the target or destination for the action";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] "procedural";;"goal";"procedural";"retrieval";;"goal";"retrieval";"procedural";       };
+      };
+      String_Data @["params"] {
+       name="params";
+       desc="extra parameters associated with the action";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] ;"start";"goal";"start";"retrieval";;"goal";"c";;       };
+      };
+      String_Data @["dst_module"] {
+       name="dst_module";
+       desc="destination module that will process this event or action";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] "procedural";;"goal";"procedural";"declarative";;"goal";"declarative";"procedural";       };
+      };
+      float_Data @["priority"] {
+       name="priority";
+       desc="event priority for scheduling";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] 100;0;100;100;0;0;0;100;100;       };
+      };
+      String_Data @["prod_action"] {
+       name="prod_action";
+       desc="extra detail on production action that created event";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] ;;;;"+retrieval start_a1 ISA count_order ( first 2; second ; )";;"=goal start_a0 ISA count_from ( start ; end ; count 2; )";"+retrieval start_a1 ISA count_order ( first 2; second ; )";;       };
+      };
+      String_Data @["chunk"] {
+       name="chunk";
+       desc="extra detail on chunk that is relevant to this event or action";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [9] ;;;;"start_a1 ISA count_order ( first 2; second ; )";;"start_a0 ISA count_from ( start ; end ; count 2; )";"c ISA count_order ( first 2; second 3; )";;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes{      };
+    };
     ActrModel @["TestModel"] {
      name="TestModel";
      desc=;
-     flags=SAVE_ALL_EVENTS;
-     cur_time=0;
+     flags=LOG_EVENTS|SAVE_ALL_EVENTS;
+     cur_time=0.1;
      chunk_types {
       name="ActrChunkType_List_0";
       el_typ=ActrChunkType;
@@ -2101,7 +2276,7 @@ LeabraProject .projects["actr"] {
        name="procedural";
        desc=;
        buffer=.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["procedural"]$$;
-       state=MS_FREE;
+       flags=0;
        mp_time=0.05;
        util_lrate=0.02;
        util_noise=0.02;
@@ -2132,7 +2307,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2174,7 +2349,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2197,7 +2372,7 @@ LeabraProject .projects["actr"] {
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=num1";
+	      val="2";
 	     };
 	    };
 	   };
@@ -2214,7 +2389,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2223,7 +2398,7 @@ LeabraProject .projects["actr"] {
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=num1";
+	      val="2";
 	     };
 	     ActrSlot @["second"] {
 	      name="second";
@@ -2263,7 +2438,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2304,7 +2479,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2339,7 +2514,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2379,7 +2554,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2412,7 +2587,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2468,7 +2643,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2510,7 +2685,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2529,7 +2704,7 @@ LeabraProject .projects["actr"] {
 	    n_act=0;
 	    t_new=0;
 	    base_act=0;
-	    slot_vals {
+	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
@@ -2568,7 +2743,7 @@ LeabraProject .projects["actr"] {
        name="declarative";
        desc=;
        buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$;
-       state=MS_FREE;
+       flags=0;
        init_chunks {
 	name=;
 	el_typ=ActrChunk;
@@ -2579,7 +2754,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2605,7 +2780,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2631,7 +2806,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2657,7 +2832,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2683,7 +2858,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2704,7 +2879,7 @@ LeabraProject .projects["actr"] {
 	 };
 	};
        };
-       chunks {
+       active {
 	name=;
 	el_typ=ActrChunk;
 	el_def=0;
@@ -2714,7 +2889,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2740,7 +2915,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2766,7 +2941,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2792,7 +2967,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2818,7 +2993,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2844,7 +3019,7 @@ LeabraProject .projects["actr"] {
        name="goal";
        desc=;
        buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
-       state=MS_FREE;
+       flags=0;
        init_chunk {
 	name=;
 	el_typ=ActrChunk;
@@ -2855,7 +3030,7 @@ LeabraProject .projects["actr"] {
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
+	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
@@ -2904,14 +3079,40 @@ LeabraProject .projects["actr"] {
       ActrBuffer @["retrieval"] {
        name="retrieval";
        desc=;
-       flags=0;
+       flags=FULL;
        active {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
+	ActrChunk @["ActrChunk_26"] {
+	 name="ActrChunk_26";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["TestModel"].chunk_types["count_order"]$;
+	 n_act=0;
+	 t_new=0;
+	 base_act=0;
+	 slots {
+	  name="ActrSlot_List_0";
+	  el_typ=ActrSlot;
+	  el_def=0;
+	  ActrSlot @["first"] {
+	   name="first";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="2";
+	  };
+	  ActrSlot @["second"] {
+	   name="second";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="3";
+	  };
+	 };
+	};
        };
-       module=NULL;
-       act_total=5.605194e-44;
+       module=.projects["actr"].programs["ActRTest"].objs["TestModel"].modules["declarative"]$$;
+       act_total=0;
       };
       ActrBuffer @["goal"] {
        name="goal";
@@ -2921,14 +3122,14 @@ LeabraProject .projects["actr"] {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
-	ActrChunk @["first_goal"] {
-	 name="first_goal";
+	ActrChunk @["ActrChunk_25"] {
+	 name="ActrChunk_25";
 	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["TestModel"].chunk_types["count_from"]$;
 	 n_act=0;
 	 t_new=0;
 	 base_act=0;
-	 slot_vals {
-	  name=;
+	 slots {
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
 	  ActrSlot @["start"] {
@@ -2936,21 +3137,21 @@ LeabraProject .projects["actr"] {
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="2";
+	   val=;
 	  };
 	  ActrSlot @["end"] {
 	   name="end";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="4";
+	   val=;
 	  };
 	  ActrSlot @["count"] {
 	   name="count";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="nil";
+	   val="2";
 	  };
 	 };
 	};
@@ -2959,13 +3160,8 @@ LeabraProject .projects["actr"] {
        act_total=0;
       };
      };
-     events {
-      name=;
-      el_typ=ActrEvent;
-      el_def=0;
-     };
-     cur_event_idx=0;
-     log_table=NULL;
+     cur_event_idx=7;
+     log_table=.projects["actr"].programs["ActRTest"].objs["ActrLogTable"]$$;
     };
    };
    types {
@@ -2987,6 +3183,17 @@ LeabraProject .projects["actr"] {
      var_type=T_Object;
      object_type=ActrModel;
      object_val=.projects["actr"].programs["ActRTest"].objs["TestModel"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["ActrLogTable"] {
+     name="ActrLogTable";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$.projects["actr"].programs["ActRTest"].objs["ActrLogTable"]$;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -7163,12 +7370,12 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.005341880489140749;
+     value 6 0=-0.003205128246918321;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.1018675714731216;
+     value 6 0=0.01528013590723276;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -7178,7 +7385,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.8132427930831909;
+     value 6 0=0.7996604442596436;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -7900,7 +8107,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7512733340263367;
+       value 6 0=0.7376909852027893;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

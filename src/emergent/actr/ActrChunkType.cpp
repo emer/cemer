@@ -21,3 +21,8 @@ void ActrChunkType::Initialize() {
 void ActrChunkType::Destroy() {
   CutLinks();
 }
+
+ActrSlotType* ActrChunkType::NewSlot() {
+  return (ActrSlotType*)New(1);
+}
+

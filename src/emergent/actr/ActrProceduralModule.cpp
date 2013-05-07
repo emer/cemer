@@ -27,8 +27,10 @@ void ActrProceduralModule::InitModule() {
   if(!Model()) return;
   ActrModel* mod = Model();
   bool made_new;
+  // note: our buffer isn't actually used?
   buffer = mod->buffers.FindMakeNameType("procedural", NULL, made_new);
   buffer->module = this;
+  buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
 }
 
 void ActrProceduralModule::ProcessEvent(ActrEvent& event) {
@@ -41,11 +43,9 @@ void ActrProceduralModule::ProcessEvent(ActrEvent& event) {
 }
 
 void ActrProceduralModule::Init() {
-  InitModule();
-  buffer->active.Reset();
-  state = MS_FREE;
+  inherited::Init();
   eligible.Reset();
-  next_pr = NULL;
+  fired = NULL;
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
     if(pr->off) continue;
     pr->Init();
@@ -73,30 +73,33 @@ void ActrProceduralModule::ConflictResolution() {
     return;
   }
   if(eligible.size == 1) {
-    next_pr = eligible.FastEl(0);
+    fired = eligible.FastEl(0);
   }
   else {
     // todo: do utility-based selection of top guy
-    next_pr = eligible.FastEl(0); // just pick the first one for now!!
+    fired = eligible.FastEl(0); // just pick the first one for now!!
+    TestWarning(true, "ConflictResolution",
+                "utility-based selection not avail yet, using first element of:",
+                (String)eligible.size, "that matched");
   }
-  // todo: log that we selected a guy -- record name
-  // "PRODUCTION-SELECTED"
-  next_pr->SendBufferReads(this, mod);
+  // todo: this appears to be an optional extra level of debug:
+  mod->LogEvent(-1.0f, "procedural", "PRODUCTION-SELECTED", "", fired->name);
+  fired->SendBufferReads(this, mod);
   // send all the BUFFER-READ-ACTION's -- clear buffers!?
   // todo: support random jitter in timing
-  Model()->ScheduleEvent(mp_time, ActrEvent::max_pri, this, this, NULL,
-                         "PRODUCTION-FIRED", next_pr->name);
+  mod->ScheduleEvent(mp_time, ActrEvent::max_pri, this, this, NULL,
+                     "PRODUCTION-FIRED", fired->name);
 }
 
 void ActrProceduralModule::ProductionFired() {
   // now we process the actions!
   // todo: is state busy at this time??
   ActrModel* mod = Model();
-  if(TestError(!next_pr, "ProductionFired",
+  if(TestError(!fired, "ProductionFired",
                "Oooops -- production was reset somehow!")) {
     mod->Stop();
     return;
   }
   // todo: could double-check name given during action..
-  next_pr->DoActions(this, mod);
+  fired->DoActions(this, mod);
 }

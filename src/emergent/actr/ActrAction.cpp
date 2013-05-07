@@ -121,8 +121,8 @@ String ActrAction::GetDesc() const {
 }
 
 void ActrAction::SetVariables(ActrProduction& prod) {
-  for(int i=0; i<chunk.slot_vals.size; i++) {
-    ActrSlot* sl = chunk.slot_vals.FastEl(i);
+  for(int i=0; i<chunk.slots.size; i++) {
+    ActrSlot* sl = chunk.slots.FastEl(i);
     if(!sl->CondIsVar()) continue;
     ActrSlot* var = prod.vars.FindName(sl->GetVarName());
     if(var) {

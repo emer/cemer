@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+// todo: add some inline objs to contain params
+
 eTypeDef_Of(ActrDeclarativeModule);
 
 class E_API ActrDeclarativeModule : public ActrModule {
@@ -30,7 +32,23 @@ class E_API ActrDeclarativeModule : public ActrModule {
 INHERITED(ActrModule)
 public:
   ActrChunk_List        init_chunks; // initial chunks to start pre-loaded into declarative memory
-  ActrChunk_List        chunks; // the current chunks in declarative memory
+  ActrChunk_List        active; // the current chunks active in declarative memory
+  ActrChunk_List        eligible; // #HIDDEN #NO_SAVE list of all matching chunks eligible for retrieval
+  ActrChunkRef          retrieved;  // #HIDDEN #NO_SAVE final chunk retrieved on last retrieval
+
+  virtual bool  AddChunk(ActrChunk* ck, bool merge = true);
+  // #CAT_ActR add a new chunk to declarative memory active buffer, if merge is true, chunk is merged with any existing ones, and base activation is increased
+  virtual bool FindMatching(ActrChunk* ck);
+  // #CAT_ActR find all chunks that match given chunk, put in eligible list
+  virtual float  UpdateBaseAct(ActrChunk* ck);
+  // #CAT_ActR update the base level activation given that it was used..
+
+  virtual void  RetrievalRequest(ActrEvent& event);
+  // #CAT_ActR process a retrieval request from given chunk probe
+  virtual void  RetrievedChunk(ActrEvent& event);
+  // #CAT_ActR after proper amount of time has passed, we register the retrieval
+  virtual void  RetrievalFailure(ActrEvent& event);
+  // #CAT_ActR after proper amount of time has passed, we register the retrieval failure
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);

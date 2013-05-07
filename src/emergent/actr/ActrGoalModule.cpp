@@ -27,15 +27,16 @@ void ActrGoalModule::InitModule() {
   bool made_new;
   buffer = mod->buffers.FindMakeNameType("goal", NULL, made_new);
   buffer->module = this;
+  buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
+  buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // goal doesn't do this!
 }
 
 void ActrGoalModule::ProcessEvent(ActrEvent& event) {
+  ProcessEvent_std(event);      // just follow standard events..
 }
 
 void ActrGoalModule::Init() {
-  InitModule();
-  buffer->active.Reset();
-  state = MS_FREE;
+  inherited::Init();
   buffer->active.CopyFrom(&init_chunk);
   buffer->UpdateState();
 }

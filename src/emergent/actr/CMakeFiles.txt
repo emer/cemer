@@ -10,6 +10,7 @@
 
 # all headers that need maketa run on them
 set(actr_HEADS_MAKETA
+  ActrNBase.h
   ActrChunkTypeRef.h
   ActrChunkRef.h
   ActrSlotType.h
@@ -46,6 +47,7 @@ set(actr_HEADS
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(actr_SRCS
+  ActrNBase.cpp
   ActrChunkTypeRef.cpp
   ActrChunkRef.cpp
   ActrSlotType.cpp

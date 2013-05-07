@@ -36,7 +36,8 @@ INHERITED(taNBase)
 public:
   enum ModelFlags { // #BITS ActR model flags
     MF_NONE             = 0, // #NO_BIT
-    SAVE_ALL_EVENTS     = 0x0001, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
+    LOG_EVENTS          = 0x0001, // log all events processed to data table
+    SAVE_ALL_EVENTS     = 0x0002, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
   };
 
   enum RunState { // current run state for this model
@@ -53,7 +54,7 @@ public:
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
   ActrBuffer_List       buffers;      // buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
-  ActrEvent_List        events;       // currently scheduled events
+  ActrEvent_List        events;       // #NO_SAVE currently scheduled events
   int                   cur_event_idx; // #READ_ONLY current event index in list of events
   DataTableRef          log_table;     // data table to log events into
 
@@ -98,9 +99,18 @@ public:
                                      TypeDef* event_type = NULL);
   // #CAT_ActR schedule an event -- creates event, adds in proper position to list of currently scheduled events, and returns pointer to new event -- called by modules -- must set dst_module as destination module to process event, unless it is action=!Stop! event -- rest are various optional args to be processed by destination module -- can create subtypes of ActrEvent with event_type arg
 
+  virtual void          LogEvent(float time, const String& module,
+                                 const String& action, const String& target = "", 
+                                 const String& params = "", const String& dst_module = "",
+                                 float priority = 0.0f, const String& prod_action = "",
+                                 const String& chunk = "");
+  // #CAT_ActR log an event -- writes to the corresponding columns in the log table -- if time <= 0 then cur_time is output
+
+  virtual void          FormatLogTable();
+  // #CAT_ActR configure the columns in the log table for holding run trace
+
   virtual void          DefaultConfig();
   // #CAT_ActR ensure that we have at least the basic default config
-
   virtual ActrModule*   FindMakeModule(const String& nm, TypeDef* td,
                                        bool& made_new);
   // #CAT_ActR find or make a module of the given name and type -- initializes the module if it makes a new one
