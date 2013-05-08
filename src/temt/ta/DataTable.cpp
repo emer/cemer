@@ -3161,7 +3161,11 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     else sp->order = DataSortEl::DESCENDING;
   }
 
+#ifdef OLD_DT_IDX_MODE
   taDataProc::Sort_impl(this, &spec);
+#else
+  taDataProc::SortThruIndex(this, &spec);
+#endif
 }
 
 bool DataTable::Filter(const String& filter_expr) {
@@ -3339,4 +3343,3 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   DataUpdate(false);
 #endif  // DMEM_COMPILE
 }
-

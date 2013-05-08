@@ -47,6 +47,7 @@ class GridTableView; //
 class T3Panel; // 
 class GraphTableView; // 
 class iDataTableModel; // #IGNORE
+class DataSortSpec;
 
 /*
   DataTable Notifications
