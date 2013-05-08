@@ -111,6 +111,7 @@ String ActrCondition::GetDesc() const {
 }
 
 void ActrCondition::UpdateVars(ActrProduction& prod) {
+  if(IsOff()) return;
   if(cond_src != BUFFER_EQ) return;
   for(int i=0; i< cmp_chunk.slots.size; i++) {
     ActrSlot* sl = cmp_chunk.slots[i];
@@ -123,6 +124,8 @@ void ActrCondition::UpdateVars(ActrProduction& prod) {
 }
 
 bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
+  if(IsOff()) return true;
+
   switch(cond_src) {
   case BUFFER_EQ: {
     // todo: should be dealt with in check config
@@ -167,7 +170,9 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
 }
 
 bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
+  if(IsOff()) return true;
   if(cond_src != BUFFER_EQ) return true;
+
   ActrBuffer* buf = (ActrBuffer*)src.ptr();
   if(!buf->IsFull()) return true; // should not fail
   if(why_not) {
@@ -205,6 +210,8 @@ bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
 }
 
 void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {
+  if(IsOff()) return;
+
   if(cond_src != BUFFER_EQ) return;
   if(HasCondFlag(BUF_UPDT_ACT)) return;
   if(TestError(!src, "Matches",

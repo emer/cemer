@@ -23,6 +23,6 @@ void ActrChunkType::Destroy() {
 }
 
 ActrSlotType* ActrChunkType::NewSlot() {
-  return (ActrSlotType*)New(1);
+  return (ActrSlotType*)slots.New(1);
 }
 

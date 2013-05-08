@@ -54,7 +54,7 @@ public:
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
   ActrBuffer_List       buffers;      // buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
-  ActrEvent_List        events;       // #NO_SAVE currently scheduled events
+  ActrEvent_List        events;       // #NO_SAVE #EXPERT currently scheduled events
   int                   cur_event_idx; // #READ_ONLY current event index in list of events
   DataTableRef          log_table;     // data table to log events into
 
@@ -80,7 +80,9 @@ public:
   virtual void          Step();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run next step of processing
   virtual void          Run();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run to completion or until Stop is pressed
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run run to completion or until Stop is pressed or emitted
+  virtual void          Cont();
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run continue running until Stop is pressed or emitted -- key difference from Run is that it does not set DONE when it finishes -- suitable for using stop to break and then continue where it left off
   virtual void          Stop();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop running if currently running
 

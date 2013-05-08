@@ -35,10 +35,12 @@ void ActrProduction::UpdateNames() {
   for(int i=0; i<conds.size; i++) {
     ActrCondition* cnd = conds.FastEl(i);
     cnd->cmp_chunk.name = name + "_c" + String(i);
+    cnd->SigEmitUpdated();
   }
   for(int i=0; i<acts.size; i++) {
     ActrAction* act = acts.FastEl(i);
     act->chunk.name = name + "_a" + String(i);
+    act->SigEmitUpdated();
   }
 }
 
@@ -79,14 +81,6 @@ String ActrProduction::PrintVars() const {
   }
   strm << " )";
   return strm;
-}
-
-int ActrProduction::GetEnabled() const {
-  return !off;
-}
-
-void ActrProduction::SetEnabled(bool value) {
-  off = !value;
 }
 
 bool ActrProduction::Matches(bool why_not) {

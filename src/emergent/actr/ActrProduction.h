@@ -69,8 +69,8 @@ public:
  
   override String       GetDesc() const {return desc;}
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override int          GetEnabled() const;
-  override void         SetEnabled(bool value);
+  override int          GetEnabled() const { return !off; }
+  override void         SetEnabled(bool value) { off = !value; }
 
   TA_SIMPLE_BASEFUNS(ActrProduction);
 protected:

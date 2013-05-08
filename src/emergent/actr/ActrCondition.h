@@ -35,12 +35,13 @@ INHERITED(taOBase)
 public:
   enum CondFlags { // #BITS ActR condition flags
     CF_NONE             = 0, // #NO_BIT
-    BUF_UPDT_ACT        = 0x0001, // for BUFFER_EQ, buffer has an update action, so don't send a BUFFER-READ-ACTION
+    OFF                 = 0x0001, // turn this condition off -- do not use it for matching
+    BUF_UPDT_ACT        = 0x0002, // for BUFFER_EQ, buffer has an update action, so don't send a BUFFER-READ-ACTION
   };
 
   enum CondSource {
     BUFFER_EQ,                  // match against an ActR chunk in a buffer (for regular ActR model) 
-    BUFFER_QUERY,               // check state of buffer or module 
+    BUFFER_QUERY,               // check state of buffer or module -- std vals are: buffer: full, empty, requested, unrequested, module: busy, free, error
     PROG_VAR,                   // match against value of a program variable (for use in controlling system) -- must be a global (args or vars) variable, not a local var
     NET_UNIT,                   // match against unit activation in a network
     NET_LAYER,                  // match against layer-level state variable in a network
@@ -61,8 +62,8 @@ public:
   TypeDef*      src_type;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with source data to match against
   taBaseRef     src;           // #TYPE_ON_src_type the source object to obtain data to match against (e.g., buffer, etc)
   String        unit_name;     // #CONDSHOW_ON_cond_src:NET_UNIT name of unit within layer to obtain unit value from -- can only access named units
-  Relations     rel;           // #CONDSHOW_OFF_cond_src:BUFFER_EQ relationship between source value and comparison value
-  String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value
+  Relations     rel;           // #CONDSHOW_OFF_cond_src:BUFFER_EQ,BUFFER_QUERY relationship between source value and comparison value
+  String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value -- for query std options are buffer: full, empty, requested, unrequested, module: busy, free, error
   ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
 
   inline void           SetCondFlag(CondFlags flg)
@@ -81,6 +82,8 @@ public:
   { SetCondFlagState(flg, !HasCondFlag(flg)); }
   // #CAT_Flags toggle flag
 
+  inline bool           IsOff() { return HasCondFlag(OFF); }
+
   // todo: config checking
 
   virtual void  UpdateVars(ActrProduction& prod);
@@ -98,6 +101,8 @@ public:
   override String  GetDisplayName() const;
   override String& Print(String& strm, int indent = 0) const;
   override String  GetDesc() const;
+  override int     GetEnabled() const { return !HasCondFlag(OFF); }
+  override void    SetEnabled(bool value) { SetCondFlagState(OFF, !value); }
 
   TA_SIMPLE_BASEFUNS(ActrCondition);
 protected:

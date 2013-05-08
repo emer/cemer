@@ -62,33 +62,54 @@ void ActrModel::Init() {
   for(int i=0; i<modules.size; i++) {
     modules.FastEl(i)->Init();  // module-specific run init
   }
+  SigEmitUpdated();
 }
 
 void ActrModel::Step() {
   if(run_state == NOT_INIT || run_state == DONE) {
     Init();
   }
+  run_state = RUN;
+  SigEmitUpdated();
   RunNextEvent();
   run_state = STOP;
+  SigEmitUpdated();
 }
  
 void ActrModel::Run() {
   if(run_state == NOT_INIT || run_state == DONE) {
     Init();
   }
+  run_state = RUN;
+  SigEmitUpdated();
   while(run_state != STOP) {
     RunNextEvent();
     taMisc::ProcessEvents();    // todo: optimize this!
   }
   run_state = DONE;
+  SigEmitUpdated();
+}
+
+void ActrModel::Cont() {
+  if(run_state == NOT_INIT || run_state == DONE) {
+    Init();
+  }
+  run_state = RUN;
+  SigEmitUpdated();
+  while(run_state != STOP) {
+    RunNextEvent();
+    taMisc::ProcessEvents();    // todo: optimize this!
+  }
+  // key diff: don't set DONE here!
+  SigEmitUpdated();
 }
 
 void ActrModel::Stop() {
   run_state = STOP;
+  SigEmitUpdated();
 }
 
 void ActrModel::RunNextEvent() {
-  run_state = RUN;
   if(cur_event_idx >= events.size) {
     cur_event_idx = events.size; // make sure..
     // no more events!

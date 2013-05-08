@@ -21,6 +21,7 @@
 #include <taMisc>
 
 void ActrAction::Initialize() {
+  flags = AF_NONE;
   action = UPDATE;
 }
 
@@ -120,7 +121,7 @@ String ActrAction::GetDesc() const {
   return PrintStr();
 }
 
-void ActrAction::SetVariables(ActrProduction& prod, ActrChunk* ck) {
+void ActrAction::SetVarsChunk(ActrProduction& prod, ActrChunk* ck) {
   for(int i=0; i<chunk.slots.size; i++) {
     ActrSlot* sl = chunk.slots.FastEl(i);
     if(!sl->CondIsVar()) continue;
@@ -132,15 +133,23 @@ void ActrAction::SetVariables(ActrProduction& prod, ActrChunk* ck) {
   }    
 }
 
+void ActrAction::SetVarsString(ActrProduction& prod, String& str) {
+  for(int i=0; i<prod.vars.size; i++) {
+    ActrSlot* var = prod.vars.FastEl(i);
+    str.gsub("=" + var->name, var->val);
+  }    
+}
+
 bool ActrAction::DoAction(ActrProduction& prod, 
                           ActrProceduralModule* proc_mod, ActrModel* model) {
+  if(IsOff()) return false;
   // todo: what priorities on these??
   switch(action) {
   case UPDATE: {
     // todo: add a flag to action if it has variables or not
     ActrChunk* new_chunk = new ActrChunk;
     new_chunk->CopyFrom(&chunk);
-    SetVariables(prod, new_chunk);
+    SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
                          buffer,
                          "MOD-BUFFER-CHUNK", buffer->name, this, new_chunk);
@@ -149,7 +158,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
   case REQUEST: {
     ActrChunk* new_chunk = new ActrChunk;
     new_chunk->CopyFrom(&chunk);
-    SetVariables(prod, new_chunk);
+    SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
                          buffer,
                          "MODULE-REQUEST", buffer->name, this, new_chunk);
@@ -162,10 +171,11 @@ bool ActrAction::DoAction(ActrProduction& prod,
     break;
   case OUTPUT: {
     String out = val;
+    SetVarsString(prod, out);
     if(chunk.chunk_type) {
       ActrChunk* new_chunk = new ActrChunk;
       new_chunk->CopyFrom(&chunk);
-      SetVariables(prod, new_chunk);
+      SetVarsChunk(prod, new_chunk);
       new_chunk->Print(out);
       delete new_chunk;
     }
@@ -178,7 +188,9 @@ bool ActrAction::DoAction(ActrProduction& prod,
     break;
   case PROG_VAR:
     if(prog_var) {
-      prog_var->SetVar(val);
+      String sval = val;
+      SetVarsString(prod, sval);
+      prog_var->SetVar(sval);
     }
     break;
   case PROG_RUN:

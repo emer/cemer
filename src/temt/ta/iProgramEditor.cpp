@@ -510,7 +510,7 @@ void iProgramEditor::GetValue() {
       }
     }
   }
-  if (typ->IsActualTaBase()) {
+  if (typ->IsActualTaBase() && base) {
     base->UpdateAfterEdit();    // hook to update the contents after an edit..
     base->MakeNameUnique();
 //shouldn't be necessary    taiMisc::Update(base);

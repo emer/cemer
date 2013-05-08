@@ -98,7 +98,7 @@ String ActrChunk::GetDesc() const {
 }
 
 ActrSlot* ActrChunk::NewSlot() {
-  return (ActrSlot*)New(1);
+  return (ActrSlot*)slots.New(1);
 }
 
 bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact, 
