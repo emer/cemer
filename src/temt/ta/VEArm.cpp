@@ -2021,9 +2021,10 @@ bool VEArm::ArmStateToTable(DataTable* table) {
 bool VEArm::SetTargetLengthsFmTable(DataTable* len_table) {
   char col_name[] = "lengths";
   DataCol* dc = len_table->FindColName(col_name, true); // find the "lengths" column, error msg if not found
-  MatrixGeom std_geom(4,12,1,1,n_musc);
+  MatrixGeom std_geom1(4,12,1,1,n_musc);
+  MatrixGeom std_geom2(4,22,1,1,n_musc);
 
-  if(TestError(dc->cell_geom != std_geom, "SetTargetLengthsFmTable","The geometry of the table provided to GetTargetLengths() is not standard\n"))
+  if(TestError((dc->cell_geom != std_geom1) && (dc->cell_geom != std_geom2), "SetTargetLengthsFmTable","The geometry of the table provided to SetTargetLengthsFmTable() is not standard\n"))
   {
     //return false;
   }
