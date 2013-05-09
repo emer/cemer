@@ -20,6 +20,7 @@
 #include <taMisc>
 
 void ActrChunk::Initialize() {
+  flags = CF_NONE;
   n_act = 0.0f;
   t_new = 0.0f;
   base_act = 0.0f;
@@ -99,6 +100,14 @@ String ActrChunk::GetDesc() const {
 
 ActrSlot* ActrChunk::NewSlot() {
   return (ActrSlot*)slots.New(1);
+}
+
+int ActrChunk::GetSpecialState() const {
+  if(HasChunkFlag(RETRIEVED)) return 4; // red
+  if(HasChunkFlag(ELIGIBLE)) return 3; // green
+  if(HasChunkFlag(RECENT)) return 1; // lavendar
+  // if(HasChunkFlag(NO_STOP_STEP)) return 2; // pale yellow
+  return 0;
 }
 
 bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact, 

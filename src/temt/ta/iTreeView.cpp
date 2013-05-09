@@ -350,10 +350,18 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   taBase* tab = item->link()->taData();
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
 
+  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
+
   bool expand = true;
   if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
     // get default info from objs
-    String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+    String exp_def_str;
+    if(item->md()) {                  // memberdef takes precedence
+      exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
+    }
+    if(exp_def_str.empty()) {
+      exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+    }
     if(exp_def_str.nonempty()) {
       int exp_def = (int)exp_def_str;
       if(exp_def == 0) {

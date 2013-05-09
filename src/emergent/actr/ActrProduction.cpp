@@ -20,7 +20,7 @@
 #include <taMisc>
 
 void ActrProduction::Initialize() {
-  off = false;
+  flags = PF_NONE;
   util = 0.0f;
   rew = 0.0f;
 }
@@ -65,9 +65,30 @@ void ActrProduction::UpdateVars() {
   }
 }
 
+void ActrProduction::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+}
+
+void ActrProduction::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  conds.CheckConfig(quiet, rval);
+  acts.CheckConfig(quiet, rval);
+}
+
+int ActrProduction::GetSpecialState() const {
+  if(HasProdFlag(FIRED)) return 4; // red
+  if(HasProdFlag(ELIGIBLE)) return 3; // green
+  // if(HasProgFlag(TRACE)) return 1; // lavendar
+  // if(HasProgFlag(NO_STOP_STEP)) return 2; // pale yellow
+  return 0;
+}
+
 void ActrProduction::Init() {
+  ClearProdFlag(FIRED);
+  ClearProdFlag(ELIGIBLE);
   UpdateNames();
   UpdateVars();
+  SigEmitUpdated();
 }
 
 String ActrProduction::PrintVars() const {
@@ -84,6 +105,12 @@ String ActrProduction::PrintVars() const {
 }
 
 bool ActrProduction::Matches(bool why_not) {
+  if(IsOff()) {
+    if(why_not) {
+      taMisc::Info("production is flagged as OFF!");
+    }
+    return false;
+  }
   for(int i=0; i<conds.size; i++) {
     ActrCondition* cnd = conds.FastEl(i);
     if(!cnd->Matches(*this, why_not)) {
@@ -102,7 +129,7 @@ bool ActrProduction::Matches(bool why_not) {
 }
 
 bool ActrProduction::WhyNot() {
-  taMisc::Info("Why production:",name,"did not match:");
+  taMisc::Info("Why production:",name,"did not match (see last line for actual match state):");
   bool rval = Matches(true);
   taMisc::Info("Production:",name,"returned from match with:", (String)rval);
   return rval;

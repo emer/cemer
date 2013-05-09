@@ -22,6 +22,11 @@ void ActrProceduralModule::Initialize() {
   util_noise = 0.02f;
 }
 
+void ActrProceduralModule::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  productions.CheckConfig(quiet, rval);
+}
+
 void ActrProceduralModule::InitModule() {
   if((bool)buffer) return;
   if(!Model()) return;
@@ -47,9 +52,10 @@ void ActrProceduralModule::Init() {
   eligible.Reset();
   fired = NULL;
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
-    if(pr->off) continue;
+    if(pr->IsOff()) continue;
     pr->Init();
   }
+  SigEmitUpdated();
 }
 
 void ActrProceduralModule::AddConflictResEvent() {
@@ -62,9 +68,21 @@ void ActrProceduralModule::ConflictResolution() {
   ActrModel* mod = Model();
   eligible.Reset();
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
-    if(pr->off) continue;
+    if(pr->IsOff()) continue;
+    bool updt = false;
+    if(mod->UpdateGui()) {
+      if(pr->HasProdFlag(ActrProduction::FIRED) || 
+         pr->HasProdFlag(ActrProduction::ELIGIBLE))
+        updt = true;
+    }
+    pr->ClearProdFlag(ActrProduction::FIRED);
+    pr->ClearProdFlag(ActrProduction::ELIGIBLE);
     if(pr->Matches()) {
       eligible.Link(pr);
+      pr->SetProdFlag(ActrProduction::ELIGIBLE);
+    }
+    if(updt && mod->UpdateGui()) {
+      pr->SigEmitUpdated();
     }
   }
   if(TestError(eligible.size == 0, "ConflictResolution",
@@ -83,6 +101,10 @@ void ActrProceduralModule::ConflictResolution() {
                 (String)eligible.size, "that matched");
   }
   // todo: this appears to be an optional extra level of debug:
+  fired->SetProdFlag(ActrProduction::FIRED);
+  if(mod->UpdateGui()) {
+    fired->SigEmitUpdated();
+  }
   mod->LogEvent(-1.0f, "procedural", "PRODUCTION-SELECTED", "", fired->name);
   fired->SendBufferReads(this, mod);
   // send all the BUFFER-READ-ACTION's -- clear buffers!?

@@ -23,7 +23,23 @@
 
 // declare all other types mentioned but not required to include:
 
-// todo: add some inline objs to contain params
+eTypeDef_Of(DeclarativeParams);
+
+class E_API DeclarativeParams : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR declarative memory parameters
+INHERITED(taOBase)
+public:
+  // todo: params from actr6
+  //  blc ans pas lf le mp ms md rt bll mas 
+
+  override String       GetTypeDecoKey() const { return "Program"; }
+
+  TA_SIMPLE_BASEFUNS(DeclarativeParams);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 
 eTypeDef_Of(ActrDeclarativeModule);
 
@@ -32,7 +48,7 @@ class E_API ActrDeclarativeModule : public ActrModule {
 INHERITED(ActrModule)
 public:
   ActrChunk_List        init_chunks; // initial chunks to start pre-loaded into declarative memory
-  ActrChunk_List        active; // the current chunks active in declarative memory
+  ActrChunk_List        active; // #NO_EXPAND_ALL the current chunks active in declarative memory
   ActrChunk_List        eligible; // #HIDDEN #NO_SAVE list of all matching chunks eligible for retrieval
   ActrChunkRef          retrieved;  // #HIDDEN #NO_SAVE final chunk retrieved on last retrieval
 

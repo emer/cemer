@@ -37,7 +37,8 @@ public:
   enum ModelFlags { // #BITS ActR model flags
     MF_NONE             = 0, // #NO_BIT
     LOG_EVENTS          = 0x0001, // log all events processed to data table
-    SAVE_ALL_EVENTS     = 0x0002, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
+    UPDATE_GUI          = 0x0002, // update the gui display with state changes so you can see which productions fired and which chunks were selected
+    SAVE_ALL_EVENTS     = 0x0004, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
   };
 
   enum RunState { // current run state for this model
@@ -53,7 +54,7 @@ public:
 
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
-  ActrBuffer_List       buffers;      // buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
+  ActrBuffer_List       buffers;      // #NO_EXPAND_ALL buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
   ActrEvent_List        events;       // #NO_SAVE #EXPERT currently scheduled events
   int                   cur_event_idx; // #READ_ONLY current event index in list of events
   DataTableRef          log_table;     // data table to log events into
@@ -74,6 +75,8 @@ public:
   { SetModelFlagState(flg, !HasModelFlag(flg)); }
   // #CAT_Flags toggle model flag
 
+  bool  LogEvents()     { return HasModelFlag(LOG_EVENTS); }
+  bool  UpdateGui()     { return HasModelFlag(UPDATE_GUI); }
 
   virtual void          Init();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run initialize model at the start
@@ -118,12 +121,17 @@ public:
   // #CAT_ActR find or make a module of the given name and type -- initializes the module if it makes a new one
 
   override String       GetDesc() const {return desc;}
+  override bool         CheckConfig_impl(bool quiet);
+  override void         CheckChildConfig_impl(bool quiet, bool& rval);
 
-  TA_SIMPLE_BASEFUNS(ActrModel);
+  void  InitLinks();
+  void  CutLinks();
+  TA_BASEFUNS(ActrModel);
 protected:
   void UpdateAfterEdit_impl(); 
 
 private:
+  SIMPLE_COPY(ActrModel);
   void Initialize();
   void Destroy()     { CutLinks(); }
 };

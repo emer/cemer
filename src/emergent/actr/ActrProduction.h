@@ -31,13 +31,38 @@ class E_API ActrProduction : public taNBase {
   // ##INSTANCE ##CAT_ActR ##SCOPE_ActrModel a production that matches conditions and produces actions
 INHERITED(taNBase)
 public:
+  enum ProdFlags { // #BITS ActR production flags
+    PF_NONE             = 0, // #NO_BIT
+    OFF                 = 0x0001, // turn this production off -- useful for temporarily disabling different productions
+    FIRED               = 0x0002, // this production just fired at last conflict resolution step
+    ELIGIBLE            = 0x0004, // this production was eligible to fire at last conflict resolution step
+  };
+
+  ProdFlags             flags;  // flag state of the production
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this production -- what does it do?
-  bool                  off;   // turn this production off 
   float                 util;  // #READ_ONLY #SHOW current utility of this production, updated from rewards
   float                 rew;   // reward value associated with the firing of this production
   ActrCondition_List    conds; // conditions that must be matched to fire this production
   ActrAction_List       acts;  // actions that this production causes when it fires
-  ActrSlot_List         vars;  // #NO_SAVE #EXPERT variable bindings used in matching and instantiating actions -- all the biologically implausible stuff happens here!
+  ActrSlot_List         vars;  // #NO_SAVE #NO_EXPAND_ALL variable bindings used in matching and instantiating actions -- automatically generated from =varname variable names listed in the productions
+
+  inline void           SetProdFlag(ProdFlags flg)
+  { flags = (ProdFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearProdFlag(ProdFlags flg)
+  { flags = (ProdFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasProdFlag(ProdFlags flg) const
+  { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetProdFlagState(ProdFlags flg, bool on)
+  { if(on) SetProdFlag(flg); else ClearProdFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleProdFlag(ProdFlags flg)
+  { SetProdFlagState(flg, !HasProdFlag(flg)); }
+  // #CAT_Flags toggle flag
+
+  bool          IsOff() const { return HasProdFlag(OFF); }
 
   float         Compute_Util(float rewval, float lrate) {
     util += lrate * (rewval - util);
@@ -67,14 +92,17 @@ public:
   virtual bool          DoActions(ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR the production fired -- perform all the actions
  
-  override String       GetDesc() const {return desc;}
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override int          GetEnabled() const { return !off; }
-  override void         SetEnabled(bool value) { off = !value; }
+  override String GetDesc() const {return desc;}
+  override String GetTypeDecoKey() const { return "ProgCtrl"; }
+  override int    GetEnabled() const { return !IsOff(); }
+  override void   SetEnabled(bool value) { SetProdFlagState(OFF, !value); }
+  override int    GetSpecialState() const;
 
   TA_SIMPLE_BASEFUNS(ActrProduction);
 protected:
-  void  UpdateAfterEdit_impl();
+  override void  UpdateAfterEdit_impl();
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+  override void	 CheckChildConfig_impl(bool quiet, bool& rval);
 
 private:
   void Initialize();

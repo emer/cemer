@@ -195,7 +195,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     break;
   case PROG_RUN:
     if(program) {
-      program->Run();
+      program->Call(NULL);
     }
     break;
   }

@@ -238,8 +238,10 @@ int Program::Call(Program* caller) {
   int rval = Cont_impl();
   if(stop_req) {
     script->Stop();             // stop us
-    caller->script->Stop();     // stop caller!
-    caller->script->Prog()->Frame()->pc = 0;
+    if(caller) {
+      caller->script->Stop();     // stop caller!
+      caller->script->Prog()->Frame()->pc = 0;
+    }
     run_state = STOP;           // we are done
     // NOTE: this backs up to restart the entire call to fun -- THIS DEPENDS ON THE CODE
     // that generates the call!!!!!  ALWAYS MUST BE IN A SUB-BLOCK of code..

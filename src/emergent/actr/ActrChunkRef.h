@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taSmartRefT>
+#include <taSmartPtrT>
 
 // member includes:
 
@@ -25,5 +26,6 @@
 
 class ActrChunk; //
 SmartRef_Of(ActrChunk); // ActrChunkRef
+SmartPtr_Of(ActrChunk); // ActrChunkPtr
 
 #endif // ActrChunkRef_h

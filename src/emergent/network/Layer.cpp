@@ -1193,6 +1193,21 @@ void Layer::GetLocalistName() {
   GetUnitNames(); // grab from units
 }
 
+int Layer::FindUnitNamedIdx(const String& nm, bool err) {
+  int idx = unit_names.FindVal_Flat(nm);
+  TestError(err && idx < 0, "FindUnitNamedIdx",
+            "name:", nm, "not found in unit_names");
+  return idx;
+}
+
+Unit* Layer::FindUnitNamed(const String& nm, bool err) {
+  int idx = FindUnitNamedIdx(nm, err);
+  if(idx >= 0) {
+    return units.Leaf(idx);
+  }
+  return NULL;
+}
+
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
   units.TransformWeights(trans);
 }

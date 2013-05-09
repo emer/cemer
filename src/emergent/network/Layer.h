@@ -437,6 +437,11 @@ public:
   // #MENU #CAT_Structure get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void  GetLocalistName();
   // #EXPERT #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our unit name to that name (also sets unit_names)
+  virtual int   FindUnitNamedIdx(const String& nm, bool err = true);
+  // #CAT_Structure look in unit_names for given name -- returns flat index of the corresponding unit in the layer if err = true, issues an error if not found
+  virtual Unit* FindUnitNamed(const String& nm, bool err = true);
+  // #CAT_Structure look in unit_names for given name -- returns unit at that index if found --  if err = true, issues an error if not found
+  
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights

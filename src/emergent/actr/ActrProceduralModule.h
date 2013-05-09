@@ -51,6 +51,9 @@ public:
   // fire off the fired production
 
   TA_SIMPLE_BASEFUNS(ActrProceduralModule);
+protected:
+  override void	 CheckChildConfig_impl(bool quiet, bool& rval);
+
 private:
   void Initialize();
   void Destroy()     { CutLinks(); }

@@ -21,6 +21,7 @@
 
 // member includes:
 #include <ActrChunk>
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 class ActrProceduralModule; //
@@ -44,8 +45,8 @@ public:
     BUFFER_QUERY,               // check state of buffer or module -- std vals are: buffer: full, empty, requested, unrequested, module: busy, free, error
     PROG_VAR,                   // match against value of a program variable (for use in controlling system) -- must be a global (args or vars) variable, not a local var
     NET_UNIT,                   // match against unit activation in a network
-    NET_LAYER,                  // match against layer-level state variable in a network
     OBJ_MEMBER,                 // match against a member in an arbitrary object
+    DATA_CELL,                  // match against a cell in a data table
   };
 
   enum Relations {
@@ -62,6 +63,10 @@ public:
   TypeDef*      src_type;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with source data to match against
   taBaseRef     src;           // #TYPE_ON_src_type the source object to obtain data to match against (e.g., buffer, etc)
   String        unit_name;     // #CONDSHOW_ON_cond_src:NET_UNIT name of unit within layer to obtain unit value from -- can only access named units
+  String        obj_path;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER path within object to obtain comparison value from
+  String        dt_col_name;   // #CONDSHOW_ON_cond_src:DATA_CELL name of column within data table cell to obtain value from
+  int           dt_row;        // #CONDSHOW_ON_cond_src:DATA_CELL row number within data table cell to obtain value from (use -1 for last row)
+  int           dt_cell;        // #CONDSHOW_ON_cond_src:DATA_CELL cell index within data row,column within data table cell to obtain value from
   Relations     rel;           // #CONDSHOW_OFF_cond_src:BUFFER_EQ,BUFFER_QUERY relationship between source value and comparison value
   String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value -- for query std options are buffer: full, empty, requested, unrequested, module: busy, free, error
   ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
@@ -84,11 +89,11 @@ public:
 
   inline bool           IsOff() { return HasCondFlag(OFF); }
 
-  // todo: config checking
-
   virtual void  UpdateVars(ActrProduction& prod);
   // #CAT_ActR update the production variable list based on what shows up in the conditions 
 
+  virtual bool  MatchVarVal(const Variant& var, bool why_not = false);
+  // #IGNORE match variant value against cmp_val using rel -- used by matches
   virtual bool  Matches(ActrProduction& prod, bool why_not = false);
   // #CAT_ActR does this condition match?
   virtual bool  MatchVars(ActrProduction& prod, bool why_not = false);
@@ -106,7 +111,8 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrCondition);
 protected:
-  void  UpdateAfterEdit_impl();
+  override void  UpdateAfterEdit_impl();
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
 
 private:
   void Initialize();

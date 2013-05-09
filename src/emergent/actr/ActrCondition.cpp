@@ -21,6 +21,7 @@
 
 #include <ProgVar>
 #include <Layer>
+#include <MemberDef>
 
 #include <taMisc>
 
@@ -29,6 +30,8 @@ void ActrCondition::Initialize() {
   cond_src = BUFFER_EQ;
   src_type = &TA_ActrBuffer;
   rel = EQUAL;
+  dt_row = -1;
+  dt_cell = 0;
 }
 
 void ActrCondition::UpdateAfterEdit_impl() {
@@ -42,10 +45,12 @@ void ActrCondition::UpdateAfterEdit_impl() {
     src_type = &TA_ProgVar;
     break;
   case NET_UNIT:
-  case NET_LAYER:
     src_type = &TA_Layer;
     break;
   case OBJ_MEMBER:
+    break;
+  case DATA_CELL:
+    src_type = &TA_DataTable;
     break;
   }
   for(int i=0; i< cmp_chunk.slots.size; i++) {
@@ -55,28 +60,55 @@ void ActrCondition::UpdateAfterEdit_impl() {
   }
 }
 
-String& ActrCondition::Print(String& strm, int indent) const {
-  taMisc::IndentString(strm, indent);
+void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!src, quiet, rval, "source src for condition matching is NULL");
   switch(cond_src) {
   case BUFFER_EQ: {
-    if(!src) {
-      strm << "=<no buffer!>";
-    }
-    else {
-      strm << "=" << src->GetName() << " ";
-      cmp_chunk.Print(strm);
-    }
+    CheckError(cmp_chunk.slots.size == 0, quiet, rval,
+               "for buffer compare: no slots in cmp_chunk to match");
     break;
   }
-  case BUFFER_QUERY: {
-    if(!src) {
-      strm << "?<no buffer!>";
-    }
-    else {
-      strm << "?" << src->GetName() << " ";
-    }
+  case BUFFER_QUERY:
+    break;
+  case PROG_VAR:
+    break;
+  case NET_UNIT:
+    CheckError(unit_name.empty(), quiet, rval,
+               "network unit name unit_name is empty -- specify name");
+    break;
+  case OBJ_MEMBER:
+    CheckError(obj_path.empty(), quiet, rval,
+               "object path obj_path is empty -- specify path to comparison value");
+    break;
+  case DATA_CELL:
+    CheckError(dt_col_name.empty(), quiet, rval,
+               "data table column name dt_col_name is empty -- specify column name");
     break;
   }
+
+  if(cond_src >= BUFFER_QUERY) {
+    CheckError(cmp_val.empty(), quiet, rval,
+               "comparison value cmp_val is empty -- must specify value to compare against");
+  }
+}
+
+String& ActrCondition::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << GetDisplayName() << " ";
+  switch(cond_src) {
+  case BUFFER_EQ:
+    cmp_chunk.Print(strm);
+    break;
+  case BUFFER_QUERY:
+    strm << cmp_val;
+    break;
+  case PROG_VAR:
+  case NET_UNIT:
+  case OBJ_MEMBER:
+  case DATA_CELL:
+    strm << " " << TA_ActrCondition.GetEnumString("Relations", rel) << " " << cmp_val;
+    break;
   }
   return strm;
 }
@@ -84,7 +116,7 @@ String& ActrCondition::Print(String& strm, int indent) const {
 String ActrCondition::GetDisplayName() const {
   String strm;
   switch(cond_src) {
-  case BUFFER_EQ: {
+  case BUFFER_EQ:
     if(!src) {
       strm << "=<no buffer!>";
     }
@@ -92,8 +124,7 @@ String ActrCondition::GetDisplayName() const {
       strm << "=" << src->GetName();
     }
     break;
-  }
-  case BUFFER_QUERY: {
+  case BUFFER_QUERY:
     if(!src) {
       strm << "?<no buffer!>";
     }
@@ -101,7 +132,39 @@ String ActrCondition::GetDisplayName() const {
       strm << "?" << src->GetName();
     }
     break;
-  }
+  case PROG_VAR:
+    if(!src) {
+      strm << "=<no prog var!>";
+    }
+    else {
+      strm << "=<prog var>" << src->GetName();
+    }
+    break;
+  case NET_UNIT:
+    if(!src) {
+      strm << "=<no layer!>";
+    }
+    else {
+      strm << "=<unit>" << src->GetName() << "." << unit_name;
+    }
+    break;
+  case OBJ_MEMBER:
+    if(!src) {
+      strm << "=<no object!>";
+    }
+    else {
+      strm << "=<object>" << src->GetName() + "." << obj_path;
+    }
+    break;
+  case DATA_CELL:
+    if(!src) {
+      strm << "=<no data table!>";
+    }
+    else {
+      strm << "=<data cell>" << src->GetName() << "[" << dt_col_name << "]["
+           << dt_cell << "," << dt_row << "]";
+    }
+    break;
   }
   return strm;
 }
@@ -123,15 +186,38 @@ void ActrCondition::UpdateVars(ActrProduction& prod) {
   }
 }
 
+bool ActrCondition::MatchVarVal(const Variant& var, bool why_not) {
+  bool match = false;
+  if(var.isNumeric() || rel >= LESSTHAN) {
+    Relation rl;
+    rl.rel = (Relation::Relations)rel;
+    rl.val = (double)cmp_val;
+    match = rl.Evaluate(var.toDouble());
+  }
+  else {
+    match = (cmp_val == var.toString());
+    if(rel == NOTEQUAL)
+      match = !match;
+  }
+  if(!match && why_not) {
+    taMisc::Info("condition:", PrintStr(), "value:", var.toString(),
+                 "doesn't match conditions");
+  }
+  return match;
+}
+
 bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
   if(IsOff()) return true;
+  if(!src) {
+    if(why_not) {
+      taMisc::Info("source to match against is NULL");
+    }
+    return false;
+  }
 
+  bool match = false;
   switch(cond_src) {
   case BUFFER_EQ: {
-    // todo: should be dealt with in check config
-    if(TestError(!src, "Matches",
-                 "no buffer specified as the source to match against!"))
-      return false;
     ActrBuffer* buf = (ActrBuffer*)src.ptr();
     if(!buf->IsFull()) {
       if(why_not) {
@@ -140,33 +226,72 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
       return false;
     }
     ActrChunk* bc =buf->CurChunk();
-    bool match = cmp_chunk.MatchesProd(prod, bc, false, why_not); // false = not exact
+    match = cmp_chunk.MatchesProd(prod, bc, false, why_not); // false = not exact
     return match;
     break;
   }
   case BUFFER_QUERY: {
-    if(TestError(!src, "Matches",
-                 "no buffer specified as the source to match against!"))
-      return false;
     ActrBuffer* buf = (ActrBuffer*)src.ptr();
-    bool match = buf->QueryMatches(cmp_val, why_not);
+    match = buf->QueryMatches(cmp_val, why_not);
     return match;
     break;
   }
-  case PROG_VAR:
-    return false;               // not yet
-    break;
-  case NET_UNIT:
-    return false;               // not yet
-    break;
-  case NET_LAYER:
-    return false;               // not yet
-    break;
-  case OBJ_MEMBER:
-    return false;               // not yet
+  case PROG_VAR: {
+    ProgVar* pv = (ProgVar*)src.ptr();
+    Variant tval = pv->GetVar();
+    match = MatchVarVal(tval, why_not);
     break;
   }
-  return false;
+  case NET_UNIT: {
+    Layer* lay = (Layer*)src.ptr();
+    Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
+    Variant tval = un->act;
+    match = MatchVarVal(tval, why_not);
+    break;
+  }
+  case OBJ_MEMBER: {
+    taBase* obj = src.ptr();
+    void* mbr_base = NULL;      // base for conditionalizing member itself
+    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
+                                                  obj_path, true); // yes warn..
+    if (md) {
+      mbr_base = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
+      Variant tval = md->type->GetValVar(mbr_base, md);
+      match = MatchVarVal(tval, why_not);
+    }
+    else {
+      if(why_not) {
+        taMisc::Info("condition:", GetDisplayName(), "member path not found:",
+                     obj_path);
+      }
+    }
+    break;
+  }
+  case DATA_CELL: {
+    DataTable* dt = (DataTable*)src.ptr();
+    DataCol* dc = dt->GetColData(dt_col_name);
+    if(dc) {
+      if(dc->isMatrix()) {
+        Variant tval = dc->GetMatrixFlatVal(dt_row, dt_cell);
+        match = MatchVarVal(tval, why_not);
+      }
+      else {
+        Variant tval = dc->GetVal(dt_row);
+        match = MatchVarVal(tval, why_not);
+      }
+    }
+    else {
+      if(why_not) {
+        taMisc::Info("condition:", GetDisplayName(), "column not found:",
+                     dt_col_name);
+      }
+    }
+    break;
+  }
+  }
+  return match;
 }
 
 bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {

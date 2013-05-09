@@ -28,6 +28,17 @@ void ActrModel::Initialize() {
   run_state = NOT_INIT;
 }
 
+void ActrModel::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ActrModel);
+  DefaultConfig();
+}
+
+void ActrModel::CutLinks() {
+  CutLinks_taAuto(&TA_ActrModel);
+  inherited::CutLinks();
+}
+
 void ActrModel::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   DefaultConfig();
@@ -50,6 +61,16 @@ void ActrModel::DefaultConfig() {
   FindMakeModule("goal", &TA_ActrGoalModule, made_new);
 }
 
+bool ActrModel::CheckConfig_impl(bool quiet) {
+  bool rval = inherited::CheckConfig_impl(quiet);
+  return rval;
+}
+
+void ActrModel::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  modules.CheckConfig(quiet, rval);
+}
+
 void ActrModel::Init() {
   FormatLogTable();
   if(log_table) {
@@ -58,10 +79,14 @@ void ActrModel::Init() {
   cur_event_idx = 0;
   events.Reset();
   cur_time = 0.0f;
-  run_state = DONE;
   for(int i=0; i<modules.size; i++) {
     modules.FastEl(i)->Init();  // module-specific run init
   }
+  CheckConfig(false);
+  if(!taMisc::check_ok)
+    run_state = NOT_INIT;
+  else
+    run_state = DONE;
   SigEmitUpdated();
 }
 

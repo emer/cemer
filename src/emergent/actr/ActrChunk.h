@@ -37,11 +37,35 @@ class E_API ActrChunk : public taNBase {
   // ##INSTANCE ##EDIT_INLINE ##CAT_ActR ##SCOPE_ActrModel ##DEF_CHILD_slots ##DEF_CHILDNAME_SlotVals a single chunk of memory in ActR
 INHERITED(taNBase)
 public:
+  enum ChunkFlags { // #BITS ActR chunk flags
+    CF_NONE             = 0, // #NO_BIT
+    RETRIEVED           = 0x0001, // this chunk was just retrieved on last retrieval
+    ELIGIBLE            = 0x0002, // this chunk was eligible to be retrieved on last retrieval
+    RECENT              = 0x0004, // this chunk was recently retrieved -- some productions may want to ignore
+  };
+
   ActrChunkTypeRef      chunk_type; // the type of this chunk -- enforces our structure to match
+  ChunkFlags            flags;      // #READ_ONLY #SHOW flags indicating state of the chunk
   float                 n_act;      // #READ_ONLY #SHOW number of times chunk has been activated
   float                 t_new;      // #READ_ONLY #SHOW time when chunk was created
   float                 base_act;   // #READ_ONLY #SHOW base level activation = ln(n_act / (1-d)) - d * ln(time - t_new) where time = current time and d = decay parameter (optimized calculation)
   ActrSlot_List         slots;      // #SHOW_TREE the slot values -- same number as slots in chunk_type
+
+  inline void           SetChunkFlag(ChunkFlags flg)
+  { flags = (ChunkFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearChunkFlag(ChunkFlags flg)
+  { flags = (ChunkFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasChunkFlag(ChunkFlags flg) const
+  { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetChunkFlagState(ChunkFlags flg, bool on)
+  { if(on) SetChunkFlag(flg); else ClearChunkFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleChunkFlag(ChunkFlags flg)
+  { SetChunkFlagState(flg, !HasChunkFlag(flg)); }
+  // #CAT_Flags toggle flag
 
   inline float Compute_BaseAct(float time, float decay) {
     if(n_act == 0) base_act = 0.0f;
@@ -75,6 +99,7 @@ public:
   override String GetDisplayName() const;
   override String GetDesc() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }
+  override int    GetSpecialState() const;
 
   TA_SIMPLE_BASEFUNS(ActrChunk);
 protected:

@@ -17,6 +17,11 @@
 
 #include <ActrModel>
 
+void DeclarativeParams::Initialize() {
+
+}
+
+
 void ActrDeclarativeModule::Initialize() {
 
 }
@@ -57,9 +62,19 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
   if(TestError(!ck, "RetrievalRequest", "probe chunk is NULL")) {
     return;
   }
+
+  // todo: what if currently busy
+  // ;; If the module has not completed the last request
+  // (when (dm-busy dm)
+  //   ;; Report a warning about that and remove the unexecuted event 
+  //   ;; from the queue.
+  //   (model-warning "A retrieval event has been aborted by a new request")
+  //   (delete-event (dm-busy dm)))
+
   ActrModel* mod = Model();
   mod->LogEvent(-1.0f, "declarative", "START-RETRIEVAL", "", "");
   SetModuleFlag(BUSY);
+  ClearModuleFlag(ERROR);
   buffer->SetReq();
   buffer->ClearChunk();         // always clear before recall
   bool got_some = FindMatching(ck);
@@ -80,6 +95,10 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
                 (String)eligible.size, "that matched");
   }
   // todo: model retrieval time
+  retrieved->SetChunkFlag(ActrChunk::RETRIEVED);
+  if(mod->UpdateGui()) {
+    retrieved->SigEmitUpdated();
+  }
   mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
                      "RETRIEVED-CHUNK", retrieved->name, event.act_arg,
                      retrieved);
@@ -117,11 +136,24 @@ bool ActrDeclarativeModule::AddChunk(ActrChunk* ck, bool merge) {
 }
 
 bool ActrDeclarativeModule::FindMatching(ActrChunk* ck) {
+  ActrModel* mod = Model();
   eligible.Reset();
   for(int i=0; i<active.size; i++) {
     ActrChunk* oc = active.FastEl(i);
+    bool updt = false;
+    if(mod->UpdateGui()) {
+      if(oc->HasChunkFlag(ActrChunk::ELIGIBLE) ||
+         oc->HasChunkFlag(ActrChunk::RETRIEVED))
+        updt = true;
+    }
+    oc->ClearChunkFlag(ActrChunk::ELIGIBLE);
+    oc->ClearChunkFlag(ActrChunk::RETRIEVED);
     if(ck->MatchesMem(oc, false)) { // false = not exact..
       eligible.Link(oc);
+      oc->SetChunkFlag(ActrChunk::ELIGIBLE);
+    }
+    if(updt && mod->UpdateGui()) {
+      oc->SigEmitUpdated();
     }
   }
   return (eligible.size > 0);

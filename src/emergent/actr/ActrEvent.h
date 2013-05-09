@@ -43,7 +43,7 @@ public:
   String                action;     // what to do -- parsed by dst_module except !Stop! which stops execution
   String                params;     // literal parameters for action, comma delimited usually
   ActrActionRef         act_arg;    // action, if relevant
-  ActrChunkRef          chunk_arg;  // chunk, if relevant
+  ActrChunkPtr          chunk_arg;  // chunk, if relevant
 
   static ActrEvent*     NewEvent(float tm, int pri,
                                  ActrModule* src_mod, ActrModule* dst_mod,
