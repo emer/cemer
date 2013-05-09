@@ -481,8 +481,6 @@ void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 // CompareCellValues - called by the sorting thru index methods
 bool taDataProc::CompareCellValues(DataTable* dt, int i, int pivot, bool isLess)
 {
-	if (i > 10 || pivot > 10)
-		return false;
   DataCol* dc = dt->data.FastEl(0);
   Variant va = dc->GetValAsVar(i);
   Variant vb = dc->GetValAsVar(pivot);
@@ -503,13 +501,13 @@ bool taDataProc::CompareCellValues(DataTable* dt, int i, int pivot, bool isLess)
 void taDataProc::SortThruIndex_impl(DataTable* dt, int arr[], int left, int right) {
   int i = left, j = right;
   int tmp;
-  int pivotIndex = arr[(left + right) / 2];
+  int pivotIndex = (left + right) / 2;
 
   /* partition */
   while (i <= j) {
-    while (CompareCellValues(dt, arr[i], pivotIndex, true))
+    while (CompareCellValues(dt, arr[i], arr[pivotIndex], true))
       i++;
-    while (CompareCellValues(dt, arr[j], pivotIndex, false))
+    while (CompareCellValues(dt, arr[j], arr[pivotIndex], false))
       j--;
     if (i <= j) {
       tmp = arr[i];
@@ -520,20 +518,12 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, int arr[], int left, int righ
     }
   };
 
-  bool rangeError = false;
-
   /* recursion */
   if (left < j) {
-	  if (j<0 || j>right)
-			rangeError = true;
-	  else
-		  SortThruIndex_impl(dt, arr, left, j);
+    SortThruIndex_impl(dt, arr, left, j);
   }
   if (i < right) {
-	  if (i<0 || i>right)
-			rangeError = true;
-	  else
-		    SortThruIndex_impl(dt, arr, i, right);
+    SortThruIndex_impl(dt, arr, i, right);
   }
 }
 
