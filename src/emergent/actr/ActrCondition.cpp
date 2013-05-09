@@ -30,8 +30,23 @@ void ActrCondition::Initialize() {
   cond_src = BUFFER_EQ;
   src_type = &TA_ActrBuffer;
   rel = EQUAL;
+  unit_val = "act";
   dt_row = -1;
   dt_cell = 0;
+}
+
+void ActrCondition::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ActrCondition);
+  ActrProduction* prod = GET_MY_OWNER(ActrProduction);
+  if(prod) {
+    prod->UpdateNames();
+  }
+}
+
+void ActrCondition::CutLinks() {
+  CutLinks_taAuto(&TA_ActrCondition);
+  inherited::CutLinks();
 }
 
 void ActrCondition::UpdateAfterEdit_impl() {
@@ -77,14 +92,25 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
     CheckError(unit_name.empty(), quiet, rval,
                "network unit name unit_name is empty -- specify name");
     break;
-  case OBJ_MEMBER:
+  case OBJ_MEMBER: {
     CheckError(obj_path.empty(), quiet, rval,
                "object path obj_path is empty -- specify path to comparison value");
+    taBase* obj = src.ptr();
+    void* mbr_base = NULL;      // base for conditionalizing member itself
+    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
+                                                  obj_path, true); // yes warn..
+    CheckError(!md, quiet, rval,
+	       "object path is not valid -- could not find path:",obj_path,
+	       "on object:", obj->GetPathNames());
     break;
-  case DATA_CELL:
+  }
+  case DATA_CELL: {
     CheckError(dt_col_name.empty(), quiet, rval,
                "data table column name dt_col_name is empty -- specify column name");
     break;
+  }
   }
 
   if(cond_src >= BUFFER_QUERY) {
@@ -245,8 +271,22 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
   case NET_UNIT: {
     Layer* lay = (Layer*)src.ptr();
     Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
-    Variant tval = un->act;
-    match = MatchVarVal(tval, why_not);
+    if(un) {
+      MemberDef* md = un->FindMember(unit_val);
+      if(md) {
+	Variant tval = md->GetValVar(un);
+	match = MatchVarVal(tval, why_not);
+      }
+      else {
+	if(why_not) {
+	  taMisc::Info("member activation:", GetDisplayName(), "member path not found:",
+		       obj_path);
+	}
+      }
+    }
+    else {
+      
+    }
     break;
   }
   case OBJ_MEMBER: {

@@ -94,8 +94,11 @@ public:
   override int     GetEnabled() const { return !HasActionFlag(OFF); }
   override void    SetEnabled(bool value) { SetActionFlagState(OFF, !value); }
 
-  TA_SIMPLE_BASEFUNS(ActrAction);
+  void  InitLinks();
+  void  CutLinks();
+  TA_BASEFUNS(ActrAction);
 private:
+  SIMPLE_COPY(ActrAction);
   void Initialize();
   void Destroy()     { CutLinks(); }
 };

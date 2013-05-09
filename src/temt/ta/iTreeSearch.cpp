@@ -21,6 +21,7 @@
 #include <taBase_PtrList>
 #include <taiSigLink>
 
+#include <taMisc>
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -96,7 +97,11 @@ void iTreeSearch::search() {
         taiSigLink* dl = item->link();
         if(dl->isBase()) {
           taBase* tab = (taBase*)dl->data();
+	  // int ss = sub_srch.size;
           tab->Search(ftxt, sub_srch, &sub_srch_own); // go with defaults for now
+	  // if(sub_srch.size > ss) {
+	  //   taMisc::Info("found in:", tab->GetPathNames());
+	  // }
         }
       }
     }

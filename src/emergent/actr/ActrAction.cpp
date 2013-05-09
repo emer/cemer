@@ -25,6 +25,20 @@ void ActrAction::Initialize() {
   action = UPDATE;
 }
 
+void ActrAction::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ActrAction);
+  ActrProduction* prod = GET_MY_OWNER(ActrProduction);
+  if(prod) {
+    prod->UpdateNames();
+  }
+}
+
+void ActrAction::CutLinks() {
+  CutLinks_taAuto(&TA_ActrAction);
+  inherited::CutLinks();
+}
+
 String& ActrAction::Print(String& strm, int indent) const {
   taMisc::IndentString(strm, indent);
   switch(action) {
