@@ -50,6 +50,8 @@ public:
     STOP,                // stop execution of the model
     PROG_VAR,            // set value of a program variable
     PROG_RUN,            // run a Program (not for official ActR models)
+    OBJ_MEMBER,                 // match against a member in an arbitrary object
+    DATA_CELL,                  // match against a cell in a data table
   };
 
   ActionFlags   flags;          // current flags
