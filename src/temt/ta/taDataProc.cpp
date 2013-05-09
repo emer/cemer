@@ -467,7 +467,7 @@ void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
   // create copy of row_indexes as simple int array
   int order[n_rows];
 
-  for (int i=0; i<n_rows;i++)
+  for (int i=0; i<n_rows; i++)
     order[i] = dt->row_indexes[i];
 
   SortThruIndex_impl(dt, order, 0, n_rows-1);
@@ -481,6 +481,8 @@ void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 // CompareCellValues - called by the sorting thru index methods
 bool taDataProc::CompareCellValues(DataTable* dt, int i, int pivot, bool isLess)
 {
+	if (i > 10 || pivot > 10)
+		return false;
   DataCol* dc = dt->data.FastEl(0);
   Variant va = dc->GetValAsVar(i);
   Variant vb = dc->GetValAsVar(pivot);
@@ -518,11 +520,21 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, int arr[], int left, int righ
     }
   };
 
+  bool rangeError = false;
+
   /* recursion */
-  if (left < j)
-    SortThruIndex_impl(dt, arr, left, j);
-  if (i < right)
-    SortThruIndex_impl(dt, arr, i, right);
+  if (left < j) {
+	  if (j<0 || j>right)
+			rangeError = true;
+	  else
+		  SortThruIndex_impl(dt, arr, left, j);
+  }
+  if (i < right) {
+	  if (i<0 || i>right)
+			rangeError = true;
+	  else
+		    SortThruIndex_impl(dt, arr, i, right);
+  }
 }
 
 bool taDataProc::Permute(DataTable* dest, DataTable* src) {

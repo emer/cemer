@@ -1032,7 +1032,11 @@ bool DataTable::SetValAsVar(const Variant& val, const Variant& col, int row) {
   if (!da) return false;
   if (da->is_matrix_err()) return false;
   int i;
-  if (idx_err(row, i)) {
+#ifdef OLD_DT_IDX_MODE
+  if (idx_err(row, i)) {  // true means use filter view to find true data row
+#else
+  if (idx_err(row, i, false, true)) {  // true means use filter view to find true data row
+#endif
     da->SetValAsVar(val, i);
     return true;
   } else return false;
@@ -1934,6 +1938,14 @@ bool DataTable::DuplicateRow(int row_no, int n_copies) {
       "row not in range:",String(row_no)))
     return false;
   DataUpdate(true);// only data because for views, no change in column structure
+
+#ifndef OLD_DT_IDX_MODE
+  int dx;
+  if(idx(row_no, dx, true))
+    row_no = dx;
+  else
+    return false;
+#endif
   for(int k=0;k<n_copies;k++) {
     AddBlankRow();
     data.CopyFromRow(-1, data, row_no);
@@ -3343,3 +3355,19 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   DataUpdate(false);
 #endif  // DMEM_COMPILE
 }
+
+bool DataTable::idx(int row_num, int& act_idx, bool useFilter) const {
+   if (row_num < 0)
+     row_num = rows + row_num;
+   if (useFilter)
+     act_idx = row_indexes[row_num];
+   else
+     act_idx = row_num;
+
+#ifdef OLD_DT_IDX_MODE
+   return (act_idx >= 0 && act_idx < rows);
+#else
+   return (act_idx >= 0 && act_idx < rows_total);
+#endif
+}
+

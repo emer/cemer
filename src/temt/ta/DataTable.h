@@ -432,18 +432,17 @@ public:
 
   virtual bool          hasData(int col, int row);
   // #CAT_Rows true if data at that cell
-  bool                  idx(int row_num, int& act_idx) const
-   { if (row_num < 0) row_num = rows + row_num;
-     act_idx = row_num; return (act_idx >= 0 && act_idx < rows); }
-   // #CAT_Rows calculates an actual index for a col item, based on the current rows --  returns 'true' if act_idx in range (i.e., if there is a data item for that column)
+  bool                  idx(int row_num, int& act_idx, bool useFilter = false) const;
+  // #CAT_Rows returns the actual row of data from the table - set useFilter to true to go thru row_indexes
   inline bool           idx_err(int row_num, int& act_idx,
-                                bool quiet = false) const {
-    bool rval = idx(row_num, act_idx);
-    if(!quiet) TestError(!rval, "idx_err", "index out of range"); return rval; }
+                                 bool quiet = false, bool useFilter = false) const {
+                                 bool rval = idx(row_num, act_idx, useFilter);
+     if(!quiet) TestError(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
-  inline bool           idx_warn(int row_num, int& act_idx, bool quiet = false) const {
-    bool rval = idx(row_num, act_idx);
-    if(!quiet) TestWarning(!rval, "idx_err", "index out of range"); return rval; }
+  inline bool           idx_warn(int row_num, int& act_idx,
+		                         bool quiet = false, bool useFilter = false) const {
+	                             bool rval = idx(row_num, act_idx, useFilter);
+                                 if(!quiet) TestWarning(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
   virtual bool          RowInRangeNormalize(int& row);
   // #EXPERT #CAT_Rows normalizes row (if -ve) and tests result in range
