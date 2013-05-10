@@ -41,6 +41,8 @@ public:
 
   virtual ActrSlotType* NewSlot();
   // #BUTTON make a new slot in this chunk
+  virtual void          UpdateAllChunks();
+  // #BUTTON update all the chunks that use this chunk type to conform to any changes made in this type
 
   override taList_impl*	children_() {return &slots;}	
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const

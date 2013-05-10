@@ -77,6 +77,7 @@ void ActrCondition::UpdateAfterEdit_impl() {
 
 void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
+  if(IsOff()) return;
   CheckError(!src, quiet, rval, "source src for condition matching is NULL");
   switch(cond_src) {
   case BUFFER_EQ: {
@@ -88,10 +89,25 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
     break;
   case PROG_VAR:
     break;
-  case NET_UNIT:
+  case NET_UNIT: {
     CheckError(unit_name.empty(), quiet, rval,
                "network unit name unit_name is empty -- specify name");
+    if(src && unit_name.nonempty()) {
+      Layer* lay = (Layer*)src.ptr();
+      Unit* un = lay->FindUnitNamed(unit_name, true); // true = error if not found
+      if(un) {
+        MemberDef* md = un->FindMember(unit_val);
+        CheckError(!md, quiet, rval,
+                   "network unit unit variable:", unit_val, "not found in unit");
+      }
+      else {
+        CheckError(!un, quiet, rval,
+                   "unit name not found:", unit_name, "in layer:",
+                   lay->name);
+      }
+    }
     break;
+  }
   case OBJ_MEMBER: {
     CheckError(obj_path.empty(), quiet, rval,
                "object path obj_path is empty -- specify path to comparison value");
@@ -109,8 +125,31 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
   case DATA_CELL: {
     CheckError(dt_col_name.empty(), quiet, rval,
                "data table column name dt_col_name is empty -- specify column name");
+    if(src && dt_col_name.nonempty()) {
+      DataTable* dt = (DataTable*)src.ptr();
+      DataCol* dc = dt->GetColData(dt_col_name);
+      CheckError(!dc, quiet, rval,
+                 "data column named:", dt_col_name, "not found in data table:",
+                 dt->name);
+      if(dc) {
+        if(dc->isMatrix()) {
+          Variant tval = dc->GetMatrixFlatVal(dt_row, dt_cell);
+          CheckError(tval.isInvalid(), quiet, rval,
+                     "could not access row:", String(dt_row), "cell:", String(dt_cell),
+                     "in column:", dc->name,"in table:", dt->name);
+            
+        }
+        else {
+          Variant tval = dc->GetVal(dt_row);
+          CheckError(tval.isInvalid(), quiet, rval,
+                     "could not access row:", String(dt_row),
+                     "in column:", dc->name,"in table:", dt->name);
+            
+        }
+      }
+    }
     break;
-  }
+    }
   }
 
   if(cond_src >= BUFFER_QUERY) {
@@ -251,7 +290,7 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
       }
       return false;
     }
-    ActrChunk* bc =buf->CurChunk();
+    ActrChunk* bc = buf->CurChunk();
     match = cmp_chunk.MatchesProd(prod, bc, false, why_not); // false = not exact
     return match;
     break;
@@ -279,13 +318,16 @@ bool ActrCondition::Matches(ActrProduction& prod, bool why_not) {
       }
       else {
 	if(why_not) {
-	  taMisc::Info("member activation:", GetDisplayName(), "member path not found:",
+	  taMisc::Info("net unit:", GetDisplayName(), "member path not found:",
 		       obj_path);
 	}
       }
     }
     else {
-      
+      if(why_not) {
+        taMisc::Info("net unit:", GetDisplayName(), "unit name not found:",
+                     unit_name);
+      }
     }
     break;
   }

@@ -102,9 +102,14 @@ ActrSlot* ActrChunk::NewSlot() {
   return (ActrSlot*)slots.New(1);
 }
 
+void ActrChunk::SetChunkType(ActrChunkType* ck_type) {
+  chunk_type = ck_type;
+  UpdateAfterEdit();
+}
+
 int ActrChunk::GetSpecialState() const {
-  if(HasChunkFlag(RETRIEVED)) return 4; // red
-  if(HasChunkFlag(ELIGIBLE)) return 3; // green
+  if(HasChunkFlag(RETRIEVED)) return 3; // green
+  if(HasChunkFlag(ELIGIBLE)) return 4; // red
   if(HasChunkFlag(RECENT)) return 1; // lavendar
   // if(HasChunkFlag(NO_STOP_STEP)) return 2; // pale yellow
   return 0;
@@ -112,7 +117,12 @@ int ActrChunk::GetSpecialState() const {
 
 bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact, 
                             bool why_not) {
-  if(!cmp) return false;
+  if(!cmp) {
+    if(why_not) {
+      taMisc::Info("chunk:", GetDisplayName(), "comparison chunk is null");
+    }
+    return false;
+  }
   if((bool)chunk_type && (bool)cmp->chunk_type) {
     if(chunk_type != cmp->chunk_type) {
       if(why_not) {
@@ -129,6 +139,14 @@ bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact,
     return true;                // pass through -- all good!
   }
   // todo: what do we do here??  lookup by names or something?
+  if(why_not) {
+    if(!chunk_type) {
+      taMisc::Info("chunk:", GetDisplayName(), "our chunk type is NULL -- must set chunk_type");
+    }
+    else {
+      taMisc::Info("for chunk:", GetDisplayName(), "comparison chunk type is NULL -- must set chunk_type", cmp->GetDisplayName());
+    }
+  }
   return false;                 // not yet
 }
 
@@ -150,6 +168,14 @@ bool ActrChunk::MatchesMem(ActrChunk* cmp, bool exact, bool why_not) {
     return true;                // pass through -- all good!
   }
   // todo: what do we do here??  lookup by names or something?
+  if(why_not) {
+    if(!chunk_type) {
+      taMisc::Info("chunk:", GetDisplayName(), "our chunk type is NULL -- must set chunk_type");
+    }
+    else {
+      taMisc::Info("for chunk:", GetDisplayName(), "comparison chunk type is NULL -- must set chunk_type", cmp->GetDisplayName());
+    }
+  }
   return false;                 // not yet
 }
 

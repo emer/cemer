@@ -24,7 +24,7 @@
 void ActrModel::Initialize() {
   cur_time = 0.0f;
   cur_event_idx = 0;
-  flags = LOG_EVENTS;
+  flags = (ModelFlags)(LOG_EVENTS | UPDATE_GUI);
   run_state = NOT_INIT;
 }
 

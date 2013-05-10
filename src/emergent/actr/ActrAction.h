@@ -46,21 +46,24 @@ public:
     UPDATE,              // =buffer -- update buffer state of ActR chunk in a buffer with chunk info
     REQUEST,             // +buffer -- request info from buffer (and associated module) according to chunk info
     CLEAR,               // -buffer -- clear chunk from buffer
-    OUTPUT,              // print out the val value follwed by contents of chunk if chunk type is set
     STOP,                // stop execution of the model
+    PROG_RUN,            // run a Program -- typically this is NOT the program that owns and manages this model -- use a separate helper program to perform actions -- set variables using PROG_VAR before calling
+    OUTPUT,              // print out the val value follwed by contents of chunk if chunk type is set
     PROG_VAR,            // set value of a program variable
-    PROG_RUN,            // run a Program (not for official ActR models)
-    OBJ_MEMBER,                 // match against a member in an arbitrary object
-    DATA_CELL,                  // match against a cell in a data table
+    OBJ_MEMBER,          // set value in a member in an arbitrary object
+    DATA_CELL,           // set value in a cell in a data table
   };
 
   ActionFlags   flags;          // current flags
   ActType       action;         // what type of action to perform
-  ActrBufferRef buffer;         // #CONDSHOW_ON_action:UPDATE,REQUEST,CLEAR what buffer to operate on
+  TypeDef*      dest_type;      // #CONDSHOW_ON_action:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with dest data to write to
+  taBaseRef     dest;           // #CONDSHOW_OFF_action:OUTPUT,STOP #TYPE_ON_dest_type #PROJ_SCOPE the destination object to write val to or call when production fires -- a buffer, prog var, program, object, or data table..
+  String        obj_path;      // #CONDSHOW_ON_action:OBJ_MEMBER path within object to obtain comparison value from
+  String        dt_col_name;   // #CONDSHOW_ON_action:DATA_CELL name of column within data table cell to obtain value from
+  int           dt_row;        // #CONDSHOW_ON_action:DATA_CELL row number within data table cell to obtain value from (use -1 for last row)
+  int           dt_cell;        // #CONDSHOW_ON_action:DATA_CELL cell index within data row,column within data table cell to obtain value from
+  String        val;            // #CONDSHOW_OFF_action:UPDATE,REQUEST,CLEAR,STOP,PROG_RUN value to print out or to set program variable to -- can use =var for outputting variable values -- just uses string replace of =var with current bound value -- can intersperse other literal information
   ActrChunk     chunk;          // #SHOW_TREE #CONDSHOW_ON_action:UPDATE,REQUEST chunk information for the action
-  ProgVarRef    prog_var;       // #CONDSHOW_ON_action:PROG_VAR #PROJ_SCOPE program variable to set to val -- can be in any program -- typically one that is called in another action
-  String        val;            // #CONDSHOW_ON_action:PROG_VAR,OUTPUT value to print out or to set program variable to -- can use =var for outputting variable values -- just uses string replace of =var with current bound value -- can intersperse other literal information
-  ProgramRef    program;        // #CONDSHOW_ON_action:PROG_RUN program to run -- does not set any arg variables prior to running -- just calls Run on it -- use prior actions to set program variables
 
   inline void           SetActionFlag(ActionFlags flg)
   { flags = (ActionFlags)(flags | flg); }
@@ -99,6 +102,10 @@ public:
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ActrAction);
+protected:
+  override void  UpdateAfterEdit_impl();
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+
 private:
   SIMPLE_COPY(ActrAction);
   void Initialize();

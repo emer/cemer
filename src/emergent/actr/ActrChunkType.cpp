@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ActrChunkType.h"
+#include <ActrChunk>
 
 void ActrChunkType::Initialize() {
 }
@@ -26,3 +27,13 @@ ActrSlotType* ActrChunkType::NewSlot() {
   return (ActrSlotType*)slots.New(1);
 }
 
+void ActrChunkType::UpdateAllChunks() {
+  TypeDef* td = &TA_ActrChunk;
+  for(int i=0; i<td->tokens.size; i++) {
+    ActrChunk* ck = (ActrChunk*)td->tokens[i];
+    if(!ck) continue;
+    if(ck->chunk_type == this) {
+      ck->UpdateAfterEdit();
+    }
+  }
+}

@@ -35,12 +35,12 @@ void ActrProduction::UpdateNames() {
   for(int i=0; i<conds.size; i++) {
     ActrCondition* cnd = conds.FastEl(i);
     cnd->cmp_chunk.name = name + "_c" + String(i);
-    cnd->SigEmitUpdated();
+    cnd->cmp_chunk.SigEmitUpdated();
   }
   for(int i=0; i<acts.size; i++) {
     ActrAction* act = acts.FastEl(i);
     act->chunk.name = name + "_a" + String(i);
-    act->SigEmitUpdated();
+    act->chunk.SigEmitUpdated();
   }
 }
 
@@ -56,7 +56,7 @@ void ActrProduction::UpdateVars() {
       for(int j=0; j<acts.size; j++) {
         ActrAction* act = acts.FastEl(j);
         if(act->action != ActrAction::UPDATE) continue;
-        if(act->buffer.ptr() == cnd->src.ptr()) {
+        if(act->dest.ptr() == cnd->src.ptr()) {
           cnd->SetCondFlag(ActrCondition::BUF_UPDT_ACT); // we are going to update
           break;
         }
@@ -76,8 +76,8 @@ void ActrProduction::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 int ActrProduction::GetSpecialState() const {
-  if(HasProdFlag(FIRED)) return 4; // red
-  if(HasProdFlag(ELIGIBLE)) return 3; // green
+  if(HasProdFlag(FIRED)) return 3; // green
+  if(HasProdFlag(ELIGIBLE)) return 4; // red
   // if(HasProgFlag(TRACE)) return 1; // lavendar
   // if(HasProgFlag(NO_STOP_STEP)) return 2; // pale yellow
   return 0;

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.0.0 rev6280
+// ta_Dump File v3.0 -- code v6.3.0.0 rev6285
 LeabraProject .projects["actr"] { 
   taBase_Group @.templates = [0] {
   };
@@ -188,7 +188,7 @@ LeabraProject .projects["actr"] {
 	    ActrProceduralModule @["procedural"] { 
 	      ActrProduction_Group @.productions = [3] {
 		ActrProduction @["start"] { 
-		  ActrCondition_List @.conds = [4] {
+		  ActrCondition_List @.conds = [5] {
 		    ActrCondition @[0] { 
 		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
@@ -205,6 +205,10 @@ LeabraProject .projects["actr"] {
 		      };
 		    };
 		    ActrCondition @[3] { 
+		      ActrSlot_List @.slots = [0] {
+		      };
+		    };
+		    ActrCondition @[4] { 
 		      ActrSlot_List @.slots = [0] {
 		      };
 		    };
@@ -243,7 +247,7 @@ LeabraProject .projects["actr"] {
 		    };
 		  };
 
-		  ActrAction_List @.acts = [3] {
+		  ActrAction_List @.acts = [6] {
 		    ActrAction @[0] { 
 		      ActrSlot_List @.slots = [3] {
 			ActrSlot @["start"] { };
@@ -258,6 +262,18 @@ LeabraProject .projects["actr"] {
 		      };
 		    };
 		    ActrAction @[2] { 
+		      ActrSlot_List @.slots = [0] {
+		      };
+		    };
+		    ActrAction @[3] { 
+		      ActrSlot_List @.slots = [0] {
+		      };
+		    };
+		    ActrAction @[4] { 
+		      ActrSlot_List @.slots = [0] {
+		      };
+		    };
+		    ActrAction @[5] { 
 		      ActrSlot_List @.slots = [0] {
 		      };
 		    };
@@ -1607,7 +1623,7 @@ LeabraProject .projects["actr"] {
 	    [0]       };
       ar {
        name=;
-	    [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
+	    [6] "5";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      float_Data @["Input"] {
       name="Input";
@@ -2098,7 +2114,7 @@ LeabraProject .projects["actr"] {
    name="ActRTest";
    short_nm="cRTst";
    tags=;
-   desc=;
+   desc="tasfaf";
    flags=OBJS_UPDT_GUI;
    objs {
     name="ProgObjList_13";
@@ -2135,11 +2151,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] 0;0;0.050000001;0.050000001;0.050000001;0.050000001;0.1;0.1;0.1;0.1;
-0.15000001;0.15000001;0.15000001;0.15000001;0.2;0.2;0.2;0.2;0.25;0.25;
-0.25;0.25;0.30000001;0.30000001;0.30000001;0.30000001;0.35000002;0.35000002;0.35000002;0.35000002;
-0.40000004;0.40000004;0.40000004;0.40000004;0.45000005;0.45000005;0.45000005;0.45000005;0.50000006;0.50000006;
-0.50000006;0.50000006;0.55000007;       };
+	      [0]        };
       };
       String_Data @["module"] {
        UserDataItem_List @*(.user_data_) {
@@ -2165,11 +2177,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] "procedural";"procedural";"procedural";"procedural";"declarative";"procedural";"declarative";"procedural";"procedural";"procedural";
-"procedural";"procedural";"declarative";"procedural";"declarative";"procedural";"procedural";"procedural";"procedural";"procedural";
-"declarative";"procedural";"declarative";"procedural";"procedural";"procedural";"procedural";"procedural";"declarative";"procedural";
-"declarative";"procedural";"procedural";"procedural";"procedural";"procedural";"declarative";"procedural";"declarative";"procedural";
-"procedural";"procedural";"procedural";       };
+	      [0]        };
       };
       String_Data @["action"] {
        UserDataItem_List @*(.user_data_) {
@@ -2195,11 +2203,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] "CONFLICT-RESOLUTION";"PRODUCTION-SELECTED";"PRODUCTION-FIRED";"MODULE-REQUEST";"START-RETRIEVAL";"MOD-BUFFER-CHUNK";"RETRIEVED-CHUNK";"CONFLICT-RESOLUTION";"PRODUCTION-SELECTED";"BUFFER-READ-ACTION";
-"PRODUCTION-FIRED";"MODULE-REQUEST";"START-RETRIEVAL";"MOD-BUFFER-CHUNK";"RETRIEVED-CHUNK";"CONFLICT-RESOLUTION";"PRODUCTION-SELECTED";"BUFFER-READ-ACTION";"PRODUCTION-FIRED";"MODULE-REQUEST";
-"START-RETRIEVAL";"MOD-BUFFER-CHUNK";"RETRIEVED-CHUNK";"CONFLICT-RESOLUTION";"PRODUCTION-SELECTED";"BUFFER-READ-ACTION";"PRODUCTION-FIRED";"MODULE-REQUEST";"START-RETRIEVAL";"MOD-BUFFER-CHUNK";
-"RETRIEVED-CHUNK";"CONFLICT-RESOLUTION";"PRODUCTION-SELECTED";"BUFFER-READ-ACTION";"PRODUCTION-FIRED";"MODULE-REQUEST";"START-RETRIEVAL";"MOD-BUFFER-CHUNK";"RETRIEVAL-FAILURE";"CONFLICT-RESOLUTION";
-"PRODUCTION-SELECTED";"BUFFER-READ-ACTION";"PRODUCTION-FIRED";       };
+	      [0]        };
       };
       String_Data @["target"] {
        UserDataItem_List @*(.user_data_) {
@@ -2225,11 +2229,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] "procedural";;"procedural";"retrieval";;"goal";"retrieval";"procedural";;"retrieval";
-"procedural";"retrieval";;"goal";"retrieval";"procedural";;"retrieval";"procedural";"retrieval";
-;"goal";"retrieval";"procedural";;"retrieval";"procedural";"retrieval";;"goal";
-"retrieval";"procedural";;"retrieval";"procedural";"retrieval";;"goal";"retrieval";"procedural";
-;"goal";"procedural";       };
+	      [0]        };
       };
       String_Data @["params"] {
        UserDataItem_List @*(.user_data_) {
@@ -2255,11 +2255,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] ;"start";"start";"retrieval";;"goal";"c";;"increment";"retrieval";
-"increment";"retrieval";;"goal";"d";;"increment";"retrieval";"increment";"retrieval";
-;"goal";"e";;"increment";"retrieval";"increment";"retrieval";;"goal";
-"f";;"increment";"retrieval";"increment";"retrieval";;"goal";;;
-"stop";"goal";"stop";       };
+	      [0]        };
       };
       String_Data @["dst_module"] {
        UserDataItem_List @*(.user_data_) {
@@ -2285,11 +2281,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] "procedural";;"procedural";"declarative";;"goal";"declarative";"procedural";;"declarative";
-"procedural";"declarative";;"goal";"declarative";"procedural";;"declarative";"procedural";"declarative";
-;"goal";"declarative";"procedural";;"declarative";"procedural";"declarative";;"goal";
-"declarative";"procedural";;"declarative";"procedural";"declarative";;"goal";"declarative";"procedural";
-;"goal";"procedural";       };
+	      [0]        };
       };
       float_Data @["priority"] {
        UserDataItem_List @*(.user_data_) {
@@ -2315,11 +2307,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] 100;0;100;0;0;0;100;100;0;100;
-100;0;0;0;100;100;0;100;100;0;
-0;0;100;100;0;100;100;0;0;0;
-100;100;0;100;100;0;0;0;100;100;
-0;100;100;       };
+	      [0]        };
       };
       String_Data @["prod_action"] {
        UserDataItem_List @*(.user_data_) {
@@ -2345,11 +2333,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] ;;;"+retrieval start_a1 ISA count_order ( first 2; second ; )";;"=goal start_a0 ISA count_from ( start ; end ; count 2; )";"+retrieval start_a1 ISA count_order ( first 2; second ; )";;;;
-;"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;"=goal increment_a0 ISA count_from ( start ; end ; count =num2; )";"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;;;;"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";
-;"=goal increment_a0 ISA count_from ( start ; end ; count =num2; )";"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;;;;"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;"=goal increment_a0 ISA count_from ( start ; end ; count =num2; )";
-"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;;;;"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;"=goal increment_a0 ISA count_from ( start ; end ; count =num2; )";"+retrieval increment_a1 ISA count_order ( first =num2; second ; )";;
-;;;       };
+	      [0]        };
       };
       String_Data @["chunk"] {
        UserDataItem_List @*(.user_data_) {
@@ -2375,11 +2359,7 @@ LeabraProject .projects["actr"] {
 	      [0]        };
        ar {
 	name=;
-	      [43] ;;;"ActrChunk_31 ISA count_order ( first 2; second ; )";;"ActrChunk_30 ISA count_from ( start ; end ; count 2; )";"c ISA count_order ( first 2; second 3; )";;;;
-;"ActrChunk_33 ISA count_order ( first 3; second ; )";;"ActrChunk_32 ISA count_from ( start ; end ; count 3; )";"d ISA count_order ( first 3; second 4; )";;;;;"ActrChunk_35 ISA count_order ( first 4; second ; )";
-;"ActrChunk_34 ISA count_from ( start ; end ; count 4; )";"e ISA count_order ( first 4; second 5; )";;;;;"ActrChunk_37 ISA count_order ( first 5; second ; )";;"ActrChunk_36 ISA count_from ( start ; end ; count 5; )";
-"f ISA count_order ( first 5; second 6; )";;;;;"ActrChunk_39 ISA count_order ( first 6; second ; )";;"ActrChunk_38 ISA count_from ( start ; end ; count 6; )";;;
-;;;       };
+	      [0]        };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2392,7 +2372,7 @@ LeabraProject .projects["actr"] {
      name="TestModel";
      desc=;
      flags=LOG_EVENTS|UPDATE_GUI|SAVE_ALL_EVENTS;
-     cur_time=0.5500001;
+     cur_time=0;
      chunk_types {
       name="ActrChunkType_List_0";
       el_typ=ActrChunkType;
@@ -2478,6 +2458,7 @@ LeabraProject .projects["actr"] {
 	   src_type=ActrBuffer;
 	   src=.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
@@ -2525,6 +2506,7 @@ LeabraProject .projects["actr"] {
 	   src_type=ProgVar;
 	   src=.projects["actr"].programs["ActRTest"].vars["TestProgVar"]$$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
@@ -2551,6 +2533,7 @@ LeabraProject .projects["actr"] {
 	   src_type=DataTable;
 	   src=.projects["actr"].data.gp["InputData"]["StdInputData"]$$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path=;
 	   dt_col_name="Name";
 	   dt_row=0;
@@ -2577,6 +2560,7 @@ LeabraProject .projects["actr"] {
 	   src_type=Network;
 	   src=.projects["actr"].networks["Network_0"]$$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path="ct_time.minus";
 	   dt_col_name=;
 	   dt_row=-1;
@@ -2597,6 +2581,33 @@ LeabraProject .projects["actr"] {
 	    };
 	   };
 	  };
+	  ActrCondition @[4] {
+	   flags=OFF;
+	   cond_src=NET_UNIT;
+	   src_type=Layer;
+	   src=.projects["actr"].networks["Network_0"].layers["Input"]$$;
+	   unit_name="flaf";
+	   unit_val="act_eq";
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   rel=EQUAL;
+	   cmp_val="0.5";
+	   cmp_chunk {
+	    name="start_c4";
+	    chunk_type=NULL;
+	    flags=0;
+	    n_act=0;
+	    t_new=0;
+	    base_act=0;
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	    };
+	   };
+	  };
 	 };
 	 acts {
 	  name="ActrAction_List_0";
@@ -2605,7 +2616,13 @@ LeabraProject .projects["actr"] {
 	  ActrAction @[0] {
 	   flags=0;
 	   action=UPDATE;
-	   buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
+	   dest_type=ActrBuffer;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
 	   chunk {
 	    name="start_a0";
 	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["TestModel"].chunk_types["count_from"]$;
@@ -2640,14 +2657,17 @@ LeabraProject .projects["actr"] {
 	     };
 	    };
 	   };
-	   prog_var=NULL;
-	   val=;
-	   program=NULL;
 	  };
 	  ActrAction @[1] {
 	   flags=0;
 	   action=REQUEST;
-	   buffer=.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$$;
+	   dest_type=ActrBuffer;
+	   dest=.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
 	   chunk {
 	    name="start_a1";
 	    chunk_type=.projects["actr"].programs["ActRTest"].objs["TestModel"].chunk_types["count_order"]$$;
@@ -2675,9 +2695,6 @@ LeabraProject .projects["actr"] {
 	     };
 	    };
 	   };
-	   prog_var=NULL;
-	   val=;
-	   program=NULL;
 	  };
 	 };
 	};
@@ -2697,6 +2714,7 @@ LeabraProject .projects["actr"] {
 	   src_type=ActrBuffer;
 	   src=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
@@ -2744,6 +2762,7 @@ LeabraProject .projects["actr"] {
 	   src_type=ActrBuffer;
 	   src=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
@@ -2786,7 +2805,13 @@ LeabraProject .projects["actr"] {
 	  ActrAction @[0] {
 	   flags=0;
 	   action=UPDATE;
-	   buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
+	   dest_type=ActrBuffer;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
 	   chunk {
 	    name="increment_a0";
 	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["TestModel"].chunk_types["count_from"]$;
@@ -2821,14 +2846,17 @@ LeabraProject .projects["actr"] {
 	     };
 	    };
 	   };
-	   prog_var=NULL;
-	   val=;
-	   program=NULL;
 	  };
 	  ActrAction @[1] {
 	   flags=0;
 	   action=REQUEST;
-	   buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$;
+	   dest_type=ActrBuffer;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
 	   chunk {
 	    name="increment_a1";
 	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["TestModel"].chunk_types["count_order"]$;
@@ -2856,14 +2884,17 @@ LeabraProject .projects["actr"] {
 	     };
 	    };
 	   };
-	   prog_var=NULL;
-	   val=;
-	   program=NULL;
 	  };
 	  ActrAction @[2] {
 	   flags=0;
 	   action=OUTPUT;
-	   buffer=NULL;
+	   dest_type=ActrBuffer;
+	   dest=NULL;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val="count is: =num1";
 	   chunk {
 	    name="increment_a2";
 	    chunk_type=NULL;
@@ -2877,15 +2908,84 @@ LeabraProject .projects["actr"] {
 	     el_def=0;
 	    };
 	   };
-	   prog_var=NULL;
-	   val="count is: =num1";
-	   program=NULL;
+	  };
+	  ActrAction @[3] {
+	   flags=OFF;
+	   action=PROG_VAR;
+	   dest_type=ProgVar;
+	   dest=$.projects["actr"].programs["ActRTest"].vars["TestProgVar"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val="=num1";
+	   chunk {
+	    name="increment_a3";
+	    chunk_type=NULL;
+	    flags=0;
+	    n_act=0;
+	    t_new=0;
+	    base_act=0;
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	    };
+	   };
+	  };
+	  ActrAction @[4] {
+	   flags=OFF;
+	   action=OBJ_MEMBER;
+	   dest_type=Program;
+	   dest=.projects["actr"].programs["ActRTest"]$$;
+	   obj_path="desc";
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val="=num1";
+	   chunk {
+	    name="increment_a4";
+	    chunk_type=NULL;
+	    flags=0;
+	    n_act=0;
+	    t_new=0;
+	    base_act=0;
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	    };
+	   };
+	  };
+	  ActrAction @[5] {
+	   flags=OFF;
+	   action=DATA_CELL;
+	   dest_type=DataTable;
+	   dest=$.projects["actr"].data.gp["InputData"]["StdInputData"]$;
+	   obj_path=;
+	   dt_col_name="Name";
+	   dt_row=-1;
+	   dt_cell=0;
+	   val="=num1";
+	   chunk {
+	    name="increment_a5";
+	    chunk_type=NULL;
+	    flags=0;
+	    n_act=0;
+	    t_new=0;
+	    base_act=0;
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	    };
+	   };
 	  };
 	 };
 	};
 	ActrProduction @["stop"] {
 	 name="stop";
-	 flags=FIRED|ELIGIBLE;
+	 flags=0;
 	 desc="detect when count == end";
 	 util=0;
 	 rew=0;
@@ -2899,6 +2999,7 @@ LeabraProject .projects["actr"] {
 	   src_type=ActrBuffer;
 	   src=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
 	   unit_name=;
+	   unit_val="act";
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
@@ -2948,7 +3049,13 @@ LeabraProject .projects["actr"] {
 	  ActrAction @[0] {
 	   flags=0;
 	   action=CLEAR;
-	   buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
+	   dest_type=ActrBuffer;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["goal"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
 	   chunk {
 	    name="stop_a0";
 	    chunk_type=NULL;
@@ -2962,14 +3069,17 @@ LeabraProject .projects["actr"] {
 	     el_def=0;
 	    };
 	   };
-	   prog_var=NULL;
-	   val=;
-	   program=NULL;
 	  };
 	  ActrAction @[1] {
 	   flags=0;
 	   action=OUTPUT;
-	   buffer=NULL;
+	   dest_type=ActrBuffer;
+	   dest=NULL;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val="count is: =num";
 	   chunk {
 	    name="stop_a1";
 	    chunk_type=NULL;
@@ -3004,14 +3114,17 @@ LeabraProject .projects["actr"] {
 	     };
 	    };
 	   };
-	   prog_var=NULL;
-	   val="count is: =num";
-	   program=NULL;
 	  };
 	  ActrAction @[2] {
 	   flags=0;
 	   action=STOP;
-	   buffer=NULL;
+	   dest_type=ActrBuffer;
+	   dest=NULL;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
 	   chunk {
 	    name="stop_a2";
 	    chunk_type=NULL;
@@ -3025,9 +3138,6 @@ LeabraProject .projects["actr"] {
 	     el_def=0;
 	    };
 	   };
-	   prog_var=NULL;
-	   val=;
-	   program=NULL;
 	  };
 	 };
 	};
@@ -3037,7 +3147,7 @@ LeabraProject .projects["actr"] {
        name="declarative";
        desc=;
        buffer=$.projects["actr"].programs["ActRTest"].objs["TestModel"].buffers["retrieval"]$;
-       flags=ERROR;
+       flags=0;
        init_chunks {
 	name=;
 	el_typ=ActrChunk;
@@ -3431,7 +3541,7 @@ LeabraProject .projects["actr"] {
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="6";
+	   val=;
 	  };
 	 };
 	};
@@ -3440,7 +3550,7 @@ LeabraProject .projects["actr"] {
        act_total=0;
       };
      };
-     cur_event_idx=33;
+     cur_event_idx=0;
      log_table=.projects["actr"].programs["ActRTest"].objs["ActrLogTable"]$$;
     };
    };
@@ -3483,7 +3593,7 @@ LeabraProject .projects["actr"] {
     ProgVar @["TestProgVar"] {
      name="TestProgVar";
      var_type=T_Real;
-     real_val=22;
+     real_val=5;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -8873,6 +8983,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
+     unit_names {
+      name=;
+	  [5 5] ;"flaf";"slff";"afff";;;;;;;
+;;;;;;;;;;
+;;;;;     };
      brain_area=;
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.projects["actr"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
@@ -8902,7 +9017,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects["actr"].networks["Network_0"].layers["Input"]$$;
+       from=$.projects["actr"].networks["Network_0"].layers["Input"]$;
        spec {type=FullPrjnSpec: spec=.projects["actr"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;

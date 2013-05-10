@@ -49,7 +49,7 @@ public:
   float                 n_act;      // #READ_ONLY #SHOW number of times chunk has been activated
   float                 t_new;      // #READ_ONLY #SHOW time when chunk was created
   float                 base_act;   // #READ_ONLY #SHOW base level activation = ln(n_act / (1-d)) - d * ln(time - t_new) where time = current time and d = decay parameter (optimized calculation)
-  ActrSlot_List         slots;      // #SHOW_TREE the slot values -- same number as slots in chunk_type
+  ActrSlot_List         slots;      // #NO_EXPAND_ALL the slot values -- same number as slots in chunk_type
 
   inline void           SetChunkFlag(ChunkFlags flg)
   { flags = (ChunkFlags)(flags | flg); }
@@ -78,6 +78,8 @@ public:
 
   virtual ActrSlot*     NewSlot();
   // #BUTTON make a new slot in this chunk
+  virtual void          SetChunkType(ActrChunkType* ck_type);
+  // #MENU #MENU_ON_Actions #DROP1 #DYN1 set chunk type for this chunk (can use drag-and-drop and call on a set of selected items)
 
   virtual bool          MatchesProd(ActrProduction& prod, ActrChunk* cmp,
                                     bool exact, bool why_not = false);

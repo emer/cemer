@@ -18,11 +18,16 @@
 #include <ActrModel>
 #include <ActrSlot>
 
+#include <MemberDef>
+
 #include <taMisc>
 
 void ActrAction::Initialize() {
   flags = AF_NONE;
   action = UPDATE;
+  dest_type = &TA_ActrBuffer;
+  dt_row = -1;
+  dt_cell = 0;
 }
 
 void ActrAction::InitLinks() {
@@ -39,49 +44,158 @@ void ActrAction::CutLinks() {
   inherited::CutLinks();
 }
 
-String& ActrAction::Print(String& strm, int indent) const {
-  taMisc::IndentString(strm, indent);
+void ActrAction::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   switch(action) {
   case UPDATE:
-    strm << "=";
-  case REQUEST:
-    if(action == REQUEST) strm << "+"; // fall thru possible
+  case REQUEST: 
   case CLEAR:
-    if(action == CLEAR) strm << "-"; // fall thru possible
-    if(!buffer) {
-      strm << "<no buffer!>";
-    }
-    else {
-      strm << buffer->GetName() << " ";
-      if(action != CLEAR)
-        chunk.Print(strm);
-    }
+    dest_type = &TA_ActrBuffer;
+    break;
+  case STOP:
     break;
   case OUTPUT:
-    strm << "!output! " << val;
+    break;
+  case PROG_RUN:
+    dest_type = &TA_Program;
+    break;
+  case PROG_VAR:
+    dest_type = &TA_ProgVar;
+    break;
+  case OBJ_MEMBER:
+    break;
+  case DATA_CELL:
+    dest_type = &TA_DataTable;
+    break;
+  }
+}
+
+void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(action != OUTPUT && action != STOP) {
+    CheckError(!dest, quiet, rval, "destination dest for action is NULL");
+    if(dest) {
+      CheckError(!dest->InheritsFrom(dest_type), quiet, rval,
+                 "destination dest for action is not of right type:", dest_type->name,
+                 "is type:", dest->GetTypeDef()->name);
+    }
+  }
+  switch(action) {
+  case UPDATE:
+  case REQUEST:
+    if(CheckError(!chunk.chunk_type, quiet, rval,
+                  "chunk type not set for update or request"));
+    break;
+  case CLEAR:
+    break;
+  case STOP:
+    break;
+  case PROG_RUN:
+    break;
+  case OUTPUT:
+    break;
+  case PROG_VAR:
+    break;
+  case OBJ_MEMBER: {
+    CheckError(obj_path.empty(), quiet, rval,
+               "object path obj_path is empty -- specify path to member to set");
+    if(dest) {
+      taBase* obj = dest.ptr();
+      void* mbr_base = NULL;      // base for conditionalizing member itself
+      ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+      TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
+      MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
+                                                    obj_path, true); // yes warn..
+      CheckError(!md, quiet, rval,
+                 "object path is not valid -- could not find path:",obj_path,
+                 "on object:", obj->GetPathNames());
+    }
+    break;
+  }
+  case DATA_CELL: {
+    CheckError(dt_col_name.empty(), quiet, rval,
+               "data table column name dt_col_name is empty -- specify column name");
+    if(dest && dt_col_name.nonempty()) {
+      DataTable* dt = (DataTable*)dest.ptr();
+      DataCol* dc = dt->GetColData(dt_col_name);
+      CheckError(!dc, quiet, rval,
+                 "data column named:", dt_col_name, "not found in data table:",
+                 dt->name);
+      if(dc) {
+        if(dc->isMatrix()) {
+          Variant tval = dc->GetMatrixFlatVal(dt_row, dt_cell);
+          CheckError(tval.isInvalid(), quiet, rval,
+                     "could not access row:", String(dt_row), "cell:", String(dt_cell),
+                     "in column:", dc->name,"in table:", dt->name);
+            
+        }
+        else {
+          Variant tval = dc->GetVal(dt_row);
+          CheckError(tval.isInvalid(), quiet, rval,
+                     "could not access row:", String(dt_row),
+                     "in column:", dc->name,"in table:", dt->name);
+            
+        }
+      }
+    }
+    break;
+    }
+  }
+  if(action >= OUTPUT) {
+    CheckError(val.empty(), quiet, rval,
+               "val is empty -- must specify value to set or output");
+  }
+  ActrProduction* prod = GET_MY_OWNER(ActrProduction);
+  if(prod) {
+    String vstr = val;
+    while(vstr.nonempty() && vstr.contains('=')) {
+      String vnm = vstr.after('=');
+      vstr = vnm;
+      if(vnm.contains(' '))
+        vnm = vnm.before(' ');
+      vstr = vstr.after(vnm);
+      ActrSlot* var = prod->vars.FindName(vnm);
+      CheckError(!var, quiet, rval,
+                 "could not find variable name:", vnm,
+                 "in production variables -- variables must originate in conditions");
+    }
+    if((bool)chunk.chunk_type) {
+      for(int i=0; i<chunk.slots.size; i++) {
+        ActrSlot* sl = chunk.slots.FastEl(i);
+        if(!sl->CondIsVar()) continue;
+        String vnm = sl->GetVarName();
+        ActrSlot* var = prod->vars.FindName(vnm);
+        CheckError(!var, quiet, rval,
+                   "could not find variable name:", vnm,
+                   "in production variables -- variables must originate in conditions");
+      }
+    }
+  }
+}
+
+String& ActrAction::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << GetDisplayName() << " ";
+  switch(action) {
+  case UPDATE:
+  case REQUEST: 
+    chunk.Print(strm);
+    break;
+  case CLEAR:
+    break;
+  case STOP:
+    break;
+  case PROG_RUN:
+    break;
+  case OUTPUT:
+    strm << " " << val;
     if(chunk.chunk_type)
       chunk.Print(strm);
     break;
-  case STOP:
-    strm << "!stop!";
-    break;
   case PROG_VAR:
-    strm << "var ";
-    if(prog_var) {
-      strm << prog_var->name << "=" << val;
-    }
-    else {
-      strm << "<no var!>";
-    }
-    break;
-  case PROG_RUN:
-    strm << "run ";
-    if(program) {
-      strm << program->name << "()";
-    }
-    else {
-      strm << "<no program!>";
-    }
+  case OBJ_MEMBER:
+  case DATA_CELL:
+    strm << " <- " << val;
     break;
   }
   return strm;
@@ -96,35 +210,54 @@ String ActrAction::GetDisplayName() const {
     if(action == REQUEST) strm << "+"; // fall thru possible
   case CLEAR:
     if(action == CLEAR) strm << "-"; // fall thru possible
-    if(!buffer) {
+    if(!dest) {
       strm << "<no buffer!>";
     }
     else {
-      strm << buffer->GetName() << " ";
+      strm << ((ActrBuffer*)dest.ptr())->GetName() << " ";
+    }
+    break;
+  case STOP:
+    strm << "!stop!";
+    break;
+  case PROG_RUN:
+    strm << "run ";
+    if(dest) {
+      strm << dest->GetName() << "()";
+    }
+    else {
+      strm << "<no program!>";
     }
     break;
   case OUTPUT:
     strm << "!output!";
     break;
-  case STOP:
-    strm << "!stop!";
-    break;
   case PROG_VAR:
     strm << "var ";
-    if(prog_var) {
-      strm << prog_var->name;
+    if(dest) {
+      strm << dest->GetName();
     }
     else {
       strm << "<no var!>";
     }
     break;
-  case PROG_RUN:
-    strm << "run ";
-    if(program) {
-      strm << program->name << "()";
+  case OBJ_MEMBER:
+    strm << "obj ";
+    if(dest) {
+      strm << dest->GetName() + "." << obj_path;
     }
     else {
-      strm << "<no program!>";
+      strm << "<no obj!>";
+    }
+    break;
+  case DATA_CELL:
+    strm << "data table ";
+    if(dest) {
+      strm << dest->GetName() << "[" << dt_col_name << "]["
+           << dt_cell << "," << dt_row << "]";
+    }
+    else {
+      strm << "<no obj!>";
     }
     break;
   }
@@ -158,14 +291,19 @@ bool ActrAction::DoAction(ActrProduction& prod,
                           ActrProceduralModule* proc_mod, ActrModel* model) {
   if(IsOff()) return false;
   // todo: what priorities on these??
+  if(!dest && action != STOP && action != OUTPUT) return false;
+  ActrBuffer* buffer = NULL;
+  if(action <= CLEAR) {
+    buffer = (ActrBuffer*)dest.ptr();
+  }
   switch(action) {
   case UPDATE: {
     // todo: add a flag to action if it has variables or not
     ActrChunk* new_chunk = new ActrChunk;
     new_chunk->CopyFrom(&chunk);
     SetVarsChunk(prod, new_chunk);
-    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
-                         buffer,
+    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
+                         buffer->module, buffer,
                          "MOD-BUFFER-CHUNK", buffer->name, this, new_chunk);
     break;
   }
@@ -173,16 +311,34 @@ bool ActrAction::DoAction(ActrProduction& prod,
     ActrChunk* new_chunk = new ActrChunk;
     new_chunk->CopyFrom(&chunk);
     SetVarsChunk(prod, new_chunk);
-    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
-                         buffer,
+    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
+                         buffer->module, buffer,
                          "MODULE-REQUEST", buffer->name, this, new_chunk);
     break;
   }
   case CLEAR:
-    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, buffer->module,
-                         buffer,
+    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
+                         buffer->module, buffer,
                          "CLEAR-BUFFER", buffer->name, this);
     break;
+  case STOP:
+    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, NULL, NULL,
+                         "!stop!", "", this);
+    break;
+  case PROG_RUN: {
+    Program* prg = (Program*)dest.ptr();
+    if(prg->run_state == Program::NOT_INIT) {
+      prg->Init();
+    }
+    if(TestError(prg->run_state == Program::NOT_INIT,
+                 "cannot run program:", prg->name,
+                 "because it cannot be initialized -- see console for errors")) {
+    }
+    else {
+      prg->Call(NULL);
+    }
+    break;
+  }
   case OUTPUT: {
     String out = val;
     SetVarsString(prod, out);
@@ -196,22 +352,42 @@ bool ActrAction::DoAction(ActrProduction& prod,
     taMisc::ConsoleOutput(out);
     break;
   }
-  case STOP:
-    model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, NULL, NULL,
-                         "!stop!", "", this);
+  case PROG_VAR: {
+    String sval = val;
+    SetVarsString(prod, sval);
+    ((ProgVar*)dest.ptr())->SetVar(sval);
     break;
-  case PROG_VAR:
-    if(prog_var) {
-      String sval = val;
-      SetVarsString(prod, sval);
-      prog_var->SetVar(sval);
+  }
+  case OBJ_MEMBER: {
+    String sval = val;
+    SetVarsString(prod, sval);
+    taBase* obj = dest.ptr();
+    void* mbr_base = NULL;      // base for conditionalizing member itself
+    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    TypeDef* eff_td = (TypeDef*)obj->GetTypeDef();
+    MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
+                                                  obj_path, true); // yes warn..
+    if(md) {
+      mbr_base = MemberDef::GetOff_static(obj, net_base_off, net_mbr_off);
+      md->type->SetValStr(sval, mbr_base, NULL, md);
     }
     break;
-  case PROG_RUN:
-    if(program) {
-      program->Call(NULL);
+  }
+  case DATA_CELL: {
+    String sval = val;
+    SetVarsString(prod, sval);
+    DataTable* dt = (DataTable*)dest.ptr();
+    DataCol* dc = dt->GetColData(dt_col_name);
+    if(dc) {
+      if(dc->isMatrix()) {
+        dc->SetMatrixFlatVal(sval, dt_row, dt_cell);
+      }
+      else {
+        dc->SetVal(sval, dt_row);
+      }
     }
     break;
+  }
   }
   return true;                  // todo: need error condition tracking etc
 }
