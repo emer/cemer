@@ -182,11 +182,10 @@ public:
 
   const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
   // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
-   bool          SetValAsVar(const Variant& val, int row)
+  bool          SetValAsVar(const Variant& val, int row)
   { return SetValAsVar_impl(val, row, 0);}
   // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
-  //  const String  GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
-  const String  GetValAsString(int row) const;
+  const String  GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
   // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool          SetValAsString(const String& val, int row)
   {return SetValAsString_impl(val, row, 0);}
@@ -398,7 +397,6 @@ protected:
                                     int d4=0) const;
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat
   virtual const Variant GetValAsVar_impl(int row, int cell) const;
-  virtual const Variant GetValAsVar_impl(int row, int cell, bool useFilter) const;
   virtual const String  GetValAsString_impl(int row, int cell) const;
   virtual double        GetValAsDouble_impl(int row, int cell) const { return 0.0; }
   virtual float         GetValAsFloat_impl(int row, int cell) const { return 0.0f; }

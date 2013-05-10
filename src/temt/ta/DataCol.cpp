@@ -459,17 +459,25 @@ String DataCol::GetDisplayName() const {
 int DataCol::IndexOfEl_Flat(int row, int cell) const {
   if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
                "cell index out of range")) return -1;
-  const DataTable* tab = dataTable();
-  if(tab) {
-    if(row < 0) row = rows() + row; // abs row, if request was from end
-#ifdef OLD_DT_IDX_MODE
-    if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
-#else
-    if(TestError((row < 0 || row >= tab->rows_total), "IndexOfEl_Flat", "row out of range")) return -1;
-#endif
-    return (row * cell_size()) + cell;
+  if(row < 0) row = rows() + row; // abs row, if request was from end
+  if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
+  return (row * cell_size()) + cell;
   }
-}
+
+//int DataCol::IndexOfEl_Flat(int row, int cell) const {
+//  if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
+//               "cell index out of range")) return -1;
+//  const DataTable* tab = dataTable();
+//  if(tab) {
+//    if(row < 0) row = rows() + row; // abs row, if request was from end
+//#ifdef OLD_DT_IDX_MODE
+//    if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
+//#else
+//    if(TestError((row < 0 || row >= tab->rows_total), "IndexOfEl_Flat", "row out of range")) return -1;
+//#endif
+//    return (row * cell_size()) + cell;
+//  }
+//}
 
 int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3, int d4) const {
   // note: any extra args will be 0 and ignored.  we're just getting index into row 0
@@ -491,10 +499,10 @@ const Variant DataCol::GetValAsVar_impl(int row, int cell) const {
   return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
 }
 
-const Variant DataCol::GetValAsVar_impl(int row, int cell, bool useFilter) const {
-  const taMatrix* ar = AR(); //cache, and preserves constness
-  return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
-}
+//const Variant DataCol::GetValAsVar_impl(int row, int cell, bool useFilter) const {
+//  const taMatrix* ar = AR(); //cache, and preserves constness
+//  return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
+//}
 
 bool DataCol::SetValAsString_impl(const String& val, int row, int cell) {
   AR()->SetFmStr_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
@@ -517,17 +525,6 @@ bool DataCol::InitValsToRowNo()  {
     SetValAsInt(i, i);
   }
   return true;
-}
-
-const String  DataCol::GetValAsString(int row) const {
-  DataTable* dt = dataTable();
-#ifdef OLD_DT_IDX_MODE
-  return GetValAsString_impl(row, 0);
-#else
-  return GetValAsString_impl(row, 0);
-//  int true_row = dt->row_indexes[row];
-//  return GetValAsString_impl(true_row, 0);
-#endif
 }
 
 ////////////////////
