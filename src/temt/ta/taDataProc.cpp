@@ -474,18 +474,20 @@ void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 
   for (int i=0;i<n_rows;i++)
    dt->row_indexes[i] = order[i];
-
-//  taMisc::DebugInfo("row_indexes", dt->row_indexes.PrintStr()); // all containers can print themselves
 }
 
 // CompareCellValues - called by the sorting thru index methods
 bool taDataProc::CompareCellValues(DataTable* dt, int i, int pivot, bool isLess)
 {
+  if (i == pivot)
+    return false;
+
+
   DataCol* dc = dt->data.FastEl(0);
   Variant va = dc->GetValAsVar(i);
   Variant vb = dc->GetValAsVar(pivot);
 
-  if (isLess) {
+    if (isLess) {
       if (va < vb)
         return true;
     }

@@ -1312,7 +1312,11 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
     return NULL;
   }
   rval->Init(); // asserts geom
+#ifdef OLD_DT_IDX_MODE
+  rval->EnforceRows(rows);      // new guys always get same # of rows as current table
+#else
   rval->EnforceRows(rows_total);      // new guys always get same # of rows as current table
+#endif
   StructUpdate(false);
   return rval;
 }
@@ -1924,8 +1928,16 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
   }
   rows -= n_rows;
 #else  // not actually removing rows - just removing from this of visible rows
-  row_indexes.RemoveIdx(st_row, n_rows);
-  rows -= n_rows;
+
+  bool rval = false;
+  for(int i=0;i<data.size;i++) {
+      DataCol* ar = data.FastEl(i);
+      rval = ar->EnforceRows(rows_total);
+    }
+  if (rval) {
+	  row_indexes.RemoveIdx(st_row, n_rows);
+	  rows -= n_rows;		// the number of rows not hidden by filtering or hiding
+  }
 #endif
   if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);

@@ -184,7 +184,9 @@ int DataCol::imageComponents() const {
 
 void DataCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+#ifdef OLD_DT_IDX_MODE
   Init();
+#endif
 }
 
 void DataCol::SigEmit(int sls, void* op1, void* op2) {
@@ -469,30 +471,6 @@ int DataCol::IndexOfEl_Flat(int row, int cell) const {
   }
 }
 
-// useFilter - if useFilter is true access thru the row_indexes array (i.e. the filtered view)
-//int DataCol::IndexOfEl_Flat(int row, int cell, bool useFilter) const {
-//  if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
-//               "cell index out of range")) return -1;
-//  const DataTable* tab = dataTable();
-//  if(tab) {
-//#ifdef OLD_DT_IDX_MODE
-//    if(row < 0) row = rows() + row; // abs row, if request was from end
-//    if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
-//    return (row * cell_size()) + cell;
-//#else
-//    const int idx_sz = tab->row_indexes.size;
-//    const int total_rows = tab->rows_total;
-//    if(row < 0) row = idx_sz + row; // abs row, if request was from end
-//    if(TestError((row < 0 || row >= total_rows), "IndexOfEl_Flat", "row out of range")) return -1;
-//    if (useFilter)
-//    	return (tab->row_indexes[row] * cell_size()) + cell;
-//    else
-//    	return (row * cell_size()) + cell;
-//
-//#endif
-//  }
-//}
-
 int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3, int d4) const {
   // note: any extra args will be 0 and ignored.  we're just getting index into row 0
   // so we don't care where the row appears
@@ -515,7 +493,6 @@ const Variant DataCol::GetValAsVar_impl(int row, int cell) const {
 
 const Variant DataCol::GetValAsVar_impl(int row, int cell, bool useFilter) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
-//  return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell, false));
   return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
 }
 
