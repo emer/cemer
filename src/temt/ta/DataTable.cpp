@@ -3185,12 +3185,57 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     else sp->order = DataSortEl::DESCENDING;
   }
 
-#ifdef OLD_DT_IDX_MODE
   taDataProc::Sort_impl(this, &spec);
-#else
-  taDataProc::SortThruIndex(this, &spec);
-#endif
 }
+
+#ifndef OLD_DT_IDX_MODE
+void DataTable::SortThruIndex(DataCol* col1, bool ascending1,
+    DataCol* col2, bool ascending2,
+    DataCol* col3, bool ascending3,
+    DataCol* col4, bool ascending4,
+    DataCol* col5, bool ascending5,
+    DataCol* col6, bool ascending6) {
+
+  DataSortSpec spec;
+  if(col1) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col1->name;
+    if(ascending1) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col2) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col2->name;
+    if(ascending2) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col3) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col3->name;
+    if(ascending3) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col4) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col4->name;
+    if(ascending4) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col5) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col5->name;
+    if(ascending5) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col6) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col6->name;
+    if(ascending6) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  taDataProc::SortThruIndex(this, &spec);
+}
+#endif
 
 bool DataTable::Filter(const String& filter_expr) {
   if(TestError(filter_expr.empty(), "Filter",
@@ -3218,12 +3263,53 @@ bool DataTable::Filter(const String& filter_expr) {
   code_str += "this.RemoveRows(row,1);\n";                   // else remove
   code_str += "}\n";
   code_str += "this.DataUpdate(false);\n";
+
   bool ok = calc_script->CompileCode(code_str);
   if(TestError(!ok, "Filter", "error in filter expression, see console for errors"))
     return false;
   calc_script->Run();
   return true;
 }
+
+#ifndef OLD_DT_IDX_MODE
+// filtering that only affects the view
+bool DataTable::FilterThruIndex(const String& filter_expr) {
+  if(TestError(filter_expr.empty(), "Filter",
+      "empty filter expression -- must specify a filter condition!"))
+    return false;
+  InitCalcScript();
+  calc_script->ClearAll();
+
+  STRING_BUF(code_str, 2048);
+  code_str += "this.DataUpdate(true);\n";
+  code_str += "for(int row=this.rows-1;row >= 0; row--) {\n";
+  for(int i=0;i<data.size; i++) {
+    DataCol* da = data.FastEl(i);
+    // only gen if possibly used
+    if(!filter_expr.contains(da->name)) continue;
+    code_str += "int dx;\n";
+    code_str += "dx = row_indexes[row];\n";    // get the "actual" row
+    if(da->is_matrix)
+      code_str += "taMatrix* " + da->name + " = this.GetValAsMatrix(" +
+      String(i) + ", dx);\n";
+    else
+      code_str += "Variant " + da->name + " = this.GetValAsVar(" +
+      String(i) + ", dx);\n";
+  }
+
+  code_str += "if(" + filter_expr + ") continue;\n"; // if ok, continue
+  code_str += "this.row_indexes.RemoveIdx(row,1);\n";     // else remove index
+  code_str += "this.rows--;\n";
+  code_str += "}\n";
+  code_str += "this.DataUpdate(false);\n";
+
+  bool ok = calc_script->CompileCode(code_str);
+  if(TestError(!ok, "Filter", "error in filter expression, see console for errors"))
+    return false;
+  calc_script->Run();
+  return true;
+}
+#endif
 
 bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
     DataCol* col2, DataCol* col3, DataCol* col4) {

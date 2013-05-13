@@ -90,7 +90,7 @@ public:
   /////////////////////////////////////////////////////////
   //    Main datatable interface:
   int                   rows;
-  // #READ_ONLY #NO_SAVE #SHOW The number of rows of data (that are visible - after filtering/removing)
+  // #GUI_READ_ONLY #NO_SAVE #SHOW The number of rows of data (that are visible - after filtering/removing)
   int                   rows_total;
   // #READ_ONLY #NO_SAVE #HIDDEN The number of rows of actual data (visible or hidden)
   DataTableCols         data;
@@ -102,8 +102,9 @@ public:
   String                auto_load_file;
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
-  int_Array             row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
 
+  int_Array             row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
+  // #READ_ONLY #HIDDEN The number of rows of actual data (visible or hidden)
   cssProgSpace*         calc_script;
   // #IGNORE script object for performing column calculations
   taFiler*              log_file;
@@ -218,7 +219,7 @@ public:
                     int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
 
-  virtual void    LoadAnyData_stream(std::istream &stream, bool append, bool has_header_line = true);
+  virtual void          LoadAnyData_stream(std::istream &stream, bool append, bool has_header_line = true);
   // #CAT_File Load any kind of data from an existing stream.  File format, delimitation, and quoting are auto-detected, but whether the file has a header line or not must be set explicitly.  Set append=false to overwrite any existing data.
 
   virtual void          LoadAnyData_gui(const String& fname, bool headers = true)
@@ -772,8 +773,7 @@ public:
   // #CAT_Calc perform calculations for given row of data (calls InitCalcScript to make sure)
 
   /////////////////////////////////////////////////////////
-  // core data processing -- see taDataProc for more elaborate options
-
+  // core data processing -- see taDataProc for more elaborate option
   virtual void          Sort(const Variant& col1, bool ascending1 = true,
                              Variant col2 = -1, bool ascending2 = true,
                              Variant col3 = -1, bool ascending3 = true,
@@ -789,14 +789,27 @@ public:
                                     const String& col6 = "", bool ascending6 = true);
   // #EXPERT #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual void          SortCol(DataCol* col1, bool ascending1 = true,
-                                DataCol* col2 = NULL, bool ascending2 = true,
-                                DataCol* col3 = NULL, bool ascending3 = true,
-                                DataCol* col4 = NULL, bool ascending4 = true,
-                                DataCol* col5 = NULL, bool ascending5 = true,
-                                DataCol* col6 = NULL, bool ascending6 = true);
+                                 DataCol* col2 = NULL, bool ascending2 = true,
+                                 DataCol* col3 = NULL, bool ascending3 = true,
+                                 DataCol* col4 = NULL, bool ascending4 = true,
+                                 DataCol* col5 = NULL, bool ascending5 = true,
+                                 DataCol* col6 = NULL, bool ascending6 = true);
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+#ifndef OLD_DT_IDX_MODE
+  virtual void          SortThruIndex(DataCol* col1, bool ascending1 = true,
+                                 DataCol* col2 = NULL, bool ascending2 = true,
+                                 DataCol* col3 = NULL, bool ascending3 = true,
+                                 DataCol* col4 = NULL, bool ascending4 = true,
+                                 DataCol* col5 = NULL, bool ascending5 = true,
+                                 DataCol* col6 = NULL, bool ascending6 = true);
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_SortIndex #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE this sorting only modifies the view NOT the data
+#endif
   virtual bool          Filter(const String& filter_expr);
-  // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current colum values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current column values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+#ifndef OLD_DT_IDX_MODE
+  virtual bool          FilterThruIndex(const String& filter_expr);
+  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_FilterIndex
+#endif
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
