@@ -2653,7 +2653,7 @@ LeabraProject .projects["actr"] {
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="2";
+	      val="=num1";
 	     };
 	    };
 	   };
@@ -2684,7 +2684,7 @@ LeabraProject .projects["actr"] {
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="2";
+	      val="=num1";
 	     };
 	     ActrSlot @["second"] {
 	      name="second";

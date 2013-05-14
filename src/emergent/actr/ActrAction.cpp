@@ -83,8 +83,8 @@ void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
   switch(action) {
   case UPDATE:
   case REQUEST:
-    if(CheckError(!chunk.chunk_type, quiet, rval,
-                  "chunk type not set for update or request"));
+    CheckError(!chunk.chunk_type, quiet, rval,
+               "chunk type not set for update or request");
     break;
   case CLEAR:
     break;
