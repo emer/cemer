@@ -78,32 +78,30 @@ public:
   ///////////////////////////////////////////////////////////////////
   // reordering functions
 
+  // these move the data
   static bool  Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order sort data from src into dest according to sorting specifications in spec; if src == dest, then it is sorted in-place, otherwise, dest is completely overwritten, and if dest is NULL, a new one is created in proj.data.AnalysisData
-  static bool   SortInPlace(DataTable* dt, DataSortSpec* spec);
+  static bool  SortInPlace(DataTable* dt, DataSortSpec* spec);
   // #CAT_Order #MENU_BUTTON #MENU_ON_Order sort given data table in place (modifies data table) according to sorting specifications in spec
-
   static int   Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
            DataSortSpec* spec);
   // #IGNORE helper function for sorting: compare values -1 = a is < b; 1 = a > b; 0 = a == b
-  static bool   Sort_impl(DataTable* dt, DataSortSpec* spec);
+  static bool  Sort_impl(DataTable* dt, DataSortSpec* spec);
   // #IGNORE actually perform sort on data table using specs
 
-  static void   SortThruIndex(DataTable* dt, DataSortSpec* spec);
-  //
+  // these only reorder the index that keeps track of the tables visible items
+  static void  SortThruIndex(DataTable* dt, DataSortSpec* spec);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order
+  static bool  SortThruIndex_Compare(DataTable* dt, DataSortSpec* spec, int i, int pivot, bool isLess);
+  // #IGNORE helper function for sorting: compare values
+  static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right);
+  // #IGNORE sort the table index based on spec
 
-  static bool   CompareCellValues(DataTable* dt, int i, int pivot, bool isLess);
-  //
-
-  static void   SortThruIndex_impl(DataTable* dt, int* arr, int left, int right);
-  //
-
+  // these move the data
   static bool  Permute(DataTable* dest, DataTable* src);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON permute (randomly reorder) the rows of the data table -- note that it is typically much more efficient to just use a permuted index to access the data rather than physically permuting the items -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
-
   static bool  Group(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON group data from src into dest according to grouping specifications in spec (if dest is NULL, a new one is created in proj.data.AnalysisData) -- if src == dest, then a temp dest is used and results are copied back to src (i.e., in-place operation)
-
   static bool  Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec);
   // #IGNORE helper function to do grouping when there are no GROUP items
   static bool  Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec,

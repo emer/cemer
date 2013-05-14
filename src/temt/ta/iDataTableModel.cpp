@@ -76,11 +76,7 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
       return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
     else {
       int dx;
-#ifdef OLD_DT_IDX_MODE
       if(m_dt->idx(index.row(), dx))
-#else
-      if(m_dt->idx(index.row(), dx, true))
-#endif
         return col->GetValAsString(dx);
       else
         return QVariant();      // nil

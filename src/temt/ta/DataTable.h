@@ -90,7 +90,7 @@ public:
   /////////////////////////////////////////////////////////
   //    Main datatable interface:
   int                   rows;
-  // #GUI_READ_ONLY #NO_SAVE #SHOW The number of rows of data (that are visible - after filtering/removing)
+  // #READ_ONLY #NO_SAVE #SHOW The number of rows of data (that are visible - after filtering/removing)
   int                   rows_total;
   // #READ_ONLY #NO_SAVE #HIDDEN The number of rows of actual data (visible or hidden)
   DataTableCols         data;
@@ -255,6 +255,14 @@ public:
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
 // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
 
+  virtual void          ResetView();
+#ifndef OLD_DT_IDX_MODE
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Reset_View #FROM_GROUP_data #NULL_OK Unfilter the view (i.e. show all rows)
+#endif
+  virtual bool          SaveFilteredViewAs(DataTable* dt);
+#ifndef OLD_DT_IDX_MODE
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Save_View_As Saves the current filtered view to a new data table
+#endif
 
   ////////////////////////////////////////////////////////////
   //    protected Load/Save and other implementation code
@@ -433,16 +441,17 @@ public:
 
   virtual bool          hasData(int col, int row);
   // #CAT_Rows true if data at that cell
-  bool                  idx(int row_num, int& act_idx, bool useFilter = false) const;
+//  bool                  idx(int row_num, int& act_idx, bool useFilter = false) const;
+  bool                  idx(int row_num, int& act_idx) const;
   // #CAT_Rows returns the actual row of data from the table - set useFilter to true to go thru row_indexes
   inline bool           idx_err(int row_num, int& act_idx,
-                                 bool quiet = false, bool useFilter = false) const {
-                                 bool rval = idx(row_num, act_idx, useFilter);
+                                 bool quiet = false) const {
+                                 bool rval = idx(row_num, act_idx);
      if(!quiet) TestError(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
   inline bool           idx_warn(int row_num, int& act_idx,
-		                         bool quiet = false, bool useFilter = false) const {
-	                             bool rval = idx(row_num, act_idx, useFilter);
+		                         bool quiet = false) const {
+	                             bool rval = idx(row_num, act_idx);
                                  if(!quiet) TestWarning(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE
   virtual bool          RowInRangeNormalize(int& row);
@@ -780,7 +789,11 @@ public:
                              Variant col4 = -1, bool ascending4 = true,
                              Variant col5 = -1, bool ascending5 = true,
                              Variant col6 = -1, bool ascending6 = true);
+#ifdef OLD_DT_IDX_MODE
   // #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+#else
+  // #CAT_DataProc sort table according to selected columns of data
+#endif
   virtual void          SortColName(const String& col1, bool ascending1 = true,
                                     const String& col2 = "", bool ascending2 = true,
                                     const String& col3 = "", bool ascending3 = true,
@@ -794,21 +807,16 @@ public:
                                  DataCol* col4 = NULL, bool ascending4 = true,
                                  DataCol* col5 = NULL, bool ascending5 = true,
                                  DataCol* col6 = NULL, bool ascending6 = true);
+#ifdef OLD_DT_IDX_MODE
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
-#ifndef OLD_DT_IDX_MODE
-  virtual void          SortThruIndex(DataCol* col1, bool ascending1 = true,
-                                 DataCol* col2 = NULL, bool ascending2 = true,
-                                 DataCol* col3 = NULL, bool ascending3 = true,
-                                 DataCol* col4 = NULL, bool ascending4 = true,
-                                 DataCol* col5 = NULL, bool ascending5 = true,
-                                 DataCol* col6 = NULL, bool ascending6 = true);
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_SortIndex #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE this sorting only modifies the view NOT the data
+#else
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data
 #endif
   virtual bool          Filter(const String& filter_expr);
+#ifdef OLD_DT_IDX_MODE
   // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current column values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
-#ifndef OLD_DT_IDX_MODE
-  virtual bool          FilterThruIndex(const String& filter_expr);
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_FilterIndex
+#else
+  // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is hidden.  Refer to current columns by name.  NOTE - use the "Reset View" menu item to restore the view and see all rows
 #endif
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,

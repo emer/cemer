@@ -462,54 +462,66 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
 // SortThruIndex - sorts the currently visible data table rows
 void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 {
+  dt->StructUpdate(true);
+
   int n_rows = dt->row_indexes.size;
-
-  // create copy of row_indexes as simple int array
-  int order[n_rows];
-
+  int order[n_rows];  // create copy of row_indexes as simple int array
   for (int i=0; i<n_rows; i++)
     order[i] = dt->row_indexes[i];
 
-  SortThruIndex_impl(dt, order, 0, n_rows-1);
+  spec->GetColumns(dt);
+  SortThruIndex_impl(dt, spec, order, 0, n_rows-1);
+  spec->ClearColumns();
 
-  for (int i=0;i<n_rows;i++)
+  for (int i=0;i<n_rows;i++)  // copy the new order into the data tables index array
    dt->row_indexes[i] = order[i];
+
+  dt->StructUpdate(false);
 }
 
-// CompareCellValues - called by the sorting thru index methods
-bool taDataProc::CompareCellValues(DataTable* dt, int i, int pivot, bool isLess)
-{
-  if (i == pivot)
-    return false;
+bool taDataProc::SortThruIndex_Compare(DataTable* dt, DataSortSpec* spec, int i, int pivot, bool isLess) {
+  if(!spec) { taMisc::Error("taDataProc::SortThruIndex_Compare: DataTable.current_sort_spec is NULL"); return 0; }
 
+  for(int k=0;k<spec->ops.size; k++) {    // compare each key and return on first non-equal comparison
+    DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(k);
+    if(ds->col_idx < 0) continue;
 
-  DataCol* dc = dt->data.FastEl(0);
-  Variant va = dc->GetValAsVar(i);
-  Variant vb = dc->GetValAsVar(pivot);
+    DataCol* dc = dt->data.FastEl(ds->col_idx);
+    Variant va = dc->GetValAsVar(i);
+    Variant vb = dc->GetValAsVar(pivot);
 
-    if (isLess) {
-      if (va < vb)
-        return true;
+    if(ds->order == DataSortEl::ASCENDING) {
+      if (isLess) {
+        if (va < vb) return true;
+      }
+      else {
+        if (va > vb) return true;
+      }
     }
-    else {
-      if (va > vb)
-        return true;
+    else {  // descending
+      if (isLess) {
+        if (va > vb) return true;
+      }
+      else {
+        if (va < vb) return true;
+      }
     }
-    return false;
- }
+  }
+  return false; // must be equal
+}
 
-// SortThruIndex_impl - An implementation of quicksort that sorts via indirection and
-// calls to a compare function
-void taDataProc::SortThruIndex_impl(DataTable* dt, int arr[], int left, int right) {
+//SortThruIndex_impl - An implementation of quicksort that sorts via indirection and
+//calls to a compare function
+void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[], int left, int right) {
   int i = left, j = right;
   int tmp;
   int pivotIndex = (left + right) / 2;
 
   /* partition */
   while (i <= j) {
-    while (CompareCellValues(dt, arr[i], arr[pivotIndex], true))
+    while (SortThruIndex_Compare(dt, spec, arr[i], arr[pivotIndex], true))
       i++;
-    while (CompareCellValues(dt, arr[j], arr[pivotIndex], false))
+    while (SortThruIndex_Compare(dt, spec, arr[j], arr[pivotIndex], false))
       j--;
     if (i <= j) {
       tmp = arr[i];
@@ -522,13 +534,14 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, int arr[], int left, int righ
 
   /* recursion */
   if (left < j) {
-    SortThruIndex_impl(dt, arr, left, j);
+    SortThruIndex_impl(dt, spec, arr, left, j);
   }
   if (i < right) {
-    SortThruIndex_impl(dt, arr, i, right);
+    SortThruIndex_impl(dt, spec, arr, i, right);
   }
 }
 
+// this version makes a duplicate data table in the permuted order
 bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   if(!src) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
   bool in_place_req = false;
