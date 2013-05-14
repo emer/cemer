@@ -3225,14 +3225,12 @@ bool DataTable::SetValAsVar(const Variant& val, const Variant& col, int row) {
       DataCol* da = data.FastEl(i);
       // only gen if possibly used
       if(!filter_expr.contains(da->name)) continue;
-      code_str += "int dx;\n";
-      code_str += "idx(row, dx);\n";
       if(da->is_matrix)
         code_str += "taMatrix* " + da->name + " = this.GetValAsMatrix(" +
-        String(i) + ", dx);\n";
+        String(i) + ", row);\n";
       else
         code_str += "Variant " + da->name + " = this.GetValAsVar(" +
-        String(i) + ", dx);\n";
+        String(i) + ", row);\n";
     }
 
     code_str += "if(" + filter_expr + ") continue;\n"; // if ok, continue
