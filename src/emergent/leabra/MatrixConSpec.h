@@ -30,6 +30,7 @@ class E_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation -- for both Matrix_Go and NoGo connections
 INHERITED(LeabraConSpec)
 public:
+  float         dwt_remain;      // how much of the dwt value remains after the weights are updated (i.e., every time there is a PV trial)
 
   inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
     // do NOT do this under any circumstances!!
@@ -46,7 +47,6 @@ public:
     LeabraNetwork* net = (LeabraNetwork*)su->own_net();
     if(ignore_unlearnable && net && net->unlearnable_trial) return;
 
-    // note; we do not care about unlearnable trial
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
@@ -75,8 +75,8 @@ public:
       cn->lwt = SigFmLinWt(lin_wt + dwt);
       Compute_EffWt(cn);
       cn->pdw = dwt;
+      cn->dwt *= dwt_remain;    // gradually dissappears
     }
-    // note: dwt NOT reset at this point -- allows multiple PV dav mods of same dwt
   }
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {

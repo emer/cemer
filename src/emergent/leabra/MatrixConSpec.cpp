@@ -17,6 +17,7 @@
 
 void MatrixConSpec::Initialize() {
   Defaults_init();
+  dwt_remain = 0.5;
 }
 
 void MatrixConSpec::Defaults_init() {
