@@ -338,7 +338,7 @@ inline void LeabraConSpec::Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit
 //     Compute dWt Norm: receiver based 
 
 inline void LeabraConSpec::Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru) {
-  if(!learn || !wt_sig.dwt_norm) return;
+  if(!learn || !wt_sig.dwt_norm || cg->size < 2) return;
   float sum_dwt = 0.0f;
   for(int i=0; i<cg->size; i++) {
     LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
