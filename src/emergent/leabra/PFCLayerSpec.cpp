@@ -172,12 +172,23 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   CopySNrThalGpData(lay, net);
+  LeabraLayer* snr_lay = SNrThalLayer(lay);
+  if(!snr_lay) return;
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    if(!gpd->go_fired_trial) {  // reset activation after 
+    bool just_fired = false;
+    if(snrls->snrthal.out_at_p) {
+      just_fired = (gpd->mnt_count == 1);
+    }
+    else {
+      just_fired = gpd->go_fired_trial;
+    }
+    if(!just_fired) {  // reset activation after 
       for(int i=0;i<nunits;i++) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;

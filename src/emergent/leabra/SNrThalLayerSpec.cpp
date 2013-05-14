@@ -23,6 +23,7 @@
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
+  out_at_p = false;
   min_cycle = 15;
 }
 
@@ -150,6 +151,11 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     lay->gp_geom.n = snr_stripes;
   }
 
+  if(lay->CheckError(((gating_types & OUTPUT) && (gating_types != OUTPUT) &&
+                      !snrthal.out_at_p), quiet, rval,
+                     "SNrThalLayer has OUTPUT gating combined with other gating types, but out_at_p is not set -- out_at_p is only thing that makes sense for this case, so I switched it for you.")) {
+    snrthal.out_at_p = true;
+  }
   return true;
 }
 
@@ -301,7 +307,7 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
 
 void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_CycleStats(lay, net);
-  if(gating_types & OUTPUT) { // everything else is maint gating 
+  if(!snrthal.out_at_p && gating_types & OUTPUT) { // everything else is maint gating 
     Compute_GateActs_Output(lay, net);
   }
 }
@@ -309,7 +315,7 @@ void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) 
 void SNrThalLayerSpec::PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle_Pre(lay, net);
   if(net->phase_no == 1) {
-    if(!(gating_types & OUTPUT)) { // everything else is maint gating 
+    if(!(!snrthal.out_at_p && gating_types & OUTPUT)) { // everything else is maint gating 
       Compute_GateActs_Maint(lay, net);
     }
   }

@@ -31,7 +31,8 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active before the mid minus cycle will actually fire
-  int           min_cycle;              // #DEF_10:25 #MIN_0 minimum cycle for output gating -- cannot gate before this cycle
+  bool          out_at_p;               // compute output gating at end of plus phase, just like maint gating -- use this when OUTPUT other stripes are combined to compete within the same snrthal -- otherwise output gating happens during minus phase independent of maint gating in its own snrthal, which allows for a reaction time and doesn't require double trials for output
+  int           min_cycle;              // #DEF_10:25 #MIN_0 #CONDSHOW_OFF_out_at_p minimum cycle for output gating -- cannot gate before this cycle -- only when out_at_p is off
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
