@@ -25,6 +25,7 @@
 #include <taDataProc>
 #include <DataGroupSpec>
 #include <DataGroupEl>
+#include <DataTable_Group>
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -2251,14 +2252,22 @@ bool DataTable::SetValAsVar(const Variant& val, const Variant& col, int row) {
     StructUpdate(false);
   }
 
-  bool DataTable::SaveFilteredViewAs(DataTable* dt) {
-    // create an empty table with the same columns
-     dt->StructUpdate(true);
-     DataTable flattend_table(true);
-     taBase::Own(flattend_table, NULL);    // activates initlinks..
-     flattend_table.Copy(*dt);
+  bool DataTable::SaveFilteredViewAs(const String& table_name) {
+    DataTable_Group* group = GET_OWNER(this, DataTable_Group);
+    DataTable* flattened_table = group->NewEl(1, NULL);   // add a new data table to the group
+    flattened_table->Copy_NoData(*this);
+    flattened_table->SetName(table_name);
 
-     dt->StructUpdate(true);
+    StructUpdate(true);
+    flattened_table->AddRows(this->rows);
+    for (int row=0; row < this->rows; row++) {
+      int dx;
+      if (this->idx(row, dx)) {
+        flattened_table->CopyFromRow(row, *this, dx);
+      }
+    }
+    StructUpdate(false);
+
     return true;
   }
 
