@@ -53,10 +53,3 @@ void MatrixUnitSpec::InitLinks() {
   bias_spec.type = &TA_MatrixBiasSpec;
 }
 
-void MatrixUnitSpec::Compute_Weights(Unit* u, Network* nt, int thread_no) {
-  LeabraNetwork* net = (LeabraNetwork*)nt;
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  if(!er_avail) return; // ONLY update weights on pv trials!!
-  inherited::Compute_Weights(u, net, thread_no);
-}
-

@@ -30,9 +30,6 @@ class E_API MatrixUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
 
-  // only call compute weights on pv trials!
-  override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
-
   void	InitLinks();
   SIMPLE_COPY(MatrixUnitSpec);
   TA_BASEFUNS(MatrixUnitSpec);
