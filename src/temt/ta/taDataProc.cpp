@@ -464,18 +464,20 @@ void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 {
   dt->StructUpdate(true);
 
-  int n_rows = dt->row_indexes.size;
-  int order[n_rows];  // create copy of row_indexes as simple int array
-  for (int i=0; i<n_rows; i++)
+  const int n_rows = dt->row_indexes.size;
+  int *order = new (std::nothrow) int[n_rows];
+  //int order[n_rows];  // create copy of row_indexes as simple int array
+  for (int i=0; i < (sizeof(order)/sizeof(int)); i++)
     order[i] = dt->row_indexes[i];
 
   spec->GetColumns(dt);
   SortThruIndex_impl(dt, spec, order, 0, n_rows-1);
   spec->ClearColumns();
 
-  for (int i=0;i<n_rows;i++)  // copy the new order into the data tables index array
+  for (int i=0; i < (sizeof(order)/sizeof(int)); i++)  // copy the new order into the data tables index array
    dt->row_indexes[i] = order[i];
 
+  delete[] order;
   dt->StructUpdate(false);
 }
 
