@@ -60,7 +60,15 @@ else (WIN32)
     SET(CPACK_GENERATOR "PackageMaker")
     SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/emergent_32x32.png")
     SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-mac")
+    # the following is necessary for having a DESTINATION /Applications
+    # which is an absolute path, instead of the usual relative path
+    # everything seems to otherwise work the same.
+    SET(CPACK_SET_DESTDIR "ON")
+    INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/install_mac_app/emergent.app
+      USE_SOURCE_PERMISSIONS
+      DESTINATION /Applications)
   else (APPLE)
+    # LINUX
     SET(CPACK_GENERATOR "DEB")
     SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, zlib1g-dev, libode-sp-dev, libpng-dev, libjpeg-dev, libquarter, libncurses-dev, libsvn-dev")
     # CPACK_DEBIAN_PACKAGE_ARCHITECTURE should get set automatically by dpkg --print-architecture
