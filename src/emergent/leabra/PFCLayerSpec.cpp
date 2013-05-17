@@ -69,7 +69,7 @@ void PFCLayerSpec::HelpConfig() {
   String help = "PFCLayerSpec Computation:\n\
  PFC maintenance functions just like LeabraTI, except updating of deep context\n\
  depends on BG Gating.\n\
- PFC output layers are gated by mid_minus_cycle, which enables units to get fully active.\n\
+ PFC output layers are gated in min..max cycle window in SNrThalLayerSpec.\n\
  \nPFCLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure layers.\n\
  - Must recv SNrThalLayerSpec marker connection\n\

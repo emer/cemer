@@ -25,6 +25,7 @@ void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   out_at_p = false;
   min_cycle = 15;
+  max_cycle = 40;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -231,7 +232,7 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
     if(u->lesioned()) continue;
 
-    if(net->ct_cycle > net->mid_minus_cycle) {
+    if(net->ct_cycle > snrthal.max_cycle) {
       if(!gpd->go_fired_trial)
         u->act_eq = 0.0f;
       continue;
@@ -254,7 +255,7 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
     }
   }
 
-  if(net->ct_cycle > net->mid_minus_cycle) {
+  if(net->ct_cycle > snrthal.max_cycle) {
     return;
   }
 

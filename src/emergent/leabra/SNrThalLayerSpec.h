@@ -30,9 +30,10 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
 public:
-  float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active before the mid minus cycle will actually fire
+  float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active will fire
   bool          out_at_p;               // compute output gating at end of plus phase, just like maint gating -- use this when OUTPUT other stripes are combined to compete within the same snrthal -- otherwise output gating happens during minus phase independent of maint gating in its own snrthal, which allows for a reaction time and doesn't require double trials for output
-  int           min_cycle;              // #DEF_10:25 #MIN_0 #CONDSHOW_OFF_out_at_p minimum cycle for output gating -- cannot gate before this cycle -- only when out_at_p is off
+  int           min_cycle;              // #DEF_10:25 #MIN_0 #CONDSHOW_OFF_out_at_p minimum cycle for output gating -- cannot output gate before this cycle -- only when out_at_p is off -- otherwise all gating happens at end of plus phase
+  int           max_cycle;              // #DEF_20:40 #MIN_0 #CONDSHOW_OFF_out_at_p maximum cycle for output gating -- cannot output gate after this cycle -- only when out_at_p is off -- otherwise all gating happens at end of plus phase
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
