@@ -494,6 +494,7 @@ QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
 
 void taiMisc::OnQuitting_impl(CancelOp& cancel_op) {
 // called when quitting -- does all saves
+  if(!taMisc::interactive) return;
   ResolveEditChanges(cancel_op);
   if (cancel_op == CO_CANCEL) return;
   ResolveViewerChanges(cancel_op);

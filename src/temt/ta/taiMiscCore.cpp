@@ -56,8 +56,9 @@ void taiMiscCore::Quit(CancelOp cancel_op) {
   if(is_quitting) return;
   // good place to save config, regardless what happens
   is_quitting = true;
-  if (tabMisc::root)
+  if (tabMisc::root && taMisc::interactive) {
     tabMisc::root->Save();
+  }
 
   taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ?
     taMisc::QF_FORCE_QUIT : taMisc::QF_USER_QUIT;
