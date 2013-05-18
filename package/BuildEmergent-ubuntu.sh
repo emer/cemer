@@ -1,32 +1,35 @@
 #!/bin/bash
 # This script builds debian packages for emergent.
-# It has been tested on Ubuntu 10.04, 10.10, and 11.04.
+# It has been tested on Ubuntu 10.04, 10.10, 11.04, 11.10, 12.04, and 12.10.
 set -e
 
 # Make sure we're on the right kind of Linux.
 # (could use /usr/bin/lsb_release to get this info)
 NEED_BACKPORT="n"
-ISSUE="Ubuntu 12.10"
+ISSUE="Ubuntu 13.04"
 if ! grep -q "$ISSUE" /etc/issue; then
-  ISSUE="Ubuntu 12.04"
+  ISSUE="Ubuntu 12.10"
   if ! grep -q "$ISSUE" /etc/issue; then
-    ISSUE="Ubuntu 11.10"
+    ISSUE="Ubuntu 12.04"
     if ! grep -q "$ISSUE" /etc/issue; then
-      ISSUE="Ubuntu 11.04"
+      ISSUE="Ubuntu 11.10"
       if ! grep -q "$ISSUE" /etc/issue; then
-        # Older releases need the backports repo for cmake.
-        NEED_BACKPORT="y"
-        ISSUE="Ubuntu 10.10"
+        ISSUE="Ubuntu 11.04"
         if ! grep -q "$ISSUE" /etc/issue; then
-          ISSUE="Ubuntu 10.04"
+          # Older releases need the backports repo for cmake.
+          NEED_BACKPORT="y"
+          ISSUE="Ubuntu 10.10"
           if ! grep -q "$ISSUE" /etc/issue; then
-            echo "ERROR: This script should be run on ${ISSUE} or higher"
-            exit
+            ISSUE="Ubuntu 10.04"
+            if ! grep -q "$ISSUE" /etc/issue; then
+              echo "ERROR: This script should be run on ${ISSUE} or higher"
+              exit
+            fi
           fi
         fi
       fi
-    fi
-  fi	
+    fi	
+  fi
 fi
 REPONAME=`lsb_release -cs`
 
@@ -200,4 +203,7 @@ Done!
 
 INSTRUCTIONS
 
-scp ${DEBS} dpfurlani@grey.colorado.edu:/home/dpfurlani/$REPONAME/
+GREY_USER="tmankad"
+read -p "Please enter your user name on grey.colorado.edu:" $GREY_USER
+
+scp ${DEBS} $GREY_USER@grey.colorado.edu:/home/$GREY_USER/$REPONAME/
