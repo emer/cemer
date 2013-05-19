@@ -1602,7 +1602,10 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     goto exit;
   }
   stat = taMisc::read_tag(strm, tag, val);
-  if((stat != taMisc::TAG_GOT) || (tag != "Fmt")) goto exit;
+  if(TestError((stat != taMisc::TAG_GOT) || (tag != "Fmt"), "LoadWeights_strm",
+               "did not got find Fmt tag at start of weights file -- probably file not found")) {
+    goto exit;
+  }
 
   fmt = (RecvCons::WtSaveFormat)TA_RecvCons.GetEnumVal(val, enum_typ_nm);
 
