@@ -1216,6 +1216,16 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
   return dt;
 }
 
+void Network::DMemTrialBarrier() {
+#ifndef DMEM_COMPILE
+  return;
+#else
+  if(taMisc::dmem_nprocs <= 1 || dmem_trl_comm.nprocs <= 1)
+    return;
+  dmem_trl_com.Barrier();
+#endif
+}
+
 #ifdef DMEM_COMPILE
 
 void Network::DMem_SyncNRecvCons() {

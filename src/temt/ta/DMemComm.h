@@ -44,21 +44,24 @@ public:
   int		this_proc;	// #IGNORE the rank of this processor within communicator
 
   void	CommAll();
-  // #IGNORE use all the processors (world group)
+  // #CAT_DMem use all the processors (world group)
   void	CommSelf();
-  // #IGNORE we are a group of just our self
+  // #CAT_DMem we are a group of just our self
   void	CommSubGpInner(int sub_gp_size);
-  // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the inner group for this processor (gp size = sub_gp_size)
+  // #CAT_DMem procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the inner group for this processor (gp size = sub_gp_size)
   void	CommSubGpOuter(int sub_gp_size);
-  // #IGNORE procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the outer group for this processor
+  // #CAT_DMem procs are organized into subgroups of given size, with nprocs / sub_gp_size such groups -- get the outer group for this processor
 
   int	GetThisProc();
-  // #IGNORE get the rank of this processor relative to communicator
+  // #CAT_DMem get the rank of this processor relative to communicator
 
   void	MakeCommFmRanks();
-  // #IGNORE make the comm from the ranks
+  // #CAT_DMem make the comm from the ranks
   void	FreeComm();
-  // #IGNORE free the comm & group 
+  // #CAT_DMem free the comm & group 
+
+  void   Barrier();
+  // #CAT_DMem call MPI_Barrier on all processors in the communicator group -- blocks all the processors so they can be coordinated going forward
 
   TA_BASEFUNS_LITE(DMemComm);
 private:

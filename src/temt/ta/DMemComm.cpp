@@ -136,4 +136,11 @@ void DMemComm::CommSubGpOuter(int sub_gp_size) {
   MakeCommFmRanks();
 }
 
+void DMemComm::Barrier() {
+  if(taMisc::dmem_nprocs <= 1 || nprocs <= 1)
+    return;
+  DMEM_MPICALL(MPI_Barrier(comm), "Barrier", "Barrier");
+}
+
+
 #endif // DMEM_COMPILE

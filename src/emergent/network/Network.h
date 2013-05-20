@@ -523,6 +523,9 @@ public:
   virtual void  SetProjectionDefaultTypes(Projection* prjn);
   // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types
 
+  virtual void  DMemTrialBarrier();
+  // #CAT_DMem block all dmem processors at the trial level until everyone reaches this same point in the program flow -- cordinates all the processors at this point -- important for cases where there are interdependencies among processors, where they need to be coordinated going forward -- does nothing if dmem_nprocs <= 1 or not using dmem
+
 #ifdef DMEM_COMPILE
   DMemComm      dmem_net_comm;  // #IGNORE the dmem communicator for the network-level dmem computations (the inner subgroup of units, each of size dmem_nprocs_actual)
   DMemComm      dmem_trl_comm;  // #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials) -- this is the outer subgroup

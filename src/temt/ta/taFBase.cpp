@@ -22,8 +22,10 @@ bool taFBase::SetFileName(const String& val) {
   if (fi.exists()) {
     // we get the canonical path, so we insure we can do exact filename compares later
     file_name = fi.canonicalFilePath();
-  } else
+  }
+  else {
     file_name = val;
+  }
   return true;
 }
 
