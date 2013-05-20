@@ -11,3 +11,11 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_config.h.in ${CMAKE_SOURCE_DIR}/config.
 # don't forget to install this guy!
 install(FILES ${CMAKE_SOURCE_DIR}/config.h DESTINATION ${EMERGENT_INCLUDE_DEST})
 
+# VERSION is separate
+
+# note: putting in source but default is to put in CMAKE_BINARY_DIR
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake_temt_version.h.in ${CMAKE_SOURCE_DIR}/temt_version.h)
+
+# don't forget to install this guy!
+install(FILES ${CMAKE_SOURCE_DIR}/temt_version.h DESTINATION ${EMERGENT_INCLUDE_DEST})
+

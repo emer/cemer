@@ -1,0 +1,4 @@
+/* temt_version.h.  Generated from cmake_temt_version.h.in by cmake.  */
+
+/* Define to the version of this package. */
+#define TEMT_VERSION "${EMERGENT_VERSION}"

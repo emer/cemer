@@ -1,7 +1,8 @@
 /* config.h.  Generated from cmake_config.h.in by cmake.  */
 
-/* Define to the version of this package. */
-#define VERSION "${EMERGENT_VERSION}"
+/* Note: TEMT_VERSION is in temt_version.h, built from cmake_temt_version.h.in
+   most files do not need to know the version and it otherwise causes a
+   full rebuild on version changes, so it is a separate include */
 
 #cmakedefine TA_GUI 1
 

@@ -223,6 +223,8 @@ public:
 
   static taThreadDefaults thread_defaults;
   // #SAVE #CAT_MultiProc defaults for parallel threading -- these are used to initialize values in any specific parallel threading context, as they should be specific to a given machine, not to a given model or project
+  static bool           dmem_output_all;
+  // #SAVE #CAT_MultiProc #EXPERT all dmem (mpi) processors generate output (with processor number as PX:) for the standard output routines (Error, Warning, Info), including program traces and verbose output -- useful for debugging dmem issues, but otherwise can be too much output
 
   ////////////////////////////////////////////////////////
   //    TA GUI parameters
@@ -234,7 +236,7 @@ public:
   static String         t3d_text_color; // #SAVE #CAT_GUI default text color for 3d view  -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_font_name;  // #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
   static ConsoleType    console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
-  static ConsoleOptions console_options; // #SAVE #CAT_GUI #EXPERT options for the console **REQUIRES APP RESTART
+  static ConsoleOptions console_options; // #SAVE #CAT_GUI options for the console **REQUIRES APP RESTART
   static String         console_font_name; // #SAVE #CAT_GUI font name for the css console
   static int            console_font_size; // #SAVE #CAT_GUI font size for the css console
   static float          doc_text_scale; // #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
@@ -246,15 +248,15 @@ public:
   static bool           emacs_mode;     // #SAVE #CAT_GUI use full emacs key bindings -- all non-conflicting emacs keys are available regardless, but with this turned on, Ctrl+V is page down instead of Paste -- use Ctrl+Y (emacs yank) for paste instead -- on a Mac, Command+V is usually paste, so Ctrl+V can be used for page down without conflict, so this setting defaults to ON for macs
   static int            undo_depth;     // #SAVE #CAT_GUI #MIN_10 how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
   static int            undo_data_max_cells; // #SAVE #CAT_GUI maximum number of cells in a data table to save an undo copy -- if above this number of cells, it won't be saved for undo (only the column structure will be retained)
-  static bool           undo_debug; // #NO_SAVE #CAT_GUI display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
+  static bool           undo_debug; // #NO_SAVE #CAT_GUI #EXPERT display undo debug messages to css console and project log -- can help determine what is causing excessive latencies and unresponsiveness in the application
   static float          undo_new_src_thr; // #SAVE #CAT_GUI #EXPERT threshold for how big (as a proportion of total file size) the diff's need to get before a new undo source record is created (default of around .3 is usually fine)
-  static int            auto_save_interval;     // #SAVE #CAT_GUI how many seconds to wait between automatic saves of opened projects that have been modified?  auto save files go to project file name + _autosave
+  static int            auto_save_interval;     // #SAVE #CAT_GUI #EXPERT how many seconds to wait between automatic saves of opened projects that have been modified?  auto save files go to project file name + _autosave
   static int            wait_proc_delay; // #SAVE #CAT_GUI #DEF_20 #EXPERT delay in milliseconds before starting the wait processing function to process misc stuff after all of the current gui events have been processed -- a smaller number makes the system more responsive but also consumes a bit more CPU -- setting to 0 consumes a lot of CPU as the wait processing loop is constantly revisited
   static int            css_gui_event_interval; // #SAVE #CAT_GUI #DEF_200 #EXPERT how many milliseconds between processing of gui events in css -- lower number = more responsive interface, but worse performance, while things are running
-  static bool           delete_prompts;  //  #SAVE #CAT_GUI should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
+  static bool           delete_prompts;  //  #SAVE #CAT_GUI #EXPERT should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
   static int            tree_indent;    // #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
   static int            program_editor_width;   // #SAVE #CAT_GUI #EXPERT width in characters of the main listing field of the program editor -- if this is too large, then you can't see the description comments
-  static int            program_editor_lines;   // #SAVE #CAT_GUI #MIN_4 #MAX_20 default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
+  static int            program_editor_lines;   // #SAVE #CAT_GUI #EXPERT #MIN_4 #MAX_20 default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
 
   static HelpDetail     help_detail;    // #SAVE #CAT_GUI #EXPERT level of detail to display in the help system
 
@@ -270,7 +272,7 @@ public:
   static ViewColor_List* view_colors;   // #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
   static EditStyle      std_edit_style; // #SAVE #SHOW #READ_ONLY #CAT_GUI #EXPERT style to use for standard edit dialogs (i.e., non select-edit dialogs)
-  static EditStyle      select_edit_style; // #SAVE #CAT_GUI #EXPERT style to use for select edit dialogs (which are typically used for control panels, etc)
+  static EditStyle      select_edit_style; // #SAVE #CAT_GUI style to use for select edit dialogs (which are typically used for control panels, etc)
 
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
@@ -282,7 +284,7 @@ public:
   static bool           auto_edit;      // #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
   static AutoRevert     auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static MatrixView     matrix_view;    // #SAVE #CAT_GUI #EXPERT #DEF_BOT_ZERO whether to show matrices with 0 row at top or bottom of view
-  static bool           beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
+  static bool           beep_on_error; // #SAVE #DEF_false #CAT_GUI #EXPERT beep when an error message is printed on the console
   static short          num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent files to save
   static short          num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save
   static short          num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_50 number of browse history items to keep
@@ -298,7 +300,7 @@ public:
   static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
 
-  static LoadVerbosity  verbose_load;   // #SAVE #CAT_File report the names of things during loading
+  static LoadVerbosity  verbose_load;   // #SAVE #CAT_File #EXPERT report the names of things during loading -- for debugging
 
   static String         app_dir;
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch

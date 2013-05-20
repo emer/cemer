@@ -93,6 +93,7 @@ public:
     NO_COLLIDE          = 0x0020, // this body is not part of the collision detection system -- useful for light beams and other ephemera
     CUR_FM_FILE         = 0x0040, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
     GRAVITY_ON          = 0x0080, // does gravitational force affect this body?
+    VERBOSE             = 0x0100, // where applicable output verbose messages for this body (e.g., in carousel, lists names of objects being loaded)
 
     INIT_WAS_ABS        = 0x1000, // #NO_BIT init vals were specified in abs coords last time (not rel)
   };

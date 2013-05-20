@@ -206,9 +206,8 @@ String NetMonItem::GetObjName(taBase* obj) {
 
   if(obj->InheritsFrom(TA_Projection)) {
     Projection* prjn = (Projection*)obj;
-    if(prjn->from.ptr() && prjn->layer) {
-      return taMisc::StringMaxLen(prjn->layer->name, max_name_len) + "_Fm_" +
-        taMisc::StringMaxLen(prjn->from->name, max_name_len);
+    if(prjn->layer) {
+      return taMisc::StringMaxLen(prjn->layer->name, max_name_len) + "_" + prjn->name;
     }
   }
   else if(obj->InheritsFrom(TA_Unit)) {
