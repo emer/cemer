@@ -222,6 +222,7 @@ int taArray_base::Dump_Load_Value(istream& strm, taBase*) {
     if(cnt > size-1)
       Add_(El_GetTmp_());
     El_SetFmStr_(FastEl_(cnt++), taMisc::LexBuf);
+    this->SetSize(cnt);
     c = taMisc::read_till_rb_or_semi(strm);
   }
   if (c==EOF)   return EOF;
