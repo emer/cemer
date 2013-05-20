@@ -1222,7 +1222,7 @@ void Network::DMemTrialBarrier() {
 #else
   if(taMisc::dmem_nprocs <= 1 || dmem_trl_comm.nprocs <= 1)
     return;
-  dmem_trl_com.Barrier();
+  dmem_trl_comm.Barrier();
 #endif
 }
 
