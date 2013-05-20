@@ -1117,7 +1117,7 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
   int pageln = 0;
   String rmdr = str;
 #if defined(DMEM_COMPILE)
-  if(taMisc::dmem_nproc > 1) {
+  if(taMisc::dmem_nprocs > 1) {
     rmdr = "P" + String(taMisc::dmem_proc) + ": " + rmdr;
   }
 #endif
