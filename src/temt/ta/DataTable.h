@@ -259,9 +259,14 @@ public:
 #ifndef OLD_DT_IDX_MODE
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Reset_View #FROM_GROUP_data #NULL_OK Unfilter the view (i.e. show all rows)
 #endif
-  virtual bool          SaveFilteredViewAs(const String& table_name);
+
+  virtual bool          Flatten();
 #ifndef OLD_DT_IDX_MODE
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Save_View_As Saves the current filtered view to a new data table
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten Saves the current filtered view. All hidden rows will be permanently deleted
+#endif
+  virtual bool          FlattenTo(DataTable* flattened_table);
+#ifndef OLD_DT_IDX_MODE
+  // #CAT_DataProc Saves the current filtered view
 #endif
 
   ////////////////////////////////////////////////////////////
@@ -441,9 +446,8 @@ public:
 
   virtual bool          hasData(int col, int row);
   // #CAT_Rows true if data at that cell
-//  bool                  idx(int row_num, int& act_idx, bool useFilter = false) const;
   bool                  idx(int row_num, int& act_idx) const;
-  // #CAT_Rows returns the actual row of data from the table - set useFilter to true to go thru row_indexes
+  // #CAT_Rows pass in the current row as viewed and get back the "true" row
   inline bool           idx_err(int row_num, int& act_idx,
                                  bool quiet = false) const {
                                  bool rval = idx(row_num, act_idx);
