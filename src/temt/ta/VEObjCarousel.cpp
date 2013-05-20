@@ -89,10 +89,12 @@ bool VEObjCarousel::LoadObjs(bool force) {
   DataCol* fpathcol = obj_table->FindColName("FilePath", true); // yes err msg
   if(!fpathcol) return false;
 
-  String msg;
-  msg << "Loading ObjCarousel " << name << " object files, total n = " << obj_table->rows
-      << " -- can take a long time for a large number.";
-  taMisc::Info(msg);
+  if(HasBodyFlag(VERBOSE)) {
+    String msg;
+    msg << "Loading ObjCarousel " << name << " object files, total n = " << obj_table->rows
+        << " -- can take a long time for a large number.";
+    taMisc::Info(msg);
+  }
 
   sw->whichChild = -1;
 
@@ -102,7 +104,9 @@ bool VEObjCarousel::LoadObjs(bool force) {
     SoInput in;
     QFileInfo qfi(fpath);
     if(qfi.isFile() && qfi.isReadable() && in.openFile(fpath)) {
-      taMisc::Info("Loading", fpath, "...");
+      if(HasBodyFlag(VERBOSE)) {
+        taMisc::Info("Loading", fpath, "...");
+      }
       SoSeparator* root = SoDB::readAll(&in);
       if (root) {
         sw->addChild(root);
