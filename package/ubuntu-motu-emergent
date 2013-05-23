@@ -20,10 +20,22 @@ DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 REPONAME=`lsb_release -cs` # e.g., "maverick"
 
-# Check out the code into ~/emergent, determine the version, and create a symlink in /tmp
+# Check out the code into ~/emergent, if it does not already exist.
+# If the source directory exists, update it. 
+# Then determine the version, and create a symlink in /tmp
 EMERGENT_SRC_DIR=~/emergent
-#svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_SRC_DIR}
-svn update --username anonymous --password emergent -r ${REV} ${EMERGENT_SRC_DIR}
+echo "${EMERGENT_SRC_DIR}"
+if [ -d $EMERGENT_SRC_DIR ]; then
+  echo "${EMERGENT_SRC_DIR} exists; updating to requested revision"
+  if [ $TAG != "trunk" ]; then
+    REV=$(svn log --stop-on-copy http://grey.colorado.edu/svn/emergent/emergent/${TAG} | sed -n '2s/\ .*$//p' | sed 's/r/-r/')
+  fi
+  svn update --username anonymous --password emergent ${REV} ${EMERGENT_SRC_DIR}
+else
+  echo "${EMERGENT_SRC_DIR} does not exist; checking out revision ${REV}"
+  svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_SRC_DIR}
+fi
+
 # config.h is a generated file, so can't do this:
 #EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/config.h`
 EMERGENT_VERSION_MAJOR=`sed -n '/set(EMERGENT_VERSION_MAJOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/CMakeLists.txt`

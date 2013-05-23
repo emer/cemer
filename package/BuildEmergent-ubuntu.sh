@@ -197,13 +197,13 @@ Done!
 ** If all went well, copy the libquarter*.deb and emergent*.deb files
 ** to your home directory on grey and run update-ubuntu-repo.sh
 **
-** scp ${DEBS} dpfurlani@grey.colorado.edu:/home/dpfurlani/$REPONAME/
-** ssh dpfurlani@grey.colorado.edu
+** scp ${DEBS} username@grey.colorado.edu:/home/username/$REPONAME/
+** ssh username@grey.colorado.edu
 ** sudo update-ubuntu-repo.sh
 
 INSTRUCTIONS
 
 GREY_USER="tmankad"
-read -p "Please enter your user name on grey.colorado.edu:" $GREY_USER
+read -p "Please enter your user name on grey.colorado.edu: " $GREY_USER
 
 scp ${DEBS} $GREY_USER@grey.colorado.edu:/home/$GREY_USER/$REPONAME/
