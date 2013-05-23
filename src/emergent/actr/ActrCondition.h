@@ -41,8 +41,8 @@ public:
   };
 
   enum CondSource {
-    BUFFER_EQ,                  // match against an ActR chunk in a buffer (for regular ActR model) 
-    BUFFER_QUERY,               // check state of buffer or module -- std vals are: buffer: full, empty, requested, unrequested, module: busy, free, error
+    BUFFER_EQ,                  // = match against an ActR chunk in a buffer (for regular ActR model) 
+    BUFFER_QUERY,               // ? check state of buffer or module -- std vals are: buffer: full, empty, requested, unrequested, module: busy, free, error
     PROG_VAR,                   // match against value of a program variable (for use in controlling system) -- must be a global (args or vars) variable, not a local var
     NET_UNIT,                   // match against unit activation in a network
     OBJ_MEMBER,                 // match against a member in an arbitrary object

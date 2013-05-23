@@ -37,7 +37,7 @@ public:
   }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
-  inline void C_Compute_dWt_Matrix_Trace(LeabraCon* cn, float lin_wt, 
+  inline void C_Compute_dWt_Matrix_Trace(LeabraCon* cn,
                                          float mtx_act, float su_act) {
     float dwt = mtx_act * su_act;
     cn->dwt = cur_lrate * dwt;  // note: =, not += -- always learn last gating action
@@ -51,7 +51,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
-      C_Compute_dWt_Matrix_Trace(cn, LinFmSigWt(cn->lwt), ru->act_p, su->act_p);
+      C_Compute_dWt_Matrix_Trace(cn, ru->act_p, su->act_p);
     }
   }
 
