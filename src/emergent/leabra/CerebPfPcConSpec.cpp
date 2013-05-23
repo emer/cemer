@@ -15,3 +15,7 @@
 
 #include "CerebPfPcConSpec.h"
 
+void CerebPfPcConSpec::Initialize() {
+  wt_sig.dwt_norm = false;      // dwt norm VERY VERY bad for this!!
+  stable_mix.stable_pct = 0.0f; // no point here either
+}

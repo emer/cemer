@@ -46,7 +46,8 @@ public:
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_PfPc(cn, su->act_lrn, ru->act_m, ru->act_p);
+      C_Compute_dWt_PfPc(cn, su->act_lrn, ru->act_eq, ru->targ);
+      // target activation trains relative to act_eq
     }
   }
 
@@ -64,7 +65,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(CerebPfPcConSpec);
 private:
-  void Initialize()  { };
+  void Initialize();
   void Destroy()     { };
 };
 
