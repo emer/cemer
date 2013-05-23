@@ -32,10 +32,14 @@ INHERITED(PVConSpec)
 public:
   float         decay;          // #MIN_0 amount to decay weight values every time they are updated, restoring some novelty (also multiplied by lrate to compute weight change, so it automtically takes that into account -- think of as a pct to decay)
 
-  inline void C_Compute_Weights_LeabraCHL(LeabraCon* cn, float dkfact) {
+  inline void C_Compute_Weights_NV(LeabraCon* cn, float dkfact) {
     float lin_wt = LinFmSigWt(cn->lwt);
     cn->dwt -= dkfact * lin_wt;
     if(cn->dwt != 0.0f) {
+      if(lmix.err_sb) {         // check for soft-bounding -- typically not enabled for pv
+        if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
+        else		        cn->dwt *= lin_wt;
+      }
       cn->lwt = SigFmLinWt(lin_wt + cn->dwt);
       Compute_EffWt(cn);
     }
@@ -43,22 +47,18 @@ public:
     cn->dwt = 0.0f;
   }
 
-  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     float dkfact = cur_lrate * decay;
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
+    CON_GROUP_LOOP(cg, C_Compute_Weights_NV((LeabraCon*)cg->OwnCn(i), dkfact));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    float dkfact = cur_lrate * decay;
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_Weights_CtLeabraXCAL(cg, su);
   }
 
   inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    float dkfact = cur_lrate * decay;
-    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+    Compute_Weights_CtLeabraXCAL(cg, su);
   }
 
   TA_SIMPLE_BASEFUNS(NVConSpec);

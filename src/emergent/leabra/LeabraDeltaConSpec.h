@@ -30,23 +30,18 @@ class E_API LeabraDeltaConSpec : public LeabraConSpec {
   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
 INHERITED(LeabraConSpec)
 public:
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
-    if(lmix.err_sb) {
-      float lin_wt = LinFmSigWt(cn->lwt);
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-    }
-    cn->dwt += cur_lrate * dwt;
+  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+    // do NOT do this under any circumstances!!
   }
 
-  inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  // everything can use one dwt with post-soft-bound because no hebbian term
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
     cn->dwt += cur_lrate * dwt;
     // soft bounding is managed in the weight update phase, not in dwt
   }
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
@@ -54,20 +49,16 @@ public:
     }
   }
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_CAL(cn, ru, su);  
-    }
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
 
   override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_CAL(cn, ru, su);  
-    }
+    Compute_dWt_CtLeabraXCAL(cg, su);
+  }
+
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_Weights_CtLeabraXCAL(cg, su); // do soft bound here
   }
 
   TA_SIMPLE_BASEFUNS(LeabraDeltaConSpec);

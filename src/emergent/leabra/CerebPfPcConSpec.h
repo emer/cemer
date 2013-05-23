@@ -38,7 +38,7 @@ public:
     cn->dwt += cur_lrate * dwt; 
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     if(su->act_lrn == 0.0f) return; // if sender is not active, bail
     LeabraNetwork* net = (LeabraNetwork*)su->own_net();
     if(ignore_unlearnable && net && net->unlearnable_trial) return;
@@ -50,14 +50,17 @@ public:
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
+    Compute_dWt_CtLeabraXCAL(cg, su);
   }
 
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_Weights_CtLeabraXCAL(cg, su); // do soft bound here
+  }
 
   TA_SIMPLE_BASEFUNS(CerebPfPcConSpec);
 private:
