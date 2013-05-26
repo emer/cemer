@@ -92,10 +92,12 @@ public:
   // these only reorder the index that keeps track of the tables visible items
   static void  SortThruIndex(DataTable* dt, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order
-  static bool  SortThruIndex_Compare(DataTable* dt, DataSortSpec* spec, int i, int pivot, bool isLess);
+  static bool  SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int i, const DataTable& pivotRow, bool isLess);
   // #IGNORE helper function for sorting: compare values
   static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right);
   // #IGNORE sort the table index based on spec
+  static bool  PermuteThruIndex(DataTable* dt);
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable
 
   // these move the data
   static bool  Permute(DataTable* dest, DataTable* src);
@@ -107,6 +109,7 @@ public:
   static bool  Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec,
        DataSortSpec* sort_spec);
   // #IGNORE helper function to do grouping when there are GROUP items, as spec'd in sort_spec
+
 
   static bool  TransposeColsToRows(DataTable* dest, DataTable* src,
       const Variant& data_col_st, int n_cols=-1, const Variant& col_names_col=-1);
