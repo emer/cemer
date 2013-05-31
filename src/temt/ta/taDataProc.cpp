@@ -1383,21 +1383,23 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
 
   DataTable ssrc_a(false);
   taBase::Own(ssrc_a, NULL);    // activates initlinks, refs
-#ifdef OLD_DT_IDX_MODE
+//#ifdef OLD_DT_IDX_MODE
   Sort(&ssrc_a, src_a, &sort_spec_a);
-#else
-  src_a->FlattenTo(&ssrc_a);
-  SortThruIndex(&ssrc_a, &sort_spec_a);
-#endif
+
+// Why doesn't this work with flatten jar 5/31/13 - should be more efficient
+//#else
+//  src_a->FlattenTo(&ssrc_a);
+//  SortThruIndex(&ssrc_a, &sort_spec_a);
+//#endif
 
   DataTable ssrc_b(false);
   taBase::Own(ssrc_b, NULL);    // activates initlinks, refs
-#ifdef OLD_DT_IDX_MODE
+//#ifdef OLD_DT_IDX_MODE
   Sort(&ssrc_b, src_b, &sort_spec_b);
-#else
-  src_b->FlattenTo(&ssrc_b);
-  SortThruIndex(&ssrc_b, &sort_spec_b);
-#endif
+//#else
+//  src_b->FlattenTo(&ssrc_b);
+//  SortThruIndex(&ssrc_b, &sort_spec_b);
+//#endif
 
   int b_row = 0;
   for(int row=0;row<ssrc_a.rows; row++) {
