@@ -338,7 +338,7 @@ int DataTable::Dump_Load_Value(istream& strm, taBase* par) {
     rows = max((int)rows, frms);
 #else
     rows_total = max((int)rows_total, frms);  // this is the number of rows in the table
-    if (row_indexes.size > 0)
+    if (row_indexes.size > 0 && row_indexes.size <= rows_total)
       rows = min(rows_total, row_indexes.size); // this is the number of rows visible (i.e. not filtered out)
     else
       ResetRowIndexes();
@@ -1048,14 +1048,12 @@ bool DataTable::SetValAsVar(const Variant& val, const Variant& col, int row) {
   if (!da) return false;
   if (da->is_matrix_err()) return false;
   int i;
-  //#ifdef OLD_DT_IDX_MODE
-  if (idx_err(row, i)) {  // true means use filter view to find true data row
-    //#else
-    //    if (idx_err(row, i, false)) {
-    //#endif
+  if (idx_err(row, i)) {
     da->SetValAsVar(val, i);
     return true;
-  } else return false;
+  }
+  else
+    return false;
 }
 
 bool DataTable::SetValAsMatrix(const taMatrix* val, const Variant& col, int row) {
@@ -1878,48 +1876,56 @@ void DataTable::RemoveOrphanCols() {
   }
 }
 
-
+bool DataTable::InsertRows(int st_row, int n_rows) {
+  if(st_row < 0) st_row = rows; // end
+  if(TestError((st_row < 0 || st_row > rows), "InsertRows",
+      "row not in range:",String(st_row))) return false;
+  bool rval = true;
+  DataUpdate(true);
+  for(int i=0;i<data.size;i++) {
+    DataCol* ar = data.FastEl(i);
 #ifdef OLD_DT_IDX_MODE
-bool DataTable::InsertRows(int st_row, int n_rows) {
-  if(st_row < 0) st_row = rows; // end
-  if(TestError((st_row < 0 || st_row > rows), "InsertRows",
-      "row not in range:",String(st_row))) return false;
-  bool rval = true;
-  DataUpdate(true);
-  for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
     rval = ar->InsertRows(st_row, n_rows);
-  }
-  if(rval)
-    rows += n_rows;
-  DataUpdate(false);
-  return rval;
-}
 #else
-// just add rows at the end of the data table
-// but insert into row_indexes so the view is correct
-bool DataTable::InsertRows(int st_row, int n_rows) {
-  if(st_row < 0) st_row = rows; // end
-  if(TestError((st_row < 0 || st_row > rows), "InsertRows",
-      "row not in range:",String(st_row))) return false;
-  bool rval = true;
-  DataUpdate(true);
-  for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
     rval = ar->EnforceRows(ar->rows() + n_rows);
+#endif
   }
   if(rval) {
     rows += n_rows;
+#ifndef OLD_DT_IDX_MODE
     // insert into row_indexes
     for (int r=st_row; r<st_row+n_rows; r++) {
       row_indexes.Insert(rows_total, r, 1);
       rows_total++;
     }
+#endif
   }
   DataUpdate(false);
   return rval;
 }
-#endif
+// just add rows at the end of the data table
+// but insert into row_indexes so the view is correct
+//bool DataTable::InsertRows(int st_row, int n_rows) {
+//  if(st_row < 0) st_row = rows; // end
+//  if(TestError((st_row < 0 || st_row > rows), "InsertRows",
+//      "row not in range:",String(st_row))) return false;
+//  bool rval = true;
+//  DataUpdate(true);
+//  for(int i=0;i<data.size;i++) {
+//    DataCol* ar = data.FastEl(i);
+//    rval = ar->EnforceRows(ar->rows() + n_rows);
+//  }
+//  if(rval) {
+//    rows += n_rows;
+//    // insert into row_indexes
+//    for (int r=st_row; r<st_row+n_rows; r++) {
+//      row_indexes.Insert(rows_total, r, 1);
+//      rows_total++;
+//    }
+//  }
+//  DataUpdate(false);
+//  return rval;
+//}
 
 bool DataTable::RemoveRows(int st_row, int n_rows) {
   if(st_row < 0)
@@ -1943,15 +1949,9 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
   }
   rows -= n_rows;
 #else  // not actually removing rows - just removing from this of visible rows
-  bool rval = false;
-  for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-    rval = ar->EnforceRows(rows_total);
-  }
-  if (rval) {
     row_indexes.RemoveIdx(st_row, n_rows);
     rows -= n_rows;		// the number of rows not hidden by filtering or hiding
-  }
+//  }
 #endif
   if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);
@@ -2031,6 +2031,7 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
 #ifdef OLD_DT_IDX_MODE
   rows = 0;
 #else
+  rows = 0;
   rows_total = 0;
   row_indexes.Reset();
 #endif
@@ -2541,6 +2542,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     if ((c == '\n') || (c == '\r') || (c == EOF)) break;
   }
   StructUpdate(false);
+
   return c;
 }
 
@@ -3166,7 +3168,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
     }
   }
 #ifdef OLD_DT_IDX_MODE
-taDataProc::Sort_impl(this, &spec);
+  taDataProc::Sort_impl(this, &spec);
 #else
   taDataProc::SortThruIndex(this, &spec);
 #endif

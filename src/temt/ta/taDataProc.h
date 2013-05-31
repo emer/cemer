@@ -90,7 +90,7 @@ public:
   // #IGNORE actually perform sort on data table using specs
 
   // these only reorder the index that keeps track of the tables visible items
-  static void  SortThruIndex(DataTable* dt, DataSortSpec* spec);
+  static bool  SortThruIndex(DataTable* dt, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order
   static bool  SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int i, const DataTable& pivotRow, bool isLess);
   // #IGNORE helper function for sorting: compare values

@@ -36,7 +36,7 @@
 #include <taMisc>
 
 bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
-                         bool& in_place_req) {
+    bool& in_place_req) {
   if(src == dest) {
     in_place_req = true;
     dest = new DataTable;
@@ -54,7 +54,7 @@ bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& s
 // manipulating lists of columns
 
 bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest_cols,
-                               DataOpList* src_cols) {
+    DataOpList* src_cols) {
   if(!dest || !src) return false;
   src_cols->Reset(); dest_cols->Reset();
   src_cols->AddAllColumns(src);
@@ -84,8 +84,8 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
     dop->col_idx = d_idx;
   }
   // note: client should do this when done with info:
-//   src_cols->ClearColumns();
-//   dest_cols->ClearColumns();
+  //   src_cols->ClearColumns();
+  //   dest_cols->ClearColumns();
   return true;
 }
 
@@ -120,7 +120,7 @@ bool taDataProc::CopyData(DataTable* dest, DataTable* src) {
 }
 
 bool taDataProc::CopyCommonColsRow_impl(DataTable* dest, DataTable* src, DataOpList* dest_cols,
-                                   DataOpList* src_cols, int dest_row, int src_row) {
+    DataOpList* src_cols, int dest_row, int src_row) {
   if(!dest || !src || !dest_cols || !src_cols) return false;
   if(dest == src) {
     taMisc::Error("taDataProc::CopyCommonColsRow_impl -- src cannot be same as dest for this operation!");
@@ -226,7 +226,7 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
 }
 
 bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b, DataTable* src_c,
-                            DataTable* src_d, DataTable* src_e, DataTable* src_f) {
+    DataTable* src_d, DataTable* src_e, DataTable* src_f) {
   if(!src_a) { taMisc::Error("taDataProc::ConcatRows: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::ConcatRows: src_b is NULL"); return false; }
   bool in_place_req = false;
@@ -251,7 +251,7 @@ bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b,
 }
 
 bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val_type,
-                                    const String& col_nm_contains, const String& dest_col_nm) {
+    const String& col_nm_contains, const String& dest_col_nm) {
   bool in_place_req = false;
   GetDest(dest, src, "AllDataToOneCell", in_place_req);
   if(in_place_req) {
@@ -322,7 +322,7 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
 }
 
 bool taDataProc::Slice2D(DataTable* dest, DataTable* src, int src_row, String src_col_nm, int dest_row, String dest_col_nm,
-                         int d0_start, int d0_end, int d1_start, int d1_end) {
+    int d0_start, int d0_end, int d1_start, int d1_end) {
   int src_dims, src_col, d0_src_size, d1_src_size, d0_dest_size, d1_dest_size, i, j, k, l;
 
   if(dest_col_nm == "") dest_col_nm = "SliceData";
@@ -372,7 +372,11 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::Sort: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Sort: spec is NULL"); return false; }
   if(src == dest) {
+#ifdef OLD_DT_IDX_MODE
     return Sort_impl(src, spec);
+#else
+    return SortThruIndex(src, spec);
+#endif
   }
   // just copy and operate on dest
   bool in_place_req = false;
@@ -381,16 +385,24 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   String dnm = dest->name;
   *dest = *src;
   dest->name = dnm;
+#ifdef OLD_DT_IDX_MODE
   return Sort_impl(dest, spec);
+#else
+  return SortThruIndex(dest, spec);
+#endif
 }
 
 bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
   if(!dt) { taMisc::Error("taDataProc::Sort: data table is NULL"); return false; }
+#ifdef OLD_DT_IDX_MODE
   return Sort_impl(dt, spec);
+#else
+  return SortThruIndex(dt, spec);
+#endif
 }
 
 int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
-                            DataSortSpec* spec) {
+    DataSortSpec* spec) {
   for(int i=0;i<spec->ops.size; i++) {
     DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
@@ -459,7 +471,7 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
 }
 
 // SortThruIndex - sorts the currently visible data table rows
-void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
+bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 {
   dt->StructUpdate(true);
 
@@ -478,55 +490,57 @@ void taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 
   delete[] order;
   dt->StructUpdate(false);
+
+  return true;
 }
 
 // SortThruIndex_Compare - values in someRow compared to values in pivotRow based on sortSpec
 bool taDataProc::SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int someRow, const DataTable& pivotRow, bool isLess) {
-if(!spec) {
-  taMisc::Error("taDataProc::SortThruIndex_Compare: DataTable.current_sort_spec is NULL");
-  return 0;
-}
+  if(!spec) {
+    taMisc::Error("taDataProc::SortThruIndex_Compare: DataTable.current_sort_spec is NULL");
+    return 0;
+  }
 
-for(int k=0;k<spec->ops.size; k++) {
-  DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(k);
-  if(ds->col_idx < 0)
-    continue;
+  for(int k=0;k<spec->ops.size; k++) {
+    DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(k);
+    if(ds->col_idx < 0)
+      continue;
 
-  DataCol* dca = dt->data.FastEl(ds->col_idx);
-  Variant va = dca->GetValAsVar(someRow);
-  DataCol* dcb = pivotRow.data.FastEl(ds->col_idx); // get column from single row table
-  Variant vb = dcb->GetValAsVar(0);  // only one row in this table
+    DataCol* dca = dt->data.FastEl(ds->col_idx);
+    Variant va = dca->GetValAsVar(someRow);
+    DataCol* dcb = pivotRow.data.FastEl(ds->col_idx); // get column from single row table
+    Variant vb = dcb->GetValAsVar(0);  // only one row in this table
 
-  if(ds->order == DataSortEl::ASCENDING) {
-    if (isLess) {
-      if (va < vb)
-        return true;
-      if (va > vb)
-        return false;
+    if(ds->order == DataSortEl::ASCENDING) {
+      if (isLess) {
+        if (va < vb)
+          return true;
+        if (va > vb)
+          return false;
+      }
+      else {
+        if (va > vb)
+          return true;
+        if (va < vb)
+          return false;
+      }
     }
-    else {
-      if (va > vb)
-        return true;
-      if (va < vb)
-        return false;
+    else {  // descending
+      if (isLess) {
+        if (va > vb)
+          return true;
+        if (va < vb)
+          return false;
+      }
+      else {
+        if (va < vb)
+          return true;
+        if (va > vb)
+          return false;
+      }
     }
   }
-  else {  // descending
-    if (isLess) {
-      if (va > vb)
-        return true;
-      if (va < vb)
-        return false;
-    }
-    else {
-      if (va < vb)
-        return true;
-      if (va > vb)
-        return false;
-    }
-  }
-}
-return false;
+  return false;
 }
 
 // SortThruIndex_impl - An implementation of quicksort that sorts via indirection and
@@ -744,7 +758,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
     if((ds->agg.op == Aggregate::FIRST) || (ds->agg.op == Aggregate::LAST) ||
-       (ds->agg.op == Aggregate::FIND_FIRST) || (ds->agg.op == Aggregate::FIND_LAST)) {
+        (ds->agg.op == Aggregate::FIND_FIRST) || (ds->agg.op == Aggregate::FIND_LAST)) {
       has_first_last = true;
       break;
     }
@@ -897,7 +911,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 }
 
 bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
-             const Variant& data_col_st, int n_cols, const Variant& col_names_col) {
+    const Variant& data_col_st, int n_cols, const Variant& col_names_col) {
   bool in_place_req = false;
   GetDest(dest, src, "TransposeColsToRows", in_place_req);
   if(in_place_req) {
@@ -942,7 +956,7 @@ bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
 
 
 bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row, int n_rows,
-                                     DataCol::ValType val_type) {
+    DataCol::ValType val_type) {
   bool in_place_req = false;
   GetDest(dest, src, "TransposeRowsToCols", in_place_req);
   if(in_place_req) {
@@ -975,6 +989,7 @@ bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row
 ///////////////////////////////////////////////////////////////////
 // row-wise functions: selecting/splitting
 
+// Select Rows selects from the raw data table not the filtered view
 bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
   bool in_place_req = false;
   GetDest(dest, src, "SelectRows", in_place_req);
@@ -1025,9 +1040,9 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
       }
     }
     if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
-       && not_incl) continue;
+        && not_incl) continue;
     if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
-       && !incl) continue;
+        && !incl) continue;
     // continuing now..
     dest->AddBlankRow();
     dest->CopyFromRow(-1, *src, row);
@@ -1042,7 +1057,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
 }
 
 bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
-                           DataSelectSpec* spec) {
+    DataSelectSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::SplitRows: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::SplitRows: spec is NULL"); return false; }
   bool in_place_req = false;
@@ -1107,9 +1122,9 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
     }
     bool sel_a = true;
     if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
-       && not_incl) sel_a = false;
+        && not_incl) sel_a = false;
     if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
-       && !incl) sel_a = false;
+        && !incl) sel_a = false;
     if(sel_a) {
       dest_a->AddBlankRow();
       dest_a->CopyFromRow(-1, *src, row);
@@ -1126,8 +1141,8 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
 }
 
 bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
-                            DataTable* dest_3, int n3, DataTable* dest_4, int n4,
-                            DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
+    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
   if(!src) { taMisc::Error("taDataProc::SplitRowsN: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
@@ -1158,7 +1173,7 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
 
   if(n_tot > src->rows) {
     taMisc::Warning("SplitRowsN: total N:", String(n_tot), "is > number of source rows:",
-                    String(src->rows), "last one will be underfilled");
+        String(src->rows), "last one will be underfilled");
   }
 
   if(rest_idx >=0) {
@@ -1198,8 +1213,8 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
 }
 
 bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, DataTable* dest_2, int n2,
-                                    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
-                                    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
+    DataTable* dest_3, int n3, DataTable* dest_4, int n4,
+    DataTable* dest_5, int n5, DataTable* dest_6, int n6) {
   if(!src) { taMisc::Error("taDataProc::SplitRowsNPermuted: src is NULL"); return false; }
   int nary[6] = {n1, n2, n3, n4, n5, n6};
   DataTable* dary[6] = {dest_1, dest_2, dest_3, dest_4, dest_5, dest_6};
@@ -1230,7 +1245,7 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
 
   if(n_tot > src->rows) {
     taMisc::Warning("SplitRowsN: total N:", String(n_tot), "is > number of source rows:",
-                    String(src->rows), "last one will be underfilled");
+        String(src->rows), "last one will be underfilled");
   }
 
   if(rest_idx >=0) {
@@ -1314,7 +1329,7 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
 }
 
 bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
-                      DataJoinSpec* spec) {
+    DataJoinSpec* spec) {
   if(!src_a) { taMisc::Error("taDataProc::Join: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::Join: src_b is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Join: spec is NULL"); return false; }
@@ -1368,14 +1383,24 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
 
   DataTable ssrc_a(false);
   taBase::Own(ssrc_a, NULL);    // activates initlinks, refs
-  taDataProc::Sort(&ssrc_a, src_a, &sort_spec_a);
+#ifdef OLD_DT_IDX_MODE
+  Sort(&ssrc_a, src_a, &sort_spec_a);
+#else
+  src_a->FlattenTo(&ssrc_a);
+  SortThruIndex(&ssrc_a, &sort_spec_a);
+#endif
 
   DataTable ssrc_b(false);
   taBase::Own(ssrc_b, NULL);    // activates initlinks, refs
-  taDataProc::Sort(&ssrc_b, src_b, &sort_spec_b);
+#ifdef OLD_DT_IDX_MODE
+  Sort(&ssrc_b, src_b, &sort_spec_b);
+#else
+  src_b->FlattenTo(&ssrc_b);
+  SortThruIndex(&ssrc_b, &sort_spec_b);
+#endif
 
   int b_row = 0;
-  for(int row=0;row<ssrc_a.rows;row++) {
+  for(int row=0;row<ssrc_a.rows; row++) {
     DataCol* sda = ssrc_a.data.FastEl(spec->col_a.col_idx);
     Variant val_a = sda->GetValAsVar(row);
     DataCol* sdb = ssrc_b.data.FastEl(spec->col_b.col_idx);
@@ -1419,8 +1444,8 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
           b_row = bi;           // otherwise just go through same b's again
         if(b_row > ssrc_b.rows-1 && spec->nomatch_warn) {
           taMisc::Warning("taDataProc::Join -- at end of src_b table:", src_b->name,
-                          "with:",String(ssrc_a.rows-row-1),
-                          "rows left in src_a!", src_a->name);
+              "with:",String(ssrc_a.rows-row-1),
+              "rows left in src_a!", src_a->name);
           break;
         }
       }
@@ -1438,8 +1463,8 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
       else {                    // left and inner: just skip b's
         if(spec->nomatch_warn) {
           taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
-                          "from table:", src_a->name, "not found in column",
-                          spec->col_b.col_name, "of src_b:", src_b->name);
+              "from table:", src_a->name, "not found in column",
+              spec->col_b.col_name, "of src_b:", src_b->name);
         }
       }
     }

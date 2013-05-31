@@ -29,7 +29,7 @@
 
 // this enables  datatable indexing mode (physical indexing)
 // once the new code is in place, we will remove this
-#define OLD_DT_IDX_MODE 1
+//#define OLD_DT_IDX_MODE 1
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
