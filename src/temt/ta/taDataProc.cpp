@@ -473,6 +473,9 @@ bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
 // SortThruIndex - sorts the currently visible data table rows
 bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 {
+  if (dt->rows <= 1)
+    return false;
+
   dt->StructUpdate(true);
 
   const int n_rows = dt->row_indexes.size;
