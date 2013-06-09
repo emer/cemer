@@ -3461,6 +3461,7 @@ bool DataTable::idx(int row_num, int& act_idx) const {
 #ifdef OLD_DT_IDX_MODE
   act_idx = row_num;
 #else
+  if(row_num < 0 || row_num >= row_indexes.size) return false;
   act_idx = row_indexes[row_num];
 #endif
 
