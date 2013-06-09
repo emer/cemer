@@ -191,6 +191,9 @@ void VEJointView::SetDraggerPos() {
 void VEJointView::Render_impl() {
   inherited::Render_impl();
 
+  VEWorldView* wv = parent();
+  if(!wv || !wv->show_joints) return;
+
   T3VEJoint* obv = (T3VEJoint*)this->node_so(); // cache
   if(!obv) return;
   VEJoint* ob = Joint();
