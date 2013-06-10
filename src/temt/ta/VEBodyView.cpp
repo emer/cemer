@@ -237,12 +237,12 @@ void VEBodyView::Render_impl() {
     SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
     VETexture* vtex = ob->texture.ptr();
     int idx = vtex->GetIndex();
-    if(idx >= 0 && tsw->getNumChildren() > idx && ssep->getNumChildren() > 0) {
+    if(idx >= 0 && tsw->getNumChildren() > idx && ssep->getNumChildren() > tex_idx) {
       SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
       SoTexture2* curtex = (SoTexture2*)ssep->getChild(tex_idx);
       if(tex != curtex && curtex->getClassTypeId() == tex->getClassTypeId()) {
         ssep->replaceChild(tex_idx, tex);
-        if(vtex->NeedsTransform() && ssep->getNumChildren() > 1) {
+        if(vtex->NeedsTransform() && ssep->getNumChildren() > tex_idx + 1) {
           // note: transform only works if previously also had a transform.. Init will fix
           SoTexture2Transform* curttx = (SoTexture2Transform*)ssep->getChild(tex_idx + 1);
           SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
