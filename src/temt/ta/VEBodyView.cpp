@@ -103,6 +103,7 @@ void VEBodyView::Render_pre() {
       if(idx >= 0 && tsw->getNumChildren() > idx) {
         SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
         ssep->addChild(tex);
+        // taMisc::Info("tex idx:", (String)(((int)ssep->getNumChildren())-1));
         if(vtex->NeedsTransform()) {
           SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
           ssep->addChild(ttx);
@@ -198,6 +199,13 @@ void VEBodyView::Render_impl() {
   VEBody* ob = Body();
   if(!ob) return;
 
+  bool show_drag = false;       // default is off!
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw)
+    show_drag = vw->interactionModeOn();
+  VEWorldView* wv = parent();
+  if(!wv->drag_objs) show_drag = false;
+
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
@@ -222,6 +230,29 @@ void VEBodyView::Render_impl() {
   }
 
   SoSeparator* ssep = obv->shapeSeparator();
+
+  if((bool)ob->texture && wv) {
+    int tex_idx = show_drag ? 4 : 3; // NOTE: this may need to be updated if structure changes -- should probably have a better solution to this..
+    SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+    SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
+    VETexture* vtex = ob->texture.ptr();
+    int idx = vtex->GetIndex();
+    if(idx >= 0 && tsw->getNumChildren() > idx && ssep->getNumChildren() > 0) {
+      SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+      SoTexture2* curtex = (SoTexture2*)ssep->getChild(tex_idx);
+      if(tex != curtex && curtex->getClassTypeId() == tex->getClassTypeId()) {
+        ssep->replaceChild(tex_idx, tex);
+        if(vtex->NeedsTransform() && ssep->getNumChildren() > 1) {
+          // note: transform only works if previously also had a transform.. Init will fix
+          SoTexture2Transform* curttx = (SoTexture2Transform*)ssep->getChild(tex_idx + 1);
+          SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
+          if(ttx != curttx && curttx->getClassTypeId() == ttx->getClassTypeId()) {
+            ssep->replaceChild(tex_idx + 1, ttx);
+          }
+        }
+      }
+    }
+  }
 
   float off_size = 1.0e-12f;    // tiny size if it is turned off..
 
