@@ -166,10 +166,12 @@ public:
   bool          InitValsToRowNo();
   // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
 
-  bool          SortAscending();
-  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column
-  bool          SortDescending();
-  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column
+  void          SortAscending();
+  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE
+  void          SortDescending();
+  // #CAT_DataProc #MENU  #MENU_CONTEXT #MENU_ON_Column
+  void          Filter(const String& filter_expr);
+   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column Select table rows by providing an expression to be evaluated against the values in the selected column -- if it evaluates to true the row remains visible, otherwise it is hidden.
 
   int           FindVal(const Variant& val, int st_row = 0) const;
   // #CAT_Access find row number for given value within column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)

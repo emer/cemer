@@ -511,14 +511,18 @@ bool DataCol::InitValsToRowNo()  {
   return true;
 }
 
-bool DataCol::SortAscending() {
+void DataCol::SortAscending() {
   dataTable()->SortCol(this, true);
-  return true;
 }
 
-bool DataCol::SortDescending() {
+void DataCol::SortDescending() {
   dataTable()->SortCol(this, false);
-  return true;
+}
+
+void DataCol::Filter(const String& filter_expr) {
+  String expr("Name ");
+  expr.cat(filter_expr);
+  dataTable()->Filter(expr);
 }
 
 ////////////////////

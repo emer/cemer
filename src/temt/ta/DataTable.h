@@ -820,7 +820,7 @@ public:
 #ifdef OLD_DT_IDX_MODE
   // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current column values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
 #else
-  // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is hidden.  Refer to current columns by name.  NOTE - use the "Reset View" menu item to restore the view and see all rows
+  // #CAT_DataProc #MENU #FROM_GROUP_data Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible, otherwise it is hidden.  Refer to columns by name.  NOTE - use the "Reset View" menu item to restore the view and see all rows
 #endif
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
