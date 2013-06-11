@@ -38,11 +38,13 @@ set(actr_HEADS_MAKETA
   ActrProceduralModule.h
   ActrGoalModule.h
   ActrModel.h
+  ActrLex.h
 )
 
-# all heads -- include maketa generated ones here
+# all heads -- do NOT include maketa generated ones here
 set(actr_HEADS
   ${actr_HEADS_MAKETA}
+  actr_parse.h
 )
 
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
@@ -75,4 +77,6 @@ set(actr_SRCS
   ActrProceduralModule.cpp
   ActrGoalModule.cpp
   ActrModel.cpp
+  ActrLex.cpp
+  actr_parse.cpp
 )

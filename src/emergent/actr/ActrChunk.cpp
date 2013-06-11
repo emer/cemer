@@ -202,3 +202,12 @@ bool ActrChunk::MergeVals(ActrChunk* cmp) {
 void ActrChunk::CopyName(ActrChunk* cp) {
   name = cp->name + "_0"; // todo: figure out name business
 }
+
+bool ActrChunk::SetSlotVal(const String& slot, const String& val) {
+  ActrSlot* slt = slots.FindName(slot);
+  if(TestError(!slt, "SetSlotVal", "slot named:", slot, "not found in chunk of type:", 
+               chunk_type ? chunk_type->name : "<no type set>")) {
+    return false;
+  }
+  slt->val = val;
+}

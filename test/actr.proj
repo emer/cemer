@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.0.0 rev6285
+// ta_Dump File v3.0 -- code v6.3.1.0 rev6329
 LeabraProject .projects["actr"] { 
   taBase_Group @.templates = [0] {
   };
@@ -1690,7 +1690,7 @@ LeabraProject .projects["actr"] {
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     keygen 4 0=0;
-    row_indexes{     };
+    row_indexes{ 0;1;2;3;4;5;    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -3552,6 +3552,14 @@ LeabraProject .projects["actr"] {
      };
      cur_event_idx=0;
      log_table=.projects["actr"].programs["ActRTest"].objs["ActrLogTable"]$$;
+     load_debug=4;
+     load_line=0;
+     load_col=0;
+     load_pos=0;
+     load_st_line=0;
+     load_st_col=0;
+     load_st_pos=0;
+     load_st_line_pos=0;
     };
    };
    types {

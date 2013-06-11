@@ -76,6 +76,9 @@ public:
   }
   // #CAT_ActR compute the base-level activation as a function of current time and decay parameter
 
+  virtual bool          SetSlotVal(const String& slot, const String& val);
+  // set given slot to given value
+
   virtual ActrSlot*     NewSlot();
   // #BUTTON make a new slot in this chunk
   virtual void          SetChunkType(ActrChunkType* ck_type);

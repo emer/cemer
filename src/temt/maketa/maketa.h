@@ -26,7 +26,7 @@
 #include <EnumDef>
 #include <taHashTable>
 
-#ifndef TYPE
+#ifndef MP_TYPE
 #include "mta_parse.h"
 #endif
 

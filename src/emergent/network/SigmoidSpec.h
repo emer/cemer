@@ -31,7 +31,7 @@ class E_API SigmoidSpec : public taOBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 INHERITED(taOBase) //
 public:
-#if !defined(__MAKETA__)
+#ifndef __MAKETA__
   static const float SIGMOID_MAX_VAL; // #READ_ONLY #HIDDEN max eval value
   static const float SIGMOID_MIN_VAL; // #READ_ONLY #HIDDEN min eval value
   static const float SIGMOID_MAX_NET; // #READ_ONLY #HIDDEN maximium net input value

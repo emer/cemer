@@ -208,7 +208,6 @@ public:
   virtual bool  ConValuesFromMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
 
-#ifndef __MAKETA__
   static int    LoadWeights_StartTag(std::istream& strm, const String& tag, String& val, bool quiet);
   // #IGNORE read in a start tag -- makes sure it matches tag, returns TAG_GOT if got it
   static int    LoadWeights_EndTag(std::istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet);
@@ -221,7 +220,6 @@ public:
   static int    SkipWeights_strm(std::istream& strm, BaseCons::WtSaveFormat fmt = BaseCons::TEXT,
                                  bool quiet = false);
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-#endif
 
   virtual void  SaveWeights(const String& fname="", Unit* ru = NULL, BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
@@ -248,7 +246,6 @@ public:
 
   override String GetTypeDecoKey() const { return "Connection"; }
 
-#ifndef __MAKETA__
   override int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0);
   override int  Dump_Load_Value(std::istream& strm, taBase* par=NULL);
   // the dump system saves the alloc_size during the first 'path' stage of dumping, and then during loading does a full AllocCons for everything, building it all anew prior to the second 'value' stage of loading, which can then do ConnectFrom to setup connections, and set weights etc
@@ -259,7 +256,6 @@ public:
   // #CAT_FILE save just the connection values out to given stream -- call this in Dump_Save_Value after default guy to actually save connections (in RecvCons)
   virtual int   Dump_Load_Cons(std::istream& strm, bool old_2nd_load = false);
   // #CAT_FILE load just the connection values from given stream -- call this in Dump_Load_Value to actually load connections (in RecvCons)
-#endif
 
   void  CutLinks();
   void  Copy_(const BaseCons& cp);

@@ -18,20 +18,31 @@
 #include <ActrDeclarativeModule>
 #include <ActrProceduralModule>
 #include <ActrGoalModule>
+#include <taFiler>
+
+#include "actr_parse.h"
 
 #include <taMisc>
+
+NameVar_Array ActrModel::load_keywords;
+ActrModelRef  ActrModel::cur_parse;
 
 void ActrModel::Initialize() {
   cur_time = 0.0f;
   cur_event_idx = 0;
   flags = (ModelFlags)(LOG_EVENTS | UPDATE_GUI);
   run_state = NOT_INIT;
+
+  load_debug = 0;
+  load_line = load_col = load_pos = 0;
+  load_st_line = load_st_col = load_st_pos = load_st_line_pos = 0;
 }
 
 void ActrModel::InitLinks() {
   inherited::InitLinks();
   InitLinks_taAuto(&TA_ActrModel);
   DefaultConfig();
+  InitLoadKeywords();
 }
 
 void ActrModel::CutLinks() {
@@ -243,4 +254,56 @@ void ActrModel::FormatLogTable() {
   dc->desc = "extra detail on production action that created event";
   dc = dt->FindMakeCol("chunk", VT_STRING);
   dc->desc = "extra detail on chunk that is relevant to this event or action";
+}
+
+
+ActrChunkType* ActrModel::FindChunkType(const String& type_name) {
+  ActrChunkType* ct = chunk_types.FindName(type_name);
+  if(TestError(!ct, "FindChunkType", "chunk type named:", type_name,
+               "not found")) {
+    return NULL;
+  }
+  return ct;
+}
+
+
+void ActrModel::SaveActrFile(const String& fname) {
+  
+}
+
+int yyparse(void);
+void yyerror(const char *s);
+extern int yydebug;
+
+bool ActrModel::LoadActrFile(const String& fname) {
+  taFiler* flr = GetLoadFiler(fname, ".lisp,.actr", false);
+  bool rval = false;
+  if(flr->istrm) {
+    ResetModel();
+    cur_parse = this;
+    load_str.Load_str(*flr->istrm);
+    load_line = 1;
+    load_col = 0;
+    load_pos = 0;
+    yydebug = load_debug > 2 ? 1 : 0;
+    load_state = YYRet_Ok;
+    while(load_state != YYRet_Exit)
+      yyparse();
+  }
+  cur_parse = NULL;
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
+}
+
+void ActrModel::ResetModel() {
+  if(log_table) {
+    log_table->ResetData();
+  }
+  events.Reset();
+  cur_event_idx = 0;
+  buffers.Reset();
+  modules.Reset();
+  chunk_types.Reset();
+  DefaultConfig();
 }

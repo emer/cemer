@@ -37,9 +37,7 @@ public:
   virtual Network* 	GetDefNetwork();
   // get default network from project
 
-#ifndef __MAKETA__
   override void		SaveRecoverFile_strm(std::ostream& strm);
-#endif
 
   virtual void	AutoBuildNets();
   // build networks according to their own individual auto_bulid modes

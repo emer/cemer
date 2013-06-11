@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include <taSmartRefT>
 
 // member includes:
 #include <ActrChunkType_List>
@@ -25,13 +26,17 @@
 #include <ActrBuffer_List>
 #include <ActrEvent_List>
 #include <DataTable>
+#include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:
+
+class ActrModel; //
+SmartRef_Of(ActrModel); // ActrModelRef
 
 eTypeDef_Of(ActrModel);
 
 class E_API ActrModel : public taNBase {
-  // ##INSTANCE ##CAT_ActR #EXPAND_DEF_2 a complete ACT-R model, including productions, buffers, chunks, etc
+  // ##INSTANCE ##CAT_ActR #EXPAND_DEF_2 ##FILETYPE_ActrModel ##EXT_actr a complete ACT-R model, including productions, buffers, chunks, etc
 INHERITED(taNBase)
 public:
   enum ModelFlags { // #BITS ActR model flags
@@ -48,6 +53,15 @@ public:
     NOT_INIT,   // model has not yet been initialized
   };
 
+  enum YY_Flags {               // #IGNORE parsing flags
+    YYRet_Exit	= 0,	// script is done being parsed
+    YYRet_Ok	= 1,	// everything is fine
+    YYRet_NoSrc	= -2,	// don't code last line as source
+    YYRet_Err	= -3,	// error
+    YYRet_Blank = -4,	// blank line
+    YYRet_Parse = -5 	// need to parse more
+  };
+
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this model
   ModelFlags            flags; // misc flags for controlling behavior of the model
   float                 cur_time;   // #READ_ONLY #SHOW current time in the model
@@ -61,6 +75,24 @@ public:
 
   RunState              run_state;
   // #READ_ONLY #NO_SAVE this model's running state
+
+  int                   load_debug;    // debug level for loading files -- higher numbers are increasing levels of verbosity
+  static ActrModelRef   cur_parse; // #IGNORE current file being parsed
+  static NameVar_Array  load_keywords; // #IGNORE keywoards for load parser
+  String                load_str;  // #IGNORE string of .actr file being loaded
+  int                   load_line; // #IGNORE line number for loading
+  int                   load_col;  // #IGNORE column number for loading
+  int                   load_pos;  // #IGNORE string pos for loading
+  int                   load_st_line; // #IGNORE line number for loading
+  int                   load_st_col;  // #IGNORE column number for loading
+  int                   load_st_pos;  // #IGNORE string pos for loading
+  int                   load_st_line_pos;  // #IGNORE string pos for loading
+  String                load_last_ln; // #IGNORE last line
+  String                load_buf;     // #IGNORE generic buf
+  YY_Flags              load_state;  // #IGNORE state of current parse
+  ActrChunkTypeRef      load_chtype;  // #IGNORE current chunk type
+  ActrChunkRef          load_chunk;   // #IGNORE current chunk
+
 
   inline void           SetModelFlag(ModelFlags flg)   { flags = (ModelFlags)(flags | flg); }
   // #CAT_Flags set flag state on
@@ -119,6 +151,40 @@ public:
   virtual ActrModule*   FindMakeModule(const String& nm, TypeDef* td,
                                        bool& made_new);
   // #CAT_ActR find or make a module of the given name and type -- initializes the module if it makes a new one
+
+  virtual ActrChunkType* FindChunkType(const String& type_name);
+  // #CAT_ActR find a chunk type by name or emit error if not found
+
+  virtual bool          LoadActrFile(const String& fname="");
+  // #BUTTON #MENU #EXT_lisp,actr #CAT_File #FILETYPE_ActrModel #FILE_DIALOG_LOAD read actr model file in standard actr lisp format (leave fname empty to pull up file chooser)
+  virtual void          SaveActrFile(const String& fname="");
+  // #BUTTON #MENU #EXT_lisp,actr #CAT_File #FILETYPE_ActrModel #FILE_DIALOG_SAVE save actr model file in standard actr lisp format (leave fname empty to pull up file chooser)
+
+  virtual int           Lex();
+  // #IGNORE lex for loading actr files -- defined in ActrLex.cpp
+  virtual int           Getc();
+  // #IGNORE get char for parsing
+  virtual int           Peekc();
+  // #IGNORE peek next char
+  virtual void          unGetc(int c);
+  // #IGNORE peek next char
+  virtual int           skipwhite();
+  // #IGNORE skip whitespace
+  virtual int           skipwhite_peek();
+  // #IGNORE skip whitespace
+  virtual int           skipwhite_nocr();
+  // #IGNORE skip whitespace
+  virtual int           skipline();
+  // #IGNORE skip whitespace
+  virtual int           readword(int c);
+  // #IGNORE read word into load_buf
+  virtual void          ResetParse();
+  // #IGNORE reset parsing state
+  virtual void          InitLoadKeywords();
+  // #IGNORE init keywords
+
+  virtual void          ResetModel();
+  // #EXPERT reset the model entirely -- remove everything from existing model -- use with caution!
 
   override String       GetDesc() const {return desc;}
   override bool         CheckConfig_impl(bool quiet);
