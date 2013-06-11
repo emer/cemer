@@ -166,6 +166,11 @@ public:
   bool          InitValsToRowNo();
   // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
 
+  bool          SortAscending();
+  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column
+  bool          SortDescending();
+  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Column
+
   int           FindVal(const Variant& val, int st_row = 0) const;
   // #CAT_Access find row number for given value within column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 

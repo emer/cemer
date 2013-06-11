@@ -511,6 +511,16 @@ bool DataCol::InitValsToRowNo()  {
   return true;
 }
 
+bool DataCol::SortAscending() {
+  dataTable()->SortCol(this, true);
+  return true;
+}
+
+bool DataCol::SortDescending() {
+  dataTable()->SortCol(this, false);
+  return true;
+}
+
 ////////////////////
 // Access: Matrix
 
