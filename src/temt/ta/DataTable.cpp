@@ -164,19 +164,6 @@ void DataTable::UpdateAfterEdit_impl() {
   // the following is likely redundant:
   //  UpdateColCalcs();
   CheckForCalcs();
-
-#ifndef OLD_DT_IDX_MODE   // handled by Dump_Load_Value now
-  //  if(taMisc::is_loading) {
-  //    taVersion v630(6, 3, 0);             // todo: increment this when new indexes go live!
-  //    if(taMisc::loading_version < v630) { // make sure old projects have indexes!
-  //      if(row_indexes.size == 0 && rows > 0) {
-  //        rows_total = rows;
-  //        ResetRowIndexes();
-  //      }
-  //    }
-  //  }
-#endif
-
 }
 
 int DataTable::GetSpecialState() const {
@@ -204,11 +191,9 @@ bool DataTable::AddRows(int n) {
     DataCol* ar = data.FastEl(i);
     ar->EnforceRows(ar->rows() + n);
   }
-#ifndef OLD_DT_IDX_MODE
   for(int r=rows_total; r<rows_total+n; r++) {
     row_indexes.Add(r);
   }
-#endif
   RowsAdding(n, false);
   return true;
 }
@@ -325,24 +310,16 @@ int DataTable::Dump_Load_Value(istream& strm, taBase* par) {
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
-#ifdef OLD_DT_IDX_MODE
-  rows = 0;
-#else
   rows_total = 0;
-#endif
   for (int i = 0; i < cols(); ++i) {
     DataCol* col = data.FastEl(i);
     int frms = col->AR()->frames();
     // number of rows is going to be = biggest number in individual cols
-#ifdef OLD_DT_IDX_MODE
-    rows = max((int)rows, frms);
-#else
     rows_total = max((int)rows_total, frms);  // this is the number of rows in the table
     if (row_indexes.size > 0 && row_indexes.size <= rows_total)
       rows = min(rows_total, row_indexes.size); // this is the number of rows visible (i.e. not filtered out)
     else
       ResetRowIndexes();
-#endif
   }
   this->SigEmitUpdated();
   return c;
@@ -1326,13 +1303,9 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
     return NULL;
   }
   rval->Init(); // asserts geom
-#ifdef OLD_DT_IDX_MODE
-rval->EnforceRows(rows);      // new guys always get same # of rows as current table
-#else
-rval->EnforceRows(rows_total);      // new guys always get same # of rows as current table
-#endif
-StructUpdate(false);
-return rval;
+  rval->EnforceRows(rows_total);      // new guys always get same # of rows as current table
+  StructUpdate(false);
+  return rval;
 }
 
 DataCol* DataTable::NewCol_gui(DataCol::ValType val_type, const String& col_nm) {
@@ -1884,21 +1857,16 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
-#ifdef OLD_DT_IDX_MODE
-    rval = ar->InsertRows(st_row, n_rows);
-#else
+
     rval = ar->EnforceRows(ar->rows() + n_rows);
-#endif
   }
   if(rval) {
     rows += n_rows;
-#ifndef OLD_DT_IDX_MODE
     // insert into row_indexes
     for (int r=st_row; r<st_row+n_rows; r++) {
       row_indexes.Insert(rows_total, r, 1);
       rows_total++;
     }
-#endif
   }
   DataUpdate(false);
   return rval;
@@ -1940,19 +1908,8 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       "end row not in range:",String(end_row)))
     return false;
   DataUpdate(true);
-#ifdef OLD_DT_IDX_MODE
-  for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-    int act_row;
-    if (idx(st_row, act_row))
-      ar->AR()->RemoveFrames(act_row, n_rows);
-  }
-  rows -= n_rows;
-#else  // not actually removing rows - just removing from this of visible rows
-    row_indexes.RemoveIdx(st_row, n_rows);
-    rows -= n_rows;		// the number of rows not hidden by filtering or hiding
-//  }
-#endif
+  row_indexes.RemoveIdx(st_row, n_rows);
+  rows -= n_rows;		// the number of rows not hidden by filtering or hiding
   if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);
   return true;
@@ -1981,13 +1938,6 @@ bool DataTable::DuplicateRow(int row_no, int n_copies) {
 bool DataTable::DuplicateRows(int st_row, int n_rows) {
   DataUpdate(true);   // only data, no change in column structure
   bool rval = InsertRows(st_row + n_rows, n_rows);
-#ifdef OLD_DT_IDX_MODE
-  if (rval) {
-    for (int i = 0; i < n_rows; i++) {
-      data.CopyFromRow(st_row + n_rows + i, data, st_row +i);
-    }
-  }
-#else
   if (rval) {
     for (int i = 0; i < n_rows; i++) {
       int src_dx, dest_dx;      // go thru index to get actual data rows
@@ -1996,7 +1946,6 @@ bool DataTable::DuplicateRows(int st_row, int n_rows) {
       data.CopyFromRow(dest_dx, data, src_dx);
     }
   }
-#endif
   DataUpdate(false);
   return rval;
 }
@@ -2010,12 +1959,8 @@ bool DataTable::RowInRangeNormalize(int& row) {
 void DataTable::Reset() {
   StructUpdate(true);
   data.Reset();
-#ifdef OLD_DT_IDX_MODE
-  rows = 0;
-#else
   rows_total = 0;
   row_indexes.Reset();
-#endif
 
   keygen.setInt64(0);
   StructUpdate(false);
@@ -2028,13 +1973,9 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
     DataCol* ar = data.FastEl(i);
     ar->AR()->Reset();
   }
-#ifdef OLD_DT_IDX_MODE
-  rows = 0;
-#else
   rows = 0;
   rows_total = 0;
   row_indexes.Reset();
-#endif
 
   keygen.setInt64(0);
   StructUpdate(false);
@@ -3167,11 +3108,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
       else sp->order = DataSortEl::DESCENDING;
     }
   }
-#ifdef OLD_DT_IDX_MODE
-  taDataProc::Sort_impl(this, &spec);
-#else
   taDataProc::SortThruIndex(this, &spec);
-#endif
 }
 
 void DataTable::SortColName(const String& col1, bool ascending1,
@@ -3218,11 +3155,7 @@ void DataTable::SortColName(const String& col1, bool ascending1,
     if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
   }
-#ifdef OLD_DT_IDX_MODE
-taDataProc::Sort_impl(this, &spec);
-#else
-taDataProc::SortThruIndex(this, &spec);
-#endif
+  taDataProc::SortThruIndex(this, &spec);
 }
 
 void DataTable::SortCol(DataCol* col1, bool ascending1,
@@ -3269,11 +3202,7 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
   }
-#ifdef OLD_DT_IDX_MODE
-taDataProc::Sort_impl(this, &spec);
-#else
-taDataProc::SortThruIndex(this, &spec);
-#endif
+  taDataProc::SortThruIndex(this, &spec);
 }
 
 bool DataTable::Filter(const String& filter_expr) {
@@ -3458,17 +3387,9 @@ bool DataTable::idx(int row_num, int& act_idx) const {
   if (row_num < 0)
     row_num = rows + row_num;
 
-#ifdef OLD_DT_IDX_MODE
-  act_idx = row_num;
-#else
   if(row_num < 0 || row_num >= row_indexes.size) return false;
   act_idx = row_indexes[row_num];
-#endif
 
-#ifdef OLD_DT_IDX_MODE
-  return (act_idx >= 0 && act_idx < rows);
-#else
   return (act_idx >= 0 && act_idx < rows_total);
-#endif
 }
 

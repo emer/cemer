@@ -158,11 +158,9 @@ void DataCol::Init() {
   taMatrix* ar = AR(); //cache
   int rows = 0; // rows, based on table (not our frames, which may have changed)
   DataTable* tab = dataTable();
-#ifdef OLD_DT_IDX_MODE
-  if (tab) rows = tab->rows;
-#else
-  if (tab) rows = tab->rows_total;    // all rows, not just the visible rows
-#endif
+  if (tab)
+    rows = tab->rows_total;    // all rows, not just the visible rows
+
   if (is_matrix) {
     MatrixGeom tdim = cell_geom;
     tdim.SetDims(tdim.dims() + 1);

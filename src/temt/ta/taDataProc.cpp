@@ -372,11 +372,7 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::Sort: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Sort: spec is NULL"); return false; }
   if(src == dest) {
-#ifdef OLD_DT_IDX_MODE
-    return Sort_impl(src, spec);
-#else
     return SortThruIndex(src, spec);
-#endif
   }
   // just copy and operate on dest
   bool in_place_req = false;
@@ -385,20 +381,12 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   String dnm = dest->name;
   *dest = *src;
   dest->name = dnm;
-#ifdef OLD_DT_IDX_MODE
-  return Sort_impl(dest, spec);
-#else
   return SortThruIndex(dest, spec);
-#endif
 }
 
 bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
   if(!dt) { taMisc::Error("taDataProc::Sort: data table is NULL"); return false; }
-#ifdef OLD_DT_IDX_MODE
-  return Sort_impl(dt, spec);
-#else
   return SortThruIndex(dt, spec);
-#endif
 }
 
 int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
@@ -1386,23 +1374,17 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
 
   DataTable ssrc_a(false);
   taBase::Own(ssrc_a, NULL);    // activates initlinks, refs
-//#ifdef OLD_DT_IDX_MODE
   Sort(&ssrc_a, src_a, &sort_spec_a);
-
-// Why doesn't this work with flatten jar 5/31/13 - should be more efficient
-//#else
-//  src_a->FlattenTo(&ssrc_a);
-//  SortThruIndex(&ssrc_a, &sort_spec_a);
-//#endif
+  // Why doesn't this work with flatten jar 5/31/13 - should be more efficient
+  //  src_a->FlattenTo(&ssrc_a);
+  //  SortThruIndex(&ssrc_a, &sort_spec_a);
 
   DataTable ssrc_b(false);
   taBase::Own(ssrc_b, NULL);    // activates initlinks, refs
-//#ifdef OLD_DT_IDX_MODE
   Sort(&ssrc_b, src_b, &sort_spec_b);
-//#else
-//  src_b->FlattenTo(&ssrc_b);
-//  SortThruIndex(&ssrc_b, &sort_spec_b);
-//#endif
+  // Why doesn't this work with flatten jar 5/31/13 - should be more efficient
+  //  src_b->FlattenTo(&ssrc_b);
+  //  SortThruIndex(&ssrc_b, &sort_spec_b);
 
   int b_row = 0;
   for(int row=0;row<ssrc_a.rows; row++) {
