@@ -249,7 +249,7 @@ public:
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
   // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
   virtual void          ResetView();
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Reset_View #FROM_GROUP_data #NULL_OK Unfilter the view (i.e. show all rows)
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Show_All_Rows #FROM_GROUP_data #NULL_OK Unfilter the view (i.e. show all rows)
   virtual bool          Flatten();
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten Saves the current filtered view. All hidden rows will be permanently deleted
   virtual bool          FlattenTo(DataTable* flattened_table);

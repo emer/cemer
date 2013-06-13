@@ -32,6 +32,7 @@ class TA_API Relation : public taINBase {
   INHERITED(taINBase)
 public:
   enum Relations {
+    NONE,               // #LABEL_
     EQUAL,              // #LABEL_=
     NOTEQUAL,           // #LABEL_!=
     LESSTHAN,           // #LABEL_<
@@ -39,6 +40,13 @@ public:
     LESSTHANOREQUAL,    // #LABEL_<=
     GREATERTHANOREQUAL  // #LABEL_>=
   };
+
+  enum Conjunctions {
+     AND,
+     OR
+   };
+
+
 
   Relations     rel;            // #LABEL_ relationship to evaluate
   double        val;            // #LABEL_ comparison value

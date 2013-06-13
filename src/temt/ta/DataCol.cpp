@@ -517,10 +517,80 @@ void DataCol::SortDescending() {
   dataTable()->SortCol(this, false);
 }
 
-void DataCol::Filter(const String& filter_expr) {
-  String expr("Name ");
+void DataCol::FilterCustom(const String& filter_expr) {
+  String expr(this->name);
   expr.cat(filter_expr);
   dataTable()->Filter(expr);
+}
+
+void DataCol::Filter(Relation::Relations operator_1, const String& value_1,
+    Relation::Conjunctions conjunction, Relation::Relations operator_2, const String& value_2) {
+  String expr;
+  CatColumnName(expr);
+  CatRelation(expr, operator_1);
+  CatValue(expr, value_1);
+  if (value_2 != "") {
+    CatConjunction(expr, conjunction);
+    CatColumnName(expr);
+    CatRelation(expr, operator_2);
+    CatValue(expr, value_2);
+  }
+  dataTable()->Filter(expr);
+}
+
+void DataCol::CatRelation(String& expr, Relation::Relations oper) {
+  switch(oper) {
+  case Relation::EQUAL:
+    expr.cat(" == ");
+    break;
+  case Relation::NOTEQUAL:
+    expr.cat(" != ");
+    break;
+  case Relation::LESSTHAN:
+    expr.cat(" < ");
+    break;
+  case Relation::GREATERTHAN:
+    expr.cat(" > ");
+    break;
+  case Relation::LESSTHANOREQUAL:
+    expr.cat(" <= ");
+    break;
+  case Relation::GREATERTHANOREQUAL:
+    expr.cat(" >= ");
+    break;
+  default:
+     taMisc::Error("DataCol::CatRelation, unknown switch value");
+     break;
+  }
+}
+
+void DataCol::CatConjunction(String& expr, Relation::Conjunctions conjunction) {
+  switch(conjunction) {
+  case Relation::AND:
+    expr.cat(" && ");
+    break;
+  case Relation::OR:
+    expr.cat(" || ");
+    break;
+  default:
+    taMisc::Error("DataCol::CatConjunction, unknown switch value");
+    break;
+  }
+}
+
+void DataCol::CatColumnName(String& expr) {
+  expr.cat(this->name);
+}
+
+void DataCol::CatValue(String& expr, const String& value) {
+  if(!(valType() == VT_INT || valType() == VT_FLOAT || valType() == VT_DOUBLE)) {
+  expr.cat(" \"");
+  expr.cat(value);
+  expr.cat("\"");
+  }
+  else {
+    expr.cat(value);
+  }
 }
 
 ////////////////////
