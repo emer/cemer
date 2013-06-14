@@ -58,6 +58,14 @@
 /* Using locations.  */
 #define YYLSP_NEEDED 0
 
+/* Substitute the variable and function names.  */
+#define yyparse apparse
+#define yylex   aplex
+#define yyerror aperror
+#define yylval  aplval
+#define yychar  apchar
+#define yydebug apdebug
+#define yynerrs apnerrs
 
 
 /* Tokens.  */
@@ -110,7 +118,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 18 "actr_parse.y"
+#line 20 "actr_parse.y"
 
 
 #include <ActrModel>
@@ -120,8 +128,8 @@
 
 #define AMCP    ActrModel::cur_parse
 
-void yyerror(const char *s);
-int yylex();
+void aperror(const char *s);
+int aplex();
 
 
 
@@ -145,7 +153,7 @@ int yylex();
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 35 "actr_parse.y"
+#line 37 "actr_parse.y"
 {
   const char*     chr;
   int	   	  rval;
@@ -156,7 +164,7 @@ typedef struct YYSTYPE
   ActrSlotType*   sltyp;
 }
 /* Line 193 of yacc.c.  */
-#line 160 "y.tab.c"
+#line 168 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -169,7 +177,7 @@ typedef struct YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 173 "y.tab.c"
+#line 181 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -465,10 +473,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    64,    64,    68,    70,    72,    74,    76,    78,    80,
-      85,    89,    94,    98,    99,   102,   103,   104,   107,   111,
-     118,   119,   122,   128,   131,   132,   135,   138,   147,   155,
-     156,   159,   161
+       0,    66,    66,    70,    72,    74,    76,    78,    80,    82,
+      87,    91,    96,   100,   101,   104,   105,   106,   109,   113,
+     120,   121,   124,   130,   133,   134,   137,   140,   149,   157,
+     158,   161,   163
 };
 #endif
 
@@ -1402,7 +1410,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 64 "actr_parse.y"
+#line 66 "actr_parse.y"
     {
             AMCP->ResetParse(); /* AMCP->load_state = ActrModel::YYRet_Exit; */
             taMisc::Info("nothing");
@@ -1410,90 +1418,90 @@ yyreduce:
     break;
 
   case 3:
-#line 68 "actr_parse.y"
-    {
-	    AMCP->ResetParse(); return AMCP->load_state; }
-    break;
-
-  case 4:
 #line 70 "actr_parse.y"
     {
 	    AMCP->ResetParse(); return AMCP->load_state; }
     break;
 
-  case 5:
+  case 4:
 #line 72 "actr_parse.y"
     {
 	    AMCP->ResetParse(); return AMCP->load_state; }
     break;
 
-  case 6:
+  case 5:
 #line 74 "actr_parse.y"
     {
 	    AMCP->ResetParse(); return AMCP->load_state; }
     break;
 
-  case 7:
+  case 6:
 #line 76 "actr_parse.y"
     {
 	    AMCP->ResetParse(); return AMCP->load_state; }
     break;
 
-  case 8:
+  case 7:
 #line 78 "actr_parse.y"
+    {
+	    AMCP->ResetParse(); return AMCP->load_state; }
+    break;
+
+  case 8:
+#line 80 "actr_parse.y"
     { /* end of define model */
 	    AMCP->ResetParse(); return AMCP->load_state; }
     break;
 
   case 9:
-#line 80 "actr_parse.y"
+#line 82 "actr_parse.y"
     {
             AMCP->ResetParse(); AMCP->load_state = ActrModel::YYRet_NoSrc;
             return AMCP->load_state; }
     break;
 
   case 10:
-#line 85 "actr_parse.y"
+#line 87 "actr_parse.y"
     { /* assumed */
         }
     break;
 
   case 11:
-#line 89 "actr_parse.y"
+#line 91 "actr_parse.y"
     { 
           AMCP->name = (yyvsp[(3) - (3)].chr);
         }
     break;
 
   case 12:
-#line 94 "actr_parse.y"
+#line 96 "actr_parse.y"
     { 
         }
     break;
 
   case 15:
-#line 102 "actr_parse.y"
-    {    }
-    break;
-
-  case 16:
-#line 103 "actr_parse.y"
-    {    }
-    break;
-
-  case 17:
 #line 104 "actr_parse.y"
     {    }
     break;
 
+  case 16:
+#line 105 "actr_parse.y"
+    {    }
+    break;
+
+  case 17:
+#line 106 "actr_parse.y"
+    {    }
+    break;
+
   case 18:
-#line 107 "actr_parse.y"
+#line 109 "actr_parse.y"
     {
         }
     break;
 
   case 19:
-#line 111 "actr_parse.y"
+#line 113 "actr_parse.y"
     {
           bool made_new = false;
           AMCP->load_chtype = AMCP->chunk_types.FindMakeNameType((yyvsp[(3) - (3)].chr), NULL, made_new);
@@ -1502,12 +1510,12 @@ yyreduce:
     break;
 
   case 21:
-#line 119 "actr_parse.y"
+#line 121 "actr_parse.y"
     { (yyval.sltyp) = (yyvsp[(1) - (2)].sltyp); }
     break;
 
   case 22:
-#line 122 "actr_parse.y"
+#line 124 "actr_parse.y"
     {
             bool made_new = false;
             (yyval.sltyp) = AMCP->load_chtype->slots.FindMakeNameType((yyvsp[(1) - (1)].chr), NULL, made_new);
@@ -1515,17 +1523,17 @@ yyreduce:
     break;
 
   case 23:
-#line 128 "actr_parse.y"
+#line 130 "actr_parse.y"
     {   }
     break;
 
   case 26:
-#line 135 "actr_parse.y"
+#line 137 "actr_parse.y"
     { }
     break;
 
   case 27:
-#line 138 "actr_parse.y"
+#line 140 "actr_parse.y"
     {
            ActrDeclarativeModule* dmod =
              (ActrDeclarativeModule*)AMCP->modules.FindName("declarative");
@@ -1536,7 +1544,7 @@ yyreduce:
     break;
 
   case 28:
-#line 147 "actr_parse.y"
+#line 149 "actr_parse.y"
     {
            ActrChunkType* ct = AMCP->FindChunkType((yyvsp[(2) - (2)].chr));
            if(ct) {
@@ -1546,20 +1554,20 @@ yyreduce:
     break;
 
   case 31:
-#line 159 "actr_parse.y"
+#line 161 "actr_parse.y"
     {
             AMCP->load_chunk->SetSlotVal((yyvsp[(1) - (2)].chr), (yyvsp[(2) - (2)].chr)); }
     break;
 
   case 32:
-#line 161 "actr_parse.y"
+#line 163 "actr_parse.y"
     {
             AMCP->load_chunk->SetSlotVal((yyvsp[(1) - (2)].chr), (String)(yyvsp[(2) - (2)].num)); }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1563 "y.tab.c"
+#line 1571 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1773,12 +1781,12 @@ yyreturn:
 }
 
 
-#line 165 "actr_parse.y"
+#line 167 "actr_parse.y"
 
 
 	/* end of grammar */
 
-void yyerror(const char *s) { 	/* called for yacc syntax error */
+void aperror(const char *s) { 	/* called for yacc syntax error */
   if(strcmp(s, "parse error") == 0) {
     taMisc::Error("Syntax Error, line:", String(AMCP->load_st_line), ":");
   }

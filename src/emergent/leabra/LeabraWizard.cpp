@@ -2489,7 +2489,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   // slow learning rate on to pfc cons!
   topfc_cons->SetUnique("lrate", true);
   topfc_cons->learn = true;
-  topfc_cons->lrate = .002f;
+  topfc_cons->lrate = .005f;
   topfc_cons->SetUnique("rnd", false);
   topfc_cons->rnd.var = 0.25f;
 
@@ -2530,7 +2530,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
     matrix_cons->SetUnique("rnd", false);
   }
   matrix_cons->SetUnique("lrate", true);
-  matrix_cons->lrate = .002f;
+  matrix_cons->lrate = .005f;
   matrix_cons->SetUnique("wt_sig", true);
   matrix_cons->wt_sig.gain = 6.0f;
   matrix_cons->wt_sig.off = 1.25f;

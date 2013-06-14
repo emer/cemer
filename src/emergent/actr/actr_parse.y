@@ -15,6 +15,8 @@
 
 /* parser for actr file loading */
 
+%name-prefix="ap" 
+
 %{
 
 #include <ActrModel>
@@ -24,8 +26,8 @@
 
 #define AMCP    ActrModel::cur_parse
 
-void yyerror(const char *s);
-int yylex();
+void aperror(const char *s);
+int aplex();
 
 %}
 
@@ -166,7 +168,7 @@ chunk_val:  AP_NAME AP_NAME  {
 
 	/* end of grammar */
 
-void yyerror(const char *s) { 	/* called for yacc syntax error */
+void aperror(const char *s) { 	/* called for yacc syntax error */
   if(strcmp(s, "parse error") == 0) {
     taMisc::Error("Syntax Error, line:", String(AMCP->load_st_line), ":");
   }

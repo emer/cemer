@@ -110,7 +110,7 @@ void ActrModel::ResetParse() {
   load_chunk = NULL;
 }
 
-int yylex() {
+int aplex() {
   if(ActrModel::cur_parse) {
     return ActrModel::cur_parse->Lex();
   }
@@ -144,7 +144,7 @@ int ActrModel::Lex() {
       } 
 
       double val = (double)load_buf;
-      yylval.num = val;
+      aplval.num = val;
       return AP_NUMBER;
     }
 
@@ -152,10 +152,10 @@ int ActrModel::Lex() {
       readword(c);
       Variant val = load_keywords.GetVal(load_buf);
       if(!val.isNull()) {
-        yylval.rval = val.toInt();
+        aplval.rval = val.toInt();
         return val.toInt();
       }
-      yylval.chr = load_buf;
+      aplval.chr = load_buf;
       return AP_NAME;
     }
     

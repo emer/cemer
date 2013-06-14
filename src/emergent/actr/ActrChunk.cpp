@@ -210,4 +210,5 @@ bool ActrChunk::SetSlotVal(const String& slot, const String& val) {
     return false;
   }
   slt->val = val;
+  return true;
 }

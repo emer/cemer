@@ -271,9 +271,9 @@ void ActrModel::SaveActrFile(const String& fname) {
   
 }
 
-int yyparse(void);
-void yyerror(const char *s);
-extern int yydebug;
+int apparse(void);
+void aperror(const char *s);
+extern int apdebug;
 
 bool ActrModel::LoadActrFile(const String& fname) {
   taFiler* flr = GetLoadFiler(fname, ".lisp,.actr", false);
@@ -285,10 +285,10 @@ bool ActrModel::LoadActrFile(const String& fname) {
     load_line = 1;
     load_col = 0;
     load_pos = 0;
-    yydebug = load_debug > 2 ? 1 : 0;
+    apdebug = load_debug > 2 ? 1 : 0;
     load_state = YYRet_Ok;
     while(load_state != YYRet_Exit)
-      yyparse();
+      apparse();
   }
   cur_parse = NULL;
   flr->Close();
