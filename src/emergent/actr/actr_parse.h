@@ -84,7 +84,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 37 "actr_parse.y"
+#line 38 "actr_parse.y"
 {
   const char*     chr;
   int	   	  rval;

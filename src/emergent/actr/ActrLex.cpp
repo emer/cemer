@@ -81,11 +81,14 @@ int ActrModel::skipwhite_nocr() {
 }
 
 int ActrModel::skipline() {
+  load_buf = "";
+
   int c;
   char lastc = '\0';
   while ((c=Getc()) != EOF) {
      if ( ((c == '\n') || ((c == '\r'))) && lastc != '\\') break;
      lastc = c;
+     load_buf += (char)c;
   }
   return c;
 }
@@ -108,6 +111,8 @@ int ActrModel::readword(int c) {
 void ActrModel::ResetParse() {
   load_chtype = NULL;
   load_chunk = NULL;
+  load_prod = NULL;
+  load_comment = "";
 }
 
 int aplex() {
@@ -129,6 +134,12 @@ int ActrModel::Lex() {
     if(c == EOF) {
       load_state = YYRet_Exit;
       return YYRet_Exit;
+    }
+
+    if(c == ';') {
+      c = skipline();
+      load_comment = load_buf;
+      continue;
     }
 
     if((c == '.') || isdigit(c) || (c == '-')) {	// number

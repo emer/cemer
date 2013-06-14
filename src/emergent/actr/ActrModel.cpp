@@ -65,6 +65,22 @@ ActrModule* ActrModel::FindMakeModule(const String& nm, TypeDef* td,
   return rval;
 }
 
+ActrDeclarativeModule* ActrModel::DeclarativeModule() {
+  ActrDeclarativeModule* dmod =
+    (ActrDeclarativeModule*)modules.FindName("declarative");
+  if(TestError(!dmod, "DeclarativeModule", "declarative module not found -- model not yet initialized"))
+    return NULL;
+  return dmod;
+}
+
+ActrProceduralModule* ActrModel::ProceduralModule() {
+  ActrProceduralModule* dmod =
+    (ActrProceduralModule*)modules.FindName("procedural");
+  if(TestError(!dmod, "ProceduralModule", "procedural module not found -- model not yet initialized"))
+    return NULL;
+  return dmod;
+}
+
 void ActrModel::DefaultConfig() {
   bool made_new;
   FindMakeModule("procedural", &TA_ActrProceduralModule, made_new);

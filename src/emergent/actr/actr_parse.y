@@ -15,12 +15,13 @@
 
 /* parser for actr file loading */
 
-%name-prefix="ap" 
+%name-prefix="ap"  /* prevent collision with css yy parser */
 
 %{
 
 #include <ActrModel>
 #include <ActrDeclarativeModule>
+#include <ActrProceduralModule>
 
 #include <taMisc>
 
@@ -58,6 +59,7 @@ int aplex();
 %type   <sltyp>  slots slot
 %type   <rval>   clear_all define_model
 %type   <chk>    dm_item_nm dm_item_typ dm_item
+%type   <prod>   prod
 
 %left	'*'
 %left   '('
@@ -76,6 +78,8 @@ list:	/* nothing */		{
         | list chunktype	{
 	    AMCP->ResetParse(); return AMCP->load_state; }
         | list add_dm	        {
+	    AMCP->ResetParse(); return AMCP->load_state; }
+        | list prod	        {
 	    AMCP->ResetParse(); return AMCP->load_state; }
         | list ')'	        { /* end of define model */
 	    AMCP->ResetParse(); return AMCP->load_state; }
@@ -138,11 +142,10 @@ dm_item:   dm_item_nm dm_item_typ chunk_vals ')' { }
         ;
 
 dm_item_nm: '(' AP_NAME {
-           ActrDeclarativeModule* dmod =
-             (ActrDeclarativeModule*)AMCP->modules.FindName("declarative");
+           ActrDeclarativeModule* dmod = AMCP->DeclarativeModule();
            bool made_new = false;
            AMCP->load_chunk = dmod->init_chunks.FindMakeNameType($2, NULL, made_new);
-           AMCP->load_chunk->name = $2; // should set this!
+           /*           AMCP->load_chunk->name = $2; // should set this! */
            $$ = AMCP->load_chunk; } 
         ;    
 
@@ -162,6 +165,99 @@ chunk_val:  AP_NAME AP_NAME  {
             AMCP->load_chunk->SetSlotVal($1, $2); }
          |  AP_NAME AP_NUMBER {
             AMCP->load_chunk->SetSlotVal($1, (String)$2); }
+         ; 
+
+prod:   prod_name prod_lhs '=' '=' '>' prod_rhs ')' { }
+         ;
+
+prod_name: '(' AP_PROD AP_NAME {
+           ActrProceduralModule* pmod = AMCP->ProceduralModule();
+           bool made_new = false;
+           AMCP->load_prod = pmod->productions.FindMakeNameType($3, NULL, made_new); }
+
+prod_lhs:  prod_cond
+         | prod_lhs prod_cond
+         ;
+
+prod_cond: prod_cond_name prod_cond_type prod_cond_vals { }
+         ;
+
+prod_cond_name: '=' AP_NAME '>' {
+           AMCP->load_cond = (ActrCondition*)AMCP->load_prod->conds.New(1);
+           AMCP->load_cond->src = AMCP->buffers.FindName($2);
+           AMCP->load_cond->cond_src = ActrCondition::BUFFER_EQ; }
+         | '?' AP_NAME '>' {
+           AMCP->load_cond = (ActrCondition*)AMCP->load_prod->conds.New(1);
+           AMCP->load_cond->src = AMCP->buffers.FindName($2);
+           AMCP->load_cond->cond_src = ActrCondition::BUFFER_QUERY; }
+         ;
+
+prod_cond_type: AP_ISA AP_NAME {
+           ActrChunkType* ct = AMCP->FindChunkType($2);
+           if(ct) {
+             AMCP->load_cond->cmp_chunk.SetChunkType(ct);
+           } }
+         ;
+
+prod_cond_vals: prod_cond_val
+         | prod_cond_vals prod_cond_val
+         ;
+
+prod_cond_val:  
+            AP_NAME AP_NAME  {
+            AMCP->load_cond->cmp_chunk.SetSlotVal($1, $2); }
+         |  AP_NAME AP_NUMBER {
+            AMCP->load_cond->cmp_chunk.SetSlotVal($1, (String)$2); }
+         |  AP_NAME '=' AP_NAME {
+            AMCP->load_cond->cmp_chunk.SetSlotVal($1, String("=") + $3); }
+         |  '-' AP_NAME AP_NAME  {
+           AMCP->load_cond->cmp_chunk.SetSlotVal($2, $3 + String("-")); }
+         |  '-' AP_NAME AP_NUMBER {
+           AMCP->load_cond->cmp_chunk.SetSlotVal($2, (String)$3 + String("-")); }
+         |  '-' AP_NAME '=' AP_NAME {
+           AMCP->load_cond->cmp_chunk.SetSlotVal($2, String("=") + $4 + String("-")); }
+         ; 
+
+prod_rhs:  prod_act
+         | prod_rhs prod_act
+         ;
+
+prod_act: prod_act_name prod_act_type prod_act_vals { }
+         | prod_act_name prod_act_vals { }
+         ;
+
+prod_act_name: '=' AP_NAME '>' {
+           AMCP->load_act = (ActrAction*)AMCP->load_prod->acts.New(1);
+           AMCP->load_act->dest = AMCP->buffers.FindName($2);
+           AMCP->load_act->action = ActrAction::UPDATE; }
+         | '+' AP_NAME '>' {
+           AMCP->load_act = (ActrAction*)AMCP->load_prod->acts.New(1);
+           AMCP->load_act->dest = AMCP->buffers.FindName($2);
+           AMCP->load_act->action = ActrAction::REQUEST; }
+         | '-' AP_NAME '>' {
+           AMCP->load_act = (ActrAction*)AMCP->load_prod->acts.New(1);
+           AMCP->load_act->dest = AMCP->buffers.FindName($2);
+           AMCP->load_act->action = ActrAction::CLEAR; }
+         ;
+
+prod_act_type: AP_ISA AP_NAME {
+           ActrChunkType* ct = AMCP->FindChunkType($2);
+           if(ct) {
+             AMCP->load_act->chunk.SetChunkType(ct);
+           } }
+         ;
+
+prod_act_vals: prod_act_val
+         | prod_act_vals prod_act_val
+         ;
+
+prod_act_val:  
+            AP_NAME AP_NAME  {
+            AMCP->load_act->chunk.SetSlotVal($1, $2); }
+         |  AP_NAME AP_NUMBER {
+            AMCP->load_act->chunk.SetSlotVal($1, (String)$2); }
+         |  AP_NAME '=' AP_NAME {
+            AMCP->load_act->chunk.SetSlotVal($1, String("=") + $3); }
          ; 
 
 %%

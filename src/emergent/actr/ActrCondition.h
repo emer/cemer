@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taOBase>
+#include <taSmartRefT>
 
 // member includes:
 #include <ActrChunk>
@@ -122,5 +123,7 @@ private:
   void Initialize();
   void Destroy()     { CutLinks(); }
 };
+
+SmartRef_Of(ActrCondition); // ActrConditionRef
 
 #endif // ActrCondition_h

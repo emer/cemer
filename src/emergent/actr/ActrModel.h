@@ -25,11 +25,14 @@
 #include <ActrModule_List>
 #include <ActrBuffer_List>
 #include <ActrEvent_List>
+#include <ActrProduction>
+
 #include <DataTable>
 #include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:
-
+class ActrDeclarativeModule; //
+class ActrProceduralModule; //
 class ActrModel; //
 SmartRef_Of(ActrModel); // ActrModelRef
 
@@ -89,9 +92,13 @@ public:
   int                   load_st_line_pos;  // #IGNORE string pos for loading
   String                load_last_ln; // #IGNORE last line
   String                load_buf;     // #IGNORE generic buf
+  String                load_comment; // #IGNORE last comment processed
   YY_Flags              load_state;  // #IGNORE state of current parse
   ActrChunkTypeRef      load_chtype;  // #IGNORE current chunk type
   ActrChunkRef          load_chunk;   // #IGNORE current chunk
+  ActrProductionRef     load_prod;   // #IGNORE current production
+  ActrConditionRef      load_cond;   // #IGNORE current condition
+  ActrActionRef         load_act;   // #IGNORE current action
 
 
   inline void           SetModelFlag(ModelFlags flg)   { flags = (ModelFlags)(flags | flg); }
@@ -151,6 +158,10 @@ public:
   virtual ActrModule*   FindMakeModule(const String& nm, TypeDef* td,
                                        bool& made_new);
   // #CAT_ActR find or make a module of the given name and type -- initializes the module if it makes a new one
+  virtual ActrDeclarativeModule*       DeclarativeModule();
+  // #CAT_ActR get the declarative module
+  virtual ActrProceduralModule*        ProceduralModule();
+  // #CAT_ActR get the procedural module
 
   virtual ActrChunkType* FindChunkType(const String& type_name);
   // #CAT_ActR find a chunk type by name or emit error if not found

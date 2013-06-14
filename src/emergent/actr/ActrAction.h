@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taOBase>
+#include <taSmartRefT>
 
 // member includes:
 #include <ActrBuffer>
