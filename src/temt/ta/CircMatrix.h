@@ -39,7 +39,7 @@ public:
   //    Special Access Routines
 
   int   CircIdx(int cidx) const
-  { int rval = cidx+st_idx; if(rval >= matrix->frames()) rval -= matrix->frames(); return rval; }
+  { int rval = cidx+st_idx; if(rval >= matrix->Frames()) rval -= matrix->Frames(); return rval; }
   // #CAT_CircAccess gets physical index from logical circular index
 
   int   CircIdx_Last() const
@@ -54,7 +54,7 @@ public:
   // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
 
   int           CircAddExpand() {
-    if((st_idx == 0) && (length >= matrix->frames())) {
+    if((st_idx == 0) && (length >= matrix->Frames())) {
       matrix->AddFrame(); length++;     // must be building up the list, so add it
     }
     else {

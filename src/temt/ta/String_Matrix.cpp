@@ -65,7 +65,7 @@ void String_Matrix::FmDelimString(const String& str, const String& delim) {
   }
   else {
     if(size < ar.size) {
-      int extra = ((ar.size - size) / frameSize());
+      int extra = ((ar.size - size) / FrameSize());
       AddFrames(extra);
       while(size < ar.size)
         AddFrames(1);

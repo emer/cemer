@@ -2847,7 +2847,7 @@ bool taMath_double::mat_dist(double_Matrix* dist_mat, const double_Matrix* src_m
     taMisc::Error("*** mat_dist: matrix is < 2 dimensional!");
     return false;
   }
-  int n = src_mat->frames();
+  int n = src_mat->Frames();
   dist_mat->SetGeom(2, n, n);
   for(int i=0;i<n;i++) {
     double_Matrix* t1 = ((double_Matrix*)src_mat)->GetFrameSlice(i);
@@ -2877,12 +2877,12 @@ bool taMath_double::mat_cross_dist(double_Matrix* dist_mat, const double_Matrix*
     taMisc::Error("*** mat_cross_dist: matrix b is < 2 dimensional!");
     return false;
   }
-  if(src_mat_a->frameSize() != src_mat_b->frameSize()) {
+  if(src_mat_a->FrameSize() != src_mat_b->FrameSize()) {
     taMisc::Error("*** mat_cross_dist: matrix a and b do not have the same framesize!");
     return false;
   }
-  int n_rows = src_mat_a->frames();
-  int n_cols = src_mat_b->frames();
+  int n_rows = src_mat_a->Frames();
+  int n_cols = src_mat_b->Frames();
   dist_mat->SetGeom(2, n_cols, n_rows);
   for(int i=0;i<n_rows;i++) {
     double_Matrix* t1 = ((double_Matrix*)src_mat_a)->GetFrameSlice(i);
@@ -2901,12 +2901,12 @@ bool taMath_double::mat_cross_dist(double_Matrix* dist_mat, const double_Matrix*
 
 bool taMath_double::mat_cell_to_vec(double_Matrix* vec, const double_Matrix* mat, int cell_no) {
   if(!vec_check_type(vec) || !vec_check_type(mat)) return false;
-  if(cell_no >= mat->frameSize()) {
+  if(cell_no >= mat->FrameSize()) {
     taMisc::Error("mat_cell_to_vec: cell no:", String(cell_no), "is larger than framesize:",
-                  String(mat->frameSize()));
+                  String(mat->FrameSize()));
     return false;
   }
-  int n = mat->frames();
+  int n = mat->Frames();
   vec->SetGeom(1, n);
   for(int i=0;i<n; i++) {
     vec->FastEl(i) = mat->FastEl_Flat(mat->FrameStartIdx(i) + cell_no);
@@ -2921,7 +2921,7 @@ bool taMath_double::mat_correl(double_Matrix* correl_mat, const double_Matrix* s
     return false;
   }
 
-  int n = src_mat->frameSize();
+  int n = src_mat->FrameSize();
   correl_mat->SetGeom(2, n, n);
 
   double_Matrix p1vals(false);
@@ -2946,11 +2946,11 @@ bool taMath_double::mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_m
     taMisc::Error("*** mat_prjn: source matrix is < 2 dimensional!");
     return false;
   }
-  if(src_mat->frameSize() != prjn_mat->count()) {
+  if(src_mat->FrameSize() != prjn_mat->count()) {
     taMisc::Error("*** mat_prjn: source matrix frame and projection matrix don't have the same size");
     return false;
   }
-  int n_rows = src_mat->frames();
+  int n_rows = src_mat->Frames();
   prjn_vec->SetGeom(1, n_rows);
   for(int i=0;i<n_rows;i++) {
     double_Matrix* t1 = ((double_Matrix*)src_mat)->GetFrameSlice(i);
@@ -2972,10 +2972,10 @@ bool taMath_double::mat_time_avg(double_Matrix* a, double avg_dt) {
     return false;
   }
   double avg_dt_c = 1.0 - avg_dt;
-  for(int i=1;i<a->frames();i++) {
+  for(int i=1;i<a->Frames();i++) {
     int fr_idx = a->FrameStartIdx(i);
     int frm1_idx = a->FrameStartIdx(i-1);
-    for(int j=0;j<a->frameSize();j++) {
+    for(int j=0;j<a->FrameSize();j++) {
       a->FastEl_Flat(fr_idx + j) = avg_dt * a->FastEl_Flat(frm1_idx + j) + avg_dt_c * a->FastEl_Flat(fr_idx + j);
     }
   }
@@ -2994,13 +2994,13 @@ bool taMath_double::mat_frame_convolve(double_Matrix* out_vec, const double_Matr
   if(out_vec->size != in_vec->size) {
     out_vec->SetGeomN(in_vec->geom); // must be same
   }
-  for(int i=0;i<in_vec->frames();i++) {
-    for(int k=0;k<in_vec->frameSize();k++) {
+  for(int i=0;i<in_vec->Frames();i++) {
+    for(int k=0;k<in_vec->FrameSize();k++) {
       float sum = 0.0;
       float dnorm = 0.0;
       for(int j=0;j<kernel->size;j++) {
         int idx = i + j - off;
-        if(idx < 0 || idx >= in_vec->frames()) {
+        if(idx < 0 || idx >= in_vec->Frames()) {
           dnorm += kernel->FastEl(j);
         }
         else {
@@ -3019,7 +3019,7 @@ bool taMath_double::mat_frame_convolve(double_Matrix* out_vec, const double_Matr
 bool taMath_double::mat_fmt_out_frame(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!vec_check_type(in_mat) || !vec_check_type(out_mat)) return false;
   MatrixGeom frg = in_mat->geom;
-  if(frg.dims() == 1 || in_mat->frames() == 0) return false;
+  if(frg.dims() == 1 || in_mat->Frames() == 0) return false;
   frg.SetDims(frg.dims()-1);    // nuke last dim
   out_mat->SetGeomN(frg);
   return true;
@@ -3027,8 +3027,8 @@ bool taMath_double::mat_fmt_out_frame(double_Matrix* out_mat, const double_Matri
 
 bool taMath_double::mat_frame_set_n(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  double frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  double frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = frn;
   }
@@ -3037,7 +3037,7 @@ bool taMath_double::mat_frame_set_n(double_Matrix* out_mat, const double_Matrix*
 
 bool taMath_double::mat_frame_first(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frs = in_mat->frameSize();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(i);
   }
@@ -3046,8 +3046,8 @@ bool taMath_double::mat_frame_first(double_Matrix* out_mat, const double_Matrix*
 
 bool taMath_double::mat_frame_last(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   int off = (frn-1) * frs;
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(off + i);
@@ -3060,8 +3060,8 @@ bool taMath_double::mat_frame_find_first(double_Matrix* out_mat, const double_Ma
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     int j;
     for(j=0;j<frn;j++) {
@@ -3078,8 +3078,8 @@ bool taMath_double::mat_frame_find_last(double_Matrix* out_mat, const double_Mat
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     int j;
     for(j=frn-1;j>=0;j--) {
@@ -3093,8 +3093,8 @@ bool taMath_double::mat_frame_find_last(double_Matrix* out_mat, const double_Mat
 
 bool taMath_double::mat_frame_max(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double mx = in_mat->FastEl_Flat(i);
     for(int j=1;j<frn;j++) {
@@ -3107,8 +3107,8 @@ bool taMath_double::mat_frame_max(double_Matrix* out_mat, const double_Matrix* i
 
 bool taMath_double::mat_frame_abs_max(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double mx = fabs(in_mat->FastEl_Flat(i));
     for(int j=1;j<frn;j++) {
@@ -3121,8 +3121,8 @@ bool taMath_double::mat_frame_abs_max(double_Matrix* out_mat, const double_Matri
 
 bool taMath_double::mat_frame_min(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double mx = in_mat->FastEl_Flat(i);
     for(int j=1;j<frn;j++) {
@@ -3135,8 +3135,8 @@ bool taMath_double::mat_frame_min(double_Matrix* out_mat, const double_Matrix* i
 
 bool taMath_double::mat_frame_abs_min(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double mx = fabs(in_mat->FastEl_Flat(i));
     for(int j=1;j<frn;j++) {
@@ -3149,8 +3149,8 @@ bool taMath_double::mat_frame_abs_min(double_Matrix* out_mat, const double_Matri
 
 bool taMath_double::mat_frame_sum(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double sum = 0.0f;
     for(int j=0;j<frn;j++) {
@@ -3163,8 +3163,8 @@ bool taMath_double::mat_frame_sum(double_Matrix* out_mat, const double_Matrix* i
 
 bool taMath_double::mat_frame_prod(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double prod = in_mat->FastEl_Flat(i);
     for(int j=1;j<frn;j++) {
@@ -3177,8 +3177,8 @@ bool taMath_double::mat_frame_prod(double_Matrix* out_mat, const double_Matrix* 
 
 bool taMath_double::mat_frame_mean(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_frame_sum(out_mat, in_mat)) return false;
-  double nrm = 1.0 / (double)in_mat->frames();
-  int frs = in_mat->frameSize();
+  double nrm = 1.0 / (double)in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) *= nrm;
   }
@@ -3187,8 +3187,8 @@ bool taMath_double::mat_frame_mean(double_Matrix* out_mat, const double_Matrix* 
 
 bool taMath_double::mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat, bool use_est) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   double nrm = 1.0 / ((double)frn - (double)use_est);
   for(int i=0;i<frs;i++) {
     double mean = 0.0f;
@@ -3208,7 +3208,7 @@ bool taMath_double::mat_frame_var(double_Matrix* out_mat, const double_Matrix* i
 
 bool taMath_double::mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat, bool use_est) {
   if(!mat_frame_var(out_mat, in_mat, use_est)) return false;
-  int frs = in_mat->frameSize();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = sqrt(out_mat->FastEl_Flat(i));
   }
@@ -3217,8 +3217,8 @@ bool taMath_double::mat_frame_std_dev(double_Matrix* out_mat, const double_Matri
 
 bool taMath_double::mat_frame_sem(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_frame_std_dev(out_mat, in_mat, true)) return false;
-  int frs = in_mat->frameSize();
-  double nrm = 1.0 / sqrt((double)in_mat->frames());
+  int frs = in_mat->FrameSize();
+  double nrm = 1.0 / sqrt((double)in_mat->Frames());
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) *= nrm;
   }
@@ -3227,8 +3227,8 @@ bool taMath_double::mat_frame_sem(double_Matrix* out_mat, const double_Matrix* i
 
 bool taMath_double::mat_frame_ss_len(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double sum = 0.0f;
     for(int j=0;j<frn;j++) {
@@ -3242,8 +3242,8 @@ bool taMath_double::mat_frame_ss_len(double_Matrix* out_mat, const double_Matrix
 
 bool taMath_double::mat_frame_ss_mean(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double sumsqr = 0.0f;
     double sum = 0.0f;
@@ -3260,8 +3260,8 @@ bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix*
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     double sum = 0.0f;
     for(int j=0;j<frn;j++) {
@@ -3274,8 +3274,8 @@ bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix*
 
 bool taMath_double::mat_frame_median(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   int idx = frn / 2;
   double_Array tmp;
   tmp.SetSize(frn);
@@ -3291,8 +3291,8 @@ bool taMath_double::mat_frame_median(double_Matrix* out_mat, const double_Matrix
 
 bool taMath_double::mat_frame_quantile(double_Matrix* out_mat, const double_Matrix* in_mat, double quant_pos) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   double_Array tmp;
   tmp.SetSize(frn);
   int idx = (int)(quant_pos * (double)tmp.size);
@@ -3310,8 +3310,8 @@ bool taMath_double::mat_frame_quantile(double_Matrix* out_mat, const double_Matr
 
 bool taMath_double::mat_frame_mode(double_Matrix* out_mat, const double_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->frames();
-  int frs = in_mat->frameSize();
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
   double_Array tmp;
   tmp.SetSize(frn);
   for(int i=0;i<frs;i++) {

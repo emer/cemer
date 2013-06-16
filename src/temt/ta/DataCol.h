@@ -84,6 +84,10 @@ public:
   // #CAT_Access const version of the matrix pointer
   virtual taMatrix*     AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
+  virtual void          SetMatrixViewMode();
+  // #IGNORE set the matrix view mode to parent datatable row_indexes 
+  virtual void          UnSetMatrixViewMode();
+  // #IGNORE set the matrix view mode to NULL -- do this before doing destructive things to underlying array
 
   /////////////////////////////////////////////
   // type of data
@@ -123,7 +127,7 @@ public:
      bool odd_y = true, int spc = 1) const;
   // #CAT_Access provides standardized 2d geom regardless of dimensionality (includes space for extra dimensions), odd_y = for odd dimension sizes, put extra dimension in y (else x): 3d = x, (y+1) * z (vertical time series of 2d patterns, +1=space), 4d = (x+1)*xx, (y+1)*yy (e.g., 2d groups of 2d patterns), 5d = vertical time series of 4d.
 
-  int                   rows() const { return AR()->frames(); }
+  int                   rows() const { return AR()->Frames(); }
   // #CAT_Access total number of rows of data within this column
 
   /////////////////////////////////////////////
@@ -335,11 +339,6 @@ public:
   bool          GetMinMaxScale(MinMax& mm);
   // #CAT_Display get min-max range of values contained within this column
 
-  bool          EnforceRows(int rows);
-  // force data to have this many rows
-  bool          InsertRows(int st_row, int n_rows);
-  // insert n_rows starting at st_row
-
   /////////////////////////////////////////////
   // misc
 
@@ -431,6 +430,11 @@ protected:
   virtual bool   SetValAsInt_impl(int val, int row, int cell)  { return false; }
   virtual bool   SetValAsByte_impl(byte val, int row, int cell)
   { return SetValAsInt_impl((int)val, row, cell); }
+
+  // note: all row memory management must come directly from the DataTable!
+
+  bool          EnforceRows(int rows);
+  // force data to have this many rows
 
 private:
   void  Copy_(const DataCol& cp);

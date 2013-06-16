@@ -27,3 +27,9 @@ bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   return rval;
 }
 
+void int_Matrix::FillSeq(int start, int inc) {
+  int i, v;
+  for(i=0,v=start; i<size; i++, v += inc)
+    FastEl_Flat(i) = v;
+}
+

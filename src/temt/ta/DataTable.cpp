@@ -63,6 +63,7 @@ void DataTable::Initialize() {
   calc_script = NULL;
   log_file = NULL;
   table_model = NULL;
+  row_indexes.SetGeom(1,0);  // always should be set to 1d
 }
 
 void DataTable::Destroy() {
@@ -179,7 +180,7 @@ void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void DataTable::ResetRowIndexes() {
   rows = rows_total;
-  row_indexes.SetSize(rows);
+  row_indexes.SetGeom(1,rows);
   row_indexes.FillSeq();        // 0...n-1
 }
 
@@ -313,13 +314,16 @@ int DataTable::Dump_Load_Value(istream& strm, taBase* par) {
   rows_total = 0;
   for (int i = 0; i < cols(); ++i) {
     DataCol* col = data.FastEl(i);
-    int frms = col->AR()->frames();
+    col->SetMatrixViewMode();
+    int frms = col->AR()->FramesRaw();
     // number of rows is going to be = biggest number in individual cols
     rows_total = max((int)rows_total, frms);  // this is the number of rows in the table
-    if (row_indexes.size > 0 && row_indexes.size <= rows_total)
-      rows = min(rows_total, row_indexes.size); // this is the number of rows visible (i.e. not filtered out)
-    else
-      ResetRowIndexes();
+  }
+  if(row_indexes.size > 0) {    // existing row indexes
+    rows = row_indexes.size; // this is the number of rows visible (i.e. not filtered out)
+  }
+  else { // should always have something visible..
+    ResetRowIndexes();
   }
   this->SigEmitUpdated();
   return c;
@@ -1270,20 +1274,6 @@ void DataTable::MarkCols() {
   }
 }
 
-int DataTable::MaxLength() {
-  return rows;
-}
-
-int DataTable::MinLength() {
-  if (cols() == 0) return 0;
-  int min = INT_MAX;
-  for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-    min = MIN(min,ar->AR()->frames());
-  }
-  return min;
-}
-
 int DataTable::CellsPerRow() const {
   int rval = 0;
   for(int i=0;i<data.size;i++) {
@@ -1856,15 +1846,15 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   bool rval = true;
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-
-    rval = ar->EnforceRows(ar->rows() + n_rows);
+    DataCol* dc = data.FastEl(i);
+    rval = dc->EnforceRows(dc->rows() + n_rows);
   }
   if(rval) {
     rows += n_rows;
     // insert into row_indexes
     for (int r=st_row; r<st_row+n_rows; r++) {
-      row_indexes.Insert(rows_total, r, 1);
+      row_indexes.InsertFrames(r, 1);
+      row_indexes.FastEl_Flat(r) = rows_total;
       rows_total++;
     }
   }
@@ -1908,7 +1898,7 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
       "end row not in range:",String(end_row)))
     return false;
   DataUpdate(true);
-  row_indexes.RemoveIdx(st_row, n_rows);
+  row_indexes.RemoveFrames(st_row, n_rows);
   rows -= n_rows;		// the number of rows not hidden by filtering or hiding
   if (rows == 0)  keygen.setInt64(0);
   DataUpdate(false);
@@ -1970,8 +1960,10 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
   if (rows == 0) return; // prevent erroneous m_dm calls
   StructUpdate(true);
   for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-    ar->AR()->Reset();
+    DataCol* dc = data.FastEl(i);
+    dc->UnSetMatrixViewMode();
+    dc->AR()->Reset();
+    dc->SetMatrixViewMode();
   }
   rows = 0;
   rows_total = 0;
@@ -3322,7 +3314,7 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
     DataCol* da = data.FastEl(i);
     taMatrix* da_mat = da->AR();
 
-    int frsz = da_mat->frameSize();
+    int frsz = da_mat->FrameSize();
     int send_idx = st_send_row * frsz;
     int n_send = n_rows * frsz;
     int recv_idx = st_recv_row * frsz;
@@ -3384,12 +3376,10 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
 
 // pass in the current row as viewed and get back the true row with the data
 bool DataTable::idx(int row_num, int& act_idx) const {
-  if (row_num < 0)
-    row_num = rows + row_num;
-
-  if(row_num < 0 || row_num >= row_indexes.size) return false;
-  act_idx = row_indexes[row_num];
-
-  return (act_idx >= 0 && act_idx < rows_total);
+  act_idx = row_num;
+  if (act_idx < 0)
+    act_idx = rows + act_idx;
+  if(act_idx < 0 || act_idx >= row_indexes.size) return false;
+  return true;
 }
 

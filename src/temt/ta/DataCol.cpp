@@ -52,8 +52,26 @@ void DataCol::InitLinks() {
   taBase::Own(calc_expr, this);
   taBase::Own(dim_names, this);
   taMatrix* ar = AR();
-  if (ar != NULL)
+  if (ar != NULL) {
     taBase::Own(ar, this);
+    SetMatrixViewMode();
+  }
+}
+
+void DataCol::SetMatrixViewMode() {
+  taMatrix* ar = AR();
+  if (ar != NULL) {
+    DataTable* dt = GET_MY_OWNER(DataTable);
+    if(dt) {
+      ar->el_view = &dt->row_indexes;
+      ar->el_view_mode = IDX_FRAMES;
+    }
+  }
+}
+
+void DataCol::UnSetMatrixViewMode() {
+  taMatrix* ar = AR();
+  ar->el_view = NULL;
 }
 
 void DataCol::CutLinks() {
@@ -165,10 +183,15 @@ void DataCol::Init() {
     MatrixGeom tdim = cell_geom;
     tdim.SetDims(tdim.dims() + 1);
     tdim.Set(tdim.dims()-1, rows);
+    UnSetMatrixViewMode();        // reset view temporarily
     ar->SetGeomN(tdim);
+    SetMatrixViewMode();          // reset it
     dim_names.SetGeom(1,cell_geom.dims());
-  } else {
+  }
+  else {
+    UnSetMatrixViewMode();        // reset view temporarily
     ar->SetGeom(1, rows);
+    SetMatrixViewMode();          // reset it
     dim_names.SetGeom(1,0);
   }
   // transfer READ_ONLY to mat
@@ -251,19 +274,24 @@ bool DataCol::EnforceRows(int rws) {
   RemoveHashTable();
   taMatrix* mat = AR();
   if (!mat) return false;
+  UnSetMatrixViewMode();        // reset view temporarily
   bool rval = false;
   rval = mat->EnforceFrames(rws);
+  SetMatrixViewMode();          // reset it
   return rval;
 }
 
-bool DataCol::InsertRows(int st_row, int n_rows) {
-  RemoveHashTable();
-  taMatrix* mat = AR();
-  if (!mat) return false;
-  bool rval = mat->InsertFrames(st_row, n_rows);
-  if (!rval) return rval;
-  return rval;
-}
+// note: this is ever called and is invalid to do at the col level anyway
+// bool DataCol::InsertRows(int st_row, int n_rows) {
+//   RemoveHashTable();
+//   taMatrix* mat = AR();
+//   if (!mat) return false;
+//   UnSetMatrixViewMode();          // reset view temporarily
+//   bool rval = mat->InsertFrames(st_row, n_rows);
+//   SetMatrixViewMode();          // reset it
+//   if (!rval) return rval;
+//   return rval;
+// }
 
 int DataCol::FindVal(const Variant& val, int st_row) const {
   if(TestError(isMatrix(), "FindVal", "column must be scalar, not matrix")) return -1;
@@ -459,12 +487,13 @@ String DataCol::GetDisplayName() const {
 int DataCol::IndexOfEl_Flat(int row, int cell) const {
   if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
                "cell index out of range")) return -1;
-  int nRows = rows();
-  if(row < 0) row = rows() + row; // abs row, if request was from end
-  if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range"))
+  const taMatrix* ar = AR(); //cache, and preserves constness
+  int nRows = ar->Frames();
+  if(row < 0) row = nRows + row; // abs row, if request was from end
+  if(TestError((row < 0 || row >= nRows), "IndexOfEl_Flat", "row out of range"))
     return -1;
-  return (row * cell_size()) + cell;
-  }
+  return ar->FrameStartIdx(row) + cell;
+}
 
 int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3, int d4) const {
   // note: any extra args will be 0 and ignored.  we're just getting index into row 0

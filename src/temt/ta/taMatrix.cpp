@@ -27,6 +27,7 @@
 #include <double_Matrix>
 #include <taBaseItr>
 #include <taFiler>
+#include <MTRnd>
 
 #include <taMisc>
 
@@ -134,12 +135,7 @@ void taMatrix::BatchUpdate(bool begin, bool struc) {
 }
 
 String& taMatrix::Print(String& strm, int indent) const {
-  if(size > 500) {
-    strm << GetTypeDef()->name + " geom: ";
-    geom.Print(strm);
-    return strm;
-  }
-
+ 
   const int dm = dims();
   int dim_break = dm / 2;
   if(dm == 2) {
@@ -154,6 +150,15 @@ String& taMatrix::Print(String& strm, int indent) const {
   taMatrix* elv = ElView();
   MatrixIndex idx(dm);
   MatrixIndex lstidx(dm,0,0,0,0,0,0,0);
+
+  int vis_size = IterCount();   // visible size
+  
+  if(vis_size > 500) {
+    strm << GetTypeDef()->name + " geom: ";
+    geom.Print(strm);
+    return strm;
+  }
+
   for(int d=0; d<dm; d++) {
     strm += "[";
   }
@@ -197,7 +202,7 @@ String& taMatrix::Print(String& strm, int indent) const {
       strm += "]";
     }
   }
-  else {                        // coords!
+  else if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     int nc = cmat->dim(1);
     strm = "[ ";
@@ -210,6 +215,46 @@ String& taMatrix::Print(String& strm, int indent) const {
         strm += ", ";
     }
     strm += " ]";
+  }
+  else if(el_view_mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    int nc = cmat->size;
+    int fsz = FrameSize();
+    int ic = 0;
+    for(int i=0; i<nc; i++) {
+      for(int j=0; j<fsz; j++, ic++) {
+        geom.DimsFmIndex(ic, idx);
+        int sc = 0;
+        int break_level = -1;
+        for(int d=0; d<dm; d++) {
+          if(idx[d] == 0 && idx[d] != lstidx[d]) {
+            sc++;
+            if(sc == 1) strm += " ";
+            strm += "]";          // end previous
+            if(d+1 == dim_break) {
+              break_level = d+1;
+            }
+          }
+        }
+        if(break_level >= 0) {
+          strm += "\n" + String(dm-break_level, 0, ' ');
+        }
+        for(int s=0; s<sc; s++) {
+          strm += "[";            // start new
+          if(s == sc-1) strm += " ";
+        }
+        if(sc == 0 && ic > 0) {
+          strm += ", ";
+        }
+        int bi = FrameStartIdx(i) + j;
+        strm += SafeElAsStr_Flat(bi);
+        lstidx = idx;             // update
+      }
+    }
+    strm += " ";
+    for(int d=0; d<dm; d++) {
+      strm += "]";
+    }
   }
   return strm;
 }
@@ -232,7 +277,47 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
   void* base_el = const_cast<void*>(FastEl_Flat_(0));
   rval->SetFixedData_(base_el, geom);      // identical geom, same data
   SliceInitialize(const_cast<taMatrix*>(this), rval);
-  rval->SetElView(view_mat, md);
+  if((bool)el_view) {
+    // has an existing view -- now we need to compile the new view from that
+    if(el_view_mode == IDX_COORDS) {
+      TestWarning(true, "NewElView",
+                  "existing el_view_mode is IDX_COORDS -- cannot mix with any new mode -- will only show the new mode and ignore the existing mask");
+      rval->SetElView(view_mat, md);
+    }
+    else if(el_view_mode == IDX_MASK) {
+      if(md == IDX_MASK) {
+        // take intersection of the existing mask
+        byte_Matrix* am = (byte_Matrix*)(*view_mat && *ElView());
+        rval->SetElView(am, md);
+      }
+      else {
+        TestWarning(true, "NewElView",
+                    "existing el_view_mode is IDX_MASK -- cannot mix with new mode that is not also a MASK -- will only show the new mode and ignore the existing mask");
+        
+        rval->SetElView(view_mat, md);
+      }
+    }
+    else if(el_view_mode == IDX_FRAMES) {
+      if(md == IDX_COORDS) {    // 
+        int_Matrix* nwvw = new int_Matrix; // copy orig
+        nwvw->Copy(view_mat);
+        int nc = view_mat->dim(1);
+        for(int i=0; i<nc; i++) {
+          int& fn = nwvw->FastEl(FrameDim(), i); // get the frame index
+          fn = FrameIdx(fn);                // pass through current logical
+        }
+        rval->SetElView(nwvw, md);
+      }
+      else {
+        TestWarning(true, "NewElView",
+                    "existing el_view_mode is IDX_FRAMES -- cannot mix with new mode that is not IDX_COORDS -- will only show the new mode and ignore the existing mask");
+        rval->SetElView(view_mat, md);
+      }
+    }
+  }
+  else {
+    rval->SetElView(view_mat, md);
+  }
   return rval;
 }
 
@@ -327,10 +412,13 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
   }
   case IDX_COORDS: {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
-    // if(cmat->dim(1) == 1) {
-    //   return ElemFmCoord(cmat);
-    // }
     taMatrix* nwvw = NewElView(cmat, IDX_COORDS);
+    return (Variant)nwvw;
+    break;
+  }
+  case IDX_FRAMES: {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    taMatrix* nwvw = NewElView(cmat, IDX_FRAMES);
     return (Variant)nwvw;
     break;
   }
@@ -390,13 +478,6 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
                  "mask matrix geometry:", String(cmat->dim(0)),
                  "is not size of list:", String(size)))
       return false;
-    if(el_view && el_view_mode == IDX_MASK) {
-      // take intersection of the existing mask
-      byte_Matrix* am = (byte_Matrix*)(*cmat && *ElView());
-      taBase::Ref(am);
-      cmat->Copy(am);
-      taBase::UnRef(am);
-    }
     taMatrix* nwvw = NewElView(cmat, IDX_MASK);
     return (Variant)nwvw;
     break;
@@ -436,11 +517,11 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
   if(!itr) return false;
   itr->count = 0;
   itr->el_idx = 0;              // just to be sure
-  const int dm = dims();
   if(!ElView()) {
     if(ElemCount() > 0) return true;
     return false;
   }
+  const int dm = dims();
   if(!IterValidate(ElView(), el_view_mode, dm)) {
     return false;
   }
@@ -454,6 +535,17 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
       idx.Set(d, cmat->FastEl(d, 0));   // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
+    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
+  else if(el_view_mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size == 0) {
+      return false;
+    }
+    itr->el_idx = FrameStartIdx(0); // frame is logical -- startidx does decoding!
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
       return false;
     }
@@ -474,7 +566,6 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
 bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
   if(!itr) return false;
   itr->count++;
-  const int dm = dims();
   if(!ElView()) {
     itr->el_idx++;
     if(itr->el_idx >= ElemCount()) {
@@ -482,6 +573,7 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
     }
     return true;
   }
+  const int dm = dims();
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->dim(1) <= itr->count) {
@@ -492,6 +584,20 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
       idx.Set(d, cmat->FastEl(d, itr->count));  // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
+    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
+  else if(el_view_mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    int fsz = FrameSize();
+    int fr = itr->count / fsz;
+    if(fr >= cmat->size) {
+      return false;
+    }
+    int cell = itr->count % fsz;
+    itr->el_idx = FrameStartIdx(fr) + cell; // fr is still logical here
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
       return false;
     }
@@ -512,13 +618,13 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
 void taMatrix::Add_(const void* it) {
   if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   if(TestError((dims() != 1), "Add", "only allowed when dims=1")) return;
-  int idx = frames();
+  int idx = Frames();
   if(EnforceFrames(idx + 1))
     El_Copy_(FastEl_Flat_(idx), it);
 }
 
 bool taMatrix::AddFrames(int n) {
-  return EnforceFrames(n + frames());
+  return EnforceFrames(n + Frames());
 }
 
 bool taMatrix::Alloc_(int new_alloc) {
@@ -555,7 +661,11 @@ bool taMatrix::Alloc_(int new_alloc) {
 bool taMatrix::AllocFrames(int n) {
   if(TestError((alloc_size < 0), "AllocFrames", "cannot alloc a fixed data matrix")) return false;
   if(TestError((n < 0), "AllocFrames", "n (num frames) must be >= 0")) return false;
-  int frsz = frameSize();
+  if(TestWarning(ElView(), "AllocFrames",
+                 "An el_view is currently set -- it is being cleared for alloc")) {
+    SetElView(NULL, el_view_mode);
+  }
+  int frsz = FrameSize();
   if(frsz == 0) return false;           // not dimensioned yet -- don't bother
   int cur_n = alloc_size / frsz;
   if(cur_n >= n) return true;   // already sufficient!
@@ -585,7 +695,8 @@ void taMatrix::Clear_impl(int fm, int to) {
   if (fastAlloc()) {
     size_t sz = ((to - fm) + 1) * El_SizeOf_();
     memset(FastEl_Flat_(fm), 0, sz);
-  } else {
+  }
+  else {
     const void* bl = El_GetBlank_();
     for (int i = fm; i <= to; ++i) {
       El_Copy_(FastEl_Flat_(i), bl);
@@ -646,8 +757,8 @@ void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
 
 bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
   if (!src.geom.IsFrameOf(geom)) return false;
-  if ((frame < 0) || (frame >= frames())) return false;
-  int n = frameSize();
+  if ((frame < 0) || (frame >= Frames())) return false;
+  int n = FrameSize();
   int base = FrameStartIdx(frame);
   // if same data types, we use an optimized copy, else must use variants
   // note that "Inherits" should imply same data type
@@ -656,7 +767,8 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
     for (int i = 0; i < n; ++i) {
       El_Copy_(FastEl_Flat_(base + i), src.FastEl_Flat_(i));
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < n; ++i) {
       El_SetFmVar_(FastEl_Flat_(base + i), src.El_GetVar_(src.FastEl_Flat_(i)));
     }
@@ -680,6 +792,17 @@ taBase* taMatrix::GetOwner() const {
 
 int taMatrix::defAlignment() const {
   return Qt::AlignRight; // most mats are numeric, so this is the default
+}
+
+void taMatrix::Permute() {
+  int i, nv;
+  void* tmp = El_GetTmp_();
+  for(i=0; i<size; i++) {
+    nv = (int) ((MTRnd::genrand_int32() % (size - i)) + i); // get someone from the future
+    El_Copy_(tmp, FastEl_Flat_(i));
+    El_Copy_(FastEl_Flat_(i), FastEl_Flat_(nv));  // swap with yourself
+    El_Copy_(FastEl_Flat_(nv), tmp);
+  }
 }
 
 String taMatrix::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
@@ -779,6 +902,7 @@ int taMatrix::Dump_Load_Value(istream& strm, taBase* par) {
     } while ((c != ']') && (c != EOF));
     //note: should always be at least one dim if we had [ but we check anyway
     if (ar.dims() > 0) {
+      el_view = NULL;           // make sure no view is set during loading..
       SetGeomN(ar);
       //note: we always write the correct number, so early termination is an error!
       int i = 0;
@@ -930,10 +1054,10 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
   // note: we enforce the size in terms of underlying cells, for when
   // dimensions are changed (even though that is frowned on...)
   if (!AllocFrames(n)) return false; // does legality test
-  int new_size = n * frameSize();
+  int new_size = n * FrameSize();
   // avoid spurious notifies -- geom changes do their own notify
   if (new_size == size) {
-    geom.Set(geom.dims()-1, n);
+    geom.Set(FrameDim(), n);
     return true;
   }
   StructUpdate(true);
@@ -943,11 +1067,12 @@ bool taMatrix::EnforceFrames(int n, bool notify) {
       El_Copy_(FastEl_Flat_(i), blank);
     }
     size = new_size;
-    geom.Set(geom.dims()-1, n);
-  } else if (new_size < size) {
+    geom.Set(FrameDim(), n);
+  }
+  else if (new_size < size) {
     ReclaimOrphans_(new_size, size - 1);
     size = new_size;
-    geom.Set(geom.dims()-1, n);
+    geom.Set(FrameDim(), n);
   }
   StructUpdate(false);
   return true;
@@ -985,18 +1110,32 @@ const String taMatrix::FlatRangeToTSV(const CellRange& cr) {
   return FlatRangeToTSV(cr.row_fr, cr.col_fr, cr.row_to, cr.col_to);
 }
 
-int taMatrix::frames() const {
+int taMatrix::Frames() const {
   if (geom.dims() == 0) return 0;
-  return geom[geom.dims()-1];
+  if(IdxFrameView()) {
+    return ViewIntMatrix()->Frames();
+  }
+  return geom[FrameDim()];
 }
 
-int taMatrix::frameSize() const {
+int taMatrix::FrameSize() const {
   if (geom.dims() == 0) return 0;
   if (geom.dims() == 1) return 1;
   int rval = geom[0];
   for (int i = 1; i < (geom.dims() - 1); ++i)
     rval *= geom[i];
   return rval;
+}
+
+int taMatrix::FrameIdx(int fr) const {
+  if(IdxFrameView()) {
+    int_Matrix* idx_frames = ViewIntMatrix();
+    int fidx = idx_frames->SafeEl_Flat(fr);
+    return fidx;
+  }
+  else {
+    return fr;
+  }
 }
 
 int taMatrix::FrameToRow(int f) const {
@@ -1008,11 +1147,36 @@ int taMatrix::FrameToRow(int f) const {
   return f;
 }
 
+int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3,
+                          int d4, int d5, int d6) const {
+  if(IdxFrameView()) {
+    int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
+    d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0;
+    d[FrameDim()] = FrameIdx(d[FrameDim()]); // fix frame idx
+    return geom.SafeIndexFmDims_(d); 
+  }
+  else {
+    return geom.SafeIndexFmDims(d0, d1, d2, d3, d4, d5, d6);
+  }
+}
+
+int taMatrix::SafeElIndexN(const MatrixIndex& indices) const {
+  if(IdxFrameView()) {
+    // use above function
+    return SafeElIndex(indices[0], indices[1], indices[2], indices[3], indices[4], 
+                       indices[5], indices[6]);
+  }
+  else {
+    return geom.SafeIndexFmDimsN(indices);
+  }
+}
+
+
 taMatrix* taMatrix::GetFrameSlice_(int frame) {
   int dims_m1 = dims() - 1; //cache
   if(TestError((dims_m1 <= 0),"GetFrameSlice_", "dims must be >1 to GetFrameSlice"))
     return NULL;
-  int frames_ = frames(); // cache
+  int frames_ = Frames(); // cache
   // check frame_base and num_frames in bounds
   if(TestError(((frame < 0) || (frame >= frames_)), "GetFrameSlice_",
                "frame is out of bounds")) return NULL;
@@ -1128,7 +1292,7 @@ bool taMatrix::InRangeN(const MatrixIndex& indices) const {
 
 bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
   if(TestError(!canResize(), "RemoveFrames", "resizing not allowed")) return false;
-  int frames_ = frames(); // cache
+  int frames_ = Frames(); // cache
   if(st_fr < 0) st_fr = frames_ - 1;
   if(TestError(((st_fr < 0) || (st_fr >= frames_)), "RemoveFrames",
                "starting frame number out of range:", String(st_fr)))
@@ -1139,7 +1303,7 @@ bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
                "ending frame number out of range:", String(end_fr)))
     return false;
   // check if we have to copy data
-  int frsz = frameSize();
+  int frsz = FrameSize();
   if(end_fr != (frames_ - 1)) {
     int fm = (end_fr + 1) * frsz;
     int to = st_fr * frsz;
@@ -1160,7 +1324,7 @@ bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
 
 bool taMatrix::InsertFrames(int st_fr, int n_fr) {
   if(TestError(!canResize(), "InsertFrames", "resizing not allowed")) return false;
-  int sz = frames(); // cache
+  int sz = Frames(); // cache
   if(st_fr < 0) st_fr = sz;
   if(TestError((st_fr>sz), "InsertFrames", "starting frame number out of range",
                String(st_fr))) return false;
@@ -1171,7 +1335,7 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
   }
   int n_mv = sz - st_fr;        // number that must be moved
   sz += n_fr;                   // update to added size
-  int frsz = frameSize();
+  int frsz = FrameSize();
   int trg_o = sz-1;
   int src_o = sz-1-n_fr;
   for(int i=0; i<n_mv; i++) {   // shift everyone over
@@ -1227,7 +1391,8 @@ bool taMatrix::SetGeom_(int dims_, const int geom_[]) {
     geom.Reset(); // ok, now you know what 0-d really means!!!
     StructUpdate(false);
     return true;
-  } else {
+  }
+  else {
     String err_msg;
     bool valid = GeomIsValid(dims_, geom_, &err_msg);
     if (TestError(!valid, "SetGeom_", err_msg)) return false;
@@ -1304,7 +1469,10 @@ void taMatrix::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //NOTE: you are NOT allowed to change geom this way -- must use the SetGeom api call
   if (taMisc::is_loading) {
+    taBase* ev = el_view.ptr();
+    el_view = NULL;             // get rid of view for update
     UpdateGeom();
+    el_view = ev;               // restore
   }
 }
 
@@ -1330,8 +1498,9 @@ void taMatrix::UpdateGeom() {
   }
   // assign storage (if not fixed) and set size
   if (isFixedData()) {
-    size = frames() * frameSize();
-  } else {
+    size = Frames() * FrameSize();
+  }
+  else {
     EnforceFrames(geom[dims_-1]); // does nothing if outer dim==0
   }
 }
@@ -1347,7 +1516,7 @@ void taMatrix::UpdateSlices_Collapse() {
 void taMatrix::UpdateSlices_FramesDeleted(void* deletion_base, int num) {
   if (!slices) return;
   // get address of first (old) address beyond the deleted frames
-  void* post_deletion = (char*)deletion_base + (num * frameSize() * El_SizeOf_());
+  void* post_deletion = (char*)deletion_base + (num * FrameSize() * El_SizeOf_());
   for (int i = 0; i < slices->size; ++i) {
     taMatrix* mat = slices->FastEl(i);
     void* mat_el = mat->data(); // cache
@@ -1444,10 +1613,10 @@ void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, RenderOp render_op,
   if(!src) return;
   MatrixIndex off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixIndex srcp;
-  int fr_max = frames();
+  int fr_max = Frames();
   bool src_frames = false;      // source has frames
   if(src->dims() == dims()) {
-    fr_max = MIN(fr_max, src->frames());
+    fr_max = MIN(fr_max, src->Frames());
     src_frames = true;
   }
   for(int fr=0;fr<fr_max;fr++) {
@@ -1473,10 +1642,10 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
                                      int off0, int off1, int off2,
                                      int off3, int off4, int off5, int off6) {
   if(!dest) return;
-  dest->EnforceFrames(frames()); // match them up
+  dest->EnforceFrames(Frames()); // match them up
   MatrixIndex off(dims(), off0, off1, off2, off3, off4, off5, off6);
   MatrixIndex srcp;
-  int fr_max = frames();
+  int fr_max = Frames();
   for(int fr=0;fr<fr_max;fr++) {
     taMatrixPtr sfr;  sfr = GetFrameSlice_(fr);
     taMatrixPtr dfr;  dfr = dest->GetFrameSlice_(fr);

@@ -137,8 +137,7 @@ class taMatrix_PList; //
      Matrix is ref-counted, and intended for sharing/moving raw data around.
      Matrix explicitly supports dimensionality and dimensional access.
      Matrix supports advanced tabular editing operations.
-     Matrix forms the basis for most pdp4 data processing constructs.
-
+     Matrix forms the basis for most emergent data processing constructs.
 */
 
 /* XxxData
@@ -152,7 +151,6 @@ class taMatrix_PList; //
    The first dimension may be unspecified (0) -- the data will automatically grow.
 
    The object supports partially filled arrays, but not ragged arrays.
-
 */
 
 typedef void (*fixed_dealloc_fun)(void*); // function that deallocates fixed data
@@ -182,7 +180,7 @@ public:
    };
 
   taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taMatrix matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
-  IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taMatrix what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
+  IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taMatrix what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS, IDX_MASK, and IDX_FRAMES
 
   ///////////////////////////////////////////////////////////////////
   // IMatrix i/f
@@ -201,9 +199,22 @@ public:
   // #CAT_Access the value of dimenion d
   inline int_Matrix*    Shape() const { return (int_Matrix*)geom; }
   // #CAT_Access the shape of the matrix -- returns an int matrix with values for the size of each dimension
-  int                   frames() const;
-  // #CAT_Access number of frames currently in use (value of highest dimension)
-  int                   frameSize() const;
+  inline int_Matrix*    ViewIntMatrix() const { return (int_Matrix*)el_view.ptr(); }
+  // #CAT_Access for IDX_COORDS or IDX_FRAMES el_view_mode, return int_Matrix version of el_view
+  inline bool           IdxFrameView() const
+  { return (bool)el_view && el_view_mode == IDX_FRAMES; }
+  // #CAT_Access are we currently using the IDX_FRAMES view mode?
+  inline int            FrameDim() const
+  { return geom.dims()-1; }
+  // #CAT_Access which dimension index is the frame index (outer-most dimension)
+  int                   Frames() const;
+  // #CAT_Access number of frames currently in use (value of highest -- outermost -- dimension) -- if an IDX_FRAMES el_view is set, it will filter this value
+  inline int            FramesRaw() const 
+  { return geom[FrameDim()]; }
+  // #CAT_Access raw number of frames currently in use (value of highest -- outermost -- dimension) -- ignores any el_view setting -- for the raw underlying data
+  int                   FrameIdx(int fm) const;
+  // #CAT_Access get raw data frame index for given logical frame number -- when IdxFrameView() is true, then uses ViewIntMatrix() to get raw index from logical index
+  int                   FrameSize() const;
   // #CAT_Access number of elements in each frame (product of inner dimensions)
   int                   rowCount(bool pat_4d = false) const
     {return geom.rowCount(pat_4d);}
@@ -213,21 +224,24 @@ public:
   inline int            FastElIndex(int d0, int d1=0, int d2=0, int d3=0,
                                     int d4=0, int d5=0, int d6=0) const
   { return geom.IndexFmDims(d0, d1, d2, d3, d4, d5, d6); }
+  // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
   inline int            FastElIndex2D(int d0, int d1=0) const
   { return (d1 * geom[0]) + d0; }
-  // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
+  // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
   inline int            FastElIndexN(const MatrixIndex& indices) const
   { return geom.IndexFmDimsN(indices); }
-  // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  inline int            SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
-                                    int d4=0, int d5=0, int d6=0) const
-  { return geom.SafeIndexFmDims(d0, d1, d2, d3, d4, d5, d6); }
-  // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
-  inline int            SafeElIndexN(const MatrixIndex& indices) const
-  { return geom.SafeIndexFmDimsN(indices); }
-  // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
-  int                   FrameStartIdx(int fm) const { return fm * frameSize(); }
-  // #CAT_Access returns the flat base index of the specified frame
+  // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
+  int                   SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
+                                    int d4=0, int d5=0, int d6=0) const;
+  // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds -- uses any IDX_FRAMES el_view in effect to translate the frame (outermost) dimension
+  int                   SafeElIndexN(const MatrixIndex& indices) const;
+  // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds -- uses any IDX_FRAMES el_view in effect to translate the frame (outermost) dimension
+  inline int            FrameStartIdx(int fm) const
+  { return FrameIdx(fm) * FrameSize(); }
+  // #CAT_Access returns the flat base index of the specified frame -- if IDX_FRAMES el_view is in effect, it uses that view to translate logical frame to raw frame 
+  inline int            FrameStartIdxRaw(int fm) const
+  { return fm * FrameSize(); }
+  // #CAT_Access returns the flat base index of the specified frame -- does not use any el_view -- uses the frame number directly
 
   virtual TypeDef*      GetDataTypeDef() const = 0;
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
@@ -520,6 +534,10 @@ public:
   virtual void          BinaryLoad(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
+
+  virtual void Permute();
+  // #CAT_Modify permute the items in the matrix, using a flat view (anything can be moved anywhere)
+
   String&       Print(String& strm, int indent=0) const;
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
@@ -559,7 +577,7 @@ public:
   { return FastEl_Flat_(FastElIndexN(indices));}
   // #IGNORE
 
-  virtual const void*   SafeEl_(int i) const
+  const void*   SafeEl_(int i) const
   {if ((i >= 0) && (i < size)) return FastEl_Flat_(i); else return El_GetBlank_(); }
   // #IGNORE raw element in flat space, else NULL
 
@@ -716,6 +734,8 @@ protected:
   // #IGNORE
   virtual uint          El_SizeOf_() const = 0;
   // #IGNORE size of element
+  virtual void*         El_GetTmp_() const = 0;
+  // #IGNORE return ptr to Tmp of type
 
   virtual void          SetFixedData_(void* el_, const MatrixGeom& geom_,
     fixed_dealloc_fun fixed_dealloc = NULL);

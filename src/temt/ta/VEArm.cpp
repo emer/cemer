@@ -1956,7 +1956,7 @@ bool VEArm::NormLengthsToTable(DataTable* len_table) {
   char col_name[] = "lengths"; 
   DataCol* dc = len_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   if(len_table->rows == 0)       // empty table, make sure we have at least 1 row
-    dc->EnforceRows(1);
+    len_table->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(norm_lens.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
@@ -1968,7 +1968,7 @@ bool VEArm::NormTargLengthsToTable(DataTable* len_table) {
   char col_name[] = "targ_lengths"; 
   DataCol* dc = len_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   if(len_table->rows == 0)       // empty table, make sure we have at least 1 row
-    dc->EnforceRows(1);
+    len_table->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(norm_targ_lens.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
@@ -1980,7 +1980,7 @@ bool VEArm::NormSpeedsToTable(DataTable* vel_table) {
   char col_name[] = "speeds"; 
   DataCol* dc = vel_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   if(vel_table->rows == 0)       // empty table, make sure we have at least 1 row
-    dc->EnforceRows(1);
+    vel_table->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(norm_vels.SafeEl(i),-1, // -1 = last row
@@ -1993,7 +1993,7 @@ bool VEArm::NormHandCoordsToTable(DataTable* coords_table) {
   char col_name[] = "hand_coords"; 
   DataCol* dc = coords_table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,3);
   if(coords_table->rows == 0)       // empty table, make sure we have at least 1 row
-    dc->EnforceRows(1);
+    coords_table->EnforceRows(1);
   
   VEBody* hand = bodies[HAND];
   float maxl = La+Lf;

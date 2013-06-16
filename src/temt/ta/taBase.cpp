@@ -588,6 +588,9 @@ taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) con
         else if(mat->dims() == 2 && mat->dim(0) == cont_dims) {
           mode = IDX_COORDS;
         }
+        else if(mat->dims() == 1) {
+          mode = IDX_FRAMES;
+        }
         if(mode == IDX_UNK) {
           String matstr;
           mat->Print(matstr);
@@ -683,6 +686,21 @@ bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims
     return true;
     break;
   }
+  case IDX_FRAMES: {
+    if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_FRAMES",
+                 "index is not taMatrix type:",
+                 idx.getTypeAsString()))
+      return false;
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    if(TestError(!cmat, "IndexModeValidate::IDX_FRAMES",
+                 "index matrix is NULL or not an int_Matrix"))
+      return false;
+    if(TestError(cmat->dims() != 1, "IndexModeValidate::IDX_FRAMES",
+                 "index matrix is not 1 dimensional"))
+      return false;
+    return true;
+    break;
+  }
   case IDX_SLICE: {
     if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_SLICE",
                  "index is not taMatrix type:",
@@ -736,7 +754,10 @@ int taBase::IterCount() const {
   if(!ElView()) return ElemCount();
   IndexMode vmd = ElViewMode();
   if(vmd == IDX_COORDS) {
-    return ElView()->frames();  // outer dim value
+    return ElView()->Frames();  // outer dim value
+  }
+  else if(vmd == IDX_FRAMES) {
+    return ElView()->size;
   }
   else if(vmd == IDX_MASK) {
     byte_Matrix* bmat = (byte_Matrix*)ElView();
@@ -769,6 +790,15 @@ bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
         return false;
     }
   }
+  else if(mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(vmat);
+    if(TestError(!cmat, "IterValidate::IDX_COORDS",
+                 "index matrix is NULL or not an int_Matrix"))
+      return false;
+    if(TestError(cmat->dims() != 1, "IndexModeValidate::IDX_FRAMES",
+                 "index matrix is not 1 dimensional"))
+      return false;
+  }
   else if(mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(vmat);
     if(TestError(!cmat, "IterValidate::IDX_MASK",
@@ -786,7 +816,7 @@ bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
     }
   }
   else {
-    TestError(true, "IterValidate", "view mode must be either IDX_COORDS or IDX_MASK");
+    TestError(true, "IterValidate", "view mode must be either IDX_COORDS, IDX_MASK, or IDX_FRAMES");
     return false;
   }
   return true;
@@ -832,6 +862,18 @@ bool taBase::IterFirst_impl(taBaseItr*& itr) const {
     }
     return true;
   }
+  else if(ElViewMode() == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size == 0) {
+      return false;
+    }
+    itr->el_idx = cmat->FastEl_Flat(0); // first guy
+    if(itr->el_idx < 0) itr->el_idx += ElemCount();
+    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
   else if(ElViewMode() == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
@@ -855,6 +897,18 @@ bool taBase::IterNext_impl(taBaseItr*& itr) const {
     return true;
   }
   if(ElViewMode() == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size <= itr->count) {
+      return false;
+    }
+    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
+    if(itr->el_idx < 0) itr->el_idx += ElemCount();
+    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
+  else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size <= itr->count) {
       return false;

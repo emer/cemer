@@ -43,6 +43,9 @@ public:
   { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
 
+  virtual void          FillSeq(int start=0, int inc=1);
+  // initialize values to given fixed value
+
   virtual void		InitFromInts(int* vals, int n=-1)
   { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
     for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }

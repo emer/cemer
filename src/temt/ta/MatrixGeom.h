@@ -164,6 +164,9 @@ public: // functions for internal/trusted use only
   inline int    FastEl(int i) const { return el[i]; } // #IGNORE
   inline int    operator [](int i) const { return el[i]; }  // #IGNORE
 
+  int           SafeIndexFmDims_(const int* d) const;
+  // #IGNORE get index from dimension values, based on geometry -- applies negaitve idx as counting back from end, and safe range checking for each dimension (returns -1 overall if any is out of range)
+
 protected:
   override void         UpdateAfterEdit_impl();
 
@@ -175,8 +178,6 @@ protected:
   // wrap negative values and do range checking
   int           IndexFmDims_(const int* d) const;
   // get index from dimension values, based on geometry
-  int           SafeIndexFmDims_(const int* d) const;
-  // get index from dimension values, based on geometry -- applies negaitve idx as counting back from end, and safe range checking for each dimension (returns -1 overall if any is out of range)
 
 private:
   void          Initialize();

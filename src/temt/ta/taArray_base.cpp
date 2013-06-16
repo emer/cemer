@@ -72,7 +72,8 @@ Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
     return SafeElAsVar(cmat->FastEl_Flat(0));
     break;
   }
-  case IDX_COORDS: {
+  case IDX_COORDS:
+  case IDX_FRAMES: {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     if(cmat->size == 1)
       return SafeElAsVar(cmat->FastEl_Flat(0));

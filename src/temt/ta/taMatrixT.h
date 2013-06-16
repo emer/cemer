@@ -60,6 +60,9 @@ public:
   T&                    FastEl_Flat(int idx) { return el[idx]; }
   // #CAT_Access get element without range checking -- treats matrix like a flat array
 
+  T&            operator[](int i) { return el[i]; }
+  const T&      operator[](int i) const { return el[i]; }
+
   const T&              SafeEl(int d0, int d1=0, int d2=0, int d3=0,
     int d4=0, int d5=0, int d6=0) const
   { return *((T*)(SafeEl_(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)))); }
@@ -94,6 +97,8 @@ public:
   override void*        FastEl_Flat_(int idx)   { return &(el[idx]); }
   override const void*  FastEl_Flat_(int idx) const { return &(el[idx]); }
 protected:
+  mutable T             tmp; // #IGNORE temporary item
+
   override void*        MakeArray_(int n) const {
     if (fastAlloc())
       return malloc(n * sizeof(T));
@@ -131,6 +136,8 @@ protected:
   override uint         El_SizeOf_() const {
     return sizeof(T);
   }
+  override void*        El_GetTmp_() const
+  { return (void*)&tmp; }
 
 private:
   TMPLT_NOCOPY(taMatrixT, T)

@@ -25,6 +25,7 @@
 
 // member includes:
 #include <DataTableCols>
+#include <int_Matrix>
 #include <int_Array>
 
 // declare all other types mentioned but not required to include:
@@ -99,7 +100,7 @@ public:
   // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
   Variant               keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
-  int_Array             row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
+  int_Matrix            row_indexes;     // #EXPERT #CAT_Access array with indicies providing view into rows in this datatable -- ALL DATA ACCESS GOES THROUGH THESE indexes and it is always kept up to date
   // #READ_ONLY #HIDDEN The number of rows of actual data (visible or hidden)
   cssProgSpace*         calc_script;
   // #IGNORE script object for performing column calculations
@@ -831,9 +832,6 @@ public:
       // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display move graph view to display starting at given row number -- operates on first graph view found -- use GraphTableView::ViewRow_At on specific view if needed
       virtual void  ScrollEditorsToBottom();
       // #IGNORE scroll all data table editors to the bottom -- called when new blank row added
-
-      virtual int           MinLength();            // #IGNORE
-      virtual int           MaxLength();            // #IGNORE
 
       virtual void  Copy_NoData(const DataTable& cp);
       // #CAT_Copy copy only the column structure, but no data, from other data table
