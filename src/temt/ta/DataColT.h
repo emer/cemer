@@ -39,7 +39,8 @@ public:
 public: //DO NOT ACCESS DIRECTLY
   T             ar;             // #NO_SHOW  the array itself
 private:
-  void  Copy_(const DataColT<T>& cp)  { ar = cp.ar; }
+  void  Copy_(const DataColT<T>& cp)
+  { UnSetMatrixViewMode(); ar = cp.ar; SetMatrixViewMode(); }
   void  Initialize()            {}
   void  Destroy()               { CutLinks(); }
 };

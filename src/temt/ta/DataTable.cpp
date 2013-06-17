@@ -99,10 +99,9 @@ void DataTable::CutLinks() {
 
 void DataTable::Copy_(const DataTable& cp) {
   ResetRowIndexes();            // key to reset our indexes before copying data
-  data = cp.data;
-  row_indexes = cp.row_indexes;
-  rows = cp.rows;
-  rows_total = cp.rows_total;
+  data = cp.data;               // matrix level copy will effectively flatten source
+  ComputeRowsTotal();           // update to what we actually got
+  ResetRowIndexes();            // so we reset our indexes to match the flattened source
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
@@ -122,9 +121,10 @@ void DataTable::Copy_NoData(const DataTable& cp) {
 void DataTable::Copy_DataOnly(const DataTable& cp) {
   StructUpdate(true); // ala Copy_impl
   SetBaseFlag(COPYING); // ala Copy__
-  data = cp.data;
-  rows = cp.rows;
-  rows_total = cp.rows_total;
+  ResetRowIndexes();            // key to reset our indexes before copying data
+  data = cp.data;               // matrix level copy will effectively flatten source
+  ComputeRowsTotal();           // update to what we actually got
+  ResetRowIndexes();            // so we reset our indexes to match the flattened source
   ClearBaseFlag(COPYING);
   StructUpdate(false);
 }
@@ -177,6 +177,16 @@ int DataTable::GetSpecialState() const {
 void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   data.CheckConfig(quiet, rval);
+}
+
+void DataTable::ComputeRowsTotal() {
+  rows_total = 0;
+  for (int i = 0; i < cols(); ++i) {
+    DataCol* col = data.FastEl(i);
+    col->SetMatrixViewMode();   // just for good measure
+    int frms = col->AR()->FramesRaw();
+    rows_total = max((int)rows_total, frms); // these should all be the same!!
+  }
 }
 
 void DataTable::ResetRowIndexes() {
@@ -312,14 +322,7 @@ int DataTable::Dump_Load_Value(istream& strm, taBase* par) {
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
-  rows_total = 0;
-  for (int i = 0; i < cols(); ++i) {
-    DataCol* col = data.FastEl(i);
-    col->SetMatrixViewMode();
-    int frms = col->AR()->FramesRaw();
-    // number of rows is going to be = biggest number in individual cols
-    rows_total = max((int)rows_total, frms);  // this is the number of rows in the table
-  }
+  ComputeRowsTotal();
   if(row_indexes.size > 0) {    // existing row indexes
     rows = row_indexes.size; // this is the number of rows visible (i.e. not filtered out)
   }

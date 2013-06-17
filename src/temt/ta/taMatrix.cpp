@@ -741,9 +741,21 @@ void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
   }
   // views -- need to go through element-by-element in views
   else if(size == 0) {		// i'm empty -- fill me up!
-    SetGeom(1, cp->IterCount());
-    TA_FOREACH_INDEX(i, *cp) {
-      El_SetFmVar_(FastEl_Flat_(i), cp->FastElAsVar_Flat(i));
+    if(ElView())
+      el_view = NULL;           // view no longer valid!
+    if(cp->IdxFrameView()) {
+      MatrixGeom gm = cp->geom;
+      gm.Set(cp->FrameDim(), cp->Frames()); // effective
+      SetGeomN(gm);
+      TA_FOREACH_INDEX(i, *cp) { // count instead of i should all work out..
+        El_SetFmVar_(FastEl_Flat_(FOREACH_itr->count), cp->FastElAsVar_Flat(i));
+      }
+    }
+    else {
+      SetGeom(1, cp->IterCount());
+      TA_FOREACH_INDEX(i, *cp) {
+        El_SetFmVar_(FastEl_Flat_(FOREACH_itr->count), cp->FastElAsVar_Flat(i));
+      }
     }
   }
   else {

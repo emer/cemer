@@ -861,3 +861,8 @@ bool taProject::AutoSave(bool force) {
   return true;
 }
 
+void taProject::CloseLater() {
+  undo_mgr.diff_threads.RemoveAll();
+  // get rid of any undo saving that might just be happening
+  inherited::CloseLater();
+}

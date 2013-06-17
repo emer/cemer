@@ -196,6 +196,7 @@ public:
 
   override void         Dump_Load_post();
   void                  OpenViewers(); // open any yet unopen viewers
+  override void         CloseLater();
 
   void  UpdateAfterEdit();
   virtual void          InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
