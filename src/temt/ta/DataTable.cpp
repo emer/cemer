@@ -1865,29 +1865,6 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   DataUpdate(false);
   return rval;
 }
-// just add rows at the end of the data table
-// but insert into row_indexes so the view is correct
-//bool DataTable::InsertRows(int st_row, int n_rows) {
-//  if(st_row < 0) st_row = rows; // end
-//  if(TestError((st_row < 0 || st_row > rows), "InsertRows",
-//      "row not in range:",String(st_row))) return false;
-//  bool rval = true;
-//  DataUpdate(true);
-//  for(int i=0;i<data.size;i++) {
-//    DataCol* ar = data.FastEl(i);
-//    rval = ar->EnforceRows(ar->rows() + n_rows);
-//  }
-//  if(rval) {
-//    rows += n_rows;
-//    // insert into row_indexes
-//    for (int r=st_row; r<st_row+n_rows; r++) {
-//      row_indexes.Insert(rows_total, r, 1);
-//      rows_total++;
-//    }
-//  }
-//  DataUpdate(false);
-//  return rval;
-//}
 
 bool DataTable::RemoveRows(int st_row, int n_rows) {
   if(st_row < 0)
@@ -1934,7 +1911,7 @@ bool DataTable::DuplicateRows(int st_row, int n_rows) {
   bool rval = InsertRows(st_row + n_rows, n_rows);
   if (rval) {
     for (int i = 0; i < n_rows; i++) {
-      int src_dx, dest_dx;      // go thru index to get actual data rows
+      int src_dx, dest_dx;
       idx(st_row + i, src_dx);
       idx(st_row + n_rows + i, dest_dx);
       data.CopyFromRow(dest_dx, data, src_dx);
@@ -3372,7 +3349,6 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
 #endif  // DMEM_COMPILE
 }
 
-// pass in the current row as viewed and get back the true row with the data
 bool DataTable::idx(int row_num, int& act_idx) const {
   act_idx = row_num;
   if (act_idx < 0)
