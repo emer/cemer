@@ -98,6 +98,7 @@ void DataTable::CutLinks() {
 }
 
 void DataTable::Copy_(const DataTable& cp) {
+  ResetRowIndexes();            // key to reset our indexes before copying data
   data = cp.data;
   row_indexes = cp.row_indexes;
   rows = cp.rows;
@@ -2212,7 +2213,7 @@ bool DataTable::WriteDataLogRow() {
   return false;
 }
 
-void DataTable::ResetView() {
+void DataTable::ShowAllRows() {
   StructUpdate(true);
   ResetRowIndexes();
   StructUpdate(false);
@@ -2240,15 +2241,9 @@ bool DataTable::FlattenTo(DataTable* flattened_table) {
   if(made_new) {
     flattened_table->SetName(name + "_flattened");
   }
+  flattened_table->EnforceRows(this->rows); // more efficient to allocate up-front
   for (int row=0; row < this->rows; row++) {
-    int dx;
-    bool ok = this->idx(row, dx);
-    if(TestError(!ok, "SaveFilteredViewAs", "row not found, see console for errors")) {
-      flattened_table->StructUpdate(false);
-      return false;
-    }
-    if (flattened_table->AddRows(1))
-      flattened_table->CopyFromRow(row, *this, dx);
+    flattened_table->CopyFromRow(row, *this, row);
   }
   flattened_table->StructUpdate(false);
 

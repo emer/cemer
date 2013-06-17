@@ -470,12 +470,17 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
   int *order = new (std::nothrow) int[n_rows];
 
   for (int i=0; i < n_rows; i++)
-    order[i] = dt->row_indexes[i];
+    order[i] = i;               // key: use *logical* indexes here always -- sort goes through current row_indexes always..
 
   spec->GetColumns(dt);
   SortThruIndex_impl(dt, spec, order, 0, n_rows-1);
   spec->ClearColumns();
 
+  // now need to translate new order into raw indexes
+  for (int i=0; i < n_rows; i++)
+    order[i] = dt->row_indexes[order[i]];
+
+  // now it is ready to overwrite
   for (int i=0; i < n_rows; i++)  // copy the new order into the data tables index array
     dt->row_indexes[i] = order[i];
 

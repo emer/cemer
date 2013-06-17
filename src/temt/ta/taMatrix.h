@@ -212,8 +212,10 @@ public:
   inline int            FramesRaw() const 
   { return geom[FrameDim()]; }
   // #CAT_Access raw number of frames currently in use (value of highest -- outermost -- dimension) -- ignores any el_view setting -- for the raw underlying data
-  int                   FrameIdx(int fm) const;
+  int                   FrameIdx(int fr) const;
   // #CAT_Access get raw data frame index for given logical frame number -- when IdxFrameView() is true, then uses ViewIntMatrix() to get raw index from logical index
+  bool                  FrameInRange(int fr, bool err_msg = true) const;
+  // #CAT_Access check if frame index is in range -- if err msg then report if not -- when IdxFrameView() is true, then uses ViewIntMatrix() to get raw index from logical index
   int                   FrameSize() const;
   // #CAT_Access number of elements in each frame (product of inner dimensions)
   int                   rowCount(bool pat_4d = false) const

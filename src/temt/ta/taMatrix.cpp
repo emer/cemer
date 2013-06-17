@@ -302,9 +302,14 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
         int_Matrix* nwvw = new int_Matrix; // copy orig
         nwvw->Copy(view_mat);
         int nc = view_mat->dim(1);
-        for(int i=0; i<nc; i++) {
+        for(int i=nc-1; i>=0; i--) {
           int& fn = nwvw->FastEl(FrameDim(), i); // get the frame index
-          fn = FrameIdx(fn);                // pass through current logical
+          if(!FrameInRange(fn, false)) {
+            nwvw->RemoveFrames(i, 1);
+          }
+          else {
+            fn = FrameIdx(fn);                // pass through current logical
+          }
         }
         rval->SetElView(nwvw, md);
       }
@@ -1113,7 +1118,7 @@ const String taMatrix::FlatRangeToTSV(const CellRange& cr) {
 int taMatrix::Frames() const {
   if (geom.dims() == 0) return 0;
   if(IdxFrameView()) {
-    return ViewIntMatrix()->Frames();
+    return ViewIntMatrix()->size;
   }
   return geom[FrameDim()];
 }
@@ -1125,6 +1130,23 @@ int taMatrix::FrameSize() const {
   for (int i = 1; i < (geom.dims() - 1); ++i)
     rval *= geom[i];
   return rval;
+}
+
+bool taMatrix::FrameInRange(int fr, bool err_msg) const {
+  if(IdxFrameView()) {
+    int_Matrix* idx_frames = ViewIntMatrix();
+    if(fr >= idx_frames->size || fr < 0) {
+      TestError(err_msg, "FrameInRange", "logical frame index out of range for IDX_FRAMES view of matrix, frame:", String(fr), "visible frames:", String(idx_frames->size));
+      return false;
+    }
+    return true;
+  }
+  int ftot = Frames();
+  if(fr >= ftot || fr < 0) {
+    TestError(err_msg, "FrameInRange", "frame index out of range for matrix, frame:", String(fr), "total frames:", String(ftot));
+    return false;
+  }
+  return true;
 }
 
 int taMatrix::FrameIdx(int fr) const {
