@@ -47,6 +47,8 @@ public: //
   override void         El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.toInt();}       // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
+  override int          El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((byte*)a) > *((byte*)b)) rval=1; else if(*((byte*)a) == *((byte*)b)) rval=0; return rval; }
 protected:
   static const byte     blank; // #IGNORE
   override void         BinarySave_Item(std::ostream& strm, int idx)

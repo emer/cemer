@@ -50,6 +50,8 @@ public: //
 #endif
   override const Variant El_GetVar_(const void* it) const {return Variant(*((void**)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((void**)it) = var.toPtr(); };  // #IGNORE
+  override int          El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
 protected:
   static const void*    blank; // #IGNORE
   override void         BinarySave_Item(std::ostream& strm, int idx)

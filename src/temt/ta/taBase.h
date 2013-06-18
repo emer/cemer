@@ -365,6 +365,53 @@ public: \
         (bool)FOREACH_itr;                                     \
         IDX_VAR_NAME = (LIST).IterNextIndex(FOREACH_itr))
 
+// generic reverse iterator over items in taBase containers
+#define TA_FOREACH_REV(ELEM_VAR_NAME, LIST)                        \
+  if(taBaseItr* FOREACH_itr = NULL) { } else                   \
+    for(Variant ELEM_VAR_NAME = (LIST).IterBeginRev(FOREACH_itr); \
+        (bool)FOREACH_itr;                                     \
+        ELEM_VAR_NAME = (LIST).IterPrev(FOREACH_itr))
+
+// generic reverse iterator over items in taBase containers, index version
+#define TA_FOREACH_INDEX_REV(IDX_VAR_NAME, LIST)                   \
+  if(taBaseItr* FOREACH_itr = NULL) { } else                   \
+    for(int IDX_VAR_NAME = (LIST).IterBeginRevIndex(FOREACH_itr); \
+        (bool)FOREACH_itr;                                     \
+        IDX_VAR_NAME = (LIST).IterPrevIndex(FOREACH_itr))
+
+// generic iterator over items in two taBase containers, index version, only checks first
+#define TA_FOREACH_INDEX_TWO(IDX_VAR_NAME_a, LIST_a, IDX_VAR_NAME_b, LIST_b)      \
+  if(taBaseItr* FOREACH_itr_a = NULL) { } else \
+  if(taBaseItr* FOREACH_itr_b = NULL) { } else \
+  if(int IDX_VAR_NAME_b = 0) { } else          \
+    for(int IDX_VAR_NAME_a = (LIST_a).IterBeginIndex(FOREACH_itr_a),   \
+        IDX_VAR_NAME_b = (LIST_b).IterBeginIndex(FOREACH_itr_b);       \
+        (bool)FOREACH_itr_a;                                           \
+        IDX_VAR_NAME_a = (LIST_a).IterNextIndex(FOREACH_itr_a),        \
+        IDX_VAR_NAME_b = (LIST_b).IterNextIndex(FOREACH_itr_b))
+
+// generic iterator over items in two taBase containers, index version, checks both
+#define TA_FOREACH_INDEX_TWOCK(IDX_VAR_NAME_a, LIST_a, IDX_VAR_NAME_b, LIST_b)      \
+  if(taBaseItr* FOREACH_itr_a = NULL) { } else \
+  if(taBaseItr* FOREACH_itr_b = NULL) { } else \
+  if(int IDX_VAR_NAME_b = 0) { } else          \
+    for(int IDX_VAR_NAME_a = (LIST_a).IterBeginIndex(FOREACH_itr_a),   \
+        int IDX_VAR_NAME_b = (LIST_b).IterBeginIndex(FOREACH_itr_b);   \
+        (bool)FOREACH_itr_a && (bool)FOREACH_itr_b;                    \
+        IDX_VAR_NAME_a = (LIST_a).IterNextIndex(FOREACH_itr_a),        \
+        IDX_VAR_NAME_b = (LIST_b).IterNextIndex(FOREACH_itr_b))
+
+// generic reverse iterator over items in two taBase containers, index version, only checks first
+#define TA_FOREACH_INDEX_REV_TWO(IDX_VAR_NAME_a, LIST_a, IDX_VAR_NAME_b, LIST_b)      \
+  if(taBaseItr* FOREACH_itr_a = NULL) { } else \
+  if(taBaseItr* FOREACH_itr_b = NULL) { } else \
+  if(int IDX_VAR_NAME_b = 0) { } else          \
+    for(int IDX_VAR_NAME_a = (LIST_a).IterBeginRevIndex(FOREACH_itr_a),   \
+        IDX_VAR_NAME_b = (LIST_b).IterBeginRevIndex(FOREACH_itr_b);       \
+        (bool)FOREACH_itr_a;                                           \
+        IDX_VAR_NAME_a = (LIST_a).IterPrevIndex(FOREACH_itr_a),        \
+        IDX_VAR_NAME_b = (LIST_b).IterPrevIndex(FOREACH_itr_b))
+
 /* Clipboard (Edit) operation summary
 
    Clipboard operations are of two basic types:
@@ -673,6 +720,17 @@ public:
   // #CAT_Access get iterator for this container and start index at the first item for iterating through items in this container, returns index if iterator was set to a valid index, -1 if not, in which case iterator is deleted: e.g., taBaseItr* itr; for(Variant itm = cont.IterBeginIndex(itr); (bool)itr; itm = cont.IterNextIndex(itr)) { ... } -- see also TA_FOREACH_INDEX macro
   virtual int           IterNextIndex(taBaseItr*& itr) const;
   // #CAT_Access iterate to index of next item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a next item -- see IterBeginIndex() for more docs
+  virtual Variant       IterBeginRev(taBaseItr*& itr) const
+  { itr = Iter(); if(!itr) return _nilVariant; return IterLast(itr); }
+  // #CAT_Access get reverse iterator for this container and start it at the last item for iterating through items in this container -- if no valid last item, iterator is deleted: e.g., taBaseItr* itr; for(Variant itm = cont.IterBeginRev(itr); (bool)itr; itm = cont.IterNextRev(itr)) { ... } -- see also TA_FOREACH_REV macro
+  virtual Variant       IterPrev(taBaseItr*& itr) const
+  { if(IterPrev_impl(itr)) return IterElem(itr); DelIter(itr); return _nilVariant; }
+  // #CAT_Access iterate to previous item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a prev item -- see IterBeginRev() for more docs
+  virtual int           IterBeginRevIndex(taBaseItr*& itr) const
+  { itr = Iter(); if(!itr) return -1; return IterLastIndex(itr); }
+  // #CAT_Access get iterator for this container and start index at the last item for iterating through items in this container in reverse, returns index if iterator was set to a valid index, -1 if not, in which case iterator is deleted: e.g., taBaseItr* itr; for(Variant itm = cont.IterBeginRevIndex(itr); (bool)itr; itm = cont.IterPrevIndex(itr)) { ... } -- see also TA_FOREACH_INDEX_REV macro
+  virtual int           IterPrevIndex(taBaseItr*& itr) const;
+  // #CAT_Access iterate to index of previous item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a prev item -- see IterBeginRevIndex() for more docs
 
     //////////////   Iteration Implementation, lower-level functions   //////////////
 
@@ -686,7 +744,18 @@ public:
     virtual bool        IterFirst_impl(taBaseItr*& itr) const;
     // #IGNORE implementation function to actually get first item -- returns true if there is a valid first item in iterator, false otherwise.  does NOT call DelItr if not valid. default should work for most cases
     virtual bool        IterNext_impl(taBaseItr*& itr) const;
-    // #IGNORE implementation function to actually get next item -- returns true if there is a valid first item in iterator, false otherwise.  does NOT call DelItr if not valid.  default should work for most cases
+    // #IGNORE implementation function to actually get next item -- returns true if there is a valid next item in iterator, false otherwise.  does NOT call DelItr if not valid.  default should work for most cases
+
+    virtual Variant     IterLast(taBaseItr*& itr) const
+    { if(IterLast_impl(itr)) return IterElem(itr); DelIter(itr); return _nilVariant; }
+    // #IGNORE get last item in list -- called by IterBeginRev
+    virtual int         IterLastIndex(taBaseItr*& itr) const;
+    // #IGNORE get first item in list -- called by IterBeginIndex
+    virtual bool        IterLast_impl(taBaseItr*& itr) const;
+    // #IGNORE implementation function to actually get last item -- returns true if there is a valid last item in iterator, false otherwise.  does NOT call DelItr if not valid. default should work for most cases
+    virtual bool        IterPrev_impl(taBaseItr*& itr) const;
+    // #IGNORE implementation function to actually get prev item -- returns true if there is a valid prev item in iterator, false otherwise.  does NOT call DelItr if not valid.  default should work for most cases
+
     virtual Variant     IterElem(taBaseItr* itr) const   { return _nilVariant; }
     // #IGNORE access current item according to iterator -- this is used by IterBegin and IterNext, and not typically required for end users
     virtual taBaseItr*  Iter() const    { return NULL; }

@@ -64,6 +64,8 @@ public:
     {return Variant(*((double*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var)
     {*((double*)it) = var.toDouble(); };  // #IGNORE
+  override int          El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((double*)a) > *((double*)b)) rval=1; else if(*((double*)a) == *((double*)b)) rval=0; return rval; }
 protected:
   static const double   blank; // #IGNORE
   override void         Dump_Save_Item(std::ostream& strm, int idx); // stream in full precision

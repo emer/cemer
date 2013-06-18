@@ -63,6 +63,8 @@ public:
   override void         El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
   override void         El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
+  override int          El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
 protected:
   static const int      blank; // #IGNORE
 #ifndef __MAKETA__

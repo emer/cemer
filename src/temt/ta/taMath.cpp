@@ -97,18 +97,20 @@ bool taMath::dist_larger_further(DistMetric metric) {
 }
 
 void taMath::mat_cvt_double_to_float(float_Matrix* flt_dest, const double_Matrix* dbl_src) {
-  flt_dest->geom.Reset();
   flt_dest->SetGeomN(dbl_src->geom);
   for (int i = 0; i < flt_dest->size; ++i) {
     flt_dest->FastEl_Flat(i) = (float)dbl_src->FastEl_Flat(i);
   }
+  if(dbl_src->ElView())
+    flt_dest->SetElView(dbl_src->ElView(), dbl_src->el_view_mode);
 }
 
 void taMath::mat_cvt_float_to_double(double_Matrix* dbl_dest, const float_Matrix* flt_src) {
-  dbl_dest->geom.Reset();
   dbl_dest->SetGeomN(flt_src->geom);
   for (int i = 0; i < dbl_dest->size; ++i) {
     dbl_dest->FastEl_Flat(i) = (double)flt_src->FastEl_Flat(i);
   }
+  if(flt_src->ElView())
+    dbl_dest->SetElView(flt_src->ElView(), flt_src->el_view_mode);
 }
 

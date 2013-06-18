@@ -155,7 +155,6 @@ class taMatrix_PList; //
 
 typedef void (*fixed_dealloc_fun)(void*); // function that deallocates fixed data
 
-
 taTypeDef_Of(taMatrix);
 
 class TA_API taMatrix: public taNBase {
@@ -199,6 +198,9 @@ public:
   // #CAT_Access the value of dimenion d
   inline int_Matrix*    Shape() const { return (int_Matrix*)geom; }
   // #CAT_Access the shape of the matrix -- returns an int matrix with values for the size of each dimension
+  bool                  ElemWiseOpTest(const taMatrix& t, bool oth_flex = true,
+                                       const String& op = "") const;
+  // #CAT_Access #EXPERT test if the given matrix is compatible with this one for an element-wise operation using mutual iterators on both sides -- if oth_wraps is true, then we assume the other can wrap-around or be larger than this, so the test is just that there is at least one element -- otherwise we test that other is exactly the same size as us -- op is name given in error message for operation being performed
   inline int_Matrix*    ViewIntMatrix() const { return (int_Matrix*)el_view.ptr(); }
   // #CAT_Access for IDX_COORDS or IDX_FRAMES el_view_mode, return int_Matrix version of el_view
   inline bool           IdxFrameView() const
@@ -260,11 +262,17 @@ public:
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
   override bool         IterFirst_impl(taBaseItr*& itr) const;
   override bool         IterNext_impl(taBaseItr*& itr) const;
+  override bool         IterLast_impl(taBaseItr*& itr) const;
+  override bool         IterPrev_impl(taBaseItr*& itr) const;
   override Variant      IterElem(taBaseItr* itr) const;
   override taBaseItr*   Iter() const;
   override bool         IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
   virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members
+  virtual void          CopyElView(const taMatrix& cp);
+  // #CAT_Access #EXPERT copy el view from another matrix (resets this to NULL if other is NULL)
+  virtual void          ClearElView();
+  // #CAT_Access #EXPERT reset el view to NULL
   virtual taMatrix*     NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
   // #CAT_Access #EXPERT make a new view of this array -- points to items in original
   virtual Variant       ElemFmCoord(int_Matrix* cmat) const;
@@ -538,7 +546,9 @@ public:
 
 
   virtual void Permute();
-  // #CAT_Modify permute the items in the matrix, using a flat view (anything can be moved anywhere)
+  // #CAT_Modify permute the items in the matrix, using a flat view (anything can be moved anywhere) -- ignores any el_view settings
+  virtual void Sort(bool descending);
+  // #CAT_Modify sort elements in the matrix, using a flat view -- ignores any el_view settings
 
   String&       Print(String& strm, int indent=0) const;
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
@@ -734,6 +744,8 @@ protected:
   // #IGNORE address of an element to return when out of range -- defaults to blank el
   virtual void          El_Copy_(void*, const void*) = 0;
   // #IGNORE
+  virtual int           El_Compare_(const void*, const void*) const { return 0; }
+  // #IGNORE for sorting
   virtual uint          El_SizeOf_() const = 0;
   // #IGNORE size of element
   virtual void*         El_GetTmp_() const = 0;

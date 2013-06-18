@@ -270,6 +270,16 @@ bool taMatrix::SetElView(taMatrix* view_mat, IndexMode md) {
   return true;
 }
 
+void taMatrix::CopyElView(const taMatrix& cp) {
+  // skip the validation from SetElView -- assume already validated
+  el_view = cp.el_view;
+  el_view_mode = cp.el_view_mode;
+}
+
+void taMatrix::ClearElView() {
+  el_view = NULL;
+}
+
 taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
   int dm = dims();
   if(!IterValidate(view_mat, md, dm)) return NULL;
@@ -620,6 +630,119 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
   return false;
 }
 
+// reverse iterator versions
+
+bool taMatrix::IterLast_impl(taBaseItr*& itr) const {
+  if(!itr) return false;
+  itr->count = 0;
+  itr->el_idx = 0;              // just to be sure
+  const int ec = ElemCount();
+  if(!ElView()) {
+    if(ec > 0) {
+      itr->el_idx = ec-1;
+      return true;
+    }
+    return false;
+  }
+  const int dm = dims();
+  if(!IterValidate(ElView(), el_view_mode, dm)) {
+    return false;
+  }
+  if(el_view_mode == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size == 0) {
+      return false;
+    }
+    MatrixIndex idx(dm);
+    int last_coord = cmat->Frames()-1;
+    for(int d=0;d<dm;d++) {
+      idx.Set(d, cmat->FastEl(d, last_coord));   // outer index is count index
+    }
+    itr->el_idx = SafeElIndexN(idx);
+    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+      return false;
+    }
+    return true;
+  }
+  else if(el_view_mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size == 0) {
+      return false;
+    }
+    itr->el_idx = FrameStartIdx(cmat->size-1); // frame is logical -- startidx does decoding!
+    itr->el_idx += FrameSize()-1;              // last cell in frame
+    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+      return false;
+    }
+    return true;
+  }
+  else if(el_view_mode == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
+    for(int i=ec-1; i>=0; i--) {
+      if(cmat->FastEl_Flat(i) != 0) {
+        itr->el_idx = i;
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool taMatrix::IterPrev_impl(taBaseItr*& itr) const {
+  if(!itr) return false;
+  itr->count++;
+  const int ec = ElemCount();
+  if(!ElView()) {
+    itr->el_idx--;
+    if(itr->el_idx < 0) {
+      return false;
+    }
+    return true;
+  }
+  const int dm = dims();
+  if(el_view_mode == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->dim(1) <= itr->count) {
+      return false;
+    }
+    MatrixIndex idx(dm);
+    int last_coord = cmat->Frames()-1-itr->count;
+    for(int d=0;d<dm;d++) {
+      idx.Set(d, cmat->FastEl(d, last_coord));  // outer index is count index
+    }
+    itr->el_idx = SafeElIndexN(idx);
+    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+      return false;
+    }
+    return true;
+  }
+  else if(el_view_mode == IDX_FRAMES) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    int fsz = FrameSize();
+    int fr = itr->count / fsz;
+    if(fr >= cmat->size) {
+      return false;
+    }
+    int cell = itr->count % fsz;
+    itr->el_idx = FrameStartIdx(cmat->size - 1 - fr);
+    itr->el_idx += fsz-1-cell;
+    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+      return false;
+    }
+    return true;
+  }
+  else if(el_view_mode == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
+    for(int i=ec - 2 - itr->el_idx; i>=0; i--) { // search for prev
+      if(cmat->FastEl_Flat(i) != 0) { // true
+        itr->el_idx = i;
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 void taMatrix::Add_(const void* it) {
   if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   if(TestError((dims() != 1), "Add", "only allowed when dims=1")) return;
@@ -668,7 +791,7 @@ bool taMatrix::AllocFrames(int n) {
   if(TestError((n < 0), "AllocFrames", "n (num frames) must be >= 0")) return false;
   if(TestWarning(ElView(), "AllocFrames",
                  "An el_view is currently set -- it is being cleared for alloc")) {
-    SetElView(NULL, el_view_mode);
+    ClearElView();
   }
   int frsz = FrameSize();
   if(frsz == 0) return false;           // not dimensioned yet -- don't bother
@@ -819,6 +942,43 @@ void taMatrix::Permute() {
     El_Copy_(tmp, FastEl_Flat_(i));
     El_Copy_(FastEl_Flat_(i), FastEl_Flat_(nv));  // swap with yourself
     El_Copy_(FastEl_Flat_(nv), tmp);
+  }
+}
+
+void taMatrix::Sort(bool descending) {
+  if(size <= 1) return;
+  int lt_compval = -1;          // comparison return value for less-than
+  if(descending)
+    lt_compval = 1;
+  // lets do a heap sort since it requires no secondary storage
+  int n = size;
+  int l,j,ir,i;
+  void* tmp = El_GetTmp_();
+
+  l = (n >> 1)+1;
+  ir = n;
+  for(;;){
+    if(l>1)
+      El_Copy_(tmp,FastEl_Flat_(--l -1)); // tmp = ra[--l]
+    else {
+      El_Copy_(tmp,FastEl_Flat_(ir-1)); // tmp = ra[ir]
+      El_Copy_(FastEl_Flat_(ir-1),FastEl_Flat_(0)); // ra[ir] = ra[1]
+      if(--ir == 1) {
+        El_Copy_(FastEl_Flat_(0),tmp); // ra[1]=tmp
+        return;
+      }
+    }
+    i=l;
+    j=l << 1;
+    while(j<= ir) {
+      if(j<ir && (El_Compare_(FastEl_Flat_(j-1),FastEl_Flat_(j)) == lt_compval)) j++;
+      if(El_Compare_(tmp,FastEl_Flat_(j-1)) == lt_compval) { // tmp < ra[j]
+        El_Copy_(FastEl_Flat_(i-1),FastEl_Flat_(j-1)); // ra[i]=ra[j];
+        j += (i=j);
+      }
+      else j = ir+1;
+    }
+    El_Copy_(FastEl_Flat_(i-1),tmp); // ra[i] = tmp;
   }
 }
 
@@ -1126,6 +1286,27 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
 const String taMatrix::FlatRangeToTSV(const CellRange& cr) {
   return FlatRangeToTSV(cr.row_fr, cr.col_fr, cr.row_to, cr.col_to);
 }
+
+
+bool taMatrix::ElemWiseOpTest(const taMatrix& t, bool oth_flex,
+                              const String& op) const {
+  String ope = op;
+  if(ope.empty()) ope = "ElemWiseOpTest";
+  if(oth_flex) {
+    if(TestError(t.IterCount() == 0, ope,
+                 "for element-wise operation, no visible elements in other matrix:", t.GetPathNames()))
+      return false;
+    return true;
+  }
+  int myic = this->IterCount();
+  int tic = t.IterCount();
+  if(TestError(myic != tic, ope,
+               "for element-wise operation, number of visible elements in other matrix not identical to that in this matrix:",
+               t.GetPathNames(), "I have:", String(myic), "other has:", String(tic)))
+    return false;
+  return true;
+}
+
 
 int taMatrix::Frames() const {
   if (geom.dims() == 0) return 0;
@@ -1727,27 +1908,32 @@ taMatrix* taMatrix::operator=(const Variant& t) {
 
 //////////// op +
 taMatrix* taMatrix::operator+(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "+", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "+"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) + ((float_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
+        + ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) + ((double_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
+        + ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->SetFmVar_Flat(FastElAsVar_Flat(mi) + t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
   }
@@ -1760,6 +1946,7 @@ taMatrix* taMatrix::operator+(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) + vt;
@@ -1768,6 +1955,7 @@ taMatrix* taMatrix::operator+(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) + vt;
@@ -1777,6 +1965,7 @@ taMatrix* taMatrix::operator+(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(FastElAsVar_Flat(i) + t, i);
     }
@@ -1787,27 +1976,30 @@ taMatrix* taMatrix::operator+(const Variant& t) const {
 
 //////////// op -
 taMatrix* taMatrix::operator-(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "-", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "-"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) - ((float_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) - ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) - ((double_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) - ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(FastElAsVar_Flat(i) - t.FastElAsVar_Flat(i), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->SetFmVar_Flat(FastElAsVar_Flat(mi) - t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
   }
@@ -1820,6 +2012,7 @@ taMatrix* taMatrix::operator-(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) - vt;
@@ -1828,6 +2021,7 @@ taMatrix* taMatrix::operator-(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) - vt;
@@ -1837,6 +2031,7 @@ taMatrix* taMatrix::operator-(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(FastElAsVar_Flat(i) - t, i);
     }
@@ -1849,6 +2044,7 @@ taMatrix* taMatrix::operator-(const Variant& t) const {
 taMatrix* taMatrix::operator-() const {
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = -((float_Matrix*)this)->FastEl_Flat(i);
     }
@@ -1856,6 +2052,7 @@ taMatrix* taMatrix::operator-() const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = -((double_Matrix*)this)->FastEl_Flat(i);
     }
@@ -1864,6 +2061,7 @@ taMatrix* taMatrix::operator-() const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       Variant var = FastElAsVar_Flat(i);
       rval->SetFmVar_Flat(-var, i);
@@ -1875,27 +2073,30 @@ taMatrix* taMatrix::operator-() const {
 
 //////////// op *
 taMatrix* taMatrix::operator*(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "*", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "*"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) * ((float_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) * ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) * ((double_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) * ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(FastElAsVar_Flat(i) * t.FastElAsVar_Flat(i), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->SetFmVar_Flat(FastElAsVar_Flat(mi) * t.FastElAsVar_Flat(ti), ti);
     }
     return rval;
   }
@@ -1908,6 +2109,7 @@ taMatrix* taMatrix::operator*(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) * vt;
@@ -1916,6 +2118,7 @@ taMatrix* taMatrix::operator*(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) * vt;
@@ -1925,6 +2128,7 @@ taMatrix* taMatrix::operator*(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(FastElAsVar_Flat(i) * t, i);
     }
@@ -1935,31 +2139,34 @@ taMatrix* taMatrix::operator*(const Variant& t) const {
 
 //////////// op /
 taMatrix* taMatrix::operator/(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "/", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "/"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      float den = ((float_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      float den = ((float_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0f, "/", "Floating Point Exception: Division by Zero"))
-        rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) / den;
+        rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) / den;
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      double den = ((double_Matrix*)&t)->FastEl_Flat(i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      double den = ((double_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/", "Floating Point Exception: Division by Zero"))
-        rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) / den;
+        rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) / den;
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(FastElAsVar_Flat(i) / t.FastElAsVar_Flat(i), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->SetFmVar_Flat(FastElAsVar_Flat(mi) / t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
   }
@@ -1972,6 +2179,7 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     if(!TestError(vt == 0.0, "/", "Floating Point Exception: Division by Zero")) {
       TA_FOREACH_INDEX(i, *this) {
@@ -1982,6 +2190,7 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     if(!TestError(vt == 0.0, "/", "Floating Point Exception: Division by Zero")) {
       TA_FOREACH_INDEX(i, *this) {
@@ -1992,9 +2201,12 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
+    rval->CopyElView(*this);
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(FastElAsVar_Flat(i) / t, i);
+    if(!TestError(t == 0.0, "/=", "Floating Point Exception: Division by Zero")) {
+      TA_FOREACH_INDEX(i, *this) {
+        rval->SetFmVar_Flat(FastElAsVar_Flat(i) / t, i);
+      }
     }
     return rval;
   }
@@ -2003,7 +2215,7 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
 
 //////////// op %
 taMatrix* taMatrix::operator%(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "%", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "%"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     if(TestError(true, "%", "not supported for floating-point types"))
@@ -2016,6 +2228,7 @@ taMatrix* taMatrix::operator%(const taMatrix& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(FastElAsVar_Flat(i) % t.FastElAsVar_Flat(i), i);
     }
@@ -2039,8 +2252,11 @@ taMatrix* taMatrix::operator%(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(FastElAsVar_Flat(i) % t, i);
+    rval->CopyElView(*this);
+    if(!TestError(t == 0, "/=", "Floating Point Exception: Division by Zero")) {
+      TA_FOREACH_INDEX(i, *this) {
+        rval->SetFmVar_Flat(FastElAsVar_Flat(i) % t, i);
+      }
     }
     return rval;
   }
@@ -2049,28 +2265,31 @@ taMatrix* taMatrix::operator%(const Variant& t) const {
 
 //////////// op ^
 taMatrix* taMatrix::operator^(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "^", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "^"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = powf(((float_Matrix*)this)->FastEl_Flat(i),  ((float_Matrix*)&t)->FastEl_Flat(i));
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = powf(((float_Matrix*)this)->FastEl_Flat(mi),  ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = pow(((double_Matrix*)this)->FastEl_Flat(i), ((double_Matrix*)&t)->FastEl_Flat(i));
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = pow(((double_Matrix*)this)->FastEl_Flat(mi), ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-     rval->SetFmVar_Flat(pow(FastElAsVar_Flat(i).toDouble(),
-                             t.FastElAsVar_Flat(i).toDouble()), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+     rval->SetFmVar_Flat(pow(FastElAsVar_Flat(mi).toDouble(),
+                             t.FastElAsVar_Flat(ti).toDouble()), mi);
     }
     return rval;
   }
@@ -2083,6 +2302,7 @@ taMatrix* taMatrix::operator^(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = powf(((float_Matrix*)this)->FastEl_Flat(i), vt);
@@ -2091,6 +2311,7 @@ taMatrix* taMatrix::operator^(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = pow(((double_Matrix*)this)->FastEl_Flat(i), vt);
@@ -2100,6 +2321,7 @@ taMatrix* taMatrix::operator^(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(pow(FastElAsVar_Flat(i).toDouble(), vt), i);
@@ -2111,27 +2333,32 @@ taMatrix* taMatrix::operator^(const Variant& t) const {
 
 //////////// op max
 taMatrix* taMatrix::Max(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "Max", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "Max"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MAX(((float_Matrix*)this)->FastEl_Flat(i),  ((float_Matrix*)&t)->FastEl_Flat(i));
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = MAX(((float_Matrix*)this)->FastEl_Flat(mi), 
+                                  ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MAX(((double_Matrix*)this)->FastEl_Flat(i), ((double_Matrix*)&t)->FastEl_Flat(i));
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = MAX(((double_Matrix*)this)->FastEl_Flat(mi),
+                                  ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(MAX(FastElAsVar_Flat(i), t.FastElAsVar_Flat(i)), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->SetFmVar_Flat(MAX(FastElAsVar_Flat(mi), t.FastElAsVar_Flat(ti)), mi);
     }
     return rval;
   }
@@ -2144,6 +2371,7 @@ taMatrix* taMatrix::Max(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = MAX(((float_Matrix*)this)->FastEl_Flat(i), vt);
@@ -2152,6 +2380,7 @@ taMatrix* taMatrix::Max(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = MAX(((double_Matrix*)this)->FastEl_Flat(i), vt);
@@ -2161,6 +2390,7 @@ taMatrix* taMatrix::Max(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(MAX(FastElAsVar_Flat(i), t), i);
     }
@@ -2217,27 +2447,32 @@ Variant taMatrix::Max() const {
 
 //////////// op min
 taMatrix* taMatrix::Min(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "min", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "Min"))
     return NULL;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     float_Matrix* rval = new float_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MIN(((float_Matrix*)this)->FastEl_Flat(i),  ((float_Matrix*)&t)->FastEl_Flat(i));
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = MIN(((float_Matrix*)this)->FastEl_Flat(mi), 
+                                  ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     double_Matrix* rval = new double_Matrix(this->geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = MIN(((double_Matrix*)this)->FastEl_Flat(i), ((double_Matrix*)&t)->FastEl_Flat(i));
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = MIN(((double_Matrix*)this)->FastEl_Flat(mi),
+                                  ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
-    TA_FOREACH_INDEX(i, *this) {
-      rval->SetFmVar_Flat(MIN(FastElAsVar_Flat(i), t.FastElAsVar_Flat(i)), i);
+    rval->CopyElView(*this);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->SetFmVar_Flat(MIN(FastElAsVar_Flat(mi), t.FastElAsVar_Flat(ti)), mi);
     }
     return rval;
   }
@@ -2250,6 +2485,7 @@ taMatrix* taMatrix::Min(const Variant& t) const {
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     float vt = t.toFloat();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = MIN(((float_Matrix*)this)->FastEl_Flat(i), vt);
@@ -2258,6 +2494,7 @@ taMatrix* taMatrix::Min(const Variant& t) const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     double vt = t.toDouble();
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = MIN(((double_Matrix*)this)->FastEl_Flat(i), vt);
@@ -2267,6 +2504,7 @@ taMatrix* taMatrix::Min(const Variant& t) const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(MIN(FastElAsVar_Flat(i), t), i);
     }
@@ -2325,6 +2563,7 @@ Variant taMatrix::Min() const {
 taMatrix* taMatrix::Abs() const {
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = fabsf(((float_Matrix*)this)->FastEl_Flat(i));
     }
@@ -2332,6 +2571,7 @@ taMatrix* taMatrix::Abs() const {
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double_Matrix* rval = new double_Matrix(this->geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = fabs(((double_Matrix*)this)->FastEl_Flat(i));
     }
@@ -2339,6 +2579,7 @@ taMatrix* taMatrix::Abs() const {
   }
   else if(GetDataValType() == VT_INT) {
     int_Matrix* rval = new int_Matrix(this->geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->FastEl_Flat(i) = ABS(((int_Matrix*)this)->FastEl_Flat(i));
     }
@@ -2347,6 +2588,7 @@ taMatrix* taMatrix::Abs() const {
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     TA_FOREACH_INDEX(i, *this) {
       rval->SetFmVar_Flat(ABS(FastElAsVar_Flat(i).toInt()), i);
     }
@@ -2357,21 +2599,21 @@ taMatrix* taMatrix::Abs() const {
 
 //////////// op +=
 void taMatrix::operator+=(const taMatrix& t) {
-  if(TestError(geom != t.geom, "+=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "+="))
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((float_Matrix*)this)->FastEl_Flat(i) += ((float_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      ((float_Matrix*)this)->FastEl_Flat(mi) += ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((double_Matrix*)this)->FastEl_Flat(i) += ((double_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      ((double_Matrix*)this)->FastEl_Flat(mi) += ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      SetFmVar_Flat(FastElAsVar_Flat(mi) + t.FastElAsVar_Flat(ti), mi);
     }
   }
 }
@@ -2402,21 +2644,21 @@ void taMatrix::operator+=(const Variant& t) {
 
 //////////// op -=
 void taMatrix::operator-=(const taMatrix& t) {
-  if(TestError(geom != t.geom, "-=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "-="))
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((float_Matrix*)this)->FastEl_Flat(i) -= ((float_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      ((float_Matrix*)this)->FastEl_Flat(mi) -= ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((double_Matrix*)this)->FastEl_Flat(i) -= ((double_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      ((double_Matrix*)this)->FastEl_Flat(mi) -= ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      SetFmVar_Flat(FastElAsVar_Flat(mi) - t.FastElAsVar_Flat(ti), mi);
     }
   }
 }
@@ -2440,28 +2682,28 @@ void taMatrix::operator-=(const Variant& t) {
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t, i);
+      SetFmVar_Flat(FastElAsVar_Flat(i) - t, i);
     }
   }
 }
 
 //////////// op *=
 void taMatrix::operator*=(const taMatrix& t) {
-  if(TestError(geom != t.geom, "*=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "*="))
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((float_Matrix*)this)->FastEl_Flat(i) *= ((float_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      ((float_Matrix*)this)->FastEl_Flat(mi) *= ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((double_Matrix*)this)->FastEl_Flat(i) *= ((double_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      ((double_Matrix*)this)->FastEl_Flat(mi) *= ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      SetFmVar_Flat(FastElAsVar_Flat(mi) * t.FastElAsVar_Flat(ti), mi);
     }
   }
 }
@@ -2485,28 +2727,32 @@ void taMatrix::operator*=(const Variant& t) {
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t, i);
+      SetFmVar_Flat(FastElAsVar_Flat(i) * t, i);
     }
   }
 }
 
 //////////// op /=
 void taMatrix::operator/=(const taMatrix& t) {
-  if(TestError(geom != t.geom, "/=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "/=+"))
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((float_Matrix*)this)->FastEl_Flat(i) /= ((float_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      float den = ((float_Matrix*)&t)->FastEl_Flat(ti);
+      if(!TestError(den == 0.0, "/=", "Floating Point Exception: Division by Zero"))
+        ((float_Matrix*)this)->FastEl_Flat(mi) /= den;
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      ((double_Matrix*)this)->FastEl_Flat(i) /= ((double_Matrix*)&t)->FastEl_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      double den = ((double_Matrix*)&t)->FastEl_Flat(ti);
+      if(!TestError(den == 0.0, "/=", "Floating Point Exception: Division by Zero"))
+        ((double_Matrix*)this)->FastEl_Flat(mi) /= den;
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      SetFmVar_Flat(FastElAsVar_Flat(mi) / t.FastElAsVar_Flat(ti), mi);
     }
   }
 }
@@ -2518,26 +2764,32 @@ void taMatrix::operator/=(const Variant& t) {
   }
   if(GetDataValType() == VT_FLOAT) {
     float vt = t.toFloat();
-    TA_FOREACH_INDEX(i, *this) {
-      ((float_Matrix*)this)->FastEl_Flat(i) /= vt;
+    if(!TestError(vt == 0.0, "/=", "Floating Point Exception: Division by Zero")) {
+      TA_FOREACH_INDEX(i, *this) {
+        ((float_Matrix*)this)->FastEl_Flat(i) /= vt;
+      }
     }
   }
   else if(GetDataValType() == VT_DOUBLE) {
     double vt = t.toDouble();
-    TA_FOREACH_INDEX(i, *this) {
-      ((double_Matrix*)this)->FastEl_Flat(i) /= vt;
+    if(!TestError(vt == 0.0, "/=", "Floating Point Exception: Division by Zero")) {
+      TA_FOREACH_INDEX(i, *this) {
+        ((double_Matrix*)this)->FastEl_Flat(i) /= vt;
+      }
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t, i);
+    if(!TestError(t == 0.0, "/=", "Floating Point Exception: Division by Zero")) {
+      TA_FOREACH_INDEX(i, *this) {
+        SetFmVar_Flat(FastElAsVar_Flat(i) / t, i);
+      }
     }
   }
 }
 
 //////////// op %=
 void taMatrix::operator%=(const taMatrix& t) {
-  if(TestError(geom != t.geom, "%=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "%="))
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     if(TestError(true, "%", "not supported for floating-point types"))
@@ -2548,8 +2800,8 @@ void taMatrix::operator%=(const taMatrix& t) {
       return;
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      SetFmVar_Flat(FastElAsVar_Flat(mi) % t.FastElAsVar_Flat(ti), mi);
     }
   }
 }
@@ -2568,30 +2820,34 @@ void taMatrix::operator%=(const Variant& t) {
       return;
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      SetFmVar_Flat(FastElAsVar_Flat(i) + t, i);
+    if(!TestError(t == 0, "/=", "Floating Point Exception: Division by Zero")) {
+      TA_FOREACH_INDEX(i, *this) {
+        SetFmVar_Flat(FastElAsVar_Flat(i) % t, i);
+      }
     }
   }
 }
 
 //////////// op <
 taMatrix* taMatrix::operator<(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "<", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "<"))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((float_Matrix*)this)->FastEl_Flat(i) < ((float_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
+                              < ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) < ((double_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
+                              < ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i) < t.FastElAsVar_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) < t.FastElAsVar_Flat(ti);
     }
   }
   return rval;
@@ -2624,22 +2880,24 @@ taMatrix* taMatrix::operator<(const Variant& t) const {
 
 //////////// op >
 taMatrix* taMatrix::operator>(const taMatrix& t) const {
-  if(TestError(geom != t.geom, ">", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, ">"))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((float_Matrix*)this)->FastEl_Flat(i) > ((float_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
+                              > ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) > ((double_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
+                              > ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i) > t.FastElAsVar_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) > t.FastElAsVar_Flat(ti);
     }
   }
   return rval;
@@ -2672,22 +2930,24 @@ taMatrix* taMatrix::operator>(const Variant& t) const {
 
 //////////// op <=
 taMatrix* taMatrix::operator<=(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "<=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "<="))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((float_Matrix*)this)->FastEl_Flat(i) <= ((float_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
+                              <= ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) <= ((double_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
+                              <= ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i) <= t.FastElAsVar_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) <= t.FastElAsVar_Flat(ti);
     }
   }
   return rval;
@@ -2720,22 +2980,24 @@ taMatrix* taMatrix::operator<=(const Variant& t) const {
 
 //////////// op >=
 taMatrix* taMatrix::operator>=(const taMatrix& t) const {
-  if(TestError(geom != t.geom, ">=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, ">="))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((float_Matrix*)this)->FastEl_Flat(i) >= ((float_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
+                              >= ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) >= ((double_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
+                               >= ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i) >= t.FastElAsVar_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) >= t.FastElAsVar_Flat(ti);
     }
   }
   return rval;
@@ -2768,22 +3030,24 @@ taMatrix* taMatrix::operator>=(const Variant& t) const {
 
 //////////// op ==
 taMatrix* taMatrix::operator==(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "==", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "=="))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((float_Matrix*)this)->FastEl_Flat(i) == ((float_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
+                              == ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) == ((double_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
+                              == ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i) == t.FastElAsVar_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) == t.FastElAsVar_Flat(ti);
     }
   }
   return rval;
@@ -2816,22 +3080,24 @@ taMatrix* taMatrix::operator==(const Variant& t) const {
 
 //////////// op !=
 taMatrix* taMatrix::operator!=(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "!=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "!="))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((float_Matrix*)this)->FastEl_Flat(i) != ((float_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
+                              != ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((double_Matrix*)this)->FastEl_Flat(i) != ((double_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
+                               != ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i) != t.FastElAsVar_Flat(i);
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) != t.FastElAsVar_Flat(ti);
     }
   }
   return rval;
@@ -2864,22 +3130,25 @@ taMatrix* taMatrix::operator!=(const Variant& t) const {
 
 //////////// op &&
 taMatrix* taMatrix::operator&&(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "&&", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "&&"))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((byte_Matrix*)this)->FastEl_Flat(i) && ((byte_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((byte_Matrix*)this)->FastEl_Flat(mi)
+                               && ((byte_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_INT && GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((int_Matrix*)this)->FastEl_Flat(i) && ((int_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((int_Matrix*)this)->FastEl_Flat(mi)
+                               && ((int_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i).toBool() && t.FastElAsVar_Flat(i).toBool();
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi).toBool()
+        && t.FastElAsVar_Flat(ti).toBool();
     }
   }
   return rval;
@@ -2913,22 +3182,25 @@ taMatrix* taMatrix::operator&&(const Variant& t) const {
 
 //////////// op ||
 taMatrix* taMatrix::operator||(const taMatrix& t) const {
-  if(TestError(geom != t.geom, "||", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+  if(!ElemWiseOpTest(t, true, "||"))
     return NULL;
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE || GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((byte_Matrix*)this)->FastEl_Flat(i) || ((byte_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((byte_Matrix*)this)->FastEl_Flat(mi)
+                               || ((byte_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_INT || GetDataValType() == t.GetDataValType()) {
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = (((int_Matrix*)this)->FastEl_Flat(i) || ((int_Matrix*)&t)->FastEl_Flat(i));
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = (((int_Matrix*)this)->FastEl_Flat(mi)
+                               || ((int_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
-    TA_FOREACH_INDEX(i, *this) {
-      rval->FastEl_Flat(i) = FastElAsVar_Flat(i).toBool() || t.FastElAsVar_Flat(i).toBool();
+    TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi).toBool()
+        || t.FastElAsVar_Flat(ti).toBool();
     }
   }
   return rval;

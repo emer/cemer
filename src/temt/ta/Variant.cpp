@@ -2576,7 +2576,12 @@ Variant operator*(const Variant& a, const Variant& b) {
 
 Variant operator/(const Variant& a, const Variant& b) {
   if(a.isNumericStrict()) {
-    return (Variant)(a.toDouble() / b.toDouble());
+    double den = b.toDouble();
+    if(den == 0.0) {
+      taMisc::Error("Variant /", "Floating Point Exception: Division by Zero");
+      return _nilVariant;
+    }
+    return (Variant)(a.toDouble() / den);
   }
   taMisc::Error("operator / not supported for non-numeric types");
   return _nilVariant;
@@ -2584,7 +2589,12 @@ Variant operator/(const Variant& a, const Variant& b) {
 
 Variant operator%(const Variant& a, const Variant& b) {
   if(a.isNumericStrict()) {
-    return (Variant)(a.toInt() % b.toInt()); // not sure this makes sense
+    int den = b.toInt();
+    if(den == 0) {
+      taMisc::Error("Variant %", "Floating Point Exception: Division by Zero");
+      return _nilVariant;
+    }
+    return (Variant)(a.toInt() % den); // not sure this makes sense
   }
   taMisc::Error("operator % not supported for non-numeric types");
   return _nilVariant;

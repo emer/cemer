@@ -48,6 +48,8 @@ public: //
   override void         El_SetFmStr_(void* it, const String& str) {((rgb_t*)it)->setString(str);}       // #IGNORE
   override const Variant El_GetVar_(const void* it) const {return Variant(((rgb_t*)it)->toInt());} // #IGNORE we use the int rep for variants
   override void         El_SetFmVar_(void* it, const Variant& var) {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
+  override int          El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(*((rgb_t*)a) > *((rgb_t*)b)) rval=1; else if(*((rgb_t*)a) == *((rgb_t*)b)) rval=0; return rval; }
 protected:
   static const rgb_t    blank; // #IGNORE
 #ifndef __MAKETA__

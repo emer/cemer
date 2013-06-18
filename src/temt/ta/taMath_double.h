@@ -289,17 +289,18 @@ public:
 
   static bool   vec_check_type(const double_Matrix* a);
   // #NO_CSS_MATH check that matrix is actually a double type -- issues Error if not and returns false
-  static bool   vec_check_same_size(const double_Matrix* a, const double_Matrix* b, bool quiet = false);
-  // check that both vectors are the same size, and issue warning if not (unless quiet)
+  static bool   vec_check_same_size(const double_Matrix* a, const double_Matrix* b,
+                                    bool quiet = false, bool flex = true);
+  // check that both vectors are the same size, and issue warning if not (unless quiet) -- if flex then use flexible test (assumes use of iterators for going through operators)
 
   static bool  vec_add(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
   static bool  vec_sub(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i)
   static bool  vec_mult_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
   static bool  vec_div_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
 
   static bool  vec_add_scalar(double_Matrix* a, double b);
   // #CAT_Arithmetic add scalar value b to elements in vector a: a(i) += b
@@ -320,13 +321,13 @@ public:
   // #CAT_Arithmetic apply simple math operators to values in vector, other vector provides 'arg' value for math_spec
 
   static bool vec_students_cum(double_Matrix* t,const double_Matrix* df);
-  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test
   static bool vec_students_cum_cum(double_Matrix* t,const double_Matrix* df);
-  // #CAT_Probability element wise cumulative student's distribution df deg of free t test (area from 0 to t) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Probability element wise cumulative student's distribution df deg of free t test (area from 0 to t)
   static bool vec_gauss_inv(double_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p
   static bool vec_gauss_inv_lim(double_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p . returns non-0 values for p==0 or p ==1 -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p . returns non-0 values for p==0 or p ==1
 
   ///////////////////////////////////////
   // basic statistics
@@ -334,11 +335,11 @@ public:
   static double vec_first(const double_Matrix* vec);
   // #CAT_Statistics first item in the vector
   static double vec_last(const double_Matrix* vec);
-  // #CAT_Statistics last item in the vector -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Statistics last item in the vector
   static int    vec_find_first(const double_Matrix* vec, Relation& rel);
   // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
   static int    vec_find_last(const double_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found 
   static double vec_max(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static double vec_abs_max(const double_Matrix* vec, int& idx);
@@ -355,7 +356,7 @@ public:
   static double vec_sum(const double_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
   static double vec_sum_range(const double_Matrix* vec, int start=0, int end=-1);
-  // #CAT_Statistics compute the sum of the values in the vector from el=startpos to el=endpos-1
+  // #CAT_Statistics compute the sum of the values in the vector from el=startpos to el=endpos-1 -- uses entire matrix, ignoring any view of sub-elements
   static double vec_prod(const double_Matrix* vec);
   // #CAT_Statistics compute the product of the values in the vector
   static double vec_mean(const double_Matrix* vec);
@@ -432,28 +433,28 @@ public:
 
   static double vec_ss_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                             bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element
   static double vec_euclid_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                                 bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element
   static double vec_hamming_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                                  bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element 
   static double vec_covar(const double_Matrix* vec, const double_Matrix* oth_vec);
-  // #CAT_Distance compute the covariance of this vector the oth vector -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute the covariance of this vector the oth vector
   static double vec_correl(const double_Matrix* vec, const double_Matrix* oth_vec);
-  // #CAT_Distance compute the correlation of this vector with the oth vector -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute the correlation of this vector with the oth vector
   static double vec_inner_prod(const double_Matrix* vec, const double_Matrix* oth_vec,
                                bool norm = false);
-  // #CAT_Distance compute the inner product of this vector and the oth vector -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute the inner product of this vector and the oth vector
   static double vec_cross_entropy(const double_Matrix* vec, const double_Matrix* oth_vec);
-  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q' -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
   static double vec_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                          DistMetric metric, bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute generalized distance metric with other vector (double_Matrix* vec, calls appropriate fun above) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute generalized distance metric with other vector (double_Matrix* vec, calls appropriate fun above)
   static double scalar_dist(double v1, double v2,
                             DistMetric metric, double tolerance=0.0);
-  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively) -- uses entire matrix, ignoring any view of sub-elements
+  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR or CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively)
 
   ///////////////////////////////////////
   // Normalization
