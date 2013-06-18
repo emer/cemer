@@ -703,6 +703,7 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
   if(!vec_check_same_size(vec, arg_ary)) return false;
   SimpleMathSpec myms = math_spec;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *arg_ary) {
+    if(!FOREACH_itr_b) bi = arg_ary->IterBeginIndex(FOREACH_itr_b); // start over
     myms.arg = arg_ary->FastEl_Flat(bi);
     vec->FastEl_Flat(ai) = myms.Evaluate(vec->FastEl_Flat(ai));
   }
@@ -712,6 +713,7 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
 bool taMath_float::vec_students_cum(float_Matrix* t, const float_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
   TA_FOREACH_INDEX_TWO(ai, *t, bi, *df) {
+    if(!FOREACH_itr_b) bi = df->IterBeginIndex(FOREACH_itr_b); // start over
     t->FastEl_Flat(ai) = students_cum(t->FastEl_Flat(ai), df->FastEl_Flat(bi));
   }
   return true;
@@ -720,6 +722,7 @@ bool taMath_float::vec_students_cum(float_Matrix* t, const float_Matrix* df) {
 bool taMath_float::vec_students_cum_cum(float_Matrix* t, const float_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
   TA_FOREACH_INDEX_TWO(ai, *t, bi, *df) {
+    if(!FOREACH_itr_b) bi = df->IterBeginIndex(FOREACH_itr_b); // start over
     t->FastEl_Flat(ai) = students_cum_cum(t->FastEl_Flat(ai), df->FastEl_Flat(bi));
   }
   return true;
@@ -1399,6 +1402,7 @@ float taMath_float::vec_ss_dist(const float_Matrix* vec, const float_Matrix* oth
   if(!vec_check_same_size(vec, oth)) return -1.0;
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
+    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
     double d = vec->FastEl_Flat(ai) - oth->FastEl_Flat(bi);
     if(fabs(d) > tolerance)
       rval += d * d;
@@ -1427,6 +1431,7 @@ float taMath_float::vec_hamming_dist(const float_Matrix* vec, const float_Matrix
   float alen = 0.0;
   float blen = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
+    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
     float d = fabs(vec->FastEl_Flat(ai) - oth->FastEl_Flat(bi));
     if(d <= tolerance)  d = 0.0;
     rval += d;
@@ -1449,6 +1454,7 @@ float taMath_float::vec_covar(const float_Matrix* vec, const float_Matrix* oth) 
   float oth_mean = vec_mean(oth);
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
+    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
     rval += (vec->FastEl_Flat(ai) - my_mean) * (oth->FastEl_Flat(bi) - oth_mean);
   }
   return rval / (float)vec->IterCount();
@@ -1462,6 +1468,7 @@ float taMath_float::vec_correl(const float_Matrix* vec, const float_Matrix* oth)
   float oth_var = 0.0;
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
+    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
     float my_val = vec->FastEl_Flat(ai) - my_mean;
     float oth_val = oth->FastEl_Flat(bi) - oth_mean;
     rval += my_val * oth_val;
@@ -1479,6 +1486,7 @@ float taMath_float::vec_inner_prod(const float_Matrix* vec, const float_Matrix* 
   if(!vec_check_same_size(vec, oth)) return -1.0;
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
+    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
     rval += vec->FastEl_Flat(ai) * oth->FastEl_Flat(bi);
   }
   if(norm) {
@@ -1493,6 +1501,7 @@ float taMath_float::vec_cross_entropy(const float_Matrix* vec, const float_Matri
   if(!vec_check_same_size(vec, oth)) return -1.0f;
   float rval = 0.0f;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
+    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
     float p = vec->FastEl_Flat(ai);
     float q = oth->FastEl_Flat(bi);
     q = max(q,0.000001f); q = max(q,0.999999f);
