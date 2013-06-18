@@ -882,14 +882,9 @@ void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
     }
   }
   else {
-    taBaseItr* my_itr = NULL;
-    taBaseItr* cp_itr = NULL;
-    int my_idx, cp_idx;
-    for(my_idx = IterBeginIndex(my_itr), cp_idx = cp->IterBeginIndex(cp_itr);
-	(bool)my_itr;		// only conditional on me -- other guy restarts 
-	my_idx = IterNextIndex(my_itr), cp_idx = cp->IterNextIndex(cp_itr)) {
-      if(!cp_itr) cp_idx = cp->IterBeginIndex(cp_itr); // start over
-      El_SetFmVar_(FastEl_Flat_(my_idx), cp->FastElAsVar_Flat(cp_idx));
+    TA_FOREACH_INDEX_TWO(mi, *this, ci, *cp) {
+      if(!FOREACH_itr_b) ci = cp->IterBeginIndex(FOREACH_itr_b); // start over
+      El_SetFmVar_(FastEl_Flat_(mi), cp->FastElAsVar_Flat(ci));
     }
   }
   ClearBaseFlag(COPYING);
@@ -1914,6 +1909,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
         + ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -1923,6 +1919,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
         + ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -1933,6 +1930,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) + t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
@@ -1982,7 +1980,9 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) - ((float_Matrix*)&t)->FastEl_Flat(ti);
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
+        - ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
@@ -1990,7 +1990,9 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) - ((double_Matrix*)&t)->FastEl_Flat(ti);
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
+        - ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
@@ -1999,6 +2001,7 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) - t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
@@ -2079,7 +2082,9 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) * ((float_Matrix*)&t)->FastEl_Flat(ti);
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
+        * ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
@@ -2087,7 +2092,9 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) * ((double_Matrix*)&t)->FastEl_Flat(ti);
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
+        * ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
     return rval;
   }
@@ -2096,6 +2103,7 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) * t.FastElAsVar_Flat(ti), ti);
     }
     return rval;
@@ -2145,6 +2153,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       float den = ((float_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0f, "/", "Floating Point Exception: Division by Zero"))
         rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) / den;
@@ -2155,6 +2164,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       double den = ((double_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/", "Floating Point Exception: Division by Zero"))
         rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) / den;
@@ -2166,6 +2176,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) / t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
@@ -2271,7 +2282,9 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      rval->FastEl_Flat(mi) = powf(((float_Matrix*)this)->FastEl_Flat(mi),  ((float_Matrix*)&t)->FastEl_Flat(ti));
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->FastEl_Flat(mi) = powf(((float_Matrix*)this)->FastEl_Flat(mi),
+                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
@@ -2279,7 +2292,9 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      rval->FastEl_Flat(mi) = pow(((double_Matrix*)this)->FastEl_Flat(mi), ((double_Matrix*)&t)->FastEl_Flat(ti));
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->FastEl_Flat(mi) = pow(((double_Matrix*)this)->FastEl_Flat(mi),
+                                  ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
     return rval;
   }
@@ -2288,8 +2303,9 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-     rval->SetFmVar_Flat(pow(FastElAsVar_Flat(mi).toDouble(),
-                             t.FastElAsVar_Flat(ti).toDouble()), mi);
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      rval->SetFmVar_Flat(pow(FastElAsVar_Flat(mi).toDouble(),
+                              t.FastElAsVar_Flat(ti).toDouble()), mi);
     }
     return rval;
   }
@@ -2339,6 +2355,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MAX(((float_Matrix*)this)->FastEl_Flat(mi), 
                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2348,6 +2365,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MAX(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2358,6 +2376,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(MAX(FastElAsVar_Flat(mi), t.FastElAsVar_Flat(ti)), mi);
     }
     return rval;
@@ -2453,6 +2472,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MIN(((float_Matrix*)this)->FastEl_Flat(mi), 
                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2462,6 +2482,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MIN(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2472,6 +2493,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(MIN(FastElAsVar_Flat(mi), t.FastElAsVar_Flat(ti)), mi);
     }
     return rval;
@@ -2603,16 +2625,19 @@ void taMatrix::operator+=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       ((float_Matrix*)this)->FastEl_Flat(mi) += ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       ((double_Matrix*)this)->FastEl_Flat(mi) += ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) + t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2648,16 +2673,19 @@ void taMatrix::operator-=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       ((float_Matrix*)this)->FastEl_Flat(mi) -= ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       ((double_Matrix*)this)->FastEl_Flat(mi) -= ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) - t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2693,16 +2721,19 @@ void taMatrix::operator*=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       ((float_Matrix*)this)->FastEl_Flat(mi) *= ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       ((double_Matrix*)this)->FastEl_Flat(mi) *= ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) * t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2738,6 +2769,7 @@ void taMatrix::operator/=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       float den = ((float_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/=", "Floating Point Exception: Division by Zero"))
         ((float_Matrix*)this)->FastEl_Flat(mi) /= den;
@@ -2745,6 +2777,7 @@ void taMatrix::operator/=(const taMatrix& t) {
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       double den = ((double_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/=", "Floating Point Exception: Division by Zero"))
         ((double_Matrix*)this)->FastEl_Flat(mi) /= den;
@@ -2752,6 +2785,7 @@ void taMatrix::operator/=(const taMatrix& t) {
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) / t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2801,6 +2835,7 @@ void taMatrix::operator%=(const taMatrix& t) {
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) % t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2835,18 +2870,21 @@ taMatrix* taMatrix::operator<(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               < ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               < ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) < t.FastElAsVar_Flat(ti);
     }
   }
@@ -2885,18 +2923,21 @@ taMatrix* taMatrix::operator>(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               > ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               > ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) > t.FastElAsVar_Flat(ti);
     }
   }
@@ -2935,18 +2976,21 @@ taMatrix* taMatrix::operator<=(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               <= ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               <= ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) <= t.FastElAsVar_Flat(ti);
     }
   }
@@ -2985,18 +3029,21 @@ taMatrix* taMatrix::operator>=(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               >= ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                                >= ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) >= t.FastElAsVar_Flat(ti);
     }
   }
@@ -3035,18 +3082,21 @@ taMatrix* taMatrix::operator==(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               == ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               == ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) == t.FastElAsVar_Flat(ti);
     }
   }
@@ -3085,18 +3135,21 @@ taMatrix* taMatrix::operator!=(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               != ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                                != ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) != t.FastElAsVar_Flat(ti);
     }
   }
@@ -3135,18 +3188,21 @@ taMatrix* taMatrix::operator&&(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((byte_Matrix*)this)->FastEl_Flat(mi)
                                && ((byte_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_INT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((int_Matrix*)this)->FastEl_Flat(mi)
                                && ((int_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi).toBool()
         && t.FastElAsVar_Flat(ti).toBool();
     }
@@ -3187,18 +3243,21 @@ taMatrix* taMatrix::operator||(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE || GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((byte_Matrix*)this)->FastEl_Flat(mi)
                                || ((byte_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_INT || GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((int_Matrix*)this)->FastEl_Flat(mi)
                                || ((int_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
+      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi).toBool()
         || t.FastElAsVar_Flat(ti).toBool();
     }
