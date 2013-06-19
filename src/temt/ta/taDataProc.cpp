@@ -985,15 +985,18 @@ bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row
 ///////////////////////////////////////////////////////////////////
 // row-wise functions: selecting/splitting
 
-// Select Rows selects from the raw data table not the filtered view
+// If the dest table is the src table hide rows not matching the spec
+// otherwise copy the matching rows to dest table
 bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spec) {
   bool in_place_req = false;
   GetDest(dest, src, "SelectRows", in_place_req);
-  dest->StructUpdate(true);
-  dest->Copy_NoData(*src);              // give it same structure
+  if (!in_place_req) {
+    dest->StructUpdate(true);
+    dest->Copy_NoData(*src);              // give it same structure
+  }
   spec->GetColumns(src);                // cache column pointers & indicies from names
   // also sets act_enabled flag
-  for(int row=0;row<src->rows; row++) {
+  for(int row=src->rows-1;row>=0; row--) {
     bool incl = false;
     bool not_incl = false;
     for(int i=0; i<spec->ops.size; i++) {
@@ -1036,19 +1039,28 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
       }
     }
     if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
-        && not_incl) continue;
+        && not_incl) {
+      if (in_place_req)
+        src->RemoveRows(row);
+      continue;
+    }
     if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
-        && !incl) continue;
+        && !incl) {
+      if (in_place_req)
+        src->RemoveRows(row);
+      continue;
+    }
     // continuing now..
-    dest->AddBlankRow();
-    dest->CopyFromRow(-1, *src, row);
+    if (!in_place_req) {
+      dest->InsertRows(0,1);
+      dest->CopyFromRow(0, *src, row);
+    }
   }
-  dest->StructUpdate(false);
-  spec->ClearColumns();
-  if(in_place_req) {
-    src->Copy_DataOnly(*dest);
+  if (in_place_req)
     delete dest;
-  }
+  else
+    dest->StructUpdate(false);
+  spec->ClearColumns();
   return true;
 }
 
