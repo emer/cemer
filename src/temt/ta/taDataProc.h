@@ -83,12 +83,6 @@ public:
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order sort data from src into dest according to sorting specifications in spec; if src == dest, then it is sorted in-place, otherwise, dest is completely overwritten, and if dest is NULL, a new one is created in proj.data.AnalysisData
   static bool  SortInPlace(DataTable* dt, DataSortSpec* spec);
   // #CAT_Order #MENU_BUTTON #MENU_ON_Order sort given data table in place (modifies data table) according to sorting specifications in spec
-  static int   Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
-           DataSortSpec* spec);
-  // #IGNORE helper function for sorting: compare values -1 = a is < b; 1 = a > b; 0 = a == b
-  static bool  Sort_impl(DataTable* dt, DataSortSpec* spec);
-  // #IGNORE actually perform sort on data table using specs
-
   // these only reorder the index that keeps track of the tables visible items
   static bool  SortThruIndex(DataTable* dt, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order
@@ -96,8 +90,6 @@ public:
   // #IGNORE helper function for sorting: compare values
   static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right);
   // #IGNORE sort the table index based on spec
-  static bool  PermuteThruIndex(DataTable* dt);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable
 
   // these move the data
   static bool  Permute(DataTable* dest, DataTable* src);

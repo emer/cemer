@@ -389,75 +389,6 @@ bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
   return SortThruIndex(dt, spec);
 }
 
-int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
-    DataSortSpec* spec) {
-  for(int i=0;i<spec->ops.size; i++) {
-    DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(i);
-    if(ds->col_idx < 0) continue;
-    DataCol* da_a = dt_a->data.FastEl(ds->col_idx);
-    DataCol* da_b = dt_b->data.FastEl(ds->col_idx);
-    Variant va = da_a->GetValAsVar(row_a);
-    Variant vb = da_b->GetValAsVar(row_b);
-    if(va < vb) {
-      if(ds->order == DataSortEl::ASCENDING) return -1; else return 1;
-    }
-    else if(va > vb) {
-      if(ds->order == DataSortEl::ASCENDING) return 1; else return -1;
-    }
-  }
-  return 0;                     // must be all equal!
-}
-
-bool taDataProc::Sort_impl(DataTable* dt, DataSortSpec* spec) {
-  if(dt->rows <= 1) return false;
-
-  // todo: seems like you can just sort an index and then read that off.
-  // see SortThruIndex()
-
-  dt->StructUpdate(true);
-  DataTable tmp_data(false);            // temporary buffer to hold vals during swap
-  taBase::Own(tmp_data, NULL);  // activates initlinks..
-  tmp_data.Copy_NoData(*dt);            // give it same structure
-  tmp_data.AddBlankRow();               // always just has one row
-
-  spec->GetColumns(dt);         // cache column pointers & indicies from names
-
-  // lets do a heap sort since it requires no secondary storage
-  int n = dt->rows;
-  int l,j,ir,i;
-
-  l = (n >> 1) + 1;
-  ir = n;
-  for(;;){
-    if(l>1) {
-      tmp_data.CopyFromRow(0, *dt, --l -1); // tmp_data = ra[--l]
-    }
-    else {
-      tmp_data.CopyFromRow(0, *dt, ir-1); // tmp_data = ra[ir]
-      dt->CopyFromRow(ir-1, *dt, 0); // ra[ir] = ra[1]
-      if(--ir == 1) {
-        dt->CopyFromRow(0, tmp_data, 0); // ra[1]=tmp_data
-        break;
-      }
-    }
-    i=l;
-    j=l << 1;
-    while(j<= ir) {
-      if(j<ir && (Sort_Compare(dt, j-1, dt, j, spec) == -1)) j++; // less-than
-      if(Sort_Compare(&tmp_data, 0, dt, j-1, spec) == -1) { // tmp_data < ra[j]
-        dt->CopyFromRow(i-1, *dt, j-1); // ra[i]=ra[j];
-        j += (i=j);
-      }
-      else j = ir+1;
-    }
-    dt->CopyFromRow(i-1, tmp_data, 0); // ra[i] = tmp_data;
-  }
-
-  dt->StructUpdate(false);
-  spec->ClearColumns();
-  return true;
-}
-
 // SortThruIndex - sorts the currently visible data table rows
 bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 {
@@ -576,38 +507,30 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[]
   }
 }
 
-
-// this version makes a duplicate data table in the permuted order
+// if dest == src do in place
 bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   if(!src) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
-  bool in_place_req = false;
-  GetDest(dest, src, "Permute", in_place_req);
-  dest->StructUpdate(true);
-  dest->Copy_NoData(*src);              // give it same structure
-  // this just uses the index technique..
-  int_Array idxs;
-  idxs.SetSize(src->rows);
-  idxs.FillSeq();
-  idxs.Permute();
-  for(int row=0;row<src->rows; row++) {
-    dest->AddBlankRow();
-    dest->CopyFromRow(-1, *src, idxs[row]);
+  bool in_place = false;
+  GetDest(dest, src, "Permute", in_place);
+  if (in_place) {
+    src->StructUpdate(true);
+    src->row_indexes.Permute();
+    src->StructUpdate(false);
   }
-  dest->StructUpdate(false);
-  if(in_place_req) {
-    // only copy the data, preserving all other attributes of the table
-    src->Copy_DataOnly(*dest);
-    delete dest;
+  else {
+    dest->StructUpdate(true);
+    dest->Copy_NoData(*src);              // give it same structure
+    // this just uses the index technique..
+    int_Array idxs;
+    idxs.SetSize(src->rows);
+    idxs.FillSeq();
+    idxs.Permute();
+    for(int row=0;row<src->rows; row++) {
+      dest->AddBlankRow();
+      dest->CopyFromRow(-1, *src, idxs[row]);
+    }
+    dest->StructUpdate(false);
   }
-  return true;
-}
-
-// this version only reorders the index, data is not moved
-bool taDataProc::PermuteThruIndex(DataTable* dt) {
-  if(!dt) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
-  dt->StructUpdate(true);
-  dt->row_indexes.Permute();
-  dt->StructUpdate(false);
   return true;
 }
 
@@ -950,7 +873,6 @@ bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
   return true;
 }
 
-
 bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row, int n_rows,
     DataCol::ValType val_type) {
   bool in_place_req = false;
@@ -980,7 +902,6 @@ bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row
   dest->StructUpdate(false);
   return true;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 // row-wise functions: selecting/splitting
@@ -1056,9 +977,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
       dest->CopyFromRow(0, *src, row);
     }
   }
-  if (in_place_req)
-    delete dest;
-  else
+  if (!in_place_req)
     dest->StructUpdate(false);
   spec->ClearColumns();
   return true;
