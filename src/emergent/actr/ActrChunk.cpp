@@ -190,7 +190,7 @@ bool ActrChunk::MergeVals(ActrChunk* cmp) {
     for(int i=0; i<slots.size; i++) {
       ActrSlot* sl = slots.FastEl(i);
       ActrSlot* os = cmp->slots.SafeEl(i);
-      if(!os->IsNil()) {
+      if(!os->IsEmpty()) {
         sl->CopyValFrom(*os);
       }
     }
@@ -203,12 +203,21 @@ void ActrChunk::CopyName(ActrChunk* cp) {
   name = cp->name + "_0"; // todo: figure out name business
 }
 
-bool ActrChunk::SetSlotVal(const String& slot, const String& val) {
+ActrSlot* ActrChunk::FindSlot(const String& slot) {
   ActrSlot* slt = slots.FindName(slot);
-  if(TestError(!slt, "SetSlotVal", "slot named:", slot, "not found in chunk of type:", 
-               chunk_type ? chunk_type->name : "<no type set>")) {
-    return false;
+  if(!slt && slot != "state" && slot != "buffer") {
+    if(TestError(true, "SetSlotVal", "slot named:", slot, "not found in chunk of type:", 
+                 chunk_type ? chunk_type->name : "<no type set>")) {
+      return NULL;
+    }
   }
+  return slt;
+}
+
+
+bool ActrChunk::SetSlotVal(const String& slot, const String& val) {
+  ActrSlot* slt = FindSlot(slot);
+  if(!slt) return false;
   slt->val = val;
   return true;
 }

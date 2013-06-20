@@ -91,8 +91,9 @@ public:
   int                   load_st_pos;  // #IGNORE string pos for loading
   int                   load_st_line_pos;  // #IGNORE string pos for loading
   String                load_last_ln; // #IGNORE last line
-  String                load_buf;     // #IGNORE generic buf
+  String                load_buf;     // #IGNORE generic buffer used for all parsing
   String                load_comment; // #IGNORE last comment processed
+  String                load_name;     // #IGNORE return val for last name read
   YY_Flags              load_state;  // #IGNORE state of current parse
   ActrChunkTypeRef      load_chtype;  // #IGNORE current chunk type
   ActrChunkRef          load_chunk;   // #IGNORE current chunk
@@ -162,9 +163,13 @@ public:
   // #CAT_ActR get the declarative module
   virtual ActrProceduralModule*        ProceduralModule();
   // #CAT_ActR get the procedural module
+  virtual ActrGoalModule*              GoalModule();
+  // #CAT_ActR get the goal module
 
   virtual ActrChunkType* FindChunkType(const String& type_name);
   // #CAT_ActR find a chunk type by name or emit error if not found
+  virtual ActrChunkType* FindMakeChunkType(const String& type_name);
+  // #CAT_ActR find a chunk type by name or make it if not otherwise found (emitting warning message if so)
 
   virtual bool          LoadActrFile(const String& fname="");
   // #BUTTON #MENU #EXT_lisp,actr #CAT_File #FILETYPE_ActrModel #FILE_DIALOG_LOAD read actr model file in standard actr lisp format (leave fname empty to pull up file chooser)
@@ -189,10 +194,14 @@ public:
   // #IGNORE skip whitespace
   virtual int           readword(int c);
   // #IGNORE read word into load_buf
+  virtual int           skip_till_rp();
+  // #IGNORE skip over everything until a right paren is found that closes to-be-ignored expression
   virtual void          ResetParse();
   // #IGNORE reset parsing state
   virtual void          InitLoadKeywords();
   // #IGNORE init keywords
+  virtual void          ParseErr(const char* er);
+  // #IGNORE parsing error handling routine
 
   virtual void          ResetModel();
   // #EXPERT reset the model entirely -- remove everything from existing model -- use with caution!

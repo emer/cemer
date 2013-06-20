@@ -54,9 +54,9 @@ public:
 
   virtual bool  AddChunk(ActrChunk* ck, bool merge = true);
   // #CAT_ActR add a new chunk to declarative memory active buffer, if merge is true, chunk is merged with any existing ones, and base activation is increased
-  virtual bool FindMatching(ActrChunk* ck);
+  virtual bool  FindMatching(ActrChunk* ck);
   // #CAT_ActR find all chunks that match given chunk, put in eligible list
-  virtual float  UpdateBaseAct(ActrChunk* ck);
+  virtual float UpdateBaseAct(ActrChunk* ck);
   // #CAT_ActR update the base level activation given that it was used..
 
   virtual void  RetrievalRequest(ActrEvent& event);

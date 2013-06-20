@@ -79,10 +79,11 @@ public:
   // #CAT_ActR update the vars based on what shows up in the conditions -- called automatically in UAE
   virtual void          UpdateNames();
   // #CAT_ActR update names of chunks within conds and acts, based on name of production
+  virtual void          InitActionProgs();
+  // #CAT_ActR initialize all the programs called directly by actions -- called by Init
 
   virtual bool          Matches(bool why_not = false);
   // #CAT_ActR do the conditions match now or not? called by procedural module
-
   virtual bool          WhyNot();
   // #BUTTON #CAT_ActR explain why this production does not match right now (report given on the css console output)
 
@@ -91,6 +92,12 @@ public:
 
   virtual bool          DoActions(ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR the production fired -- perform all the actions
+
+  virtual ActrCondition* FindCondOnBuffer(ActrBuffer* buf);
+  // #CAT_ActR find a condition that matches on given buffer
+
+  virtual bool          SetParam(const String& par_nm, float val);
+  // #CAT_ActR set production paramter -- u = util, r = reward
  
   override String GetDesc() const {return desc;}
   override String GetTypeDecoKey() const { return "ProgCtrl"; }

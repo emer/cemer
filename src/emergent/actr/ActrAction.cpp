@@ -68,6 +68,39 @@ void ActrAction::UpdateAfterEdit_impl() {
     dest_type = &TA_DataTable;
     break;
   }
+  SetChunkTypeFromCond();
+}
+
+bool ActrAction::SetChunkTypeFromCond() {
+  if(dest_type != &TA_ActrBuffer || !(bool)dest) return false;
+  if(chunk.chunk_type) return false; // we're ok -- todo: should always override??
+  ActrProduction* prod = GET_MY_OWNER(ActrProduction);
+  if(!prod) return false;
+  ActrCondition* cnd = prod->FindCondOnBuffer((ActrBuffer*)dest.ptr());
+  if(cnd) {
+    if(cnd->cmp_chunk.chunk_type) {
+      chunk.SetChunkType(cnd->cmp_chunk.chunk_type.ptr());
+      return true;
+    }
+  }
+  return false;
+}
+
+bool ActrAction::SetBangAction(const String& act) {
+  if(act == "output") {
+    action = OUTPUT;
+  }
+  else if(act == "stop") {
+    action = STOP;
+  }
+  else if(act == "eval") {
+    taMisc::Info("Note: lisp eval expressiosn are not supported in C++!");
+  }
+  else {
+    TestError(true, "SetBangAction", "action value: !" + act + "!  not recognized");
+    return false;
+  }
+  return true;
 }
 
 void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -390,4 +423,12 @@ bool ActrAction::DoAction(ActrProduction& prod,
   }
   }
   return true;                  // todo: need error condition tracking etc
+}
+
+void ActrAction::InitProg() {
+  if(IsOff()) return;
+  if(action != PROG_RUN) return;
+  Program* prg = (Program*)dest.ptr();
+  if(!prg) return;
+  prg->Init();
 }

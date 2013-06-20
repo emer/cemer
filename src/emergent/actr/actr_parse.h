@@ -42,49 +42,45 @@
      AP_CHUNK_TYPE = 258,
      AP_PROD = 259,
      AP_ISA = 260,
-     AP_GOAL = 261,
-     AP_RETRIEVAL = 262,
-     AP_OUTPUT = 263,
-     AP_CLEAR_ALL = 264,
-     AP_DEFINE_MODEL = 265,
-     AP_ADD_DM = 266,
-     AP_SGP = 267,
-     AP_ESC = 268,
-     AP_LF = 269,
-     AP_TRACE_DETAIL = 270,
-     AP_GOAL_FOCUS = 271,
-     AP_NUMBER = 272,
-     AP_NAME = 273,
-     AP_COMMENT = 274,
-     AP_VALUE = 275
+     AP_CLEAR_ALL = 261,
+     AP_DEFINE_MODEL = 262,
+     AP_ADD_DM = 263,
+     AP_SGP = 264,
+     AP_GOAL_FOCUS = 265,
+     AP_SPP = 266,
+     AP_NUMBER = 267,
+     AP_NAME = 268,
+     AP_STRING = 269,
+     AP_DEFVAR = 270,
+     AP_DEFMETHOD = 271,
+     AP_DEFUN = 272,
+     AP_SETF = 273
    };
 #endif
 /* Tokens.  */
 #define AP_CHUNK_TYPE 258
 #define AP_PROD 259
 #define AP_ISA 260
-#define AP_GOAL 261
-#define AP_RETRIEVAL 262
-#define AP_OUTPUT 263
-#define AP_CLEAR_ALL 264
-#define AP_DEFINE_MODEL 265
-#define AP_ADD_DM 266
-#define AP_SGP 267
-#define AP_ESC 268
-#define AP_LF 269
-#define AP_TRACE_DETAIL 270
-#define AP_GOAL_FOCUS 271
-#define AP_NUMBER 272
-#define AP_NAME 273
-#define AP_COMMENT 274
-#define AP_VALUE 275
+#define AP_CLEAR_ALL 261
+#define AP_DEFINE_MODEL 262
+#define AP_ADD_DM 263
+#define AP_SGP 264
+#define AP_GOAL_FOCUS 265
+#define AP_SPP 266
+#define AP_NUMBER 267
+#define AP_NAME 268
+#define AP_STRING 269
+#define AP_DEFVAR 270
+#define AP_DEFMETHOD 271
+#define AP_DEFUN 272
+#define AP_SETF 273
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef struct YYSTYPE
-#line 38 "actr_parse.y"
+#line 40 "actr_parse.y"
 {
   const char*     chr;
   int	   	  rval;
@@ -93,9 +89,10 @@ typedef struct YYSTYPE
   ActrChunk*      chk;
   ActrProduction* prod;
   ActrSlotType*   sltyp;
+  ActrSlot*       slt;
 }
 /* Line 1529 of yacc.c.  */
-#line 99 "y.tab.h"
+#line 96 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

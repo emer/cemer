@@ -104,6 +104,9 @@ public:
   virtual void  SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR send BUFFER-READ-ACTION events for all BUFFER_EQ cases
 
+  virtual bool  SetVal(ActrSlot* slt, const String& val);
+  // #IGNORE for parsing -- set comparison value, either for given slot or if null then cmp_val
+
   override String  GetTypeDecoKey() const { return "ProgCtrl"; }
   override String  GetDisplayName() const;
   override String& Print(String& strm, int indent = 0) const;

@@ -81,6 +81,14 @@ ActrProceduralModule* ActrModel::ProceduralModule() {
   return dmod;
 }
 
+ActrGoalModule* ActrModel::GoalModule() {
+  ActrGoalModule* dmod =
+    (ActrGoalModule*)modules.FindName("goal");
+  if(TestError(!dmod, "GoalModule", "procedural module not found -- model not yet initialized"))
+    return NULL;
+  return dmod;
+}
+
 void ActrModel::DefaultConfig() {
   bool made_new;
   FindMakeModule("procedural", &TA_ActrProceduralModule, made_new);
@@ -274,6 +282,11 @@ void ActrModel::FormatLogTable() {
 
 
 ActrChunkType* ActrModel::FindChunkType(const String& type_name) {
+  if(type_name == "chunk") {    // special case
+    bool made_new = false;
+    ActrChunkType* ct = chunk_types.FindMakeNameType(type_name, NULL, made_new);
+    return ct;
+  }
   ActrChunkType* ct = chunk_types.FindName(type_name);
   if(TestError(!ct, "FindChunkType", "chunk type named:", type_name,
                "not found")) {
@@ -282,6 +295,16 @@ ActrChunkType* ActrModel::FindChunkType(const String& type_name) {
   return ct;
 }
 
+ActrChunkType* ActrModel::FindMakeChunkType(const String& type_name) {
+  bool made_new = false;
+  ActrChunkType* ct = chunk_types.FindMakeNameType(type_name, NULL, made_new);
+  if(type_name == "chunk") {    // special case
+    return ct;
+  }
+  TestWarning(!ct, "FindMakeChunkType", "chunk type named:", type_name,
+              "was created implicitly -- was not defined in advance");
+  return ct;
+}
 
 void ActrModel::SaveActrFile(const String& fname) {
   
@@ -323,3 +346,4 @@ void ActrModel::ResetModel() {
   chunk_types.Reset();
   DefaultConfig();
 }
+

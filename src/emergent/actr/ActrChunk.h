@@ -78,6 +78,8 @@ public:
 
   virtual bool          SetSlotVal(const String& slot, const String& val);
   // set given slot to given value
+  virtual ActrSlot*     FindSlot(const String& slot);
+  // find slot by name -- issues error if not found
 
   virtual ActrSlot*     NewSlot();
   // #BUTTON make a new slot in this chunk

@@ -49,8 +49,10 @@ public:
   ActrChunkRef  val_chunk;      // #CONDSHOW_ON_val_type:CHUNK the value as a pointer to another chunk
   String        val;            // #CONDSHOW_ON_val_type:LITERAL the value as a literal value -- empty or "nil" = not set -- for production conditions use =var for variable, and =var- (trailing -) for != var
 
-  virtual bool          IsNil();
+  virtual bool          IsEmpty();
   // #CAT_ActR is this item empty or not?
+  virtual bool          IsNil();
+  // #CAT_ActR does this have an explicit 'nil' value set (different than empty)
   inline  bool          CondIsVar()     { return val.startsWith('='); }
   // #CAT_ActR production condition value is a variable name
   inline  bool          CondIsNeg()     { return val.endsWith('-'); }

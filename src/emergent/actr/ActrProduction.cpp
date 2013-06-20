@@ -65,6 +65,13 @@ void ActrProduction::UpdateVars() {
   }
 }
 
+void ActrProduction::InitActionProgs() {
+  for(int i=0; i<acts.size; i++) {
+    ActrAction* act = acts.FastEl(i);
+    act->InitProg();
+  }
+}
+
 void ActrProduction::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 }
@@ -88,6 +95,7 @@ void ActrProduction::Init() {
   ClearProdFlag(ELIGIBLE);
   UpdateNames();
   UpdateVars();
+  InitActionProgs();
   SigEmitUpdated();
 }
 
@@ -150,4 +158,27 @@ bool ActrProduction::DoActions(ActrProceduralModule* proc_mod, ActrModel* model)
     good = good && rv;
   }
   return good;
+}
+
+ActrCondition* ActrProduction::FindCondOnBuffer(ActrBuffer* buf) {
+  for(int i=0; i<conds.size; i++) {
+    ActrCondition* cnd = conds.FastEl(i);
+    if(cnd->src.ptr() == buf)
+      return cnd;
+  }
+  return NULL;
+}
+
+bool ActrProduction::SetParam(const String& par_nm, float val) {
+  if(par_nm == "u") {
+    util = val;
+  }
+  else if(par_nm == "r") {
+    rew = val;
+  }
+  else {
+    TestError(true, "SetParam", "parameter named:", par_nm, "not found");
+    return false;
+  }
+  return true;
 }

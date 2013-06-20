@@ -93,6 +93,14 @@ public:
                             ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR perform the action as specified
 
+  virtual bool     SetChunkTypeFromCond();
+  // #CAT_ActR if our chunk type is not set, set it from any corresponding production conditional that matches against the same buffer as we do -- called in UAE and during loading from actr file
+  virtual bool     SetBangAction(const String& act);
+  // #CAT_ActR set action from !action! keyword (minus the ! ! surrounds) -- used in parsing
+
+  virtual void     InitProg();
+  // #CAT_ActR initialize program if in use
+
   override String  GetTypeDecoKey() const { return "Function"; }
   override String  GetDisplayName() const;
   override String& Print(String& strm, int indent = 0) const;

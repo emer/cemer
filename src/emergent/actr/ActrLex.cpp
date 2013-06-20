@@ -115,11 +115,55 @@ void ActrModel::ResetParse() {
   load_comment = "";
 }
 
+int ActrModel::skip_till_rp() {
+  int c = skipwhite();
+  String LexBuf = load_last_ln;
+  int depth = 0;
+  while (((c = Peekc()) != EOF) && !(((c == ')')) && (depth <= 0))) {
+    LexBuf += (char)c;
+    if(c == '(')      depth++;
+    if(c == ')')      depth--;
+    Getc();
+  }
+  TestWarning(true, "Skip",
+              "skipping over lisp code that cannot be imported:\n", LexBuf);
+  return c;
+}
+
 int aplex() {
   if(ActrModel::cur_parse) {
     return ActrModel::cur_parse->Lex();
   }
   return ActrModel::YYRet_Exit;
+}
+
+static int ctrl_char(int c) {
+  int rval = ' ';
+  switch (c) {
+  case 'n':
+    rval = '\n';	break;
+  case 't':
+    rval = '\t';	break;
+  case 'v':
+    rval = '\v';	break;
+  case 'b':
+    rval = '\b';	break;
+  case 'r':
+    rval= '\r';		break;
+  case 'f':
+    rval = '\f';	break;
+  case '\\':
+    rval = '\\';	break;
+  case '?':
+    rval = '\?';	break;
+  case '\'':
+    rval = '\'';	break;
+  case '\"':
+    rval = '\"';	break;	// "
+  case '0':
+    rval = '\0';	break;
+  }
+  return rval;
 }
 
 int ActrModel::Lex() {
@@ -142,7 +186,7 @@ int ActrModel::Lex() {
       continue;
     }
 
-    if((c == '.') || isdigit(c) || (c == '-')) {	// number
+    if((c == '.') || isdigit(c)) {	// number: note no -
       int gotreal = 0;
       load_buf = (char)c;
       if(c == '.') gotreal = 1;
@@ -159,14 +203,35 @@ int ActrModel::Lex() {
       return AP_NUMBER;
     }
 
+    if(c == '\"') {
+      load_buf = "";
+      while(((c=Getc()) != EOF) && (c != '\"')) {
+	if(c == '\\') {
+	  c=Getc();
+	  if((c == '\n') || (c == '\r'))
+	    continue;
+	  else
+	    load_buf += (char)ctrl_char(c);
+	}
+	else
+	  load_buf += (char)c;
+      }
+      aplval.chr = load_name;
+      return AP_STRING;
+    }
+
     if(isalpha(c) || (c == '_')) {
       readword(c);
       Variant val = load_keywords.GetVal(load_buf);
       if(!val.isNull()) {
         aplval.rval = val.toInt();
+        if(aplval.rval >= AP_DEFVAR) {
+          skip_till_rp();       // skip it all..
+        }
         return val.toInt();
       }
-      aplval.chr = load_buf;
+      load_name = load_buf;
+      aplval.chr = load_name;
       return AP_NAME;
     }
     
@@ -181,16 +246,35 @@ void ActrModel::InitLoadKeywords() {
   load_keywords.Add(NameVar("p", AP_PROD));
   load_keywords.Add(NameVar("P", AP_PROD));
   load_keywords.Add(NameVar("ISA", AP_ISA));
-  load_keywords.Add(NameVar("goal", AP_GOAL));
-  load_keywords.Add(NameVar("retrieval", AP_RETRIEVAL));
-  load_keywords.Add(NameVar("output", AP_OUTPUT));
+  load_keywords.Add(NameVar("isa", AP_ISA));
   load_keywords.Add(NameVar("chunk_type", AP_CHUNK_TYPE));
   load_keywords.Add(NameVar("clear_all", AP_CLEAR_ALL));
   load_keywords.Add(NameVar("define_model", AP_DEFINE_MODEL));
   load_keywords.Add(NameVar("add_dm", AP_ADD_DM));
   load_keywords.Add(NameVar("sgp", AP_SGP));
-  load_keywords.Add(NameVar("esc", AP_ESC));
-  load_keywords.Add(NameVar("lf", AP_LF));
-  load_keywords.Add(NameVar("trace_detail", AP_TRACE_DETAIL));
   load_keywords.Add(NameVar("goal_focus", AP_GOAL_FOCUS));
+  load_keywords.Add(NameVar("spp", AP_SPP));
+  load_keywords.Add(NameVar("defvar", AP_DEFVAR));
+  load_keywords.Add(NameVar("defmethod", AP_DEFMETHOD));
+  load_keywords.Add(NameVar("defun", AP_DEFUN));
+  load_keywords.Add(NameVar("setf", AP_SETF));
+}
+
+void ActrModel::ParseErr(const char* er) {
+  String erm = String(er) + " line: " + String(load_st_line) + ":";
+  String src = load_last_ln;
+  src.gsub('\t',' ');         // replace tabs
+  String msg = erm + "\n" + src;
+  if(erm.startsWith("syntax error")) {
+    msg += "\n";
+    for(int i=0; i < load_st_col; i++)
+      msg += " ";
+    msg += "^";
+  }
+  if(taMisc::ErrorCancelCheck()) {
+    taMisc::Info(msg);
+  }
+  else {
+    taMisc::Error(msg);
+  }
 }

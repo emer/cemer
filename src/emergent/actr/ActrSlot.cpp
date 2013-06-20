@@ -102,10 +102,18 @@ String ActrSlot::GetVarName() {
   return var;
 }
 
+bool ActrSlot::IsEmpty() {
+  if(val_type == LITERAL) {
+    return val.empty();
+  }
+  if(!val_chunk) return true;
+  // todo: maybe more here about chunk?
+  return false;
+}
+
 bool ActrSlot::IsNil() {
   if(val_type == LITERAL) {
-    if(val.empty() || val == "nil") return true;
-    return false;
+    return (val == "nil");
   }
   if(!val_chunk) return true;
   // todo: maybe more here about chunk?
@@ -120,15 +128,9 @@ bool ActrSlot::MatchesProd(ActrProduction& prod, ActrSlot* os, bool exact, bool 
     }
     return false;
   }
+  // explicit nil is a strong requirement -- other must be nil or empty to match
   if(IsNil()) {
-    bool rval = false;
-    if(exact || val == "nil") {          // nil is explicit nil match
-      rval = os->IsNil();
-    }
-    else {
-      if(!exact)
-        return true;      //  if we're empty we don't care
-    }
+    bool rval = os->IsNil() || os->IsEmpty();
     if(!rval) {
       if(why_not) {
         taMisc::Info("slot:", GetDisplayName(), "value mismatch",
@@ -137,8 +139,47 @@ bool ActrSlot::MatchesProd(ActrProduction& prod, ActrSlot* os, bool exact, bool 
     }
     return rval;
   }
-  if(!exact && os->IsNil()) {             // presumably this is symmetrical?
-    return true; 
+  if(os->IsNil()) {
+    bool rval = IsNil() || IsEmpty();
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "other slot was explicit nil, our condition is:", val);
+      }
+    }
+    return rval;
+  }
+  if(IsEmpty()) {
+    bool rval = false;
+    if(exact) {          // nil is explicit nil match
+      rval = os->IsNil() || os->IsEmpty();
+    }
+    else {
+      return true;      //  if we're empty we don't care
+    }
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for empty, got:", os->val);
+      }
+    }
+    return rval;
+  }
+  if(os->IsEmpty()) { 
+    bool rval = false;
+    if(exact) {          // nil is explicit nil match
+      rval = IsNil() || IsEmpty();
+    }
+    else {
+      return true;      //  if other guy is empty we don't care regardless??
+    }
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for empty, got:", os->val);
+      }
+    }
+    return rval;
   }
   if(!exact && CondIsVar()) {
     if(!CondIsNeg()) {
@@ -175,15 +216,9 @@ bool ActrSlot::MatchesMem(ActrSlot* os, bool exact, bool why_not) {
     }
     return false;
   }
+  // explicit nil is a strong requirement -- other must be nil or empty to match
   if(IsNil()) {
-    bool rval = false;
-    if(exact || val == "nil") {          // nil is explicit nil match
-      rval = os->IsNil();
-    }
-    else {
-      if(!exact)
-        return true;      //  if we're empty we don't care
-    }
+    bool rval = os->IsNil() || os->IsEmpty();
     if(!rval) {
       if(why_not) {
         taMisc::Info("slot:", GetDisplayName(), "value mismatch",
@@ -192,8 +227,47 @@ bool ActrSlot::MatchesMem(ActrSlot* os, bool exact, bool why_not) {
     }
     return rval;
   }
-  if(!exact && os->IsNil()) {             // presumably this is symmetrical?
-    return true; 
+  if(os->IsNil()) {
+    bool rval = IsNil() || IsEmpty();
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "other slot was explicit nil, our condition is:", val);
+      }
+    }
+    return rval;
+  }
+  if(IsEmpty()) {
+    bool rval = false;
+    if(exact) {          // nil is explicit nil match
+      rval = os->IsNil() || os->IsEmpty();
+    }
+    else {
+      return true;      //  if we're empty we don't care
+    }
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for empty, got:", os->val);
+      }
+    }
+    return rval;
+  }
+  if(os->IsEmpty()) { 
+    bool rval = false;
+    if(exact) {          // nil is explicit nil match
+      rval = IsNil() || IsEmpty();
+    }
+    else {
+      return true;      //  if other guy is empty we don't care regardless??
+    }
+    if(!rval) {
+      if(why_not) {
+        taMisc::Info("slot:", GetDisplayName(), "value mismatch",
+                     "looking for empty, got:", os->val);
+      }
+    }
+    return rval;
   }
   if(os->val_type == LITERAL) {
     bool rval = (val == os->val);

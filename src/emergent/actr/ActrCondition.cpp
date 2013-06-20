@@ -429,3 +429,13 @@ void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* m
   model->ScheduleEvent(0.0f, ActrEvent::max_pri, proc_mod, buf->module, buf,
                        "BUFFER-READ-ACTION", buf->name);
 }
+
+bool ActrCondition::SetVal(ActrSlot* slt, const String& val) {
+  if(slt) {
+    slt->val = val;
+  }
+  else {
+    cmp_val = val;              // todo: could test that this is ok..
+  }
+  return true;
+}

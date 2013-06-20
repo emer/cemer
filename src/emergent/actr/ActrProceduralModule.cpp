@@ -16,6 +16,8 @@
 #include "ActrProceduralModule.h"
 #include <ActrModel>
 
+#include <taMisc>
+
 void ActrProceduralModule::Initialize() {
   mp_time = 0.05f;
   util_lrate = 0.02f;
@@ -85,8 +87,8 @@ void ActrProceduralModule::ConflictResolution() {
       pr->SigEmitUpdated();
     }
   }
-  if(TestError(eligible.size == 0, "ConflictResolution",
-               "No matching productions found!")) {
+  if(eligible.size == 0) {
+    taMisc::Info("ConflictResolution: No matching productions found -- stopping");
     mod->Stop();
     return;
   }
