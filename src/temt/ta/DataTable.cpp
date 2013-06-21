@@ -200,8 +200,8 @@ bool DataTable::AddRows(int n) {
   if(TestError((n < 1), "AddRows", "n rows < 1")) return false;
   RowsAdding(n, true);
   for(int i=0;i<data.size;i++) {
-    DataCol* ar = data.FastEl(i);
-    ar->EnforceRows(ar->rows() + n);
+    DataCol* dc = data.FastEl(i);
+    dc->EnforceRows(rows_total + n); // key to use rows_total here, not rows() which is filtered
   }
   for(int r=rows_total; r<rows_total+n; r++) {
     row_indexes.Add(r);
@@ -1851,7 +1851,7 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* dc = data.FastEl(i);
-    rval = dc->EnforceRows(dc->rows() + n_rows);
+    rval = dc->EnforceRows(rows_total + n_rows); // key to use rows_total not rows()
   }
   if(rval) {
     rows += n_rows;
