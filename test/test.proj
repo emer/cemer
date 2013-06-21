@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.1.0 rev6334
+// ta_Dump File v3.0 -- code v6.3.1.0 rev6345
 LeabraProject .projects["test"] { 
   taBase_Group @.templates = [0] {
   };
@@ -30,11 +30,10 @@ LeabraProject .projects["test"] {
   DataTable_Group @.data = [0] {
     DataTable_Group @.gp["InputData"] = [1] { 
       DataTable @["StdInputData"] { 
-	DataTableCols @.data = [4] {
+	DataTableCols @.data = [3] {
 	  String_Data @["Name"] { };
 	  float_Data @["Input"] { };
 	  float_Data @["Output"] { };
-	  float_Data @["test"] { };
 	};
       };
     };
@@ -1329,21 +1328,6 @@ LeabraProject .projects["test"] {
 1;0;0;0;0;0;0;0;0;0;
       };
      };
-     float_Data @["test"] {
-      name="test";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      ar {
-       name=;
-	    [6] 5;0;3;1;4;2;      };
-     };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
@@ -1351,7 +1335,7 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name=;
-	[5] 3;5;2;4;0;    };
+	[5] 3;5;1;4;0;    };
    };
   };
   DataTable_Group @.gp["OutputData"] {

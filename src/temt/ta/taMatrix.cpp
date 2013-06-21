@@ -314,6 +314,7 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
         int nc = view_mat->dim(1);
         for(int i=nc-1; i>=0; i--) {
           int& fn = nwvw->FastEl(FrameDim(), i); // get the frame index
+          if(fn < 0) fn = Frames() + fn;
           if(!FrameInRange(fn, false)) {
             nwvw->RemoveFrames(i, 1);
           }
@@ -321,11 +322,32 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
             fn = FrameIdx(fn);                // pass through current logical
           }
         }
+        TestError(nwvw->size == 0, "NewElView",
+                  "no valid frame coordinates provided for new IDX_COORDS view of existing IDX_FRAMES view of matrix");
+        rval->SetElView(nwvw, md);
+      }
+      else if(md == IDX_FRAMES) {
+        int_Matrix* nwvw = new int_Matrix; // copy orig
+        nwvw->Copy(view_mat);
+        for(int i=nwvw->size-1; i>=0; i--) {
+          int& fn = nwvw->FastEl_Flat(i);
+          if(fn < 0) fn = Frames() + fn;
+          if(!FrameInRange(fn, false)) {
+            nwvw->RemoveFrames(i, 1);
+          }
+          else {
+            fn = FrameIdx(fn);                // pass through current logical
+          }
+        }
+        TestError(nwvw->size == 0, "NewElView",
+                  "no valid frame coordinates provided for new IDX_FRAMES view of existing IDX_FRAMES view of matrix");
         rval->SetElView(nwvw, md);
       }
       else {
+        String nw_vw = TA_taMatrix.GetEnumString("IndexMode", md);
         TestWarning(true, "NewElView",
-                    "existing el_view_mode is IDX_FRAMES -- cannot mix with new mode that is not IDX_COORDS -- will only show the new mode and ignore the existing mask");
+                    "existing el_view_mode is IDX_FRAMES -- cannot mix with new mode:",
+                    nw_vw, "that is not IDX_COORDS -- will only show the new mode and ignore the existing mask");
         rval->SetElView(view_mat, md);
       }
     }
@@ -366,7 +388,14 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     return _nilVariant;
   switch(mode) {
   case IDX_IDX: {
-    return SafeElAsVar_Flat(idx.toInt());
+    int dx = idx.toInt();
+    if(IdxFrameView()) {
+      return SafeElAsVar_Flat(FrameViewFlatIdx(dx));
+    }
+    else {
+      if(dx < 0) dx += size;    // wrap around
+      return SafeElAsVar_Flat(dx);
+    }
     break;
   }
   case IDX_NAME: {
@@ -1355,6 +1384,16 @@ int taMatrix::FrameToRow(int f) const {
   for (int i = dims() - 2; i >= 1; --i)
     f *= dim(i);
   return f;
+}
+
+int taMatrix::FrameViewFlatIdx(int idx) const {
+  int fsz = FrameSize();
+  int fr = idx / fsz;
+  if(fr < 0) fr += Frames();
+  if(!FrameInRange(fr)) return -1; // will emit error
+  int cl = idx % fsz;
+  int rval = FrameStartIdx(fr) + cl;
+  return rval;
 }
 
 int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3,

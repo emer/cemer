@@ -246,6 +246,8 @@ public:
   inline int            FrameStartIdxRaw(int fm) const
   { return fm * FrameSize(); }
   // #CAT_Access returns the flat base index of the specified frame -- does not use any el_view -- uses the frame number directly
+  int                   FrameViewFlatIdx(int idx) const;
+  // #CAT_Access compute a flat index for access when frame view is in effect
 
   virtual TypeDef*      GetDataTypeDef() const = 0;
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
