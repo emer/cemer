@@ -32,6 +32,7 @@
 #include <DataSelectSpec>
 #include <DataSelectEl>
 #include <DataJoinSpec>
+#include <Relation>
 
 #include <taMisc>
 
@@ -936,7 +937,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
           }
           int cmpidx = ds->cmp.toInt(); // convert to an integer index
           int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
-          if(ds->rel == DataSelectEl::EQUAL)
+            if(ds->rel == Relation::EQUAL)
             ev = (vl == 1);                       // true if cell value is 1
           else
             ev = (vl != 1);                       // true if cell value is NOT 1
@@ -946,26 +947,26 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
         Variant val = da->GetValAsVar(row);
         ev = ds->Eval(val);
       }
-      if(spec->comb_op == DataSelectSpec::AND) {
+      if(spec->comb_op == Relation::AND) {
         if(!ev) { not_incl = true;  break; }
       }
-      else if(spec->comb_op == DataSelectSpec::OR) {
+      else if(spec->comb_op == Relation::OR) {
         if(ev) { incl = true; break; }
       }
-      else if(spec->comb_op == DataSelectSpec::NOT_AND) {
+      else if(spec->comb_op == Relation::NOT_AND) {
         if(ev) { not_incl = true; break; }
       }
-      else if(spec->comb_op == DataSelectSpec::NOT_OR) {
+      else if(spec->comb_op == Relation::NOT_OR) {
         if(!ev) { incl = true; break; }
       }
     }
-    if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
+    if(((spec->comb_op == Relation::AND) || (spec->comb_op == Relation::NOT_AND))
         && not_incl) {
       if (in_place_req)
         src->RemoveRows(row);
       continue;
     }
-    if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
+    if(((spec->comb_op == Relation::OR) || (spec->comb_op == Relation::NOT_OR))
         && !incl) {
       if (in_place_req)
         src->RemoveRows(row);
@@ -1024,7 +1025,7 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
           }
           int cmpidx = ds->cmp.toInt(); // convert to an integer index
           int vl = da->GetValAsIntM(row, cmpidx); // use as a cell number
-          if(ds->rel == DataSelectEl::EQUAL)
+          if(ds->rel == Relation::EQUAL)
             ev = (vl == 1);                       // true if cell value is 1
           else
             ev = (vl != 1);                       // true if cell value is NOT 1
@@ -1034,23 +1035,23 @@ bool taDataProc::SplitRows(DataTable* dest_a, DataTable* dest_b, DataTable* src,
         Variant val = da->GetValAsVar(row);
         ev = ds->Eval(val);
       }
-      if(spec->comb_op == DataSelectSpec::AND) {
+      if(spec->comb_op == Relation::AND) {
         if(!ev) { not_incl = true;  break; }
       }
-      else if(spec->comb_op == DataSelectSpec::OR) {
+      else if(spec->comb_op == Relation::OR) {
         if(ev) { incl = true; break; }
       }
-      else if(spec->comb_op == DataSelectSpec::NOT_AND) {
+      else if(spec->comb_op == Relation::NOT_AND) {
         if(ev) { not_incl = true; break; }
       }
-      else if(spec->comb_op == DataSelectSpec::NOT_OR) {
+      else if(spec->comb_op == Relation::NOT_OR) {
         if(!ev) { incl = true; break; }
       }
     }
     bool sel_a = true;
-    if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
+    if(((spec->comb_op == Relation::AND) || (spec->comb_op == Relation::NOT_AND))
         && not_incl) sel_a = false;
-    if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
+    if(((spec->comb_op == Relation::OR) || (spec->comb_op == Relation::NOT_OR))
         && !incl) sel_a = false;
     if(sel_a) {
       dest_a->AddBlankRow();

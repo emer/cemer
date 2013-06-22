@@ -18,12 +18,12 @@
 
 // parent includes:
 #include <DataOpBaseSpec>
+#include <Relation>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class DataTable; // 
-
+class DataTable; //
 
 taTypeDef_Of(DataSelectSpec);
 
@@ -31,14 +31,7 @@ class TA_API DataSelectSpec : public DataOpBaseSpec {
   // #CAT_Data a datatable select specification (list of select elements)
   INHERITED(DataOpBaseSpec)
 public:
-  enum CombOp {
-    AND,			// include only if all of the columns are true
-    OR,				// include if any one (or more) of the columns are true
-    NOT_AND,			// include only if all of the columns are false
-    NOT_OR,			// include if any of (or more) the columns are false
-  };
-
-  CombOp	comb_op;	// how to combine individual expressions for each column
+  Relation::CombOp	comb_op;	// how to combine individual expressions for each column
 
   virtual void 	UpdateEnabled(); // update the act_enabled flags based on variables etc
 

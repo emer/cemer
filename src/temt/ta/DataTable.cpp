@@ -27,6 +27,7 @@
 #include <DataGroupEl>
 #include <DataTable_Group>
 #include <int_Array>
+#include <DataSelectSpec>
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -3204,6 +3205,10 @@ bool DataTable::Filter(const String& filter_expr) {
     return false;
   calc_script->Run();
   return true;
+}
+
+bool DataTable::FilterFromSpec(DataSelectSpec* spec) {
+  return taDataProc::SelectRows(this, this, spec);
 }
 
 bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,

@@ -15,12 +15,13 @@
 
 #include "DataSelectSpec.h"
 #include <DataSelectEl>
+#include <Relation>
 
 
 
 void DataSelectSpec::Initialize() {
   ops.SetBaseType(&TA_DataSelectEl);
-  comb_op = AND;
+  comb_op = Relation::AND;
 }
 
 String DataSelectSpec::GetDisplayName() const {

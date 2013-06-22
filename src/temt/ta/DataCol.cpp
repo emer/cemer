@@ -26,6 +26,8 @@
 #include <MatrixIndex>
 #include <taObjDiffRec>
 #include <taObjDiff_List>
+#include <DataSelectSpec>
+#include <DataSelectEl>
 
 #include <SigLinkSignal>
 #include <tabMisc>
@@ -553,18 +555,19 @@ void DataCol::FilterCustom(const String& filter_expr) {
 }
 
 void DataCol::Filter(Relation::Relations operator_1, const String& value_1,
-    Relation::Conjunctions conjunction, Relation::Relations operator_2, const String& value_2) {
-  String expr;
-  CatColumnName(expr);
-  CatRelation(expr, operator_1);
-  CatValue(expr, value_1);
+       Relation::CombOp comb_op, Relation::Relations operator_2, const String& value_2) {
+  DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
+  DataSelectEl* select_el = (DataSelectEl*)select_spec->AddColumn(this->name, dataTable());
+  select_el->cmp = value_1;
+  select_el->rel = operator_1;
+  select_spec->comb_op = comb_op;
   if (value_2 != "") {
-    CatConjunction(expr, conjunction);
-    CatColumnName(expr);
-    CatRelation(expr, operator_2);
-    CatValue(expr, value_2);
+    DataSelectEl* select_el_2 = (DataSelectEl*)select_spec->AddColumn(this->name, dataTable());
+    select_el_2->cmp = value_2;
+    select_el_2->rel = operator_2;
   }
-  dataTable()->Filter(expr);
+  dataTable()->FilterFromSpec(select_spec);
+  taBase::unRefDone(select_spec);
 }
 
 void DataCol::CatRelation(String& expr, Relation::Relations oper) {
@@ -593,7 +596,7 @@ void DataCol::CatRelation(String& expr, Relation::Relations oper) {
   }
 }
 
-void DataCol::CatConjunction(String& expr, Relation::Conjunctions conjunction) {
+void DataCol::CatConjunction(String& expr, Relation::CombOp conjunction) {
   switch(conjunction) {
   case Relation::AND:
     expr.cat(" && ");

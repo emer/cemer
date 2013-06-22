@@ -31,19 +31,8 @@ class TA_API DataSelectEl : public DataOpEl {
   // one element of a data selection specification -- for matrix cells with cell size > 1, the cmp value is treated as a cell index and if the value at this index is 1 (true) then result is true for EQUAL and not true for NOTEQUAL
   INHERITED(DataOpEl)
 public:
-  enum Relations {
-    EQUAL,		// #LABEL_=
-    NOTEQUAL,		// #LABEL_!=
-    LESSTHAN,		// #LABEL_<
-    GREATERTHAN,	// #LABEL_>
-    LESSTHANOREQUAL,	// #LABEL_<=
-    GREATERTHANOREQUAL, // #LABEL_>=
-    CONTAINS,		// for strings: contains this value
-    NOT_CONTAINS,	// for strings: doesn't contain this value
-  };
-
   bool		on;		// use this selection criterion?  can be useful to have various selections available but not enabled as needs change.  see also enable_var to dynamically determine use of selection crtiteria based on a variable.
-  Relations	rel;		// #CONDEDIT_ON_on relation of column to expression for selection
+  Relation::Relations	rel;		// #CONDEDIT_ON_on relation of column to expression for selection
   bool		use_var;	// #CONDEDIT_ON_on if true, use a program variable to specify the selection value
   Variant	cmp;		// #CONDEDIT_ON_use_var:false&&on literal compare value of column to this comparison value
   ProgVarRef	var;		// #CONDEDIT_ON_use_var&&on variable that contains the comparison value: note -- this MUST be a global var in vars or args, not in local vars!

@@ -32,21 +32,22 @@ class TA_API Relation : public taINBase {
   INHERITED(taINBase)
 public:
   enum Relations {
-    NONE,               // #LABEL_
     EQUAL,              // #LABEL_=
     NOTEQUAL,           // #LABEL_!=
     LESSTHAN,           // #LABEL_<
     GREATERTHAN,        // #LABEL_>
     LESSTHANOREQUAL,    // #LABEL_<=
-    GREATERTHANOREQUAL  // #LABEL_>=
-  };
+    GREATERTHANOREQUAL,  // #LABEL_>=
+    CONTAINS,   // for strings: contains this value
+    NOT_CONTAINS, // for strings: doesn't contain this value
+};
 
-  enum Conjunctions {
-     AND,
-     OR
-   };
-
-
+  enum CombOp {
+      AND,      // include only if all of the columns are true
+      OR,       // include if any one (or more) of the columns are true
+      NOT_AND,  // include only if all of the columns are false
+      NOT_OR,   // include if any of (or more) the columns are false
+    };
 
   Relations     rel;            // #LABEL_ relationship to evaluate
   double        val;            // #LABEL_ comparison value
