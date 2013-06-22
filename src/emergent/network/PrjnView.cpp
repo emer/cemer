@@ -160,6 +160,10 @@ void PrjnView::Render_impl() {
     dst.y -= .01f;
     src.z -= net_margin;	// rise up just a bit per similar on layer
     dst.z -= net_margin;
+    if(lay_fr->InLayerSubGroup())
+      src.z -= net_margin; // extra offset
+    if(lay_to->InLayerSubGroup())
+      dst.z -= net_margin; // extra offset
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
