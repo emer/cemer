@@ -28,6 +28,7 @@
 #include <DataTable_Group>
 #include <int_Array>
 #include <DataSelectSpec>
+#include <DataSelectEl>
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -3173,7 +3174,23 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
   taDataProc::SortThruIndex(this, &spec);
 }
 
-bool DataTable::Filter(const String& filter_expr) {
+void DataTable::Filter(DataCol* column_1, Relation::Relations operator_1, const String& value_1,
+       Relation::CombOp comb_op, DataCol* column_2, Relation::Relations operator_2, const String& value_2) {
+  DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
+  DataSelectEl* select_el = (DataSelectEl*)select_spec->AddColumn(column_1->name, this);
+  select_el->cmp = value_1;
+  select_el->rel = operator_1;
+  select_spec->comb_op = comb_op;
+  if (column_2 != NULL && value_2 != "") {
+    DataSelectEl* select_el_2 = (DataSelectEl*)select_spec->AddColumn(column_2->name, this);
+    select_el_2->cmp = value_2;
+    select_el_2->rel = operator_2;
+  }
+  this->FilterBySpec(select_spec);
+  taBase::unRefDone(select_spec);
+}
+
+bool DataTable::FilterByScript(const String& filter_expr) {
   if(TestError(filter_expr.empty(), "Filter",
       "empty filter expression -- must specify a filter condition!"))
     return false;
@@ -3207,7 +3224,7 @@ bool DataTable::Filter(const String& filter_expr) {
   return true;
 }
 
-bool DataTable::FilterFromSpec(DataSelectSpec* spec) {
+bool DataTable::FilterBySpec(DataSelectSpec* spec) {
   return taDataProc::SelectRows(this, this, spec);
 }
 

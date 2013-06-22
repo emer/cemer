@@ -177,9 +177,7 @@ public:
   // #CAT_DataProc #MENU  #MENU_CONTEXT #MENU_ON_Column
   void          Filter(Relation::Relations operator_1 = Relation::EQUAL, const String& value_1 = "",
       Relation::CombOp comb_op = Relation::AND, Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "");
-   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter Show rows where:
-  void          FilterCustom(const String& filter_expr);
-    // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter_Custom Select table rows by providing an expression to be evaluated against the values in the selected column -- if it evaluates to true the row remains visible, otherwise it is hidden.
+   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter Hide rows not matching the filter
   void          CatRelation(String& expr, Relation::Relations oper);
   // concatenate an relation operator onto the end of the expression
   void          CatConjunction(String& expr, Relation::CombOp conjunction);

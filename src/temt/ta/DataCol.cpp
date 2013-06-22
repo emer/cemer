@@ -548,12 +548,6 @@ void DataCol::SortDescending() {
   dataTable()->SortCol(this, false);
 }
 
-void DataCol::FilterCustom(const String& filter_expr) {
-  String expr(this->name);
-  expr.cat(filter_expr);
-  dataTable()->Filter(expr);
-}
-
 void DataCol::Filter(Relation::Relations operator_1, const String& value_1,
        Relation::CombOp comb_op, Relation::Relations operator_2, const String& value_2) {
   DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
@@ -566,7 +560,7 @@ void DataCol::Filter(Relation::Relations operator_1, const String& value_1,
     select_el_2->cmp = value_2;
     select_el_2->rel = operator_2;
   }
-  dataTable()->FilterFromSpec(select_spec);
+  dataTable()->FilterBySpec(select_spec);
   taBase::unRefDone(select_spec);
 }
 

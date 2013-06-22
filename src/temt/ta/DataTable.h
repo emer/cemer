@@ -798,10 +798,15 @@ public:
                                 DataCol* col5 = NULL, bool ascending5 = true,
                                 DataCol* col6 = NULL, bool ascending6 = true);
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data
-  virtual bool          Filter(const String& filter_expr);
-  // #CAT_DataProc #MENU #FROM_GROUP_data Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible, otherwise it is hidden.  Refer to columns by name.  NOTE - use the "Reset View" menu item to restore the view and see all rows
-  virtual bool          FilterFromSpec(DataSelectSpec* spec);
-    // #CAT_DataProc
+
+  virtual void          Filter(DataCol* column_1, Relation::Relations operator_1, const String& value_1,
+         Relation::CombOp comb_op, DataCol* column_2 = NULL, Relation::Relations operator_2 = Relation::EQUAL,
+         const String& value_2 = "");
+  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter Select table rows by specifying up to 2 conditions. Use the "Show All Rows" menu item to restore the view.
+  virtual bool          FilterByScript(const String& filter_expr);
+  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name.
+  virtual bool          FilterBySpec(DataSelectSpec* spec);
+  // #CAT_DataProc Hides rows not matching the spec
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
