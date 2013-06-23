@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.1.0 rev6345
+// ta_Dump File v3.0 -- code v6.3.1.0 rev6353
 LeabraProject .projects["test"] { 
   taBase_Group @.templates = [0] {
   };
@@ -998,7 +998,7 @@ LeabraProject .projects["test"] {
 	BrowseViewerTaBase @["Tree"] { };
 	PanelViewer @["Panels"] { };
 	T3PanelViewer @["T3Frames"] { 
-	  T3Panel_List @.panels = [2] {
+	  T3Panel_List @.panels = [3] {
 	    T3Panel @["Network_0"] { 
 	      T3DataView_List @.children = [1] {
 		NetView @["Network_0_View"] { 
@@ -1040,6 +1040,26 @@ LeabraProject .projects["test"] {
 		T3SavedView @["View_3"] { };
 		T3SavedView @["View_4"] { };
 		T3SavedView @["View_5"] { };
+	      };
+	    };
+	    T3Panel @["StdInputData"] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @["StdInputData_Grid"] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @["Name"] { };
+		    GridColView @["Input"] { };
+		    GridColView @["Output"] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View 0"] { };
+		T3SavedView @["View 1"] { };
+		T3SavedView @["View 2"] { };
+		T3SavedView @["View 3"] { };
+		T3SavedView @["View 4"] { };
+		T3SavedView @["View 5"] { };
 	      };
 	    };
 	  };
@@ -1113,9 +1133,18 @@ LeabraProject .projects["test"] {
 	};
       };
 
-      Layer_Group @.layers = [2] {
+      Layer_Group @.layers = [3] {
 	LeabraLayer @["Input"] { 
 	  Projection_Group @.projections = [0] {
+	  };
+
+	  Unit_Group @.units = [25] {
+	  };
+	};
+	LeabraLayer @["Hidden"] { 
+	  Projection_Group @.projections = [2] {
+	    LeabraPrjn @["Fm_Input"] { };
+	    LeabraPrjn @["Fm_Output"] { };
 	  };
 
 	  Unit_Group @.units = [25] {
@@ -1127,17 +1156,6 @@ LeabraProject .projects["test"] {
 	  };
 
 	  Unit_Group @.units = [25] {
-	  };
-	};
-	Layer_Group @.gp["sub1"] = [1] { 
-	  LeabraLayer @["Hidden"] { 
-	    Projection_Group @.projections = [2] {
-	      LeabraPrjn @["Fm_Input"] { };
-	      LeabraPrjn @["Fm_Output"] { };
-	    };
-
-	    Unit_Group @.units = [25] {
-	    };
 	  };
 	};
       };
@@ -1268,7 +1286,8 @@ LeabraProject .projects["test"] {
 	    [0]       };
       ar {
        name=;
-	    [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
+	    [13] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";"midhoriz";"rdiag";"mitvert";"checks";
+"ldiag";"random";"mitvert";      };
      };
      float_Data @["Input"] {
       name="Input";
@@ -1283,7 +1302,7 @@ LeabraProject .projects["test"] {
 	    [2] ;;      };
       ar {
        name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;
+	    [5 5 13] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
 1;0;0;0;1;0;0;1;0;0;
 0;0;1;0;0;0;0;1;0;0;
@@ -1298,7 +1317,24 @@ LeabraProject .projects["test"] {
 0;0;0;0;1;1;0;0;0;0;
 0;0;0;1;0;0;1;0;0;0;
 1;0;0;0;1;0;0;0;0;0;
-      };
+0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;1;0;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;1;0;0;0;1;
+1;0;0;0;0;0;1;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;0;0;0;1;1;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+1;0;0;0;1;0;0;0;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;      };
      };
      float_Data @["Output"] {
       name="Output";
@@ -1313,7 +1349,7 @@ LeabraProject .projects["test"] {
 	    [2] ;;      };
       ar {
        name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;
+	    [5 5 13] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
 1;0;0;0;1;0;0;1;0;0;
 0;0;1;0;0;0;0;1;0;0;
@@ -1328,7 +1364,24 @@ LeabraProject .projects["test"] {
 0;0;0;0;1;1;0;0;0;0;
 0;0;0;1;0;0;1;0;0;1;
 1;0;0;0;0;0;0;0;0;0;
-      };
+0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;1;0;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;1;0;0;0;1;
+1;0;0;0;0;0;1;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;0;0;0;1;1;0;0;0;0;
+0;0;0;1;0;0;1;0;0;1;
+1;0;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1337,7 +1390,8 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name=;
-	[5] 3;5;1;4;0;    };
+	[13] 0;9;1;8;12;2;6;3;7;4;
+10;5;11;    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -5956,17 +6010,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 NetView @["Network_0_View"] {
 	  name="Network_0_View";
 	  m_data=$.projects["test"].networks["Network_0"]$;
-taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=0: z=0: }: };
-	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=0: z=0: }: };
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
-	  lay_layout=TWO_D;
+	  lay_layout=THREE_D;
 	  lay_mv=1;
 	  net_text=1;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;
 	  cur_unit_vals{ act;	  };
-	  unit_src_path=".layers[1].units[22]";
+	  unit_src_path=".layers[2].units[0]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -5975,8 +6029,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=2.333333: };
-	  max_size2d {x=5: y=23: z=1: };
-	  eff_max_size {x=5: y=23: z=1: };
+	  max_size2d {x=5: y=18: z=1: };
+	  eff_max_size {x=5: y=5: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
 	   net_vals=0.05;
@@ -5990,7 +6044,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  view_params {
 	   xy_square=0;
 	   unit_spacing=0.05;
-	   prjn_disp=L_R_F;
+	   prjn_disp=L_R_B;
 	   prjn_name=0;
 	   prjn_width=0.002;
 	   prjn_trans=0.5;
@@ -6029,7 +6083,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	    max=1;
 	   };
 	  };
-	  lay_disp_modes{ Input=-1;Output=-1;Hidden=-1;	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
 	 };
 	};
        };
@@ -6555,6 +6609,151 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
       };
+      T3Panel @["StdInputData"] {
+       name="StdInputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["StdInputData_Grid"] {
+	  name="StdInputData_Grid";
+	  m_data=$.projects["test"].data.gp["InputData"]["StdInputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["Name"] {
+	    name="Name";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Input"] {
+	    name="Input";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Input"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output"] {
+	    name="Output";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Output"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10;
+	  view_range {min=0: max=9: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_20";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View 0"] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.392734: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.402734;
+	};
+	T3SavedView @["View 1"] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 2"] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 3"] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 4"] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 5"] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
      };
     };
    };
@@ -6956,7 +7155,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     pos {x=0: y=0: z=0: };
     pos2d {x=0: y=0: };
     max_disp_size {x=5: y=5: z=3: };
-    max_disp_size2d {x=5: y=23: };
+    max_disp_size2d {x=5: y=18: };
     LeabraLayer @["Input"] {
      name="Input";
      desc=;
@@ -6982,7 +7181,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="Projection_Group_1";
       el_typ=LeabraPrjn;
       el_def=0;
-	    Projection_Group @. = [0] = LeabraPrjn .projects["test"].networks["Network_0"].layers.gp["sub1"]["Hidden"].projections["Fm_Input"];
+	    Projection_Group @. = [0] = LeabraPrjn .projects["test"].networks["Network_0"].layers["Hidden"].projections["Fm_Input"];
      };
      units {
       name="Unit_Group_0";
@@ -7003,13 +7202,97 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
+    LeabraLayer @["Hidden"] {
+     name="Hidden";
+     desc=;
+     flags=0;
+     layer_type=HIDDEN;
+     pos {x=0: y=0: z=1: };
+     pos2d {x=0: y=13: };
+     disp_scale=1;
+     un_geom {x=5: y=5: n_not_xy=0: n=25: };
+     unit_groups=0;
+     virt_groups=1;
+     gp_geom {x=1: y=1: n_not_xy=0: n=1: };
+     gp_spc {x=1: y=1: };
+     flat_geom {x=5: y=5: n_not_xy=0: n=25: };
+     disp_geom {x=5: y=5: n_not_xy=0: n=25: };
+     scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     projections {
+      name="Projection_Group_2";
+      el_typ=LeabraPrjn;
+      el_def=0;
+      LeabraPrjn @["Fm_Input"] {
+       name="Fm_Input";
+       off=0;
+       disp=1;
+       from_type=CUSTOM;
+       from=.projects["test"].networks["Network_0"].layers["Input"]$$;
+       spec {type=FullPrjnSpec: spec=.projects["test"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
+       con_type=LeabraCon;
+       recvcons_type=LeabraRecvCons;
+       sendcons_type=LeabraSendCons;
+       con_spec {type=LeabraConSpec: spec=.projects["test"].networks["Network_0"].specs["LeabraConSpec_0"]$$: };
+       recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+       trg_netin_rel=-1;
+      };
+      LeabraPrjn @["Fm_Output"] {
+       name="Fm_Output";
+       off=0;
+       disp=1;
+       from_type=CUSTOM;
+       from=.projects["test"].networks["Network_0"].layers["Output"]$$;
+       spec {type=FullPrjnSpec: spec=$.projects["test"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
+       con_type=LeabraCon;
+       recvcons_type=LeabraRecvCons;
+       sendcons_type=LeabraSendCons;
+       con_spec {type=LeabraConSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
+       recv_idx=1;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+       trg_netin_rel=-1;
+      };
+     };
+     send_prjns {
+      name="Projection_Group_3";
+      el_typ=LeabraPrjn;
+      el_def=0;
+	    Projection_Group @. = [0] = LeabraPrjn .projects["test"].networks["Network_0"].layers["Output"].projections["Fm_Hidden"];
+     };
+     units {
+      name="Unit_Group_1";
+      el_typ=LeabraUnit;
+      el_def=0;
+      pos {x=0: y=0: z=0: };
+      output_name=;
+     };
+     unit_spec {type=LeabraUnitSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
+     dmem_dist=DMEM_DIST_DEFAULT;
+     dist {
+      fm_input=-1;
+      fm_output=-1;
+     };
+     units_lesioned=0;
+     gp_unit_names_4d=0;
+     brain_area=;
+     voxel_fill_pct=1;
+     spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"]$$: };
+    };
     LeabraLayer @["Output"] {
      name="Output";
      desc=;
      flags=0;
      layer_type=TARGET;
      pos {x=0: y=0: z=2: };
-     pos2d {x=0: y=18: };
+     pos2d {x=0: y=6: };
      disp_scale=1;
      un_geom {x=5: y=5: n_not_xy=0: n=25: };
      unit_groups=0;
@@ -7028,12 +7311,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        off=0;
        disp=1;
        from_type=CUSTOM;
-       from=.projects["test"].networks["Network_0"].layers.gp["sub1"]["Hidden"]$$;
-       spec {type=FullPrjnSpec: spec=.projects["test"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
+       from=.projects["test"].networks["Network_0"].layers["Hidden"]$$;
+       spec {type=FullPrjnSpec: spec=$.projects["test"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects["test"].networks["Network_0"].specs["LeabraConSpec_0"]$$: };
+       con_spec {type=LeabraConSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -7047,7 +7330,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       name="Projection_Group_5";
       el_typ=LeabraPrjn;
       el_def=0;
-	    Projection_Group @. = [0] = LeabraPrjn .projects["test"].networks["Network_0"].layers.gp["sub1"]["Hidden"].projections["Fm_Output"];
+	    Projection_Group @. = [0] = LeabraPrjn .projects["test"].networks["Network_0"].layers["Hidden"].projections["Fm_Output"];
      };
      units {
       name="Unit_Group_2";
@@ -7067,99 +7350,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
-    };
-    Layer_Group @.gp["sub1"] {
-     name="sub1";
-     el_typ=LeabraLayer;
-     el_def=0;
-     pos {x=0: y=0: z=1: };
-     pos2d {x=2: y=8: };
-     max_disp_size {x=3: y=3: z=1: };
-     max_disp_size2d {x=3: y=3: };
-     LeabraLayer @["Hidden"] {
-      name="Hidden";
-      desc=;
-      flags=0;
-      layer_type=HIDDEN;
-      pos {x=0: y=0: z=0: };
-      pos2d {x=0: y=0: };
-      disp_scale=0.5;
-      un_geom {x=5: y=5: n_not_xy=0: n=25: };
-      unit_groups=0;
-      virt_groups=1;
-      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
-      gp_spc {x=1: y=1: };
-      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
-      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
-      scaled_disp_geom {x=3: y=3: n_not_xy=0: n=1: };
-      projections {
-       name="Projection_Group_2";
-       el_typ=LeabraPrjn;
-       el_def=0;
-       LeabraPrjn @["Fm_Input"] {
-	name="Fm_Input";
-	off=0;
-	disp=1;
-	from_type=CUSTOM;
-	from=.projects["test"].networks["Network_0"].layers["Input"]$$;
-	spec {type=FullPrjnSpec: spec=$.projects["test"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
-	con_type=LeabraCon;
-	recvcons_type=LeabraRecvCons;
-	sendcons_type=LeabraSendCons;
-	con_spec {type=LeabraConSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
-	recv_idx=0;
-	send_idx=0;
-	recv_n=1;
-	send_n=1;
-	projected=1;
-	direction=DIR_UNKNOWN;
-	trg_netin_rel=-1;
-       };
-       LeabraPrjn @["Fm_Output"] {
-	name="Fm_Output";
-	off=0;
-	disp=1;
-	from_type=CUSTOM;
-	from=.projects["test"].networks["Network_0"].layers["Output"]$$;
-	spec {type=FullPrjnSpec: spec=$.projects["test"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
-	con_type=LeabraCon;
-	recvcons_type=LeabraRecvCons;
-	sendcons_type=LeabraSendCons;
-	con_spec {type=LeabraConSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
-	recv_idx=1;
-	send_idx=0;
-	recv_n=1;
-	send_n=1;
-	projected=1;
-	direction=DIR_UNKNOWN;
-	trg_netin_rel=-1;
-       };
-      };
-      send_prjns {
-       name="Projection_Group_3";
-       el_typ=LeabraPrjn;
-       el_def=0;
-	      Projection_Group @. = [0] = LeabraPrjn .projects["test"].networks["Network_0"].layers["Output"].projections["Fm_Hidden"];
-      };
-      units {
-       name="Unit_Group_1";
-       el_typ=LeabraUnit;
-       el_def=0;
-       pos {x=0: y=0: z=0: };
-       output_name=;
-      };
-      unit_spec {type=LeabraUnitSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
-      dmem_dist=DMEM_DIST_DEFAULT;
-      dist {
-       fm_input=-1;
-       fm_output=-1;
-      };
-      units_lesioned=0;
-      gp_unit_names_4d=0;
-      brain_area=;
-      voxel_fill_pct=1;
-      spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"]$$: };
-     };
     };
    };
    view_objs {
@@ -7196,7 +7386,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    n_cons=1875;
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
-   max_disp_size2d {x=5: y=23: };
+   max_disp_size2d {x=5: y=18: };
    learn_rule=CTLEABRA_XCAL;
    ti_mode=0;
    phase_order=MINUS_PLUS;
