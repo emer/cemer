@@ -22,6 +22,7 @@
 
 // member includes:
 #include <ActrChunk>
+#include <Relation>
 #include <DataTable>
 
 // declare all other types mentioned but not required to include:
@@ -50,16 +51,7 @@ public:
     DATA_CELL,                  // match against a cell in a data table
   };
 
-  enum Relations {
-    EQUAL,              // #LABEL_=
-    NOTEQUAL,           // #LABEL_!=
-    LESSTHAN,           // #LABEL_<
-    GREATERTHAN,        // #LABEL_>
-    LESSTHANOREQUAL,    // #LABEL_<=
-    GREATERTHANOREQUAL  // #LABEL_>=
-  };
-
-  CondFlags     flags;          // current flags
+  CondFlags     flags;         // current flags
   CondSource    cond_src;      // what is the source of the data to match against
   TypeDef*      src_type;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER #NO_NULL #TYPE_taBase type of object with source data to match against
   taBaseRef     src;           // #TYPE_ON_src_type #PROJ_SCOPE the source object to obtain data to match against (e.g., buffer, etc)
@@ -68,8 +60,8 @@ public:
   String        obj_path;      // #CONDSHOW_ON_cond_src:OBJ_MEMBER path within object to obtain comparison value from
   String        dt_col_name;   // #CONDSHOW_ON_cond_src:DATA_CELL name of column within data table cell to obtain value from
   int           dt_row;        // #CONDSHOW_ON_cond_src:DATA_CELL row number within data table cell to obtain value from (use -1 for last row)
-  int           dt_cell;        // #CONDSHOW_ON_cond_src:DATA_CELL cell index within data row,column within data table cell to obtain value from
-  Relations     rel;           // #CONDSHOW_OFF_cond_src:BUFFER_EQ,BUFFER_QUERY relationship between source value and comparison value
+  int           dt_cell;       // #CONDSHOW_ON_cond_src:DATA_CELL cell index within data row,column within data table cell to obtain value from
+  Relation::Relations  rel;    // #CONDSHOW_OFF_cond_src:BUFFER_EQ,BUFFER_QUERY relationship between source value and comparison value
   String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value -- for query std options are buffer: full, empty, requested, unrequested, module: busy, free, error
   ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
 
@@ -104,7 +96,8 @@ public:
   virtual void  SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR send BUFFER-READ-ACTION events for all BUFFER_EQ cases
 
-  virtual bool  SetVal(ActrSlot* slt, const String& val);
+  virtual bool  SetVal(ActrSlot* slt, const String& val,
+                       Relation::Relations rl = Relation::EQUAL);
   // #IGNORE for parsing -- set comparison value, either for given slot or if null then cmp_val
 
   override String  GetTypeDecoKey() const { return "ProgCtrl"; }

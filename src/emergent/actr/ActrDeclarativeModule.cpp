@@ -72,6 +72,14 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
   //   (delete-event (dm-busy dm)))
 
   ActrModel* mod = Model();
+
+  if(HasModuleFlag(BUSY)) {
+    TestWarning(true, "RetrievalRequest",
+                "a retrieval request was made while still busy retrieving previous request -- new request should preempt but currently new request is rejected");
+    mod->LogEvent(-1.0f, "declarative", "ABORT-RETRIEVAL", "", "");
+    return;
+  }
+
   mod->LogEvent(-1.0f, "declarative", "START-RETRIEVAL", "", "");
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);

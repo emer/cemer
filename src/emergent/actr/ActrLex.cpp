@@ -204,19 +204,19 @@ int ActrModel::Lex() {
     }
 
     if(c == '\"') {
-      load_buf = "";
+      load_string = "";
       while(((c=Getc()) != EOF) && (c != '\"')) {
 	if(c == '\\') {
 	  c=Getc();
 	  if((c == '\n') || (c == '\r'))
 	    continue;
 	  else
-	    load_buf += (char)ctrl_char(c);
+	    load_string += (char)ctrl_char(c);
 	}
 	else
-	  load_buf += (char)c;
+	  load_string += (char)c;
       }
-      aplval.chr = load_name;
+      aplval.chr = load_string;
       return AP_STRING;
     }
 

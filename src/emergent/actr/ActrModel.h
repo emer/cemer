@@ -33,6 +33,8 @@
 // declare all other types mentioned but not required to include:
 class ActrDeclarativeModule; //
 class ActrProceduralModule; //
+class ActrImaginalModule; //
+class ActrVisionModule; //
 class ActrModel; //
 SmartRef_Of(ActrModel); // ActrModelRef
 
@@ -94,6 +96,7 @@ public:
   String                load_buf;     // #IGNORE generic buffer used for all parsing
   String                load_comment; // #IGNORE last comment processed
   String                load_name;     // #IGNORE return val for last name read
+  String                load_string;  // #IGNORE return val for last string read
   YY_Flags              load_state;  // #IGNORE state of current parse
   ActrChunkTypeRef      load_chtype;  // #IGNORE current chunk type
   ActrChunkRef          load_chunk;   // #IGNORE current chunk
@@ -165,6 +168,10 @@ public:
   // #CAT_ActR get the procedural module
   virtual ActrGoalModule*              GoalModule();
   // #CAT_ActR get the goal module
+  virtual ActrImaginalModule*          ImaginalModule();
+  // #CAT_ActR get the imaginal module
+  virtual ActrVisionModule*            VisionModule();
+  // #CAT_ActR get the vision module
 
   virtual ActrChunkType* FindChunkType(const String& type_name);
   // #CAT_ActR find a chunk type by name or emit error if not found

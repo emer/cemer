@@ -29,7 +29,7 @@ void ActrCondition::Initialize() {
   flags = CF_NONE;
   cond_src = BUFFER_EQ;
   src_type = &TA_ActrBuffer;
-  rel = EQUAL;
+  rel = Relation::EQUAL;
   unit_val = "act";
   dt_row = -1;
   dt_cell = 0;
@@ -159,10 +159,12 @@ void ActrCondition::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String& ActrCondition::Print(String& strm, int indent) const {
+  String relstr = TA_Relation.GetEnumString("Relations", rel);
   taMisc::IndentString(strm, indent);
   strm << GetDisplayName() << " ";
   switch(cond_src) {
   case BUFFER_EQ:
+    strm << relstr << " ";
     cmp_chunk.Print(strm);
     break;
   case BUFFER_QUERY:
@@ -172,7 +174,7 @@ String& ActrCondition::Print(String& strm, int indent) const {
   case NET_UNIT:
   case OBJ_MEMBER:
   case DATA_CELL:
-    strm << " " << TA_ActrCondition.GetEnumString("Relations", rel) << " " << cmp_val;
+    strm << " " << relstr << " " << cmp_val;
     break;
   }
   return strm;
@@ -253,15 +255,20 @@ void ActrCondition::UpdateVars(ActrProduction& prod) {
 
 bool ActrCondition::MatchVarVal(const Variant& var, bool why_not) {
   bool match = false;
-  if(var.isNumeric() || rel >= LESSTHAN) {
+  if(rel >= Relation::CONTAINS) {
+    match = var.toString().contains(cmp_val);
+    if(rel == Relation::NOT_CONTAINS)
+      match = !match;
+  }
+  else if(var.isNumeric() || (rel >= Relation::LESSTHAN)) {
     Relation rl;
-    rl.rel = (Relation::Relations)rel;
+    rl.rel = rel;
     rl.val = (double)cmp_val;
     match = rl.Evaluate(var.toDouble());
   }
   else {
     match = (cmp_val == var.toString());
-    if(rel == NOTEQUAL)
+    if(rel == Relation::NOTEQUAL)
       match = !match;
   }
   if(!match && why_not) {
@@ -430,9 +437,11 @@ void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* m
                        "BUFFER-READ-ACTION", buf->name);
 }
 
-bool ActrCondition::SetVal(ActrSlot* slt, const String& val) {
+bool ActrCondition::SetVal(ActrSlot* slt, const String& val,
+                           Relation::Relations rl) {
   if(slt) {
     slt->val = val;
+    slt->rel = rl;
   }
   else {
     cmp_val = val;              // todo: could test that this is ok..

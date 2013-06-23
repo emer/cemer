@@ -24,6 +24,7 @@
 void ActrSlot::Initialize() {
   flags = SF_NONE;
   val_type = LITERAL;
+  rel = Relation::EQUAL;
 }
 
 void ActrSlot::UpdateAfterEdit_impl() {
@@ -85,6 +86,12 @@ String& ActrSlot::Print(String& strm, int indent) const {
       else {
         val_chunk->Print(strm, 0);
       }
+    }
+  }
+  if(HasSlotFlag(COND)) {
+    if(rel != Relation::EQUAL) {
+      String relstr = TA_Relation.GetEnumString("Relations", rel);
+      strm << " " << relstr;
     }
   }
   return strm;
@@ -191,11 +198,29 @@ bool ActrSlot::MatchesProd(ActrProduction& prod, ActrSlot* os, bool exact, bool 
     return true;  // a variable always matches at this stage
   }
   if(os->val_type == LITERAL) {
-    bool rval = (val == os->val);
+    bool rval = false;
+    if(rel == Relation::EQUAL) {
+      rval = (val == os->val);
+    }
+    else if(rel == Relation::NOTEQUAL) {
+      rval = (val != os->val);
+    }
+    else if(rel >= Relation::CONTAINS) {
+      rval = os->val.contains(val);
+      if(rel == Relation::NOT_CONTAINS)
+        rval = !rval;
+    }
+    else {
+      Relation rl;
+      rl.rel = rel;
+      rl.val = (double)val;
+      rval = rl.Evaluate((double)os->val);
+    }
     if(!rval) {
       if(why_not) {
+        String relstr = TA_Relation.GetEnumString("Relations", rel);
         taMisc::Info("slot:", GetDisplayName(), "value mismatch",
-                     "looking for:", val, "got:", os->val);
+                     "looking for:", val, relstr, os->val);
       }
     }
     return rval;

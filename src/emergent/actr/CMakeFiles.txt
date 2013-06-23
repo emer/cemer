@@ -37,6 +37,8 @@ set(actr_HEADS_MAKETA
   ActrDeclarativeModule.h
   ActrProceduralModule.h
   ActrGoalModule.h
+  ActrImaginalModule.h
+  ActrVisionModule.h
   ActrModel.h
   ActrLex.h
 )
@@ -76,6 +78,8 @@ set(actr_SRCS
   ActrDeclarativeModule.cpp
   ActrProceduralModule.cpp
   ActrGoalModule.cpp
+  ActrImaginalModule.cpp
+  ActrVisionModule.cpp
   ActrModel.cpp
   ActrLex.cpp
   actr_parse.cpp

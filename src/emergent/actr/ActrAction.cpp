@@ -249,6 +249,8 @@ String ActrAction::GetDisplayName() const {
     else {
       strm << ((ActrBuffer*)dest.ptr())->GetName() << " ";
     }
+    if(params.nonempty())
+      strm << ":" << params;
     break;
   case STOP:
     strm << "!stop!";
@@ -337,7 +339,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
-                         "MOD-BUFFER-CHUNK", buffer->name, this, new_chunk);
+                         "MOD-BUFFER-CHUNK", params, this, new_chunk);
     break;
   }
   case REQUEST: {
@@ -346,7 +348,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
-                         "MODULE-REQUEST", buffer->name, this, new_chunk);
+                         "MODULE-REQUEST", params, this, new_chunk);
     break;
   }
   case CLEAR:

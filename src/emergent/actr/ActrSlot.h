@@ -22,6 +22,7 @@
 
 // member includes:
 #include <ActrChunk>
+#include <Relation>
 
 // declare all other types mentioned but not required to include:
 class ActrSlotType; // 
@@ -48,6 +49,7 @@ public:
   SlotValType   val_type;       // #CONDSHOW_OFF_flags:COND what type of value fills this slot
   ActrChunkRef  val_chunk;      // #CONDSHOW_ON_val_type:CHUNK the value as a pointer to another chunk
   String        val;            // #CONDSHOW_ON_val_type:LITERAL the value as a literal value -- empty or "nil" = not set -- for production conditions use =var for variable, and =var- (trailing -) for != var
+  Relation::Relations   rel;    // #CONDSHOW_ON_flags:COND for production conditionals, specifies relationship to use in comparison to potential matching chunk slot values
 
   virtual bool          IsEmpty();
   // #CAT_ActR is this item empty or not?

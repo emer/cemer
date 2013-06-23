@@ -190,6 +190,11 @@ prod_name: '(' AP_PROD AP_NAME {
            ActrProceduralModule* pmod = AMCP->ProceduralModule();
            bool made_new = false;
            AMCP->load_prod = pmod->productions.FindMakeNameType($3, NULL, made_new); }
+         | '(' AP_PROD AP_NAME AP_STRING {
+           ActrProceduralModule* pmod = AMCP->ProceduralModule();
+           bool made_new = false;
+           AMCP->load_prod = pmod->productions.FindMakeNameType($3, NULL, made_new);
+           AMCP->load_prod->desc = $4; }
 
 prod_lhs:  prod_cond
          | prod_lhs prod_cond
@@ -209,6 +214,10 @@ prod_cond_name:
            AMCP->load_cond = (ActrCondition*)AMCP->load_prod->conds.New(1);
            AMCP->load_cond->src = AMCP->buffers.FindName($2);
            AMCP->load_cond->cond_src = ActrCondition::BUFFER_QUERY; }
+         | '!' AP_NAME '!' {
+            /* todo: need to skip expr */
+            taMisc::Warning("lisp-specific condition not processed:", $2);
+           }
          ;
 
 prod_cond_type:
@@ -232,12 +241,24 @@ prod_cond_val:
            AMCP->load_cond->SetVal($1, (String)$2); }
          | cond_slot '=' AP_NAME {
            AMCP->load_cond->SetVal($1, String("=") + $3); }
-         | '-' cond_slot AP_NAME {
-           AMCP->load_cond->SetVal($2, $3 + String("-")); }
-         | '-' cond_slot apnum {
-           AMCP->load_cond->SetVal($2, (String)$3 + String("-")); }
-         | '-' cond_slot '=' AP_NAME {
+         | '-' cond_slot '=' AP_NAME { /* - only allowed w/ variables? */
            AMCP->load_cond->SetVal($2, String("=") + $4 + String("-")); }
+         | '>' cond_slot AP_NAME {
+           AMCP->load_cond->SetVal($2, $3, Relation::GREATERTHAN); }
+         | '>' cond_slot apnum {
+           AMCP->load_cond->SetVal($2, (String)$3, Relation::GREATERTHAN); }
+         | '<' cond_slot AP_NAME {
+           AMCP->load_cond->SetVal($2, $3, Relation::LESSTHAN); }
+         | '<' cond_slot apnum {
+           AMCP->load_cond->SetVal($2, (String)$3, Relation::LESSTHAN); }
+         | '>' '=' cond_slot AP_NAME {
+           AMCP->load_cond->SetVal($3, $4, Relation::GREATERTHANOREQUAL); }
+         | '>' '=' cond_slot apnum {
+           AMCP->load_cond->SetVal($3, (String)$4, Relation::GREATERTHANOREQUAL); }
+         | '<' '=' cond_slot AP_NAME {
+           AMCP->load_cond->SetVal($3, $4, Relation::LESSTHANOREQUAL); }
+         | '<' '=' cond_slot apnum {
+           AMCP->load_cond->SetVal($3, (String)$4, Relation::LESSTHANOREQUAL); }
          ; 
 
 cond_slot: AP_NAME { $$ = AMCP->load_cond->cmp_chunk.FindSlot($1); }
@@ -298,6 +319,7 @@ prod_act_val:
             act_slot AP_NAME  { if($1) $1->val = $2; }
          |  act_slot apnum { if($1) $1->val = (String)$2; }
          |  act_slot '=' AP_NAME { if($1) $1->val = String("=") + $3; }
+         |  act_param AP_NAME { AMCP->load_act->params += $2; }
          ; 
 
 act_expr: '(' sub_exp ')'
@@ -310,6 +332,9 @@ sub_exp:   AP_NAME     { AMCP->load_act->val += $1; }
          ;
 
 act_slot: AP_NAME { $$ = AMCP->load_act->chunk.FindSlot($1); }
+         ;
+
+act_param: ':' AP_NAME { AMCP->load_act->params = $2; }
          ;
 
 goal_focus: '(' AP_GOAL_FOCUS AP_NAME ')' {

@@ -115,7 +115,7 @@ int ActrChunk::GetSpecialState() const {
   return 0;
 }
 
-bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact, 
+bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact,
                             bool why_not) {
   if(!cmp) {
     if(why_not) {
@@ -124,7 +124,7 @@ bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact,
     return false;
   }
   if((bool)chunk_type && (bool)cmp->chunk_type) {
-    if(chunk_type != cmp->chunk_type) {
+    if(chunk_type != cmp->chunk_type) { // todo: use an inheritance mechanism here instead
       if(why_not) {
         taMisc::Info("chunk:", GetDisplayName(), "type mismatch");
       }

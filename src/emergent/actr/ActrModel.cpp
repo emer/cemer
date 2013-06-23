@@ -18,6 +18,8 @@
 #include <ActrDeclarativeModule>
 #include <ActrProceduralModule>
 #include <ActrGoalModule>
+#include <ActrImaginalModule>
+#include <ActrVisionModule>
 #include <taFiler>
 
 #include "actr_parse.h"
@@ -84,7 +86,23 @@ ActrProceduralModule* ActrModel::ProceduralModule() {
 ActrGoalModule* ActrModel::GoalModule() {
   ActrGoalModule* dmod =
     (ActrGoalModule*)modules.FindName("goal");
-  if(TestError(!dmod, "GoalModule", "procedural module not found -- model not yet initialized"))
+  if(TestError(!dmod, "GoalModule", "goal module not found -- model not yet initialized"))
+    return NULL;
+  return dmod;
+}
+
+ActrImaginalModule* ActrModel::ImaginalModule() {
+  ActrImaginalModule* dmod =
+    (ActrImaginalModule*)modules.FindName("imaginal");
+  if(TestError(!dmod, "ImaginalModule", "imaginal module not found -- model not yet initialized"))
+    return NULL;
+  return dmod;
+}
+
+ActrVisionModule* ActrModel::VisionModule() {
+  ActrVisionModule* dmod =
+    (ActrVisionModule*)modules.FindName("vision");
+  if(TestError(!dmod, "VisionModule", "vision module not found -- model not yet initialized"))
     return NULL;
   return dmod;
 }
@@ -94,6 +112,8 @@ void ActrModel::DefaultConfig() {
   FindMakeModule("procedural", &TA_ActrProceduralModule, made_new);
   FindMakeModule("declarative", &TA_ActrDeclarativeModule, made_new);
   FindMakeModule("goal", &TA_ActrGoalModule, made_new);
+  FindMakeModule("imaginal", &TA_ActrImaginalModule, made_new);
+  FindMakeModule("vision", &TA_ActrVisionModule, made_new);
 }
 
 bool ActrModel::CheckConfig_impl(bool quiet) {
