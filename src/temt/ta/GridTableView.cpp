@@ -366,6 +366,7 @@ void GridTableView::UpdateDisplay(bool update_panel) {
     // if we were not at the very end, then don't scroll, but do update the panel
     if(update_panel && (view_range.max < old_rows-1) && (view_range.max > 0)) {
       UpdatePanel();
+      Render_impl();
       return;
     }
     // scroll down to end of new data
