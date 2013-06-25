@@ -1459,6 +1459,27 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
   if(TestError((slice_frame_dims < 0) || (slice_frame_dims >= dims()),
                "GetSlice_", "slice_frame_dims must be >= 0 and < parent Matrix"))
     return NULL;
+
+  if(num_slice_frames > 1 && IdxFrameView()) {
+    if(TestError((slice_frame_dims != dims()-1),
+                 "GetSlice_", "slice_frame_dims must be same as source matrix when frame view is in effect"))
+      return NULL;
+    // if we have a frame view, must return entire matrix with new view
+    int_Matrix* idx_frames = ViewIntMatrix();
+    int_Matrix* new_frame_view = new int_Matrix;
+    new_frame_view->SetGeom(1, num_slice_frames);
+    int st_frame = base.SafeEl(slice_frame_dims);
+    for(int i=0; i<num_slice_frames; i++) {
+      new_frame_view->FastEl(i) = idx_frames->SafeEl_Flat(st_frame + i);
+    }
+    taMatrix* rval = (taMatrix*)MakeToken(); // make a token of me
+    void* base_el = const_cast<void*>(FastEl_Flat_(0));
+    rval->SetFixedData_(base_el, geom);      // identical geom, same data
+    SliceInitialize(const_cast<taMatrix*>(this), rval);
+    rval->SetElView(new_frame_view, IDX_FRAMES);
+    return rval;
+  }
+
   // check start cell in bounds and legal
   int sl_i = SafeElIndexN(base); // -1 if out of bounds
   if(TestError((sl_i < 0), "GetSlice_", "slice base is out of bounds")) return NULL;
@@ -1470,14 +1491,14 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
     slice_geom.Set(i, dim(i));
   slice_geom.Set(slice_frame_dims, num_slice_frames);
 
+  void* base_el = FastEl_Flat_(sl_i);
+  taMatrix* rval = FindSlice(base_el, slice_geom);
+  if (rval) return rval;
+
   // easiest to now check for frames in bounds
   int sl_tot = slice_geom.Product();
   if(TestError(((sl_i + sl_tot) > size), "GetSlice_", "slice end is out of bounds"))
     return NULL;
-
-  void* base_el = FastEl_Flat_(sl_i);
-  taMatrix* rval = FindSlice(base_el, slice_geom);
-  if (rval) return rval;
 
   rval = (taMatrix*)MakeToken(); // an empty instance of our type
   if(TestError((!rval), "GetSlice_", "could not make token of matrix")) return NULL;
@@ -1498,11 +1519,13 @@ taMatrix* taMatrix::GetFrameRangeSlice_(int st_frame, int n_frames) {
 }
 
 taMatrix* taMatrix::FindSlice(void* el_, const MatrixGeom& geom_) {
-  if (slices) for (int i = 0; i < slices->size; ++i) {
-    taMatrix* mat = slices->FastEl(i);
-    if (!mat) continue; // shouldn't happen
-    if ((mat->data() == el_) && (mat->geom == geom_))
-      return mat;
+  if (slices) {
+    for (int i = 0; i < slices->size; ++i) {
+      taMatrix* mat = slices->FastEl(i);
+      if (!mat) continue; // shouldn't happen
+      if ((mat->data() == el_) && (mat->geom == geom_))
+        return mat;
+    }
   }
   return NULL;
 }
