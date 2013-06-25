@@ -21,8 +21,12 @@
 
 void ActrProduction::Initialize() {
   flags = PF_NONE;
+  init_util = 0.0f;
   util = 0.0f;
+  choice_util = 0.0f;
   rew = 0.0f;
+  act_time= 0.0f;
+  last_fire_time = -1.0f;
 }
 
 void ActrProduction::UpdateAfterEdit_impl() {
@@ -93,6 +97,7 @@ int ActrProduction::GetSpecialState() const {
 void ActrProduction::Init() {
   ClearProdFlag(FIRED);
   ClearProdFlag(ELIGIBLE);
+  last_fire_time = -1.0f;
   UpdateNames();
   UpdateVars();
   InitActionProgs();
@@ -173,8 +178,11 @@ bool ActrProduction::SetParam(const String& par_nm, float val) {
   if(par_nm == "u") {
     util = val;
   }
-  else if(par_nm == "r") {
+  else if(par_nm == "reward") {
     rew = val;
+  }
+  else if(par_nm == "at") {
+    act_time = val;
   }
   else {
     TestError(true, "SetParam", "parameter named:", par_nm, "not found");

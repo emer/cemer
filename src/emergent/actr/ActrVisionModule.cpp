@@ -24,12 +24,12 @@ void ActrVisionModule::InitModule() {
   if(!Model()) return;
   ActrModel* mod = Model();
   bool made_new;
-  buffer = mod->buffers.FindMakeNameType("vision", NULL, made_new);
+  buffer = mod->buffers.FindMakeNameType("visual", NULL, made_new);
   buffer->module = this;
   buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
   buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // vision doesn't do this!
 
-  buffer = mod->buffers.FindMakeNameType("vision-location", NULL, made_new);
+  buffer = mod->buffers.FindMakeNameType("visual-location", NULL, made_new);
   buffer->module = this;
   buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
   buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // vision doesn't do this!

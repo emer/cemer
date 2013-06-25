@@ -19,11 +19,18 @@
 
 #include <taMisc>
 
+void ActrActVals::Initialize() {
+  act = base = spread = match = noise = 0.0f;
+}
+
+void ActrActTimeVals::Initialize() {
+  n_act = 0.0f;
+  t_new = -1.0f;
+  t_ret = -1.0f;
+}
+
 void ActrChunk::Initialize() {
   flags = CF_NONE;
-  n_act = 0.0f;
-  t_new = 0.0f;
-  base_act = 0.0f;
 }
 
 void ActrChunk::Destroy() {

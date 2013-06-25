@@ -34,14 +34,19 @@ public:
   enum ProdFlags { // #BITS ActR production flags
     PF_NONE             = 0, // #NO_BIT
     OFF                 = 0x0001, // turn this production off -- useful for temporarily disabling different productions
-    FIRED               = 0x0002, // this production just fired at last conflict resolution step
-    ELIGIBLE            = 0x0004, // this production was eligible to fire at last conflict resolution step
+    PSTAR               = 0x0002, // this is a p* production that can have variablized slot names to match against
+    FIRED               = 0x0004, // this production just fired at last conflict resolution step
+    ELIGIBLE            = 0x0008, // this production was eligible to fire at last conflict resolution step
   };
 
   ProdFlags             flags;  // flag state of the production
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this production -- what does it do?
-  float                 util;  // #READ_ONLY #SHOW current utility of this production, updated from rewards
-  float                 rew;   // reward value associated with the firing of this production
+  float                 init_util; // initial utility of this production -- if non-zero then this production will have a custom initial utility instead of the default one set in the procedural module
+  float                 util;  // #READ_ONLY #SHOW current utility of this production -- updated by reward-based learning
+  float                 choice_util;  // #READ_ONLY #SHOW actual utility value used when choosing a production -- reflects added noise, if any, on top of util value
+  float                 rew;  // #DEF_0 reward value associated with the firing of this production -- if non-zero, will drive a ComputeReward function call with this value
+  float                 act_time; // #DEF_0 action time associated with this production -- if this is non-zero, then it will be used instead of the default value
+  float                 last_fire_time; // #READ_ONLY #SHOW time when this production last fired
   ActrCondition_List    conds; // conditions that must be matched to fire this production
   ActrAction_List       acts;  // actions that this production causes when it fires
   ActrSlot_List         vars;  // #NO_SAVE #NO_EXPAND_ALL variable bindings used in matching and instantiating actions -- automatically generated from =varname variable names listed in the productions

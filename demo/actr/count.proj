@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.0.0 rev6289
+// ta_Dump File v3.0 -- code v6.3.1.0 rev6355
 LeabraProject .projects["count"] { 
   taBase_Group @.templates = [0] {
   };
@@ -185,7 +185,7 @@ LeabraProject .projects["count"] {
 	    };
 	  };
 
-	  ActrModule_List @.modules = [3] {
+	  ActrModule_List @.modules = [5] {
 	    ActrProceduralModule @["procedural"] { 
 	      ActrProduction_Group @.productions = [3] {
 		ActrProduction @["start"] { 
@@ -265,7 +265,10 @@ LeabraProject .projects["count"] {
 
 		  ActrAction_List @.acts = [3] {
 		    ActrAction @[0] { 
-		      ActrSlot_List @.slots = [0] {
+		      ActrSlot_List @.slots = [3] {
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrAction @[1] { 
@@ -318,31 +321,31 @@ LeabraProject .projects["count"] {
 	      };
 
 	      ActrChunk_List @.active = [5] {
-		ActrChunk @["b"] { 
+		ActrChunk @["b_0"] { 
 		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["c"] { 
+		ActrChunk @["c_0"] { 
 		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["d"] { 
+		ActrChunk @["d_0"] { 
 		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["e"] { 
+		ActrChunk @["e_0"] { 
 		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["f"] { 
+		ActrChunk @["f_0"] { 
 		  ActrSlot_List @.slots = [2] {
 		    ActrSlot @["first"] { };
 		    ActrSlot @["second"] { };
@@ -361,9 +364,11 @@ LeabraProject .projects["count"] {
 		};
 	      };
 	    };
+	    ActrImaginalModule @["imaginal"] { };
+	    ActrVisionModule @["vision"] { };
 	  };
 
-	  ActrBuffer_List @.buffers = [3] {
+	  ActrBuffer_List @.buffers = [7] {
 	    ActrBuffer @["procedural"] { 
 	      ActrChunk_List @.active = [0] {
 	      };
@@ -381,6 +386,22 @@ LeabraProject .projects["count"] {
 		    ActrSlot @["count"] { };
 		  };
 		};
+	      };
+	    };
+	    ActrBuffer @["imaginal"] { 
+	      ActrChunk_List @.active = [0] {
+	      };
+	    };
+	    ActrBuffer @["imaginal_action"] { 
+	      ActrChunk_List @.active = [0] {
+	      };
+	    };
+	    ActrBuffer @["visual"] { 
+	      ActrChunk_List @.active = [0] {
+	      };
+	    };
+	    ActrBuffer @["visual_location"] { 
+	      ActrChunk_List @.active = [0] {
 	      };
 	    };
 	  };
@@ -682,9 +703,9 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":fals
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"40\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 \"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});;},{},{});mw.loader.
-implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"6aa2ffa236bc0cf2a1a3debf9c061742+\\\\\",\"watchToken\":\"643914377b377f77b79c0aed2d8cad54+\\\\\"});;},{},{});
+implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"96a9be34e80f995ca2d6d50a00eef1d0+\\\\\",\"watchToken\":\"438f7c8ae4c9193791d5c0fdd28322b5+\\\\\"});;},{},{});
 
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:3ef28eb9ae7f15dba6e9753dc18552d0 */
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:8d190cf74c49b6f987370ec1b0a896ac */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
@@ -789,7 +810,7 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/ACT-R/demo/count\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=1f6148f7ff36018e682e7c96aa117250%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=1f62f02d13f09c5eac5a05117fe92d84%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -1382,7 +1403,7 @@ Template argument size: 1178/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2602-0!*!0!!en!*!* and timestamp 20130515072106 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2602-0!*!0!!en!*!* and timestamp 20130624083745 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT-R/demo/count&amp;oldid=9995\">http://grey.colorado.edu/emergent/index.php?title=ACT-R/demo/count&amp;oldid=9995</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -1417,7 +1438,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 May 2013, at 01:21.</span>
-			<span id=\"f-viewcount\">This page has been accessed 12 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 92 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -1451,7 +1472,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.462 secs. -->
+<!-- Served in 0.246 secs. -->
 
 
 
@@ -1617,7 +1638,9 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     keygen 4 0=0;
-    row_indexes{     };
+    row_indexes {
+     name=;
+	[6] 0;1;2;3;4;5;    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -1811,7 +1834,9 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     keygen 4 0=0;
-    row_indexes{     };
+    row_indexes {
+     name=;
+	[0]     };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -1965,7 +1990,9 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     keygen 4 0=0;
-    row_indexes{     };
+    row_indexes {
+     name=;
+	[0]     };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -2293,13 +2320,19 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
      auto_load=NO_AUTO_LOAD;
      auto_load_file=;
      keygen 4 0=0;
-     row_indexes{      };
+     row_indexes {
+      name=;
+	  [0]      };
     };
     ActrModel @["CountModel"] {
      name="CountModel";
      desc="the count.lisp ACT-R model itself -- everything is contained underneath this object";
      flags=LOG_EVENTS|UPDATE_GUI|SAVE_ALL_EVENTS;
      cur_time=0;
+     params {
+      enable_sub_symbolic=0;
+      enable_rnd=0;
+     };
      chunk_types {
       name="ActrChunkType_List_0";
       el_typ=ActrChunkType;
@@ -2362,9 +2395,17 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        desc=;
        buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["procedural"]$$;
        flags=0;
-       mp_time=0.05;
-       util_lrate=0.02;
-       util_noise=0.02;
+       trace_level=NO_TRACE;
+       mp_time {name="": type=NONE: mean=0.05000000074505806: var=0: par=1: };
+       util {
+	learn=0;
+	lrate=0.2;
+	init=0;
+	noise=0;
+	thresh=-1000000;
+       };
+       last_rew_time=0;
+       last_rew=0;
        productions {
 	name=;
 	el_typ=ActrProduction;
@@ -2373,8 +2414,12 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="start";
 	 flags=0;
 	 desc=;
+	 init_util=0;
 	 util=0;
+	 choice_util=0;
 	 rew=0;
+	 act_time=0;
+	 last_fire_time=-1;
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -2396,9 +2441,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	    name="start_c0";
 	    chunk_type=.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2409,6 +2453,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num1";
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2416,6 +2461,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["count"] {
 	      name="count";
@@ -2423,6 +2469,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="nil";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2442,13 +2489,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
 	    name="start_a0";
 	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2459,6 +2506,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2466,6 +2514,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["count"] {
 	      name="count";
@@ -2473,6 +2522,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num1";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2487,13 +2537,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
 	    name="start_a1";
 	    chunk_type=.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2504,6 +2554,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num1";
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["second"] {
 	      name="second";
@@ -2511,6 +2562,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2521,8 +2573,12 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="increment";
 	 flags=0;
 	 desc="increment the count and retrieve the next count fact -- print out current";
+	 init_util=0;
 	 util=0;
+	 choice_util=0;
 	 rew=0;
+	 act_time=0;
+	 last_fire_time=-1;
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -2544,9 +2600,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	    name="increment_c0";
 	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2557,6 +2612,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2564,6 +2620,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num1-";
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["count"] {
 	      name="count";
@@ -2571,6 +2628,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num1";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2592,9 +2650,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	    name="increment_c1";
 	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2605,6 +2662,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num1";
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["second"] {
 	      name="second";
@@ -2612,6 +2670,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num2";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2631,13 +2690,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
 	    name="increment_a0";
 	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2648,6 +2707,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2655,6 +2715,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["count"] {
 	      name="count";
@@ -2662,6 +2723,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num2";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2676,13 +2738,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
 	    name="increment_a1";
 	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2693,6 +2755,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num2";
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["second"] {
 	      name="second";
@@ -2700,6 +2763,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2714,13 +2778,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val="count is: =num1";
+	   params=;
 	   chunk {
 	    name="increment_a2";
 	    chunk_type=NULL;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2734,8 +2798,12 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="stop";
 	 flags=0;
 	 desc="detect when count == end";
+	 init_util=0;
 	 util=0;
+	 choice_util=0;
 	 rew=0;
+	 act_time=0;
+	 last_fire_time=-1;
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -2757,9 +2825,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	    name="stop_c0";
 	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2770,6 +2837,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2777,6 +2845,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num";
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["count"] {
 	      name="count";
@@ -2784,6 +2853,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2803,17 +2873,41 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
 	    name="stop_a0";
-	    chunk_type=NULL;
+	    chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
+	     ActrSlot @["start"] {
+	      name="start";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["end"] {
+	      name="end";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["count"] {
+	      name="count";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
 	    };
 	   };
 	  };
@@ -2827,13 +2921,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val="count is: =num";
+	   params=;
 	   chunk {
 	    name="stop_a1";
 	    chunk_type=NULL;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2844,6 +2938,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["end"] {
 	      name="end";
@@ -2851,6 +2946,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	     ActrSlot @["count"] {
 	      name="count";
@@ -2858,6 +2954,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="=num";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2872,13 +2969,13 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
 	    name="stop_a2";
 	    chunk_type=NULL;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -2895,6 +2992,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        desc=;
        buffer=$.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["retrieval"]$;
        flags=0;
+       trace_level=NO_TRACE;
+       act {learn=0: decay=0.5: inst_noise=0: perm_noise=0: init=0: n_finst=4: finst_span=3: };
+       ret {thresh=0: time_pow=1: time_gain=1: };
+       partial {on=0: mismatch_p=1: max_diff=-1: max_sim=0: };
+       assoc {on=0: max_str=1: neg_ok=0: };
        init_chunks {
 	name=;
 	el_typ=ActrChunk;
@@ -2903,9 +3005,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="b";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
@@ -2916,6 +3017,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="1";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -2923,6 +3025,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="2";
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -2930,9 +3033,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="c";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
@@ -2943,6 +3045,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="2";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -2950,6 +3053,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="3";
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -2957,9 +3061,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="d";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
@@ -2970,6 +3073,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="3";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -2977,6 +3081,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="4";
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -2984,9 +3089,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="e";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
@@ -2997,6 +3101,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="4";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3004,6 +3109,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="5";
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -3011,9 +3117,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="f";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
@@ -3024,6 +3129,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="5";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3031,6 +3137,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="6";
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -3039,15 +3146,14 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	name=;
 	el_typ=ActrChunk;
 	el_def=0;
-	ActrChunk @["b"] {
-	 name="b";
+	ActrChunk @["b_0"] {
+	 name="b_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
 	  ActrSlot @["first"] {
@@ -3056,6 +3162,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="1";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3063,18 +3170,18 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="2";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["c"] {
-	 name="c";
+	ActrChunk @["c_0"] {
+	 name="c_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
 	  ActrSlot @["first"] {
@@ -3083,6 +3190,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="2";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3090,18 +3198,18 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="3";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["d"] {
-	 name="d";
+	ActrChunk @["d_0"] {
+	 name="d_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
 	  ActrSlot @["first"] {
@@ -3110,6 +3218,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="3";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3117,18 +3226,18 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="4";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["e"] {
-	 name="e";
+	ActrChunk @["e_0"] {
+	 name="e_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
 	  ActrSlot @["first"] {
@@ -3137,6 +3246,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="4";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3144,18 +3254,18 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="5";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["f"] {
-	 name="f";
+	ActrChunk @["f_0"] {
+	 name="f_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
 	  ActrSlot @["first"] {
@@ -3164,6 +3274,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="5";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["second"] {
 	   name="second";
@@ -3171,6 +3282,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="6";
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -3189,9 +3301,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="first_goal";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
@@ -3202,6 +3313,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="2";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["end"] {
 	   name="end";
@@ -3209,6 +3321,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="4";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["count"] {
 	   name="count";
@@ -3216,10 +3329,25 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val=;
+	   rel=EQUAL;
 	  };
 	 };
 	};
        };
+      };
+      ActrImaginalModule @["imaginal"] {
+       name="imaginal";
+       desc=;
+       buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["imaginal"]$$;
+       flags=0;
+       imaginal_delay {name="": type=NONE: mean=0.2000000029802322: var=0: par=1: };
+       action_buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["imaginal_action"]$$;
+      };
+      ActrVisionModule @["vision"] {
+       name="vision";
+       desc=;
+       buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["visual_location"]$$;
+       flags=0;
       };
      };
      buffers {
@@ -3262,9 +3390,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="first_goal";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_from"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
@@ -3275,6 +3402,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="2";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["end"] {
 	   name="end";
@@ -3282,6 +3410,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="4";
+	   rel=EQUAL;
 	  };
 	  ActrSlot @["count"] {
 	   name="count";
@@ -3289,6 +3418,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val=;
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -3296,9 +3426,58 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        module=.projects["count"].programs["Count_ActR"].objs["CountModel"].modules["goal"]$$;
        act_total=0;
       };
+      ActrBuffer @["imaginal"] {
+       name="imaginal";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name=;
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=.projects["count"].programs["Count_ActR"].objs["CountModel"].modules["imaginal"]$$;
+       act_total=0;
+      };
+      ActrBuffer @["imaginal_action"] {
+       name="imaginal_action";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name=;
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=$.projects["count"].programs["Count_ActR"].objs["CountModel"].modules["imaginal"]$;
+       act_total=0;
+      };
+      ActrBuffer @["visual"] {
+       name="visual";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name=;
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=.projects["count"].programs["Count_ActR"].objs["CountModel"].modules["vision"]$$;
+       act_total=0;
+      };
+      ActrBuffer @["visual_location"] {
+       name="visual_location";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name=;
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=$.projects["count"].programs["Count_ActR"].objs["CountModel"].modules["vision"]$;
+       act_total=0;
+      };
      };
      cur_event_idx=0;
      log_table=.projects["count"].programs["Count_ActR"].objs["ActrLogTable"]$$;
+     load_debug=0;
     };
    };
    types {

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.1.0 rev6345
+// ta_Dump File v3.0 -- code v6.3.1.0 rev6355
 LeabraProject .projects["actr"] { 
   taBase_Group @.templates = [0] {
   };
@@ -167,38 +167,33 @@ LeabraProject .projects["actr"] {
 };
 	  };
 	};
-	ActrModel @["semantic"] { 
-	  ActrChunkType_List @.chunk_types = [3] {
-	    ActrChunkType @["property"] { 
-	      ActrSlotType_List @.slots = [3] {
-		ActrSlotType @["object"] { };
-		ActrSlotType @["attribute"] { };
-		ActrSlotType @["value"] { };
+	ActrModel @["count"] { 
+	  ActrChunkType_List @.chunk_types = [2] {
+	    ActrChunkType @["count_order"] { 
+	      ActrSlotType_List @.slots = [2] {
+		ActrSlotType @["first"] { };
+		ActrSlotType @["second"] { };
 	      };
 	    };
-	    ActrChunkType @["is_member"] { 
+	    ActrChunkType @["count_from"] { 
 	      ActrSlotType_List @.slots = [3] {
-		ActrSlotType @["object"] { };
-		ActrSlotType @["category"] { };
-		ActrSlotType @["judgment"] { };
-	      };
-	    };
-	    ActrChunkType @["chunk"] { 
-	      ActrSlotType_List @.slots = [0] {
+		ActrSlotType @["start"] { };
+		ActrSlotType @["end"] { };
+		ActrSlotType @["count"] { };
 	      };
 	    };
 	  };
 
-	  ActrModule_List @.modules = [3] {
+	  ActrModule_List @.modules = [5] {
 	    ActrProceduralModule @["procedural"] { 
-	      ActrProduction_Group @.productions = [4] {
-		ActrProduction @["initial_retrieve"] { 
+	      ActrProduction_Group @.productions = [3] {
+		ActrProduction @["start"] { 
 		  ActrCondition_List @.conds = [1] {
 		    ActrCondition @[0] { 
 		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
 		      };
 		    };
 		  };
@@ -206,108 +201,81 @@ LeabraProject .projects["actr"] {
 		  ActrAction_List @.acts = [2] {
 		    ActrAction @[0] { 
 		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrAction @[1] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["attribute"] { };
-			ActrSlot @["value"] { };
+		      ActrSlot_List @.slots = [2] {
+			ActrSlot @["first"] { };
+			ActrSlot @["second"] { };
 		      };
 		    };
 		  };
 		};
-		ActrProduction @["direct_verify"] { 
+		ActrProduction @["increment"] { 
 		  ActrCondition_List @.conds = [2] {
 		    ActrCondition @[0] { 
 		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrCondition @[1] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["attribute"] { };
-			ActrSlot @["value"] { };
+		      ActrSlot_List @.slots = [2] {
+			ActrSlot @["first"] { };
+			ActrSlot @["second"] { };
 		      };
 		    };
 		  };
 
-		  ActrAction_List @.acts = [2] {
+		  ActrAction_List @.acts = [3] {
 		    ActrAction @[0] { 
 		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
+		      };
+		    };
+		    ActrAction @[1] { 
+		      ActrSlot_List @.slots = [2] {
+			ActrSlot @["first"] { };
+			ActrSlot @["second"] { };
+		      };
+		    };
+		    ActrAction @[2] { 
+		      ActrSlot_List @.slots = [0] {
+		      };
+		    };
+		  };
+		};
+		ActrProduction @["stop"] { 
+		  ActrCondition_List @.conds = [1] {
+		    ActrCondition @[0] { 
+		      ActrSlot_List @.slots = [3] {
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
+		      };
+		    };
+		  };
+
+		  ActrAction_List @.acts = [3] {
+		    ActrAction @[0] { 
+		      ActrSlot_List @.slots = [3] {
+			ActrSlot @["start"] { };
+			ActrSlot @["end"] { };
+			ActrSlot @["count"] { };
 		      };
 		    };
 		    ActrAction @[1] { 
 		      ActrSlot_List @.slots = [0] {
 		      };
 		    };
-		  };
-		};
-		ActrProduction @["chain_category"] { 
-		  ActrCondition_List @.conds = [2] {
-		    ActrCondition @[0] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
-		      };
-		    };
-		    ActrCondition @[1] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["attribute"] { };
-			ActrSlot @["value"] { };
-		      };
-		    };
-		  };
-
-		  ActrAction_List @.acts = [2] {
-		    ActrAction @[0] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
-		      };
-		    };
-		    ActrAction @[1] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["attribute"] { };
-			ActrSlot @["value"] { };
-		      };
-		    };
-		  };
-		};
-		ActrProduction @["fail"] { 
-		  ActrCondition_List @.conds = [2] {
-		    ActrCondition @[0] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
-		      };
-		    };
-		    ActrCondition @[1] { 
+		    ActrAction @[2] { 
 		      ActrSlot_List @.slots = [0] {
-		      };
-		    };
-		  };
-
-		  ActrAction_List @.acts = [1] {
-		    ActrAction @[0] { 
-		      ActrSlot_List @.slots = [3] {
-			ActrSlot @["object"] { };
-			ActrSlot @["category"] { };
-			ActrSlot @["judgment"] { };
 		      };
 		    };
 		  };
@@ -315,540 +283,71 @@ LeabraProject .projects["actr"] {
 	      };
 	    };
 	    ActrDeclarativeModule @["declarative"] { 
-	      ActrChunk_List @.init_chunks = [47] {
-		ActrChunk @["shark"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["dangerous"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["locomotion"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["swimming"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["fish"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["salmon"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["edible"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["breathe"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["gills"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["animal"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["moves"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["skin"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["canary"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["color"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["sings"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["bird"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["ostrich"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["flies"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["height"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["tall"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["wings"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["flying"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["true"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["false"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["p1"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p2"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p3"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p4"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p5"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p6"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p7"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p8"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p9"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p10"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p11"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p12"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p13"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p14"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p15"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p16"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p17"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p18"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p19"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p20"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["g1"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
-		  };
-		};
-		ActrChunk @["g2"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
-		  };
-		};
-		ActrChunk @["g3"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
-		  };
-		};
+	      ActrChunk_List @.init_chunks = [6] {
+		ActrChunk @[0] { };
+		ActrChunk @[1] { };
+		ActrChunk @[2] { };
+		ActrChunk @[3] { };
+		ActrChunk @[4] { };
+		ActrChunk @[5] { };
 	      };
 
-	      ActrChunk_List @.active = [47] {
-		ActrChunk @["shark"] { 
-		  ActrSlot_List @.slots = [0] {
+	      ActrChunk_List @.active = [6] {
+		ActrChunk @["b"] { 
+		  ActrSlot_List @.slots = [2] {
+		    ActrSlot @["first"] { };
+		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["dangerous"] { 
-		  ActrSlot_List @.slots = [0] {
+		ActrChunk @["c"] { 
+		  ActrSlot_List @.slots = [2] {
+		    ActrSlot @["first"] { };
+		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["locomotion"] { 
-		  ActrSlot_List @.slots = [0] {
+		ActrChunk @["d"] { 
+		  ActrSlot_List @.slots = [2] {
+		    ActrSlot @["first"] { };
+		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["swimming"] { 
-		  ActrSlot_List @.slots = [0] {
+		ActrChunk @["e"] { 
+		  ActrSlot_List @.slots = [2] {
+		    ActrSlot @["first"] { };
+		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["fish"] { 
-		  ActrSlot_List @.slots = [0] {
+		ActrChunk @["f"] { 
+		  ActrSlot_List @.slots = [2] {
+		    ActrSlot @["first"] { };
+		    ActrSlot @["second"] { };
 		  };
 		};
-		ActrChunk @["salmon"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["edible"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["breathe"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["gills"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["animal"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["moves"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["skin"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["canary"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["color"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["sings"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["bird"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["ostrich"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["flies"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["height"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["tall"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["wings"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["flying"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["true"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["false"] { 
-		  ActrSlot_List @.slots = [0] {
-		  };
-		};
-		ActrChunk @["p1"] { 
+		ActrChunk @["first_goal"] { 
 		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p2"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p3"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p4"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p5"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p6"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p7"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p8"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p9"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p10"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p11"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p12"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p13"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p14"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p15"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p16"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p17"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p18"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p19"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["p20"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["attribute"] { };
-		    ActrSlot @["value"] { };
-		  };
-		};
-		ActrChunk @["g1"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
-		  };
-		};
-		ActrChunk @["g2"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
-		  };
-		};
-		ActrChunk @["g3"] { 
-		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
+		    ActrSlot @["start"] { };
+		    ActrSlot @["end"] { };
+		    ActrSlot @["count"] { };
 		  };
 		};
 	      };
 	    };
 	    ActrGoalModule @["goal"] { 
 	      ActrChunk_List @.init_chunk = [1] {
-		ActrChunk @["g2"] { 
+		ActrChunk @["first_goal"] { 
 		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
+		    ActrSlot @["start"] { };
+		    ActrSlot @["end"] { };
+		    ActrSlot @["count"] { };
 		  };
 		};
 	      };
 	    };
+	    ActrImaginalModule @["imaginal"] { };
+	    ActrVisionModule @["vision"] { };
 	  };
 
-	  ActrBuffer_List @.buffers = [3] {
+	  ActrBuffer_List @.buffers = [7] {
 	    ActrBuffer @["procedural"] { 
 	      ActrChunk_List @.active = [0] {
 	      };
@@ -859,13 +358,29 @@ LeabraProject .projects["actr"] {
 	    };
 	    ActrBuffer @["goal"] { 
 	      ActrChunk_List @.active = [1] {
-		ActrChunk @["g2"] { 
+		ActrChunk @["first_goal"] { 
 		  ActrSlot_List @.slots = [3] {
-		    ActrSlot @["object"] { };
-		    ActrSlot @["category"] { };
-		    ActrSlot @["judgment"] { };
+		    ActrSlot @["start"] { };
+		    ActrSlot @["end"] { };
+		    ActrSlot @["count"] { };
 		  };
 		};
+	      };
+	    };
+	    ActrBuffer @["imaginal"] { 
+	      ActrChunk_List @.active = [0] {
+	      };
+	    };
+	    ActrBuffer @["imaginal_action"] { 
+	      ActrChunk_List @.active = [0] {
+	      };
+	    };
+	    ActrBuffer @["visual"] { 
+	      ActrChunk_List @.active = [0] {
+	      };
+	    };
+	    ActrBuffer @["visual_location"] { 
+	      ActrChunk_List @.active = [0] {
 	      };
 	    };
 	  };
@@ -879,7 +394,7 @@ LeabraProject .projects["actr"] {
       };
 
       ProgVar_List @.vars = [3] {
-	ProgVar @["semantic"] { };
+	ProgVar @["count"] { };
 	ProgVar @["ActrLogTable"] { };
 	ProgVar @["TestProgVar"] { };
       };
@@ -2805,80 +2320,67 @@ LeabraProject .projects["actr"] {
      keygen 4 0=0;
      row_indexes {
       name=;
-	  [21] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;     };
+	  [0]      };
     };
-    ActrModel @["semantic"] {
-     name="semantic";
+    ActrModel @["count"] {
+     name="count";
      desc=;
      flags=LOG_EVENTS|UPDATE_GUI|SAVE_ALL_EVENTS;
-     cur_time=0.25;
+     cur_time=0;
+     params {
+      enable_sub_symbolic=0;
+      enable_rnd=0;
+     };
      chunk_types {
       name="ActrChunkType_List_0";
       el_typ=ActrChunkType;
       el_def=0;
-      ActrChunkType @["property"] {
-       name="property";
+      ActrChunkType @["count_order"] {
+       name="count_order";
        desc=;
        slots {
 	name="ActrSlotType_List_0";
 	el_typ=ActrSlotType;
 	el_def=0;
-	ActrSlotType @["object"] {
-	 name="object";
+	ActrSlotType @["first"] {
+	 name="first";
 	 desc=;
 	 val_type=LITERAL;
 	 val_chunk_type=NULL;
 	};
-	ActrSlotType @["attribute"] {
-	 name="attribute";
-	 desc=;
-	 val_type=LITERAL;
-	 val_chunk_type=NULL;
-	};
-	ActrSlotType @["value"] {
-	 name="value";
+	ActrSlotType @["second"] {
+	 name="second";
 	 desc=;
 	 val_type=LITERAL;
 	 val_chunk_type=NULL;
 	};
        };
       };
-      ActrChunkType @["is_member"] {
-       name="is_member";
+      ActrChunkType @["count_from"] {
+       name="count_from";
        desc=;
        slots {
 	name="ActrSlotType_List_0";
 	el_typ=ActrSlotType;
 	el_def=0;
-	ActrSlotType @["object"] {
-	 name="object";
+	ActrSlotType @["start"] {
+	 name="start";
 	 desc=;
 	 val_type=LITERAL;
 	 val_chunk_type=NULL;
 	};
-	ActrSlotType @["category"] {
-	 name="category";
+	ActrSlotType @["end"] {
+	 name="end";
 	 desc=;
 	 val_type=LITERAL;
 	 val_chunk_type=NULL;
 	};
-	ActrSlotType @["judgment"] {
-	 name="judgment";
+	ActrSlotType @["count"] {
+	 name="count";
 	 desc=;
 	 val_type=LITERAL;
 	 val_chunk_type=NULL;
 	};
-       };
-      };
-      ActrChunkType @["chunk"] {
-       name="chunk";
-       desc=;
-       slots {
-	name="ActrSlotType_List_0";
-	el_typ=ActrSlotType;
-	el_def=0;
        };
       };
      };
@@ -2889,21 +2391,33 @@ LeabraProject .projects["actr"] {
       ActrProceduralModule @["procedural"] {
        name="procedural";
        desc=;
-       buffer=.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["procedural"]$$;
+       buffer=.projects["actr"].programs["ActRTest"].objs["count"].buffers["procedural"]$$;
        flags=0;
-       mp_time=0.05;
-       util_lrate=0.02;
-       util_noise=0.02;
+       trace_level=NO_TRACE;
+       mp_time {name="Random_3": type=NONE: mean=0.05000000074505806: var=0: par=1: };
+       util {
+	learn=0;
+	lrate=0.2;
+	init=0;
+	noise=0;
+	thresh=-1000000;
+       };
+       last_rew_time=0;
+       last_rew=0;
        productions {
 	name="ActrProduction_Group_0";
 	el_typ=ActrProduction;
 	el_def=0;
-	ActrProduction @["initial_retrieve"] {
-	 name="initial_retrieve";
+	ActrProduction @["start"] {
+	 name="start";
 	 flags=0;
 	 desc=;
+	 init_util=0;
 	 util=0;
+	 choice_util=0;
 	 rew=0;
+	 act_time=0;
+	 last_fire_time=-1;
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -2912,7 +2426,7 @@ LeabraProject .projects["actr"] {
 	   flags=BUF_UPDT_ACT;
 	   cond_src=BUFFER_EQ;
 	   src_type=ActrBuffer;
-	   src=.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$$;
+	   src=.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$$;
 	   unit_name=;
 	   unit_val="act";
 	   obj_path=;
@@ -2922,36 +2436,38 @@ LeabraProject .projects["actr"] {
 	   rel=EQUAL;
 	   cmp_val=;
 	   cmp_chunk {
-	    name="initial_retrieve_c0";
-	    chunk_type=.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$$;
+	    name="start_c0";
+	    chunk_type=.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
+	     ActrSlot @["start"] {
+	      name="start";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=obj";
+	      val="=num1";
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["category"] {
-	      name="category";
+	     ActrSlot @["end"] {
+	      name="end";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=cat";
+	      val=;
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
+	     ActrSlot @["count"] {
+	      name="count";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val="nil";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -2965,43 +2481,46 @@ LeabraProject .projects["actr"] {
 	   flags=0;
 	   action=UPDATE;
 	   dest_type=ActrBuffer;
-	   dest=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$;
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
-	    name="initial_retrieve_a0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
+	    name="start_a0";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
+	     ActrSlot @["start"] {
+	      name="start";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["category"] {
-	      name="category";
+	     ActrSlot @["end"] {
+	      name="end";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
+	     ActrSlot @["count"] {
+	      name="count";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="pending";
+	      val="=num1";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -3010,55 +2529,54 @@ LeabraProject .projects["actr"] {
 	   flags=0;
 	   action=REQUEST;
 	   dest_type=ActrBuffer;
-	   dest=.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["retrieval"]$$;
+	   dest=.projects["actr"].programs["ActRTest"].objs["count"].buffers["retrieval"]$$;
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
-	    name="initial_retrieve_a1";
-	    chunk_type=.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$$;
+	    name="start_a1";
+	    chunk_type=.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
+	     ActrSlot @["first"] {
+	      name="first";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=obj";
+	      val="=num1";
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["attribute"] {
-	      name="attribute";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="category";
-	     };
-	     ActrSlot @["value"] {
-	      name="value";
+	     ActrSlot @["second"] {
+	      name="second";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
 	    };
 	   };
 	  };
 	 };
 	};
-	ActrProduction @["direct_verify"] {
-	 name="direct_verify";
+	ActrProduction @["increment"] {
+	 name="increment";
 	 flags=0;
 	 desc=;
+	 init_util=0;
 	 util=0;
+	 choice_util=0;
 	 rew=0;
+	 act_time=0;
+	 last_fire_time=-1;
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -3067,7 +2585,7 @@ LeabraProject .projects["actr"] {
 	   flags=BUF_UPDT_ACT;
 	   cond_src=BUFFER_EQ;
 	   src_type=ActrBuffer;
-	   src=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
+	   src=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$;
 	   unit_name=;
 	   unit_val="act";
 	   obj_path=;
@@ -3077,36 +2595,38 @@ LeabraProject .projects["actr"] {
 	   rel=EQUAL;
 	   cmp_val=;
 	   cmp_chunk {
-	    name="direct_verify_c0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
+	    name="increment_c0";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
+	     ActrSlot @["start"] {
+	      name="start";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=obj";
+	      val=;
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["category"] {
-	      name="category";
+	     ActrSlot @["end"] {
+	      name="end";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=cat";
+	      val="=num1-";
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
+	     ActrSlot @["count"] {
+	      name="count";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="pending";
+	      val="=num1";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -3115,7 +2635,7 @@ LeabraProject .projects["actr"] {
 	   flags=0;
 	   cond_src=BUFFER_EQ;
 	   src_type=ActrBuffer;
-	   src=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["retrieval"]$;
+	   src=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["retrieval"]$;
 	   unit_name=;
 	   unit_val="act";
 	   obj_path=;
@@ -3125,36 +2645,30 @@ LeabraProject .projects["actr"] {
 	   rel=EQUAL;
 	   cmp_val=;
 	   cmp_chunk {
-	    name="direct_verify_c1";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
+	    name="increment_c1";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
+	     ActrSlot @["first"] {
+	      name="first";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="=obj";
+	      val="=num1";
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["attribute"] {
-	      name="attribute";
+	     ActrSlot @["second"] {
+	      name="second";
 	      flags=COND;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="category";
-	     };
-	     ActrSlot @["value"] {
-	      name="value";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=cat";
+	      val="=num2";
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -3168,43 +2682,229 @@ LeabraProject .projects["actr"] {
 	   flags=0;
 	   action=UPDATE;
 	   dest_type=ActrBuffer;
-	   dest=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$;
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
-	    name="direct_verify_a0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
+	    name="increment_a0";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
+	     ActrSlot @["start"] {
+	      name="start";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["category"] {
-	      name="category";
+	     ActrSlot @["end"] {
+	      name="end";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
 	      val=;
+	      rel=EQUAL;
 	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
+	     ActrSlot @["count"] {
+	      name="count";
 	      flags=0;
 	      val_type=LITERAL;
 	      val_chunk=NULL;
-	      val="yes";
+	      val="=num2";
+	      rel=EQUAL;
+	     };
+	    };
+	   };
+	  };
+	  ActrAction @[1] {
+	   flags=0;
+	   action=REQUEST;
+	   dest_type=ActrBuffer;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["retrieval"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
+	   params=;
+	   chunk {
+	    name="increment_a1";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
+	    flags=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	     ActrSlot @["first"] {
+	      name="first";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val="=num2";
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["second"] {
+	      name="second";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
+	    };
+	   };
+	  };
+	  ActrAction @[2] {
+	   flags=0;
+	   action=OUTPUT;
+	   dest_type=ActrBuffer;
+	   dest=NULL;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val="=num1";
+	   params=;
+	   chunk {
+	    name="increment_a2";
+	    chunk_type=NULL;
+	    flags=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	    };
+	   };
+	  };
+	 };
+	};
+	ActrProduction @["stop"] {
+	 name="stop";
+	 flags=0;
+	 desc=;
+	 init_util=0;
+	 util=0;
+	 choice_util=0;
+	 rew=0;
+	 act_time=0;
+	 last_fire_time=-1;
+	 conds {
+	  name="ActrCondition_List_0";
+	  el_typ=ActrCondition;
+	  el_def=0;
+	  ActrCondition @[0] {
+	   flags=0;
+	   cond_src=BUFFER_EQ;
+	   src_type=ActrBuffer;
+	   src=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$;
+	   unit_name=;
+	   unit_val="act";
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   rel=EQUAL;
+	   cmp_val=;
+	   cmp_chunk {
+	    name="stop_c0";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
+	    flags=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	     ActrSlot @["start"] {
+	      name="start";
+	      flags=COND;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["end"] {
+	      name="end";
+	      flags=COND;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val="=num";
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["count"] {
+	      name="count";
+	      flags=COND;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val="=num";
+	      rel=EQUAL;
+	     };
+	    };
+	   };
+	  };
+	 };
+	 acts {
+	  name="ActrAction_List_0";
+	  el_typ=ActrAction;
+	  el_def=0;
+	  ActrAction @[0] {
+	   flags=0;
+	   action=CLEAR;
+	   dest_type=ActrBuffer;
+	   dest=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$;
+	   obj_path=;
+	   dt_col_name=;
+	   dt_row=-1;
+	   dt_cell=0;
+	   val=;
+	   params=;
+	   chunk {
+	    name="stop_a0";
+	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
+	    flags=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
+	    slots {
+	     name="ActrSlot_List_0";
+	     el_typ=ActrSlot;
+	     el_def=0;
+	     ActrSlot @["start"] {
+	      name="start";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["end"] {
+	      name="end";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
+	     };
+	     ActrSlot @["count"] {
+	      name="count";
+	      flags=0;
+	      val_type=LITERAL;
+	      val_chunk=NULL;
+	      val=;
+	      rel=EQUAL;
 	     };
 	    };
 	   };
@@ -3218,14 +2918,14 @@ LeabraProject .projects["actr"] {
 	   dt_col_name=;
 	   dt_row=-1;
 	   dt_cell=0;
-	   val="direct verified yes";
+	   val="=num";
+	   params=;
 	   chunk {
-	    name="direct_verify_a1";
+	    name="stop_a1";
 	    chunk_type=NULL;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
@@ -3233,343 +2933,27 @@ LeabraProject .projects["actr"] {
 	    };
 	   };
 	  };
-	 };
-	};
-	ActrProduction @["chain_category"] {
-	 name="chain_category";
-	 flags=0;
-	 desc=;
-	 util=0;
-	 rew=0;
-	 conds {
-	  name="ActrCondition_List_0";
-	  el_typ=ActrCondition;
-	  el_def=0;
-	  ActrCondition @[0] {
-	   flags=BUF_UPDT_ACT;
-	   cond_src=BUFFER_EQ;
-	   src_type=ActrBuffer;
-	   src=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
-	   unit_name=;
-	   unit_val="act";
-	   obj_path=;
-	   dt_col_name=;
-	   dt_row=-1;
-	   dt_cell=0;
-	   rel=EQUAL;
-	   cmp_val=;
-	   cmp_chunk {
-	    name="chain_category_c0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
-	    slots {
-	     name="ActrSlot_List_0";
-	     el_typ=ActrSlot;
-	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=obj1";
-	     };
-	     ActrSlot @["category"] {
-	      name="category";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=cat";
-	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="pending";
-	     };
-	    };
-	   };
-	  };
-	  ActrCondition @[1] {
+	  ActrAction @[2] {
 	   flags=0;
-	   cond_src=BUFFER_EQ;
-	   src_type=ActrBuffer;
-	   src=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["retrieval"]$;
-	   unit_name=;
-	   unit_val="act";
-	   obj_path=;
-	   dt_col_name=;
-	   dt_row=-1;
-	   dt_cell=0;
-	   rel=EQUAL;
-	   cmp_val=;
-	   cmp_chunk {
-	    name="chain_category_c1";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
-	    slots {
-	     name="ActrSlot_List_0";
-	     el_typ=ActrSlot;
-	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=obj1";
-	     };
-	     ActrSlot @["attribute"] {
-	      name="attribute";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="category";
-	     };
-	     ActrSlot @["value"] {
-	      name="value";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=obj2";
-	     };
-	    };
-	   };
-	  };
-	 };
-	 acts {
-	  name="ActrAction_List_0";
-	  el_typ=ActrAction;
-	  el_def=0;
-	  ActrAction @[0] {
-	   flags=0;
-	   action=UPDATE;
+	   action=STOP;
 	   dest_type=ActrBuffer;
-	   dest=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
+	   dest=NULL;
 	   obj_path=;
 	   dt_col_name=;
 	   dt_row=-1;
 	   dt_cell=0;
 	   val=;
+	   params=;
 	   chunk {
-	    name="chain_category_a0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
-	    slots {
-	     name="ActrSlot_List_0";
-	     el_typ=ActrSlot;
-	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=obj2";
-	     };
-	     ActrSlot @["category"] {
-	      name="category";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val=;
-	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val=;
-	     };
-	    };
-	   };
-	  };
-	  ActrAction @[1] {
-	   flags=0;
-	   action=REQUEST;
-	   dest_type=ActrBuffer;
-	   dest=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["retrieval"]$;
-	   obj_path=;
-	   dt_col_name=;
-	   dt_row=-1;
-	   dt_cell=0;
-	   val=;
-	   chunk {
-	    name="chain_category_a1";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
-	    slots {
-	     name="ActrSlot_List_0";
-	     el_typ=ActrSlot;
-	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=obj2";
-	     };
-	     ActrSlot @["attribute"] {
-	      name="attribute";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="category";
-	     };
-	     ActrSlot @["value"] {
-	      name="value";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val=;
-	     };
-	    };
-	   };
-	  };
-	 };
-	};
-	ActrProduction @["fail"] {
-	 name="fail";
-	 flags=0;
-	 desc=;
-	 util=0;
-	 rew=0;
-	 conds {
-	  name="ActrCondition_List_0";
-	  el_typ=ActrCondition;
-	  el_def=0;
-	  ActrCondition @[0] {
-	   flags=BUF_UPDT_ACT;
-	   cond_src=BUFFER_EQ;
-	   src_type=ActrBuffer;
-	   src=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
-	   unit_name=;
-	   unit_val="act";
-	   obj_path=;
-	   dt_col_name=;
-	   dt_row=-1;
-	   dt_cell=0;
-	   rel=EQUAL;
-	   cmp_val=;
-	   cmp_chunk {
-	    name="fail_c0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
-	    slots {
-	     name="ActrSlot_List_0";
-	     el_typ=ActrSlot;
-	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=obj1";
-	     };
-	     ActrSlot @["category"] {
-	      name="category";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="=cat";
-	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
-	      flags=COND;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="pending";
-	     };
-	    };
-	   };
-	  };
-	  ActrCondition @[1] {
-	   flags=0;
-	   cond_src=BUFFER_QUERY;
-	   src_type=ActrBuffer;
-	   src=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["retrieval"]$;
-	   unit_name=;
-	   unit_val="act";
-	   obj_path=;
-	   dt_col_name=;
-	   dt_row=-1;
-	   dt_cell=0;
-	   rel=EQUAL;
-	   cmp_val="error";
-	   cmp_chunk {
-	    name="fail_c1";
+	    name="stop_a2";
 	    chunk_type=NULL;
 	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
+	    act {act=0: base=0: spread=0: match=0: noise=0: };
+	    time {n_act=0: t_new=-1: t_ret=-1: };
 	    slots {
 	     name="ActrSlot_List_0";
 	     el_typ=ActrSlot;
 	     el_def=0;
-	    };
-	   };
-	  };
-	 };
-	 acts {
-	  name="ActrAction_List_0";
-	  el_typ=ActrAction;
-	  el_def=0;
-	  ActrAction @[0] {
-	   flags=0;
-	   action=UPDATE;
-	   dest_type=ActrBuffer;
-	   dest=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
-	   obj_path=;
-	   dt_col_name=;
-	   dt_row=-1;
-	   dt_cell=0;
-	   val=;
-	   chunk {
-	    name="fail_a0";
-	    chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	    flags=0;
-	    n_act=0;
-	    t_new=0;
-	    base_act=0;
-	    slots {
-	     name="ActrSlot_List_0";
-	     el_typ=ActrSlot;
-	     el_def=0;
-	     ActrSlot @["object"] {
-	      name="object";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val=;
-	     };
-	     ActrSlot @["category"] {
-	      name="category";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val=;
-	     };
-	     ActrSlot @["judgment"] {
-	      name="judgment";
-	      flags=0;
-	      val_type=LITERAL;
-	      val_chunk=NULL;
-	      val="no";
-	     };
 	    };
 	   };
 	  };
@@ -3580,2202 +2964,201 @@ LeabraProject .projects["actr"] {
       ActrDeclarativeModule @["declarative"] {
        name="declarative";
        desc=;
-       buffer=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["retrieval"]$;
+       buffer=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["retrieval"]$;
        flags=0;
+       trace_level=NO_TRACE;
+       act {learn=0: decay=0.5: inst_noise=0: perm_noise=0: init=0: n_finst=4: finst_span=3: };
+       ret {thresh=0: time_pow=1: time_gain=1: };
+       partial {on=0: mismatch_p=1: max_diff=-1: max_sim=0: };
+       assoc {on=0: max_str=1: neg_ok=0: };
        init_chunks {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
-	ActrChunk @["shark"] {
-	 name="shark";
-	 chunk_type=.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["dangerous"] {
-	 name="dangerous";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["locomotion"] {
-	 name="locomotion";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["swimming"] {
-	 name="swimming";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["fish"] {
-	 name="fish";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["salmon"] {
-	 name="salmon";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["edible"] {
-	 name="edible";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["breathe"] {
-	 name="breathe";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["gills"] {
-	 name="gills";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["animal"] {
-	 name="animal";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["moves"] {
-	 name="moves";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["skin"] {
-	 name="skin";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["canary"] {
-	 name="canary";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["color"] {
-	 name="color";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["sings"] {
-	 name="sings";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["bird"] {
-	 name="bird";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["ostrich"] {
-	 name="ostrich";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["flies"] {
-	 name="flies";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["height"] {
-	 name="height";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["tall"] {
-	 name="tall";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["wings"] {
-	 name="wings";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["flying"] {
-	 name="flying";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["true"] {
-	 name="true";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["false"] {
-	 name="false";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["p1"] {
-	 name="p1";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="shark";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="dangerous";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p2"] {
-	 name="p2";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="shark";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="swimming";
-	  };
-	 };
-	};
-	ActrChunk @["p3"] {
-	 name="p3";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="shark";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	 };
-	};
-	ActrChunk @["p4"] {
-	 name="p4";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="salmon";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="edible";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p5"] {
-	 name="p5";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="salmon";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="swimming";
-	  };
-	 };
-	};
-	ActrChunk @["p6"] {
-	 name="p6";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="salmon";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	 };
-	};
-	ActrChunk @["p7"] {
-	 name="p7";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="breathe";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="gills";
-	  };
-	 };
-	};
-	ActrChunk @["p8"] {
-	 name="p8";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="swimming";
-	  };
-	 };
-	};
-	ActrChunk @["p9"] {
-	 name="p9";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	 };
-	};
-	ActrChunk @["p10"] {
-	 name="p10";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="moves";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p11"] {
-	 name="p11";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="skin";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p12"] {
-	 name="p12";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="color";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="yellow";
-	  };
-	 };
-	};
-	ActrChunk @["p13"] {
-	 name="p13";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="sings";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p14"] {
-	 name="p14";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	 };
-	};
-	ActrChunk @["p15"] {
-	 name="p15";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="ostrich";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="flies";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="false";
-	  };
-	 };
-	};
-	ActrChunk @["p16"] {
-	 name="p16";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="ostrich";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="height";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="tall";
-	  };
-	 };
-	};
-	ActrChunk @["p17"] {
-	 name="p17";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="ostrich";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	 };
-	};
-	ActrChunk @["p18"] {
-	 name="p18";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="wings";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p19"] {
-	 name="p19";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="flying";
-	  };
-	 };
-	};
-	ActrChunk @["p20"] {
-	 name="p20";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	 };
-	};
-	ActrChunk @["g1"] {
-	 name="g1";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["category"] {
-	   name="category";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="nil";
-	  };
-	 };
-	};
-	ActrChunk @["g2"] {
-	 name="g2";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["category"] {
-	   name="category";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="nil";
-	  };
-	 };
-	};
-	ActrChunk @["g3"] {
-	 name="g3";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["category"] {
-	   name="category";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="nil";
-	  };
-	 };
-	};
+		ActrChunk_List @. = [0] = ActrChunk .projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"].active["b"];
+		ActrChunk_List @. = [1] = ActrChunk .projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"].active["c"];
+		ActrChunk_List @. = [2] = ActrChunk .projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"].active["d"];
+		ActrChunk_List @. = [3] = ActrChunk .projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"].active["e"];
+		ActrChunk_List @. = [4] = ActrChunk .projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"].active["f"];
+		ActrChunk_List @. = [5] = ActrChunk .projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"].active["first_goal"];
        };
        active {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
-	ActrChunk @["shark"] {
-	 name="shark";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
+	ActrChunk @["b"] {
+	 name="b";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	 };
-	};
-	ActrChunk @["dangerous"] {
-	 name="dangerous";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["locomotion"] {
-	 name="locomotion";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["swimming"] {
-	 name="swimming";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["fish"] {
-	 name="fish";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["salmon"] {
-	 name="salmon";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["edible"] {
-	 name="edible";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["breathe"] {
-	 name="breathe";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["gills"] {
-	 name="gills";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["animal"] {
-	 name="animal";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["moves"] {
-	 name="moves";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["skin"] {
-	 name="skin";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["canary"] {
-	 name="canary";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["color"] {
-	 name="color";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["sings"] {
-	 name="sings";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["bird"] {
-	 name="bird";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["ostrich"] {
-	 name="ostrich";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["flies"] {
-	 name="flies";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["height"] {
-	 name="height";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["tall"] {
-	 name="tall";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["wings"] {
-	 name="wings";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["flying"] {
-	 name="flying";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["true"] {
-	 name="true";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["false"] {
-	 name="false";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["chunk"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	 };
-	};
-	ActrChunk @["p1"] {
-	 name="p1";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["first"] {
+	   name="first";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="shark";
+	   val="1";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
+	  ActrSlot @["second"] {
+	   name="second";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="dangerous";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
+	   val="2";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["p2"] {
-	 name="p2";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
+	ActrChunk @["c"] {
+	 name="c";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["first"] {
+	   name="first";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="shark";
+	   val="2";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
+	  ActrSlot @["second"] {
+	   name="second";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="swimming";
+	   val="3";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["p3"] {
-	 name="p3";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
+	ActrChunk @["d"] {
+	 name="d";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["first"] {
+	   name="first";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="shark";
+	   val="3";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
+	  ActrSlot @["second"] {
+	   name="second";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
+	   val="4";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["p4"] {
-	 name="p4";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
+	ActrChunk @["e"] {
+	 name="e";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["first"] {
+	   name="first";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="salmon";
+	   val="4";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
+	  ActrSlot @["second"] {
+	   name="second";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="edible";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
+	   val="5";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["p5"] {
-	 name="p5";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
+	ActrChunk @["f"] {
+	 name="f";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_order"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["first"] {
+	   name="first";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="salmon";
+	   val="5";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
+	  ActrSlot @["second"] {
+	   name="second";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="swimming";
+	   val="6";
+	   rel=EQUAL;
 	  };
 	 };
 	};
-	ActrChunk @["p6"] {
-	 name="p6";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
+	ActrChunk @["first_goal"] {
+	 name="first_goal";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
-	  name=;
+	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["start"] {
+	   name="start";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="salmon";
+	   val="2";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
+	  ActrSlot @["end"] {
+	   name="end";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="category";
+	   val="4";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["value"] {
-	   name="value";
+	  ActrSlot @["count"] {
+	   name="count";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="fish";
-	  };
-	 };
-	};
-	ActrChunk @["p7"] {
-	 name="p7";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="breathe";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="gills";
-	  };
-	 };
-	};
-	ActrChunk @["p8"] {
-	 name="p8";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="swimming";
-	  };
-	 };
-	};
-	ActrChunk @["p9"] {
-	 name="p9";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	 };
-	};
-	ActrChunk @["p10"] {
-	 name="p10";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="moves";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p11"] {
-	 name="p11";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="skin";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p12"] {
-	 name="p12";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="color";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="yellow";
-	  };
-	 };
-	};
-	ActrChunk @["p13"] {
-	 name="p13";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="sings";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p14"] {
-	 name="p14";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	 };
-	};
-	ActrChunk @["p15"] {
-	 name="p15";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="ostrich";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="flies";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="false";
-	  };
-	 };
-	};
-	ActrChunk @["p16"] {
-	 name="p16";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="ostrich";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="height";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="tall";
-	  };
-	 };
-	};
-	ActrChunk @["p17"] {
-	 name="p17";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="ostrich";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	 };
-	};
-	ActrChunk @["p18"] {
-	 name="p18";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="wings";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="true";
-	  };
-	 };
-	};
-	ActrChunk @["p19"] {
-	 name="p19";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="locomotion";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="flying";
-	  };
-	 };
-	};
-	ActrChunk @["p20"] {
-	 name="p20";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["property"]$;
-	 flags=ELIGIBLE;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["attribute"] {
-	   name="attribute";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="category";
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	 };
-	};
-	ActrChunk @["g1"] {
-	 name="g1";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["category"] {
-	   name="category";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="bird";
-	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="nil";
-	  };
-	 };
-	};
-	ActrChunk @["g2"] {
-	 name="g2";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["category"] {
-	   name="category";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="animal";
-	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="nil";
-	  };
-	 };
-	};
-	ActrChunk @["g3"] {
-	 name="g3";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
-	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
-	 slots {
-	  name=;
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="canary";
-	  };
-	  ActrSlot @["category"] {
-	   name="category";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="fish";
-	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="nil";
+	   val=;
+	   rel=EQUAL;
 	  };
 	 };
 	};
@@ -5784,47 +3167,63 @@ LeabraProject .projects["actr"] {
       ActrGoalModule @["goal"] {
        name="goal";
        desc=;
-       buffer=$.projects["actr"].programs["ActRTest"].objs["semantic"].buffers["goal"]$;
+       buffer=$.projects["actr"].programs["ActRTest"].objs["count"].buffers["goal"]$;
        flags=0;
        init_chunk {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
-	ActrChunk @["g2"] {
-	 name="g2";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
+	ActrChunk @["first_goal"] {
+	 name="first_goal";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["start"] {
+	   name="start";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="canary";
+	   val="2";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["category"] {
-	   name="category";
+	  ActrSlot @["end"] {
+	   name="end";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="animal";
+	   val="4";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
+	  ActrSlot @["count"] {
+	   name="count";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="nil";
+	   val=;
+	   rel=EQUAL;
 	  };
 	 };
 	};
        };
+      };
+      ActrImaginalModule @["imaginal"] {
+       name="imaginal";
+       desc=;
+       buffer=.projects["actr"].programs["ActRTest"].objs["count"].buffers["imaginal"]$$;
+       flags=0;
+       imaginal_delay {name="Random_4": type=NONE: mean=0.2000000029802322: var=0: par=1: };
+       action_buffer=.projects["actr"].programs["ActRTest"].objs["count"].buffers["imaginal_action"]$$;
+      };
+      ActrVisionModule @["vision"] {
+       name="vision";
+       desc=;
+       buffer=.projects["actr"].programs["ActRTest"].objs["count"].buffers["visual_location"]$$;
+       flags=0;
       };
      };
      buffers {
@@ -5840,7 +3239,7 @@ LeabraProject .projects["actr"] {
 	el_typ=ActrChunk;
 	el_def=0;
        };
-       module=.projects["actr"].programs["ActRTest"].objs["semantic"].modules["procedural"]$$;
+       module=.projects["actr"].programs["ActRTest"].objs["count"].modules["procedural"]$$;
        act_total=0;
       };
       ActrBuffer @["retrieval"] {
@@ -5852,7 +3251,7 @@ LeabraProject .projects["actr"] {
 	el_typ=ActrChunk;
 	el_def=0;
        };
-       module=.projects["actr"].programs["ActRTest"].objs["semantic"].modules["declarative"]$$;
+       module=.projects["actr"].programs["ActRTest"].objs["count"].modules["declarative"]$$;
        act_total=0;
       };
       ActrBuffer @["goal"] {
@@ -5863,46 +3262,96 @@ LeabraProject .projects["actr"] {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
-	ActrChunk @["g2"] {
-	 name="g2";
-	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["semantic"].chunk_types["is_member"]$;
+	ActrChunk @["first_goal"] {
+	 name="first_goal";
+	 chunk_type=$.projects["actr"].programs["ActRTest"].objs["count"].chunk_types["count_from"]$;
 	 flags=0;
-	 n_act=0;
-	 t_new=0;
-	 base_act=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_ret=-1: };
 	 slots {
 	  name=;
 	  el_typ=ActrSlot;
 	  el_def=0;
-	  ActrSlot @["object"] {
-	   name="object";
+	  ActrSlot @["start"] {
+	   name="start";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="bird";
+	   val="2";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["category"] {
-	   name="category";
+	  ActrSlot @["end"] {
+	   name="end";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="animal";
+	   val="4";
+	   rel=EQUAL;
 	  };
-	  ActrSlot @["judgment"] {
-	   name="judgment";
+	  ActrSlot @["count"] {
+	   name="count";
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="yes";
+	   val=;
+	   rel=EQUAL;
 	  };
 	 };
 	};
        };
-       module=.projects["actr"].programs["ActRTest"].objs["semantic"].modules["goal"]$$;
+       module=.projects["actr"].programs["ActRTest"].objs["count"].modules["goal"]$$;
+       act_total=1;
+      };
+      ActrBuffer @["imaginal"] {
+       name="imaginal";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name="ActrChunk_List_0";
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=.projects["actr"].programs["ActRTest"].objs["count"].modules["imaginal"]$$;
+       act_total=0;
+      };
+      ActrBuffer @["imaginal_action"] {
+       name="imaginal_action";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name="ActrChunk_List_0";
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=$.projects["actr"].programs["ActRTest"].objs["count"].modules["imaginal"]$;
+       act_total=0;
+      };
+      ActrBuffer @["visual"] {
+       name="visual";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name="ActrChunk_List_0";
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=.projects["actr"].programs["ActRTest"].objs["count"].modules["vision"]$$;
+       act_total=0;
+      };
+      ActrBuffer @["visual_location"] {
+       name="visual_location";
+       desc=;
+       flags=DM_MERGE;
+       active {
+	name="ActrChunk_List_0";
+	el_typ=ActrChunk;
+	el_def=0;
+       };
+       module=$.projects["actr"].programs["ActRTest"].objs["count"].modules["vision"]$;
        act_total=0;
       };
      };
-     cur_event_idx=16;
+     cur_event_idx=0;
      log_table=.projects["actr"].programs["ActRTest"].objs["ActrLogTable"]$$;
      load_debug=0;
     };
@@ -5921,11 +3370,11 @@ LeabraProject .projects["actr"] {
     name="ProgVar_List_0";
     el_typ=ProgVar;
     el_def=0;
-    ProgVar @["semantic"] {
-     name="semantic";
+    ProgVar @["count"] {
+     name="count";
      var_type=T_Object;
      object_type=ActrModel;
-     object_val=.projects["actr"].programs["ActRTest"].objs["semantic"]$$;
+     object_val=.projects["actr"].programs["ActRTest"].objs["count"]$$;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -5968,7 +3417,7 @@ LeabraProject .projects["actr"] {
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="TestModel.Init()";
      result_var=NULL;
-     obj=.projects["actr"].programs["ActRTest"].vars["semantic"]$$;
+     obj=.projects["actr"].programs["ActRTest"].vars["count"]$$;
      method=ActrModel::Init;
      meth_args {
       name="ProgArg_List_0";
@@ -5996,7 +3445,7 @@ LeabraProject .projects["actr"] {
      flags=WARNING|CAN_REVERT_TO_CODE;
      orig_prog_code="TestModel.Init()";
      result_var=NULL;
-     obj=$.projects["actr"].programs["ActRTest"].vars["semantic"]$;
+     obj=$.projects["actr"].programs["ActRTest"].vars["count"]$;
      method=ActrModel::Run;
      meth_args {
       name="ProgArg_List_0";

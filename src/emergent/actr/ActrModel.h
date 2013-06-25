@@ -38,6 +38,23 @@ class ActrVisionModule; //
 class ActrModel; //
 SmartRef_Of(ActrModel); // ActrModelRef
 
+
+eTypeDef_Of(ActrGlobalParams);
+
+class E_API ActrGlobalParams : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_ActR global parameters for ACT-R models
+INHERITED(taOBase)
+public:
+  bool          enable_sub_symbolic; // :esc in ACT-R -- enable the sub-symbolic computations for choosing items from declarative memory and selecting productions, when multiple are available
+  bool          enable_rnd;     // :er in ACT-R -- enable random tie-breaking -- only likely to occur when enable_sub_symbolic is off (or noise params are set to 0) -- when enable_rnd is on, then when multiple productions match, one is chosen at random
+  
+  TA_SIMPLE_BASEFUNS(ActrGlobalParams);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+
 eTypeDef_Of(ActrModel);
 
 class E_API ActrModel : public taNBase {
@@ -46,7 +63,7 @@ INHERITED(taNBase)
 public:
   enum ModelFlags { // #BITS ActR model flags
     MF_NONE             = 0, // #NO_BIT
-    LOG_EVENTS          = 0x0001, // log all events processed to data table
+    LOG_EVENTS          = 0x0001, // log all events processed to data table -- otherwise does not log any events -- specific modules also have more detailed levels of logging available
     UPDATE_GUI          = 0x0002, // update the gui display with state changes so you can see which productions fired and which chunks were selected
     SAVE_ALL_EVENTS     = 0x0004, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
   };
@@ -70,6 +87,7 @@ public:
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this model
   ModelFlags            flags; // misc flags for controlling behavior of the model
   float                 cur_time;   // #READ_ONLY #SHOW current time in the model
+  ActrGlobalParams      params;     // global parameters
 
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
@@ -97,6 +115,7 @@ public:
   String                load_comment; // #IGNORE last comment processed
   String                load_name;     // #IGNORE return val for last name read
   String                load_string;  // #IGNORE return val for last string read
+  String                load_param;  // #IGNORE current parameter
   YY_Flags              load_state;  // #IGNORE state of current parse
   ActrChunkTypeRef      load_chtype;  // #IGNORE current chunk type
   ActrChunkRef          load_chunk;   // #IGNORE current chunk
@@ -209,6 +228,10 @@ public:
   // #IGNORE init keywords
   virtual void          ParseErr(const char* er);
   // #IGNORE parsing error handling routine
+
+  virtual void          SetParam(const String& param_nm, Variant par1,
+                                 Variant par2 = _nilVariant);
+  // #CAT_ActR set parameter -- parses standard ACT-R parameter names
 
   virtual void          ResetModel();
   // #EXPERT reset the model entirely -- remove everything from existing model -- use with caution!

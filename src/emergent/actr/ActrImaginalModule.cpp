@@ -32,11 +32,17 @@ void ActrImaginalModule::InitModule() {
   buffer->module = this;
   buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
   buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // imaginal doesn't do this!
+  if(made_new) {
+    buffer->act_total = 0.0f;   // imaginal-activation
+  }
 
-  buffer = mod->buffers.FindMakeNameType("imaginal-action", NULL, made_new);
-  buffer->module = this;
-  buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
-  buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // imaginal doesn't do this!
+  action_buffer = mod->buffers.FindMakeNameType("imaginal-action", NULL, made_new);
+  action_buffer->module = this;
+  action_buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
+  action_buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // imaginal doesn't do this!
+  if(made_new) {
+    action_buffer->act_total = 0.0f;   // imaginal-activation
+  }
 }
 
 void ActrImaginalModule::Init() {

@@ -16,14 +16,41 @@
 #include "ActrDeclarativeModule.h"
 
 #include <ActrModel>
+#include <taMath_double>
+#include <Random>
 
-void DeclarativeParams::Initialize() {
+void ActrActParams::Initialize() {
+  learn = false;
+  decay = 0.5f;
+  inst_noise = 0.0f;
+  perm_noise = 0.0f;
+  init = 0.0f;
+  n_finst = 4;
+  finst_span = 3.0f;
+}
 
+void ActrRetrievalParams::Initialize() {
+  thresh = 0.0f;
+  time_pow = 1.0f;
+  time_gain = 1.0f;
+}
+
+void ActrPartialParams::Initialize() {
+  on = false;
+  mismatch_p = 1.0f;            // todo: std val?
+  max_diff = -1.0f;
+  max_sim = 0.0f;
+}
+
+void ActrAssocParams::Initialize() {
+  on = false;
+  max_str = 1.0f;               // todo: std val?
+  neg_ok = false;
 }
 
 
 void ActrDeclarativeModule::Initialize() {
-
+  trace_level = NO_TRACE;
 }
 
 void ActrDeclarativeModule::InitModule() {
@@ -34,12 +61,26 @@ void ActrDeclarativeModule::InitModule() {
   buffer = mod->buffers.FindMakeNameType("retrieval", NULL, made_new);
   buffer->module = this;
   buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
+  if(made_new) {
+    buffer->act_total = 0.0f;
+  }
 }
 
 void ActrDeclarativeModule::Init() {
   inherited::Init();
   active.Reset();
-  active.CopyFrom(&init_chunks);
+  retrieved = NULL;
+  finsts.Reset();
+  eligible.Reset();
+  AddInitChunks();
+}
+
+void ActrDeclarativeModule::AddInitChunks() {
+  active.Reset();
+  for(int i=0; i<init_chunks.size; i++) {
+    ActrChunk* ck = init_chunks.FastEl(i);
+    AddChunk(ck, false);        // false = no merge
+  }
 }
 
 void ActrDeclarativeModule::ProcessEvent(ActrEvent& event) {
@@ -63,14 +104,6 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
     return;
   }
 
-  // todo: what if currently busy
-  // ;; If the module has not completed the last request
-  // (when (dm-busy dm)
-  //   ;; Report a warning about that and remove the unexecuted event 
-  //   ;; from the queue.
-  //   (model-warning "A retrieval event has been aborted by a new request")
-  //   (delete-event (dm-busy dm)))
-
   ActrModel* mod = Model();
 
   if(HasModuleFlag(BUSY)) {
@@ -85,10 +118,32 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
   ClearModuleFlag(ERROR);
   buffer->SetReq();
   buffer->ClearChunk();         // always clear before recall
-  bool got_some = FindMatching(ck);
+
+  RemoveOldFinsts();            // update the list to current time
+
+  ComputeAct();                 // compute the activations for everyone
+
+  Recency recency = NO_RECENCY;
+  if(event.params.contains("recently_retrieved ")) {
+    String val = event.params.after("recently_retrieved ");
+    if(val.contains("reset")) {
+      finsts.Reset();
+    }
+    else if(val.contains("nil") || val.contains("false")) {
+      recency = NOT_RECENT;
+    }
+    else {
+      recency = RECENT;
+    }
+  }
+
+  bool got_some = FindMatchingRetrieval(ck, recency);
+  float rt = 0.0f;            // hard coded default latency for failure if non-esc
   if(!got_some) {
-    // todo: model retrieval time
-    mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
+    if(mod->params.enable_sub_symbolic) {
+      rt = ret.GetRt(ret.thresh);
+    }
+    mod->ScheduleEvent(rt, ActrEvent::max_pri, this, this, buffer,
                        "RETRIEVAL-FAILURE", "", event.act_arg);
     return;
   }
@@ -96,23 +151,27 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
     retrieved = eligible.FastEl(0);
   }
   else {
-    // todo: do utility-based selection of top guy
-    retrieved = eligible.FastEl(0); // just pick the first one for now!!
-    TestWarning(true, "RetrievalRequest",
-                "activity-based selection not avail yet, using first element of:",
-                (String)eligible.size, "that matched");
+    ChooseFromEligible();
   }
-  // todo: model retrieval time
-  retrieved->SetChunkFlag(ActrChunk::RETRIEVED);
-  if(mod->UpdateGui()) {
-    retrieved->SigEmitUpdated();
+
+  if(mod->params.enable_sub_symbolic) {
+    rt = ret.GetRt(retrieved->act.act);
   }
-  mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
+
+  mod->ScheduleEvent(rt, ActrEvent::max_pri, this, this, buffer,
                      "RETRIEVED-CHUNK", retrieved->name, event.act_arg,
                      retrieved);
 }
 
 void ActrDeclarativeModule::RetrievedChunk(ActrEvent& event) {
+  ActrModel* mod = Model();
+  retrieved->SetChunkFlag(ActrChunk::RETRIEVED);
+  retrieved->ChunkActivated();      // increment use
+  if(mod->UpdateGui()) {
+    retrieved->SigEmitUpdated();
+  }
+  UpdateFinsts();                 // uses retrieved
+
   buffer->UpdateChunk(retrieved); // should be clear..
   ClearModuleFlag(BUSY);
   buffer->ClearReq();
@@ -120,34 +179,100 @@ void ActrDeclarativeModule::RetrievedChunk(ActrEvent& event) {
 
 void ActrDeclarativeModule::RetrievalFailure(ActrEvent& event) {
   ClearModuleFlag(BUSY);
-  SetModuleFlag(ERROR);         // todo: when are errors cleared??
+  SetModuleFlag(ERROR);
   buffer->ClearReq();
 }
 
-bool ActrDeclarativeModule::AddChunk(ActrChunk* ck, bool merge) {
-  if(merge) {
-    bool match = FindMatching(ck);
-    if(!match || eligible.size > 1) { // none or too many
-      eligible.Reset();
-      AddChunk(ck, false);
-      return false;             // not merged
-    }
-    // todo: what to do to merge values??
-    ActrChunk* mck = eligible[0];
-    UpdateBaseAct(mck);
-  }
-  else {
-    active.Add(ck);             // todo: transfer?  some issues of ref counting here
-    UpdateBaseAct(ck);
-  }
-  return true;
+void ActrDeclarativeModule::ComputeAct() {
+  ComputeBaseAct();
+  ComputeSpreadAct();
+  ComputePartialAct();
+  ComputeTotalAct();
 }
 
-bool ActrDeclarativeModule::FindMatching(ActrChunk* ck) {
+void ActrDeclarativeModule::ComputeBaseAct() {
+  if(!act.learn) return;
   ActrModel* mod = Model();
-  eligible.Reset();
+  const float cur_t = mod->cur_time;
   for(int i=0; i<active.size; i++) {
     ActrChunk* oc = active.FastEl(i);
+    oc->ComputeBaseAct(cur_t, act.decay);
+  }
+}
+
+void ActrDeclarativeModule::ComputeSpreadAct() {
+  if(!assoc.on) return;
+  if(TestError(assoc.on, "ComputeSpreadAct",
+               "spreading activation computation not yet implemented -- please turn assoc.on to off for now")) {
+    return;
+  }
+}
+
+void ActrDeclarativeModule::ComputePartialAct() {
+  if(!partial.on) return;
+  if(TestError(partial.on, "ComputePartialAct",
+               "partial matching activation computation not yet implemented -- please turn partial.on to off for now")) {
+    return;
+  }
+}
+
+void ActrDeclarativeModule::ComputeTotalAct() {
+  ActrModel* mod = Model();
+  const float cur_t = mod->cur_time;
+  for(int i=0; i<active.size; i++) {
+    ActrChunk* oc = active.FastEl(i);
+    float instn = act.inst_noise * taMath_double::gauss_dev();
+    oc->act.ComputeAct(instn);
+  }
+}
+
+void ActrDeclarativeModule::RemoveOldFinsts() {
+  ActrModel* mod = Model();
+  for(int i=finsts.size-1; i >= 0; i--) {
+    ActrChunk* oc = finsts.FastEl(i);
+    if(mod->cur_time - oc->time.t_ret > act.finst_span) {
+      oc->ClearChunkFlag(ActrChunk::RECENT);
+      finsts.RemoveIdx(i);
+    }
+  }
+}
+
+void ActrDeclarativeModule::UpdateFinsts() {
+  ActrModel* mod = Model();
+  if(finsts.size < act.n_finst) {
+    finsts.Link(retrieved);      // just add it
+  }
+  else {
+    float oldest_t = 0.0f;
+    int oldest_i = 0;
+    for(int i=finsts.size-1; i >= 0; i--) {
+      ActrChunk* oc = finsts.FastEl(i);
+      float tm = mod->cur_time - oc->time.t_ret;
+      if(tm > oldest_t) {
+        oldest_t = tm;
+        oldest_i = i;
+      }
+    }
+    finsts.FastEl(oldest_i)->ClearChunkFlag(ActrChunk::RECENT);
+    finsts.ReplaceLinkIdx(oldest_i, retrieved); // replace the oldest
+  }
+  retrieved->SetChunkFlag(ActrChunk::RECENT);
+}
+
+bool ActrDeclarativeModule::FindMatchingRetrieval(ActrChunk* ck, Recency recency) {
+  ActrModel* mod = Model();
+  eligible.Reset();
+  ActrChunk_List* lst = &active;
+  if(recency == RECENT)
+    lst = &finsts;
+  for(int i=0; i<lst->size; i++) {
+    ActrChunk* oc = lst->FastEl(i);
+    if(recency == NOT_RECENT) {
+      if(oc->HasChunkFlag(ActrChunk::RECENT)) continue; // skip
+    }
+    if(mod->params.enable_sub_symbolic && oc->act.act < ret.thresh) {
+      continue;
+    }
     bool updt = false;
     if(mod->UpdateGui()) {
       if(oc->HasChunkFlag(ActrChunk::ELIGIBLE) ||
@@ -156,6 +281,7 @@ bool ActrDeclarativeModule::FindMatching(ActrChunk* ck) {
     }
     oc->ClearChunkFlag(ActrChunk::ELIGIBLE);
     oc->ClearChunkFlag(ActrChunk::RETRIEVED);
+    // todo: partial matching
     if(ck->MatchesMem(oc, false)) { // false = not exact..
       eligible.Link(oc);
       oc->SetChunkFlag(ActrChunk::ELIGIBLE);
@@ -167,8 +293,78 @@ bool ActrDeclarativeModule::FindMatching(ActrChunk* ck) {
   return (eligible.size > 0);
 }
 
-float ActrDeclarativeModule::UpdateBaseAct(ActrChunk* ck) {
-  // todo: write code for this
-  return 0.5f;
+void ActrDeclarativeModule::ChooseFromEligible() {
+  int best_idx = 0;
+  float best_act = -1.0e6f;
+  int_Array ties;
+  ActrModel* mod = Model();
+  for(int i=0; i<eligible.size; i++) {
+    ActrChunk* pr = eligible.FastEl(i);
+    float eff_act = pr->act.act;
+    if(!mod->params.enable_sub_symbolic) {
+      eff_act = 0.0f;   // will turn everything into a tie and engage that mech
+    }
+    if(eff_act > best_act) {
+      ties.Reset();
+      ties.Add(i);              // we always want us to be in the tie set
+      best_idx = i;
+      best_act = eff_act;
+    }
+    else if(eff_act == best_act) { // keep track of ties
+      ties.Add(i);
+    }
+  }
+  if(ties.size > 1) {
+    if(mod->params.enable_rnd) {
+      int choose = Random::IntZeroN(ties.size);
+      retrieved = eligible.FastEl(ties[choose]);
+    }
+    else {
+      retrieved = eligible.FastEl(best_idx); // just choose first
+    }
+  }
+  else {
+    retrieved = eligible.FastEl(best_idx);
+  }
+}
+
+bool ActrDeclarativeModule::FindMatchingBasic(ActrChunk* ck, ActrChunk_List& lst,
+                                              ActrChunk_List& matches) {
+  ActrModel* mod = Model();
+  matches.Reset();
+  for(int i=0; i<lst.size; i++) {
+    ActrChunk* oc = lst.FastEl(i);
+    if(ck->MatchesMem(oc, false)) { // false = not exact..
+      matches.Link(oc);
+    }
+  }
+  return (matches.size > 0);
+}
+
+bool ActrDeclarativeModule::AddChunk(ActrChunk* ck, bool merge) {
+  ActrModel* mod = Model();
+  if(merge) {
+    bool match = FindMatchingBasic(ck, active, tmp_match);
+    if(!match || tmp_match.size > 1) { // none or too many
+      tmp_match.Reset();
+      AddChunk(ck, false);      // go through non-merge branch
+      return false;             // not merged
+    }
+    // todo: what to do to merge values??
+    ActrChunk* mck = tmp_match[0];
+    mck->ChunkActivated();      // increment use
+  }
+  else {
+    ActrChunk* nw_ck = (ActrChunk*)ck->Clone(); // make a copy
+    nw_ck->CopyName(ck);
+    active.Add(nw_ck);
+    nw_ck->NewDMChunk(mod->cur_time);
+    // todo: need to fix noise equivalencies!
+    nw_ck->act.noise = act.perm_noise * taMath_double::gauss_dev();
+    if(!act.learn) {
+      nw_ck->act.base = act.init;
+    }
+  }
+  return true;
 }
 

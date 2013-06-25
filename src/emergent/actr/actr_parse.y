@@ -66,6 +66,7 @@ int aplex();
 %type   <prod>   prod
 %type   <slt>    chunk_slot cond_slot act_slot
 %type   <num>    apnum
+%type   <chr>    sgp_param_nm
 
 %left	'*'
 %left   '('
@@ -114,12 +115,12 @@ sgp_params: sgp_param
         | sgp_params sgp_param
         ;
 
-sgp_param: sgp_param_nm AP_NAME  { }
-        | sgp_param_nm apnum     { }
-        | sgp_param_nm '(' apnum apnum ')' { }
+sgp_param: sgp_param_nm AP_NAME  { AMCP->SetParam($1, $2); }
+        | sgp_param_nm apnum     { AMCP->SetParam($1, $2); }
+        | sgp_param_nm '(' apnum apnum ')' { AMCP->SetParam($1, $3, $4); }
         ;
 
-sgp_param_nm: ':' AP_NAME  { /* todo: write overall param parser */ }
+sgp_param_nm: ':' AP_NAME  { AMCP->load_param = $2; $$ = AMCP->load_param; }
         ;
 
 chunktype: chunktype_nm	slots ')'	{ }
@@ -190,11 +191,23 @@ prod_name: '(' AP_PROD AP_NAME {
            ActrProceduralModule* pmod = AMCP->ProceduralModule();
            bool made_new = false;
            AMCP->load_prod = pmod->productions.FindMakeNameType($3, NULL, made_new); }
+         | '(' AP_PROD '*' AP_NAME {
+           ActrProceduralModule* pmod = AMCP->ProceduralModule();
+           bool made_new = false;
+           AMCP->load_prod = pmod->productions.FindMakeNameType($4, NULL, made_new);
+           AMCP->load_prod->SetProdFlag(ActrProduction::PSTAR); }
          | '(' AP_PROD AP_NAME AP_STRING {
            ActrProceduralModule* pmod = AMCP->ProceduralModule();
            bool made_new = false;
            AMCP->load_prod = pmod->productions.FindMakeNameType($3, NULL, made_new);
            AMCP->load_prod->desc = $4; }
+         | '(' AP_PROD '*' AP_NAME AP_STRING {
+           ActrProceduralModule* pmod = AMCP->ProceduralModule();
+           bool made_new = false;
+           AMCP->load_prod = pmod->productions.FindMakeNameType($4, NULL, made_new);
+           AMCP->load_prod->desc = $5;
+           AMCP->load_prod->SetProdFlag(ActrProduction::PSTAR); }
+         ;
 
 prod_lhs:  prod_cond
          | prod_lhs prod_cond

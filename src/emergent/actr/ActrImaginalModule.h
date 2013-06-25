@@ -31,6 +31,7 @@ class E_API ActrImaginalModule : public ActrModule {
 INHERITED(ActrModule)
 public:
   Random         imaginal_delay; // time in seconds it takes for a request or modification to the imaginal buffer to complete -- default is non-random, .2 secons
+  ActrBufferRef  action_buffer; // the imaginal-action buffer for this module
 
   virtual void   ImaginalRequest(ActrEvent& event);
   // #CAT_ActR process imaginal buffer request

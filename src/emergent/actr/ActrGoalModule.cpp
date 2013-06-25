@@ -28,7 +28,10 @@ void ActrGoalModule::InitModule() {
   buffer = mod->buffers.FindMakeNameType("goal", NULL, made_new);
   buffer->module = this;
   buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
-  buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // goal doesn't do this!
+  buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // goal doesn't do this! 
+  if(made_new) {
+    buffer->act_total = 1.0f;   // default ga
+  }
 }
 
 void ActrGoalModule::ProcessEvent(ActrEvent& event) {

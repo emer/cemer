@@ -26,6 +26,11 @@
 
 #include <taMisc>
 
+void ActrGlobalParams::Initialize() {
+  enable_sub_symbolic = false;
+  enable_rnd = false;
+}
+
 NameVar_Array ActrModel::load_keywords;
 ActrModelRef  ActrModel::cur_parse;
 
@@ -367,3 +372,154 @@ void ActrModel::ResetModel() {
   DefaultConfig();
 }
 
+void ActrModel::SetParam(const String& param_nm, Variant par1,
+                         Variant par2) {
+  if(par1.isStringType() && par1.toString() == "t") {
+    par1 = true;
+  }
+  if(par1.isStringType() && par1.toString() == "nil") {
+    par1 = false;
+  }
+
+  ActrProceduralModule* pmod = ProceduralModule();
+  ActrDeclarativeModule* dmod = DeclarativeModule();
+  ActrGoalModule* gmod = GoalModule();
+  ActrImaginalModule* imod = ImaginalModule();
+
+  bool got = false;
+
+  if(param_nm == "esc") {
+    params.enable_sub_symbolic = par1.toBool();
+    got = true;
+  }
+  else if(param_nm == "er") {
+    params.enable_rnd = par1.toBool();
+    got = true;
+  }
+  else if(param_nm == "ul" && pmod) {
+    pmod->util.learn = par1.toBool();
+    got = true;
+  }
+  else if(param_nm == "alpha" && pmod) {
+    pmod->util.lrate = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "iu" && pmod) {
+    pmod->util.init = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "egs" && pmod) {
+    pmod->util.noise = par1.toFloat();
+    pmod->util.UpdateAfterEdit();
+    got = true;
+  }
+  else if(param_nm == "ut" && pmod) {
+    pmod->util.thresh = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "crt" && pmod) {
+    pmod->trace_level = ActrProceduralModule::TRACE_ALL;
+    got = true;
+  }
+  else if(param_nm == "cst" && pmod) {
+    pmod->trace_level = ActrProceduralModule::TRACE_ELIG;
+    got = true;
+  }
+  else if(param_nm == "ult" && pmod) {
+    pmod->trace_level = ActrProceduralModule::UTIL_LEARN;
+    got = true;
+  }
+  else if(param_nm == "bll" && dmod) {
+    if(!par1.toBool())
+      dmod->act.learn = false;
+    else {
+      dmod->act.learn = true;
+      dmod->act.decay = par1.toFloat();
+    }
+    got = true;
+  }
+  else if(param_nm == "ans" && dmod) {
+    dmod->act.inst_noise = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "pas" && dmod) {
+    dmod->act.perm_noise = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "blc" && dmod) {
+    dmod->act.init = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "declarative_num_finsts" && dmod) {
+    dmod->act.n_finst = par1.toInt();
+    got = true;
+  }
+  else if(param_nm == "declarative_finst_span" && dmod) {
+    dmod->act.finst_span = par1.toInt();
+    got = true;
+  }
+  else if(param_nm == "rt" && dmod) {
+    dmod->ret.thresh = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "le" && dmod) {
+    dmod->ret.time_pow = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "lf" && dmod) {
+    dmod->ret.time_gain = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "mp" && dmod) {
+    if(!par1.toBool())
+      dmod->partial.on = false;
+    else {
+      dmod->partial.on = true;
+      dmod->partial.mismatch_p = par1.toFloat();
+    }
+    got = true;
+  }
+  else if(param_nm == "md" && dmod) {
+    dmod->partial.max_diff = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "ms" && dmod) {
+    dmod->partial.max_sim = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "mas" && dmod) {
+    if(!par1.toBool())
+      dmod->assoc.on = false;
+    else {
+      dmod->assoc.on = true;
+      dmod->assoc.max_str = par1.toFloat();
+    }
+    got = true;
+  }
+  else if(param_nm == "nsji" && dmod) {
+    dmod->assoc.neg_ok = par1.toBool();
+    got = true;
+  }
+  else if((param_nm == "act" || param_nm == "sact") && dmod) {
+    if(par1.toString() == "low")
+      dmod->trace_level = ActrDeclarativeModule::TRACE_MATCH;
+    else
+      dmod->trace_level = ActrDeclarativeModule::TRACE_ALL;
+    got = true;
+  }
+  else if(param_nm == "ga" && gmod && gmod->buffer) {
+    gmod->buffer->act_total = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "imaginal_activation" && imod && imod->buffer) {
+    imod->buffer->act_total = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "imaginal_action_activation" && imod && imod->buffer) {
+    imod->buffer->act_total = par1.toFloat();
+    got = true;
+  }
+
+  TestWarning(!got, "SetParam", "was not able to process parameter named:",
+              param_nm);
+}

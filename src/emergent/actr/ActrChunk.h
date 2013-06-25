@@ -31,6 +31,46 @@
 // declare all other types mentioned but not required to include:
 class ActrProduction; //
 
+eTypeDef_Of(ActrActVals);
+
+class E_API ActrActVals : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_ActR actr activation values associated with a given chunk
+INHERITED(taOBase)
+public:
+  float                 act;     // overall chunk activation = act_base + act_spread + act_match + act_noise + inst_noise
+  float                 base;   // base level activation = ln(n_act / (1-d)) - d * ln(time - t_new) where time = current time and d = decay parameter (optimized calculation)
+  float                 spread; // spreading activation through associative strengths from chunks in active buffers
+  float                 match;  // activation derived from partial matching
+  float                 noise;  // permanent noise established when chunk created
+  
+  inline float    ComputeAct(float inst_noise) {
+    act = base + spread + match + noise + inst_noise;
+    return act;
+  }
+  // compute the overall activation from all of the activation components
+  
+  TA_SIMPLE_BASEFUNS(ActrActVals);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+eTypeDef_Of(ActrActTimeVals);
+
+class E_API ActrActTimeVals : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_ActR actr activation timing values associated with a given chunk
+INHERITED(taOBase)
+public:
+  float                 n_act;      // number of times chunk has been activated
+  float                 t_new;      // time when chunk was created
+  float                 t_ret;      // time when chunk was last retrieved
+  
+  TA_SIMPLE_BASEFUNS(ActrActTimeVals);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 eTypeDef_Of(ActrChunk);
 
 class E_API ActrChunk : public taNBase {
@@ -42,13 +82,13 @@ public:
     RETRIEVED           = 0x0001, // this chunk was just retrieved on last retrieval
     ELIGIBLE            = 0x0002, // this chunk was eligible to be retrieved on last retrieval
     RECENT              = 0x0004, // this chunk was recently retrieved -- some productions may want to ignore
+    ALL_STATE_FLAGS     = RETRIEVED | ELIGIBLE | RECENT, // #NO_BIT all the DM state flags
   };
 
   ActrChunkTypeRef      chunk_type; // the type of this chunk -- enforces our structure to match
   ChunkFlags            flags;      // #READ_ONLY #SHOW flags indicating state of the chunk
-  float                 n_act;      // #READ_ONLY #SHOW number of times chunk has been activated
-  float                 t_new;      // #READ_ONLY #SHOW time when chunk was created
-  float                 base_act;   // #READ_ONLY #SHOW base level activation = ln(n_act / (1-d)) - d * ln(time - t_new) where time = current time and d = decay parameter (optimized calculation)
+  ActrActVals           act;        // #READ_ONLY #SHOW activation values for the chunk
+  ActrActTimeVals       time;       // #READ_ONLY #SHOW activation timing values for the chunk -- when created, accessed, etc
   ActrSlot_List         slots;      // #NO_EXPAND_ALL the slot values -- same number as slots in chunk_type
 
   inline void           SetChunkFlag(ChunkFlags flg)
@@ -67,12 +107,20 @@ public:
   { SetChunkFlagState(flg, !HasChunkFlag(flg)); }
   // #CAT_Flags toggle flag
 
-  inline float Compute_BaseAct(float time, float decay) {
-    if(n_act == 0) base_act = 0.0f;
+  inline void   ChunkActivated() { time.n_act += 1.0f; }
+  // #CAT_ActR chunk was activated -- update its activation count
+  inline void   NewDMChunk(float cur_time) 
+  { time.t_new = cur_time; time.n_act = 1.0f; time.t_ret = -1.0f;
+    ClearChunkFlag(ALL_STATE_FLAGS); }
+  // #CAT_ActR initialize the chunk as a new chunk in declarative memory
+
+  inline float ComputeBaseAct(float cur_t, float decay) {
+    if(time.n_act == 0) act.base = 0.0f;
     else {
-      base_act = std::log(n_act / (1.0f - decay)) - decay * std::log(time - t_new);
+      act.base = std::log(time.n_act / (1.0f - decay))
+        - decay * std::log(cur_t - time.t_new);
     }
-    return base_act;
+    return act.base;
   }
   // #CAT_ActR compute the base-level activation as a function of current time and decay parameter
 
