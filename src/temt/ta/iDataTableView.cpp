@@ -126,6 +126,8 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   if (!tab) return;
   taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
 
+//  this->resizeColumnsToContents();
+
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
@@ -171,6 +173,11 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
           tab->RemoveCol(col);
         }
         tab->StructUpdate(false);
+      }
+    }
+    else if (op_code & OP_RESIZE_TO_CONTENT) {
+      for (int col = sel.col_to; col >= sel.col_fr; --col) {
+        this->resizeColumnToContents(col);
       }
     }
   }

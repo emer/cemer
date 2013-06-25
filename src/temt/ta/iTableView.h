@@ -98,12 +98,13 @@ signals:
 
 protected:
   enum RowColOpCode {
-    OP_APPEND           = 0x01,
-    OP_INSERT           = 0x02,
-    OP_DUPLICATE        = 0x04,
-    OP_DELETE           = 0x08,
-    OP_ROW              = 0x40,
-    OP_COL              = 0x80
+    OP_APPEND             = 0x001,
+    OP_INSERT             = 0x002,
+    OP_DUPLICATE          = 0x004,
+    OP_DELETE             = 0x008,
+    OP_ROW                = 0x040,
+    OP_COL                = 0x080,
+    OP_RESIZE_TO_CONTENT  = 0x100
   };
 
   bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
