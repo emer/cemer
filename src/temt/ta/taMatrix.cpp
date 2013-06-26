@@ -1466,6 +1466,11 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
       return NULL;
     int st_frame = base.SafeEl(slice_frame_dims);
     int_Matrix* idx_frames = ViewIntMatrix();
+    if(st_frame < 0) st_frame += idx_frames->size; // allow from-end neg indexing here..
+    if(TestError(st_frame < 0 || st_frame >= idx_frames->size,
+                 "GetSlice_", "starting frame out of bounds in IDX_FRAMES view. requested starting frame:", String(st_frame), "avail:",
+                 String(idx_frames->size-1)))
+      return NULL;
     if(TestError(st_frame + num_slice_frames > idx_frames->size,
                  "GetSlice_", "more frames requested than available in IDX_FRAMES view.  requested up to frame:", String(st_frame + num_slice_frames), "avail:",
                  String(idx_frames->size)))
