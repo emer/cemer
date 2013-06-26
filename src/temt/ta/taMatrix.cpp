@@ -1464,11 +1464,15 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
     if(TestError((slice_frame_dims != dims()-1),
                  "GetSlice_", "slice_frame_dims must be same as source matrix when frame view is in effect"))
       return NULL;
-    // if we have a frame view, must return entire matrix with new view
+    int st_frame = base.SafeEl(slice_frame_dims);
     int_Matrix* idx_frames = ViewIntMatrix();
+    if(TestError(st_frame + num_slice_frames > idx_frames->size,
+                 "GetSlice_", "more frames requested than available in IDX_FRAMES view.  requested up to frame:", String(st_frame + num_slice_frames), "avail:",
+                 String(idx_frames->size)))
+      return NULL;
+    // if we have a frame view, must return entire matrix with new view
     int_Matrix* new_frame_view = new int_Matrix;
     new_frame_view->SetGeom(1, num_slice_frames);
-    int st_frame = base.SafeEl(slice_frame_dims);
     for(int i=0; i<num_slice_frames; i++) {
       new_frame_view->FastEl(i) = idx_frames->SafeEl_Flat(st_frame + i);
     }
