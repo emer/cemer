@@ -626,7 +626,7 @@ taMatrix* DataCol::GetValAsMatrix(int row) {
   taMatrix* ar = AR();
   if(row < 0) row = rows() + row;
   taMatrix* rval = ar->GetFrameSlice_(row);
-  if (col_flags & READ_ONLY)
+  if(rval && (col_flags & READ_ONLY))
     rval->SetBaseFlag(BF_READ_ONLY | BF_GUI_READ_ONLY);
   return rval;
 }
@@ -635,7 +635,7 @@ taMatrix* DataCol::GetRangeAsMatrix(int st_row, int n_rows) {
   taMatrix* ar = AR();
   if(st_row < 0) st_row = rows() + st_row;
   taMatrix* rval = ar->GetFrameRangeSlice_(st_row, n_rows);
-  if (col_flags & READ_ONLY)
+  if(rval && (col_flags & READ_ONLY))
     rval->SetBaseFlag(BF_READ_ONLY | BF_GUI_READ_ONLY);
   return rval;
 }

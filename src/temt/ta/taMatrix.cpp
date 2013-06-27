@@ -1335,7 +1335,7 @@ bool taMatrix::ElemWiseOpTest(const taMatrix& t, bool oth_flex,
 int taMatrix::Frames() const {
   if (geom.dims() == 0) return 0;
   if(IdxFrameView()) {
-    return ViewIntMatrix()->size;
+    return MIN(ViewIntMatrix()->size, geom[FrameDim()]);
   }
   return geom[FrameDim()];
 }

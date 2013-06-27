@@ -326,6 +326,8 @@ int DataTable::Dump_Load_Value(istream& strm, taBase* par) {
   // otherwise, if data was loaded, we need to set the rows
   ComputeRowsTotal();
   if(row_indexes.size > 0) {    // existing row indexes
+    if(rows_total == 0)         // no data saved / loaded
+      row_indexes.Reset();     // nuke the indexes to match
     rows = row_indexes.size; // this is the number of rows visible (i.e. not filtered out)
   }
   else { // should always have something visible..
