@@ -113,20 +113,23 @@ void ActrModel::ResetParse() {
   load_chunk = NULL;
   load_prod = NULL;
   load_comment = "";
+  load_bang_expr = false;
 }
 
-int ActrModel::skip_till_rp() {
+int ActrModel::skip_till_rp(int init_depth) {
   int c = skipwhite();
-  String LexBuf = load_last_ln;
-  int depth = 0;
+  String st = load_last_ln;
+  load_buf = (char)c;
+  int depth = init_depth;
   while (((c = Peekc()) != EOF) && !(((c == ')')) && (depth <= 0))) {
-    LexBuf += (char)c;
+    load_buf += (char)c;
     if(c == '(')      depth++;
     if(c == ')')      depth--;
     Getc();
   }
   TestWarning(true, "Skip",
-              "skipping over lisp code that cannot be imported:\n", LexBuf);
+              "skipping over lisp code that cannot be imported:\n", st,
+              load_buf);
   return c;
 }
 
@@ -184,6 +187,22 @@ int ActrModel::Lex() {
       c = skipline();
       load_comment = load_buf;
       continue;
+    }
+
+    if(load_bang_expr) {
+      load_bang_expr = false;   // only true once
+      if(c == '(') {
+        skip_till_rp(0);       // skip it all -- depth is 0
+        Getc();                // suck up the final )
+        aplval.chr = load_buf;
+        return AP_BANG_EXPR;
+      }
+      else if(c == '=') {
+        skip_till_rp(-1);       // skip it all -- depth is -1
+        Getc();                // suck up the final )
+        aplval.chr = load_buf;
+        return AP_BANG_EXPR;
+      }
     }
 
     if((c == '.') || isdigit(c)) {	// number: note no -
@@ -267,7 +286,7 @@ void ActrModel::ParseErr(const char* er) {
   String msg = erm + "\n" + src;
   if(erm.startsWith("syntax error")) {
     msg += "\n";
-    for(int i=0; i < load_st_col; i++)
+    for(int i=0; i <= load_st_col; i++)
       msg += " ";
     msg += "^";
   }

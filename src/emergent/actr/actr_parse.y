@@ -34,8 +34,8 @@ int aplex();
 
 %}
 
-/* zero expected shift-reduce conflicts */
-%expect 0
+/* six expected shift-reduce conflicts */
+%expect 3
 
 %union {
   const char*     chr;
@@ -54,7 +54,7 @@ int aplex();
 %token  <rval>  AP_SGP AP_GOAL_FOCUS AP_SPP
 /* basic tokens */
 %token	<num>	AP_NUMBER
-%token  <chr>	AP_NAME AP_STRING
+%token  <chr>	AP_NAME AP_STRING AP_BANG_EXPR
 
 /* important: any keyword tokens defined after AP_DEFVAR will auto-skip remainder */
 %token  <rval>  AP_DEFVAR AP_DEFMETHOD AP_DEFUN AP_SETF
@@ -66,7 +66,7 @@ int aplex();
 %type   <prod>   prod
 %type   <slt>    chunk_slot cond_slot act_slot
 %type   <num>    apnum
-%type   <chr>    sgp_param_nm
+%type   <chr>    sgp_param_nm prod_query_val query_first slot_val bang_expr
 
 %left	'*'
 %left   '('
@@ -215,7 +215,12 @@ prod_lhs:  prod_cond
          ;
 
 prod_cond: prod_cond_name prod_cond_vals { }
+         | prod_cond_name prod_cond_type { }
          | prod_cond_name prod_cond_type prod_cond_vals { }
+         | prod_query_name { }
+         | prod_query_name prod_query_vals { }
+         | prod_cond_bang { AMCP->load_bang_expr = false; }
+         | prod_cond_bang bang_expr { AMCP->load_bang_expr = false; }
          ;
 
 prod_cond_name:
@@ -223,14 +228,6 @@ prod_cond_name:
            AMCP->load_cond = (ActrCondition*)AMCP->load_prod->conds.New(1);
            AMCP->load_cond->src = AMCP->buffers.FindName($2);
            AMCP->load_cond->cond_src = ActrCondition::BUFFER_EQ; }
-         | '?' AP_NAME '>' {
-           AMCP->load_cond = (ActrCondition*)AMCP->load_prod->conds.New(1);
-           AMCP->load_cond->src = AMCP->buffers.FindName($2);
-           AMCP->load_cond->cond_src = ActrCondition::BUFFER_QUERY; }
-         | '!' AP_NAME '!' {
-            /* todo: need to skip expr */
-            taMisc::Warning("lisp-specific condition not processed:", $2);
-           }
          ;
 
 prod_cond_type:
@@ -248,33 +245,66 @@ prod_cond_vals:
          ;
 
 prod_cond_val:  
-           cond_slot AP_NAME  {
+           cond_slot slot_val  {
              AMCP->load_cond->SetVal($1, $2); }
-         | cond_slot apnum {
-           AMCP->load_cond->SetVal($1, (String)$2); }
-         | cond_slot '=' AP_NAME {
-           AMCP->load_cond->SetVal($1, String("=") + $3); }
-         | '-' cond_slot '=' AP_NAME { /* - only allowed w/ variables? */
-           AMCP->load_cond->SetVal($2, String("=") + $4 + String("-")); }
-         | '>' cond_slot AP_NAME {
+         | '-' cond_slot slot_val {
+           AMCP->load_cond->SetVal($2, String($3) + String("-")); }
+         | '>' cond_slot slot_val {
            AMCP->load_cond->SetVal($2, $3, Relation::GREATERTHAN); }
-         | '>' cond_slot apnum {
-           AMCP->load_cond->SetVal($2, (String)$3, Relation::GREATERTHAN); }
-         | '<' cond_slot AP_NAME {
+         | '<' cond_slot slot_val {
            AMCP->load_cond->SetVal($2, $3, Relation::LESSTHAN); }
-         | '<' cond_slot apnum {
-           AMCP->load_cond->SetVal($2, (String)$3, Relation::LESSTHAN); }
-         | '>' '=' cond_slot AP_NAME {
+         | '>' '=' cond_slot slot_val {
            AMCP->load_cond->SetVal($3, $4, Relation::GREATERTHANOREQUAL); }
-         | '>' '=' cond_slot apnum {
-           AMCP->load_cond->SetVal($3, (String)$4, Relation::GREATERTHANOREQUAL); }
-         | '<' '=' cond_slot AP_NAME {
+         | '<' '=' cond_slot slot_val {
            AMCP->load_cond->SetVal($3, $4, Relation::LESSTHANOREQUAL); }
-         | '<' '=' cond_slot apnum {
-           AMCP->load_cond->SetVal($3, (String)$4, Relation::LESSTHANOREQUAL); }
          ; 
 
-cond_slot: AP_NAME { $$ = AMCP->load_cond->cmp_chunk.FindSlot($1); }
+cond_slot: AP_NAME { 
+             if((String)$1 == "buffer") {
+               AMCP->ParseErr("Warning: use of 'buffer' state query in =buffer (BUFFER_EQ) tests not supported");
+               $$ = NULL;
+             }
+             else { $$ = AMCP->load_cond->cmp_chunk.FindSlot($1); } }
+         ;
+
+slot_val:  AP_NAME
+         | '=' AP_NAME { AMCP->load_tmp = String("=") + $2; $$ = AMCP->load_tmp; }
+         | apnum       { AMCP->load_tmp = (String)$1; $$ = AMCP->load_tmp; }
+         ;
+
+prod_query_name:
+           '?' AP_NAME '>' {
+           AMCP->load_cond = (ActrCondition*)AMCP->load_prod->conds.New(1);
+           AMCP->load_cond->src = AMCP->buffers.FindName($2);
+           AMCP->load_cond->cond_src = ActrCondition::BUFFER_QUERY; }
+         ;
+
+prod_query_vals:
+           prod_query_val
+         | prod_query_vals prod_query_val
+         ;
+
+prod_query_val:  
+           query_first AP_NAME  {
+             AMCP->load_cond->SetQuery($1, $2); }
+         | '-' query_first AP_NAME  {
+           AMCP->load_cond->SetQuery($2, $3, true); /* neg = true */ }
+         | query_first '=' AP_NAME  {
+           AMCP->ParseErr("Warning: use of variable expression (=varname) query tests not supported");
+           AMCP->load_cond->SetQuery($1, String("=") + $3); /* neg = true */ }
+         | '-' query_first '=' AP_NAME  {
+           AMCP->ParseErr("Warning: use of variable expression (=varname) query tests not supported");
+           AMCP->load_cond->SetQuery($2, String("=") + $4, true); /* neg = true */ }
+         ;
+
+query_first: AP_NAME { AMCP->load_tmp = $1; $$ = AMCP->load_tmp; }
+         ;
+
+prod_cond_bang:
+           '!' AP_NAME '!' { 
+             AMCP->ParseErr(String("Warning: use of !") + $2 + "! expression not supported for conditions");
+             AMCP->load_bang_expr = true; /* get expr */
+           }
          ;
 
 prod_rhs:  prod_act
@@ -285,8 +315,8 @@ prod_rhs:  prod_act
 prod_act:  prod_act_name  /* just a clear */
          | prod_act_name prod_act_type prod_act_vals { }
          | prod_act_name prod_act_vals { }
-         | prod_act_bang { }
-         | prod_act_bang act_expr { }
+         | prod_act_bang { AMCP->load_bang_expr = false; }
+         | prod_act_bang bang_expr { AMCP->load_act->val += $2; AMCP->load_bang_expr = false; }
          ;
 
 prod_act_name:
@@ -311,7 +341,8 @@ prod_act_bang:
            '!' AP_NAME '!' {
              AMCP->load_act = (ActrAction*)AMCP->load_prod->acts.New(1);
              AMCP->load_act->SetBangAction($2);
-             AMCP->load_act->UpdateAfterEdit_NoGui(); }
+             AMCP->load_act->UpdateAfterEdit_NoGui();
+             AMCP->load_bang_expr = true; /* get expr */ }
          ;
 
 prod_act_type:
@@ -329,19 +360,28 @@ prod_act_vals:
          ;
 
 prod_act_val:  
-            act_slot AP_NAME  { if($1) $1->val = $2; }
-         |  act_slot apnum { if($1) $1->val = (String)$2; }
-         |  act_slot '=' AP_NAME { if($1) $1->val = String("=") + $3; }
-         |  act_param AP_NAME { AMCP->load_act->params += $2; }
+           act_slot slot_val  {
+             if($1) $1->SetVal($2); }
+         | '-' act_slot slot_val {
+           if($2) $2->SetVal(String($3) + String("-")); }
+         | '>' act_slot slot_val {
+           if($2) $2->SetVal($3, Relation::GREATERTHAN); }
+         | '<' act_slot slot_val {
+           if($2) $2->SetVal($3, Relation::LESSTHAN); }
+         | '>' '=' act_slot slot_val {
+           if($3) $3->SetVal($4, Relation::GREATERTHANOREQUAL); }
+         | '<' '=' act_slot slot_val {
+           if($3) $3->SetVal($4, Relation::LESSTHANOREQUAL); }
+/*         | '=' AP_NAME        {
+           if(AMCP->load_act->action == ActrAction::UPDATE)
+             AMCP->load_act->action = ActrAction::OVERWRITE;
+           else
+             AMCP->load_act->action = ActrAction::REQUEST_DIR;
+             AMCP->load_act->val = String("=") + $2; } */
+         | act_param slot_val { AMCP->load_act->params += String(" ") + $2; }
          ; 
 
-act_expr: '(' sub_exp ')'
-         ;
-
-sub_exp:   AP_NAME     { AMCP->load_act->val += $1; }
-         | '=' AP_NAME { AMCP->load_act->val += String("=") + $2; }
-         | AP_STRING   { AMCP->load_act->val += $1; }
-         | AP_NUMBER   { AMCP->load_act->val += (String)$1; }
+bang_expr: AP_BANG_EXPR
          ;
 
 act_slot: AP_NAME { $$ = AMCP->load_act->chunk.FindSlot($1); }

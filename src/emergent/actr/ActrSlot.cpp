@@ -27,8 +27,32 @@ void ActrSlot::Initialize() {
   rel = Relation::EQUAL;
 }
 
+void ActrSlot::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ActrSlot);
+  if(owner && owner->InheritsFrom(&TA_ActrChunk)) {
+    ActrChunk* ck = (ActrChunk*)owner;
+    if(ck->HasChunkFlag(ActrChunk::COND))
+      SetSlotFlag(COND);
+    else if(ck->HasChunkFlag(ActrChunk::ACT))
+      SetSlotFlag(ACT);
+  }
+}
+
+void ActrSlot::CutLinks() {
+  CutLinks_taAuto(&TA_ActrSlot);
+  inherited::CutLinks();
+}
+
 void ActrSlot::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(owner && owner->InheritsFrom(&TA_ActrChunk)) {
+    ActrChunk* ck = (ActrChunk*)owner;
+    if(ck->HasChunkFlag(ActrChunk::COND))
+      SetSlotFlag(COND);
+    else if(ck->HasChunkFlag(ActrChunk::ACT))
+      SetSlotFlag(ACT);
+  }
   if(HasSlotFlag(COND)) {
     val_type = LITERAL;
   }
@@ -326,3 +350,12 @@ void ActrSlot::CopyValFrom(const ActrSlot& cp) {
     val_chunk = cp.val_chunk;
 }
 
+bool ActrSlot::SetVal(const String& str, Relation::Relations rl) {
+  if(TestError(val.nonempty(), "SetVal",
+               "chunk value had already been set -- request multiple values of the same slot, please duplicate the action and divide across them")) {
+    val += " ";
+  }
+  val += str;
+  rel = rl;
+  return true;
+}

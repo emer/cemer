@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.1.0 rev6355
+// ta_Dump File v3.0 -- code v6.3.1.0 rev6357
 LeabraProject .projects["count"] { 
   taBase_Group @.templates = [0] {
   };
@@ -185,6 +185,9 @@ LeabraProject .projects["count"] {
 	    };
 	  };
 
+	  ActrChunk_List @.chunks = [0] {
+	  };
+
 	  ActrModule_List @.modules = [5] {
 	    ActrProceduralModule @["procedural"] { 
 	      ActrProduction_Group @.productions = [3] {
@@ -365,7 +368,10 @@ LeabraProject .projects["count"] {
 	      };
 	    };
 	    ActrImaginalModule @["imaginal"] { };
-	    ActrVisionModule @["vision"] { };
+	    ActrVisionModule @["vision"] { 
+	      ActrChunk_List @.visicon = [0] {
+	      };
+	    };
 	  };
 
 	  ActrBuffer_List @.buffers = [7] {
@@ -703,9 +709,9 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":fals
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"40\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 \"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});;},{},{});mw.loader.
-implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"96a9be34e80f995ca2d6d50a00eef1d0+\\\\\",\"watchToken\":\"438f7c8ae4c9193791d5c0fdd28322b5+\\\\\"});;},{},{});
+implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"84c187a8d4b51078a70970f110ac88fb+\\\\\",\"watchToken\":\"1f8e1deaa6645e456689123ebe9ac6cf+\\\\\"});;},{},{});
 
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:8d190cf74c49b6f987370ec1b0a896ac */
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:85a6a663d5d8e243ada0e05284f645eb */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
@@ -810,7 +816,7 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/ACT-R/demo/count\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=1f62f02d13f09c5eac5a05117fe92d84%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=3168986197c3627643d4a8b178d91722%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -1403,7 +1409,7 @@ Template argument size: 1178/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2602-0!*!0!!en!*!* and timestamp 20130624083745 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2602-0!*!0!!en!*!* and timestamp 20130629002903 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT-R/demo/count&amp;oldid=9995\">http://grey.colorado.edu/emergent/index.php?title=ACT-R/demo/count&amp;oldid=9995</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -1438,7 +1444,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 May 2013, at 01:21.</span>
-			<span id=\"f-viewcount\">This page has been accessed 92 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 113 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -1472,7 +1478,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.246 secs. -->
+<!-- Served in 0.173 secs. -->
 
 
 
@@ -2340,6 +2346,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
       ActrChunkType @["count_order"] {
        name="count_order";
        desc="memory for a pairwise order of numbers";
+       parent=NULL;
        slots {
 	name=;
 	el_typ=ActrSlotType;
@@ -2361,6 +2368,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
       ActrChunkType @["count_from"] {
        name="count_from";
        desc="goal buffer control chunk that manages the sequence of counting";
+       parent=NULL;
        slots {
 	name=;
 	el_typ=ActrSlotType;
@@ -2385,6 +2393,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	};
        };
       };
+     };
+     chunks {
+      name=;
+      el_typ=ActrChunk;
+      el_def=0;
      };
      modules {
       name="ActrModule_List_0";
@@ -3150,7 +3163,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="b_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
 	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -3178,7 +3191,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="c_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
 	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -3206,7 +3219,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="d_0";
 	 chunk_type=$.projects["count"].programs["Count_ActR"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
 	 time {n_act=1: t_new=0: t_ret=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -3346,8 +3359,16 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
       ActrVisionModule @["vision"] {
        name="vision";
        desc=;
-       buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["visual_location"]$$;
+       buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["visual"]$$;
        flags=0;
+       params {n_finst=4: finst_span=3: onset_span=0.5: move_tol=0.5: };
+       attn {auto_attend=0: latency=0.085: scene_chg_thresh=0.25: };
+       location_buffer=.projects["count"].programs["Count_ActR"].objs["CountModel"].buffers["visual_location"]$$;
+       visicon {
+	name=;
+	el_typ=ActrChunk;
+	el_def=0;
+       };
       };
      };
      buffers {

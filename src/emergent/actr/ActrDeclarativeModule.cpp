@@ -368,3 +368,89 @@ bool ActrDeclarativeModule::AddChunk(ActrChunk* ck, bool merge) {
   return true;
 }
 
+bool ActrDeclarativeModule::SetParam(const String& param_nm, Variant par1, Variant par2) {
+  bool got = false;
+  if(param_nm == "retrieval_activation" && buffer) {
+    buffer->act_total = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "bll") {
+    if(!par1.toBool())
+      act.learn = false;
+    else {
+      act.learn = true;
+      act.decay = par1.toFloat();
+    }
+    got = true;
+  }
+  else if(param_nm == "ans") {
+    act.inst_noise = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "pas") {
+    act.perm_noise = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "blc") {
+    act.init = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "declarative_num_finsts") {
+    act.n_finst = par1.toInt();
+    got = true;
+  }
+  else if(param_nm == "declarative_finst_span") {
+    act.finst_span = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "rt") {
+    ret.thresh = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "le") {
+    ret.time_pow = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "lf") {
+    ret.time_gain = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "mp") {
+    if(!par1.toBool())
+      partial.on = false;
+    else {
+      partial.on = true;
+      partial.mismatch_p = par1.toFloat();
+    }
+    got = true;
+  }
+  else if(param_nm == "md") {
+    partial.max_diff = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "ms") {
+    partial.max_sim = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "mas") {
+    if(!par1.toBool())
+      assoc.on = false;
+    else {
+      assoc.on = true;
+      assoc.max_str = par1.toFloat();
+    }
+    got = true;
+  }
+  else if(param_nm == "nsji") {
+    assoc.neg_ok = par1.toBool();
+    got = true;
+  }
+  else if((param_nm == "act" || param_nm == "sact")) {
+    if(par1.toString() == "low")
+      trace_level = ActrDeclarativeModule::TRACE_MATCH;
+    else
+      trace_level = ActrDeclarativeModule::TRACE_ALL;
+    got = true;
+  }
+  return got;
+}

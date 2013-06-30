@@ -17,8 +17,9 @@
 #define ActrChunkType_List_h 1
 
 // parent includes:
-#include <ActrChunkType>
 #include <taList>
+#include "network_def.h"
+class ActrChunkType; //
 
 // member includes:
 

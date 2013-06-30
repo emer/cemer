@@ -90,6 +90,7 @@ public:
   ActrGlobalParams      params;     // global parameters
 
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
+  ActrChunk_List        chunks;       // #NO_EXPAND_ALL globally-defined chunks stored here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
   ActrBuffer_List       buffers;      // #NO_EXPAND_ALL buffers for containing active chunks -- always contains at least retrieval and goal buffers, and others according to modules
   ActrEvent_List        events;       // #NO_SAVE #EXPERT currently scheduled events
@@ -110,12 +111,14 @@ public:
   int                   load_st_col;  // #IGNORE column number for loading
   int                   load_st_pos;  // #IGNORE string pos for loading
   int                   load_st_line_pos;  // #IGNORE string pos for loading
+  bool                  load_bang_expr;    // #IGNORE expecting a bang expr -- parse it
   String                load_last_ln; // #IGNORE last line
   String                load_buf;     // #IGNORE generic buffer used for all parsing
   String                load_comment; // #IGNORE last comment processed
   String                load_name;     // #IGNORE return val for last name read
   String                load_string;  // #IGNORE return val for last string read
   String                load_param;  // #IGNORE current parameter
+  String                load_tmp;    // #IGNORE temp string holder
   YY_Flags              load_state;  // #IGNORE state of current parse
   ActrChunkTypeRef      load_chtype;  // #IGNORE current chunk type
   ActrChunkRef          load_chunk;   // #IGNORE current chunk
@@ -195,7 +198,24 @@ public:
   virtual ActrChunkType* FindChunkType(const String& type_name);
   // #CAT_ActR find a chunk type by name or emit error if not found
   virtual ActrChunkType* FindMakeChunkType(const String& type_name);
-  // #CAT_ActR find a chunk type by name or make it if not otherwise found (emitting warning message if so)
+  // #CAT_ActR find a chunk type by name or make it if not otherwise found (emitting warning message if so) -- this is for *runtime* access to chunktypes -- do not use for initial creation of new chunks (see DefineChunkType instead)
+  virtual ActrChunkType* DefineChunkType(const String& type_name,
+                                         const String& par_name=_nilString,
+                                         const String& slot_0 = _nilString,
+                                         const String& slot_1 = _nilString,
+                                         const String& slot_2 = _nilString,
+                                         const String& slot_3 = _nilString,
+                                         const String& slot_4 = _nilString,
+                                         const String& slot_5 = _nilString,
+                                         const String& slot_6 = _nilString,
+                                         const String& slot_7 = _nilString,
+                                         const String& slot_8 = _nilString,
+                                         const String& slot_9 = _nilString,
+                                         const String& slot_a = _nilString,
+                                         const String& slot_b = _nilString);
+  // #CAT_ActR one-stop define chunk type command, optinally setting parent type and slots
+  virtual ActrChunk*    DefineChunk(const String& chunk_nm, const String& type_name);
+  // #CAT_ActR define a global chunk of given name and type
 
   virtual bool          LoadActrFile(const String& fname="");
   // #BUTTON #MENU #EXT_lisp,actr #CAT_File #FILETYPE_ActrModel #FILE_DIALOG_LOAD read actr model file in standard actr lisp format (leave fname empty to pull up file chooser)
@@ -220,7 +240,7 @@ public:
   // #IGNORE skip whitespace
   virtual int           readword(int c);
   // #IGNORE read word into load_buf
-  virtual int           skip_till_rp();
+  virtual int           skip_till_rp(int init_depth=0);
   // #IGNORE skip over everything until a right paren is found that closes to-be-ignored expression
   virtual void          ResetParse();
   // #IGNORE reset parsing state

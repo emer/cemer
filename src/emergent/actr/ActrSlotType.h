@@ -40,6 +40,14 @@ public:
   SlotValType           val_type;       // what type of value fills this slot
   ActrChunkTypeRef      val_chunk_type; // #CONDSHOW_ON_val_type:CHUNK what type of chunk should fill this slot
 
+  virtual bool  UpdateFromType(const ActrSlotType& typ);
+  // #CAT_ActR update our slot type info from other slot type -- return true if changes occurred
+  virtual void  SetChunkType(ActrChunkType* ct);
+  // #CAT_ActR set chunk type to given type -- sets val_type and val_chunk_type
+  virtual void  SetChunkTypeName(const String& ct_name);
+  // #CAT_ActR set chunk type to given type name -- sets val_type and val_chunk_type
+
+
   override String GetDisplayName() const;
   override String GetDesc() const {return desc;}
   override String GetTypeDecoKey() const { return "ProgType"; }

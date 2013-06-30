@@ -43,12 +43,13 @@ void ActrModel::Initialize() {
   load_debug = 0;
   load_line = load_col = load_pos = 0;
   load_st_line = load_st_col = load_st_pos = load_st_line_pos = 0;
+  load_bang_expr = false;
 }
 
 void ActrModel::InitLinks() {
   inherited::InitLinks();
   InitLinks_taAuto(&TA_ActrModel);
-  DefaultConfig();
+  //  chunk_types.BuildHashTable(500);
   InitLoadKeywords();
 }
 
@@ -59,8 +60,10 @@ void ActrModel::CutLinks() {
 
 void ActrModel::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  DefaultConfig();
-  FormatLogTable();
+  if(modules.size == 0) {
+    DefaultConfig();
+    FormatLogTable();
+  }
 }
 
 ActrModule* ActrModel::FindMakeModule(const String& nm, TypeDef* td,
@@ -114,6 +117,7 @@ ActrVisionModule* ActrModel::VisionModule() {
 
 void ActrModel::DefaultConfig() {
   bool made_new;
+  DefineChunkType("chunk");     // basic built-in chunk type
   FindMakeModule("procedural", &TA_ActrProceduralModule, made_new);
   FindMakeModule("declarative", &TA_ActrDeclarativeModule, made_new);
   FindMakeModule("goal", &TA_ActrGoalModule, made_new);
@@ -307,11 +311,6 @@ void ActrModel::FormatLogTable() {
 
 
 ActrChunkType* ActrModel::FindChunkType(const String& type_name) {
-  if(type_name == "chunk") {    // special case
-    bool made_new = false;
-    ActrChunkType* ct = chunk_types.FindMakeNameType(type_name, NULL, made_new);
-    return ct;
-  }
   ActrChunkType* ct = chunk_types.FindName(type_name);
   if(TestError(!ct, "FindChunkType", "chunk type named:", type_name,
                "not found")) {
@@ -323,12 +322,47 @@ ActrChunkType* ActrModel::FindChunkType(const String& type_name) {
 ActrChunkType* ActrModel::FindMakeChunkType(const String& type_name) {
   bool made_new = false;
   ActrChunkType* ct = chunk_types.FindMakeNameType(type_name, NULL, made_new);
-  if(type_name == "chunk") {    // special case
-    return ct;
-  }
-  TestWarning(!ct, "FindMakeChunkType", "chunk type named:", type_name,
+  TestWarning(made_new, "FindMakeChunkType", "chunk type named:", type_name,
               "was created implicitly -- was not defined in advance");
   return ct;
+}
+
+ActrChunkType* ActrModel::DefineChunkType(const String& type_name,
+                                         const String& par_name,
+                                         const String& slot_0,
+                                         const String& slot_1,
+                                         const String& slot_2,
+                                         const String& slot_3,
+                                         const String& slot_4,
+                                         const String& slot_5,
+                                         const String& slot_6,
+                                         const String& slot_7,
+                                         const String& slot_8,
+                                         const String& slot_9,
+                                         const String& slot_a,
+                                          const String& slot_b) {
+  bool made_new;
+  ActrChunkType* ck = chunk_types.FindMakeNameType(type_name, NULL, made_new);
+  if(par_name.nonempty()) {
+    ActrChunkType* par = FindChunkType(par_name);
+    if(par) {
+      ck->SetParent(par);
+    }
+  }
+  ck->MakeSlots(slot_0, slot_1, slot_2, slot_3, slot_4, slot_5, slot_6,
+                slot_7, slot_8, slot_9, slot_a, slot_b);
+  return ck;
+}
+
+ActrChunk* ActrModel::DefineChunk(const String& chunk_name,
+                                  const String& type_name) {
+  bool made_new;
+  ActrChunk* ck = chunks.FindMakeNameType(chunk_name, NULL, made_new);
+  ActrChunkType* typ = FindChunkType(type_name);
+  if(typ) {
+    ck->SetChunkType(typ);
+  }
+  return ck;
 }
 
 void ActrModel::SaveActrFile(const String& fname) {
@@ -368,6 +402,7 @@ void ActrModel::ResetModel() {
   cur_event_idx = 0;
   buffers.Reset();
   modules.Reset();
+  chunks.Reset();
   chunk_types.Reset();
   DefaultConfig();
 }
@@ -385,6 +420,7 @@ void ActrModel::SetParam(const String& param_nm, Variant par1,
   ActrDeclarativeModule* dmod = DeclarativeModule();
   ActrGoalModule* gmod = GoalModule();
   ActrImaginalModule* imod = ImaginalModule();
+  ActrVisionModule* vmod = VisionModule();
 
   bool got = false;
 
@@ -396,127 +432,19 @@ void ActrModel::SetParam(const String& param_nm, Variant par1,
     params.enable_rnd = par1.toBool();
     got = true;
   }
-  else if(param_nm == "ul" && pmod) {
-    pmod->util.learn = par1.toBool();
+  else if(pmod && pmod->SetParam(param_nm, par1, par2)) {
     got = true;
   }
-  else if(param_nm == "alpha" && pmod) {
-    pmod->util.lrate = par1.toFloat();
+  else if(dmod && dmod->SetParam(param_nm, par1, par2)) {
     got = true;
   }
-  else if(param_nm == "iu" && pmod) {
-    pmod->util.init = par1.toFloat();
+  else if(gmod && gmod->SetParam(param_nm, par1, par2)) {
     got = true;
   }
-  else if(param_nm == "egs" && pmod) {
-    pmod->util.noise = par1.toFloat();
-    pmod->util.UpdateAfterEdit();
+  else if(imod && imod->SetParam(param_nm, par1, par2)) {
     got = true;
   }
-  else if(param_nm == "ut" && pmod) {
-    pmod->util.thresh = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "crt" && pmod) {
-    pmod->trace_level = ActrProceduralModule::TRACE_ALL;
-    got = true;
-  }
-  else if(param_nm == "cst" && pmod) {
-    pmod->trace_level = ActrProceduralModule::TRACE_ELIG;
-    got = true;
-  }
-  else if(param_nm == "ult" && pmod) {
-    pmod->trace_level = ActrProceduralModule::UTIL_LEARN;
-    got = true;
-  }
-  else if(param_nm == "bll" && dmod) {
-    if(!par1.toBool())
-      dmod->act.learn = false;
-    else {
-      dmod->act.learn = true;
-      dmod->act.decay = par1.toFloat();
-    }
-    got = true;
-  }
-  else if(param_nm == "ans" && dmod) {
-    dmod->act.inst_noise = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "pas" && dmod) {
-    dmod->act.perm_noise = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "blc" && dmod) {
-    dmod->act.init = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "declarative_num_finsts" && dmod) {
-    dmod->act.n_finst = par1.toInt();
-    got = true;
-  }
-  else if(param_nm == "declarative_finst_span" && dmod) {
-    dmod->act.finst_span = par1.toInt();
-    got = true;
-  }
-  else if(param_nm == "rt" && dmod) {
-    dmod->ret.thresh = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "le" && dmod) {
-    dmod->ret.time_pow = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "lf" && dmod) {
-    dmod->ret.time_gain = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "mp" && dmod) {
-    if(!par1.toBool())
-      dmod->partial.on = false;
-    else {
-      dmod->partial.on = true;
-      dmod->partial.mismatch_p = par1.toFloat();
-    }
-    got = true;
-  }
-  else if(param_nm == "md" && dmod) {
-    dmod->partial.max_diff = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "ms" && dmod) {
-    dmod->partial.max_sim = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "mas" && dmod) {
-    if(!par1.toBool())
-      dmod->assoc.on = false;
-    else {
-      dmod->assoc.on = true;
-      dmod->assoc.max_str = par1.toFloat();
-    }
-    got = true;
-  }
-  else if(param_nm == "nsji" && dmod) {
-    dmod->assoc.neg_ok = par1.toBool();
-    got = true;
-  }
-  else if((param_nm == "act" || param_nm == "sact") && dmod) {
-    if(par1.toString() == "low")
-      dmod->trace_level = ActrDeclarativeModule::TRACE_MATCH;
-    else
-      dmod->trace_level = ActrDeclarativeModule::TRACE_ALL;
-    got = true;
-  }
-  else if(param_nm == "ga" && gmod && gmod->buffer) {
-    gmod->buffer->act_total = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "imaginal_activation" && imod && imod->buffer) {
-    imod->buffer->act_total = par1.toFloat();
-    got = true;
-  }
-  else if(param_nm == "imaginal_action_activation" && imod && imod->buffer) {
-    imod->buffer->act_total = par1.toFloat();
+  else if(vmod && vmod->SetParam(param_nm, par1, par2)) {
     got = true;
   }
 

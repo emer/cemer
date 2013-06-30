@@ -32,15 +32,18 @@ class E_API ActrModule : public ActrNBase {
   // base class for ACT-R modules
 INHERITED(ActrNBase)
 public:
-  enum ModuleFlags { // #BITS ActR module flags
+  enum ModuleFlags { // #BITS ActR module flags for settings and state
     MF_NONE             = 0, // #NO_BIT
     BUSY                = 0x0001,  // module is busy processing something
     ERROR               = 0x0002,  // module is in an error state
+    PREP                = 0x0004,  // module is in a preparation state
+    PROC                = 0x0008,  // module is in a processing state
+    EXEC                = 0x0010,  // module is in a execution state
   };
 
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this module
   ActrBufferRef         buffer; // the main buffer for this module (can add other ones in subclasses)
-  ModuleFlags           flags;  // flags for various settings of module
+  ModuleFlags           flags;  // flags for various settings and state of module
 
   inline void           SetModuleFlag(ModuleFlags flg)
   { flags = (ModuleFlags)(flags | flg); }
@@ -61,16 +64,28 @@ public:
   bool  IsBusy()        { return HasModuleFlag(BUSY); }
   bool  IsFree()        { return !IsBusy(); }
   bool  IsError()       { return HasModuleFlag(ERROR); }
+  bool  IsPrep()        { return HasModuleFlag(PREP); }
+  bool  IsProc()        { return HasModuleFlag(PROC); }
+  bool  IsExec()        { return HasModuleFlag(EXEC); }
 
   virtual void  InitModule() { };
   // #CAT_ActR initialize the module -- ensure we have our appropriate buffer in model, and set our buffer pointer, etc
   virtual void  ProcessEvent(ActrEvent& event) { };
   // #CAT_ActR process a given event, defined in a module-specific way
+  virtual bool  ProcessQuery(ActrBuffer* buf, const String& query,
+                             bool why_not = false);
+  // #CAT_ActR process queries directed at the given buffer -- buffers delegate queries to their module so that modules can process more advanced queries
+  virtual bool  SetParam(const String& param_nm, Variant par1, Variant par2)
+  { return false; }
+  // #CAT_ActR set given parameter name to given values -- returns true if param was recognized by this module, otherwise false
   virtual void  Init();
   // #CAT_ActR perform run-time initialization at start of processing -- derived classes should call parent which resets basic stuff including buffer and calls InitModule -- don't call that!
 
   virtual bool  ProcessEvent_std(ActrEvent& event);
   // #CAT_ActR process standard events dealing with state of module or buffer: BUFFER-READ-ACTION, CLEAR-BUFFER, MOD-BUFFER-CHUNK
+  virtual bool  ProcessQuery_std(ActrBuffer* buf, const String& query,
+                                 bool why_not = false);
+  // #CAT_ActR process standard queries directed at the given buffer -- buffers delegate queries to their module so that modules can process more advanced queries
 
   override String       GetDesc() const {return desc;}
   override String       GetTypeDecoKey() const { return "Program"; }

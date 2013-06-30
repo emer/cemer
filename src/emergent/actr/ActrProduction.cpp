@@ -19,14 +19,20 @@
 
 #include <taMisc>
 
+void ActrProdUtilVals::Initialize() {
+  init = 0.0f;
+  cur = 0.0f;
+  choice = 0.0f;
+  rew = 0.0f;
+}
+
+void ActrProdTimeVals::Initialize() {
+  act = 0.0f;
+  last_fire = -1.0f;
+}
+
 void ActrProduction::Initialize() {
   flags = PF_NONE;
-  init_util = 0.0f;
-  util = 0.0f;
-  choice_util = 0.0f;
-  rew = 0.0f;
-  act_time= 0.0f;
-  last_fire_time = -1.0f;
 }
 
 void ActrProduction::UpdateAfterEdit_impl() {
@@ -97,7 +103,7 @@ int ActrProduction::GetSpecialState() const {
 void ActrProduction::Init() {
   ClearProdFlag(FIRED);
   ClearProdFlag(ELIGIBLE);
-  last_fire_time = -1.0f;
+  time.last_fire = -1.0f;
   UpdateNames();
   UpdateVars();
   InitActionProgs();
@@ -176,13 +182,13 @@ ActrCondition* ActrProduction::FindCondOnBuffer(ActrBuffer* buf) {
 
 bool ActrProduction::SetParam(const String& par_nm, float val) {
   if(par_nm == "u") {
-    util = val;
+    util.init = val;
   }
   else if(par_nm == "reward") {
-    rew = val;
+    util.rew = val;
   }
   else if(par_nm == "at") {
-    act_time = val;
+    time.act = val;
   }
   else {
     TestError(true, "SetParam", "parameter named:", par_nm, "not found");

@@ -33,6 +33,7 @@ public:
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);
+  override bool  SetParam(const String& param_nm, Variant par1, Variant par2);
   override void  Init();
 
   TA_SIMPLE_BASEFUNS(ActrGoalModule);

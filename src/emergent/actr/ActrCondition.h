@@ -44,7 +44,7 @@ public:
 
   enum CondSource {
     BUFFER_EQ,                  // = match against an ActR chunk in a buffer (for regular ActR model) 
-    BUFFER_QUERY,               // ? check state of buffer or module -- std vals are: buffer: full, empty, requested, unrequested, module: busy, free, error
+    BUFFER_QUERY,               // ? check state of buffer or module -- std vals are: buffer: full, empty, requested, unrequested, state (or preparation, processor, execution): busy, free, error -- can chain multiple with ; separator
     PROG_VAR,                   // match against value of a program variable (for use in controlling system) -- must be a global (args or vars) variable, not a local var
     NET_UNIT,                   // match against unit activation in a network
     OBJ_MEMBER,                 // match against a member in an arbitrary object
@@ -62,8 +62,8 @@ public:
   int           dt_row;        // #CONDSHOW_ON_cond_src:DATA_CELL row number within data table cell to obtain value from (use -1 for last row)
   int           dt_cell;       // #CONDSHOW_ON_cond_src:DATA_CELL cell index within data row,column within data table cell to obtain value from
   Relation::Relations  rel;    // #CONDSHOW_OFF_cond_src:BUFFER_EQ,BUFFER_QUERY relationship between source value and comparison value
-  String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value -- for query std options are buffer: full, empty, requested, unrequested, module: busy, free, error
-  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
+  String        cmp_val;       // #CONDSHOW_OFF_cond_src:BUFFER_EQ comparison value -- for query std options are buffer: full, empty, requested, unrequested, state (or preparation, processor, execution): busy, free, error -- can chain multiple with ; separator
+  ActrChunk     cmp_chunk;     // #CONDSHOW_ON_cond_src:BUFFER_EQ #CONDTREE_ON_cond_src:BUFFER_EQ #SHOW_TREE comparison chunk -- fill in chunk type and all chunk values that should match.  use =name for variable copying
 
   inline void           SetCondFlag(CondFlags flg)
   { flags = (CondFlags)(flags | flg); }
@@ -99,6 +99,8 @@ public:
   virtual bool  SetVal(ActrSlot* slt, const String& val,
                        Relation::Relations rl = Relation::EQUAL);
   // #IGNORE for parsing -- set comparison value, either for given slot or if null then cmp_val
+  virtual bool  SetQuery(const String& sys, const String& val, bool neg = false);
+  // #IGNORE for parsing -- set query value, e.g., "state", "free"
 
   override String  GetTypeDecoKey() const { return "ProgCtrl"; }
   override String  GetDisplayName() const;

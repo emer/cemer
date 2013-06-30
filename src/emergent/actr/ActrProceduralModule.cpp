@@ -86,11 +86,13 @@ void ActrProceduralModule::Init() {
 void ActrProceduralModule::InitUtils() {
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
     if(pr->IsOff()) continue;
-    if(pr->init_util == 0.0f)
-      pr->util = util.init;
-    else
-      pr->util = pr->init_util;
-    pr->choice_util = pr->util;
+    if(pr->util.init == 0.0f) {
+      pr->util.cur = util.init;
+    }
+    else {
+      pr->util.cur = pr->util.init;
+    }
+    pr->util.choice = pr->util.cur;
   }
 }
 
@@ -113,7 +115,7 @@ void ActrProceduralModule::ConflictResolution() {
     }
     pr->ClearProdFlag(ActrProduction::FIRED);
     pr->ClearProdFlag(ActrProduction::ELIGIBLE);
-    if(pr->util >= util.thresh) {
+    if(pr->util.cur >= util.thresh) {
       if(pr->Matches()) {
         eligible.Link(pr);
         pr->SetProdFlag(ActrProduction::ELIGIBLE);
@@ -135,7 +137,7 @@ void ActrProceduralModule::ConflictResolution() {
     else {
       if(trace_level == TRACE_ALL) {
         mod->LogEvent(-1.0f, "procedural", "TRACE", pr->name,
-                      "util: " + String(pr->util) + " < thresh");
+                      "util: " + String(pr->util.cur) + " < thresh");
       }
     }
   }
@@ -161,8 +163,8 @@ void ActrProceduralModule::ConflictResolution() {
   // send all the BUFFER-READ-ACTION's -- clear buffers!
 
   float ptime = mp_time.Gen();  // always generate a random number to keep seeds more predictable
-  if(fired->act_time > 0.0f) {  // custom time
-    ptime = fired->act_time;
+  if(fired->time.act > 0.0f) {  // custom time
+    ptime = fired->time.act;
   }
   mod->ScheduleEvent(ptime, ActrEvent::max_pri, this, this, NULL,
                      "PRODUCTION-FIRED", fired->name);
@@ -176,26 +178,26 @@ void ActrProceduralModule::ChooseFromEligible() {
   for(int i=0; i<eligible.size; i++) {
     ActrProduction* pr = eligible.FastEl(i);
     if(!mod->params.enable_sub_symbolic) {
-      pr->choice_util = 0.0f;   // will turn everything into a tie and engage that mech
+      pr->util.choice = 0.0f;   // will turn everything into a tie and engage that mech
     }
     else {
-      pr->choice_util = pr->util;
+      pr->util.choice = pr->util.cur;
       if(util.noise > 0.0f) {
         // todo: still need to resolve correspondence of noise_eff relative to gauss_def function vs. act_r_noise function and s sigma
-        pr->choice_util += util.noise_eff * taMath_double::gauss_dev();
+        pr->util.choice += util.noise_eff * taMath_double::gauss_dev();
       }
       if(trace_level == TRACE_ALL || trace_level == TRACE_ELIG) {
         mod->LogEvent(-1.0f, "procedural", "TRACE", pr->name,
-                      "elig util: " + String(pr->choice_util));
+                      "elig util: " + String(pr->util.choice));
       }
     }
-    if(pr->choice_util > best_util) {
+    if(pr->util.choice > best_util) {
       ties.Reset();
       ties.Add(i);              // we always want us to be in the tie set
       best_idx = i;
-      best_util = pr->choice_util;
+      best_util = pr->util.choice;
     }
-    else if(pr->choice_util == best_util) { // keep track of ties
+    else if(pr->util.choice == best_util) { // keep track of ties
       ties.Add(i);
     }
   }
@@ -223,9 +225,9 @@ void ActrProceduralModule::ProductionFired() {
   }
   // todo: could double-check name given during action..
   fired->DoActions(this, mod);
-  fired->last_fire_time = mod->cur_time;
-  if(fired->rew != 0.0f) {
-    ComputeReward(fired->rew);
+  fired->time.last_fire = mod->cur_time;
+  if(fired->util.rew != 0.0f) {
+    ComputeReward(fired->util.rew);
   }
   ClearModuleFlag(BUSY);
 }
@@ -240,14 +242,53 @@ void ActrProceduralModule::ComputeReward(float rew) {
                 "rew: " + String(rew));
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
     if(pr->IsOff()) continue;
-    if(pr->last_fire_time > last_rew_time) {
-      pr->util += util.lrate * (rew - pr->util);
+    if(pr->time.last_fire > last_rew_time) {
+      pr->Compute_Util(rew, util.lrate);
+      //       pr->util.cur += util.lrate * (rew - pr->util.cur);
       if(trace_level == UTIL_LEARN) {
         mod->LogEvent(-1.0f, "procedural", "TRACE", pr->name,
-                      "learned util: " + String(pr->util));
+                      "learned util: " + String(pr->util.cur));
       }
     }
   }
   last_rew_time = mod->cur_time;
   last_rew = rew;
+}
+
+bool ActrProceduralModule::SetParam(const String& param_nm, Variant par1, Variant par2) {
+  bool got = false;
+  if(param_nm == "ul") {
+    util.learn = par1.toBool();
+    got = true;
+  }
+  else if(param_nm == "alpha") {
+    util.lrate = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "iu") {
+    util.init = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "egs") {
+    util.noise = par1.toFloat();
+    util.UpdateAfterEdit();
+    got = true;
+  }
+  else if(param_nm == "ut") {
+    util.thresh = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "crt") {
+    trace_level = ActrProceduralModule::TRACE_ALL;
+    got = true;
+  }
+  else if(param_nm == "cst") {
+    trace_level = ActrProceduralModule::TRACE_ELIG;
+    got = true;
+  }
+  else if(param_nm == "ult") {
+    trace_level = ActrProceduralModule::UTIL_LEARN;
+    got = true;
+  }
+  return got;
 }

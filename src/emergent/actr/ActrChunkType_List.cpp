@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ActrChunkType_List.h"
+#include <ActrChunkType>
 
 void ActrChunkType_List::Initialize() {
   SetBaseType(&TA_ActrChunkType);

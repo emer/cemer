@@ -25,6 +25,42 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(ActrProdUtilVals);
+
+class E_API ActrProdUtilVals : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR vision parameters
+INHERITED(taOBase)
+public:
+  float                 init; // initial utility of this production -- if non-zero then this production will have a custom initial utility instead of the default one set in the procedural module
+  float                 cur;  // #READ_ONLY #SHOW current utility of this production -- updated by reward-based learning
+  float                 choice;  // #READ_ONLY #SHOW actual utility value used when choosing a production -- reflects added noise, if any, on top of util value
+  float                 rew;  // #DEF_0 reward value associated with the firing of this production -- if non-zero, will drive a ComputeReward function call with this value
+
+  override String       GetTypeDecoKey() const { return "Program"; }
+
+  TA_SIMPLE_BASEFUNS(ActrProdUtilVals);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+eTypeDef_Of(ActrProdTimeVals);
+
+class E_API ActrProdTimeVals : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_ActR vision parameters
+INHERITED(taOBase)
+public:
+  float                 act; // #DEF_0 action time associated with this production -- if this is non-zero, then it will be used instead of the default value
+  float                 last_fire; // #READ_ONLY #SHOW time when this production last fired
+
+  override String       GetTypeDecoKey() const { return "Program"; }
+
+  TA_SIMPLE_BASEFUNS(ActrProdTimeVals);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 eTypeDef_Of(ActrProduction);
 
 class E_API ActrProduction : public taNBase {
@@ -41,12 +77,8 @@ public:
 
   ProdFlags             flags;  // flag state of the production
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this production -- what does it do?
-  float                 init_util; // initial utility of this production -- if non-zero then this production will have a custom initial utility instead of the default one set in the procedural module
-  float                 util;  // #READ_ONLY #SHOW current utility of this production -- updated by reward-based learning
-  float                 choice_util;  // #READ_ONLY #SHOW actual utility value used when choosing a production -- reflects added noise, if any, on top of util value
-  float                 rew;  // #DEF_0 reward value associated with the firing of this production -- if non-zero, will drive a ComputeReward function call with this value
-  float                 act_time; // #DEF_0 action time associated with this production -- if this is non-zero, then it will be used instead of the default value
-  float                 last_fire_time; // #READ_ONLY #SHOW time when this production last fired
+  ActrProdUtilVals      util;  // utility values for this production
+  ActrProdTimeVals      time;  // time values for this production
   ActrCondition_List    conds; // conditions that must be matched to fire this production
   ActrAction_List       acts;  // actions that this production causes when it fires
   ActrSlot_List         vars;  // #NO_SAVE #NO_EXPAND_ALL variable bindings used in matching and instantiating actions -- automatically generated from =varname variable names listed in the productions
@@ -69,9 +101,9 @@ public:
 
   bool          IsOff() const { return HasProdFlag(OFF); }
 
-  float         Compute_Util(float rewval, float lrate) {
-    util += lrate * (rewval - util);
-    return util;
+  inline float  Compute_Util(float rewval, float lrate) {
+    util.cur += lrate * (rewval - util.cur);
+    return util.cur;
   }
   // #CAT_ActR update the utility of this production from given reward value and learning rate
 

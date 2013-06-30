@@ -48,7 +48,9 @@ void ActrAction::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   switch(action) {
   case UPDATE:
+  case OVERWRITE:
   case REQUEST: 
+  case REQUEST_DIR:
   case CLEAR:
     dest_type = &TA_ActrBuffer;
     break;
@@ -94,7 +96,19 @@ bool ActrAction::SetBangAction(const String& act) {
     action = STOP;
   }
   else if(act == "eval") {
-    taMisc::Info("Note: lisp eval expressiosn are not supported in C++!");
+    taMisc::Info("Note: eval expressions are not supported in C++!");
+  }
+  else if(act == "safe_eval") {
+    taMisc::Info("Note: safe-eval expressions are not supported in C++!");
+  }
+  else if(act == "bind") {
+    taMisc::Info("Note: bind expressions are not supported in C++!");
+  }
+  else if(act == "mv_bind") {
+    taMisc::Info("Note: mv-bind expressions are not supported in C++!");
+  }
+  else if(act == "safe_bind") {
+    taMisc::Info("Note: safe-bind expressions are not supported in C++!");
   }
   else {
     TestError(true, "SetBangAction", "action value: !" + act + "!  not recognized");
@@ -118,6 +132,10 @@ void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
   case REQUEST:
     CheckError(!chunk.chunk_type, quiet, rval,
                "chunk type not set for update or request");
+    break;
+  case OVERWRITE:
+    break;
+  case REQUEST_DIR:
     break;
   case CLEAR:
     break;
@@ -227,6 +245,8 @@ String& ActrAction::Print(String& strm, int indent) const {
     break;
   case PROG_VAR:
   case OBJ_MEMBER:
+  case OVERWRITE:
+  case REQUEST_DIR:
   case DATA_CELL:
     strm << " <- " << val;
     break;
@@ -238,9 +258,11 @@ String ActrAction::GetDisplayName() const {
   String strm;
   switch(action) {
   case UPDATE:
+  case OVERWRITE:
     strm << "=";
   case REQUEST:
-    if(action == REQUEST) strm << "+"; // fall thru possible
+  case REQUEST_DIR:
+    if(action >= REQUEST) strm << "+"; // fall thru possible
   case CLEAR:
     if(action == CLEAR) strm << "-"; // fall thru possible
     if(!dest) {
@@ -342,6 +364,17 @@ bool ActrAction::DoAction(ActrProduction& prod,
                          "MOD-BUFFER-CHUNK", params, this, new_chunk);
     break;
   }
+  case OVERWRITE: {
+    // todo: get new chunk from val expression!
+    // ActrChunk* new_chunk = new ActrChunk;
+    // new_chunk->CopyFrom(&chunk);
+    // SetVarsChunk(prod, new_chunk);
+    TestError(true, "DoAction::OVERWRITE", "not yet supported!");
+    // model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
+    //                      buffer->module, buffer,
+    //                      "MOD-BUFFER-CHUNK", params, this, new_chunk);
+    break;
+  }
   case REQUEST: {
     ActrChunk* new_chunk = new ActrChunk;
     new_chunk->CopyFrom(&chunk);
@@ -349,6 +382,17 @@ bool ActrAction::DoAction(ActrProduction& prod,
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
                          "MODULE-REQUEST", params, this, new_chunk);
+    break;
+  }
+  case REQUEST_DIR: {
+    // todo: get new chunk from val expression!
+    // ActrChunk* new_chunk = new ActrChunk;
+    // new_chunk->CopyFrom(&chunk);
+    // SetVarsChunk(prod, new_chunk);
+    TestError(true, "DoAction::REQUEST_DIR", "not yet supported!");
+    // model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
+    //                      buffer->module, buffer,
+    //                      "MOD-BUFFER-CHUNK", params, this, new_chunk);
     break;
   }
   case CLEAR:

@@ -37,6 +37,7 @@ public:
   enum SlotFlags { // #BITS ActR slot flags
     SF_NONE             = 0, // #NO_BIT
     COND                = 0x0001, // this slot belongs in a condition of a production
+    ACT                 = 0x0002, // this slot belongs in an action of a production
   };
 
   enum SlotValType {            // slot value type -- must be same as in ActrSlotType
@@ -49,7 +50,7 @@ public:
   SlotValType   val_type;       // #CONDSHOW_OFF_flags:COND what type of value fills this slot
   ActrChunkRef  val_chunk;      // #CONDSHOW_ON_val_type:CHUNK the value as a pointer to another chunk
   String        val;            // #CONDSHOW_ON_val_type:LITERAL the value as a literal value -- empty or "nil" = not set -- for production conditions use =var for variable, and =var- (trailing -) for != var
-  Relation::Relations   rel;    // #CONDSHOW_ON_flags:COND for production conditionals, specifies relationship to use in comparison to potential matching chunk slot values
+  Relation::Relations   rel;    // #CONDSHOW_ON_flags:COND,ACT for production conditionals, specifies relationship to use in comparison to potential matching chunk slot values
 
   virtual bool          IsEmpty();
   // #CAT_ActR is this item empty or not?
@@ -88,6 +89,10 @@ public:
   virtual bool          UpdateFromType(const ActrSlotType& typ);
   // initialize this slot from given slot type -- this is called by parent chunk based on chunk type -- returns true if updated
 
+  virtual bool          SetVal(const String& str,
+                               Relation::Relations rl = Relation::EQUAL);
+  // #IGNORE for parsing -- set slot value and potentially relation
+
   override bool HasName() const { return true; }
   override bool SetName(const String& nm) { name = nm; return true; }
   override String GetName() const  { return name; }
@@ -95,11 +100,14 @@ public:
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgType"; }
 
-  TA_SIMPLE_BASEFUNS(ActrSlot);
+  void  InitLinks();
+  void  CutLinks();
+  TA_BASEFUNS(ActrSlot);
 protected:
   void UpdateAfterEdit_impl(); 
 
 private:
+  SIMPLE_COPY(ActrSlot);
   void Initialize();
   void Destroy()     { CutLinks(); }
 };

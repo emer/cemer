@@ -81,15 +81,17 @@ public:
     CF_NONE             = 0, // #NO_BIT
     RETRIEVED           = 0x0001, // this chunk was just retrieved on last retrieval
     ELIGIBLE            = 0x0002, // this chunk was eligible to be retrieved on last retrieval
-    RECENT              = 0x0004, // this chunk was recently retrieved -- some productions may want to ignore
+    RECENT              = 0x0004, // this chunk was recently activated or retrieved -- i.e., has a finger-of-instantiation (finst)
+    COND                = 0x0010, // this chunk lives in a condition of a production
+    ACT                 = 0x0020, // this chunk lives in an action of a production
     ALL_STATE_FLAGS     = RETRIEVED | ELIGIBLE | RECENT, // #NO_BIT all the DM state flags
   };
 
   ActrChunkTypeRef      chunk_type; // the type of this chunk -- enforces our structure to match
-  ChunkFlags            flags;      // #READ_ONLY #SHOW flags indicating state of the chunk
-  ActrActVals           act;        // #READ_ONLY #SHOW activation values for the chunk
-  ActrActTimeVals       time;       // #READ_ONLY #SHOW activation timing values for the chunk -- when created, accessed, etc
-  ActrSlot_List         slots;      // #NO_EXPAND_ALL the slot values -- same number as slots in chunk_type
+  ChunkFlags            flags;      // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW flags indicating state of the chunk
+  ActrActVals           act;        // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW activation values for the chunk
+  ActrActTimeVals       time;       // #CONDSHOW_OFF_flags:COND,ACT #READ_ONLY #SHOW activation timing values for the chunk -- when created, accessed, etc
+  ActrSlot_List         slots;      // #NO_EXPAND_ALL #SHOW_TREE the slot values -- same number as slots in chunk_type
 
   inline void           SetChunkFlag(ChunkFlags flg)
   { flags = (ChunkFlags)(flags | flg); }
@@ -125,9 +127,15 @@ public:
   // #CAT_ActR compute the base-level activation as a function of current time and decay parameter
 
   virtual bool          SetSlotVal(const String& slot, const String& val);
-  // set given slot to given value
+  // #CAT_ActR set given slot to given value
   virtual ActrSlot*     FindSlot(const String& slot);
-  // find slot by name -- issues error if not found
+  // #CAT_ActR find slot by name -- issues error if not found
+  virtual Variant       GetSlotVal(const String& slot);
+  // #CAT_ActR get slot value as a variant -- either is a string or points to a chunk or is nil if not found (err emitted)
+  virtual String        GetSlotValLiteral(const String& slot);
+  // #CAT_ActR get slot value as a literal string value -- emits an error if slot type is a chunk pointer
+  virtual ActrChunk*    GetSlotValChunk(const String& slot);
+  // #CAT_ActR get slot value as a pointer to a chunk -- emits error if slot type is a literal
 
   virtual ActrSlot*     NewSlot();
   // #BUTTON make a new slot in this chunk
@@ -156,11 +164,14 @@ public:
   override String GetTypeDecoKey() const { return "ProgVar"; }
   override int    GetSpecialState() const;
 
-  TA_SIMPLE_BASEFUNS(ActrChunk);
+  void  InitLinks();
+  void  CutLinks();
+  TA_BASEFUNS(ActrChunk);
 protected:
   void  UpdateAfterEdit_impl();
 
 private:
+  SIMPLE_COPY(ActrChunk);
   void Initialize();
   void Destroy();
 };

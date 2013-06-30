@@ -17,6 +17,8 @@
 #include <ActrModel>
 #include <ActrEvent>
 
+#include <taMisc>
+
 void ActrModule::Initialize() {
   own_model = NULL;
   flags = MF_NONE;
@@ -26,6 +28,69 @@ void ActrModule::Init() {
   flags = MF_NONE;
   InitModule();
   buffer->Init();
+}
+
+
+bool ActrModule::ProcessQuery(ActrBuffer* buf, const String& query, bool why_not) {
+  return ProcessQuery_std(buf, query, why_not);
+}
+
+bool ActrModule::ProcessQuery_std(ActrBuffer* buf, const String& query, bool why_not) {
+  String quer = query;
+  bool neg = false;
+  if(quer.endsWith('-')) {
+    quer = quer.before('-',-1);
+    neg = true;
+  }
+  bool rval = false;
+  if(quer == "buffer full" || quer == "full") {
+    rval = buf->IsFull();
+  }
+  else if(quer == "buffer empty" || quer == "empty") {
+    rval = buf->IsEmpty();
+  }
+  else if(quer == "buffer requested" || quer == "requested") {
+    rval = buf->IsReq();
+  }
+  else if(quer == "buffer unrequested" || quer == "unrequested") {
+    rval = buf->IsUnReq();
+  }
+  else if(quer == "state busy" || quer == "busy") {
+    rval = IsBusy();
+  }
+  else if(quer == "state free" || quer == "free") {
+    rval = IsFree();
+  }
+  else if(quer == "state error" || quer == "error") {
+    rval = IsError();
+  }
+  else if(quer == "state busy" || quer == "busy") {
+    rval = IsBusy();
+  }
+  else if(quer == "preparation free") {
+    rval = !IsPrep();
+  }
+  else if(quer == "preparation busy") {
+    rval = IsPrep();
+  }
+  else if(quer == "processor free") {
+    rval = !IsProc();
+  }
+  else if(quer == "processor busy") {
+    rval = IsProc();
+  }
+  else if(quer == "execution free") {
+    rval = !IsExec();
+  }
+  else if(quer == "execution busy") {
+    rval = IsExec();
+  }
+  if(neg) rval = !rval;
+  if(!rval && why_not) {
+    taMisc::Info("module:",GetDisplayName(), "buffer:", buf->GetDisplayName(),
+                 "query:", query, "returned false");
+  }
+  return rval;
 }
 
 bool ActrModule::ProcessEvent_std(ActrEvent& event) {

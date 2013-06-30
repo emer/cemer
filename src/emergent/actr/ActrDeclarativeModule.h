@@ -35,7 +35,7 @@ public:
   float         perm_noise;    // :pas in ACT-R -- permanent noise for chunks -- added only once, when chunk is added to DM (0 default)
   float         init;          // #DEF_0 :blc in ACT-R -- default initial base level activation value if not learning
   int           n_finst;       // #DEF_4 :declarative-num-finsts in ACT-R -- number of 'fingers of instantiation' for declarative memory system
-  int           finst_span;    // #DEF_3 :declarative-finst-span in ACT-R -- how long a 'fingers of instantiation' persists for declarative memory system
+  float         finst_span;    // #DEF_3 :declarative-finst-span in ACT-R -- how long a 'fingers of instantiation' persists for declarative memory system
 
   override String       GetTypeDecoKey() const { return "Program"; }
 
@@ -164,7 +164,7 @@ public:
   virtual void  RemoveOldFinsts();
   // #CAT_ActR remove any old finsts (older than finst_span) -- done prior to matching
   virtual void  UpdateFinsts();
-  // #CAT_ActR rupdate finsts to reflect last retrieved item
+  // #CAT_ActR update finsts to reflect last retrieved item
 
   virtual void  RetrievalRequest(ActrEvent& event);
   // #CAT_ActR process a retrieval request from given chunk probe
@@ -182,6 +182,7 @@ public:
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);
+  override bool  SetParam(const String& param_nm, Variant par1, Variant par2);
   override void  Init();
 
   TA_SIMPLE_BASEFUNS(ActrDeclarativeModule);

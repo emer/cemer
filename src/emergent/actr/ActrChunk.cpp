@@ -16,6 +16,9 @@
 #include "ActrChunk.h"
 #include <ActrSlotType>
 #include <ActrSlot>
+#include <ActrCondition>
+#include <ActrAction>
+#include <ActrModule>
 
 #include <taMisc>
 
@@ -37,9 +40,40 @@ void ActrChunk::Destroy() {
   CutLinks();
 }
 
+void ActrChunk::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ActrChunk);
+  if(owner && owner->InheritsFrom(&TA_ActrCondition)) {
+    SetChunkFlag(COND);
+  }
+  else if(owner && owner->InheritsFrom(&TA_ActrAction)) {
+    SetChunkFlag(ACT);
+  }
+}
+
+void ActrChunk::CutLinks() {
+  CutLinks_taAuto(&TA_ActrChunk);
+  inherited::CutLinks();
+}
+
 void ActrChunk::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateFromType();
+  if(owner && owner->InheritsFrom(&TA_ActrCondition)) {
+    SetChunkFlag(COND);
+    for(int i=0; i< slots.size; i++) {
+      ActrSlot* sl = slots[i];
+      sl->SetSlotFlag(ActrSlot::COND); // must be in cond mode!
+      sl->val_type = ActrSlot::LITERAL;
+    }
+  }
+  else if(owner && owner->InheritsFrom(&TA_ActrAction)) {
+    SetChunkFlag(ACT);
+    for(int i=0; i< slots.size; i++) {
+      ActrSlot* sl = slots[i];
+      sl->SetSlotFlag(ActrSlot::ACT);
+    }
+  }
 }
 
 bool ActrChunk::UpdateFromType() {
@@ -212,15 +246,43 @@ void ActrChunk::CopyName(ActrChunk* cp) {
 
 ActrSlot* ActrChunk::FindSlot(const String& slot) {
   ActrSlot* slt = slots.FindName(slot);
-  if(!slt && slot != "state" && slot != "buffer") {
-    if(TestError(true, "SetSlotVal", "slot named:", slot, "not found in chunk of type:", 
-                 chunk_type ? chunk_type->name : "<no type set>")) {
-      return NULL;
-    }
+  if(TestError(!slt, "SetSlotVal", "slot named:", slot, "not found in chunk of type:", 
+               chunk_type ? chunk_type->name : "<no type set>")) {
+    return NULL;
   }
   return slt;
 }
 
+Variant ActrChunk::GetSlotVal(const String& slot) {
+  ActrSlot* sl = FindSlot(slot);
+  if(!sl) return _nilVariant;
+  if(sl->val_type == ActrSlot::LITERAL) {
+    return (Variant)sl->val;
+  }
+  else {
+    return (Variant)sl->val_chunk.ptr();
+  }
+}
+
+String ActrChunk::GetSlotValLiteral(const String& slot) {
+  ActrSlot* sl = FindSlot(slot);
+  if(!sl) return _nilString;
+  if(TestError(sl->val_type != ActrSlot::LITERAL, "GetSlotValLiteral",
+               "slot is not a LITERAL"))
+    return _nilString;
+  
+  return sl->val;
+}
+
+ActrChunk* ActrChunk::GetSlotValChunk(const String& slot) {
+  ActrSlot* sl = FindSlot(slot);
+  if(!sl) return NULL;
+  if(TestError(sl->val_type != ActrSlot::CHUNK, "GetSlotValLiteral",
+               "slot is not a CHUNK pointer"))
+    return NULL;
+  
+  return sl->val_chunk.ptr();
+}
 
 bool ActrChunk::SetSlotVal(const String& slot, const String& val) {
   ActrSlot* slt = FindSlot(slot);

@@ -16,6 +16,8 @@
 #include "ActrBuffer.h"
 #include <ActrDeclarativeModule>
 
+#include <String_Array>
+
 #include <taMisc>
 
 void ActrBuffer::Initialize() {
@@ -24,39 +26,20 @@ void ActrBuffer::Initialize() {
 }
 
 bool ActrBuffer::QueryMatches(const String& query, bool why_not) {
-  String quer = query;
-  bool neg = false;
-  if(quer.endsWith('-')) {
-    quer = quer.before('-',-1);
-    neg = true;
+  if(query.contains(';')) {
+    // multiple queries
+    String_Array ary;
+    ary.FmDelimString(query, ';');
+    for(int i=0; i<ary.size; i++) {
+      String qu = ary[i];
+      bool rv = module->ProcessQuery(this, qu, why_not); // delegate to module
+      if(!rv) return false;
+    }
+    return true;
   }
-  bool rval = false;
-  if(quer == "full") {
-    rval = IsFull();
+  else {
+    return module->ProcessQuery(this, query, why_not); // delegate to module
   }
-  else if(quer == "empty") {
-    rval = IsEmpty();
-  }
-  else if(quer == "requested") {
-    rval = IsReq();
-  }
-  else if(quer == "unrequested") {
-    rval = IsUnReq();
-  }
-  else if(quer == "busy") {
-    rval = module->IsBusy();
-  }
-  else if(quer == "free") {
-    rval = module->IsFree();
-  }
-  else if(quer == "error") {
-    rval = module->IsError();
-  }
-  if(neg) rval = !rval;
-  if(!rval && why_not) {
-    taMisc::Info("buffer:", GetDisplayName(), "query:", query, "returned false");
-  }
-  return rval;
 }
 
 void ActrBuffer::Init() {

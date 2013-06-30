@@ -440,7 +440,11 @@ void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* m
 bool ActrCondition::SetVal(ActrSlot* slt, const String& val,
                            Relation::Relations rl) {
   if(slt) {
-    slt->val = val;
+    if(TestError(slt->val.nonempty(), "SetVal",
+                 "chunk comparison value had already been set -- to test multiple values of the same slot, please duplicate the condition and divide the tests across them -- can only have one test per slot per condition in this implementation")) {
+      slt->val += " ";
+    }
+    slt->val += val;
     slt->rel = rl;
   }
   else {
@@ -448,3 +452,14 @@ bool ActrCondition::SetVal(ActrSlot* slt, const String& val,
   }
   return true;
 }
+
+bool ActrCondition::SetQuery(const String& sys, const String& val, bool neg) {
+  if(cmp_val.nonempty()) {
+    cmp_val += "; ";
+  }
+  cmp_val += sys + " " + val;
+  if(neg)
+    cmp_val += "-";
+  return true;
+}
+ 

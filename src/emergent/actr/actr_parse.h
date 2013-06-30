@@ -51,10 +51,11 @@
      AP_NUMBER = 267,
      AP_NAME = 268,
      AP_STRING = 269,
-     AP_DEFVAR = 270,
-     AP_DEFMETHOD = 271,
-     AP_DEFUN = 272,
-     AP_SETF = 273
+     AP_BANG_EXPR = 270,
+     AP_DEFVAR = 271,
+     AP_DEFMETHOD = 272,
+     AP_DEFUN = 273,
+     AP_SETF = 274
    };
 #endif
 /* Tokens.  */
@@ -70,10 +71,11 @@
 #define AP_NUMBER 267
 #define AP_NAME 268
 #define AP_STRING 269
-#define AP_DEFVAR 270
-#define AP_DEFMETHOD 271
-#define AP_DEFUN 272
-#define AP_SETF 273
+#define AP_BANG_EXPR 270
+#define AP_DEFVAR 271
+#define AP_DEFMETHOD 272
+#define AP_DEFUN 273
+#define AP_SETF 274
 
 
 
@@ -92,7 +94,7 @@ typedef struct YYSTYPE
   ActrSlot*       slt;
 }
 /* Line 1529 of yacc.c.  */
-#line 96 "y.tab.h"
+#line 98 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

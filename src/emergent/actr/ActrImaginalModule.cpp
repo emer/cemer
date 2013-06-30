@@ -43,11 +43,16 @@ void ActrImaginalModule::InitModule() {
   if(made_new) {
     action_buffer->act_total = 0.0f;   // imaginal-activation
   }
+
+  mod->DefineChunkType("generic_action", "", "action", "result");
+  mod->DefineChunkType("simple_action", "", "action");
 }
 
 void ActrImaginalModule::Init() {
   inherited::Init();
+  action_buffer->Init();
   buffer->UpdateState();
+  action_buffer->UpdateState();
 }
 
 void ActrImaginalModule::ProcessEvent(ActrEvent& event) {
@@ -151,3 +156,15 @@ void ActrImaginalModule::ModImaginalChunk(ActrEvent& event) {
   ClearModuleFlag(BUSY);
 }
 
+bool ActrImaginalModule::SetParam(const String& param_nm, Variant par1, Variant par2) {
+  bool got = false;
+  if(param_nm == "imaginal_activation" && buffer) {
+    buffer->act_total = par1.toFloat();
+    got = true;
+  }
+  else if(param_nm == "imaginal_action_activation" && action_buffer) {
+    action_buffer->act_total = par1.toFloat();
+    got = true;
+  }
+  return got;
+}

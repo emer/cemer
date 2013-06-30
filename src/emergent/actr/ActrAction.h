@@ -45,7 +45,9 @@ public:
 
   enum ActType {
     UPDATE,              // =buffer -- update buffer state of ActR chunk in a buffer with chunk info
+    OVERWRITE,           // =buffer =value -- directly overwrite contents of buffer with given variable, specified in val
     REQUEST,             // +buffer -- request info from buffer (and associated module) according to chunk info
+    REQUEST_DIR,         // +buffer =value -- a direct chunk request -- full request is provided in chunk specified in val
     CLEAR,               // -buffer -- clear chunk from buffer
     STOP,                // stop execution of the model
     PROG_RUN,            // run a Program -- typically this is NOT the program that owns and manages this model -- use a separate helper program to perform actions -- set variables using PROG_VAR before calling
@@ -65,7 +67,7 @@ public:
   int           dt_cell;        // #CONDSHOW_ON_action:DATA_CELL cell index within data row,column within data table cell to obtain value from
   String        val;            // #CONDSHOW_OFF_action:UPDATE,REQUEST,CLEAR,STOP,PROG_RUN value to print out or to set program variable to -- can use =var for outputting variable values -- just uses string replace of =var with current bound value -- can intersperse other literal information
   String        params;         // #CONDSHOW_ON_action:UPDATE,REQUEST extra module-specific parameters for UPDATE and REQUEST actions -- these are prefixed with a colon : in ACT-R -- do not include the colon here, and separate with commas if multiple -- refer to specific module docs for available options
-  ActrChunk     chunk;          // #SHOW_TREE #CONDSHOW_ON_action:UPDATE,REQUEST chunk information for the action
+  ActrChunk     chunk;          // #CONDSHOW_ON_action:UPDATE,REQUEST #SHOW_TREE #CONDTREE_ON_action:UPDATE,REQUEST chunk information for the action
   
 
   inline void           SetActionFlag(ActionFlags flg)

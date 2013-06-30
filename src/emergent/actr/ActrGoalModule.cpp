@@ -44,3 +44,11 @@ void ActrGoalModule::Init() {
   buffer->UpdateState();
 }
 
+bool ActrGoalModule::SetParam(const String& param_nm, Variant par1, Variant par2) {
+  bool got = false;
+  if(param_nm == "ga" && buffer) {
+    buffer->act_total = par1.toFloat();
+    got = true;
+  }
+  return got;
+}
