@@ -63,7 +63,7 @@ INHERITED(taOBase)
 public:
   float                 n_act;      // number of times chunk has been activated
   float                 t_new;      // time when chunk was created
-  float                 t_ret;      // time when chunk was last retrieved
+  float                 t_act;      // time when chunk was last activated
   
   TA_SIMPLE_BASEFUNS(ActrActTimeVals);
 private:
@@ -111,10 +111,10 @@ public:
 
   inline void   ChunkActivated() { time.n_act += 1.0f; }
   // #CAT_ActR chunk was activated -- update its activation count
-  inline void   NewDMChunk(float cur_time) 
-  { time.t_new = cur_time; time.n_act = 1.0f; time.t_ret = -1.0f;
+  inline void   InitChunk(float cur_time) 
+  { time.t_new = cur_time; time.n_act = 1.0f; time.t_act = -1.0f;
     ClearChunkFlag(ALL_STATE_FLAGS); }
-  // #CAT_ActR initialize the chunk as a new chunk in declarative memory
+  // #CAT_ActR initialize the chunk as a new chunk (e.g., for declarative memory)
 
   inline float ComputeBaseAct(float cur_t, float decay) {
     if(time.n_act == 0) act.base = 0.0f;
@@ -152,8 +152,19 @@ public:
   virtual void          CopyName(ActrChunk* cp);
   // #CAT_ActR copy name from other chunk -- uses special new name for copy
 
-  virtual bool  UpdateFromType();
+  virtual bool          UpdateFromType();
   // ensure that this chunk is formatted properly based on the chunk_type -- automatically called in update-after-edit -- returns true if any changes were made -- preserves existing content even if slots change order etc, to greatest extent possible
+
+  inline bool          InheritsFromCT(ActrChunkType* par)
+  { if(!chunk_type) return false; return chunk_type->InheritsFromCT(par); }
+  // #CAT_ActR determine if this chunk type inherits from given parent chunk type, including being the same type itself
+  inline bool          InheritsFromCTName(const String& chunk_type_nm)
+  { if(!chunk_type) return false; return chunk_type->InheritsFromCTName(chunk_type_nm); }
+  // #CAT_ActR determine if this chunk type inherits from given parent chunk type name, including being the same type itself
+  virtual ActrChunkType* CommonChunkType(ActrChunkType* other)
+  { if(!chunk_type) return NULL; return chunk_type->CommonChunkType(other); }
+  // #CAT_ActR returns the highest common chunk type between this chunk type and the other -- NULL if they are not related
+
 
   override taList_impl*	children_() {return &slots;}	
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const

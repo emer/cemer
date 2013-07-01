@@ -1287,6 +1287,23 @@ String TypeDef::GetEnumString(const String& enum_tp_nm, int enum_val) const {
   return "";
 }
 
+String TypeDef::GetEnumLabel(const String& enum_tp_nm, int enum_val) const {
+  EnumDef* rval;
+  if(enum_vals.size > 0) {
+    rval = enum_vals.FindNo(enum_val);
+    if(rval != NULL) return rval->GetLabel();
+  }
+  int i;
+  for(i=0; i < sub_types.size; i++) {
+    TypeDef* td = sub_types.FastEl(i);
+    if(td->IsEnum() && (enum_tp_nm.empty() || (td->name == enum_tp_nm))) {
+      rval = td->enum_vals.FindNo(enum_val);
+      if(rval != NULL) return rval->GetLabel();
+    }
+  }
+  return "";
+}
+
 const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
   STRING_BUF(rval, 80); // extends if needed
 

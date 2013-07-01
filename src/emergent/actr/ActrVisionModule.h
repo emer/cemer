@@ -20,6 +20,7 @@
 #include <ActrModule>
 
 // member includes:
+#include <taVector2f>
 
 // declare all other types mentioned but not required to include:
 
@@ -66,6 +67,21 @@ class E_API ActrVisionModule : public ActrModule {
   // the ACT-R vision module, supporting the visual and visual-location buffers
 INHERITED(ActrModule)
 public:
+  enum Attended {
+    NO_ATTENDED,                // no constraint on attended or not
+    ATTENDED,                   // yes attended (in finst list)
+    NOT_ATTENDED,               // not attended (not in finst list)
+    NEW_NOT_ATTENDED,           // newly added (within onset span) and not currently attended
+  };
+  enum Nearest {
+    NO_NEAREST,                 // no constraint on nearest
+    NEAR_XY,                    // nearest to given x-y coords
+    NEAR_X,                     // nearest just to x coord
+    NEAR_Y,                     // nearest just to y coord
+    NEAR_CLOCKWISE,             // clockwise around center
+    NEAR_COUNTERCLOCKWISE,      // counterclockwise around center
+  };
+
   ActrVisParams         params;        // visual system parameters
   ActrAttnParams        attn;           // attentional parameters
   ActrBufferRef         location_buffer; // the visual-location buffer for this module
@@ -73,7 +89,10 @@ public:
   ActrChunk_List        finsts;         // #HIDDEN #NO_SAVE list of current declarative fingers of instantiation chunks
   ActrChunk_List        eligible;       // #HIDDEN #NO_SAVE list of all matching chunks eligible
   ActrChunkRef          found;          // #HIDDEN #NO_SAVE final chunk found on last find-location request
-  String                last_cmd;       // #HIDDEN #NO_SAVE #SHOW last command (chunk type) executed by module
+  ActrChunkRef          attended;       // #HIDDEN #NO_SAVE currently attended location 
+  ActrChunkRef          tracking;       // #HIDDEN #NO_SAVE currently tracked object (vis_obj)
+  String                last_cmd;       // #READ_ONLY #NO_SAVE #SHOW last command (chunk type) executed by module
+  taVector2f            center;         // center point for clockwise or counterclockwise location specifications -- can be set directly or via params
 
   virtual void  VisionRequest(ActrEvent& event);
   // #CAT_ActR process a vision request
@@ -81,11 +100,22 @@ public:
   // #CAT_ActR process a visual_location request
   virtual void  MoveAttentionRequest(ActrEvent& event);
   // #CAT_ActR process a move_attention request
+  virtual void  StartTrackingRequest(ActrEvent& event);
+  // #CAT_ActR process a start_tracking request
+  virtual void  ClearRequest(ActrEvent& event);
+  // #CAT_ActR process a clear request
+  virtual void  ClearSceneChangeRequest(ActrEvent& event);
+  // #CAT_ActR process a clear_scene_change request
+  virtual void  AssignFinstRequest(ActrEvent& event);
+  // #CAT_ActR process a assign_finst request
   virtual void  EncodingComplete(ActrEvent& event);
   // #CAT_ActR done encoding new location -- activate chunk
 
-  virtual bool  FindMatchingLocation(ActrChunk* ck);
-  // #CAT_ActR find a location in the visicon that matches parameters of given chunk -- put matches in eligible -- returns true
+  virtual bool  FindMatchingLocation(ActrChunk* ck, Attended attd = NO_ATTENDED, 
+                                     Nearest nearest = NO_NEAREST,
+                                     float nx = 0, float ny = 0,
+                                     float ctrx = 0, float ctry = 0);
+  // #CAT_ActR find a location in the visicon that matches parameters of given chunk, plus additional parameters -- put matches in eligible -- returns true if at least one match found
   virtual void  ChooseFromEligibleLocations();
   // #CAT_ActR when multiple items in eligible, choose one based on add time -- ties selected at random
 

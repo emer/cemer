@@ -15,8 +15,11 @@
 
 #include "ActrVisionModule.h"
 #include <ActrModel>
+#include <ActrSlot>
 
 #include <Random>
+#include <float_Array>
+#include <taMath_float>
 #include <taMisc>
 
 void ActrVisParams::Initialize() {
@@ -80,7 +83,9 @@ void ActrVisionModule::InitModule() {
   ck->SetSlotChunkType("screen_pos", "visual_location"); // screen_pos is pointer to vis loc
   
   mod->DefineChunkType("start_tracking", "vision_command");
-  mod->DefineChunkType("assign_finst", "vision_command", "object", "location");
+  ck = mod->DefineChunkType("assign_finst", "vision_command", "object", "location");
+  ck->SetSlotChunkType("object", "visual_object"); 
+  ck->SetSlotChunkType("location", "visual_location");
   mod->DefineChunkType("clear_scene_change", "vision_command");
   mod->DefineChunkType("clear");
 
@@ -126,9 +131,12 @@ void ActrVisionModule::InitModule() {
 
 void ActrVisionModule::Init() {
   inherited::Init();
+  attended = NULL;
   found = NULL;
+  finsts.Reset();
   eligible.Reset();
   visicon.Reset();
+  last_cmd = "";
   buffer->UpdateState();
   location_buffer->Init();
   location_buffer->UpdateState();
@@ -179,10 +187,21 @@ void ActrVisionModule::VisionRequest(ActrEvent& event) {
        ck->chunk_type->InheritsFromCTName("move_attention")) {
       MoveAttentionRequest(event);
     }
-    // etc.
-    // else if(ck->name == "clear" || ck->InheritsFromCTName("clear")) {
-    //   ClearRequest(event);
-    // }
+    else if(ck->name == "start_tracking" ||
+            ck->chunk_type->InheritsFromCTName("start_tracking")) {
+      StartTrackingRequest(event);
+    }
+    else if(ck->name == "clear" || ck->chunk_type->InheritsFromCTName("clear")) {
+      ClearRequest(event);
+    }
+    else if(ck->name == "clear_scene_change" ||
+            ck->chunk_type->InheritsFromCTName("clear_scene_change")) {
+      ClearSceneChangeRequest(event);
+    }
+    else if(ck->name == "assign_finst" ||
+            ck->chunk_type->InheritsFromCTName("assign_finst")) {
+      AssignFinstRequest(event);
+    }
   }
 }
 
@@ -198,15 +217,81 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   location_buffer->SetReq();
   location_buffer->ClearChunk();         // always clear before find
 
-  String param = event.params;
-  if(param.contains("nearest")) {
-    // todo: process nearest
-  }
-  else if(param.contains("attended")) {
-    // todo: use finsts
+  Attended attd = NO_ATTENDED;
+  Nearest nearest = NO_NEAREST;
+  float nx = 0.0f;
+  float ny = 0.0f;
+  float ctrx = center.x;
+  float ctry = center.y;
+  // process parameters
+  String_Array pary;
+  pary.FmDelimString(event.params, ";");
+  for(int i=0; i<pary.size; i++) {
+    String ps = pary[i];
+    if(ps.startsWith("nearest ")) {
+      String spec = ps.after("nearest ");
+      if(spec == "current" && attended) {
+        nearest = NEAR_XY;
+        nx = attended->GetSlotVal("screen_x").toFloat();
+        ny = attended->GetSlotVal("screen_y").toFloat();
+      }
+      else if(spec == "current_x" && attended) {
+        nearest = NEAR_X;
+        nx = attended->GetSlotVal("screen_x").toFloat();
+      }
+      else if(spec == "current_y" && attended) {
+        nearest = NEAR_Y;
+        nx = attended->GetSlotVal("screen_y").toFloat();
+      }
+      else if(spec == "clockwise") {
+        nearest = NEAR_CLOCKWISE;
+      }
+      else if(spec == "counterclockwise") {
+        nearest = NEAR_COUNTERCLOCKWISE;
+      }
+      else {
+        // must be name of a chunk in visicon
+        ActrChunk* nck = visicon.FindName(spec);
+        if(nck) {
+          nearest = NEAR_XY;
+          nx = nck->GetSlotVal("screen_x").toFloat();
+          ny = nck->GetSlotVal("screen_y").toFloat();
+        }
+        else {
+          TestWarning(true, "find_location", "nearest chunk name not found in visicon:",
+                      spec);
+        }
+      }
+    }
+    else if(ps.startsWith("attended ")) {
+      String spec = ps.after("attended ");
+      if(spec == "nil" || spec == "false") {
+        attd = NOT_ATTENDED;
+      }
+      else if(spec == "new") {
+        attd = NEW_NOT_ATTENDED;
+      }
+      else {
+        attd = ATTENDED;
+      }
+    }
+    else if(ps.startsWith("center ")) {
+      String spec = ps.after("center ");
+      // must be name of a chunk in visicon
+      ActrChunk* nck = visicon.FindName(spec);
+      if(nck) {
+        ctrx = nck->GetSlotVal("screen_x").toFloat();
+        ctry = nck->GetSlotVal("screen_y").toFloat();
+      }
+      else {
+        TestWarning(true, "find_location", "center chunk name not found in visicon:",
+                    spec);
+      }
+    }
   }
 
-  bool got_some = FindMatchingLocation(ck);
+  bool got_some = FindMatchingLocation(ck, attd, nearest, nx, ny, ctrx, ctry);
+
   if(!got_some) {
     ClearModuleFlag(BUSY);
     SetModuleFlag(ERROR);
@@ -225,8 +310,6 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, location_buffer,
                      "SET-BUFFER-CHUNK", found->name, event.act_arg,
                      found);
-  // todo: unclear if finsts should be activated for locations as well?
-  // UpdateFinsts();                 // uses retrieved
 
   ClearModuleFlag(BUSY);
   location_buffer->ClearReq();
@@ -250,11 +333,44 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   }
 }
 
-bool ActrVisionModule::FindMatchingLocation(ActrChunk* ck) {
+bool ActrVisionModule::FindMatchingLocation(ActrChunk* ck, Attended attd,
+                                            Nearest nearest,
+                                            float nx, float ny,
+                                            float ctrx, float ctry) {
+  ActrChunk cpck;               // need a local copy
+  cpck.CopyFrom(ck);
+  float_Array lohivals;               // contains lowest and highest values
+
+  bool low_hi = false;          // were low or hi used?
+  for(int i=0; i<cpck.slots.size; i++) {
+    ActrSlot* sl = cpck.slots.FastEl(i);
+    if(sl->val == "lowest" || sl->val == "highest") {
+      low_hi = true;
+    }
+    else if(sl->val == "current") {
+      if(attended) {
+        ActrSlot* csl = attended->FindSlot(sl->name);
+        if(csl) {
+          sl->CopyFrom(csl);
+        }
+      }
+    }
+  }
+  
+  if(low_hi) {
+    lohivals.SetSize(cpck.slots.size);
+  }
+
   ActrModel* mod = Model();
   eligible.Reset();
-  for(int i=0; i<visicon.size; i++) {
-    ActrChunk* oc = visicon.FastEl(i);
+
+  ActrChunk_List* lst = &visicon;
+  if(attd == ATTENDED) {
+    lst = &finsts;
+  }
+
+  for(int i=0; i<lst->size; i++) {
+    ActrChunk* oc = lst->FastEl(i);
     bool updt = false;
     if(mod->UpdateGui()) {
       if(oc->HasChunkFlag(ActrChunk::ELIGIBLE) ||
@@ -263,17 +379,146 @@ bool ActrVisionModule::FindMatchingLocation(ActrChunk* ck) {
     }
     oc->ClearChunkFlag(ActrChunk::ELIGIBLE);
     oc->ClearChunkFlag(ActrChunk::RETRIEVED);
-    if(ck->MatchesMem(oc, false)) { // false = not exact..
+
+    if(attd == NOT_ATTENDED) {
+      if(oc->HasChunkFlag(ActrChunk::RECENT)) continue; // skip
+    }
+    if(attd == NEW_NOT_ATTENDED) {
+      if(oc->HasChunkFlag(ActrChunk::RECENT)) continue; // skip
+      float tm = mod->cur_time - oc->time.t_new;
+      if(tm > params.onset_span) { // not new
+        continue;
+      }
+    }
+
+    ActrChunkType* compar = cpck.chunk_type->CommonChunkType(oc->chunk_type);
+    bool match = true;
+    if(compar) {
+      for(int j=0; j<compar->slots.size; j++) {
+        ActrSlot* sl = cpck.slots.FastEl(j);
+        ActrSlot* os = oc->slots.SafeEl(j);
+        if(sl->val == "lowest" || sl->val == "highest") {
+          continue;
+        }
+        if(!sl->MatchesMem(os, false, false)) { // false = exact, why_not
+          match = false;
+          break;
+        }
+      }
+    }
+    else {
+      match = false;
+    }
+    if(match) {
       eligible.Link(oc);
       oc->SetChunkFlag(ActrChunk::ELIGIBLE);
+
+      // get low-high values only for matches
+      if(low_hi) {
+        for(int j=0; j<compar->slots.size; j++) {
+          ActrSlot* sl = cpck.slots.FastEl(j);
+          ActrSlot* os = oc->slots.FastEl(j);
+          if(sl->val == "lowest") {
+            float oval = (float)os->val;
+            if(eligible.size == 1) { // first one, set
+              lohivals[j] = oval;
+            }
+            else {
+              float& lv = lohivals[j];
+              lv = MIN(lv, oval);
+            }
+          }
+          else if(sl->val == "highest") {
+            float oval = (float)os->val;
+            if(eligible.size == 1) { // first one, set
+              lohivals[j] = oval;
+            }
+            else {
+              float& lv = lohivals[j];
+              lv = MAX(lv, oval);
+            }
+          }
+        }
+      }
     }
-    // todo: process highest, lowest, current
     if(updt && mod->UpdateGui()) {
       oc->SigEmitUpdated();
     }
   }
+
+  if(low_hi) {                  // go through eligible and eliminate 
+    for(int i=eligible.size-1; i>=0; i--) {
+      ActrChunk* oc = eligible.FastEl(i);
+      ActrChunkType* compar = cpck.chunk_type->CommonChunkType(oc->chunk_type);
+
+      bool remove = false;
+      for(int j=0; j<compar->slots.size; j++) {
+        ActrSlot* sl = cpck.slots.FastEl(j);
+        ActrSlot* os = oc->slots.FastEl(j);
+        if(sl->val == "lowest") {
+          float oval = (float)os->val;
+          if(oval > lohivals[j]) {
+            remove = true;
+            break;
+          }
+        }
+        else if(sl->val == "lowest") {
+          float oval = (float)os->val;
+          if(oval < lohivals[j]) {
+            remove = true;
+            break;
+          }
+        }
+      }
+      if(remove) {
+        eligible.RemoveIdx(i);
+      }
+    }
+  }
+
+  if(nearest == NO_NEAREST) {
+    return (eligible.size > 0);
+  }
+  if(TestWarning(nearest >= NEAR_CLOCKWISE, "FindLocation",
+                 "clockwise and counterclockwise nearest tests not yet supported")) {
+    return (eligible.size > 0);
+  }
+
+  // now process nearest
+  float_Array dsts;
+  dsts.SetSize(eligible.size);
+  float min_dist = 0.0f;
+  for(int i=eligible.size-1; i>=0; i--) {
+    ActrChunk* oc = eligible.FastEl(i);
+    float cx = oc->GetSlotVal("screen_x").toFloat();
+    float cy = oc->GetSlotVal("screen_y").toFloat();
+    float dist = 0.0f;
+    if(nearest == NEAR_XY) {
+      dist = taMath_float::euc_dist(cx, cy, nx, ny);
+    }
+    else if(nearest == NEAR_X) {
+      dist = taMath_float::fabs(cx - nx);
+    }
+    else if(nearest == NEAR_Y) {
+      dist = taMath_float::fabs(cy - ny);
+    }
+    dsts[i] = dist;
+    if(dist < min_dist) {
+      min_dist = dist;
+    }
+  }
+    
+  for(int i=eligible.size-1; i>=0; i--) {
+    ActrChunk* oc = eligible.FastEl(i);
+    float dist = dsts[i];
+    if(dist > min_dist) {
+      eligible.RemoveIdx(i);
+    }
+  }
+
   return (eligible.size > 0);
 }
+
 
 void ActrVisionModule::ChooseFromEligibleLocations() {
   int best_idx = 0;
@@ -311,7 +556,7 @@ void ActrVisionModule::RemoveOldFinsts() {
   ActrModel* mod = Model();
   for(int i=finsts.size-1; i >= 0; i--) {
     ActrChunk* oc = finsts.FastEl(i);
-    if(mod->cur_time - oc->time.t_ret > params.finst_span) {
+    if(mod->cur_time - oc->time.t_act > params.finst_span) {
       oc->ClearChunkFlag(ActrChunk::RECENT);
       finsts.RemoveIdx(i);
     }
@@ -328,7 +573,7 @@ void ActrVisionModule::UpdateFinsts(ActrChunk* attend) {
     int oldest_i = 0;
     for(int i=finsts.size-1; i >= 0; i--) {
       ActrChunk* oc = finsts.FastEl(i);
-      float tm = mod->cur_time - oc->time.t_ret;
+      float tm = mod->cur_time - oc->time.t_act;
       if(tm > oldest_t) {
         oldest_t = tm;
         oldest_i = i;
@@ -346,7 +591,9 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
 
   mod->LogEvent(-1.0f, "vision", "Move-attention", "", "");
 
-  SetModuleFlag(PROC);          // move-attention = processor
+  SetModuleFlag(BUSY);
+  SetModuleFlag(PROC);       // move-attention = processor
+  SetModuleFlag(EXEC);       // move-attention and execution (also tracking, unreq re-eq)
   ClearModuleFlag(ERROR);
   buffer->SetReq();
   buffer->ClearChunk();         // always clear before..
@@ -358,28 +605,25 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
     scale = ck->GetSlotValLiteral("scale");
   }
   else {                        // must be the command
-    moveto = found;
+    moveto = found;             // use prev
   }
   if(!moveto) {
+    ClearModuleFlag(BUSY);
     ClearModuleFlag(PROC);
+    ClearModuleFlag(EXEC);
     SetModuleFlag(ERROR);
     buffer->ClearReq();
     mod->LogEvent(-1.0f, "vision", "MOVE-ATTN-FAILURE", "move_attention chunk not found",
                   "");
     return;
   }
-  // todo: process the scale command
-    
-  // if(param.contains("nearest")) {
-  //   // todo: process nearest
-  // }
-  // else if(param.contains("attended")) {
-  //   // todo: use finsts
-  // }
+  // todo: process the scale command -- not compatible with new model of visicon
 
   ActrChunk* obj = moveto->GetSlotValChunk("object");
   if(!obj) {
+    ClearModuleFlag(BUSY);
     ClearModuleFlag(PROC);
+    ClearModuleFlag(EXEC);
     SetModuleFlag(ERROR);
     buffer->ClearReq();
     mod->LogEvent(-1.0f, "vision", "MOVE-ATTN-FAILURE", "object pointer not set in move_attention visual_location chunk",
@@ -387,12 +631,13 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
     return;
   }
 
+  attended = moveto;            // this is now the new attended location
+  UpdateFinsts(attended);       // and we mark it as such
+
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
                      "Encoding-complete", obj->name, event.act_arg,
                      obj);
-  
-  // ClearModuleFlag(PROC);
-  // buffer->CearReq();
+
 }
 
 void ActrVisionModule::EncodingComplete(ActrEvent& event) {
@@ -402,9 +647,81 @@ void ActrVisionModule::EncodingComplete(ActrEvent& event) {
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
                      "SET-BUFFER-CHUNK", ck->name, event.act_arg,
                      ck);
-  
+
+  ClearModuleFlag(BUSY);
   ClearModuleFlag(PROC);
+  ClearModuleFlag(EXEC);
   buffer->ClearReq();
+}
+
+void ActrVisionModule::StartTrackingRequest(ActrEvent& event) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  mod->LogEvent(-1.0f, "vision", "Start-tracking", "", "");
+
+  if(!attended) {
+    ClearModuleFlag(BUSY);
+    ClearModuleFlag(EXEC);
+    SetModuleFlag(ERROR);
+    buffer->ClearReq();
+    mod->LogEvent(-1.0f, "vision", "Start-tracking-FAILURE", "no currently-attended item");
+    return;
+  }
+
+  SetModuleFlag(BUSY);
+  SetModuleFlag(EXEC);       // stays on during entire tracking time
+  ClearModuleFlag(ERROR);
+
+  ActrChunk* obj = attended->GetSlotValChunk("object"); // should exist!
+  tracking = obj;          // just turn it on -- up to other code to keep it up-to-date
+  
+  ClearModuleFlag(BUSY);
+  ClearModuleFlag(EXEC);
+  buffer->ClearReq();
+}
+
+void ActrVisionModule::ClearRequest(ActrEvent& event) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  mod->LogEvent(-1.0f, "vision", "CLEAR", "", "");
+
+  tracking = NULL;
+  attended = NULL;
+  ClearModuleFlag(EXEC);
+  ClearModuleFlag(ERROR);
+
+  // todo: should delay by .050 and send a subsequent event that records CHANGE_STATE
+  // should clear last_cmd as well
+
+  ClearModuleFlag(BUSY);
+  buffer->ClearReq();
+}
+
+void ActrVisionModule::ClearSceneChangeRequest(ActrEvent& event) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  mod->LogEvent(-1.0f, "vision", "CLEAR_SCENE_CHANGE", "", "");
+
+  // clears any pending scene change -- takes no time and does not cause any busy
+
+}
+
+void ActrVisionModule::AssignFinstRequest(ActrEvent& event) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  ActrChunk* loc = ck->GetSlotValChunk("location");
+  if(loc) {
+    UpdateFinsts(loc);          // mark it -- should check types
+    mod->LogEvent(-1.0f, "vision", "ASSIGN_FINST", "", "");
+  }
+  else {
+    TestWarning(true, "AssignFinstRequest",
+                "object-based requests not current supported");
+  }
 }
 
 bool ActrVisionModule::ProcessQuery(ActrBuffer* buf, const String& query, bool why_not) {
@@ -437,8 +754,8 @@ bool ActrVisionModule::ProcessQuery(ActrBuffer* buf, const String& query, bool w
   else if(quer == "newly_attended" || quer == "attended new") {
     if(location_buffer->IsFull()) {
       ActrChunk* ck = location_buffer->CurChunk();
-      float tm = mod->cur_time; // todo: get time
-      rval = tm <= params.onset_span;
+      float tm = mod->cur_time - ck->time.t_new;
+      rval = (tm <= params.onset_span);
     }
     else {
       rval = false;
@@ -513,8 +830,6 @@ bool ActrVisionModule::SetParam(const String& param_nm, Variant par1, Variant pa
 
 void ActrVisionModule::AddToVisIcon(ActrChunk* ck) {
   ActrModel* mod = Model();
+  ck->InitChunk(mod->cur_time);
   visicon.Add(ck);
-  ck->time.t_new = mod->cur_time;
-  ck->time.t_ret = -1.0f;
-  ck->ClearChunkFlag(ActrChunk::ALL_STATE_FLAGS);
 }

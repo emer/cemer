@@ -112,9 +112,9 @@ String& ActrSlot::Print(String& strm, int indent) const {
       }
     }
   }
-  if(HasSlotFlag(COND)) {
+  if(HasSlotFlag(COND) || HasSlotFlag(ACT)) {
     if(rel != Relation::EQUAL) {
-      String relstr = TA_Relation.GetEnumString("Relations", rel);
+      String relstr = TA_Relation.GetEnumLabel("Relations", rel);
       strm << " " << relstr;
     }
   }

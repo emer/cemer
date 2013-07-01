@@ -67,13 +67,16 @@ public:
   virtual bool          UpdateFromParent_impl();
   // #IGNORE actually do the update itself -- doesn't update the parent
   virtual bool          UpdateAllSubTypes();
-  // #IGNORE update all the sub-types of this type -- called automatically in uae
+  // #BUTTON update all the sub-types of this type -- called automatically in uae
   virtual void          SetParent(ActrChunkType* par);
   // #CAT_ActR set the parent of this chunk type and update our slots from parent
+
   virtual bool          InheritsFromCT(ActrChunkType* par);
   // #CAT_ActR determine if this chunk type inherits from given parent chunk type, including being the same type itself
   virtual bool          InheritsFromCTName(const String& chunk_type_nm);
   // #CAT_ActR determine if this chunk type inherits from given parent chunk type name, including being the same type itself
+  virtual ActrChunkType* CommonChunkType(ActrChunkType* other);
+  // #CAT_ActR returns the highest common chunk type between this chunk type and the other -- NULL if they are not related
 
   override taList_impl*	children_() {return &slots;}	
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const

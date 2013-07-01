@@ -138,6 +138,7 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
   }
 
   bool got_some = FindMatchingRetrieval(ck, recency);
+
   float rt = 0.0f;            // hard coded default latency for failure if non-esc
   if(!got_some) {
     if(mod->params.enable_sub_symbolic) {
@@ -230,7 +231,7 @@ void ActrDeclarativeModule::RemoveOldFinsts() {
   ActrModel* mod = Model();
   for(int i=finsts.size-1; i >= 0; i--) {
     ActrChunk* oc = finsts.FastEl(i);
-    if(mod->cur_time - oc->time.t_ret > act.finst_span) {
+    if(mod->cur_time - oc->time.t_act > act.finst_span) {
       oc->ClearChunkFlag(ActrChunk::RECENT);
       finsts.RemoveIdx(i);
     }
@@ -247,7 +248,7 @@ void ActrDeclarativeModule::UpdateFinsts() {
     int oldest_i = 0;
     for(int i=finsts.size-1; i >= 0; i--) {
       ActrChunk* oc = finsts.FastEl(i);
-      float tm = mod->cur_time - oc->time.t_ret;
+      float tm = mod->cur_time - oc->time.t_act;
       if(tm > oldest_t) {
         oldest_t = tm;
         oldest_i = i;
@@ -357,8 +358,8 @@ bool ActrDeclarativeModule::AddChunk(ActrChunk* ck, bool merge) {
   else {
     ActrChunk* nw_ck = (ActrChunk*)ck->Clone(); // make a copy
     nw_ck->CopyName(ck);
+    nw_ck->InitChunk(mod->cur_time);
     active.Add(nw_ck);
-    nw_ck->NewDMChunk(mod->cur_time);
     // todo: need to fix noise equivalencies!
     nw_ck->act.noise = act.perm_noise * taMath_double::gauss_dev();
     if(!act.learn) {

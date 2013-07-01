@@ -29,7 +29,7 @@ void ActrActVals::Initialize() {
 void ActrActTimeVals::Initialize() {
   n_act = 0.0f;
   t_new = -1.0f;
-  t_ret = -1.0f;
+  t_act = -1.0f;
 }
 
 void ActrChunk::Initialize() {
@@ -165,13 +165,14 @@ bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact,
     return false;
   }
   if((bool)chunk_type && (bool)cmp->chunk_type) {
-    if(chunk_type != cmp->chunk_type) { // todo: use an inheritance mechanism here instead
+    ActrChunkType* compar = chunk_type->CommonChunkType(cmp->chunk_type);
+    if(!compar) {
       if(why_not) {
         taMisc::Info("chunk:", GetDisplayName(), "type mismatch");
       }
       return false; // must be same type..
     }
-    for(int i=0; i<slots.size; i++) {
+    for(int i=0; i<compar->slots.size; i++) {
       ActrSlot* sl = slots.FastEl(i);
       ActrSlot* os = cmp->slots.SafeEl(i);
       if(!sl->MatchesProd(prod, os, exact, why_not))
@@ -194,13 +195,14 @@ bool ActrChunk::MatchesProd(ActrProduction& prod, ActrChunk* cmp, bool exact,
 bool ActrChunk::MatchesMem(ActrChunk* cmp, bool exact, bool why_not) {
   if(!cmp) return false;
   if((bool)chunk_type && (bool)cmp->chunk_type) {
-    if(chunk_type != cmp->chunk_type) {
+    ActrChunkType* compar = chunk_type->CommonChunkType(cmp->chunk_type);
+    if(!compar) {
       if(why_not) {
-        taMisc::Info("chunk:", GetDisplayName(), "type mismatch");
+        taMisc::Info("chunk:", GetDisplayName(), "type mismatch -- no common parent type");
       }
       return false; // must be same type..
     }
-    for(int i=0; i<slots.size; i++) {
+    for(int i=0; i<compar->slots.size; i++) {
       ActrSlot* sl = slots.FastEl(i);
       ActrSlot* os = cmp->slots.SafeEl(i);
       if(!sl->MatchesMem(os, exact, why_not))

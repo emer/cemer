@@ -89,6 +89,27 @@ bool ActrChunkType::InheritsFromCTName(const String& chunk_type_nm) {
   return parent->InheritsFromCTName(chunk_type_nm);
 }
 
+ActrChunkType* ActrChunkType::CommonChunkType(ActrChunkType* other) {
+  if(this == other) return this;
+  if(this->InheritsFromCT(other)) return other;
+  if(other->InheritsFromCT(this)) return this;
+  ActrChunkType* mypar = parent;
+  ActrChunkType* othcmp = other;
+  while(mypar != NULL) {
+    if(othcmp->InheritsFromCT(mypar)) return mypar;
+    if(mypar->InheritsFromCT(othcmp)) return othcmp;
+    ActrChunkType* othpar = othcmp->parent;
+    while(othpar != NULL) {
+      if(othpar->InheritsFromCT(mypar)) return mypar;
+      if(mypar->InheritsFromCT(othpar)) return othpar;
+      othpar = othpar->parent;
+    }
+    mypar = mypar->parent;
+  }
+  return NULL;
+}
+
+
 void ActrChunkType::SetParent(ActrChunkType* par) {
   parent = par;
   if(par) {
