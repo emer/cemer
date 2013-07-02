@@ -403,8 +403,10 @@ public:
   // #MENU_1N #CAT_Columns find existing or create new matrix column of data based on name/type in the data item
   {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
 
+  void                  MoveCol(int old_index, int new_index);
+  // #CAT_Columns move the column from position old to position new
   virtual void          RemoveCol(const Variant& col);
-  // #CAT_Columns removes indicated column; 'true' if removed
+  // #CAT_Columns removes indicated column;
   void                  RemoveAllCols() { Reset(); }
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
   virtual void          Reset();

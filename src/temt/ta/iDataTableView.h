@@ -23,6 +23,7 @@
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
+class iDataTableColHeaderView; //
 
 
 class TA_API iDataTableView: public iTableView {
@@ -33,6 +34,7 @@ friend class iDataTableEditor;
 public:
   bool                  gui_edit_op; // true if doing a gui editing operation
 
+  iDataTableColHeaderView* col_header;
   DataTable*            dataTable() const;
 
   override bool         isFixedRowCount() const {return false;}

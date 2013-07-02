@@ -784,7 +784,7 @@ set(ta_HEADS_MAKETA_MOC
   iMatrixEditor.h
   iDataTableModel.h
   iDataTableEditor.h
-
+  
   iViewPanelOfDataTable.h
   iViewPanelOfGridTable.h
   iViewPanelOfGraphTable.h
@@ -931,6 +931,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iTableView.h
   iMatrixTableView.h
   iDataTableView.h
+  iDataTableColHeaderView.h
 
   iHelpBrowser.h
   iTypeInfoBrowser.h
@@ -1986,6 +1987,7 @@ set(ta_SRCS_NOMAKETA
   iTableView.cpp
   iMatrixTableView.cpp
   iDataTableView.cpp
+  iDataTableColHeaderView.cpp
 
   iHelpBrowser.cpp
   iTypeInfoBrowser.cpp

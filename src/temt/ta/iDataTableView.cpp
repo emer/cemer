@@ -15,6 +15,7 @@
 
 #include "iDataTableView.h"
 #include <DataTable>
+#include <iDataTableColHeaderView>
 #include <iDataTableModel>
 #include <taiTabularDataMimeFactory>
 #include <iClipData>
@@ -23,19 +24,20 @@
 #include <taProject>
 #include <taiSigLink>
 #include <taiWidgetMenu>
-
 #include <taMisc>
 
-
 #include <QHeaderView>
-
-
 
 iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
 {
   setSelectionMode(QAbstractItemView::ContiguousSelection);
   gui_edit_op = false;
+
+  col_header = new iDataTableColHeaderView(this);
+  this->setHorizontalHeader(col_header);
+  horizontalHeader()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  horizontalHeader()->setClickable(true);
 
   // this is important for faster viewing:
 #if (QT_VERSION >= 0x050000)
@@ -125,8 +127,6 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   DataTable* tab = this->dataTable(); // may not exist
   if (!tab) return;
   taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
-
-//  this->resizeColumnsToContents();
 
   gui_edit_op = true;
   if (op_code & OP_ROW) {
