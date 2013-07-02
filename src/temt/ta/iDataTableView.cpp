@@ -34,10 +34,13 @@ iDataTableView::iDataTableView(QWidget* parent)
   setSelectionMode(QAbstractItemView::ContiguousSelection);
   gui_edit_op = false;
 
-  col_header = new iDataTableColHeaderView(this);
-  this->setHorizontalHeader(col_header);
+//  col_header = new iDataTableColHeaderView(this);
+//  this->setHorizontalHeader(col_header);
   horizontalHeader()->setSelectionMode(QAbstractItemView::ExtendedSelection);
   horizontalHeader()->setClickable(true);
+//  horizontalHeader()->setMovable(true);
+
+//  connect(horizontalHeader(), SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
 
   // this is important for faster viewing:
 #if (QT_VERSION >= 0x050000)
@@ -199,4 +202,11 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
       if (link) link->FillContextMenu(menu);
     }
   }
+}
+
+void iDataTableView::movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx)
+{
+  DataTable* tab = this->dataTable(); // may not exist
+  if (!tab) return;
+  tab->MoveCol(oldVisualIdx, newVisualIdx);
 }

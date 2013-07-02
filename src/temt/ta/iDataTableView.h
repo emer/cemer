@@ -69,6 +69,10 @@ protected:
   override void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
                                              const CellRange& sel);
   override void         RowColOp_impl(int op_code, const CellRange& sel);
+
+  protected slots:
+  void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
+
 };
 
 #endif // iDataTableView_h
