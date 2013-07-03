@@ -19,31 +19,26 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <QHeaderView>
-//#include <Qt>
 #endif
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 class QWidget; //
-class QMouseEvent; //
 
 class TA_API iDataTableColHeaderView: public QHeaderView {
   INHERITED(QHeaderView)
-  Q_OBJECT
+          Q_OBJECT
 
 public:
-  iDataTableColHeaderView(QWidget* parent = NULL);
-  ~iDataTableColHeaderView();
+          iDataTableColHeaderView(QWidget* parent = NULL);
+          ~iDataTableColHeaderView();
 
 protected:
-  int                   m_old_index;
-  bool                  m_dragging;
+          bool                  m_section_move_complete;
 
-  virtual void          mouseEnterEvent(QMouseEvent* event );
-  virtual void          mousePressEvent(QMouseEvent* event );
-  virtual void          mouseMoveEvent(QMouseEvent* event );
-  virtual void          mouseReleaseEvent(QMouseEvent* event );
+          protected slots:
+          void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
 };
 
 #endif // iDataTableColHeaderView_h

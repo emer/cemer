@@ -34,14 +34,18 @@ iDataTableView::iDataTableView(QWidget* parent)
   setSelectionMode(QAbstractItemView::ContiguousSelection);
   gui_edit_op = false;
 
-//  col_header = new iDataTableColHeaderView(this);
-//  this->setHorizontalHeader(col_header);
-  horizontalHeader()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  //  col_header = new iDataTableColHeaderView(this); // subclass header
+  //  this->setHorizontalHeader(col_header);
+
+  horizontalHeader()->setSelectionMode(QAbstractItemView::ContiguousSelection);
   horizontalHeader()->setClickable(true);
   horizontalHeader()->setMovable(true);
+  horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectColumns);
+
   m_section_move_complete = false;      // no section (column) currently being moved
 
   connect(horizontalHeader(), SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
+
 
   // this is important for faster viewing:
 #if (QT_VERSION >= 0x050000)
@@ -57,11 +61,11 @@ void iDataTableView::currentChanged(const QModelIndex& current, const QModelInde
 }
 
 void iDataTableView::dataChanged(const QModelIndex& topLeft,
-				 const QModelIndex & bottomRight
+    const QModelIndex & bottomRight
 #if (QT_VERSION >= 0x050000)
-				 , const QVector<int> &roles
+    const QVector<int> &roles
 #endif
-				 )
+)
 {
 #if (QT_VERSION >= 0x050000)
   inherited::dataChanged(topLeft, bottomRight, roles);
@@ -162,7 +166,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
       if (sel.width() < 1) goto bail;
-/*note: not supporting col ops here
+      /*note: not supporting col ops here
       if (op_code & OP_APPEND) {
       } else
       if (op_code & OP_INSERT) {
@@ -185,12 +189,12 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       }
     }
   }
- bail:
+  bail:
   gui_edit_op = false;
 }
 
 void iDataTableView::FillContextMenu_impl(ContextArea ca,
-  taiWidgetMenu* menu, const CellRange& sel)
+    taiWidgetMenu* menu, const CellRange& sel)
 {
   inherited::FillContextMenu_impl(ca, menu, sel);
   DataTable* tab = this->dataTable(); // may not exist
@@ -210,12 +214,12 @@ void iDataTableView::movedSection(int logicalIdx, int oldVisualIdx, int newVisua
   if (m_section_move_complete == false) {
     m_section_move_complete = true;
     horizontalHeader()->moveSection(newVisualIdx, oldVisualIdx);
-    DataTable* tab = this->dataTable(); // may not exist
-    if (!tab)
-        return;
-    tab->MoveCol(oldVisualIdx, newVisualIdx);
+    DataTable* dt = dataTable();
+    if (!dt)
+      return;
+    dt->MoveCol(oldVisualIdx, newVisualIdx);
   }
   else {
-    m_section_move_complete = false;
+    m_section_move_complete = false;  // ready for another move
   }
 }

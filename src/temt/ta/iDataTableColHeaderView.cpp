@@ -19,52 +19,36 @@
 
 #include <Qt>
 #include <QHeaderView>
-#include <QMouseEvent>
 
 iDataTableColHeaderView::iDataTableColHeaderView(QWidget* parent)
 :inherited(Qt::Horizontal, parent) {
-  m_old_index = -1;
-  m_dragging = false;
-  connect(this, SIGNAL(sectionClicked(int)), this, SLOT(clickedSection(int)));
+
+  this->setSelectionMode(QAbstractItemView::ContiguousSelection);
+  this->setClickable(true);
+  this->setMovable(true);
+  this->setSelectionBehavior(QAbstractItemView::SelectColumns);
+
+  m_section_move_complete = false;      // no section (column) currently being moved
+
+  connect(this, SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
+
 }
 
 iDataTableColHeaderView::~iDataTableColHeaderView() {
 }
 
-void iDataTableColHeaderView::mouseEnterEvent(QMouseEvent* event ) {
-  event->ignore();
-}
-
-void iDataTableColHeaderView::mousePressEvent(QMouseEvent* event ) {
-  if (event->modifiers() == Qt::NoModifier) {
-    m_dragging = true;
-    m_old_index = logicalIndexAt(event->pos());
-    setCursor(Qt::ClosedHandCursor);
-    event->accept();
+void iDataTableColHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx)
+{
+  if (m_section_move_complete == false) {
+    m_section_move_complete = true;
+    this->moveSection(newVisualIdx, oldVisualIdx);
+    DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
+    if (!dt)
+      return;
+    dt->MoveCol(oldVisualIdx, newVisualIdx);
   }
   else {
-    emit dynamic_cast<iDataTableView*>(parent())->hor_customContextMenuRequested(event->pos());
-    event->ignore();
-  }
-  QHeaderView::mousePressEvent(event);
-}
-
-void iDataTableColHeaderView::mouseMoveEvent(QMouseEvent* event) {
-  if (m_dragging == true) {
-    setCursor(Qt::ClosedHandCursor);
-    event->accept();
+    m_section_move_complete = false;  // ready for another move
   }
 }
 
-void iDataTableColHeaderView::mouseReleaseEvent(QMouseEvent* event ) {
-  m_dragging = false;
-  int new_index = logicalIndexAt(event->pos());
-  if (parent()) {
-    DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
-    if (dt && m_old_index != -1) {
-      dt->MoveCol(m_old_index, new_index);
-    }
-  }
-  m_old_index = -1;
-  setCursor(Qt::ArrowCursor);
-}
