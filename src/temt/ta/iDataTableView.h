@@ -35,6 +35,8 @@ public:
   bool                  gui_edit_op; // true if doing a gui editing operation
 
   iDataTableColHeaderView* col_header;
+  bool                  m_section_move_complete;
+
   DataTable*            dataTable() const;
 
   override bool         isFixedRowCount() const {return false;}
