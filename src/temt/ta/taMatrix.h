@@ -551,6 +551,8 @@ public:
   // #CAT_Modify permute the items in the matrix, using a flat view (anything can be moved anywhere) -- ignores any el_view settings
   virtual void Sort(bool descending);
   // #CAT_Modify sort elements in the matrix, using a flat view -- ignores any el_view settings
+  virtual void Move(int from, int to);
+  // #CAT_Modify move an element and shift
 
   String&       Print(String& strm, int indent=0) const;
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,

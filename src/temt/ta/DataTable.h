@@ -460,7 +460,6 @@ public:
   // #BUTTON #MENU #MENU_ON_Rows #CAT_Rows add n rows, returns true if successfully added
   virtual bool          InsertRows(int st_row, int n_rows=1);
   // #MENU #MENU_ON_Rows #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
-
   virtual bool          RemoveRows(int st_row, int n_rows=1);
   // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end
   virtual void          RemoveAllRows() { ResetData(); }
@@ -471,6 +470,9 @@ public:
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
   bool                  DuplicateRows(int st_row, int n_rows=1);
   // #CAT_Rows copy the n_rows starting from st_row and insert them immediately after selected rows
+  virtual void          MoveRow(int old_index, int new_index);
+  // #CAT_Rows should only be called internally
+
   const Variant         GetColUserData(const String& name, const Variant& col) const;
   // #CAT_Config gets user data from the column (col can be an index or a name)
   void                  SetColUserData(const String& name, const Variant& value, const Variant& col);

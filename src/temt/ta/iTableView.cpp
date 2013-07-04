@@ -37,22 +37,8 @@ iTableView::iTableView(QWidget* parent)
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
 
   setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-    this, SLOT(this_customContextMenuRequested(const QPoint&)) );
-  horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
-    this, SLOT(hor_customContextMenuRequested(const QPoint&)) );
-  verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-  // note: auto resize a lot more important for vertical, for multi dims 
-#if (QT_VERSION >= 0x050000)
-  verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-#else
-  verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-#endif
-  connect(verticalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
-    this, SLOT(ver_customContextMenuRequested(const QPoint&)) );
-  // wire the selection signals to the UpdateUi, to update enabling
-//  connect(me->tv, SIGNAL(activated(const QModelIndex&)), me, SIGNAL(UpdateUi()) );
+
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(this_customContextMenuRequested(const QPoint&)) );
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
 
   installEventFilter(this);

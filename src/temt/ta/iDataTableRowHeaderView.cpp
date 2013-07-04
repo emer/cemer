@@ -1,4 +1,4 @@
-// Copyright, 1995-2013, Regents of the University of Colorado,
+// Copyright, 1995-2013, Regents of the University of Roworado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -13,40 +13,47 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "iDataTableColHeaderView.h"
+#include "iDataTableRowHeaderView.h"
 #include <iDataTableView>
 #include <DataTable>
 
 #include <Qt>
 #include <QHeaderView>
 
-iDataTableColHeaderView::iDataTableColHeaderView(QWidget* parent)
-:inherited(Qt::Horizontal, parent) {
+iDataTableRowHeaderView::iDataTableRowHeaderView(QWidget* parent)
+:inherited(Qt::Vertical, parent) {
 
   this->setClickable(true);
   this->setMovable(true);
   this->setSelectionMode(QAbstractItemView::ContiguousSelection);
-  this->setSelectionBehavior(QAbstractItemView::SelectColumns);
+  this->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->setContextMenuPolicy(Qt::CustomContextMenu);
 
   m_section_move_complete = false;      // no section (column) currently being moved
 
+  // this is important for faster viewing:
+#if (QT_VERSION >= 0x050000)
+  this->setSectionResizeMode(QHeaderView::Interactive);
+#else
+  this->setResizeMode(QHeaderView::Interactive);
+#endif
+
   connect(this, SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
-  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), parent, SLOT(hor_customContextMenuRequested(const QPoint&)) );
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), parent, SLOT(ver_customContextMenuRequested(const QPoint&)) );
 }
 
-iDataTableColHeaderView::~iDataTableColHeaderView() {
+iDataTableRowHeaderView::~iDataTableRowHeaderView() {
 }
 
-void iDataTableColHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx)
+void iDataTableRowHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx)
 {
   if (m_section_move_complete == false) {
     m_section_move_complete = true;
-    this->moveSection(newVisualIdx, oldVisualIdx);
-    DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
-    if (!dt)
-      return;
-    dt->MoveCol(oldVisualIdx, newVisualIdx);
+        this->moveSection(newVisualIdx, oldVisualIdx);
+        DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
+        if (!dt)
+          return;
+        dt->MoveRow(oldVisualIdx, newVisualIdx);
   }
   else {
     m_section_move_complete = false;  // ready for another move

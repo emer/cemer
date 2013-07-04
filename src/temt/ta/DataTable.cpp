@@ -1838,6 +1838,12 @@ void DataTable::MoveCol(int old_index, int new_index) {
   StructUpdate(false);
 }
 
+void DataTable::MoveRow(int old_index, int new_index) {
+  StructUpdate(true);
+  row_indexes.Move(old_index, new_index);
+  StructUpdate(false);
+}
+
 void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
   for(int i=data.size-1;i>=0;i--) {

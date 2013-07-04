@@ -969,6 +969,31 @@ void taMatrix::Permute() {
   }
 }
 
+void taMatrix::Move(int from, int to) {
+  if (from == to) return; // nop
+  if ((from < 0) || (from >= size) || (to < 0) || (to >= size)) {
+    taMisc::Error("taMatrix::Move - argument out of range");
+    return;
+  }
+
+  void* tmp = El_GetTmp_();
+
+  if (from < to) {
+    El_Copy_(tmp, FastEl_Flat_(from));
+    for (int j = from; j < to; j++) {
+      El_Copy_(FastEl_Flat_(j), FastEl_Flat_(j+1));
+    }
+    El_Copy_(FastEl_Flat_(to), tmp);
+  }
+  else {
+    El_Copy_(tmp, FastEl_Flat_(from));
+    for (int j = from; j > to; j--) {
+      El_Copy_(FastEl_Flat_(j), FastEl_Flat_(j-1));
+    }
+    El_Copy_(FastEl_Flat_(to), tmp);
+  }
+}
+
 void taMatrix::Sort(bool descending) {
   if(size <= 1) return;
   int lt_compval = -1;          // comparison return value for less-than

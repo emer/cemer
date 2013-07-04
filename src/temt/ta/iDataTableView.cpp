@@ -16,6 +16,7 @@
 #include "iDataTableView.h"
 #include <DataTable>
 #include <iDataTableColHeaderView>
+#include <iDataTableRowHeaderView>
 #include <iDataTableModel>
 #include <taiTabularDataMimeFactory>
 #include <iClipData>
@@ -31,28 +32,14 @@
 iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
 {
-  setSelectionMode(QAbstractItemView::ContiguousSelection);
+  setSelectionMode(QAbstractItemView::ContiguousSelection);   // mode for table items (not headers)
   gui_edit_op = false;
 
-  //  col_header = new iDataTableColHeaderView(this); // subclass header
-  //  this->setHorizontalHeader(col_header);
+  col_header = new iDataTableColHeaderView(this); // subclass header
+  this->setHorizontalHeader(col_header);
 
-  horizontalHeader()->setSelectionMode(QAbstractItemView::ContiguousSelection);
-  horizontalHeader()->setClickable(true);
-  horizontalHeader()->setMovable(true);
-  horizontalHeader()->setSelectionBehavior(QAbstractItemView::SelectColumns);
-
-  m_section_move_complete = false;      // no section (column) currently being moved
-
-  connect(horizontalHeader(), SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
-
-
-  // this is important for faster viewing:
-#if (QT_VERSION >= 0x050000)
-  verticalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-#else
-  verticalHeader()->setResizeMode(QHeaderView::Interactive);
-#endif
+  row_header = new iDataTableRowHeaderView(this); // subclass header
+  this->setVerticalHeader(row_header);
 }
 
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
@@ -206,20 +193,5 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
       taiSigLink* link = (taiSigLink*)col->GetSigLink();
       if (link) link->FillContextMenu(menu);
     }
-  }
-}
-
-void iDataTableView::movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx)
-{
-  if (m_section_move_complete == false) {
-    m_section_move_complete = true;
-    horizontalHeader()->moveSection(newVisualIdx, oldVisualIdx);
-    DataTable* dt = dataTable();
-    if (!dt)
-      return;
-    dt->MoveCol(oldVisualIdx, newVisualIdx);
-  }
-  else {
-    m_section_move_complete = false;  // ready for another move
   }
 }

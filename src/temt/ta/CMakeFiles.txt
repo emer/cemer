@@ -932,6 +932,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iMatrixTableView.h
   iDataTableView.h
   iDataTableColHeaderView.h
+  iDataTableRowHeaderView.h
 
   iHelpBrowser.h
   iTypeInfoBrowser.h
@@ -1988,6 +1989,7 @@ set(ta_SRCS_NOMAKETA
   iMatrixTableView.cpp
   iDataTableView.cpp
   iDataTableColHeaderView.cpp
+  iDataTableRowHeaderView.cpp
 
   iHelpBrowser.cpp
   iTypeInfoBrowser.cpp

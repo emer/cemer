@@ -24,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 class iDataTableColHeaderView; //
+class iDataTableRowHeaderView; //
 
 
 class TA_API iDataTableView: public iTableView {
@@ -35,7 +36,7 @@ public:
   bool                  gui_edit_op; // true if doing a gui editing operation
 
   iDataTableColHeaderView* col_header;
-  bool                  m_section_move_complete;
+  iDataTableRowHeaderView* row_header;
 
   DataTable*            dataTable() const;
 
@@ -71,9 +72,6 @@ protected:
   override void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
       const CellRange& sel);
   override void         RowColOp_impl(int op_code, const CellRange& sel);
-
-  protected slots:
-  void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
 
 };
 
