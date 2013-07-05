@@ -16,6 +16,7 @@
 #include "iDataTableRowHeaderView.h"
 #include <iDataTableView>
 #include <DataTable>
+#include <taProject>
 
 #include <Qt>
 #include <QHeaderView>
@@ -49,11 +50,14 @@ void iDataTableRowHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int
 {
   if (m_section_move_complete == false) {
     m_section_move_complete = true;
-        this->moveSection(newVisualIdx, oldVisualIdx);
-        DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
-        if (!dt)
-          return;
-        dt->MoveRow(oldVisualIdx, newVisualIdx);
+    this->moveSection(newVisualIdx, oldVisualIdx);
+    DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
+    if (!dt)
+      return;
+    taProject* proj = (taProject*)dt->GetOwner(&TA_taProject);
+    if(proj)
+      proj->undo_mgr.SaveUndo(dt, "MoveCol", dt);
+    dt->MoveRow(oldVisualIdx, newVisualIdx);
   }
   else {
     m_section_move_complete = false;  // ready for another move
