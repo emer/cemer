@@ -56,7 +56,7 @@ void iDataTableRowHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int
       return;
     taProject* proj = (taProject*)dt->GetOwner(&TA_taProject);
     if(proj)
-      proj->undo_mgr.SaveUndo(dt, "MoveCol", dt);
+      proj->undo_mgr.SaveUndo(dt, "MoveRow", dt);
     dt->MoveRow(oldVisualIdx, newVisualIdx);
   }
   else {
