@@ -52,6 +52,8 @@ class taSigLink; //
 class iTreeViewItem; //
 class QWidget; //
 class ISelectableHost; //
+class iSplitter;  //
+class QSize;  //
 
 
 taTypeDef_Of(iProgramEditor);
@@ -71,20 +73,27 @@ public:
 #endif
 
   iBrowseHistory*       brow_hist;
-  iAction*            historyBackAction;
-  iAction*            historyForwardAction;
+  iAction*              historyBackAction;
+  iAction*              historyForwardAction;
 
-  QVBoxLayout*          layOuter;
-  QScrollArea*            scrBody;
-  iStripeWidget*          body; // container for the actual taiWidget items
-  iMethodButtonMgr*         meth_but_mgr; // note: not a widget
-  QHBoxLayout*            layButtons;
-  QToolBar*                 tb; // for the history buttons
-  iHiLightButton*            btnHelp;
-  iHiLightButton*            btnApply;
-  iHiLightButton*            btnRevert;
-  iTreeView*              items;
-  iTreeSearch*            search;
+  QWidget*              propsWidget; // container for widgets that set properties, apply button, etc.
+  QWidget*              codeWidget;  // container for code tree and search field/controls
+  iSplitter*            propsCodeSplitter;  // split the props widget and the code widget
+
+  QVBoxLayout*          layout_all; // master layout, includes all other widgets and layouts
+  QVBoxLayout*          layout_props; // layout for properties (upper portion)
+  QVBoxLayout*          layout_code;  // layout for code (lower portion)
+
+  QScrollArea*          scrBody; // property fields in here
+  iStripeWidget*        body; // container for the actual taiWidget items
+  iMethodButtonMgr*     meth_but_mgr; // note: not a widget
+  QHBoxLayout*          layButtons;
+  QToolBar*             tb; // for the history buttons
+  iHiLightButton*       btnHelp;
+  iHiLightButton*       btnApply;
+  iHiLightButton*       btnRevert;
+  iTreeView*            items;  // these are the lines of code
+  iTreeSearch*          search; // search the code
 #ifndef __MAKETA__
   QPointer<QWidget>     first_tab_foc;  // first tab focus widget
 #endif

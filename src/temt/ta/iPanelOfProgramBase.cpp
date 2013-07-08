@@ -33,24 +33,24 @@ taTypeDef_Of(ProgramToolBar);
 iPanelOfProgramBase::iPanelOfProgramBase(taiSigLink* dl_)
 :inherited(dl_)
 {
-  pe = new iProgramEditor();
+  pe = new iProgramEditor(this);
   setCentralWidget(pe); //sets parent
 
   // add view button(s)
-  QLabel* lab = new QLabel;
-  lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
-  lab->setFont(taiM->nameFont(taiMisc::sizSmall));
-  lab->setText("lines");
-  lab->setToolTip("how many lines to show in the item editor");
-  AddMinibarWidget(lab);
-  QSpinBox* sp = new QSpinBox;
-  sp->setFont(taiM->buttonFont(taiMisc::sizSmall));
-  sp->setValue(pe->editLines()); // assume this is min as well
-  sp->setMinimum(pe->editLines()); // assume this is min as well
-  sp->setMaximum(20);// arbitrary
-  sp->setToolTip(lab->toolTip());
-  AddMinibarWidget(sp);
-  connect(sp, SIGNAL(valueChanged(int)), this, SLOT(mb_Lines(int)) );
+//  QLabel* lab = new QLabel;
+//  lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
+//  lab->setFont(taiM->nameFont(taiMisc::sizSmall));
+//  lab->setText("lines");
+//  lab->setToolTip("how many lines to show in the item editor");
+//  AddMinibarWidget(lab);
+//  QSpinBox* sp = new QSpinBox;
+//  sp->setFont(taiM->buttonFont(taiMisc::sizSmall));
+//  sp->setValue(pe->editLines()); // assume this is min as well
+//  sp->setMinimum(pe->editLines()); // assume this is min as well
+//  sp->setMaximum(20);// arbitrary
+//  sp->setToolTip(lab->toolTip());
+//  AddMinibarWidget(sp);
+//  connect(sp, SIGNAL(valueChanged(int)), this, SLOT(mb_Lines(int)) );
 
   // add view button(s)
   QCheckBox* but = new QCheckBox;
