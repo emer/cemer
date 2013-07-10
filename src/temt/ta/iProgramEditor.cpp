@@ -108,7 +108,7 @@ void iProgramEditor::Init() {
   line_ht = ln_sz + (2 * ln_vmargin);
   body->setStripeHeight(line_ht);
   int min_body_ht = line_ht * editLines();
-  scrBody->setMinimumHeight(min_body_ht + scrBody->horizontalScrollBar()->height() + 2);
+  scrBody->setMinimumHeight(min_body_ht + scrBody->horizontalScrollBar()->height() - 12);
   layout_props->addWidget(scrBody, 1);
 
   meth_but_mgr = new iMethodButtonMgr(this);
@@ -119,7 +119,7 @@ void iProgramEditor::Init() {
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
   tb = new QToolBar(this);
-  int icon_sz = taiM_->label_height(taiMisc::sizSmall) -4;
+  int icon_sz = taiM_->label_height(taiMisc::sizSmall) - 12;
   tb->setIconSize(QSize(icon_sz, icon_sz));
   layButtons->addWidget(tb);
   layButtons->addSpacing(4);
