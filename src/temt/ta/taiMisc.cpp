@@ -282,7 +282,7 @@ void taiMisc::InitMetrics(bool reinit) {
   int primaryScreen = d->primaryScreen();
   scrn_geom = d->availableGeometry(primaryScreen);
   scrn_s = scrn_geom.size();
-  if (scrn_s.height() <= 768)
+  if (scrn_s.height() <= 768)   // jr 07/11/13 - base_height only used in T3 UnitNode
     base_height = 21;
   else if (scrn_s.height() <= 1024)
     base_height = 25;
@@ -292,21 +292,25 @@ void taiMisc::InitMetrics(bool reinit) {
   // control sizes -- depend on size of default font
   if (taMisc::font_size <= 10) {
     // Small
-//TODO:  not extensively tested as of 9/24/06
-    mbutton_ht[0] = 21; mbutton_ht[1] = 23; mbutton_ht[2] = 24;
+//    mbutton_ht[0] = 21; mbutton_ht[1] = 23; mbutton_ht[2] = 24;
+    mbutton_ht[0] = 20; mbutton_ht[1] = 22; mbutton_ht[2] = 23;
     mlabel_ht[0] = 17; mlabel_ht[1] = 19; mlabel_ht[2] = 20;
     mtext_ht[0] = 19; mtext_ht[1] = 21; mtext_ht[2] = 22;
-  } else if (taMisc::font_size > 12) {
+    currentSizeSpec = sizSmall;
+  } else if (taMisc::font_size > 13) {
     // Big
-//TODO:  not extensively tested as of 9/24/06
-    mbutton_ht[0] = 27; mbutton_ht[1] = 30; mbutton_ht[2] = 33;
+//    mbutton_ht[0] = 27; mbutton_ht[1] = 30; mbutton_ht[2] = 33;
+    mbutton_ht[0] = 24; mbutton_ht[1] = 27; mbutton_ht[2] = 30;
     mlabel_ht[0] = 24; mlabel_ht[1] = 26; mlabel_ht[2] = 29;
     mtext_ht[0] = 26; mtext_ht[1] = 28; mtext_ht[2] = 31;
+    currentSizeSpec = sizBig;
   }  else {
     // Med
-    mbutton_ht[0] = 24;  mbutton_ht[1] = 25;  mbutton_ht[2] = 27;
+//    mbutton_ht[0] = 24;  mbutton_ht[1] = 25;  mbutton_ht[2] = 27;
+    mbutton_ht[0] = 22;  mbutton_ht[1] = 23;  mbutton_ht[2] = 25;
     mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
     mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
+    currentSizeSpec = sizMedium;
   }
 
   // fonts -- note, no way to get Qt's metrics without instances!
@@ -357,9 +361,12 @@ QLabel                  20              21              24
 QLineEdit               22              23              26
   QSpinBox
 
-
-
 */
+
+taiMisc::SizeSpec taiMisc::GetCurrentSizeSpec() {
+  return currentSizeSpec;
+}
+
 int taiMisc::button_height(int sizeSpec) {
   switch (sizeSpec & siz_mask) {
   case sizSmall: return mbutton_ht[0]; break;

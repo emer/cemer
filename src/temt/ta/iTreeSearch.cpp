@@ -22,35 +22,43 @@
 #include <taiSigLink>
 
 #include <taMisc>
+#include <taiMisc>
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolBar>
 #include <QAction>
+#include <QToolButton>
 
 
 void iTreeSearch::Constr() {
+  taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
+
   QHBoxLayout* lay = new QHBoxLayout(this);
   srch_bar = new QToolBar(this);
   lay->addWidget(srch_bar);
   lay->setMargin(0);
   lay->setSpacing(0);
 
-  srch_label = new QLabel("find:");
+  srch_label = new QLabel("Find:");
+  srch_label->setFont(taiM->nameFont(currentSizeSpec));
   srch_label->setToolTip("Find text within the above browser");
   srch_bar->addWidget(srch_label);
+
   srch_text = new iLineEdit();
-  // srch_text->setCharWidth(16);
   srch_bar->addWidget(srch_text);
+
   srch_nfound = new QLabel(" 0");
-  srch_nfound->setToolTip("number of items found");
+  srch_nfound->setFont(taiM->nameFont(currentSizeSpec));
+  srch_nfound->setToolTip("Number of items found");
   srch_bar->addWidget(srch_nfound);
+
   srch_clear = srch_bar->addAction("x");
-  srch_clear->setToolTip("Clear srch text and reset any prior highlighting");
+  srch_clear->setToolTip("Clear search text and highlighting");
   srch_prev = srch_bar->addAction("<");
   srch_prev->setToolTip("Find previous occurrence of find text within browser");
   srch_next = srch_bar->addAction(">");
-  srch_next->setToolTip("Srch next occurrence of find text within browser");
+  srch_next->setToolTip("Find next occurrence of find text within browser");
 
   connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
   connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );

@@ -53,14 +53,14 @@ iPanelOfProgramBase::iPanelOfProgramBase(taiSigLink* dl_)
 //  connect(sp, SIGNAL(valueChanged(int)), this, SLOT(mb_Lines(int)) );
 
   // add view button(s)
-  QCheckBox* but = new QCheckBox;
-  but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
-  but->setFont(taiM->buttonFont(taiMisc::sizSmall));
-  but->setText("expert");
-  but->setToolTip("whether to show items marked 'expert' in the program editor");
-  but->setChecked(!(taMisc::show_gui & TypeItem::NO_EXPERT));
-  AddMinibarWidget(but);
-  connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );
+//  QCheckBox* but = new QCheckBox;
+//  but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
+//  but->setFont(taiM->buttonFont(taiMisc::sizSmall));
+//  but->setText("expert");
+//  but->setToolTip("whether to show items marked 'expert' in the program editor");
+//  but->setChecked(!(taMisc::show_gui & TypeItem::NO_EXPERT));
+//  AddMinibarWidget(but);
+//  connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );
 }
 
 void iPanelOfProgramBase::SigEmit_impl(int sls, void* op1_, void* op2_) {

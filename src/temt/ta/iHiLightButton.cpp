@@ -16,8 +16,10 @@
 #include "iHiLightButton.h"
 
 #include <taMisc>
+#include <taiMisc>
 
 #include <QApplication>
+#include <QSize>
 
 
 iHiLightButton::iHiLightButton(QWidget* parent, const char* script_)
@@ -42,6 +44,11 @@ void iHiLightButton::init(const char* script_) {
   if (script_ != NULL)
     mscript = script_;
   mhiLight_color.setRgb(0x66, 0xFF, 0x66); // medium-light green
+
+  // button should use same font as other buttons
+  taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
+  iFont currentFont = taiM->buttonFont(currentSizeSpec);
+  this->setFont(currentFont);
 }
 
 void iHiLightButton::released() {
@@ -65,3 +72,11 @@ void iHiLightButton::setHiLight(bool value) {
   }
   mhiLight = value;
 }
+
+QSize iHiLightButton::sizeHint() const
+{
+  taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
+  int height = taiM->button_height(currentSizeSpec);
+  return QSize(this->width(), height*1.2); // make it taller than our other buttons because of the way a pushButton is drawn
+}
+

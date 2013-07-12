@@ -249,8 +249,11 @@ public:
   QBitmap*      icon_bitmap;    // icon bitmap
   float         edit_darkbg_brightness;
   float         edit_lightbg_brightness;
+  SizeSpec      currentSizeSpec;
 
   iSize         dialogSize(int dialogSpec); // return starting dialog size for given spec
+
+  SizeSpec      GetCurrentSizeSpec();
 
   iFont         buttonFont(int fontSpec); // get a button font
   iFont         dialogFont(int fontSpec = 0); // get a dialog font

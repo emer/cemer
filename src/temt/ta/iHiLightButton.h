@@ -39,6 +39,8 @@ public:
   iHiLightButton(const String& text, QWidget* parent, const char* script_ = 0);
   ~iHiLightButton();
 
+  QSize                 sizeHint() const; // override
+
 protected:
   iColor                mhiLight_color;
   bool                  mhiLight;
@@ -46,6 +48,7 @@ protected:
 
   void                  init(const char* script_); // #IGNORE
   void                  released(); // override
+
 };
 
 

@@ -58,6 +58,7 @@ iProgramEditor::~iProgramEditor() {
 
 void iProgramEditor::Init() {
   // layout constants
+  taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
   ln_sz = taiM->max_control_height(taiM->ctrl_size);
   ln_vmargin = 1;
   m_editLines = taMisc::program_editor_lines;
@@ -119,7 +120,7 @@ void iProgramEditor::Init() {
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
   tb = new QToolBar(this);
-  int icon_sz = taiM_->label_height(taiMisc::sizSmall) - 12;
+  int icon_sz = taiM_->label_height(currentSizeSpec) * .5;
   tb->setIconSize(QSize(icon_sz, icon_sz));
   layButtons->addWidget(tb);
   layButtons->addSpacing(4);
