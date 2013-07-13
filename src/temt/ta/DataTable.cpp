@@ -3312,8 +3312,8 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
 
   DataUpdate(true);
 
-  int st_send_row = rows - n_rows;
-  st_send_row = row_indexes.SafeEl(st_send_row); // de-index -- assume contigous!
+  int st_send_row_logical = rows - n_rows;
+  int st_send_row = row_indexes.SafeEl(st_send_row_logical); // de-index -- assume contigous!
   int st_recv_row = rows_total; // raw memory at end
   int n_recv_rows = np * n_rows;
   AddRows(n_recv_rows);         // make room for new ones
@@ -3381,7 +3381,7 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   }
 
   // remove sending rows -- they were all received already!
-  RemoveRows(st_send_row, n_rows);
+  RemoveRows(st_send_row_logical, n_rows);
   DataUpdate(false);
 #endif  // DMEM_COMPILE
 }
