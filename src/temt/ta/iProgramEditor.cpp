@@ -93,11 +93,14 @@ void iProgramEditor::Init() {
   propsWidget->setLayout(layout_props);
   codeWidget->setLayout(layout_code);
 
-  layout_props->setMargin(2);
-  layout_props->setSpacing(taiM->vsep_c);
-  layout_code->setMargin(2);
-  layout_code->setSpacing(taiM->vsep_c);
-
+  // layout_props->setMargin(2);
+  // layout_props->setSpacing(taiM->vsep_c);
+  layout_props->setMargin(0);
+  layout_props->setSpacing(0);
+  // layout_code->setMargin(2);
+  // layout_code->setSpacing(taiM->vsep_c);
+  layout_code->setMargin(0);
+  layout_code->setSpacing(0);
 
   scrBody = new QScrollArea(propsWidget);
   scrBody->setWidgetResizable(true);
