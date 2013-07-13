@@ -354,6 +354,8 @@ void Layer::UpdateSendPrjnNames() {
 }
 
 void Layer::RecomputeGeometry() {
+  un_geom.SetGtEq(1);           // can't go < 1
+  gp_geom.SetGtEq(1);
   un_geom.UpdateAfterEdit_NoGui();
   gp_geom.UpdateAfterEdit_NoGui();
   if(unit_groups) {
