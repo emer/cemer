@@ -39,6 +39,12 @@ protected:
 
           protected slots:
           void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
+          void                  columnResized(int column, int oldWidth, int newWidth);
+
+#ifndef __MAKETA__
+signals:
+          void                  tableViewChange();
+#endif // ndef __MAKETA__
 };
 
 #endif // iDataTableColHeaderView_h

@@ -65,6 +65,8 @@ protected:
 
 protected slots:
   void                  tv_hasFocus(iTableView* sender); // for both tableviews
+  void                  ViewChange();
+
 };
 
 #endif // iPanelOfDataTable_h

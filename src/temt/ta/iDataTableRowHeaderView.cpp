@@ -41,6 +41,7 @@ iDataTableRowHeaderView::iDataTableRowHeaderView(QWidget* parent)
 
   connect(this, SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), parent, SLOT(ver_customContextMenuRequested(const QPoint&)) );
+  connect(this, SIGNAL(sectionResized(int, int, int)), this, SLOT(rowResized(int, int, int)) );
 }
 
 iDataTableRowHeaderView::~iDataTableRowHeaderView() {
@@ -62,5 +63,9 @@ void iDataTableRowHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int
   else {
     m_section_move_complete = false;  // ready for another move
   }
+}
+
+void iDataTableRowHeaderView::rowResized(int column, int oldWidth, int newWidth) {
+   emit tableViewChange();
 }
 

@@ -37,8 +37,15 @@ public:
 protected:
           bool                  m_section_move_complete;
 
-          protected slots:
+protected slots:
           void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
+          void                  rowResized(int column, int oldWidth, int newWidth);
+
+#ifndef __MAKETA__
+signals:
+          void                  tableViewChange();
+#endif // ndef __MAKETA__
+
 };
 
 #endif // iDataTableRowHeaderView_h

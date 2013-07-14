@@ -18,6 +18,7 @@
 #include <iMatrixEditor>
 #include <iClipData>
 #include <iDataTableView>
+#include <iDataTableColHeaderView>
 #include <iMainWindowViewer>
 #include <taSigLinkItr>
 #include <iMatrixTableView>
@@ -140,10 +141,9 @@ void iPanelOfDataTable::Render_impl() {
   setCentralWidget(dte);
 
   dte->setDataTable(dt());
-  connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)),
-          this, SLOT(tv_hasFocus(iTableView*)) );
-  connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)),
-          this, SLOT(tv_hasFocus(iTableView*)) );
+  connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
+  connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
+  connect(dte->tvTable->col_header, SIGNAL(tableViewChange()), this, SLOT(ViewChange()) );
 
   iMainWindowViewer* vw = viewerWindow();
   if (vw) {
@@ -156,14 +156,10 @@ void iPanelOfDataTable::Render_impl() {
 void iPanelOfDataTable::tv_hasFocus(iTableView* sender) {
   iMainWindowViewer* vw = viewerWindow();
   if (vw) {
-    vw->SetClipboardHandler(sender,
-                            SLOT(GetEditActionsEnabled(int&)),
-                            SLOT(EditAction(int)),
-                            NULL,
-                            SIGNAL(UpdateUi()) );
+    vw->SetClipboardHandler(sender, SLOT(GetEditActionsEnabled(int&)),
+      SLOT(EditAction(int)), NULL, SIGNAL(UpdateUi()) );
   }
 }
-
 
 void DataTable::ScrollEditorsToBottom() {
   if(!taMisc::gui_active) return;
@@ -176,4 +172,8 @@ void DataTable::ScrollEditorsToBottom() {
         el->dte->ScrollToBottom();
     }
   }
+}
+
+void iPanelOfDataTable::ViewChange() {
+  GetWinState();
 }
