@@ -251,17 +251,17 @@ public:
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
   // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
   virtual void          ShowAllRows();
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK Unfilter the view (i.e. show all rows)
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
   virtual bool          Flatten();
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten Saves the current filtered view. All hidden rows will be permanently deleted
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten permanently removes any currently invisible data rows and arranges raw memory in current order -- useful for optimizing and locking-in data table size after a series of operations.  The DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions -- *all* access to the DataTable rows goes through the indexes -- so the Flatten function will not change the appearance of the data table, but it can optimize processing in large data tables, and establish the baseline state that the ShowAllRows function will revert to.  See also the FlattenTo and ShowAllRows functions.
   virtual bool          FlattenTo(DataTable* flattened_table);
-  // #CAT_DataProc Saves the current filtered view
+  // #CAT_DataProc copies currently visible rows of data to given table, without including any currently invisible data rows  and arranges raw memory in current order -- useful for optimizing and locking-in data table size after a series of operations.  The DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions -- *all* access to the DataTable rows goes through the indexes -- so the FlattenTo function will not change the appearance of the data table, but it can optimize processing in large data tables, and establish the baseline state that the ShowAllRows function will revert to.  See also the FlattenTo and ShowAllRows functions.
 
   ////////////////////////////////////////////////////////////
   //    protected Load/Save and other implementation code
 protected:
 
-  iDataTableModel*       table_model; // #IGNORE for gui view/model stuff
+  iDataTableModel*      table_model; // #IGNORE for gui view/model stuff
   static int_Array      load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array      load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
@@ -269,15 +269,17 @@ protected:
       const DataTable& src, DataCol* sar, int src_row); // #IGNORE
 
   virtual void          DetermineLoadDataParams(std::istream& strm,
-                                                bool headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
-                                                bool& headers, Delimiters& delim, bool& quote_str, bool& native);
+                              bool headers_req, LoadDelimiters delim_req,
+                              LoadQuotes quote_str_req, bool& headers,
+                              Delimiters& delim, bool& quote_str, bool& native);
   // #IGNORE determine delimiters and other info from file for loading data -- for non-native files, will also decode headers and/or create data columns to fit the data -- the first line of actual data after the header (if any) is used to determine column type info
   void                  ImportData_strm(std::istream& strm, bool headers = true,
                                         Delimiters delim = COMMA, bool quote_str = true, int max_recs = -1);
   // #IGNORE loads simple delimited data with undecorated headers and rows (such as csv files from Excel etc.) -- must be called AFTER ImportHeaderCols -- just skips headers
 
   void                  SaveHeader_strm_impl(std::ostream& strm, Delimiters delim,
-                                             bool row_mark, int col_fr, int col_to, bool native, bool quote_str);
+                                             bool row_mark, int col_fr, int col_to,
+                                             bool native, bool quote_str);
   // #IGNORE
   virtual int           LoadHeader_impl(std::istream& strm, Delimiters delim,
                                         bool native, bool quote_str = false);
@@ -416,19 +418,6 @@ public:
   // #CAT_Columns mark all cols before updating, for orphan deleting
   virtual void          RemoveOrphanCols();
   // #CAT_Columns removes all non-pinned marked cols
-
-  virtual bool          MatrixColToScalarsCol(DataCol* mtx_col,
-                                              const String& scalar_col_name_stub="");
-  // #EXPERT #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
-  virtual bool          MatrixColToScalars(const Variant& mtx_col,
-                                           const String& scalar_col_name_stub="");
-  // #CAT_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
-
-  virtual bool          MatrixColFmScalarsCol(DataCol* mtx_col,
-                                              const String& scalar_col_name_stub="");
-  // #EXPERT #CAT_Columns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
-  virtual bool          MatrixColFmScalars(const Variant& mtx_col, const String& scalar_col_name_stub="");
-  // #CAT_Columns convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix numeric fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
 
   /////////////////////////////////////////////////////////
   // rows
@@ -787,30 +776,30 @@ public:
                              Variant col4 = -1, bool ascending4 = true,
                              Variant col5 = -1, bool ascending5 = true,
                              Variant col6 = -1, bool ascending6 = true);
-  // #CAT_DataProc sort table according to selected columns of data
+  // #CAT_DataProc sort table according to selected columns of data.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
   virtual void          SortColName(const String& col1, bool ascending1 = true,
                                     const String& col2 = "", bool ascending2 = true,
                                     const String& col3 = "", bool ascending3 = true,
                                     const String& col4 = "", bool ascending4 = true,
                                     const String& col5 = "", bool ascending5 = true,
                                     const String& col6 = "", bool ascending6 = true);
-  // #EXPERT #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  // #EXPERT #CAT_DataProc sort table according to selected columns of data.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
   virtual void          SortCol(DataCol* col1, bool ascending1 = true,
                                 DataCol* col2 = NULL, bool ascending2 = true,
                                 DataCol* col3 = NULL, bool ascending3 = true,
                                 DataCol* col4 = NULL, bool ascending4 = true,
                                 DataCol* col5 = NULL, bool ascending5 = true,
                                 DataCol* col6 = NULL, bool ascending6 = true);
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data
+  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
 
   virtual void          Filter(DataCol* column_1, Relation::Relations operator_1, const String& value_1,
          Relation::CombOp comb_op, DataCol* column_2 = NULL, Relation::Relations operator_2 = Relation::EQUAL,
          const String& value_2 = "");
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter Select table rows by specifying up to 2 conditions. Use the "Show All Rows" menu item to restore the view.
+  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter Select table rows by specifying up to 2 conditions. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterByScript(const String& filter_expr);
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name.
+  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
-  // #CAT_DataProc Hides rows not matching the spec
+  // #CAT_DataProc Hides rows not matching the spec.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
@@ -821,6 +810,29 @@ public:
   // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_ColStats #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual String        ColStatsName(const String& col_name);
   // #EXPERT #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  virtual void          PermuteRows();
+  // #CAT_DataProc #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first
+
+  virtual bool          MatrixColToScalarsCol(DataCol* mtx_col,
+                                              const String& scalar_col_name_stub="");
+  // #EXPERT #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  virtual bool          MatrixColToScalars(const Variant& mtx_col,
+                                           const String& scalar_col_name_stub="");
+  // #CAT_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+
+  virtual bool          MatrixColFmScalarsCol(DataCol* mtx_col,
+                                              const String& scalar_col_name_stub="");
+  // #EXPERT #CAT_Columns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
+  virtual bool          MatrixColFmScalars(const Variant& mtx_col, const String& scalar_col_name_stub="");
+  // #CAT_Columns convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix numeric fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
+  virtual bool          SplitStringToColsCol(DataCol* string_col,
+                                          const String& delim = "_",
+                                          const String& col_name_stub="");
+  // #EXPERT #CAT_Columns #MENU #FROM_GROUP_data #LABEL_SplitStringToCols split a string column to a sequence of separate string columns, by splitting the string by given delimiter -- this can be very useful for unpacking various conditions built into a single string value, so that they can be separately Group'ed upon (see taDataProc::Group function).  The first row's string value determines how many columns are created.  If col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  virtual bool          SplitStringToCols(const Variant& string_col,
+                                          const String& delim = "_",
+                                          const String& col_name_stub="");
+  // #CAT_Columns split a string column to a sequence of separate string columns, by splitting the string by given delimiter -- this can be very useful for unpacking various conditions built into a single string value, so that they can be separately Group'ed upon (see taDataProc::Group function).  The first row's string value determines how many columns are created.  If col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
 
   /////////////////////////////////////////////////////////
   // misc funs

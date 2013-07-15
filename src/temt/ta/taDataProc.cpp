@@ -511,27 +511,24 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[]
 // if dest == src do in place
 bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   if(!src) { taMisc::Error("taDataProc::Permute: src is NULL"); return false; }
-  bool in_place = false;
+  if(src == dest) {             // in place
+    src->PermuteRows();
+    return true;
+  }
+  bool in_place = false;        // will remain false
   GetDest(dest, src, "Permute", in_place);
-  if (in_place) {
-    src->StructUpdate(true);
-    src->row_indexes.Permute();
-    src->StructUpdate(false);
+  dest->StructUpdate(true);
+  dest->Copy_NoData(*src);              // give it same structure
+  // this just uses the index technique..
+  int_Array idxs;
+  idxs.SetSize(src->rows);
+  idxs.FillSeq();
+  idxs.Permute();
+  for(int row=0;row<src->rows; row++) {
+    dest->AddBlankRow();
+    dest->CopyFromRow(-1, *src, idxs[row]);
   }
-  else {
-    dest->StructUpdate(true);
-    dest->Copy_NoData(*src);              // give it same structure
-    // this just uses the index technique..
-    int_Array idxs;
-    idxs.SetSize(src->rows);
-    idxs.FillSeq();
-    idxs.Permute();
-    for(int row=0;row<src->rows; row++) {
-      dest->AddBlankRow();
-      dest->CopyFromRow(-1, *src, idxs[row]);
-    }
-    dest->StructUpdate(false);
-  }
+  dest->StructUpdate(false);
   return true;
 }
 

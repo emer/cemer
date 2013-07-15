@@ -1655,69 +1655,6 @@ void DataTable::ChangeAllColsOfType(ValType cur_val_type, ValType new_val_type) 
   }
 }
 
-bool DataTable::MatrixColToScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
-  return MatrixColToScalarsCol(GetColData(mtx_col), scalar_col_name_stub);
-}
-
-bool DataTable::MatrixColToScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
-  if(!da || da->not_matrix_err()) return false;
-  String clstub;
-  if(scalar_col_name_stub.nonempty())
-    clstub = scalar_col_name_stub;
-  else
-    clstub = da->name;
-  clstub += "_";
-  int cls = da->cell_size();
-  StructUpdate(true);
-  for(int i=0;i<cls;i++) {
-    DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
-    for(int j=0;j<rows;j++) {
-      scda->SetVal(da->GetMatrixFlatVal(j, i), j);
-    }
-  }
-  StructUpdate(false);
-  return true;
-}
-
-bool DataTable::MatrixColFmScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
-  return MatrixColFmScalarsCol(GetColData(mtx_col), scalar_col_name_stub);
-}
-
-bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
-  if(!da || da->not_matrix_err()) return false;
-  StructUpdate(true);
-  if(scalar_col_name_stub.nonempty()) {
-    String clstub = scalar_col_name_stub;
-    clstub += "_";
-    int cls = da->cell_size();
-    for(int i=0;i<cls;i++) {
-      DataCol* scda = FindColName(clstub + String(i));
-      if(scda) {
-        for(int j=0;j<rows;j++) {
-          Variant var = scda->GetVal(j);
-          da->SetMatrixFlatVal(var, j, i);
-        }
-      }
-    }
-  }
-  else {
-    int cls = da->cell_size();
-    int cur_idx = 0;
-    for(int i=0;i<data.size;i++) {
-      DataCol* scda = data[i];
-      if(scda->isMatrix() || scda->valType() != da->valType()) continue;
-      for(int j=0;j<rows;j++) {
-        Variant var = scda->GetVal(j);
-        da->SetMatrixFlatVal(var, j, cur_idx);
-      }
-      cur_idx++;
-      if(cur_idx >= cls) break; // all done
-    }
-  }
-  StructUpdate(false);
-  return true;
-}
-
 void DataTable::UniqueColNames() {
   for(int i=0;i<data.size; i++) {
     DataCol* da = data.FastEl(i);
@@ -1954,7 +1891,7 @@ void DataTable::Reset() {
 }
 
 void DataTable::ResetData() {  // this permanently deletes all row data!
-  if (rows == 0) return; // prevent erroneous m_dm calls
+  if (rows == 0 && rows_total == 0) return; // prevent erroneous m_dm calls
   StructUpdate(true);
   for(int i=0;i<data.size;i++) {
     DataCol* dc = data.FastEl(i);
@@ -3297,6 +3234,122 @@ String DataTable::ColStatsName(const String& col_nm) {
   return cda->ColStats();
 }
 
+void DataTable::PermuteRows() {
+  StructUpdate(true);
+  row_indexes.Permute();
+  StructUpdate(false);
+}
+
+bool DataTable::MatrixColToScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
+  return MatrixColToScalarsCol(GetColData(mtx_col), scalar_col_name_stub);
+}
+
+bool DataTable::MatrixColToScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
+  if(!da || da->not_matrix_err()) return false;
+  String clstub;
+  if(scalar_col_name_stub.nonempty())
+    clstub = scalar_col_name_stub;
+  else
+    clstub = da->name;
+  clstub += "_";
+  int cls = da->cell_size();
+  StructUpdate(true);
+  for(int i=0;i<cls;i++) {
+    DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
+    for(int j=0;j<rows;j++) {
+      scda->SetVal(da->GetMatrixFlatVal(j, i), j);
+    }
+  }
+  StructUpdate(false);
+  return true;
+}
+
+bool DataTable::MatrixColFmScalars(const Variant& mtx_col, const String& scalar_col_name_stub) {
+  return MatrixColFmScalarsCol(GetColData(mtx_col), scalar_col_name_stub);
+}
+
+bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
+  if(!da || da->not_matrix_err()) return false;
+  StructUpdate(true);
+  if(scalar_col_name_stub.nonempty()) {
+    String clstub = scalar_col_name_stub;
+    clstub += "_";
+    int cls = da->cell_size();
+    for(int i=0;i<cls;i++) {
+      DataCol* scda = FindColName(clstub + String(i));
+      if(scda) {
+        for(int j=0;j<rows;j++) {
+          Variant var = scda->GetVal(j);
+          da->SetMatrixFlatVal(var, j, i);
+        }
+      }
+    }
+  }
+  else {
+    int cls = da->cell_size();
+    int cur_idx = 0;
+    for(int i=0;i<data.size;i++) {
+      DataCol* scda = data[i];
+      if(scda->isMatrix() || scda->valType() != da->valType()) continue;
+      for(int j=0;j<rows;j++) {
+        Variant var = scda->GetVal(j);
+        da->SetMatrixFlatVal(var, j, cur_idx);
+      }
+      cur_idx++;
+      if(cur_idx >= cls) break; // all done
+    }
+  }
+  StructUpdate(false);
+  return true;
+}
+
+bool DataTable::SplitStringToCols(const Variant& string_col,
+                                  const String& delim,
+                                  const String& col_name_stub) {
+  return SplitStringToColsCol(GetColData(string_col), delim, col_name_stub);
+}
+
+bool DataTable::SplitStringToColsCol(DataCol* da, 
+                                  const String& delim,
+                                  const String& col_name_stub) {
+  if(TestError(!da || !da->isString(), "SplitStringToCols",
+               "column is NULL or is not a String type")) {
+    return false;
+  }
+  if(rows <= 0) return false;
+  String clstub;
+  if(col_name_stub.nonempty())
+    clstub = col_name_stub;
+  else
+    clstub = da->name;
+  clstub += "_";
+  String_Array ar;
+  String fc = da->GetValAsString(0);
+  ar.FmDelimString(fc, delim);
+  if(TestError(ar.size <= 1, "SplitStringToCols",
+               "first row string value:", fc,
+               "does not contain multiple substrings delimted by:", delim)) {
+    return false;
+  }
+  
+  int cls = ar.size;
+  StructUpdate(true);
+  // make the cols first
+  for(int i=0;i<cls;i++) {
+    DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
+  }
+  for(int j=0;j<rows;j++) {
+    String sc = da->GetValAsString(j);
+    ar.FmDelimString(sc, delim);
+    int mx = MIN(cls, ar.size);
+    for(int i=0;i<mx;i++) {
+      DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
+      scda->SetVal(ar[i], j);
+    }
+  }
+  StructUpdate(false);
+  return true;
+}
 
 ////////////////////////////////////////////////////////////////////////////
 //              DMEM
