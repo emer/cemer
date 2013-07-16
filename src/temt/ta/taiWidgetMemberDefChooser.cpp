@@ -20,7 +20,7 @@
 #include <MemberDef>
 #include <iDialogItemChooser>
 
-#include <QTreeWidget>
+#include <iTreeWidget>
 #include <QTreeWidgetItem>
 
 #include <taMisc>

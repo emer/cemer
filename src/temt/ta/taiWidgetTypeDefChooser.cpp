@@ -23,6 +23,7 @@
 #include <taMisc>
 #include <taiMisc>
 
+#include <iTreeWidget>
 #include <QTreeWidgetItem>
 
 

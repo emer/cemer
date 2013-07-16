@@ -30,8 +30,6 @@ class TA_API iTreeWidget: public QTreeWidget {
 INHERITED(QTreeWidget)
   Q_OBJECT
 public:
-  bool			allColumnsShowFocus() const; // qt3 compat
-  
   bool			hasHighlightColor(int idx) const;
   void			setHighlightColor(int idx, const QColor& base);
     // synthesizes the darker highlight color
@@ -46,6 +44,10 @@ public:
   bool			siblingSel() const {return m_sibling_sel;}
   // whether we enforce sibling-only selection
   void			setSiblingSel(bool value);
+  QModelIndex           indexFromItem(QTreeWidgetItem* itm, int column = 0) const;
+  // get the model index of this item -- promoting this function to public
+  bool                  selectItem(QTreeWidgetItem* itm, int column = 0);
+  // select given item
 
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
   virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection

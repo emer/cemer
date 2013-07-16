@@ -25,7 +25,7 @@
 #include <taMisc>
 #include <taiMisc>
 
-#include <QTreeWidget>
+#include <iTreeWidget>
 #include <QTreeWidgetItem>
 
 

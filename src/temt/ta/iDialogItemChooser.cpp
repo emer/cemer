@@ -29,6 +29,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QComboBox>
+#include <QCoreApplication>
+#include <QKeyEvent>
 
 
 const String iDialogItemChooser::cat_none("(none)");
@@ -168,6 +170,7 @@ int iDialogItemChooser::ApplyFiltering() {
   int n_items = 0;
   while ((item = *it)) {
     bool show = ShowItem(item);
+    if(!show) item->setSelected(false); // maybe help with selection problems
     items->setItemHidden(item, !show);
     if(show) {
       if(n_items == 0)
@@ -178,7 +181,7 @@ int iDialogItemChooser::ApplyFiltering() {
   }
   taMisc::DoneBusy();
   if(first_item)
-    items->setCurrentItem(first_item); // auto-select first item always
+    SelectItem(first_item, true); // auto-select first item always
   --m_changing;
   return n_items;
 }
@@ -288,6 +291,9 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
 
   items = new iTreeWidget(this);
   items->setSortingEnabled(true);
+  items->setAllColumnsShowFocus(true);
+  items->setSelectionMode(QAbstractItemView::SingleSelection);
+  items->setSelectionBehavior(QAbstractItemView::SelectRows);
   layOuter->addWidget(items, 1); // list is item to expand in host
 
   lay = new QHBoxLayout();
@@ -376,18 +382,19 @@ void iDialogItemChooser::setCatFilter(int value, bool force) {
 bool iDialogItemChooser::SetCurrentItemByData(void* value) {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Selectable);
   QTreeWidgetItem* item;
+  bool is_first = true;
   while ((item = *it)) {
     void* data = (void*)QVARIANT_TO_INTPTR(item->data(0, ObjDataRole));
     if (value == data) {
-      items->setCurrentItem(item);
+      SelectItem(item, is_first);
       m_selItem = item; // cache for showEvent
-      items->scrollToItem(item); //note: this only works when we are visible
       return true;
     }
+    is_first = false;
     ++it;
   }
   // not found
-  items->setCurrentItem(NULL);
+  items->selectionModel()->clear();
   m_selItem = NULL;
   return false;
 }
@@ -471,22 +478,40 @@ void iDialogItemChooser::setView(int value, bool force) {
   if (!text.isEmpty()) SetFilter(text);
 }
 
+void iDialogItemChooser::SelectItem(QTreeWidgetItem* itm, bool is_first) {
+  // some kind of completely crazy hack needed to get this thing to select
+  // totally pulling my hair out about this!!!!
+  // problem seems to be when items are hidden -- only happens when the filter
+  // is in place -- oh well, couldn't find a better workaround..
+  items->selectItem(itm);
+  QModelIndex idx = items->indexFromItem(itm);
+  QCoreApplication* app = QCoreApplication::instance();
+  app->postEvent(items, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+  if(!is_first) {
+    app->postEvent(items, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+                                        Qt::NoModifier));
+  }
+  items->scrollToItem(itm);
+}
+
+
 void iDialogItemChooser::showEvent(QShowEvent* event) {
   inherited::showEvent(event);
-  filter->insert(init_filter);
-  filter->deselect();
-  filter->end(false);
-  if (m_selItem)
-    items->scrollToItem(m_selItem);
+  if(init_filter != "^") {
+    filter->insert(init_filter);
+    items->setFocus();
+    if(m_selItem) {
+      SelectItem(m_selItem, true); // is first in this case
+    }
+  }
   QTimer::singleShot(150, this, SLOT(show_timeout()) );
+  m_fully_up = true;
 }
 
 void iDialogItemChooser::show_timeout() {
-  filter->deselect();
-  filter->end(false);
-  if (m_selItem)
+  if(m_selItem) {
     items->scrollToItem(m_selItem);
-  m_fully_up = true;
+  }
 }
 
 void iDialogItemChooser::timFilter_timeout() {

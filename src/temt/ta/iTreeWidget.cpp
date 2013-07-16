@@ -84,12 +84,6 @@ void  iTreeWidget::init() {
   setPalette(p);
 }
 
-bool iTreeWidget::allColumnsShowFocus() const {
-//NOTE: assuming the following test will return this
-  return (selectionBehavior() & QAbstractItemView::SelectRows);
-}
-
-
 //NOTE: this routine copied and modified from Qt3 source
 void iTreeWidget::contextMenuEvent(QContextMenuEvent* e)
 {
@@ -334,6 +328,17 @@ void iTreeWidget::this_itemExpanded(QTreeWidgetItem* item) {
   doItemExpanded(item, true);
 }
 
+
+QModelIndex iTreeWidget::indexFromItem(QTreeWidgetItem* itm, int column) const {
+  return inherited::indexFromItem(itm, column);
+}
+
+bool iTreeWidget::selectItem(QTreeWidgetItem* itm, int column) {
+  QModelIndex idx = indexFromItem(itm, column);
+  if(!idx.isValid()) return false;
+  selectionModel()->setCurrentIndex(idx, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
 
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);

@@ -26,7 +26,7 @@
 #include <tabMisc>
 #include <taRootBase>
 
-
+#include <iTreeWidget>
 #include <QTreeWidgetItem>
 
 taiWidgetTokenChooser::taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,

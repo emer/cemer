@@ -30,7 +30,7 @@
 class taiWidgetItemChooser; //
 class QVBoxLayout; // 
 class QComboBox; //
-class QTreeWidget; //
+class iTreeWidget; //
 class QTreeWidgetItem; //
 class QLineEdit; //
 
@@ -69,7 +69,7 @@ public:
   QVBoxLayout*          layOuter;
   QComboBox*              cmbView;
   QComboBox*              cmbCat; //note: item 0 is "all" (i.e., no filtering)
-  QTreeWidget*            items;        // list of items
+  iTreeWidget*            items;        // list of items
   QPushButton*              btnOk;
   QPushButton*              btnCancel;
   QLineEdit*              filter;
@@ -107,6 +107,8 @@ protected:
   bool                  ShowItem(const QTreeWidgetItem* item) const;
   virtual void          Constr(taiWidgetItemChooser* client_);
    // does constr, called in static, so can extend
+  virtual void          SelectItem(QTreeWidgetItem* itm, bool is_first = false);
+  // select the item in items list, by one form of force or another
 
   iDialogItemChooser(const String& caption, QWidget* par_window_);
 protected slots:
