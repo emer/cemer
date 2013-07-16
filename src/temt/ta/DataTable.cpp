@@ -100,7 +100,7 @@ void DataTable::CutLinks() {
 }
 
 void DataTable::Copy_(const DataTable& cp) {
-  ResetRowIndexes();            // key to reset our indexes before copying data
+  ResetData();                  // full reset because matrix copy cannot enforce geom for view'ed copy of view'ed source
   data = cp.data;               // matrix level copy will effectively flatten source
   ComputeRowsTotal();           // update to what we actually got
   ResetRowIndexes();            // so we reset our indexes to match the flattened source
