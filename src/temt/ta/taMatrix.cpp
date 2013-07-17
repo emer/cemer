@@ -312,6 +312,7 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
         int_Matrix* nwvw = new int_Matrix; // copy orig
         nwvw->Copy(view_mat);
         int nc = view_mat->dim(1);
+        delete view_mat;        // now done with original
         for(int i=nc-1; i>=0; i--) {
           int& fn = nwvw->FastEl(FrameDim(), i); // get the frame index
           if(fn < 0) fn = Frames() + fn;
@@ -329,6 +330,7 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
       else if(md == IDX_FRAMES) {
         int_Matrix* nwvw = new int_Matrix; // copy orig
         nwvw->Copy(view_mat);
+        delete view_mat;        // now done with original
         for(int i=nwvw->size-1; i>=0; i--) {
           int& fn = nwvw->FastEl_Flat(i);
           if(fn < 0) fn = Frames() + fn;
