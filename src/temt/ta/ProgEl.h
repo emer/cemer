@@ -107,8 +107,10 @@ public:
   { SetProgFlagState(flg, !HasProgFlag(flg)); }
   // toggle program flag
 
+  virtual bool          EditProgramEl();
+  // #BUTTON #MENU #MENU_CONTEXT #NO_BUSY #CAT_Code view the program code lines associated with this program element, as highlighted lines within the overall program code
   virtual bool          ViewScript();
-  // #BUTTON #MENU ##MENU_CONTEXT #NO_BUSY #CAT_Code view the css script associated with this program element, as highlighted lines within the overall program code
+  // #BUTTON #MENU #MENU_CONTEXT #NO_BUSY #CAT_Code view the css script associated with this program element, as highlighted lines within the overall program code
   virtual bool          ScriptLines(int& start_ln, int& end_ln);
   // #CAT_Code get the line numbers that this program element generated within the program script
   void                  SetOffFlag(bool off);

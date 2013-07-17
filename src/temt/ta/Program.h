@@ -331,6 +331,10 @@ public:
   // #MENU #MENU_CONTEXT #CAT_Code open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
   virtual void          ViewScriptUpdate();
   // #IGNORE regenerate view_script listing
+  virtual void          EditProgram();
+  // #MENU #MENU_CONTEXT #NO_BUSY  #CAT_Code view the associated code in the program editor frame
+  virtual bool          EditProgramEl(taBase* pel);
+  // view the program element as highlighted text in editor frame
 
   virtual String        GetProgCodeInfo(int line_no, const String& code_str);
   // #CAT_Code attempt to get program code information (e.g., current variable value) for given code string element on given line number -- code_str may contain other surrounding text which is parsed to extract a variable name or other interpretable value

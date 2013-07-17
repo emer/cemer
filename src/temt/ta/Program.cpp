@@ -1499,6 +1499,11 @@ void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {
   if(sel_ln_st > 0)
     host_->SelectLines(sel_ln_st, sel_ln_ed);
 }
+
+void Program::EditProgram() {
+  this->FindMyProgramPanel();
+}
+
 #endif  // TA_GUI
 
 void Program::SaveListing(ostream& strm) {
@@ -1716,3 +1721,6 @@ bool Program::ViewScriptEl(taBase* pel) {
   return true;
 }
 
+bool Program::EditProgramEl(taBase* pel) {
+  return this->BrowserSelectMe_ProgItem(dynamic_cast<taOBase*>(pel));
+}

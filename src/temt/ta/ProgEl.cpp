@@ -439,6 +439,12 @@ String ProgEl::GetStateDecoKey() const {
   return rval;
 }
 
+bool ProgEl::EditProgramEl() {
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return false;
+  return prg->EditProgramEl(this);
+}
+
 bool ProgEl::ViewScript() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
