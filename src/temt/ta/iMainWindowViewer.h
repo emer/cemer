@@ -132,7 +132,7 @@ public:
   iAction*            viewSplitVerticalAction;
   iAction*            viewSplitHorizontalAction;
   iAction*            viewCloseCurrentViewAction;
-  iAction*            viewSaveViewAction;
+  iAction*            viewSetSaveViewAction;
 
   iAction*            toolsTypeInfoBrowseAction;
   iAction*            toolsHelpBrowseAction;
@@ -335,6 +335,7 @@ protected slots:
   virtual void          this_FrameSelect(iAction* me); // user has selected or unselected one of the frames
   virtual void          this_ToolBarSelect(iAction* me); // user has selected or unselected one of the toolbars
   virtual void          this_DockSelect(iAction* me); // user has selected or unselected one of the docks
+  virtual void          SetSaveView(iAction* me); // user does/doesn't want current view saved with project
 
 protected:
   static int            s_next_unique_id;

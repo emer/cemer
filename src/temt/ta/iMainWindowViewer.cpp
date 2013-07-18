@@ -364,8 +364,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   // if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
   toolsMenu = menu->AddSubMenu("&Tools");
   windowMenu = menu->AddSubMenu("&Window");
-  connect(windowMenu->menu(), SIGNAL(aboutToShow()),
-    this, SLOT(windowMenu_aboutToShow()));
+  connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
 
   helpMenu = menu->AddSubMenu("&Help");;
 }
@@ -571,7 +570,6 @@ void iMainWindowViewer::Constr_EditMenu()
 void iMainWindowViewer::Constr_ViewMenu()
 {
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
-  viewSaveViewAction = AddAction(new iAction("&Save View", QKeySequence(), "viewSaveViewAction"));
 
   // Forward and back buttons -- note: on Win the icons don't show up if Action has text
   historyBackAction = AddAction(new iAction("Back",
@@ -601,7 +599,10 @@ void iMainWindowViewer::Constr_ViewMenu()
   dockMenu = viewMenu->AddSubMenu("Dock Windows");
 
   viewMenu->insertSeparator();
-  viewMenu->AddAction(viewSaveViewAction);
+  viewSetSaveViewAction = viewMenu->AddItem("Save View on Save", taiWidgetMenu::toggle,
+      iAction::men_act, this, SLOT(SetSaveView(iAction*)));
+  if (curProject() != NULL)
+    viewSetSaveViewAction->setChecked(curProject()->saveViewOnSave);  // reinstate setting
 
   // Make connections.
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()));
@@ -616,7 +617,6 @@ void iMainWindowViewer::Constr_ViewMenu()
     this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
 
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
-  connect(viewSaveViewAction, SIGNAL(Action()), this, SLOT(viewSaveView()));
 }
 
 void iMainWindowViewer::Constr_ShowMenu()
@@ -1835,6 +1835,14 @@ void iMainWindowViewer::toolsHelpBrowser() {
   iHelpBrowser::instance();
 }
 
+void iMainWindowViewer::SetSaveView(iAction* me) {
+  if (me->isChecked()) {
+    curProject()->SetSaveView(true);
+  } else { //need to show
+    curProject()->SetSaveView(false);
+  }
+}
+
 void iMainWindowViewer::UpdateUi() {
   int ea = GetEditActions();
   // some actions we always show, others we only show if available
@@ -1916,6 +1924,8 @@ void iMainWindowViewer::UpdateUi() {
   bool css_running = (Program::global_run_state == Program::RUN);
   ctrlStopAction->setEnabled(css_running);
   ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
+
+  viewSetSaveViewAction->setEnabled(curProject() != NULL);
 
   emit SetActionsEnabled();
 }

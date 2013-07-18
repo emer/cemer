@@ -39,7 +39,6 @@ protected:
 
 protected slots:
           void                  movedSection(int logicalIdx, int oldVisualIdx, int newVisualIdx);
-          void                  rowResized(int column, int oldWidth, int newWidth);
 
 #ifndef __MAKETA__
 signals:

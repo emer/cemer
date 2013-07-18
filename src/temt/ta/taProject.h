@@ -83,8 +83,8 @@ public:
   DataTable_Group       data;   // data, such as patterns for network input
   taBase_Group          data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group         programs; // Gui-based programs to run simulations and other processing
-  taViewer_List       viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
-  taViewer_List       viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
+  taViewer_List         viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
+  taViewer_List         viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr             undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
   bool                  auto_name; // #DEF_true automatically update the name of the project based on the file name used when saving -- useful because this name is typically neglected yet useful for distinguishing different projects when comparing or choosing objects
@@ -93,6 +93,8 @@ public:
   String                last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
   String                view_plog;
   // #READ_ONLY #NO_SAVE current view of project log data
+  bool                  saveViewOnSave; // // #HIDDEN #READ_ONLY project specific setting determines if view saved when project is saved
+
 
   override bool         isDirty() const {return m_dirty;}
   override void         setDirty(bool value);  //
@@ -171,6 +173,8 @@ public:
   override int          Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0);
   override int          Save();
   override int          SaveAs(const String& fname = "");
+  void                  SetSaveView(bool value);
+  // #CAT_File determines whether or not the current view settings will be save with the project
 
   virtual void          PublishDocsOnWeb(const String &repositoryName);
 

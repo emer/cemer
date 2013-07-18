@@ -458,6 +458,16 @@ int taProject::Save() {
 }
 
 int taProject::SaveAs(const String& fname) {
+  if (saveViewOnSave == true) { // save current view with project
+    for (int i = 0; i < viewers.size; ++i) {
+      MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+      if (!(vwr && vwr->isProjBrowser())) continue;
+      iMainWindowViewer* imwv = vwr->widget();
+      if(!imwv) continue;
+      imwv->viewSaveView();
+    }
+  }
+
   int rval = false;
   taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
   if (flr->ostrm) {
@@ -865,4 +875,8 @@ void taProject::CloseLater() {
   undo_mgr.diff_threads.RemoveAll();
   // get rid of any undo saving that might just be happening
   inherited::CloseLater();
+}
+
+void taProject::SetSaveView(bool value) {
+  saveViewOnSave = value;
 }
