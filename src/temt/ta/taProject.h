@@ -76,6 +76,7 @@ public:
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
   taLicense             license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
   taWikiURL             wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
+  bool                  save_view; // project specific setting determines if view saved when project is saved
   taBase_Group          templates; // #HIDDEN templates for new objects -- copy new objects from here
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
@@ -93,7 +94,6 @@ public:
   String                last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
   String                view_plog;
   // #READ_ONLY #NO_SAVE current view of project log data
-  bool                  saveViewOnSave; // // #HIDDEN #READ_ONLY project specific setting determines if view saved when project is saved
 
 
   override bool         isDirty() const {return m_dirty;}

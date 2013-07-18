@@ -72,7 +72,7 @@ void taProject::Initialize() {
   m_no_save = false;
   viewers.SetBaseType(&TA_TopLevelViewer);
   viewers_tmp.SetBaseType(&TA_TopLevelViewer);
-  saveViewOnSave = true;
+  save_view = true;
 }
 
 void taProject::Destroy() {
@@ -459,7 +459,7 @@ int taProject::Save() {
 }
 
 int taProject::SaveAs(const String& fname) {
-  if (saveViewOnSave == true) { // save current view with project
+  if (save_view == true) { // save current view with project
     for (int i = 0; i < viewers.size; ++i) {
       MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
       if (!(vwr && vwr->isProjBrowser())) continue;
@@ -879,5 +879,5 @@ void taProject::CloseLater() {
 }
 
 void taProject::SetSaveView(bool value) {
-  saveViewOnSave = value;
+  save_view = value;
 }

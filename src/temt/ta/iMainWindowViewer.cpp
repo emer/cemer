@@ -602,7 +602,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewSetSaveViewAction = viewMenu->AddItem("Save View on Save", taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(SetSaveView(iAction*)));
   if (curProject() != NULL)
-    viewSetSaveViewAction->setChecked(curProject()->saveViewOnSave);  // reinstate setting
+    viewSetSaveViewAction->setChecked(curProject()->save_view);  // reinstate setting
 
   // Make connections.
   connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()));
