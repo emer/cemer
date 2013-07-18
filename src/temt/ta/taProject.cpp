@@ -72,6 +72,7 @@ void taProject::Initialize() {
   m_no_save = false;
   viewers.SetBaseType(&TA_TopLevelViewer);
   viewers_tmp.SetBaseType(&TA_TopLevelViewer);
+  saveViewOnSave = true;
 }
 
 void taProject::Destroy() {
