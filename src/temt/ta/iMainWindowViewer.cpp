@@ -454,7 +454,12 @@ void iMainWindowViewer::Constr_FileMenu()
   // TBD: is this the same as checking if (!isRoot()) ??
   // Logic for isProjShower() is unclear.
   if (isProjShower()) {
+//    if (!curProject()->save_as_only) {
     connect(fileSaveAction, SIGNAL(Action()), this, SLOT(fileSave()));
+//    }
+//    else {
+//      fileSaveAction->setEnabled(false);
+//    }
     connect(fileSaveAsAction, SIGNAL(Action()), this, SLOT(fileSaveAs()));
     connect(fileSaveNotesAction, SIGNAL(Action()), this, SLOT(fileSaveNotes()));
     connect(fileSaveAsTemplateAction, SIGNAL(Action()), this, SLOT(fileSaveAsTemplate()));
@@ -599,8 +604,8 @@ void iMainWindowViewer::Constr_ViewMenu()
   dockMenu = viewMenu->AddSubMenu("Dock Windows");
 
   viewMenu->insertSeparator();
-  viewSetSaveViewAction = viewMenu->AddItem("Save View on Save", taiWidgetMenu::toggle,
-      iAction::men_act, this, SLOT(SetSaveView(iAction*)));
+  viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
+      iAction::men_act, this, SLOT(this_SaveView(iAction*)));
   if (curProject() != NULL)
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // reinstate setting
 
@@ -1835,7 +1840,7 @@ void iMainWindowViewer::toolsHelpBrowser() {
   iHelpBrowser::instance();
 }
 
-void iMainWindowViewer::SetSaveView(iAction* me) {
+void iMainWindowViewer::this_SaveView(iAction* me) {
   if (me->isChecked()) {
     curProject()->SetSaveView(true);
   } else { //need to show
@@ -1926,6 +1931,15 @@ void iMainWindowViewer::UpdateUi() {
   ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
 
   viewSetSaveViewAction->setEnabled(curProject() != NULL);
+  if (curProject() != NULL)
+    viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
+
+  if (curProject() != NULL) {
+    if (curProject()->save_as_only)
+      fileSaveAction->setEnabled(false);
+    else
+      fileSaveAction->setEnabled(true);
+  }
 
   emit SetActionsEnabled();
 }

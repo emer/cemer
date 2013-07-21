@@ -846,7 +846,7 @@ public:
   // #IGNORE convert stream from old to new format (if needed)
 
   taFiler*              GetSaveFiler(const String& fname, String ext = _nilString,
-    int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
+    int compress=-1, String filetypes=_nilString, bool getset_file_name = true, bool make_copy = false);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   taFiler*              GetAppendFiler(const String& fname, const String& ext="",
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true);

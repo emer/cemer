@@ -129,6 +129,7 @@ public:
 
   String                FileName() const; // full file name: concats dir and fname
   String                FileName_tmp() const; // full temporary file name: concats dir and tmp_fname
+  String                FileNameForSaveAs() const; // append _copy to filename (used in save_as_only case)
   void                  SetFileName(const String& value); // parses out into dir and name, setting in us
   inline String         dir() const {return m_dir;} // the directory path to the file
   inline String         fname() const {return m_fname;} // the name (no path) of the file
@@ -157,7 +158,7 @@ public:
   // #MENU to open an existing file for reading; starts with curr filename if any
   virtual std::ostream*      Save(bool tmp_fname_save = true);
   // #MENU to save to an existing file; requests a new filename if doesn't exist  -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
-  virtual std::ostream*      SaveAs(bool tmp_fname_save = true);
+  virtual std::ostream*      SaveAs(bool tmp_fname_save = true, bool make_copy = false);
   // #MENU to save to a new file -- if tmp_fname_save is true, and chosen file name already exists, saves to a temporary file and is then renamed to target file on Close() -- provides safety in case of crashing
   virtual std::ostream*      Append();
   // #MENU to open an existing file for appending

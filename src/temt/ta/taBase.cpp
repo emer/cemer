@@ -1557,7 +1557,7 @@ int taBase::Save_strm(ostream& strm, taBase* par, int indent) {
 }
 
 taFiler* taBase::GetSaveFiler(const String& fname, String exts,
-  int compress, String filetypes, bool getset_file_name)
+  int compress, String filetypes, bool getset_file_name, bool make_copy)
 {
   // get names/types here, because save/load are different
   TypeDef* typ = NULL; // we are the group
@@ -1580,7 +1580,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     if (tfname.empty())
       tfname = GetName();
     flr->SetFileName(tfname); // filer etc. does auto extension
-    flr->SaveAs();
+      flr->SaveAs(true, make_copy);
   }
 
   if (flr->ostrm && getset_file_name) {

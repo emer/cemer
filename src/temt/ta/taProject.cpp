@@ -73,6 +73,7 @@ void taProject::Initialize() {
   viewers.SetBaseType(&TA_TopLevelViewer);
   viewers_tmp.SetBaseType(&TA_TopLevelViewer);
   save_view = true;
+  save_as_only = false;
 }
 
 void taProject::Destroy() {
@@ -167,6 +168,7 @@ void taProject::UpdateAfterEdit() {
   if(taMisc::is_loading) {	// make sure we have one of these for old projects
     FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
   }
+  UpdateUi();
 }
 
 taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
@@ -469,8 +471,13 @@ int taProject::SaveAs(const String& fname) {
     }
   }
 
+  bool tmp_save_as_only = save_as_only;
+  if (save_as_only)
+    save_as_only = false;   // ok to save the new project on top of itself so set to false before the save
+
   int rval = false;
-  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString);
+  taFiler* flr = GetSaveFiler(fname, _nilString, -1, _nilString, true, tmp_save_as_only);
+
   if (flr->ostrm) {
     QFileInfo fi(flr->FileName()); // set to current working dir
     proj_dir = fi.absolutePath();
@@ -490,6 +497,10 @@ int taProject::SaveAs(const String& fname) {
     }
     OpenProjectLog();
   }
+  else { // if the save wasn't successful reset the save_as_only flag
+    save_as_only = tmp_save_as_only;
+  }
+
   taRefN::unRefDone(flr);
   SigEmit(SLS_ITEM_UPDATED_ND);
   return rval;

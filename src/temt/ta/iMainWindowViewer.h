@@ -270,9 +270,8 @@ public slots:
   virtual void  editRedo();
   virtual void  editFind();
   virtual void  editFindNext();
-  virtual void  viewRefresh() { Refresh(); UpdateUi(); }
-  // manually rebuild/refresh the current view
-  void          viewSaveView(); // save view state
+  virtual void  viewRefresh() { Refresh(); UpdateUi(); } // manually rebuild/refresh the current view
+  virtual void  viewSaveView(); // save the current view state
 
   virtual void  showMenu_aboutToShow();
   virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
@@ -335,7 +334,7 @@ protected slots:
   virtual void          this_FrameSelect(iAction* me); // user has selected or unselected one of the frames
   virtual void          this_ToolBarSelect(iAction* me); // user has selected or unselected one of the toolbars
   virtual void          this_DockSelect(iAction* me); // user has selected or unselected one of the docks
-  virtual void          SetSaveView(iAction* me); // user does/doesn't want current view saved with project
+  virtual void          this_SaveView(iAction* me); // user does/doesn't want current view saved with project
 
 protected:
   static int            s_next_unique_id;

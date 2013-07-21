@@ -76,7 +76,6 @@ public:
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
   taLicense             license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
   taWikiURL             wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
-  bool                  save_view; // project specific setting determines if view saved when project is saved
   taBase_Group          templates; // #HIDDEN templates for new objects -- copy new objects from here
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
@@ -88,6 +87,8 @@ public:
   taViewer_List         viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr             undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
+  bool                  save_view; // project specific setting determines if view state saved when project is saved
+  bool                  save_as_only;  // prevent the project from being changed, force save_as
   bool                  auto_name; // #DEF_true automatically update the name of the project based on the file name used when saving -- useful because this name is typically neglected yet useful for distinguishing different projects when comparing or choosing objects
   bool                  m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool                  m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
@@ -174,7 +175,7 @@ public:
   override int          Save();
   override int          SaveAs(const String& fname = "");
   void                  SetSaveView(bool value);
-  // #CAT_File determines whether or not the current view settings will be save with the project
+  // #CAT_File determines whether or not the current view settings will be saved with the project
 
   virtual void          PublishDocsOnWeb(const String &repositoryName);
 

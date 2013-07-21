@@ -154,6 +154,18 @@ String taFiler::FileName_tmp() const {
   else return m_dir + "/" + m_tmp_fname;
 }
 
+String taFiler::FileNameForSaveAs() const {
+  String fname = FileName();
+  if (fname.endsWith(".proj")) {
+    String temp_name = fname.before(".proj",-1);
+    fname = temp_name + "_copy";
+  }
+  else {
+    fname = fname + "_copy";
+  }
+  return fname;
+}
+
 bool taFiler::RenameFile(const String& new_fname, bool remove_existing) {
   String cur_fnm = FileName();
   if(remove_existing && QFile::exists(new_fname)) {
@@ -378,10 +390,17 @@ ostream* taFiler::Save(bool tmp_fname_save) {
   return ostrm;
 }
 
-ostream* taFiler::SaveAs(bool tmp_fname_save) {
+ostream* taFiler::SaveAs(bool tmp_fname_save, bool make_copy) {
   // do a first preliminary fix, which will, ex., add the default extension
   SetFilerFlagState(TMP_SAVE_FILE, tmp_fname_save);
+
+  // tag the filename with _copy so original file is not overwritten
+  if (make_copy) {
+    String copyName = FileNameForSaveAs();
+    SetFileName(copyName);
+  }
   FixFileName();
+
   bool wasFileChosen = GetFileName(foSaveAs);
 
   ostream* rstrm = NULL;
