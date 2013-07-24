@@ -120,8 +120,6 @@ public:
     // #EXPERT #CAT_ODE do computations prior to taking a step of the ode physics solver -- called automatically at the start of Step() to allow special objects (e.g., VEArm) to update prior to stepping
   virtual void  Reset() { DestroyODE(); SetValsToODE(); }
   // #BUTTON #CAT_ODE completely reset the ODE environment -- this is necessary if bad float numbers have been generated (nan, inf)
-  virtual void SetStepSize(float size);
-  // #CAT_ODE stepsize is in seconds and a value such as .01 makes sense - use one stepsize, don't vary during simulation
 
   virtual void  CurToODE();
   // #CAT_ODE #BUTTON set the current values to ODE -- if you have updated these values external to the physics, then call this to update the physics engine so it is using the right thing -- only works after an Init call

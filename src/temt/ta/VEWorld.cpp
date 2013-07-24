@@ -316,6 +316,3 @@ float VEWorld::SnapVal(float val, float grid_size) {
 
 // in ta_virtenv_qtso.cpp:  QImage VEWorld::GetCameraImage(int cam_no)
 
-void VEWorld::SetStepSize(float size) {
-  stepsize = size;
-}
