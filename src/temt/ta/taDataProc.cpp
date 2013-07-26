@@ -807,10 +807,30 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
             if(mat) {
               taBase::Ref(mat);
               if(ds->agg.op == Aggregate::FIRST) {
-                dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), -1);
+                String val;
+                if(mat->ElView()) {		// significantly less efficient
+                  TA_FOREACH_INDEX(i, *mat) {
+                    val = mat->FastEl_Flat(i);
+                    break;
+                  }
+                }
+                else {
+                  val = mat->SafeEl_Flat(0);
+                }
+                dda->SetValAsString(val, -1);
               }
               else if(ds->agg.op == Aggregate::LAST) {
-                dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), -1);
+                String val;
+                if(mat->ElView()) {		// significantly less efficient
+                  TA_FOREACH_INDEX_REV(i, *mat) {
+                    val = mat->FastEl_Flat(i);
+                    break;
+                  }
+                }
+                else {
+                  val = mat->SafeEl_Flat(mat->size-1);
+                }
+                dda->SetValAsString(val, -1);
               }
               else if(ds->agg.op == Aggregate::N) {
                 dda->SetValAsInt(mat->size, -1);

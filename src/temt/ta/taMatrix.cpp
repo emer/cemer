@@ -1400,6 +1400,7 @@ int taMatrix::FrameIdx(int fr) const {
     return fidx;
   }
   else {
+    if(fr < 0) fr += geom[FrameDim()];
     return fr;
   }
 }
