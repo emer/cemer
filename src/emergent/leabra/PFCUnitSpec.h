@@ -28,7 +28,7 @@ class PFCLayerSpec; //
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // superficial layer PFC unit spec -- drives maintenance activation values
+  // PFC unit spec -- works with PFCLayerSpec to implement gated deep-layer context updating dynamics -- p_act_p contains gating time activation state, and misc_1 is 1 if network gated last trial
 INHERITED(LeabraUnitSpec)
 public:
 
@@ -36,6 +36,7 @@ public:
                                      PFCLayerSpec*& pfcls);
   // returns true if my stripe gated this trial -- this is only valid in PostSettle for phase_no == 1 or thereafter (TI_ComputeCtxtAct)
 
+  override void	Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   override void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
   override void PostSettle(LeabraUnit* u, LeabraNetwork* net);
 

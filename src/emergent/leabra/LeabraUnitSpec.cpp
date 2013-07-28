@@ -604,6 +604,7 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
   u->act -= decay * u->act;
   u->act_nd -= decay * u->act_nd;
   u->act_eq -= decay * u->act_eq;
+  u->p_act_p -= decay * u->p_act_p; // reset this for ti guys
   // note: this is causing a problem in learning with xcal:
 //   u->avg_ss -= decay * (u->avg_ss - act.avg_init);
 //   u->avg_s -= decay * (u->avg_s - act.avg_init);
@@ -1691,6 +1692,7 @@ void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
   u->act_ctxt = 0.0f;
   u->net_ctxt = 0.0f;
+  u->p_act_p = 0.0f;
 }
 
 

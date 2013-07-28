@@ -50,7 +50,7 @@ private:
 eTypeDef_Of(PFCLayerSpec);
 
 class E_API PFCLayerSpec : public LeabraLayerSpec {
-  // #AKA_PFCDeepLayerSpec Prefrontal cortex layer -- deep and superficial types
+  // #AKA_PFCDeepLayerSpec Prefrontal cortex layer -- uses built-in TI mechanisms to update act_ctxt deep layer activations, but unlike regular TI networks, this only occurs at the time of BG-driven gating, not every trial.  Much of the impl is in PFCUnitSpec
 INHERITED(LeabraLayerSpec)
 public:
 

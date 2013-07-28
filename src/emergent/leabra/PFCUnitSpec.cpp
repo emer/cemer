@@ -59,6 +59,24 @@ void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
+void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  inherited::Trial_Init_Unit(u, net, thread_no);
+  // this is called *BEFORE* the PFC layer grabs the updated info from the snrthal, so we pretend like we're at the end of the last trial here..
+  PFCLayerSpec* pfcls = NULL;
+  PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
+  if(gpd) {
+    bool gated_last_trial = gpd->go_fired_trial;
+    if(gated_last_trial) {
+      u->misc_1 = 1.0f;
+      u->p_act_p = u->act_p;    // grab the activation signal -- just gets it earlier it is avail for full trial right after gating
+    }
+    else {
+      u->misc_1 = 0.0f;
+    }
+  }
+}
+
+
 void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   float save_p_act_p = u->p_act_p;
   inherited::PostSettle(u, net);
