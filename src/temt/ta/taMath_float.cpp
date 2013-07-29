@@ -1758,7 +1758,6 @@ bool taMath_float::vec_kern_uniform(float_Matrix* kernel, int half_sz,
                                      bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
   int sz = half_sz * 2 + 1;
-  kernel->ClearElView();
   kernel->SetGeom(1, sz);
   float ctr = (float)half_sz;
   float val = 1.0 / (float)sz;
@@ -1784,7 +1783,6 @@ bool taMath_float::vec_kern_uniform(float_Matrix* kernel, int half_sz,
 bool taMath_float::vec_kern_gauss(float_Matrix* kernel, int half_sz, float sigma,
                                    bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
-  kernel->ClearElView();
   kernel->SetGeom(1, half_sz * 2 + 1);
   float off = (float)half_sz;
   float ssq = -1.0 / (2.0 * sigma * sigma);
@@ -1808,7 +1806,6 @@ bool taMath_float::vec_kern_gauss(float_Matrix* kernel, int half_sz, float sigma
 bool taMath_float::vec_kern_exp(float_Matrix* kernel, int half_sz, float exp_mult,
                                  bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
-  kernel->ClearElView();
   kernel->SetGeom(1, half_sz * 2 + 1);
   float ctr = (float)half_sz;
   for(int i=0;i<kernel->size;i++) {
@@ -1834,7 +1831,6 @@ bool taMath_float::vec_kern_exp(float_Matrix* kernel, int half_sz, float exp_mul
 bool taMath_float::vec_kern_pow(float_Matrix* kernel, int half_sz, float pow_exp,
                                  bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
-  kernel->ClearElView();
   kernel->SetGeom(1, half_sz * 2 + 1);
   float ctr = (float)half_sz;
   for(int i=0;i<kernel->size;i++) {
@@ -1867,8 +1863,9 @@ bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_ve
   }
   int off = (kernel->size-1) / 2;
   if(keep_edges) {
-    if(out_vec->size != in_vec->size)
+    if(out_vec->size != in_vec->size) {
       out_vec->SetGeom(1, in_vec->size);
+    }
     for(int i=0;i<out_vec->size;i++) {
       float sum = 0.0;
       float dnorm = 0.0;
@@ -1892,8 +1889,9 @@ bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_ve
       taMisc::Error("vec_convolve: input vector size < kernel size -- cannot convolve");
       return false;
     }
-    if(out_vec->size != in_vec->size - kernel->size)
+    if(out_vec->size != in_vec->size - kernel->size) {
       out_vec->SetGeom(1, in_vec->size - kernel->size);
+    }
     for(int i=0;i<out_vec->size;i++) {
       float sum = 0.0;
       for(int j=0;j<kernel->size;j++) {

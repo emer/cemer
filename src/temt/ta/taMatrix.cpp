@@ -1694,6 +1694,7 @@ void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
 
 bool taMatrix::SetGeom_(int dims_, const int geom_[]) {
   // dims=0 is special case, which is just a reset
+  ClearElView();                // an explicit call to SetGeom implies resetting existing data
   if (dims_ == 0) {
     StructUpdate(true);
     Reset(); // deletes data, and collapses slices
@@ -2311,8 +2312,8 @@ taMatrix* taMatrix::operator/(const Variant& t) const {
   }
   else {                        // use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
-    rval->CopyElView(*this);
     rval->SetGeomN(geom);
+    rval->CopyElView(*this);
     if(!TestError(t == 0.0, "/=", "Floating Point Exception: Division by Zero")) {
       TA_FOREACH_INDEX(i, *this) {
         rval->SetFmVar_Flat(FastElAsVar_Flat(i) / t, i);

@@ -1938,7 +1938,6 @@ bool taMath_double::vec_kern_uniform(double_Matrix* kernel, int half_sz,
                                      bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
   int sz = half_sz * 2 + 1;
-  kernel->ClearElView();
   kernel->SetGeom(1, sz);
   double ctr = (double)half_sz;
   double val = 1.0 / (double)sz;
@@ -1964,7 +1963,6 @@ bool taMath_double::vec_kern_uniform(double_Matrix* kernel, int half_sz,
 bool taMath_double::vec_kern_gauss(double_Matrix* kernel, int half_sz, double sigma,
                                    bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
-  kernel->ClearElView();
   kernel->SetGeom(1, half_sz * 2 + 1);
   double off = (double)half_sz;
   double ssq = -1.0 / (2.0 * sigma * sigma);
@@ -1988,7 +1986,6 @@ bool taMath_double::vec_kern_gauss(double_Matrix* kernel, int half_sz, double si
 bool taMath_double::vec_kern_exp(double_Matrix* kernel, int half_sz, double exp_mult,
                                  bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
-  kernel->ClearElView();
   kernel->SetGeom(1, half_sz * 2 + 1);
   double ctr = (double)half_sz;
   for(int i=0;i<kernel->size;i++) {
@@ -2014,7 +2011,6 @@ bool taMath_double::vec_kern_exp(double_Matrix* kernel, int half_sz, double exp_
 bool taMath_double::vec_kern_pow(double_Matrix* kernel, int half_sz, double pow_exp,
                                  bool neg_tail, bool pos_tail) {
   if(!vec_check_type(kernel)) return false;
-  kernel->ClearElView();
   kernel->SetGeom(1, half_sz * 2 + 1);
   double ctr = (double)half_sz;
   for(int i=0;i<kernel->size;i++) {
