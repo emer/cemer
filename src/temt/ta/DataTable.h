@@ -27,6 +27,7 @@
 #include <DataTableCols>
 #include <int_Matrix>
 #include <int_Array>
+#include <AnalysisRun>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -791,6 +792,9 @@ public:
                                 DataCol* col5 = NULL, bool ascending5 = true,
                                 DataCol* col6 = NULL, bool ascending6 = true);
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
+
+  virtual bool          RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type);
+  // #CAT_stats Run an analysis of specified type on the specified column
 
   virtual void          Filter(DataCol* column_1, Relation::Relations operator_1, const String& value_1,
          Relation::CombOp comb_op, DataCol* column_2 = NULL, Relation::Relations operator_2 = Relation::EQUAL,

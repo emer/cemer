@@ -178,6 +178,12 @@ public:
   void          Filter(Relation::Relations operator_1 = Relation::EQUAL, const String& value_1 = "",
       Relation::CombOp comb_op = Relation::AND, Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "");
    // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter Hide rows not matching the filter
+
+  void          RunClusterAnalysis();
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE
+  void          RunPCA2dAnalysis();
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column
+
   void          CatRelation(String& expr, Relation::Relations oper);
   // concatenate an relation operator onto the end of the expression
   void          CatConjunction(String& expr, Relation::CombOp conjunction);

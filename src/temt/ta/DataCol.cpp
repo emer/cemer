@@ -28,6 +28,7 @@
 #include <taObjDiff_List>
 #include <DataSelectSpec>
 #include <DataSelectEl>
+#include <AnalysisRun>  // need for analysis type enum
 
 #include <SigLinkSignal>
 #include <tabMisc>
@@ -802,4 +803,12 @@ taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDe
     }
   }
   return odr;
+}
+
+void DataCol::RunClusterAnalysis() {
+  dataTable()->RunAnalysis(this, AnalysisRun::CLUSTER);
+}
+
+void DataCol::RunPCA2dAnalysis() {
+  dataTable()->RunAnalysis(this, AnalysisRun::PCA2d);
 }

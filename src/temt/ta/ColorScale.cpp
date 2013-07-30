@@ -106,7 +106,7 @@ const iColor ColorScale::GetColor(float val, float& sc_val, iColor* maincolor,
 {
   iColor m;
   iColor c;
-  if (isnan(val) || isinf(val)) {
+  if (std::isnan(val) || std::isinf(val)) {
     val = 0.0f;
     m = iColor::black_;
     c.setRgb(255,255,255);

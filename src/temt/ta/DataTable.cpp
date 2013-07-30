@@ -29,6 +29,8 @@
 #include <int_Array>
 #include <DataSelectSpec>
 #include <DataSelectEl>
+#include <AnalysisRun>
+#include <taProject>
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -3447,3 +3449,20 @@ bool DataTable::idx(int row_num, int& act_idx) const {
   return true;
 }
 
+bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
+  // create a table for the analysis results
+  taProject* proj = GET_OWNER(this, taProject);
+  DataTable_Group* group = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
+  DataTable* result_data_table = group->NewEl(1, NULL);   // add a new data table to the group
+
+  AnalysisRun analysis;
+  bool rval = false;
+  rval = analysis.Init(type, this, column->name, result_data_table);
+  if (rval) {
+    rval = analysis.Run();
+  }
+  if (rval == false) {
+    delete result_data_table;
+  }
+  return rval;
+}

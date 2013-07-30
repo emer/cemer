@@ -1,0 +1,320 @@
+// Copyright, 1995-2013, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
+
+#include "AnalysisRun.h"
+
+#include <DataTable>
+#include <taGuiDialog>
+#include <taDataAnal>
+#include <taDataAnalParams>
+#include <taMisc>
+#include <DynEnum>
+#include <String_Array>
+
+#include <QComboBox>
+#include <QBoxLayout>
+
+bool AnalysisRun::Init(AnalysisType type, DataTable* src_table, const String& src_col_name, DataTable* result_table) {
+  analysis_type = type;
+
+  bool rval = true;
+  if (src_table && result_table) {
+    params.Init(src_table, src_col_name, result_table);
+  }
+  else {
+    rval = false;
+  }
+  return rval;
+}
+
+bool AnalysisRun::Run() {
+  bool rval = false;
+
+  if (analysis_type == CLUSTER) {
+    bool paramsSet = CollectParametersCluster(params);
+    if (paramsSet) {
+      rval = taDataAnal::Cluster(params.result_data_table, params.view, params.src_data_table, params.data_column_name,
+          params.name_column_name, params.distance_metric, params.norm, params.tolerance);
+    }
+  }
+  else if (analysis_type == PCA2d) {
+    bool paramsSet = CollectParametersPCA2d(params);
+    if (paramsSet) {
+      rval = taDataAnal::PCA2dPrjn(params.result_data_table, params.view, params.src_data_table, params.data_column_name,
+          params.name_column_name, params.x_axis_component, params.y_axis_component);
+    }
+  }
+  return rval;
+}
+
+// TODO - add popup to choose frame for graph
+
+bool AnalysisRun::CollectParametersCluster(taDataAnalParams& params) {
+  bool rval = true;
+
+  taGuiDialog dlg;
+  String title;
+  title = "Cluster Analysis";
+  dlg.prompt = "Enter parameters";
+  dlg.width = 300;
+  dlg.height = 400;
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row("");
+  int space = 0;
+
+  row = "input_table";  // no spaces!
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  src_table_str = "label=" + src_table_str + ";";
+  dlg.AddLabel("input_table_label", widget, row, src_table_str);
+
+  row = "input_data_column";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String src_column_str = "Source Input Column: " + params.data_column_name;
+  src_column_str = "label=" + src_column_str + ";";
+  dlg.AddLabel("input_data_column_label", widget, row, src_column_str);
+
+  QComboBox* combo_name_column = new QComboBox;
+  {
+    row = "input_name_column";
+    dlg.AddSpace(space, vbox);
+    dlg.AddHBoxLayout(row, vbox);
+    dlg.AddLabel("input_name_column_label", widget, row, "label=Source Name Column:;");
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) {
+      return false;
+    }
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) {
+      return false;
+    }
+    for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
+      combo_name_column->addItem(params.src_data_table->data[idx]->name);
+    }
+    hbox->addWidget(combo_name_column);
+    int idx_combo = combo_name_column->findText("Name");
+    if (idx_combo >= 0) {
+      combo_name_column->setCurrentIndex(idx_combo);
+    }
+  }
+
+  // TODO Add a real separator to taGuiDialog AddSeparator method
+
+  row = "separator_1";
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
+
+  row = "results_table";
+  String result_table_name = params.src_data_table->name + "_" + params.data_column_name + "_" + "results";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("result_table_label", widget, row, "label=Results Table:;");
+  dlg.AddStringField(&result_table_name, "results_table", widget, row, "tooltip=Enter a name for the results table that will be generated;");
+
+  row = "distance_metric";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("distance_metric_label", widget, row, "label=Distance Metric:;");
+
+  // TODO - figure out how to use DynEnum
+  // ALERT KLUDGE  - hand coding enum values into array
+  //  enum DistMetric {             // generalized distance metrics
+  //      SUM_SQUARES,                // sum of squares:  sum[(x-y)^2]
+  //      EUCLIDIAN,                  // Euclidian distance (sqrt of sum of squares)
+  //      HAMMING,                    // Hamming distance: sum[abs(x-y)]
+  //      COVAR,                      // covariance: sum[(x-<x>)(y-<y>)]
+  //      CORREL,                     // correlation: sum[(x-<x>)(y-<y>)] / sqrt(sum[x^2 y^2])
+  //      INNER_PROD,                 // inner product: sum[x y]
+  //      CROSS_ENTROPY               // cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
+  //    };
+  String_Array dist_metrics;
+  dist_metrics.FmDelimString("SUM_SQUARES EUCLIDIAN HAMMING"); // only these 3 for cluster analysis
+
+  QComboBox* combo_dist_metric = new QComboBox;
+  {
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);  // Get the hbox for this row so we can add our combobox to it.
+    if (!hboxEmer) {
+      return false;
+    }
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) {
+      return false;
+    }
+    for (int idx = 0; idx < dist_metrics.size; ++idx) {
+      combo_dist_metric->addItem(dist_metrics[idx]);
+    }
+    hbox->addWidget(combo_dist_metric);
+    int idx_combo = combo_dist_metric->findText("EUCLIDIAN");
+    if (idx_combo >= 0) {
+      combo_dist_metric->setCurrentIndex(idx_combo);//
+    }
+  }
+
+  row = "norm";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("norm", widget, row, "label=Normalize the data?:;");
+  dlg.AddBoolCheckbox(&params.norm, "norm", widget, row,
+      "tooltip=Do you want the data normalized, default is yes.;");
+  dlg.AddStretch(row);
+
+  row = "tolerance";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("tolerance", widget, row, "label=Tolerance Value:;");
+  dlg.AddFloatField(&params.tolerance, "tolerance", widget, row,
+      "tooltip=Float value for the tolerance, 0.0 is the default.;");
+  dlg.AddStretch(row);
+
+  row = "separator_2";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("separator_2_label", widget, row, "label=-------------------------------;");
+
+  row = "view";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("view_label", widget, row, "label=Draw Graph;");
+  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+      "tooltip=Show the analysis results in a new graph panel?;");
+
+  bool modal = true;
+  int drval = dlg.PostDialog(modal);
+
+  params.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
+  params.result_data_table->name = result_table_name;
+  params.distance_metric = (taMath::DistMetric)combo_dist_metric->currentIndex();
+
+  if (drval != 0)
+    rval = true;
+
+  return rval;
+}
+
+bool AnalysisRun::CollectParametersPCA2d(taDataAnalParams& params) {
+  bool rval = true;
+
+  taGuiDialog dlg;
+  String title;
+  title = "Cluster Analysis";
+  dlg.prompt = "Enter parameters";
+  dlg.width = 300;
+  dlg.height = 400;
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row("");
+  int space = 0;
+
+  row = "input_table";  // no spaces!
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  src_table_str = "label=" + src_table_str + ";";
+  dlg.AddLabel("input_table_label", widget, row, src_table_str);
+
+  row = "input_data_column";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String src_column_str = "Source Input Column: " + params.data_column_name;
+  src_column_str = "label=" + src_column_str + ";";
+  dlg.AddLabel("input_data_column_label", widget, row, src_column_str);
+
+  row = "input_name_column";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("input_name_column_label", widget, row, "label=Source Name Column:;");
+  // Get the hbox for this row so we can add our combobox to it.
+  taGuiLayout *hboxEmer = dlg.FindLayout(row);
+  if (!hboxEmer) {
+    return false;
+  }
+  QBoxLayout *hbox = hboxEmer->layout;
+  if (!hbox) {
+    return false;
+  }
+  QComboBox* combo_name_column = new QComboBox;
+  for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
+    combo_name_column->addItem(params.src_data_table->data[idx]->name);
+  }
+  hbox->addWidget(combo_name_column);
+  int idx_combo = combo_name_column->findText("Name");
+  if (idx_combo >= 0) {
+    combo_name_column->setCurrentIndex(idx_combo);
+  }
+
+  // TODO Add a real separator to taGuiDialog AddSeparator method
+
+  row = "separator_1";
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
+
+  row = "results_table";
+  String result_table_name = params.src_data_table->name + "_" + params.data_column_name + "_" + "results";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("result_table_label", widget, row, "label=Results Table:;");
+  dlg.AddStringField(&result_table_name, "results_table", widget, row, "tooltip=Enter a name for the results table that will be generated;");
+
+  row = "x_axis_component";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("x_axis_component", widget, row, "label=X Axis Component:;");
+  dlg.AddIntField(&params.x_axis_component, "x_axis", widget, row,
+      "tooltip=Enter the component number to plot on the X axis. The first component '0' accounts for the most variance.;");
+  dlg.AddStretch(row);
+
+  row = "y_axis_component";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("y_axis_component", widget, row, "label=Y Axis Component:;");
+  dlg.AddIntField(&params.y_axis_component, "y_axis", widget, row,
+      "tooltip=Enter the component number to plot on the Y axis. The second component '1' accounts for the second most variance.;");
+  dlg.AddStretch(row);
+
+   row = "separator_2";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("separator_2_label", widget, row, "label=-------------------------------;");
+
+  row = "view";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("view_label", widget, row, "label=Draw Graph;");
+  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+      "tooltip=Show the analysis results in a new graph panel?;");
+
+  bool modal = true;
+  int drval = dlg.PostDialog(modal);
+
+  params.name_column_name = combo_name_column->itemText(combo_name_column->currentIndex());
+  params.result_data_table->name = result_table_name;
+
+  if (drval != 0)
+    rval = true;
+
+  return rval;
+}

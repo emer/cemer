@@ -419,6 +419,8 @@ set(ta_HEADS_MAKETA_NOMOC
   ClustNode.h
   ClustLink.h
   taDataAnal.h
+  taDataAnalParams.h
+  AnalysisRun.h 
   DataAnalCall.h
 
   SubMatrixOpEl.h
@@ -980,7 +982,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
 
   ClusterManager.h
   SubversionClient.h
-
+  
   IPlugin.h
   taPluginInst_PList.h
   taPlugins.h
@@ -1478,6 +1480,8 @@ set(ta_SRCS_MAKETA
   ClustNode.cpp
   ClustLink.cpp
   taDataAnal.cpp
+  taDataAnalParams.cpp
+  AnalysisRun.cpp
   DataAnalCall.cpp
 
   SubMatrixOpEl.cpp
