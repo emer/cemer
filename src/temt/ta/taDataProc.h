@@ -88,7 +88,7 @@ public:
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order
   static bool  SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int i, const DataTable& pivotRow, bool isLess);
   // #IGNORE helper function for sorting: compare values
-  static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right);
+  static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right, DataTable& pivot_row_table);
   // #IGNORE sort the table index based on spec
 
   // these move the data

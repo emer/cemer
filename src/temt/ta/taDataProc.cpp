@@ -35,6 +35,8 @@
 #include <Relation>
 
 #include <taMisc>
+#include <QDateTime>
+#include <QtGlobal>
 
 bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
     bool& in_place_req) {
@@ -396,6 +398,17 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
   if (dt->rows <= 1)
     return false;
 
+  if(!spec) {
+      taMisc::Error("taDataProc::SortThruIndex_Compare: DataTable.current_sort_spec is NULL");
+      return false;
+    }
+
+  // Sort implementation requires a place to keep a row of data
+  // Create a single row table that gets reused on each recursion
+  DataTable pivot_row_table;
+  pivot_row_table.Copy_NoData(*dt);            // give it same structure
+  pivot_row_table.AddBlankRow();               // always just has one row
+
   dt->StructUpdate(true);
 
   const int n_rows = dt->row_indexes.size;
@@ -405,7 +418,7 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
     order[i] = i;               // key: use *logical* indexes here always -- sort goes through current row_indexes always..
 
   spec->GetColumns(dt);
-  SortThruIndex_impl(dt, spec, order, 0, n_rows-1);
+  SortThruIndex_impl(dt, spec, order, 0, n_rows-1, pivot_row_table);
   spec->ClearColumns();
 
   // now need to translate new order into raw indexes
@@ -424,11 +437,6 @@ bool taDataProc::SortThruIndex(DataTable* dt, DataSortSpec* spec)
 
 // SortThruIndex_Compare - values in someRow compared to values in pivotRow based on sortSpec
 bool taDataProc::SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int someRow, const DataTable& pivotRow, bool isLess) {
-  if(!spec) {
-    taMisc::Error("taDataProc::SortThruIndex_Compare: DataTable.current_sort_spec is NULL");
-    return 0;
-  }
-
   for(int k=0;k<spec->ops.size; k++) {
     DataSortEl* ds = (DataSortEl*)spec->ops.FastEl(k);
     if(ds->col_idx < 0)
@@ -471,24 +479,21 @@ bool taDataProc::SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* 
   return false;
 }
 
-// SortThruIndex_impl - An implementation of quicksort that sorts via indirection and
-// calls  a compare function
-void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[], int left, int right) {
+// SortThruIndex_impl - An implementation of quicksort that sorts via indirection and calls  a compare function.
+// Pivot row table used as an intermediary
+void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[], int left, int right, DataTable& pivot_row_table) {
   int i = left, j = right;
   int tmp;
   int pivotIndex = ((left + right) / 2);
 
-  DataTable pivotRow(false);            // temporary buffer to hold vals during swap
-  taBase::Own(pivotRow, NULL);          // activates initlinks..
-  pivotRow.Copy_NoData(*dt);            // give it same structure
-  pivotRow.AddBlankRow();               // always just has one row
-  pivotRow.CopyFromRow(0, *dt, arr[pivotIndex]);
+  // a place to store the row that is the pivot for the sort
+  pivot_row_table.CopyFromRow(0, *dt, arr[pivotIndex]);
 
   /* partition */
   while (i <= j) {
-    while (SortThruIndex_Compare(dt, spec, arr[i], pivotRow, true))
+    while (SortThruIndex_Compare(dt, spec, arr[i], pivot_row_table, true))
       i++;
-    while (SortThruIndex_Compare(dt, spec, arr[j], pivotRow, false))
+    while (SortThruIndex_Compare(dt, spec, arr[j], pivot_row_table, false))
       j--;
     if (i <= j) {
       tmp = arr[i];
@@ -501,10 +506,10 @@ void taDataProc::SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int arr[]
 
   /* recursion */
   if (left < j) {
-    SortThruIndex_impl(dt, spec, arr, left, j);
+    SortThruIndex_impl(dt, spec, arr, left, j, pivot_row_table);
   }
   if (i < right) {
-    SortThruIndex_impl(dt, spec, arr, i, right);
+    SortThruIndex_impl(dt, spec, arr, i, right, pivot_row_table);
   }
 }
 
