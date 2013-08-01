@@ -59,6 +59,20 @@ public:
 //   static float nextafter(float x, float y) { return nextafterf(x, y); }
 //   // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
 
+// The windows macros min and max need to be undefined before code will compile on 
+// that platform. This is already done in taMath.h, but somehow doesn't "take" (maybe 
+// the first inclusion of taMath.h happens before the macros are defined; maybe Qt is
+// responsible for including windef.h, and we don't know where)
+// See also: http://stackoverflow.com/questions/5004858/stdmin-gives-error
+#ifdef TA_OS_WIN
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
+#endif //TA_OS_WIN
+
   static float  min(float x, float y) { return (x < y) ? x : y; }
   // #CAT_Arithmetic minimum of x and y
   static float  max(float x, float y) { return (x > y) ? x : y; }

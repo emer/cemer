@@ -59,6 +59,16 @@ public:
 //   static double nextafter(double x, double y) { return std::nextafter(x, y); }
 //   // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
 
+// See comment in taMath_float.h:
+#ifdef TA_OS_WIN
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
+#endif //TA_OS_WIN
+
   static double  min(double x, double y) { return (x < y) ? x : y; }
   // #CAT_Arithmetic #NO_CSS_MATH minimum of x and y
   static double  max(double x, double y) { return (x > y) ? x : y; }
