@@ -79,6 +79,12 @@ void taiWidgetMethod::AddToMenu(taiWidgetActions* mnu) {
     act->setStatusTip(statustip);
   if (meth->HasOption("MENU_SEP_AFTER"))
     mnu->AddSep();
+
+  // works for context menus! Yes!
+  if(meth->OptionAfter("GHOST_").nonempty()) {
+    bool ghost = meth->GetCondOptTest("GHOST", typ, base);
+    act->setEnabled(ghost);
+  }
 }
 
 bool taiWidgetMethod::CallFun_impl() {

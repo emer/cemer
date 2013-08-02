@@ -169,20 +169,20 @@ public:
   bool          InitVals(const Variant& init_val);
   // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
   bool          InitValsToRowNo();
-  // #CAT_Modify #MENU #MENU_CONTEXT initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_OFF_is_matrix initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
 
   void          SortAscending();
-  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE
+  // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_OFF_is_matrix
   void          SortDescending();
-  // #CAT_DataProc #MENU  #MENU_CONTEXT #MENU_ON_Column
+  // #CAT_DataProc #MENU  #MENU_CONTEXT #MENU_ON_Column #GHOST_OFF_is_matrix
   void          Filter(Relation::Relations operator_1 = Relation::EQUAL, const String& value_1 = "",
       Relation::CombOp comb_op = Relation::AND, Relation::Relations operator_2 = Relation::EQUAL, const String& value_2 = "");
-   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter Hide rows not matching the filter
+   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #LABEL_Filter #GHOST_OFF_is_matrix Hide rows not matching the filter
 
   void          RunClusterAnalysis();
-  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_ON_is_matrix
   void          RunPCA2dAnalysis();
-  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_ON_is_matrix
 
   void          CatRelation(String& expr, Relation::Relations oper);
   // concatenate an relation operator onto the end of the expression
