@@ -57,7 +57,7 @@ public:
   virtual bool          RunScript();
   // run the script (returns false for no scr)
   virtual bool          CompileScript(bool force = false);
-  // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 compile script from source into internal runnable format;\n 'true' if compiled, 'false' if not or if deferred due to being in readline
+  // #MENU #LABEL_Compile #MENU_ON_Actions #ARGC_0 #GHOST_ON_script_compiled:true compile script from source into internal runnable format;\n 'true' if compiled, 'false' if not or if deferred due to being in readline
   virtual void          StopScript();
   // stops the running script
   virtual void          CmdShellScript();

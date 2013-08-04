@@ -83,7 +83,7 @@ void taiWidgetMethod::AddToMenu(taiWidgetActions* mnu) {
   // works for context menus! Yes!
   if(meth->OptionAfter("GHOST_").nonempty()) {
     bool ghost = meth->GetCondOptTest("GHOST", typ, base);
-    act->setEnabled(ghost);
+    act->setEnabled(!ghost);
   }
 }
 
