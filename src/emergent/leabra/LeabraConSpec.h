@@ -245,7 +245,6 @@ INHERITED(SpecMemberBase)
 public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
-  bool		norm_con_n;	// #DEF_true #AKA_div_gp_n #OBSOLETE WARNING: this is now obsolete and only used if wt_scale.old = true -- in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer -- THIS SHOULD ALWAYS BE ON AND IS THE NEW DEFAULT
 
   override String       GetTypeDecoKey() const { return "ConSpec"; }
 

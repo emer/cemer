@@ -127,7 +127,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
 void SAvgCorSpec::Initialize() {
   cor = .4f;
   thresh = .001f;
-  norm_con_n = true;
 }
 
 void AdaptRelNetinSpec::Initialize() {
