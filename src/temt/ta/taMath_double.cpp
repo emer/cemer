@@ -793,7 +793,7 @@ bool taMath_double::vec_gauss_inv_lim(double_Matrix* p) {
 }
 
 double taMath_double::vec_first(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
     TA_FOREACH_INDEX(i, *vec) {
@@ -804,7 +804,7 @@ double taMath_double::vec_first(const double_Matrix* vec) {
 }
 
 double taMath_double::vec_last(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
     TA_FOREACH_INDEX_REV(i, *vec) {
@@ -815,27 +815,29 @@ double taMath_double::vec_last(const double_Matrix* vec) {
 }
 
 int taMath_double::vec_find_first(const double_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return -1;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX(i, *vec) {
-    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) return i;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
+      return FOREACH_itr->count;
   }
   return -1;
 }
 
 int taMath_double::vec_find_last(const double_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return -1;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX_REV(i, *vec) {
-    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) return i;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
+      return (vec->IterCount() - FOREACH_itr->count) - 1;
   }
   return -1;
 }
 
 double taMath_double::vec_max(const double_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   idx = 0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
@@ -852,7 +854,7 @@ double taMath_double::vec_max(const double_Matrix* vec, int& idx) {
 }
 
 double taMath_double::vec_abs_max(const double_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   idx = 0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
@@ -883,7 +885,7 @@ double taMath_double::vec_abs_max(const double_Matrix* vec, int& idx) {
 }
 
 double taMath_double::vec_next_max(const double_Matrix* vec, int max_idx, int& idx) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   idx = 0;
   if(vec->size < 2) return 0.0;
   double rval;
@@ -902,7 +904,7 @@ double taMath_double::vec_next_max(const double_Matrix* vec, int max_idx, int& i
 }
 
 double taMath_double::vec_min(const double_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   idx = 0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
@@ -919,7 +921,7 @@ double taMath_double::vec_min(const double_Matrix* vec, int& idx) {
 }
 
 double taMath_double::vec_abs_min(const double_Matrix* vec, int& idx) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   idx = 0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
@@ -950,7 +952,7 @@ double taMath_double::vec_abs_min(const double_Matrix* vec, int& idx) {
 }
 
 double taMath_double::vec_next_min(const double_Matrix* vec, int min_idx, int& idx) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   idx = 0;
   if(vec->size < 2) return 0.0;
   double rval;
@@ -969,7 +971,7 @@ double taMath_double::vec_next_min(const double_Matrix* vec, int min_idx, int& i
 }
 
 double taMath_double::vec_sum(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   double rval = 0.0;
   TA_FOREACH_INDEX(i, *vec) {
     rval += vec->FastEl_Flat(i);
@@ -978,7 +980,7 @@ double taMath_double::vec_sum(const double_Matrix* vec) {
 }
 
 double taMath_double::vec_sum_range(const double_Matrix* vec, int start, int end) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   double rval = 0.0;
   if(start<0)
     start = vec->size - 1;
@@ -992,7 +994,7 @@ double taMath_double::vec_sum_range(const double_Matrix* vec, int start, int end
 }
 
 double taMath_double::vec_prod(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0) return 0.0;
   double rval = 0.0;
   if(vec->ElView()) {		// significantly less efficient
@@ -1013,7 +1015,7 @@ double taMath_double::vec_prod(const double_Matrix* vec) {
 }
 
 double taMath_double::vec_mean(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   if(vec->ElView()) {		// significantly less efficient
     int ic = vec->IterCount();
@@ -1025,7 +1027,7 @@ double taMath_double::vec_mean(const double_Matrix* vec) {
 
 double taMath_double::vec_var(const double_Matrix* vec, double mean, bool use_mean,
 			      bool use_est) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size <= 1)    return 0.0;
   if(!use_mean)
     mean = vec_mean(vec);
@@ -1043,7 +1045,7 @@ double taMath_double::vec_std_dev(const double_Matrix* vec, double mean, bool us
 }
 
 double taMath_double::vec_sem(const double_Matrix* vec, double mean, bool use_mean) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size <= 1)    return 0.0;
   if(vec->ElView()) {		// significantly less efficient
     int ic = vec->IterCount();
@@ -1054,7 +1056,7 @@ double taMath_double::vec_sem(const double_Matrix* vec, double mean, bool use_me
 }
 
 double taMath_double::vec_ss_len(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   double rval = 0.0;
   TA_FOREACH_INDEX(i, *vec) {
     double val = vec->FastEl_Flat(i);
@@ -1068,7 +1070,7 @@ double taMath_double::vec_norm(const double_Matrix* vec) {
 }
 
 double taMath_double::vec_ss_mean(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size <= 1)    return 0.0;
   double rval = 0.0;
   double mean = vec_mean(vec);
@@ -1114,7 +1116,7 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
 }
 
 double taMath_double::vec_count(const double_Matrix* vec, Relation& rel) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   double rval = 0.0;
@@ -1299,7 +1301,7 @@ void taMath_double::vec_kwta_avg(double& top_k_avg, double& bot_k_avg,
 }
 
 double taMath_double::vec_mode(const double_Matrix* vec) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0) return 0.0f;
   double_Array tmp;
   tmp.SetSize(vec->IterCount());
@@ -1759,7 +1761,7 @@ double taMath_double::scalar_dist(double v1, double v2,
 // Normalization
 
 double taMath_double::vec_norm_len(double_Matrix* vec, double len) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   double scale = (len * len) / vec_ss_len(vec);
   TA_FOREACH_INDEX(i, *vec) {
@@ -1771,7 +1773,7 @@ double taMath_double::vec_norm_len(double_Matrix* vec, double len) {
 }
 
 double taMath_double::vec_norm_sum(double_Matrix* vec, double sum, double min_val) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   double act_sum = 0.0;
   TA_FOREACH_INDEX(i, *vec) {
@@ -1786,7 +1788,7 @@ double taMath_double::vec_norm_sum(double_Matrix* vec, double sum, double min_va
 }
 
 double taMath_double::vec_norm_max(double_Matrix* vec, double max) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   int idx;
   double cur_max = vec_max(vec, idx);
@@ -1799,7 +1801,7 @@ double taMath_double::vec_norm_max(double_Matrix* vec, double max) {
 }
 
 double taMath_double::vec_norm_abs_max(double_Matrix* vec, double max) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   int idx;
   double cur_max = vec_abs_max(vec, idx);
@@ -1812,7 +1814,7 @@ double taMath_double::vec_norm_abs_max(double_Matrix* vec, double max) {
 }
 
 int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, double high) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
   TA_FOREACH_INDEX(i, *vec) {
@@ -1827,7 +1829,7 @@ int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, 
 }
 
 int taMath_double::vec_threshold_low(double_Matrix* vec, double thresh, double low) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
   TA_FOREACH_INDEX(i, *vec) {
@@ -1840,7 +1842,7 @@ int taMath_double::vec_threshold_low(double_Matrix* vec, double thresh, double l
 }
 
 int taMath_double::vec_threshold_high(double_Matrix* vec, double thresh, double high) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
   TA_FOREACH_INDEX(i, *vec) {
@@ -1859,7 +1861,7 @@ int taMath_double::vec_replace(double_Matrix* vec, double find1, double repl1,
                                bool do4, double find4, double repl4,
                                bool do5, double find5, double repl5,
                                bool do6, double find6, double repl6) {
-  if(!vec_check_type(vec)) return false;
+  if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
   TA_FOREACH_INDEX(i, *vec) {

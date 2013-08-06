@@ -838,7 +838,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
                 dda->SetValAsString(val, -1);
               }
               else if(ds->agg.op == Aggregate::N) {
-                dda->SetValAsInt(mat->size, -1);
+                dda->SetValAsInt(mat->IterCount(), -1);
               }
               taBase::unRefDone(mat);
             }
