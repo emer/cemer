@@ -796,14 +796,30 @@ public:
   virtual bool          RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type);
   // #CAT_stats Run an analysis of specified type on the specified column
 
-  virtual void          Filter(DataCol* column_1, Relation::Relations operator_1, const String& value_1,
-         Relation::CombOp comb_op, DataCol* column_2 = NULL, Relation::Relations operator_2 = Relation::EQUAL,
-         const String& value_2 = "");
-  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter Select table rows by specifying up to 2 conditions. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  virtual void          Filter(Variant& col1, Relation::Relations operator_1,
+                               const String& value_1,
+                               Relation::CombOp comb_op = Relation::AND,
+                               Variant col2 = -1,
+                               Relation::Relations operator_2 = Relation::EQUAL,
+                               const String& value_2 = "",
+                               Variant col3 = -1,
+                               Relation::Relations operator_3 = Relation::EQUAL,
+                               const String& value_3 = "");
+  // #CAT_DataProc Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  virtual void          FilterCol(DataCol* col1, Relation::Relations operator_1,
+                                  const String& value_1,
+                                  Relation::CombOp comb_op = Relation::AND,
+                                  DataCol* col2 = NULL,
+                                  Relation::Relations operator_2 = Relation::EQUAL,
+                                  const String& value_2 = "",
+                                  DataCol* col3 = NULL,
+                                  Relation::Relations operator_3 = Relation::EQUAL,
+                                  const String& value_3 = "");
+  // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter Select table rows by specifying up to 3 conditions for which rows to retain in the table (hiding the ones that do not match). Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterByScript(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
-  // #CAT_DataProc Hides rows not matching the spec.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);

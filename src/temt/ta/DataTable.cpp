@@ -3127,17 +3127,85 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
   taDataProc::SortThruIndex(this, &spec);
 }
 
-void DataTable::Filter(DataCol* column_1, Relation::Relations operator_1, const String& value_1,
-       Relation::CombOp comb_op, DataCol* column_2, Relation::Relations operator_2, const String& value_2) {
+void DataTable::Filter(Variant& col1, Relation::Relations operator_1,
+                       const String& value_1, Relation::CombOp comb_op,
+                       Variant col2, Relation::Relations operator_2,
+                       const String& value_2,
+                       Variant col3, Relation::Relations operator_3,
+                       const String& value_3) {
   DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
-  DataSelectEl* select_el = (DataSelectEl*)select_spec->AddColumn(column_1->name, this);
-  select_el->cmp = value_1;
-  select_el->rel = operator_1;
   select_spec->comb_op = comb_op;
-  if (column_2 != NULL && value_2 != "") {
-    DataSelectEl* select_el_2 = (DataSelectEl*)select_spec->AddColumn(column_2->name, this);
-    select_el_2->cmp = value_2;
+  if(col1.isStringType() || col1.toInt() >= 0) {
+    DataCol* da = GetColData(col1);
+    if(da) {
+      DataSelectEl* select_el_1 = (DataSelectEl*)select_spec->AddColumn(da->name, this);
+      if(da->isNumeric())
+        select_el_1->cmp = (double)value_1;
+      else
+        select_el_1->cmp = value_1;
+      select_el_1->rel = operator_1;
+    }
+  }
+  if(col2.isStringType() || col2.toInt() >= 0) {
+    DataCol* da = GetColData(col2);
+    if(da) {
+      DataSelectEl* select_el_2 = (DataSelectEl*)select_spec->AddColumn(da->name, this);
+      if(da->isNumeric())
+        select_el_2->cmp = (double)value_2;
+      else
+        select_el_2->cmp = value_2;
+      select_el_2->rel = operator_2;
+    }
+  }
+  if(col3.isStringType() || col3.toInt() >= 0) {
+    DataCol* da = GetColData(col3);
+    if(da) {
+      DataSelectEl* select_el_3 = (DataSelectEl*)select_spec->AddColumn(da->name, this);
+      if(da->isNumeric())
+        select_el_3->cmp = (double)value_3;
+      else
+        select_el_3->cmp = value_3;
+      select_el_3->rel = operator_3;
+    }
+  }
+  this->FilterBySpec(select_spec);
+  taBase::unRefDone(select_spec);
+}
+
+void DataTable::FilterCol(DataCol* col1, Relation::Relations operator_1,
+                          const String& value_1, Relation::CombOp comb_op,
+                          DataCol* col2, Relation::Relations operator_2,
+                          const String& value_2,
+                          DataCol* col3, Relation::Relations operator_3,
+                          const String& value_3) {
+  if(TestError(!col1, "Filter",
+               "column 1 is NULL-- must have at least one column"))
+    return;
+  DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
+  if(col1) {
+    DataSelectEl* select_el_1 = (DataSelectEl*)select_spec->AddColumn(col1->name, this);
+    if(col1->isNumeric())
+      select_el_1->cmp = (double)value_1;
+    else
+      select_el_1->cmp = value_1;
+    select_el_1->rel = operator_1;
+    select_spec->comb_op = comb_op;
+  }
+  if (col2 != NULL) {
+    DataSelectEl* select_el_2 = (DataSelectEl*)select_spec->AddColumn(col2->name, this);
+    if(col2->isNumeric())
+      select_el_2->cmp = (double)value_2;
+    else
+      select_el_2->cmp = value_2;
     select_el_2->rel = operator_2;
+  }
+  if (col3 != NULL) {
+    DataSelectEl* select_el_3 = (DataSelectEl*)select_spec->AddColumn(col3->name, this);
+    if(col3->isNumeric())
+      select_el_3->cmp = (double)value_3;
+    else
+      select_el_3->cmp = value_3;
+    select_el_3->rel = operator_3;
   }
   this->FilterBySpec(select_spec);
   taBase::unRefDone(select_spec);
