@@ -127,9 +127,6 @@ void iPanelOfDataTable::SetWinState_impl() {
     if (iwd > 0) { // ==0 typically if not set in UD
       tv->setColumnWidth(i, iwd);
     }
-    else {
-      tv->resizeColumnToContents(i);
-    }
   }
 }
 
