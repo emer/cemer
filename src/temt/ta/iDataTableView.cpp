@@ -175,6 +175,12 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         this->resizeColumnToContents(col);
       }
     }
+    else if (op_code & OP_RESIZE_TO_CONTENT_ALL) {
+      int cols = tab->data.size;
+      for (int col = cols-1; col >= 0; --col) {
+        this->resizeColumnToContents(col);
+      }
+    }
   }
   bail:
   gui_edit_op = false;

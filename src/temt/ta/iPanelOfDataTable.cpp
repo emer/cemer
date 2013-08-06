@@ -88,7 +88,12 @@ void iPanelOfDataTable::GetSelectedItems(ISelectable_PtrList& lst) {
 void iPanelOfDataTable::GetWinState_impl() {
   inherited::GetWinState_impl();
   DataTable* dt = this->dt(); // cache
+
+  if (dt->name == "StdInputData")
+	  taMisc::DebugInfo("GetWinState");
+
   if (!dt || !dte) return;
+
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
   float fwd = (float)tv->width();
@@ -106,6 +111,10 @@ void iPanelOfDataTable::GetWinState_impl() {
 void iPanelOfDataTable::SetWinState_impl() {
   inherited::SetWinState_impl();
   DataTable* dt = this->dt(); // cache
+
+  if (dt->name == "StdInputData")
+	  taMisc::DebugInfo("SetWinState");
+
   if (!dt || !dte) return;
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
@@ -117,6 +126,9 @@ void iPanelOfDataTable::SetWinState_impl() {
     int iwd = (int)(fwd * fcolwd);
     if (iwd > 0) { // ==0 typically if not set in UD
       tv->setColumnWidth(i, iwd);
+    }
+    else {
+      tv->resizeColumnToContents(i);
     }
   }
 }

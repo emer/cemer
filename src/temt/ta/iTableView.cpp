@@ -217,8 +217,10 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
         this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );*/
       act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
-      act = menu->AddItem("Resize Width to Contents", taiWidgetMenu::normal, iAction::int_act,
+      act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
+      act = menu->AddItem("Resize All Widths to Content", taiWidgetMenu::normal, iAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
       menu->AddSep();
     }
   }
