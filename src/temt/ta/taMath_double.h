@@ -388,6 +388,8 @@ public:
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector -- min and maximum ranges to compute within are also optional args -- only used if min != max
   static double vec_count(const double_Matrix* vec, Relation& rel);
   // #CAT_Statistics count number of times relationship is true
+  static double vec_percent(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics compute percent (proportion) of times relationship is true
   static double vec_median(const double_Matrix* vec);
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static double vec_mode(const double_Matrix* vec);
@@ -648,6 +650,8 @@ public:
 
   static bool   mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel);
   // #CAT_HighDimMatrix compute count number of times relationship rel is true for each value within inner frame dimensions across matrix frames (last outer dimension)
+  static bool   mat_frame_percent(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute percent (proportion) of times relationship rel is true for each value within inner frame dimensions across matrix frames (last outer dimension)
   static bool   mat_frame_median(double_Matrix* out_mat, const double_Matrix* in_mat);
   // #CAT_HighDimMatrix compute median (middle value -- requires sorting) for each value within inner frame dimensions across matrix frames (last outer dimension)
   static bool   mat_frame_mode(double_Matrix* out_mat, const double_Matrix* in_mat);

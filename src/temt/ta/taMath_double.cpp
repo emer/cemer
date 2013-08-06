@@ -1126,6 +1126,20 @@ double taMath_double::vec_count(const double_Matrix* vec, Relation& rel) {
   return rval;
 }
 
+double taMath_double::vec_percent(const double_Matrix* vec, Relation& rel) {
+  if(!vec_check_type(vec)) return 0.0;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  double rval = 0.0;
+  TA_FOREACH_INDEX(i, *vec) {
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+  }
+  double denom = (double)vec->IterCount();
+  if(denom > 0.0)
+    rval /= denom;
+  return rval;
+}
+
 double taMath_double::vec_median(const double_Matrix* vec) {
   if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0) return 0.0;
@@ -1916,6 +1930,8 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return (double)vec->IterCount();
   case Aggregate::COUNT:
     return taMath_double::vec_count(vec, agg.rel);
+  case Aggregate::PERCENT:
+    return taMath_double::vec_percent(vec, agg.rel);
   case Aggregate::MEDIAN:
     return taMath_double::vec_median(vec);
   case Aggregate::MODE:
@@ -3244,7 +3260,8 @@ bool taMath_double::mat_frame_ss_mean(double_Matrix* out_mat, const double_Matri
   return true;
 }
 
-bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel) {
+bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat,
+                                    Relation& rel) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
@@ -3256,6 +3273,26 @@ bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix*
       int fsi = in_mat->FrameStartIdx(j);
       if(tmp_rel.Evaluate(in_mat->FastEl_Flat(fsi + i))) sum += 1.0;
     }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_percent(double_Matrix* out_mat,
+                                      const double_Matrix* in_mat, Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->Frames();
+  int frs = in_mat->FrameSize();
+  for(int i=0;i<frs;i++) {
+    double sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      int fsi = in_mat->FrameStartIdx(j);
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(fsi + i))) sum += 1.0;
+    }
+    if(frn > 0)
+      sum /= (double)frn;
     out_mat->FastEl_Flat(i) = sum;
   }
   return true;
@@ -3371,6 +3408,8 @@ bool taMath_double::mat_frame_aggregate(double_Matrix* out_mat, const double_Mat
     return taMath_double::mat_frame_set_n(out_mat, in_mat);
   case Aggregate::COUNT:
     return taMath_double::mat_frame_count(out_mat, in_mat, agg.rel);
+  case Aggregate::PERCENT:
+    return taMath_double::mat_frame_percent(out_mat, in_mat, agg.rel);
   case Aggregate::MEDIAN:
     return taMath_double::mat_frame_median(out_mat, in_mat);
   case Aggregate::MODE:

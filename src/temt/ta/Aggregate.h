@@ -50,6 +50,7 @@ public:
     SEM,                        // Standard error of the mean (always uses the unbiased estimate of the variance)
     N,                          // the number of data items in the vector
     COUNT,                      // Count of the number times count relation was true
+    PERCENT,                    // compute percent (proportion) of the time relation was true
     MEDIAN,                     // middle item in sorted list of values
     MODE,                       // most frequent item (note: requires sorting)
     QUANTILE,                   // value at ordinal position within a sorted list given by rel.val parameter (normalized 0-1 position within sorted list, e.g., .5 = median, .25 = first quartile, etc) -- rel relation is not used
@@ -61,7 +62,7 @@ public:
 #endif
 
   Operator      op;             // how to aggregate over the network
-  Relation      rel;            // #CONDSHOW_ON_op:COUNT,FIND_FIRST,FIND_LAST,QUANTILE,VAR,STDEV parameters for the COUNT, FIND_xxx, and QUANTILE operators
+  Relation      rel;            // #CONDSHOW_ON_op:COUNT,PERCENT,FIND_FIRST,FIND_LAST,QUANTILE,VAR,STDEV parameters for the COUNT, PERCENT, FIND_xxx, and QUANTILE operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
   virtual ValType MinValType() const; // minimum value type that aggregation operator can operate on (VT_INT = any kind of numeric data, VT_STRING = even non-numeric is ok (GROUP, FIRST, LAST)
