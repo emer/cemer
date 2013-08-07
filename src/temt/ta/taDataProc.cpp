@@ -600,6 +600,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
 }
 
 bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
+  if(src->rows == 0) return false;
   float_Matrix float_tmp(false);
   dest->AddBlankRow();
   int dest_idx = 0;
@@ -666,6 +667,7 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 }
 
 bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, DataSortSpec* sort_spec) {
+  if(src->rows == 0) return false;
   DataTable ssrc(false);
   taBase::Own(ssrc, NULL);      // activates initlinks, refs
 
