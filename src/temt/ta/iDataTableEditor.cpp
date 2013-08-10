@@ -167,13 +167,27 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
 }
 
 void iDataTableEditor::tvTable_layoutChanged() {
-  if(!isVisible()) return;
-  ConfigView();
-//no-causes recursive invocation!  Refresh();
-  if ((bool)m_cell) {
-    iMatrixTableModel* mat_model = m_cell->GetTableModel();
-    mat_model->emit_layoutChanged(); // hacky but works
-  }
+  if(!isVisible())
+    return;
+	ConfigView();
+
+	// jar - 8/9/2013
+	// keep column widths in sync for multiple views
+	// would be nice to be able to save multiple views so that the views could be independent
+	// but for now we only save column width on the panel not the dialog view so this was
+	// a way to get the sizes saved for someone like me that often opens a table as a dialog
+	for(int i=0; i<dt()->data.size; i++) {
+	  DataCol* dc = dt()->data.FastEl(i);
+		if (dc->width > 0) {
+			tvTable->setColumnWidth(i, dc->width);
+		}
+	}
+
+	//no-causes recursive invocation!  Refresh();
+	if ((bool)m_cell) {
+	  iMatrixTableModel* mat_model = m_cell->GetTableModel();
+	  mat_model->emit_layoutChanged(); // hacky but works
+	}
 }
 
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {

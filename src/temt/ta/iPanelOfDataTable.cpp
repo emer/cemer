@@ -89,9 +89,6 @@ void iPanelOfDataTable::GetWinState_impl() {
   inherited::GetWinState_impl();
   DataTable* dt = this->dt(); // cache
 
-  if (dt->name == "StdInputData")
-	  taMisc::DebugInfo("GetWinState");
-
   if (!dt || !dte) return;
 
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
@@ -112,9 +109,6 @@ void iPanelOfDataTable::SetWinState_impl() {
   inherited::SetWinState_impl();
   DataTable* dt = this->dt(); // cache
 
-  if (dt->name == "StdInputData")
-	  taMisc::DebugInfo("SetWinState");
-
   if (!dt || !dte) return;
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
@@ -122,10 +116,16 @@ void iPanelOfDataTable::SetWinState_impl() {
   if (fwd <= 0.0f) return; // huh???
   for (int i = 0; i < dt->data.size; ++i) {
     DataCol* dc = dt->data.FastEl(i);
-    float fcolwd = dc->GetUserDataAsFloat("view_panel_wd");
-    int iwd = (int)(fwd * fcolwd);
-    if (iwd > 0) { // ==0 typically if not set in UD
-      tv->setColumnWidth(i, iwd);
+    if (dc->width > 0) { // use the current width
+      tv->setColumnWidth(i, dc->width);
+    }
+    else { // either a new table - fcolwd should be zero or first opening of this table from a saved project
+      float fcolwd = dc->GetUserDataAsFloat("view_panel_wd");
+      int iwd = (int)(fwd * fcolwd);
+      if (iwd > 0) {
+        tv->setColumnWidth(i, iwd);
+      }
+      // otherwise let it go to default value
     }
   }
 }

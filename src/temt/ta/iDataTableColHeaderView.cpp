@@ -17,6 +17,7 @@
 #include <iDataTableView>
 #include <DataTable>
 #include <taProject>
+#include <taMisc>
 
 #include <Qt>
 #include <QHeaderView>
@@ -33,6 +34,7 @@ iDataTableColHeaderView::iDataTableColHeaderView(QWidget* parent)
   m_section_move_complete = false;      // no section (column) currently being moved
 
   connect(this, SIGNAL(sectionMoved(int, int, int)), this, SLOT(movedSection(int, int, int)));
+  connect(this, SIGNAL(sectionResized(int, int, int)), this, SLOT(resizedSection(int, int, int)));
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), parent, SLOT(hor_customContextMenuRequested(const QPoint&)) );
 }
 
@@ -57,4 +59,18 @@ void iDataTableColHeaderView::movedSection(int logicalIdx, int oldVisualIdx, int
   else {
     m_section_move_complete = false;  // ready for another move
   }
+}
+
+void iDataTableColHeaderView::resizedSection(int columnIdx, int oldWidth, int newWidth)
+{
+  DataTable* dt = dynamic_cast<iDataTableView*>(parent())->dataTable();
+  if (!dt)
+    return;
+
+  dt->StructUpdate(true);
+  DataCol* dc = dt->data.FastEl(columnIdx);
+  if (dc) {
+      dc->width = newWidth;
+  }
+  dt->StructUpdate(false);
 }
