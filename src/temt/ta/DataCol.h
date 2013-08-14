@@ -183,6 +183,10 @@ public:
   // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_OFF_is_matrix
   void          RunPCA2dAnalysis();
   // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
+  void          RunPCA_EigenAnalysis();
+  // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
+  void          RunDistMatrixAnalysis();
+    // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
 
   void          CatRelation(String& expr, Relation::Relations oper);
   // concatenate an relation operator onto the end of the expression

@@ -811,5 +811,13 @@ void DataCol::RunClusterAnalysis() {
 }
 
 void DataCol::RunPCA2dAnalysis() {
-  dataTable()->RunAnalysis(this, AnalysisRun::PCA2d);
+  dataTable()->RunAnalysis(this, AnalysisRun::PCA_2d);
+}
+
+void DataCol::RunPCA_EigenAnalysis() {
+  dataTable()->RunAnalysis(this, AnalysisRun::PCA_EIGEN);
+}
+
+void DataCol::RunDistMatrixAnalysis() {
+  dataTable()->RunAnalysis(this, AnalysisRun::DISTANCE_MATRIX);
 }

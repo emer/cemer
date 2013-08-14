@@ -49,6 +49,7 @@ public:
   float                 tolerance;
   int                   x_axis_component;
   int                   y_axis_component;
+  bool                  include_scalars;
 
   void Initialize();
   void Destroy() { };

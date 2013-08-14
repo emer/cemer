@@ -33,7 +33,9 @@ class TA_API AnalysisRun : public taNBase {
 public:
   enum AnalysisType {
     CLUSTER,
-    PCA2d
+    PCA_2d,
+    PCA_EIGEN,
+    DISTANCE_MATRIX
   };
 
   AnalysisType        analysis_type;
@@ -48,8 +50,10 @@ public:
   TA_SIMPLE_BASEFUNS(AnalysisRun);
 
 protected:
-  virtual bool        CollectParametersCluster(taDataAnalParams& params);
-  virtual bool        CollectParametersPCA2d(taDataAnalParams& params);
+  virtual bool        CollectParamsCluster(taDataAnalParams& params);
+  virtual bool        CollectParamsPCA_2d(taDataAnalParams& params);
+  virtual bool        CollectParamsPCA_Eigen(taDataAnalParams& params);
+  virtual bool        CollectParamsDistanceMatrix(taDataAnalParams& params);
 
 private:
 };

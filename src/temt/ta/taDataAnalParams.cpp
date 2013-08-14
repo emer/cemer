@@ -32,4 +32,5 @@ void taDataAnalParams::Initialize()
   tolerance = 0.0f;
   x_axis_component = 0;
   y_axis_component = 1;
+  include_scalars = false;
 }
