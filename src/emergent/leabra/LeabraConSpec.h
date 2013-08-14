@@ -240,7 +240,7 @@ private:
 eTypeDef_Of(SAvgCorSpec);
 
 class E_API SAvgCorSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: affects hebbian learning and netinput computation
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: only affects original CPCA hebbian learning
 INHERITED(SpecMemberBase)
 public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
@@ -328,7 +328,7 @@ public:
   StableMixSpec stable_mix;     // #CAT_Learning #CONDSHOW_ON_learn mixing parameters for stable (swt) vs. learning weight (lwt) to compute the overall effective weight value (wt) -- stable wt reflects protein-synthesis dependent consolidated weight -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights!
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C&&learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
-  SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
+  SAvgCorSpec	savg_cor;	// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn for original CPCA Hebbian learning: correction for sending average act levels (i.e., renormalization)
 
   AdaptRelNetinSpec rel_net_adapt; // #CAT_Learning #CONDSHOW_ON_learn adapt relative netinput values based on targets for fm_input, fm_output, and lateral projections -- not used by default (call Compute_RelNetinAdapt to activate; requires Compute_RelNetin and Compute_AvgRelNetin for underlying data)
   
