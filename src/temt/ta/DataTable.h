@@ -908,6 +908,7 @@ public:
   override void         Dump_Save_pre();
   override String       GetTypeDecoKey() const { return "DataTable"; }
   override int          GetSpecialState() const;
+  override taBase*      ChildDuplicate(const taBase* chld);
 
   void  InitLinks();
   void  CutLinks();

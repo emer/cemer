@@ -345,6 +345,14 @@ void DataTable::Dump_Save_pre() {
   AutoSaveData();
 }
 
+taBase* DataTable::ChildDuplicate(const taBase* chld) {
+  // because copying a column implicitly flattens the column, we flatten everything first
+  // this should be ok b/c we're doing structural damage here anyway so all rows view
+  // is nonsensical really
+  Flatten();
+  return inherited::ChildDuplicate(chld);
+}
+
 DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
   for(int i=data.size-1;i>=0;i--) {
     DataCol* da = data.FastEl(i);

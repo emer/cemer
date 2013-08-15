@@ -43,6 +43,16 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
   }
 }
 
+taBase* DataTableCols::ChildDuplicate(const taBase* chld) {
+  // because copying a column implicitly flattens the column, we flatten everything first
+  // this should be ok b/c we're doing structural damage here anyway so all rows view
+  // is nonsensical really
+  if(owner) {
+    ((DataTable*)owner)->Flatten();
+  }
+  return inherited::ChildDuplicate(chld);
+}
+
 void DataTableCols::SigEmit(int sls, void* op1, void* op2) {
   inherited::SigEmit(sls, op1, op2);
 

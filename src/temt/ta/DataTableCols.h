@@ -50,6 +50,7 @@ public:
   override const KeyString GetListColKey(int col) const;
 
   override String       GetTypeDecoKey() const { return "DataTable"; }
+  override taBase*      ChildDuplicate(const taBase* chld);
 
   TA_BASEFUNS(DataTableCols);
 protected: // these guys must only be used by DataTable, but no external guys

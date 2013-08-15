@@ -320,7 +320,11 @@ bool taDataGen::SampleByFrequency(DataTable* dest, const DataTable* data_in,
                                   int n_samples, const String& freq_col_nm,
                                   bool renorm_freqs) {
   if(!data_in || data_in->rows == 0) {
-    taMisc::Error("taDataGen:SampleByFrequency data_list_in is NULL or has no rows");
+    taMisc::Error("taDataGen:SampleByFrequency data_in is NULL or has no rows");
+    return false;
+  }
+  if(data_in == dest) {
+    taMisc::Error("taDataGen:SampleByFrequency data_in is same as dest -- this is not allowed");
     return false;
   }
 
