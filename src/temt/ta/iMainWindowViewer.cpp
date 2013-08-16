@@ -439,7 +439,7 @@ void iMainWindowViewer::Constr_FileMenu()
 
   // Make connections.
   if (!isRoot()) {
-    fileCloseWindowAction = AddAction(new iAction("C&lose Window", QKeySequence(), "fileCloseWindowAction"));
+    fileCloseWindowAction = AddAction(new iAction("C&lose Window", QKeySequence(cmd_str + "W"), "fileCloseWindowAction"));
     connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()));
   }
 
