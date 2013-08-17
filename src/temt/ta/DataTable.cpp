@@ -3526,19 +3526,30 @@ bool DataTable::idx(int row_num, int& act_idx) const {
 }
 
 bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
-  // create a table for the analysis results
-  taProject* proj = GET_OWNER(this, taProject);
-  DataTable_Group* group = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
-  DataTable* result_data_table = group->NewEl(1, NULL);   // add a new data table to the group
-
-  AnalysisRun analysis;
   bool rval = false;
-  rval = analysis.Init(type, this, column->name, result_data_table);
-  if (rval) {
-    rval = analysis.Run();
+  // create a table for the analysis results
+  DataTable* result_data_table = NULL;
+  DataTable_Group* group = GET_OWNER(this, DataTable_Group);
+  if (group != NULL) { // The table belongs to the data section of the project
+    taProject* proj = GET_OWNER(this, taProject);
+    DataTable_Group* group = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
+    result_data_table = group->NewEl(1, NULL);   // add a new data table to the group
   }
-  if (rval == false) {
-    delete result_data_table;
+  else {  // not in a datatable group so must be an object in a program
+    Program* program = GET_OWNER(this, Program);
+    ProgObjList* objList = &program->objs;
+    result_data_table = objList->NewDataTable();   // add a new data table to the object group of the program
+  }
+
+  if (result_data_table) {
+    AnalysisRun analysis;
+    rval = analysis.Init(type, this, column->name, result_data_table);
+    if (rval) {
+      rval = analysis.Run();
+    }
+    if (rval == false) {
+      delete result_data_table;
+    }
   }
   return rval;
 }
