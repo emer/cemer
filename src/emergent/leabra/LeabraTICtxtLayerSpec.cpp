@@ -66,7 +66,7 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
     else {
       u->act = su->act_ctxt;
     }
-    u->act_eq = u->act_nd = u->act;
+    u->act_lrn = u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;            // I'm fully settled!
     u->AddToActBuf(rus->syn_delay);
   }

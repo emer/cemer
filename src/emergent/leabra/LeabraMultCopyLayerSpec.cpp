@@ -74,7 +74,7 @@ void LeabraMultCopyLayerSpec::Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwor
     else
       new_act = copy_un->act_eq * mult_eff;
     u->act = new_act;
-    u->act_eq = u->act_nd = u->act;
+    u->act_lrn = u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;               // I'm fully settled!
     u->AddToActBuf(rus->syn_delay);
   }

@@ -378,7 +378,7 @@ void MatrixLayerSpec::Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_mid = 0.0f;
-    u->act = u->act_nd = u->act_eq = 0.0f;
+    u->act_lrn = u->act = u->act_nd = u->act_eq = 0.0f;
     u->misc_1 = 0.0f;           // signal of non gating
     u->da = 0.0f;
   }
@@ -412,7 +412,7 @@ void MatrixLayerSpec::Compute_ShowGatingAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->act = u->act_nd = u->act_eq = u->act_mid;
+    u->act_lrn = u->act = u->act_nd = u->act_eq = u->act_mid;
     u->da = 0.0f;
   }
 }

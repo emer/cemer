@@ -197,16 +197,16 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
 
     if(net->ct_cycle > snrthal.max_cycle) {
       if(!gpd->go_fired_trial)
-        u->act = u->act_eq = u->act_nd = 0.0f;
+        u->act_lrn = u->act = u->act_eq = u->act_nd = 0.0f;
       else
-        u->act = u->act_eq = u->act_nd = u->act_mid;
+        u->act_lrn = u->act = u->act_eq = u->act_nd = u->act_mid;
       continue;
     }
 
     if(gpd->go_fired_trial) {
       n_fired_trial++;
       gpd->go_fired_now = false;
-      u->act = u->act_eq = u->act_nd = u->act_mid;
+      u->act_lrn = u->act = u->act_eq = u->act_nd = u->act_mid;
     }
     else {
       if(u->act_eq >= snrthal.go_thr) {
