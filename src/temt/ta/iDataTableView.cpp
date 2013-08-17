@@ -141,7 +141,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         tab->DuplicateRows(sel.row_fr, sel.height());
       }
       else if (op_code & OP_DELETE) {
-        if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
+        if(taMisc::delete_prompts) {
           if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) goto bail;
         }
         if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
@@ -159,7 +159,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       if (op_code & OP_INSERT) {
       } else */
       if (op_code & OP_DELETE) {
-        if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
+        if(taMisc::delete_prompts) {
           if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
         }
         tab->StructUpdate(true);

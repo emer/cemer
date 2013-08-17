@@ -23,9 +23,8 @@
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
-  out_at_p = false;
-  min_cycle = 15;
-  max_cycle = 40;
+  min_cycle = 20;
+  max_cycle = 25;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -152,11 +151,6 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     lay->gp_geom.n = snr_stripes;
   }
 
-  if(lay->CheckError(((gating_types & OUTPUT) && (gating_types != OUTPUT) &&
-                      !snrthal.out_at_p), quiet, rval,
-                     "SNrThalLayer has OUTPUT gating combined with other gating types, but out_at_p is not set -- out_at_p is only thing that makes sense for this case, so I switched it for you.")) {
-    snrthal.out_at_p = true;
-  }
   return true;
 }
 
@@ -185,38 +179,7 @@ void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   Init_GateStats(lay, net);
 }
 
-void SNrThalLayerSpec::Compute_GateActs_Maint(LeabraLayer* lay, LeabraNetwork* net) {
-  Layer::AccessMode acc_md = Layer::ACC_GP;
-  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
-
-  int n_fired_trial = 0;
-  int n_fired_now = 0;
-
-  for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
-    if(u->lesioned()) continue;
-
-    if(u->act_eq >= snrthal.go_thr) {
-      n_fired_trial++;
-      n_fired_now++;
-      gpd->go_fired_now = true;
-      gpd->go_fired_trial = true;
-      gpd->go_cycle = net->ct_cycle;
-      gpd->prv_mnt_count = gpd->mnt_count; 
-      gpd->mnt_count = 0;	// reset
-    }
-    else {
-      u->act_eq = u->act_p = 0.0f; // turn off non-gated guys
-    }
-  }
-
-  Compute_GateStats(lay, net); // update overall stats at this point
-  lay->SetUserData("n_fired_trial", n_fired_trial);
-  lay->SetUserData("n_fired_now", n_fired_now);
-}
-
-void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* net) {
+void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
 
@@ -234,13 +197,16 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
 
     if(net->ct_cycle > snrthal.max_cycle) {
       if(!gpd->go_fired_trial)
-        u->act_eq = 0.0f;
+        u->act = u->act_eq = u->act_nd = 0.0f;
+      else
+        u->act = u->act_eq = u->act_nd = u->act_mid;
       continue;
     }
 
     if(gpd->go_fired_trial) {
       n_fired_trial++;
       gpd->go_fired_now = false;
+      u->act = u->act_eq = u->act_nd = u->act_mid;
     }
     else {
       if(u->act_eq >= snrthal.go_thr) {
@@ -251,6 +217,7 @@ void SNrThalLayerSpec::Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* 
         gpd->go_cycle = net->ct_cycle;
         gpd->prv_mnt_count = gpd->mnt_count; 
         gpd->mnt_count = 0;	// reset
+        u->act_mid = u->act_eq;
       }
     }
   }
@@ -308,18 +275,11 @@ void SNrThalLayerSpec::Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
 
 void SNrThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_CycleStats(lay, net);
-  if(!snrthal.out_at_p && gating_types & OUTPUT) { // everything else is maint gating 
-    Compute_GateActs_Output(lay, net);
-  }
+  Compute_GateActs(lay, net);
 }
 
-void SNrThalLayerSpec::PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle_Pre(lay, net);
-  if(net->phase_no == 1) {
-    if(!(!snrthal.out_at_p && gating_types & OUTPUT)) { // everything else is maint gating 
-      Compute_GateActs_Maint(lay, net);
-    }
-  }
+void SNrThalLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  // nop -- don't do the default thing -- already done by GatedActs
 }
 
 void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {

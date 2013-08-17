@@ -140,6 +140,7 @@ set(leabra_HEADS_MAKETA
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   LeabraTICtxtLayerSpec.h
+  MatrixCon.h
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -285,4 +286,5 @@ set(leabra_SRCS
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
   LeabraTICtxtLayerSpec.cpp
+  MatrixCon.cpp
 )

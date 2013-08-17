@@ -377,8 +377,10 @@ void MatrixLayerSpec::Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->act_eq = u->act_p = 0.0f;
+    u->act_mid = 0.0f;
+    u->act = u->act_nd = u->act_eq = 0.0f;
     u->misc_1 = 0.0f;           // signal of non gating
+    u->da = 0.0f;
   }
 }
 
@@ -389,8 +391,29 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    // just leave the activations as-is
+    u->act_mid = u->act_eq;
     u->misc_1 = 1.0f;           // signal of gating
+
+    // now save the sending unit activations at time of gating
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(cs->InheritsFrom(&TA_MatrixConSpec)) {
+        ((MatrixConSpec*)cs)->Compute_SuLearnAct(recv_gp, u);
+      }
+    }
+  }
+}
+
+void MatrixLayerSpec::Compute_ShowGatingAct_ugp(LeabraLayer* lay,
+                                              Layer::AccessMode acc_md, int gpidx,
+                                              LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    u->act = u->act_nd = u->act_eq = u->act_mid;
+    u->da = 0.0f;
   }
 }
 
@@ -399,16 +422,23 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
                                        LeabraNetwork* net) {
   int snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
   LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
-//  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+  SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
 
   PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   gpd->CopyPBWMData(*snr_gpd);	// always grab from snr
   if(snr_gpd->go_fired_trial) {
-    Compute_GoGatingAct_ugp(lay, acc_md, gpidx, net); // set gating flag
+    if(snr_gpd->go_fired_now) {
+      Compute_GoGatingAct_ugp(lay, acc_md, gpidx, net); // capture gating time values
+    }
+    else {
+      Compute_ShowGatingAct_ugp(lay, acc_md, gpidx, net); // set gating flag
+    }
   }
   else {
-    Compute_NoGatingZeroAct_ugp(lay, acc_md, gpidx, net); // zero our act values
+    if(net->ct_cycle > snr_ls->snrthal.max_cycle) {
+      Compute_NoGatingZeroAct_ugp(lay, acc_md, gpidx, net); // zero our act values
+    }
   }
 }
 
@@ -417,6 +447,15 @@ void MatrixLayerSpec::Compute_GatingActs(LeabraLayer* lay, LeabraNetwork* net) {
   for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
     Compute_GatingActs_ugp(lay, acc_md, gpidx, net);
   }
+}
+
+void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
+  Compute_GatingActs(lay, net);
+  inherited::Compute_CycleStats(lay, net);
+}
+
+void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  // nop -- don't do the default thing -- already done by call to MidMinusAct
 }
 
 // this is called at end of plus phase, to establish a da value for driving learning
@@ -471,10 +510,10 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
 void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::PostSettle(lay, net);
+  Compute_GatingActs(lay, net); // at end of every phase
 
   if(net->phase_no == 1) {
     // end of plus -- compute da value used for learning
-    Compute_GatingActs(lay, net);
     Compute_LearnDaVal(lay, net);
   }
 }

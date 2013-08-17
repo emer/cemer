@@ -22,6 +22,7 @@
 #include <taMisc>
 
 void PFCGateSpec::Initialize() {
+  gate_ctxt_mod = 0.5f;
   ctxt_decay = 0.0f;
   ctxt_decay_c = 1.0f - ctxt_decay;
   out_nogate_gain = 0.0f;
@@ -170,25 +171,31 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   CopySNrThalGpData(lay, net);
 }
 
-void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCLayerSpec::Compute_GateCycle(LeabraLayer* lay, LeabraNetwork* net) {
   CopySNrThalGpData(lay, net);
-  LeabraLayer* snr_lay = SNrThalLayer(lay);
-  if(!snr_lay) return;
-  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-  
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    bool just_fired = false;
-    if(snrls->snrthal.out_at_p) {
-      just_fired = (gpd->mnt_count == 1);
+    if(!gpd->go_fired_now) continue; // only on very cycle of gating
+    for(int i=0;i<nunits;i++) {
+      LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+      if(ru->lesioned()) continue;
+      ru->act_ctxt *= gate.gate_ctxt_mod;
     }
-    else {
-      just_fired = gpd->go_fired_trial;
-    }
-    if(!just_fired) {  // reset activation after 
+  }
+}
+
+void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
+  CopySNrThalGpData(lay, net);
+
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    if(!gpd->go_fired_trial) {
       for(int i=0;i<nunits;i++) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;
@@ -202,6 +209,7 @@ void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_GateCycle(lay, net);
   if(pfc_type & SNrThalLayerSpec::OUTPUT) {
     Compute_OutGatedAct(lay, net);
   }

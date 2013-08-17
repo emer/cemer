@@ -31,9 +31,8 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active will fire
-  bool          out_at_p;               // compute output gating at end of plus phase, just like maint gating -- use this when OUTPUT other stripes are combined to compete within the same snrthal -- otherwise output gating happens during minus phase independent of maint gating in its own snrthal, which allows for a reaction time and doesn't require double trials for output
-  int           min_cycle;              // #DEF_10:25 #MIN_0 #CONDSHOW_OFF_out_at_p minimum cycle for output gating -- cannot output gate before this cycle -- only when out_at_p is off -- otherwise all gating happens at end of plus phase
-  int           max_cycle;              // #DEF_20:40 #MIN_0 #CONDSHOW_OFF_out_at_p maximum cycle for output gating -- cannot output gate after this cycle -- only when out_at_p is off -- otherwise all gating happens at end of plus phase
+  int           min_cycle;              // #DEF_10:25 #MIN_0 minimum cycle for gating -- cannot gate before this cycle
+  int           max_cycle;              // #DEF_20:40 #MIN_0 maximum cycle for gating -- cannot gate after this cycle
   
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -59,9 +58,8 @@ public:
     OUTPUT = 0x04,		// Gating of output in PFC_out layers -- these have to be in their own separate SNrThal layer, because output gating occurs at different time
     MNT_OUT = 0x08,		// Less commonly used: Gating of pre-output maintenance in PFC_mnt_out layers -- if active, these are after MNT and before OUTPUT in SNrThal layer
     OUT_MNT = 0x10,		// Less commonly used: Gating of a fixation-like rep in PFC_out_mnt layers -- if active, these are last units in SNrThal layer
-#ifndef __MAKETA__
+
     IN_MNT_OUT = INPUT | MNT | OUTPUT,// #NO_BIT input mnt output -- typical default
-#endif
   };
 
   GatingTypes		gating_types;	// types of gating units present within this SNrThal layer -- used for coordinating structure of network (projections mostly) -- snrthal is the official "source" of this setting, which is copied to associated matrix and pfc layers during config check
@@ -69,16 +67,14 @@ public:
 
   virtual void	Init_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // initialize the gating stats in the group data -- called by Trial_Init_Layer
-  virtual void	Compute_GateActs_Maint(LeabraLayer* lay, LeabraNetwork* net);
-  // compute gating activations -- called at final plus phase for maint gating
-  virtual void	Compute_GateActs_Output(LeabraLayer* lay, LeabraNetwork* net);
-  // compute gating activations -- called at gate_cycle
+  virtual void	Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net);
+  // compute gating activations -- called every cycle
   virtual void	Compute_GateStats(LeabraLayer* lay, LeabraNetwork* net);
   // update layer user data gating statistics which are useful to monitor for overall performance -- called at gate_cycle
 
   // we compute maint gating in postsettle pre stage of plus phase, output gating in cycle
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
 

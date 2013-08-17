@@ -13,33 +13,24 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "MatrixConSpec.h"
+#ifndef MatrixCon_h
+#define MatrixCon_h 1
 
-void MatrixConSpec::Initialize() {
-  min_obj_type = &TA_MatrixCon;
+// parent includes:
+#include <LeabraCon>
 
-  Defaults_init();
-  dwt_remain = 0.5f;
-}
+// member includes:
 
-void MatrixConSpec::Defaults_init() {
-  SetUnique("wt_limits", true);
-  wt_limits.sym = false;
+// declare all other types mentioned but not required to include:
 
-  SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
+eTypeDef_Of(MatrixCon);
 
-  // SetUnique("wt_sig", true);
-  wt_sig.gain = 6.0f;
-  wt_sig.off = 1.25f;
-}
+class E_API MatrixCon : public LeabraCon {
+  // connection for recv cons into matrix units -- stores the sender activation prior to any gating update signals, used for learning
+public:
+  float		sact_lrn;	// #NO_SAVE sending activation value used for learning -- prior to any gating-based update in activation states
 
-void MatrixConSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  // these are enforced absolutely because the code does not use them:
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-  //  lmix.err_sb = false;
-}
+  MatrixCon() { sact_lrn = 0.0f; }
+};
 
+#endif // MatrixCon_h

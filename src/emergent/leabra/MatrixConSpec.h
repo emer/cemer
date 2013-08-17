@@ -21,6 +21,7 @@
 
 // member includes:
 #include <LeabraNetwork>
+#include <MatrixCon>
 
 // declare all other types mentioned but not required to include:
 
@@ -31,6 +32,15 @@ class E_API MatrixConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   float         dwt_remain;      // how much of the dwt value remains after the weights are updated (i.e., every time there is a PV trial)
+
+  inline void Compute_SuLearnAct(LeabraRecvCons* cg, LeabraUnit* ru) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      MatrixCon* cn = (MatrixCon*)cg->PtrCn(i);
+      cn->sact_lrn = su->act_eq;
+    }
+  }
+  // RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
   inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
     // do NOT do this under any circumstances!!
@@ -49,9 +59,9 @@ public:
 
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
       if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
-      C_Compute_dWt_Matrix_Trace(cn, ru->act_p, su->act_p);
+      C_Compute_dWt_Matrix_Trace(cn, ru->act_mid, cn->sact_lrn);
     }
   }
 

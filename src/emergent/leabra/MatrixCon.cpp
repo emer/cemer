@@ -13,33 +13,5 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "MatrixConSpec.h"
-
-void MatrixConSpec::Initialize() {
-  min_obj_type = &TA_MatrixCon;
-
-  Defaults_init();
-  dwt_remain = 0.5f;
-}
-
-void MatrixConSpec::Defaults_init() {
-  SetUnique("wt_limits", true);
-  wt_limits.sym = false;
-
-  SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-
-  // SetUnique("wt_sig", true);
-  wt_sig.gain = 6.0f;
-  wt_sig.off = 1.25f;
-}
-
-void MatrixConSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  // these are enforced absolutely because the code does not use them:
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-  //  lmix.err_sb = false;
-}
+#include "MatrixCon.h"
 
