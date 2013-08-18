@@ -30,6 +30,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 }
 
 void MatrixMiscSpec::Initialize() {
+  pv_da_only = true;
   da_gain = 0.1f;
   nogo_inhib = 0.5f;
   refract_inhib = 0.0f;
@@ -462,6 +463,7 @@ void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   // float lay_ton_da = lay->GetUserDataAsFloat("tonic_da");
+  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
 
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
@@ -471,6 +473,10 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
+        if(matrix.pv_da_only && !er_avail) {
+          u->dav = 0.0f;
+          continue;
+        }
         u->dav *= -matrix.da_gain; // inverting the da at this point -- uses same learning rule as GO otherwise
         if(go_nogo_gain.on) {
           if(u->dav >= 0.0f)
@@ -484,6 +490,10 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
+        if(matrix.pv_da_only && !er_avail) {
+          u->dav = 0.0f;
+          continue;
+        }
         u->dav *= matrix.da_gain;
         if(go_nogo_gain.on) {
           if(u->dav >= 0.0f)

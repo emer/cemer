@@ -1939,6 +1939,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   // trace-based learning -- only pvi gets from pfc..
   if(in_stripes > 0) {
     net->FindMakePrjn(pvi, pfc_in, fullprjn, pvi_cons);
+    // this seems to actually be bad -- make it an option
     net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
     net->FindMakePrjn(lvi, pfc_in, fullprjn, lvi_cons);
     net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
