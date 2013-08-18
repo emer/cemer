@@ -67,8 +67,9 @@ public:
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
   virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 0, int mnt_stripes = 6,
-		     int out_stripes = 6, bool topo_prjns = false);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; numbers of stripes can be set per each type of gating (0 = do not create that type of gating pathway);  topo_prjns = use topographic connections to establish default patterns of gating
+		     int out_stripes = 6, bool one_snr = true, bool make_deep_pfc = true,
+                     bool topo_prjns = false);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; numbers of stripes can be set per each type of gating (0 = do not create that type of gating pathway);  one_snr = make one snrthal layer for all pfc layers -- otherwise make separate;  make_deep_pfc = make separate pfc_deep layers;  topo_prjns = use topographic connections to establish default patterns of gating
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, bool topo_prjns = false);
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups)

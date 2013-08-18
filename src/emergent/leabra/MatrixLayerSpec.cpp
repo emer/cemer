@@ -431,8 +431,8 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
     if(snr_gpd->go_fired_now) {
       Compute_GoGatingAct_ugp(lay, acc_md, gpidx, net); // capture gating time values
     }
-    else {
-      Compute_ShowGatingAct_ugp(lay, acc_md, gpidx, net); // set gating flag
+    else if(net->ct_cycle > snr_ls->snrthal.max_cycle) {
+      Compute_ShowGatingAct_ugp(lay, acc_md, gpidx, net); // show what happened
     }
   }
   else {

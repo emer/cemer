@@ -58,6 +58,7 @@
 #include <PFCLayerSpec>
 #include <PFCConSpec>
 #include <PFCDeepGatedConSpec>
+#include <LeabraTICtxtLayerSpec>
 
 #include <SNrPrjnSpec>
 #include <TopoWtsPrjnSpec>
@@ -1367,7 +1368,8 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
 }
 
 bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-			int out_stripes, bool topo_prjns) {
+			int out_stripes, bool one_snr, bool make_deep_pfc, 
+                        bool topo_prjns) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -1449,7 +1451,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   // stick this in go -- must be first!
   snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal", NULL, snrthal_new);
-  if(out_stripes > 0) {
+  if(!one_snr && out_stripes > 0) {
     snrthal_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer("SNrThal_out", NULL,
                                                              snrthal_out_new);
   }
@@ -1529,6 +1531,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
 
   LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_PFCUnitSpec);
+  LeabraUnitSpec* pfcd_units = (LeabraUnitSpec*)pfc_units->FindMakeChild("PFCDeepUnits", &TA_LayerActUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
   LeabraUnitSpec* matrix_nogo_units = (LeabraUnitSpec*)matrix_units->FindMakeChild("MatrixNoGo", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
@@ -1589,6 +1592,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
                                                                      &TA_PFCLayerSpec);
   PFCLayerSpec* pfc_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out",
                                                                       &TA_PFCLayerSpec);
+  LeabraTICtxtLayerSpec* pfc_deep_sp =
+    (LeabraTICtxtLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_deep",
+                                                      &TA_LeabraTICtxtLayerSpec);
 
   MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
   MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
@@ -1933,9 +1939,15 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   // trace-based learning -- only pvi gets from pfc..
   if(in_stripes > 0) {
     net->FindMakePrjn(pvi, pfc_in, fullprjn, pvi_cons);
+    net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
+    net->FindMakePrjn(lvi, pfc_in, fullprjn, lvi_cons);
+    net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
   }
   if(mnt_stripes > 0) {
     net->FindMakePrjn(pvi, pfc_mnt, fullprjn, pvi_cons);
+    net->FindMakePrjn(lve, pfc_mnt, fullprjn, lve_cons);
+    net->FindMakePrjn(lvi, pfc_mnt, fullprjn, lvi_cons);
+    net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
   }
 
   for(i=0;i<input_lays.size;i++) {
@@ -2322,6 +2334,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
 
   LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_PFCUnitSpec);
+  LeabraUnitSpec* pfcd_units = (LeabraUnitSpec*)pfc_units->FindMakeChild("PFCDeepUnits", &TA_LayerActUnitSpec);
   LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
   LeabraUnitSpec* matrix_nogo_units = (LeabraUnitSpec*)matrix_units->FindMakeChild("MatrixNoGo", &TA_MatrixUnitSpec);
   LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
@@ -2382,6 +2395,9 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
                                                                      &TA_PFCLayerSpec);
   PFCLayerSpec* pfc_out_sp = (PFCLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_out",
                                                                       &TA_PFCLayerSpec);
+  LeabraTICtxtLayerSpec* pfc_deep_sp =
+    (LeabraTICtxtLayerSpec*)pfc_mnt_sp->FindMakeChild("PFC_deep",
+                                                      &TA_LeabraTICtxtLayerSpec);
 
   MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
   MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
