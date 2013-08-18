@@ -20,6 +20,7 @@ void MatrixConSpec::Initialize() {
 
   Defaults_init();
   dwt_remain = 0.5f;
+  mtx_learn = TRACE;
 }
 
 void MatrixConSpec::Defaults_init() {

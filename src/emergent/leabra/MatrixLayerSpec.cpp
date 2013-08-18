@@ -463,8 +463,6 @@ void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   // float lay_ton_da = lay->GetUserDataAsFloat("tonic_da");
 
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
@@ -473,17 +471,12 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
-        if(!er_avail) {         // trace learning means only PV da!!
-          u->dav = 0.0f;
-        }
-        else {
-          u->dav *= -matrix.da_gain; // inverting the da at this point -- uses same learning rule as GO otherwise
-          if(go_nogo_gain.on) {
-            if(u->dav >= 0.0f)
-              u->dav *= go_nogo_gain.nogo_p;
-            else
-              u->dav *= go_nogo_gain.nogo_n;
-          }
+        u->dav *= -matrix.da_gain; // inverting the da at this point -- uses same learning rule as GO otherwise
+        if(go_nogo_gain.on) {
+          if(u->dav >= 0.0f)
+            u->dav *= go_nogo_gain.nogo_p;
+          else
+            u->dav *= go_nogo_gain.nogo_n;
         }
       }
     }
@@ -491,18 +484,13 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
-        if(!er_avail) {         // trace learning means only PV da!!
-          u->dav = 0.0f;
+        u->dav *= matrix.da_gain;
+        if(go_nogo_gain.on) {
+          if(u->dav >= 0.0f)
+            u->dav *= go_nogo_gain.go_p;
+          else
+            u->dav *= go_nogo_gain.go_n;
         }
-        else {
-          u->dav *= matrix.da_gain;
-          if(go_nogo_gain.on) {
-            if(u->dav >= 0.0f)
-              u->dav *= go_nogo_gain.go_p;
-            else
-              u->dav *= go_nogo_gain.go_n;
-          }
-	}
       }
     }
   }

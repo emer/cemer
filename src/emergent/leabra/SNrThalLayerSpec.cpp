@@ -196,10 +196,12 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
     if(u->lesioned()) continue;
 
     if(net->ct_cycle > snrthal.max_cycle) {
-      if(!gpd->go_fired_trial)
-        u->act_lrn = u->act = u->act_eq = u->act_nd = 0.0f;
-      else
+      if(!gpd->go_fired_trial) {
+        u->act_mid = u->act_lrn = u->act = u->act_eq = u->act_nd = 0.0f;
+      }
+      else {
         u->act_lrn = u->act = u->act_eq = u->act_nd = u->act_mid;
+      }
       continue;
     }
 

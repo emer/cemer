@@ -31,6 +31,12 @@ class E_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation -- for both Matrix_Go and NoGo connections
 INHERITED(LeabraConSpec)
 public:
+  enum MtxLearnMode {           // how does the matrix learn?
+    TRACE,                      // learn from trace of gating activation modulated by PV dopamine
+    LV_DA,                      // use PVLV LV dopamine, which anticipates positive outcomes
+  };
+
+  MtxLearnMode  mtx_learn;       // how do the matrix units learn?  can either use a trace mechanism or pure PVLV dopamine
   float         dwt_remain;      // how much of the dwt value remains after the weights are updated (i.e., every time there is a PV trial)
 
   inline void Compute_SuLearnAct(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -53,15 +59,31 @@ public:
     cn->dwt = cur_lrate * dwt;  // note: =, not += -- always learn last gating action
   }
 
+  inline void C_Compute_dWt_Matrix_LvDa(LeabraCon* cn, 
+                                        float mtx_da, float mtx_act, float su_act) {
+    float dwt = mtx_da * mtx_act * su_act;
+    cn->dwt += cur_lrate * dwt;
+  }
+
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     LeabraNetwork* net = (LeabraNetwork*)su->own_net();
     if(ignore_unlearnable && net && net->unlearnable_trial) return;
 
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
-      if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
-      C_Compute_dWt_Matrix_Trace(cn, ru->act_mid, cn->sact_lrn);
+    if(mtx_learn == TRACE) {
+      for(int i=0; i<cg->size; i++) {
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+        MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
+        if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
+        C_Compute_dWt_Matrix_Trace(cn, ru->act_mid, cn->sact_lrn);
+      }
+    }
+    else {                      // LV_DA
+      for(int i=0; i<cg->size; i++) {
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+        MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
+        if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
+        C_Compute_dWt_Matrix_LvDa(cn, ru->dav, ru->act_mid, cn->sact_lrn);
+      }
     }
   }
 
@@ -90,13 +112,18 @@ public:
   }
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      if(ru->dav != 0.0f) {
-        LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-        C_Compute_Weights_Matrix_Trace(cn, ru->dav);
+    if(mtx_learn == TRACE) {
+      for(int i=0; i<cg->size; i++) {
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+        if(ru->dav != 0.0f) {
+          LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+          C_Compute_Weights_Matrix_Trace(cn, ru->dav);
+        }
+        //  ApplyLimits(cg, ru); limits are automatically enforced anyway
       }
-      //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+    }
+    else {
+      inherited::Compute_Weights_CtLeabraXCAL(cg, su); // use std
     }
   }
 
