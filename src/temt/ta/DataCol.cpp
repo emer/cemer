@@ -818,6 +818,6 @@ void DataCol::RunPCA_EigenAnalysis() {
   dataTable()->RunAnalysis(this, AnalysisRun::PCA_EIGEN);
 }
 
-void DataCol::RunDistMatrixAnalysis() {
+void DataCol::ComputeDistanceMatrix() {
   dataTable()->RunAnalysis(this, AnalysisRun::DISTANCE_MATRIX);
 }

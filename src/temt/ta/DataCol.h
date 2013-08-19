@@ -185,7 +185,7 @@ public:
   // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
   void          RunPCA_EigenAnalysis();
   // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
-  void          RunDistMatrixAnalysis();
+  void          ComputeDistanceMatrix();
     // #CAT_Stat #MENU  #MENU_CONTEXT #MENU_ON_Column  #GHOST_OFF_is_matrix
 
   void          CatRelation(String& expr, Relation::Relations oper);
