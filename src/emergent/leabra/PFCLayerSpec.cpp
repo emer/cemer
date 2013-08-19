@@ -22,7 +22,7 @@
 #include <taMisc>
 
 void PFCGateSpec::Initialize() {
-  gate_ctxt_mod = 0.5f;
+  gate_ctxt_mod = 1.0f;
   ctxt_decay = 0.0f;
   ctxt_decay_c = 1.0f - ctxt_decay;
   out_nogate_gain = 0.0f;

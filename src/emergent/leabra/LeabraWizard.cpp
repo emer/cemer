@@ -1327,7 +1327,7 @@ static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
 }
 
 bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-				    int out_stripes, int n_matrix_units,
+				    int out_stripes, bool one_snr, int n_matrix_units,
 				    int n_pfc_units) {
   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
@@ -1351,14 +1351,20 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
   set_n_stripes(net, "Matrix_NoGo_out",out_stripes, n_matrix_units, true);
 
   int snr_stripes = in_stripes + mnt_stripes;
-  if(in_stripes > 0 && mnt_stripes > 0) {
+  if(!one_snr) {
+    if(out_stripes > 0) {
+      set_n_stripes(net, "SNrThal_out", out_stripes, 1, true);
+    }
+  }
+  else {
+    snr_stripes += out_stripes;
+  }
+  if(snr_stripes > in_stripes && snr_stripes > mnt_stripes &&
+     (!one_snr || snr_stripes > out_stripes)) {
     set_n_stripes(net, "SNrThal", snr_stripes, 1, true, snr_stripes, 1);
   }
   else {
     set_n_stripes(net, "SNrThal", snr_stripes, 1, true);
-  }
-  if(out_stripes > 0) {
-    set_n_stripes(net, "SNrThal_out", out_stripes, 1, true);
   }
 
   set_n_stripes(net, "LVe", 1, -1, false, 1, 1);
@@ -1433,12 +1439,15 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   // new gets full update, otherwise more just params
   bool matrix_new =   false; 
   bool pfc_new = false; 
+  bool pfcd_new = false; 
   bool snrthal_new = false; 
   bool snrthal_out_new = false; 
 
   LeabraLayer* pfc_mnt = NULL;
   LeabraLayer* pfc_out = NULL;
   LeabraLayer* pfc_in = NULL;
+  LeabraLayer* pfc_mnt_d = NULL;
+  LeabraLayer* pfc_in_d = NULL;
 
   LeabraLayer* matrix_go_in = NULL;
   LeabraLayer* matrix_go_mnt = NULL;
@@ -1462,6 +1471,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_in = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_in", NULL,
 								  matrix_new);
     pfc_in =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFC_in",  NULL, pfc_new);
+    if(make_deep_pfc) {
+      pfc_in_d =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_in",  NULL, pfcd_new);
+    }
   }
 
   if(mnt_stripes > 0) {
@@ -1470,6 +1482,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_mnt = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_mnt", NULL,
 								  matrix_new);
     pfc_mnt = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFC_mnt", NULL, pfc_new);
+    if(make_deep_pfc) {
+      pfc_mnt_d = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_mnt", NULL, pfcd_new);
+    }
   }
 
   if(out_stripes > 0) {
@@ -1496,7 +1511,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
        && lay != snrthal && lay != snrthal_out 
        && lay != matrix_go_in && lay != matrix_go_mnt && lay != matrix_go_out
        && lay != matrix_nogo_in && lay != matrix_nogo_mnt && lay != matrix_nogo_out
-       && lay != pfc_mnt && lay != pfc_out && lay != pfc_in) {
+       && lay != pfc_mnt && lay != pfc_out && lay != pfc_in
+       && lay != pfc_mnt_d && lay != pfc_in_d) {
       other_lays.Link(lay);
       lay->GetAbsPos(lpos);
       if(lpos.z == 0) lay->pos.z+=2; // nobody allowed in 0!
@@ -1766,6 +1782,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_in->SetUnitSpec(matrix_nogo_units);
 
     pfc_in->SetLayerSpec(pfc_in_sp);  pfc_in->SetUnitSpec(pfc_units);
+    if(pfc_in_d) {
+      pfc_in_d->SetLayerSpec(pfc_deep_sp);  pfc_in_d->SetUnitSpec(pfcd_units);
+    }
   }
   if(mnt_stripes > 0) {
     matrix_go_mnt->SetLayerSpec(matrix_go_mnt_sp);
@@ -1774,6 +1793,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_mnt->SetUnitSpec(matrix_nogo_units);
 
     pfc_mnt->SetLayerSpec(pfc_mnt_sp);  pfc_mnt->SetUnitSpec(pfc_units);
+    if(pfc_mnt_d) {
+      pfc_mnt_d->SetLayerSpec(pfc_deep_sp);  pfc_mnt_d->SetUnitSpec(pfcd_units);
+    }
   }
   if(out_stripes > 0) {
     matrix_go_out->SetLayerSpec(matrix_go_out_sp);
@@ -1782,7 +1804,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
 
     pfc_out->SetLayerSpec(pfc_out_sp);  pfc_out->SetUnitSpec(pfc_units);
-    snrthal_out->SetLayerSpec(snrthalsp_out); snrthal_out->SetUnitSpec(snrthal_units);
+    if(snrthal_out) {
+      snrthal_out->SetLayerSpec(snrthalsp_out); snrthal_out->SetUnitSpec(snrthal_units);
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1815,12 +1839,19 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 		      matrix_cons_nogofmgo);
   }
   if(out_stripes > 0) {
-    net->FindMakePrjn(snrthal_out, matrix_go_out, snr_prjn, matrix_to_snrthal);
+    if(snrthal_out) {
+      net->FindMakePrjn(snrthal_out, matrix_go_out, snr_prjn, matrix_to_snrthal);
+      net->FindMakePrjn(matrix_go_out, snrthal_out, snr_prjn, marker_cons);
+      net->FindMakePrjn(matrix_nogo_out, snrthal_out, snr_prjn, marker_cons);
+    }
+    else {
+      net->FindMakePrjn(snrthal, matrix_go_out, snr_prjn, matrix_to_snrthal);
+      net->FindMakePrjn(matrix_go_out, snrthal, snr_prjn, marker_cons);
+      net->FindMakePrjn(matrix_nogo_out, snrthal, snr_prjn, marker_cons);
+    }
     net->FindMakePrjn(matrix_go_out, matrix_nogo_out, markergponetoone, marker_cons);
-    net->FindMakePrjn(matrix_go_out, snrthal_out, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_go_out, vta, fullprjn, marker_cons);
 
-    net->FindMakePrjn(matrix_nogo_out, snrthal_out, snr_prjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_out, vta, fullprjn, marker_cons);
     net->FindMakePrjn(matrix_nogo_out, matrix_go_out, gponetoone, matrix_cons_nogofmgo);
   }
@@ -1838,6 +1869,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     }
     net->FindMakePrjn(pfc_in, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(pfc_in, pfc_in, gponetoone, pfc_ctxt_cons);
+
+    if(pfc_in_d) {
+      net->FindMakePrjn(pfc_in_d, pfc_in, onetoone, marker_cons);
+    }
 
     // if(mnt_stripes > 0) { // default is for input gating to be straight input, no maint
     //   if(topo_prjns) {
@@ -1885,6 +1920,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     net->FindMakePrjn(pfc_mnt, snrthal, snr_prjn, marker_cons);
     net->FindMakePrjn(pfc_mnt, pfc_mnt, gponetoone, pfc_ctxt_cons);
 
+    if(pfc_mnt_d) {
+      net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
+    }
+
     if(in_stripes > 0) {
       if(topo_prjns) {
         net->FindMakePrjn(pfc_mnt, pfc_in, intrapfctopo, topfc_cons);
@@ -1908,7 +1947,12 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   }
 
   if(out_stripes > 0) {
-    net->FindMakePrjn(pfc_out, snrthal_out, snr_prjn, marker_cons);
+    if(snrthal_out) {
+      net->FindMakePrjn(pfc_out, snrthal_out, snr_prjn, marker_cons);
+    }
+    else {
+      net->FindMakePrjn(pfc_out, snrthal, snr_prjn, marker_cons);
+    }
 
     if(in_stripes > 0) {
       if(topo_prjns) {
@@ -1936,19 +1980,19 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     }
   }
 
-  // trace-based learning -- only pvi gets from pfc..
+  // connections from PFC to pvlv seem to actually be bad when dealing with distributed
+  // TI-like representations, as compared to the more symbolic kind -- parameterize
   if(in_stripes > 0) {
     net->FindMakePrjn(pvi, pfc_in, fullprjn, pvi_cons);
-    // this seems to actually be bad -- make it an option
-    net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
-    net->FindMakePrjn(lvi, pfc_in, fullprjn, lvi_cons);
-    net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
+    // net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
+    // net->FindMakePrjn(lvi, pfc_in, fullprjn, lvi_cons);
+    // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
   }
   if(mnt_stripes > 0) {
     net->FindMakePrjn(pvi, pfc_mnt, fullprjn, pvi_cons);
-    net->FindMakePrjn(lve, pfc_mnt, fullprjn, lve_cons);
-    net->FindMakePrjn(lvi, pfc_mnt, fullprjn, lvi_cons);
-    net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
+    // net->FindMakePrjn(lve, pfc_mnt, fullprjn, lve_cons);
+    // net->FindMakePrjn(lvi, pfc_mnt, fullprjn, lvi_cons);
+    // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
   }
 
   for(i=0;i<input_lays.size;i++) {
@@ -2048,6 +2092,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(pfc_in->brain_area.empty()) {
       pfc_in->brain_area = ".*/.*/.*/.*/BA45";
     }
+    if(pfc_in_d && pfc_in_d->brain_area.empty()) {
+      pfc_in_d->brain_area = ".*/.*/.*/.*/BA45";
+    }
   }
   if(mnt_stripes > 0) {
     if(matrix_go_mnt->brain_area.empty()) 
@@ -2056,6 +2103,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       matrix_nogo_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
     if(pfc_mnt->brain_area.empty()) {
       pfc_mnt->brain_area = ".*/.*/.*/.*/BA9";
+    }
+    if(pfc_mnt_d && pfc_mnt_d->brain_area.empty()) {
+      pfc_mnt_d->brain_area = ".*/.*/.*/.*/BA9";
     }
   }
   if(out_stripes > 0) {
@@ -2164,25 +2214,41 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   if(in_stripes > 0) {
     if(pfc_new) {
       pfc_in->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-      pfc_in->un_geom.n = pfcu_n; pfc_in->un_geom.x = pfcu_x; pfc_in->un_geom.y = pfcu_y;
+      pfc_in->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
     }
     lay_set_geom(pfc_in, in_stripes);
+
+    if(pfc_in_d) {
+      if(pfcd_new) {
+        pfc_in_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_in->disp_geom.y + lay_spc, pfc_z);
+        pfc_in_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+      }
+      lay_set_geom(pfc_in_d, in_stripes);
+    }
     pfc_st_x += pfc_in->disp_geom.x + lay_spc; // move starting x over for next type
   }
 
   if(mnt_stripes > 0) {
     if(pfc_new) {
       pfc_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-      pfc_mnt->un_geom.n = pfcu_n; pfc_mnt->un_geom.x = pfcu_x; pfc_mnt->un_geom.y = pfcu_y;
+      pfc_mnt->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
     }
     lay_set_geom(pfc_mnt, mnt_stripes);
+
+    if(pfc_mnt_d) {
+      if(pfcd_new) {
+        pfc_mnt_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_mnt->disp_geom.y + lay_spc, pfc_z);
+        pfc_mnt_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+      }
+      lay_set_geom(pfc_mnt_d, mnt_stripes);
+    }
     pfc_st_x += pfc_mnt->disp_geom.x + lay_spc;
   }
 
   if(out_stripes > 0) {
     if(pfc_new) {
       pfc_out->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-      pfc_out->un_geom.n = pfcu_n; pfc_out->un_geom.x = pfcu_x; pfc_out->un_geom.y = pfcu_y;
+      pfc_out->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
     }
     lay_set_geom(pfc_out, out_stripes);
   }
@@ -2190,20 +2256,23 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   ///////////////	Now SNrThal
 
   int snr_stripes = in_stripes + mnt_stripes;
-  lay_set_geom(snrthal, snr_stripes, 1);
   if(snrthal_out) {
     lay_set_geom(snrthal_out, out_stripes, 1);
   }
+  else {
+    snr_stripes += out_stripes;
+  }
+  lay_set_geom(snrthal, snr_stripes, 1);
 
   if(snrthal_new) { // put at front of go
     snrthal->pos.SetXYZ(0, 0, mtx_z);
   }
-  if(snrthal_out_new) {
+  if(snrthal_out && snrthal_out_new) {
     snrthal_out->pos.SetXYZ(snr_stripes*2 + lay_spc, 0, mtx_z);
   }
 
   // here to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes);
+  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes, one_snr);
 
   if(new_pbwm_laygp) {
     pbwm_laygp_go->pos.z = 0;

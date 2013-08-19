@@ -173,6 +173,20 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		       "Receiving connections must be of type MatrixConSpec!")) {
       return false;
     }
+    if(cs->mtx_learn == MatrixConSpec::TRACE) {
+      if(lay->CheckError(!matrix.pv_da_only, quiet, rval,
+                  "TRACE learning requires pv_da_only, I just set it for you in spec:",
+                    name)) {
+        matrix.pv_da_only = true;
+      }
+    }
+    else {
+      if(lay->CheckError(matrix.pv_da_only, quiet, rval,
+                  "LV_DA learning requires pv_da_only = false, I just set it for you in spec:",
+                    name)) {
+        matrix.pv_da_only = false;
+      }
+    }
     if(lay->CheckError(cs->wt_limits.sym != false, quiet, rval,
                   "requires recv connections to have wt_limits.sym=false, I just set it for you in spec:",
                   cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
