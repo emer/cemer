@@ -1185,7 +1185,7 @@ class SubversionPoller(object):
                 if abs_cnt > job_done_retries:
                     self._job_is_done(row, 'DONE')
                 else:
-                    status = 'ABSENT_' + abs_cnt
+                    status = 'ABSENT_' + str(abs_cnt)
                     self.jobs_running.set_val(row, "status", status)
             elif status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
                 pass    # don't do anything
@@ -1265,7 +1265,7 @@ class SubversionPoller(object):
                 if abs_cnt > job_done_retries:
                     self._job_is_done(row, 'DONE')
                 else:
-                    status = 'ABSENT_' + abs_cnt
+                    status = 'ABSENT_' + str(abs_cnt)
                     self.jobs_running.set_val(row, "status", status)
             elif status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
                 pass    # don't do anything
