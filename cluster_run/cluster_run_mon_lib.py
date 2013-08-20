@@ -75,6 +75,12 @@ showq_parser = "moab"
 # output info from the job (job_out, dat_files)
 job_update_window = 3
 
+# number of retries to determine if a job is truly done or not, when unable
+# to get a status report from the scheduler -- sometimes it just doesn't report
+# back because its flakey, not because the job is actually done..  these are
+# iterated as ABSENT_X.. counts
+job_done_retries = 5
+
 # set to true for more debugging info
 debug = False
 #debug = True
@@ -107,6 +113,7 @@ job_out_bytes_total = 4096
 #   QUEUED    when the job is known to be in the cluster queue.
 #             At this point, we have a job number (job_no).
 #   RUNNING   when the job has begun.
+#   ABSENT_x  multiple iterations of not finding a status for the job
 #   DONE      if the job completed successfully.
 #   KILLED    if the job was cancelled.
 
@@ -757,7 +764,7 @@ class SubversionPoller(object):
 
             if status == 'SUBMITTED' or status == 'QUEUED':
                 self._query_job_queue(row, status, force_updt)
-            elif status == 'RUNNING':
+            elif status == 'RUNNING' or ('ABSENT_' in status):
                 self._query_job_queue(row, status, force_updt)   # always update status!
                 self._update_running_job(row, force_updt)
             elif status == 'CANCELLED':
@@ -1135,7 +1142,13 @@ class SubversionPoller(object):
                 just_started = False
                 stat = qcols[4]  # should be R, Q, C
                 if stat == 'R':
-                    if status != 'RUNNING' and status != 'CANCELLED':
+                    if 'ABSENT_' in status:
+                        status = 'RUNNING'
+                        self.jobs_running.set_val(row, "status", status)
+                        status_info = qcols[3]
+                        status_info = status_info.strip(' \t\n\r')
+                        self.jobs_running.set_val(row, "status_info", status_info)
+                    elif status != 'RUNNING' and status != 'CANCELLED':
                         just_started = True
                         self.status_change = True
                         status = 'RUNNING'
@@ -1166,13 +1179,20 @@ class SubversionPoller(object):
             job_out = self._get_job_out(job_out_file)
             if len(job_out) > 0:
                 self.jobs_running.set_val(row, "job_out", job_out)
-            if status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
+            if 'ABSENT_' in status:
+                abs_cnt = int(status.split('_')[1])
+                abs_cnt += 1
+                if abs_cnt > job_done_retries:
+                    self._job_is_done(row, 'DONE')
+                else:
+                    status = 'ABSENT_' + abs_cnt
+                    self.jobs_running.set_val(row, "status", status)
+            elif status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
                 pass    # don't do anything
-            elif status == 'RUNNING':
-                self._job_is_done(row, 'DONE')
+            elif status == 'RUNNING' or status == 'QUEUED':
+                status = 'ABSENT_1'
+                self.jobs_running.set_val(row, "status", status)
             elif status == 'CANCELLED':
-                self._job_is_done(row, 'KILLED')
-            elif status == 'QUEUED':
                 self._job_is_done(row, 'KILLED')
         # done
 
@@ -1239,13 +1259,20 @@ class SubversionPoller(object):
             job_out = self._get_job_out(job_out_file)
             if len(job_out) > 0:
                 self.jobs_running.set_val(row, "job_out", job_out)
-            if status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
+            if 'ABSENT_' in status:
+                abs_cnt = int(status.split('_')[1])
+                abs_cnt += 1
+                if abs_cnt > job_done_retries:
+                    self._job_is_done(row, 'DONE')
+                else:
+                    status = 'ABSENT_' + abs_cnt
+                    self.jobs_running.set_val(row, "status", status)
+            elif status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
                 pass    # don't do anything
-            elif status == 'RUNNING':
-                self._job_is_done(row, 'DONE')
+            elif status == 'RUNNING' or status == 'QUEUED':
+                status = 'ABSENT_1'
+                self.jobs_running.set_val(row, "status", status)
             elif status == 'CANCELLED':
-                self._job_is_done(row, 'KILLED')
-            elif status == 'QUEUED':
                 self._job_is_done(row, 'KILLED')
         # done
 

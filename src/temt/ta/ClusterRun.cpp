@@ -711,7 +711,8 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   //   QUEUED    when the job is known to be in the cluster queue.
   //             At this point, we have a job number (job_no).
   //   RUNNING   when the job has begun.
-  //   DONE      if the job completed successfully.
+  //   ABSENT_x  multiple iterations of not finding a status for the job
+  //   DONE      if the job completed successfully (after multiple iterations)
   //   KILLED    if the job was cancelled.
 
   // NOTE: it is essential that we only ever send jobs_submit to cluster, and it
