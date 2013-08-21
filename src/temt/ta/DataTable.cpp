@@ -345,12 +345,13 @@ void DataTable::Dump_Save_pre() {
   AutoSaveData();
 }
 
-taBase* DataTable::ChildDuplicate(const taBase* chld) {
-  // because copying a column implicitly flattens the column, we flatten everything first
-  // this should be ok b/c we're doing structural damage here anyway so all rows view
-  // is nonsensical really
-  Flatten();
-  return inherited::ChildDuplicate(chld);
+taBase* DataTable::ChildDuplicate(const taBase* child) {
+  taBase* newChild;
+  taBase* oldChild = const_cast<taBase*>(child);
+  dynamic_cast<DataCol*>(oldChild)->UnSetMatrixViewMode();  // we want to copy all rows hidden and visible
+  newChild = inherited::ChildDuplicate(child);
+  dynamic_cast<DataCol*>(oldChild)->SetMatrixViewMode();
+  return newChild;
 }
 
 DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
