@@ -2177,6 +2177,15 @@ void taBase::Copy_impl(const taBase& cp) { // note: not a virtual method
   base_flags = (BaseFlags)((base_flags & ~COPY_MASK) | (cp.base_flags & COPY_MASK));
 }
 
+bool taBase::CanAppend(const taBase* appendee) const {
+  return false;
+}
+
+// base class does no appending
+bool taBase::Append(taBase* appendee) {
+  return false;
+}
+
 bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {
   bool ok = true;
   if (CheckError((chld == NULL), quiet, ok,
@@ -2259,6 +2268,7 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
   return own->ChangeType(this, new_type);
   // owner will used delayed remove to make this safe!
 }
+
 
 ///////////////////////////////////////////////////////////////////////////
 //      Type information

@@ -135,6 +135,11 @@ show_menu:
         iClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
   }
 
+  if (ea & iClipData::EA_PASTE_APPEND)
+    act = menu->AddItem("Append to", iAction::int_act,
+      host_->helperObj(),  SLOT(DropEditAction(int)),
+      iClipData::EA_PASTE_APPEND, QKeySequence());
+
   act = NULL;
   // Assign only applicable for "On" drops
   if ((where == iTreeWidgetItem::WI_ON) &&

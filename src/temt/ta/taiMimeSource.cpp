@@ -24,6 +24,7 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <taDataProc>
 
 #include <QStringList>
 #include <QApplication>
@@ -282,6 +283,8 @@ void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbid
     taBase* obj = ms->tabObject();
     if (CanCopy(obj))
       allowed |= (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN);
+    if (CanAppend(obj))
+      allowed |= (iClipData::EA_PASTE_APPEND);
   }
 }
 
@@ -344,6 +347,17 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
     this->Copy(obj);
     UpdateAfterEdit();
   }
+
+  if (ea & (iClipData::EA_PASTE_APPEND)) {
+    taBase* obj = ms->tabObject();
+    bool ok; // dummy
+    if (CheckError((!obj), false, ok,
+        "Could not retrieve object from clipboard"))
+      return iClipData::ER_ERROR;
+    this->Append(obj);
+    UpdateAfterEdit();
+  }
+
   return 0;
 }
 

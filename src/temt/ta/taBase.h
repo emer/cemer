@@ -1197,6 +1197,11 @@ public:
   bool                  CopyTo(taBase* cpy_to);
   // #TYPE_ON_this #PROJ_SCOPE #CAT_ObjectMgmt Copy to given object from this object
   // need both directions to more easily handle scoping of types on menus
+  virtual bool          CanAppend(const taBase* apendee) const;
+  // #IGNORE can you append an object to this object
+  virtual bool          Append(taBase* appendee);
+  // #IGNORE
+
   virtual bool          ChildCanDuplicate(const taBase* chld, bool quiet = true) const;
     // #IGNORE
   virtual taBase*       ChildDuplicate(const taBase* chld);

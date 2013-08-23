@@ -3554,3 +3554,16 @@ bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
   }
   return rval;
 }
+
+bool DataTable::CanAppend(const taBase* obj) const {
+  if (obj == NULL)
+    return false;
+  // if another datatable ok to append (column structue check will be done later)
+  return (GetTypeDef() == obj->GetTypeDef());
+}
+
+bool DataTable::Append(taBase* src) {
+  // if it is a another datatable try appending
+  if (GetTypeDef() == src->GetTypeDef())
+    taDataProc::AppendRows(this, dynamic_cast<DataTable*>(src));
+}

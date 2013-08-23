@@ -257,6 +257,8 @@ public:
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten permanently removes any currently invisible data rows and arranges raw memory in current order -- useful for optimizing and locking-in data table size after a series of operations.  The DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions -- *all* access to the DataTable rows goes through the indexes -- so the Flatten function will not change the appearance of the data table, but it can optimize processing in large data tables, and establish the baseline state that the ShowAllRows function will revert to.  See also the FlattenTo and ShowAllRows functions.
   virtual bool          FlattenTo(DataTable* flattened_table);
   // #CAT_DataProc copies currently visible rows of data to given table, without including any currently invisible data rows  and arranges raw memory in current order -- useful for optimizing and locking-in data table size after a series of operations.  The DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions -- *all* access to the DataTable rows goes through the indexes -- so the FlattenTo function will not change the appearance of the data table, but it can optimize processing in large data tables, and establish the baseline state that the ShowAllRows function will revert to.  See also the FlattenTo and ShowAllRows functions.
+  virtual bool          CanAppend(const taBase* apendee) const;
+  // #IGNORE ok to append an object to this object?
 
   ////////////////////////////////////////////////////////////
   //    protected Load/Save and other implementation code
@@ -462,7 +464,8 @@ public:
   // #CAT_Rows copy the n_rows starting from st_row and insert them immediately after selected rows
   virtual void          MoveRow(int old_index, int new_index);
   // #CAT_Rows should only be called internally
-
+  virtual bool          Append(taBase* src);
+  // #CAT_Rows appends the rows of src table to "this" table
   const Variant         GetColUserData(const String& name, const Variant& col) const;
   // #CAT_Config gets user data from the column (col can be an index or a name)
   void                  SetColUserData(const String& name, const Variant& value, const Variant& col);
