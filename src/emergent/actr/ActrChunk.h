@@ -48,6 +48,11 @@ public:
     return act;
   }
   // compute the overall activation from all of the activation components
+
+  inline void     InitAct() {
+    act = base = spread = match = noise = 0.0f;
+  }
+  // initialize activations
   
   TA_SIMPLE_BASEFUNS(ActrActVals);
 private:
@@ -115,6 +120,8 @@ public:
   { time.t_new = cur_time; time.n_act = 1.0f; time.t_act = -1.0f;
     ClearChunkFlag(ALL_STATE_FLAGS); }
   // #CAT_ActR initialize the chunk as a new chunk (e.g., for declarative memory)
+  void          ResetChunk();
+  // #CAT_ActR completely reset a chunk to null everything
 
   inline float ComputeBaseAct(float cur_t, float decay) {
     if(time.n_act == 0) act.base = 0.0f;

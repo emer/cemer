@@ -91,7 +91,6 @@ public:
   ActrChunkRef          found;          // #HIDDEN #NO_SAVE final chunk found on last find-location request
   ActrChunkRef          attended;       // #HIDDEN #NO_SAVE currently attended location 
   ActrChunkRef          tracking;       // #HIDDEN #NO_SAVE currently tracked object (vis_obj)
-  String                last_cmd;       // #READ_ONLY #NO_SAVE #SHOW last command (chunk type) executed by module
   taVector2f            center;         // center point for clockwise or counterclockwise location specifications -- can be set directly or via params
 
   virtual void  VisionRequest(ActrEvent& event);

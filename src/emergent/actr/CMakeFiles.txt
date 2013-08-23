@@ -41,6 +41,7 @@ set(actr_HEADS_MAKETA
   ActrVisionModule.h
   ActrModel.h
   ActrLex.h
+  ActrMotorModule.h
 )
 
 # all heads -- do NOT include maketa generated ones here
@@ -83,4 +84,5 @@ set(actr_SRCS
   ActrModel.cpp
   ActrLex.cpp
   actr_parse.cpp
+  ActrMotorModule.cpp
 )

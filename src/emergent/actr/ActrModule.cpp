@@ -116,6 +116,55 @@ bool ActrModule::ProcessEvent_std(ActrEvent& event) {
       buffer->UpdateChunk(event.chunk_arg);   // use default
     handled = true;
   }
+  else if(event.action == "CLEAR-STATE") {
+    String_Array pary;
+    pary.FmDelimString(event.params, " ");
+    if(TestError(pary.size % 2 != 0, "ProcessEvent_std",
+                 "CLEAR-STATE must have even number of parameters: state, value pairs")) {
+      return true;
+    }
+    for(int i=0; i<pary.size; i += 2) {
+      String st = pary[i];
+      String vl = pary[i+1];
+      if(st == "LAST") {
+        if(vl == "NONE")
+          last_cmd = "";
+        else
+          last_cmd = vl;
+      }
+      else if(st == "PREP") {
+        if(vl == "FREE")
+          ClearModuleFlag(PREP);
+        else
+          SetModuleFlag(PREP);
+      }
+      else if(st == "PROC") {
+        if(vl == "FREE")
+          ClearModuleFlag(PROC);
+        else
+          SetModuleFlag(PROC);
+      }
+      else if(st == "EXEC") {
+        if(vl == "FREE")
+          ClearModuleFlag(EXEC);
+        else
+          SetModuleFlag(EXEC);
+      }
+      else if(st == "BUSY") {
+        if(vl == "FREE")
+          ClearModuleFlag(BUSY);
+        else
+          SetModuleFlag(BUSY);
+      }
+      else if(st == "ERROR") {
+        if(vl == "CLEAR")
+          ClearModuleFlag(ERROR);
+        else
+          SetModuleFlag(ERROR);
+      }
+    }
+    handled = true;
+  }
   return handled;
 }
 

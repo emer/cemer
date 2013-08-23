@@ -42,6 +42,11 @@ public:
   void          FmDelimString(const String& str, const String& delim = " ");
   // fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything
 
+  virtual void		InitFromChars(const char** vals, int n=-1)
+  { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
+    for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
+  // initialize values from an array of char* strings, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
+
   TA_MATRIX_FUNS_SLOW(String_Matrix, String)
 
 public:

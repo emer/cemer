@@ -76,6 +76,13 @@ void ActrChunk::UpdateAfterEdit_impl() {
   }
 }
 
+void ActrChunk::ResetChunk() {
+  InitChunk(0.0f);
+  act.InitAct();
+  chunk_type = NULL;
+  slots.Reset();  
+}
+
 bool ActrChunk::UpdateFromType() {
   if(!chunk_type) return false;
 

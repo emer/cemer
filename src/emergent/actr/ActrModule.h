@@ -44,6 +44,7 @@ public:
   String                desc;  // #EDIT_DIALOG #HIDDEN_INLINE description of this module
   ActrBufferRef         buffer; // the main buffer for this module (can add other ones in subclasses)
   ModuleFlags           flags;  // flags for various settings and state of module
+  String                last_cmd; // #READ_ONLY #NO_SAVE #SHOW last command (chunk type) executed by module
 
   inline void           SetModuleFlag(ModuleFlags flg)
   { flags = (ModuleFlags)(flags | flg); }

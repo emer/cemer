@@ -1792,6 +1792,10 @@ void DataTable::MoveRow(int old_index, int new_index) {
   StructUpdate(false);
 }
 
+bool DataTable::AppendRows(DataTable* append_from) {
+  return taDataProc::AppendRows(this, append_from);
+}
+
 void DataTable::RemoveOrphanCols() {
   int cls_cnt = 0; // used to prevent spurious struct updates
   for(int i=data.size-1;i>=0;i--) {
@@ -3555,15 +3559,3 @@ bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
   return rval;
 }
 
-bool DataTable::CanAppend(const taBase* obj) const {
-  if (obj == NULL)
-    return false;
-  // if another datatable ok to append (column structue check will be done later)
-  return (GetTypeDef() == obj->GetTypeDef());
-}
-
-bool DataTable::Append(taBase* src) {
-  // if it is a another datatable try appending
-  if (GetTypeDef() == src->GetTypeDef())
-    taDataProc::AppendRows(this, dynamic_cast<DataTable*>(src));
-}

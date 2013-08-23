@@ -149,15 +149,6 @@ void ActrVisionModule::ProcessEvent(ActrEvent& event) {
   else if(event.action == "Encoding-complete") {
     EncodingComplete(event);
   }
-  // else if(event.action == "CREATE-NEW-BUFFER-CHUNK") {
-  //   CreateNewChunk(event);
-  // }
-  // else if(event.action == "SET-BUFFER-CHUNK") {
-  //   SetBufferChunk(event);
-  // }
-  // else if(event.action == "MOD-VISION-CHUNK") {
-  //   ModVisionChunk(event);
-  // }
   else {
     ProcessEvent_std(event);   // respond to regular requests
   }
@@ -173,7 +164,7 @@ void ActrVisionModule::VisionRequest(ActrEvent& event) {
   if(HasModuleFlag(BUSY)) {
     TestWarning(true, "VisionRequest",
                 "a vision request was made while still busy activating previous request -- new request ignored");
-    mod->LogEvent(-1.0f, "vision", "ABORT-IMAGINAL-REQ", "", "");
+    mod->LogEvent(-1.0f, "vision", "ABORT-VISION-REQ", "", "");
     return;
   }
 
@@ -208,9 +199,9 @@ void ActrVisionModule::VisionRequest(ActrEvent& event) {
 void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   ActrModel* mod = Model();
+  last_cmd = "visual_location";
 
   mod->LogEvent(-1.0f, "vision", "Find-location", "", "");
-  last_cmd = "visual_location";
 
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
@@ -589,7 +580,8 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   ActrModel* mod = Model();
 
-  mod->LogEvent(-1.0f, "vision", "Move-attention", "", "");
+  last_cmd = "move_attention";
+  // mod->LogEvent(-1.0f, "vision", "Move-attention", "", "");
 
   SetModuleFlag(BUSY);
   SetModuleFlag(PROC);       // move-attention = processor
@@ -657,8 +649,9 @@ void ActrVisionModule::EncodingComplete(ActrEvent& event) {
 void ActrVisionModule::StartTrackingRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   ActrModel* mod = Model();
+  last_cmd = "start_tracking";
 
-  mod->LogEvent(-1.0f, "vision", "Start-tracking", "", "");
+  // mod->LogEvent(-1.0f, "vision", "Start-tracking", "", "");
 
   if(!attended) {
     ClearModuleFlag(BUSY);
@@ -684,16 +677,17 @@ void ActrVisionModule::StartTrackingRequest(ActrEvent& event) {
 void ActrVisionModule::ClearRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   ActrModel* mod = Model();
-
-  mod->LogEvent(-1.0f, "vision", "CLEAR", "", "");
+  last_cmd = "clear";
 
   tracking = NULL;
   attended = NULL;
   ClearModuleFlag(EXEC);
   ClearModuleFlag(ERROR);
+  SetModuleFlag(PREP);
 
-  // todo: should delay by .050 and send a subsequent event that records CHANGE_STATE
-  // should clear last_cmd as well
+  mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, location_buffer,
+                     "CLEAR-STATE", "LAST NONE PREP FREE", event.act_arg,
+                     ck);
 
   ClearModuleFlag(BUSY);
   buffer->ClearReq();
@@ -702,8 +696,9 @@ void ActrVisionModule::ClearRequest(ActrEvent& event) {
 void ActrVisionModule::ClearSceneChangeRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   ActrModel* mod = Model();
+  last_cmd = "clear_scene_change";
 
-  mod->LogEvent(-1.0f, "vision", "CLEAR_SCENE_CHANGE", "", "");
+  // mod->LogEvent(-1.0f, "vision", "CLEAR_SCENE_CHANGE", "", "");
 
   // clears any pending scene change -- takes no time and does not cause any busy
 
@@ -712,6 +707,7 @@ void ActrVisionModule::ClearSceneChangeRequest(ActrEvent& event) {
 void ActrVisionModule::AssignFinstRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   ActrModel* mod = Model();
+  last_cmd = "assign_finst";
 
   ActrChunk* loc = ck->GetSlotValChunk("location");
   if(loc) {
