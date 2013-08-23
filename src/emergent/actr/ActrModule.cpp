@@ -95,32 +95,32 @@ bool ActrModule::ProcessQuery_std(ActrBuffer* buf, const String& query, bool why
 
 bool ActrModule::ProcessEvent_std(ActrEvent& event) {
   bool handled = false;
-  if(event.action == "BUFFER-READ-ACTION") {
+  if(event.action == "BUFFER_READ_ACTION") {
     if(event.dst_buffer)
       event.dst_buffer->HarvestChunk();
     else
       buffer->HarvestChunk();   // use default
     handled = true;
   }
-  else if(event.action == "CLEAR-BUFFER") {
+  else if(event.action == "CLEAR_BUFFER") {
     if(event.dst_buffer)
       event.dst_buffer->ClearChunk();
     else
       buffer->ClearChunk();   // use default
     handled = true;
   }
-  else if(event.action == "MOD-BUFFER-CHUNK") {
+  else if(event.action == "MOD_BUFFER_CHUNK") {
     if(event.dst_buffer)
       event.dst_buffer->UpdateChunk(event.chunk_arg);
     else
       buffer->UpdateChunk(event.chunk_arg);   // use default
     handled = true;
   }
-  else if(event.action == "CLEAR-STATE") {
+  else if(event.action == "CLEAR_STATE") {
     String_Array pary;
     pary.FmDelimString(event.params, " ");
     if(TestError(pary.size % 2 != 0, "ProcessEvent_std",
-                 "CLEAR-STATE must have even number of parameters: state, value pairs")) {
+                 "CLEAR_STATE must have even number of parameters: state, value pairs")) {
       return true;
     }
     for(int i=0; i<pary.size; i += 2) {

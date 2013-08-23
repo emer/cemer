@@ -143,10 +143,10 @@ void ActrVisionModule::Init() {
 }
 
 void ActrVisionModule::ProcessEvent(ActrEvent& event) {
-  if(event.action == "MODULE-REQUEST") {
+  if(event.action == "MODULE_REQUEST") {
     VisionRequest(event);
   }
-  else if(event.action == "Encoding-complete") {
+  else if(event.action == "Encoding_complete") {
     EncodingComplete(event);
   }
   else {
@@ -164,7 +164,7 @@ void ActrVisionModule::VisionRequest(ActrEvent& event) {
   if(HasModuleFlag(BUSY)) {
     TestWarning(true, "VisionRequest",
                 "a vision request was made while still busy activating previous request -- new request ignored");
-    mod->LogEvent(-1.0f, "vision", "ABORT-VISION-REQ", "", "");
+    mod->LogEvent(-1.0f, "vision", "ABORT_VISION_REQ", "", "");
     return;
   }
 
@@ -174,24 +174,23 @@ void ActrVisionModule::VisionRequest(ActrEvent& event) {
     VisualLocationRequest(event);
   }
   else if(event.dst_buffer == buffer) { // supports many types
-    if(ck->name == "move_attention" ||
-       ck->chunk_type->InheritsFromCTName("move_attention")) {
+    if(ck->chunk_type->InheritsFromCTName("move_attention")) {
       MoveAttentionRequest(event);
     }
-    else if(ck->name == "start_tracking" ||
-            ck->chunk_type->InheritsFromCTName("start_tracking")) {
+    else if(ck->chunk_type->InheritsFromCTName("start_tracking")) {
       StartTrackingRequest(event);
     }
-    else if(ck->name == "clear" || ck->chunk_type->InheritsFromCTName("clear")) {
+    else if(ck->chunk_type->InheritsFromCTName("clear")) {
       ClearRequest(event);
     }
-    else if(ck->name == "clear_scene_change" ||
-            ck->chunk_type->InheritsFromCTName("clear_scene_change")) {
+    else if(ck->chunk_type->InheritsFromCTName("clear_scene_change")) {
       ClearSceneChangeRequest(event);
     }
-    else if(ck->name == "assign_finst" ||
-            ck->chunk_type->InheritsFromCTName("assign_finst")) {
+    else if(ck->chunk_type->InheritsFromCTName("assign_finst")) {
       AssignFinstRequest(event);
+    }
+    else {
+      TestWarning(true, "VisionRequest", "chunk type not recognized:", ck->chunk_type->name);
     }
   }
 }
@@ -201,7 +200,7 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   ActrModel* mod = Model();
   last_cmd = "visual_location";
 
-  mod->LogEvent(-1.0f, "vision", "Find-location", "", "");
+  mod->LogEvent(-1.0f, "vision", "Find_location", "", "");
 
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
@@ -287,7 +286,7 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
     ClearModuleFlag(BUSY);
     SetModuleFlag(ERROR);
     location_buffer->ClearReq();
-    mod->LogEvent(-1.0f, "vision", "FIND-LOC-FAILURE", "", "");
+    mod->LogEvent(-1.0f, "vision", "FIND_LOC_FAILURE", "", "");
     return;
   }
 
@@ -299,7 +298,7 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   }
 
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, location_buffer,
-                     "SET-BUFFER-CHUNK", found->name, event.act_arg,
+                     "SET_BUFFER_CHUNK", found->name, event.act_arg,
                      found);
 
   ClearModuleFlag(BUSY);
@@ -312,7 +311,7 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
     ActrChunk* ma = mod->chunks.FindName("move_attention");
 
     mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
-                       "Move-attention", found->name, event.act_arg,
+                       "Move_attention", found->name, event.act_arg,
                        ma);     // ma type triggers move
 
     // from the vision.lisp module, line 2600:
@@ -581,7 +580,7 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
   ActrModel* mod = Model();
 
   last_cmd = "move_attention";
-  // mod->LogEvent(-1.0f, "vision", "Move-attention", "", "");
+  // mod->LogEvent(-1.0f, "vision", "Move_attention", "", "");
 
   SetModuleFlag(BUSY);
   SetModuleFlag(PROC);       // move-attention = processor
@@ -605,7 +604,7 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
     ClearModuleFlag(EXEC);
     SetModuleFlag(ERROR);
     buffer->ClearReq();
-    mod->LogEvent(-1.0f, "vision", "MOVE-ATTN-FAILURE", "move_attention chunk not found",
+    mod->LogEvent(-1.0f, "vision", "MOVE_ATTN_FAILURE", "move_attention chunk not found",
                   "");
     return;
   }
@@ -618,7 +617,7 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
     ClearModuleFlag(EXEC);
     SetModuleFlag(ERROR);
     buffer->ClearReq();
-    mod->LogEvent(-1.0f, "vision", "MOVE-ATTN-FAILURE", "object pointer not set in move_attention visual_location chunk",
+    mod->LogEvent(-1.0f, "vision", "MOVE_ATTN_FAILURE", "object pointer not set in move_attention visual_location chunk",
                   "");
     return;
   }
@@ -627,7 +626,7 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
   UpdateFinsts(attended);       // and we mark it as such
 
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
-                     "Encoding-complete", obj->name, event.act_arg,
+                     "Encoding_complete", obj->name, event.act_arg,
                      obj);
 
 }
@@ -637,7 +636,7 @@ void ActrVisionModule::EncodingComplete(ActrEvent& event) {
   ActrModel* mod = Model();
 
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
-                     "SET-BUFFER-CHUNK", ck->name, event.act_arg,
+                     "SET_BUFFER_CHUNK", ck->name, event.act_arg,
                      ck);
 
   ClearModuleFlag(BUSY);
@@ -651,14 +650,14 @@ void ActrVisionModule::StartTrackingRequest(ActrEvent& event) {
   ActrModel* mod = Model();
   last_cmd = "start_tracking";
 
-  // mod->LogEvent(-1.0f, "vision", "Start-tracking", "", "");
+  // mod->LogEvent(-1.0f, "vision", "Start_tracking", "", "");
 
   if(!attended) {
     ClearModuleFlag(BUSY);
     ClearModuleFlag(EXEC);
     SetModuleFlag(ERROR);
     buffer->ClearReq();
-    mod->LogEvent(-1.0f, "vision", "Start-tracking-FAILURE", "no currently-attended item");
+    mod->LogEvent(-1.0f, "vision", "Start_tracking_FAILURE", "no currently-attended item");
     return;
   }
 
@@ -686,7 +685,7 @@ void ActrVisionModule::ClearRequest(ActrEvent& event) {
   SetModuleFlag(PREP);
 
   mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, location_buffer,
-                     "CLEAR-STATE", "LAST NONE PREP FREE", event.act_arg,
+                     "CLEAR_STATE", "LAST NONE PREP FREE", event.act_arg,
                      ck);
 
   ClearModuleFlag(BUSY);

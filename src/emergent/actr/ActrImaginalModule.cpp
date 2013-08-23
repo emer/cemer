@@ -33,15 +33,15 @@ void ActrImaginalModule::InitModule() {
   buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
   buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // imaginal doesn't do this!
   if(made_new) {
-    buffer->act_total = 0.0f;   // imaginal-activation
+    buffer->act_total = 0.0f;   // imaginal_activation
   }
 
-  action_buffer = mod->buffers.FindMakeNameType("imaginal-action", NULL, made_new);
+  action_buffer = mod->buffers.FindMakeNameType("imaginal_action", NULL, made_new);
   action_buffer->module = this;
   action_buffer->SetBufferFlag(ActrBuffer::STD_FLAGS); // harvest, merge
   action_buffer->ClearBufferFlag(ActrBuffer::STRICT_HARVEST); // imaginal doesn't do this!
   if(made_new) {
-    action_buffer->act_total = 0.0f;   // imaginal-activation
+    action_buffer->act_total = 0.0f;   // imaginal_activation
   }
 
   mod->DefineChunkType("generic_action", "", "action", "result");
@@ -56,19 +56,19 @@ void ActrImaginalModule::Init() {
 }
 
 void ActrImaginalModule::ProcessEvent(ActrEvent& event) {
-  if(event.action == "MODULE-REQUEST") {
+  if(event.action == "MODULE_REQUEST") {
     ImaginalRequest(event);
   }
-  else if(event.action == "MOD-BUFFER-CHUNK") {
+  else if(event.action == "MOD_BUFFER_CHUNK") {
     ImaginalBufferMod(event);
   }
-  else if(event.action == "CREATE-NEW-BUFFER-CHUNK") {
+  else if(event.action == "CREATE_NEW_BUFFER_CHUNK") {
     CreateNewChunk(event);
   }
-  else if(event.action == "SET-BUFFER-CHUNK") {
+  else if(event.action == "SET_BUFFER_CHUNK") {
     SetBufferChunk(event);
   }
-  else if(event.action == "MOD-IMAGINAL-CHUNK") {
+  else if(event.action == "MOD_IMAGINAL_CHUNK") {
     ModImaginalChunk(event);
   }
   else {
@@ -87,17 +87,17 @@ void ActrImaginalModule::ImaginalRequest(ActrEvent& event) {
   if(HasModuleFlag(BUSY)) {
     TestWarning(true, "ImaginalRequest",
                 "a imaginal request was made while still busy activating previous request -- new request ignored");
-    mod->LogEvent(-1.0f, "imaginal", "ABORT-IMAGINAL-REQ", "", "");
+    mod->LogEvent(-1.0f, "imaginal", "ABORT_IMAGINAL_REQ", "", "");
     return;
   }
 
-  mod->LogEvent(-1.0f, "imaginal", "START-IMAGINAL-REQ", "", "");
+  mod->LogEvent(-1.0f, "imaginal", "START_IMAGINAL_REQ", "", "");
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
   buffer->SetReq();
   buffer->ClearChunk();         // always clear before imaging new
   mod->ScheduleEvent(imaginal_delay.Gen(), ActrEvent::max_pri, this, this, buffer,
-                     "CREATE-NEW-BUFFER-CHUNK", "", event.act_arg,
+                     "CREATE_NEW_BUFFER_CHUNK", "", event.act_arg,
                      ck);
 }
 
@@ -110,7 +110,7 @@ void ActrImaginalModule::CreateNewChunk(ActrEvent& event) {
   nw_ck->CopyName(ck);
   ActrModel* mod = Model();
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
-                     "SET-BUFFER-CHUNK", "", event.act_arg,
+                     "SET_BUFFER_CHUNK", "", event.act_arg,
                      nw_ck);
 }
 
@@ -135,15 +135,15 @@ void ActrImaginalModule::ImaginalBufferMod(ActrEvent& event) {
   if(HasModuleFlag(BUSY)) {
     TestWarning(true, "ImaginalBufferMod",
                 "a imaginal modification was made while still busy activating previous -- new modification ignored");
-    mod->LogEvent(-1.0f, "imaginal", "ABORT-IMAGINAL-MOD", "", "");
+    mod->LogEvent(-1.0f, "imaginal", "ABORT_IMAGINAL_MOD", "", "");
     return;
   }
 
-  mod->LogEvent(-1.0f, "imaginal", "START-IMAGINAL-MOD", "", "");
+  mod->LogEvent(-1.0f, "imaginal", "START_IMAGINAL_MOD", "", "");
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
   mod->ScheduleEvent(imaginal_delay.Gen(), ActrEvent::max_pri, this, this, buffer,
-                     "MOD-IMAGINAL-CHUNK", "", event.act_arg,
+                     "MOD_IMAGINAL_CHUNK", "", event.act_arg,
                      ck);
 }
 

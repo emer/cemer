@@ -99,16 +99,16 @@ bool ActrAction::SetBangAction(const String& act) {
     taMisc::Info("Note: eval expressions are not supported in C++!");
   }
   else if(act == "safe_eval") {
-    taMisc::Info("Note: safe-eval expressions are not supported in C++!");
+    taMisc::Info("Note: safe_eval expressions are not supported in C++!");
   }
   else if(act == "bind") {
     taMisc::Info("Note: bind expressions are not supported in C++!");
   }
   else if(act == "mv_bind") {
-    taMisc::Info("Note: mv-bind expressions are not supported in C++!");
+    taMisc::Info("Note: mv_bind expressions are not supported in C++!");
   }
   else if(act == "safe_bind") {
-    taMisc::Info("Note: safe-bind expressions are not supported in C++!");
+    taMisc::Info("Note: safe_bind expressions are not supported in C++!");
   }
   else {
     TestError(true, "SetBangAction", "action value: !" + act + "!  not recognized");
@@ -361,7 +361,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
-                         "MOD-BUFFER-CHUNK", params, this, new_chunk);
+                         "MOD_BUFFER_CHUNK", params, this, new_chunk);
     break;
   }
   case OVERWRITE: {
@@ -372,7 +372,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     TestError(true, "DoAction::OVERWRITE", "not yet supported!");
     // model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
     //                      buffer->module, buffer,
-    //                      "MOD-BUFFER-CHUNK", params, this, new_chunk);
+    //                      "MOD_BUFFER_CHUNK", params, this, new_chunk);
     break;
   }
   case REQUEST: {
@@ -381,7 +381,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
-                         "MODULE-REQUEST", params, this, new_chunk);
+                         "MODULE_REQUEST", params, this, new_chunk);
     break;
   }
   case REQUEST_DIR: {
@@ -392,13 +392,13 @@ bool ActrAction::DoAction(ActrProduction& prod,
     TestError(true, "DoAction::REQUEST_DIR", "not yet supported!");
     // model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
     //                      buffer->module, buffer,
-    //                      "MOD-BUFFER-CHUNK", params, this, new_chunk);
+    //                      "MOD_BUFFER_CHUNK", params, this, new_chunk);
     break;
   }
   case CLEAR:
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
-                         "CLEAR-BUFFER", buffer->name, this);
+                         "CLEAR_BUFFER", buffer->name, this);
     break;
   case STOP:
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod, NULL, NULL,

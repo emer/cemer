@@ -59,10 +59,10 @@ void ActrProceduralModule::InitModule() {
 }
 
 void ActrProceduralModule::ProcessEvent(ActrEvent& event) {
-  if(event.action == "CONFLICT-RESOLUTION") {
+  if(event.action == "CONFLICT_RESOLUTION") {
     ConflictResolution();
   }
-  else if(event.action == "PRODUCTION-FIRED") {
+  else if(event.action == "PRODUCTION_FIRED") {
     ProductionFired();
   }
   else {
@@ -98,7 +98,7 @@ void ActrProceduralModule::InitUtils() {
 
 void ActrProceduralModule::AddConflictResEvent() {
   Model()->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, NULL,
-                         "CONFLICT-RESOLUTION", "");
+                         "CONFLICT_RESOLUTION", "");
 }
 
 void ActrProceduralModule::ConflictResolution() {
@@ -158,16 +158,16 @@ void ActrProceduralModule::ConflictResolution() {
   if(mod->UpdateGui()) {
     fired->SigEmitUpdated();
   }
-  mod->LogEvent(-1.0f, "procedural", "PRODUCTION-SELECTED", fired->name);
+  mod->LogEvent(-1.0f, "procedural", "PRODUCTION_SELECTED", fired->name);
   fired->SendBufferReads(this, mod);
-  // send all the BUFFER-READ-ACTION's -- clear buffers!
+  // send all the BUFFER_READ_ACTION's -- clear buffers!
 
   float ptime = mp_time.Gen();  // always generate a random number to keep seeds more predictable
   if(fired->time.act > 0.0f) {  // custom time
     ptime = fired->time.act;
   }
   mod->ScheduleEvent(ptime, ActrEvent::max_pri, this, this, NULL,
-                     "PRODUCTION-FIRED", fired->name);
+                     "PRODUCTION_FIRED", fired->name);
 }
 
 void ActrProceduralModule::ChooseFromEligible() {
@@ -238,7 +238,7 @@ void ActrProceduralModule::ComputeReward(float rew) {
     return;
   }
   ActrModel* mod = Model();
-  mod->LogEvent(-1.0f, "procedural", "COMPUTE-REWARD", "",
+  mod->LogEvent(-1.0f, "procedural", "COMPUTE_REWARD", "",
                 "rew: " + String(rew));
   FOREACH_ELEM_IN_GROUP(ActrProduction, pr, productions) {
     if(pr->IsOff()) continue;

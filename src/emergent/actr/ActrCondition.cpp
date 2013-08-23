@@ -434,7 +434,7 @@ void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* m
   ActrBuffer* buf = (ActrBuffer*)src.ptr();
   // todo: not sure about pri here
   model->ScheduleEvent(0.0f, ActrEvent::max_pri, proc_mod, buf->module, buf,
-                       "BUFFER-READ-ACTION", buf->name);
+                       "BUFFER_READ_ACTION", buf->name);
 }
 
 bool ActrCondition::SetVal(ActrSlot* slt, const String& val,

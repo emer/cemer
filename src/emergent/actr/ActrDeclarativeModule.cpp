@@ -84,13 +84,13 @@ void ActrDeclarativeModule::AddInitChunks() {
 }
 
 void ActrDeclarativeModule::ProcessEvent(ActrEvent& event) {
-  if(event.action == "MODULE-REQUEST") {
+  if(event.action == "MODULE_REQUEST") {
     RetrievalRequest(event);
   }
-  else if(event.action == "RETRIEVED-CHUNK") {
+  else if(event.action == "RETRIEVED_CHUNK") {
     RetrievedChunk(event);
   }
-  else if(event.action == "RETRIEVAL-FAILURE") {
+  else if(event.action == "RETRIEVAL_FAILURE") {
     RetrievalFailure(event);
   }
   else {
@@ -109,11 +109,11 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
   if(HasModuleFlag(BUSY)) {
     TestWarning(true, "RetrievalRequest",
                 "a retrieval request was made while still busy retrieving previous request -- new request should preempt but currently new request is rejected");
-    mod->LogEvent(-1.0f, "declarative", "ABORT-RETRIEVAL", "", "");
+    mod->LogEvent(-1.0f, "declarative", "ABORT_RETRIEVAL", "", "");
     return;
   }
 
-  mod->LogEvent(-1.0f, "declarative", "START-RETRIEVAL", "", "");
+  mod->LogEvent(-1.0f, "declarative", "START_RETRIEVAL", "", "");
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
   buffer->SetReq();
@@ -145,7 +145,7 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
       rt = ret.GetRt(ret.thresh);
     }
     mod->ScheduleEvent(rt, ActrEvent::max_pri, this, this, buffer,
-                       "RETRIEVAL-FAILURE", "", event.act_arg);
+                       "RETRIEVAL_FAILURE", "", event.act_arg);
     return;
   }
   if(eligible.size == 1) {
@@ -160,7 +160,7 @@ void ActrDeclarativeModule::RetrievalRequest(ActrEvent& event) {
   }
 
   mod->ScheduleEvent(rt, ActrEvent::max_pri, this, this, buffer,
-                     "RETRIEVED-CHUNK", retrieved->name, event.act_arg,
+                     "RETRIEVED_CHUNK", retrieved->name, event.act_arg,
                      retrieved);
 }
 

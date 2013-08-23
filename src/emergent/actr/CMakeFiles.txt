@@ -39,9 +39,9 @@ set(actr_HEADS_MAKETA
   ActrGoalModule.h
   ActrImaginalModule.h
   ActrVisionModule.h
+  ActrMotorModule.h
   ActrModel.h
   ActrLex.h
-  ActrMotorModule.h
 )
 
 # all heads -- do NOT include maketa generated ones here
@@ -81,8 +81,8 @@ set(actr_SRCS
   ActrGoalModule.cpp
   ActrImaginalModule.cpp
   ActrVisionModule.cpp
+  ActrMotorModule.cpp
   ActrModel.cpp
   ActrLex.cpp
   actr_parse.cpp
-  ActrMotorModule.cpp
 )

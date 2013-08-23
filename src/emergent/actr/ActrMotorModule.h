@@ -125,18 +125,38 @@ public:
   // #CAT_ActR is the hand on the mouse?
   virtual void    HandToMouse(Hand hand = RIGHT);
   // #CAT_ActR move the hand to the mouse
+  virtual void    HandToHome(Hand hand = RIGHT);
+  // #CAT_ActR move the hand and fingers to the home positions on keyboard
 
   virtual void  MotorRequest(ActrEvent& event);
   // #CAT_ActR process a motor request
   virtual void  ClearRequest(ActrEvent& event);
   // #CAT_ActR process a clear request
+  virtual void  PrepareRequest(ActrEvent& event);
+  // #CAT_ActR process a prepare request
+  virtual void  ExecuteRequest(ActrEvent& event);
+  // #CAT_ActR process an execute request
   virtual void  StdMotorRequest(ActrEvent& event, const String& cmd);
   // #CAT_ActR process a standard motor request -- triggers prep, init, exec sequence
 
   virtual void  ExecPunch(ActrEvent& event);
   // #CAT_ActR execute a punch action
   virtual void  ExecClickMouse(ActrEvent& event);
-  // #CAT_ActR execute a click-mouse action
+  // #CAT_ActR execute a click_mouse action
+  virtual void  ExecPeck(ActrEvent& event);
+  // #CAT_ActR execute a peck action
+  virtual void  ExecPeckRecoil(ActrEvent& event);
+  // #CAT_ActR execute a peck_recoil action
+  virtual void  ExecPressKey(ActrEvent& event);
+  // #CAT_ActR execute a press_key action
+  virtual void  ExecHandToMouse(ActrEvent& event);
+  // #CAT_ActR execute a hand_to_mouse action
+  virtual void  ExecHandToHome(ActrEvent& event);
+  // #CAT_ActR execute a hand_to_home action
+  virtual void  ExecMoveCursor(ActrEvent& event);
+  // #CAT_ActR execute a move_cursor action
+  virtual void  ExecPointHandAtKey(ActrEvent& event);
+  // #CAT_ActR execute a point_hand_at_key action
 
   virtual void  InitHandPos();
   // #CAT_ActR initialize hand position to home keys

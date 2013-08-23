@@ -20,6 +20,7 @@
 #include <ActrGoalModule>
 #include <ActrImaginalModule>
 #include <ActrVisionModule>
+#include <ActrMotorModule>
 #include <taFiler>
 
 #include "actr_parse.h"
@@ -123,6 +124,7 @@ void ActrModel::DefaultConfig() {
   FindMakeModule("goal", &TA_ActrGoalModule, made_new);
   FindMakeModule("imaginal", &TA_ActrImaginalModule, made_new);
   FindMakeModule("vision", &TA_ActrVisionModule, made_new);
+  FindMakeModule("motor", &TA_ActrMotorModule, made_new);
 }
 
 bool ActrModel::CheckConfig_impl(bool quiet) {
