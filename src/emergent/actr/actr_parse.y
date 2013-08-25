@@ -50,7 +50,7 @@ int aplex();
 
 /* misc keywords */
 %token  <rval>  AP_CHUNK_TYPE AP_PROD AP_ISA
-%token  <rval>  AP_CLEAR_ALL AP_DEFINE_MODEL AP_ADD_DM
+%token  <rval>  AP_CLEAR_ALL AP_DEFINE_MODEL AP_ADD_DM AP_DEF_CHUNKS
 %token  <rval>  AP_SGP AP_GOAL_FOCUS AP_SPP
 /* basic tokens */
 %token	<num>	AP_NUMBER
@@ -62,7 +62,7 @@ int aplex();
 %type   <chtyp>  chunktype chunktype_nm
 %type   <sltyp>  slots slot
 %type   <rval>   clear_all define_model
-%type   <chk>    dm_item_nm dm_item_typ dm_item
+%type   <chk>    dm_item_nm dm_item_typ dm_item dc_item_nm dc_item
 %type   <prod>   prod
 %type   <slt>    chunk_slot cond_slot act_slot
 %type   <num>    apnum
@@ -85,6 +85,8 @@ list:	/* nothing */		{
         | list chunktype	{
 	    AMCP->ResetParse(); return AMCP->load_state; }
         | list add_dm	        {
+	    AMCP->ResetParse(); return AMCP->load_state; }
+        | list def_chunks	        {
 	    AMCP->ResetParse(); return AMCP->load_state; }
         | list prod	        {
 	    AMCP->ResetParse(); return AMCP->load_state; }
@@ -183,6 +185,25 @@ chunk_val:  chunk_slot AP_NAME   { if($1) $1->val = $2; }
 
 chunk_slot: AP_NAME { $$ = AMCP->load_chunk->FindSlot($1); }
          ;
+
+def_chunks:   '(' AP_DEF_CHUNKS dc_items ')' {   }
+        ;
+
+dc_items: dc_item
+        | dc_items dc_item
+        | dc_items error
+        ;
+
+dc_item:  dc_item_nm dm_item_typ ')' { }
+        | dc_item_nm dm_item_typ chunk_vals ')' { }
+        ;
+
+dc_item_nm: '(' AP_NAME {
+           bool made_new = false;
+           AMCP->load_chunk = AMCP->chunks.FindMakeNameType($2, NULL, made_new);
+           /*           AMCP->load_chunk->name = $2; // should set this! */
+           $$ = AMCP->load_chunk; } 
+        ;    
 
 prod:      prod_name prod_lhs '=' '=' '>' prod_rhs ')' { }
          ;

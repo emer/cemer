@@ -146,7 +146,7 @@ bool ActrSlot::IsNil() {
   if(val_type == LITERAL) {
     return (val == "nil");
   }
-  if(!val_chunk) return true;
+  if(!val_chunk) return false;  // just empty, not nil!
   // todo: maybe more here about chunk?
   return false;
 }
@@ -343,11 +343,28 @@ bool ActrSlot::MatchesMem(ActrSlot* os, bool exact, bool why_not) {
 
 
 void ActrSlot::CopyValFrom(const ActrSlot& cp) {
-  val_type = cp.val_type;
+  if(val_type != cp.val_type) {
+    String myvt = TA_ActrSlot.GetEnumLabel("SlotValType", val_type);
+    String cpvt = TA_ActrSlot.GetEnumLabel("SlotValType", cp.val_type);
+    if(TestError(true, "CopyValFrom",
+                 "val_type mismatch in attempting to copy value from slot of type:", cpvt,
+                 "into my type:", myvt)) {
+      return;
+    }
+  }
   if(val_type == LITERAL)
     val = cp.val;
   else
     val_chunk = cp.val_chunk;
+}
+
+void ActrSlot::CopyValFromChunk(ActrChunk* ck) {
+  if(TestError(val_type != CHUNK, "CopyValFromChunk",
+               "attempt to copy value as a pointer to another chunk into a slot that has a LITERAL value type")) {
+    return;
+  }
+  // note: not doing type checking here..
+  val_chunk = ck;
 }
 
 bool ActrSlot::SetVal(const String& str, Relation::Relations rl) {

@@ -118,7 +118,7 @@ ActrVisionModule* ActrModel::VisionModule() {
 
 void ActrModel::DefaultConfig() {
   bool made_new;
-  DefineChunkType("chunk");     // basic built-in chunk type
+  DefineChunkTypeSys("chunk");     // basic built-in chunk type
   FindMakeModule("procedural", &TA_ActrProceduralModule, made_new);
   FindMakeModule("declarative", &TA_ActrDeclarativeModule, made_new);
   FindMakeModule("goal", &TA_ActrGoalModule, made_new);
@@ -314,6 +314,9 @@ void ActrModel::FormatLogTable() {
 
 ActrChunkType* ActrModel::FindChunkType(const String& type_name) {
   ActrChunkType* ct = chunk_types.FindName(type_name);
+  if(!ct) {
+    ct = sys_chunk_types.FindName(type_name);
+  }
   if(TestError(!ct, "FindChunkType", "chunk type named:", type_name,
                "not found")) {
     return NULL;
@@ -367,6 +370,44 @@ ActrChunk* ActrModel::DefineChunk(const String& chunk_name,
   return ck;
 }
 
+ActrChunkType* ActrModel::DefineChunkTypeSys(const String& type_name,
+                                             const String& par_name,
+                                             const String& slot_0,
+                                             const String& slot_1,
+                                             const String& slot_2,
+                                             const String& slot_3,
+                                             const String& slot_4,
+                                             const String& slot_5,
+                                             const String& slot_6,
+                                             const String& slot_7,
+                                             const String& slot_8,
+                                             const String& slot_9,
+                                             const String& slot_a,
+                                             const String& slot_b) {
+  bool made_new;
+  ActrChunkType* ck = sys_chunk_types.FindMakeNameType(type_name, NULL, made_new);
+  if(par_name.nonempty()) {
+    ActrChunkType* par = FindChunkType(par_name);
+    if(par) {
+      ck->SetParent(par);
+    }
+  }
+  ck->MakeSlots(slot_0, slot_1, slot_2, slot_3, slot_4, slot_5, slot_6,
+                slot_7, slot_8, slot_9, slot_a, slot_b);
+  return ck;
+}
+
+ActrChunk* ActrModel::DefineChunkSys(const String& chunk_name,
+                                     const String& type_name) {
+  bool made_new;
+  ActrChunk* ck = sys_chunks.FindMakeNameType(chunk_name, NULL, made_new);
+  ActrChunkType* typ = FindChunkType(type_name);
+  if(typ) {
+    ck->SetChunkType(typ);
+  }
+  return ck;
+}
+
 void ActrModel::SaveActrFile(const String& fname) {
   
 }
@@ -405,7 +446,9 @@ void ActrModel::ResetModel() {
   buffers.Reset();
   modules.Reset();
   chunks.Reset();
+  sys_chunks.Reset();
   chunk_types.Reset();
+  sys_chunk_types.Reset();
   DefaultConfig();
 }
 

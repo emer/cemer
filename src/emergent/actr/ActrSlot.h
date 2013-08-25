@@ -70,7 +70,9 @@ public:
   // #CAT_ActR for memory matching: does this match against other slot?  exact = require exact value match (e.g., for matching var values), else nil matches anything 
 
   virtual void          CopyValFrom(const ActrSlot& cp);
-  // #CAT_ActR copy slot value from other slot
+  // #CAT_ActR copy slot value from other slot -- slot val_types must match
+  virtual void          CopyValFromChunk(ActrChunk* ck);
+  // #CAT_ActR copy slot value as pointer to given chunk
 
   inline void           SetSlotFlag(SlotFlags flg)   { flags = (SlotFlags)(flags | flg); }
   // #CAT_Flags set flag state on

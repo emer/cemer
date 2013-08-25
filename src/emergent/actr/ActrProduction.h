@@ -110,6 +110,8 @@ public:
   virtual void          Init();
   // #CAT_ActR initialize production for start of a new run -- runs check config and updates vars etc
 
+  virtual ActrSlot*     FindVar(const String& nm, ActrBuffer*& buf, bool err_msg = true);
+  // #CAT_ActR find given variable by name (name does NOT have = at front) -- if variable name is not found, then available buffer names are checked and returned in buf pointer if found -- if err_msg then an error message is emitted if no variable is found
   virtual String        PrintVars() const;
   // #CAT_ActR print current values of the variables
   virtual void          UpdateVars();

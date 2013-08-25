@@ -133,8 +133,13 @@ public:
   }
   // #CAT_ActR compute the base-level activation as a function of current time and decay parameter
 
-  virtual bool          SetSlotVal(const String& slot, const String& val);
-  // #CAT_ActR set given slot to given value
+  virtual  bool         SetSlotValLiteral(const String& slot, const String& val);
+  // #CAT_ActR set given slot to given literal value -- error if not a LITERAL type
+  inline bool           SetSlotVal(const String& slot, const String& val)
+  { return SetSlotValLiteral(slot, val); }
+  // #CAT_ActR set given slot to given literal value -- error if not a LITERAL type
+  virtual bool          SetSlotValChunk(const String& slot, ActrChunk* ck);
+  // #CAT_ActR set given slot to given chunk value -- error if not a CHUNK type
   virtual ActrSlot*     FindSlot(const String& slot);
   // #CAT_ActR find slot by name -- issues error if not found
   virtual Variant       GetSlotVal(const String& slot);
@@ -148,6 +153,8 @@ public:
   // #BUTTON make a new slot in this chunk
   virtual void          SetChunkType(ActrChunkType* ck_type);
   // #MENU #MENU_ON_Actions #DROP1 #DYN1 set chunk type for this chunk (can use drag-and-drop and call on a set of selected items)
+  virtual void          SetChunkTypeName(const String& ck_type);
+  // #MENU #MENU_ON_Actions set chunk type for this chunk to given name
 
   virtual bool          MatchesProd(ActrProduction& prod, ActrChunk* cmp,
                                     bool exact, bool why_not = false);

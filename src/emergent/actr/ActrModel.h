@@ -89,6 +89,8 @@ public:
   float                 cur_time;   // #READ_ONLY #SHOW current time in the model
   ActrGlobalParams      params;     // global parameters
 
+  ActrChunkType_List    sys_chunk_types;  // #NO_EXPAND_ALL system chunk types -- defined automatically by modules
+  ActrChunk_List        sys_chunks;       // #NO_EXPAND_ALL system globally-defined chunks stored here -- automatically created by modules
   ActrChunkType_List    chunk_types;  // all chunk types used within the model must be defined here
   ActrChunk_List        chunks;       // #NO_EXPAND_ALL globally-defined chunks stored here
   ActrModule_List       modules;      // modules -- always contains declarative as the first one, and optional other ones
@@ -216,6 +218,24 @@ public:
   // #CAT_ActR one-stop define chunk type command, optinally setting parent type and slots
   virtual ActrChunk*    DefineChunk(const String& chunk_nm, const String& type_name);
   // #CAT_ActR define a global chunk of given name and type
+
+  virtual ActrChunkType* DefineChunkTypeSys(const String& type_name,
+                                            const String& par_name=_nilString,
+                                            const String& slot_0 = _nilString,
+                                            const String& slot_1 = _nilString,
+                                            const String& slot_2 = _nilString,
+                                            const String& slot_3 = _nilString,
+                                            const String& slot_4 = _nilString,
+                                            const String& slot_5 = _nilString,
+                                            const String& slot_6 = _nilString,
+                                            const String& slot_7 = _nilString,
+                                            const String& slot_8 = _nilString,
+                                            const String& slot_9 = _nilString,
+                                            const String& slot_a = _nilString,
+                                            const String& slot_b = _nilString);
+  // #CAT_ActR one-stop define system chunk type command, optinally setting parent type and slots
+  virtual ActrChunk*    DefineChunkSys(const String& chunk_nm, const String& type_name);
+  // #CAT_ActR define a system global chunk of given name and type
 
   virtual bool          LoadActrFile(const String& fname="");
   // #BUTTON #MENU #EXT_lisp,actr #CAT_File #FILETYPE_ActrModel #FILE_DIALOG_LOAD read actr model file in standard actr lisp format (leave fname empty to pull up file chooser)

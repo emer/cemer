@@ -16,6 +16,7 @@
 #include "ActrProduction.h"
 #include <ActrModule>
 #include <ActrSlot>
+#include <ActrModel>
 
 #include <taMisc>
 
@@ -108,6 +109,19 @@ void ActrProduction::Init() {
   UpdateVars();
   InitActionProgs();
   SigEmitUpdated();
+}
+
+ActrSlot* ActrProduction::FindVar(const String& nm, ActrBuffer*& buf, bool err_msg) {
+  buf = NULL;
+  ActrSlot* rval = vars.FindName(nm);
+  if(rval) return rval;
+  ActrModel* mod = GET_MY_OWNER(ActrModel);
+  if(mod) {
+    buf = mod->buffers.FindName(nm);
+    if(buf) return NULL;
+  }
+  TestError(err_msg, "FindVar", "variable or buffer named:", nm, "not found");
+  return NULL;
 }
 
 String ActrProduction::PrintVars() const {

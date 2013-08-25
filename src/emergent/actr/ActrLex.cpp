@@ -270,6 +270,7 @@ void ActrModel::InitLoadKeywords() {
   load_keywords.Add(NameVar("clear_all", AP_CLEAR_ALL));
   load_keywords.Add(NameVar("define_model", AP_DEFINE_MODEL));
   load_keywords.Add(NameVar("add_dm", AP_ADD_DM));
+  load_keywords.Add(NameVar("define_chunks", AP_DEF_CHUNKS));
   load_keywords.Add(NameVar("sgp", AP_SGP));
   load_keywords.Add(NameVar("goal_focus", AP_GOAL_FOCUS));
   load_keywords.Add(NameVar("spp", AP_SPP));

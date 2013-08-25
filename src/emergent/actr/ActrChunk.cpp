@@ -19,6 +19,7 @@
 #include <ActrCondition>
 #include <ActrAction>
 #include <ActrModule>
+#include <ActrModel>
 
 #include <taMisc>
 
@@ -155,6 +156,16 @@ void ActrChunk::SetChunkType(ActrChunkType* ck_type) {
   UpdateAfterEdit();
 }
 
+void ActrChunk::SetChunkTypeName(const String& ck_type) {
+  ActrModel* mod = GET_MY_OWNER(ActrModel);
+  if(mod) {
+    ActrChunkType* ct = mod->FindChunkType(ck_type);
+    if(ct) {
+      SetChunkType(ct);
+    }
+  }
+}
+
 int ActrChunk::GetSpecialState() const {
   if(HasChunkFlag(RETRIEVED)) return 3; // green
   if(HasChunkFlag(ELIGIBLE)) return 4; // red
@@ -235,7 +246,7 @@ bool ActrChunk::MergeVals(ActrChunk* cmp) {
   if((bool)chunk_type && (bool)cmp->chunk_type) {
     if(TestError(chunk_type != cmp->chunk_type,
                  "MergeVals", "chunk type mismatch")) {
-      return false; // must be same type..
+      return false; // must be same type.. (todo: use inheritance here??)
     }
     for(int i=0; i<slots.size; i++) {
       ActrSlot* sl = slots.FastEl(i);
@@ -286,16 +297,29 @@ String ActrChunk::GetSlotValLiteral(const String& slot) {
 ActrChunk* ActrChunk::GetSlotValChunk(const String& slot) {
   ActrSlot* sl = FindSlot(slot);
   if(!sl) return NULL;
-  if(TestError(sl->val_type != ActrSlot::CHUNK, "GetSlotValLiteral",
+  if(TestError(sl->val_type != ActrSlot::CHUNK, "GetSlotValChunk",
                "slot is not a CHUNK pointer"))
     return NULL;
   
   return sl->val_chunk.ptr();
 }
 
-bool ActrChunk::SetSlotVal(const String& slot, const String& val) {
+bool ActrChunk::SetSlotValLiteral(const String& slot, const String& val) {
   ActrSlot* slt = FindSlot(slot);
   if(!slt) return false;
+  if(TestError(slt->val_type != ActrSlot::LITERAL, "SetSlotVal",
+               "slot is not a LITERAL"))
+    return false;
   slt->val = val;
+  return true;
+}
+
+bool ActrChunk::SetSlotValChunk(const String& slot, ActrChunk* ck) {
+  ActrSlot* slt = FindSlot(slot);
+  if(!slt) return false;
+  if(TestError(slt->val_type != ActrSlot::CHUNK, "SetSlotValChunk",
+               "slot is not a CHUNK pointer"))
+    return false;
+  slt->val_chunk = ck;
   return true;
 }

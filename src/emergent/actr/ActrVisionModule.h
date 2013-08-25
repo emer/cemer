@@ -86,6 +86,7 @@ public:
   ActrAttnParams        attn;           // attentional parameters
   ActrBufferRef         location_buffer; // the visual-location buffer for this module
   ActrChunk_List        visicon;        // current contents of the visual iconic memory -- what is available in the perceptual input display
+  ActrChunk_List        objects;        // place where object chunks can be created and stored -- not used directly in requests or other run-time processing, except if referred to by visual location chunks installed into the visicon.  see AddObject and related functions for adding to here and to the visicon.
   ActrChunk_List        finsts;         // #HIDDEN #NO_SAVE list of current declarative fingers of instantiation chunks
   ActrChunk_List        eligible;       // #HIDDEN #NO_SAVE list of all matching chunks eligible
   ActrChunkRef          found;          // #HIDDEN #NO_SAVE final chunk found on last find-location request
@@ -123,8 +124,18 @@ public:
   virtual void  UpdateFinsts(ActrChunk* attend);
   // #CAT_ActR update finsts to reflect given attended item
 
+  virtual ActrChunk* AddObject(const String& nm, const String& value = "", const String& status = "",
+                               const String& color = "", const String& height = "",
+                               const String& width = "", const String& typ_nm = "visual_object");
+  // #CAT_ActR add object to the objects list with given properties -- updates features if object of that name already exists
+  virtual ActrChunk* AddObjToVisIcon(const String& nm, float screen_x, float screen_y, 
+                                     float distance, const String& kind = "", 
+                                     const String& value = "", const String& status = "",
+                                     const String& color = "", const String& height = "",
+                                    const String& width = "", const String& typ_nm = "visual_location");
+  // #CAT_ActR add object to the objects list with given properties -- updates features if object of that name already exists, and then add it to the visicon with a new visual_location chunk -- kind is text, color, ??
   virtual void   AddToVisIcon(ActrChunk* ck);
-  // #CAT_ActR add item to the visicon -- sets the t_new to be the current time at adding
+  // #CAT_ActR add chunk (must be of type visual_location) to the visicon -- creates a new copy of the input chunk, and sets the t_new to be the current time at adding
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);

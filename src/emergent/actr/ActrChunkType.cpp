@@ -60,9 +60,9 @@ void ActrChunkType::MakeSlots(const String& slot_0, const String& slot_1,
 } 
 
 void ActrChunkType::SetSlotChunkType(const String& slot_nm, const String& chunk_typ) {
-  ActrSlotType* st = slots.FindName("screen_pos");
+  ActrSlotType* st = slots.FindName(slot_nm);
   if(st) {
-    st->SetChunkTypeName("visual_location");
+    st->SetChunkTypeName(chunk_typ);
   }
 }
 

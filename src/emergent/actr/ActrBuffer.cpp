@@ -77,7 +77,7 @@ bool ActrBuffer::ClearChunk_impl(bool dm_merge) {
 }
 
 ActrChunk* ActrBuffer::UpdateChunk(ActrChunk* chunk) {
-  if(TestError(!chunk, "SetChunk", "called with null chunk!")) { // shouldn't happen
+  if(TestError(!chunk, "UpdateChunk", "called with null chunk!")) { // shouldn't happen
     return NULL;
   }
   if(IsFull()) {
@@ -98,4 +98,18 @@ ActrChunk* ActrBuffer::UpdateChunk(ActrChunk* chunk) {
     SetBufferFlag(FULL);
     return nw_ck;
   }
+}
+
+ActrChunk* ActrBuffer::SetChunk(ActrChunk* chunk) {
+  if(TestError(!chunk, "SetChunk", "called with null chunk!")) { // shouldn't happen
+    return NULL;
+  }
+  if(IsFull()) {
+    ClearChunk();
+  }
+  ActrChunk* nw_ck = (ActrChunk*)active.New(1);
+  nw_ck->CopyFrom(chunk);
+  nw_ck->CopyName(chunk);
+  SetBufferFlag(FULL);
+  return nw_ck;
 }

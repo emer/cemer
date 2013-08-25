@@ -58,75 +58,77 @@ void ActrVisionModule::InitModule() {
   }
 
   ActrChunkType* ck = NULL;
-  mod->DefineChunkType("visual_object", "", "screen_pos", "value",
-                       "status", "color", "height", "width");
-  mod->DefineChunkType("abstract_object", "", "value", "line_pos", "bin_pos");
-  mod->DefineChunkType("abstract_letter", "abstract_object");
-  mod->DefineChunkType("abstract_number", "abstract_object");
-  mod->DefineChunkType("text", "visual_object");
-  mod->DefineChunkType("empty_space", "visual_object");
-  mod->DefineChunkType("line", "visual_object");
-  mod->DefineChunkType("oval", "visual_object");
-  mod->DefineChunkType("cursor", "visual_object");
-  mod->DefineChunkType("phrase", "visual_object", "objects", "words", "colors");
-  ck = mod->DefineChunkType("visual_location", "", "screen_x", "screen_y", "distance",
+  ActrChunkType* vock = mod->DefineChunkTypeSys("visual_object", "", "screen_pos", "value",
+                                                "status", "color", "height", "width");
+  ck = mod->DefineChunkTypeSys("visual_location", "", "screen_x", "screen_y", "distance",
                             "kind", "color", "value", "height", "width", "size", "object");
   ck->SetSlotChunkType("object", "visual_object"); // object is pointer to visual_object
-  mod->DefineChunkType("set_visloc_default", "", "type", "screen_x", "screen_y",
+  vock->SetSlotChunkType("screen_pos", "visual_location"); // screen_pos is pointer to vis loc
+
+  mod->DefineChunkTypeSys("abstract_object", "", "value", "line_pos", "bin_pos");
+  mod->DefineChunkTypeSys("abstract_letter", "abstract_object");
+  mod->DefineChunkTypeSys("abstract_number", "abstract_object");
+  mod->DefineChunkTypeSys("text", "visual_object");
+  mod->DefineChunkTypeSys("empty_space", "visual_object");
+  mod->DefineChunkTypeSys("line", "visual_object");
+  mod->DefineChunkTypeSys("oval", "visual_object");
+  mod->DefineChunkTypeSys("cursor", "visual_object");
+  mod->DefineChunkTypeSys("phrase", "visual_object", "objects", "words", "colors");
+  mod->DefineChunkTypeSys("set_visloc_default", "", "type", "screen_x", "screen_y",
                        "distance", "kind", "color", "value", "height", "width",
                        "size");
-  mod->DefineChunkType("char_primitive", "visual_location", "left", "right");
-  mod->DefineChunkType("vision_command");
-  mod->DefineChunkType("pm_constant");
-  mod->DefineChunkType("color");
-  ck = mod->DefineChunkType("move_attention", "vision_command", "screen_pos", "scale");
+  mod->DefineChunkTypeSys("char_primitive", "visual_location", "left", "right");
+  mod->DefineChunkTypeSys("vision_command");
+  mod->DefineChunkTypeSys("pm_constant");
+  mod->DefineChunkTypeSys("color");
+  ck = mod->DefineChunkTypeSys("move_attention", "vision_command", "screen_pos", "scale");
   ck->SetSlotChunkType("screen_pos", "visual_location"); // screen_pos is pointer to vis loc
   
-  mod->DefineChunkType("start_tracking", "vision_command");
-  ck = mod->DefineChunkType("assign_finst", "vision_command", "object", "location");
+  mod->DefineChunkTypeSys("start_tracking", "vision_command");
+  ck = mod->DefineChunkTypeSys("assign_finst", "vision_command", "object", "location");
   ck->SetSlotChunkType("object", "visual_object"); 
   ck->SetSlotChunkType("location", "visual_location");
-  mod->DefineChunkType("clear_scene_change", "vision_command");
-  mod->DefineChunkType("clear");
+  mod->DefineChunkTypeSys("clear_scene_change", "vision_command");
+  mod->DefineChunkTypeSys("clear");
 
-  mod->DefineChunk("lowest", "pm_constant");
-  mod->DefineChunk("highest", "pm_constant");
-  mod->DefineChunk("current", "pm_constant");
-  mod->DefineChunk("current_x", "pm_constant");
-  mod->DefineChunk("current_y", "pm_constant");
-  mod->DefineChunk("clockwise", "pm_constant");
-  mod->DefineChunk("counterclockwise", "pm_constant");
-  mod->DefineChunk("external", "pm_constant");
-  mod->DefineChunk("internal", "pm_constant");
-  mod->DefineChunk("find_location", "vision_command");
-  mod->DefineChunk("move_attention", "vision_command");
-  mod->DefineChunk("assign_finst", "vision_command");
-  mod->DefineChunk("start_tracking", "vision_command");
+  mod->DefineChunkSys("lowest", "pm_constant");
+  mod->DefineChunkSys("highest", "pm_constant");
+  mod->DefineChunkSys("current", "pm_constant");
+  mod->DefineChunkSys("current_x", "pm_constant");
+  mod->DefineChunkSys("current_y", "pm_constant");
+  mod->DefineChunkSys("clockwise", "pm_constant");
+  mod->DefineChunkSys("counterclockwise", "pm_constant");
+  mod->DefineChunkSys("external", "pm_constant");
+  mod->DefineChunkSys("internal", "pm_constant");
+  mod->DefineChunkSys("find_location", "vision_command");
+  mod->DefineChunkSys("move_attention", "move_attention");
+  mod->DefineChunkSys("assign_finst", "assign_finst");
+  mod->DefineChunkSys("start_tracking", "start_tracking");
     
-  mod->DefineChunk("black", "color");
-  mod->DefineChunk("red", "color");
-  mod->DefineChunk("blue", "color");
-  mod->DefineChunk("green", "color");
-  mod->DefineChunk("white", "color");
-  mod->DefineChunk("magenta", "color");
-  mod->DefineChunk("yellow", "color");
-  mod->DefineChunk("cyan", "color");
-  mod->DefineChunk("dark_green", "color");
-  mod->DefineChunk("dark_red", "color");
-  mod->DefineChunk("dark_cyan", "color");
-  mod->DefineChunk("dark_blue", "color");
-  mod->DefineChunk("dark_magenta", "color");
-  mod->DefineChunk("dark_yellow", "color");
-  mod->DefineChunk("light_gray", "color");
-  mod->DefineChunk("dark_gray", "color");
+  mod->DefineChunkSys("black", "color");
+  mod->DefineChunkSys("red", "color");
+  mod->DefineChunkSys("blue", "color");
+  mod->DefineChunkSys("green", "color");
+  mod->DefineChunkSys("white", "color");
+  mod->DefineChunkSys("magenta", "color");
+  mod->DefineChunkSys("yellow", "color");
+  mod->DefineChunkSys("cyan", "color");
+  mod->DefineChunkSys("dark_green", "color");
+  mod->DefineChunkSys("dark_red", "color");
+  mod->DefineChunkSys("dark_cyan", "color");
+  mod->DefineChunkSys("dark_blue", "color");
+  mod->DefineChunkSys("dark_magenta", "color");
+  mod->DefineChunkSys("dark_yellow", "color");
+  mod->DefineChunkSys("light_gray", "color");
+  mod->DefineChunkSys("dark_gray", "color");
         
-  mod->DefineChunk("text", "chunk");
-  mod->DefineChunk("box", "chunk");
-  mod->DefineChunk("line", "chunk");
-  mod->DefineChunk("oval", "chunk");
+  mod->DefineChunkSys("text", "chunk");
+  mod->DefineChunkSys("box", "chunk");
+  mod->DefineChunkSys("line", "chunk");
+  mod->DefineChunkSys("oval", "chunk");
     
-  mod->DefineChunk("new", "chunk");
-  mod->DefineChunk("clear", "chunk");
+  mod->DefineChunkSys("new", "chunk");
+  mod->DefineChunkSys("clear", "chunk");
 }
 
 void ActrVisionModule::Init() {
@@ -135,7 +137,8 @@ void ActrVisionModule::Init() {
   found = NULL;
   finsts.Reset();
   eligible.Reset();
-  visicon.Reset();
+  // don't reset the visicon -- this has probably just been setup!
+  // visicon.Reset();
   last_cmd = "";
   buffer->UpdateState();
   location_buffer->Init();
@@ -308,7 +311,7 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
     // todo: technically should be a separate event instead of just log
     mod->LogEvent(-1.0f, "vision", "automatically attending", "", "");
 
-    ActrChunk* ma = mod->chunks.FindName("move_attention");
+    ActrChunk* ma = mod->sys_chunks.FindName("move_attention");
 
     mod->ScheduleEvent(0.05f, ActrEvent::max_pri, this, this, buffer,
                        "Move_attention", found->name, event.act_arg,
@@ -822,9 +825,47 @@ bool ActrVisionModule::SetParam(const String& param_nm, Variant par1, Variant pa
   return got;
 }
 
+ActrChunk* ActrVisionModule::AddObject(const String& nm, const String& value, const String& status,
+                                       const String& color, const String& height,
+                                       const String& width, const String& typ_nm) {
+  bool made_new;
+  ActrChunk* obj = (ActrChunk*)objects.FindMakeNameType(nm, NULL, made_new);
+  obj->SetChunkTypeName(typ_nm);
+  obj->SetSlotVal("value", value);
+  obj->SetSlotVal("status", status);
+  obj->SetSlotVal("color", color);
+  obj->SetSlotVal("height", height);
+  obj->SetSlotVal("width", width);
+  return obj;                
+}
+
+ActrChunk* ActrVisionModule::AddObjToVisIcon(const String& nm, float screen_x, float screen_y, 
+                                             float distance, const String& kind, 
+                                             const String& value, const String& status,
+                                             const String& color, const String& height,
+                                             const String& width, const String& typ_nm) {
+  ActrChunk* obj = AddObject(nm, value, status, color, height, width);
+  ActrChunk* loc = (ActrChunk*)visicon.New(1);
+  loc->SetChunkTypeName(typ_nm);
+  loc->SetSlotVal("screen_x", (String)screen_x);
+  loc->SetSlotVal("screen_y", (String)screen_y);
+  loc->SetSlotVal("distance", (String)distance);
+  loc->SetSlotVal("kind", kind);
+  loc->SetSlotVal("value", value);
+  loc->SetSlotVal("color", color);
+  loc->SetSlotVal("height", height);
+  loc->SetSlotVal("width", width);
+  loc->SetSlotValChunk("object", obj);
+  obj->SetSlotValChunk("screen_pos", loc);
+  ActrModel* mod = Model();
+  loc->InitChunk(mod->cur_time);
+  return loc;                
+}
 
 void ActrVisionModule::AddToVisIcon(ActrChunk* ck) {
+  ActrChunk* loc = (ActrChunk*)visicon.New(1);
+  loc->CopyFrom(ck);
+  loc->CopyName(ck);
   ActrModel* mod = Model();
-  ck->InitChunk(mod->cur_time);
-  visicon.Add(ck);
+  loc->InitChunk(mod->cur_time);
 }

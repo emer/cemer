@@ -45,17 +45,18 @@
      AP_CLEAR_ALL = 261,
      AP_DEFINE_MODEL = 262,
      AP_ADD_DM = 263,
-     AP_SGP = 264,
-     AP_GOAL_FOCUS = 265,
-     AP_SPP = 266,
-     AP_NUMBER = 267,
-     AP_NAME = 268,
-     AP_STRING = 269,
-     AP_BANG_EXPR = 270,
-     AP_DEFVAR = 271,
-     AP_DEFMETHOD = 272,
-     AP_DEFUN = 273,
-     AP_SETF = 274
+     AP_DEF_CHUNKS = 264,
+     AP_SGP = 265,
+     AP_GOAL_FOCUS = 266,
+     AP_SPP = 267,
+     AP_NUMBER = 268,
+     AP_NAME = 269,
+     AP_STRING = 270,
+     AP_BANG_EXPR = 271,
+     AP_DEFVAR = 272,
+     AP_DEFMETHOD = 273,
+     AP_DEFUN = 274,
+     AP_SETF = 275
    };
 #endif
 /* Tokens.  */
@@ -65,17 +66,18 @@
 #define AP_CLEAR_ALL 261
 #define AP_DEFINE_MODEL 262
 #define AP_ADD_DM 263
-#define AP_SGP 264
-#define AP_GOAL_FOCUS 265
-#define AP_SPP 266
-#define AP_NUMBER 267
-#define AP_NAME 268
-#define AP_STRING 269
-#define AP_BANG_EXPR 270
-#define AP_DEFVAR 271
-#define AP_DEFMETHOD 272
-#define AP_DEFUN 273
-#define AP_SETF 274
+#define AP_DEF_CHUNKS 264
+#define AP_SGP 265
+#define AP_GOAL_FOCUS 266
+#define AP_SPP 267
+#define AP_NUMBER 268
+#define AP_NAME 269
+#define AP_STRING 270
+#define AP_BANG_EXPR 271
+#define AP_DEFVAR 272
+#define AP_DEFMETHOD 273
+#define AP_DEFUN 274
+#define AP_SETF 275
 
 
 
@@ -94,7 +96,7 @@ typedef struct YYSTYPE
   ActrSlot*       slt;
 }
 /* Line 1529 of yacc.c.  */
-#line 98 "y.tab.h"
+#line 100 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

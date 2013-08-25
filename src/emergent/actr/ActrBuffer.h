@@ -84,6 +84,8 @@ public:
   // #CAT_ActR implementation function that does merge per arg, ignoring flags: clear any existing chunk from buffer, and merge into declarative memory (normal ACT-R behavior for any chunk that is cleared) -- also updates state -- returns false if error
   virtual ActrChunk*    UpdateChunk(ActrChunk* chunk);
   // #CAT_ActR update chunk from new item coming in -- if there is currently a chunk, it is updated with non-nil elements from new chunk (unless chunk types differ, in which case it replaces entirely) -- if no existing chunk, it makes a *copy* of the chunk and updates state -- returns new chunk
+  virtual ActrChunk*    SetChunk(ActrChunk* chunk);
+  // #CAT_ActR set chunk to be new one -- if there is currently a chunk, it is cleared, then it makes a *copy* of the chunk and updates state -- returns new chunk
 
   bool  QueryMatches(const String& query, bool why_not = false);
   // #CAT_ActR for production matching: does state of buffer match given query value -- must be: buffer: full, empty, requested, unrequested, module: busy, free, error

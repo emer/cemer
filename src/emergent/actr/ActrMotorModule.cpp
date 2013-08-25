@@ -48,21 +48,21 @@ void ActrMotorModule::InitModule() {
   }
 
   ActrChunkType* ck = NULL;
-  mod->DefineChunkType("motor_command", "");
-  mod->DefineChunkType("click_mouse", "motor_command");
-  mod->DefineChunkType("hand_to_mouse", "motor_command");
-  mod->DefineChunkType("hand_to_home", "motor_command");
-  mod->DefineChunkType("move_cursor", "motor_command", "object", "loc", "device");
-  mod->DefineChunkType("peck", "motor_command", "hand",  "finger", "r", "theta");
-  mod->DefineChunkType("peck_recoil", "motor_command", "hand", "finger", "r",
+  mod->DefineChunkTypeSys("motor_command", "");
+  mod->DefineChunkTypeSys("click_mouse", "motor_command");
+  mod->DefineChunkTypeSys("hand_to_mouse", "motor_command");
+  mod->DefineChunkTypeSys("hand_to_home", "motor_command");
+  mod->DefineChunkTypeSys("move_cursor", "motor_command", "object", "loc", "device");
+  mod->DefineChunkTypeSys("peck", "motor_command", "hand",  "finger", "r", "theta");
+  mod->DefineChunkTypeSys("peck_recoil", "motor_command", "hand", "finger", "r",
                        "theta");
-  mod->DefineChunkType("point_hand_at_key", "motor_command", "hand", "to_key");
-  mod->DefineChunkType("press_key", "motor_command", "key");
-  mod->DefineChunkType("punch", "motor_command", "hand", "finger");
-  mod->DefineChunkType("prepare", "motor_command", "style", "hand",  "finger",
+  mod->DefineChunkTypeSys("point_hand_at_key", "motor_command", "hand", "to_key");
+  mod->DefineChunkTypeSys("press_key", "motor_command", "key");
+  mod->DefineChunkTypeSys("punch", "motor_command", "hand", "finger");
+  mod->DefineChunkTypeSys("prepare", "motor_command", "style", "hand",  "finger",
                        "r", "theta");
-  mod->DefineChunkType("execute", "motor_command");
-  mod->DefineChunkType("clear", "");
+  mod->DefineChunkTypeSys("execute", "motor_command");
+  mod->DefineChunkTypeSys("clear", "");
 }
 
 void ActrMotorModule::Init() {

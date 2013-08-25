@@ -37,8 +37,6 @@ public:
   // #CAT_ActR process imaginal buffer request
   virtual void   CreateNewChunk(ActrEvent& event);
   // #CAT_ActR create a new chunk -- delayed
-  virtual void   SetBufferChunk(ActrEvent& event);
-  // #CAT_ActR set buffer to new chunk
   virtual void   ImaginalBufferMod(ActrEvent& event);
   // #CAT_ActR process imaginal buffer modification
   virtual void   ModImaginalChunk(ActrEvent& event);

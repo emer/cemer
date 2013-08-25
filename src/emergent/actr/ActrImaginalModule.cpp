@@ -44,8 +44,8 @@ void ActrImaginalModule::InitModule() {
     action_buffer->act_total = 0.0f;   // imaginal_activation
   }
 
-  mod->DefineChunkType("generic_action", "", "action", "result");
-  mod->DefineChunkType("simple_action", "", "action");
+  mod->DefineChunkTypeSys("generic_action", "", "action", "result");
+  mod->DefineChunkTypeSys("simple_action", "", "action");
 }
 
 void ActrImaginalModule::Init() {
@@ -64,9 +64,6 @@ void ActrImaginalModule::ProcessEvent(ActrEvent& event) {
   }
   else if(event.action == "CREATE_NEW_BUFFER_CHUNK") {
     CreateNewChunk(event);
-  }
-  else if(event.action == "SET_BUFFER_CHUNK") {
-    SetBufferChunk(event);
   }
   else if(event.action == "MOD_IMAGINAL_CHUNK") {
     ModImaginalChunk(event);
@@ -112,16 +109,6 @@ void ActrImaginalModule::CreateNewChunk(ActrEvent& event) {
   mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
                      "SET_BUFFER_CHUNK", "", event.act_arg,
                      nw_ck);
-}
-
-void ActrImaginalModule::SetBufferChunk(ActrEvent& event) {
-  ActrChunk* ck = event.chunk_arg;
-  if(TestError(!ck, "CreateNewChunk", "chunk is NULL")) {
-    return;
-  }
-  buffer->UpdateChunk(ck);
-  ClearModuleFlag(BUSY);
-  buffer->ClearReq();
 }
 
 void ActrImaginalModule::ImaginalBufferMod(ActrEvent& event) {

@@ -205,20 +205,22 @@ void ActrAction::CheckThisConfig_impl(bool quiet, bool& rval) {
       if(vnm.contains(' '))
         vnm = vnm.before(' ');
       vstr = vstr.after(vnm);
-      ActrSlot* var = prod->vars.FindName(vnm);
-      CheckError(!var, quiet, rval,
+      ActrBuffer* buf = NULL;
+      ActrSlot* var = prod->FindVar(vnm, buf, false); // we do our own err
+      CheckError(!var && !buf, quiet, rval,
                  "could not find variable name:", vnm,
-                 "in production variables -- variables must originate in conditions");
+                 "in production variables -- variables must originate in conditions or be a buffer name");
     }
     if((bool)chunk.chunk_type) {
       for(int i=0; i<chunk.slots.size; i++) {
         ActrSlot* sl = chunk.slots.FastEl(i);
         if(!sl->CondIsVar()) continue;
         String vnm = sl->GetVarName();
-        ActrSlot* var = prod->vars.FindName(vnm);
-        CheckError(!var, quiet, rval,
+        ActrBuffer* buf = NULL;
+        ActrSlot* var = prod->FindVar(vnm, buf, false);
+        CheckError(!var && !buf, quiet, rval,
                    "could not find variable name:", vnm,
-                   "in production variables -- variables must originate in conditions");
+                   "in production variables -- variables must originate in conditions or be a buffer");
       }
     }
   }
@@ -329,10 +331,15 @@ void ActrAction::SetVarsChunk(ActrProduction& prod, ActrChunk* ck) {
   for(int i=0; i<chunk.slots.size; i++) {
     ActrSlot* sl = chunk.slots.FastEl(i);
     if(!sl->CondIsVar()) continue;
-    ActrSlot* var = prod.vars.FindName(sl->GetVarName());
+    ActrBuffer* buf = NULL;
+    ActrSlot* var = prod.FindVar(sl->GetVarName(), buf);
     ActrSlot* cs = ck->slots.FastEl(i);
-    if(var && cs) {
+    if(var) {
       cs->CopyValFrom(*var); 
+    }
+    else if(buf) {
+      ActrChunk* bck = buf->CurChunk(); // null is presumably OK here..
+      cs->CopyValFromChunk(bck);
     }
   }    
 }
