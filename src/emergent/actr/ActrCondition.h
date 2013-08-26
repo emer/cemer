@@ -93,8 +93,8 @@ public:
   virtual bool  MatchVars(ActrProduction& prod, bool why_not = false);
   // #CAT_ActR second pass on matching -- check for any tests against cur vars -- return true if OK and false if fails variable comparison test
 
-  virtual void  SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
-  // #CAT_ActR send BUFFER-READ-ACTION events for all BUFFER_EQ cases
+  virtual void  SendCondActions(ActrProceduralModule* proc_mod, ActrModel* model);
+  // #CAT_ActR send BUFFER_READ_ACTION and QUERY_BUFFER_ACTION events to all the buffers we read when we fire, sent from procedural module to buffer owning module
 
   virtual bool  SetVal(ActrSlot* slt, const String& val,
                        Relation::Relations rl = Relation::EQUAL);

@@ -121,6 +121,7 @@ set(network_HEADS_MAKETA
   NetView.h
   iViewPanelOfNetwork.h
 
+  BrainAtlasRegexpPopulator.h
   BrainView.h
   BrainVolumeView.h
   iViewPanelOfBrain.h
@@ -145,7 +146,6 @@ set(network_HEADS_NOMAKETA
   Unit_inlines.h
 
   BrainAtlas.h
-  BrainAtlasRegexpPopulator.h
   BrainAtlasFileParser.h
   BrainAtlasInfo.h
   BrainAtlasLabel.h

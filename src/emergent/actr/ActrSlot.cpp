@@ -53,7 +53,7 @@ void ActrSlot::UpdateAfterEdit_impl() {
     else if(ck->HasChunkFlag(ActrChunk::ACT))
       SetSlotFlag(ACT);
   }
-  if(HasSlotFlag(COND)) {
+  if(IsCond()) {
     val_type = LITERAL;
   }
 }
@@ -64,7 +64,7 @@ bool ActrSlot::UpdateFromType(const ActrSlotType& typ) {
     name = typ.name;
     any_changes = true;
   }
-  if(HasSlotFlag(COND)) {
+  if(IsCondAct()) {
     val_type = LITERAL;
   }
   else {
@@ -112,7 +112,7 @@ String& ActrSlot::Print(String& strm, int indent) const {
       }
     }
   }
-  if(HasSlotFlag(COND) || HasSlotFlag(ACT)) {
+  if(IsCondAct()) {
     if(rel != Relation::EQUAL) {
       String relstr = TA_Relation.GetEnumLabel("Relations", rel);
       strm << " " << relstr;
@@ -125,7 +125,7 @@ String ActrSlot::GetDisplayName() const {
   return PrintStr();            // calls Print above
 }
 
-String ActrSlot::GetVarName() {
+String ActrSlot::GetVarName() const {
   if(!CondIsVar()) return _nilString;
   String var = val.after('=');
   if(CondIsNeg())
@@ -133,7 +133,7 @@ String ActrSlot::GetVarName() {
   return var;
 }
 
-bool ActrSlot::IsEmpty() {
+bool ActrSlot::IsEmpty() const {
   if(val_type == LITERAL) {
     return val.empty();
   }
@@ -142,7 +142,7 @@ bool ActrSlot::IsEmpty() {
   return false;
 }
 
-bool ActrSlot::IsNil() {
+bool ActrSlot::IsNil() const {
   if(val_type == LITERAL) {
     return (val == "nil");
   }

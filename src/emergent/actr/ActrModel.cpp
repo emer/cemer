@@ -27,6 +27,8 @@
 
 #include <taMisc>
 
+#include <ctype.h>
+
 void ActrGlobalParams::Initialize() {
   enable_sub_symbolic = false;
   enable_rnd = false;
@@ -38,7 +40,7 @@ ActrModelRef  ActrModel::cur_parse;
 void ActrModel::Initialize() {
   cur_time = 0.0f;
   cur_event_idx = 0;
-  flags = (ModelFlags)(LOG_EVENTS | UPDATE_GUI);
+  flags = (ModelFlags)(LOG_EVENTS | UPDATE_GUI | UPCASE_LOG);
   run_state = NOT_INIT;
 
   load_debug = 0;
@@ -224,7 +226,7 @@ void ActrModel::RunNextEvent() {
 
   cur_time = ev->time;          // set current time to event time
   if(HasModelFlag(LOG_EVENTS) && log_table) {
-    ev->LogEvent(*log_table.ptr());
+    ev->LogEvent(this, log_table.ptr());
   }
   ev->dst_module->ProcessEvent(*ev);
 
@@ -265,6 +267,16 @@ ActrEvent* ActrModel::ScheduleEvent(float time_fm_now, int priority,
   return ev;
 }
 
+void ActrModel::LogEventString(DataTable* dt, const String& val, const String& colnm) {
+  if(val.length() > 0 && HasModelFlag(UPCASE_LOG)) {
+    String uc = val; if(!isupper(val[0])) uc.upcase();
+    dt->SetVal(uc, colnm, -1);
+  }
+  else {
+    dt->SetVal(val, colnm, -1);
+  }
+}
+
 void ActrModel::LogEvent(float time, const String& module,
                          const String& action, const String& target, 
                          const String& params, const String& dst_module,
@@ -275,11 +287,11 @@ void ActrModel::LogEvent(float time, const String& module,
   dt->AddBlankRow();
   if(time < 0) time = cur_time;
   dt->SetVal(time, "time", -1);
-  dt->SetVal(module, "module", -1);
-  dt->SetVal(action, "action", -1);
-  dt->SetVal(target, "target", -1);
-  dt->SetVal(params, "params", -1);
-  dt->SetVal(dst_module, "dst_module", -1);
+  LogEventString(dt, module, "module");
+  LogEventString(dt, action, "action");
+  LogEventString(dt, target, "target");
+  LogEventString(dt, params, "params");
+  LogEventString(dt, dst_module, "dst_module");
   dt->SetVal(priority, "priority", -1);
   dt->SetVal(prod_action, "prod_action", -1);
   dt->SetVal(chunk, "chunk", -1);

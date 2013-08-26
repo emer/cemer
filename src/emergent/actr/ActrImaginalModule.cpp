@@ -88,11 +88,13 @@ void ActrImaginalModule::ImaginalRequest(ActrEvent& event) {
     return;
   }
 
-  mod->LogEvent(-1.0f, "imaginal", "START_IMAGINAL_REQ", "", "");
+  RequestBufferClear(event.dst_buffer); // always clear for any request
+
+  // mod->LogEvent(-1.0f, "imaginal", "START_IMAGINAL_REQ", "", "");
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
   buffer->SetReq();
-  buffer->ClearChunk();         // always clear before imaging new
+
   mod->ScheduleEvent(imaginal_delay.Gen(), ActrEvent::max_pri, this, this, buffer,
                      "CREATE_NEW_BUFFER_CHUNK", "", event.act_arg,
                      ck);

@@ -142,7 +142,7 @@ void ActrProceduralModule::ConflictResolution() {
     }
   }
   if(eligible.size == 0) {
-    taMisc::Info("ConflictResolution: No matching productions found -- stopping");
+    mod->LogEvent(-1.0f, "------", "Stopped because no events left to process");
     mod->Stop();
     return;
   }
@@ -159,8 +159,8 @@ void ActrProceduralModule::ConflictResolution() {
     fired->SigEmitUpdated();
   }
   mod->LogEvent(-1.0f, "procedural", "PRODUCTION_SELECTED", fired->name);
-  fired->SendBufferReads(this, mod);
-  // send all the BUFFER_READ_ACTION's -- clear buffers!
+  fired->SendCondActions(this, mod);
+  // send all the BUFFER_READ_ACTION's and QUERY_BUFFER_ACTION events..
 
   float ptime = mp_time.Gen();  // always generate a random number to keep seeds more predictable
   if(fired->time.act > 0.0f) {  // custom time

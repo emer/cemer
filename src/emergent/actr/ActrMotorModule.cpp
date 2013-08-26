@@ -72,6 +72,7 @@ void ActrMotorModule::Init() {
   exec_act.ResetChunk();
   last_cmd = "";
   InitHandPos();
+  InitPosToKey();
   buffer->UpdateState();
 }
 
@@ -86,8 +87,8 @@ void ActrMotorModule::InitPosToKey() {
   pos_to_key.SetGeom(2, 23, 7);
   const char* keys[] = {
     // function key row
-    "escape", "", "F1", "F2", "F3", "F4", "", "F5", "F6", "F7", "F8", "",
-    "F9", "F10", "F11", "F12", "", "F13", "F14", "F15", "", "", "",
+    "escape", "", "f1", "f2", "f3", "f4", "", "f5", "f6", "f7", "f8", "",
+    "f9", "f10", "f11", "f12", "", "f13", "f14", "f15", "", "", "",
 
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
     "", "", "", "", "", "", "", "", "",
@@ -96,15 +97,15 @@ void ActrMotorModule::InitPosToKey() {
     "help", "home", "pageup", "",
     "clear", "=", "/", "*", 
 
-    "tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "backslash ", "",
+    "tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "backslash ", "",
     "forward_delete", "end", "pagedn", "",
     "keypad_7", "keypad_8", "keypad_9", "keypad_hyphen", 
 
-    "caps_lock", "A", "S", "D", "F", "G", "H", "J", "K", "L", "semicolon", "quote", "return", "return", "",
+    "caps_lock", "a", "s", "d", "f", "g", "h", "j", "k", "l", "semicolon", "quote", "return", "return", "",
     "", "", "", "", 
     "keypad_4", "keypad_5", "keypad_6", "keypad_plus",
 
-    "shift", "Z", "X", "C", "V", "B", "N", "M", "comma", "period", "dot ", "/", "right_shift", "right_shift", "", "",
+    "shift", "z", "x", "c", "v", "b", "n", "m", "comma", "period", "dot ", "/", "right_shift", "right_shift", "", "",
     "", "up_arrow", "", "",
     "keypad_1", "keypad_2", "keypad_3", "keypad_enter",
 
@@ -227,29 +228,16 @@ void ActrMotorModule::HandToHome(Hand hand) {
 }
 
 void ActrMotorModule::ProcessEvent(ActrEvent& event) {
-  if(event.action == "MODULE_REQUEST") {
-    MotorRequest(event);
-  }
-  else {
-    ProcessEvent_std(event);   // respond to regular requests
-  }
-}
-
-void ActrMotorModule::MotorRequest(ActrEvent& event) {
+  ActrModel* mod = Model();
   ActrChunk* ck = event.chunk_arg;
   if(TestError(!ck || !ck->chunk_type, "MotorRequest", "chunk is NULL")) {
     return;
   }
-  ActrModel* mod = Model();
 
-  if(IsPrep()) {
-    TestWarning(true, "MotorRequest",
-                "a motor request was made while still preparing previous request -- new request ignored");
-    mod->LogEvent(-1.0f, "motor", "ABORT_MOTOR_REQ", "", "");
-    return;
+  if(event.action == "MODULE_REQUEST") {
+    MotorRequest(event);
   }
-
-  if(event.action == "PREPARATION_COMPLETE") {
+  else if(event.action == "PREPARATION_COMPLETE") {
     if(event.params != "prepare") {
       init_act = prep_act;
       ClearModuleFlag(PREP);
@@ -298,7 +286,30 @@ void ActrMotorModule::MotorRequest(ActrEvent& event) {
   else if(event.action == "FINISH_MOVEMENT") {
     ClearModuleFlag(EXEC);
   }
-  else if(ck->chunk_type->InheritsFromCTName("clear")) {
+  else {
+    ProcessEvent_std(event);   // respond to regular requests
+  }
+}
+
+void ActrMotorModule::MotorRequest(ActrEvent& event) {
+  ActrChunk* ck = event.chunk_arg;
+  if(TestError(!ck || !ck->chunk_type, "MotorRequest", "chunk is NULL")) {
+    return;
+  }
+  ActrModel* mod = Model();
+
+  if(IsPrep()) {
+    TestWarning(true, "MotorRequest",
+                "a motor request was made while still preparing previous request -- new request ignored");
+    mod->LogEvent(-1.0f, "motor", "ABORT_MOTOR_REQ", "", "");
+    return;
+  }
+
+  RequestBufferClear(event.dst_buffer); // always clear for any request
+
+  mod->LogEvent(-1.0f, "motor", ck->chunk_type->name, "", ck->PrintStr());
+
+  if(ck->chunk_type->InheritsFromCTName("clear")) {
     ClearRequest(event);
   }
   else if(ck->chunk_type->InheritsFromCTName("prepare")) {

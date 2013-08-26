@@ -364,7 +364,8 @@ bool ActrAction::DoAction(ActrProduction& prod,
   case UPDATE: {
     // todo: add a flag to action if it has variables or not
     ActrChunk* new_chunk = new ActrChunk;
-    new_chunk->CopyFrom(&chunk);
+    new_chunk->CopyChunkData(&chunk);
+    
     SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
@@ -374,7 +375,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
   case OVERWRITE: {
     // todo: get new chunk from val expression!
     // ActrChunk* new_chunk = new ActrChunk;
-    // new_chunk->CopyFrom(&chunk);
+    // new_chunk->CopyChunkData(&chunk);
     // SetVarsChunk(prod, new_chunk);
     TestError(true, "DoAction::OVERWRITE", "not yet supported!");
     // model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
@@ -384,7 +385,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
   }
   case REQUEST: {
     ActrChunk* new_chunk = new ActrChunk;
-    new_chunk->CopyFrom(&chunk);
+    new_chunk->CopyChunkData(&chunk);
     SetVarsChunk(prod, new_chunk);
     model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
                          buffer->module, buffer,
@@ -394,7 +395,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
   case REQUEST_DIR: {
     // todo: get new chunk from val expression!
     // ActrChunk* new_chunk = new ActrChunk;
-    // new_chunk->CopyFrom(&chunk);
+    // new_chunk->CopyChunkData(&chunk);
     // SetVarsChunk(prod, new_chunk);
     TestError(true, "DoAction::REQUEST_DIR", "not yet supported!");
     // model->ScheduleEvent(0.0f, ActrEvent::min_pri, proc_mod,
@@ -430,7 +431,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
     SetVarsString(prod, out);
     if(chunk.chunk_type) {
       ActrChunk* new_chunk = new ActrChunk;
-      new_chunk->CopyFrom(&chunk);
+      new_chunk->CopyChunkData(&chunk);
       SetVarsChunk(prod, new_chunk);
       new_chunk->Print(out);
       delete new_chunk;

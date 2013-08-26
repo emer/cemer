@@ -83,10 +83,13 @@ public:
   // #CAT_ActR perform run-time initialization at start of processing -- derived classes should call parent which resets basic stuff including buffer and calls InitModule -- don't call that!
 
   virtual bool  ProcessEvent_std(ActrEvent& event);
-  // #CAT_ActR process standard events dealing with state of module or buffer: BUFFER-READ-ACTION, CLEAR-BUFFER, MOD-BUFFER-CHUNK
+  // #CAT_ActR process standard events dealing with state of module or buffer: BUFFER_READ_ACTION, CLEAR_BUFFER, MOD_BUFFER_CHUNK, SET_BUFFER_CHUNK
   virtual bool  ProcessQuery_std(ActrBuffer* buf, const String& query,
                                  bool why_not = false);
   // #CAT_ActR process standard queries directed at the given buffer -- buffers delegate queries to their module so that modules can process more advanced queries
+
+  virtual bool  RequestBufferClear(ActrBuffer* buf);
+  // #CAT_ActR call this at start of a request event
 
   override String       GetDesc() const {return desc;}
   override String       GetTypeDecoKey() const { return "Program"; }

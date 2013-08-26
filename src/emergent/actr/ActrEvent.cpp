@@ -15,6 +15,7 @@
 
 #include "ActrEvent.h"
 #include <ActrModule>
+#include <ActrModel>
 
 #include <DataTable>
 
@@ -52,32 +53,32 @@ ActrEvent* ActrEvent::NewEvent(float tm, int pri, ActrModule* src_mod,
   return rv;
 }
 
-void ActrEvent::LogEvent(DataTable& dt) {
-  dt.AddBlankRow();
-  dt.SetVal(time, "time", -1);
+void ActrEvent::LogEvent(ActrModel* mod, DataTable* dt) {
+  dt->AddBlankRow();
+  dt->SetVal(time, "time", -1);
   if(src_module) {
-    dt.SetVal(src_module->name, "module", -1);
+    mod->LogEventString(dt, src_module->name, "module");
   }
-  dt.SetVal(action, "action", -1);
+  mod->LogEventString(dt, action, "action");
   if(dst_buffer) {
-    dt.SetVal(dst_buffer->name, "target", -1);
+    mod->LogEventString(dt, dst_buffer->name, "target");
   }
   else if(dst_module) {
-    dt.SetVal(dst_module->name, "target", -1);
-    dt.SetVal(dst_module->name, "dst_module", -1);
+    mod->LogEventString(dt, dst_module->name, "target");
+    mod->LogEventString(dt, dst_module->name, "dst_module");
   }
-  dt.SetVal(params, "params", -1);
+  mod->LogEventString(dt, params, "params");
   if(dst_module) {
-    dt.SetVal(dst_module->name, "dst_module", -1);
+    mod->LogEventString(dt, dst_module->name, "dst_module");
   }
-  dt.SetVal(priority, "priority", -1);
+  dt->SetVal(priority, "priority", -1);
   if(act_arg) {
-    dt.SetVal(act_arg->PrintStr(), "prod_action", -1);
+    dt->SetVal(act_arg->PrintStr(), "prod_action", -1);
   }
   if(chunk_arg) {
-    dt.SetVal(chunk_arg->PrintStr(), "chunk", -1);
+    dt->SetVal(chunk_arg->PrintStr(), "chunk", -1);
   }
-  dt.WriteClose();
+  dt->WriteClose();
 }
 
 

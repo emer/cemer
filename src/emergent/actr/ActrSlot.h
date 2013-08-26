@@ -52,15 +52,34 @@ public:
   String        val;            // #CONDSHOW_ON_val_type:LITERAL the value as a literal value -- empty or "nil" = not set -- for production conditions use =var for variable, and =var- (trailing -) for != var
   Relation::Relations   rel;    // #CONDSHOW_ON_flags:COND,ACT for production conditionals, specifies relationship to use in comparison to potential matching chunk slot values
 
-  virtual bool          IsEmpty();
+  inline void           SetSlotFlag(SlotFlags flg)   { flags = (SlotFlags)(flags | flg); }
+  // #CAT_Flags set flag state on
+  inline void           ClearSlotFlag(SlotFlags flg) { flags = (SlotFlags)(flags & ~flg); }
+  // #CAT_Flags clear flag state (set off)
+  inline bool           HasSlotFlag(SlotFlags flg) const { return (flags & flg); }
+  // #CAT_Flags check if flag is set
+  inline void           SetSlotFlagState(SlotFlags flg, bool on)
+  { if(on) SetSlotFlag(flg); else ClearSlotFlag(flg); }
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleSlotFlag(SlotFlags flg)
+  { SetSlotFlagState(flg, !HasSlotFlag(flg)); }
+  // #CAT_Flags toggle flag
+
+  virtual bool          IsEmpty() const;
   // #CAT_ActR is this item empty or not?
-  virtual bool          IsNil();
+  virtual bool          IsNil() const;
   // #CAT_ActR does this have an explicit 'nil' value set (different than empty)
-  inline  bool          CondIsVar()     { return val.startsWith('='); }
+  inline  bool          IsCond() const  { return HasSlotFlag(COND); }
+  // #CAT_ActR is this a production condition slot?
+  inline  bool          IsAct() const   { return HasSlotFlag(ACT); }
+  // #CAT_ActR is this a production action slot?
+  inline  bool          IsCondAct() const { return IsCond() || IsAct(); }
+  // #CAT_ActR is this a production condition or action slot?
+  inline  bool          CondIsVar() const { return val.startsWith('='); }
   // #CAT_ActR production condition value is a variable name
-  inline  bool          CondIsNeg()     { return val.endsWith('-'); }
+  inline  bool          CondIsNeg() const { return val.endsWith('-'); }
   // #CAT_ActR production condition value is a negation (-)
-  virtual String        GetVarName();
+  virtual String        GetVarName() const;
   // #CAT_ActR get variable name from val 
 
   virtual bool          MatchesProd(ActrProduction& prod, ActrSlot* os,
@@ -74,18 +93,6 @@ public:
   virtual void          CopyValFromChunk(ActrChunk* ck);
   // #CAT_ActR copy slot value as pointer to given chunk
 
-  inline void           SetSlotFlag(SlotFlags flg)   { flags = (SlotFlags)(flags | flg); }
-  // #CAT_Flags set flag state on
-  inline void           ClearSlotFlag(SlotFlags flg) { flags = (SlotFlags)(flags & ~flg); }
-  // #CAT_Flags clear flag state (set off)
-  inline bool           HasSlotFlag(SlotFlags flg) const { return (flags & flg); }
-  // #CAT_Flags check if flag is set
-  inline void           SetSlotFlagState(SlotFlags flg, bool on)
-  { if(on) SetSlotFlag(flg); else ClearSlotFlag(flg); }
-  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
-  inline void           ToggleSlotFlag(SlotFlags flg)
-  { SetSlotFlagState(flg, !HasSlotFlag(flg)); }
-  // #CAT_Flags toggle flag
 
 
   virtual bool          UpdateFromType(const ActrSlotType& typ);

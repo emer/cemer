@@ -126,8 +126,8 @@ public:
   virtual bool          WhyNot();
   // #BUTTON #CAT_ActR explain why this production does not match right now (report given on the css console output)
 
-  virtual void          SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model);
-  // #CAT_ActR send BUFFER-READ-ACTION events to all the buffers we read when we fire, sent from procedural module to buffer owning module
+  virtual void          SendCondActions(ActrProceduralModule* proc_mod, ActrModel* model);
+  // #CAT_ActR send BUFFER_READ_ACTION and QUERY_BUFFER_ACTION events to all the buffers we read when we fire, sent from procedural module to buffer owning module
 
   virtual bool          DoActions(ActrProceduralModule* proc_mod, ActrModel* model);
   // #CAT_ActR the production fired -- perform all the actions

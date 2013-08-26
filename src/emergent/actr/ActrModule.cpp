@@ -96,6 +96,9 @@ bool ActrModule::ProcessQuery_std(ActrBuffer* buf, const String& query, bool why
 bool ActrModule::ProcessEvent_std(ActrEvent& event) {
   bool handled = false;
   if(event.action == "BUFFER_READ_ACTION") {
+    // todo: it seems that this should generate a CLEAR_BUFFER event .05 latency later, when
+    // production actually fires.. -- this is what is recorded in the stack
+    // this may make some kind of difference at some point..
     if(event.dst_buffer)
       event.dst_buffer->HarvestChunk();
     else
@@ -175,3 +178,10 @@ bool ActrModule::ProcessEvent_std(ActrEvent& event) {
   return handled;
 }
 
+bool ActrModule::RequestBufferClear(ActrBuffer* buf) {
+  if(!buf) return false;
+  ActrModel* mod = Model();
+  buf->ClearChunk();         // always clear before find
+  mod->LogEvent(-1.0f, "procedural", "CLEAR_BUFFER", buf->name, "");
+  return true;
+}

@@ -31,7 +31,7 @@ taiWidget* taiMemberOfRegexpDialog::GetWidgetRep_impl(IWidgetHost* host_, taiWid
   iDialogRegexpPopulator *populator = 0;
   String pop_type = mbr->OptionAfter("TYPE_");
   if (!pop_type.empty()) {
-    if (TypeDef *type = TypeDef::FindGlobalTypeName(pop_type, false)) {
+    if (TypeDef *type = TypeDef::FindGlobalTypeName(pop_type, true)) {
       if (void *pv_inst = type->GetInstance()) {
         populator = reinterpret_cast<iDialogRegexpPopulator *>(pv_inst);
       }

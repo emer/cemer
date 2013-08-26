@@ -41,6 +41,10 @@ void ActrGoalModule::ProcessEvent(ActrEvent& event) {
 void ActrGoalModule::Init() {
   inherited::Init();
   buffer->active.CopyFrom(&init_chunk);
+  if(init_chunk.size == 1) {
+    ActrModel* mod = Model();
+    mod->LogEvent(0.0f, "goal", "SET_BUFFER_CHUNK", "", init_chunk.FastEl(0)->name);
+  }
   buffer->UpdateState();
 }
 

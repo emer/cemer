@@ -66,6 +66,7 @@ public:
     LOG_EVENTS          = 0x0001, // log all events processed to data table -- otherwise does not log any events -- specific modules also have more detailed levels of logging available
     UPDATE_GUI          = 0x0002, // update the gui display with state changes so you can see which productions fired and which chunks were selected
     SAVE_ALL_EVENTS     = 0x0004, // never delete any events from the events_list -- useful for debugging to see a trace of everything that happened during a run in the events list -- otherwise culls the list periodically
+    UPCASE_LOG          = 0x0008, // attempt to match ACT-R upper-casing of items in the log
   };
 
   enum RunState { // current run state for this model
@@ -177,6 +178,8 @@ public:
                                  float priority = 0.0f, const String& prod_action = "",
                                  const String& chunk = "");
   // #CAT_ActR log an event -- writes to the corresponding columns in the log table -- if time <= 0 then cur_time is output
+  virtual void          LogEventString(DataTable* dt, const String& val, const String& colnm);
+  // #IGNORE log a string event to a column -- does the UPCASE_LOG logic
 
   virtual void          FormatLogTable();
   // #CAT_ActR configure the columns in the log table for holding run trace

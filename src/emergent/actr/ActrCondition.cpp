@@ -423,18 +423,31 @@ bool ActrCondition::MatchVars(ActrProduction& prod, bool why_not) {
   return true;
 }
 
-void ActrCondition::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {
+void ActrCondition::SendCondActions(ActrProceduralModule* proc_mod, ActrModel* model) {
   if(IsOff()) return;
 
-  if(cond_src != BUFFER_EQ) return;
-  if(HasCondFlag(BUF_UPDT_ACT)) return;
-  if(TestError(!src, "Matches",
-               "no buffer specified as the source to match against!"))
-    return;
-  ActrBuffer* buf = (ActrBuffer*)src.ptr();
-  // todo: not sure about pri here
-  model->ScheduleEvent(0.0f, ActrEvent::max_pri, proc_mod, buf->module, buf,
-                       "BUFFER_READ_ACTION", buf->name);
+  if(cond_src == BUFFER_EQ) {
+    if(TestError(!src, "SendCondActions",
+                 "no buffer specified as the source to match against!"))
+      return;
+    ActrBuffer* buf = (ActrBuffer*)src.ptr();
+    if(HasCondFlag(BUF_UPDT_ACT)) {
+      model->LogEvent(-1.0f, "procedural", "BUFFER_READ_ACTION", buf->name, "will updt, is null");
+      return;
+    }
+    // todo: not sure about pri here
+    model->ScheduleEvent(0.0f, ActrEvent::max_pri, proc_mod, buf->module, buf,
+                         "BUFFER_READ_ACTION", buf->name);
+  }
+  else if(cond_src == BUFFER_QUERY) {
+    // note: this already happened so is kinda superflous -- not sure what point is,
+    // but matches act-r log
+    if(TestError(!src, "SendCondActions",
+                 "no buffer specified as the source to match against!"))
+      return;
+    ActrBuffer* buf = (ActrBuffer*)src.ptr();
+    model->LogEvent(-1.0f, "procedural", "QUERY_BUFFER_ACTION", buf->name);
+  }
 }
 
 bool ActrCondition::SetVal(ActrSlot* slt, const String& val,

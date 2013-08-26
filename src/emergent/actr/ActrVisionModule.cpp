@@ -157,6 +157,9 @@ void ActrVisionModule::ProcessEvent(ActrEvent& event) {
   }
 }
 
+// todo: buffer stuffing:
+// Whenever there is an update to the visual scene (as indicated to the model by calling proc- display), if the visual-location buffer is empty, a visual-location chunk of some visual feature will be placed into the visual-location buffer. The feature which gets "stuffed" into the buffer is chosen based on preferences which can be set either by the modeler or directly by the model. The default preference is for the left-most unattended item.
+
 void ActrVisionModule::VisionRequest(ActrEvent& event) {
   ActrChunk* ck = event.chunk_arg;
   if(TestError(!ck || !ck->chunk_type, "VisionRequest", "chunk is NULL")) {
@@ -170,6 +173,8 @@ void ActrVisionModule::VisionRequest(ActrEvent& event) {
     mod->LogEvent(-1.0f, "vision", "ABORT_VISION_REQ", "", "");
     return;
   }
+
+  RequestBufferClear(event.dst_buffer); // always clear for any request
 
   RemoveOldFinsts();            // update the list to current time
 
@@ -208,7 +213,6 @@ void ActrVisionModule::VisualLocationRequest(ActrEvent& event) {
   SetModuleFlag(BUSY);
   ClearModuleFlag(ERROR);
   location_buffer->SetReq();
-  location_buffer->ClearChunk();         // always clear before find
 
   Attended attd = NO_ATTENDED;
   Nearest nearest = NO_NEAREST;
@@ -583,7 +587,6 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
   ActrModel* mod = Model();
 
   last_cmd = "move_attention";
-  // mod->LogEvent(-1.0f, "vision", "Move_attention", "", "");
 
   SetModuleFlag(BUSY);
   SetModuleFlag(PROC);       // move-attention = processor
@@ -611,6 +614,9 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
                   "");
     return;
   }
+
+  mod->LogEvent(-1.0f, "vision", "Move_attention", "", moveto->name);
+
   // todo: process the scale command -- not compatible with new model of visicon
 
   ActrChunk* obj = moveto->GetSlotValChunk("object");
@@ -628,7 +634,7 @@ void ActrVisionModule::MoveAttentionRequest(ActrEvent& event) {
   attended = moveto;            // this is now the new attended location
   UpdateFinsts(attended);       // and we mark it as such
 
-  mod->ScheduleEvent(0.0f, ActrEvent::max_pri, this, this, buffer,
+  mod->ScheduleEvent(attn.latency, ActrEvent::max_pri, this, this, buffer,
                      "Encoding_complete", obj->name, event.act_arg,
                      obj);
 
@@ -653,7 +659,7 @@ void ActrVisionModule::StartTrackingRequest(ActrEvent& event) {
   ActrModel* mod = Model();
   last_cmd = "start_tracking";
 
-  // mod->LogEvent(-1.0f, "vision", "Start_tracking", "", "");
+  mod->LogEvent(-1.0f, "vision", "Start_tracking", "", "");
 
   if(!attended) {
     ClearModuleFlag(BUSY);
@@ -700,7 +706,7 @@ void ActrVisionModule::ClearSceneChangeRequest(ActrEvent& event) {
   ActrModel* mod = Model();
   last_cmd = "clear_scene_change";
 
-  // mod->LogEvent(-1.0f, "vision", "CLEAR_SCENE_CHANGE", "", "");
+  mod->LogEvent(-1.0f, "vision", "CLEAR_SCENE_CHANGE", "", "");
 
   // clears any pending scene change -- takes no time and does not cause any busy
 
@@ -831,6 +837,7 @@ ActrChunk* ActrVisionModule::AddObject(const String& nm, const String& value, co
   bool made_new;
   ActrChunk* obj = (ActrChunk*)objects.FindMakeNameType(nm, NULL, made_new);
   obj->SetChunkTypeName(typ_nm);
+  obj->SetChunkDefName(objects.size-1); // name by size of objects
   obj->SetSlotVal("value", value);
   obj->SetSlotVal("status", status);
   obj->SetSlotVal("color", color);
@@ -847,6 +854,7 @@ ActrChunk* ActrVisionModule::AddObjToVisIcon(const String& nm, float screen_x, f
   ActrChunk* obj = AddObject(nm, value, status, color, height, width);
   ActrChunk* loc = (ActrChunk*)visicon.New(1);
   loc->SetChunkTypeName(typ_nm);
+  loc->SetChunkDefName(visicon.size-1); // name by size of visicon
   loc->SetSlotVal("screen_x", (String)screen_x);
   loc->SetSlotVal("screen_y", (String)screen_y);
   loc->SetSlotVal("distance", (String)distance);

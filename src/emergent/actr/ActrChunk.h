@@ -150,11 +150,13 @@ public:
   // #CAT_ActR get slot value as a pointer to a chunk -- emits error if slot type is a literal
 
   virtual ActrSlot*     NewSlot();
-  // #BUTTON make a new slot in this chunk
+  // #BUTTON #CAT_ActR make a new slot in this chunk
   virtual void          SetChunkType(ActrChunkType* ck_type);
-  // #MENU #MENU_ON_Actions #DROP1 #DYN1 set chunk type for this chunk (can use drag-and-drop and call on a set of selected items)
+  // #MENU #MENU_ON_Actions #DROP1 #DYN1 #CAT_ActR set chunk type for this chunk (can use drag-and-drop and call on a set of selected items)
   virtual void          SetChunkTypeName(const String& ck_type);
-  // #MENU #MENU_ON_Actions set chunk type for this chunk to given name
+  // #MENU #MENU_ON_Actions #CAT_ActR set chunk type for this chunk to given name
+  virtual void          SetChunkDefName(int ctr = 0);
+  // #CAT_ActR set default chunk name based on type name with additional counter variable
 
   virtual bool          MatchesProd(ActrProduction& prod, ActrChunk* cmp,
                                     bool exact, bool why_not = false);
@@ -179,6 +181,8 @@ public:
   { if(!chunk_type) return NULL; return chunk_type->CommonChunkType(other); }
   // #CAT_ActR returns the highest common chunk type between this chunk type and the other -- NULL if they are not related
 
+  virtual void          CopyChunkData(ActrChunk* fm_ck);
+  // #CAT_ActR copy only the data from another chunk -- for use in runtime -- doesn't copy flags or other things -- just the values
 
   override taList_impl*	children_() {return &slots;}	
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const

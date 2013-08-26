@@ -33,6 +33,7 @@ class taBrainAtlas; //
 eTypeDef_Of(BrainAtlasRegexpPopulator);
 
 class E_API BrainAtlasRegexpPopulator : public iDialogRegexpPopulator {
+  // #NO_MEMBERS #NO_CSS
 public:
   BrainAtlasRegexpPopulator();
   override QStringList getHeadings(bool editor_mode, int& extra_cols) const;
@@ -42,14 +43,18 @@ public:
   override void    setSource(const void *fieldOwner);
   override void adjustTitle(QString &title, const void *fieldOwner) const;
 
+#ifndef __MAKETA__
   QList<QColor> getColors() const;
   void setColors(const QList<QColor>& colors);
+#endif
 private:
   mutable taBrainAtlas* m_atlas;
   mutable QStringList m_labels;
   mutable QStringList m_headings;
   mutable QString m_filepath;
+#ifndef __MAKETA__
   mutable QList<QColor> m_colors;
+#endif
 };
 
 #endif // BrainAtlasRegexpPopulator_h

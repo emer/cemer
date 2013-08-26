@@ -74,6 +74,27 @@ void ActrProduction::UpdateVars() {
       }
     }
   }
+  // extra check on all actions for buffer names -- those need to be marked as UPDT as well apparently
+  ActrModel* mod = GET_MY_OWNER(ActrModel);
+  if(mod) {
+    for(int j=0; j<acts.size; j++) {
+      ActrAction* act = acts.FastEl(j);
+      for(int ci=0; ci<act->chunk.slots.size; ci++) {
+        ActrSlot* as = act->chunk.slots.FastEl(ci);
+        if(!as->CondIsVar()) continue;
+        String vnm = as->GetVarName();
+        ActrBuffer* buf = mod->buffers.FindName(vnm);
+        if(buf) {
+          for(int i=0; i<conds.size; i++) {
+            ActrCondition* cnd = conds.FastEl(i);
+            if(cnd->src.ptr() == buf) {
+              cnd->SetCondFlag(ActrCondition::BUF_UPDT_ACT); // we are going to update
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 void ActrProduction::InitActionProgs() {
@@ -168,10 +189,10 @@ bool ActrProduction::WhyNot() {
   return rval;
 }
 
-void ActrProduction::SendBufferReads(ActrProceduralModule* proc_mod, ActrModel* model) {
+void ActrProduction::SendCondActions(ActrProceduralModule* proc_mod, ActrModel* model) {
   for(int i=0; i<conds.size; i++) {
     ActrCondition* cnd = conds.FastEl(i);
-    cnd->SendBufferReads(proc_mod, model);
+    cnd->SendCondActions(proc_mod, model);
   }
 }
 

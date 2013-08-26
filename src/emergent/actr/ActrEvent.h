@@ -53,7 +53,7 @@ public:
                                  TypeDef* event_type = NULL);
   // #CAT_ActR create a new event with given params
 
-  virtual void     LogEvent(DataTable& dt);
+  virtual void     LogEvent(ActrModel* mod, DataTable* dt);
   // #CAT_ActR log the event to a log_table configured by ActrModel with relevant columns
 
   override String& Print(String& strm, int indent = 0) const;

@@ -73,8 +73,20 @@ void ActrChunk::UpdateAfterEdit_impl() {
     for(int i=0; i< slots.size; i++) {
       ActrSlot* sl = slots[i];
       sl->SetSlotFlag(ActrSlot::ACT);
+      sl->val_type = ActrSlot::LITERAL;
     }
   }
+}
+
+void ActrChunk::CopyChunkData(ActrChunk* fm_ck) {
+  name = fm_ck->name + "_0";
+  chunk_type = fm_ck->chunk_type;
+  slots = fm_ck->slots;
+  for(int i=0; i< slots.size; i++) {
+    ActrSlot* sl = slots[i];
+    sl->flags = ActrSlot::SF_NONE; // clear flags
+  }
+  UpdateFromType();
 }
 
 void ActrChunk::ResetChunk() {
@@ -163,6 +175,15 @@ void ActrChunk::SetChunkTypeName(const String& ck_type) {
     if(ct) {
       SetChunkType(ct);
     }
+  }
+}
+
+void ActrChunk::SetChunkDefName(int ctr) {
+  if(chunk_type) {
+    SetName(chunk_type->name + "_" + String(ctr));
+  }
+  else {
+    SetName("nil_type_" + String(ctr));
   }
 }
 
