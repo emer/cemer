@@ -1834,6 +1834,10 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   return rval;
 }
 
+bool DataTable::InsertRowsAfter(int st_row, int n_rows) {
+  return InsertRows(st_row + n_rows, n_rows);  // InsertRows does the range check
+}
+
 bool DataTable::RemoveRows(int st_row, int n_rows) {
   if(st_row < 0)
     st_row = rows-1;       // end

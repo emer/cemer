@@ -449,7 +449,9 @@ public:
   virtual bool          AddRows(int n = 1);
   // #BUTTON #MENU #MENU_ON_Rows #CAT_Rows add n rows, returns true if successfully added
   virtual bool          InsertRows(int st_row, int n_rows=1);
-  // #MENU #MENU_ON_Rows #CAT_Rows insert n rows at starting row number, returns true if succesfully inserted
+  // #MENU #MENU_ON_Rows #CAT_Rows insert n rows at starting row number, returns true if successfully inserted
+  virtual bool          InsertRowsAfter(int st_row, int n_rows=1);
+  // #CAT_Rows insert N rows after st_row + n_rows, returns true if successfully inserted
   virtual bool          RemoveRows(int st_row, int n_rows=1);
   // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end
   virtual void          RemoveAllRows() { ResetData(); }

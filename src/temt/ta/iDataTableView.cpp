@@ -126,15 +126,19 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE))) {
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER))) {
       if (sel.height() < 1) goto bail;
       if (op_code & OP_APPEND) {
         if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
         tab->AddRows(sel.height());
       }
       else if (op_code & OP_INSERT) {
-        if(proj) proj->undo_mgr.SaveUndo(tab, "Insertows", tab);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "InsertRows", tab);
         tab->InsertRows(sel.row_fr, sel.height());
+      }
+      else if (op_code & OP_INSERT_AFTER) {
+        if(proj) proj->undo_mgr.SaveUndo(tab, "InsertRowsAfter", tab);
+        tab->InsertRowsAfter(sel.row_fr, sel.height());
       }
       else if (op_code & OP_DUPLICATE) {
         if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);

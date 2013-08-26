@@ -128,6 +128,10 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       RowColOp(OP_ROW | OP_INSERT);
       e->accept();
       break;
+    case Qt::Key_O:
+      RowColOp(OP_ROW | OP_INSERT_AFTER);
+      e->accept();
+      break;
     case Qt::Key_M:
       RowColOp(OP_ROW | OP_DUPLICATE);
       e->accept();
@@ -232,6 +236,8 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
       act = menu->AddItem("Insert Rows (Ctrl+I)", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
+      act = menu->AddItem("Insert Rows After (Ctrl+O)", taiWidgetMenu::normal, iAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT_AFTER) );
       act = menu->AddItem("Duplicate Rows (Ctrl+M)", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
       act = menu->AddItem("Delete Rows (Ctrl+D)", taiWidgetMenu::normal, iAction::int_act,
