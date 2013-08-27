@@ -127,29 +127,53 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER))) {
-      if (sel.height() < 1) goto bail;
+      if (sel.height() < 1)
+        goto bail;
+      QModelIndex newIndex;
+      bool rval = false;
+
       if (op_code & OP_APPEND) {
-        if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
-        tab->AddRows(sel.height());
+        if(proj)
+          proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
+        rval = tab->AddRows(sel.height());
+        newIndex  = this->model()->index(tab->rows-1, 0);
       }
       else if (op_code & OP_INSERT) {
-        if(proj) proj->undo_mgr.SaveUndo(tab, "InsertRows", tab);
-        tab->InsertRows(sel.row_fr, sel.height());
+        if(proj)
+          proj->undo_mgr.SaveUndo(tab, "InsertRows", tab);
+        rval = tab->InsertRows(sel.row_fr, sel.height());
+        newIndex  = this->model()->index(sel.row_fr, 0);
       }
       else if (op_code & OP_INSERT_AFTER) {
-        if(proj) proj->undo_mgr.SaveUndo(tab, "InsertRowsAfter", tab);
-        tab->InsertRowsAfter(sel.row_fr, sel.height());
+        if(proj)
+          proj->undo_mgr.SaveUndo(tab, "InsertRowsAfter", tab);
+        rval = tab->InsertRowsAfter(sel.row_fr, sel.height());
+        newIndex  = this->model()->index(sel.row_fr + sel.height(), 0);
       }
       else if (op_code & OP_DUPLICATE) {
-        if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
-        tab->DuplicateRows(sel.row_fr, sel.height());
+        if(proj)
+          proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
+        rval = tab->DuplicateRows(sel.row_fr, sel.height());
+        newIndex  = this->model()->index(sel.row_fr + sel.height(), 0);
       }
       else if (op_code & OP_DELETE) {
         if(taMisc::delete_prompts) {
-          if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) goto bail;
+          if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0)
+            goto bail;
         }
-        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
-        tab->RemoveRows(sel.row_fr, sel.height());
+        if(proj)
+          proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
+        rval = tab->RemoveRows(sel.row_fr, sel.height());
+        if (sel.row_fr != 0)
+          newIndex = this->model()->index(sel.row_fr - 1, 0);
+        else
+          newIndex = this->model()->index(0, 0);
+        }
+
+      if (rval) {
+        this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
+        this->setCurrentIndex(newIndex);
+        this->setFocus();
       }
     }
   }
