@@ -39,6 +39,8 @@ set(actr_HEADS_MAKETA
   ActrGoalModule.h
   ActrImaginalModule.h
   ActrVisionModule.h
+  ActrMotorStyle.h
+  ActrMotorStyle_List.h
   ActrMotorModule.h
   ActrModel.h
   ActrLex.h
@@ -81,6 +83,8 @@ set(actr_SRCS
   ActrGoalModule.cpp
   ActrImaginalModule.cpp
   ActrVisionModule.cpp
+  ActrMotorStyle.cpp
+  ActrMotorStyle_List.cpp
   ActrMotorModule.cpp
   ActrModel.cpp
   ActrLex.cpp

@@ -22,6 +22,8 @@
 // member includes:
 #include <int_Matrix>
 #include <String_Matrix>
+#include <ActrMotorStyle_List>
+#include <taMath_float>
 
 // declare all other types mentioned but not required to include:
 
@@ -55,6 +57,11 @@ public:
   float         min_fitts;  // #DEF_0.1 :min-fitts-time in ACT-R -- minimum movement time in seconds to perform an aimed movement (for which Fitt's timing law is applied)
   float         peck_fitts_coeff; // #DEF_0.075 :peck-fitts-coeff in ACT-R -- the b coefficient in Fitt's equation for the timing of peck style movements
 
+  float         Fitts(float b, float dist, float width = 1.0f)
+  { float rv = b * taMath_float::log2(dist / width + 0.5f); if(rv < min_fitts) rv = min_fitts;
+    return rv;}
+  // fitts law equation
+
   override String       GetTypeDecoKey() const { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrMotorTimeParams);
@@ -84,12 +91,22 @@ public:
     COL,
     ROW,
   };
+  enum MotorStyles {       // these correspond to entries in the styles list of motor styles
+    PUNCH,                      // punch a key -- hand, finger features
+    HFRT,                       // hand-finger r-theta movement -- those 4 features
+    PECK,                       // peck a key -- basically hfrt
+    PECK_RECOIL,                // peck and recoil -- same as PECK feature-wise
+    PLY,                        // generic ply
+    HAND_PLY,                   // hand ply -- to keyboard-centric coordinates
+    CURSOR_PLY,                 // hand ply -- to screen coordinates
+    N_STYLES,                   // number of styles
+  };
 
   ActrMotorParams       params; // misc motor parameters
   ActrMotorTimeParams   timing; // timing motor parameters
-  ActrChunk             prep_act; // #HIDDEN #NO_SAVE action being prepared
-  ActrChunk             init_act; // #HIDDEN #NO_SAVE action being initiated
-  ActrChunk             exec_act; // #HIDDEN #NO_SAVE action being executed
+  ActrMotorStyle_List   styles; // available motor styles defined
+  ActrMotorStyle_List   last_prep; // last prepared motor action
+  ActrMotorStyle_List   exec_queue; // list of queued motor actions that have been prepared and are ready to execute
   int_Matrix            hand_pos; // #HIDDEN #NO_SAVE [x y, finger, hand] matrix for hand positions
   String_Matrix         pos_to_key; // #HIDDEN #NO_SAVE translate position to key name (only for 0..22, 0..6 keyboard -- mouse at 28,2 handled separately in function)
 
@@ -136,32 +153,63 @@ public:
   // #CAT_ActR process a prepare request
   virtual void  ExecuteRequest(ActrEvent& event);
   // #CAT_ActR process an execute request
-  virtual void  StdMotorRequest(ActrEvent& event, const String& cmd);
+  virtual void  StdMotorRequest(ActrEvent& event);
   // #CAT_ActR process a standard motor request -- triggers prep, init, exec sequence
 
-  virtual void  ExecPunch(ActrEvent& event);
+  virtual ActrMotorStyle* NewPrep(MotorStyles style);
+  // #IGNORE get a new motor prep rep for given style
+  virtual ActrMotorStyle* LastPrep();
+  // #IGNORE return last prep or NULL if none
+  virtual void  SetNewLastPrep(ActrMotorStyle* st);
+  // #IGNORE set last_prep to this new prep
+
+  virtual void  PrepPunch(const String& hand, const String& finger);
+  // #CAT_ActR prepare a punch action
+  virtual void  ExecPunch(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a punch action
-  virtual void  ExecClickMouse(ActrEvent& event);
+  virtual void  PrepClickMouse();
+  // #CAT_ActR prepare a click_mouse action
+  virtual void  ExecClickMouse(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a click_mouse action
-  virtual void  ExecPeck(ActrEvent& event);
+  virtual void  PrepPeck(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a peck action
+  virtual void  ExecPeck(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a peck action
-  virtual void  ExecPeckRecoil(ActrEvent& event);
+  virtual void  PrepPeckRecoil(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a peck_recoil action
+  virtual void  ExecPeckRecoil(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a peck_recoil action
-  virtual void  ExecPressKey(ActrEvent& event);
-  // #CAT_ActR execute a press_key action
-  virtual void  ExecHandToMouse(ActrEvent& event);
+  virtual void  PrepPressKey(const String& key);
+  // #CAT_ActR prepare a press_key action
+  virtual void  PrepHandPly(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a ply (hand movement)
+  virtual void  PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y);
+  // #CAT_ActR prepare a ply (hand movement)
+  virtual void  PrepHandToMouse();
+  // #CAT_ActR prepare a hand_to_mouse action
+  virtual void  ExecHandToMouse(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a hand_to_mouse action
-  virtual void  ExecHandToHome(ActrEvent& event);
+  virtual void  PrepHandToHome();
+  // #CAT_ActR prepare a hand_to_home action
+  virtual void  ExecHandToHome(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a hand_to_home action
-  virtual void  ExecMoveCursor(ActrEvent& event);
+  virtual void  PrepCursorPly(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a move_cursor action
+  virtual void  PrepMoveCursor();
+  // #CAT_ActR prepare a move_cursor action
+  virtual void  ExecCursorPly(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a move_cursor action
-  virtual void  ExecPointHandAtKey(ActrEvent& event);
+  virtual void  PrepPointHandAtKey(const String& hand, const String& to_key);
+  // #CAT_ActR prepare a point_hand_at_key action
+  virtual void  ExecPointHandAtKey(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a point_hand_at_key action
 
   virtual void  InitHandPos();
   // #CAT_ActR initialize hand position to home keys
   virtual void  InitPosToKey();
   // #IGNORE initialize the pos_to_key mapping matrix
+  virtual void  InitMotorStyles();
+  // #IGNORE initialize the motor styles
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);
