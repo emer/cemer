@@ -24,6 +24,7 @@
 #include <String_Matrix>
 #include <ActrMotorStyle_List>
 #include <taMath_float>
+#include <taVector2i>
 #include <Program>
 
 // declare all other types mentioned but not required to include:
@@ -35,8 +36,8 @@ class E_API ActrMotorParams : public taOBase {
 INHERITED(taOBase)
 public:
   bool          cursor_noise;  // #DEF_false :cursor-noise in ACT-R -- add noise to the final cursor position relative to the target position
-  float         def_targ_width; // #DEF_1 :default-target-width in ACT-R -- The effective width, in degrees of visual angle, of targets with undefined widths when computing the Fitt's law computation
   float         inc_mouse_move;  // #DEF_0:0.05 :incremental-mouse-moves in ACT-R -- if non-zero, updates mouse location every inc_mouse_move seconds when it is in motion (typically 50 ms) -- if 0, only updates location at end of move
+  float         def_targ_width; // #DEF_1 :default-target-width in ACT-R -- The effective width, in degrees of visual angle, of targets with undefined widths when computing the Fitt's law computation
 
   override String       GetTypeDecoKey() const { return "Program"; }
 
@@ -57,8 +58,9 @@ public:
   float         burst;      // #DEF_0.05 :motor-burst-time in ACT-R -- minimum time required for any motor movement in seconds
   float         min_fitts;  // #DEF_0.1 :min-fitts-time in ACT-R -- minimum movement time in seconds to perform an aimed movement (for which Fitt's timing law is applied)
   float         peck_fitts_coeff; // #DEF_0.075 :peck-fitts-coeff in ACT-R -- the b coefficient in Fitt's equation for the timing of peck style movements
+  float         mouse_fitts_coeff; // #DEF_0.1 :mouse-fitts-coeff in ACT-R -- the b coefficient in Fitt's equation for the timing of mouse cursor movements
 
-  float         Fitts(float b, float dist, float width = 1.0f)
+  float         Fitts(float b, float dist, float width)
   { float rv = b * taMath_float::log2(dist / width + 0.5f); if(rv < min_fitts) rv = min_fitts;
     return rv;}
   // fitts law equation
@@ -113,6 +115,7 @@ public:
   ActrMotorStyle_List   exec_queue; // #HIDDEN #NO_SAVE list of queued motor actions that have been prepared and are ready to execute
   int_Matrix            hand_pos; // #HIDDEN #NO_SAVE [x y, hand] matrix for hand positions
   int_Matrix            finger_pos; // #HIDDEN #NO_SAVE [x y, finger, hand] matrix for finger offset positions relative to hand positions
+  taVector2i            cursor_pos; // #HIDDEN #NO_SAVE current cursor position
   String_Matrix         pos_to_key; // #HIDDEN #NO_SAVE translate position to key name (only for 0..22, 0..6 keyboard -- mouse at 28,2 handled separately in function)
   ActrMotorStyle_List   key_to_cmd; // #HIDDEN #NO_SAVE mapping between keys and motor commands
 
@@ -148,9 +151,10 @@ public:
   virtual bool  MoveFinger(int& col, int& row, Hand hand, Finger finger,
                            float r, float theta);
   // #CAT_ActR move given finger using r, theta parameters
-  virtual bool  MoveHand(int& col, int& row, Hand hand,
-                         float r, float theta);
-  // #CAT_ActR move given finger using r, theta parameters
+  virtual bool  MoveHand(int& col, int& row, Hand hand, float r, float theta);
+  // #CAT_ActR move given hand using r, theta parameters -- also resets associated finger offsets to std form
+  virtual bool  MoveCursor(int& col, int& row, float r, float theta);
+  // #CAT_ActR move cursor using given r, theta parameters
   virtual bool  HandOnMouse(Hand hand = RIGHT);
   // #CAT_ActR is the hand on the mouse?
 
@@ -190,17 +194,23 @@ public:
   // #CAT_ActR prepare a peck_recoil action
   virtual ActrMotorStyle* PrepPressKey(const String& key);
   // #CAT_ActR prepare a press_key action
-  virtual ActrMotorStyle* PrepHandPly(const String& hand, const String& finger, float r, float theta);
+  virtual ActrMotorStyle* PrepHandPly(const String& hand, float r, float theta);
   // #CAT_ActR prepare a ply (hand movement)
-  virtual ActrMotorStyle* PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y);
+  virtual ActrMotorStyle* PrepHandPlyToCoord(const String& hand, int to_col, int to_row);
   // #CAT_ActR prepare a ply (hand movement)
   virtual ActrMotorStyle* PrepHandToMouse();
   // #CAT_ActR prepare a hand_to_mouse action
   virtual ActrMotorStyle* PrepHandToHome();
   // #CAT_ActR prepare a hand_to_home action
-  virtual ActrMotorStyle* PrepCursorPly(const String& hand, const String& finger, float r, float theta);
-  // #CAT_ActR prepare a move_cursor action
-  virtual ActrMotorStyle* PrepMoveCursor();
+  virtual ActrMotorStyle* PrepCursorPly(float r, float theta, float coeff_mult = 1.0f,
+                                        float targ_width = 1.0f);
+  // #CAT_ActR prepare a cursor_ply action
+  virtual ActrMotorStyle* PrepCursorPlyToCoord(int to_col, int to_row,
+                                               float coeff_mult = 1.0f,
+                                               float targ_width = 1.0f);
+  // #CAT_ActR prepare a cursor_ply action to coords
+  virtual ActrMotorStyle* PrepMoveCursor(ActrChunk* obj, ActrChunk* loc,
+                                         const String& device);
   // #CAT_ActR prepare a move_cursor action
   virtual ActrMotorStyle* PrepPointHandAtKey(const String& hand, const String& to_key);
   // #CAT_ActR prepare a point_hand_at_key action
@@ -224,6 +234,9 @@ public:
   // #IGNORE initialize the pos_to_key mapping matrix
   virtual void  InitMotorStyles();
   // #IGNORE initialize the motor styles
+
+  virtual void  Clear_impl();
+  // #IGNORE implement clearing
 
   override void  InitModule();
   override void  ProcessEvent(ActrEvent& event);

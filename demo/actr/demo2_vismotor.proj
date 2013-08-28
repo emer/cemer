@@ -905,7 +905,7 @@ LeabraProject .projects["demo2_vismotor"] {
 		};
 	      };
 
-	      ActrChunk_List @.active = [5] {
+	      ActrChunk_List @.active = [6] {
 		ActrChunk @["start_0"] { 
 		  ActrSlot_List @.slots = [0] {
 		  };
@@ -925,6 +925,16 @@ LeabraProject .projects["demo2_vismotor"] {
 		ActrChunk @["goal_0"] { 
 		  ActrSlot_List @.slots = [1] {
 		    ActrSlot @["state"] { };
+		  };
+		};
+		ActrChunk @["visual_object_0_0_0"] { 
+		  ActrSlot_List @.slots = [6] {
+		    ActrSlot @["screen_pos"] { };
+		    ActrSlot @["value"] { };
+		    ActrSlot @["status"] { };
+		    ActrSlot @["color"] { };
+		    ActrSlot @["height"] { };
+		    ActrSlot @["width"] { };
 		  };
 		};
 	      };
@@ -957,178 +967,8 @@ LeabraProject .projects["demo2_vismotor"] {
 		};
 	      };
 
-	      ActrChunk_List @.objects = [18] {
+	      ActrChunk_List @.objects = [1] {
 		ActrChunk @["visual_object_0"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_1"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_2"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_3"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_4"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_5"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_6"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_7"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_8"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_9"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_10"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_11"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_12"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_13"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_14"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_15"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_16"] { 
-		  ActrSlot_List @.slots = [6] {
-		    ActrSlot @["screen_pos"] { };
-		    ActrSlot @["value"] { };
-		    ActrSlot @["status"] { };
-		    ActrSlot @["color"] { };
-		    ActrSlot @["height"] { };
-		    ActrSlot @["width"] { };
-		  };
-		};
-		ActrChunk @["visual_object_17"] { 
 		  ActrSlot_List @.slots = [6] {
 		    ActrSlot @["screen_pos"] { };
 		    ActrSlot @["value"] { };
@@ -1162,7 +1002,12 @@ LeabraProject .projects["demo2_vismotor"] {
 	      };
 	    };
 	    ActrBuffer @["imaginal"] { 
-	      ActrChunk_List @.active = [0] {
+	      ActrChunk_List @.active = [1] {
+		ActrChunk @["encode_letter_a1_0_0_0"] { 
+		  ActrSlot_List @.slots = [1] {
+		    ActrSlot @["letter"] { };
+		  };
+		};
 	      };
 	    };
 	    ActrBuffer @["imaginal_action"] { 
@@ -1174,7 +1019,21 @@ LeabraProject .projects["demo2_vismotor"] {
 	      };
 	    };
 	    ActrBuffer @["visual_location"] { 
-	      ActrChunk_List @.active = [0] {
+	      ActrChunk_List @.active = [1] {
+		ActrChunk @["visual_location_0_0"] { 
+		  ActrSlot_List @.slots = [10] {
+		    ActrSlot @["screen_x"] { };
+		    ActrSlot @["screen_y"] { };
+		    ActrSlot @["distance"] { };
+		    ActrSlot @["kind"] { };
+		    ActrSlot @["color"] { };
+		    ActrSlot @["value"] { };
+		    ActrSlot @["height"] { };
+		    ActrSlot @["width"] { };
+		    ActrSlot @["size"] { };
+		    ActrSlot @["object"] { };
+		  };
+		};
 	      };
 	    };
 	    ActrBuffer @["manual"] { 
@@ -1207,7 +1066,7 @@ LeabraProject .projects["demo2_vismotor"] {
 	};
       };
 
-      ProgEl_List @.prog_code = [8] {
+      ProgEl_List @.prog_code = [9] {
 	LocalVars @[0] { 
 	  ProgVar_List @.local_vars = [1] {
 	    ProgVar @["stim"] { };
@@ -1225,6 +1084,10 @@ LeabraProject .projects["demo2_vismotor"] {
 	  };
 	};
 	MemberMethodCall @[6] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MemberMethodCall @[7] { 
 	  ProgArg_List @.meth_args = [11] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -1239,7 +1102,7 @@ LeabraProject .projects["demo2_vismotor"] {
 	    ProgArg @[10] { };
 	  };
 	};
-	MethodCall @[7] { 
+	MethodCall @[8] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
@@ -1508,9 +1371,9 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":fals
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"40\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 \"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});;},{},{});mw.loader.
-implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"8367334593c477e7b2692f581f05a59a+\\\\\",\"watchToken\":\"0f5c209969b740d6447b5e0afaca6298+\\\\\"});;},{},{});
+implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"741e999904a4ad46419ba1969e7988d5+\\\\\",\"watchToken\":\"40a7783b6499365812cbf13123af0b6d+\\\\\"});;},{},{});
 
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:24126d58f13bd6a24acb11018caa5bc2 */
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:01a41ade7d3eb79b341a8b508f2ff0cb */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
@@ -1615,7 +1478,7 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/ACT-R/demo/count\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=c4076aed1b9dfec8f7f06ca1af8636ac%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=d9d3974f62b1656f0b7f2093c6e96883%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2243,7 +2106,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 May 2013, at 01:21.</span>
-			<span id=\"f-viewcount\">This page has been accessed 277 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 281 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2277,7 +2140,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.180 secs. -->
+<!-- Served in 0.253 secs. -->
 
 
 
@@ -2941,8 +2804,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
      keygen 4 0=0;
      row_indexes {
       name=;
-	  [21] 18;2;15;7;17;1;9;8;13;20;
-14;19;4;10;3;12;6;11;5;0;
+	  [21] 10;14;19;1;9;18;4;15;12;17;
+6;0;11;8;5;3;7;2;13;20;
 16;     };
     };
     DataTable @["ActrLogTable"] {
@@ -2977,7 +2840,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=60;
        ar {
 	name=;
-	      [1] 0;       };
+	      [49] 0;0;0;0;0.050000001;0.050000001;0.050000001;0.050000001;0.050000001;0.050000001;
+0.050000001;0.050000001;0.050000001;0.050000001;0.050000001;0.1;0.1;0.1;0.1;0.1;
+0.185;0.185;0.185;0.185;0.185;0.185;0.235;0.235;0.235;0.235;
+0.435;0.435;0.435;0.435;0.435;0.435;0.435;0.48500001;0.48500001;0.48500001;
+0.48500001;0.48500001;0.73500001;0.78500003;0.88500005;0.88500005;1.0350001;1.0350001;1.0350001;       };
       };
       String_Data @["module"] {
        UserDataItem_List @*(.user_data_) {
@@ -3004,7 +2871,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=90;
        ar {
 	name=;
-	      [1] "GOAL";       };
+	      [49] "GOAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"VISION";"VISION";
+"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"VISION";
+"VISION";"VISION";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";
+"IMAGINAL";"IMAGINAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";"PROCEDURAL";
+"MOTOR";"PROCEDURAL";"MOTOR";"MOTOR";"MOTOR";"MOTOR";"MOTOR";"PROCEDURAL";"------";       };
       };
       String_Data @["action"] {
        UserDataItem_List @*(.user_data_) {
@@ -3031,7 +2902,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=131;
        ar {
 	name=;
-	      [1] "SET_BUFFER_CHUNK";       };
+	      [49] "SET_BUFFER_CHUNK";"CONFLICT_RESOLUTION";"PRODUCTION_SELECTED";"BUFFER_READ_ACTION";"PRODUCTION_FIRED";"MOD_BUFFER_CHUNK";"MODULE_REQUEST";"CLEAR_BUFFER";"Find_location";"SET_BUFFER_CHUNK";
+"CONFLICT_RESOLUTION";"PRODUCTION_SELECTED";"BUFFER_READ_ACTION";"BUFFER_READ_ACTION";"QUERY_BUFFER_ACTION";"PRODUCTION_FIRED";"MOD_BUFFER_CHUNK";"MODULE_REQUEST";"CLEAR_BUFFER";"Move_attention";
+"Encoding_complete";"SET_BUFFER_CHUNK";"CONFLICT_RESOLUTION";"PRODUCTION_SELECTED";"BUFFER_READ_ACTION";"BUFFER_READ_ACTION";"PRODUCTION_FIRED";"MODULE_REQUEST";"CLEAR_BUFFER";"MOD_BUFFER_CHUNK";
+"CREATE_NEW_BUFFER_CHUNK";"SET_BUFFER_CHUNK";"CONFLICT_RESOLUTION";"PRODUCTION_SELECTED";"BUFFER_READ_ACTION";"QUERY_BUFFER_ACTION";"BUFFER_READ_ACTION";"PRODUCTION_FIRED";"MODULE_REQUEST";"CLEAR_BUFFER";
+"PRESS_KEY";"MOD_BUFFER_CHUNK";"PREPARATION_COMPLETE";"INITIATION_COMPLETE";"EXECUTE_ACTION";"OUTPUT_KEY";"FINISH_MOVEMENT";"CONFLICT_RESOLUTION";"Stopped because no events left to process";       };
       };
       String_Data @["target"] {
        UserDataItem_List @*(.user_data_) {
@@ -3058,7 +2933,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=145;
        ar {
 	name=;
-	      [1] ;       };
+	      [49] ;"PROCEDURAL";"FIND_UNATTENDED_LETTER";"GOAL";"PROCEDURAL";"GOAL";"VISUAL_LOCATION";"VISUAL_LOCATION";;"VISUAL_LOCATION";
+"PROCEDURAL";"ATTEND_LETTER";"GOAL";"VISUAL_LOCATION";"VISUAL";"PROCEDURAL";"GOAL";"VISUAL";"VISUAL";;
+"VISUAL";"VISUAL";"PROCEDURAL";"ENCODE_LETTER";"GOAL";"VISUAL";"PROCEDURAL";"IMAGINAL";"IMAGINAL";"GOAL";
+"IMAGINAL";"IMAGINAL";"PROCEDURAL";"RESPOND";"GOAL";"MANUAL";"IMAGINAL";"PROCEDURAL";"MANUAL";"MANUAL";
+;"GOAL";"MANUAL";"MANUAL";"MANUAL";;"MANUAL";"PROCEDURAL";;       };
       };
       String_Data @["params"] {
        UserDataItem_List @*(.user_data_) {
@@ -3085,7 +2964,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=119;
        ar {
 	name=;
-	      [1] "GOAL";       };
+	      [49] "GOAL";;;"WILL UPDT, IS NULL";"FIND_UNATTENDED_LETTER";;"ATTENDED NIL";;;"VISUAL_LOCATION_0";
+;;"WILL UPDT, IS NULL";"WILL UPDT, IS NULL";;"ATTEND_LETTER";;;;"VISUAL_LOCATION_0_0";
+"VISUAL_OBJECT_0";"VISUAL_OBJECT_0";;;"WILL UPDT, IS NULL";"VISUAL";"ENCODE_LETTER";;;;
+;;;;"WILL UPDT, IS NULL";;"IMAGINAL";"RESPOND";;;
+"RESPOND_A1_0 ISA PRESS_KEY ( KEY N; )";;"PRESS_KEY";"PRESS_KEY";"PRESS_KEY";"N #(6 5)";"PRESS_KEY";;;       };
       };
       String_Data @["dst_module"] {
        UserDataItem_List @*(.user_data_) {
@@ -3112,7 +2995,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=80;
        ar {
 	name=;
-	      [1] ;       };
+	      [49] ;"PROCEDURAL";;;"PROCEDURAL";"GOAL";"VISION";;;"VISION";
+"PROCEDURAL";;;;;"PROCEDURAL";"GOAL";"VISION";;;
+"VISION";"VISION";"PROCEDURAL";;;"VISION";"PROCEDURAL";"IMAGINAL";;"GOAL";
+"IMAGINAL";"IMAGINAL";"PROCEDURAL";;;;"IMAGINAL";"PROCEDURAL";"MOTOR";;
+;"GOAL";"MOTOR";"MOTOR";"MOTOR";;"MOTOR";"PROCEDURAL";;       };
       };
       float_Data @["priority"] {
        UserDataItem_List @*(.user_data_) {
@@ -3139,7 +3026,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=60;
        ar {
 	name=;
-	      [1] 0;       };
+	      [49] 0;100;0;0;100;0;0;0;0;100;
+100;0;0;0;0;100;0;0;0;0;
+100;100;100;0;0;100;100;0;0;0;
+100;100;100;0;0;0;100;100;0;0;
+0;0;100;100;100;0;100;100;0;       };
       };
       String_Data @["prod_action"] {
        UserDataItem_List @*(.user_data_) {
@@ -3166,7 +3057,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=245;
        ar {
 	name=;
-	      [1] ;       };
+	      [49] ;;;;;"=goal  find_unattended_letter_a1 ISA read_letters ( state find_location; )";"+visual_location :attended nil find_unattended_letter_a0 ISA visual_location ( screen_x ; screen_y ; distance ; kind ; color ; value ; height ; width ; size ; object ; )";;;"+visual_location :attended nil find_unattended_letter_a0 ISA visual_location ( screen_x ; screen_y ; distance ; kind ; color ; value ; height ; width ; size ; object ; )";
+;;;;;;"=goal  attend_letter_a1 ISA read_letters ( state attend; )";"+visual  attend_letter_a0 ISA move_attention ( screen_pos =visual_location; scale ; )";;;
+"+visual  attend_letter_a0 ISA move_attention ( screen_pos =visual_location; scale ; )";"+visual  attend_letter_a0 ISA move_attention ( screen_pos =visual_location; scale ; )";;;;;;"+imaginal  encode_letter_a1 ISA array ( letter =letter; )";;"=goal  encode_letter_a0 ISA read_letters ( state respond; )";
+"+imaginal  encode_letter_a1 ISA array ( letter =letter; )";"+imaginal  encode_letter_a1 ISA array ( letter =letter; )";;;;;;;"+manual  respond_a1 ISA press_key ( key =letter; )";;
+;"=goal  respond_a0 ISA read_letters ( state done; )";"+manual  respond_a1 ISA press_key ( key =letter; )";"+manual  respond_a1 ISA press_key ( key =letter; )";"+manual  respond_a1 ISA press_key ( key =letter; )";;"+manual  respond_a1 ISA press_key ( key =letter; )";;;       };
       };
       String_Data @["chunk"] {
        UserDataItem_List @*(.user_data_) {
@@ -3193,7 +3088,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        width=208;
        ar {
 	name=;
-	      [1] ;       };
+	      [49] ;;;;;"find_unattended_letter_a1_0 ISA read_letters ( state find_location; )";"find_unattended_letter_a0_0 ISA visual_location ( screen_x ; screen_y ; distance ; kind ; color ; value ; height ; width ; size ; object nil; )";;;"visual_location_0 ISA visual_location ( screen_x 125; screen_y 150; distance 0; kind text; color ; value N; height ; width ; size ; object *visual_object_0; )";
+;;;;;;"attend_letter_a1_0 ISA read_letters ( state attend; )";"attend_letter_a0_0 ISA move_attention ( screen_pos *visual_location_0_0; scale ; )";;;
+"visual_object_0 ISA visual_object ( screen_pos *visual_location_0; value N; status ; color ; height ; width ; )";"visual_object_0 ISA visual_object ( screen_pos *visual_location_0; value N; status ; color ; height ; width ; )";;;;;;"encode_letter_a1_0 ISA array ( letter N; )";;"encode_letter_a0_0 ISA read_letters ( state respond; )";
+"encode_letter_a1_0 ISA array ( letter N; )";"encode_letter_a1_0_0 ISA array ( letter N; )";;;;;;;"respond_a1_0 ISA press_key ( key N; )";;
+;"respond_a0_0 ISA read_letters ( state done; )";"respond_a1_0 ISA press_key ( key N; )";"respond_a1_0 ISA press_key ( key N; )";"respond_a1_0 ISA press_key ( key N; )";;"respond_a1_0 ISA press_key ( key N; )";;;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3202,13 +3101,17 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
      keygen 4 0=0;
      row_indexes {
       name=;
-	  [1] 0;     };
+	  [49] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;     };
     };
     ActrModel @["demo2"] {
      name="demo2";
      desc="the demo2.lisp ACT-R model itself -- everything is contained underneath this object";
      flags=LOG_EVENTS|UPDATE_GUI|SAVE_ALL_EVENTS|UPCASE_LOG;
-     cur_time=0;
+     cur_time=1.035;
      params {
       enable_sub_symbolic=0;
       enable_rnd=0;
@@ -5004,7 +4907,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 flags=0;
 	 desc=;
 	 util {init=0: cur=0: choice=0: rew=0: };
-	 time {act=0: last_fire=-1: };
+	 time {act=0: last_fire=0.05: };
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -5191,7 +5094,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 flags=0;
 	 desc=;
 	 util {init=0: cur=0: choice=0: rew=0: };
-	 time {act=0: last_fire=-1: };
+	 time {act=0: last_fire=0.1: };
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -5446,7 +5349,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 flags=0;
 	 desc=;
 	 util {init=0: cur=0: choice=0: rew=0: };
-	 time {act=0: last_fire=-1: };
+	 time {act=0: last_fire=0.235: };
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -5635,7 +5538,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 flags=0;
 	 desc=;
 	 util {init=0: cur=0: choice=0: rew=0: };
-	 time {act=0: last_fire=-1: };
+	 time {act=0: last_fire=0.485: };
 	 conds {
 	  name="ActrCondition_List_0";
 	  el_typ=ActrCondition;
@@ -5898,7 +5801,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="start_0";
 	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["chunk"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
 	 time {n_act=1: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -5910,7 +5813,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="attend_0";
 	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["chunk"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
 	 time {n_act=1: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -5922,7 +5825,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="respond_0";
 	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["chunk"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
 	 time {n_act=1: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -5934,7 +5837,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="done_0";
 	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["chunk"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
 	 time {n_act=1: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -5946,7 +5849,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="goal_0";
 	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].chunk_types["read_letters"]$;
 	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 act {act=0: base=0: spread=0: match=0: noise=-0: };
 	 time {n_act=1: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -5958,6 +5861,66 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   val_type=LITERAL;
 	   val_chunk=NULL;
 	   val="start";
+	   rel=EQUAL;
+	  };
+	 };
+	};
+	ActrChunk @["visual_object_0_0_0"] {
+	 name="visual_object_0_0_0";
+	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
+	 flags=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=1: t_new=0.185: t_act=-1: };
+	 slots {
+	  name="ActrSlot_List_0";
+	  el_typ=ActrSlot;
+	  el_def=0;
+	  ActrSlot @["screen_pos"] {
+	   name="screen_pos";
+	   flags=0;
+	   val_type=CHUNK;
+	   val_chunk=.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"].visicon["visual_location_0"]$$;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["value"] {
+	   name="value";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="N";
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["status"] {
+	   name="status";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["color"] {
+	   name="color";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["height"] {
+	   name="height";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["width"] {
+	   name="width";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
 	   rel=EQUAL;
 	  };
 	 };
@@ -5999,7 +5962,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        name="imaginal";
        desc=;
        buffer=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].buffers["imaginal"]$;
-       flags=0;
+       flags=BUSY;
        imaginal_delay {name="Random_4": type=NONE: mean=0.2000000029802322: var=0: par=1: };
        action_buffer=.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].buffers["imaginal_action"]$$;
       };
@@ -6020,7 +5983,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_location"]$;
 	 flags=ELIGIBLE;
 	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=1: t_new=0.785: t_act=-1: };
+	 time {n_act=1: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
 	  el_typ=ActrSlot;
@@ -6070,7 +6033,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="X";
+	   val="N";
 	   rel=EQUAL;
 	  };
 	  ActrSlot @["height"] {
@@ -6101,7 +6064,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   name="object";
 	   flags=0;
 	   val_type=CHUNK;
-	   val_chunk=.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"].objects["visual_object_17"]$$;
+	   val_chunk=.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"].objects["visual_object_0"]$$;
 	   val=;
 	   rel=EQUAL;
 	  };
@@ -6126,607 +6089,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   name="screen_pos";
 	   flags=0;
 	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="B";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_1"] {
-	 name="visual_object_1";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="B";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_2"] {
-	 name="visual_object_2";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="B";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_3"] {
-	 name="visual_object_3";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="C";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_4"] {
-	 name="visual_object_4";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="J";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_5"] {
-	 name="visual_object_5";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="C";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_6"] {
-	 name="visual_object_6";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="S";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_7"] {
-	 name="visual_object_7";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="M";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_8"] {
-	 name="visual_object_8";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="T";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_9"] {
-	 name="visual_object_9";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="F";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_10"] {
-	 name="visual_object_10";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
+	   val_chunk=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"].visicon["visual_location_0"]$;
 	   val=;
 	   rel=EQUAL;
 	  };
@@ -6772,426 +6135,6 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	  };
 	 };
 	};
-	ActrChunk @["visual_object_11"] {
-	 name="visual_object_11";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="Y";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_12"] {
-	 name="visual_object_12";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="W";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_13"] {
-	 name="visual_object_13";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="W";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_14"] {
-	 name="visual_object_14";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="W";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_15"] {
-	 name="visual_object_15";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="P";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_16"] {
-	 name="visual_object_16";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="D";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
-	ActrChunk @["visual_object_17"] {
-	 name="visual_object_17";
-	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_object"]$;
-	 flags=0;
-	 act {act=0: base=0: spread=0: match=0: noise=0: };
-	 time {n_act=0: t_new=-1: t_act=-1: };
-	 slots {
-	  name="ActrSlot_List_0";
-	  el_typ=ActrSlot;
-	  el_def=0;
-	  ActrSlot @["screen_pos"] {
-	   name="screen_pos";
-	   flags=0;
-	   val_type=CHUNK;
-	   val_chunk=.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"].visicon["visual_location_0"]$$;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["value"] {
-	   name="value";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val="X";
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["status"] {
-	   name="status";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["color"] {
-	   name="color";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["height"] {
-	   name="height";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	  ActrSlot @["width"] {
-	   name="width";
-	   flags=0;
-	   val_type=LITERAL;
-	   val_chunk=NULL;
-	   val=;
-	   rel=EQUAL;
-	  };
-	 };
-	};
        };
        center {x=0: y=0: };
       };
@@ -7200,8 +6143,8 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        desc=;
        buffer=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].buffers["manual"]$;
        flags=0;
-       params {cursor_noise=0: def_targ_width=1: inc_mouse_move=0: };
-       timing {feat_prep=0.05: init=0.05: burst=0.05: min_fitts=0.1: peck_fitts_coeff=0.075: };
+       params {cursor_noise=0: inc_mouse_move=0: def_targ_width=1: };
+       timing {feat_prep=0.05: init=0.05: burst=0.05: min_fitts=0.1: peck_fitts_coeff=0.075: mouse_fitts_coeff=0.1: };
        act_prog=NULL;
       };
      };
@@ -7256,7 +6199,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	   flags=0;
 	   val_type=LITERAL;
 	   val_chunk=NULL;
-	   val="start";
+	   val="done";
 	   rel=EQUAL;
 	  };
 	 };
@@ -7268,11 +6211,31 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
       ActrBuffer @["imaginal"] {
        name="imaginal";
        desc=;
-       flags=DM_MERGE;
+       flags=FULL|REQ|DM_MERGE;
        active {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
+	ActrChunk @["encode_letter_a1_0_0_0"] {
+	 name="encode_letter_a1_0_0_0";
+	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].chunk_types["array"]$;
+	 flags=0;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=0: t_new=-1: t_act=-1: };
+	 slots {
+	  name="ActrSlot_List_0";
+	  el_typ=ActrSlot;
+	  el_def=0;
+	  ActrSlot @["letter"] {
+	   name="letter";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="N";
+	   rel=EQUAL;
+	  };
+	 };
+	};
        };
        module=.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["imaginal"]$$;
        act_total=0;
@@ -7304,11 +6267,103 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
       ActrBuffer @["visual_location"] {
        name="visual_location";
        desc=;
-       flags=STRICT_HARVEST|DM_MERGE;
+       flags=FULL|STRICT_HARVEST|DM_MERGE;
        active {
 	name="ActrChunk_List_0";
 	el_typ=ActrChunk;
 	el_def=0;
+	ActrChunk @["visual_location_0_0"] {
+	 name="visual_location_0_0";
+	 chunk_type=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].sys_chunk_types["visual_location"]$;
+	 flags=ELIGIBLE|RECENT;
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
+	 time {n_act=1: t_new=0: t_act=-1: };
+	 slots {
+	  name="ActrSlot_List_0";
+	  el_typ=ActrSlot;
+	  el_def=0;
+	  ActrSlot @["screen_x"] {
+	   name="screen_x";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="125";
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["screen_y"] {
+	   name="screen_y";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="150";
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["distance"] {
+	   name="distance";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="0";
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["kind"] {
+	   name="kind";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="text";
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["color"] {
+	   name="color";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["value"] {
+	   name="value";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val="N";
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["height"] {
+	   name="height";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["width"] {
+	   name="width";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["size"] {
+	   name="size";
+	   flags=0;
+	   val_type=LITERAL;
+	   val_chunk=NULL;
+	   val=;
+	   rel=EQUAL;
+	  };
+	  ActrSlot @["object"] {
+	   name="object";
+	   flags=0;
+	   val_type=CHUNK;
+	   val_chunk=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"].objects["visual_object_0"]$;
+	   val=;
+	   rel=EQUAL;
+	  };
+	 };
+	};
        };
        module=$.projects["demo2_vismotor"].programs["Count_ActR"].objs["demo2"].modules["vision"]$;
        act_total=0;
@@ -7326,7 +6381,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
        act_total=0;
       };
      };
-     cur_event_idx=0;
+     cur_event_idx=28;
      log_table=.projects["demo2_vismotor"].programs["Count_ActR"].objs["ActrLogTable"]$$;
      load_debug=0;
     };
@@ -7485,6 +6540,20 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="demo2.modules.vision.visicon.Reset()";
      obj=$.projects["demo2_vismotor"].programs["Count_ActR"].vars["demo2"]$;
+     path="modules.vision.objects";
+     result_var=NULL;
+     method=taList_impl::Reset;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MemberMethodCall @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="demo2.modules.vision.visicon.Reset()";
+     obj=$.projects["demo2_vismotor"].programs["Count_ActR"].vars["demo2"]$;
      path="modules.vision";
      result_var=NULL;
      method=ActrVisionModule::AddObjToVisIcon;
@@ -7604,7 +6673,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
       };
      };
     };
-    MethodCall @[7] {
+    MethodCall @[8] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="TestModel.Init()";
