@@ -37,7 +37,6 @@ void ActrMotorTimeParams::Initialize() {
 }
 
 void ActrMotorModule::Initialize() {
-  hand_pos.SetGeom(3, 2, 5, 2);
 }
 
 void ActrMotorModule::InitModule() {
@@ -121,10 +120,15 @@ void ActrMotorModule::InitMotorStyles() {
 }
 
 void ActrMotorModule::InitHandPos() {
-  int inits[] = { 4,4, 3,4, 2,4, 1,4, 5,6,
-                  7,4, 8,4, 9,4, 10,4, 6,6 };
+  finger_pos.SetGeom(3, 2, 5, 2);
+  hand_pos.SetGeom(2, 2, 2);
+
+  int hand_inits[] = { 4,4, 7,4 };
+  int fing_inits[] = { 0,0, -1,0, -2,0, -3,0, 1,2,
+                       0,0, 1,0, 2,0, 3,0, -1,2 };
   
-  hand_pos.InitFromInts(inits);
+  hand_pos.InitFromInts(hand_inits);
+  finger_pos.InitFromInts(fing_inits);
 }
 
 void ActrMotorModule::InitPosToKey() {
@@ -261,22 +265,42 @@ ActrMotorModule::Finger ActrMotorModule::StringToFinger(const String& str) {
 }
 
 bool ActrMotorModule::CurFingerPos(int& col, int& row, Hand hand, Finger finger) {
-  if(TestError(!hand_pos.InRange(ROW, finger, hand), "CurFingerPos",
+  if(TestError(!finger_pos.InRange(ROW, finger, hand), "CurFingerPos",
                "hand:", (String)hand, "or finger:", (String)finger, "is out of range")) {
     return false;
   }
-  col = hand_pos.SafeEl(COL, finger, hand);
-  row = hand_pos.SafeEl(ROW, finger, hand);
+  col = hand_pos.SafeEl(COL, hand) + finger_pos.SafeEl(COL, finger, hand);
+  row = hand_pos.SafeEl(ROW, hand) + finger_pos.SafeEl(ROW, finger, hand);
+  return true;
+}
+
+bool ActrMotorModule::CurHandPos(int& col, int& row, Hand hand) {
+  if(TestError(!hand_pos.InRange(ROW, hand), "CurHandPos",
+               "hand:", (String)hand, "is out of range")) {
+    return false;
+  }
+  col = hand_pos.SafeEl(COL, hand);
+  row = hand_pos.SafeEl(ROW, hand);
   return true;
 }
 
 bool ActrMotorModule::SetFingerPos(int col, int row, Hand hand, Finger finger) {
-  if(TestError(!hand_pos.InRange(ROW, finger, hand), "CurFingerPos",
+  if(TestError(!finger_pos.InRange(ROW, finger, hand), "SetFingerPos",
                "hand:", (String)hand, "or finger:", (String)finger, "is out of range")) {
     return false;
   }
-  hand_pos.FastEl(COL, finger, hand) = col;
-  hand_pos.FastEl(ROW, finger, hand) = row;
+  finger_pos.FastEl(COL, finger, hand) = col - hand_pos.SafeEl(COL, hand);
+  finger_pos.FastEl(ROW, finger, hand) = row - hand_pos.SafeEl(ROW, hand);
+  return true;
+}
+
+bool ActrMotorModule::SetHandPos(int col, int row, Hand hand) {
+  if(TestError(!hand_pos.InRange(ROW, hand), "SetHandPos",
+               "hand:", (String)hand, "is out of range")) {
+    return false;
+  }
+  hand_pos.FastEl(COL, hand) = col;
+  hand_pos.FastEl(ROW, hand) = row;
   return true;
 }
 
@@ -308,6 +332,17 @@ bool ActrMotorModule::MoveFinger(int& col, int& row, Hand hand, Finger finger,
   return true;
 }
 
+bool ActrMotorModule::MoveHand(int& col, int& row, Hand hand,
+                               float r, float theta) {
+  CurHandPos(col, row, hand);
+  if(r > 0.0f) {
+    col += (int) taMath_float::round(r * cosf(theta));
+    row += (int) taMath_float::round(r * sinf(theta));
+    SetHandPos(col, row, hand);
+  }
+  return true;
+}
+
 void ActrMotorModule::PressKey(const String& key, float time) {
   last_key = key;
   last_key_time = time;
@@ -330,28 +365,9 @@ void ActrMotorModule::PressKey(const String& key, float time) {
 }
 
 bool ActrMotorModule::HandOnMouse(Hand hand) {
-  return CurFingerKey(hand, INDEX) == "mouse";
-}
-
-void ActrMotorModule::HandToMouse(Hand hand) {
-  SetFingerKey("mouse", hand, INDEX);
-}
-
-void ActrMotorModule::HandToHome(Hand hand) {
-  if(hand == RIGHT) {
-    SetFingerKey("j", hand, INDEX);
-    SetFingerKey("k", hand, MIDDLE);
-    SetFingerKey("l", hand, RING);
-    SetFingerKey(";", hand, PINKIE);
-    SetFingerPos(6, 6, hand, THUMB);
-  }
-  else {
-    SetFingerKey("f", hand, INDEX);
-    SetFingerKey("d", hand, MIDDLE);
-    SetFingerKey("s", hand, RING);
-    SetFingerKey("a", hand, PINKIE);
-    SetFingerPos(5, 6, hand, THUMB);
-  }
+  int row, col;
+  CurHandPos(col, row, hand);
+  return (col == 28 && row == 2);
 }
 
 void ActrMotorModule::ProcessEvent(ActrEvent& event) {
@@ -691,7 +707,8 @@ ActrMotorStyle* ActrMotorModule::PrepPressKey(const String& key) {
 
   // fall-through
   int row, col;
-  if(TestWarning(!KeyToPos(col, row, key), "Motor", "No press_key mapping available for key:", key)) {
+  if(TestWarning(!KeyToPos(col, row, key), "Motor",
+                 "No press_key mapping available for key:", key)) {
     // todo: log a BAD_KEY message
     return NULL;
   }
@@ -699,7 +716,8 @@ ActrMotorStyle* ActrMotorModule::PrepPressKey(const String& key) {
   return PrepPeckRecoil("right", "index", 1, 0); // dummy values -- just do something
 }  
     
-ActrMotorStyle* ActrMotorModule::PrepHandPly(const String& hand, const String& finger, float r, float theta) {
+ActrMotorStyle* ActrMotorModule::PrepHandPly(const String& hand, const String& finger,
+                                             float r, float theta) {
   ActrMotorStyle* st = NewPrep(HAND_PLY);
   st->features.SetVal("hand", hand);
   st->features.SetVal("finger", finger);
@@ -729,7 +747,8 @@ ActrMotorStyle* ActrMotorModule::PrepHandPly(const String& hand, const String& f
   return st;
 }  
 
-ActrMotorStyle* ActrMotorModule::PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y) {
+ActrMotorStyle* ActrMotorModule::PrepHandPlyToCoord(const String& hand,
+                                        const String& finger, float x, float y) {
   // todo: convert x,y to r, theta, then call PrepPly
   return PrepHandPly(hand, finger, 1.0f, 0.0f);
 }  
@@ -746,7 +765,8 @@ ActrMotorStyle* ActrMotorModule::PrepHandToHome() {
   return PrepHandPlyToCoord("right", "index", 7.0, 4.0);
 }
     
-ActrMotorStyle* ActrMotorModule::PrepCursorPly(const String& hand, const String& finger, float r, float theta) {
+ActrMotorStyle* ActrMotorModule::PrepCursorPly(const String& hand, const String& finger,
+                                               float r, float theta) {
   ActrMotorStyle* st = NewPrep(CURSOR_PLY);
   st->features.SetVal("hand", hand);
   st->features.SetVal("finger", finger);

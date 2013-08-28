@@ -111,7 +111,8 @@ public:
   ActrMotorStyle_List   styles; // #HIDDEN #NO_SAVE available motor styles defined
   ActrMotorStyle_List   last_prep; // #HIDDEN #NO_SAVE last prepared motor action
   ActrMotorStyle_List   exec_queue; // #HIDDEN #NO_SAVE list of queued motor actions that have been prepared and are ready to execute
-  int_Matrix            hand_pos; // #HIDDEN #NO_SAVE [x y, finger, hand] matrix for hand positions
+  int_Matrix            hand_pos; // #HIDDEN #NO_SAVE [x y, hand] matrix for hand positions
+  int_Matrix            finger_pos; // #HIDDEN #NO_SAVE [x y, finger, hand] matrix for finger offset positions relative to hand positions
   String_Matrix         pos_to_key; // #HIDDEN #NO_SAVE translate position to key name (only for 0..22, 0..6 keyboard -- mouse at 28,2 handled separately in function)
   ActrMotorStyle_List   key_to_cmd; // #HIDDEN #NO_SAVE mapping between keys and motor commands
 
@@ -126,13 +127,11 @@ public:
 
   virtual bool   CurFingerPos(int& col, int& row, Hand hand, Finger finger);
   // #CAT_ActR return current col, row position of given finger on given hand
-  inline bool    CurHandPos(int& col, int& row, Hand hand)
-  { return CurFingerPos(col, row, hand, INDEX); }
+  virtual bool   CurHandPos(int& col, int& row, Hand hand);
   // #CAT_ActR return current col, row position of given hand (as determined by INDEX finger)
   virtual bool   SetFingerPos(int col, int row, Hand hand, Finger finger);
   // #CAT_ActR set current col, row position of given finger on given hand
-  inline bool    SetHandPos(int& col, int& row, Hand hand)
-  { return SetFingerPos(col, row, hand, INDEX); }
+  virtual bool   SetHandPos(int col, int row, Hand hand);
   // #CAT_ActR set current col, row position of given hand (as determined by INDEX finger)
 
   virtual String  CurFingerKey(Hand hand, Finger finger);
@@ -149,12 +148,11 @@ public:
   virtual bool  MoveFinger(int& col, int& row, Hand hand, Finger finger,
                            float r, float theta);
   // #CAT_ActR move given finger using r, theta parameters
+  virtual bool  MoveHand(int& col, int& row, Hand hand,
+                         float r, float theta);
+  // #CAT_ActR move given finger using r, theta parameters
   virtual bool  HandOnMouse(Hand hand = RIGHT);
   // #CAT_ActR is the hand on the mouse?
-  virtual void  HandToMouse(Hand hand = RIGHT);
-  // #CAT_ActR move the hand to the mouse
-  virtual void  HandToHome(Hand hand = RIGHT);
-  // #CAT_ActR move the hand and fingers to the home positions on keyboard
 
   virtual void  MotorRequest(ActrEvent& event);
   // #CAT_ActR process a motor request
