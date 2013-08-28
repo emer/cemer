@@ -24,6 +24,7 @@
 #include <String_Matrix>
 #include <ActrMotorStyle_List>
 #include <taMath_float>
+#include <Program>
 
 // declare all other types mentioned but not required to include:
 
@@ -104,11 +105,15 @@ public:
 
   ActrMotorParams       params; // misc motor parameters
   ActrMotorTimeParams   timing; // timing motor parameters
-  ActrMotorStyle_List   styles; // available motor styles defined
-  ActrMotorStyle_List   last_prep; // last prepared motor action
-  ActrMotorStyle_List   exec_queue; // list of queued motor actions that have been prepared and are ready to execute
+  String                last_key; // #NO_SAVE last key pressed -- will be the string mouse for a mouse click
+  float                 last_key_time; // #NO_SAVE time that last key was pressed
+  ProgramRef            act_prog;      // program to call when an action is executed -- program can check the info on this module for what happened
+  ActrMotorStyle_List   styles; // #HIDDEN #NO_SAVE available motor styles defined
+  ActrMotorStyle_List   last_prep; // #HIDDEN #NO_SAVE last prepared motor action
+  ActrMotorStyle_List   exec_queue; // #HIDDEN #NO_SAVE list of queued motor actions that have been prepared and are ready to execute
   int_Matrix            hand_pos; // #HIDDEN #NO_SAVE [x y, finger, hand] matrix for hand positions
   String_Matrix         pos_to_key; // #HIDDEN #NO_SAVE translate position to key name (only for 0..22, 0..6 keyboard -- mouse at 28,2 handled separately in function)
+  ActrMotorStyle_List   key_to_cmd; // #HIDDEN #NO_SAVE mapping between keys and motor commands
 
   virtual String PosToKey(int col, int row);
   // #CAT_ActR translate col, row position to corresponding key on keyboard, or if 28,2, the mouse
@@ -138,11 +143,17 @@ public:
   virtual String  CurFingerAll(int& col, int& row, Hand hand, Finger finger);
   // #CAT_ActR return key name, col, and row for current position of given finger on given hand
 
-  virtual bool    HandOnMouse(Hand hand = RIGHT);
+  virtual void  PressKey(const String& key, float time);
+  // #CAT_ActR called when a key is pressed -- sets last_key and last_key_time, calls act_prog or if that is NULL just prints out the key output
+
+  virtual bool  MoveFinger(int& col, int& row, Hand hand, Finger finger,
+                           float r, float theta);
+  // #CAT_ActR move given finger using r, theta parameters
+  virtual bool  HandOnMouse(Hand hand = RIGHT);
   // #CAT_ActR is the hand on the mouse?
-  virtual void    HandToMouse(Hand hand = RIGHT);
+  virtual void  HandToMouse(Hand hand = RIGHT);
   // #CAT_ActR move the hand to the mouse
-  virtual void    HandToHome(Hand hand = RIGHT);
+  virtual void  HandToHome(Hand hand = RIGHT);
   // #CAT_ActR move the hand and fingers to the home positions on keyboard
 
   virtual void  MotorRequest(ActrEvent& event);
@@ -158,51 +169,56 @@ public:
 
   virtual ActrMotorStyle* NewPrep(MotorStyles style);
   // #IGNORE get a new motor prep rep for given style
+  virtual ActrMotorStyle* MakeMotorCmd(const String& nm, MotorStyles style,
+                                       const Variant& par1=_nilVariant,
+                                       const Variant& par2=_nilVariant,
+                                       const Variant& par3=_nilVariant,
+                                       const Variant& par4=_nilVariant,
+                                       const Variant& par5=_nilVariant);
+  // #IGNORE make a new motor command with given parameters
+    
   virtual ActrMotorStyle* LastPrep();
   // #IGNORE return last prep or NULL if none
   virtual void  SetNewLastPrep(ActrMotorStyle* st);
   // #IGNORE set last_prep to this new prep
 
-  virtual void  PrepPunch(const String& hand, const String& finger);
+  virtual ActrMotorStyle* PrepPunch(const String& hand, const String& finger);
   // #CAT_ActR prepare a punch action
+  virtual ActrMotorStyle* PrepClickMouse();
+  // #CAT_ActR prepare a click_mouse action
+  virtual ActrMotorStyle* PrepPeck(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a peck action
+  virtual ActrMotorStyle* PrepPeckRecoil(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a peck_recoil action
+  virtual ActrMotorStyle* PrepPressKey(const String& key);
+  // #CAT_ActR prepare a press_key action
+  virtual ActrMotorStyle* PrepHandPly(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a ply (hand movement)
+  virtual ActrMotorStyle* PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y);
+  // #CAT_ActR prepare a ply (hand movement)
+  virtual ActrMotorStyle* PrepHandToMouse();
+  // #CAT_ActR prepare a hand_to_mouse action
+  virtual ActrMotorStyle* PrepHandToHome();
+  // #CAT_ActR prepare a hand_to_home action
+  virtual ActrMotorStyle* PrepCursorPly(const String& hand, const String& finger, float r, float theta);
+  // #CAT_ActR prepare a move_cursor action
+  virtual ActrMotorStyle* PrepMoveCursor();
+  // #CAT_ActR prepare a move_cursor action
+  virtual ActrMotorStyle* PrepPointHandAtKey(const String& hand, const String& to_key);
+  // #CAT_ActR prepare a point_hand_at_key action
+
+  virtual void  ExecAction(ActrEvent& event, ActrMotorStyle* st);
+  // #CAT_ActR execute an action
   virtual void  ExecPunch(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a punch action
-  virtual void  PrepClickMouse();
-  // #CAT_ActR prepare a click_mouse action
-  virtual void  ExecClickMouse(ActrEvent& event, ActrMotorStyle* st);
-  // #CAT_ActR execute a click_mouse action
-  virtual void  PrepPeck(const String& hand, const String& finger, float r, float theta);
-  // #CAT_ActR prepare a peck action
   virtual void  ExecPeck(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a peck action
-  virtual void  PrepPeckRecoil(const String& hand, const String& finger, float r, float theta);
-  // #CAT_ActR prepare a peck_recoil action
   virtual void  ExecPeckRecoil(ActrEvent& event, ActrMotorStyle* st);
   // #CAT_ActR execute a peck_recoil action
-  virtual void  PrepPressKey(const String& key);
-  // #CAT_ActR prepare a press_key action
-  virtual void  PrepHandPly(const String& hand, const String& finger, float r, float theta);
-  // #CAT_ActR prepare a ply (hand movement)
-  virtual void  PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y);
-  // #CAT_ActR prepare a ply (hand movement)
-  virtual void  PrepHandToMouse();
-  // #CAT_ActR prepare a hand_to_mouse action
-  virtual void  ExecHandToMouse(ActrEvent& event, ActrMotorStyle* st);
-  // #CAT_ActR execute a hand_to_mouse action
-  virtual void  PrepHandToHome();
-  // #CAT_ActR prepare a hand_to_home action
-  virtual void  ExecHandToHome(ActrEvent& event, ActrMotorStyle* st);
-  // #CAT_ActR execute a hand_to_home action
-  virtual void  PrepCursorPly(const String& hand, const String& finger, float r, float theta);
-  // #CAT_ActR prepare a move_cursor action
-  virtual void  PrepMoveCursor();
-  // #CAT_ActR prepare a move_cursor action
+  virtual void  ExecHandPly(ActrEvent& event, ActrMotorStyle* st);
+  // #CAT_ActR execute a hand_ply action
   virtual void  ExecCursorPly(ActrEvent& event, ActrMotorStyle* st);
-  // #CAT_ActR execute a move_cursor action
-  virtual void  PrepPointHandAtKey(const String& hand, const String& to_key);
-  // #CAT_ActR prepare a point_hand_at_key action
-  virtual void  ExecPointHandAtKey(ActrEvent& event, ActrMotorStyle* st);
-  // #CAT_ActR execute a point_hand_at_key action
+  // #CAT_ActR execute a cursor_ply action
 
   virtual void  InitHandPos();
   // #CAT_ActR initialize hand position to home keys

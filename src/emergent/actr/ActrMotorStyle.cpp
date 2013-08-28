@@ -16,6 +16,7 @@
 #include "ActrMotorStyle.h"
 
 void ActrMotorStyle::Initialize() {
+  style_id = -1;
   fprep_time = 0.0f;
   exec_time = 0.0f;
   finish_time = 0.0f;

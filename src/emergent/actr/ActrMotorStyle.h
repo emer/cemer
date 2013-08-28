@@ -31,6 +31,7 @@ class E_API ActrMotorStyle : public taNBase {
   // A motor style -- defines parameters for how motor actions are performed -- used to represent prepared and executed motor actions
 INHERITED(taNBase)
 public:
+  int           style_id;    // module-specific identifier for this motor style
   float         fprep_time;  // actual feature prep time for the current movement
   float         exec_time;   // actual execution time for the current movement
   float         finish_time; // actual finish time for the current movement

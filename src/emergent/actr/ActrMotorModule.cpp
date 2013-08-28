@@ -17,6 +17,8 @@
 #include <ActrModel>
 #include <ActrSlot>
 
+#include <taMisc>
+
 // actr source is largely in support/general-pm.lisp
 // core-modules/motor.lisp derives much from general-pm.
 
@@ -73,9 +75,9 @@ void ActrMotorModule::Init() {
   last_prep.Reset();
   exec_queue.Reset();
   last_cmd = "";
+  InitMotorStyles();
   InitHandPos();
   InitPosToKey();
-  InitMotorStyles();
   buffer->UpdateState();
 }
 
@@ -84,11 +86,13 @@ void ActrMotorModule::InitMotorStyles() {
   ActrMotorStyle* st;
   st = styles[PUNCH];
   st->name = "punch";
+  st->style_id = PUNCH;
   st->features.SetSize(2);
   st->features[0].name = "hand";    st->features[0].value.setString("");
   st->features[1].name = "finger";  st->features[1].value.setString("");
   ActrMotorStyle* hfrt = styles[HFRT];
   hfrt->name = "hfrt";
+  hfrt->style_id = HFRT;
   hfrt->features.SetSize(4);
   hfrt->features[0].name = "hand";    hfrt->features[0].value.setString("");
   hfrt->features[1].name = "finger";  hfrt->features[1].value.setString("");
@@ -96,18 +100,23 @@ void ActrMotorModule::InitMotorStyles() {
   hfrt->features[3].name = "theta";   hfrt->features[1].value.setFloat(0.0f);
   st = styles[PECK];
   st->CopyFrom(hfrt);
+  st->style_id = PECK;
   st->name = "peck";
   st = styles[PECK_RECOIL];
   st->CopyFrom(hfrt);
+  st->style_id = PECK_RECOIL;
   st->name = "peck_recoil";
   st = styles[PLY];
   st->CopyFrom(hfrt);
+  st->style_id = PLY;
   st->name = "ply";
   st = styles[HAND_PLY];
   st->CopyFrom(hfrt);
+  st->style_id = HAND_PLY;
   st->name = "hand_ply";
   st = styles[CURSOR_PLY];
   st->CopyFrom(hfrt);
+  st->style_id = CURSOR_PLY;
   st->name = "cursor_ply";
 }
 
@@ -126,9 +135,9 @@ void ActrMotorModule::InitPosToKey() {
     "f9", "f10", "f11", "f12", "", "f13", "f14", "f15", "", "", "",
 
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-    "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "",
 
-    "backquote", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "hyphen", "=", "delete", "",
+    "backquote", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "delete", "",
     "help", "home", "pageup", "",
     "clear", "=", "/", "*", 
 
@@ -150,6 +159,57 @@ void ActrMotorModule::InitPosToKey() {
     "keypad_0", "keypad_period", "enter" };
 
   pos_to_key.InitFromChars(keys);
+
+  // make press_key lookup table
+  key_to_cmd.Reset();
+  key_to_cmd.Add(MakeMotorCmd("space", PUNCH, "left", "thumb"));
+  key_to_cmd.Add(MakeMotorCmd("backquote", PECK_RECOIL, "left", "pinkie", 2.24, -2.03));
+  key_to_cmd.Add(MakeMotorCmd("tab", PECK_RECOIL, "left", "pinkie", 1.41, -2.36));
+  key_to_cmd.Add(MakeMotorCmd("1", PECK_RECOIL, "left", "pinkie", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("q", PECK_RECOIL, "left", "pinkie", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("a", PUNCH, "left", "pinkie"));
+  key_to_cmd.Add(MakeMotorCmd("z", PECK_RECOIL, "left", "pinkie", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("2", PECK_RECOIL, "left", "ring", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("w", PECK_RECOIL, "left", "ring", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("s", PUNCH, "left", "ring"));
+  key_to_cmd.Add(MakeMotorCmd("x", PECK_RECOIL, "left", "ring", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("3", PECK_RECOIL, "left", "middle", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("e", PECK_RECOIL, "left", "middle", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("d", PUNCH, "left", "middle"));
+  key_to_cmd.Add(MakeMotorCmd("c", PECK_RECOIL, "left", "middle", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("4", PECK_RECOIL, "left", "index", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("r", PECK_RECOIL, "left", "index", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("f", PUNCH, "left", "index"));
+  key_to_cmd.Add(MakeMotorCmd("v", PECK_RECOIL, "left", "index", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("s", PECK_RECOIL, "left", "index", 2.24, -1.11));
+  key_to_cmd.Add(MakeMotorCmd("t", PECK_RECOIL, "left", "index", 1.41, -0.79));
+  key_to_cmd.Add(MakeMotorCmd("g", PECK_RECOIL, "left", "index", 1, 0));
+  key_to_cmd.Add(MakeMotorCmd("b", PECK_RECOIL, "left", "index", 1.41, 0.79));
+  key_to_cmd.Add(MakeMotorCmd("6", PECK_RECOIL, "right", "index", 2.24, -2.03));
+  key_to_cmd.Add(MakeMotorCmd("y", PECK_RECOIL, "right", "index", 1.41, -2.36));
+  key_to_cmd.Add(MakeMotorCmd("h", PECK_RECOIL, "right", "index", 1, 3.14));
+  key_to_cmd.Add(MakeMotorCmd("n", PECK_RECOIL, "right", "index", 1.41, 2.36));
+  key_to_cmd.Add(MakeMotorCmd("7", PECK_RECOIL, "right", "index", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("u", PECK_RECOIL, "right", "index", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("j", PUNCH, "right", "index"));
+  key_to_cmd.Add(MakeMotorCmd("m", PECK_RECOIL, "right", "index", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("8", PECK_RECOIL, "right", "middle", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("i", PECK_RECOIL, "right", "middle", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("k", PUNCH, "right", "middle"));
+  key_to_cmd.Add(MakeMotorCmd("comma", PECK_RECOIL, "right", "middle", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("9", PECK_RECOIL, "right", "ring", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("o", PECK_RECOIL, "right", "ring", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("l", PUNCH, "right", "ring"));
+  key_to_cmd.Add(MakeMotorCmd("period", PECK_RECOIL, "right", "ring", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("0", PECK_RECOIL, "right", "pinkie", 2, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("p", PECK_RECOIL, "right", "pinkie", 1, -1.57));
+  key_to_cmd.Add(MakeMotorCmd("semicolon", PUNCH, "right", "pinkie"));
+  key_to_cmd.Add(MakeMotorCmd("slash", PECK_RECOIL, "right", "pinkie", 1, 1.57));
+  key_to_cmd.Add(MakeMotorCmd("hyphen", PECK_RECOIL, "right", "pinkie", 2.24, -1.11));
+  key_to_cmd.Add(MakeMotorCmd("-", PECK_RECOIL, "right", "pinkie", 2.24, -1.11));
+  key_to_cmd.Add(MakeMotorCmd("[", PECK_RECOIL, "right", "pinkie", 1.41, -0.78));
+  key_to_cmd.Add(MakeMotorCmd("quote", PECK_RECOIL, "right", "pinkie", 1, 0));
+  key_to_cmd.Add(MakeMotorCmd("return", PECK_RECOIL, "right", "pinkie", 2, 0));
 } 
 
 String ActrMotorModule::PosToKey(int col, int row) {
@@ -237,6 +297,38 @@ String ActrMotorModule::CurFingerAll(int& col, int& row, Hand hand, Finger finge
   return PosToKey(col, row);
 }
 
+bool ActrMotorModule::MoveFinger(int& col, int& row, Hand hand, Finger finger,
+                                 float r, float theta) {
+  CurFingerPos(col, row, hand, finger);
+  if(r > 0.0f) {
+    col += (int) taMath_float::round(r * cosf(theta));
+    row += (int) taMath_float::round(r * sinf(theta));
+    SetFingerPos(col, row, hand, finger);
+  }
+  return true;
+}
+
+void ActrMotorModule::PressKey(const String& key, float time) {
+  last_key = key;
+  last_key_time = time;
+  if(act_prog) {
+    Program* prg = act_prog.ptr();
+    if(prg->run_state == Program::NOT_INIT) {
+      prg->CallInit(NULL);
+    }
+    if(TestError(prg->run_state == Program::NOT_INIT,
+                 "cannot run program:", prg->name,
+                 "because it cannot be initialized -- see console for errors")) {
+    }
+    else {
+      prg->Call(NULL);
+    }
+  }
+  else {
+    taMisc::Info("key pressed:", key, "at time:", String(time));
+  }
+}
+
 bool ActrMotorModule::HandOnMouse(Hand hand) {
   return CurFingerKey(hand, INDEX) == "mouse";
 }
@@ -273,7 +365,6 @@ void ActrMotorModule::ProcessEvent(ActrEvent& event) {
     MotorRequest(event);
   }
   else if(event.action == "PREPARATION_COMPLETE") {
-    // todo: should put on exec_queue at this point!
     ActrMotorStyle* st = LastPrep();
     if(st && st->exec_immediate) {
       ClearModuleFlag(PREP);
@@ -285,29 +376,18 @@ void ActrMotorModule::ProcessEvent(ActrEvent& event) {
   }
   else if(event.action == "INITIATION_COMPLETE") {
     ClearModuleFlag(PROC);
-    ActrMotorStyle* st = LastPrep(); // todo: exec_queue
+    ActrMotorStyle* st = LastPrep();
     if(st) {
       mod->ScheduleEvent(st->exec_time, ActrEvent::max_pri, this, this, event.dst_buffer,
                          "EXECUTE_ACTION", event.params, event.act_arg,
                          ck);
+      exec_queue.Add(st);       // now we add to the exec queue
     }
   }
   else if(event.action == "EXECUTE_ACTION") {
-    ActrMotorStyle* st = LastPrep(); // todo: exec_queue
-    if(st->name == "punch") {
-      ExecPunch(event, st);
-    }
-    else if(st->name == "peck") {
-      ExecPeck(event, st);
-    }
-    else if(st->name == "peck_recoil") {
-      ExecPeckRecoil(event, st);
-    }
-    else if(st->name == "hand_ply") {
-      ExecCursorPly(event, st); // todo: fix this
-    }
-    else if(st->name == "cursor_ply") {
-      ExecCursorPly(event, st);
+    ActrMotorStyle* st = exec_queue.Pop();
+    if(st) {
+      ExecAction(event, st);
     }
   }
   else if(event.action == "FINISH_MOVEMENT") {
@@ -421,45 +501,52 @@ void ActrMotorModule::StdMotorRequest(ActrEvent& event) {
 
   last_cmd = ck->chunk_type->name;
 
+  ActrMotorStyle* st = NULL;
   if(ck->chunk_type->InheritsFromCTName("punch")) {
-    PrepPunch(ck->GetSlotVal("hand").toString(), ck->GetSlotVal("finger").toString());
+    st = PrepPunch(ck->GetSlotVal("hand").toString(),
+                                   ck->GetSlotVal("finger").toString());
   }
   else if(ck->chunk_type->InheritsFromCTName("click_mouse")) {
-    PrepClickMouse();
+    st = PrepClickMouse();
   }
   else if(ck->chunk_type->InheritsFromCTName("peck")) {
-    PrepPeck(ck->GetSlotVal("hand").toString(), ck->GetSlotVal("finger").toString(),
-             ck->GetSlotVal("r").toFloat(), ck->GetSlotVal("theta").toFloat());
+    st = PrepPeck(ck->GetSlotVal("hand").toString(),
+                                  ck->GetSlotVal("finger").toString(),
+                                  ck->GetSlotVal("r").toFloat(),
+                                  ck->GetSlotVal("theta").toFloat());
   }
   else if(ck->chunk_type->InheritsFromCTName("peck_recoil")) {
-    PrepPeckRecoil(ck->GetSlotVal("hand").toString(), ck->GetSlotVal("finger").toString(),
-                   ck->GetSlotVal("r").toFloat(), ck->GetSlotVal("theta").toFloat());
+    st = PrepPeckRecoil(ck->GetSlotVal("hand").toString(),
+                                        ck->GetSlotVal("finger").toString(),
+                                        ck->GetSlotVal("r").toFloat(),
+                                        ck->GetSlotVal("theta").toFloat());
   }
   else if(ck->chunk_type->InheritsFromCTName("press_key")) {
-    PrepPressKey(ck->GetSlotVal("key").toString());
+    st = PrepPressKey(ck->GetSlotVal("key").toString());
   }
   else if(ck->chunk_type->InheritsFromCTName("hand_to_mouse")) {
-    PrepHandToMouse();
+    st = PrepHandToMouse();
   }
   else if(ck->chunk_type->InheritsFromCTName("hand_to_home")) {
-    PrepHandToHome();
+    st = PrepHandToHome();
   }
   else if(ck->chunk_type->InheritsFromCTName("move_cursor")) {
-    PrepMoveCursor();
+    st = PrepMoveCursor();
   }
   else if(ck->chunk_type->InheritsFromCTName("point_hand_at_key")) {
-    PrepPointHandAtKey(ck->GetSlotVal("hand").toString(), ck->GetSlotVal("to_key").toString());
+    st = PrepPointHandAtKey(ck->GetSlotVal("hand").toString(),
+                                            ck->GetSlotVal("to_key").toString());
   }
   else {
     TestWarning(true, "MotorRequest", "chunk type not recognized:", ck->chunk_type->name);
   }
 
-  ActrMotorStyle* st = LastPrep();
   if(st) {
+    SetNewLastPrep(st);
     SetModuleFlag(PREP);
     SetModuleFlag(PROC);
 
-    mod->ScheduleEvent(timing.feat_prep, ActrEvent::max_pri, this, this,
+    mod->ScheduleEvent(st->fprep_time, ActrEvent::max_pri, this, this,
                        event.dst_buffer,
                        "PREPARATION_COMPLETE", last_cmd, event.act_arg,
                        ck);
@@ -479,6 +566,38 @@ ActrMotorStyle* ActrMotorModule::NewPrep(MotorStyles style) {
   return st;
 }
 
+ActrMotorStyle* ActrMotorModule::MakeMotorCmd(const String& nm, MotorStyles style,
+                                              const Variant& par1,
+                                              const Variant& par2,
+                                              const Variant& par3,
+                                              const Variant& par4,
+                                              const Variant& par5) {
+  ActrMotorStyle* st = NULL;
+  switch(style) {
+  case PUNCH:
+    st = PrepPunch(par1.toString(), par2.toString());
+    break;
+  case PECK:
+    st = PrepPeck(par1.toString(), par2.toString(), par3.toFloat(), par4.toFloat());
+    break;
+  case PECK_RECOIL:
+    st = PrepPeckRecoil(par1.toString(), par2.toString(), par3.toFloat(), par4.toFloat());
+    break;
+  case HAND_PLY:
+    st = PrepHandPly(par1.toString(), par2.toString(), par3.toFloat(), par4.toFloat());
+    break;
+  case CURSOR_PLY:
+    st = PrepCursorPly(par1.toString(), par2.toString(), par3.toFloat(), par4.toFloat());
+    break;
+  default:
+    st = NULL;
+    break;
+  }
+  if(st)
+    st->name = nm;
+  return st;
+}
+
 ActrMotorStyle* ActrMotorModule::LastPrep() {
   if(last_prep.size == 0) return NULL;
   return last_prep[0];
@@ -489,7 +608,7 @@ void ActrMotorModule::SetNewLastPrep(ActrMotorStyle* st) {
   last_prep.Add(st);
 }
 
-void ActrMotorModule::PrepPunch(const String& hand, const String& finger) {
+ActrMotorStyle* ActrMotorModule::PrepPunch(const String& hand, const String& finger) {
   ActrMotorStyle* st = NewPrep(PUNCH);
   st->features.SetVal("hand", hand);
   st->features.SetVal("finger", finger);
@@ -509,57 +628,18 @@ void ActrMotorModule::PrepPunch(const String& hand, const String& finger) {
   st->exec_time = 0.01f;         // not doc'd but seems to be the case
   st->finish_time = 2.0f * timing.burst - st->exec_time;
   st->exec_immediate = true;
-
-  SetNewLastPrep(st);
+  return st;
 }  
     
-void ActrMotorModule::ExecPunch(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  String hstr = st->features.GetVal("hand").toString();
-  String fstr = st->features.GetVal("finger").toString();
- 
-  int row, col;
-  String key;
-  key = CurFingerAll(col, row, StringToHand(hstr), StringToFinger(fstr));
-
-  String out_str = key + " #(" + String(row) + " " + String(col) + ")"; 
-
-  mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
-  
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
-
-void ActrMotorModule::PrepClickMouse() {
+ActrMotorStyle* ActrMotorModule::PrepClickMouse() {
   if(TestWarning(!HandOnMouse(), "Motor", "CLICK_MOUSE requested when hand not at mouse!")) {
-    last_prep.Reset();          // indicates failure to prep
-    return;
+    return NULL;
   }
 
-  PrepPunch("right", "index");
+  return PrepPunch("right", "index");
 }  
     
-void ActrMotorModule::ExecClickMouse(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  int row, col;
-  String key;
-  key = CurFingerAll(col, row, RIGHT, INDEX);
-
-  String out_str = key + " #(" + String(row) + " " + String(col) + ")"; 
-
-  mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
-  
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
-
-void ActrMotorModule::PrepPeck(const String& hand, const String& finger, float r, float theta) {
+ActrMotorStyle* ActrMotorModule::PrepPeck(const String& hand, const String& finger, float r, float theta) {
   ActrMotorStyle* st = NewPrep(PECK);
   st->features.SetVal("hand", hand);
   st->features.SetVal("finger", finger);
@@ -586,84 +666,40 @@ void ActrMotorModule::PrepPeck(const String& hand, const String& finger, float r
   st->exec_time = MAX(timing.Fitts(timing.peck_fitts_coeff, r), timing.burst); 
   st->finish_time = timing.burst; // not clear but this seems to be the case
   st->exec_immediate = true;
-
-  SetNewLastPrep(st);
+  return st;
 }  
     
-void ActrMotorModule::ExecPeck(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  String hstr = st->features.GetVal("hand").toString();
-  String fstr = st->features.GetVal("finger").toString();
-  float r = st->features.GetVal("r").toFloat();
-  float theta = st->features.GetVal("theta").toFloat();
-
-  // todo: convert r, theta back to x,y and add to current pos to get new pos..
- 
-  int row, col;
-  String key;
-  key = CurFingerAll(col, row, StringToHand(hstr), StringToFinger(fstr));
-
-  String out_str = key + " #(" + String(row) + " " + String(col) + ")"; 
-
-  mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
-  
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
-
-void ActrMotorModule::PrepPeckRecoil(const String& hand, const String& finger, float r, float theta) {
-  PrepPeck(hand, finger, r, theta);
-  ActrMotorStyle* st = LastPrep();
+ActrMotorStyle* ActrMotorModule::PrepPeckRecoil(const String& hand, const String& finger,
+                                                float r, float theta) {
+  ActrMotorStyle* st = PrepPeck(hand, finger, r, theta);
+  st->style_id = PECK_RECOIL;
+  st->name = "peck_recoil";
   if(st) {
     st->finish_time = st->exec_time + timing.burst;  // finish is usual burst + full exec time to get back
   }
+  return st;
 }  
     
-void ActrMotorModule::ExecPeckRecoil(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  String hstr = st->features.GetVal("hand").toString();
-  String fstr = st->features.GetVal("finger").toString();
-  float r = st->features.GetVal("r").toFloat();
-  float theta = st->features.GetVal("theta").toFloat();
-
-  // todo: convert r, theta back to x,y and add to current pos to get new pos..
-  // todo: return to original position afterward -- save current finger positions!
- 
-  int row, col;
-  String key;
-  key = CurFingerAll(col, row, StringToHand(hstr), StringToFinger(fstr));
-
-  String out_str = key + " #(" + String(row) + " " + String(col) + ")"; 
-
-  mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
+ActrMotorStyle* ActrMotorModule::PrepPressKey(const String& key) {
+  String tkey = key;
+  tkey.downcase();
   
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
+  ActrMotorStyle* st = key_to_cmd.FindName(tkey);
+  if(st) {
+    return st;
+  }
 
-void ActrMotorModule::PrepPressKey(const String& key) {
-  // todo: to do this right requires looking up each key position relative to home key positions
-  // not clear if it uses touch typing or not -- could not find where the lookup table is computed
-  // in actr -- theory is that home key presses are used.
-  // as a first step, could do peck-recoil for all 
-
+  // fall-through
   int row, col;
   if(TestWarning(!KeyToPos(col, row, key), "Motor", "No press_key mapping available for key:", key)) {
     // todo: log a BAD_KEY message
-    last_prep.Reset();
-    return;
+    return NULL;
   }
 
-  PrepPeckRecoil("right", "index", 1, 0); // dummy values -- just do something
+  return PrepPeckRecoil("right", "index", 1, 0); // dummy values -- just do something
 }  
     
-void ActrMotorModule::PrepHandPly(const String& hand, const String& finger, float r, float theta) {
+ActrMotorStyle* ActrMotorModule::PrepHandPly(const String& hand, const String& finger, float r, float theta) {
   ActrMotorStyle* st = NewPrep(HAND_PLY);
   st->features.SetVal("hand", hand);
   st->features.SetVal("finger", finger);
@@ -690,53 +726,27 @@ void ActrMotorModule::PrepHandPly(const String& hand, const String& finger, floa
   st->exec_time = MAX(timing.Fitts(timing.peck_fitts_coeff, r), timing.burst); 
   st->finish_time = timing.burst; // not clear but this seems to be the case
   st->exec_immediate = true;
-
-  SetNewLastPrep(st);
+  return st;
 }  
 
-void ActrMotorModule::PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y) {
+ActrMotorStyle* ActrMotorModule::PrepHandPlyToCoord(const String& hand, const String& finger, float x, float y) {
   // todo: convert x,y to r, theta, then call PrepPly
-  PrepHandPly(hand, finger, 1.0f, 0.0f);
+  return PrepHandPly(hand, finger, 1.0f, 0.0f);
 }  
 
-void ActrMotorModule::PrepHandToMouse() {
+ActrMotorStyle* ActrMotorModule::PrepHandToMouse() {
   if(HandOnMouse()) {           // already there!
-    last_prep.Reset();
-    return;
+    return NULL;
   }
-  PrepHandPlyToCoord("right", "index", 28.0, 2.0);
+  return PrepHandPlyToCoord("right", "index", 28.0, 2.0);
 }
     
-void ActrMotorModule::ExecHandToMouse(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  HandToMouse();
-  mod->LogEvent(-1.0f, "motor", "MOVE_A_HAND", "", "RIGHT x,y");
-  
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
-
-void ActrMotorModule::PrepHandToHome() {
+ActrMotorStyle* ActrMotorModule::PrepHandToHome() {
   // if hand already on home, still do everything
-  PrepHandPlyToCoord("right", "index", 6.0, 4.0);
+  return PrepHandPlyToCoord("right", "index", 7.0, 4.0);
 }
     
-void ActrMotorModule::ExecHandToHome(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  HandToHome();
-  mod->LogEvent(-1.0f, "motor", "MOVE_A_HAND", "", "RIGHT x,y");
-  
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
-
-void ActrMotorModule::PrepCursorPly(const String& hand, const String& finger, float r, float theta) {
+ActrMotorStyle* ActrMotorModule::PrepCursorPly(const String& hand, const String& finger, float r, float theta) {
   ActrMotorStyle* st = NewPrep(CURSOR_PLY);
   st->features.SetVal("hand", hand);
   st->features.SetVal("finger", finger);
@@ -763,19 +773,150 @@ void ActrMotorModule::PrepCursorPly(const String& hand, const String& finger, fl
   st->exec_time = MAX(timing.Fitts(timing.peck_fitts_coeff, r), timing.burst); 
   st->finish_time = timing.burst; // not clear but this seems to be the case
   st->exec_immediate = true;
-
-  SetNewLastPrep(st);
+  return st;
 }  
 
-void ActrMotorModule::PrepMoveCursor() {
+ActrMotorStyle* ActrMotorModule::PrepMoveCursor() {
   if(TestWarning(!HandOnMouse(), "Motor", "MOVE_CURSOR requested when hand not at mouse!")) {
-    last_prep.Reset();
-    return;
+    return NULL;
   }
 
   // todo: decode object, location, etc
 
-  PrepCursorPly("right", "index", 1.0f, 0.0f); // temp dummy
+  return PrepCursorPly("right", "index", 1.0f, 0.0f); // temp dummy
+}
+
+ActrMotorStyle* ActrMotorModule::PrepPointHandAtKey(const String& hand,
+                                                    const String& to_key) {
+  int row, col;
+  if(TestWarning(!KeyToPos(col, row, to_key), "Motor", "No press_key mapping available for key:", to_key)) {
+    // todo: log a BAD_KEY message
+    return NULL;
+  }
+
+  return PrepPeckRecoil(hand, "index", 1, 0); // dummy values -- just do something
+}  
+
+void ActrMotorModule::ExecAction(ActrEvent& event, ActrMotorStyle* st) {
+  switch(st->style_id) {
+  case PUNCH:
+    ExecPunch(event, st);
+    break;
+  case PECK:
+    ExecPeck(event, st);
+    break;
+  case PECK_RECOIL:
+    ExecPeckRecoil(event, st);
+    break;
+  case HAND_PLY:
+    ExecHandPly(event, st);
+    break;
+  case CURSOR_PLY:
+    ExecCursorPly(event, st);
+    break;
+  }
+}
+    
+void ActrMotorModule::ExecPunch(ActrEvent& event, ActrMotorStyle* st) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  String hstr = st->features.GetVal("hand").toString();
+  String fstr = st->features.GetVal("finger").toString();
+ 
+  int row, col;
+  String key;
+  key = CurFingerAll(col, row, StringToHand(hstr), StringToFinger(fstr));
+
+  String out_str = key + " #(" + String(col) + " " + String(row) + ")"; 
+
+  if(col == 28 && row == 2) {
+    mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
+  }
+  else {
+    mod->LogEvent(-1.0f, "motor", "CLICK_MOUSE", "", out_str);
+  }
+
+  PressKey(key, mod->cur_time);
+  
+  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
+      "FINISH_MOVEMENT", event.params, event.act_arg,
+      ck);
+}
+
+void ActrMotorModule::ExecPeck(ActrEvent& event, ActrMotorStyle* st) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  String hstr = st->features.GetVal("hand").toString();
+  String fstr = st->features.GetVal("finger").toString();
+  float r = st->features.GetVal("r").toFloat();
+  float theta = st->features.GetVal("theta").toFloat();
+
+  Hand hand = StringToHand(hstr);
+  Finger finger = StringToFinger(fstr);
+
+  int row, col;
+  MoveFinger(col, row, hand, finger, r, theta);
+
+  String key = CurFingerKey(hand, finger);
+  String out_str = key + " #(" + String(col) + " " + String(row) + ")"; 
+
+  mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
+  
+  PressKey(key, mod->cur_time);
+
+  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
+      "FINISH_MOVEMENT", event.params, event.act_arg,
+      ck);
+}
+
+void ActrMotorModule::ExecPeckRecoil(ActrEvent& event, ActrMotorStyle* st) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  String hstr = st->features.GetVal("hand").toString();
+  String fstr = st->features.GetVal("finger").toString();
+  float r = st->features.GetVal("r").toFloat();
+  float theta = st->features.GetVal("theta").toFloat();
+
+  Hand hand = StringToHand(hstr);
+  Finger finger = StringToFinger(fstr);
+
+  int orig_row, orig_col;
+  CurFingerPos(orig_col, orig_row, hand, finger);;
+
+  int row, col;
+  MoveFinger(col, row, hand, finger, r, theta);
+
+  String key = CurFingerKey(hand, finger);
+  String out_str = key + " #(" + String(col) + " " + String(row) + ")"; 
+
+  SetFingerPos(orig_col, orig_row, hand, finger); // restore original positions
+
+  mod->LogEvent(-1.0f, "motor", "OUTPUT_KEY", "", out_str);
+  
+  PressKey(key, mod->cur_time);
+
+  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
+      "FINISH_MOVEMENT", event.params, event.act_arg,
+      ck);
+}
+
+void ActrMotorModule::ExecHandPly(ActrEvent& event, ActrMotorStyle* st) {
+  ActrChunk* ck = event.chunk_arg;
+  ActrModel* mod = Model();
+
+  // todo: decode events, locations, etc -- p 307 in ref manual
+
+  // HandToHome();
+  mod->LogEvent(-1.0f, "motor", "MOVE_CURSOR_ABSOLUTE", "", "x,y");
+ 
+  // todo: if incremental, do MOVE_CURSOR_POLAR repeated many times..
+ 
+  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
+      "FINISH_MOVEMENT", event.params, event.act_arg,
+      ck);
 }
 
 void ActrMotorModule::ExecCursorPly(ActrEvent& event, ActrMotorStyle* st) {
@@ -794,47 +935,9 @@ void ActrMotorModule::ExecCursorPly(ActrEvent& event, ActrMotorStyle* st) {
       ck);
 }
 
-void ActrMotorModule::PrepPointHandAtKey(const String& hand, const String& to_key) {
-  int row, col;
-  if(TestWarning(!KeyToPos(col, row, to_key), "Motor", "No press_key mapping available for key:", to_key)) {
-    // todo: log a BAD_KEY message
-    last_prep.Reset();
-    return;
-  }
-
-  PrepPeckRecoil(hand, "index", 1, 0); // dummy values -- just do something
-}  
-    
-void ActrMotorModule::ExecPointHandAtKey(ActrEvent& event, ActrMotorStyle* st) {
-  ActrChunk* ck = event.chunk_arg;
-  ActrModel* mod = Model();
-
-  // todo: fix per above -- need to move all fingers!!
-
-  String key = ck->GetSlotVal("to_key").toString();
-
-  int row, col;
-  if(TestWarning(!KeyToPos(col, row, key), "Motor", "No press_key mapping available for key:", key)) {
-    return;
-  }
-
-  String hstr = ck->GetSlotVal("hand").toString();
-
-  SetHandPos(col, row, StringToHand(hstr));
-
-  String out_str = hstr + " " + key + " #(" + String(row) + " " + String(col) + ")"; 
-
-  mod->LogEvent(-1.0f, "motor", "MOVE_A_HAND", "", out_str);
-  
-  mod->ScheduleEvent(st->finish_time, ActrEvent::max_pri, this, this, event.dst_buffer,
-      "FINISH_MOVEMENT", event.params, event.act_arg,
-      ck);
-}
-
 bool ActrMotorModule::ProcessQuery(ActrBuffer* buf, const String& query, bool why_not) {
   return ProcessQuery_std(buf, query, why_not);
 }
-
 
 bool ActrMotorModule::SetParam(const String& param_nm, Variant par1, Variant par2) {
   bool got = false;
