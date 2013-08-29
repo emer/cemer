@@ -162,7 +162,7 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   //      CROSS_ENTROPY               // cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
   //    };
   String_Array dist_metrics;
-  dist_metrics.FmDelimString("SUM_SQUARES EUCLIDIAN HAMMING"); // only these 3 for cluster analysis
+  dist_metrics.FmDelimString("SUM_SQUARES EUCLIDIAN HAMMING"); // only 3 for cluster
 
   QComboBox* combo_dist_metric = new QComboBox;
   {
@@ -480,7 +480,7 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   dlg.AddLabel("distance_metric_label", widget, row, "label=Distance Metric:;");
 
   String_Array dist_metrics;
-  dist_metrics.FmDelimString("SUM_SQUARES EUCLIDIAN HAMMING"); // only these 3 for cluster analysis
+  dist_metrics.FmDelimString("SUM_SQUARES EUCLIDIAN HAMMING COVAR CORREL INNER_PROD CROSS_ENTROPY");
 
   QComboBox* combo_dist_metric = new QComboBox;
   {
