@@ -26,7 +26,7 @@ bool DataVarProgMatrix::GenCss_OneVar(Program* prog, ProgVarRef& var, const Stri
   if(!var) return false;
   DataCol* da = NULL;
   String col_nm = var->name.before('_', -1);
-  if(TestError(col_nm.empty(), "GenCss_OneVar", "variable name must contain a '_' with part before that being name of column in data table to get/set value")) {
+  if(TestError(col_nm.empty(), "GenCss_OneVar", "if your column is scalar use DataVarProg not DataVarProgMatrix, if your column contains matrix data your variable name must contain a '_' with part before that being name of column in data table to get/set value")) {
     return false;
   }
   DataTable* dt = GetData();
