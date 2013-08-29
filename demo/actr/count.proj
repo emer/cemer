@@ -29,65 +29,9 @@ LeabraProject .projects["count"] {
   };
 
   DataTable_Group @.data = [0] {
-    DataTable_Group @.gp["InputData"] = [1] { 
-      DataTable @["StdInputData"] { 
-	DataTableCols @.data = [3] {
-	  String_Data @["Name"] { };
-	  float_Data @["Input"] { };
-	  float_Data @["Output"] { };
-	};
-      };
+    DataTable_Group @.gp["InputData"] { 
     };
-    DataTable_Group @.gp["OutputData"] = [2] { 
-      DataTable @["TrialOutputData"] { 
-	DataTableCols @.data = [9] {
-	  int_Data @["batch"] { 
-      UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["NARROW"] { };
-      };
-};
-	  int_Data @["epoch"] { 
-      UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["NARROW"] { };
-      };
-};
-	  int_Data @["trial"] { 
-      UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["NARROW"] { };
-      };
-};
-	  String_Data @["trial_name"] { };
-	  String_Data @["group_name"] { };
-	  int_Data @["phase_no"] { 
-      UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["NARROW"] { };
-      };
-};
-	  float_Data @["minus_cycles"] { };
-	  float_Data @["sse"] { };
-	  float_Data @["ext_rew"] { };
-	};
-      };
-      DataTable @["EpochOutputData"] { 
-	DataTableCols @.data = [8] {
-	  int_Data @["batch"] { 
-      UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["NARROW"] { };
-      };
-};
-	  int_Data @["epoch"] { 
-      UserDataItem_List @*(.user_data_) {
-	      UserDataItem @["NARROW"] { };
-      };
-};
-	  float_Data @["avg_sse"] { };
-	  float_Data @["cnt_err"] { };
-	  float_Data @["avg_ext_rew"] { };
-	  float_Data @["avg_cycles"] { };
-	  float_Data @["epoch_time_tot"] { };
-	  float_Data @["epoch_time_usr"] { };
-	};
-      };
+    DataTable_Group @.gp["OutputData"] { 
     };
     DataTable_Group @.gp["AnalysisData"] { 
     };
@@ -200,7 +144,7 @@ LeabraProject .projects["count"] {
 	  ActrChunk_List @.chunks = [0] {
 	  };
 
-	  ActrModule_List @.modules = [5] {
+	  ActrModule_List @.modules = [3] {
 	    ActrProceduralModule @["procedural"] { 
 	      ActrProduction_Group @.productions = [3] {
 		ActrProduction @["start"] { 
@@ -379,17 +323,9 @@ LeabraProject .projects["count"] {
 		};
 	      };
 	    };
-	    ActrImaginalModule @["imaginal"] { };
-	    ActrVisionModule @["vision"] { 
-	      ActrChunk_List @.visicon = [0] {
-	      };
-
-	      ActrChunk_List @.objects = [0] {
-	      };
-	    };
 	  };
 
-	  ActrBuffer_List @.buffers = [7] {
+	  ActrBuffer_List @.buffers = [3] {
 	    ActrBuffer @["procedural"] { 
 	      ActrChunk_List @.active = [0] {
 	      };
@@ -413,22 +349,6 @@ LeabraProject .projects["count"] {
 		    ActrSlot @["count"] { };
 		  };
 		};
-	      };
-	    };
-	    ActrBuffer @["imaginal"] { 
-	      ActrChunk_List @.active = [0] {
-	      };
-	    };
-	    ActrBuffer @["imaginal_action"] { 
-	      ActrChunk_List @.active = [0] {
-	      };
-	    };
-	    ActrBuffer @["visual"] { 
-	      ActrChunk_List @.active = [0] {
-	      };
-	    };
-	    ActrBuffer @["visual_location"] { 
-	      ActrChunk_List @.active = [0] {
 	      };
 	    };
 	  };
@@ -511,19 +431,7 @@ LeabraProject .projects["count"] {
 	      };
 	    };
 	    T3Panel @["EpochOutputData"] { 
-	      T3DataView_List @.children = [1] {
-		GraphTableView @["EpochOutputData_Graph"] { 
-		  T3DataView_List @.children = [8] {
-		    GraphColView @["batch"] { };
-		    GraphColView @["epoch"] { };
-		    GraphColView @["avg_sse"] { };
-		    GraphColView @["cnt_err"] { };
-		    GraphColView @["avg_ext_rew"] { };
-		    GraphColView @["avg_cycles"] { };
-		    GraphColView @["epoch_time_tot"] { };
-		    GraphColView @["epoch_time_usr"] { };
-		  };
-		};
+	      T3DataView_List @.children = [0] {
 	      };
 
 	      T3SavedView_List @.saved_views = [6] {
@@ -635,9 +543,9 @@ mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":fals
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"40\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 \"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});;},{},{});mw.loader.
-implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"a23d5a2ed3eac00527943cce58032ed9+\\\\\",\"watchToken\":\"66d0998adc9fee84f1d02756b36f64cb+\\\\\"});;},{},{});
+implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"e051060a1fb9da3b881500ce61e981e2+\\\\\",\"watchToken\":\"fb79116453fc20d72bba11bdcb08fbef+\\\\\"});;},{},{});
 
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:5c3600ac494055cc81200dc00b7da299 */
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:039eb0c9b4d924ea2120d1c089d9ae56 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
@@ -742,7 +650,7 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/ACT-R/demo/count\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=0f333aeb974cb579d09eeddc3db7055b%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=unwatch&amp;token=7e96a3850ff9567552fc3a7388356fcd%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=ACT-R/demo/count&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -1334,7 +1242,7 @@ Template argument size: 1174/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2602-0!*!0!!en!*!* and timestamp 20130829023337 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2602-0!*!0!!en!*!* and timestamp 20130829024239 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT-R/demo/count&amp;oldid=10057\">http://grey.colorado.edu/emergent/index.php?title=ACT-R/demo/count&amp;oldid=10057</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -1369,7 +1277,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ACT
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 28 August 2013, at 20:33.</span>
-			<span id=\"f-viewcount\">This page has been accessed 288 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 293 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -1403,7 +1311,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.363 secs. -->
+<!-- Served in 0.175 secs. -->
 
 
 
@@ -1482,469 +1390,11 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
    name="InputData";
    el_typ=DataTable;
    el_def=0;
-   DataTable @["StdInputData"] {
-    name="StdInputData";
-    desc=;
-    data {
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @["Name"] {
-      name="Name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [6] "5";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
-     };
-     float_Data @["Input"] {
-      name="Input";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [2] ;;      };
-      width=0;
-      ar {
-       name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;
-0;0;1;0;0;0;0;0;0;0;
-1;0;0;0;1;0;0;1;0;0;
-0;0;1;0;0;0;0;1;0;0;
-0;0;1;0;0;0;0;1;0;0;
-0;0;0;0;0;0;0;0;0;0;
-1;1;1;1;1;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;1;
-0;0;0;1;0;0;0;1;0;0;
-0;1;0;0;0;1;0;0;0;0;
-1;0;0;0;0;0;1;0;0;0;
-0;0;1;0;0;0;0;0;1;0;
-0;0;0;0;1;1;0;0;0;0;
-0;0;0;1;0;0;1;0;0;0;
-1;0;0;0;1;0;0;0;0;0;
-      };
-     };
-     float_Data @["Output"] {
-      name="Output";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [2] ;;      };
-      width=0;
-      ar {
-       name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;
-0;0;1;0;0;0;0;0;0;0;
-1;0;0;0;1;0;0;1;0;0;
-0;0;1;0;0;0;0;1;0;0;
-0;0;1;0;0;0;0;1;0;0;
-0;0;0;0;0;0;0;0;0;0;
-1;1;1;1;1;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;1;
-0;0;0;1;0;0;0;1;0;0;
-0;1;0;0;0;1;0;0;0;0;
-1;0;0;0;0;0;1;0;0;0;
-0;0;1;0;0;0;0;0;1;0;
-0;0;0;0;1;1;0;0;0;0;
-0;0;0;1;0;0;1;0;0;1;
-1;0;0;0;0;0;0;0;0;0;
-      };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-    row_indexes {
-     name=;
-	[6] 0;1;2;3;4;5;    };
-   };
   };
   DataTable_Group @.gp["OutputData"] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
-   DataTable @["TrialOutputData"] {
-    name="TrialOutputData";
-    desc=;
-    data {
-     name="data";
-     el_typ=int_Data;
-     el_def=0;
-     int_Data @["batch"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_10";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="batch";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["epoch"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_11";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="epoch";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["trial"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_12";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="trial";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["trial_name"] {
-      name="trial_name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     String_Data @["group_name"] {
-      name="group_name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["phase_no"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_13";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="phase_no";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["minus_cycles"] {
-      name="minus_cycles";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["sse"] {
-      name="sse";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["ext_rew"] {
-      name="ext_rew";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-    row_indexes {
-     name=;
-	[0]     };
-   };
-   DataTable @["EpochOutputData"] {
-    name="EpochOutputData";
-    desc=;
-    data {
-     name="data";
-     el_typ=int_Data;
-     el_def=0;
-     int_Data @["batch"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_12";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="batch";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     int_Data @["epoch"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_13";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["NARROW"] {
-	name="NARROW";
-	value 1 0=1;
-	val_type_fixed=0;
-       };
-      };
-      name="epoch";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["avg_sse"] {
-      name="avg_sse";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["cnt_err"] {
-      name="cnt_err";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["avg_ext_rew"] {
-      name="avg_ext_rew";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["avg_cycles"] {
-      name="avg_cycles";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["epoch_time_tot"] {
-      name="epoch_time_tot";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-     float_Data @["epoch_time_usr"] {
-      name="epoch_time_usr";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-      width=0;
-      ar {
-       name=;
-	    [0]       };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-    row_indexes {
-     name=;
-	[0]     };
-   };
   };
   DataTable_Group @.gp["AnalysisData"] {
    name="AnalysisData";
@@ -3183,7 +2633,7 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="c_0";
 	 chunk_type=$.projects["count"].programs["Count"].objs["CountModel"].chunk_types["count_order"]$;
 	 flags=RECENT;
-	 act {act=0: base=0: spread=0: match=0: noise=-0: };
+	 act {act=0: base=0: spread=0: match=0: noise=0: };
 	 time {n_act=3: t_new=0: t_act=-1: };
 	 slots {
 	  name="ActrSlot_List_0";
@@ -3340,34 +2790,6 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	};
        };
       };
-      ActrImaginalModule @["imaginal"] {
-       name="imaginal";
-       desc=;
-       buffer=.projects["count"].programs["Count"].objs["CountModel"].buffers["imaginal"]$$;
-       flags=0;
-       imaginal_delay {name="": type=NONE: mean=0.2000000029802322: var=0: par=1: };
-       action_buffer=.projects["count"].programs["Count"].objs["CountModel"].buffers["imaginal_action"]$$;
-      };
-      ActrVisionModule @["vision"] {
-       name="vision";
-       desc=;
-       buffer=.projects["count"].programs["Count"].objs["CountModel"].buffers["visual"]$$;
-       flags=0;
-       params {n_finst=4: finst_span=3: onset_span=0.5: move_tol=0.5: };
-       attn {auto_attend=0: latency=0.085: scene_chg_thresh=0.25: };
-       location_buffer=.projects["count"].programs["Count"].objs["CountModel"].buffers["visual_location"]$$;
-       visicon {
-	name=;
-	el_typ=ActrChunk;
-	el_def=0;
-       };
-       objects {
-	name=;
-	el_typ=ActrChunk;
-	el_def=0;
-       };
-       center {x=0: y=0: };
-      };
      };
      buffers {
       name="ActrBuffer_List_0";
@@ -3471,54 +2893,6 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	};
        };
        module=.projects["count"].programs["Count"].objs["CountModel"].modules["goal"]$$;
-       act_total=0;
-      };
-      ActrBuffer @["imaginal"] {
-       name="imaginal";
-       desc=;
-       flags=DM_MERGE;
-       active {
-	name=;
-	el_typ=ActrChunk;
-	el_def=0;
-       };
-       module=.projects["count"].programs["Count"].objs["CountModel"].modules["imaginal"]$$;
-       act_total=0;
-      };
-      ActrBuffer @["imaginal_action"] {
-       name="imaginal_action";
-       desc=;
-       flags=DM_MERGE;
-       active {
-	name=;
-	el_typ=ActrChunk;
-	el_def=0;
-       };
-       module=$.projects["count"].programs["Count"].objs["CountModel"].modules["imaginal"]$;
-       act_total=0;
-      };
-      ActrBuffer @["visual"] {
-       name="visual";
-       desc=;
-       flags=DM_MERGE;
-       active {
-	name=;
-	el_typ=ActrChunk;
-	el_def=0;
-       };
-       module=.projects["count"].programs["Count"].objs["CountModel"].modules["vision"]$$;
-       act_total=0;
-      };
-      ActrBuffer @["visual_location"] {
-       name="visual_location";
-       desc=;
-       flags=DM_MERGE;
-       active {
-	name=;
-	el_typ=ActrChunk;
-	el_def=0;
-       };
-       module=$.projects["count"].programs["Count"].objs["CountModel"].modules["vision"]$;
        act_total=0;
       };
      };
@@ -3802,410 +3176,6 @@ mw.loader.load([\"mediawiki.user\",\"mediawiki.page.ready\",\"mediawiki.action.w
 	 name="T3DataView_List_0";
 	 el_typ=GraphTableView;
 	 el_def=0;
-	 GraphTableView @["EpochOutputData_Graph"] {
-	  name="EpochOutputData_Graph";
-	  m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"]$$;
-taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
-	  children {
-	   name="T3DataView_List_0";
-	   el_typ=GraphColView;
-	   el_def=0;
-	   GraphColView @["batch"] {
-	    name="batch";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["epoch"] {
-	    name="epoch";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_sse"] {
-	    name="avg_sse";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["cnt_err"] {
-	    name="cnt_err";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_ext_rew"] {
-	    name="avg_ext_rew";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["avg_ext_rew"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["avg_cycles"] {
-	    name="avg_cycles";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["epoch_time_tot"] {
-	    name="epoch_time_tot";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["epoch_time_usr"] {
-	    name="epoch_time_usr";
-	    m_data=.projects["count"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	  };
-	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
-	  view_rows=10000;
-	  view_range {min=0: max=-1: };
-	  display_on=1;
-	  manip_ctrl_on=1;
-	  graph_type=XY;
-	  plot_style=LINE;
-	  negative_draw=0;
-	  negative_draw_z=1;
-	  line_width=2;
-	  point_size=MEDIUM;
-	  point_spacing=1;
-	  bar_space=0.2;
-	  label_spacing=-1;
-	  width=1;
-	  depth=1;
-	  axis_font_size=0.05;
-	  label_font_size=0.04;
-	  x_axis {
-	   name="GraphAxisView_0";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=X;
-	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  z_axis {
-	   name="GraphAxisView_1";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Z;
-	   col_name="batch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  plot_1 {
-	   name="GraphPlotView_0";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="avg_sse";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  plot_2 {
-	   name="GraphPlotView_1";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="cnt_err";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=SQUARE;
-	   alt_y=0;
-	  };
-	  plot_3 {
-	   name="GraphPlotView_2";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=DIAMOND;
-	   alt_y=0;
-	  };
-	  plot_4 {
-	   name="GraphPlotView_3";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=TRIANGLE;
-	   alt_y=0;
-	  };
-	  plot_5 {
-	   name="GraphPlotView_4";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=PLUS;
-	   alt_y=0;
-	  };
-	  plot_6 {
-	   name="GraphPlotView_5";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CROSS;
-	   alt_y=0;
-	  };
-	  plot_7 {
-	   name="GraphPlotView_6";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=STAR;
-	   alt_y=0;
-	  };
-	  plot_8 {
-	   name="GraphPlotView_7";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=MINUS;
-	   alt_y=0;
-	  };
-	  err_1 {
-	   name="GraphPlotView_8";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_2 {
-	   name="GraphPlotView_9";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_3 {
-	   name="GraphPlotView_10";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_4 {
-	   name="GraphPlotView_11";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_5 {
-	   name="GraphPlotView_12";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_6 {
-	   name="GraphPlotView_13";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_7 {
-	   name="GraphPlotView_14";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_8 {
-	   name="GraphPlotView_15";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_spacing=1;
-	  err_bar_width=0.02;
-	  color_mode=FIXED_COLOR;
-	  color_axis {
-	   name="GraphAxisView_2";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  colorscale {
-	   name="ColorScale_0";
-	   chunks=133;
-	   min=-1;
-	   max=1;
-	   range=0;
-	   zero=0;
-	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
-	   auto_scale=0;
-	  };
-	  raster_axis {
-	   name="GraphAxisView_3";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   row_num=0;
-	  };
-	  thresh=0.5;
-	  thr_line_len=0.48;
-	  matrix_mode=SEP_GRAPHS;
-	  mat_layout=BOT_ZERO;
-	  mat_odd_vert=1;
-	  two_d_font=0;
-	  two_d_font_scale=350;
-	 };
 	};
        };
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
