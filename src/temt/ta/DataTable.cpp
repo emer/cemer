@@ -1780,6 +1780,14 @@ void DataTable::RemoveCol(const Variant& col) {
   // but we don't renormalize
 }
 
+void DataTable::DuplicateCol(const Variant& col) {
+  DataCol* da = GetColData(col);
+  if(!da) return;
+  StructUpdate(true);
+  data.ChildDuplicate(da);
+  StructUpdate(false);
+}
+
 void DataTable::MoveCol(int old_index, int new_index) {
   StructUpdate(true);
   data.MoveIdx(old_index, new_index);

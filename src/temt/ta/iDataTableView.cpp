@@ -79,6 +79,14 @@ void iDataTableView::EditAction(int ea) {
   } else {// dest op
     taiMimeSource* ms = taiMimeSource::NewFromClipboard();
     fact->Table_EditActionD(tab, sel, ms, ea);
+
+    // jar 8/28/13 setting selection
+    QModelIndex newIndex;
+    newIndex  = this->model()->index(sel.row_to, sel.col_to);
+    this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
+    this->setCurrentIndex(newIndex);
+    this->setFocus();
+
     delete ms;
   }
   gui_edit_op = false;
@@ -179,25 +187,33 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   }
   else if (op_code & OP_COL) {
     // must have >=1 col selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
-      if (sel.width() < 1) goto bail;
-      /*note: not supporting col ops here
-      if (op_code & OP_APPEND) {
-      } else
-      if (op_code & OP_INSERT) {
-      } else */
-      if (op_code & OP_DELETE) {
-        if(taMisc::delete_prompts) {
-          if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
-        }
-        tab->StructUpdate(true);
-        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
-        for (int col = sel.col_to; col >= sel.col_fr; --col) {
-          tab->RemoveCol(col);
-        }
-        tab->StructUpdate(false);
-      }
-    }
+	    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE | OP_DUPLICATE))) {
+	      if (sel.width() < 1) goto bail;
+	      /*note: not supporting col ops here
+	      if (op_code & OP_APPEND) {
+	      } else
+	      if (op_code & OP_INSERT) {
+	      } else */
+	      if (op_code & OP_DELETE) {
+	        if(taMisc::delete_prompts) {
+	          if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
+	        }
+	        tab->StructUpdate(true);
+	        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
+	        for (int col = sel.col_to; col >= sel.col_fr; --col) {
+	          tab->RemoveCol(col);
+	        }
+	        tab->StructUpdate(false);
+	      }
+	      if (op_code & OP_DUPLICATE) {
+	        tab->StructUpdate(true);
+	        if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateCols", tab);
+	        for (int col = sel.col_to; col >= sel.col_fr; --col) {
+	          tab->DuplicateCol(col);
+	        }
+	        tab->StructUpdate(false);
+	      }
+	    }
     else if (op_code & OP_RESIZE_TO_CONTENT) {
       for (int col = sel.col_to; col >= sel.col_fr; --col) {
         this->resizeColumnToContents(col);

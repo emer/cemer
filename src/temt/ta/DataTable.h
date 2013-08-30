@@ -409,7 +409,7 @@ public:
   void                  MoveCol(int old_index, int new_index);
   // #CAT_Columns move the column from position old to position new
   virtual void          RemoveCol(const Variant& col);
-  // #CAT_Columns removes indicated column;
+  // #CAT_Columns removes indicated column
   void                  RemoveAllCols() { Reset(); }
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
   virtual void          Reset();
@@ -419,6 +419,8 @@ public:
   // #CAT_Columns mark all cols before updating, for orphan deleting
   virtual void          RemoveOrphanCols();
   // #CAT_Columns removes all non-pinned marked cols
+  virtual void 			DuplicateCol(const Variant& col);
+  // #CAT_Columns duplicates indicated column
 
   /////////////////////////////////////////////////////////
   // rows

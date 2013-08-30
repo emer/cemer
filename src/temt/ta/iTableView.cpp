@@ -214,18 +214,21 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   if (ca == CA_COL_HDR) {
     if (!isFixedColCount()) {
 //note: not include these yet, because fairly complicated semantics, ex
-// popping up col editor etc. etc.
-/*      act = menu->AddItem("Append Columns", taiWidgetMenu::normal, iAction::int_act,
+    	// popping up col editor etc. etc.
+    	/*      act = menu->AddItem("Append Columns", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_APPEND) );
       act = menu->AddItem("Insert Columns", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );*/
-      act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
-        this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
-      act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal, iAction::int_act,
-        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
-      act = menu->AddItem("Resize All Widths to Content", taiWidgetMenu::normal, iAction::int_act,
-        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
-      menu->AddSep();
+    	act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal, iAction::int_act,
+    			this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
+    	act = menu->AddItem("Resize All Widths to Content", taiWidgetMenu::normal, iAction::int_act,
+    			this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
+    	menu->AddSep();
+    	act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
+    			this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
+    	act = menu->AddItem("Duplicate Columns", taiWidgetMenu::normal, iAction::int_act,
+    			this, SLOT(RowColOp(int)), (OP_COL | OP_DUPLICATE) );
+    	menu->AddSep();
     }
   }
   
