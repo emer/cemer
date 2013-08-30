@@ -80,10 +80,12 @@ void iDataTableView::EditAction(int ea) {
     taiMimeSource* ms = taiMimeSource::NewFromClipboard();
     fact->Table_EditActionD(tab, sel, ms, ea);
 
-    // jar 8/28/13 setting selection
     QModelIndex newIndex;
-    newIndex  = this->model()->index(sel.row_to, sel.col_to);
-    this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
+    newIndex  = this->model()->index(sel.row_fr, sel.col_fr);
+    QModelIndex topLeft = model()->index(sel.row_fr, sel.col_fr);
+    QModelIndex bottomRight = model()->index(sel.row_to, sel.col_to);
+    QItemSelection selection(topLeft, bottomRight);
+    this->selectionModel()->select(selection, QItemSelectionModel::Select);
     this->setCurrentIndex(newIndex);
     this->setFocus();
 

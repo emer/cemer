@@ -63,26 +63,19 @@ iDataTableEditor::~iDataTableEditor() {
   }
 }
 
+// jar 8/30/13 - Note to self - Is this code of any value?
 void iDataTableEditor::ConfigView() {
   DataTable* dt = this->dt(); // cache
   if (!dt) return;
   bool show_cell = (bool)m_cell; // if we have a cell, show it..
-  // false if not in mode, or no mat cols
-//   if (true) { // in cell mode
-//     for (int i = 0; i < dt->data.size; ++i) {
-//       DataCol* dc = dt->data.FastEl(i);
-//       if (dc->is_matrix) {
-//         show_cell = true;
-//         break;
-//       }
-//     }
-//   }
+
   tvCell->setVisible(show_cell);
   // make sure orphan cell viewer goes away...
   if (dt->rows == 0) {
     setCellMat(NULL, QModelIndex());
   }
-  tvTable->setCurrentIndex(QModelIndex());
+  // jar 8/30/13 - don't clear the selection!!!!!!!!
+//  tvTable->setCurrentIndex(QModelIndex());
 }
 
 
