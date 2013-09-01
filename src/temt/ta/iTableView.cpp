@@ -195,17 +195,6 @@ bool iTableView::event(QEvent* ev) {
   return rval;
 }
 
-void iTableView::ContextMenuRequested(ContextArea ca, const QPoint& global_pos) {
-  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
-  if(!selectionModel()) return;
-  CellRange sel(selectionModel()->selectedIndexes());
-  FillContextMenu_impl(ca, menu, sel);
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(global_pos);
-  }
-  delete menu;
-}
-
 void iTableView::FillContextMenu_impl(ContextArea ca,
   taiWidgetMenu* menu, const CellRange& sel)
 {
@@ -285,18 +274,63 @@ void iTableView::RowColOp(int op_code) {
 }
 
 void iTableView::this_customContextMenuRequested(const QPoint& pos) {
-  ContextArea ca = CA_GRID; // TODO: determine if in blank
-  ContextMenuRequested(ca, mapToGlobal(pos));
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+   if(!selectionModel())
+ 	  return;
+   CellRange sel(selectionModel()->selectedIndexes());
+   FillContextMenu_impl(CA_GRID, menu, sel);
+   if (menu->count() > 0) {
+     menu->exec(mapToGlobal(pos));
+   }
+   delete menu;
 }
 
 void iTableView::hor_customContextMenuRequested(const QPoint& pos) {
-  ContextArea ca = CA_COL_HDR; // TODO: determine if in blank
-  ContextMenuRequested(ca, horizontalHeader()->mapToGlobal(pos));
+	int columnIndex = horizontalHeader()->logicalIndexAt(pos);
+	// ** don't clear current selection if this column (individually or as one of a group of columns) is already selected
+	QModelIndex mdlIndex = model()->index(0, columnIndex);
+	if (!selectionModel()->isColumnSelected(columnIndex, mdlIndex.parent())) {
+		this->clearSelection();
+	}
+	QItemSelection columnSelection;
+	// we select the entire column so we don't need to specify the rows
+	QModelIndex topLeft = model()->index(0, columnIndex);
+	QModelIndex bottomRight = model()->index(0, columnIndex);
+	columnSelection.select(topLeft, bottomRight);
+	this->selectionModel()->select(columnSelection, QItemSelectionModel::Select | QItemSelectionModel::Columns);
+
+	// build and display menu
+	taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+	CellRange sel(selectionModel()->selectedIndexes());
+	FillContextMenu_impl(CA_COL_HDR, menu, sel);
+	if (menu->count() > 0) {
+		menu->exec(horizontalHeader()->mapToGlobal(pos));
+	}
+	delete menu;
 }
 
 void iTableView::ver_customContextMenuRequested(const QPoint& pos) {
-  ContextArea ca = CA_ROW_HDR; // TODO: determine if in blank
-  ContextMenuRequested(ca, verticalHeader()->mapToGlobal(pos));
+	int rowIndex = verticalHeader()->logicalIndexAt(pos);
+	// ** don't clear current selection if this row (individually or as one of a group of rows) is already selected
+	QModelIndex mdlIndex = model()->index(rowIndex, 0);
+	if (!selectionModel()->isRowSelected(rowIndex, mdlIndex.parent())) {
+		this->clearSelection();
+	}
+	QItemSelection rowSelection;
+	// we select the entire row so we don't need to specify the rows
+	QModelIndex topLeft = model()->index(rowIndex, 0);
+	QModelIndex bottomRight = model()->index(rowIndex, 0);
+	rowSelection.select(topLeft, bottomRight);
+	this->selectionModel()->select(rowSelection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+
+	// build and display menu
+	taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+	CellRange sel(selectionModel()->selectedIndexes());
+	FillContextMenu_impl(CA_ROW_HDR, menu, sel);
+	if (menu->count() > 0) {
+		menu->exec(verticalHeader()->mapToGlobal(pos));
+	}
+	delete menu;
 }
 
 void iTableView::SaveScrollPos() {
