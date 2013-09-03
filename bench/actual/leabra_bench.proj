@@ -2048,7 +2048,7 @@ LeabraProject .projects["leabra_bench"] {
       width=0;
       ar {
        name=;
-	    [1] 31.029999;      };
+	    [1] 18.01;      };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -2064,7 +2064,7 @@ LeabraProject .projects["leabra_bench"] {
       width=0;
       ar {
        name=;
-	    [1] 54.340004;      };
+	    [1] 28.509998;      };
      };
      String_Data @["Name"] {
       name="Name";
@@ -3747,7 +3747,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       is_gauss_double_cached=0;
       cached_gauss_double=0;
      };
-     TimeUsedHR @["batch_TimeUsedHR"] {name="batch_TimeUsedHR": s_used=31.100892: n_used=1: };
+     TimeUsedHR @["batch_TimeUsedHR"] {name="batch_TimeUsedHR": s_used=18.064782: n_used=1: };
     };
     types {
      name=;
@@ -4066,7 +4066,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       cond {
        expr="taMisc::gui_active";
       };
-      show_false_code=1;
+      show_false_code=0;
       true_code {
        name="ProgEl_List_127";
        el_typ=ProgCode;
@@ -7253,7 +7253,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.01600853726267815;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -7547,7 +7547,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10;
-	  view_range {min=0: max=9: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -8390,7 +8390,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        ignore_unlearnable=1;
-       wt_sig {gain=6: off=1: dwt_norm=1: };
+       wt_sig {gain=6: off=1: dwt_norm=0: norm_lrn_only=0: };
        stable_mix {stable_pct=0.8: learn_pct=0.2: };
        lmix {hebb=0.01: err=0.99: err_sb=1: };
        xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
@@ -8428,7 +8428,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      ignore_unlearnable=1;
-     wt_sig {gain=6: off=1: dwt_norm=1: };
+     wt_sig {gain=6: off=1: dwt_norm=0: norm_lrn_only=0: };
      stable_mix {stable_pct=0.8: learn_pct=0.2: };
      lmix {hebb=0.01: err=0.99: err_sb=1: };
      xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
@@ -8937,13 +8937,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    cnt_err_tol=0;
    compute_prerr=0;
    threads {
-    run_time {name="": s_used=24.36939000000013: n_used=21410: };
-    sync_time {name="": s_used=0.01534099999999947: n_used=21410: };
-    total_time {name="": s_used=24.46646900000043: n_used=21410: };
-    n_wake_in_sync=2;
-    run_time_pct=0.9960321614042346;
-    sync_time_pct=0.0006270214144917766;
-    wake_in_sync_pct=9.341429238673517e-5;
+    run_time {name="": s_used=10.94238799999994: n_used=21410: };
+    sync_time {name="": s_used=0.01162499999999982: n_used=21410: };
+    total_time {name="": s_used=11.03108499999992: n_used=21410: };
+    n_wake_in_sync=1;
+    run_time_pct=0.9919593584855907;
+    sync_time_pct=0.001053840125427363;
+    wake_in_sync_pct=4.670714619336758e-5;
     interleave=1;
     ignore_lay_sync=0;
    };
