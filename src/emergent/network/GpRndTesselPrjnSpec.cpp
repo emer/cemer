@@ -206,6 +206,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
   Layer* send_lay = prjn->from;
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
+  Network* net = recv_lay->own_net;
 
   if((prjn->from.ptr() != prjn->layer) || !sym_self)
     return;                     // not applicable otherwise!
@@ -217,7 +218,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
       if((scg->prjn->layer != send_lay) || (scg->prjn->layer != recv_lay))
         continue;               // only deal with self projections to this same layer
       for(int i=0;i<scg->size;i++) {
-        Unit* su = scg->Un(i);
+        Unit* su = scg->Un(i,net);
         // only connect if this sender is in actual group I'm trying to connect
         int osgpidx = su->UnitGpIdx();
         if(osgpidx == sgpidx) {
@@ -234,6 +235,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
   Layer* send_lay = prjn->from;
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
+  Network* net = recv_lay->own_net;
 
   // trick is to divide cons in half, choose recv, send at random
   // for 1/2 cons, then go through all units and make the symmetric cons..
@@ -266,7 +268,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
       RecvCons* scg = su->recv.FindPrjn(prjn);
-      if(scg->FindConFromIdx(ru) >= 0) continue;
+      if(scg->FindConFromIdx(ru,net) >= 0) continue;
       perm_list.Link(su);
     }
     perm_list.Permute();
@@ -281,7 +283,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
     SendCons* scg = ru->send.FindPrjn(prjn);
     if(scg == NULL) continue;
     for(int i=0;i<scg->size;i++) {
-      Unit* su = scg->Un(i);
+      Unit* su = scg->Un(i,net);
       ru->ConnectFromCk(su, prjn);
     }
   }
@@ -293,6 +295,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
   Layer* send_lay = prjn->from;
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
+  Network* net = recv_lay->own_net;
 
   // within the same layer, i want to make connections symmetric: either i'm the
   // first to connect to other group, or other group has already connected to me
@@ -308,7 +311,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
       SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
       for(int i=0;i<scg->size;i++) {
-        Unit* su = scg->Un(i);
+        Unit* su = scg->Un(i,net);
         // only connect if this sender is in actual group I'm trying to connect
         int osgpidx = su->UnitGpIdx();
         if(osgpidx == sgpidx) {

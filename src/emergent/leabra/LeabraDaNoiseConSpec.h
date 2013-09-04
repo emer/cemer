@@ -66,13 +66,13 @@ public:
     cn->dwt += cur_lrate * err;
   }
 
-  inline void Compute_dWt_DaNoise(LeabraSendCons* cg, LeabraUnit* su) {
+  inline void Compute_dWt_DaNoise(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
     // compute what activation value would be if we subtract out noise -- note that
     // we don't save v_m by phase so this is necessarily on the current v_m val, assumed
     // to be plus-phase value
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
 
       // note: with switch to sender-based, this is very expensive -- fortunately it doesn't
@@ -91,13 +91,14 @@ public:
     cn->dwt += da_noise.std_leabra * cur_lrate * dwt;
   }
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) {
     if(da_noise.std_leabra > 0.0f) {
       // this is a copy of the main fun, but uses above C_Compute_dWt which mults dwt
-      Compute_SAvgCor(cg, su);
+      Compute_SAvgCor(cg, su, net);
       if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
 	for(int i=0; i<cg->size; i++) {
-	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+	  LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
 	  LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
 	  float lin_wt = LinFmSigWt(cn->lwt);
 	  C_Compute_dWt(cn, ru, 
@@ -108,7 +109,7 @@ public:
       }
     }
     if(da_noise.da_noise > 0.0f) {
-      Compute_dWt_DaNoise(cg, su);
+      Compute_dWt_DaNoise(cg, su, net);
     }
   }
 

@@ -332,7 +332,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
         if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
         if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
       }
-      recv_gp->Init_Weights_post(u);
+      recv_gp->Init_Weights_post(u, lay->own_net);
     }
   }
 }

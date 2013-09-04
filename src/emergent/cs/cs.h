@@ -78,7 +78,8 @@ public:
 
   inline void		C_Aggregate_dWt(CsCon* cn, CsUnit* ru, 
 				      CsUnit* su, float phase);
-  inline virtual void 	Aggregate_dWt(CsRecvCons* cg, CsUnit* ru, float phase);
+  inline virtual void 	Aggregate_dWt(CsRecvCons* cg, CsUnit* ru, CsNetwork* net, 
+                                      float phase);
   inline virtual void 	B_Aggregate_dWt(CsCon* cn, CsUnit* ru, float phase);
   // aggregate coproducts
 
@@ -86,11 +87,11 @@ public:
   // call the decay function 
 
   inline void		C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su);
-  inline void		Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   inline virtual void	B_Compute_dWt(CsCon* cn, CsUnit* ru);
   
   inline void		C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su);
-  inline void		Compute_Weights(RecvCons* cg, Unit* ru);
+  inline void		Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
   inline virtual void	B_Compute_Weights(CsCon* cn, Unit* ru);
 
   void	InitLinks();
@@ -123,8 +124,8 @@ class E_API CsRecvCons : public RecvCons {
   // #STEM_BASE ##CAT_Cs group of constraint-satisfaction receiving connections
 INHERITED(RecvCons)
 public:
-  void		Aggregate_dWt(CsUnit* ru, float phase)
-  { ((CsConSpec*)GetConSpec())->Aggregate_dWt(this, ru, phase); }
+  void		Aggregate_dWt(CsUnit* ru, CsNetwork* net, float phase)
+  { ((CsConSpec*)GetConSpec())->Aggregate_dWt(this, ru, net, phase); }
   // compute weight change
 
   TA_BASEFUNS_NOCOPY(CsRecvCons);
@@ -338,97 +339,6 @@ typedef void (CsUnit::*CsUnitMethod)(CsNetwork*, int);
 #endif 
 
 
-////////////////////////////////
-// 	In-line functions     //
-////////////////////////////////
-
-inline void CsConSpec::C_Aggregate_dWt(CsCon* cn, CsUnit* ru, CsUnit* su,
-				       float phase) {
-  cn->dwt_agg += phase * (su->act * ru->act); 
-}
-inline void CsConSpec::Aggregate_dWt(CsRecvCons* cg, CsUnit* ru,
-				      float phase) {
-  CON_GROUP_LOOP(cg, C_Aggregate_dWt((CsCon*)cg->OwnCn(i), ru, (CsUnit*)cg->Un(i),
-				   phase));
-}
-inline void CsConSpec::B_Aggregate_dWt(CsCon* cn, CsUnit* ru, float phase) {
-  cn->dwt_agg += phase * ru->act;
-}
-
-inline void CsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit*) {
-  cn->dwt_agg /= (float)ru->n_dwt_aggs;
-  cn->dwt += cn->dwt_agg;
-  cn->dwt_agg = 0.0f;
-}
-
-inline void CsConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt((CsCon*)cg->OwnCn(i), (CsUnit*)ru,
-				   (CsUnit*)cg->Un(i)));
-}
-inline void CsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
-  C_Compute_dWt(cn, ru, NULL);
-}
-
-inline void CsConSpec::C_Compute_WtDecay(CsCon* cn, Unit* ru, Unit* su) {
-  if(decay_fun != NULL)
-    (*decay_fun)(this, cn, ru, su);
-}
-
-inline void CsConSpec::C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su) {
-  C_Compute_WtDecay(cn, ru, su);
-// normalized
-//  cn->pdw = (momentum_c * cn->dwt) + (momentum * cn->pdw);
-// before lrate
-  cn->pdw = cn->dwt + (momentum * cn->pdw);
-  cn->wt += lrate * cn->pdw;	
-  cn->dwt = 0.0f;
-}
-inline void CsConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights((CsCon*)cg->OwnCn(i), ru, cg->Un(i)));
-  ApplyLimits(cg, ru);
-}
-inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
-  C_Compute_Weights(cn, ru, NULL);
-  C_ApplyLimits(cn, ru, NULL);
-}
-
-//////////////////////////////////////////
-//	Additional ConSpec Types	//
-//////////////////////////////////////////
-
-eTypeDef_Of(HebbCsConSpec);
-
-class E_API HebbCsConSpec : public CsConSpec {
-  // Simple Hebbian wt update (send act * recv act), operates only on final activity states
-INHERITED(CsConSpec)
-public:
-  virtual void 	Aggregate_dWt(CsRecvCons*, CsUnit*, float) 	{ };
-  virtual void 	B_Aggregate_dWt(CsCon*, CsUnit*, float)		{ }; 
-  // disable both of these functions
-
-  inline void 		C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su);
-  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
-
-  inline void		B_Compute_dWt(CsCon* cn, CsUnit* ru);
-
-  TA_BASEFUNS_NOCOPY(HebbCsConSpec);
-private:
-  void	Initialize()		{ };
-  void 	Destroy()		{ };
-};
-
-inline void HebbCsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su) {
-  cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
-}
-
-inline void HebbCsConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((CsCon*)cg->OwnCn(i), (CsUnit*)ru, (CsUnit*)cg->Un(i)));
-}
-
-inline void HebbCsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
-  cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
-}
-
 /////////////////////////////////////////////////////////////////////////
 
 eTypeDef_Of(CsLayer);
@@ -576,6 +486,100 @@ private:
   void	Initialize();
   void 	Destroy()		{}
 };
+
+////////////////////////////////
+// 	In-line functions     //
+////////////////////////////////
+
+inline void CsConSpec::C_Aggregate_dWt(CsCon* cn, CsUnit* ru, CsUnit* su,
+				       float phase) {
+  cn->dwt_agg += phase * (su->act * ru->act); 
+}
+inline void CsConSpec::Aggregate_dWt(CsRecvCons* cg, CsUnit* ru, CsNetwork* net, 
+				      float phase) {
+  CON_GROUP_LOOP(cg, C_Aggregate_dWt((CsCon*)cg->OwnCn(i), ru, (CsUnit*)cg->Un(i,net),
+				   phase));
+}
+inline void CsConSpec::B_Aggregate_dWt(CsCon* cn, CsUnit* ru, float phase) {
+  cn->dwt_agg += phase * ru->act;
+}
+
+inline void CsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit*) {
+  cn->dwt_agg /= (float)ru->n_dwt_aggs;
+  cn->dwt += cn->dwt_agg;
+  cn->dwt_agg = 0.0f;
+}
+
+inline void CsConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg, C_Compute_dWt((CsCon*)cg->OwnCn(i), (CsUnit*)ru,
+				   (CsUnit*)cg->Un(i,net)));
+}
+inline void CsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
+  C_Compute_dWt(cn, ru, NULL);
+}
+
+inline void CsConSpec::C_Compute_WtDecay(CsCon* cn, Unit* ru, Unit* su) {
+  if(decay_fun != NULL)
+    (*decay_fun)(this, cn, ru, su);
+}
+
+inline void CsConSpec::C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su) {
+  C_Compute_WtDecay(cn, ru, su);
+// normalized
+//  cn->pdw = (momentum_c * cn->dwt) + (momentum * cn->pdw);
+// before lrate
+  cn->pdw = cn->dwt + (momentum * cn->pdw);
+  cn->wt += lrate * cn->pdw;	
+  cn->dwt = 0.0f;
+}
+inline void CsConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg, C_Compute_Weights((CsCon*)cg->OwnCn(i), ru, cg->Un(i,net)));
+  ApplyLimits(cg, ru, net);
+}
+inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
+  C_Compute_Weights(cn, ru, NULL);
+  C_ApplyLimits(cn, ru, NULL);
+}
+
+//////////////////////////////////////////
+//	Additional ConSpec Types	//
+//////////////////////////////////////////
+
+eTypeDef_Of(HebbCsConSpec);
+
+class E_API HebbCsConSpec : public CsConSpec {
+  // Simple Hebbian wt update (send act * recv act), operates only on final activity states
+INHERITED(CsConSpec)
+public:
+  virtual void 	Aggregate_dWt(CsRecvCons*, CsUnit*, CsNetwork*, float) 	{ };
+  virtual void 	B_Aggregate_dWt(CsCon*, CsUnit*, float)		{ }; 
+  // disable both of these functions
+
+  inline void 		C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
+
+  inline void		B_Compute_dWt(CsCon* cn, CsUnit* ru);
+
+  TA_BASEFUNS_NOCOPY(HebbCsConSpec);
+private:
+  void	Initialize()		{ };
+  void 	Destroy()		{ };
+};
+
+inline void HebbCsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su) {
+  cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
+}
+
+inline void HebbCsConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg,C_Compute_dWt((CsCon*)cg->OwnCn(i), (CsUnit*)ru,
+                                  (CsUnit*)cg->Un(i,net)));
+}
+
+inline void HebbCsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
+  cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
+}
+
+////////////////////////////////////////////////////
 
 eTypeDef_Of(CsProject);
 

@@ -117,10 +117,10 @@ void SoUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
     u->act = u->net;
 }
 
-void SoUnitSpec::Compute_AvgInAct(Unit* u) {
+void SoUnitSpec::Compute_AvgInAct(SoUnit* u, SoNetwork* net) {
   FOREACH_ELEM_IN_LIST(SoRecvCons, recv_gp, u->recv) {
     if (!recv_gp->prjn->from->lesioned()) {
-      recv_gp->Compute_AvgInAct(u);
+      recv_gp->Compute_AvgInAct(u, net);
     }
   }
 }

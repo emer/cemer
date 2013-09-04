@@ -59,6 +59,7 @@ void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = true;
+  norm_lrn_only = false;
   if(taMisc::is_loading) {
     taVersion v533(5, 3, 3);
     if(taMisc::loading_version < v533) { // default prior to 533 is off

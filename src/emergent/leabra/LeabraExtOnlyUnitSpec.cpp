@@ -66,7 +66,7 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
     if(TestError(!cg, "Compute_NetinInteg", "requires one recv projection!")) {
       return;
     }
-    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0,net);
     if(TestError(!su, "Compute_NetinInteg", "requires one unit in recv projection!")) {
       return;
     }

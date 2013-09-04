@@ -1313,6 +1313,8 @@ void NetView::Render_wt_lines() {
   }
   taVector3i src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
 
+  Network* nt = net();
+
   drw->style = SoDrawStyleElement::LINES;
   drw->lineWidth = MAX(wt_line_width, 0.0f);
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED); // part = line segment = same as FACE but likely to be faster to compute line segs?
@@ -1411,7 +1413,7 @@ void NetView::Render_wt_lines() {
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
     for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-      Unit* su = (swt ? ((SendCons*)cg)->Un(i) : ((RecvCons*)cg)->Un(i));
+      Unit* su = (swt ? ((SendCons*)cg)->Un(i,nt) : ((RecvCons*)cg)->Un(i,nt));
       float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
       if(fabsf(wt) < wt_line_thr) continue;
 

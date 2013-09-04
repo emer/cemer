@@ -37,23 +37,30 @@ public:
   //    Below are the primary computational interface to the Network Objects
   //    for performing algorithm-specific activation and learning
 
-  void  Init_Weights(Unit* ru)          { if(GetConSpec()) GetConSpec()->Init_Weights(this,ru); }
+  void  Init_Weights(Unit* ru, Network* net)
+  { if(GetConSpec()) GetConSpec()->Init_Weights(this,ru,net); }
   // #CAT_Learning initialize weights for group
   void  C_Init_Weights(Connection* cn, Unit* ru, Unit* su)
   { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
   // #CAT_Learning initialize weights for single connection
-  void  Init_Weights_post(Unit* ru)     { if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru); }
+  void  Init_Weights_post(Unit* ru, Network* net)
+  { if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru,net); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
-  void  Init_dWt(Unit* ru)              { GetConSpec()->Init_dWt(this,ru); }
+  void  Init_dWt(Unit* ru, Network* net)
+  { GetConSpec()->Init_dWt(this,ru,net); }
   // #CAT_Learning  initialize weight change variables
 
-  float Compute_Netin(Unit* ru)         { return GetConSpec()->Compute_Netin(this,ru); }
+  float Compute_Netin(Unit* ru, Network* net)
+  { return GetConSpec()->Compute_Netin(this,ru,net); }
   // #CAT_Activation compute net input (receiver based; recv group)
-  float Compute_Dist(Unit* ru)          { return GetConSpec()->Compute_Dist(this,ru); }
+  float Compute_Dist(Unit* ru, Network* net)
+  { return GetConSpec()->Compute_Dist(this,ru,net); }
   // #CAT_Activation compute net input as distance between activation and weights
-  void  Compute_dWt(Unit* ru)           { GetConSpec()->Compute_dWt(this,ru); }
+  void  Compute_dWt(Unit* ru, Network* net)
+  { GetConSpec()->Compute_dWt(this,ru,net); }
   // #CAT_Learning compute weight changes (the fundamental learning problem)
-  void  Compute_Weights(Unit* ru)       { GetConSpec()->Compute_Weights(this,ru); }
+  void  Compute_Weights(Unit* ru, Network* net)
+  { GetConSpec()->Compute_Weights(this,ru,net); }
   // #CAT_Learning update weight values from deltas
 
   override int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);

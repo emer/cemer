@@ -271,6 +271,8 @@ void Unit::MonitorVar(NetMonitor* net_mon, const String& variable) {
 }
 
 bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap) {
+  Network* net = own_net();
+
   Variant val = 0.0f;
   if(var.startsWith("r.") || var.startsWith("s.")) {
     Unit* src_u = NULL;
@@ -284,7 +286,7 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
         RecvCons* tcong = recv.FastEl(g);
         MemberDef* act_md = tcong->con_type->members.FindName(cvar);
         if(!act_md) continue;
-        Connection* con = tcong->FindConFrom(src_u);
+        Connection* con = tcong->FindConFrom(src_u, net);
         if(!con) continue;
         val = *((float*)act_md->GetOff(con));
         break;
@@ -295,7 +297,7 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
         SendCons* tcong = send.FastEl(g);
         MemberDef* act_md = tcong->con_type->members.FindName(cvar);
         if(!act_md)     continue;
-        Connection* con = tcong->FindConFrom(src_u);
+        Connection* con = tcong->FindConFrom(src_u, net);
         if(!con) continue;
         val = *((float*)act_md->GetOff(con));
         break;
@@ -438,6 +440,8 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
+  Network* net = own_net();
+
   RecvCons* recv_gp = NULL;
   SendCons* send_gp = NULL;
   if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
@@ -453,7 +457,7 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
   if(send_gp->recv_idx() < 0)
     send_gp->other_idx = prjn->recv_idx;
 
-  if(recv_gp->FindConFromIdx(su) >= 0) // already connected!
+  if(recv_gp->FindConFromIdx(su, net) >= 0) // already connected!
     return NULL;
 
   Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
@@ -463,6 +467,7 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
 }
 
 bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
+  Network* net = own_net();
   RecvCons* recv_gp;
   SendCons* send_gp;
   if(prjn) {
@@ -485,27 +490,28 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
     prjn = recv_gp->prjn;
   }
 
-  recv_gp->RemoveConUn(su);
+  recv_gp->RemoveConUn(su, net);
   n_recv_cons--;
-  return send_gp->RemoveConUn(this);
+  return send_gp->RemoveConUn(this, net);
 }
 
 void Unit::DisConnectAll() {
   RecvCons* recv_gp;
   SendCons* send_gp;
+  Network* net = own_net();
   int g;
   int i;
   for(g=0; g<recv.size; g++) { // the removes cause the leaf_gp to crash..
     recv_gp = recv.FastEl(g);
     for(i=recv_gp->size-1; i>=0; i--) {
       if(recv_gp->send_idx() >= 0)
-        send_gp = recv_gp->Un(i)->send.SafeEl(recv_gp->send_idx());
+        send_gp = recv_gp->Un(i,net)->send.SafeEl(recv_gp->send_idx());
       else
         send_gp = NULL;
       if(send_gp == NULL)
-        send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn);
+        send_gp = recv_gp->Un(i,net)->send.FindPrjn(recv_gp->prjn);
       if(send_gp)
-        send_gp->RemoveConUn(this);
+        send_gp->RemoveConUn(this, net);
       recv_gp->RemoveConIdx(i);
     }
     recv_gp->other_idx = -1;
@@ -514,13 +520,13 @@ void Unit::DisConnectAll() {
     send_gp = send.FastEl(g);
     for(i=send_gp->size-1; i>=0; i--) {
       if(send_gp->recv_idx() >= 0)
-        recv_gp = send_gp->Un(i)->recv.SafeEl(send_gp->recv_idx());
+        recv_gp = send_gp->Un(i,net)->recv.SafeEl(send_gp->recv_idx());
       else
         recv_gp = NULL;
       if(recv_gp == NULL)
-        recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn);
+        recv_gp = send_gp->Un(i,net)->recv.FindPrjn(send_gp->prjn);
       if(recv_gp)
-        recv_gp->RemoveConUn(this);
+        recv_gp->RemoveConUn(this, net);
       send_gp->RemoveConIdx(i);
     }
     send_gp->other_idx = -1;
@@ -713,11 +719,12 @@ int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFor
 
 void Unit::GetLocalistName() {
   if(name.nonempty()) return;   // only if not otherwise named!
+  Network* net = own_net();
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned()) continue;
     if(cg->size != 1) continue; // only 1-to-1
-    Unit* un = cg->Un(0);
+    Unit* un = cg->Un(0,net);
     if(!un->name.empty()) {
       SetName(un->name);
       break;                    // done!

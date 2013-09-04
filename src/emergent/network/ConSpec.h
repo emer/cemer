@@ -93,10 +93,10 @@ public:
   inline void           C_ApplyLimits(Connection* cn, Unit*, Unit*)
   { wt_limits.ApplyLimits(cn->wt); }
   // #CAT_Learning apply weight limits to single connection
-  inline virtual void   ApplyLimits(RecvCons* cg, Unit* ru);
+  inline virtual void   ApplyLimits(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning apply weight limits (sign, magnitude)
 
-  virtual void          ApplySymmetry(RecvCons* cg, Unit* ru);
+  virtual void          ApplySymmetry(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning apply weight symmetrizing between reciprocal units
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -107,21 +107,21 @@ public:
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
   inline virtual void   C_AddRndWeights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su, float scale);
   // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
-  inline virtual void   Init_Weights(RecvCons* cg, Unit* ru);
+  inline virtual void   Init_Weights(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
   inline virtual void   C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su)
   { };
-  inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru);
+  inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru, Network* net);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void   C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
   { cn->dwt=0.0f; }
   // #CAT_Learning initialize weight-change variables on a single connection
-  inline virtual void   Init_dWt(RecvCons* cg, Unit* ru);
+  inline virtual void   Init_dWt(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning initialize weight-change variables for whole set
 
   inline float          C_Compute_Netin(Connection* cn, Unit* ru, Unit* su);
   // #IGNORE 
-  inline virtual float  Compute_Netin(RecvCons* cg, Unit* ru);
+  inline virtual float  Compute_Netin(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Activation compute net input for weights in this con group
 
   inline void           C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru,
@@ -134,13 +134,13 @@ public:
 
   inline float          C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
   // #IGNORE 
-  inline virtual float  Compute_Dist(RecvCons* cg, Unit* ru);
+  inline virtual float  Compute_Dist(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Activation compute net distance for con group (ie. euclidean distance)
   inline void           C_Compute_dWt(Connection*, Unit*, Unit*)        { };
-  inline virtual void   Compute_dWt(RecvCons* cg, Unit* ru);
+  inline virtual void   Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning compute the delta-weight change
   inline void           C_Compute_Weights(Connection*, Unit*, Unit*)    { };
-  inline virtual void   Compute_Weights(RecvCons* cg, Unit* ru);
+  inline virtual void   Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning update weights (ie. add delta-wt to wt, zero delta-wt)
 
   ////////////////////////////////////////////////////////////////////////////////

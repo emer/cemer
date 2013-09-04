@@ -83,11 +83,11 @@ public:
   { ConSpec::C_Init_Weights(cg, cn, ru, su); ((BpCon*)cn)->pdw = 0.0f;}
 
   inline float		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline virtual float 	Compute_dEdA(BpSendCons* cg, BpUnit* su);
+  inline virtual float 	Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net);
   // get error from units I send to
 
   inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   inline virtual void	B_Compute_dWt(BpCon* cn, BpUnit* ru);
   // Compute dE with respect to the weights
 
@@ -97,7 +97,7 @@ public:
   inline void	C_BEF_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // BEFORE_LRATE
   inline void	C_AFT_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // AFTER_LRATE
   inline void	C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // NORMALIZED
-  inline void	Compute_Weights(RecvCons* cg, Unit* ru);
+  inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
   inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
   // for the bias unit
 
@@ -154,7 +154,8 @@ INHERITED(SendCons)
 public:
   // these are "convenience" functions for those defined in the spec
 
-  float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)GetConSpec())->Compute_dEdA(this, su); }
+  float Compute_dEdA(BpUnit* su, Network* net)
+  { return ((BpConSpec*)GetConSpec())->Compute_dEdA(this, su, net); }
 
   TA_BASEFUNS_NOCOPY(BpSendCons);
 private:
@@ -254,17 +255,19 @@ typedef void (BpUnit::*BpUnitMethod)(BpNetwork*, int);
 inline float BpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
   return cn->wt * ru->dEdNet;
 }
-inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
+inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net) {
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i), su));
+  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i,net),
+                                           su));
   return rval;
 }
 
 inline void BpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
   cn->dwt += su->act * ru->dEdNet;
 }
-inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru,
+                                  (BpUnit*)cg->Un(i,net)));
 }
 inline void BpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
   cn->dwt += ru->dEdNet;
@@ -293,20 +296,20 @@ inline void BpConSpec::C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) 
   cn->dwt = 0.0f;
 }
 
-inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
+inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
   if(momentum_type == AFTER_LRATE) {
     CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((BpCon*)cg->OwnCn(i),
-					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
   }
   else if(momentum_type == BEFORE_LRATE) {
     CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((BpCon*)cg->OwnCn(i),
-					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
   }
   else {
     CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((BpCon*)cg->OwnCn(i),
-					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
   }
-  ApplyLimits(cg, ru);
+  ApplyLimits(cg, ru, net);
 }
 
 inline void BpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
@@ -330,7 +333,7 @@ class E_API HebbBpConSpec : public BpConSpec {
 INHERITED(BpConSpec)
 public:
   inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
 
   inline void		B_Compute_dWt(BpCon* cn, BpUnit* ru);
 
@@ -344,8 +347,9 @@ inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
   cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
 }
 
-inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru,
+                                  (BpUnit*)cg->Un(i,net)));
 }
 
 inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
@@ -361,7 +365,7 @@ public:
   float		err_scale;	// the scaling parameter
 
   inline float 		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
-  inline float 		Compute_dEdA(BpSendCons* cg, BpUnit* su);
+  inline float 		Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net);
 
   TA_SIMPLE_BASEFUNS(ErrScaleBpConSpec);
 protected:
@@ -375,9 +379,10 @@ private:
 inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
   return err_scale * cn->wt * ru->dEdNet;
 }
-inline float ErrScaleBpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
+inline float ErrScaleBpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net) {
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i), su));
+  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i,net),
+                                           su));
   return rval;
 }
 
@@ -409,7 +414,7 @@ public:
   inline void	C_BEF_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
   inline void	C_AFT_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
   inline void	C_NRM_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
-  inline virtual void	Compute_Weights(RecvCons* cg, Unit* ru);
+  inline virtual void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
   inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
 
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
@@ -461,20 +466,20 @@ inline void DeltaBarDeltaBpConSpec::C_NRM_Compute_Weights
   cn->dwt = 0.0f;
 }
 
-inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
+inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
   if(momentum_type == AFTER_LRATE) {
     CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
-					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
   }
   else if(momentum_type == BEFORE_LRATE) {
     CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
-					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
   }
   else {
     CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
-					   (BpUnit*)ru, (BpUnit*)cg->Un(i)));
+                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
   }
-  ApplyLimits(cg, ru);
+  ApplyLimits(cg, ru, net);
 }
 
 inline void DeltaBarDeltaBpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {

@@ -34,6 +34,8 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
+  Network* net = prjn->layer->own_net;
+
   int recv_no;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
     recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f);
@@ -80,7 +82,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
         // don't connect to anyone who already recvs from me cuz that will make
         // a symmetric connection which isn't good: symmetry will be enforced later
         RecvCons* scg = su->recv.FindPrjn(prjn);
-        if(scg->FindConFromIdx(ru) >= 0) continue;
+        if(scg->FindConFromIdx(ru,net) >= 0) continue;
         perm_list.Link(su);
       }
       perm_list.Permute();
@@ -95,7 +97,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
       if(scg == NULL) continue;
       int i;
       for(i=0;i<scg->size;i++) {
-        Unit* su = scg->Un(i);
+        Unit* su = scg->Un(i,net);
         ru->ConnectFromCk(su, prjn, true);
         // true = ignore errs -- to be expected
       }

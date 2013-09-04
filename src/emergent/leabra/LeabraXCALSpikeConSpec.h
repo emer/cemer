@@ -73,7 +73,7 @@ public:
 #endif
   }
 
-  inline void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su) { };
+  inline void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) { };
   // never init..
 
   inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su,
@@ -105,20 +105,21 @@ public:
     cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
   }
 
-  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
+                            LeabraNetwork* net, bool do_s) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
     if(learn_rule == CTLEABRA_XCAL_C) {
       if(xcal_spike.ss_sr) {
 	CON_GROUP_LOOP(cg, C_Compute_SRAvg_sssr((LeabraSpikeCon*)cg->OwnCn(i), 
-						(LeabraUnit*)cg->Un(i), su, us));
+						(LeabraUnit*)cg->Un(i,net), su, us));
       }
       else {
 	CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
-						 (LeabraUnit*)cg->Un(i), su, us));
+						 (LeabraUnit*)cg->Un(i,net), su, us));
       }
     }
     else {
-      inherited::Compute_SRAvg(cg, su, do_s);
+      inherited::Compute_SRAvg(cg, su, net, do_s);
     }
   }
 
@@ -131,18 +132,20 @@ public:
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                       LeabraNetwork* net) {
     float su_avg_m = su->avg_m;
     float su_act_mult = xcal.thr_l_mix * su_avg_m;
 
     if(learn_rule == CTLEABRA_XCAL_C) {
       for(int i=0; i<cg->size; i++) {
-	LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-	C_Compute_dWt_CtLeabraXCAL_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su, su_act_mult);
+	LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+	C_Compute_dWt_CtLeabraXCAL_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su,
+                                         su_act_mult);
       }
     }
     else {
-      inherited::Compute_dWt_CtLeabraXCAL(cg, su);
+      inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
     }
   }
 

@@ -95,6 +95,7 @@ public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL
   bool		dwt_norm;	// #DEF_true normalize weight changes -- this adds a small amount of computational cost but generally makes learning more robust -- dwt -= (act_p / sum act_p) (sum dwt) over projection
+  bool		norm_lrn_only;	// #CONDSHOW_ON_dwt_norm if using dwt_norm, only normalize over connections that have dwt != 0 -- i.e., ones that have some learning taking place already
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
@@ -345,8 +346,8 @@ public:
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
     lcn->pdw = 0.0f; }
-  inline override void Init_Weights(RecvCons* cg, Unit* ru) {
-    ConSpec::Init_Weights(cg, ru);
+  inline override void Init_Weights(RecvCons* cg, Unit* ru, Network* net) {
+    ConSpec::Init_Weights(cg, ru, net);
     if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
       wt_scale.rel = wt_scale_init.rel; } }
 
@@ -365,7 +366,8 @@ public:
     cn->wt = cn->swt = cn->lwt; // once we set swt, wt also becomes equivalent
   }
 
-  inline void Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su);
+  inline void Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su,
+                                    LeabraNetwork* net);
   // #CAT_Learning #IGNORE compute the effective weight from the stable and learned weights -- simulates the effects of protein synthesis and potential sleep in consolidating the learned weight value
 
   ///////////////////////////////////////////////////////////////
@@ -380,10 +382,10 @@ public:
   // is this a TI thalamic connection (LeabraTIThalConSpec) -- optimized check for higher speed
 
   inline void 	C_Send_NetinDelta_Thread(Connection* cn, float* send_netin_vec,
-				      LeabraUnit* ru, float su_act_delta_eff);
+                                         int ru_idx, float su_act_delta_eff);
   // #IGNORE
   inline void 	C_Send_NetinDelta_NoThread(Connection* cn, LeabraUnit* ru,
-					float su_act_delta_eff);
+                                           float su_act_delta_eff);
   // #IGNORE
   virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net, int thread_no,
 				float su_act_delta);
@@ -392,7 +394,7 @@ public:
   // recv-based also needed for some statistics, but is NOT used for main compute code -- uses act_eq for sender act as well
   inline float 	C_Compute_Netin(LeabraCon* cn, LeabraUnit*, LeabraUnit* su);
   // #IGNORE
-  inline float 	Compute_Netin(RecvCons* cg, Unit* ru);
+  inline float 	Compute_Netin(RecvCons* cg, Unit* ru, Network* net);
   // #IGNORE
 
   ///////////////////////////////////////////////////////////////
@@ -401,7 +403,7 @@ public:
   /////////////////////////////////////
   // LeabraCHL code
 
-  inline void 	Compute_SAvgCor(LeabraSendCons* cg, LeabraUnit* su);
+  inline void 	Compute_SAvgCor(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net);
   // #CAT_Learning #IGNORE compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
 
   inline float	C_Compute_Hebb(LeabraCon* cn, LeabraSendCons* cg, float lin_wt,
@@ -417,12 +419,14 @@ public:
   // #CAT_Learning #IGNORE combine associative and error-driven weight change, actually update dwt
   inline void 	C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* su, float err);
   // #CAT_Learning #IGNORE just error-driven weight change, actually update dwt
-  virtual void 	Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void 	Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net);
   // #CAT_Learning Leabra/CHL weight changes
 
   inline void	C_Compute_Weights_LeabraCHL(LeabraCon* cn);
   // #CAT_Learning #IGNORE compute weights for LeabraCHL learning rule
-  virtual void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                          LeabraNetwork* net);
   // #CAT_Learning overall compute weights for LeabraCHL learning rule
 
   /////////////////////////////////////
@@ -431,12 +435,14 @@ public:
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
 				 float su_avg_s, float su_avg_m, float su_act_mult);
   // #CAT_Learning #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
-  virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net);
   // #CAT_Learning CtLeabraXCAL weight changes
 
   inline void	C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn);
   // #CAT_Learning #IGNORE overall compute weights for CtLeabraXCAL learning rule
-  virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net);
   // #CAT_Learning overall compute weights for CtLeabraXCAL learning rule
 
 
@@ -445,7 +451,8 @@ public:
 
   inline void 	C_Compute_dWt_CtLeabraXCalC(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
   // #CAT_Learning #IGNORE compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
-  virtual void 	Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru);
+  virtual void 	Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru,
+                                          LeabraNetwork* net);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
 
   /////////////////////////////////////
@@ -455,35 +462,41 @@ public:
   // #IGNORE accumulate sender-receiver activation product average -- medium (trial-level) time scale
   inline void C_Compute_SRAvg_ms(LeabraSRAvgCon* cn, float ru_act, float su_act);
   // #IGNORE accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
-  virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s);
+  virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net,
+                             bool do_s);
   // accumulate sender-receiver activation product average -- only for CtLeabraCAL
 
   inline void C_Trial_Init_SRAvg(LeabraSRAvgCon* cn);
   // #IGNORE initialize sender-receiver activation product averages for trial and below 
-  virtual void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net);
   // initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
 
   inline void 	C_Compute_dWt_CtLeabraCAL(LeabraSRAvgCon* cn,
 					  float sravg_s_nrm, float sravg_m_nrm);
   // #CAT_Learning #IGNORE compute Contrastive Attractor Learning (CAL)
-  virtual void 	Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void 	Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net);
   // #CAT_Learning CtLeabraCAL weight changes
 
   inline void	C_Compute_Weights_CtLeabraCAL(LeabraSRAvgCon* cn);
   // #CAT_Learning #IGNORE overall compute weights for CtLeabraCAL learning rule
-  virtual void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su);
+  virtual void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                            LeabraNetwork* net);
   // #CAT_Learning overall compute weights for CtLeabraCAL learning rule
 
   /////////////////////////////////////
   // Master dWt, Weights functions
 
-  inline void	Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su);
+  inline void	Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su,
+                                   LeabraNetwork* net);
   // #CAT_Learning #IGNORE overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
-  inline void	Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su);
+  inline void	Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su,
+                                       LeabraNetwork* net);
   // #CAT_Learning #IGNORE overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
-  virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru);
+  virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru,
+                                 LeabraNetwork* net);
   // #CAT_Learning compute dwt normalization
 
   /////////////////////////////////////
@@ -508,10 +521,12 @@ public:
   /////////////////////////////////////
   // General 
 
-  virtual void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) { };
+  virtual void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
+                                 LeabraNetwork* net) { };
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
-  inline void Compute_CopyWeights(LeabraSendCons* cg, LeabraSendCons* src_cg);
+  inline void Compute_CopyWeights(LeabraSendCons* cg, LeabraSendCons* src_cg,
+                                  LeabraNetwork* net);
   // #CAT_Learning #IGNORE copy weights from src_cg to cg -- typically used to compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
 
   virtual void	SetCurLrate(LeabraNetwork* net, int epoch);

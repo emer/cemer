@@ -37,12 +37,12 @@ public:
   float		net_delta;	// #NO_SAVE #CAT_Activation delta netinput to this con_group -- only used for NETIN_PER_PRJN
   float		net_raw;	// #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
 
-  void	Compute_dWt_CtLeabraXCalC(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCalC(this, ru); }
+  void	Compute_dWt_CtLeabraXCalC(LeabraUnit* ru, LeabraNetwork* net)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCalC(this, ru, net); }
   // #CAT_Learning compute weight changes: CtLeabra XCalC version
 
-  void	Compute_dWt_Norm(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_Norm(this, ru); }
+  void	Compute_dWt_Norm(LeabraUnit* ru, LeabraNetwork* net)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_Norm(this, ru, net); }
   // #CAT_Learning compute dwt normalization
 
   void	Copy_(const LeabraRecvCons& cp);

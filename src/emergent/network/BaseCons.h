@@ -69,7 +69,7 @@ protected:
     Connection**        cons_ptr;       // if we don't own the cons, these are pointers to the cons (alloc_size)
   };
 #endif
-  Unit**                units;          // list of units on the other side of the connection, in index association with the connections
+  int*                unit_idxs;        // list of unit flat_idx indexes on the other side of the connection, in index association with the connections
 
 public:
 
@@ -115,11 +115,16 @@ public:
   { if(!InRange(idx)) return NULL; return Cn(idx); }
   // #CAT_Access fully safe generic access of connection at given index, regardless of whether it is owned or a pointer -- consumer must cast to appropriate sub-type (for type safety, check con_type) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn or PtrCn)
 
-  inline Unit*          Un(int idx) const  { return units[idx]; }
-  // #CAT_Access fast access (no range checking) to unit pointer at given index
-  inline bool           SetUn(int idx, Unit* un)
-  { if(!InRange(idx)) return false; units[idx] = un; return true; }
-  // #CAT_Modify set unit pointer at given index -- returns false if out of range
+  inline int            UnIdx(int idx) const
+  { return unit_idxs[idx]; }
+  // #CAT_Access fast access (no range checking) to unit flat index at given connection index
+  inline Unit*          Un(int idx, Network* net) const;
+  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- todo: must be marked as IGNORE for maketa, but actually needs to be usable from css -- need to fix
+  inline Unit*          UnFmLst(int idx, Unit** flat_units) const
+  { return flat_units[unit_idxs[idx]]; }
+  // #CAT_Access fast access (no range checking) to unit pointer at given index (goes through flat index at network level)
+  inline bool           SetUn(int idx, Unit* un);
+  // #IGNORE #CAT_Modify set unit pointer at given index -- returns false if out of range
 
   Connection*           ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
                                      bool ignore_alloc_errs = false);
@@ -145,7 +150,7 @@ public:
 
   virtual bool          RemoveConIdx(int i);
   // #CAT_Modify remove connection (cons and units) at given index, moving others down to fill in
-  virtual bool          RemoveConUn(Unit* un);
+  virtual bool          RemoveConUn(Unit* un, Network* net);
   // #CAT_Modify remove connection from given unit
   virtual void          RemoveAll()     { FreeCons(); }
   // #CAT_Modify remove all conections -- frees all associated memory
@@ -160,14 +165,14 @@ public:
   virtual void          MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this set of receiving connections
 
-  virtual int           FindConFromIdx(Unit* un) const;
+  virtual int           FindConFromIdx(Unit* un, Network* net) const;
   // #CAT_Structure find index of connection from given unit
-  virtual int           FindConFromNameIdx(const String& unit_nm) const;
+  virtual int           FindConFromNameIdx(const String& unit_nm, Network* net) const;
   // #CAT_Structure find index of connection from given unit name
 
-  virtual Connection*   FindConFrom(Unit* un) const;
+  virtual Connection*   FindConFrom(Unit* un, Network* net) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit
-  virtual Connection*   FindConFromName(const String& unit_nm) const;
+  virtual Connection*   FindConFromName(const String& unit_nm, Network* net) const;
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure find connection from given unit name
 
   virtual SendCons*     GetPrjnSendCons(Unit* su) const;
@@ -183,7 +188,8 @@ public:
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are computational functions needed for basic infrastructure
 
-  void  Init_Weights_post(Unit* ru)     { if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru); }
+  void  Init_Weights_post(Unit* ru, Network* net)
+  { if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru,net); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   ////////////////////////////////////////////////////////////////////////////////

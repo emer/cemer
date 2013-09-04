@@ -211,6 +211,11 @@ public:
   { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
+  inline Unit*  UnFmIdx(int idx) const { return units_flat.FastEl(idx); }
+  // #CAT_Structure get the unit from its flat_idx value
+  inline Unit*  UnFmIdx_Safe(int idx) const { return units_flat.SafeEl(idx); }
+  // #CAT_Structure get the unit from its flat_idx value, with safe range checking (slow -- generally avoid using if possible)
+
   void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
     virtual void  CheckSpecs();
@@ -585,6 +590,7 @@ private:
 // these inline functions depend on having all the structure defined already
 // so we include them here, at the very end
 
+#include <BaseCons_inlines>
 #include <Unit_inlines>
 #include <ConSpec_inlines>
 

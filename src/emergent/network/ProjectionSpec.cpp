@@ -84,38 +84,42 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
 
 void ProjectionSpec::Init_Weights(Projection* prjn) {
   if(prjn->off) return;
+  Network* net = prjn->layer->own_net;
   FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
-        cg->Init_Weights(u);
+        cg->Init_Weights(u, net);
     }
   }
 }
 
 void ProjectionSpec::Init_Weights_post(Projection* prjn) {
   if(prjn->off) return;
+  Network* net = prjn->layer->own_net;
   FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
-        cg->Init_Weights_post(u);
+        cg->Init_Weights_post(u, net);
     }
   }
 }
 
-void ProjectionSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) {
+void ProjectionSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   // default is just to do same thing as the conspec would have done..
-  CON_GROUP_LOOP(cg, cg->C_Init_Weights(cg->Cn(i), ru, cg->Un(i)));
+  Network* net = prjn->layer->own_net;
+  CON_GROUP_LOOP(cg, cg->C_Init_Weights(cg->Cn(i), ru, cg->Un(i,net)));
 }
 
 void ProjectionSpec::Init_dWt(Projection* prjn) {
+  Network* net = prjn->layer->own_net;
   FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     int g;
     for(g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
-        cg->Init_dWt(u);
+        cg->Init_dWt(u,net);
     }
   }
 }

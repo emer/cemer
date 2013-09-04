@@ -34,14 +34,15 @@ public:
   float		hebb_mix_c;	// #READ_ONLY 1 - hebb_mix -- amount of sending medium time scale activation to mulitply ru avg_l by
   float		su_act_min;	// #DEF_0 #MIN_0 #MAX_1 NOTE: this is only useful for hebb_mixminimum effective activation for sending units as entering into learning rule -- because the xcal curve returns to 0 when the S*R coproduct is 0, an inactive sending unit will never experience any weight change -- this is counter to the hebbian form of learning, where an active recv unit will decrease weights from inactive senders -- ensuring a minimal amount of activation avoids this issue, and reflects the low background rate of neural and synaptic activity that actually exists in the brain
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                       LeabraNetwork* net) {
     LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
     float su_avg_s = MAX(su->avg_s, su_act_min);
     float su_avg_m = MAX(su->avg_m, su_act_min);
     float su_act_mult = xcal.thr_l_mix * (hebb_mix * slay->kwta.pct + hebb_mix_c * su_avg_m);
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
 				       su_act_mult);
     }

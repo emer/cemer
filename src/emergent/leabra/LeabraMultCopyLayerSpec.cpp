@@ -63,8 +63,8 @@ void LeabraMultCopyLayerSpec::Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwor
 
     LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
 
-    LeabraUnit* copy_un = (LeabraUnit*)copy_gp->Un(0);
-    LeabraUnit* mult_un = (LeabraUnit*)mult_gp->Un(0);
+    LeabraUnit* copy_un = (LeabraUnit*)copy_gp->Un(0,net);
+    LeabraUnit* mult_un = (LeabraUnit*)mult_gp->Un(0,net);
 
     float mult_eff = mult_gain * mult_un->act_eq;;
     if(mult_eff > 1.0f) mult_eff = 1.0f;

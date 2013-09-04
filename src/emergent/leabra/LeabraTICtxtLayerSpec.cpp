@@ -42,7 +42,7 @@ bool LeabraTICtxtLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                      "Requires one recv projection!")) {
     return false;
   }
-  LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+  LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
   if(lay->CheckError(!su, quiet, rval, 
                      "Requires one unit in recv projection!")) {
     return false;
@@ -57,7 +57,7 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
     if(u->lesioned()) continue;
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
     if(!cg) return;
-    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
     if(!su) return;
     LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
     if(act_val == P_ACT_P) {

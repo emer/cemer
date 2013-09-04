@@ -68,9 +68,10 @@ public:
   inline void C_Compute_CycSynDep(CycleSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     syn_dep.Depress(cn->effwt, cn->wt, ru->act_eq, su->act_eq);
   }
-  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) {
     CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CycleSynDepCon*)cg->OwnCn(i),
-					   (LeabraUnit*)cg->Un(i), su));
+					   (LeabraUnit*)cg->Un(i,net), su));
   }
 
   void C_Reset_EffWt(CycleSynDepCon* cn) {
@@ -89,33 +90,36 @@ public:
   }
 
   inline void C_Send_NetinDelta_Thread(CycleSynDepCon* cn, float* send_netin_vec,
-				    LeabraUnit* ru, float su_act_delta_eff) {
-    send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
+                                       int ru_idx, float su_act_delta_eff) {
+    send_netin_vec[ru_idx] += cn->effwt * su_act_delta_eff;
   }
 
-  inline void C_Send_NetinDelta_NoThread(CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+  inline void C_Send_NetinDelta_NoThread(CycleSynDepCon* cn, LeabraUnit* ru,
+                                         float su_act_delta_eff) {
     ru->net_delta += cn->effwt * su_act_delta_eff;
   }
 
   override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-			      int thread_no, float su_act_delta) {
+                                int thread_no, float su_act_delta) {
     float su_act_delta_eff = cg->scale_eff * su_act_delta;
     if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CycleSynDepCon*)cg->OwnCn(i), send_netin_vec,
-					(LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CycleSynDepCon*)cg->OwnCn(i),
+                                                  send_netin_vec,
+                                                  cg->UnIdx(i), su_act_delta_eff));
     }
     else {
       if(thread_no < 0) {
 	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread((CycleSynDepCon*)cg->OwnCn(i),
-				   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+                                      (LeabraUnit*)cg->Un(i,net), su_act_delta_eff));
       }
       else {
 	float* send_netin_vec = net->send_netin_tmp.el
 	  + net->send_netin_tmp.FastElIndex(0, thread_no);
-	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CycleSynDepCon*)cg->OwnCn(i), send_netin_vec,
-				 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CycleSynDepCon*)cg->OwnCn(i),
+                                                    send_netin_vec,
+                                                    cg->UnIdx(i), su_act_delta_eff));
       }
     }
   }
@@ -123,10 +127,11 @@ public:
   float C_Compute_Netin(CycleSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
     return cn->effwt * su->act_eq;
   }
-  float Compute_Netin(RecvCons* cg, Unit* ru) {
+  float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
     float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CycleSynDepCon*)cg->PtrCn(i), (LeabraUnit*)ru,
-					       (LeabraUnit*)cg->Un(i)));
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CycleSynDepCon*)cg->PtrCn(i),
+                                               (LeabraUnit*)ru,
+					       (LeabraUnit*)cg->Un(i,net)));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 

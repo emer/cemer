@@ -34,8 +34,8 @@ public:
   override bool  IsTICtxtCon() { return true; }
 
   inline void C_Send_CtxtNetin_Thread(Connection* cn, float* send_netin_vec,
-                                      LeabraUnit* ru, const float su_act_eff) {
-    send_netin_vec[ru->flat_idx] += cn->wt * su_act_eff;
+                                      int ru_idx, const float su_act_eff) {
+    send_netin_vec[ru_idx] += cn->wt * su_act_eff;
   }
   // #IGNORE
 
@@ -49,14 +49,15 @@ public:
                              int thread_no, float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_CtxtNetin_NoThread(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
+      CON_GROUP_LOOP(cg, C_Send_CtxtNetin_NoThread(cg->OwnCn(i),
+                                                   (LeabraUnit*)cg->Un(i,net),
                                                    su_act_eff));
     }
     else {
       float* send_netin_vec = net->send_netin_tmp.el
         + net->send_netin_tmp.FastElIndex(0, thread_no);
       CON_GROUP_LOOP(cg, C_Send_CtxtNetin_Thread(cg->OwnCn(i), send_netin_vec,
-                                                 (LeabraUnit*)cg->Un(i), su_act_eff));
+                                                 cg->UnIdx(i), su_act_eff));
     }
   }
   // #CAT_Activation sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
@@ -64,7 +65,7 @@ public:
   // don't send regular net inputs..
   override void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
 				float su_act_delta_eff) { };
-  override float Compute_Netin(RecvCons* cg, Unit* ru) { return 0.0f; }
+  override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) { return 0.0f; }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
@@ -73,40 +74,41 @@ public:
     // soft bounding is managed in the weight update phase, not in dwt
   }
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) {
+    if(ignore_unlearnable && net->unlearnable_trial) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) {
+    if(ignore_unlearnable && net->unlearnable_trial) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
+    if(ignore_unlearnable && net->unlearnable_trial) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
     // CHL uses XCAL with aggregate soft weight bounding, b/c no hebbian term
     CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->OwnCn(i)));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway

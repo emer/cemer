@@ -120,12 +120,13 @@ public:
 
   // todo: do CtLeabra_XCal and cal
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_SAvgCor(cg, su);
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) {
+    Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       FastWtCon* cn = (FastWtCon*)cg->OwnCn(i);
       C_Compute_FastDecay(cn, ru, su);
       float lin_wt = LinFmSigWt(cn->lwt);
@@ -154,9 +155,10 @@ public:
     cn->sdwt = 0.0f;
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
     CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->OwnCn(i)));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+    //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 
   TA_SIMPLE_BASEFUNS(FastWtConSpec);

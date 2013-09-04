@@ -181,6 +181,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   if(cg->size == 0) return;
   int n_wedges = 8;
+  Network* net = prjn->layer->own_net;
 
   if(reciprocal) {
     Layer* recv_lay = prjn->from;
@@ -199,7 +200,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     int sang_dx = suc.x;
 
     for(int i=0; i < cg->size; i++) {
-      Unit* su = cg->Un(i);     // this is actually ru
+      Unit* su = cg->Un(i,net);     // this is actually ru
       int rgpidx;
       int rui;
       recv_lay->UnGpIdxFmUnitIdx(su->idx, rui, rgpidx); // recv = send!
@@ -207,7 +208,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 
       RecvCons* rucg = su->recv.FindFrom(send_lay); // recip prjn
       if(!rucg) continue;
-      Unit* ssu = rucg->Un(0);  // first sending unit in that guy's prjn
+      Unit* ssu = rucg->Un(0,net);  // first sending unit in that guy's prjn
       int ssgpidx;
       int ssui;
       send_lay->UnGpIdxFmUnitIdx(ssu->idx, ssui, ssgpidx);
@@ -232,7 +233,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
     int wedge = rui % n_wedges;
 
-    Unit* ssu = cg->Un(0);
+    Unit* ssu = cg->Un(0,net);
     int ssgpidx;
     int ssui;
     send_lay->UnGpIdxFmUnitIdx(ssu->idx, ssui, ssgpidx);
@@ -240,7 +241,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     ssgpc.SetFmIndex(ssgpidx, send_lay->gp_geom.x);
 
     for(int i=0; i < cg->size; i++) {
-      Unit* su = cg->Un(i);
+      Unit* su = cg->Un(i,net);
       int sgpidx;
       int sui;
       send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);

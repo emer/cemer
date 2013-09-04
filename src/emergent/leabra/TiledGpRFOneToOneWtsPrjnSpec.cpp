@@ -28,11 +28,13 @@ void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
+  Network* net = prjn->layer->own_net;
+
   int rgpidx;
   int rui;
   recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
   for(int i=0; i < cg->size; i++) {
-    Unit* su = cg->Un(i);
+    Unit* su = cg->Un(i,net);
     int sgpidx;
     int sui;
     send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);

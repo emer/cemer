@@ -38,29 +38,32 @@ public:
     cn->dwt += cur_lrate * dwt; 
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
     if(su->act_lrn == 0.0f) return; // if sender is not active, bail
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+    if(ignore_unlearnable && net->unlearnable_trial) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_PfPc(cn, su->act_lrn, ru->act_eq, ru->targ);
       // target activation trains relative to act_eq
     }
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su); // do soft bound here
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
   }
 
   TA_SIMPLE_BASEFUNS(CerebPfPcConSpec);

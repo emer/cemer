@@ -15,9 +15,6 @@
 
 #include "BaseCons.h"
 #include <Network>
-#include <Layer>
-#include <Unit>
-#include <ConSpec>
 #include <NetMonitor>
 #include <SimpleMathSpec>
 #include <float_Array>
@@ -39,7 +36,7 @@ void BaseCons::Initialize() {
   m_con_spec = NULL;
   con_size = con_type->size;
   cons_own = NULL;
-  units = NULL;
+  unit_idxs = NULL;
 }
 
 void BaseCons::Destroy() {
@@ -101,7 +98,7 @@ int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     Network* nw_net = (Network*)new_par;
     Network* old_net = (Network*)old_par;
     for(int i=size-1; i >= 0; i--) {
-      Unit* itm = Un(i);
+      Unit* itm = Un(i,old_net);
       if(!itm) continue;
       Layer* old_lay = GET_OWNER(itm,Layer);
       int lidx = old_net->layers.FindLeafEl(old_lay);
@@ -122,8 +119,9 @@ int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     }
   }
   else {
+    Network* old_net = GET_OWNER(old_par, Network);
     for(int i=size-1; i >= 0; i--) {
-      Unit* itm = Un(i);
+      Unit* itm = Un(i,old_net);
       if(!itm) continue;
       taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
       if(old_own != old_par) continue;
@@ -143,18 +141,20 @@ int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
 }
 
 int BaseCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+  Network* old_net = GET_MY_OWNER(Network);
   int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
   if(size <= 0) return 0;
-  Unit* itm = Un(0);
+  Unit* itm = Un(0, old_net);
   taBase* old_par = itm->GetOwner(par_typ);
   nchg += UpdatePointers_NewPar(old_par, new_par);
   return nchg;
 }
 
 int BaseCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+  Network* old_net = GET_MY_OWNER(Network);
   int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
   for(int i=size-1; i>=0; i--) {
-    Unit* itm = Un(i);
+    Unit* itm = Un(i, old_net);
     if(!itm) continue;
     if(itm == old_ptr) {           // if it is the old guy, it is by defn a link because we're not the owner..
       if(!new_ptr)                 // if replacement is null, just remove it
@@ -187,7 +187,7 @@ Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs) {
     return NULL;
   }
   Connection* rval = OwnCn(size);
-  units[size++] = un;
+  unit_idxs[size++] = un->flat_idx;
   return rval;
 }
 
@@ -200,7 +200,7 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) 
     return false;
   }
   cons_ptr[size] = cn;
-  units[size++] = un;
+  unit_idxs[size++] = un->flat_idx;
   return true;
 }
 
@@ -265,7 +265,7 @@ void BaseCons::AllocCons(int sz) {
   else {
     cons_ptr = (Connection**)calloc(alloc_size, sizeof(Connection*));
   }
-  units = (Unit**)calloc(alloc_size, sizeof(Unit*));
+  unit_idxs = (int*)calloc(alloc_size, sizeof(int));
 }
 
 void BaseCons::FreeCons() {
@@ -275,7 +275,7 @@ void BaseCons::FreeCons() {
   else {
     if(cons_ptr) { free(cons_ptr); cons_ptr = NULL; }
   }
-  if(units) { free(units); units = NULL; }
+  if(unit_idxs) { free(unit_idxs); unit_idxs = NULL; }
   size = 0;
   alloc_size = 0;
 }
@@ -294,7 +294,7 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
     memcpy(cons_ptr, (char*)cp.cons_ptr, size * sizeof(Connection*));
   }
 
-  memcpy(units, (char*)cp.units, size * sizeof(Unit*));
+  memcpy(unit_idxs, (char*)cp.unit_idxs, size * sizeof(int));
   return true;
 }
 
@@ -312,40 +312,42 @@ bool BaseCons::RemoveConIdx(int i) {
   }
 
   for(int j=i; j<size-1; j++)
-    memcpy(&(units[j]), &(units[j+1]), sizeof(Unit*));
+    memcpy(&(unit_idxs[j]), &(unit_idxs[j+1]), sizeof(int));
 
   size--;
   return true;
 }
 
-bool BaseCons::RemoveConUn(Unit* un) {
-  int idx = FindConFromIdx(un);
+bool BaseCons::RemoveConUn(Unit* un, Network* net) {
+  int idx = FindConFromIdx(un, net);
   if(idx < 0) return false;
   return RemoveConIdx(idx);
 }
 
-int BaseCons::FindConFromIdx(Unit* un) const {
+int BaseCons::FindConFromIdx(Unit* un, Network* net) const {
   for(int i=0; i<size; i++) {
-    if(Un(i) == un) return i;
+    Unit* u = Un(i,net);
+    if(u == un) return i;
   }
   return -1;
 }
 
-int BaseCons::FindConFromNameIdx(const String& unit_nm) const {
+int BaseCons::FindConFromNameIdx(const String& unit_nm, Network* net) const {
   for(int i=0; i<size; i++) {
-    if(Un(i) && (Un(i)->name == unit_nm)) return i;
+    Unit* u = Un(i,net);
+    if(u && (u->name == unit_nm)) return i;
   }
   return -1;
 }
 
-Connection* BaseCons::FindConFrom(Unit* un) const {
-  int idx = FindConFromIdx(un);
+Connection* BaseCons::FindConFrom(Unit* un, Network* net) const {
+  int idx = FindConFromIdx(un, net);
   if(idx < 0) return NULL;
   return SafeCn(idx);
 }
 
-Connection* BaseCons::FindConFromName(const String& unit_nm) const {
-  int idx = FindConFromNameIdx(unit_nm);
+Connection* BaseCons::FindConFromName(const String& unit_nm, Network* net) const {
+  int idx = FindConFromNameIdx(unit_nm, net);
   if(idx < 0) return NULL;
   return SafeCn(idx);
 }
@@ -372,10 +374,11 @@ RecvCons* BaseCons::GetPrjnRecvCons(Unit* ru) const {
 
 // static
 Connection* BaseCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
+  Network* net = ru_lay->own_net;
   for(int g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
     if(!cg->prjn || (cg->prjn->from.ptr() != ru_lay)) continue;
-    Connection* con = cg->FindConFrom(ru);
+    Connection* con = cg->FindConFrom(ru, net);
     if(con) return con;
   }
   return NULL;
@@ -383,10 +386,11 @@ Connection* BaseCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
 
 // static
 Connection* BaseCons::FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay) {
+  Network* net = su_lay->own_net;
   for(int g=0; g<ru->send.size; g++) {
     SendCons* cg = ru->send.FastEl(g);
     if(!cg->prjn || (cg->prjn->layer != su_lay)) continue;
-    Connection* con = cg->FindConFrom(su);
+    Connection* con = cg->FindConFrom(su, net);
     if(con) return con;
   }
   return NULL;
@@ -404,25 +408,26 @@ void BaseCons::TransformWeights(const SimpleMathSpec& trans) {
   for(int i=0; i < size; i++)
     Cn(i)->wt = trans.Evaluate(Cn(i)->wt);
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);        // update weights after mod
+  Init_Weights_post(ru, ru->own_net());        // update weights after mod
 }
 
 void BaseCons::AddNoiseToWeights(const Random& noise_spec) {
   for(int i=0; i < size; i++)
     Cn(i)->wt += noise_spec.Gen();
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);        // update weights after mod
+  Init_Weights_post(ru, ru->own_net());        // update weights after mod
 }
 
 int BaseCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
                             Relation::Relations rel, float cmp_val)
 {
+  Network* net = un->own_net();
   Relation cond;
   cond.rel = rel; cond.val = cmp_val;
   int rval = 0;
   for(int j=size-1; j>=0; j--) {
     if(cond.Evaluate(pre_proc.Evaluate(Cn(j)->wt))) {
-      un->DisConnectFrom(Un(j), prjn);
+      un->DisConnectFrom(Un(j, net), prjn);
       rval++;
     }
   }
@@ -430,6 +435,7 @@ int BaseCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
 }
 
 int BaseCons::LesionCons(Unit* un, float p_lesion, bool permute) {
+  Network* net = un->own_net();
   int rval = 0;
   if(permute) {
     rval = (int) (p_lesion * (float)size);
@@ -441,14 +447,15 @@ int BaseCons::LesionCons(Unit* un, float p_lesion, bool permute) {
     ary.Permute();
     ary.size = rval;
     ary.Sort();
-    for(j=ary.size-1; j>=0; j--)
-      un->DisConnectFrom(Un(ary.FastEl(j)), prjn);
+    for(j=ary.size-1; j>=0; j--) {
+      un->DisConnectFrom(Un(ary.FastEl(j), net), prjn);
+    }
   }
   else {
     int j;
     for(j=size-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
-        un->DisConnectFrom(Un(j), prjn);
+        un->DisConnectFrom(Un(j, net), prjn);
         rval++;
       }
     }
@@ -504,7 +511,7 @@ bool BaseCons::ConValuesFromArray(float_Array& ary, const String& variable) {
     *val = ary[i];
   }
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);        // update weights after mod
+  Init_Weights_post(ru, ru->own_net());        // update weights after mod
   return true;
 }
 
@@ -521,14 +528,15 @@ bool BaseCons::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
     *val = mat.FastEl_Flat(i);
   }
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);        // update weights after mod
+  Init_Weights_post(ru, ru->own_net());        // update weights after mod
   return true;
 }
 
 /////////////////////////////////////////////////////////////
 //      Save/Load Weights
 
-void BaseCons::SaveWeights_strm(ostream& strm, Unit*, BaseCons::WtSaveFormat fmt) {
+void BaseCons::SaveWeights_strm(ostream& strm, Unit* un, BaseCons::WtSaveFormat fmt) {
+  Network* net = un->own_net();
   if((prjn == NULL) || (!(bool)prjn->from)) {
     strm << "<Cn 0>\n";
     goto end_tag;               // don't do anything
@@ -537,7 +545,7 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit*, BaseCons::WtSaveFormat fmt
   switch(fmt) {
   case BaseCons::TEXT:
     for(int i=0; i < size; i++) {
-      int lidx = Un(i)->GetMyLeafIndex();
+      int lidx = Un(i,net)->GetMyLeafIndex();
       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
         lidx = 0;
       }
@@ -546,7 +554,7 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit*, BaseCons::WtSaveFormat fmt
     break;
   case BaseCons::BINARY:
     for(int i=0; i < size; i++) {
-      int lidx = Un(i)->GetMyLeafIndex();
+      int lidx = Un(i,net)->GetMyLeafIndex();
       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
         lidx = 0;
       }
@@ -597,6 +605,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
   if((prjn == NULL) || (!(bool)prjn->from)) {
     return SkipWeights_strm(strm, fmt, quiet); // bail
   }
+  Network* net = ru->own_net();
   String tag, val;
   int stat = BaseCons::LoadWeights_StartTag(strm, "Cn", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
@@ -645,8 +654,9 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
                   String(lidx), "not found in layer:", prjn->from->name,
                   "removing this connection");
-      if(size > i)
-        ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
+      if(size > i) {
+        ru->DisConnectFrom(Un(i,net), prjn); // remove this guy to keep total size straight
+      }
       sz--;                            // now doing less..
       i--;
       continue;
@@ -656,7 +666,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
                   String(lidx), "does not have proper send group:", String(prjn->send_idx));
       if(size > i)
-        ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
+        ru->DisConnectFrom(Un(i,net), prjn); // remove this guy to keep total size straight
       sz--;                            // now doing less..
       i--;
       continue;
@@ -666,7 +676,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
       if(cn)
         cn->wt = wtval;
     }
-    else if(su != Un(i)) {
+    else if(su != Un(i,net)) {
       // not same unit -- note that at this point, the only viable strategy is to discon
       // all existing cons and start over, as otherwise everything will be hopelessly out
       // of whack
@@ -674,7 +684,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
                   "in cons group does not match the loaded unit",
                   "-- removing all subsequent units and reconnecting");
       for(int j=size-1; j >= i; j--) {
-        Unit* su = Un(j);
+        Unit* su = Un(j,net);
         ru->DisConnectFrom(su, prjn);
       }
       Connection* cn = ru->ConnectFromCk(su, prjn);
@@ -687,7 +697,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
   }
   BaseCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
 
-  Init_Weights_post(ru);        // update weights after loading
+  Init_Weights_post(ru,net);        // update weights after loading
   return stat;                  // should be tag end!
 }
 
@@ -786,9 +796,12 @@ int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
   // output the units
   taMisc::indent(strm, indent, 1) << "{ con_alloc = " << alloc_size << ";\n";
   taMisc::indent(strm, indent+1, 1) << "units = {";
+  Unit* own_ru = GET_MY_OWNER(Unit);
+  Network* net = own_ru->own_net();
   for(int i=0; i<size; i++) {
-    if(Un(i))
-      strm << Un(i)->GetMyLeafIndex() << "; ";
+    Unit* u = Un(i,net);
+    if(u)
+      strm << u->GetMyLeafIndex() << "; ";
     else
       strm << -1 << "; ";       // null..
   }
@@ -813,6 +826,8 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   if(TestWarning(!own_ru, "Dump_Load_Cons","NULL own_ru -- should not happen")) {
     return false;
   }
+
+  Network* net = own_ru->own_net();
 
   int c = taMisc::read_till_lbracket(strm);     // get past opening bracket
   if(c == EOF) return EOF;
@@ -966,16 +981,15 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   if(prjn && prjn->con_spec.spec) {
     SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
     if(!old_load)
-      Init_Weights_post(own_ru);        // update weights after loading
+      Init_Weights_post(own_ru, net);        // update weights after loading
   }
 
   if(old_load) {
-    if(own_ru->own_lay() && own_ru->own_lay()->own_net) {
+    if(net) {
       int my_idx = own_ru->recv.FindEl(this);
       own_ru->SetUserData("OldLoadCons_" + String(my_idx), load_str);
       // save in user data for loading later -- important: can't save in this because we
       // have to do a Connect later and that nukes us! :(  So, we use the unit instead
-      Network* net = own_ru->own_lay()->own_net;
       net->old_load_cons = true; // tell network to load later
     }
   }
@@ -985,14 +999,16 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
 void BaseCons::LinkPtrCons(Unit* my_u) {
   if(OwnCons()) return;         // only for ptr cons
 
+  Network* net = my_u->own_net();
+
   for(int j=0; j< size; j++) {
-    Unit* fmu = Un(j);
+    Unit* fmu = Un(j, net);
     if(!fmu) continue;
 
     if(IsRecv()) {
       SendCons* send_gp = GetPrjnSendCons(fmu);
       if(send_gp) {
-        int myi = FindConFromIdx(my_u);
+        int myi = FindConFromIdx(my_u, net);
         if(myi >= 0) {
           SetPtrCn(j, send_gp->Cn(myi));
         }
@@ -1001,7 +1017,7 @@ void BaseCons::LinkPtrCons(Unit* my_u) {
     else {
       RecvCons* recv_gp = GetPrjnRecvCons(fmu);
       if(recv_gp) {
-        int myi = FindConFromIdx(my_u);
+        int myi = FindConFromIdx(my_u, net);
         if(myi >= 0) {
           SetPtrCn(j, recv_gp->Cn(myi));
         }
@@ -1018,6 +1034,8 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
   if(TestError(!ru, "ConVarsToTable", "recv unit is NULL -- bailing"))
     return NULL;
   if(size <= 0) return NULL;            // nothing here
+  Network* net = ru->own_net();
+
   bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -1035,7 +1053,7 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
   bool biasv[nvars];            // bias var
 
   TypeDef* rutd = ru->GetTypeDef();
-  Unit* su0 = Un(0);
+  Unit* su0 = Un(0, net);
   TypeDef* sutd = su0->GetTypeDef();
 
   TypeDef* rubiastd = NULL;
@@ -1124,10 +1142,10 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
       }
       else if(suv[i]) {
         if(biasv[i]) {
-          val = mds[i]->GetValVar((void*)(Un(j)->bias.Cn(0)));
+          val = mds[i]->GetValVar((void*)(Un(j,net)->bias.Cn(0)));
         }
         else {
-          val = mds[i]->GetValVar((void*)Un(j));
+          val = mds[i]->GetValVar((void*)Un(j,net));
         }
       }
       else {

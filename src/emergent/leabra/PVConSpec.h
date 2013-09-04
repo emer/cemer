@@ -42,9 +42,9 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
+    if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float su_act;
     if(send_act == ACT_P)
@@ -53,18 +53,20 @@ public:
       su_act = su->act_m2;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su_act);
     }
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
   inline void C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn) {
@@ -81,16 +83,19 @@ public:
     cn->dwt = 0.0f;
   }
 
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) {
     CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->OwnCn(i)));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+    //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 
-  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su);
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                 LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
-  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su);
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                   LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
   TA_SIMPLE_BASEFUNS(PVConSpec);

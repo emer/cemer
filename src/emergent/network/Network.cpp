@@ -1327,7 +1327,7 @@ void Network::DMem_PruneNonLocalCons() {
         recv_gp = (RecvCons *)u->recv.FastEl(g);
         if(recv_gp->GetConSpec()->DMem_AlwaysLocal()) continue;
         for (int sui = recv_gp->size-1; sui >= 0; sui--) {
-          u->DisConnectFrom(recv_gp->Un(sui), NULL);
+          u->DisConnectFrom(recv_gp->Un(sui,this), NULL);
         }
       }
     }
@@ -1524,7 +1524,7 @@ void Network::DMem_SymmetrizeWts() {
           }
           // now have all the data collected, to through and get the sym values!
           for(int i=0;i<cg->size;i++) {
-            Unit* fm = cg->Un(i);
+            Unit* fm = cg->Un(i,this);
             int uidx = fm->GetMyLeafIndex();
             if(uidx < 0) continue;
             int sidx = all_unit_idxs.FindEl(uidx);
@@ -2102,7 +2102,7 @@ bool Network::VarToVal(const String& dest_var, float val) {
   return true;
 }
 
-static bool net_project_wts_propagate(Unit* u, bool swt) {
+static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
   bool got_some = false;
   // propagate!
   for(int g = 0; g < (swt ? u->send.size : u->recv.size); g++) {
@@ -2120,7 +2120,7 @@ static bool net_project_wts_propagate(Unit* u, bool swt) {
       SendCons* scg = (SendCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
         float wtv = scg->Cn(ci)->wt;
-        Unit* su = scg->Un(ci);
+        Unit* su = scg->Un(ci,net);
         su->wt_prjn += u->wt_prjn * wtv;
         su->tmp_calc1 += u->wt_prjn;
       }
@@ -2129,7 +2129,7 @@ static bool net_project_wts_propagate(Unit* u, bool swt) {
       RecvCons* scg = (RecvCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
         float wtv = scg->Cn(ci)->wt;
-        Unit* su = scg->Un(ci);
+        Unit* su = scg->Un(ci,net);
         su->wt_prjn += u->wt_prjn * wtv;
         su->tmp_calc1 += u->wt_prjn;
       }
@@ -2170,7 +2170,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       SendCons* scg = (SendCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
         float wtv = scg->Cn(ci)->wt;
-        Unit* su = scg->Un(ci);
+        Unit* su = scg->Un(ci,this);
         su->wt_prjn += wtv;
         su->tmp_calc1 += 1.0f;  // sum to 1
       }
@@ -2179,7 +2179,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       RecvCons* scg = (RecvCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
         float wtv = scg->Cn(ci)->wt;
-        Unit* su = scg->Un(ci);
+        Unit* su = scg->Un(ci,this);
         su->wt_prjn += wtv;
         su->tmp_calc1 += 1.0f;  // sum to 1
       }
@@ -2253,7 +2253,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
               continue;
             }
 
-            bool got = net_project_wts_propagate(u, swt);
+            bool got = net_project_wts_propagate(this, u, swt);
             got_some |= got;
           }
         }
@@ -2271,7 +2271,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
             continue; // bail
           }
 
-          bool got = net_project_wts_propagate(u, swt);
+          bool got = net_project_wts_propagate(this, u, swt);
           got_some |= got;
         }
       }

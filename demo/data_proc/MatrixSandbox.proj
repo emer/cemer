@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6453
+// ta_Dump File v3.0 -- code v6.3.3.0 rev6452
 BpProject .projects["MatrixSandbox"] { 
   taBase_Group @.templates = [0] {
   };
@@ -338,12 +338,14 @@ BpProject .projects["MatrixSandbox"] {
 
       ProgEl_List @.prog_code = [18] {
 	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [5] {
+	  ProgVar_List @.local_vars = [7] {
 	    ProgVar @["in_matrix_2d"] { };
 	    ProgVar @["slice_of_matrix"] { };
 	    ProgVar @["out_matrix"] { };
 	    ProgVar @["kernel"] { };
 	    ProgVar @["i"] { };
+	    ProgVar @["y"] { };
+	    ProgVar @["x"] { };
 	  };
 	};
 	AssignExpr @[1] { };
@@ -398,18 +400,48 @@ BpProject .projects["MatrixSandbox"] {
 	};
 	ForLoop @[9] { 
 	  ProgEl_List @.loop_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
+	    ForLoop @[0] { 
+	      ProgEl_List @.loop_code = [1] {
+		IfElse @[0] { 
+		  ProgEl_List @.true_code = [1] {
+		    MethodCall @[0] { 
+		      ProgArg_List @.meth_args = [8] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+			ProgArg @[3] { };
+			ProgArg @[4] { };
+			ProgArg @[5] { };
+			ProgArg @[6] { };
+			ProgArg @[7] { };
+		      };
+		    };
+		  };
+
+		  ProgEl_List @.false_code = [1] {
+		    MethodCall @[0] { 
+		      ProgArg_List @.meth_args = [8] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+			ProgArg @[3] { };
+			ProgArg @[4] { };
+			ProgArg @[5] { };
+			ProgArg @[6] { };
+			ProgArg @[7] { };
+		      };
+		    };
+		  };
+		};
 	      };
 	    };
 	  };
 	};
-	MethodCall @[10] { 
-	  ProgArg_List @.meth_args = [2] {
+	MathCall @[10] { 
+	  ProgArg_List @.meth_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
+	    ProgArg @[2] { };
 	  };
 	};
 	PrintVar @[11] { };
@@ -765,7 +797,7 @@ BpProject .projects["MatrixSandbox"] {
     ProgVar @["cell_value"] {
      name="cell_value";
      var_type=T_Real;
-     real_val=-1.063395142555237;
+     real_val=1.139253735542297;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2294,6 +2326,26 @@ BpProject .projects["MatrixSandbox"] {
        desc=;
        init_from=NULL;
       };
+      ProgVar @["y"] {
+       name="y";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["x"] {
+       name="x";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
      };
     };
     AssignExpr @[1] {
@@ -2671,84 +2723,285 @@ BpProject .projects["MatrixSandbox"] {
     ForLoop @[9] {
      desc=;
      flags=0;
-     orig_prog_code=;
+     orig_prog_code="for(y=0; y<3; y++)";
      loop_code {
-      name=;
+      name="ProgEl_List_63";
       el_typ=ProgCode;
       el_def=0;
-      MethodCall @[0] {
+      ForLoop @[0] {
        desc=;
        flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
-       method=taMatrixT_float_::Set_Flat;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
+       orig_prog_code="for(x=0; x<3; x++)";
+       loop_code {
+	name="ProgEl_List_64";
+	el_typ=ProgCode;
 	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_float_ref;
-	 type="float&";
-	 name="item";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="0";
+	IfElse @[0] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code="if(x == 1 && y == 1)";
+	 cond {
+	  expr="x == 1 && y == 1";
+	 };
+	 show_false_code=1;
+	 true_code {
+	  name="ProgEl_List_65";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="kernel.Set(1, x,y)";
+	   result_var=NULL;
+	   obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+	   method=taMatrixT_float_::Set;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_float_ref;
+	     type="float&";
+	     name="item";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="1";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="d0";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="x";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="d1";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr="y";
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=int;
+	     type="int";
+	     name="d2";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=int;
+	     type="int";
+	     name="d3";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=int;
+	     type="int";
+	     name="d4";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=int;
+	     type="int";
+	     name="d5";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=int;
+	     type="int";
+	     name="d6";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	 };
+	 false_code {
+	  name="ProgEl_List_66";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="kernel.Set(1, x,y)";
+	   result_var=NULL;
+	   obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+	   method=taMatrixT_float_::Set;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_float_ref;
+	     type="float&";
+	     name="item";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr=".1";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="d0";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="x";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="d1";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr="y";
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=int;
+	     type="int";
+	     name="d2";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=int;
+	     type="int";
+	     name="d3";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=int;
+	     type="int";
+	     name="d4";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=int;
+	     type="int";
+	     name="d5";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=int;
+	     type="int";
+	     name="d6";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
 	 };
 	};
-	ProgArg @[1] {
-	 arg_type=int;
-	 type="int";
-	 name="idx";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="i";
-	 };
-	};
+       };
+       init {
+	expr="x=0";
+       };
+       test {
+	expr=" x<3";
+       };
+       iter {
+	expr=" x++";
        };
       };
      };
      init {
-      expr="i = 0";
+      expr="y=0";
      };
      test {
-      expr="i < 9";
+      expr=" y<3";
      };
      iter {
-      expr="i++";
+      expr=" y++";
      };
     };
-    MethodCall @[10] {
+    MathCall @[10] {
      desc=;
-     flags=0;
-     orig_prog_code=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="taMath_float::vec_norm_sum()";
      result_var=NULL;
-     obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
-     method=taMatrixT_float_::Set_Flat;
+     object_type=taMath_float;
+     method=taMath_float::vec_norm_sum;
      meth_args {
-      name=;
+      name="ProgArg_List_0";
       el_typ=ProgArg;
       el_def=0;
       ProgArg @[0] {
-       arg_type=const_float_ref;
-       type="float&";
-       name="item";
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="vec";
        required=1;
        def_val=;
        expr {
-	expr="1";
+	expr="kernel";
        };
       };
       ProgArg @[1] {
-       arg_type=int;
-       type="int";
-       name="idx";
-       required=1;
-       def_val=;
+       arg_type=float;
+       type="float";
+       name="sum";
+       required=0;
+       def_val="1.0f";
        expr {
-	expr="4";
+	expr="1.0";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=float;
+       type="float";
+       name="min_val";
+       required=0;
+       def_val="0.0f";
+       expr {
+	expr=;
        };
       };
      };
@@ -2963,22 +3216,22 @@ BpProject .projects["MatrixSandbox"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.03064066916704178;
+     value 6 0=0.0304162222892046;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.05353075265884399;
+     value 6 0=0.05348047614097595;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9282729625701904;
+     value 6 0=0.9279615879058838;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7995443940162659;
+     value 6 0=0.5755518078804016;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -3142,17 +3395,17 @@ BpProject .projects["MatrixSandbox"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.0182232353836298;
+       value 6 0=0.007640067953616381;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.06058495864272118;
+       value 6 0=0.0405549630522728;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7072892785072327;
+       value 6 0=0.5135823488235474;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

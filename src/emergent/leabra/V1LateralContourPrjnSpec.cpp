@@ -142,6 +142,7 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
 void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   Layer* lay = prjn->from;
+  Network* net = prjn->layer->own_net;
   taVector2i gp_geo = lay->gp_geom;
   taVector2i un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
@@ -155,7 +156,7 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
   taVector2i run;
   run.SetFmIndex(rui, un_geo.x);
   for(int i=0; i<cg->size; i++) {
-    Unit* su = cg->Un(i);
+    Unit* su = cg->Un(i,net);
     int sgpidx;
     int sui;
     lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);

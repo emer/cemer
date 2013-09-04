@@ -180,7 +180,7 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
+void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     const float snd_val = u->act;
@@ -189,7 +189,7 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned())       continue;
       for(int j=0;j<send_gp->size; j++) {
-        ((LeabraUnit*)send_gp->Un(j))->dav = snd_val;
+        ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
       }
     }
   }

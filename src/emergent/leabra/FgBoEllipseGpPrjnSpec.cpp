@@ -273,6 +273,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     recv_lay = prjn->from;
     send_lay = prjn->layer;
   }
+  Network* net = prjn->layer->own_net;
   taVector2i rgp_geo = recv_lay->gp_geom;
   taVector2i run_geo = recv_lay->un_geom;
   taVector2i sgp_geo = send_lay->gp_geom;
@@ -295,7 +296,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     int suy_st = depth * 2;
 
     for(int i=0; i<cg->size; i++) {
-      Unit* su = cg->Un(i);
+      Unit* su = cg->Un(i,net);
       int rgpidx;
       int rui;
       recv_lay->UnGpIdxFmUnitIdx(su->idx, rui, rgpidx); // recv = send!
@@ -332,7 +333,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     float wt_renorm = (1.0f - el->min_wt);
 
     for(int i=0; i<cg->size; i++) {
-      Unit* su = cg->Un(i);
+      Unit* su = cg->Un(i,net);
       int sgpidx;
       int sui;
       send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);

@@ -34,12 +34,13 @@ public:
   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
 #endif
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_SAvgCor(cg, su);
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) {
+    Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       float lin_wt = LinFmSigWt(cn->lwt);
       C_Compute_dWt(cn, ru, 
@@ -49,22 +50,24 @@ public:
     }
   }
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
+  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) {
+    Compute_dWt_LeabraCHL(cg, su, net);
   }
 
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_LeabraCHL(cg, su);
+  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
+    Compute_dWt_LeabraCHL(cg, su, net);
   }
 
-  override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    inherited::Compute_Weights_LeabraCHL(cg, su);
+  override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) {
+    inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
-  override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    inherited::Compute_Weights_LeabraCHL(cg, su);
+  override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                            LeabraNetwork* net) {
+    inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
-
-
 
   TA_BASEFUNS_NOCOPY(HippoEncoderConSpec);
 protected:

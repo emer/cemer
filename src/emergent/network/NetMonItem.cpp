@@ -695,6 +695,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   String convar = var.after('.');
   MemberDef* con_md = prjn->con_type->members.FindNameR(convar);
   if(!con_md) return;           // can't find that var!
+  Network* net = lay->own_net;
 
   // always create a 4dimensional matrix: 1st 2 are units, 2nd 2 are cons
   taVector2i lay_geom;
@@ -725,7 +726,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
-        Unit* su = cg->Un(j);
+        Unit* su = cg->Un(j,net);
         if(!su) continue;
         taVector2i upos;  su->LayerLogPos(upos);
         con_geom_max.Max(upos);
@@ -736,7 +737,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       SendCons* cg = u->send.SafeEl(prjn->send_idx);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
-        Unit* su = cg->Un(j);
+        Unit* su = cg->Un(j,net);
         if(!su) continue;
         taVector2i upos; su->LayerLogPos(upos);
         con_geom_max.Max(upos);
@@ -764,7 +765,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
-        Unit* su = cg->Un(j);
+        Unit* su = cg->Un(j,net);
         if(!su) continue;
         taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
@@ -776,7 +777,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       SendCons* cg = u->send.SafeEl(prjn->send_idx);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
-        Unit* su = cg->Un(j);
+        Unit* su = cg->Un(j,net);
         if(!su) continue;
         taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
@@ -879,11 +880,13 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   MemberDef* con_md = cg->con_type->members.FindNameR(var);
   if(!con_md) return;           // can't find that var!
 
+  Network* net = cg->prjn->layer->own_net;
+
   // find the geometry span of the cons
   taVector2i con_geom_max;
   taVector2i con_geom_min(INT_MAX, INT_MAX);
   for(int j=0; j<cg->size; ++j) {
-    Unit* su = cg->Un(j);
+    Unit* su = cg->Un(j,net);
     if(!su) continue;
     taVector2i upos;  su->LayerLogPos(upos);
     con_geom_max.Max(upos);
@@ -903,7 +906,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
     ptrs.Add(NULL); members.Link(con_md);
   }
   for(int j=0; j<cg->size; ++j) {
-    Unit* su = cg->Un(j);
+    Unit* su = cg->Un(j,net);
     if(!su) continue;
     taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
@@ -917,11 +920,13 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   MemberDef* con_md = cg->con_type->members.FindNameR(var);
   if(!con_md) return;           // can't find that var!
 
+  Network* net = cg->prjn->layer->own_net;
+
   // find the geometry span of the cons
   taVector2i con_geom_max;
   taVector2i con_geom_min(INT_MAX, INT_MAX);
   for(int j=0; j<cg->size; ++j) {
-    Unit* su = cg->Un(j);
+    Unit* su = cg->Un(j,net);
     if(!su) continue;
     taVector2i upos;  su->LayerLogPos(upos);
     con_geom_max.Max(upos);
@@ -941,7 +946,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
     ptrs.Add(NULL); members.Link(con_md);
   }
   for(int j=0; j<cg->size; ++j) {
-    Unit* su = cg->Un(j);
+    Unit* su = cg->Un(j,net);
     if(!su) continue;
     taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;

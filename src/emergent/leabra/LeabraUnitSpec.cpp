@@ -715,7 +715,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
     for(int g = 0; g < u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       if(send_gp->prjn->layer->lesioned() || !send_gp->size) continue;
-      send_gp->Trial_Init_SRAvg(u);
+      send_gp->Trial_Init_SRAvg(u,net);
     }
   }
 }
@@ -810,12 +810,13 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-void LeabraUnitSpec::Compute_NetinScale_Senders(LeabraUnit* u, LeabraNetwork*) {
+void LeabraUnitSpec::Compute_NetinScale_Senders(LeabraUnit* u, LeabraNetwork* net) {
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(send_gp->size > 0) {
-      Unit* ru = send_gp->Un(0);
-      send_gp->scale_eff = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx()))->scale_eff;
+      Unit* ru = send_gp->Un(0,net);
+      send_gp->scale_eff =
+        ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx()))->scale_eff;
     }
     else {
       send_gp->scale_eff = 0.0f;
@@ -1531,7 +1532,7 @@ void LeabraUnitSpec::Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int th
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(send_gp->prjn->layer->lesioned() || !send_gp->size) continue;
-    send_gp->Compute_CycSynDep(u);
+    send_gp->Compute_CycSynDep(u,net);
   }
 }
 
@@ -1767,7 +1768,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
         LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
         LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
         if(rlay->lesioned() || !send_gp->size || !rlay->Compute_SRAvg_Test(net)) continue;
-        send_gp->Compute_SRAvg(u, do_s);
+        send_gp->Compute_SRAvg(u, net, do_s);
       }
     }
   }
@@ -1778,7 +1779,7 @@ void LeabraUnitSpec::Compute_dWt_FirstMinus(LeabraUnit* u, LeabraNetwork* net, i
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_FirstMinus_Test(net)) continue;
-    send_gp->Compute_Leabra_dWt(u);
+    send_gp->Compute_Leabra_dWt(u,net);
   }
 
   LeabraLayer* lay = u->own_lay();
@@ -1793,7 +1794,7 @@ void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, in
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_FirstPlus_Test(net)) continue;
-    send_gp->Compute_Leabra_dWt(u);
+    send_gp->Compute_Leabra_dWt(u,net);
   }
 
   LeabraLayer* lay = u->own_lay();
@@ -1808,7 +1809,7 @@ void LeabraUnitSpec::Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int 
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_Nothing_Test(net)) continue;
-    send_gp->Compute_Leabra_dWt(u);
+    send_gp->Compute_Leabra_dWt(u,net);
   }
 
   LeabraLayer* lay = u->own_lay();
@@ -1824,7 +1825,7 @@ void LeabraUnitSpec::Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thr
   for(int g = 0; g < u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->size) continue;
-    recv_gp->Compute_dWt_Norm(u);
+    recv_gp->Compute_dWt_Norm(u,net);
   }
 }
 
@@ -1843,7 +1844,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
     LeabraSendCons* send_gp = (LeabraSendCons*)lu->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size) continue;
-    send_gp->Compute_Leabra_Weights(lu);
+    send_gp->Compute_Leabra_Weights(lu,lnet);
   }
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
   bspc->B_Compute_Weights((LeabraCon*)u->bias.OwnCn(0), lu);
@@ -1858,7 +1859,7 @@ void LeabraUnitSpec::Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net,
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
     if(rlay->lesioned() || !send_gp->size) continue;
     LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-    cs->Compute_StableWeights(send_gp, u);
+    cs->Compute_StableWeights(send_gp, u, net);
   }
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());

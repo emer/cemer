@@ -30,7 +30,8 @@ class E_API LeabraDeltaConSpec : public LeabraConSpec {
   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
 INHERITED(LeabraConSpec)
 public:
-  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
+                                     LeabraNetwork* net, bool do_s) {
     // do NOT do this under any circumstances!!
   }
 
@@ -41,24 +42,28 @@ public:
     // soft bounding is managed in the weight update phase, not in dwt
   }
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       C_Compute_dWt_Delta(cn, ru, su);  
     }
   }
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su); // do soft bound here
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
   }
 
   TA_SIMPLE_BASEFUNS(LeabraDeltaConSpec);

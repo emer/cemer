@@ -30,6 +30,8 @@ void RecvCons::Initialize() {
 
 void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
+  Unit* own_ru = GET_MY_OWNER(Unit);
+  Network* net = own_ru->own_net();
 
   if(size > 0) {                // connections exist
     if(CheckError((send_idx() < 0) || (send_idx() != prjn->send_idx), quiet, rval,
@@ -37,7 +39,7 @@ void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
       prjn->projected = false;
     }
 
-    Unit* su = Un(0);
+    Unit* su = Un(0,net);
     if(CheckError(!su, quiet, rval,
                   "sending unit is null when it should not be!  rebuild network!")) {
       prjn->projected = false;

@@ -39,16 +39,17 @@ public:
   MtxLearnMode  mtx_learn;       // how do the matrix units learn?  can either use a trace mechanism or pure PVLV dopamine
   float         dwt_remain;      // how much of the dwt value remains after the weights are updated (i.e., every time there is a PV trial)
 
-  inline void Compute_SuLearnAct(LeabraRecvCons* cg, LeabraUnit* ru) {
+  inline void Compute_SuLearnAct(LeabraRecvCons* cg, LeabraUnit* ru, LeabraNetwork* net) {
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i,net);
       MatrixCon* cn = (MatrixCon*)cg->PtrCn(i);
       cn->sact_lrn = su->act_eq;
     }
   }
   // RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
-  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, bool do_s) {
+  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
+                                     LeabraNetwork* net, bool do_s) {
     // do NOT do this under any circumstances!!
   }
 
@@ -65,13 +66,13 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraNetwork* net = (LeabraNetwork*)su->own_net();
-    if(ignore_unlearnable && net && net->unlearnable_trial) return;
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
+    if(ignore_unlearnable && net->unlearnable_trial) return;
 
     if(mtx_learn == TRACE) {
       for(int i=0; i<cg->size; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
         if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
         C_Compute_dWt_Matrix_Trace(cn, ru->act_mid, cn->sact_lrn);
@@ -79,7 +80,7 @@ public:
     }
     else {                      // LV_DA
       for(int i=0; i<cg->size; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
         if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
         C_Compute_dWt_Matrix_LvDa(cn, ru->dav, ru->act_mid, cn->sact_lrn);
@@ -87,12 +88,14 @@ public:
     }
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) {
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
   inline void C_Compute_Weights_Matrix_Trace(LeabraCon* cn, float ru_dav) {
@@ -111,27 +114,30 @@ public:
     }
   }
 
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) {
     if(mtx_learn == TRACE) {
       for(int i=0; i<cg->size; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(ru->dav != 0.0f) {
           LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
           C_Compute_Weights_Matrix_Trace(cn, ru->dav);
         }
-        //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+        //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
       }
     }
     else {
-      inherited::Compute_Weights_CtLeabraXCAL(cg, su); // use std
+      inherited::Compute_Weights_CtLeabraXCAL(cg, su, net); // use std
     }
   }
 
-  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su);
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                 LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
-  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su);
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                   LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
   TA_SIMPLE_BASEFUNS(MatrixConSpec);

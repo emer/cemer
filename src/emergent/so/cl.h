@@ -36,7 +36,7 @@ INHERITED(SoConSpec)
 public:
   inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // compute weight change according to Cl function (normalized input acts)
 
   TA_BASEFUNS_NOCOPY(ClConSpec);
@@ -53,7 +53,7 @@ INHERITED(SoConSpec)
 public:
   inline void		C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline virtual void 	Compute_dWt(RecvCons* cg, Unit* ru);
+  inline virtual void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // compute weight change according to soft Cl function
 
   TA_BASEFUNS_NOCOPY(SoftClConSpec);
@@ -127,10 +127,10 @@ C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su)
   cn->dwt += ru->act * ((su->act / cg->sum_in_act) - cn->wt);
 }
 
-inline void ClConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  Compute_AvgInAct((SoRecvCons*)cg, ru);
+inline void ClConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
 }
 
 inline void SoftClConSpec::
@@ -139,9 +139,9 @@ C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
   cn->dwt += ru->act * (su->act - cn->wt);
 }
 
-inline void SoftClConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
+inline void SoftClConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
 }
 
 #endif // cl_h

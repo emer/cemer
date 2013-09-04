@@ -47,18 +47,21 @@ public:
     cn->dwt = 0.0f;
   }
 
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) {
     float dkfact = cur_lrate * decay;
     CON_GROUP_LOOP(cg, C_Compute_Weights_NV((LeabraCon*)cg->OwnCn(i), dkfact));
-    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+    //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 
-  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su);
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                 LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
-  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Weights_CtLeabraXCAL(cg, su);
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                   LeabraNetwork* net) {
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
   TA_SIMPLE_BASEFUNS(NVConSpec);

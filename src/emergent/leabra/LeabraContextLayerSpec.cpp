@@ -60,7 +60,8 @@ taBase::DumpQueryResult LeabraContextLayerSpec::Dump_QuerySaveMember(MemberDef* 
   return (update_criteria == UC_N_TRIAL) ? DQR_SAVE : DQR_NO_SAVE;
 }
 
-void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net) {
+void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u,
+                                             LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     u->ext = u->act_m;          // just use previous minus phase value!
   }
@@ -69,7 +70,7 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
     if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
       return;
     }
-    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0,net);
     if(TestError(!su, "Compute_Context", "requires one unit in recv projection!")) {
       return;
     }

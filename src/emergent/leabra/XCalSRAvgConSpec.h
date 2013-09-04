@@ -40,14 +40,13 @@ public:
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                       LeabraNetwork* net) {
     float su_avg_m = su->avg_m;
     float su_act_mult = xcal.thr_l_mix * su_avg_m;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       C_Compute_dWt_CtLeabraXCAL_trial((LeabraSRAvgCon*)cg->OwnCn(i), ru, 
 				       net->sravg_vals.s_nrm, net->sravg_vals.m_nrm,
 				       su_act_mult);

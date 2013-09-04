@@ -142,6 +142,7 @@ set(network_HEADS_MAKETA
 
 set(network_HEADS_NOMAKETA
   network_def.h
+  BaseCons_inlines.h
   ConSpec_inlines.h
   Unit_inlines.h
 

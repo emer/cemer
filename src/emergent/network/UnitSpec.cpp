@@ -116,7 +116,7 @@ void UnitSpec::Init_dWt(Unit* u, Network* net) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
-    recv_gp->Init_dWt(u);
+    recv_gp->Init_dWt(u, net);
   }
   if(u->bias.size && u->bias.OwnCn(0))
     bias_spec->C_Init_dWt(&u->bias, u->bias.OwnCn(0), u, NULL); // this is a virtual fun
@@ -137,7 +137,7 @@ void UnitSpec::Init_Weights(Unit* u, Network* net) {
         RecvCons* recv_gp = u->recv.FastEl(g);
         // ignore lesion here because n_recv_cons does not take into account lesioned layers, so dmem would get out of sync
         //    if(!recv_gp->prjn->from->lesioned())
-        recv_gp->Init_Weights(u);
+        recv_gp->Init_Weights(u, net);
       }
     }
 
@@ -151,7 +151,7 @@ void UnitSpec::Init_Weights_post(Unit* u, Network* net) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
-    recv_gp->Init_Weights_post(u);
+    recv_gp->Init_Weights_post(u, net);
   }
   if(u->bias.size && u->bias.OwnCn(0)) {
     bias_spec->C_Init_Weights_post(&u->bias, u->bias.OwnCn(0), u, NULL); // this is a virtual fun
@@ -163,7 +163,7 @@ void UnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
-    u->net += recv_gp->Compute_Netin(u);
+    u->net += recv_gp->Compute_Netin(u, net);
   }
   if(u->bias.size)
     u->net += u->bias.OwnCn(0)->wt;
@@ -211,7 +211,7 @@ void UnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
-    recv_gp->Compute_dWt(u);
+    recv_gp->Compute_dWt(u, net);
   }
   // NOTE: derived classes must supply bias.OwnCn(0)->Compute_dWt call because C_Compute_dWt
   // is not virtual, so if called here, only ConSpec version would be called.
@@ -222,7 +222,7 @@ void UnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
-    recv_gp->Compute_Weights(u);
+    recv_gp->Compute_Weights(u, net);
   }
   // NOTE: derived classes must supply bias.OwnCn(0)->Compute_Weights call because C_Compute_Weights
   // is not virtual, so if called here, only ConSpec version would be called.

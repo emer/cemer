@@ -96,7 +96,7 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru, BpNetwork* net, int thread_n
     Layer* fmlay = recv_gp->prjn->from;
     if(fmlay->lesioned() || !(fmlay->ext_flag & Unit::EXT))
       continue;		// don't get from the non-clamped layers!
-    ru->clmp_net += recv_gp->Compute_Netin(ru);
+    ru->clmp_net += recv_gp->Compute_Netin(ru,net);
   }
   if(ru->bias.size)
     ru->clmp_net += ru->bias.OwnCn(0)->wt;
@@ -113,7 +113,7 @@ void RBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
       Layer* fmlay = recv_gp->prjn->from;
       if(fmlay->lesioned() || (fmlay->ext_flag & Unit::EXT))
 	continue;		// don't get from the clamped layers
-      u->net += recv_gp->Compute_Netin(u);
+      u->net += recv_gp->Compute_Netin(u,net);
     }
   }
   else {
@@ -339,8 +339,9 @@ void RBpContextSpec::UpdateAfterEdit_impl() {
 
 void RBpContextSpec::CopyContext(RBpUnit* u) {
   // todo: checkconfig should test for this!
+  Network* net = u->own_net();
   RecvCons* recv_gp = (RecvCons*)u->recv.SafeEl(0); // first group
-  Unit* hu = (Unit*)recv_gp->Un(0);
+  Unit* hu = (Unit*)recv_gp->Un(0,net);
   float* varptr = (float*)var_md->GetOff((void*)u);
   *varptr = hysteresis_c * hu->act + hysteresis * (*varptr);
   u->SetExtFlag(unit_flags);

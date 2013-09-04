@@ -414,7 +414,7 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(cs->InheritsFrom(&TA_MatrixConSpec)) {
-        ((MatrixConSpec*)cs)->Compute_SuLearnAct(recv_gp, u);
+        ((MatrixConSpec*)cs)->Compute_SuLearnAct(recv_gp, u, net);
       }
     }
   }

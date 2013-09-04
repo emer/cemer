@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "DecodeTwoDValLayerSpec.h"
+#include <LeabraNetwork>
 
 void DecodeTwoDValLayerSpec::Initialize() {
 }
@@ -32,7 +33,7 @@ void DecodeTwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
     if(u->recv.size == 0) continue;
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
     if(cg->size == 0) continue;
-    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
     u->net = su->net;
     u->act = su->act;
     u->act_eq = su->act_eq;

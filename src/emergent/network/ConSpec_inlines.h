@@ -28,9 +28,9 @@
 // which is the default for most algos -- if using sender-own, then
 // DEFINITELY need to re-write!!
 
-inline void ConSpec::ApplyLimits(RecvCons* cg, Unit* ru) {
+inline void ConSpec::ApplyLimits(RecvCons* cg, Unit* ru, Network* net) {
   if(wt_limits.type != WeightLimits::NONE) {
-    CON_GROUP_LOOP(cg, C_ApplyLimits(cg->Cn(i), ru, cg->Un(i)));
+    CON_GROUP_LOOP(cg, C_ApplyLimits(cg->Cn(i), ru, cg->Un(i,net)));
   }
 }
 
@@ -54,37 +54,37 @@ inline void ConSpec::C_AddRndWeights(RecvCons*, Connection* cn, Unit* ru, Unit* 
   C_ApplyLimits(cn,ru,su);
 }
 
-inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru) {
+inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru, Network* net) {
   Projection* prjn = cg->prjn;
   if(prjn->spec->init_wts) {
     prjn->C_Init_Weights(cg, ru); // NOTE: this must call PrjnSpec::C_Init_Weights which does basic ConSpec C_Init_Weights
     if(prjn->spec->add_rnd_wts) {
       float scl = prjn->spec->add_rnd_wts_scale;
-      CON_GROUP_LOOP(cg, C_AddRndWeights(cg, cg->Cn(i), ru, cg->Un(i), scl));
+      CON_GROUP_LOOP(cg, C_AddRndWeights(cg, cg->Cn(i), ru, cg->Un(i,net), scl));
     }
   }
   else {
-    CON_GROUP_LOOP(cg, C_Init_Weights(cg, cg->Cn(i), ru, cg->Un(i)));
+    CON_GROUP_LOOP(cg, C_Init_Weights(cg, cg->Cn(i), ru, cg->Un(i,net)));
   }
 
-  Init_dWt(cg,ru);
-  ApplySymmetry(cg,ru);
+  Init_dWt(cg,ru,net);
+  ApplySymmetry(cg,ru,net);
 }
 
-inline void ConSpec::Init_Weights_post(BaseCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Init_Weights_post(cg, cg->Cn(i), ru, cg->Un(i)));
+inline void ConSpec::Init_Weights_post(BaseCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg, C_Init_Weights_post(cg, cg->Cn(i), ru, cg->Un(i,net)));
 }
 
-inline void ConSpec::Init_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Init_dWt(cg, cg->Cn(i), ru, cg->Un(i)));
+inline void ConSpec::Init_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg, C_Init_dWt(cg, cg->Cn(i), ru, cg->Un(i,net)));
 }
 
 inline float ConSpec::C_Compute_Netin(Connection* cn, Unit*, Unit* su) {
   return cn->wt * su->act;
 }
-inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
+inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
   float rval=0.0f;
-  CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->OwnCn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->OwnCn(i), ru, cg->Un(i,net)));
   return rval;
 }
 
@@ -94,33 +94,33 @@ inline void ConSpec::C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* r
 inline void ConSpec::Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su) {
   const float su_act = su->act;
   float* send_netin_vec = net->send_netin_tmp.el + net->send_netin_tmp.FastElIndex(0, thread_no);
-  CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i), su_act));
+  CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i,net), su_act));
 }
 
 inline void ConSpec::Send_Netin_PerPrjn(SendCons* cg, Network* net, int thread_no, Unit* su) {
   const float su_act = su->act;
   float* send_netin_vec = net->send_netin_tmp.el +
     net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-  CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i), su_act));
+  CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i,net), su_act));
 }
 
 inline float ConSpec::C_Compute_Dist(Connection* cn, Unit*, Unit* su) {
   float tmp = su->act - cn->wt;
   return tmp * tmp;
 }
-inline float ConSpec::Compute_Dist(RecvCons* cg, Unit* ru) {
+inline float ConSpec::Compute_Dist(RecvCons* cg, Unit* ru, Network* net) {
   float rval=0.0f;
-  CON_GROUP_LOOP(cg, rval += C_Compute_Dist(cg->OwnCn(i), ru, cg->Un(i)));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Dist(cg->OwnCn(i), ru, cg->Un(i,net)));
   return rval;
 }
 
-inline void ConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights(cg->OwnCn(i), ru, cg->Un(i)));
-  ApplyLimits(cg,ru); // ApplySymmetry(cg,ru);  don't apply symmetry during learning..
+inline void ConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg, C_Compute_Weights(cg->OwnCn(i), ru, cg->Un(i,net)));
+  ApplyLimits(cg,ru,net); // ApplySymmetry(cg,ru);  don't apply symmetry during learning..
 }
 
-inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt(cg->OwnCn(i), ru, cg->Un(i)));
+inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  CON_GROUP_LOOP(cg, C_Compute_dWt(cg->OwnCn(i), ru, cg->Un(i,net)));
 }
 
 #endif // ConSpec_inlines_h

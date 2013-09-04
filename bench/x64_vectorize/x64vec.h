@@ -17,7 +17,7 @@
 #define x64vec_h 1
 
 // define this to expand the connection object to full size..
-// #define STABLE_WEIGHTS 1
+#define STABLE_WEIGHTS 1
 
 class LeabraSendCons;
 class LeabraUnit;

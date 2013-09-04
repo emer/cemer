@@ -204,6 +204,8 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
     
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
@@ -219,7 +221,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
             continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;
-          Connection* con = tcong->FindConFrom(src_u);
+          Connection* con = tcong->FindConFrom(src_u, net);
           if (!con) continue;
           uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
           break;                // once you've got one, done!
@@ -232,7 +234,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
             continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;
-          Connection* con = tcong->FindConFrom(src_u);
+          Connection* con = tcong->FindConFrom(src_u, net);
           if (!con) continue;
           uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
           break;                // once you've got one, done!

@@ -43,23 +43,26 @@ public:
   inline void C_Compute_LimPrecWts(LeabraCon* cn) {
     cn->wt = PrecLimitVal(cn->wt);
   }
-  inline void Compute_LimPrecWts(LeabraSendCons* cg, LeabraUnit* su) {
+  inline void Compute_LimPrecWts(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
     CON_GROUP_LOOP(cg, C_Compute_LimPrecWts((LeabraCon*)cg->OwnCn(i)));
   }
 
-  inline override void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    inherited::Compute_Weights_LeabraCHL(cg, su);
-    Compute_LimPrecWts(cg, su);
+  inline override void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                  LeabraNetwork* net) {
+    inherited::Compute_Weights_LeabraCHL(cg, su, net);
+    Compute_LimPrecWts(cg, su, net);
   }
 
-  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    inherited::Compute_Weights_CtLeabraXCAL(cg, su);
-    Compute_LimPrecWts(cg, su);
+  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                     LeabraNetwork* net) {
+    inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
+    Compute_LimPrecWts(cg, su, net);
   }
 
-  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    inherited::Compute_Weights_CtLeabraCAL(cg, su);
-    Compute_LimPrecWts(cg, su);
+  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) {
+    inherited::Compute_Weights_CtLeabraCAL(cg, su, net);
+    Compute_LimPrecWts(cg, su, net);
   }
 
   // NOTE: bias weights typically not subject to limited precision!

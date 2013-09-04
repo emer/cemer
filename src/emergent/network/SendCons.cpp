@@ -25,12 +25,15 @@ void SendCons::Initialize() {
 void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
+  Unit* own_su = GET_MY_OWNER(Unit);
+  Network* net = own_su->own_net();
+
   if(size > 0) {                // connections exist
     if(CheckError((recv_idx() < 0) || (recv_idx() != prjn->recv_idx), quiet, rval,
                   "unset recv_idx, do FixPrjnIndexes or Connect")) {
       prjn->projected = false;
     }
-    Unit* ru = Un(0);
+    Unit* ru = Un(0,net);
     if(CheckError(!ru, quiet, rval,
                   "recv unit is null when it should not be!  rebuild network!")) {
       prjn->projected = false;

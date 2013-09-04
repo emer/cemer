@@ -58,7 +58,7 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
-//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
   // must have the appropriate ranges for unit specs..
@@ -96,7 +96,7 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                     "requires one recv projection with at least one unit!")) {
         return false;
       }
-      if(lay->CheckError(!recv_gp->Un(0)->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
+      if(lay->CheckError(!recv_gp->Un(0,net)->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
                     "I need to receive from a LeabraTdUnit!")) {
         return false;
       }
@@ -136,7 +136,7 @@ void TdLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork*) {
   }
 }
 
-void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
+void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork* net) {
   int ri_prjn_idx;
   FindLayerFmSpec(lay, ri_prjn_idx, &TA_TDRewIntegLayerSpec);
 
@@ -144,7 +144,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
   FOREACH_ELEM_IN_GROUP(LeabraTdUnit, u, lay->units) {
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[ri_prjn_idx];
     // just taking the first unit = scalar val
-    LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(0);
+    LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(0,net);
     u->dav = su->act_eq - su->act_m; // subtract current minus previous!
     u->ext = u->dav;
     u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -153,7 +153,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
   if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;
 }
 
-void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
+void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     for(int g=0; g<u->send.size; g++) {
@@ -161,7 +161,7 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned())       continue;
       for(int j=0;j<send_gp->size; j++) {
-        ((LeabraTdUnit*)send_gp->Un(j))->dav = u->act;
+        ((LeabraTdUnit*)send_gp->Un(j,net))->dav = u->act;
       }
     }
   }

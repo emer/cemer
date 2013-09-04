@@ -78,6 +78,7 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, 
 void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
+  Network* net = recv_lay->own_net;
   Unit* lru = (Unit*)ru;
   int rgpidx = lru->UnitGpIdx();
   taVector2i rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
@@ -92,7 +93,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
 
   for(int i=0; i<cg->size; i++) {
-    Unit* su = cg->Un(i);
+    Unit* su = cg->Un(i,net);
     taVector2i su_pos;
     send_lay->UnitLogPos(su, su_pos);
     float su_x = (float)su_pos.x / mxs_x;
@@ -148,6 +149,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
 void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, Unit* ru) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
+  Network* net = recv_lay->own_net;
   taVector2i ru_pos;
   recv_lay->UnitLogPos(ru, ru_pos);
   float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1);
@@ -161,7 +163,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
   float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
 
   for(int i=0; i<cg->size; i++) {
-    Unit* su = cg->Un(i);
+    Unit* su = cg->Un(i,net);
     taVector2i su_pos;
     send_lay->UnitLogPos(su, su_pos);
     float su_x = (float)su_pos.x / mxs_x;

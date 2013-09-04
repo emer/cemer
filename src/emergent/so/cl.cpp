@@ -64,7 +64,7 @@ void SoftClUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     for(int g=0; g<u->recv.size; g++) {
       SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
       if(!recv_gp->prjn->from->lesioned())
-        u->net += recv_gp->Compute_Dist(u);
+        u->net += recv_gp->Compute_Dist(u, net);
     }
   }
 }

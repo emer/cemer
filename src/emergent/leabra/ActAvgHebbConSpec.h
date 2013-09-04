@@ -63,12 +63,13 @@ public:
   }
 
   // this computes weight changes based on sender at time t-1
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_SAvgCor(cg, su);
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) {
+    Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
       float lin_wt = LinFmSigWt(cn->lwt);
       C_Compute_dWt(cn, ru, 

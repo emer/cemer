@@ -193,7 +193,7 @@ void BpUnitSpec::Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no) {
   for(int g=0; g<u->send.size; g++) {
     BpSendCons* send_gp = (BpSendCons*)u->send.FastEl(g);
     if(!send_gp->prjn->layer->lesioned())
-      u->dEdA += send_gp->Compute_dEdA(u);
+      u->dEdA += send_gp->Compute_dEdA(u, net);
   }
 }
 
@@ -357,7 +357,7 @@ void BpContextSpec::Init_Acts(Unit* u, Network* net) {
 void BpContextSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 // todo: add a checkconfig to ensure this congroup exists!
   RecvCons* recv_gp = (RecvCons*)u->recv.SafeEl(0); // first group
-  Unit* hu = (Unit*)recv_gp->Un(0);
+  Unit* hu = (Unit*)recv_gp->Un(0, net);
   float* varptr = (float*)var_md->GetOff((void*)u);
   *varptr = hysteresis_c * hu->act + hysteresis * (*varptr);
   u->SetExtFlag(unit_flags);
@@ -486,7 +486,7 @@ void RBFBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   for(int g=0; g<u->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
-    u->net += recv_gp->Compute_Dist(u);
+    u->net += recv_gp->Compute_Dist(u, net);
   }
   if(u->bias.size)
     u->net += u->bias.OwnCn(0)->wt;
@@ -557,8 +557,8 @@ void SoftMaxBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
                   "exponential units (in first projection) and from linear sum unit (in second), did not find these.");
     return;
   }
-  BpUnit* exp_unit = (BpUnit*)((RecvCons*)u->recv[0])->Un(0);
-  BpUnit* sum_unit = (BpUnit*)((RecvCons*)u->recv[1])->Un(0);
+  BpUnit* exp_unit = (BpUnit*)((RecvCons*)u->recv[0])->Un(0, net);
+  BpUnit* sum_unit = (BpUnit*)((RecvCons*)u->recv[1])->Un(0, net);
 
   float sum_act = sum_unit->act;
   if(sum_act < FLT_MIN)

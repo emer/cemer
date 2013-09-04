@@ -40,8 +40,9 @@ public:
     ca_dep.CaUpdt(cn->cai, ru->act_eq, su->act_eq);
   }
   // connection-level Cai update
-  inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su) {
-    CON_GROUP_LOOP(cg, C_Compute_Cai((SRAvgCaiSynDepCon*)cg->OwnCn(i), (LeabraUnit*)cg->Un(i), su));
+  inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
+    CON_GROUP_LOOP(cg, C_Compute_Cai((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+                                     (LeabraUnit*)cg->Un(i, net), su));
   }
 
   // connection-level synaptic depression: syn dep direct
@@ -49,10 +50,11 @@ public:
     cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
   }
   // connection-level synaptic depression: ca mediated
-  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_Cai(cg, su);
+  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) {
+    Compute_Cai(cg, su, net);
     CON_GROUP_LOOP(cg, C_Compute_CycSynDep((SRAvgCaiSynDepCon*)cg->OwnCn(i),
-					   (LeabraUnit*)cg->Un(i), su));
+					   (LeabraUnit*)cg->Un(i,net), su));
   }
   // connection-group level synaptic depression
 
@@ -75,8 +77,8 @@ public:
   }
 
   inline void C_Send_NetinDelta_Thread(SRAvgCaiSynDepCon* cn, float* send_netin_vec,
-				    LeabraUnit* ru, float su_act_delta_eff) {
-    send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
+                                       int ru_idx, float su_act_delta_eff) {
+    send_netin_vec[ru_idx] += cn->effwt * su_act_delta_eff;
   }
 
   inline void C_Send_NetinDelta_NoThread(SRAvgCaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
@@ -89,19 +91,22 @@ public:
     if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((SRAvgCaiSynDepCon*)cg->OwnCn(i), send_netin_vec,
-					(LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+                                                  send_netin_vec,
+                                                  cg->UnIdx(i), su_act_delta_eff));
     }
     else {
       if(thread_no < 0) {
 	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread((SRAvgCaiSynDepCon*)cg->OwnCn(i),
-						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+                                                      (LeabraUnit*)cg->Un(i,net),
+                                                      su_act_delta_eff));
       }
       else {
 	float* send_netin_vec = net->send_netin_tmp.el
 	  + net->send_netin_tmp.FastElIndex(0, thread_no);
-	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((SRAvgCaiSynDepCon*)cg->OwnCn(i), send_netin_vec,
-						 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+                                                    send_netin_vec,
+                                                    cg->UnIdx(i), su_act_delta_eff));
       }
     }
   }
@@ -109,10 +114,11 @@ public:
   float C_Compute_Netin(SRAvgCaiSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
     return cn->effwt * su->act_eq;
   }
-  float Compute_Netin(RecvCons* cg, Unit* ru) {
+  float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin((SRAvgCaiSynDepCon*)cg->PtrCn(i), 
-					       (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i)));
+					       (LeabraUnit*)ru,
+                                               (LeabraUnit*)cg->Un(i,net)));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 
@@ -125,14 +131,13 @@ public:
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                       LeabraNetwork* net) {
     float su_avg_m = su->avg_m;
     float su_act_mult = xcal.thr_l_mix * su_avg_m;
 
     for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       C_Compute_dWt_CtLeabraXCAL_trial((LeabraSRAvgCon*)cg->OwnCn(i), ru, 
 				       net->sravg_vals.s_nrm, net->sravg_vals.m_nrm,
 				       su_act_mult);

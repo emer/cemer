@@ -33,7 +33,7 @@ public:
 
   inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // compute weight change according to Zsh function
 
   TA_SIMPLE_BASEFUNS(ZshConSpec);
@@ -59,7 +59,7 @@ public:
 
   inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // compute weight change according to approximate MaxIn function
 
   TA_SIMPLE_BASEFUNS(MaxInConSpec);
@@ -86,10 +86,10 @@ C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
   cn->dwt += tmp;
 }
 
-inline void ZshConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  Compute_AvgInAct((SoRecvCons*)cg, ru);
+inline void ZshConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
 }
 
 inline void MaxInConSpec::
@@ -105,10 +105,10 @@ C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
   cn->dwt += tmp;
 }
 
-inline void MaxInConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  Compute_AvgInAct((SoRecvCons*)cg, ru);
+inline void MaxInConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
 }
 
 #endif // zsh_h
