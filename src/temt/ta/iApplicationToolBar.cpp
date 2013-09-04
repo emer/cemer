@@ -73,5 +73,6 @@ void iApplicationToolBar::Constr_post() {
 
   tb->addSeparator();
   tb->addAction(win->helpHelpAction);
+  tb->addAction(win->helpFileBugAction);
 }
 

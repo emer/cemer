@@ -142,6 +142,7 @@ public:
 
   iAction*            helpHelpAction;
   iAction*            helpAboutAction;
+  iAction*            helpFileBugAction;
 
   QObject*              clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
 
@@ -286,6 +287,7 @@ public slots:
   void          windowActivate(int win); // activate the indicated win
   virtual void  helpHelp();
   virtual void  helpAbout();
+  virtual void  FileBugReport();
 
   virtual void  mnuEditAction(iAction* mel);
 

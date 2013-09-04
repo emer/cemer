@@ -688,15 +688,19 @@ void iMainWindowViewer::Constr_HelpMenu()
   helpHelpAction->setStatusTip(s);
 
   helpAboutAction = AddAction(new iAction("&About", QKeySequence(), "helpAboutAction"));
+  helpFileBugAction = AddAction(new iAction("Report Bug", QKeySequence(), "helpFileBugAction"));
+  helpFileBugAction->setToolTip("Opens web page for reporting a problem or requesting an enhancement");
 
   // Build menu items.
   helpMenu->AddAction(helpHelpAction);
+  helpMenu->AddAction(helpFileBugAction);
   helpMenu->insertSeparator();
   helpMenu->AddAction(helpAboutAction);
 
   // Make connetions.
   connect(helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()));
   connect(helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()));
+  connect(helpFileBugAction, SIGNAL(Action()), this, SLOT(FileBugReport()));
 }
 
 
@@ -1489,28 +1493,14 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 }
 
 void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
-  // always just use the help browser for any misc links
-  iHelpBrowser::StatLoadUrl(url.toString());
-//   if(isProjShower()) {
-//     taProject* prj = curProject();
-//     if(prj) {
-//       taDoc* browser = prj->FindMakeDoc("misc_browser", "", url.toString());
-//       browser->EditDialog();
-//       return;
-//     }
-//   }
-//   else if(isRoot()) {
-//     MainWindowViewer* db = viewer();
-//     if(db) {
-//       taRootBase* rt = dynamic_cast<taRootBase*>(db->data());
-//       if(rt) {
-//      taDoc* browser = rt->FindMakeDoc("misc_browser", "", url.toString());
-//      browser->EditDialog();
-//      return;
-//       }
-//     }
-//   }
-//   QDesktopServices::openUrl(url);    // fall back on default
+  String urlString = url.toString();
+  if (urlString.contains("bugzilla")) {
+    QDesktopServices::openUrl(url);    // user's default browser
+  }
+  else {
+    // just use the help browser for any misc links
+    iHelpBrowser::StatLoadUrl(url.toString());
+  }
 }
 
 bool iMainWindowViewer::event(QEvent* ev) {
@@ -1593,6 +1583,10 @@ void iMainWindowViewer::helpHelp() {
 
 void iMainWindowViewer::helpAbout() {
   if (tabMisc::root) tabMisc::root->About();
+}
+
+void iMainWindowViewer::FileBugReport() {
+  QDesktopServices::openUrl(QUrl("http://grey.colorado.edu/bugzilla"));
 }
 
 void iMainWindowViewer::mnuEditAction(iAction* mel) {
