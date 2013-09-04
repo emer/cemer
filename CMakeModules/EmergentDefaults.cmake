@@ -39,19 +39,24 @@ if (WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 
 else (WIN32) # assume gcc!!!
-  add_definitions(-Wno-undefined-inline)
   # A function with a non-void return-type that doesn't return a value s/b an error!!!
   # GCC added support for treating this as an error somewhere around version 4.2
   include(CheckCXXCompilerFlag)
   set(GCC_RETURN_TYPE_ERROR "-Werror=return-type")
   set(GCC_RETURN_TYPE_WARN "-Wreturn-type")
-  check_cxx_compiler_flag(GCC_RETURN_TYPE_ERROR HAS_RETURN_TYPE_ERROR_FLAG)
+  check_cxx_compiler_flag("${GCC_RETURN_TYPE_ERROR}" HAS_RETURN_TYPE_ERROR_FLAG)
   if (HAS_RETURN_TYPE_ERROR_FLAG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_RETURN_TYPE_ERROR}")
   else (HAS_RETURN_TYPE_ERROR_FLAG)
     message("Compiler does not support ${GCC_RETURN_TYPE_ERROR}, will use ${GCC_RETURN_TYPE_WARN} instead.")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_RETURN_TYPE_WARN}") # at least get a warning!
   endif (HAS_RETURN_TYPE_ERROR_FLAG)
+
+  set(GCC_UNDEF_INLINE "-Wno-undefined-inline")
+  check_cxx_compiler_flag("${GCC_UNDEF_INLINE}" HAS_UNDEF_INLINE_FLAG)
+  if (HAS_UNDEF_INLINE_FLAG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_UNDEF_INLINE}")
+  endif (HAS_UNDEF_INLINE_FLAG)
   
   # NOTE:  -ftree-vectorizer-verbose=1 can be interesting but not worth it for a default param -- users may add at own discretion 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wno-unused-variable")
@@ -60,5 +65,7 @@ else (WIN32) # assume gcc!!!
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
     message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
   endif (APPLE)
+
+  message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 endif (WIN32)
 
