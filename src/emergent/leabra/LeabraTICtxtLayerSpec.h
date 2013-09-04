@@ -35,6 +35,7 @@ public:
   };
 
   TIActVal	act_val;	// which activation value to get from the source layer?
+  bool          pfc_gate_dynamic_updt; // if true, and we recv from a PFCLayerSpec layer, then when that PFC layer has gated on a given trial, it will dynamically update the activation directly from the current activation of those 'superficial' pfc units -- this allows gating effects to propagate within one trial, instead of requiring multiple trials
 
   virtual void Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net);
   // set current act of deep unit to sending super unit activation

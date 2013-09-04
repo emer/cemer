@@ -58,6 +58,8 @@ bool Relation::Evaluate(double cmp) const {
   case GREATERTHANOREQUAL:
     if(cmp >= eff_val)  return true;
     break;
+  default:
+    break;
   }
   return false;
 }
