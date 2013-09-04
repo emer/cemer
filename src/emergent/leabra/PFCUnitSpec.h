@@ -36,6 +36,7 @@ public:
                                      PFCLayerSpec*& pfcls);
   // returns true if my stripe gated this trial -- this is only valid in PostSettle for phase_no == 1 or thereafter (TI_ComputeCtxtAct)
 
+  override void Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net);
   override void	Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   override void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
   override void PostSettle(LeabraUnit* u, LeabraNetwork* net);

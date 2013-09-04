@@ -116,6 +116,8 @@ void Network::Initialize() {
   proj = NULL;
   old_load_cons = false;
 
+  null_unit = NULL;
+
 #ifdef DMEM_COMPILE
   // dmem_net_comm = ??
   // dmem_trl_comm = ??
@@ -193,6 +195,7 @@ void Network::CutLinks() {
   layers.CutLinks();            // then std kills
   specs.CutLinks();
   proj = NULL;
+  taBase::DelPointer((taBase**)&null_unit);
   inherited::CutLinks();
 }
 
@@ -404,6 +407,7 @@ void Network::BuildLayers() {
 void Network::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
+  BuildNullUnit();
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     l->BuildUnits();
@@ -417,12 +421,21 @@ void Network::BuildUnits() {
   if(!taMisc::gui_active)    return;
 }
 
+void Network::BuildNullUnit() {
+  // in derived classes, just replace the unit type with appropriate one -- do NOT call
+  // inherited!
+  if(!null_unit) {
+    taBase::OwnPointer((taBase**)&null_unit, new Unit, this);
+  }
+}
+
 void Network::BuildUnits_Threads() {
   threads.InitAll();
   units_flat.Reset();
   // real indexes start at 1, to allow 0 to be a dummy case for inactive units that may
   // nevertheless get a send netin call to them -- all those just go to this 0 bin
-  units_flat.Add(NULL);         // add a dummy null
+  BuildNullUnit();              // double sure
+  units_flat.Add(null_unit);         // add a dummy null
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) {
       l->units_flat_idx = 0;

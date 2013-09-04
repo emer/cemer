@@ -32,6 +32,7 @@ INHERITED(SpecMemberBase)
 public:
   float         gate_ctxt_mod;  // #MIN_0 #MAX_1 how much to modulate context input at time of gating -- decreases influence of prior context in pfc units so they can better reflect new inputs -- smaller values = more clearing of prior context
   float         ctxt_decay;     // #MIN_0 #MAX_1 decay rate for context, per trial when no updating occurs
+  int           max_maint;      // maximum maintenance duration (-1 = no limit) -- after this number trials, active maintenance will be terminated
   float		out_nogate_gain; // #MIN_0 #MAX_1 #DEF_0 how active are output gating units in absence of gating?
 
   float         ctxt_decay_c;   // #READ_ONLY #HIDDEN 1-ctxt_decay
@@ -72,6 +73,9 @@ public:
   virtual void  Compute_GateCycle(LeabraLayer* lay, LeabraNetwork* net);
   // compute at time of gating -- called every cycle -- modulates influence of context at time of gating in early minus phase
 
+  virtual void  GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+                                    int gpidx, LeabraNetwork* net);
+  // gate on the deep prjns using PFCDeepGatedConSpec 
   virtual void  Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net);
   // for output gating layer, only allow activation for trial immediately after gating -- called in CycleStats
 

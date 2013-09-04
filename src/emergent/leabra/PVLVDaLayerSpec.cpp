@@ -22,6 +22,7 @@
 #include <NVLayerSpec>
 #include <PVConSpec>
 #include <ExtRewLayerSpec>
+#include <OneToOnePrjnSpec>
 
 #include <taMisc>
 
@@ -108,10 +109,26 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
-      if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
-                    "requires one recv projection with at least one unit!")) {
-        return false;
+      if(recv_gp->size <= 0) {
+        OneToOnePrjnSpec* pspec = (OneToOnePrjnSpec*)recv_gp->prjn->spec.SPtr();
+        BaseSpec_Group* spgp = GET_OWNER(pspec, BaseSpec_Group);
+        if(spgp) {
+          bool made_new = false;
+          OneToOnePrjnSpec* vtasp =
+            (OneToOnePrjnSpec*)spgp->FindMakeNameType("VTAOneToOnePrjn",
+                                                      &TA_OneToOnePrjnSpec, made_new);
+          vtasp->send_start = 1; // set offset to 1
+          recv_gp->prjn->SetPrjnSpec(vtasp);
+          if(lay->CheckError(made_new, quiet, rval,
+                             "requires a special projection spec that I just made -- you will have to re-build the network and re-init -- save project after this change")) {
+          }
+        }
       }
+      // if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
+      //                    "requires one recv projection with at least one unit!  from:", 
+      //                    fmlay->name)) {
+      //   return false;
+      // }
       if(fls->InheritsFrom(TA_LVeLayerSpec)) lve_lay = fmlay;
       if(fls->InheritsFrom(TA_LViLayerSpec)) lvi_lay = fmlay;
       if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = fmlay;
@@ -195,15 +212,6 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PVLVDaLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
-  // that's it: don't do any processing on this layer: set all idx to 0
-  lay->units_flat_idx = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-    if(un->lesioned()) continue;
-    un->flat_idx = 0;
-  }
-}
-
 void PVLVDaLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_Da(lay, net);
   Send_Da(lay, net);
@@ -214,4 +222,5 @@ void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   lay->UnSetExtFlag(Unit::EXT);
   inherited::Compute_HardClamp(lay, net);
 }
+
 

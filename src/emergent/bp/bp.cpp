@@ -601,6 +601,12 @@ void BpNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
+void BpNetwork::BuildNullUnit() {
+  if(!null_unit) {
+    taBase::OwnPointer((taBase**)&null_unit, new BpUnit, this);
+  }
+}
+
 void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_BpCon;

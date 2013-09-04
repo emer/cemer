@@ -310,6 +310,12 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   }
 }
 
+void LeabraNetwork::BuildNullUnit() {
+  if(!null_unit) {
+    taBase::OwnPointer((taBase**)&null_unit, new LeabraUnit, this);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      General Init functions
 

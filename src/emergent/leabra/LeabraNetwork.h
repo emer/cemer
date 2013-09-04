@@ -667,6 +667,8 @@ public:
   virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
   // #MENU #MENU_SEP_BEFORE #NULL_OK #NULL_TEXT_NewGraphData graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
 
+  override void  BuildNullUnit();
+
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:
   int	prv_learn_rule;		// previous learning rule for triggering updates

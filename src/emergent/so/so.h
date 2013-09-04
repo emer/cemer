@@ -257,6 +257,7 @@ public:
   virtual void	 Trial_Run(); // run one trial of So
   
   override void	SetProjectionDefaultTypes(Projection* prjn);
+  override void  BuildNullUnit();
 
   TA_BASEFUNS_NOCOPY(SoNetwork);
 private:

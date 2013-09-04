@@ -25,6 +25,7 @@ void PFCGateSpec::Initialize() {
   gate_ctxt_mod = 1.0f;
   ctxt_decay = 0.0f;
   ctxt_decay_c = 1.0f - ctxt_decay;
+  max_maint = -1;
   out_nogate_gain = 0.0f;
 }
 
@@ -179,12 +180,34 @@ void PFCLayerSpec::Compute_GateCycle(LeabraLayer* lay, LeabraNetwork* net) {
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
     if(!gpd->go_fired_now) continue; // only on very cycle of gating
+    GateOnDeepPrjns_ugp(lay, acc_md, mg, net); // gate on the deep prjns
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
       if(ru->lesioned()) continue;
       ru->act_ctxt *= gate.gate_ctxt_mod;
     }
   }
+}
+
+void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+				      int gpidx, LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+
+  for(int j=0;j<nunits;j++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+    if(u->lesioned()) continue;
+
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(!recv_gp->prjn->spec.SPtr()->InheritsFrom(&TA_PFCDeepGatedConSpec)) continue;
+      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)       continue;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      cs->Compute_NetinScale(recv_gp, from, false); // false = not plus phase
+      recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale (prev computed)
+    }
+  }
+  net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
 }
 
 void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {

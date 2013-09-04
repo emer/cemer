@@ -562,6 +562,12 @@ void CsNetwork::UpdateAfterEdit_impl() {
   }
 }
 
+void CsNetwork::BuildNullUnit() {
+  if(!null_unit) {
+    taBase::OwnPointer((taBase**)&null_unit, new CsUnit, this);
+  }
+}
+
 void CsNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_CsCon;

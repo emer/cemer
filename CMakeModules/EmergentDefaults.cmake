@@ -39,6 +39,7 @@ if (WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 
 else (WIN32) # assume gcc!!!
+  add_definitions(-Wno-undefined-inline)
   # A function with a non-void return-type that doesn't return a value s/b an error!!!
   # GCC added support for treating this as an error somewhere around version 4.2
   include(CheckCXXCompilerFlag)

@@ -212,7 +212,7 @@ bool Unit::BuildUnits() {
     bias.SetConType(bstd);
     if(bias.size == 0) {
       bias.AllocCons(1);
-      bias.ConnectUnOwnCn(this);
+      bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
     }
     bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
   }

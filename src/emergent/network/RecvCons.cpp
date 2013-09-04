@@ -40,6 +40,10 @@ void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
 
     Unit* su = Un(0,net);
+    if(su == net->null_unit && size > 1)
+      su = Un(1,net);
+    if(su == net->null_unit) return; // still null -- no checking
+
     if(CheckError(!su, quiet, rval,
                   "sending unit is null when it should not be!  rebuild network!")) {
       prjn->projected = false;

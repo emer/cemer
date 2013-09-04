@@ -182,7 +182,8 @@ public:
   TimeUsed      misc_time;      // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
   UnitCallThreadMgr threads;    // #CAT_Threads parallel threading of network computation
-  UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads
+  UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads and for connection indexes -- first (0 index) is a null unit that is skipped over and should never be computed on
+  Unit*         null_unit;      // #HIDDEN #NO_SAVE unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
   float_Matrix  send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
@@ -224,7 +225,9 @@ public:
     // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
     virtual void  BuildUnits();
     // #MENU #CAT_Structure Build the network units in layers according to geometry
-    virtual void        BuildUnits_Threads();
+    virtual void  BuildNullUnit();
+    // #IGNORE make the null_unit unit
+    virtual void  BuildUnits_Threads();
     // #IGNORE build unit-level thread information: flat list of units, etc, and update thread structures
     virtual void  BuildPrjns();
     // #MENU #CAT_Structure Build any network prjns that are dynamically constructed

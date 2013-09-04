@@ -308,6 +308,12 @@ void SoNetwork::Initialize() {
   layers.SetBaseType(&TA_SoLayer);
 }
 
+void SoNetwork::BuildNullUnit() {
+  if(!null_unit) {
+    taBase::OwnPointer((taBase**)&null_unit, new SoUnit, this);
+  }
+}
+
 void SoNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_SoCon;

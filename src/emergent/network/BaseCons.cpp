@@ -178,9 +178,12 @@ bool BaseCons::ChangeMyType(TypeDef*) {
   return false;
 }
 
-Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs) {
+Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
+                                     bool allow_null_unit) {
   if(TestError(!OwnCons(), "ConnectUnOwnCn", "does not own cons!"))
     return NULL;
+  if(!allow_null_unit && un->flat_idx == 0)
+    return NULL; // null unit -- don't even connect!
   if(size >= alloc_size) {
     TestError(!ignore_alloc_errs, "ConnectUnOwnCn", "size already at maximum allocated of",
               String(alloc_size),"this is a programmer error -- please report the bug");
@@ -194,6 +197,8 @@ Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs) {
 bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) {
   if(TestError(OwnCons(), "ConnectUnPtrCn", "is not a ptr cons!"))
     return false;
+  if(un->flat_idx == 0)
+    return false; // null unit -- don't even connect!
   if(size >= alloc_size) {
     TestError(!ignore_alloc_errs, "ConnectUnPtrCn", "size already at maximum allocated of",
               String(alloc_size),"this is a programmer error -- please report the bug");

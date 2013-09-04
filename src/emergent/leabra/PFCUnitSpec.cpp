@@ -17,6 +17,7 @@
 #include <LeabraNetwork>
 #include <PFCLayerSpec>
 #include <PBWMUnGpData>
+#include <PFCDeepGatedConSpec>
 
 void PFCUnitSpec::Initialize() {
   Defaults_init();
@@ -56,6 +57,9 @@ void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
   }
   else {
     u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
+    if(gpd->mnt_count > pfcls->gate.max_maint) {
+      u->act_ctxt = 0.0f;       // go all the way
+    }
   }
 }
 
@@ -75,7 +79,6 @@ void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_
     }
   }
 }
-
 
 void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   float save_p_act_p = u->p_act_p;
@@ -99,3 +102,24 @@ void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     }
   }
 }
+
+// this sets default wt scale from deep prjns to super to 0 unless fired go
+void PFCUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::Compute_NetinScale(u, net);
+
+  PFCLayerSpec* pfcls = NULL;
+  PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
+  if(gpd) {
+    if(gpd->go_fired_trial) return; // only if didn't fire go in minus phase
+
+    // didn't fire: zero it out
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(!recv_gp->prjn->spec.SPtr()->InheritsFrom(&TA_PFCDeepGatedConSpec)) continue;
+      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(from->lesioned() || !recv_gp->size)       continue;
+      recv_gp->scale_eff = 0.0f; // negate!!
+    }
+  }
+}
+

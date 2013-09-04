@@ -129,8 +129,9 @@ public:
   Connection*           ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
                                      bool ignore_alloc_errs = false);
   // #CAT_Modify add a new connection betwee our unit and an other unit and its appropriate cons -- does appropriate things depending on who owns the connects, etc.  enough room must already be allocated on both sides  (flag will turn off err msg)
-    Connection*         ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs = false);
-    // #CAT_Modify add a new connection from given unit for OwnCons case -- returns NULL if no more room relative to alloc_size (flag will turn off err msg)
+  Connection*         ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs = false,
+                                     bool allow_null_unit = false);
+    // #CAT_Modify add a new connection from given unit for OwnCons case -- returns NULL if no more room relative to alloc_size (flag will turn off err msg) -- default is to not allow connections from a unit with flat_idx = 0 (null_unit) but this can be overridden
     bool                ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs = false);
     // #CAT_Modify add a new connection from given unit and connection pointer for PtrCons case -- returns false if no more room, else true
 

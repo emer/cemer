@@ -58,8 +58,6 @@ public:
   virtual void  Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
   // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
-
   override void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) { };
   override void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };

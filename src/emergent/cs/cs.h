@@ -478,6 +478,7 @@ public:
   // #CAT_Statistic compute epoch-level statistics, including SSE and AvgCycles
 
   override void	SetProjectionDefaultTypes(Projection* prjn);
+  override void  BuildNullUnit();
 
   TA_SIMPLE_BASEFUNS(CsNetwork);
 protected:
