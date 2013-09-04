@@ -136,7 +136,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER))) {
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED))) {
       if (sel.height() < 1)
         goto bail;
       QModelIndex newIndex;
@@ -178,7 +178,21 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
           newIndex = this->model()->index(sel.row_fr - 1, 0);
         else
           newIndex = this->model()->index(0, 0);
+      }
+      else if (op_code & OP_DELETE_UNSELECTED) {
+        if(taMisc::delete_prompts) {
+          if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0)
+            goto bail;
         }
+        if(proj)
+          proj->undo_mgr.SaveUndo(tab, "RemoveRowsUnselected", tab);
+        // we are using contiguous selection so remove rows above and below selection
+        if (sel.row_to != tab->rows-1) // i.e. last row not selected
+          rval = tab->RemoveRows(sel.row_to + 1, tab->rows - sel.row_to -1);
+        if (sel.row_fr != 0) // i.e. first row not selected
+          rval = tab->RemoveRows(0, sel.row_fr);
+        newIndex = this->model()->index(0, 0);
+      }
 
       if (rval) {
         this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
@@ -189,8 +203,8 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   }
   else if (op_code & OP_COL) {
     // must have >=1 col selected to make sense
-	    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE | OP_DUPLICATE))) {
-	      if (sel.width() < 1) goto bail;
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE | OP_DUPLICATE))) {
+      if (sel.width() < 1) goto bail;
 	      /*note: not supporting col ops here
 	      if (op_code & OP_APPEND) {
 	      } else

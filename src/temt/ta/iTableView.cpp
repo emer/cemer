@@ -234,6 +234,8 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
       act = menu->AddItem("Delete Rows (Ctrl+D)", taiWidgetMenu::normal, iAction::int_act,
         this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
+      act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal, iAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
     }
     menu->AddSep();
   }

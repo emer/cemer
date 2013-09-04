@@ -98,15 +98,16 @@ public:
 
       protected:
       enum RowColOpCode {
-        OP_APPEND             		= 0x001,
-        OP_INSERT             		= 0x002,
-        OP_DUPLICATE          		= 0x004,
-        OP_DELETE             		= 0x008,
-        OP_INSERT_AFTER       		= 0X010,
-        OP_ROW                		= 0x040,
-        OP_COL                		= 0x080,
-        OP_RESIZE_TO_CONTENT  		= 0x100,
-        OP_RESIZE_TO_CONTENT_ALL  	= 0x200
+        OP_APPEND                 = 0x001,
+        OP_INSERT                 = 0x002,
+        OP_DUPLICATE              = 0x004,
+        OP_DELETE                 = 0x008,
+        OP_INSERT_AFTER           = 0X010,
+        OP_DELETE_UNSELECTED      = 0X020,
+        OP_ROW                    = 0x040,
+        OP_COL                    = 0x080,
+        OP_RESIZE_TO_CONTENT      = 0x100,
+        OP_RESIZE_TO_CONTENT_ALL  = 0x200
       };
 
       bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
