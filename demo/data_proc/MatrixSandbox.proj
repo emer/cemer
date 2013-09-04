@@ -1,0 +1,3187 @@
+// ta_Dump File v3.0 -- code v6.3.3.0 rev6453
+BpProject .projects["MatrixSandbox"] { 
+  taBase_Group @.templates = [0] {
+  };
+
+  Doc_Group @.docs = [0] {
+  };
+
+  Wizard_Group @.wizards = [1] {
+    BpWizard @["BpWizard_0"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  SelectEdit_Group @.edits = [1] {
+    ClusterRun @["ClusterRun"] { 
+      EditMbrItem_Group @.mbrs = [0] {
+      };
+
+      EditMthItem_Group @.mths = [0] {
+      };
+
+      ParamSearchAlgo_List @.search_algos = [0] {
+      };
+    };
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp["InputData"] = [1] { 
+      DataTable @["test"] { 
+	DataTableCols @.data = [1] {
+	  float_Data @["temp"] { 
+      UserDataItem_List @*(.user_data_) {
+	      UserDataItem @["view_panel_wd"] { };
+      };
+};
+	};
+      };
+    };
+    DataTable_Group @.gp["OutputData"] { 
+    };
+    DataTable_Group @.gp["AnalysisData"] { 
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @["data_base"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataAnal @["data_anal"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataGen @["data_gen"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taImageProc @["image_proc"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [4] {
+    Program @["Matrix_2D"] { 
+      ProgObjList @.objs = [1] {
+	Random @["Random_0"] { };
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @["Random_0"] { };
+	ProgVar @["cell_value"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [10] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [1] {
+	    ProgVar @["in_matrix_2d"] { };
+	  };
+	};
+	AssignExpr @[1] { };
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	DataGenCall @[3] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	PrintExpr @[4] { };
+	PrintExpr @[5] { };
+	PrintExpr @[6] { };
+	PrintVar @[7] { };
+	MethodCall @[8] { 
+	  ProgArg_List @.meth_args = [7] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	  };
+	};
+	PrintVar @[9] { };
+      };
+    };
+    Program @["Matrix_3D"] { 
+      ProgObjList @.objs = [1] {
+	Random @["Random_0"] { };
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @["Random_0"] { };
+	ProgVar @["cell_value"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [15] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [1] {
+	    ProgVar @["in_matrix_3d"] { };
+	  };
+	};
+	AssignExpr @[1] { };
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	DataGenCall @[3] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	PrintExpr @[4] { };
+	PrintExpr @[5] { };
+	PrintExpr @[6] { };
+	PrintVar @[7] { };
+	MethodCall @[8] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	PrintExpr @[9] { };
+	PrintExpr @[10] { };
+	PrintExpr @[11] { };
+	PrintVar @[12] { };
+	MethodCall @[13] { 
+	  ProgArg_List @.meth_args = [7] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	  };
+	};
+	PrintVar @[14] { };
+      };
+    };
+    Program @["Slicing"] { 
+      ProgObjList @.objs = [1] {
+	Random @["Random_0"] { };
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @["Random_0"] { };
+	ProgVar @["cell_value"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [16] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [5] {
+	    ProgVar @["in_matrix_3d"] { };
+	    ProgVar @["slice_of_matrix"] { };
+	    ProgVar @["out_matrix"] { };
+	    ProgVar @["kernel"] { };
+	    ProgVar @["i"] { };
+	  };
+	};
+	AssignExpr @[1] { };
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	DataGenCall @[3] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	PrintVar @[4] { };
+	AssignExpr @[5] { };
+	MethodCall @[6] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	PrintVar @[7] { };
+	AssignExpr @[8] { };
+	MethodCall @[9] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	AssignExpr @[10] { };
+	MethodCall @[11] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	ForLoop @[12] { 
+	  ProgEl_List @.loop_code = [1] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	  };
+	};
+	PrintVar @[13] { };
+	MathCall @[14] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	PrintVar @[15] { };
+      };
+    };
+    Program @["Convolve_test"] { 
+      ProgObjList @.objs = [1] {
+	Random @["Random_0"] { };
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @["Random_0"] { };
+	ProgVar @["cell_value"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [18] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [5] {
+	    ProgVar @["in_matrix_2d"] { };
+	    ProgVar @["slice_of_matrix"] { };
+	    ProgVar @["out_matrix"] { };
+	    ProgVar @["kernel"] { };
+	    ProgVar @["i"] { };
+	  };
+	};
+	AssignExpr @[1] { };
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	ForLoop @[3] { 
+	  ProgEl_List @.loop_code = [1] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	  };
+	};
+	PrintVar @[4] { };
+	AssignExpr @[5] { };
+	MethodCall @[6] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	AssignExpr @[7] { };
+	MethodCall @[8] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	ForLoop @[9] { 
+	  ProgEl_List @.loop_code = [1] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	  };
+	};
+	MethodCall @[10] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	PrintVar @[11] { };
+	MathCall @[12] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	PrintVar @[13] { };
+	ForLoop @[14] { 
+	  ProgEl_List @.loop_code = [1] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	  };
+	};
+	PrintVar @[15] { };
+	MathCall @[16] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	PrintVar @[17] { };
+      };
+    };
+  };
+
+  taViewer_List @.viewers = [1] {
+    MainWindowViewer @["Browser2"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_win_lft"] { };
+	UserDataItem @["view_win_top"] { };
+	UserDataItem @["view_win_wd"] { };
+	UserDataItem @["view_win_ht"] { };
+	UserDataItem @["view_win_iconified"] { };
+	UserDataItem @["view_splitter_state"] { };
+   };
+
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["view_win_visible"] { };
+     };
+};
+      };
+
+      FrameViewer_List @.frames = [3] {
+	BrowseViewerTaBase @["Tree"] { };
+	PanelViewer @["Panels"] { };
+	T3PanelViewer @["T3Frames"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["view_panel_selected"] { };
+     };
+
+	  T3Panel_List @.panels = [1] {
+	    T3Panel @["Frame1"] { 
+	      T3DataView_List @.children = [0] {
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View_0"] { };
+		T3SavedView @["View_1"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @["view_win_lft"] { };
+	    UserDataItem @["view_win_top"] { };
+	    UserDataItem @["view_win_wd"] { };
+	    UserDataItem @["view_win_ht"] { };
+	    UserDataItem @["view_win_iconified"] { };
+	    UserDataItem @["view_visible"] { };
+     };
+};
+      };
+    };
+  };
+
+  Network_Group @.networks = [0] {
+  };
+};
+BpProject .projects["MatrixSandbox"] {
+ name="MatrixSandbox";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ license {
+  owner="Regents of the University of Colorado";
+  license=NO_LIC;
+  org="CCNLab at the University of Colorado Boulder";
+  year="2011";
+  custom=;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name="taBase_Group_0";
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name="Doc_Group_1";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name="Wizard_Group_1";
+  el_typ=BpWizard;
+  el_def=0;
+  BpWizard @["BpWizard_0"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_6";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="BpWizard_0";
+   auto_open=1;
+  };
+ };
+ edits {
+  name="SelectEdit_Group_0";
+  el_typ=ClusterRun;
+  el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=1;
+   desc=;
+   mbrs {
+    name=;
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name=;
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   search_algos {
+    name=;
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   last_submit_time=;
+   notes=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=-1;
+   n_threads=2;
+   use_mpi=0;
+   mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
+   nowin_x=0;
+  };
+ };
+ data {
+  name="DataTable_Group_0";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp["InputData"] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @["test"] {
+    name="test";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @["temp"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_50";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1004016101360321;
+	val_type_fixed=0;
+       };
+      };
+      name="temp";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 3;3;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+	    [2] ;;      };
+      width=0;
+      ar {
+       name=;
+	    [3 3 1] 7;8;9;4;5;6;1;2;3;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+	[1] 0;    };
+   };
+  };
+  DataTable_Group @.gp["OutputData"] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["AnalysisData"] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name="taBase_Group_0";
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @["data_base"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_2";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @["data_anal"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_3";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @["data_gen"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_4";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @["image_proc"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_5";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name="Program_Group_0";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+  Program @["Matrix_2D"] {
+   name="Matrix_2D";
+   short_nm="blur";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name="ProgObjList_4";
+    el_typ=float_Matrix;
+    el_def=0;
+    Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
+   };
+   types {
+    name="ProgType_List_0";
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["Random_0"] {
+     name="Random_0";
+     var_type=T_Object;
+     object_type=Random;
+     object_val=.projects["MatrixSandbox"].programs["Matrix_2D"].objs["Random_0"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["cell_value"] {
+     name="cell_value";
+     var_type=T_Real;
+     real_val=-1.063395142555237;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_4";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_47";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_48";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["in_matrix_2d"] {
+       name="in_matrix_2d";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     desc="create a new object for our variable to point to -- this is essential!";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="5";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataGenCall @[3] {
+     desc="fill matrix with noise";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     object_type=taDataGen;
+     method=taDataGen::AddNoiseMat;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="in_matrix_2d";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Random_ref;
+       type="Random&";
+       name="rnd_spec";
+       required=1;
+       def_val=;
+       expr {
+	expr="Random_0";
+       };
+      };
+     };
+    };
+    PrintExpr @[4] {
+     desc="The number of dimensions in the matrix";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"dimensions = \" + in_matrix_2d->dims()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintExpr @[5] {
+     desc="The number of frames is the size of the last dimension";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"frames = \" + in_matrix_2d->Frames()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintExpr @[6] {
+     desc="The number of elements in each frame (product of inner dimensions)";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"frame size = \" + in_matrix_2d->FrameSize()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintVar @[7] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    MethodCall @[8] {
+     desc="for any matrix access is inner to outer (for a 2d matrix this is basically column, row - row being the frame)";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Matrix_2D"].vars["cell_value"]$$;
+     obj=$.projects["MatrixSandbox"].programs["Matrix_2D"].prog_code[0].local_vars["in_matrix_2d"]$;
+     method=taMatrix::FastElAsFloat;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    PrintVar @[9] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Matrix_2D"].vars["cell_value"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["Matrix_3D"] {
+   name="Matrix_3D";
+   short_nm="DMtrx";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name="ProgObjList_5";
+    el_typ=taNBase;
+    el_def=0;
+    Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
+   };
+   types {
+    name="ProgType_List_0";
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["Random_0"] {
+     name="Random_0";
+     var_type=T_Object;
+     object_type=Random;
+     object_val=.projects["MatrixSandbox"].programs["Matrix_3D"].objs["Random_0"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["cell_value"] {
+     name="cell_value";
+     var_type=T_Real;
+     real_val=0.6977747082710266;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_5";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_51";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_52";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["in_matrix_3d"] {
+       name="in_matrix_3d";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     desc="create a new object for our variable to point to -- this is essential!";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="5";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="6";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataGenCall @[3] {
+     desc="fill matrix with noise";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     object_type=taDataGen;
+     method=taDataGen::AddNoiseMat;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="in_matrix_3d";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Random_ref;
+       type="Random&";
+       name="rnd_spec";
+       required=1;
+       def_val=;
+       expr {
+	expr="Random_0";
+       };
+      };
+     };
+    };
+    PrintExpr @[4] {
+     desc="The number of dimensions was set at 3";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"dimensions = \" + in_matrix_3d->dims()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintExpr @[5] {
+     desc="The number of frames is the size of the last dimension";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"frames = \" + in_matrix_3d->Frames()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintExpr @[6] {
+     desc="The number of elements in each frame (product of inner dimensions)";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"frame size = \" + in_matrix_3d->FrameSize()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintVar @[7] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    MethodCall @[8] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
+     method=taMatrix::AddFrames;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+     };
+    };
+    PrintExpr @[9] {
+     desc="The number of dimensions was set at 3";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"dimensions = \" + in_matrix_3d->dims()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintExpr @[10] {
+     desc="We now have a matrix that is 5 x 6 x 4";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"frames = \" + in_matrix_3d->Frames()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintExpr @[11] {
+     desc="The number of elements in each frame (product of inner dimensions)";
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"frame size = \" + in_matrix_3d->FrameSize()";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    PrintVar @[12] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    MethodCall @[13] {
+     desc="for a 3d matrix the access is inner to outer with the frame being the most outer";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Matrix_3D"].vars["cell_value"]$$;
+     obj=$.projects["MatrixSandbox"].programs["Matrix_3D"].prog_code[0].local_vars["in_matrix_3d"]$;
+     method=taMatrix::FastElAsFloat;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    PrintVar @[14] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Matrix_3D"].vars["cell_value"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["Slicing"] {
+   name="Slicing";
+   short_nm="Slicin";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+    Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["Random_0"] {
+     name="Random_0";
+     var_type=T_Object;
+     object_type=Random;
+     object_val=.projects["MatrixSandbox"].programs["Slicing"].objs["Random_0"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["cell_value"] {
+     name="cell_value";
+     var_type=T_Real;
+     real_val=0.697775;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["in_matrix_3d"] {
+       name="in_matrix_3d";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["slice_of_matrix"] {
+       name="slice_of_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["out_matrix"] {
+       name="out_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["kernel"] {
+       name="kernel";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["i"] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     desc="create a new object for our local variable to point to -- this is essential!";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[2] {
+     desc="A matrix that is 10x10x4";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="10";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="10";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr="4";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataGenCall @[3] {
+     desc="fill matrix with random values";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     object_type=taDataGen;
+     method=taDataGen::AddNoiseMat;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="in_matrix_3d";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_Random_ref;
+       type="Random&";
+       name="rnd_spec";
+       required=1;
+       def_val=;
+       expr {
+	expr="Random_0";
+       };
+      };
+     };
+    };
+    PrintVar @[4] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    AssignExpr @[5] {
+     desc="create another float_matrix object ";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["slice_of_matrix"]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[6] {
+     desc="the matrix will get its geometry from the matrix we are slicing";
+     flags=0;
+     orig_prog_code=;
+     result_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["slice_of_matrix"]$;
+     obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["in_matrix_3d"]$;
+     method=taMatrix::GetFrameSlice_;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="frame";
+       required=1;
+       def_val=;
+       expr {
+	expr="3";
+       };
+      };
+     };
+    };
+    PrintVar @[7] {
+     desc="the slice should be a 10x10 matrix";
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["slice_of_matrix"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    AssignExpr @[8] {
+     desc="create another float_matrix to hold the result of the convolution we will do";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["out_matrix"]$$;
+     expr {
+      expr="new float_Matrix()";
+     };
+    };
+    MethodCall @[9] {
+     desc="set the geometry to be the same as the matrix we will pass in to the convolve method";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["out_matrix"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="10";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="10";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    AssignExpr @[10] {
+     desc="the kernel matrix to convolve with the slice of matrix";
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$$;
+     expr {
+      expr="new float_Matrix()";
+     };
+    };
+    MethodCall @[11] {
+     desc="a 2x2 matrix";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[12] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     loop_code {
+      name="ProgEl_List_54";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       obj=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$;
+       method=taMatrixT_float_::Set_Flat;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_ref;
+	 type="float&";
+	 name="item";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr=".111";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="i";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 9";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    PrintVar @[13] {
+     desc="the slice should be a 10x10 matrix";
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["kernel"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    MathCall @[14] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     object_type=taMath_float;
+     method=taMath_float::mat_frame_convolve;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="out_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="out_matrix";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="in_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="slice_of_matrix";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="kernel";
+       required=1;
+       def_val=;
+       expr {
+	expr="kernel";
+       };
+      };
+     };
+    };
+    PrintVar @[15] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Slicing"].prog_code[0].local_vars["out_matrix"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["Convolve_test"] {
+   name="Convolve_test";
+   short_nm="cnvtst";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+    Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["Random_0"] {
+     name="Random_0";
+     var_type=T_Object;
+     object_type=Random;
+     object_val=.projects["MatrixSandbox"].programs["Convolve_test"].objs["Random_0"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["cell_value"] {
+     name="cell_value";
+     var_type=T_Real;
+     real_val=0.697775;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["in_matrix_2d"] {
+       name="in_matrix_2d";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["slice_of_matrix"] {
+       name="slice_of_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["out_matrix"] {
+       name="out_matrix";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["kernel"] {
+       name="kernel";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["i"] {
+       name="i";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    AssignExpr @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$$;
+     expr {
+      expr="new float_Matrix";
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="5";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="5";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[3] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     loop_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$;
+       method=taMatrixT_float_::Set_Flat;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_ref;
+	 type="float&";
+	 name="item";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="i";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="i";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 25";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    PrintVar @[4] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["in_matrix_2d"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    AssignExpr @[5] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$$;
+     expr {
+      expr="new float_Matrix()";
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="5";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="5";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    AssignExpr @[7] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$$;
+     expr {
+      expr="new float_Matrix()";
+     };
+    };
+    MethodCall @[8] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+     method=taMatrix::SetGeom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="size";
+       required=1;
+       def_val=;
+       expr {
+	expr="2";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="d0";
+       required=1;
+       def_val=;
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="d1";
+       required=0;
+       def_val="0";
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="d2";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="d3";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="d4";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="d5";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=int;
+       type="int";
+       name="d6";
+       required=0;
+       def_val="0";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    ForLoop @[9] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     loop_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+       method=taMatrixT_float_::Set_Flat;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_ref;
+	 type="float&";
+	 name="item";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="0";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="i";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 9";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    MethodCall @[10] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+     method=taMatrixT_float_::Set_Flat;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_float_ref;
+       type="float&";
+       name="item";
+       required=1;
+       def_val=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="idx";
+       required=1;
+       def_val=;
+       expr {
+	expr="4";
+       };
+      };
+     };
+    };
+    PrintVar @[11] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    MathCall @[12] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     object_type=taMath_float;
+     method=taMath_float::mat_frame_convolve;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="out_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="out_matrix";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="in_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="in_matrix_2d";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="kernel";
+       required=1;
+       def_val=;
+       expr {
+	expr="kernel";
+       };
+      };
+     };
+    };
+    PrintVar @[13] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    ForLoop @[14] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     loop_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       obj=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+       method=taMatrixT_float_::Set_Flat;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_float_ref;
+	 type="float&";
+	 name="item";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr=".111";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="idx";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="i";
+	 };
+	};
+       };
+      };
+     };
+     init {
+      expr="i = 0";
+     };
+     test {
+      expr="i < 9";
+     };
+     iter {
+      expr="i++";
+     };
+    };
+    PrintVar @[15] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["kernel"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    MathCall @[16] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     object_type=taMath_float;
+     method=taMath_float::mat_frame_convolve;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="out_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="out_matrix";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="in_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="in_matrix_2d";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="kernel";
+       required=1;
+       def_val=;
+       expr {
+	expr="kernel";
+       };
+      };
+     };
+    };
+    PrintVar @[17] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["MatrixSandbox"].programs["Convolve_test"].prog_code[0].local_vars["out_matrix"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+ };
+ viewers {
+  name="DataViewer_List_0";
+  el_typ=MainWindowViewer;
+  el_def=0;
+  MainWindowViewer @["Browser2"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_79";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     name="view_win_lft";
+     value 6 0=0.03064066916704178;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     name="view_win_top";
+     value 6 0=0.05353075265884399;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     name="view_win_wd";
+     value 6 0=0.9282729625701904;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     name="view_win_ht";
+     value 6 0=0.7995443940162659;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAAAAAADAAABZgAAAo8AAAAAAQAAAAcBAAAAAQ==";
+     val_type_fixed=0;
+    };
+   };
+   name="Browser2";
+   m_data=.projects["MatrixSandbox"]$$;
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name="ToolBar_List_1";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_80";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Application";
+     m_data=NULL;
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name="FrameViewer_List_0";
+    el_typ=BrowseViewerTaBase;
+    el_def=0;
+    BrowseViewerTaBase @["Tree"] {
+     name="Tree";
+     m_data=NULL;
+     visible=1;
+     root_typ=BpProject;
+     root_md=NULL;
+     m_root=$.projects["MatrixSandbox"]$;
+    };
+    PanelViewer @["Panels"] {
+     name="Panels";
+     m_data=NULL;
+     visible=1;
+    };
+    T3PanelViewer @["T3Frames"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_81";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="T3Frames";
+     m_data=NULL;
+     visible=1;
+     panels {
+      name="T3DataViewFrame_List_0";
+      el_typ=T3Panel;
+      el_def=0;
+      T3Panel @["Frame1"] {
+       name="Frame1";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_0";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View_0"] {
+	 name="View_0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=-0.4765596: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=3.52344;
+	};
+	T3SavedView @["View_1"] {
+	 name="View_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_2"] {
+	 name="View_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_3"] {
+	 name="View_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_4"] {
+	 name="View_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_5"] {
+	 name="View_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name="DockViewer_List_0";
+    el_typ=ToolBoxDockViewer;
+    el_def=0;
+    ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_82";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       name="view_win_lft";
+       value 6 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       name="view_win_top";
+       value 6 0=0.0182232353836298;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       name="view_win_wd";
+       value 6 0=0.06058495864272118;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       name="view_win_ht";
+       value 6 0=0.7072892785072327;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Tools";
+     m_data=NULL;
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ save_view=1;
+ save_as_only=0;
+ auto_name=1;
+ last_change_desc=;
+ networks {
+  name="Network_Group_0";
+  el_typ=BpNetwork;
+  el_def=0;
+ };
+};
