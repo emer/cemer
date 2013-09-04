@@ -57,7 +57,7 @@ void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
   }
   else {
     u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
-    if(gpd->mnt_count > pfcls->gate.max_maint) {
+    if(pfcls->gate.max_maint > 0 && gpd->mnt_count > pfcls->gate.max_maint) {
       u->act_ctxt = 0.0f;       // go all the way
     }
   }
