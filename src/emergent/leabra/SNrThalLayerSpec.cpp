@@ -298,3 +298,11 @@ void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetUserData("max_mnt_count", 0.0f);
 }
 
+void SNrThalLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {
+  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    gpd->Init_State();
+  }
+  inherited::TI_ClearContext(lay, net);
+}
+

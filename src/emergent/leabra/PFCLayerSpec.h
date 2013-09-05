@@ -33,6 +33,7 @@ public:
   float         gate_ctxt_mod;  // #MIN_0 #MAX_1 how much to modulate context input at time of gating -- decreases influence of prior context in pfc units so they can better reflect new inputs -- smaller values = more clearing of prior context
   float         ctxt_decay;     // #MIN_0 #MAX_1 decay rate for context, per trial when no updating occurs
   int           max_maint;      // maximum maintenance duration (-1 = no limit) -- after this number trials, active maintenance will be terminated
+  float         ctxt_drift;     // #MIN_0 #MAX_1 on non-gating trials, when something is maintained, how much the deep context information can drift toward the new context (reflecting current superficial activations) -- this drift happens prior to decay (and the two are somewhat in opposition to each other -- typically use one or the other but not both)
   float		out_nogate_gain; // #MIN_0 #MAX_1 #DEF_0 how active are output gating units in absence of gating?
 
   float         ctxt_decay_c;   // #READ_ONLY #HIDDEN 1-ctxt_decay

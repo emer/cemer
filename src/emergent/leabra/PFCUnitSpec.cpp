@@ -56,10 +56,7 @@ void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
     u->act_ctxt = u->net_ctxt;
   }
   else {
-    u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
-    if(pfcls->gate.max_maint > 0 && gpd->mnt_count > pfcls->gate.max_maint) {
-      u->act_ctxt = 0.0f;       // go all the way
-    }
+    // moved to trial_init_unit
   }
 }
 
@@ -76,6 +73,16 @@ void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_
     }
     else {
       u->misc_1 = 0.0f;
+      if(gpd->mnt_count > 0 && pfcls->gate.ctxt_drift > 0.0f) {
+        u->act_ctxt = u->act_ctxt + pfcls->gate.ctxt_drift * (u->net_ctxt - u->act_ctxt);
+        u->p_act_p = u->p_act_p + pfcls->gate.ctxt_drift * (u->act_p - u->p_act_p);
+      }
+      u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
+      u->p_act_p *= pfcls->gate.ctxt_decay_c; // no gating = decay
+      if(pfcls->gate.max_maint > 0 && gpd->mnt_count >= pfcls->gate.max_maint) {
+        u->act_ctxt = 0.0f;       // go all the way
+        u->p_act_p = 0.0f;
+      }
     }
   }
 }
@@ -93,7 +100,8 @@ void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       // maintained for 1 trial (note: mnt_count updated at start of trial so will be 1)
       if(gated_last_trial) {
         u->misc_1 = 1.0f;
-        // p_act_p was just encoded as previous act_p value..
+        // p_act_p was just encoded as previous act_p value..  this is redundant with the
+        // Trial_Init_Unit call now
       }
       else {
         u->misc_1 = 0.0f;

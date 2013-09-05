@@ -26,6 +26,7 @@ void PFCGateSpec::Initialize() {
   ctxt_decay = 0.0f;
   ctxt_decay_c = 1.0f - ctxt_decay;
   max_maint = -1;
+  ctxt_drift = 0.0f;
   out_nogate_gain = 0.0f;
 }
 
