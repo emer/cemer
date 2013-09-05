@@ -2479,6 +2479,48 @@ bool taMath_float::mat_frame_convolve(float_Matrix* out_vec, const float_Matrix*
   return true;
 }
 
+// jar 9/5/2013 - work in progress only
+bool taMath_float::mat_frame_convolve_2(float_Matrix* out_vec, const float_Matrix* in_vec,
+    const float_Matrix* kernel) {
+  if(!vec_check_type(kernel) || !vec_check_type(in_vec) || !vec_check_type(out_vec))
+    return false;
+  if(kernel->size == 0) {
+    taMisc::Error("mat_frame_convolve: kernel size == 0");
+    return false;
+  }
+
+  if(out_vec->size != in_vec->size) {
+    out_vec->SetGeomN(in_vec->geom); // must be same
+  }
+
+  int kernel_size = kernel->FrameSize();  // assumes square kernel
+  int offset = kernel_size/2;
+
+  for(int i=0; i<in_vec->Frames(); i++) {
+    for(int j=0; j<in_vec->FrameSize(); j++) {
+      float sum = 0.0;
+      float dnorm = 0.0;
+      for(int m=0; m<kernel_size; m++) {
+        for(int n=0; n<kernel_size; n++) {
+          int iIdx = i+n-kernel_size;
+          int jIdx = j+m-kernel_size;
+          if ((iIdx < 0 || iIdx >= in_vec->Frames()) || (jIdx < 0 || jIdx >= in_vec->FrameSize())) {
+            dnorm += kernel->FastEl(n,m);
+          }
+          else {
+            sum += kernel->FastEl(n,m)*in_vec->FastEl(iIdx, jIdx);
+          }
+        }
+        if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+          sum /= (1.0 - dnorm);
+        }
+      }
+      out_vec->FastEl(i,j) = sum;
+    }
+  }
+  return true;
+}
+
 bool taMath_float::mat_fmt_out_frame(float_Matrix* out_mat, const float_Matrix* in_mat) {
   if(!vec_check_type(in_mat) || !vec_check_type(out_mat)) return false;
   MatrixGeom frg = in_mat->geom;

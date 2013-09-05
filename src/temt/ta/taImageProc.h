@@ -111,6 +111,8 @@ public:
   static bool	OverlayImages(float_Matrix& img1, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
 
+  static bool Blur(float_Matrix& img, int window_size, bool useOldConvolve=true);
+
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
 private:
