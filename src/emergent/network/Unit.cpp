@@ -286,9 +286,9 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
         RecvCons* tcong = recv.FastEl(g);
         MemberDef* act_md = tcong->con_type->members.FindName(cvar);
         if(!act_md) continue;
-        Connection* con = tcong->FindConFrom(src_u, net);
-        if(!con) continue;
-        val = *((float*)act_md->GetOff(con));
+        int con = tcong->FindConFromIdx(src_u);
+        if(con < 0) continue;
+        val = tcong->Cn(con, act_md->idx, net);
         break;
       }
     }
@@ -297,9 +297,9 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
         SendCons* tcong = send.FastEl(g);
         MemberDef* act_md = tcong->con_type->members.FindName(cvar);
         if(!act_md)     continue;
-        Connection* con = tcong->FindConFrom(src_u, net);
-        if(!con) continue;
-        val = *((float*)act_md->GetOff(con));
+        int con = tcong->FindConFromIdx(src_u);
+        if(con < 0) continue;
+        val = tcong->Cn(con, act_md->idx, net);
         break;
       }
     }
@@ -309,9 +309,7 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     String cvar = var.after(".");
     MemberDef* act_md = bias.con_type->members.FindName(cvar);
     if(!act_md) return false;
-    Connection* con = bias.Cn(0);
-    if(!con) return false;
-    val = *((float*)act_md->GetOff(con));
+    val = bias.Cn(0, act_md->idx, net);
   }
   else {
     MemberDef* md = NULL;
@@ -327,18 +325,6 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     snap = (float)math_op.Evaluate(val.toDouble());
   }
   return true;
-}
-
-void Unit::LinkPtrCons() {
-  // its going to be one or the other of these two depending on who has OwnCons -- just do both
-  for(int g=0; g<recv.size; g++) {
-    RecvCons* recv_gp = recv.FastEl(g);
-    recv_gp->LinkPtrCons(this);
-  }
-  for(int g=0; g<send.size; g++) {
-    SendCons* send_gp = send.FastEl(g);
-    send_gp->LinkPtrCons(this);
-  }
 }
 
 void Unit::RecvConsPreAlloc(int no, Projection* prjn) {
@@ -404,8 +390,8 @@ void Unit::RecvConsPostAlloc(Projection* prjn) {
   cgp->AllocConsFmSize();
 }
 
-Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
-                              bool ignore_alloc_errs) {
+int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
+                      bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
@@ -426,17 +412,19 @@ Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
 
   if(alloc_send) {
     send_gp->ConnectAllocInc(); // just do alloc increment
-    return NULL;
+    return -1;
   }
 
-  Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
-  if(con)
+  int con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs,
+                                  set_init_wt, init_wt);
+  if(con >= 0) {
     n_recv_cons++;
+  }
   return con;
 }
 
-Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
-                                bool ignore_alloc_errs) {
+int Unit::ConnectFromCk(Unit* su, Projection* prjn,
+                        bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
@@ -457,12 +445,14 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
   if(send_gp->recv_idx() < 0)
     send_gp->other_idx = prjn->recv_idx;
 
-  if(recv_gp->FindConFromIdx(su, net) >= 0) // already connected!
-    return NULL;
+  if(recv_gp->FindConFromIdx(su) >= 0) // already connected!
+    return -1;
 
-  Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
-  if(con)
+  int con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs,
+                                  set_init_wt, init_wt);
+  if(con >= 0) {
     n_recv_cons++;
+  }
   return con;
 }
 
@@ -490,9 +480,9 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
     prjn = recv_gp->prjn;
   }
 
-  recv_gp->RemoveConUn(su, net);
+  recv_gp->RemoveConUn(su, this, net);
   n_recv_cons--;
-  return send_gp->RemoveConUn(this, net);
+  return send_gp->RemoveConUn(this, su, net);
 }
 
 void Unit::DisConnectAll() {
@@ -504,30 +494,32 @@ void Unit::DisConnectAll() {
   for(g=0; g<recv.size; g++) { // the removes cause the leaf_gp to crash..
     recv_gp = recv.FastEl(g);
     for(i=recv_gp->size-1; i>=0; i--) {
+      Unit* su = recv_gp->Un(i,net);
       if(recv_gp->send_idx() >= 0)
-        send_gp = recv_gp->Un(i,net)->send.SafeEl(recv_gp->send_idx());
+        send_gp = su->send.SafeEl(recv_gp->send_idx());
       else
         send_gp = NULL;
       if(send_gp == NULL)
-        send_gp = recv_gp->Un(i,net)->send.FindPrjn(recv_gp->prjn);
+        send_gp = su->send.FindPrjn(recv_gp->prjn);
       if(send_gp)
-        send_gp->RemoveConUn(this, net);
-      recv_gp->RemoveConIdx(i);
+        send_gp->RemoveConUn(this, su, net);
+      recv_gp->RemoveConIdx(i, this, net);
     }
     recv_gp->other_idx = -1;
   }
   for(g=0; g<send.size; g++) { // the removes cause the leaf_gp to crash..
     send_gp = send.FastEl(g);
     for(i=send_gp->size-1; i>=0; i--) {
+      Unit* ru = send_gp->Un(i,net);
       if(send_gp->recv_idx() >= 0)
-        recv_gp = send_gp->Un(i,net)->recv.SafeEl(send_gp->recv_idx());
+        recv_gp = ru->recv.SafeEl(send_gp->recv_idx());
       else
         recv_gp = NULL;
       if(recv_gp == NULL)
-        recv_gp = send_gp->Un(i,net)->recv.FindPrjn(send_gp->prjn);
+        recv_gp = ru->recv.FindPrjn(send_gp->prjn);
       if(recv_gp)
-        recv_gp->RemoveConUn(this, net);
-      send_gp->RemoveConIdx(i);
+        recv_gp->RemoveConUn(this, ru, net);
+      send_gp->RemoveConIdx(i, this, net);
     }
     send_gp->other_idx = -1;
   }
@@ -560,22 +552,24 @@ int Unit::UnitGpIdx() const {
 }
 
 void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
+  Network* net = own_net();
   if((bias.size) && (src->bias.size)) {
-    bias.OwnCn(0)->wt = src->bias.OwnCn(0)->wt;
+    bias.OwnCn(0, BaseCons::WT) = src->bias.OwnCn(0, BaseCons::WT);
   }
   int mx = MIN(recv.size, src->recv.size);
   for(int i=0; i<mx; i++) {
     RecvCons* cg = recv.FastEl(i);
     RecvCons* scg = src->recv.FastEl(i);
     if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
-    cg->Copy_Weights(scg);
+    cg->Copy_Weights(scg, net);
   }
 }
 
 void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFormat fmt) {
+  Network* net = own_net();
   strm << "<Un>\n";
   float bwt = 0.0;
-  if(bias.size) bwt = bias.OwnCn(0)->wt;
+  if(bias.size > 0) bwt = bias.OwnCn(0, BaseCons::WT);
   // always write this for a consistent format
   switch(fmt) {
   case RecvCons::TEXT:
@@ -592,13 +586,14 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFor
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned() || (prjn && (cg->prjn != prjn))) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
-    cg->SaveWeights_strm(strm, this, fmt);
+    cg->SaveWeights_strm(strm, this, net, fmt);
     strm << "</Cg>\n";
   }
   strm << "</Un>\n";
 }
 
 int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveFormat fmt, bool quiet) {
+  Network* net = own_net();
   String tag, val;
   int stat = RecvCons::LoadWeights_StartTag(strm, "Un", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
@@ -616,8 +611,8 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     strm.get();         // get the /n
     break;
   }
-  if(bias.size) {
-    bias.OwnCn(0)->wt = bwt;
+  if(bias.size > 0) {
+    bias.OwnCn(0, BaseCons::WT) = bwt;
   }
 
 #ifdef DMEM_COMPILE
@@ -652,7 +647,7 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
       cg = recv.FindFromName(fm);
     }
     if(cg) {
-      stat = cg->LoadWeights_strm(strm, this, fmt, quiet);
+      stat = cg->LoadWeights_strm(strm, this, net, fmt, quiet);
     }
     else {
       stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
@@ -804,6 +799,7 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
                           const String& var9, const String& var10, const String& var11,
                           const String& var12, const String& var13, const String& var14,
                           Projection* prjn) {
+  Network* net = own_net();
   bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -814,7 +810,7 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
   for(int g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
-    cg->ConVarsToTable(dt, this, var1, var2, var3, var4, var5, var6, var7, var8,
+    cg->ConVarsToTable(dt, this, net, var1, var2, var3, var4, var5, var6, var7, var8,
                        var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);

@@ -194,6 +194,7 @@ bool Projection::ChangeMyType(TypeDef* new_typ) {
 
 DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   if(!(bool)from) return NULL;
+  Network* net = layer->own_net;
   bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -207,7 +208,8 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   if(col_nm.empty()) col_nm = from->name;
 
   int idx;
-  DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2, from->flat_geom.x, from->flat_geom.y);
+  DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
+                                      from->flat_geom.x, from->flat_geom.y);
 
   FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
     RecvCons* cg = ru->recv.FindFrom(from);
@@ -216,7 +218,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
     dt->AddBlankRow();
     int wi;
     for(wi=0;wi<cg->size;wi++) {
-      scol->SetValAsFloatM(cg->Cn(wi)->wt, -1, wi);
+      scol->SetValAsFloatM(cg->Cn(wi,BaseCons::WT,net), -1, wi);
     }
   }
   dt->StructUpdate(false);

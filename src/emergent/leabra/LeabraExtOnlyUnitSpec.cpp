@@ -39,7 +39,7 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
   }
 
   u->net_raw += u->net_delta;
-  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
+  float tot_net = (u->bias_scale * u->bias.OwnCn(0,BaseCons::WT)) + u->net_raw;
 
   if(ls->inhib.avg_boost > 0.0f && u->act_eq > 0.0f && net->ct_cycle > 0) {
     LeabraInhib* thr;

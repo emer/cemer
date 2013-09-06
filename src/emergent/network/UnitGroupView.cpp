@@ -221,9 +221,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
             continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;
-          Connection* con = tcong->FindConFrom(src_u, net);
-          if (!con) continue;
-          uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
+          int con = tcong->FindConFromIdx(src_u);
+          if (con < 0) continue;
+          uvd_bases.Set(&tcong->Cn(con, act_md->idx, net), coord.x, coord.y, midx);
           break;                // once you've got one, done!
         }
       }
@@ -234,9 +234,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
             continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;
-          Connection* con = tcong->FindConFrom(src_u, net);
-          if (!con) continue;
-          uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
+          int con = tcong->FindConFromIdx(src_u);
+          if (con < 0) continue;
+          uvd_bases.Set(&tcong->Cn(con, act_md->idx, net), coord.x, coord.y, midx);
           break;                // once you've got one, done!
         }
       }
@@ -247,6 +247,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
 void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
   taVector2i coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
@@ -255,8 +256,7 @@ void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
       if(unit->bias.size == 0) continue;
-      Connection* con = unit->bias.Cn(0);
-      uvd_bases.Set(disp_md->GetOff(con), coord.x, coord.y, midx);
+      uvd_bases.Set(&(unit->bias.OwnCn(0, disp_md->idx)), coord.x, coord.y, midx);
     }
   }
 }

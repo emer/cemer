@@ -31,20 +31,23 @@ INHERITED(PVConSpec)
 public:
   float         wt_dec_mult;   // multiplier for weight decrease rate relative to basic lrate used for weight increases
 
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    if(dwt < 0.0f)      dwt *= wt_dec_mult;
-    cn->dwt += cur_lrate * dwt;
+  inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, 
+                                  const float ru_act_m, const float su_act) {
+    float tmp = (ru_act_p - ru_act_m) * su_act;
+    if(tmp < 0.0f)      tmp *= wt_dec_mult;
+    dwt += cur_lrate * tmp;
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
-    for(int i=0; i<cg->size; i++) {
+    float su_act = su->act_p;
+    float* dwts = cg->OwnCnVar(DWT);
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, ru, su);
+      C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_act);
     }
   }
 

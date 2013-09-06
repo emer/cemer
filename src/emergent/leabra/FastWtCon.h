@@ -28,10 +28,9 @@ eTypeDef_Of(FastWtCon);
 class E_API FastWtCon : public LeabraCon {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 public:
-  float		swt;		// slow weight value
   float		sdwt;		// #NO_SAVE slow weight delta-weight change
 
-  FastWtCon() { swt = sdwt = 0.0f; }
+  FastWtCon() { sdwt = 0.0f; }
 };
 
 #endif // FastWtCon_h

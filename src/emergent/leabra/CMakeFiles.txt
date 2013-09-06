@@ -43,7 +43,6 @@ set(leabra_HEADS_MAKETA
   LeabraTICtxtConSpec.h
   MarkerConSpec.h
   XCalSRAvgConSpec.h
-  XCalHebbConSpec.h
   TrialSynDepCon.h
   TrialSynDepConSpec.h
   CycleSynDepCon.h
@@ -54,13 +53,11 @@ set(leabra_HEADS_MAKETA
   SRAvgCaiSynDepConSpec.h
   FastWtCon.h
   FastWtConSpec.h
-  ActAvgHebbConSpec.h
   LeabraDeltaConSpec.h
   LeabraSpikeCon.h
   LeabraXCALSpikeConSpec.h
   LeabraLimPrecConSpec.h
-  LeabraDaNoiseConSpec.h
-
+  
   LeabraNegBiasSpec.h
 
   LayerActUnitSpec.h
@@ -189,7 +186,6 @@ set(leabra_SRCS
   LeabraTICtxtConSpec.cpp
   MarkerConSpec.cpp
   XCalSRAvgConSpec.cpp
-  XCalHebbConSpec.cpp
   TrialSynDepCon.cpp
   TrialSynDepConSpec.cpp
   CycleSynDepCon.cpp
@@ -200,13 +196,11 @@ set(leabra_SRCS
   SRAvgCaiSynDepConSpec.cpp
   FastWtCon.cpp
   FastWtConSpec.cpp
-  ActAvgHebbConSpec.cpp
   LeabraDeltaConSpec.cpp
   LeabraSpikeCon.cpp
   LeabraXCALSpikeConSpec.cpp
   LeabraLimPrecConSpec.cpp
-  LeabraDaNoiseConSpec.cpp
-
+  
   LeabraNegBiasSpec.cpp
 
   LayerActUnitSpec.cpp

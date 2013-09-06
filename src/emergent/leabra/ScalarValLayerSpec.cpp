@@ -319,6 +319,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode 
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits < 3) return;        // must be at least a few units..
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
+  Network* net = lay->own_net;
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
@@ -329,10 +330,10 @@ void ScalarValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode 
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
          cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-        LeabraCon* cn = (LeabraCon*)recv_gp->PtrCn(ci);
-        cn->wt += act;
-        if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
-        if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
+        float& wt = recv_gp->PtrCn(ci, BaseCons::WT, net);
+        wt += act;
+        if(wt < cs->wt_limits.min) wt = cs->wt_limits.min;
+        if(wt > cs->wt_limits.max) wt = cs->wt_limits.max;
       }
       recv_gp->Init_Weights_post(u, lay->own_net);
     }
@@ -351,7 +352,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode 
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias.OwnCn(0)->wt = act;
+      u->bias.OwnCn(0,BaseCons::WT) = act;
   }
 }
 
@@ -367,7 +368,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(LeabraLayer* lay, Layer::AccessMo
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_a = val;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias.OwnCn(0)->wt = -val;
+      u->bias.OwnCn(0,BaseCons::WT) = -val;
     val += incr;
   }
 }
@@ -384,7 +385,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(LeabraLayer* lay, Layer::AccessMo
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = val;
     else if(bias_val.un == ScalarValBias::BWT)
-      u->bias.OwnCn(0)->wt = val;
+      u->bias.OwnCn(0,BaseCons::WT) = val;
     val += incr;
   }
 }

@@ -26,15 +26,16 @@
 
 using namespace std;
 
+float BaseCons::null_rval = 0.0f;
+
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types
   size = 0;
   alloc_size = 0;
-  con_type = &TA_Connection;
   prjn = NULL;
   other_idx = -1;
   m_con_spec = NULL;
-  con_size = con_type->size;
+  con_type = &TA_Connection;
   cons_own = NULL;
   unit_idxs = NULL;
 }
@@ -91,86 +92,89 @@ void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
-  int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
-  if(old_par->InheritsFrom(&TA_Network) && new_par->InheritsFrom(&TA_Network)) {
-    // this is optimized for networks to use the getmyleafindex
-    Network* nw_net = (Network*)new_par;
-    Network* old_net = (Network*)old_par;
-    for(int i=size-1; i >= 0; i--) {
-      Unit* itm = Un(i,old_net);
-      if(!itm) continue;
-      Layer* old_lay = GET_OWNER(itm,Layer);
-      int lidx = old_net->layers.FindLeafEl(old_lay);
-      int uidx = itm->GetMyLeafIndex();
-      if((lidx >= 0) && (uidx >= 0)) {
-        Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
-        if(nw_lay) {
-          Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
-          if(nw_un) {
-            SetUn(i, nw_un);
-            nchg++;
-          }
-          else {
-            RemoveConIdx(i);
-          }
-        }
-      }
-    }
-  }
-  else {
-    Network* old_net = GET_OWNER(old_par, Network);
-    for(int i=size-1; i >= 0; i--) {
-      Unit* itm = Un(i,old_net);
-      if(!itm) continue;
-      taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
-      if(old_own != old_par) continue;
-      String old_path = itm->GetPath(NULL, old_par);
-      MemberDef* md;
-      Unit* nitm = (Unit*)new_par->FindFromPath(old_path, md);
-      if(nitm) {
-        SetUn(i, nitm);
-        nchg++;
-      }
-      else {
-        RemoveConIdx(i);
-      }
-    }
-  }
-  return nchg;
-}
+// todo: confirm -- this stuff should not be needed anymore with index-based storage
 
-int BaseCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
-  Network* old_net = GET_MY_OWNER(Network);
-  int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
-  if(size <= 0) return 0;
-  Unit* itm = Un(0, old_net);
-  taBase* old_par = itm->GetOwner(par_typ);
-  nchg += UpdatePointers_NewPar(old_par, new_par);
-  return nchg;
-}
+// int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+//   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
+//   if(old_par->InheritsFrom(&TA_Network) && new_par->InheritsFrom(&TA_Network)) {
+//     // this is optimized for networks to use the getmyleafindex
+//     Network* nw_net = (Network*)new_par;
+//     Network* old_net = (Network*)old_par;
+//     for(int i=size-1; i >= 0; i--) {
+//       Unit* itm = Un(i,old_net);
+//       if(!itm) continue;
+//       Layer* old_lay = GET_OWNER(itm,Layer);
+//       int lidx = old_net->layers.FindLeafEl(old_lay);
+//       int uidx = itm->GetMyLeafIndex();
+//       if((lidx >= 0) && (uidx >= 0)) {
+//         Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
+//         if(nw_lay) {
+//           Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
+//           if(nw_un) {
+//             SetUn(i, nw_un);
+//             nchg++;
+//           }
+//           else {
+//             RemoveConIdx(i);
+//           }
+//         }
+//       }
+//     }
+//   }
+//   else {
+//     Network* old_net = GET_OWNER(old_par, Network);
+//     for(int i=size-1; i >= 0; i--) {
+//       Unit* itm = Un(i,old_net);
+//       if(!itm) continue;
+//       taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
+//       if(old_own != old_par) continue;
+//       String old_path = itm->GetPath(NULL, old_par);
+//       MemberDef* md;
+//       Unit* nitm = (Unit*)new_par->FindFromPath(old_path, md);
+//       if(nitm) {
+//         SetUn(i, nitm);
+//         nchg++;
+//       }
+//       else {
+//         RemoveConIdx(i);
+//       }
+//     }
+//   }
+//   return nchg;
+// }
 
-int BaseCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
-  Network* old_net = GET_MY_OWNER(Network);
-  int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
-  for(int i=size-1; i>=0; i--) {
-    Unit* itm = Un(i, old_net);
-    if(!itm) continue;
-    if(itm == old_ptr) {           // if it is the old guy, it is by defn a link because we're not the owner..
-      if(!new_ptr)                 // if replacement is null, just remove it
-        RemoveConIdx(i);
-      else
-        SetUn(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
-      nchg++;
-    }
-  }
-  return nchg;
-}
+// int BaseCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+//   Network* old_net = GET_MY_OWNER(Network);
+//   int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
+//   if(size <= 0) return 0;
+//   Unit* itm = Un(0, old_net);
+//   taBase* old_par = itm->GetOwner(par_typ);
+//   nchg += UpdatePointers_NewPar(old_par, new_par);
+//   return nchg;
+// }
 
-void BaseCons::Copy_Weights(const BaseCons* src) {
+// int BaseCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
+//   Network* old_net = GET_MY_OWNER(Network);
+//   int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
+//   for(int i=size-1; i>=0; i--) {
+//     Unit* itm = Un(i, old_net);
+//     if(!itm) continue;
+//     if(itm == old_ptr) {           // if it is the old guy, it is by defn a link because we're not the owner..
+//       if(!new_ptr)                 // if replacement is null, just remove it
+//         RemoveConIdx(i);
+//       else
+//         SetUn(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
+//       nchg++;
+//     }
+//   }
+//   return nchg;
+// }
+
+void BaseCons::Copy_Weights(const BaseCons* src, Network* net) {
   int mx = MIN(size, src->size);
-  for(int i=0; i < mx; i++)
-    Cn(i)->wt = src->Cn(i)->wt;
+  for(int i=0; i < mx; i++) {
+    Cn(i, WT, net) = src->Cn(i, WT, net);
+  }
 }
 
 bool BaseCons::ChangeMyType(TypeDef*) {
@@ -178,23 +182,29 @@ bool BaseCons::ChangeMyType(TypeDef*) {
   return false;
 }
 
-Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
+float& BaseCons::CnName(int idx, const String& var_nm, Network* net) const {
+  MemberDef* md = con_type->members.FindName(var_nm);
+  if(!md) return null_rval;
+  return Cn(idx, md->idx, net);
+}
+
+int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
                                      bool allow_null_unit) {
   if(TestError(!OwnCons(), "ConnectUnOwnCn", "does not own cons!"))
-    return NULL;
+    return -1;
   if(!allow_null_unit && un->flat_idx == 0)
-    return NULL; // null unit -- don't even connect!
+    return -1; // null unit -- don't even connect!
   if(size >= alloc_size) {
     TestError(!ignore_alloc_errs, "ConnectUnOwnCn", "size already at maximum allocated of",
               String(alloc_size),"this is a programmer error -- please report the bug");
-    return NULL;
+    return -1;
   }
-  Connection* rval = OwnCn(size);
-  unit_idxs[size++] = un->flat_idx;
+  int rval = size;
+  unit_idxs[size++] = (int32_t)un->flat_idx;
   return rval;
 }
 
-bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) {
+bool BaseCons::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
   if(TestError(OwnCons(), "ConnectUnPtrCn", "is not a ptr cons!"))
     return false;
   if(un->flat_idx == 0)
@@ -204,37 +214,35 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) 
               String(alloc_size),"this is a programmer error -- please report the bug");
     return false;
   }
-  cons_ptr[size] = cn;
-  unit_idxs[size++] = un->flat_idx;
+  cons_idx[size] = con_idx;
+  unit_idxs[size++] = (int32_t)un->flat_idx;
   return true;
 }
 
-Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
-                                   bool ignore_alloc_errs) {
-  Connection* con = NULL;
+int BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
+                           bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
+  Network* net = our_un->own_net();
+  int con = -1;
   if(OwnCons()) {
     con = ConnectUnOwnCn(oth_un, ignore_alloc_errs);
-    if(con) {
-      if(oth_cons->ConnectUnPtrCn(our_un, con, ignore_alloc_errs)) {
-        return con;
-      }
-      else {
-        con = NULL;
-        RemoveConIdx(size-1);   // remove last guy!  otherwise it is a dangler
+    if(con >= 0) {
+      if(!oth_cons->ConnectUnPtrCn(our_un, con, ignore_alloc_errs)) {
+        con = -1;
+        RemoveConIdx(size-1, our_un, net);   // remove last guy!  otherwise it is a dangler
       }
     }
   }
   else {
     con = oth_cons->ConnectUnOwnCn(our_un, ignore_alloc_errs);
-    if(con) {
-      if(ConnectUnPtrCn(oth_un, con, ignore_alloc_errs)) {
-        return con;
-      }
-      else {
-        con = NULL;
-        oth_cons->RemoveConIdx(size-1); // remove last guy!  otherwise it is a dangler
+    if(con >= 0) {
+      if(!ConnectUnPtrCn(oth_un, con, ignore_alloc_errs)) {
+        con = -1;
+        oth_cons->RemoveConIdx(size-1, oth_un, net); // remove last guy!  otherwise it is a dangler
       }
     }
+  }
+  if(con >= 0 && set_init_wt) {
+    Cn(con, WT, net) = init_wt;
   }
   return con;
 }
@@ -254,23 +262,21 @@ bool BaseCons::SetConType(TypeDef* cn_tp) {
     return false;
   }
   con_type = cn_tp;
-  con_size = cn_tp->size;
   return true;
 }
 
 void BaseCons::AllocCons(int sz) {
   if(sz == alloc_size) return;
   FreeCons();
-  con_size = con_type->size;
   alloc_size = sz;
   if(alloc_size == 0) return;
   if(OwnCons()) {
-    cons_own = (char*)calloc(alloc_size, con_size); // clear it
+    cons_own = (float**)calloc(alloc_size, con_type->members.size * sizeof(float));
   }
   else {
-    cons_ptr = (Connection**)calloc(alloc_size, sizeof(Connection*));
+    cons_idx = (int32_t*)calloc(alloc_size, sizeof(int32_t));
   }
-  unit_idxs = (int*)calloc(alloc_size, sizeof(int));
+  unit_idxs = (int32_t*)calloc(alloc_size, sizeof(int32_t));
 }
 
 void BaseCons::FreeCons() {
@@ -278,7 +284,7 @@ void BaseCons::FreeCons() {
     if(cons_own) { free(cons_own); cons_own = NULL; }
   }
   else {
-    if(cons_ptr) { free(cons_ptr); cons_ptr = NULL; }
+    if(cons_idx) { free(cons_idx); cons_idx = NULL; }
   }
   if(unit_idxs) { free(unit_idxs); unit_idxs = NULL; }
   size = 0;
@@ -292,47 +298,55 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   if(size == 0) return true;
 
   if(OwnCons()) {
-    memcpy(cons_own, (char*)cp.cons_own, size * con_size);
+    memcpy(cons_own, (char*)cp.cons_own, size * con_type->members.size * sizeof(float));
   }
   else {
-    // note: this makes little sense for most cases and must be fixed with a subsequent re-link
-    memcpy(cons_ptr, (char*)cp.cons_ptr, size * sizeof(Connection*));
+    memcpy(cons_idx, (char*)cp.cons_idx, size * sizeof(int32_t));
   }
 
-  memcpy(unit_idxs, (char*)cp.unit_idxs, size * sizeof(int));
+  memcpy(unit_idxs, (char*)cp.unit_idxs, size * sizeof(int32_t));
   return true;
 }
 
-bool BaseCons::RemoveConIdx(int i) {
+bool BaseCons::RemoveConIdx(int i, Unit* myun, Network* net) {
   if(!InRange(i)) return false;
-  // note: doing this piecewize because memcpy is undefined if overlapping
-  // and we don't need the full non-destructive memmove
+
   if(OwnCons()) {
-    for(int j=i; j<size-1; j++)
-      memcpy((void*)OwnCn(j), (void*)OwnCn(j+1), con_size);
+    for(int j=i; j<size-1; j++) {
+      // first, have to ensure that other side's indexes are updated for our connections
+      BaseCons* othcn = UnCons(j+1, net); 
+      int myidx = othcn->FindConFromIdx(myun);
+      if(myidx >= 0) {
+        othcn->PtrCnIdx(myidx)--; // our index is decreased by 1
+      }
+      for(int k=0; k<con_type->members.size; k++) {
+        OwnCn(j,k) = OwnCn(j+1,k);
+      }
+    }
   }
   else {
     for(int j=i; j<size-1; j++)
-      memcpy(&(cons_ptr[j]), &(cons_ptr[j+1]), sizeof(Connection*));
+      cons_idx[j] = cons_idx[j+1];
   }
 
-  for(int j=i; j<size-1; j++)
-    memcpy(&(unit_idxs[j]), &(unit_idxs[j+1]), sizeof(int));
+  for(int j=i; j<size-1; j++) {
+    unit_idxs[j] = unit_idxs[j+1];
+  }
 
   size--;
   return true;
 }
 
-bool BaseCons::RemoveConUn(Unit* un, Network* net) {
-  int idx = FindConFromIdx(un, net);
+bool BaseCons::RemoveConUn(Unit* un, Unit* myun, Network* net) {
+  int idx = FindConFromIdx(un);
   if(idx < 0) return false;
-  return RemoveConIdx(idx);
+  return RemoveConIdx(idx, myun, net);
 }
 
-int BaseCons::FindConFromIdx(Unit* un, Network* net) const {
+int BaseCons::FindConFromIdx(Unit* un) const {
+  const int trg_idx = un->flat_idx;
   for(int i=0; i<size; i++) {
-    Unit* u = Un(i,net);
-    if(u == un) return i;
+    if(UnIdx(i) == trg_idx) return i;
   }
   return -1;
 }
@@ -343,18 +357,6 @@ int BaseCons::FindConFromNameIdx(const String& unit_nm, Network* net) const {
     if(u && (u->name == unit_nm)) return i;
   }
   return -1;
-}
-
-Connection* BaseCons::FindConFrom(Unit* un, Network* net) const {
-  int idx = FindConFromIdx(un, net);
-  if(idx < 0) return NULL;
-  return SafeCn(idx);
-}
-
-Connection* BaseCons::FindConFromName(const String& unit_nm, Network* net) const {
-  int idx = FindConFromNameIdx(unit_nm, net);
-  if(idx < 0) return NULL;
-  return SafeCn(idx);
 }
 
 SendCons* BaseCons::GetPrjnSendCons(Unit* su) const {
@@ -378,25 +380,27 @@ RecvCons* BaseCons::GetPrjnRecvCons(Unit* ru) const {
 }
 
 // static
-Connection* BaseCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
+RecvCons* BaseCons::FindRecipRecvCon(int& con_idx, Unit* su, Unit* ru, Layer* ru_lay) {
+  con_idx = -1;
   Network* net = ru_lay->own_net;
   for(int g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
     if(!cg->prjn || (cg->prjn->from.ptr() != ru_lay)) continue;
-    Connection* con = cg->FindConFrom(ru, net);
-    if(con) return con;
+    con_idx = cg->FindConFromIdx(ru);
+    if(con_idx >= 0) return cg;
   }
   return NULL;
 }
 
 // static
-Connection* BaseCons::FindRecipSendCon(Unit* ru, Unit* su, Layer* su_lay) {
+SendCons* BaseCons::FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su_lay) {
+  con_idx = -1;
   Network* net = su_lay->own_net;
   for(int g=0; g<ru->send.size; g++) {
     SendCons* cg = ru->send.FastEl(g);
     if(!cg->prjn || (cg->prjn->layer != su_lay)) continue;
-    Connection* con = cg->FindConFrom(su, net);
-    if(con) return con;
+    con_idx = cg->FindConFromIdx(su);
+    if(con_idx >= 0) return cg;
   }
   return NULL;
 }
@@ -410,17 +414,21 @@ void BaseCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
 //      Weight ops
 
 void BaseCons::TransformWeights(const SimpleMathSpec& trans) {
-  for(int i=0; i < size; i++)
-    Cn(i)->wt = trans.Evaluate(Cn(i)->wt);
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru, ru->own_net());        // update weights after mod
+  Network* net = ru->own_net();
+  for(int i=0; i < size; i++) {
+    float& wt = Cn(i, WT,net);
+    wt = trans.Evaluate(wt);
+  }
+  Init_Weights_post(ru, net);        // update weights after mod
 }
 
 void BaseCons::AddNoiseToWeights(const Random& noise_spec) {
-  for(int i=0; i < size; i++)
-    Cn(i)->wt += noise_spec.Gen();
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru, ru->own_net());        // update weights after mod
+  Network* net = ru->own_net();
+  for(int i=0; i < size; i++)
+    Cn(i, WT, net) += noise_spec.Gen();
+  Init_Weights_post(ru, net);        // update weights after mod
 }
 
 int BaseCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
@@ -431,7 +439,7 @@ int BaseCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
   cond.rel = rel; cond.val = cmp_val;
   int rval = 0;
   for(int j=size-1; j>=0; j--) {
-    if(cond.Evaluate(pre_proc.Evaluate(Cn(j)->wt))) {
+    if(cond.Evaluate(pre_proc.Evaluate(Cn(j, WT, net)))) {
       un->DisConnectFrom(Un(j, net), prjn);
       rval++;
     }
@@ -478,9 +486,11 @@ bool BaseCons::ConValuesToArray(float_Array& ary, const String& variable) {
                  con_type->name)) {
     return false;
   }
+  Unit* ru = GET_MY_OWNER(Unit);
+  Network* net = ru->own_net();
   for(int i=0; i<size; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    ary.Add(*val);
+    float val = Cn(i, md->idx, net);
+    ary.Add(val);
   }
   return true;
 }
@@ -496,9 +506,11 @@ bool BaseCons::ConValuesToMatrix(float_Matrix& mat, const String& variable) {
     return false;
   }
 
+  Unit* ru = GET_MY_OWNER(Unit);
+  Network* net = ru->own_net();
   for(int i=0; i<size; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    mat.FastEl_Flat(i) = *val;
+    float val = Cn(i, md->idx, net);
+    mat.FastEl_Flat(i) = val;
   }
   return true;
 }
@@ -510,13 +522,14 @@ bool BaseCons::ConValuesFromArray(float_Array& ary, const String& variable) {
                  con_type->name)) {
     return false;
   }
+  Unit* ru = GET_MY_OWNER(Unit);
+  Network* net = ru->own_net();
   int mx = MIN(size, ary.size);
   for(int i=0; i<mx; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    *val = ary[i];
+    float& val = Cn(i, md->idx, net);
+    val = ary[i];
   }
-  Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru, ru->own_net());        // update weights after mod
+  Init_Weights_post(ru, net);        // update weights after mod
   return true;
 }
 
@@ -527,21 +540,22 @@ bool BaseCons::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
                  con_type->name)) {
     return false;
   }
+  Unit* ru = GET_MY_OWNER(Unit);
+  Network* net = ru->own_net();
   int mx = MIN(size, mat.size);
   for(int i=0; i<mx; i++) {
-    float* val = (float*)md->GetOff((void*)Cn(i));
-    *val = mat.FastEl_Flat(i);
+    float& val = Cn(i,md->idx, net);
+    val = mat.FastEl_Flat(i);
   }
-  Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru, ru->own_net());        // update weights after mod
+  Init_Weights_post(ru, net);        // update weights after mod
   return true;
 }
 
 /////////////////////////////////////////////////////////////
 //      Save/Load Weights
 
-void BaseCons::SaveWeights_strm(ostream& strm, Unit* un, BaseCons::WtSaveFormat fmt) {
-  Network* net = un->own_net();
+void BaseCons::SaveWeights_strm(ostream& strm, Unit* un, Network* net,
+                                BaseCons::WtSaveFormat fmt) {
   if((prjn == NULL) || (!(bool)prjn->from)) {
     strm << "<Cn 0>\n";
     goto end_tag;               // don't do anything
@@ -554,7 +568,7 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit* un, BaseCons::WtSaveFormat 
       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
         lidx = 0;
       }
-      strm << lidx << " " << Cn(i)->wt << "\n";
+      strm << lidx << " " << Cn(i,WT,net) << "\n";
     }
     break;
   case BaseCons::BINARY:
@@ -564,7 +578,7 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit* un, BaseCons::WtSaveFormat 
         lidx = 0;
       }
       strm.write((char*)&(lidx), sizeof(lidx));
-      strm.write((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
+      strm.write((char*)&(Cn(i,WT,net)), sizeof(float));
     }
     strm << "\n";
     break;
@@ -578,7 +592,8 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit* un, BaseCons::WtSaveFormat 
 // TAG_NONE = some kind of error
 // TAG_EOF = EOF
 
-int BaseCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val, bool quiet) {
+int BaseCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val,
+                                   bool quiet) {
   String in_tag;
   int stat = taMisc::read_tag(strm, in_tag, val);
   if(stat == taMisc::TAG_END) return taMisc::TAG_NONE; // some other end -- not good
@@ -594,7 +609,8 @@ int BaseCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val
   return stat;
 }
 
-int BaseCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet) {
+int BaseCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag,
+                                 int& stat, bool quiet) {
   String val;
   if(stat != taMisc::TAG_END)   // haven't already hit the end
     stat = taMisc::read_tag(strm, cur_tag, val);
@@ -606,11 +622,11 @@ int BaseCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& c
   return stat;
 }
 
-int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat fmt, bool quiet) {
+int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
+                               BaseCons::WtSaveFormat fmt, bool quiet) {
   if((prjn == NULL) || (!(bool)prjn->from)) {
     return SkipWeights_strm(strm, fmt, quiet); // bail
   }
-  Network* net = ru->own_net();
   String tag, val;
   int stat = BaseCons::LoadWeights_StartTag(strm, "Cn", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
@@ -677,9 +693,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
       continue;
     }
     if(i >= size) {             // new connection
-      Connection* cn = ru->ConnectFromCk(su, prjn);
-      if(cn)
-        cn->wt = wtval;
+      ru->ConnectFromCk(su, prjn, false, true, wtval); // set init wt
     }
     else if(su != Un(i,net)) {
       // not same unit -- note that at this point, the only viable strategy is to discon
@@ -692,12 +706,10 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
         Unit* su = Un(j,net);
         ru->DisConnectFrom(su, prjn);
       }
-      Connection* cn = ru->ConnectFromCk(su, prjn);
-      if(cn)
-        cn->wt = wtval;
+      ru->ConnectFromCk(su, prjn, false, true, wtval); // set init wt
     }
     else {                      // all good normal case, just set the weights!
-      Cn(i)->wt = wtval;
+      Cn(i,WT,net) = wtval;
     }
   }
   BaseCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
@@ -731,19 +743,21 @@ int BaseCons::SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt, bool q
   return stat;
 }
 
-void BaseCons::SaveWeights(const String& fname, Unit* ru, BaseCons::WtSaveFormat fmt) {
+void BaseCons::SaveWeights(const String& fname, Unit* ru, Network* net,
+                           BaseCons::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm, ru, fmt);
+    SaveWeights_strm(*flr->ostrm, ru, net, fmt);
   flr->Close();
   taRefN::unRefDone(flr);
 }
 
-int BaseCons::LoadWeights(const String& fname, Unit* ru, BaseCons::WtSaveFormat fmt, bool quiet) {
+int BaseCons::LoadWeights(const String& fname, Unit* ru, Network* net,
+                          BaseCons::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = 0;
   if(flr->istrm)
-    rval = LoadWeights_strm(*flr->istrm, ru, fmt, quiet);
+    rval = LoadWeights_strm(*flr->istrm, ru, net, fmt, quiet);
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;
@@ -819,7 +833,7 @@ int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
       continue;
     taMisc::indent(strm, indent+1,1) << md->name << " = {";
     for(int i=0; i<size; i++) {
-      strm << md->type->GetValStr(md->GetOff((void*)Cn(i))) << "; ";
+       strm << Cn(i,md->idx,net) << "; ";
     }
     strm << "};\n";
   }
@@ -977,8 +991,8 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
         if(old_load)    load_str += "};\n";
         break;
       }
-      Connection* cn = Cn(i);
-      md->type->SetValStr(taMisc::LexBuf, md->GetOff((void*)cn));
+      float& val = Cn(i,md->idx,net);
+      val = (float)taMisc::LexBuf;
       i++;
     }
   }
@@ -1001,37 +1015,8 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   return true;
 }
 
-void BaseCons::LinkPtrCons(Unit* my_u) {
-  if(OwnCons()) return;         // only for ptr cons
-
-  Network* net = my_u->own_net();
-
-  for(int j=0; j< size; j++) {
-    Unit* fmu = Un(j, net);
-    if(!fmu) continue;
-
-    if(IsRecv()) {
-      SendCons* send_gp = GetPrjnSendCons(fmu);
-      if(send_gp) {
-        int myi = FindConFromIdx(my_u, net);
-        if(myi >= 0) {
-          SetPtrCn(j, send_gp->Cn(myi));
-        }
-      }
-    }
-    else {
-      RecvCons* recv_gp = GetPrjnRecvCons(fmu);
-      if(recv_gp) {
-        int myi = FindConFromIdx(my_u, net);
-        if(myi >= 0) {
-          SetPtrCn(j, recv_gp->Cn(myi));
-        }
-      }
-    }
-  }
-}
-
-DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2,
+DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
+                              const String& var1, const String& var2,
                               const String& var3, const String& var4, const String& var5,
                               const String& var6, const String& var7, const String& var8,
                               const String& var9, const String& var10, const String& var11,
@@ -1039,7 +1024,6 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
   if(TestError(!ru, "ConVarsToTable", "recv unit is NULL -- bailing"))
     return NULL;
   if(size <= 0) return NULL;            // nothing here
-  Network* net = ru->own_net();
 
   bool new_table = false;
   if (!dt) {
@@ -1062,15 +1046,11 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
   TypeDef* sutd = su0->GetTypeDef();
 
   TypeDef* rubiastd = NULL;
-  Connection* rubias = NULL;
   TypeDef* subiastd = NULL;
-  Connection* subias0 = NULL;
   if(ru->bias.size) {
-    rubias = ru->bias.OwnCn(0);
     rubiastd = ru->bias.con_type;
   }
   if(su0->bias.size) {
-    subias0 = su0->bias.OwnCn(0);
     subiastd = su0->bias.con_type;
   }
 
@@ -1084,7 +1064,7 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
         ruv[i] = true;
         String varnxt = vars[i].after("r.");
         if(varnxt.startsWith("bias.")) {
-          if(TestWarning(!rubiastd || !rubias, "ConVarstoTable", "recv bias type or con not set"))
+          if(TestWarning(!rubiastd, "ConVarstoTable", "recv bias type or con not set"))
             continue;
           biasv[i] = true;
           varnxt = varnxt.after("bias.");
@@ -1104,7 +1084,7 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
         suv[i] = true;
         String varnxt = vars[i].after("s.");
         if(varnxt.startsWith("bias.")) {
-          if(TestWarning(!subiastd || !subias0, "ConVarstoTable", "recv bias type or con not set"))
+          if(TestWarning(!subiastd, "ConVarstoTable", "recv bias type or con not set"))
             continue;
           biasv[i] = true;
           varnxt = varnxt.after("bias.");
@@ -1139,7 +1119,7 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
       Variant val;
       if(ruv[i]) {
         if(biasv[i]) {
-          val = mds[i]->GetValVar((void*)rubias);
+          val = ru->bias.OwnCn(0, mds[i]->idx);
         }
         else {
           val = mds[i]->GetValVar((void*)ru);
@@ -1147,14 +1127,14 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
       }
       else if(suv[i]) {
         if(biasv[i]) {
-          val = mds[i]->GetValVar((void*)(Un(j,net)->bias.Cn(0)));
+          val = Un(j,net)->bias.OwnCn(0, mds[i]->idx);
         }
         else {
           val = mds[i]->GetValVar((void*)Un(j,net));
         }
       }
       else {
-        val = mds[i]->GetValVar((void*)Cn(j));
+        val = Cn(j, mds[i]->idx, net);
       }
       cols[i]->SetVal(val, -1);
     }

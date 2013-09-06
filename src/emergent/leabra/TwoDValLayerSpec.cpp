@@ -314,6 +314,7 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
 
 void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
                                           float x_val, float y_val) {
+  Network* net = lay->own_net;
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits < 3) return;        // must be at least a few units..
   twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
@@ -327,10 +328,10 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
          cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-        LeabraCon* cn = (LeabraCon*)recv_gp->PtrCn(ci);
-        cn->wt += act;
-        if(cn->wt < cs->wt_limits.min) cn->wt = cs->wt_limits.min;
-        if(cn->wt > cs->wt_limits.max) cn->wt = cs->wt_limits.max;
+        float& wt = recv_gp->PtrCn(ci, BaseCons::WT, net);
+        wt += act;
+        if(wt < cs->wt_limits.min) wt = cs->wt_limits.min;
+        if(wt > cs->wt_limits.max) wt = cs->wt_limits.max;
       }
       recv_gp->Init_Weights_post(u, lay->own_net);
     }
@@ -349,7 +350,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode ac
     if(bias_val.un == TwoDValBias::GC)
       u->vcb.g_h = act;
     else if(bias_val.un == TwoDValBias::BWT)
-      u->bias.OwnCn(0)->wt = act;
+      u->bias.OwnCn(0,BaseCons::WT) = act;
   }
 }
 

@@ -182,6 +182,7 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
   }
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
+  Network* net = recv_lay->own_net;
 
   int fltwd = dog_wts.filter_width; // no convergence.
   int fltsz = dog_wts.filter_size * convergence;
@@ -220,17 +221,17 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
       if(wt > 0) {
         for(int sui=0;sui<su_gp->size;sui++) {
           if(sui == feat_no)
-            cg->Cn(su_idx++)->wt = wt; // target feature
+            cg->Cn(su_idx++,BaseCons::WT,net) = wt; // target feature
           else
-            cg->Cn(su_idx++)->wt = 0.0f; // everyone else
+            cg->Cn(su_idx++,BaseCons::WT,net) = 0.0f; // everyone else
         }
       }
       else {
         for(int sui=0;sui<su_gp->size;sui++) {
           if(sui != feat_no && sui >= fg_st && sui < fg_ed)
-            cg->Cn(su_idx++)->wt = -surr_mult * wt;
+            cg->Cn(su_idx++,BaseCons::WT,net) = -surr_mult * wt;
           else
-            cg->Cn(su_idx++)->wt = 0.0f; // not in our group or is guy itself
+            cg->Cn(su_idx++,BaseCons::WT,net) = 0.0f; // not in our group or is guy itself
         }
       }
     }

@@ -32,7 +32,7 @@ INHERITED(LeabraConSpec)
 public:
   float		prec_levels;	// number of levels of precision available in the weight values
 
-  inline float	PrecLimitVal(float val) {
+  inline float	PrecLimitVal(const float val) {
     int tmp = (int)((prec_levels * val) + .5f); // integerize with rounding -- val 0-1
     float rval = (float)tmp / prec_levels;
     if(rval > 1.0f) rval = 1.0f;
@@ -40,11 +40,12 @@ public:
     return rval;
   }
 
-  inline void C_Compute_LimPrecWts(LeabraCon* cn) {
-    cn->wt = PrecLimitVal(cn->wt);
-  }
+  inline void C_Compute_LimPrecWts(float& wt)
+  { wt = PrecLimitVal(wt); }
+
   inline void Compute_LimPrecWts(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
-    CON_GROUP_LOOP(cg, C_Compute_LimPrecWts((LeabraCon*)cg->OwnCn(i)));
+    float* wts = cg->OwnCnVar(WT);
+    CON_GROUP_LOOP(cg, C_Compute_LimPrecWts(wts[i]));
   }
 
   inline override void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,

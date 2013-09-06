@@ -31,7 +31,7 @@ void WtScaleSpec::Defaults_init() {
 }
 
 
-float WtScaleSpec::SLayActScale(float savg, float lay_sz, float n_cons) {
+float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const float n_cons) {
   int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
   slay_act_n = MAX(slay_act_n, 1);
   float rval = 1.0f;
@@ -59,7 +59,6 @@ void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = true;
-  norm_lrn_only = false;
   if(taMisc::is_loading) {
     taVersion v533(5, 3, 3);
     if(taMisc::loading_version < v533) { // default prior to 533 is off

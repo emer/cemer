@@ -168,11 +168,12 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 // which breaks for clipped patterns
 void TesselPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+  Network* net = prjn->layer->own_net;
   int mxi = MIN(cg->size, send_offs.size);
   int i;
   for(i=0; i<mxi; i++) {
     TessEl* te = (TessEl*)send_offs.FastEl(i);
-    cg->Cn(i)->wt = te->wt_val;
+    cg->Cn(i,BaseCons::WT,net) = te->wt_val;
   }
 }
 

@@ -32,14 +32,16 @@ INHERITED(LeabraConSpec)
 public:
 
   override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-				 int thread_no, float su_act_delta) {
+				 const int thread_no, const float su_act_delta) {
+    const float* wts = cg->OwnCnVar(WT);
     if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
       float* send_netin_vec = net->send_netin_tmp.el
         + net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-      for(int i=0; i<cg->size; i++) {
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
 	LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-        C_Send_NetinDelta_Thread(cg->OwnCn(i), send_netin_vec,
+        C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
                                  cg->UnIdx(i), rcg->scale_eff * su_act_delta);
       }
     }
@@ -49,8 +51,8 @@ public:
         for(int i=0; i<cg->size; i++) {
           LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
           LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-          C_Send_NetinDelta_NoThread(cg->OwnCn(i),
-                                     (LeabraUnit*)cg->Un(i,net),
+          C_Send_NetinDelta_NoThread(wts[i],
+                                     ((LeabraUnit*)cg->Un(i,net))->net_delta,
                                      rcg->scale_eff * su_act_delta);
         }
       }
@@ -60,7 +62,7 @@ public:
         for(int i=0; i<cg->size; i++) {
           LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
           LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-          C_Send_NetinDelta_Thread(cg->OwnCn(i), send_netin_vec,
+          C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
                                    cg->UnIdx(i), rcg->scale_eff * su_act_delta);
         }
       }

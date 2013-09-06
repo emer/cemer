@@ -35,55 +35,59 @@ public:
     TRACE,                      // learn from trace of gating activation modulated by PV dopamine
     LV_DA,                      // use PVLV LV dopamine, which anticipates positive outcomes
   };
+  enum MtxConVars {
+    SACT_LRN = SWT+1,           // sending activation for learning
+  };
 
   MtxLearnMode  mtx_learn;       // how do the matrix units learn?  can either use a trace mechanism or pure PVLV dopamine
   float         dwt_remain;      // how much of the dwt value remains after the weights are updated (i.e., every time there is a PV trial)
 
   inline void Compute_SuLearnAct(LeabraRecvCons* cg, LeabraUnit* ru, LeabraNetwork* net) {
-    for(int i=0; i<cg->size; i++) {
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i,net);
-      MatrixCon* cn = (MatrixCon*)cg->PtrCn(i);
-      cn->sact_lrn = su->act_eq;
+      cg->PtrCn(i, SACT_LRN, net) = su->act_eq;
     }
   }
   // RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
   inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                                     LeabraNetwork* net, bool do_s) {
+                                     LeabraNetwork* net, const bool do_s) {
     // do NOT do this under any circumstances!!
   }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
-  inline void C_Compute_dWt_Matrix_Trace(LeabraCon* cn,
-                                         float mtx_act, float su_act) {
-    float dwt = mtx_act * su_act;
-    cn->dwt = cur_lrate * dwt;  // note: =, not += -- always learn last gating action
+  inline void C_Compute_dWt_Matrix_Trace(float& dwt, 
+                                         const float mtx_act, const float su_act) {
+    dwt = cur_lrate * mtx_act * su_act;  // note: =, not += -- always learn last gating action
   }
 
-  inline void C_Compute_dWt_Matrix_LvDa(LeabraCon* cn, 
-                                        float mtx_da, float mtx_act, float su_act) {
-    float dwt = mtx_da * mtx_act * su_act;
-    cn->dwt += cur_lrate * dwt;
+  inline void C_Compute_dWt_Matrix_LvDa(float& dwt, const float mtx_da,
+                                        const float mtx_act, const float su_act) {
+    dwt += cur_lrate * mtx_da * mtx_act * su_act;
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
+    float* dwts = cg->OwnCnVar(DWT);
+    float* sacts = cg->OwnCnVar(SACT_LRN);
+
     if(mtx_learn == TRACE) {
-      for(int i=0; i<cg->size; i++) {
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
         if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
-        C_Compute_dWt_Matrix_Trace(cn, ru->act_mid, cn->sact_lrn);
+        C_Compute_dWt_Matrix_Trace(dwts[i], ru->act_mid, sacts[i]);
       }
     }
     else {                      // LV_DA
-      for(int i=0; i<cg->size; i++) {
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
         if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
-        C_Compute_dWt_Matrix_LvDa(cn, ru->dav, ru->act_mid, cn->sact_lrn);
+        C_Compute_dWt_Matrix_LvDa(dwts[i], ru->dav, ru->act_mid, sacts[i]);
       }
     }
   }
@@ -98,30 +102,38 @@ public:
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void C_Compute_Weights_Matrix_Trace(LeabraCon* cn, float ru_dav) {
-    if(cn->dwt != 0.0f) {
-      // always do soft bounding, at this point (post agg across processors, etc)
+  inline void C_Compute_Weights_Matrix_Trace(float& wt, float& dwt, float& pdw,
+                                             float& lwt, const float swt,
+                                             const float ru_dav) {
+    if(dwt != 0.0f) {
       // PV dav modulates the prior su product dwts -- skipping the LV middleman..
-      float dwt = ru_dav * cn->dwt;
-      float lin_wt = LinFmSigWt(cn->lwt);
+      float tmp = ru_dav * dwt;
+      float lin_wt = LinFmSigWt(lwt);
       // always do soft bounding
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-      cn->lwt = SigFmLinWt(lin_wt + dwt);
-      Compute_EffWt(cn);
-      cn->pdw = dwt;
-      cn->dwt *= dwt_remain;    // gradually dissappears
+      if(tmp > 0.0f)	tmp *= (1.0f - lin_wt);
+      else		tmp *= lin_wt;
+      lwt = SigFmLinWt(lin_wt + tmp);
+      C_Compute_EffWt(wt, swt, lwt);
+      pdw = tmp;
+      dwt *= dwt_remain;    // gradually dissappears
     }
   }
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {
     if(mtx_learn == TRACE) {
-      for(int i=0; i<cg->size; i++) {
+      float* wts = cg->OwnCnVar(WT);
+      float* dwts = cg->OwnCnVar(DWT);
+      float* pdws = cg->OwnCnVar(PDW);
+      float* lwts = cg->OwnCnVar(LWT);
+      float* swts = cg->OwnCnVar(SWT);
+
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(ru->dav != 0.0f) {
-          LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-          C_Compute_Weights_Matrix_Trace(cn, ru->dav);
+          C_Compute_Weights_Matrix_Trace(wts[i], dwts[i], pdws[i], 
+                                         lwts[i], swts[i], ru->dav);
         }
         //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
       }

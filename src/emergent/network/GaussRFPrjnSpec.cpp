@@ -95,6 +95,8 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
 void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
 
+  Network* net = prjn->layer->own_net;
+
   taVector2i rf_half_wd = rf_width / 2;
   taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == rf_width) // even
@@ -109,7 +111,7 @@ void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
-    cg->Cn(i)->wt = wt;
+    cg->Cn(i,BaseCons::WT,net) = wt;
   }
 }
 

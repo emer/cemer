@@ -226,8 +226,7 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
                       su_u->SendConsAllocInc(1, prjn);
                     }
                     else {
-                      Connection* cn = ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-                      cn->wt = wt;
+                      ru_u->ConnectFrom(su_u, prjn, alloc_loop, true, wt);
                     }
                   }
                 }
@@ -276,7 +275,7 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 
     float wt = v2ffbo_weights.FastEl(del.x + radius, del.y + radius,
                                      sun.y % 2, sun.x, run.y % 2, run.x);
-    cg->Cn(i)->wt = wt;
+    cg->Cn(i,BaseCons::WT,net) = wt;
   }
 }
 

@@ -118,13 +118,14 @@ void BpSendCons::Initialize() {
   SetConType(&TA_BpCon);
 }
 
-void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit*, BpUnit*) {
-  cn->dwt -= spec->decay * cn->wt;
+void Bp_Simple_WtDecay(BpConSpec* spec, float& wt, float& dwt) {
+  dwt -= spec->decay * wt;
 }
 
-void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit*, BpUnit*) {
-  float denom = (1.0f + (cn->wt * cn->wt));
-  cn->dwt -= spec->decay * ((2.0f * cn->wt * cn->wt) / (denom * denom));
+void Bp_WtElim_WtDecay(BpConSpec* spec, float& wt, float& dwt) {
+  const float wt_sq = wt * wt;
+  float denom = (1.0f + wt_sq);
+  dwt -= spec->decay * ((2.0f * wt_sq) / (denom * denom));
 }
 
 
@@ -205,13 +206,13 @@ void BpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
 void BpUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u, net, thread_no);
-  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.OwnCn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt(&u->bias, (BpUnit*)u);
 }
 
 void BpUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   if(u->ext_flag & Unit::EXT)  return; // don't update for clamped units
   UnitSpec::Compute_Weights(u, net, thread_no);
-  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.OwnCn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights(&u->bias, (BpUnit*)u);
 }
 
 void BpUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
@@ -488,8 +489,8 @@ void RBFBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
     u->net += recv_gp->Compute_Dist(u, net);
   }
-  if(u->bias.size)
-    u->net += u->bias.OwnCn(0)->wt;
+  if(u->bias.size > 0)
+    u->net += u->bias.OwnCn(0,BaseCons::WT);
 }
 
 void RBFBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {

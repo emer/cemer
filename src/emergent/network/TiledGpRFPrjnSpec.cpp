@@ -244,13 +244,12 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
               // just do a basic probabilistic version: too hard to permute..
               if(Random::ZeroOne() > p_add_con) continue; // no-go
 
-              Connection* con;
-              if(!reciprocal)
-                con = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
+              int con = -1;
+              if(!reciprocal)   // gotta check
+                con = ru_u->ConnectFromCk(su_u, prjn, false, true, init_wt);
               else
-                con = su_u->ConnectFromCk(ru_u, prjn);
-              if(con) {
-                con->wt = init_wt;
+                con = su_u->ConnectFromCk(ru_u, prjn, false, true, init_wt);
+              if(con >= 0) {
                 rval++;
               }
             }
@@ -302,14 +301,16 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 
 void TiledGpRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
                                     int cg_idx) {
+  Network* net = prjn->layer->own_net;
   float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
   float wt_val = wt_range.min + gaus * wt_range.Range();
-  cg->Cn(cg_idx)->wt = wt_val;
+  cg->Cn(cg_idx,BaseCons::WT,net) = wt_val;
 }
 
 void TiledGpRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru);
 
+  //  Network* net = prjn->layer->own_net;
   // Layer* recv_lay = (Layer*)prjn->layer;
   // Layer* send_lay = (Layer*)prjn->from.ptr();
 
@@ -320,7 +321,7 @@ void TiledGpRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
   //   float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
   //   float wt = expf(-0.5 * dst / sig_sq);
 
-  //   cg->Cn(i)->wt = wt;
+  //   cg->Cn(i,BaseCons::WT,net) = wt;
   // }
 
 }

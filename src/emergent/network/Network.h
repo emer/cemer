@@ -262,8 +262,6 @@ public:
   virtual void  RemoveUnitGroups();
   // #MENU #CONFIRM #CAT_Structure Remove all unit groups in network
 
-  virtual void  LinkPtrCons();
-  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void  FixPrjnIndexes();
   // #CAT_Structure fix the projection indexes of the connection groups (recv_idx, send_idx)
 

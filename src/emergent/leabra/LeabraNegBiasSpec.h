@@ -33,27 +33,31 @@ public:
   float		decay;		// rate of weight decay towards zero 
   bool		updt_immed;	// update weights immediately when weights are changed
 
-  inline void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru) {
-    if(cn->dwt > 0.0f)		// positive only
-      cn->dwt = 0.0f;
-    cn->dwt -= decay * cn->wt;
-    cn->pdw = cn->dwt;
-    cn->wt += cn->dwt;
-    cn->dwt = 0.0f;
-    C_ApplyLimits(cn, ru, NULL);
+  inline void	B_Compute_Weights(RecvCons* bias, LeabraUnit* ru) {
+    if(!learn) return;
+    float& wt = bias->OwnCn(0,WT);
+    float& dwt = bias->OwnCn(0,DWT);
+    float& pdw = bias->OwnCn(0,PDW);
+    if(dwt > 0.0f)		// positive only
+      dwt = 0.0f;
+    dwt -= decay * wt;
+    pdw = dwt;
+    wt += dwt;
+    dwt = 0.0f;
+    C_ApplyLimits(wt, ru, NULL);
   }
 
-  inline void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
-    LeabraBiasSpec::B_Compute_dWt_LeabraCHL(cn, ru);
-    if(updt_immed) B_Compute_Weights(cn, ru);
+  inline void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru) {
+    LeabraBiasSpec::B_Compute_dWt_LeabraCHL(bias, ru);
+    if(updt_immed) B_Compute_Weights(bias, ru);
   }
-  inline void	B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
-    LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(cn, ru, rlay);
-    if(updt_immed) B_Compute_Weights(cn, ru);
+  inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay) {
+    LeabraBiasSpec::B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
+    if(updt_immed) B_Compute_Weights(bias, ru);
   }
-  inline void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
-    LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(cn, ru, rlay);
-    if(updt_immed) B_Compute_Weights(cn, ru);
+  inline void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay) {
+    LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(bias, ru, rlay);
+    if(updt_immed) B_Compute_Weights(bias, ru);
   }
 
   SIMPLE_COPY(LeabraNegBiasSpec);

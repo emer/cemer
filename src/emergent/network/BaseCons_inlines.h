@@ -33,4 +33,8 @@ inline bool BaseCons::SetUn(int idx, Unit* un) {
   return true;
 }
 
+inline BaseCons* BaseCons::UnCons(int idx, Network* net) const
+{ if(IsRecv()) return Un(idx, net)->send.FastEl(other_idx);
+  return Un(idx, net)->recv.FastEl(other_idx); }
+
 #endif // BaseCons_inlines_h

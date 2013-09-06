@@ -66,17 +66,17 @@ public:
       inherited::Compute_Weights_CtLeabraCAL(cg, su, net);
   }
 
-  override void	B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
+  override void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay) {
     if(use_chl)
-      inherited::B_Compute_dWt_LeabraCHL(cn, ru);
+      inherited::B_Compute_dWt_LeabraCHL(bias, ru);
     else
-      inherited::B_Compute_dWt_CtLeabraXCAL(cn, ru, rlay);
+      inherited::B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
   }
-  override void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
+  override void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay) {
     if(use_chl)
-      inherited::B_Compute_dWt_LeabraCHL(cn, ru);
+      inherited::B_Compute_dWt_LeabraCHL(bias, ru);
     else
-      inherited::B_Compute_dWt_CtLeabraCAL(cn, ru, rlay);
+      inherited::B_Compute_dWt_CtLeabraCAL(bias, ru, rlay);
   }
 
   TA_SIMPLE_BASEFUNS(XCalCHLConSpec);

@@ -164,9 +164,8 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
           Unit* su_u = prjn->from->UnitAtCoord(suc);
           if(su_u == NULL) continue;
           if(!self_con && (su_u == ru_u)) continue;
-          Connection* cn = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
-          if(cn) {
-            cn->wt = init_wt;
+          int cn = ru_u->ConnectFromCk(su_u, prjn, false, true, init_wt); // gotta check!
+          if(cn >= 0) {
             rval++;
           }
         }

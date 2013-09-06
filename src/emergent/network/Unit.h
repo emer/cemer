@@ -241,12 +241,13 @@ public: //
   // #CAT_Structure post-allocate given no of sending connections (calls AllocConsFmSize on send con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
   virtual void  RecvConsPostAlloc(Projection* prjn);
   // #CAT_Structure post-allocate given no of recv connections (calls AllocConsFmSize on recv con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
-  virtual Connection*   ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false,
-                                    bool ignore_alloc_errs = false);
-  // #CAT_Structure make a recv connection from given unit to this unit using given projection -- requires both recv and sender to have sufficient connections allocated already, unless alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation (then call SendConstPostAlloc) and second pass as actual connection making
-  virtual Connection*   ConnectFromCk(Unit* su, Projection* prjn,
-                                      bool ignore_alloc_errs = false);
-  // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections -- note that this is expensive -- only use if there is a risk of multiple connections.  This does not support alloc_send option -- can call in 2nd pass if needed
+  virtual int   ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false,
+                            bool ignore_alloc_errs = false, bool set_init_wt = false,
+                            float init_wt = 0.0f);
+  // #CAT_Structure make a recv connection from given unit to this unit using given projection -- requires both recv and sender to have sufficient connections allocated already, unless alloc_send is true, then it only allocates connections on the sender -- does NOT make any connection on the receiver -- use this in a loop that runs connections twice, with first pass as allocation (then call SendConstPostAlloc) and second pass as actual connection making -- return val is index of recv connection -- can also optionally set initial weight value
+  virtual int   ConnectFromCk(Unit* su, Projection* prjn, bool ignore_alloc_errs = false,
+                              bool set_init_wt = false, float init_wt = 0.0f);
+  // #CAT_Structure does ConnectFrom but checks for an existing connection to prevent double-connections -- note that this is expensive -- only use if there is a risk of multiple connections.  This does not support alloc_send option -- can call in 2nd pass if needed -- return val is index of recv connection -- can also optionally set initial weight value
   virtual bool  DisConnectFrom(Unit* su, Projection* prjn=NULL);
   // #CAT_Structure remove connection from given unit (projection is optional)
   virtual void  DisConnectAll();
@@ -281,9 +282,6 @@ public: //
                const String& var12 = "", const String& var13 = "", const String& var14 = "",
                Projection* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
-
-  virtual void  LinkPtrCons();
-  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
 
   override int  GetIndex() const { return idx; }
   override void SetIndex(int i) { idx = i; }

@@ -40,8 +40,8 @@ public:
   void  Init_Weights(Unit* ru, Network* net)
   { if(GetConSpec()) GetConSpec()->Init_Weights(this,ru,net); }
   // #CAT_Learning initialize weights for group
-  void  C_Init_Weights(Connection* cn, Unit* ru, Unit* su)
-  { GetConSpec()->C_Init_Weights(this, cn, ru, su); }
+  void  C_Init_Weights(int idx, Unit* ru, Unit* su, Network* net)
+  { GetConSpec()->C_Init_Weights(this, idx, ru, su, net); }
   // #CAT_Learning initialize weights for single connection
   void  Init_Weights_post(Unit* ru, Network* net)
   { if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru,net); }

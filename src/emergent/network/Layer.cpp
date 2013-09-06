@@ -737,12 +737,6 @@ int Layer::CountRecvCons() {
   return n_cons;
 }
 
-void Layer::LinkPtrCons() {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->LinkPtrCons();
-  }
-}
-
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {

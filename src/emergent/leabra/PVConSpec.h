@@ -37,9 +37,9 @@ public:
 
   SendActVal    send_act;       // what to use for the sending activation value
 
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, float su_act) {
-    float dwt = (ru->act_p - ru->act_m) * su_act; // basic delta rule
-    cn->dwt += cur_lrate * dwt;
+  inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, 
+                                  const float ru_act_m, const float su_act) {
+    dwt += cur_lrate * (ru_act_p - ru_act_m) * su_act;
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
@@ -52,10 +52,12 @@ public:
     else                        // ACT_M2
       su_act = su->act_m2;
 
-    for(int i=0; i<cg->size; i++) {
+    float* dwts = cg->OwnCnVar(DWT);
+
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, ru, su_act);
+      C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_act);
     }
   }
 
@@ -69,23 +71,31 @@ public:
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void C_Compute_Weights_CtLeabraXCAL(LeabraCon* cn) {
-    if(cn->dwt != 0.0f) {
-      float lin_wt = LinFmSigWt(cn->lwt);
+  inline void C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt, float& pdw,
+                                               float& lwt, const float swt) {
+    if(dwt != 0.0f) {
+      float lin_wt = LinFmSigWt(lwt);
       if(lmix.err_sb) {         // check for soft-bounding -- typically not enabled for pv
-        if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
-        else		        cn->dwt *= lin_wt;
+        if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+        else		dwt *= lin_wt;
       }
-      cn->lwt = SigFmLinWt(lin_wt + cn->dwt);
-      Compute_EffWt(cn);
+      lwt = SigFmLinWt(lin_wt + dwt);
+      C_Compute_EffWt(wt, swt, lwt);
     }
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
+    pdw = dwt;
+    dwt = 0.0f;
   }
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {
-    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL((LeabraCon*)cg->OwnCn(i)));
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+    float* lwts = cg->OwnCnVar(LWT);
+    float* swts = cg->OwnCnVar(SWT);
+
+    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], pdws[i], 
+                                                      lwts[i], swts[i]));
     //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 

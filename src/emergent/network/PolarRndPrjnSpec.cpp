@@ -212,7 +212,7 @@ void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
   Network* net = prjn->layer->own_net;
   
   for(int i=0; i<cg->size; i++) {
-    cg->Cn(i)->wt = GetDistProb(prjn, ru, cg->Un(i,net));
+    cg->Cn(i,BaseCons::WT,net) = GetDistProb(prjn, ru, cg->Un(i,net));
   }
 }
 

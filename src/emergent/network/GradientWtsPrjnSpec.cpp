@@ -47,6 +47,8 @@ void GradientWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 
 void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
                                       int cg_idx) {
+  Network* net = prjn->layer->own_net;
+
   float wt_val = wt_range.min;
   if(grad_type == LINEAR) {
     if(invert)
@@ -61,7 +63,7 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, 
     else
       wt_val = wt_range.min + gaus * wt_range.Range();
   }
-  cg->Cn(cg_idx)->wt = wt_val;
+  cg->Cn(cg_idx,BaseCons::WT,net) = wt_val;
 }
 
 ///////////////////////////////////////////////

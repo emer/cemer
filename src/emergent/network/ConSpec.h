@@ -44,7 +44,8 @@ class Projection; //
 // The following macro makes this process easier:
 
 #define CON_GROUP_LOOP(cg, expr) \
-  for(int i=0; i<cg->size; i++) \
+  const int sz = cg->size; \
+  for(int i=0; i<sz; i++) \
     expr
 
 eTypeDef_Of(WeightLimits);
@@ -87,11 +88,16 @@ class E_API ConSpec: public BaseSpec {
   // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection
 INHERITED(BaseSpec)
 public:
+  enum ConVars {                // Connection variables -- must align with Connection obj
+    WT,                         // the synaptic weight of connection
+    DWT,                        // change in synaptic weight as computed by learning mechanism
+  };
+
   RandomSpec    rnd;            // #CAT_ConSpec Weight randomization specification.  Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc
   WeightLimits  wt_limits;      // #CAT_ConSpec limits on weight sign, symmetry
 
-  inline void           C_ApplyLimits(Connection* cn, Unit*, Unit*)
-  { wt_limits.ApplyLimits(cn->wt); }
+  inline void           C_ApplyLimits(float& wt, Unit*, Unit*)
+  { wt_limits.ApplyLimits(wt); }
   // #CAT_Learning apply weight limits to single connection
   inline virtual void   ApplyLimits(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning apply weight limits (sign, magnitude)
@@ -103,43 +109,56 @@ public:
   //    Below are the primary computational interface to the Network Objects
   //    for performing algorithm-specific activation and learning
 
-  inline virtual void   C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
+  inline virtual void   C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+                                       Network* net);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
-  inline virtual void   C_AddRndWeights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su, float scale);
+  inline virtual void   C_AddRndWeights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+                                        const float scale, Network* net);
   // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
   inline virtual void   Init_Weights(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
-  inline virtual void   C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su)
+  inline virtual void   C_Init_Weights_post(BaseCons* cg, const int idx,
+                                            Unit* ru, Unit* su, Network* net)
   { };
   inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru, Network* net);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
-  inline virtual void   C_Init_dWt(RecvCons*, Connection* cn, Unit*, Unit*)
-  { cn->dwt=0.0f; }
+  inline virtual void   C_Init_dWt(RecvCons* cg, const int idx, Unit*, Unit*,
+                                   Network* net);
   // #CAT_Learning initialize weight-change variables on a single connection
   inline virtual void   Init_dWt(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning initialize weight-change variables for whole set
 
-  inline float          C_Compute_Netin(Connection* cn, Unit* ru, Unit* su);
+  inline float          C_Compute_Netin(const float wt, const float su_act)
+  { return wt * su_act; }
   // #IGNORE 
   inline virtual float  Compute_Netin(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Activation compute net input for weights in this con group
 
-  inline void           C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* ru,
-                                     float su_act);
+  inline void           C_Send_Netin(const float wt, float* send_netin_vec,
+                                     const int ru_idx, const float su_act)
+  { send_netin_vec[ru_idx] += wt * su_act; }
   // #IGNORE 
-  inline virtual void   Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su);
+  inline virtual void   Send_Netin(SendCons* cg, Network* net, const int thread_no,
+                                   Unit* su);
   // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
-  inline virtual void   Send_Netin_PerPrjn(SendCons* cg, Network* net, int thread_no, Unit* su);
+  inline virtual void   Send_Netin_PerPrjn(SendCons* cg, Network* net,
+                                           const int thread_no, Unit* su);
   // #CAT_Activation sender-based net input, keeping projections separate, for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
-  inline float          C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
+  inline float          C_Compute_Dist(const float wt, const float su_act)
+  { const float tmp = su_act - wt; return tmp * tmp; }
   // #IGNORE 
   inline virtual float  Compute_Dist(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Activation compute net distance for con group (ie. euclidean distance)
-  inline void           C_Compute_dWt(Connection*, Unit*, Unit*)        { };
+  inline void           C_Compute_dWt(float& wt, float& dwt, const float ru_act,
+                                      const float su_act)
+  { dwt += ru_act * su_act; }
+  // #IGNORE define in subclass to take proper args -- this is just for demo -- best to take all the vals as direct floats
   inline virtual void   Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning compute the delta-weight change
-  inline void           C_Compute_Weights(Connection*, Unit*, Unit*)    { };
+  inline void           C_Compute_Weights(float& wt, float& dwt)
+  { wt += dwt; dwt = 0.0f; }
+  // #IGNORE define in subclass to take proper args -- this is just for demo -- best to take all the vals as direct floats
   inline virtual void   Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning update weights (ie. add delta-wt to wt, zero delta-wt)
 

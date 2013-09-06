@@ -109,7 +109,7 @@ void ProjectionSpec::Init_Weights_post(Projection* prjn) {
 void ProjectionSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   // default is just to do same thing as the conspec would have done..
   Network* net = prjn->layer->own_net;
-  CON_GROUP_LOOP(cg, cg->C_Init_Weights(cg->Cn(i), ru, cg->Un(i,net)));
+  CON_GROUP_LOOP(cg, cg->C_Init_Weights(i, ru, cg->Un(i,net), net));
 }
 
 void ProjectionSpec::Init_dWt(Projection* prjn) {

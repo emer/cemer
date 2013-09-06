@@ -98,8 +98,9 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru, BpNetwork* net, int thread_n
       continue;		// don't get from the non-clamped layers!
     ru->clmp_net += recv_gp->Compute_Netin(ru,net);
   }
-  if(ru->bias.size)
-    ru->clmp_net += ru->bias.OwnCn(0)->wt;
+  if(ru->bias.size > 0) {
+    ru->clmp_net += ru->bias.OwnCn(0, BaseCons::WT);
+  }
 }
 
 void RBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
@@ -187,13 +188,13 @@ void RBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
 void RBpUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts)  return; // don't compute dwts for clamped units
   UnitSpec::Compute_dWt(u, net, thread_no);
-  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt((BpCon*)u->bias.OwnCn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_dWt(&u->bias, (BpUnit*)u);
 }
 
 void RBpUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   if((u->ext_flag & Unit::EXT) && !soft_clamp && !updt_clamped_wts) return; // don't update for clamped units
   UnitSpec::Compute_Weights(u, net, thread_no);
-  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights((BpCon*)u->bias.OwnCn(0), (BpUnit*)u);
+  ((BpConSpec*)bias_spec.SPtr())->B_Compute_Weights(&u->bias, (BpUnit*)u);
 }
 
 

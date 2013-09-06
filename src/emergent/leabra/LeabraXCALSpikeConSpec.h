@@ -62,13 +62,22 @@ class E_API LeabraXCALSpikeConSpec : public LeabraConSpec {
   // XCAL purely spiking learning rule based on Urakubo et al 2008 -- computes a postsynaptic calcium value that drives learning using the XCAL_C fully continous-time learning parameters
 INHERITED(LeabraConSpec)
 public:
+  enum SpikeConVars {
+    SRAVG_SS = SRAVG_M+1,       // super-short term scale sr average
+    NMDA,                       // NMDA open channels
+    CA,                         // postsynaptic ca
+  };
+
   XCALSpikeSpec	xcal_spike;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) spike-based fully continuous-time learning parameters
 
-  inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
-    LeabraConSpec::C_Init_Weights(cg, cn, ru, su); LeabraSpikeCon* lcn = (LeabraSpikeCon*)cn;
-    lcn->sravg_ss = 0.15f; lcn->sravg_s = 0.15f; lcn->sravg_m = 0.15f;
-    lcn->nmda = 0.0f; lcn->ca = 0.0f; 
+  inline override void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+                                       Network* net)
+  { inherited::C_Init_Weights(cg, idx, ru, su, net); 
+    cg->OwnCn(idx,SRAVG_SS) = 0.15f; cg->OwnCn(idx,SRAVG_S) = 0.15f; 
+    cg->OwnCn(idx,SRAVG_M) = 0.15f; 
+    cg->OwnCn(idx,NMDA) = 0.0f; cg->OwnCn(idx,CA) = 0.0f; 
 #ifdef XCAL_DEBUG
+    // not supported
     lcn->srprod_s = lcn->srprod_m = xcal.avg_init;
 #endif
   }
@@ -76,46 +85,60 @@ public:
   inline void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) { };
   // never init..
 
-  inline void C_Compute_SRAvg_spike(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su,
-				    LeabraUnitSpec* us) {
+  inline void C_Compute_SRAvg_spike(float& sravg_ss, float& sravg_s, float& sravg_m,
+                                    float& nmda, float& ca, const float ru_act, 
+                                    const float ru_vm_dend,
+                                    const float su_act, LeabraUnitSpec* us) {
     // this happens every cycle, and is the place to compute nmda and ca -- expensive!! :(
-    float dnmda = -cn->nmda * xcal_spike.nmda_rate;
-    float dca = (cn->nmda * (xcal_spike.ca_v_nmda * ru->vm_dend + xcal_spike.ca_nmda))
-      - (cn->ca * xcal_spike.ca_rate);
-    if(su->act > 0.5f) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + cn->ca); }
-    if(ru->act > 0.5f) { dca += xcal_spike.ca_vgcc; }
-    cn->nmda += dnmda;
-    cn->ca += dca;
-    float sr = (cn->ca - xcal_spike.ca_off);
+    float dnmda = -nmda * xcal_spike.nmda_rate;
+    float dca = (nmda * (xcal_spike.ca_v_nmda * ru_vm_dend + xcal_spike.ca_nmda))
+      - (ca * xcal_spike.ca_rate);
+    if(su_act > 0.5f) { dnmda += xcal_spike.k_ca / (xcal_spike.k_ca + ca); }
+    if(ru_act > 0.5f) { dca += xcal_spike.ca_vgcc; }
+    nmda += dnmda;
+    ca += dca;
+    float sr = (ca - xcal_spike.ca_off);
     if(sr < 0.0f) sr = 0.0f;
-    cn->sravg_ss += us->act_avg.ss_dt * (sr - cn->sravg_ss);
-    cn->sravg_s += us->act_avg.s_dt * (cn->sravg_ss - cn->sravg_s);
-    cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
+    sravg_ss += us->act_avg.ss_dt * (sr - sravg_ss);
+    sravg_s += us->act_avg.s_dt * (sravg_ss - sravg_s);
+    sravg_m += us->act_avg.m_dt * (sravg_s - sravg_m);
 
 #ifdef XCAL_DEBUG
-    cn->srprod_s = ru->avg_s * su->avg_s;
-    cn->srprod_m = ru->avg_m * su->avg_m;
+    srprod_s = ru->avg_s * su->avg_s;
+    srprod_m = ru->avg_m * su->avg_m;
 #endif
   }
 
-  inline void C_Compute_SRAvg_sssr(LeabraSpikeCon* cn, LeabraUnit* ru, LeabraUnit* su,
+  inline void C_Compute_SRAvg_sssr(float& sravg_ss, float& sravg_s, float& sravg_m,
+                                   const float ru_avg_ss, const float su_avg_ss,
 				   LeabraUnitSpec* us) {
-    cn->sravg_ss = ru->avg_ss * su->avg_ss; // use ss to capture local time window
-    cn->sravg_s += us->act_avg.s_dt * (cn->sravg_ss - cn->sravg_s);
-    cn->sravg_m += us->act_avg.m_dt * (cn->sravg_s - cn->sravg_m);
+    sravg_ss = ru_avg_ss * su_avg_ss; // use ss to capture local time window
+    sravg_s += us->act_avg.s_dt * (sravg_ss - sravg_s);
+    sravg_m += us->act_avg.m_dt * (sravg_s - sravg_m);
   }
 
   inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                            LeabraNetwork* net, bool do_s) {
+                            LeabraNetwork* net, const bool do_s) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
+    float* srss = cg->OwnCnVar(SRAVG_SS);
+    float* srs = cg->OwnCnVar(SRAVG_S);
+    float* srm = cg->OwnCnVar(SRAVG_M);
+    float* nmdas = cg->OwnCnVar(NMDA);
+    float* cas = cg->OwnCnVar(CA);
+    const float su_act = su->act;
+    const float su_avg_ss = su->avg_ss;
+
     if(learn_rule == CTLEABRA_XCAL_C) {
       if(xcal_spike.ss_sr) {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_sssr((LeabraSpikeCon*)cg->OwnCn(i), 
-						(LeabraUnit*)cg->Un(i,net), su, us));
+	CON_GROUP_LOOP(cg, C_Compute_SRAvg_sssr(srss[i], srs[i], srm[i], 
+                                                ((LeabraUnit*)cg->Un(i,net))->avg_ss,
+                                                su_avg_ss, us));
       }
       else {
-	CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike((LeabraSpikeCon*)cg->OwnCn(i), 
-						 (LeabraUnit*)cg->Un(i,net), su, us));
+	CON_GROUP_LOOP(cg, C_Compute_SRAvg_spike(srss[i], srs[i], srm[i], nmdas[i], cas[i],
+                                                 cg->Un(i,net)->act, 
+                                                 ((LeabraUnit*)cg->Un(i,net))->vm_dend,
+                                                 su_act, us));
       }
     }
     else {
@@ -123,24 +146,28 @@ public:
     }
   }
 
-  inline void C_Compute_dWt_CtLeabraXCAL_spike(LeabraSpikeCon* cn, LeabraUnit* ru,
-					       LeabraUnit* su, float su_act_mult) {
-    float srs = cn->sravg_s;
-    float srm = cn->sravg_m;
-    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->avg_l;
-    cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+  inline void C_Compute_dWt_CtLeabraXCAL_spike(float& dwt, 
+                                               const float sravg_s, const float sravg_m,
+                                               const float ru_avg_l, 
+                                               const float su_act_mult) {
+    float sm_mix = xcal.s_mix * sravg_s + xcal.m_mix * sravg_m;
+    float effthr = xcal.thr_m_mix * sravg_m + su_act_mult * ru_avg_l;
+    dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                        LeabraNetwork* net) {
-    float su_avg_m = su->avg_m;
-    float su_act_mult = xcal.thr_l_mix * su_avg_m;
+    const float su_avg_m = su->avg_m;
+    const float su_act_mult = xcal.thr_l_mix * su_avg_m;
+    float* dwts = cg->OwnCnVar(DWT);
+    float* srs = cg->OwnCnVar(SRAVG_S);
+    float* srm = cg->OwnCnVar(SRAVG_M);
 
     if(learn_rule == CTLEABRA_XCAL_C) {
-      for(int i=0; i<cg->size; i++) {
+      const int sz = cg->size;
+      for(int i=0; i<sz; i++) {
 	LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-	C_Compute_dWt_CtLeabraXCAL_spike((LeabraSpikeCon*)cg->OwnCn(i), ru, su,
+	C_Compute_dWt_CtLeabraXCAL_spike(dwts[i], srs[i], srm[i], ru->avg_l,
                                          su_act_mult);
       }
     }

@@ -770,7 +770,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
         taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
-        ptrs[st_idx + idx] = cg->Cn(j); // set the ptr
+        ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net)); // set the ptr
       }
     }
     else {                      // send
@@ -782,7 +782,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
         taVector2i upos;  su->LayerLogPos(upos);
         upos -= con_geom_min;
         int idx = upos.y * con_geom.x + upos.x;
-        ptrs[st_idx + idx] = cg->Cn(j); // set the ptr
+        ptrs[st_idx + idx] = &(cg->Cn(j,con_md->idx,net)); // set the ptr
       }
     }
   }
@@ -911,7 +911,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
     taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
-    ptrs[idx] = cg->Cn(j);      // set the ptr
+    ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
   }
 }
 
@@ -951,7 +951,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
     taVector2i upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
-    ptrs[idx] = cg->Cn(j);      // set the ptr
+    ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
   }
 }
 
@@ -968,7 +968,7 @@ void NetMonItem::ScanObject_BiasCon(RecvCons* cg, String var, taBase* name_obj) 
       AddScalarChan_Agg(valname, vt); // add the agg guy just to keep it consistent
     }
   }
-  ptrs.Add(cg->Cn(0));
+  ptrs.Add(&(cg->OwnCn(0, con_md->idx)));
   members.Link(con_md);
 }
 
@@ -1006,7 +1006,10 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
     rval = _nilVariant;
     return false;
   }
-  rval = md->GetValVar(obj);
+  if(md->GetOwnerType()->InheritsFrom(&TA_Connection))
+    rval = *((float*)obj);      // we stored the raw float*
+  else
+    rval = md->GetValVar(obj);
   // pre-process..
   // note: NONE op leaves Variant in same format, otherwise converted to float
   pre_proc_3.EvaluateVar(pre_proc_2.EvaluateVar(pre_proc_1.EvaluateVar(rval)));

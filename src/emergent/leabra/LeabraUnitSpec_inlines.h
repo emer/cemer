@@ -47,7 +47,7 @@ inline void LeabraUnitSpec::Compute_ApplyInhib_LoserGain(LeabraUnit* u,
 inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
   // including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
@@ -57,7 +57,7 @@ inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* ne
 inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
   // NOT including the ga term
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.h * e_rev_sub_thr.h) /
@@ -67,7 +67,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* ne
 inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
   // NOT including the gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a - u->adapt) /
@@ -77,7 +77,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* ne
 inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net;
   if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
+    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
   // NOT including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
 	  thr_sub_e_rev_i);

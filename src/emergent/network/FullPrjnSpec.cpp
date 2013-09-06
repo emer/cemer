@@ -58,9 +58,9 @@ int FullPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init
     new_idxs.Permute();
     for(int i=0;i<n_new_cons;i++) {
       Unit* su = (Unit*)prjn->from->units.Leaf(new_idxs[i]);
-      Connection* cn = ru->ConnectFromCk(su, prjn); // check means that it won't add any new connections if already there!
-      if(cn) {
-        cn->wt = init_wt;
+      int cn = ru->ConnectFromCk(su, prjn, false, true, init_wt); // set init_wt
+      // check means that it won't add any new connections if already there!
+      if(cn >= 0) {
         rval++;
       }
     }

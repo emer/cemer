@@ -255,7 +255,6 @@ void Network::Copy_(const Network& cp) {
   SyncSendPrjns();
   FixPrjnIndexes();                          // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
-  LinkPtrCons();                // set the pointer cons, which are not updatable by the UpdatePointers function
   BuildUnits_Threads();
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
@@ -325,9 +324,6 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
     }
     old_load_cons = false;
   }
-
-//   if(rval)
-//     LinkPtrCons();
 
   ClearNetFlag(SAVE_UNITS_FORCE);       // might have been saved in on state from recover file or something!
 
@@ -598,11 +594,6 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
     taMisc::ScriptRecordAssignment(pjn,pjn->FindMember("from"));
     taMisc::RecordScript(pjn->GetPath() + ".spec.type = CustomPrjnSpec;");
   }
-}
-
-void Network::LinkPtrCons() {
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers)
-    l->LinkPtrCons();
 }
 
 #ifdef TA_GUI
@@ -1368,14 +1359,14 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
         for(int g = 0; g < un->recv.size; g++) {
           RecvCons* cg = un->recv.FastEl(g);
           for(int i = 0;i<cg->size;i++)
-            values.FastEl(cidx++) = cg->Cn(i)->dwt;
+            values.FastEl(cidx++) = cg->Cn(i,BaseCons::DWT,this);
         }
       }
       else {
         for(int g = 0; g < un->send.size; g++) {
           SendCons* cg = un->send.FastEl(g);
           for(int i = 0;i<cg->size;i++)
-            values.FastEl(cidx++) = cg->Cn(i)->dwt;
+            values.FastEl(cidx++) = cg->Cn(i,BaseCons::DWT,this);
         }
       }
     }
@@ -1556,10 +1547,10 @@ void Network::DMem_SymmetrizeWts() {
             for(int g = 0; g < fm->recv.size; g++) {
               RecvCons* fmg = fm->recv.FastEl(g);
               if(fmg->prjn->from != lay) continue;
-              Connection* con = fmg->FindConFrom(un);
-              if(con) {
+              int con = fmg->FindConFromIdx(un, this);
+              if(con >= 0) {
                 unit_idxs.Add(uni);
-                wt_vals.Add(con->wt);
+                wt_vals.Add(fmg->Cn(con, BaseCons::WT, this));
               }
             }
           }
@@ -2132,7 +2123,7 @@ static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
     if(swt) {
       SendCons* scg = (SendCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-        float wtv = scg->Cn(ci)->wt;
+        float wtv = scg->Cn(ci, BaseCons::WT, net);
         Unit* su = scg->Un(ci,net);
         su->wt_prjn += u->wt_prjn * wtv;
         su->tmp_calc1 += u->wt_prjn;
@@ -2141,7 +2132,7 @@ static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
     else {
       RecvCons* scg = (RecvCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-        float wtv = scg->Cn(ci)->wt;
+        float wtv = scg->Cn(ci, BaseCons::WT, net);
         Unit* su = scg->Un(ci,net);
         su->wt_prjn += u->wt_prjn * wtv;
         su->tmp_calc1 += u->wt_prjn;
@@ -2182,7 +2173,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
     if(swt) {
       SendCons* scg = (SendCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-        float wtv = scg->Cn(ci)->wt;
+        float wtv = scg->Cn(ci, BaseCons::WT, this);
         Unit* su = scg->Un(ci,this);
         su->wt_prjn += wtv;
         su->tmp_calc1 += 1.0f;  // sum to 1
@@ -2191,7 +2182,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
     else {
       RecvCons* scg = (RecvCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-        float wtv = scg->Cn(ci)->wt;
+        float wtv = scg->Cn(ci, BaseCons::WT, this);
         Unit* su = scg->Un(ci,this);
         su->wt_prjn += wtv;
         su->tmp_calc1 += 1.0f;  // sum to 1

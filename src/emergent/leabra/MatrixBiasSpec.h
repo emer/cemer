@@ -31,20 +31,21 @@ class E_API MatrixBiasSpec : public LeabraBiasSpec {
 INHERITED(LeabraBiasSpec)
 public:
 
-  inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
+  inline override void B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru) {
     float err = ru->act_p * ru->dav;
-    if(fabsf(err) >= dwt_thresh)
-      cn->dwt += cur_lrate * err;
+    if(fabsf(err) >= dwt_thresh) {
+      bias->OwnCn(0,DWT) += cur_lrate * err;
+    }
   }
 
-  inline override void B_Compute_dWt_CtLeabraXCAL(LeabraCon* cn, LeabraUnit* ru,
+  inline override void B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
 						  LeabraLayer* rlay) {
-    B_Compute_dWt_LeabraCHL(cn, ru);
+    B_Compute_dWt_LeabraCHL(bias, ru);
   }
 
-  inline override void B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
+  inline override void B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
 						 LeabraLayer* rlay) {
-    B_Compute_dWt_LeabraCHL(cn, ru);
+    B_Compute_dWt_LeabraCHL(bias, ru);
   }
   
   TA_BASEFUNS(MatrixBiasSpec);

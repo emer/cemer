@@ -32,25 +32,33 @@ INHERITED(PVConSpec)
 public:
   float         decay;          // #MIN_0 amount to decay weight values every time they are updated, restoring some novelty (also multiplied by lrate to compute weight change, so it automtically takes that into account -- think of as a pct to decay)
 
-  inline void C_Compute_Weights_NV(LeabraCon* cn, float dkfact) {
-    float lin_wt = LinFmSigWt(cn->lwt);
-    cn->dwt -= dkfact * lin_wt;
-    if(cn->dwt != 0.0f) {
+  inline void C_Compute_Weights_NV(float& wt, float& dwt, float& pdw,
+                                   float& lwt, const float swt, const float dkfact) {
+    float lin_wt = LinFmSigWt(lwt);
+    dwt -= dkfact * lin_wt;
+    if(dwt != 0.0f) {
       if(lmix.err_sb) {         // check for soft-bounding -- typically not enabled for pv
-        if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - lin_wt);
-        else		        cn->dwt *= lin_wt;
+        if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+        else		dwt *= lin_wt;
       }
-      cn->lwt = SigFmLinWt(lin_wt + cn->dwt);
-      Compute_EffWt(cn);
+      lwt = SigFmLinWt(lin_wt + dwt);
+      C_Compute_EffWt(wt, swt, lwt);
     }
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
+    pdw = dwt;
+    dwt = 0.0f;
   }
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {
     float dkfact = cur_lrate * decay;
-    CON_GROUP_LOOP(cg, C_Compute_Weights_NV((LeabraCon*)cg->OwnCn(i), dkfact));
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+    float* lwts = cg->OwnCnVar(LWT);
+    float* swts = cg->OwnCnVar(SWT);
+
+    CON_GROUP_LOOP(cg, C_Compute_Weights_NV(wts[i], dwts[i], pdws[i], 
+                                            lwts[i], swts[i], dkfact));
     //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 

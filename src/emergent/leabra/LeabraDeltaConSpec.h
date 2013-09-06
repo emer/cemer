@@ -36,18 +36,20 @@ public:
   }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m) * su->act_m; // basic delta rule, sender in minus
-    cn->dwt += cur_lrate * dwt;
-    // soft bounding is managed in the weight update phase, not in dwt
+  inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, 
+                                  const float ru_act_m, const float su_act) {
+    dwt += cur_lrate * (ru_act_p - ru_act_m) * su_act;
   }
 
   override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                          LeabraNetwork* net) {
-    for(int i=0; i<cg->size; i++) {
+    const float su_act = su->act_m; // note: using act_m
+    float* dwts = cg->OwnCnVar(DWT);
+
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, ru, su);  
+      C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_act);
     }
   }
 

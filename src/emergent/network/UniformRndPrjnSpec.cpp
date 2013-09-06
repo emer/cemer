@@ -82,7 +82,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
         // don't connect to anyone who already recvs from me cuz that will make
         // a symmetric connection which isn't good: symmetry will be enforced later
         RecvCons* scg = su->recv.FindPrjn(prjn);
-        if(scg->FindConFromIdx(ru,net) >= 0) continue;
+        if(scg->FindConFromIdx(ru) >= 0) continue;
         perm_list.Link(su);
       }
       perm_list.Permute();

@@ -53,7 +53,6 @@ class E_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
 INHERITED(BpConSpec)
 public:
-  inline void 		C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su);
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
   // Compute dE with respect to the weights (using prv_act) as sender
 
@@ -71,9 +70,11 @@ INHERITED(RBpConSpec)
 public:
   bool	sym_wt_updt;		// if true, use symmetric weight updates
 
-  inline void 		C_Compute_dWt_Sym(BpCon* cn, RBpUnit* ru, RBpUnit* su);
+  inline void C_Compute_dWt_Sym(float& dwt, const float ru_dEdNet,
+                                const float su_act, const float su_dEdNet,
+                                const float ru_act)
+  { dwt += 0.5f * (su_act * ru_dEdNet + ru_act * su_dEdNet); }
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
-  // Compute dE with respect to the weights (using prv_act) as sender
 
   TA_SIMPLE_BASEFUNS(SymRBpConSpec);
 private:
@@ -180,28 +181,26 @@ private:
   void	Destroy()		{ };
 };
 
-// use previous activation value
-inline void RBpConSpec::C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su) {
-  cn->dwt += su->prv_act * ru->dEdNet;
-}
 inline void RBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (RBpUnit*)ru,
-                                  (RBpUnit*)cg->Un(i,net)));
+  const float ru_dEdNet = ((BpUnit*)ru)->dEdNet;
+  float* dwts = cg->OwnCnVar(DWT);
+  CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_dEdNet,
+                                   ((RBpUnit*)cg->Un(i,net))->prv_act));
 }
 
-// use previous activation value
-inline void SymRBpConSpec::C_Compute_dWt_Sym(BpCon* cn, RBpUnit* ru, RBpUnit* su) {
-  // just take the average of the two different weight changes
-  cn->dwt += 0.5f * (su->prv_act * ru->dEdNet + ru->prv_act * su->dEdNet);
-}
 inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  const float ru_dEdNet = ((BpUnit*)ru)->dEdNet;
+  const float ru_act = ((RBpUnit*)ru)->prv_act;
+  float* dwts = cg->OwnCnVar(DWT);
   if(sym_wt_updt) {
-    CON_GROUP_LOOP(cg,C_Compute_dWt_Sym((BpCon*)cg->OwnCn(i), (RBpUnit*)ru,
-                                        (RBpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_Compute_dWt_Sym(dwts[i], ru_dEdNet,
+                                         ((RBpUnit*)cg->Un(i,net))->prv_act,
+                                         ((RBpUnit*)cg->Un(i,net))->dEdNet,
+                                         ru_act));
   }
   else {
-    CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (RBpUnit*)ru,
-                                    (RBpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_dEdNet,
+                                     ((RBpUnit*)cg->Un(i,net))->prv_act));
   }
 }
 

@@ -44,12 +44,12 @@ public:
   float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr 
   // (= sd_ca_gain/(1 - sd_ca_thr))
 
-  inline void	CaUpdt(float& cai, float ru_act, float su_act) {
+  inline void	CaUpdt(float& cai, const float ru_act, const float su_act) {
     float drive = ru_act * su_act;
     cai += ca_inc * (1.0f - cai) * drive - ca_dec * cai;
   }
 
-  inline float	SynDep(float cai) {
+  inline float	SynDep(const float cai) {
     float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
     return cao_thr * cao_thr;
   }
@@ -74,94 +74,74 @@ class E_API CaiSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraConSpec)
 public:
+  enum CaiSynDepConVars {
+    EFFWT = SWT+1,                // effective weight value
+    CAI,                          // cai intacelluarl calcium
+  };
+
   CaiSynDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy
+
   
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Ca updating and synaptic depression
 
-  inline void C_Compute_Cai(CaiSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    ca_dep.CaUpdt(cn->cai, ru->act_eq, su->act_eq);
-  }
+  inline void C_Compute_Cai(float& cai, const float ru_act, const float su_act)
+  { ca_dep.CaUpdt(cai, ru_act, su_act); }
   // connection-level Cai update
-  inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
-    CON_GROUP_LOOP(cg, C_Compute_Cai((CaiSynDepCon*)cg->OwnCn(i),
-                                     (LeabraUnit*)cg->Un(i,net), su));
+  inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net)
+  { float* cais = cg->OwnCnVar(CAI);
+    const float su_act = su->act_eq;
+    CON_GROUP_LOOP(cg, C_Compute_Cai(cais[i],
+                                     ((LeabraUnit*)cg->Un(i,net))->act_eq, su_act));
   }
-
   // connection-level synaptic depression: syn dep direct
-  inline void C_Compute_CycSynDep(CaiSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
-  }
+
+  inline void C_Compute_CycSynDep(float& effwt, const float wt, const float cai)
+  { effwt = wt * ca_dep.SynDep(cai); }
   // connection-level synaptic depression: ca mediated
   inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
                                          LeabraNetwork* net) {
     Compute_Cai(cg, su, net);
-    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CaiSynDepCon*)cg->OwnCn(i),
-					   (LeabraUnit*)cg->Un(i,net), su));
+    float* wts = cg->OwnCnVar(WT);
+    float* cais = cg->OwnCnVar(CAI);
+    float* effs = cg->OwnCnVar(EFFWT);
+    CON_GROUP_LOOP(cg, C_Compute_CycSynDep(effs[i], wts[i], cais[i]));
   }
   // connection-group level synaptic depression
 
-  inline void C_Init_SdEffWt(CaiSynDepCon* cn) {
-    cn->effwt = cn->wt; cn->cai = 0.0f; 
+  inline void C_Init_SdEffWt(float& effwt, const float wt, float& cai)
+  { effwt = wt; cai = 0.0f;  }
+
+  inline void Init_SdEffWt(LeabraRecvCons* cg, LeabraNetwork* net) {
+    // receiver based
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt(cg->PtrCn(i,EFFWT,net), cg->PtrCn(i,WT,net),
+                                      cg->PtrCn(i,CAI,net)));
   }
-  inline void Init_SdEffWt(LeabraRecvCons* cg) {
-    CON_GROUP_LOOP(cg, C_Init_SdEffWt((CaiSynDepCon*)cg->PtrCn(i)));
-  }
-  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables) -- receiver based -- slow -- use sender if possible
   inline void Init_SdEffWt(LeabraSendCons* cg) {
-    CON_GROUP_LOOP(cg, C_Init_SdEffWt((CaiSynDepCon*)cg->OwnCn(i)));
+    float* wts = cg->OwnCnVar(WT);
+    float* cais = cg->OwnCnVar(CAI);
+    float* effs = cg->OwnCnVar(EFFWT);
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt(effs[i], wts[i], cais[i]));
   }
   // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
-  override void C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su) {
-    inherited::C_Init_Weights_post(cg, cn, ru, su);
-    CaiSynDepCon* lcn = (CaiSynDepCon*)cn; lcn->effwt = lcn->wt;
-    lcn->cai = 0.0f; 
+  inline override void C_Init_Weights_post(BaseCons* cg, const int idx,
+                                           Unit* ru, Unit* su, Network* net) {
+    inherited::C_Init_Weights_post(cg, idx, ru, su, net);
+    cg->OwnCn(idx,EFFWT) = cg->OwnCn(idx,WT); cg->OwnCn(idx,CAI) = 0.0f;
   }
 
-  inline void C_Send_NetinDelta_Thread(CaiSynDepCon* cn, float* send_netin_vec,
-                                       int ru_idx, float su_act_delta_eff) {
-    send_netin_vec[ru_idx] += cn->effwt * su_act_delta_eff;
-  }
+  inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+                                const int thread_no, const float su_act_delta)
+  { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
+  // use effwt instead of wt
 
-  inline void C_Send_NetinDelta_NoThread(CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
-    ru->net_delta += cn->effwt * su_act_delta_eff;
-  }
-
-  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-			      int thread_no, float su_act_delta) {
-    float su_act_delta_eff = cg->scale_eff * su_act_delta;
-    if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
-      float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CaiSynDepCon*)cg->OwnCn(i),
-                                                  send_netin_vec,
-                                                  cg->UnIdx(i), su_act_delta_eff));
-    }
-    else {
-      if(thread_no < 0) {
-	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread((CaiSynDepCon*)cg->OwnCn(i),
-                                                      (LeabraUnit*)cg->Un(i,net),
-                                                      su_act_delta_eff));
-      }
-      else {
-	float* send_netin_vec = net->send_netin_tmp.el
-	  + net->send_netin_tmp.FastElIndex(0, thread_no);
-	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread((CaiSynDepCon*)cg->OwnCn(i),
-                                                    send_netin_vec,
-                                                    cg->UnIdx(i), su_act_delta_eff));
-      }
-    }
-  }
-
-  float C_Compute_Netin(CaiSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
-    return cn->effwt * su->act_eq;
-  }
-  float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
+  inline override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
+    // this is slow b/c going through the PtrCn
     float rval=0.0f;
-    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CaiSynDepCon*)cg->PtrCn(i), 
-					       (LeabraUnit*)ru,
-                                               (LeabraUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt
+                                               cg->Un(i,net)->act));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 

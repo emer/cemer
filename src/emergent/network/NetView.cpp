@@ -1337,7 +1337,8 @@ void NetView::Render_wt_lines() {
       n_prjns++;
       int n_con = 0;
       for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-        float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
+        float wt = (swt ? ((SendCons*)cg)->Cn(i,BaseCons::WT,nt) :
+                    ((RecvCons*)cg)->Cn(i, BaseCons::WT, nt));
         if(wt >= wt_line_thr) n_con++;
       }
 
@@ -1414,7 +1415,8 @@ void NetView::Render_wt_lines() {
 
     for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
       Unit* su = (swt ? ((SendCons*)cg)->Un(i,nt) : ((RecvCons*)cg)->Un(i,nt));
-      float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
+      float wt = (swt ? ((SendCons*)cg)->Cn(i, BaseCons::WT, nt) :
+                  ((RecvCons*)cg)->Cn(i, BaseCons::WT, nt));
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos

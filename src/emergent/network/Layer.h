@@ -371,8 +371,6 @@ public:
   // #EXPERT #CAT_Structure allocate sending connections based on those allocated previously
   virtual void  RecvConsPostAlloc(Projection* prjn);
   // #EXPERT #CAT_Structure allocate recv connections based on those allocated previously
-  virtual void  LinkPtrCons();
-  // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void  DisConnect();
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
   virtual int   CountRecvCons();

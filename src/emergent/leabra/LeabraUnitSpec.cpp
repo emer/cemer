@@ -986,7 +986,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
 
   u->net_raw += u->net_delta;
-  float tot_net = (u->bias_scale * u->bias.OwnCn(0)->wt) + u->net_raw;
+  float tot_net = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT)) + u->net_raw;
 
   if(ls->inhib.avg_boost > 0.0f && u->act_eq > 0.0f && net->ct_cycle > 0) {
     LeabraInhib* thr;
@@ -1786,7 +1786,7 @@ void LeabraUnitSpec::Compute_dWt_FirstMinus(LeabraUnit* u, LeabraNetwork* net, i
   if(!lay->Compute_dWt_FirstMinus_Test(net)) return; // applies to bias weights now
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
+  bspc->B_Compute_Leabra_dWt(&u->bias, u, lay);
 }
 
 void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -1801,7 +1801,7 @@ void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, in
   if(!lay->Compute_dWt_FirstPlus_Test(net)) return; // applies to bias weights now
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
+  bspc->B_Compute_Leabra_dWt(&u->bias, u, lay);
 }
 
 void LeabraUnitSpec::Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -1816,7 +1816,7 @@ void LeabraUnitSpec::Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int 
   if(!lay->Compute_dWt_Nothing_Test(net)) return; // applies to bias weights now
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
+  bspc->B_Compute_Leabra_dWt(&u->bias, u, lay);
 }
 
 void LeabraUnitSpec::Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -1847,7 +1847,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
     send_gp->Compute_Leabra_Weights(lu,lnet);
   }
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->B_Compute_Weights((LeabraCon*)u->bias.OwnCn(0), lu);
+  bspc->B_Compute_Weights(&u->bias, lu);
 }
 
 void LeabraUnitSpec::Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net,
@@ -1863,7 +1863,9 @@ void LeabraUnitSpec::Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net,
   }
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->C_Compute_StableWeights((LeabraCon*)u->bias.OwnCn(0));
+  bspc->C_Compute_StableWeights(u->bias.OwnCn(0,LeabraConSpec::WT),
+                                u->bias.OwnCn(0,LeabraConSpec::SWT),
+                                u->bias.OwnCn(0,LeabraConSpec::LWT));
 }
 
 

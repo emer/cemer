@@ -78,7 +78,7 @@ void ScalarValSelfPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     int su_idx = su->idx;
     float dist = (float)(ru_idx - su_idx) / wt_width;
     float wtval = scale_val * expf(-(dist * dist));
-    cg->PtrCn(i)->wt = wtval;
+    cg->PtrCn(i,BaseCons::WT,net) = wtval;
   }
 }
 

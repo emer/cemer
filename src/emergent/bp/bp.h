@@ -65,6 +65,10 @@ public:
     BEFORE_LRATE,		// apply momentum before learning rate
     NORMALIZED 			// like BEFORE, but normalize direction to unit length
   };
+ 
+  enum BpConVars {
+    PDW = DWT+1,                // previous delta weight
+  };
 
   float 	lrate;		// learning rate
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
@@ -73,32 +77,55 @@ public:
   MomentumType	momentum_type;	// #CONDEDIT_OFF_momentum:0 type of momentum function to use
   float		momentum_c;	// #READ_ONLY complement of momentum (for NORMALIZED)
   float 	decay;		// decay rate (before lrate and momentum)
-  void 		(*decay_fun)(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su);
+  void 		(*decay_fun)(BpConSpec* spec, float& wt, float& dwt);
   // #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  void 		C_Init_dWt(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_Init_dWt(cg, cn, ru, su); ((BpCon*)cn)->dwt = 0.0f; }
+  inline override void C_Init_Weights(RecvCons* cg, int idx, Unit* ru, Unit* su,
+                                      Network* net)
+  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
 
-  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((BpCon*)cn)->pdw = 0.0f;}
-
-  inline float		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
+  inline float		C_Compute_dEdA(const float wt, const float ru_dEdNet)
+  { return wt * ru_dEdNet; }
+  // #IGNORE 
   inline virtual float 	Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net);
   // get error from units I send to
 
-  inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
+  inline void 		C_Compute_dWt(float& dwt, const float ru_dEdNet,
+                                     const float su_act)
+  { dwt += su_act * ru_dEdNet; }
+  // #IGNORE
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
-  inline virtual void	B_Compute_dWt(BpCon* cn, BpUnit* ru);
+  inline virtual void	B_Compute_dWt(RecvCons* bias, BpUnit* ru);
   // Compute dE with respect to the weights
 
-  inline void 	C_Compute_WtDecay(BpCon* cn, BpUnit* ru, BpUnit* su);
-  // call the decay function
+  inline void 	C_Compute_WtDecay(float& wt, float& dwt) {
+    if(decay_fun != NULL)
+      (*decay_fun)(this, wt, dwt);
+  }
+  inline void C_AFT_Compute_Weights(float& wt, float& dwt, float& pdw) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    pdw = cur_lrate * dwt + momentum * pdw;
+    wt += pdw;
+    dwt = 0.0f;
+  }
+  // AFTER_LRATE
+  inline void C_BEF_Compute_Weights(float& wt, float& dwt, float& pdw) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    pdw = dwt + momentum * pdw;
+    wt += cur_lrate * pdw;
+    dwt = 0.0f;
+  }
+  // BEFORE_LRATE
+  inline void C_NRM_Compute_Weights(float& wt, float& dwt, float& pdw) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    pdw = momentum_c * dwt + momentum * pdw;
+    wt += cur_lrate * pdw;
+    dwt = 0.0f;
+  }
+  // NORMALIZED
 
-  inline void	C_BEF_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // BEFORE_LRATE
-  inline void	C_AFT_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // AFTER_LRATE
-  inline void	C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su); // NORMALIZED
   inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
-  inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
+  inline virtual void B_Compute_Weights(RecvCons* bias, BpUnit* ru);
   // for the bias unit
 
   virtual void	LogLrateSched(int epcs_per_step = 50, float n_steps=7);
@@ -122,13 +149,13 @@ private:
 // the following functions are possible weight decay functions
 
 // #REG_FUN
-E_API void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
+E_API void Bp_Simple_WtDecay(BpConSpec* spec, float& wt, float& dwt)
 // #LIST_BpConSpec_WtDecay Simple weight decay (subtract decay*wt)
-     ;				// term here so scanner picks up comment
+     ;				// term here so maketa picks up comment
 // #REG_FUN
-E_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su)
+E_API void Bp_WtElim_WtDecay(BpConSpec* spec, float& wt, float& dwt)
 // #LIST_BpConSpec_WtDecay Weight Elimination (Rumelhart) weight decay
-     ;				// term here so scanner picks up comment
+     ;				// term here so maketa picks up comment
 
 eTypeDef_Of(BpRecvCons);
 
@@ -252,74 +279,50 @@ typedef void (BpUnit::*BpUnitMethod)(BpNetwork*, int);
 
 // inline functions (for speed)
 
-inline float BpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
-  return cn->wt * ru->dEdNet;
-}
 inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net) {
+  // this is ptr-con based and thus very slow..
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i,net),
-                                           su));
+  CON_GROUP_LOOP(cg, rval += C_Compute_dEdA(cg->PtrCn(i,WT,net),
+                                            ((BpUnit*)cg->Un(i,net))->dEdNet));
   return rval;
 }
 
-inline void BpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  cn->dwt += su->act * ru->dEdNet;
-}
 inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru,
-                                  (BpUnit*)cg->Un(i,net)));
+  const float ru_dEdNet = ((BpUnit*)ru)->dEdNet;
+  float* dwts = cg->OwnCnVar(DWT);
+  CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_dEdNet, cg->Un(i,net)->act));
 }
-inline void BpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
-  cn->dwt += ru->dEdNet;
-}
-
-inline void BpConSpec::C_Compute_WtDecay(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  if(decay_fun != NULL)
-    (*decay_fun)(this, cn, ru, su);
-}
-inline void BpConSpec::C_AFT_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  C_Compute_WtDecay(cn, ru, su); // decay goes into dwt...
-  cn->pdw = cur_lrate * cn->dwt + momentum * cn->pdw;
-  cn->wt += cn->pdw;
-  cn->dwt = 0.0f;
-}
-inline void BpConSpec::C_BEF_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  C_Compute_WtDecay(cn, ru, su);
-  cn->pdw = cn->dwt + momentum * cn->pdw;
-  cn->wt += cur_lrate * cn->pdw;
-  cn->dwt = 0.0f;
-}
-inline void BpConSpec::C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  C_Compute_WtDecay(cn, ru, su);
-  cn->pdw = momentum_c * cn->dwt + momentum * cn->pdw;
-  cn->wt += cur_lrate * cn->pdw;
-  cn->dwt = 0.0f;
+inline void BpConSpec::B_Compute_dWt(RecvCons* bias, BpUnit* ru) {
+  bias->OwnCn(0, DWT) += ru->dEdNet;
 }
 
 inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+  float* wts = cg->OwnCnVar(WT);
+  float* dwts = cg->OwnCnVar(DWT);
+  float* pdwts = cg->OwnCnVar(PDW);
   if(momentum_type == AFTER_LRATE) {
-    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((BpCon*)cg->OwnCn(i),
-                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights(wts[i], dwts[i], pdwts[i]));
   }
   else if(momentum_type == BEFORE_LRATE) {
-    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((BpCon*)cg->OwnCn(i),
-                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights(wts[i], dwts[i], pdwts[i]));
   }
   else {
-    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((BpCon*)cg->OwnCn(i),
-                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights(wts[i], dwts[i], pdwts[i]));
   }
   ApplyLimits(cg, ru, net);
 }
 
-inline void BpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
+inline void BpConSpec::B_Compute_Weights(RecvCons* bias, BpUnit* ru) {
   if(momentum_type == AFTER_LRATE)
-    C_AFT_Compute_Weights(cn, ru, NULL);
+    C_AFT_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
+                          bias->OwnCn(0,PDW));
   else if(momentum_type == BEFORE_LRATE)
-    C_BEF_Compute_Weights(cn, ru, NULL);
+    C_BEF_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
+                          bias->OwnCn(0,PDW));
   else
-    C_NRM_Compute_Weights(cn, ru, NULL);
-  C_ApplyLimits(cn, ru, NULL);
+    C_NRM_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
+                          bias->OwnCn(0,PDW));
+  C_ApplyLimits(bias->OwnCn(0,WT), ru, NULL);
 }
 
 //////////////////////////////////////////
@@ -332,10 +335,12 @@ class E_API HebbBpConSpec : public BpConSpec {
   // Simple Hebbian wt update (send act * recv act)
 INHERITED(BpConSpec)
 public:
-  inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
+  inline void 		C_Compute_dWt(float& dwt, const float ru_act,
+                                     const float su_act)
+  { dwt += su_act * ru_act; }
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
 
-  inline void		B_Compute_dWt(BpCon* cn, BpUnit* ru);
+  inline void		B_Compute_dWt(RecvCons* bias, BpUnit* ru);
 
   TA_BASEFUNS_NOCOPY(HebbBpConSpec);
 private:
@@ -343,17 +348,15 @@ private:
   void 	Destroy()		{ };
 };
 
-inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
-}
-
 inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->OwnCn(i), (BpUnit*)ru,
-                                  (BpUnit*)cg->Un(i,net)));
+  const float ru_act = (ru->ext_flag & Unit::TARG) ? ru->targ : ru->act;
+  float* dwts = cg->OwnCnVar(DWT);
+  CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act));
 }
 
-inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
-  cn->dwt +=  ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
+inline void HebbBpConSpec::B_Compute_dWt(RecvCons* bias, BpUnit* ru) {
+  const float ru_act = (ru->ext_flag & Unit::TARG) ? ru->targ : ru->act;
+  bias->OwnCn(0, DWT) += ru_act;            // is this really what we want?
 }
 
 eTypeDef_Of(ErrScaleBpConSpec);
@@ -364,7 +367,8 @@ INHERITED(BpConSpec)
 public:
   float		err_scale;	// the scaling parameter
 
-  inline float 		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
+  inline float 		C_Compute_dEdA(const float wt, const float ru_dEdNet)
+  { return err_scale * wt * ru_dEdNet; }
   inline float 		Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net);
 
   TA_SIMPLE_BASEFUNS(ErrScaleBpConSpec);
@@ -376,13 +380,11 @@ private:
   void	Defaults_init() { };
 };
 
-inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
-  return err_scale * cn->wt * ru->dEdNet;
-}
 inline float ErrScaleBpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net) {
+  // this is ptr-con based and thus very slow..
   float rval = 0.0f;
-  CON_GROUP_LOOP(cg,rval += C_Compute_dEdA((BpCon*)cg->PtrCn(i), (BpUnit*)cg->Un(i,net),
-                                           su));
+  CON_GROUP_LOOP(cg, rval += C_Compute_dEdA(cg->PtrCn(i,WT,net),
+                                            ((BpUnit*)cg->Un(i,net))->dEdNet));
   return rval;
 }
 
@@ -402,20 +404,51 @@ class E_API DeltaBarDeltaBpConSpec : public BpConSpec {
   // delta-bar-delta has local learning rates for each connection
 INHERITED(BpConSpec)
 public:
+  enum DBDBpConVars {
+    LRATE = PDW+1,                // local learning rate
+  };
+
   float		lrate_incr;	// rate of learning rate increase (additive)
   float		lrate_decr;	// rate of learning rate decrease (multiplicative)
   float		act_lrate_incr;	// #HIDDEN actual lrate increase (times lrate)
 
-  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((DeltaBarDeltaBpCon*)cn)->lrate = lrate;}
-  // set initial learning rate
+  inline override void 	C_Init_Weights(RecvCons* cg, int idx, Unit* ru, Unit* su,
+                                       Network* net)
+  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,LRATE) = lrate; }
 
-  inline void	C_UpdateLrate(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void	C_BEF_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void	C_AFT_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
-  inline void	C_NRM_Compute_Weights(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su);
-  inline virtual void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
-  inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
+  inline void	C_UpdateLrate(float& lrate, const float dwt, const float pdw) {
+    const float prod = pdw * dwt;
+    if(prod > 0.0f)
+      lrate += act_lrate_incr;
+    else if(prod < 0.0f)
+      lrate *= lrate_decr;
+    // prod = 0 means first epoch, don't change lrate..
+  }
+
+  inline void C_AFT_Compute_Weights(float& wt, float& dwt, float& pdw, float& lrate) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    C_UpdateLrate(lrate, dwt, pdw);
+    pdw = cur_lrate * dwt + momentum * pdw;
+    wt += pdw;
+    dwt = 0.0f;
+  }
+  inline void C_BEF_Compute_Weights(float& wt, float& dwt, float& pdw, float& lrate) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    C_UpdateLrate(lrate, dwt, pdw);
+    pdw = dwt + momentum * pdw;
+    wt += cur_lrate * pdw;
+    dwt = 0.0f;
+  }
+  inline void C_NRM_Compute_Weights(float& wt, float& dwt, float& pdw, float& lrate) {
+    C_Compute_WtDecay(wt, dwt); // decay goes into dwt...
+    C_UpdateLrate(lrate, dwt, pdw);
+    pdw = momentum_c * dwt + momentum * pdw;
+    wt += cur_lrate * pdw;
+    dwt = 0.0f;
+  }
+
+  inline override void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
+  inline override void	B_Compute_Weights(RecvCons* bias, BpUnit* ru);
 
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
 protected:
@@ -427,69 +460,34 @@ private:
   void	Defaults_init();
 };
 
-inline void DeltaBarDeltaBpConSpec::C_UpdateLrate
-(DeltaBarDeltaBpCon* cn, BpUnit*, BpUnit*)
-{
-  float prod = cn->pdw * cn->dwt;
-  if(prod > 0.0f)
-    cn->lrate += act_lrate_incr;
-  else if(prod < 0.0f)
-    cn->lrate *= lrate_decr;
-  // prod = 0 means first epoch, don't change lrate..
-}
-
-inline void DeltaBarDeltaBpConSpec::C_AFT_Compute_Weights
-(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su)
-{
-  C_Compute_WtDecay(cn, ru, su); // decay goes into dwt...
-  C_UpdateLrate(cn, ru, su);
-  cn->pdw = cn->lrate * cn->dwt + momentum * cn->pdw;
-  cn->wt += cn->pdw;
-  cn->dwt = 0.0f;
-}
-inline void DeltaBarDeltaBpConSpec::C_BEF_Compute_Weights
-(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su)
-{
-  C_Compute_WtDecay(cn, ru, su);
-  C_UpdateLrate(cn, ru, su);
-  cn->pdw = cn->dwt + momentum * cn->pdw;
-  cn->wt += cn->lrate * cn->pdw;
-  cn->dwt = 0.0f;
-}
-inline void DeltaBarDeltaBpConSpec::C_NRM_Compute_Weights
-(DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su)
-{
-  C_Compute_WtDecay(cn, ru, su);
-  C_UpdateLrate(cn, ru, su);
-  cn->pdw = momentum_c * cn->dwt + momentum * cn->pdw;
-  cn->wt += cn->lrate * cn->pdw;
-  cn->dwt = 0.0f;
-}
-
 inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+  float* wts = cg->OwnCnVar(WT);
+  float* dwts = cg->OwnCnVar(DWT);
+  float* pdwts = cg->OwnCnVar(PDW);
+  float* lrates = cg->OwnCnVar(LRATE);
   if(momentum_type == AFTER_LRATE) {
-    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
-                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_AFT_Compute_Weights(wts[i], dwts[i], pdwts[i], lrates[i]));
   }
   else if(momentum_type == BEFORE_LRATE) {
-    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
-                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_BEF_Compute_Weights(wts[i], dwts[i], pdwts[i], lrates[i]));
   }
   else {
-    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights((DeltaBarDeltaBpCon*)cg->OwnCn(i),
-                                             (BpUnit*)ru, (BpUnit*)cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_NRM_Compute_Weights(wts[i], dwts[i], pdwts[i], lrates[i]));
   }
   ApplyLimits(cg, ru, net);
 }
 
-inline void DeltaBarDeltaBpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
+inline void DeltaBarDeltaBpConSpec::B_Compute_Weights(RecvCons* bias, BpUnit* ru) {
   if(momentum_type == AFTER_LRATE)
-    C_AFT_Compute_Weights((DeltaBarDeltaBpCon*)cn, ru, NULL);
+    C_AFT_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
+                          bias->OwnCn(0,PDW), bias->OwnCn(0,LRATE));
   else if(momentum_type == BEFORE_LRATE)
-    C_BEF_Compute_Weights((DeltaBarDeltaBpCon*)cn, ru, NULL);
+    C_BEF_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
+                          bias->OwnCn(0,PDW), bias->OwnCn(0,LRATE));
   else
-    C_NRM_Compute_Weights((DeltaBarDeltaBpCon*)cn, ru, NULL);
-  C_ApplyLimits(cn, ru, NULL);
+    C_NRM_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
+                          bias->OwnCn(0,PDW), bias->OwnCn(0,LRATE));
+  C_ApplyLimits(bias->OwnCn(0,WT), ru, NULL);
 }
 
 

@@ -25,22 +25,21 @@
 
 eTypeDef_Of(Connection);
 
-// the connection is managed fully by the ConSpec and the RecvCons
-// don't put any functions on the connection itself
+// the connection is managed fully by the ConSpec and the BaseCons
+// and is no longer used as such -- all the memory is directly 
+// allocated floats -- the Connection object is only used for type information
+// regarding number of variables
 
-// note: v4.0 connection stuff is not backwards compatible with v3.2
-
-// note: connection must be just a bag of bits with *no* functions of its own
-// especially no virtual functions!  it is managed with raw bit copy ops
-// although the sending connections have pointers to connection objects
-// it is up to the connection management code to ensure that when a
-// connection is removed, its associated sending link is also removed
+// note: connections MUST have only float members -- type information 
+// of this object is used by the BaseCons to manage the connection memory,
+// which is allocated vector-wise so that each variable is contiguous in memory,
+// to optimize the vectorization processes
 
 class E_API Connection {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
-  float         wt;             // #VIEW_HOT weight of connection
-  float         dwt;            // #VIEW #NO_SAVE resulting net weight change
+  float        wt;             // #VIEW_HOT synaptic weight of connection
+  float        dwt;            // #VIEW #NO_SAVE change in synaptic weight as computed by learning mechanism
 
   Connection() { wt = dwt = 0.0f; }
 };

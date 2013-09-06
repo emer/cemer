@@ -36,16 +36,22 @@ public:
 
   override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                       LeabraNetwork* net) {
+    if(ignore_unlearnable && net->unlearnable_trial) return;
+
     Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
-    for(int i=0; i<cg->size; i++) {
+  float* lwts = cg->OwnCnVar(LWT);
+  float* dwts = cg->OwnCnVar(DWT);
+
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      float lin_wt = LinFmSigWt(cn->lwt);
-      C_Compute_dWt(cn, ru, 
-		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
-		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_mid,
+      const float lin_wt = LinFmSigWt(lwts[i]);
+      C_Compute_dWt_LeabraCHL(dwts[i],
+		    C_Compute_Hebb(cg->savg_cor, lin_wt, ru->act_p, su->act_p),
+                              // only diff: replaces act_mid instead of act_m
+                    C_Compute_Err_LeabraCHL(lin_wt, ru->act_p, ru->act_mid,
 					    su->act_p, su->act_mid));  
     }
   }

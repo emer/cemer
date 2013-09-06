@@ -121,8 +121,7 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
                       su_u->SendConsAllocInc(1, prjn);
                     }
                     else {
-                      Connection* cn = ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-                      cn->wt = eff_wt;
+                      ru_u->ConnectFrom(su_u, prjn, alloc_loop, true, eff_wt);
                     }
                   }
                 }
@@ -183,7 +182,7 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
     if(run.y != sun.y)
       feat_wt = oth_feat_wt;
     float wt = feat_wt * sangwt * gangwt * gauswt;
-    cg->Cn(i)->wt = wt;
+    cg->Cn(i,BaseCons::WT,net) = wt;
   }
 }
 
