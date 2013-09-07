@@ -49,7 +49,7 @@ public:
       cg->PtrCn(i, SACT_LRN, net) = su->act_eq;
     }
   }
-  // RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
+  // #IGNORE RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
   inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
                                      LeabraNetwork* net, const bool do_s) {
@@ -61,11 +61,13 @@ public:
                                          const float mtx_act, const float su_act) {
     dwt = cur_lrate * mtx_act * su_act;  // note: =, not += -- always learn last gating action
   }
+  // #IGNORE
 
   inline void C_Compute_dWt_Matrix_LvDa(float& dwt, const float mtx_da,
                                         const float mtx_act, const float su_act) {
     dwt += cur_lrate * mtx_da * mtx_act * su_act;
   }
+  // #IGNORE
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {
@@ -118,6 +120,7 @@ public:
       dwt *= dwt_remain;    // gradually dissappears
     }
   }
+  // #IGNORE
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {

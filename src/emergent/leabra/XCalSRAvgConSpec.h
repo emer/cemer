@@ -40,10 +40,11 @@ public:
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
     float effthr = xcal.thr_m_mix * srm + su_act_mult * ru_avg_l;
     dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
- }
+  }
+  // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                       LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float su_avg_m = su->avg_m;

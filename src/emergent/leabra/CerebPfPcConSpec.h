@@ -32,39 +32,45 @@ INHERITED(LeabraConSpec)
 public:
 
   // everything can use one dwt with post-soft-bound because no hebbian term
-  inline void C_Compute_dWt_PfPc(LeabraCon* cn, float gran_act,
-                                 float purk_minus, float purk_plus) {
-    float dwt = gran_act * (purk_plus - purk_minus);
-    cn->dwt += cur_lrate * dwt; 
-  }
+  inline void C_Compute_dWt_PfPc(float& dwt, const float gran_act,
+                                 const float purk_minus, const float purk_plus)
+  { dwt += cur_lrate * gran_act * (purk_plus - purk_minus); }
+  // #IGNORE  
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {
     if(su->act_lrn == 0.0f) return; // if sender is not active, bail
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
-    for(int i=0; i<cg->size; i++) {
+    const float gran_act = su->act_lrn;
+    float* dwts = cg->OwnCnVar(DWT);
+
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_PfPc(cn, su->act_lrn, ru->act_eq, ru->targ);
+      C_Compute_dWt_PfPc(dwts[i], gran_act, ru->act_eq, ru->targ);
       // target activation trains relative to act_eq
     }
   }
+  // #IGNORE 
 
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                              LeabraNetwork* net) {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
+  // #IGNORE 
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                LeabraNetwork* net) {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
+  // #IGNORE 
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                         LeabraNetwork* net) {
     Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
   }
+  // #IGNORE 
 
   TA_SIMPLE_BASEFUNS(CerebPfPcConSpec);
 private:

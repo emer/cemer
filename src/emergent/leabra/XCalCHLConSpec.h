@@ -34,7 +34,7 @@ public:
 #endif
   bool		use_chl;	// use LeabraCHL learning instead of XCAL or CAL learning, even when rest of network is using those other algorithms
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                          LeabraNetwork* net) {
     if(use_chl)
       inherited::Compute_dWt_LeabraCHL(cg, su, net);
@@ -42,37 +42,39 @@ public:
       inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) {
+  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                     LeabraNetwork* net) {
     if(use_chl)
       inherited::Compute_Weights_LeabraCHL(cg, su, net);
     else
       inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) {
     if(use_chl)
       inherited::Compute_dWt_LeabraCHL(cg, su, net);
     else
       inherited::Compute_dWt_CtLeabraCAL(cg, su, net);
   }
 
-  override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                            LeabraNetwork* net) {
+  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) {
     if(use_chl)
       inherited::Compute_Weights_LeabraCHL(cg, su, net);
     else
       inherited::Compute_Weights_CtLeabraCAL(cg, su, net);
   }
 
-  override void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay) {
+  inline override void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
+                                                   LeabraLayer* rlay) {
     if(use_chl)
       inherited::B_Compute_dWt_LeabraCHL(bias, ru);
     else
       inherited::B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
   }
-  override void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay) {
+  inline override void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
+                                                  LeabraLayer* rlay) {
     if(use_chl)
       inherited::B_Compute_dWt_LeabraCHL(bias, ru);
     else

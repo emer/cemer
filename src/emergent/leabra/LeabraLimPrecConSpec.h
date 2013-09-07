@@ -42,11 +42,13 @@ public:
 
   inline void C_Compute_LimPrecWts(float& wt)
   { wt = PrecLimitVal(wt); }
+  // #IGNORE
 
   inline void Compute_LimPrecWts(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
     float* wts = cg->OwnCnVar(WT);
     CON_GROUP_LOOP(cg, C_Compute_LimPrecWts(wts[i]));
   }
+  // #IGNORE
 
   inline override void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                                   LeabraNetwork* net) {

@@ -57,15 +57,16 @@ public:
   };
 
   TrialSynDepSpec	syn_dep;	// synaptic depression specifications
-
-  void C_Depress_Wt(float& effwt, const float wt, const float su_act) {
+  
+  inline void C_Depress_Wt(float& effwt, const float wt, const float su_act) {
     // NOTE: fctn of sender act and wt: could be just sender or sender*recv.. 
     float deff = syn_dep.rec * (wt - effwt) - syn_dep.depl * su_act * wt;
     effwt += deff;
     if(effwt > wt)              effwt = wt;
     if(effwt < wt_limits.min)   effwt = wt_limits.min;
   }
-  virtual void Depress_Wt(LeabraSendCons* cg, LeabraUnit* su,
+  // #IGNORE
+  inline virtual void Depress_Wt(LeabraSendCons* cg, LeabraUnit* su,
                           LeabraNetwork* net) {
     const float su_act = su->act_eq;
     float* wts = cg->OwnCnVar(WT);
@@ -73,18 +74,19 @@ public:
 
     CON_GROUP_LOOP(cg, C_Depress_Wt(effs[i], wts[i], su_act));
   }
+  // #IGNORE
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                       LeabraNetwork* net) {
     inherited::Compute_dWt_LeabraCHL(cg, su, net);
     Depress_Wt(cg, su, net);
   }
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                          LeabraNetwork* net) {
     inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
     Depress_Wt(cg, su, net);
   }
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
                                         LeabraNetwork* net) {
     inherited::Compute_dWt_CtLeabraCAL(cg, su, net);
     Depress_Wt(cg, su, net);
@@ -93,20 +95,23 @@ public:
   void C_Reset_EffWt(float& effwt, const float wt) {
     effwt = wt;
   }
+  // #IGNORE
   virtual void Reset_EffWt(LeabraRecvCons* cg, LeabraNetwork* net) {
     // recv based -- slow
     CON_GROUP_LOOP(cg, C_Reset_EffWt(cg->PtrCn(i,EFFWT,net), cg->PtrCn(i,WT,net)));
   }
+  // #IGNORE
   virtual void Reset_EffWt(LeabraSendCons* cg) {
     float* wts = cg->OwnCnVar(WT);
     float* effs = cg->OwnCnVar(EFFWT);
     CON_GROUP_LOOP(cg, C_Reset_EffWt(effs[i], wts[i]));
   }
+  // #IGNORE
 
   inline override void 	C_Init_Weights_post(BaseCons* cg, const int idx,
                                             Unit* ru, Unit* su, Network* net) {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
-    cg->OwnCn(idx,EFFWT) = cg->OwnCn(idx,WT);
+    cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net);
   }
 
   inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,

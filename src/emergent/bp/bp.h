@@ -80,7 +80,7 @@ public:
   void 		(*decay_fun)(BpConSpec* spec, float& wt, float& dwt);
   // #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  inline override void C_Init_Weights(RecvCons* cg, int idx, Unit* ru, Unit* su,
+  inline override void C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
                                       Network* net)
   { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
 

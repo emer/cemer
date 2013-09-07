@@ -237,8 +237,9 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
 
 void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+  Network* net = prjn->layer->own_net;
   if(cg->size == 1) {           // right eye
-    cg->Cn(0)->wt = 1.0f;
+    cg->Cn(0,BaseCons::WT,net) = 1.0f;
     return;
   }
 
@@ -260,7 +261,7 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
   if(cg->size == dwd) {
     for(int i=0; i<cg->size; i++) {
       float wt = v1b_weights.SafeEl(i, didx);
-      cg->Cn(i)->wt = wt;
+      cg->Cn(i,BaseCons::WT,net) = wt;
     }
   }
   else {
@@ -269,14 +270,14 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
       int st = dwd - cg->size;
       for(int i=0; i<cg->size; i++) {
         float wt = v1b_weights.SafeEl(st + i, didx);
-        cg->Cn(i)->wt = wt;
+        cg->Cn(i,BaseCons::WT,net) = wt;
       }
     }
     else {
       // actually just straight up
       for(int i=0; i<cg->size; i++) {
         float wt = v1b_weights.SafeEl(i, didx);
-        cg->Cn(i)->wt = wt;
+        cg->Cn(i,BaseCons::WT,net) = wt;
       }
     }
   }

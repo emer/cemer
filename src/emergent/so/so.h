@@ -54,14 +54,20 @@ public:
     LAYER_AVG_ACT,		// from layer's average activation
     COMPUTE_AVG_ACT 		// compute the avg_in_act directly from my inputs (more computationally expensive but always accurate)
   };
+  enum CsConVars {
+    PDW = DWT+1,                // previous delta weight
+    DWT_AGG,                    // for aggregating the outer products
+  };
 
   float		lrate;		// learning rate
   AvgInActSource avg_act_source; // source of average input actviation value
 
-  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) 
-  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((SoCon*)cn)->pdw=0.0f; }
+  inline override void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+                                       Network* net)
+  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
 
-  inline void	C_Compute_Weights(SoCon* cn, Unit* ru, Unit* su); 
+  inline void	C_Compute_Weights(float& wt, float& dwt, float& pdw)
+  { pdw = dwt;  wt += lrate * dwt;  dwt = 0.0f; }
   inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
 
   inline virtual void	Compute_AvgInAct(SoRecvCons* cg, SoUnit* ru, SoNetwork* net);
@@ -269,13 +275,11 @@ private:
 //	Inline Functions	//
 //////////////////////////////////
 
-inline void SoConSpec::C_Compute_Weights(SoCon* cn, Unit*, Unit*) {
-  cn->pdw = cn->dwt;
-  cn->wt += lrate * cn->dwt;
-  cn->dwt = 0.0f;
-}
 inline void SoConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg, C_Compute_Weights((SoCon*)cg->OwnCn(i), ru, cg->Un(i,net)));
+  float* wts = cg->OwnCnVar(WT);
+  float* dwts = cg->OwnCnVar(DWT);
+  float* pdws = cg->OwnCnVar(PDW);
+  CON_GROUP_LOOP(cg, C_Compute_Weights(wts[i], dwts[i], pdws[i]));
   ApplyLimits(cg, ru, net);
 }
 
@@ -285,12 +289,13 @@ inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, SoUnit*, SoNetwork* net)
     cg->sum_in_act = ((SoLayer*)cg->prjn->from.ptr())->sum_act;
   }
   else if(cg->size > 0) {
-    cg->sum_in_act = 0.0f;
-    int i;
-    for(i=0; i<cg->size; i++) {
-      cg->sum_in_act += ((Unit*)cg->Un(i,net))->act;
+    float sum = 0.0f;
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      sum += cg->Un(i,net)->act;
     }
-    cg->avg_in_act = cg->sum_in_act / (float)cg->size;
+    cg->sum_in_act = sum;
+    cg->avg_in_act = sum / (float)cg->size;
   }
 }
 
@@ -305,9 +310,13 @@ class E_API HebbConSpec : public SoConSpec {
   // simple hebbian learning
 INHERITED(SoConSpec)
 public:
-  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
-				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
+  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act) 
+  { dwt += ru_act * su_act; }
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+    float* dwts = cg->OwnCnVar(DWT);
+    const float ru_act = ru->act;
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act));
+  }
   // compute weight change according to simple hebb function
 
   TA_BASEFUNS(HebbConSpec);
@@ -315,17 +324,6 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
-
-inline void HebbConSpec::
-C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
-{
-  cn->dwt += ru->act * su->act;
-}
-
-inline void HebbConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
-}
 
 /////////////////////////////////////////////////
 

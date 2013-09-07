@@ -31,10 +31,27 @@ public:
   bool		soft_wt_bound;
   // soft weight bounding *(1-wt) for inc, *wt for dec
 
-  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
-				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
-  // compute weight change according to Zsh function
+  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+                              const float avg_in_act, const float wt)
+  { float tmp = ru_act * (su_act - avg_in_act);
+    if(soft_wt_bound) {
+      if(tmp > 0) tmp *= wt_limits.max - wt;
+      else        tmp *= wt - wt_limits.min; 
+    }
+    dwt += tmp;
+  }
+
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+    Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
+    const float avg_in_act = ((SoRecvCons*)cg)->avg_in_act;
+    const float ru_act = ru->act;
+    float* dwts = cg->OwnCnVar(DWT);
+    float* wts = cg->OwnCnVar(WT);
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, avg_in_act,
+                                     wts[i]));
+   
+  }
+  // compute weight change according to Cl function (normalized input acts)
 
   TA_SIMPLE_BASEFUNS(ZshConSpec);
 private:
@@ -57,9 +74,27 @@ public:
   float		k_scl;
   // strength of the soft-competitive learning component
 
-  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
-				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
+  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+                              const float avg_in_act, const float wt)
+  { float tmp = ru_act * (su_act - avg_in_act) +
+      k_scl * ru_act * (su_act - wt);
+    if(soft_wt_bound) {
+      if(tmp > 0) tmp *= wt_limits.max - wt;
+      else        tmp *= wt - wt_limits.min; 
+    }
+    dwt += tmp;
+  }
+
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+    Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
+    const float avg_in_act = ((SoRecvCons*)cg)->avg_in_act;
+    const float ru_act = ru->act;
+    float* dwts = cg->OwnCnVar(DWT);
+    float* wts = cg->OwnCnVar(WT);
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, avg_in_act,
+                                     wts[i]));
+   
+  }
   // compute weight change according to approximate MaxIn function
 
   TA_SIMPLE_BASEFUNS(MaxInConSpec);
@@ -67,48 +102,5 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
-
-
-
-//////////////////////////////////
-//	Inline Functions	//
-//////////////////////////////////
-
-inline void ZshConSpec::
-C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
-  float tmp = ru->act * (su->act - cg->avg_in_act);
-  if(soft_wt_bound) {
-    if(tmp > 0)			
-      tmp *= wt_limits.max - cn->wt;
-    else
-      tmp *= cn->wt - wt_limits.min; 
-  }
-  cn->dwt += tmp;
-}
-
-inline void ZshConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
-}
-
-inline void MaxInConSpec::
-C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
-  float tmp = ru->act * (su->act - cg->avg_in_act) +
-    k_scl * ru->act * (su->act - cn->wt);
-  if(soft_wt_bound) {
-    if(tmp > 0)			
-      tmp *= wt_limits.max - cn->wt;
-    else
-      tmp *= cn->wt - wt_limits.min;
-  }
-  cn->dwt += tmp;
-}
-
-inline void MaxInConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
-}
 
 #endif // zsh_h

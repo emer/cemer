@@ -39,9 +39,9 @@ void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg
     int sui;
     send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
     if(sui == rui)
-      cg->Cn(i)->wt = one_to_one_wt;
+      cg->Cn(i,BaseCons::WT,net) = one_to_one_wt;
     else
-      cg->Cn(i)->wt = other_wt;
+      cg->Cn(i,BaseCons::WT,net) = other_wt;
   }
 }
 

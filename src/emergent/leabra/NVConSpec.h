@@ -47,6 +47,7 @@ public:
     pdw = dwt;
     dwt = 0.0f;
   }
+  // #IGNORE
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {

@@ -98,9 +98,9 @@ public:
 
   inline void           C_ApplyLimits(float& wt, Unit*, Unit*)
   { wt_limits.ApplyLimits(wt); }
-  // #CAT_Learning apply weight limits to single connection
+  // #IGNORE #CAT_Learning apply weight limits to single connection
   inline virtual void   ApplyLimits(RecvCons* cg, Unit* ru, Network* net);
-  // #CAT_Learning apply weight limits (sign, magnitude)
+  // #IGNORE #CAT_Learning apply weight limits (sign, magnitude)
 
   virtual void          ApplySymmetry(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning apply weight symmetrizing between reciprocal units
@@ -111,7 +111,7 @@ public:
 
   inline virtual void   C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
                                        Network* net);
-  // #CAT_Learning initialize weight state variables (ie. at beginning of training)
+  // #IGNORE #CAT_Learning initialize weight state variables (ie. at beginning of training)
   inline virtual void   C_AddRndWeights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
                                         const float scale, Network* net);
   // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
@@ -120,11 +120,12 @@ public:
   inline virtual void   C_Init_Weights_post(BaseCons* cg, const int idx,
                                             Unit* ru, Unit* su, Network* net)
   { };
+  // #IGNORE post-initialize vars
   inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru, Network* net);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
   inline virtual void   C_Init_dWt(RecvCons* cg, const int idx, Unit*, Unit*,
                                    Network* net);
-  // #CAT_Learning initialize weight-change variables on a single connection
+  // #IGNORE #CAT_Learning initialize weight-change variables on a single connection
   inline virtual void   Init_dWt(RecvCons* cg, Unit* ru, Network* net);
   // #CAT_Learning initialize weight-change variables for whole set
 
@@ -171,10 +172,10 @@ public:
   virtual bool          CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
-  virtual  void  Init_Weights_Net();
+  virtual  void         Init_Weights_Net();
   // #BUTTON #CAT_Learning initializes all weights in the network
 
-  virtual bool   DMem_AlwaysLocal() { return false; }
+  virtual bool          DMem_AlwaysLocal() { return false; }
   // #CAT_DMem overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
 
   override String       GetTypeDecoKey() const { return "ConSpec"; }

@@ -34,15 +34,15 @@ public:
   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
 #endif
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                      LeabraNetwork* net) {
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
-  float* lwts = cg->OwnCnVar(LWT);
-  float* dwts = cg->OwnCnVar(DWT);
+    float* lwts = cg->OwnCnVar(LWT);
+    float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
@@ -56,22 +56,20 @@ public:
     }
   }
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
     Compute_dWt_LeabraCHL(cg, su, net);
   }
-
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) {
     Compute_dWt_LeabraCHL(cg, su, net);
   }
-
-  override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) {
+  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                     LeabraNetwork* net) {
     inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
-  override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                            LeabraNetwork* net) {
+  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) {
     inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
 

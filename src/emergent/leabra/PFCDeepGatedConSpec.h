@@ -31,7 +31,7 @@ class E_API PFCDeepGatedConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
 
-  override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+  inline override void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 				 const int thread_no, const float su_act_delta) {
     const float* wts = cg->OwnCnVar(WT);
     if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads

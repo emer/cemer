@@ -241,6 +241,7 @@ void V1EndStopPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   taVector2i gp_geo = recv_lay->gp_geom; // same as sgp
+  Network* net = prjn->layer->own_net;
 
   taVector2i run_geo = recv_lay->un_geom;
   taVector2i sun_geo = send_lay->un_geom;
@@ -259,13 +260,13 @@ void V1EndStopPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
   int cnidx = 0;
   taVector2i sun;
   for(sun.y = 0; sun.y < sun_geo.y; sun.y++) {
-    cg->Cn(cnidx++)->wt = 1.0f; // center point
+    cg->Cn(cnidx++,BaseCons::WT,net) = 1.0f; // center point
     for(int sidx=0; sidx < 2; sidx++) {
       for(int lpdx=0; lpdx < 2; lpdx++) {
         for(int opang=0; opang<n_angles; opang++) {
           float angwt = v1c_es_angwts.FastEl(rui, opang);
           if(angwt == 0.0f) continue;
-          cg->Cn(cnidx++)->wt = angwt;
+          cg->Cn(cnidx++,BaseCons::WT,net) = angwt;
         }
       }
     }

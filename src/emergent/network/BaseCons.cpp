@@ -182,10 +182,42 @@ bool BaseCons::ChangeMyType(TypeDef*) {
   return false;
 }
 
-float& BaseCons::CnName(int idx, const String& var_nm, Network* net) const {
+float& BaseCons::SafeCn(int idx, int var_no) const {
+  if(TestError(!InRange(idx),"SafeCn", "index out of range:", String(idx),
+               "size:", String(size))) {
+    return null_rval;
+  }
+  if(TestError(var_no < 0 || var_no >= con_type->members.size,
+               "SafeCn", "variable number out of range:", String(var_no),
+               "number of variables:", String(con_type->members.size))) {
+    return null_rval;
+  }
+  Unit* un = GET_MY_OWNER(Unit);
+  if(!un) return null_rval;
+  Network* net = un->own_net();
+  if(!net) return null_rval;
+  return Cn(idx, var_no, net);
+}
+
+float& BaseCons::SafeCnName(int idx, const String& var_nm) const {
   MemberDef* md = con_type->members.FindName(var_nm);
-  if(!md) return null_rval;
-  return Cn(idx, md->idx, net);
+  if(TestError(!md, "SafeCnName", "variable named:", String(var_nm),
+               "not found in connection of type:", con_type->name)) {
+    return null_rval;
+  }
+  return SafeCn(idx, md->idx);
+}
+
+Unit* BaseCons::SafeUn(int idx) const {
+  if(TestError(!InRange(idx),"SafeUn", "index out of range:", String(idx),
+               "size:", String(size))) {
+    return NULL;
+  }
+  Unit* un = GET_MY_OWNER(Unit);
+  if(!un) return NULL;
+  Network* net = un->own_net();
+  if(!net) return NULL;
+  return Un(idx, net);
 }
 
 int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
@@ -271,7 +303,10 @@ void BaseCons::AllocCons(int sz) {
   alloc_size = sz;
   if(alloc_size == 0) return;
   if(OwnCons()) {
-    cons_own = (float**)calloc(alloc_size, con_type->members.size * sizeof(float));
+    cons_own = (float**)calloc(con_type->members.size, sizeof(float*));
+    for(int i=0; i< con_type->members.size; i++) {
+      cons_own[i] = (float*)calloc(alloc_size, sizeof(float));
+    }
   }
   else {
     cons_idx = (int32_t*)calloc(alloc_size, sizeof(int32_t));
@@ -281,7 +316,12 @@ void BaseCons::AllocCons(int sz) {
 
 void BaseCons::FreeCons() {
   if(OwnCons()) {
-    if(cons_own) { free(cons_own); cons_own = NULL; }
+    if(cons_own) {
+      for(int i=0; i< con_type->members.size; i++) {
+        free(cons_own[i]);
+      }
+      free(cons_own); cons_own = NULL;
+    }
   }
   else {
     if(cons_idx) { free(cons_idx); cons_idx = NULL; }

@@ -40,9 +40,10 @@ public:
                                   const float ru_act_m, const float su_act) {
     dwt += cur_lrate * (ru_act_p - ru_act_m) * su_act;
   }
+  // #IGNORE
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
     const float su_act = su->act_m; // note: using act_m
     float* dwts = cg->OwnCnVar(DWT);
 
@@ -53,18 +54,18 @@ public:
     }
   }
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                      LeabraNetwork* net) {
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                 LeabraNetwork* net) {
     Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
   }
 

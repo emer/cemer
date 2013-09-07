@@ -79,13 +79,14 @@ void CsConSpec::UpdateAfterEdit_impl() {
   momentum_c = 1.0f - momentum;
 }
 
-void Cs_Simple_WtDecay(CsConSpec* spec, CsCon* cn, Unit*, Unit*) {
-  cn->dwt -= spec->decay * cn->wt;
+void Cs_Simple_WtDecay(CsConSpec* spec, float& wt, float& dwt) {
+  dwt -= spec->decay * wt;
 }
 
-void Cs_WtElim_WtDecay(CsConSpec* spec, CsCon* cn, Unit*, Unit*) {
-  float denom = (1.0f + (cn->wt * cn->wt));
-  cn->dwt -= spec->decay * ((2.0f * cn->wt * cn->wt) / (denom * denom));
+void Cs_WtElim_WtDecay(CsConSpec* spec, float& wt, float& dwt) {
+  const float wt_sq = wt * wt;
+  float denom = (1.0f + wt_sq);
+  dwt -= spec->decay * ((2.0f * wt_sq) / (denom * denom));
 }
 
 void CsRecvCons::Initialize() {
@@ -205,7 +206,7 @@ void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
         continue;
       u->net += recv_gp->Compute_Netin(u, net);
     }
-    u->net += u->bias.OwnCn(0)->wt;
+    u->net += u->bias.OwnCn(0,BaseCons::WT);
   }
   else if(clamp_type == HARD_CLAMP) {
     if(cu->ext_flag & Unit::EXT) // no point in computing net for clamped units!
@@ -268,7 +269,7 @@ void CsUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
 void CsUnitSpec::Aggregate_dWt(CsUnit* cu, CsNetwork* net, int thread_no) {
   int phase = net->phase;
-  ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt((CsCon*)cu->bias.OwnCn(0), cu, phase);
+  ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt(&cu->bias, cu, phase);
   for(int g=0; g<cu->recv.size; g++) {
     CsRecvCons* recv_gp = (CsRecvCons*)cu->recv.FastEl(g);
     if(!recv_gp->prjn->from->lesioned())
@@ -301,13 +302,13 @@ void CsUnitSpec::PostSettle(CsUnit* u, CsNetwork* net) {
 void CsUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   inherited::Compute_dWt(u, net, thread_no);
   CsUnit* cu = (CsUnit*)u;
-  ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt((CsCon*)cu->bias.OwnCn(0), cu);
+  ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt(&cu->bias, cu);
   cu->n_dwt_aggs = 0;           // reset after wts are aggd
 }
 
 void CsUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   inherited::Compute_Weights(u, net, thread_no);
-  ((CsConSpec*)bias_spec.SPtr())->B_Compute_Weights((CsCon*)u->bias.OwnCn(0), u);
+  ((CsConSpec*)bias_spec.SPtr())->B_Compute_Weights(&u->bias, u);
 }
 
 void CsUnitSpec::GraphActFun(DataTable* graph_data, float min, float max, int ncycles) {

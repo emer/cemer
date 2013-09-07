@@ -53,6 +53,8 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
 void TiledGpRFOneToOnePrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
 
+  Network* net = prjn->layer->own_net;
+
   taVector2i rf_half_wd = send_gp_size / 2;
   taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == send_gp_size) // even
@@ -67,6 +69,6 @@ void TiledGpRFOneToOnePrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, U
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
-    cg->Cn(i)->wt = wt;
+    cg->Cn(i,BaseCons::WT,net) = wt;
   }
 }

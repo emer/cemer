@@ -73,9 +73,9 @@ public:
   inline override void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
                                        Network* net)
   { inherited::C_Init_Weights(cg, idx, ru, su, net); 
-    cg->OwnCn(idx,SRAVG_SS) = 0.15f; cg->OwnCn(idx,SRAVG_S) = 0.15f; 
-    cg->OwnCn(idx,SRAVG_M) = 0.15f; 
-    cg->OwnCn(idx,NMDA) = 0.0f; cg->OwnCn(idx,CA) = 0.0f; 
+    cg->Cn(idx,SRAVG_SS,net) = 0.15f; cg->Cn(idx,SRAVG_S,net) = 0.15f; 
+    cg->Cn(idx,SRAVG_M,net) = 0.15f; 
+    cg->Cn(idx,NMDA,net) = 0.0f; cg->Cn(idx,CA,net) = 0.0f; 
 #ifdef XCAL_DEBUG
     // not supported
     lcn->srprod_s = lcn->srprod_m = xcal.avg_init;
@@ -108,6 +108,7 @@ public:
     srprod_m = ru->avg_m * su->avg_m;
 #endif
   }
+  // #IGNORE
 
   inline void C_Compute_SRAvg_sssr(float& sravg_ss, float& sravg_s, float& sravg_m,
                                    const float ru_avg_ss, const float su_avg_ss,
@@ -116,8 +117,9 @@ public:
     sravg_s += us->act_avg.s_dt * (sravg_ss - sravg_s);
     sravg_m += us->act_avg.m_dt * (sravg_s - sravg_m);
   }
+  // #IGNORE
 
-  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
                             LeabraNetwork* net, const bool do_s) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
     float* srss = cg->OwnCnVar(SRAVG_SS);
@@ -154,9 +156,10 @@ public:
     float effthr = xcal.thr_m_mix * sravg_m + su_act_mult * ru_avg_l;
     dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
+  // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                       LeabraNetwork* net) {
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) {
     const float su_avg_m = su->avg_m;
     const float su_act_mult = xcal.thr_l_mix * su_avg_m;
     float* dwts = cg->OwnCnVar(DWT);

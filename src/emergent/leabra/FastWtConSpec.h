@@ -74,13 +74,13 @@ public:
   // inline override void C_Init_Weights_post(BaseCons* cg, const int idx,
   //                                          Unit* ru, Unit* su, Network* net) {
   //   inherited::C_Init_Weights_post(cg, idx, ru, su, net);
-  //   cg->OwnCn(idx,SWT) = cg->OwnCn(idx,WT);
+  //   cg->Cn(idx,SWT,net) = cg->Cn(idx,WT,net);
   // }
 
   inline override void C_Init_dWt(RecvCons* cg, const int idx, Unit* ru, Unit* su,
                                   Network* net)
-  { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->OwnCn(idx,SDWT)=0.0f; }
-
+  { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->Cn(idx,SDWT,net)=0.0f; }
+  // #IGNORE 
   override void SetCurLrate(LeabraNetwork* net, int epoch);
 
   // inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraSendCons* cg,

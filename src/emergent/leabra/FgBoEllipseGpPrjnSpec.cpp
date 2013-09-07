@@ -242,12 +242,10 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
                     }
                     else {
                       if(reciprocal) {
-                        Connection* cn = su_u->ConnectFrom(ru_u, prjn, alloc_loop);
-                        if(cn) cn->wt = wt;
+                        su_u->ConnectFrom(ru_u, prjn, alloc_loop, true, wt);
                       }
                       else {
-                        Connection* cn = ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-                        if(cn) cn->wt = wt;
+                        ru_u->ConnectFrom(su_u, prjn, alloc_loop, true, wt);
                       }
                     }
                   }
@@ -315,7 +313,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
       float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
                                          sun.y-suy_st, sun.x);
       wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
-      cg->Cn(i)->wt = wt;
+      cg->Cn(i,BaseCons::WT,net) = wt;
     }
   }
   else {
@@ -349,7 +347,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
       float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
                                          sun.y-suy_st, sun.x);
       wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
-      cg->Cn(i)->wt = wt;
+      cg->Cn(i,BaseCons::WT,net) = wt;
     }
   }
 }

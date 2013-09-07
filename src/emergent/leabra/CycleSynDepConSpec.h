@@ -73,6 +73,7 @@ public:
   inline void C_Compute_CycSynDep(float& effwt, const float wt,
                                   const float ru_act, const float su_act)
   { syn_dep.Depress(effwt, wt, ru_act, su_act); }
+  // #IGNORE 
 
   inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
                                          LeabraNetwork* net) {
@@ -82,6 +83,7 @@ public:
     CON_GROUP_LOOP(cg, C_Compute_CycSynDep(effs[i], wts[i],
 					   ((LeabraUnit*)cg->Un(i,net))->act_eq, su_act));
   }
+  // #IGNORE 
 
   inline void C_Reset_EffWt(float& effwt, const float wt)
   { effwt = wt; }
@@ -90,22 +92,23 @@ public:
     // receiver based -- avoid
     CON_GROUP_LOOP(cg, C_Reset_EffWt(cg->PtrCn(i,EFFWT,net), cg->PtrCn(i,WT,net)));
   }
+  // #IGNORE 
   inline virtual void Reset_EffWt(LeabraSendCons* cg) {
     float* wts = cg->OwnCnVar(WT);
     float* effs = cg->OwnCnVar(EFFWT);
     CON_GROUP_LOOP(cg, C_Reset_EffWt(effs[i], wts[i]));
   }
-
+  // #IGNORE 
   inline override void 	C_Init_Weights_post(BaseCons* cg, const int idx,
                                             Unit* ru, Unit* su, Network* net) {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
-    cg->OwnCn(idx,EFFWT) = cg->OwnCn(idx,WT);
+    cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net);
   }
-
+  // #IGNORE 
   inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
                                 const int thread_no, const float su_act_delta)
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
-  // use effwt instead of wt
+  // #IGNORE use effwt instead of wt
 
   inline override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
     // this is slow b/c going through the PtrCn
@@ -114,6 +117,7 @@ public:
                                                cg->Un(i,net)->act));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
+  // #IGNORE 
 
   TA_SIMPLE_BASEFUNS(CycleSynDepConSpec);
 protected:

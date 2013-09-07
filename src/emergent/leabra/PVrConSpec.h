@@ -37,6 +37,7 @@ public:
     if(tmp < 0.0f)      tmp *= wt_dec_mult;
     dwt += cur_lrate * tmp;
   }
+  // #IGNORE
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {

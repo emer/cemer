@@ -87,18 +87,18 @@ public:
 
   inline void C_Compute_Cai(float& cai, const float ru_act, const float su_act)
   { ca_dep.CaUpdt(cai, ru_act, su_act); }
-  // connection-level Cai update
+  // #IGNORE connection-level Cai update
   inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net)
   { float* cais = cg->OwnCnVar(CAI);
     const float su_act = su->act_eq;
     CON_GROUP_LOOP(cg, C_Compute_Cai(cais[i],
                                      ((LeabraUnit*)cg->Un(i,net))->act_eq, su_act));
   }
-  // connection-level synaptic depression: syn dep direct
+  // #IGNORE connection-level synaptic depression: syn dep direct
 
   inline void C_Compute_CycSynDep(float& effwt, const float wt, const float cai)
   { effwt = wt * ca_dep.SynDep(cai); }
-  // connection-level synaptic depression: ca mediated
+  // #IGNORE connection-level synaptic depression: ca mediated
   inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
                                          LeabraNetwork* net) {
     Compute_Cai(cg, su, net);
@@ -107,17 +107,18 @@ public:
     float* effs = cg->OwnCnVar(EFFWT);
     CON_GROUP_LOOP(cg, C_Compute_CycSynDep(effs[i], wts[i], cais[i]));
   }
-  // connection-group level synaptic depression
+  // #IGNORE connection-group level synaptic depression
 
   inline void C_Init_SdEffWt(float& effwt, const float wt, float& cai)
   { effwt = wt; cai = 0.0f;  }
+  // #IGNORE 
 
   inline void Init_SdEffWt(LeabraRecvCons* cg, LeabraNetwork* net) {
     // receiver based
     CON_GROUP_LOOP(cg, C_Init_SdEffWt(cg->PtrCn(i,EFFWT,net), cg->PtrCn(i,WT,net),
                                       cg->PtrCn(i,CAI,net)));
   }
-  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables) -- receiver based -- slow -- use sender if possible
+  // #IGNORE #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables) -- receiver based -- slow -- use sender if possible
   inline void Init_SdEffWt(LeabraSendCons* cg) {
     float* wts = cg->OwnCnVar(WT);
     float* cais = cg->OwnCnVar(CAI);
@@ -129,13 +130,14 @@ public:
   inline override void C_Init_Weights_post(BaseCons* cg, const int idx,
                                            Unit* ru, Unit* su, Network* net) {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
-    cg->OwnCn(idx,EFFWT) = cg->OwnCn(idx,WT); cg->OwnCn(idx,CAI) = 0.0f;
+    cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net); cg->Cn(idx,CAI,net) = 0.0f;
   }
+  // #IGNORE 
 
   inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
                                 const int thread_no, const float su_act_delta)
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
-  // use effwt instead of wt
+  // #IGNORE use effwt instead of wt
 
   inline override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
     // this is slow b/c going through the PtrCn
@@ -144,6 +146,7 @@ public:
                                                cg->Un(i,net)->act));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
+  // #IGNORE 
 
   TA_SIMPLE_BASEFUNS(CaiSynDepConSpec);
 protected:

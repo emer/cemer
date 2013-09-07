@@ -75,8 +75,8 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
     if(!cg_l || cg_l->size <= 0) return;
     for(int i=0; i < cg_l->size; i++) {
       LeabraUnit* su_l = (LeabraUnit*)cg_l->Un(i,net);
-      LeabraCon* cn = (LeabraCon*)cg_l->PtrCn(i); // recv mode
-      float itm = cn->wt * su_l->act_eq;
+      float wt = cg_l->PtrCn(i,BaseCons::WT,net); // recv mode
+      float itm = wt * su_l->act_eq;
       if(disp.max_l)
         left = MAX(left, itm);
       else
@@ -98,8 +98,8 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
         float netin = 0.0f;
         for(int i=0; i < cg->size; i++) {
           LeabraUnit* su = (LeabraUnit*)cg->Un(i,net);
-//        LeabraCon* cn = (LeabraCon*)cg->PtrCn(i); // recv mode
-//        float itm = cn->wt * su->misc_1;          // note: using misc_1 prod val!
+//        float wt = cg->PtrCn(i,BaseCons::WT,net); // recv mode
+//        float itm = wt * su->misc_1;          // note: using misc_1 prod val!
           float itm = su->misc_1; // no need for weight!
           if(disp.max_l)
             netin = MAX(netin, itm);

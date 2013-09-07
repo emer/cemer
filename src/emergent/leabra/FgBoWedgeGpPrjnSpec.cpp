@@ -219,7 +219,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
       sgpc.WrapMinDist(del, sgp_geo, ssgpc, sgp_geo_half);
 
       float wt = fgbo_weights.FastEl(del.x, del.y, sdir, sang_dx, wedge);
-      cg->Cn(i)->wt = wt;
+      cg->Cn(i,BaseCons::WT,net) = wt;
     }
   }
   else {
@@ -256,7 +256,7 @@ void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
       int sdir = suc.y % 2;
       int sang_dx = suc.x;
       float wt = fgbo_weights.FastEl(del.x, del.y, sdir, sang_dx, wedge);
-      cg->Cn(i)->wt = wt;
+      cg->Cn(i,BaseCons::WT,net) = wt;
     }
   }
 }

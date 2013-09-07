@@ -41,6 +41,7 @@ public:
                                   const float ru_act_m, const float su_act) {
     dwt += cur_lrate * (ru_act_p - ru_act_m) * su_act;
   }
+  // #IGNORE
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {
@@ -85,6 +86,7 @@ public:
     pdw = dwt;
     dwt = 0.0f;
   }
+  // #IGNORE
 
   inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {

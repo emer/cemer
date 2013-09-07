@@ -49,7 +49,7 @@ public:
                                                   cg->UnIdx(i), su_act_eff));
     }
   }
-  // #CAT_Activation sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
+  // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // don't send regular net inputs..
   inline override void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
@@ -61,8 +61,9 @@ public:
   inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, const float ru_act_m,
                                   const float su_p_act_p)
   { dwt += cur_lrate * (ru_act_p - ru_act_m) * su_p_act_p; }
+  // #IGNORE
 
-  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                       LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
@@ -76,16 +77,16 @@ public:
     }
   }
 
-  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net)
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net)
   { Compute_dWt_LeabraCHL(cg, su, net); }
 
-  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net)
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net)
   { Compute_dWt_LeabraCHL(cg, su, net); }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                 LeabraNetwork* net) {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
     // CHL uses XCAL with aggregate soft weight bounding, b/c no hebbian term
   }

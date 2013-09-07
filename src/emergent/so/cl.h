@@ -34,9 +34,19 @@ class E_API ClConSpec : public SoConSpec {
   // competitive learning connection spec (uses normalized input activation)
 INHERITED(SoConSpec)
 public:
-  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
-				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
+  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+                              const float sum_in_act, const float wt)
+  { dwt += ru_act * ((su_act / sum_in_act) - wt); }
+
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+    Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
+    const float sum_in_act = ((SoRecvCons*)cg)->sum_in_act;
+    const float ru_act = ru->act;
+    float* dwts = cg->OwnCnVar(DWT);
+    float* wts = cg->OwnCnVar(WT);
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, sum_in_act,
+                                     wts[i]));
+  }
   // compute weight change according to Cl function (normalized input acts)
 
   TA_BASEFUNS_NOCOPY(ClConSpec);
@@ -51,10 +61,16 @@ class E_API SoftClConSpec : public SoConSpec {
   // soft competitive learning connection spec
 INHERITED(SoConSpec)
 public:
-  inline void		C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
-				      Unit* ru, Unit* su);
-  inline virtual void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
-  // compute weight change according to soft Cl function
+  inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act,
+                              const float wt)
+  { dwt += ru_act * (su_act - wt); }
+
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+    const float ru_act = ru->act;
+    float* dwts = cg->OwnCnVar(DWT);
+    float* wts = cg->OwnCnVar(WT);
+    CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act, wts[i]));
+  }
 
   TA_BASEFUNS_NOCOPY(SoftClConSpec);
 private:
@@ -117,31 +133,5 @@ private:
   void	Destroy()	{ };
 };
 
-//////////////////////////////////
-//	Inline Functions	//
-//////////////////////////////////
-
-inline void ClConSpec::
-C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su)
-{
-  cn->dwt += ru->act * ((su->act / cg->sum_in_act) - cn->wt);
-}
-
-inline void ClConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
-}
-
-inline void SoftClConSpec::
-C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
-{
-  cn->dwt += ru->act * (su->act - cn->wt);
-}
-
-inline void SoftClConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->OwnCn(i), 
-				   (SoRecvCons*)cg, ru, cg->Un(i,net)));
-}
 
 #endif // cl_h

@@ -40,15 +40,17 @@ public:
     }
     dwt += cur_lrate * err;
   }
+  // #IGNORE
 
   inline void C_Compute_dWt_Delta_NoSB(float& dwt, const float ru_act_p, 
                                   const float ru_act_m, const float su_trace) {
     const float err = (ru_act_p - ru_act_m) * su_trace;
     dwt += cur_lrate * err;
   }
+  // #IGNORE
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                     LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
@@ -63,7 +65,7 @@ public:
     }
   }
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                        LeabraNetwork* net) {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
@@ -78,7 +80,7 @@ public:
     }
   }
 
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
                                       LeabraNetwork* net) {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
