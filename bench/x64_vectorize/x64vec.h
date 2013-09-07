@@ -27,9 +27,10 @@ class LeabraCon;
 /////////////////////////////////////////////////////
 //      Basic Utilities -- Timing etc
 
-# include <sys/time.h>
-# include <sys/times.h>
-# include <unistd.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <unistd.h>
+#include <stdint.h>
 
 // computes a-b
 #define ONE_MILLION 1000000
@@ -236,29 +237,42 @@ public:
 class LeabraSendCons  {
   // Leabra sending connections -- owns connection objects, has int pointers to master unit list
 public:
+  enum LeabraConVars {          // Connection variables -- must align with Connection obj
+    WT,                         // the synaptic weight of connection
+    DWT,                        // change in synaptic weight as computed by learning     
+    PDW,                        // previous delta weight
+    LWT,                        // learning weight value -- adapts according to learning rules every trial in a dynamic online manner
+    SWT,                        // stable (protein-synthesis and potentially sleep dependent) weight value -- updated from lwt value periodically (e.g., at the end of an epoch) by Compute_StableWeight function
+    N_CON_VARS,                 // total number of vars
+  };
+
   int           size;           // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections currently active
   int           alloc_size;     // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW allocated size -- no more than this number of connections may be created -- it is a hard limit set by the alloc function
   int           other_idx;      // #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
 
 protected:
   int           con_size;       // size of the connection object -- set if we own cons and built them
-  char*         cons_own;       // if we own the cons, this is their physical memory: alloc_size * con_size
-  int*          unit_idxs;      // list of unit flat_idx indexes on the other side of the connection, in index association with the connections
+  float**       cons_own;       // if we own the cons, this is their physical memory: alloc_size * con_size
+  int32_t*      unit_idxs;      // list of unit flat_idx indexes on the other side of the connection, in index association with the connections
 
 public:
 
   /////////////////////////////
   //    Accessors
 
-  inline LeabraCon*     OwnCn(int idx) const
-  { return (LeabraCon*)&(cons_own[con_size * idx]); }
-  // #CAT_Access fast access (no range or own_cons checking) to owned connection at given index, consumer must cast to appropriate type (for type safety, check con_type) -- compute algorithms should use this, as they know whether the connections are owned
+  inline float*          OwnCnVar(int var_no) const
+  { return cons_own[var_no]; }
+  // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index
 
-  inline int            UnIdx(int idx) const
+  inline float&          OwnCn(int idx, int var_no) const
+  { return cons_own[var_no][idx]; }
+  // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access
+
+  inline int             UnIdx(int idx) const
   { return unit_idxs[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   inline LeabraUnit*          Un(int idx, LeabraNetwork** net) const;
-  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- todo: must be marked as IGNORE for maketa, but actually needs to be usable from css -- need to fix
+  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level)
   inline LeabraUnit*          UnFmLst(int idx, LeabraUnit** flat_units) const
   { return flat_units[unit_idxs[idx]]; }
   // #CAT_Access fast access (no range checking) to unit pointer at given index (goes through flat index at network level)
@@ -266,7 +280,7 @@ public:
   /////////////////////////////
   //    Infrastructure
 
-  virtual LeabraCon*    ConnectUnOwnCn(int to_idx);
+  virtual int           ConnectUnOwnCn(int to_idx);
   // add a connection to given unit
   virtual void          AllocCons(int n);
   // #CAT_Structure allocate storage for given number of connections (and Unit pointers) -- this MUST be called prior to making any new connections
@@ -276,24 +290,23 @@ public:
   /////////////////////////////
   //    Computation -- usually goes in LeabraConSpec / LeabraConSpec_inlines
   
-  // this is all we really care about !!!
+  // this is all we really care about for now!!!
 
-  inline void C_Send_NetinDelta_Thread(LeabraCon* cn, float* send_netin_vec,
-                                       int ru_idx,
-                                       const float su_act_delta_eff) {
+  // note: may need to do various things here to convince the system to do sse
+  // see: http://locklessinc.com/articles/vectorize/
+  // float *x = __builtin_assume_aligned(send_netin_vec, 16);
 
-    // note: may need to do various things here to convince the system to do sse
-    // see: http://locklessinc.com/articles/vectorize/
-    // float *x = __builtin_assume_aligned(send_netin_vec, 16);
-
-    send_netin_vec[ru_idx] += cn->wt * su_act_delta_eff;
-  }
+  inline void 	C_Send_NetinDelta_Thread(const float wt, float* send_netin_vec,
+                                         const int ru_idx, const float su_act_delta_eff)
+  { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
 
   inline void Send_NetinDelta(LeabraNetwork* net, float su_act_delta) {
     const float su_act_delta_eff = su_act_delta;
     float* send_netin_vec = net->send_netin_tmp;
-    for(int i=0; i<size; i++) {
-      C_Send_NetinDelta_Thread(OwnCn(i), send_netin_vec,
+    const float* wts = OwnCnVar(WT);
+    const int sz = size;
+    for(int i=0; i<sz; i++) {
+      C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
                                UnIdx(i), su_act_delta_eff);
     }
   }

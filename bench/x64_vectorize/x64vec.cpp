@@ -85,8 +85,8 @@ void LeabraNetwork::ConnectUnits(int n_per_un, int n_layers, int n_prjns) {
       int to_lay_st = to_lay * n_per_un + lay_pos; // start at our offset in layer
       for(int k=0; k<n_per_prjn; k++) {
         int to_idx = (to_lay_st + k) % n_units;
-        LeabraCon* cn = un->send[0].ConnectUnOwnCn(to_idx);
-        cn->wt = rand_float();
+        int idx = un->send[0].ConnectUnOwnCn(to_idx);
+        un->send[0].OwnCn(idx, LeabraSendCons::WT) = rand_float();
       }
     }
   }
@@ -105,11 +105,14 @@ void LeabraNetwork::Send_Netin(float pct_delta) {
 
   // send to send_netin_tmp
   int n_send = (int)(pct_delta * n_units);
-  for(int s = 0; s<n_send; s++) {
-    int si = rand() % n_units;
-    LeabraUnit* un = units_flat[si];
-    float su_act_delta = rand_float(); // fake
-    un->send[0].Send_NetinDelta(this, su_act_delta);
+  if(n_send < 1) n_send = 1;
+  for(int s = 0; s<n_units; s++) {
+    int rnd_no = rand() % n_units;
+    if(rnd_no < n_send) {       // got below low probability number, go for it
+      LeabraUnit* un = units_flat[s];
+      float su_act_delta = rand_float(); // fake
+      un->send[0].Send_NetinDelta(this, su_act_delta);
+    }
   }
 
 // #pragma clang diagnostic pop
@@ -163,21 +166,29 @@ void LeabraSendCons::AllocCons(int sz) {
   FreeCons();
   alloc_size = sz;
   if(alloc_size == 0) return;
-  cons_own = (char*)calloc(alloc_size, con_size); // clear it
+  cons_own = (float**)calloc(N_CON_VARS, sizeof(float*));
+  for(int i=0; i< N_CON_VARS; i++) {
+    cons_own[i] = (float*)calloc(alloc_size, sizeof(float));
+  }
   unit_idxs = (int*)calloc(alloc_size, sizeof(int));
 }
 
 void LeabraSendCons::FreeCons() {
-  if(cons_own) { free(cons_own); cons_own = NULL; }
+  if(cons_own) {
+    for(int i=0; i< N_CON_VARS; i++) {
+      free(cons_own[i]);
+    }
+    free(cons_own); cons_own = NULL;
+  }
   if(unit_idxs) { free(unit_idxs); unit_idxs = NULL; }
   size = 0;
   alloc_size = 0;
 }
 
-LeabraCon* LeabraSendCons::ConnectUnOwnCn(int fm_idx) {
-  if(size >= alloc_size) return NULL;
-  LeabraCon* rval = OwnCn(size);
-  unit_idxs[size++] = fm_idx;
+int LeabraSendCons::ConnectUnOwnCn(int fm_idx) {
+  if(size >= alloc_size) return -1;
+  int rval = size;
+  unit_idxs[size++] = (int32_t)fm_idx;
   return rval;
 }
 
