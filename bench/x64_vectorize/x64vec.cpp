@@ -15,6 +15,13 @@
 
 #include "x64vec.h"
 #include <iostream>
+#include <memory>
+#include <cstring>
+
+// todo: ifdef for gcc instead of clang
+// #include <random>
+
+using namespace std;
 
 float rand_float() {
   float r = (float)rand()/(float)RAND_MAX;
@@ -207,6 +214,42 @@ int main(int argc, char* argv[]) {
   int cyc_per_trl = 70;
 
   float pct_delta = 0.02f;
+
+  // very basic arg setting
+  for(int i=1; i < argc; i++) {
+    if(strcmp("n_units", argv[i]) == 0) {
+      n_units = atoi(argv[i+1]);
+      std::cout << "n_units=" << n_units << std::endl;
+    }
+    else if(strcmp("n_per_un", argv[i]) == 0) {
+      n_per_un = atoi(argv[i+1]);
+      std::cout << "n_per_un=" << n_per_un << std::endl;
+    }
+    else if(strcmp("n_layers", argv[i]) == 0) {
+      n_layers = atoi(argv[i+1]);
+      std::cout << "n_layers=" << n_layers << std::endl;
+    }
+    else if(strcmp("n_prjns", argv[i]) == 0) {
+      n_prjns = atoi(argv[i+1]);
+      std::cout << "n_prjns=" << n_prjns << std::endl;
+    }
+    else if(strcmp("n_trials", argv[i]) == 0) {
+      n_trials = atoi(argv[i+1]);
+      std::cout << "n_trials=" << n_trials << std::endl;
+    }
+    else if(strcmp("n_epochs", argv[i]) == 0) {
+      n_epochs = atoi(argv[i+1]);
+      std::cout << "n_epochs=" << n_epochs << std::endl;
+    }
+    else if(strcmp("cyc_per_trl", argv[i]) == 0) {
+      cyc_per_trl = atoi(argv[i+1]);
+      std::cout << "cyc_per_trl=" << cyc_per_trl << std::endl;
+    }
+    else if(strcmp("pct_delta", argv[i]) == 0) {
+      pct_delta = atof(argv[i+1]);
+      std::cout << "pct_delta=" << pct_delta << std::endl;
+    }
+  }
 
   // todo: get all the args
 
