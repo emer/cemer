@@ -333,8 +333,8 @@ public:
       sni[3] = send_netin_vec[unit_idxs[i+3]];
       Vec4f sn;
       sn.load(sni);
-
       sn += dp;
+      // sn.store(sni); this is much slower than using the extract direct from sn
       send_netin_vec[unit_idxs[i+0]] = sn[0];
       send_netin_vec[unit_idxs[i+1]] = sn[1];
       send_netin_vec[unit_idxs[i+2]] = sn[2];

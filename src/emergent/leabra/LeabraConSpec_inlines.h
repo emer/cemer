@@ -19,6 +19,7 @@
 // parent includes:
 
 // member includes:
+#include "vectorclass.h"   // Abner Fog's wrapper for SSE intrinsics
 
 // declare all other types mentioned but not required to include:
 
@@ -32,7 +33,40 @@ inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit*
   CON_GROUP_LOOP(cg, C_Compute_StableWeights(wts[i], swts[i], lwts[i]));
 }
 
-#if 1
+
+inline void LeabraConSpec::Send_NetinDelta_sse(LeabraSendCons* cg, 
+                                               const float su_act_delta_eff,
+                                               float* send_netin_vec, const float* wts)
+{
+  Vec4f sa(su_act_delta_eff);
+  const int parsz = 4 * (cg->size / 4);
+  for(int i=0; i<parsz; i+=4) {
+    Vec4f wv;
+    wv.load(wts+i);
+    Vec4f dp = wv * sa;
+    float sni[4];
+    sni[0] = send_netin_vec[cg->unit_idxs[i+0]];
+    sni[1] = send_netin_vec[cg->unit_idxs[i+1]];
+    sni[2] = send_netin_vec[cg->unit_idxs[i+2]];
+    sni[3] = send_netin_vec[cg->unit_idxs[i+3]];
+    Vec4f sn;
+    sn.load(sni);
+    sn += dp;
+    send_netin_vec[cg->unit_idxs[i+0]] = sn[0];
+    send_netin_vec[cg->unit_idxs[i+1]] = sn[1];
+    send_netin_vec[cg->unit_idxs[i+2]] = sn[2];
+    send_netin_vec[cg->unit_idxs[i+3]] = sn[3];
+  }
+  // then do the extra parts that didn't fit in mod 4 bit
+  const int sz = cg->size;
+  if(parsz < sz)
+    send_netin_vec[cg->unit_idxs[parsz]] += wts[parsz] * su_act_delta_eff;
+  if(parsz+1 < sz)
+    send_netin_vec[cg->unit_idxs[parsz+1]] += wts[parsz+1] * su_act_delta_eff;
+  if(parsz+2 < sz)
+    send_netin_vec[cg->unit_idxs[parsz+2]] += wts[parsz+2] * su_act_delta_eff;
+}
+
 inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
                                          const int thread_no, const float su_act_delta,
                                          const float* wts) {
@@ -40,8 +74,9 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwor
   if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
     float* send_netin_vec = net->send_netin_tmp.el
       + net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                cg->UnIdx(i), su_act_delta_eff));
+    Send_NetinDelta_sse(cg, su_act_delta_eff, send_netin_vec, wts);
+    // CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+    //                                             cg->UnIdx(i), su_act_delta_eff));
   }
   else {
     // todo: might want to make everything go through tmp for vectorization speed..
@@ -53,29 +88,12 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwor
     else {
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                  cg->UnIdx(i), su_act_delta_eff));
+      Send_NetinDelta_sse(cg, su_act_delta_eff, send_netin_vec, wts);
+      // CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+      //                                             cg->UnIdx(i), su_act_delta_eff));
     }
   }
 }
-#else
-
-// this is an experimental testbed to try to improve performance
-
-inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
-                                         const int thread_no, const float su_act_delta,
-                                         const float* wts) {
-  const float su_act_delta_eff = cg->scale_eff * su_act_delta;
-  float* send_netin_vec = net->send_netin_tmp.el
-    + net->send_netin_tmp.FastElIndex(0, thread_no);
-  const int sz = cg->size;
-  for(int i=0; i<sz; i++) {
-    C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                             cg->UnIdx(i), su_act_delta_eff);
-  }
-}
-
-#endif
 
 inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
                                            const int thread_no, const float su_act_delta)

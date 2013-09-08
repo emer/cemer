@@ -400,6 +400,9 @@ public:
                                            const float su_act_delta_eff) 
   {  ru_net_delta += wt * su_act_delta_eff; }
   // #IGNORE
+  inline void 	Send_NetinDelta_sse(LeabraSendCons* cg, const float su_act_delta_eff,
+                                    float* send_netin_vec, const float* wts);
+  // #IGNORE sse (SIMD) version -- only for threaded
   inline void 	Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
                                      const int thread_no, const float su_act_delta,
                                      const float* wts);

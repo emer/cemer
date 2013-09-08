@@ -67,8 +67,7 @@ public:
   Projection*   prjn;           // #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer to the projection which created these connections -- has the source con_type and con spec information
   int           other_idx;      // #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
 
-protected:
-  ConSpec*      m_con_spec;     // con spec that we use: controlled entirely by the projection!
+  ConSpec*      m_con_spec;     // #IGNORE con spec that we use: controlled entirely by the projection!
 
 #ifndef __MAKETA__
   union {
@@ -76,9 +75,7 @@ protected:
     int32_t*        cons_idx;       // if we don't own the cons, these are indexes into the connections of the unit on the other side of the connection, for each connection
   };
 #endif
-  int32_t*          unit_idxs;      // list of unit flat_idx indexes on the other side of the connection, in index association with the connections
-
-public:
+  int32_t*          unit_idxs;      // #IGNORE list of unit flat_idx indexes on the other side of the connection, in index association with the connections
 
   ////////////////////////////////////////////////////////////////////////////////
   //    Primary infrastructure management routines
