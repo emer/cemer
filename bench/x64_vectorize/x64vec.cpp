@@ -195,7 +195,7 @@ void LeabraSendCons::FreeCons() {
 int LeabraSendCons::ConnectUnOwnCn(int fm_idx) {
   if(size >= alloc_size) return -1;
   int rval = size;
-  unit_idxs[size++] = (int32_t)fm_idx;
+  unit_idxs[size++] = (conidx_t)fm_idx;
   return rval;
 }
 
@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
   int n_prjns = 2;
 
   int n_trials = 100;
-  int n_epochs = 5;
+  int n_epochs = 20;
   int cyc_per_trl = 70;
 
   float pct_delta = 0.02f;

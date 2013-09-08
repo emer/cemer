@@ -16,8 +16,22 @@
 #ifndef x64vec_h
 #define x64vec_h 1
 
+#include <sys/time.h>
+#include <sys/times.h>
+#include <unistd.h>
+#include <stdint.h>
+
 // define this to expand the connection object to full size..
 #define STABLE_WEIGHTS 1
+
+// include Agner Fog's c++ extensions on top of "intrinsics" for SIMD stuff
+#if 1
+#include "vectorclass.h"
+#endif
+
+// type for connection index storage
+typedef int32_t conidx_t;
+//typedef int conidx_t;
 
 class LeabraSendCons;
 class LeabraUnit;
@@ -26,11 +40,6 @@ class LeabraCon;
 
 /////////////////////////////////////////////////////
 //      Basic Utilities -- Timing etc
-
-#include <sys/time.h>
-#include <sys/times.h>
-#include <unistd.h>
-#include <stdint.h>
 
 // computes a-b
 #define ONE_MILLION 1000000
@@ -253,7 +262,7 @@ public:
 protected:
   int           con_size;       // size of the connection object -- set if we own cons and built them
   float**       cons_own;       // if we own the cons, this is their physical memory: alloc_size * con_size
-  int32_t*      unit_idxs;      // list of unit flat_idx indexes on the other side of the connection, in index association with the connections
+  conidx_t*     unit_idxs;      // list of unit flat_idx indexes on the other side of the connection, in index association with the connections
 
 public:
 
@@ -300,15 +309,92 @@ public:
                                          const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
 
+
+  inline void Send_NetinDelta_sse(const float su_act_delta_eff,
+                                  float* send_netin_vec, const float* wts)
+  {
+    const int sz = size;
+
+    Vec4f sa(su_act_delta_eff);
+
+    // assuming for optimization purposes that size is / 4
+    for(int i=0; i<sz; i+=4) {
+      Vec4f wv;
+      wv.load(wts+i);
+      Vec4f dp = wv * sa;
+      // Vec4i ui;
+      // ui.load(unit_idxs + i);
+      // Vec4f sn = lookup<8192>(ui, send_netin_vec); // this has to be compile time const
+      // this is faster than the lookup, and doesn't require the compile-time fixed guy:
+      float sni[4];
+      sni[0] = send_netin_vec[unit_idxs[i+0]];
+      sni[1] = send_netin_vec[unit_idxs[i+1]];
+      sni[2] = send_netin_vec[unit_idxs[i+2]];
+      sni[3] = send_netin_vec[unit_idxs[i+3]];
+      Vec4f sn;
+      sn.load(sni);
+
+      sn += dp;
+      send_netin_vec[unit_idxs[i+0]] = sn[0];
+      send_netin_vec[unit_idxs[i+1]] = sn[1];
+      send_netin_vec[unit_idxs[i+2]] = sn[2];
+      send_netin_vec[unit_idxs[i+3]] = sn[3];
+    }
+  }
+
+  inline void Send_NetinDelta_avx(const float su_act_delta_eff,
+                                  float* send_netin_vec, const float* wts)
+  {
+    const int sz = size;
+
+    Vec8f sa(su_act_delta_eff);
+
+    // assuming for optimization purposes that size is / 8
+    for(int i=0; i<sz; i+=8) {
+      Vec8f wv;
+      wv.load(wts+i);
+      Vec8f dp = wv * sa;
+
+      float sni[8];
+      sni[0] = send_netin_vec[unit_idxs[i+0]];
+      sni[1] = send_netin_vec[unit_idxs[i+1]];
+      sni[2] = send_netin_vec[unit_idxs[i+2]];
+      sni[3] = send_netin_vec[unit_idxs[i+3]];
+      sni[4] = send_netin_vec[unit_idxs[i+4]];
+      sni[5] = send_netin_vec[unit_idxs[i+5]];
+      sni[6] = send_netin_vec[unit_idxs[i+6]];
+      sni[7] = send_netin_vec[unit_idxs[i+7]];
+      Vec8f sn;
+      sn.load(sni);
+
+      sn += dp;
+      send_netin_vec[unit_idxs[i+0]] = sn[0];
+      send_netin_vec[unit_idxs[i+1]] = sn[1];
+      send_netin_vec[unit_idxs[i+2]] = sn[2];
+      send_netin_vec[unit_idxs[i+3]] = sn[3];
+      send_netin_vec[unit_idxs[i+4]] = sn[4];
+      send_netin_vec[unit_idxs[i+5]] = sn[5];
+      send_netin_vec[unit_idxs[i+6]] = sn[6];
+      send_netin_vec[unit_idxs[i+7]] = sn[7];
+    }
+  }
+
   inline void Send_NetinDelta(LeabraNetwork* net, float su_act_delta) {
     const float su_act_delta_eff = su_act_delta;
     float* send_netin_vec = net->send_netin_tmp;
     const float* wts = cons_own[WT]; // OwnCnVar(WT);
+    
+    // this is for the vectorized version:
+#if 1
+    Send_NetinDelta_sse(su_act_delta_eff, send_netin_vec, wts);
+    //    Send_NetinDelta_avx(su_act_delta_eff, send_netin_vec, wts);
+#else
+    // standard version:
     const int sz = size;
     for(int i=0; i<sz; i++) {
       send_netin_vec[unit_idxs[i]] += wts[i] * su_act_delta_eff;
-      //      C_Send_NetinDelta_Thread(wts[i], send_netin_vec, UnIdx(i), su_act_delta_eff);
     }
+#endif
   }
 
   LeabraSendCons();
