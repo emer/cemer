@@ -2631,7 +2631,7 @@ static inline Vec2q operator ~ (Vec2q const & a) {
 
 // vector operator ! : logical not, returns true for elements == 0
 static inline Vec2q operator ! (Vec2q const & a) {
-    return a == _mm_setzero_si128();
+  return a == (Vec2q)_mm_setzero_si128();
 }
 
 // Functions for this class
@@ -5212,7 +5212,7 @@ static inline Vec8us divide_by_ui(Vec8us const & x) {
     __m128i xm = _mm_mulhi_epu16(x1, multv);                         // high part of 16x16->32 bit unsigned multiplication
     Vec8us q    = _mm_srli_epi16(xm, b);                             // shift right by b
     if (round_down) {
-        Vec8s overfl = (x1 == _mm_setzero_si128());                  // check for overflow of x+1
+      Vec8s overfl = (x1 == (Vec8us)_mm_setzero_si128());                  // check for overflow of x+1
         return select(overfl, Vec8us(mult >> b), q);                 // deal with overflow (rarely needed)
     }
     else {

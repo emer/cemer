@@ -125,7 +125,7 @@ public:
     };
     // Type cast operator to convert to type Vec4i used as Boolean for integer vectors
     operator Vec4i() const {
-        return _mm_castps_si128(xmm);
+      return _mm_castps_si128(xmm);
     }
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
@@ -141,13 +141,13 @@ public:
         return *this;
     };
     // Member function extract a single element from vector
-    int extract(uint32_t index) const {
-        return Vec4i(*this).extract(index);
-    }
-    // Extract a single element. Operator [] can only read an element, not write.
-    int operator [] (uint32_t index) const {
-        return extract(index);
-    }
+    // int extract(uint32_t index) const {
+    //   return (int)Vec4i(*this).extract(index);
+    // }
+    // // Extract a single element. Operator [] can only read an element, not write.
+    // int operator [] (uint32_t index) const {
+    //     return extract(index);
+    // }
 };
 
 
@@ -204,9 +204,9 @@ static inline Vec4fb operator ~ (Vec4fb const & a) {
 // vector operator ! : logical not
 // (operator ! is less efficient than operator ~. Use only where not
 // all bits in an element are the same)
-static inline Vec4fb operator ! (Vec4fb const & a) {
-    return Vec4fb( ! Vec4i(a));
-}
+// static inline Vec4fb operator ! (Vec4fb const & a) {
+//     return Vec4fb( ! Vec4i(a));
+// }
 
 // Functions for Vec4fb
 
@@ -294,13 +294,13 @@ public:
         return *this;
     };
     // Member function extract a single element from vector
-    int extract(uint32_t index) const {
-        return int32_t(Vec2q(*this).extract(index));
-    }
-    // Extract a single element. Operator [] can only read an element, not write.
-    int operator [] (uint32_t index) const {
-        return extract(index);
-    }
+    // int extract(uint32_t index) const {
+    //     return int32_t(Vec2q(*this).extract(index));
+    // }
+    // // Extract a single element. Operator [] can only read an element, not write.
+    // int operator [] (uint32_t index) const {
+    //     return extract(index);
+    // }
 };
 
 
@@ -357,9 +357,9 @@ static inline Vec2db operator ~ (Vec2db const & a) {
 // vector operator ! : logical not
 // (operator ! is less efficient than operator ~. Use only where not
 // all bits in an element are the same)
-static inline Vec2db operator ! (Vec2db const & a) {
-    return Vec2db (! Vec2q(a));
-}
+// static inline Vec2db operator ! (Vec2db const & a) {
+//     return Vec2db (! Vec2q(a));
+// }
 
 // Functions for Vec2db
 
