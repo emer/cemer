@@ -89,7 +89,7 @@ void iPanelOfDataTable::GetWinState_impl() {
   inherited::GetWinState_impl();
   DataTable* dt = this->dt(); // cache
 
-  if (!dt || !dte) return;
+  if (!dt || !dte) return;  // if the dt wasn't viewed no DataTableEditor will have been constructed
 
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
@@ -110,6 +110,7 @@ void iPanelOfDataTable::SetWinState_impl() {
   DataTable* dt = this->dt(); // cache
 
   if (!dt || !dte) return;
+
   QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
   // we store col widths as fraction of ctrl width
   float fwd = (float)tv->width();
