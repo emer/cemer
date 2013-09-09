@@ -19,7 +19,9 @@
 // parent includes:
 
 // member includes:
+#ifdef USE_SSE4
 #include "vectorclass.h"   // Abner Fog's wrapper for SSE intrinsics
+#endif
 
 // declare all other types mentioned but not required to include:
 
@@ -34,6 +36,7 @@ inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit*
 }
 
 
+#ifdef USE_SSE4
 inline void LeabraConSpec::Send_NetinDelta_sse4(LeabraSendCons* cg, 
                                                 const float su_act_delta_eff,
                                                 float* send_netin_vec, const float* wts)
@@ -66,6 +69,13 @@ inline void LeabraConSpec::Send_NetinDelta_sse4(LeabraSendCons* cg,
   if(parsz+2 < sz)
     send_netin_vec[cg->unit_idxs[parsz+2]] += wts[parsz+2] * su_act_delta_eff;
 }
+#else 
+inline void LeabraConSpec::Send_NetinDelta_sse4(LeabraSendCons* cg, 
+                                                const float su_act_delta_eff,
+                                                float* send_netin_vec, const float* wts) {
+  // nop
+}
+#endif
 
 inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
                                          const int thread_no, const float su_act_delta,
