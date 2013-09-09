@@ -138,7 +138,7 @@ void LeabraNetwork::Send_Netin(float pct_delta) {
   }
 
   if(!did_stats) {
-    std::cout << "n_non_zero: " << n_non_zero << " of total: " << n_units << std::endl;
+    // std::cout << "n_non_zero: " << n_non_zero << " of total: " << n_units << std::endl;
     did_stats = true;
   }
 }
@@ -256,7 +256,7 @@ int main(int argc, char* argv[]) {
   else if(vec_type == SSE8)
     vecstr = "sse8";
 
-  std::cout
+  std::cout << " "
     << "vec=" << vecstr << " "
     << "n_units=" << n_units << " "
     << "n_per_un=" << n_per_un << " "
@@ -294,7 +294,7 @@ int main(int argc, char* argv[]) {
 
   double mflops_sec = (n_flops / time_used.s_used) / 1000000.0;
 
-  std::cout << "total time used: " << time_used.s_used
+  std::cout << " total time used: " << time_used.s_used
             << " total flops: " << n_flops
             << " mflops/sec: " << mflops_sec << std::endl;
 
