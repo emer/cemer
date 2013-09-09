@@ -5,9 +5,9 @@ cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 project(x64cuda)
 
 # definitely add this for best results 
-add_definitions(-march=corei7)
+#add_definitions(-march=corei7)
 # or this: but it might be subject to the avx problems
-#add_definitions(-march=native)
+add_definitions(-march=native)
 
 # this is good for everything
 add_definitions(-Ofast -ffast-math)
@@ -17,7 +17,7 @@ add_definitions(-Ofast -ffast-math)
 #add_definitions(-ftree-vectorizer-verbose=9)
 # looks like avx is hard to support on mac -- assembler doesn't, even when
 # fixed with the clang replacement script!
-add_definitions(-mavx)
+#add_definitions(-mavx)
 # to get assemply language: results go in
 # build/CMakeFiles/x64vec.dir/x64vec.cpp.o
 # add_definitions(-S -fverbose-asm)
