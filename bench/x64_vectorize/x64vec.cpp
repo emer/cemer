@@ -251,8 +251,6 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  // todo: get all the args
-
   int tot_cyc = cyc_per_trl * n_trials * n_epochs;
 
   int szun = sizeof(LeabraUnit);

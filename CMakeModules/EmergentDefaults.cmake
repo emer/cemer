@@ -59,7 +59,12 @@ else (WIN32) # assume gcc!!!
   endif (HAS_UNDEF_INLINE_FLAG)
   
   # NOTE:  -ftree-vectorizer-verbose=1 can be interesting but not worth it for a default param -- users may add at own discretion 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wno-unused-variable -ffast-math -march=corei7 -mavx")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wno-unused-variable")
+
+  if(CMAKE_BUILD_TYPE MATCHES "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math -march=native")
+  endif (CMAKE_BUILD_TYPE MATCHES "Release")
+
   if (APPLE)
     # on Mac, DEBUG is not defined!
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")

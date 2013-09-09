@@ -124,11 +124,9 @@ public:
         return *this;
     };
     // Type cast operator to convert to type Vec4i used as Boolean for integer vectors
-#ifndef __clang__
     operator Vec4i() const {
-       return _mm_castps_si128(xmm);
+        return _mm_castps_si128(xmm);
     }
-#endif
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
     Vec4fb const & insert(uint32_t index, bool value) {
@@ -144,7 +142,8 @@ public:
     };
     // Member function extract a single element from vector
     int extract(uint32_t index) const {
-      return Vec4i(*this).extract(index);
+        //return Vec4i(*this).extract(index); // problem in clang !!
+        return ((*this).operator Vec4i()).extract(index); // tell silly clang which way to go
     }
     // Extract a single element. Operator [] can only read an element, not write.
     int operator [] (uint32_t index) const {
@@ -206,9 +205,9 @@ static inline Vec4fb operator ~ (Vec4fb const & a) {
 // vector operator ! : logical not
 // (operator ! is less efficient than operator ~. Use only where not
 // all bits in an element are the same)
-// static inline Vec4fb operator ! (Vec4fb const & a) {
-//     return Vec4fb( ! Vec4i(a));
-// }
+static inline Vec4fb operator ! (Vec4fb const & a) {
+    return Vec4fb( ! ((a).operator Vec4i())); //!!
+}
 
 // Functions for Vec4fb
 
@@ -279,11 +278,9 @@ public:
         return *this;
     };
     // Type cast operator to convert to type Vec2q used as Boolean for integer vectors
-#ifndef __clang__
     operator Vec2q() const {
         return _mm_castpd_si128(xmm);
     }
-#endif
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
     Vec2db const & insert(uint32_t index, bool value) {
@@ -299,11 +296,12 @@ public:
     };
     // Member function extract a single element from vector
     int extract(uint32_t index) const {
-      return int32_t(Vec2q(*this).extract(index));
+        //return int32_t(Vec2q(*this).extract(index)); // problem in clang  !!
+        return int32_t(((*this).operator Vec2q()).extract(index)); // tell silly clang which way to go
     }
     // Extract a single element. Operator [] can only read an element, not write.
     int operator [] (uint32_t index) const {
-      return extract(index);
+        return extract(index);
     }
 };
 
@@ -361,9 +359,10 @@ static inline Vec2db operator ~ (Vec2db const & a) {
 // vector operator ! : logical not
 // (operator ! is less efficient than operator ~. Use only where not
 // all bits in an element are the same)
-// static inline Vec2db operator ! (Vec2db const & a) {
-//     return Vec2db (! Vec2q(a));
-// }
+static inline Vec2db operator ! (Vec2db const & a) {
+    //return Vec2db (! Vec2q(a)); // problem in clang!!
+    return Vec2db (! (a.operator Vec2q()) );
+}
 
 // Functions for Vec2db
 
