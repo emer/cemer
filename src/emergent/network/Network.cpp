@@ -1360,7 +1360,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
           RecvCons* cg = un->recv.FastEl(g);
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
           for(int i = 0;i<cg->size;i++) { // todo: could use memcopy here!
-            values.FastEl(cidx++) = dwt[i];
+            values.FastEl(cidx++) = dwts[i];
           }
         }
       }
@@ -1458,7 +1458,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       if(un->lesioned()) continue;
       if(un->bias.size)
-        un->bias.OwnCn(0,BaseCons::WT)->wt = avg_mult * results.FastEl(cidx++);
+        un->bias.OwnCn(0,BaseCons::WT) = avg_mult * results.FastEl(cidx++);
       if(RecvOwnsCons()) {
         for(int g = 0; g < un->recv.size; g++) {
           RecvCons* cg = un->recv.FastEl(g);
@@ -1565,7 +1565,7 @@ void Network::DMem_SymmetrizeWts() {
             for(int g = 0; g < fm->recv.size; g++) {
               RecvCons* fmg = fm->recv.FastEl(g);
               if(fmg->prjn->from != lay) continue;
-              int con = fmg->FindConFromIdx(un, this);
+              int con = fmg->FindConFromIdx(un);
               if(con >= 0) {
                 unit_idxs.Add(uni);
                 wt_vals.Add(fmg->Cn(con, BaseCons::WT, this));
