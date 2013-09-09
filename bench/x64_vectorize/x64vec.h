@@ -385,15 +385,18 @@ public:
     const float* wts = cons_own[WT]; // OwnCnVar(WT);
     
     // this is for the vectorized version:
-#if 1
+#ifdef USE_SSE
     Send_NetinDelta_sse(su_act_delta_eff, send_netin_vec, wts);
-    //    Send_NetinDelta_avx(su_act_delta_eff, send_netin_vec, wts);
+#else
+#ifdef USE_AVX
+    Send_NetinDelta_avx(su_act_delta_eff, send_netin_vec, wts);
 #else
     // standard version:
     const int sz = size;
     for(int i=0; i<sz; i++) {
       send_netin_vec[unit_idxs[i]] += wts[i] * su_act_delta_eff;
     }
+#endif
 #endif
   }
 
