@@ -5,9 +5,6 @@ cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 project(x64vec)
 
 # optional compiler args
-#add_definitions(-Weverything)
-#add_definitions(-ftree-vetorizer-verbose=2 -ffast-math)
-#add_definitions(-ffast-math)
 
 # definitely add this for best results 
 add_definitions(-march=corei7)

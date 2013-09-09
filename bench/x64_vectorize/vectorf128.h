@@ -124,9 +124,11 @@ public:
         return *this;
     };
     // Type cast operator to convert to type Vec4i used as Boolean for integer vectors
+#ifndef __clang__
     operator Vec4i() const {
-      return _mm_castps_si128(xmm);
+       return _mm_castps_si128(xmm);
     }
+#endif
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
     Vec4fb const & insert(uint32_t index, bool value) {
@@ -141,13 +143,13 @@ public:
         return *this;
     };
     // Member function extract a single element from vector
-    // int extract(uint32_t index) const {
-    //   return (int)Vec4i(*this).extract(index);
-    // }
-    // // Extract a single element. Operator [] can only read an element, not write.
-    // int operator [] (uint32_t index) const {
-    //     return extract(index);
-    // }
+    int extract(uint32_t index) const {
+      return Vec4i(*this).extract(index);
+    }
+    // Extract a single element. Operator [] can only read an element, not write.
+    int operator [] (uint32_t index) const {
+        return extract(index);
+    }
 };
 
 
@@ -277,9 +279,11 @@ public:
         return *this;
     };
     // Type cast operator to convert to type Vec2q used as Boolean for integer vectors
+#ifndef __clang__
     operator Vec2q() const {
         return _mm_castpd_si128(xmm);
     }
+#endif
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
     Vec2db const & insert(uint32_t index, bool value) {
@@ -294,13 +298,13 @@ public:
         return *this;
     };
     // Member function extract a single element from vector
-    // int extract(uint32_t index) const {
-    //     return int32_t(Vec2q(*this).extract(index));
-    // }
-    // // Extract a single element. Operator [] can only read an element, not write.
-    // int operator [] (uint32_t index) const {
-    //     return extract(index);
-    // }
+    int extract(uint32_t index) const {
+      return int32_t(Vec2q(*this).extract(index));
+    }
+    // Extract a single element. Operator [] can only read an element, not write.
+    int operator [] (uint32_t index) const {
+      return extract(index);
+    }
 };
 
 
