@@ -34,9 +34,9 @@ inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit*
 }
 
 
-inline void LeabraConSpec::Send_NetinDelta_sse(LeabraSendCons* cg, 
-                                               const float su_act_delta_eff,
-                                               float* send_netin_vec, const float* wts)
+inline void LeabraConSpec::Send_NetinDelta_sse4(LeabraSendCons* cg, 
+                                                const float su_act_delta_eff,
+                                                float* send_netin_vec, const float* wts)
 {
   Vec4f sa(su_act_delta_eff);
   const int parsz = 4 * (cg->size / 4);
@@ -74,9 +74,12 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwor
   if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
     float* send_netin_vec = net->send_netin_tmp.el
       + net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
-    Send_NetinDelta_sse(cg, su_act_delta_eff, send_netin_vec, wts);
-    // CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-    //                                             cg->UnIdx(i), su_act_delta_eff));
+#ifdef USE_SSE4                 // only faster on very recent ivy bridge machines
+    Send_NetinDelta_sse4(cg, su_act_delta_eff, send_netin_vec, wts);
+#else
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+                                                 cg->UnIdx(i), su_act_delta_eff));
+#endif
   }
   else {
     // todo: might want to make everything go through tmp for vectorization speed..
@@ -88,9 +91,12 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwor
     else {
       float* send_netin_vec = net->send_netin_tmp.el
 	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      Send_NetinDelta_sse(cg, su_act_delta_eff, send_netin_vec, wts);
-      // CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-      //                                             cg->UnIdx(i), su_act_delta_eff));
+#ifdef USE_SSE4                 // only faster on very recent ivy bridge machines
+      Send_NetinDelta_sse4(cg, su_act_delta_eff, send_netin_vec, wts);
+#else
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+                                                  cg->UnIdx(i), su_act_delta_eff));
+#endif
     }
   }
 }

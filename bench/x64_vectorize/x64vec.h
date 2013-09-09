@@ -310,8 +310,8 @@ public:
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
 
 
-  inline void Send_NetinDelta_sse(const float su_act_delta_eff,
-                                  float* send_netin_vec, const float* wts)
+  inline void Send_NetinDelta_sse4(const float su_act_delta_eff,
+                                   float* send_netin_vec, const float* wts)
   {
     const int sz = size;
 
@@ -342,8 +342,8 @@ public:
     }
   }
 
-  inline void Send_NetinDelta_avx(const float su_act_delta_eff,
-                                  float* send_netin_vec, const float* wts)
+  inline void Send_NetinDelta_sse8(const float su_act_delta_eff,
+                                   float* send_netin_vec, const float* wts)
   {
     const int sz = size;
 
@@ -385,11 +385,11 @@ public:
     const float* wts = cons_own[WT]; // OwnCnVar(WT);
     
     // this is for the vectorized version:
-#ifdef USE_SSE
-    Send_NetinDelta_sse(su_act_delta_eff, send_netin_vec, wts);
+#ifdef USE_SSE4
+    Send_NetinDelta_sse4(su_act_delta_eff, send_netin_vec, wts);
 #else
-#ifdef USE_AVX
-    Send_NetinDelta_avx(su_act_delta_eff, send_netin_vec, wts);
+#ifdef USE_SSE8
+    Send_NetinDelta_sse8(su_act_delta_eff, send_netin_vec, wts);
 #else
     // standard version:
     const int sz = size;

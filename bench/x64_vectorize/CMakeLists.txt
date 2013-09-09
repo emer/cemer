@@ -17,12 +17,6 @@ add_definitions(-Ofast -ffast-math)
 # needed on g++ on linux for vectorizing
 add_definitions(-fabi-version=4)
 
-# set this for doing sse-based Vec4f optimizations
-add_definitions(-DUSE_SSE)
-# set this for doing avx2-based Vec8f optimizations
-#add_definitions(-DUSE_AVX)
-# comment both of above out to use no sse
-
 # need this for g++
 #add_definitions(-std=c++11)
 #add_definitions(-ftree-vectorizer-verbose=9)

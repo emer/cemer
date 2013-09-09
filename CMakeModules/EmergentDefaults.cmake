@@ -65,6 +65,10 @@ else (WIN32) # assume gcc!!!
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math -march=native")
   endif (CMAKE_BUILD_TYPE MATCHES "Release")
 
+  # NOTE: use cmake ../ -DUSE_SSE4 to use SSE Vec4f optimized code
+  # -- slower on everything except the most recent Ivy Bridge 2012
+  # and later era machines
+
   if (APPLE)
     # on Mac, DEBUG is not defined!
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
