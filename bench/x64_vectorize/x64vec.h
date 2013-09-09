@@ -21,13 +21,18 @@
 #include <unistd.h>
 #include <stdint.h>
 
-// define this to expand the connection object to full size..
-#define STABLE_WEIGHTS 1
-
 // include Agner Fog's c++ extensions on top of "intrinsics" for SIMD stuff
 #if 1
 #include "vectorclass.h"
 #endif
+
+enum VecType {
+  CPU_ONLY,                     // use only plain cpu compiled code
+  SSE4,                         // use Vec4f SSE optimized code
+  SSE8,                         // use Vec8f SSE optimized code
+};
+
+VecType vec_type = CPU_ONLY;  // global selector -- can change in startup args
 
 // type for connection index storage
 typedef int32_t conidx_t;
@@ -230,16 +235,12 @@ public:
   float         wt;             // #VIEW_HOT weight of connection
   float         dwt;            // #VIEW #NO_SAVE resulting net weight change
   float		pdw;		// #VIEW_HOT #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
-#ifdef STABLE_WEIGHTS
   float         lwt;            // #NO_SAVE learning weight value -- adapts according to learning rules every trial in a dynamic online manner
   float         swt;            // #NO_SAVE stable (protein-synthesis and potentially sleep dependent) weight value -- updated from lwt value periodically (e.g., at the end of an epoch) by Compute_StableWeight function
-#endif
   
   LeabraCon() {
     wt = dwt = pdw = 0.0f;
-#ifdef STABLE_WEIGHTS
     pdw = 0.0f; lwt = swt = 0.0f;
-#endif
   }
 };
 
@@ -385,19 +386,19 @@ public:
     const float* wts = cons_own[WT]; // OwnCnVar(WT);
     
     // this is for the vectorized version:
-#ifdef USE_SSE4
-    Send_NetinDelta_sse4(su_act_delta_eff, send_netin_vec, wts);
-#else
-#ifdef USE_SSE8
-    Send_NetinDelta_sse8(su_act_delta_eff, send_netin_vec, wts);
-#else
-    // standard version:
-    const int sz = size;
-    for(int i=0; i<sz; i++) {
-      send_netin_vec[unit_idxs[i]] += wts[i] * su_act_delta_eff;
+    if(vec_type == SSE4) {
+      Send_NetinDelta_sse4(su_act_delta_eff, send_netin_vec, wts);
     }
-#endif
-#endif
+    else if(vec_type == SSE8) {
+      Send_NetinDelta_sse8(su_act_delta_eff, send_netin_vec, wts);
+    }
+    else {
+      // standard version:
+      const int sz = size;
+      for(int i=0; i<sz; i++) {
+        send_netin_vec[unit_idxs[i]] += wts[i] * su_act_delta_eff;
+      }
+    }
   }
 
   LeabraSendCons();

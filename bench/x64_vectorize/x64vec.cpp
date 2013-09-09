@@ -204,13 +204,14 @@ int LeabraSendCons::ConnectUnOwnCn(int fm_idx) {
 //      main
 
 int main(int argc, char* argv[]) {
-  int n_units = 2048;
-  int n_per_un = 512;
+  int n_units = 8192;
+  int n_per_un = 2048;
+  int n_epochs = 2;
+
   int n_layers = 5;
   int n_prjns = 2;
 
   int n_trials = 100;
-  int n_epochs = 20;
   int cyc_per_trl = 70;
 
   float pct_delta = 0.02f;
@@ -219,37 +220,53 @@ int main(int argc, char* argv[]) {
   for(int i=1; i < argc; i++) {
     if(strcmp("n_units", argv[i]) == 0) {
       n_units = atoi(argv[i+1]);
-      std::cout << "n_units=" << n_units << std::endl;
     }
     else if(strcmp("n_per_un", argv[i]) == 0) {
       n_per_un = atoi(argv[i+1]);
-      std::cout << "n_per_un=" << n_per_un << std::endl;
     }
     else if(strcmp("n_layers", argv[i]) == 0) {
       n_layers = atoi(argv[i+1]);
-      std::cout << "n_layers=" << n_layers << std::endl;
-    }
-    else if(strcmp("n_prjns", argv[i]) == 0) {
-      n_prjns = atoi(argv[i+1]);
-      std::cout << "n_prjns=" << n_prjns << std::endl;
-    }
-    else if(strcmp("n_trials", argv[i]) == 0) {
-      n_trials = atoi(argv[i+1]);
-      std::cout << "n_trials=" << n_trials << std::endl;
     }
     else if(strcmp("n_epochs", argv[i]) == 0) {
       n_epochs = atoi(argv[i+1]);
-      std::cout << "n_epochs=" << n_epochs << std::endl;
+    }
+    else if(strcmp("n_prjns", argv[i]) == 0) {
+      n_prjns = atoi(argv[i+1]);
+    }
+    else if(strcmp("n_trials", argv[i]) == 0) {
+      n_trials = atoi(argv[i+1]);
     }
     else if(strcmp("cyc_per_trl", argv[i]) == 0) {
       cyc_per_trl = atoi(argv[i+1]);
-      std::cout << "cyc_per_trl=" << cyc_per_trl << std::endl;
     }
     else if(strcmp("pct_delta", argv[i]) == 0) {
       pct_delta = atof(argv[i+1]);
-      std::cout << "pct_delta=" << pct_delta << std::endl;
+    }
+    else if(strcmp("vec", argv[i]) == 0) {
+      if((strcmp("SSE4", argv[i+1]) == 0) || (strcmp("sse4", argv[i+1]) == 0))
+        vec_type = SSE4;
+      if((strcmp("SSE8", argv[i+1]) == 0) || (strcmp("sse8", argv[i+1]) == 0))
+        vec_type = SSE8;
     }
   }
+
+  const char* vecstr = "cpu_only";
+  if(vec_type == SSE4)
+    vecstr = "sse4";
+  else if(vec_type == SSE8)
+    vecstr = "sse8";
+
+  std::cout
+    << "vec=" << vecstr << " "
+    << "n_units=" << n_units << " "
+    << "n_per_un=" << n_per_un << " "
+    << "n_epochs=" << n_epochs << " "
+    << "n_layers=" << n_layers << " "
+    << "n_prjns=" << n_prjns << " "
+    << "n_trials=" << n_trials << " "
+    << "cyc_per_trl=" << cyc_per_trl << " "
+    << "pct_delta=" << pct_delta << " "
+    << std::endl;
 
   int tot_cyc = cyc_per_trl * n_trials * n_epochs;
 

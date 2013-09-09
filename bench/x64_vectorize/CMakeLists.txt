@@ -7,9 +7,9 @@ project(x64vec)
 # optional compiler args
 
 # definitely add this for best results 
-#add_definitions(-march=corei7)
+add_definitions(-march=corei7)
 # or this: but it might be subject to the avx problems
-add_definitions(-march=native)
+#add_definitions(-march=native)
 
 # this is good for everything
 add_definitions(-Ofast -ffast-math)
