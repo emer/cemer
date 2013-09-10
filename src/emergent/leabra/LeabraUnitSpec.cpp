@@ -167,6 +167,7 @@ void OptThreshSpec::Initialize() {
   send = .1f;
   delta = 0.005f;
   phase_dif = 0.0f;             // .8 also useful
+  xcal_lrn = 0.01f;
 }
 
 void LeabraDtSpec::Initialize() {
@@ -1793,7 +1794,8 @@ void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, in
   for(int g = 0; g < u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
-    if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_FirstPlus_Test(net)) continue;
+    if(rlay->lesioned() || !send_gp->size || !rlay->Compute_dWt_FirstPlus_Test(net))
+      continue;
     send_gp->Compute_Leabra_dWt(u,net);
   }
 

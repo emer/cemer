@@ -61,13 +61,20 @@ else (WIN32) # assume gcc!!!
   # NOTE:  -ftree-vectorizer-verbose=1 can be interesting but not worth it for a default param -- users may add at own discretion 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wno-unused-variable")
 
-  if(CMAKE_BUILD_TYPE MATCHES "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math -march=native")
-  endif (CMAKE_BUILD_TYPE MATCHES "Release")
+  if(CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -ffast-math")
+  endif (CMAKE_BUILD_TYPE MATCHES "Release" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
 
-  # NOTE: use cmake ../ -DUSE_SSE4 to use SSE Vec4f optimized code
-  # -- slower on everything except the most recent Ivy Bridge 2012
-  # and later era machines
+  if(NOT NOT_NATIVE MATCHES "not-native")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+  endif (NOT NOT_NATIVE MATCHES "not-native")
+
+  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    # only clang seems to be able to make the sse code go fast
+    # SSE8 seems as good or better than 4 in all modern platforms, so using that
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_SSE8")
+  endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+
 
   if (APPLE)
     # on Mac, DEBUG is not defined!

@@ -172,14 +172,16 @@ void LeabraConSpec::Initialize() {
   
   ignore_unlearnable = true;
 
+  // we are no longer going back-and-forth from inv to sig weights 
+  // so we presumably can use an order of magnitude smaller lookup table
   wt_sig_fun.x_range.min = 0.0f;
   wt_sig_fun.x_range.max = 1.0f;
-  wt_sig_fun.res = 1.0e-5f;     // 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
+  wt_sig_fun.res = 1.0e-4f;  // 1.0e-5f;     // 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
   wt_sig_fun.UpdateAfterEdit_NoGui();
 
   wt_sig_fun_inv.x_range.min = 0.0f;
   wt_sig_fun_inv.x_range.max = 1.0f;
-  wt_sig_fun_inv.res = 1.0e-5f; // 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
+  wt_sig_fun_inv.res = 1.0e-4f;  // 1.0e-5f; // 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
   wt_sig_fun_inv.UpdateAfterEdit_NoGui();
 
   wt_sig_fun_lst.off = -1.0f;   wt_sig_fun_lst.gain = -1.0f; // trigger an update
@@ -273,7 +275,7 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
       if(lrate == 0.01f)
         lrate = 0.02f;          // also important
     }
-    wt_sig.dwt_norm = true;	// definitely default for xcal
+    // wt_sig.dwt_norm = true;	// definitely default for xcal
   }
   else {
     if(wt_sig.off == 1.0f)

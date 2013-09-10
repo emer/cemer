@@ -18,18 +18,18 @@ echo "  --clean                      clean existing cmake cache etc first: start
 echo "  --build-dir=<name>           provide a custom build directory name (else auto)."
 echo "  --generator=<name>           use given code generator (-G in cmake, which also works)"
 echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for make probs"
+echo "  --not-native                 don't define -march=native for compilation, which is otherwise the default -- only needed for making packages that will run more broadly"
 echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro var to qt install dir (e.g., home/Qt5.0.0/5.0.0/clang_64)"
-echo "  --sse4                       define USE_SSE4 to take advantage of 4-way parallel SIMD (SSE) ops -- only useful for Ivy Bridge 2012 or later chips"
+echo "  --sse8                       define USE_SSE8 to take advantage of 8-way parallel SIMD (SSE) ops -- only useful for clang compiler, where it is auto-enabled"
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
 echo " "
 
-
-
 cmake_cmd="cmake ../"
 build_dir="build"
 extra_suffix=""
+not_native=""
 
 while [ $# -gt 0 ]
 do
@@ -93,6 +93,12 @@ do
       shift 1
     ;;
 
+    --not-native | -not-native | not-native)
+      not_native="not-native"
+      cmake_cmd="$cmake_cmd -DNOT_NATIVE=not-native"
+      shift 1
+    ;;
+
     --emer-mac-arch-bits)
       cmake_cmd="$cmake_cmd -DEMER_MAC_ARCH_BITS=${1##*=}"
       shift 1
@@ -103,8 +109,8 @@ do
       shift 1
     ;;
 
-    --sse4 | -sse4 | sse4)
-      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-DUSE_SSE4"
+    --sse8 | -sse8 | sse8)
+      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-DUSE_SSE8"
       shift 1
     ;;
 

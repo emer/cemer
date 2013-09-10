@@ -78,6 +78,12 @@ set(emergentlib_SRCS
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})
 
+# experiment for vectormath.h intel shared lib -- avoid at all costs and use a 
+# lookup table instead
+# add_library( libsvml SHARED IMPORTED )
+# set_target_properties( libsvml PROPERTIES IMPORTED_LOCATION /usr/local/lib/libsvml.dylib )
+# TARGET_LINK_LIBRARIES(emergentlib libsvml)
+
 if (WIN32)
   # Don't warn so much on 3rd party C files.
   set_source_files_properties(

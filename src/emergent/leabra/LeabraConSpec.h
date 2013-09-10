@@ -105,12 +105,27 @@ public:
   }
   // static version of function for implementing weight sigmodid
 
+  static inline float	SigFun61(const float w) {
+    if(w <= 0.0f) return 0.0f;
+    if(w >= 1.0f) return 1.0f;
+    const float pwguy = (1.0f - w) / w;
+    return (1.0f / (1.0f + pwguy*pwguy*pwguy*pwguy*pwguy*pwguy));
+  }
+  // static version of function for implementing weight sigmodid -- for default gain = 6, offset = 1 params
+
   static inline float	InvFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
     if(w >= 1.0f) return 1.0f;
     return 1.0f / (1.0f + powf((1.0f - w) / w, 1.0f / gn) / of);
   }
   // static version of function for implementing inverse of weight sigmoid
+
+  static inline float	InvFun61(const float w) {
+    if(w <= 0.0f) return 0.0f;
+    if(w >= 1.0f) return 1.0f;
+    return 1.0f / (1.0f + powf((1.0f - w) / w, 1.0f / 6.0f));
+  }
+  // static version of function for implementing inverse of weight sigmoid -- for default gain = 6, offset = 1 params
 
   inline float	SigFmLinWt(const float lw) {
     return SigFun(lw, gain, off);
@@ -400,9 +415,9 @@ public:
                                            const float su_act_delta_eff) 
   {  ru_net_delta += wt * su_act_delta_eff; }
   // #IGNORE
-  inline void 	Send_NetinDelta_sse4(LeabraSendCons* cg, const float su_act_delta_eff,
+  inline void 	Send_NetinDelta_sse8(LeabraSendCons* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts);
-  // #IGNORE sse4 (SIMD) version -- only for threaded
+  // #IGNORE sse8 (SIMD) version
   inline void 	Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
                                      const int thread_no, const float su_act_delta,
                                      const float* wts);
@@ -487,6 +502,10 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
 
+  inline void 	Compute_dWt_CtLeabraXCAL_sse8(LeabraSendCons* cg, LeabraUnit* su,
+                                              LeabraNetwork* net);
+  // #IGNORE CtLeabraXCAL weight changes, sse8 optimized version
+
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                  LeabraNetwork* net);
   // #IGNORE CtLeabraXCAL weight changes
@@ -504,6 +523,10 @@ public:
     dwt = 0.0f;
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule
+  inline void	Compute_Weights_CtLeabraXCAL_sse8(LeabraSendCons* cg, LeabraUnit* su,
+                                                  LeabraNetwork* net);
+  // #IGNORE sse8 optimized compute weights -- only when gain = 6, off = 1
+
   inline virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                      LeabraNetwork* net);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule
