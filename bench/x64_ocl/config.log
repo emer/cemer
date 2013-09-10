@@ -1,0 +1,1 @@
+Command line: ./configure --verbose --clean --release --sse4
