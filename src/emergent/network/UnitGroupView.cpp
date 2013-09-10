@@ -191,6 +191,7 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
 
 void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm,
                                                 Unit* src_u, int con_type) {
+  if(!src_u) return;
   String prjn_starts_with;
   switch(con_type) {
   case NetView::STD_CON:
