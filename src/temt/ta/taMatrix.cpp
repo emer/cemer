@@ -208,7 +208,7 @@ String& taMatrix::Print(String& strm, int indent) const {
     strm = "[ ";
     for(int i=0; i<nc; i++) {
       for(int d=0;d<dm;d++) {
-        idx.Set(d, cmat->FastEl(d, i)); // outer index is count index
+        idx.Set(d, cmat->FastEl2d(d, i)); // outer index is count index
       }
       idx.Print(strm) << ": " << SafeElAsStrN(idx);
       if(i < nc-1)
@@ -314,7 +314,7 @@ taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
         int nc = view_mat->dim(1);
         delete view_mat;        // now done with original
         for(int i=nc-1; i>=0; i--) {
-          int& fn = nwvw->FastEl(FrameDim(), i); // get the frame index
+          int& fn = nwvw->FastEl2d(FrameDim(), i); // get the frame index
           if(fn < 0) fn = Frames() + fn;
           if(!FrameInRange(fn, false)) {
             nwvw->RemoveFrames(i, 1);
@@ -476,17 +476,17 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     for(int i=0;i<dm; i++) {
       int start = 0; int end = -1; int step = 1;
       if(i < cmat->dim(1)) {
-        start = cmat->FastEl(0,i);
-        end = cmat->FastEl(1,i);
-        step = cmat->FastEl(2,i);
+        start = cmat->FastEl2d(0,i);
+        end = cmat->FastEl2d(1,i);
+        step = cmat->FastEl2d(2,i);
       }
       if(step == 0) step = 1;
       if(FixSliceValsFromSize(start, end, dim(i))) {
         int my_n = (end-start) / ABS(step); // number of guys in my slice
         sliceg.Set(i, my_n);
-        fixsmat.FastEl(0,i) = start;
-        fixsmat.FastEl(1,i) = end;
-        fixsmat.FastEl(2,i) = step;
+        fixsmat.FastEl2d(0,i) = start;
+        fixsmat.FastEl2d(1,i) = end;
+        fixsmat.FastEl2d(2,i) = step;
       }
       else {
         return _nilVariant;
@@ -501,9 +501,9 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     for(int i=0;i<tot_n; i++) {
       sliceg.DimsFmIndex(i, sidx); // get index into slice vals
       for(int d=0; d<dm; d++) {
-        int start = fixsmat.FastEl(0,d);
-        int end = fixsmat.FastEl(1,d);
-        int step = fixsmat.FastEl(2,d);
+        int start = fixsmat.FastEl2d(0,d);
+        int end = fixsmat.FastEl2d(1,d);
+        int step = fixsmat.FastEl2d(2,d);
         int sc;
         if(step > 0) {
           sc = start + step * sidx[d];
@@ -511,7 +511,7 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
         else {
           sc = end-1 + step * sidx[d];
         }
-        imat->FastEl(d, i) = sc;
+        imat->FastEl2d(d, i) = sc;
       }
     }
     taMatrix* nwvw = NewElView(imat, IDX_COORDS);
@@ -578,7 +578,7 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
     }
     MatrixIndex idx(dm);
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl(d, 0));   // outer index is count index
+      idx.Set(d, cmat->FastEl2d(d, 0));   // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
@@ -627,7 +627,7 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
     }
     MatrixIndex idx(dm);
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl(d, itr->count));  // outer index is count index
+      idx.Set(d, cmat->FastEl2d(d, itr->count));  // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
@@ -687,7 +687,7 @@ bool taMatrix::IterLast_impl(taBaseItr*& itr) const {
     MatrixIndex idx(dm);
     int last_coord = cmat->Frames()-1;
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl(d, last_coord));   // outer index is count index
+      idx.Set(d, cmat->FastEl2d(d, last_coord));   // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ec) {
@@ -739,7 +739,7 @@ bool taMatrix::IterPrev_impl(taBaseItr*& itr) const {
     MatrixIndex idx(dm);
     int last_coord = cmat->Frames()-1-itr->count;
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl(d, last_coord));  // outer index is count index
+      idx.Set(d, cmat->FastEl2d(d, last_coord));  // outer index is count index
     }
     itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ec) {
@@ -1507,7 +1507,7 @@ taMatrix* taMatrix::GetSlice_(const MatrixIndex& base,
     int_Matrix* new_frame_view = new int_Matrix;
     new_frame_view->SetGeom(1, num_slice_frames);
     for(int i=0; i<num_slice_frames; i++) {
-      new_frame_view->FastEl(i) = idx_frames->SafeEl_Flat(st_frame + i);
+      new_frame_view->FastEl_Flat(i) = idx_frames->SafeEl_Flat(st_frame + i);
     }
     taMatrix* rval = (taMatrix*)MakeToken(); // make a token of me
     void* base_el = const_cast<void*>(FastEl_Flat_(0));
@@ -3497,7 +3497,7 @@ int_Matrix* taMatrix::Find() const {
     if(!FastElAsVar_Flat(i).toBool()) continue;
     geom.DimsFmIndex(i, sidx);
     for(int d=0; d<dm; d++) {
-      rval->FastEl(d,cnt) = sidx[d];
+      rval->FastEl2d(d,cnt) = sidx[d];
     }
     cnt++;
   }
@@ -3514,7 +3514,7 @@ taMatrix* taMatrix::Transpose() const {
     float_Matrix* rval = new float_Matrix(tg);
     for(int i=0;i<d0;i++) {
       for(int j=0;j<d1;j++) {
-        rval->FastEl(j,i) = ((float_Matrix*)this)->FastEl(i,j);
+        rval->FastEl2d(j,i) = ((float_Matrix*)this)->FastEl2d(i,j);
       }
     }
     return rval;
@@ -3523,7 +3523,7 @@ taMatrix* taMatrix::Transpose() const {
     double_Matrix* rval = new double_Matrix(tg);
     for(int i=0;i<d0;i++) {
       for(int j=0;j<d1;j++) {
-        rval->FastEl(j,i) = ((double_Matrix*)this)->FastEl(i,j);
+        rval->FastEl2d(j,i) = ((double_Matrix*)this)->FastEl2d(i,j);
       }
     }
     return rval;

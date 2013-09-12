@@ -574,7 +574,7 @@ bool taDataGen::WritePoint(float_Matrix* mat, int x, int y, float color, bool wr
                   taVector2i::WrapClipOne(wrap, y, mat->dim(1)));
   if(clipped)
     return false;
-  mat->FastEl(x,y) = color;
+  mat->FastEl2d(x,y) = color;
   return true;
 }
 
@@ -647,7 +647,7 @@ bool taDataGen::WriteXPoints(float_Matrix* mat, int x, int y,
   int del = (wdth - 1) / 2;
   int i;
   for(i=0; i<wdth; i++)
-    WritePoint(mat, x, y+i-del, color.FastEl(i), wrap);
+    WritePoint(mat, x, y+i-del, color.FastEl_Flat(i), wrap);
   return true;
 }
 
@@ -658,7 +658,7 @@ bool taDataGen::WriteYPoints(float_Matrix* mat, int x, int y,
   int del = (wdth - 1) / 2;
   int i;
   for(i=0; i<wdth; i++)
-    WritePoint(mat, x+i-del, y, color.FastEl(i), wrap);
+    WritePoint(mat, x+i-del, y, color.FastEl_Flat(i), wrap);
   return true;
 }
 

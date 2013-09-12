@@ -188,17 +188,17 @@ void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
           if(ic.WrapClip(wrap, input_size.retina_size)) {
             if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
           }
-          cnv_sum += dog_specs.FilterPoint(xf, yf, dog_img->FastEl(ic.x, ic.y));
+          cnv_sum += dog_specs.FilterPoint(xf, yf, dog_img->FastEl2d(ic.x, ic.y));
         }
       }
     }
     if(cnv_sum >= 0.0f) {
-      cur_out->FastEl(0, chan, dc.x, dc.y) = cnv_sum; // feat x = 0 = on
-      cur_out->FastEl(1, chan, dc.x, dc.y) = 0.0f;      // feat x = 1 = off
+      cur_out->FastEl4d(0, chan, dc.x, dc.y) = cnv_sum; // feat x = 0 = on
+      cur_out->FastEl4d(1, chan, dc.x, dc.y) = 0.0f;      // feat x = 1 = off
     }
     else {
-      cur_out->FastEl(0, chan, dc.x, dc.y) = 0.0f;      // feat x = 0 = on
-      cur_out->FastEl(1, chan, dc.x, dc.y) = -cnv_sum; // feat x = 1 = off
+      cur_out->FastEl4d(0, chan, dc.x, dc.y) = 0.0f;      // feat x = 0 = on
+      cur_out->FastEl4d(1, chan, dc.x, dc.y) = -cnv_sum; // feat x = 1 = off
     }
   }
 }
@@ -255,8 +255,8 @@ bool DoGRegionSpec::DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, co
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       for(dc.y = 0; dc.y < dog_img_geom.y; dc.y++) {
         for(dc.x = 0; dc.x < dog_img_geom.x; dc.x++) {
-          float val = out->FastEl(fc.x, fc.y, dc.x, dc.y);
-          dout->FastEl(dc.x, dc.y) = val;
+          float val = out->FastEl4d(fc.x, fc.y, dc.x, dc.y);
+          dout->FastEl2d(dc.x, dc.y) = val;
         }
       }
     }
@@ -304,7 +304,7 @@ void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
     for(y=input_size.border.y; y<= input_size.retina_size.y-input_size.border.y; y+= dog_specs.spacing) {
       for(x=input_size.border.x; x<= input_size.retina_size.x-input_size.border.x; x+=dog_specs.spacing) {
         ic.y = y; ic.x = x;
-        ic.WrapClip(true, input_size.retina_size);      mat->FastEl(ic.x,ic.y) = 1.0f;
+        ic.WrapClip(true, input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
       }
     }
   }

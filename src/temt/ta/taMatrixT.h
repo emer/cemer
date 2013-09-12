@@ -43,17 +43,37 @@ public:
   //    functions that return the type          //
   ////////////////////////////////////////////////
 
-  const T&              FastEl(int d0, int d1=0, int d2=0, int d3=0,
-    int d4=0, int d5=0, int d6=0) const
+  const T&              FastEl(int d0, int d1, int d2, int d3,
+    int d4, int d5=0, int d6=0) const
   { return el[FastElIndex(d0, d1, d2, d3, d4, d5, d6)]; }
+  const T&              FastEl1d(int d0) const
+  { return el[d0]; }
+  const T&              FastEl2d(int d0, int d1) const
+  { return el[FastElIndex2d(d0, d1)]; }
+  const T&              FastEl3d(int d0, int d1, int d2) const
+  { return el[FastElIndex3d(d0, d1, d2)]; }
+  const T&              FastEl4d(int d0, int d1, int d2, int d3) const
+  { return el[FastElIndex3d(d0, d1, d2)]; }
   const T&              FastElN(const MatrixIndex& indices) const
   { return el[FastElIndexN(indices)]; }
   const T&              FastEl_Flat(int idx) const { return el[idx]; }
 
-  T&                    FastEl(int d0, int d1=0, int d2=0, int d3=0,
-    int d4=0, int d5=0, int d6=0)
+  T&                    FastEl(int d0, int d1, int d2, int d3,
+                               int d4, int d5=0, int d6=0)
   { return el[FastElIndex(d0, d1, d2, d3, d4, d5, d6)]; }
-  // #CAT_Access get element without range checking
+  // #CAT_Access get element without range checking -- only for > 4d matrices -- for 4d and lower, use specific dimensionality required
+  T&                    FastEl1d(int d0)
+  { return el[d0]; }
+  // #CAT_Access get element without range checking, 1d optimized -- use if you know you've got a 1d matrix
+  T&                    FastEl2d(int d0, int d1)
+  { return el[FastElIndex2d(d0, d1)]; }
+  // #CAT_Access get element without range checking, 2d optimized -- use if you know you've got a 2d matrix
+  T&                    FastEl3d(int d0, int d1, int d2)
+  { return el[FastElIndex3d(d0, d1, d2)]; }
+  // #CAT_Access get element without range checking, 3d optimized -- use if you know you've got a 3d matrix
+  T&                    FastEl4d(int d0, int d1, int d2, int d3)
+  { return el[FastElIndex4d(d0, d1, d2, d3)]; }
+  // #CAT_Access get element without range checking, 4d optimized -- use if you know you've got a 4d matrix
   T&                    FastElN(const MatrixIndex& indices)
   { return el[FastElIndexN(indices)]; }
   // #CAT_Access get element without range checking

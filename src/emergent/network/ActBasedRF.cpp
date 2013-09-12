@@ -112,7 +112,7 @@ bool ActBasedRF::IncrementSums() {
       float tact = fabsf(tu->act);
       if(tact < threshold) continue; // not this time!
 
-      wt_array.FastEl(tidx) += tact;
+      wt_array.FastEl1d(tidx) += tact;
 
       float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(tidx);
       taBase::Ref(sum_mat);
@@ -120,7 +120,7 @@ bool ActBasedRF::IncrementSums() {
       Unit* su;
       taLeafItr sui;
       for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
-        sum_mat->FastEl(sidx) += tu->act * su->act;
+        sum_mat->FastEl1d(sidx) += tu->act * su->act;
       }
       taBase::unRefDone(sum_mat);
     }
@@ -140,7 +140,7 @@ bool ActBasedRF::ComputeRF() {
     DataCol* sum_da = sum_data.data.FastEl(i);
 
     for(int r=0;r<rf_data->rows; r++) {
-      float wt = wt_array.FastEl(r);
+      float wt = wt_array.FastEl1d(r);
       float sc = 1.0f;
       if(wt > 0.0f)
         sc = 1.0f / wt;
@@ -150,7 +150,7 @@ bool ActBasedRF::ComputeRF() {
       taBase::Ref(sum_mat);
 
       for(int j=0;j<rf_mat->size; j++) {
-        rf_mat->FastEl(j) = sum_mat->FastEl(j) * sc;
+        rf_mat->FastEl1d(j) = sum_mat->FastEl1d(j) * sc;
       }
 
       taBase::unRefDone(rf_mat);

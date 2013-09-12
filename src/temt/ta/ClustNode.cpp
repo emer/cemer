@@ -117,7 +117,7 @@ bool ClustNode::Cluster(taMath::DistMetric metric, bool norm, float tol) {
 	dst = taMath_float::vec_dist((float_Matrix*)nd->pat, (float_Matrix*)ond->pat, metric, norm, tol);
       else
 	dst = (float)taMath_double::vec_dist((double_Matrix*)nd->pat, (double_Matrix*)ond->pat, metric, norm, tol);
-      leaf_dists->FastEl(j,i) = dst;
+      leaf_dists->FastEl2d(j,i) = dst;
     }
   }
 
@@ -298,7 +298,7 @@ float ClustNode::Dist(const ClustNode& oth, taMath::DistMetric metric,
   if(pat) {
     if(oth.pat) {
       if(leaf_dists) {
-	rval = leaf_dists->FastEl(leaf_idx, oth.leaf_idx);
+	rval = leaf_dists->FastEl2d(leaf_idx, oth.leaf_idx);
       }
       else {
 	if(pat->GetDataValType() == VT_FLOAT)
@@ -318,7 +318,7 @@ float ClustNode::Dist(const ClustNode& oth, taMath::DistMetric metric,
       if(nd->pat) {
 	if(oth.pat) {
 	  if(leaf_dists) {
-	    rval += leaf_dists->FastEl(nd->leaf_idx, oth.leaf_idx);
+	    rval += leaf_dists->FastEl2d(nd->leaf_idx, oth.leaf_idx);
 	  }
 	  else {
 	    if(nd->pat->GetDataValType() == VT_FLOAT)

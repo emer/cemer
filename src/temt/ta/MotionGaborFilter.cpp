@@ -139,7 +139,7 @@ void MotionGaborFilter::GraphFilter(DataTable* graph_data) {
   for(t=0; t<t_size; t++) {
     for(z=0; z<y_size; z++) {
       for(x=0; x<x_size; x++) {
-        float val = filter.FastEl(x,z,t);
+        float val = filter.FastEl3d(x,z,t);
         graph_data->AddBlankRow();
         xda->SetValAsFloat(x, -1);
         zda->SetValAsFloat(z, -1);

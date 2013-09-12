@@ -101,7 +101,7 @@ void GaborFilter::GraphFilter(DataTable* graph_data) {
   int x,z;
   for(z=0; z<y_size; z++) {
     for(x=0; x<x_size; x++) {
-      float val = filter.FastEl(x,z);
+      float val = filter.FastEl2d(x,z);
       graph_data->AddBlankRow();
       xda->SetValAsFloat(x, -1);
       zda->SetValAsFloat(z, -1);

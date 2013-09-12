@@ -125,7 +125,7 @@ float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
     int cidx = (uvd_hist_idx.length - nv->hist_idx);
     int midx = uvd_hist_idx.CircIdx(cidx);
     if(uvd_hist.InRange(co.x, co.y, nv->unit_disp_idx, midx))
-      val = uvd_hist.FastEl(co.x, co.y, nv->unit_disp_idx, midx);
+      val = uvd_hist.FastEl4d(co.x, co.y, nv->unit_disp_idx, midx);
     else {
       taMisc::Info("midx idx problem:", String(midx), "cidx:",
                    String(cidx), "mbs:", String(uvd_hist.dim(3)));

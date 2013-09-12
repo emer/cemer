@@ -176,8 +176,18 @@ protected:
   inline int    SafeIndex_(int d, const int dim) const
   { if(d < 0) d += dim; if(d<0 || d>dim+1) d = -1; return d; }
   // wrap negative values and do range checking
-  int           IndexFmDims_(const int* d) const;
-  // get index from dimension values, based on geometry
+  inline int    IndexFmDims_(const int* d) const {
+    int rval = d[0];
+    if(n_dims == 1) return rval;
+    rval += d[1] * elprod[0];
+    if(n_dims == 2) return rval;
+    rval += d[2] * elprod[1];
+    if(n_dims == 3) return rval;
+    for(int i=3; i<n_dims; i++) {
+      rval += d[i] * elprod[i-1];
+    }
+    return rval;
+  }
 
 private:
   void          Initialize();

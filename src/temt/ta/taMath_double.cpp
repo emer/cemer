@@ -624,7 +624,7 @@ double taMath_double::integrate_polynomial(double_Matrix* coef, double min, doub
   double area = 0;
 
   for (int n = 0; n < coef->size; n++)
-    area += coef->FastEl(n) * ( ( pow(max, n + 1) / (n + 1) )  -  ( pow(min, n + 1 ) / ( n + 1 ) )  );
+    area += coef->FastEl_Flat(n) * ( ( pow(max, n + 1) / (n + 1) )  -  ( pow(min, n + 1 ) / ( n + 1 ) )  );
 
   return area;
 
@@ -698,24 +698,45 @@ bool taMath_double::vec_div_els(double_Matrix* a, const double_Matrix* b) {
 
 bool taMath_double::vec_add_scalar(double_Matrix* a, double b) {
   if(!vec_check_type(a)) return false;
-  TA_FOREACH_INDEX(i, *a) {
-    a->FastEl_Flat(i) += b;
+  if(a->ElView()) {
+    TA_FOREACH_INDEX(i, *a) {
+      a->FastEl_Flat(i) += b;
+    }
+  }
+  else {
+    for(int i=0; i<a->size; i++) {
+      a->FastEl_Flat(i) += b;
+    }
   }
   return true;
 }
 
 bool taMath_double::vec_sub_scalar(double_Matrix* a, double b) {
   if(!vec_check_type(a)) return false;
-  TA_FOREACH_INDEX(i, *a) {
-    a->FastEl_Flat(i) -= b;
+  if(a->ElView()) {
+    TA_FOREACH_INDEX(i, *a) {
+      a->FastEl_Flat(i) -= b;
+    }
+  }
+  else {
+    for(int i=0; i<a->size; i++) {
+      a->FastEl_Flat(i) -= b;
+    }
   }
   return true;
 }
 
 bool taMath_double::vec_mult_scalar(double_Matrix* a, double b) {
   if(!vec_check_type(a)) return false;
-  TA_FOREACH_INDEX(i, *a) {
-    a->FastEl_Flat(i) *= b;
+  if(a->ElView()) {
+    TA_FOREACH_INDEX(i, *a) {
+      a->FastEl_Flat(i) *= b;
+    }
+  }
+  else {
+    for(int i=0; i<a->size; i++) {
+      a->FastEl_Flat(i) *= b;
+    }
   }
   return true;
 }
@@ -723,8 +744,15 @@ bool taMath_double::vec_mult_scalar(double_Matrix* a, double b) {
 bool taMath_double::vec_div_scalar(double_Matrix* a, double b) {
   if(!vec_check_type(a)) return false;
   if(b == 0.0) return false;
-  TA_FOREACH_INDEX(i, *a) {
-    a->FastEl_Flat(i) /= b;
+  if(a->ElView()) {
+    TA_FOREACH_INDEX(i, *a) {
+      a->FastEl_Flat(i) /= b;
+    }
+  }
+  else {
+    for(int i=0; i<a->size; i++) {
+      a->FastEl_Flat(i) /= b;
+    }
   }
   return true;
 }
@@ -732,16 +760,30 @@ bool taMath_double::vec_div_scalar(double_Matrix* a, double b) {
 bool taMath_double::vec_quantize(double_Matrix* vec, double grid) {
   if(!vec_check_type(vec)) return false;
   if(grid == 0.0) return false;
-  TA_FOREACH_INDEX(i, *vec) {
-    vec->FastEl_Flat(i) = quantize(vec->FastEl_Flat(i), grid);
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      vec->FastEl_Flat(i) = quantize(vec->FastEl_Flat(i), grid);
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      vec->FastEl_Flat(i) = quantize(vec->FastEl_Flat(i), grid);
+    }
   }
   return true;
 }
 
 bool taMath_double::vec_simple_math(double_Matrix* vec, const SimpleMathSpec& math_spec) {
   if(!vec_check_type(vec)) return false;
-  TA_FOREACH_INDEX(i, *vec) {
-    vec->FastEl_Flat(i) = math_spec.Evaluate(vec->FastEl_Flat(i));
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      vec->FastEl_Flat(i) = math_spec.Evaluate(vec->FastEl_Flat(i));
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      vec->FastEl_Flat(i) = math_spec.Evaluate(vec->FastEl_Flat(i));
+    }
   }
   return true;
 }
@@ -778,16 +820,30 @@ bool taMath_double::vec_students_cum_cum(double_Matrix* t, const double_Matrix* 
 
 bool taMath_double::vec_gauss_inv(double_Matrix* p) {
   if(!vec_check_type(p)) return false;
-  TA_FOREACH_INDEX(i, *p) {
-    p->FastEl_Flat(i) = gauss_inv(p->FastEl_Flat(i));
+  if(p->ElView()) {
+    TA_FOREACH_INDEX(i, *p) {
+      p->FastEl_Flat(i) = gauss_inv(p->FastEl_Flat(i));
+    }
+  }
+  else {
+    for(int i=0; i<p->size; i++) {
+      p->FastEl_Flat(i) = gauss_inv(p->FastEl_Flat(i));
+    }
   }
   return true;
 }
 
 bool taMath_double::vec_gauss_inv_lim(double_Matrix* p) {
   if(!vec_check_type(p)) return false;
-  TA_FOREACH_INDEX(i, *p) {
-    p->FastEl_Flat(i) = gauss_inv_lim(p->FastEl_Flat(i));
+  if(p->ElView()) {
+    TA_FOREACH_INDEX(i, *p) {
+      p->FastEl_Flat(i) = gauss_inv_lim(p->FastEl_Flat(i));
+    }
+  }
+  else {
+    for(int i=0; i<p->size; i++) {
+      p->FastEl_Flat(i) = gauss_inv_lim(p->FastEl_Flat(i));
+    }
   }
   return true;
 }
@@ -973,8 +1029,15 @@ double taMath_double::vec_next_min(const double_Matrix* vec, int min_idx, int& i
 double taMath_double::vec_sum(const double_Matrix* vec) {
   if(!vec_check_type(vec)) return 0.0;
   double rval = 0.0;
-  TA_FOREACH_INDEX(i, *vec) {
-    rval += vec->FastEl_Flat(i);
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      rval += vec->FastEl_Flat(i);
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      rval += vec->FastEl_Flat(i);
+    }
   }
   return rval;
 }
@@ -1058,9 +1121,15 @@ double taMath_double::vec_sem(const double_Matrix* vec, double mean, bool use_me
 double taMath_double::vec_ss_len(const double_Matrix* vec) {
   if(!vec_check_type(vec)) return 0.0;
   double rval = 0.0;
-  TA_FOREACH_INDEX(i, *vec) {
-    double val = vec->FastEl_Flat(i);
-    rval += val * val;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      double val = vec->FastEl_Flat(i); rval += val * val;
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      double val = vec->FastEl_Flat(i); rval += val * val;
+    }
   }
   return rval;
 }
@@ -1074,9 +1143,15 @@ double taMath_double::vec_ss_mean(const double_Matrix* vec) {
   if(vec->size <= 1)    return 0.0;
   double rval = 0.0;
   double mean = vec_mean(vec);
-  TA_FOREACH_INDEX(i, *vec) {
-    double val = vec->FastEl_Flat(i) - mean;
-    rval += val * val;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      double val = vec->FastEl_Flat(i) - mean; rval += val * val;
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      double val = vec->FastEl_Flat(i) - mean; rval += val * val;
+    }
   }
   return rval;
 }
@@ -1120,8 +1195,15 @@ double taMath_double::vec_count(const double_Matrix* vec, Relation& rel) {
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   double rval = 0.0;
-  TA_FOREACH_INDEX(i, *vec) {
-    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+    }
   }
   return rval;
 }
@@ -1131,12 +1213,21 @@ double taMath_double::vec_percent(const double_Matrix* vec, Relation& rel) {
   Relation tmp_rel;
   rel.CacheVar(tmp_rel);
   double rval = 0.0;
-  TA_FOREACH_INDEX(i, *vec) {
-    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+    }
+    double denom = (double)vec->IterCount();
+    if(denom > 0.0)
+      rval /= denom;
   }
-  double denom = (double)vec->IterCount();
-  if(denom > 0.0)
-    rval /= denom;
+  else {
+    for(int i=0; i<vec->size; i++) {
+      if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+    }
+    if(vec->size > 0)
+      rval /= (float)vec->size;
+  }
   return rval;
 }
 
@@ -1528,7 +1619,7 @@ bool taMath_double::vec_regress_multi_lin_polynomial(double_Matrix* dx, double_M
     for (int i = 0; i < obs; i++) {
       gsl_matrix_set(X, i, 0, 1.0);
       for (int j = 0; j < degree; j++) {
-        gsl_matrix_set(X, i, j, pow(dx->FastEl(i), j));
+        gsl_matrix_set(X, i, j, pow(dx->FastEl_Flat(i), j));
       }
     }
 
@@ -1778,10 +1869,19 @@ double taMath_double::vec_norm_len(double_Matrix* vec, double len) {
   if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   double scale = (len * len) / vec_ss_len(vec);
-  TA_FOREACH_INDEX(i, *vec) {
-    double val = vec->FastEl_Flat(i);
-    double mag = (val * val) * scale;
-    vec->FastEl_Flat(i) = (val >= 0.0f) ? mag : -mag;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      double val = vec->FastEl_Flat(i);
+      double mag = (val * val) * scale;
+      vec->FastEl_Flat(i) = (val >= 0.0f) ? mag : -mag;
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      double val = vec->FastEl_Flat(i);
+      double mag = (val * val) * scale;
+      vec->FastEl_Flat(i) = (val >= 0.0f) ? mag : -mag;
+    }
   }
   return scale;
 }
@@ -1790,13 +1890,26 @@ double taMath_double::vec_norm_sum(double_Matrix* vec, double sum, double min_va
   if(!vec_check_type(vec)) return 0.0;
   if(vec->size == 0)    return 0.0;
   double act_sum = 0.0;
-  TA_FOREACH_INDEX(i, *vec) {
-    act_sum += (vec->FastEl_Flat(i) - min_val);
+  double scale;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      act_sum += (vec->FastEl_Flat(i) - min_val);
+    }
+    if(act_sum == 0.0) return 0.0;
+    scale = (sum / act_sum);
+    TA_FOREACH_INDEX(i, *vec) {
+      vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
+    }
   }
-  if(act_sum == 0.0) return 0.0;
-  double scale = (sum / act_sum);
-  TA_FOREACH_INDEX(i, *vec) {
-    vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
+  else { // optimized
+    for(int i=0; i<vec->size; i++) {
+      act_sum += (vec->FastEl_Flat(i) - min_val);
+    }
+    if(act_sum == 0.0f) return 0.0;
+    scale = (sum / act_sum);
+    for(int i=0; i<vec->size; i++) {
+      vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
+    }
   }
   return scale;
 }
@@ -1808,8 +1921,15 @@ double taMath_double::vec_norm_max(double_Matrix* vec, double max) {
   double cur_max = vec_max(vec, idx);
   if(cur_max == 0.0) return 0.0;
   double scale = (max / cur_max);
-  TA_FOREACH_INDEX(i, *vec) {
-    vec->FastEl_Flat(i) *= scale;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      vec->FastEl_Flat(i) *= scale;
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      vec->FastEl_Flat(i) *= scale;
+    }
   }
   return scale;
 }
@@ -1821,8 +1941,15 @@ double taMath_double::vec_norm_abs_max(double_Matrix* vec, double max) {
   double cur_max = vec_abs_max(vec, idx);
   if(cur_max == 0.0) return 0.0;
   double scale = (max / cur_max);
-  TA_FOREACH_INDEX(i, *vec) {
-    vec->FastEl_Flat(i) *= scale;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      vec->FastEl_Flat(i) *= scale;
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      vec->FastEl_Flat(i) *= scale;
+    }
   }
   return scale;
 }
@@ -1831,13 +1958,26 @@ int taMath_double::vec_threshold(double_Matrix* vec, double thresh, double low, 
   if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
-  TA_FOREACH_INDEX(i, *vec) {
-    if(vec->FastEl_Flat(i) >= thresh) {
-      vec->FastEl_Flat(i) = high;
-      rval++;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      if(vec->FastEl_Flat(i) >= thresh) {
+        vec->FastEl_Flat(i) = high;
+        rval++;
+      }
+      else
+        vec->FastEl_Flat(i) = low;
     }
-    else
-      vec->FastEl_Flat(i) = low;
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      if(vec->FastEl_Flat(i) >= thresh) {
+        vec->FastEl_Flat(i) = high;
+        rval++;
+      }
+      else {
+        vec->FastEl_Flat(i) = low;
+      }
+    }
   }
   return rval;
 }
@@ -1846,10 +1986,20 @@ int taMath_double::vec_threshold_low(double_Matrix* vec, double thresh, double l
   if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
-  TA_FOREACH_INDEX(i, *vec) {
-    if(vec->FastEl_Flat(i) <= thresh) {
-      vec->FastEl_Flat(i) = low;
-      rval++;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      if(vec->FastEl_Flat(i) <= thresh) {
+        vec->FastEl_Flat(i) = low;
+        rval++;
+      }
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      if(vec->FastEl_Flat(i) <= thresh) {
+        vec->FastEl_Flat(i) = low;
+        rval++;
+      }
     }
   }
   return rval;
@@ -1859,10 +2009,20 @@ int taMath_double::vec_threshold_high(double_Matrix* vec, double thresh, double 
   if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
-  TA_FOREACH_INDEX(i, *vec) {
-    if(vec->FastEl_Flat(i) >= thresh) {
-      vec->FastEl_Flat(i) = high;
-      rval++;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      if(vec->FastEl_Flat(i) >= thresh) {
+        vec->FastEl_Flat(i) = high;
+        rval++;
+      }
+    }
+  }
+  else {
+    for(int i=0; i<vec->size; i++) {
+      if(vec->FastEl_Flat(i) >= thresh) {
+        vec->FastEl_Flat(i) = high;
+        rval++;
+      }
     }
   }
   return rval;
@@ -1973,7 +2133,7 @@ bool taMath_double::vec_kern_uniform(double_Matrix* kernel, int half_sz,
     else {
       y = val;
     }
-    kernel->FastEl(i) = y;
+    kernel->FastEl_Flat(i) = y;
   }
   return true;
 }
@@ -1995,7 +2155,7 @@ bool taMath_double::vec_kern_gauss(double_Matrix* kernel, int half_sz, double si
       if(!pos_tail)
         y = 0.0;
     }
-    kernel->FastEl(i) = y;
+    kernel->FastEl_Flat(i) = y;
   }
   vec_norm_sum(kernel);
   return true;
@@ -2020,7 +2180,7 @@ bool taMath_double::vec_kern_exp(double_Matrix* kernel, int half_sz, double exp_
     else {
       y = exp(-exp_mult * x);   // always count point
     }
-    kernel->FastEl(i) = y;
+    kernel->FastEl_Flat(i) = y;
   }
   vec_norm_sum(kernel);
   return true;
@@ -2045,7 +2205,7 @@ bool taMath_double::vec_kern_pow(double_Matrix* kernel, int half_sz, double pow_
     else {
       y = 1.0;                  // count self as 1
     }
-    kernel->FastEl(i) = y;
+    kernel->FastEl_Flat(i) = y;
   }
   vec_norm_sum(kernel);
   return true;
@@ -2069,16 +2229,16 @@ bool taMath_double::vec_convolve(double_Matrix* out_vec, const double_Matrix* in
       for(int j=0;j<kernel->size;j++) {
         int idx = i + j - off;
         if(idx < 0 || idx >= in_vec->size) {
-          dnorm += kernel->FastEl(j);
+          dnorm += kernel->FastEl_Flat(j);
         }
         else {
-          sum += in_vec->FastEl(idx) * kernel->FastEl(j);
+          sum += in_vec->FastEl_Flat(idx) * kernel->FastEl_Flat(j);
         }
       }
       if(dnorm > 0.0 && dnorm < 1.0) { // renorm
         sum /= (1.0 - dnorm);
       }
-      out_vec->FastEl(i) = sum;
+      out_vec->FastEl_Flat(i) = sum;
     }
   }
   else {
@@ -2091,9 +2251,9 @@ bool taMath_double::vec_convolve(double_Matrix* out_vec, const double_Matrix* in
     for(int i=0;i<out_vec->size;i++) {
       double sum = 0.0;
       for(int j=0;j<kernel->size;j++) {
-        sum += in_vec->FastEl(i+j) * kernel->FastEl(j);
+        sum += in_vec->FastEl_Flat(i+j) * kernel->FastEl_Flat(j);
       }
-      out_vec->FastEl(i) = sum;
+      out_vec->FastEl_Flat(i) = sum;
     }
   }
   return true;
@@ -2112,7 +2272,7 @@ bool taMath_double::vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
     for(int xi=0; xi < sz_x; xi++) {
       double x = ((double)xi - ctr_y) / eff_sig_x;
       double gv = exp(-(x*x + y*y)/2.0f);
-      kernel->FastEl(xi, yi) = gv;
+      kernel->FastEl2d(xi, yi) = gv;
     }
   }
   vec_norm_sum(kernel);
@@ -2131,7 +2291,7 @@ bool taMath_double::mat_col(double_Matrix* col, const double_Matrix* mat, int co
   int rows = mat->dim(1);
   col->SetGeom(1, rows);
   for(int i=0;i<rows;i++) {
-    col->FastEl(i) = mat->FastEl(col_no, i);
+    col->FastEl_Flat(i) = mat->FastEl2d(col_no, i);
   }
   return true;
 }
@@ -2144,7 +2304,7 @@ bool taMath_double::mat_row(double_Matrix* row, const double_Matrix* mat, int ro
   int cols = mat->dim(0);
   row->SetGeom(1, cols);
   for(int i=0;i<cols;i++) {
-    row->FastEl(i) = mat->FastEl(i, row_no);
+    row->FastEl_Flat(i) = mat->FastEl2d(i, row_no);
   }
   return true;
 }
@@ -2210,8 +2370,8 @@ bool taMath_double::mat_transpose(double_Matrix* dest, const double_Matrix* src)
     dest->SetGeom(3,2,d1,d0);
     for(int i=0;i<d0;i++) {
       for(int j=0;j<d1;j++) {
-	dest->FastEl(0,j,i) = src->FastEl(0,i,j);
-	dest->FastEl(1,j,i) = src->FastEl(1,i,j);
+	dest->FastEl3d(0,j,i) = src->FastEl3d(0,i,j);
+	dest->FastEl3d(1,j,i) = src->FastEl3d(1,i,j);
       }
     }
   }
@@ -2371,18 +2531,18 @@ bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, i
   for(int i=0; i<dim; i++) {
     double sum = 0.0;
     for(int j=0; j<dim; j++)
-      sum += a->FastEl(i, j);
+      sum += a->FastEl2d(i, j);
     sum /= (double)dim;
     for(int j=0; j<dim; j++)
-      a->FastEl(i, j) -= sum;
+      a->FastEl2d(i, j) -= sum;
   }
   for(int j=0; j<dim; j++) {
     double sum = 0.0;
     for(int i=0; i<dim; i++)
-      sum += a->FastEl(i, j);
+      sum += a->FastEl2d(i, j);
     sum /= (double)dim;
     for(int i=0; i<dim; i++)
-      a->FastEl(i, j) -= sum;
+      a->FastEl2d(i, j) -= sum;
   }
 
   for(int i=0;i<a->size;i++) a->FastEl_Flat(i) *= -.5;
@@ -2393,16 +2553,16 @@ bool taMath_double::mat_mds_owrite(double_Matrix* a, double_Matrix* xy_coords, i
 
   xy_coords->SetGeom(2, 2, dim);
   // multiply the eigenvectors by sqrt(eigen values)
-  double evsq = taMath_double::sqrt(taMath_double::fabs(evals.FastEl(x_axis_c)));
+  double evsq = taMath_double::sqrt(taMath_double::fabs(evals.FastEl_Flat(x_axis_c)));
   for(int i=0;i<dim;i++) {
-    float val = evecs.FastEl(i, x_axis_c) * evsq;
-    xy_coords->FastEl(0, i) = val;      // 0 = x coord
+    float val = evecs.FastEl2d(i, x_axis_c) * evsq;
+    xy_coords->FastEl2d(0, i) = val;      // 0 = x coord
   }
 
-  evsq = taMath_double::sqrt(taMath_double::fabs(evals.FastEl(y_axis_c)));
+  evsq = taMath_double::sqrt(taMath_double::fabs(evals.FastEl_Flat(y_axis_c)));
   for(int i=0;i<dim;i++) {
-    float val = evecs.FastEl(i, y_axis_c) * evsq;
-    xy_coords->FastEl(1, i) = val;      // 1 = y coord
+    float val = evecs.FastEl2d(i, y_axis_c) * evsq;
+    xy_coords->FastEl2d(1, i) = val;      // 1 = y coord
   }
 
   return true;
@@ -2843,7 +3003,7 @@ bool taMath_double::mat_dist(double_Matrix* dist_mat, const double_Matrix* src_m
       double_Matrix* t2 = ((double_Matrix*)src_mat)->GetFrameSlice(j);
       taBase::Ref(t2);
       double dist = vec_dist(t1, t2, metric, norm, tolerance);
-      dist_mat->FastEl(j,i) = dist;
+      dist_mat->FastEl2d(j,i) = dist;
       taBase::unRefDone(t2);
     }
     taBase::unRefDone(t1);
@@ -2878,7 +3038,7 @@ bool taMath_double::mat_cross_dist(double_Matrix* dist_mat, const double_Matrix*
       double_Matrix* t2 = ((double_Matrix*)src_mat_b)->GetFrameSlice(j);
       taBase::Ref(t2);
       double dist = vec_dist(t1, t2, metric, norm, tolerance);
-      dist_mat->FastEl(j,i) = dist;
+      dist_mat->FastEl2d(j,i) = dist;
       taBase::unRefDone(t2);
     }
     taBase::unRefDone(t1);
@@ -2896,7 +3056,7 @@ bool taMath_double::mat_cell_to_vec(double_Matrix* vec, const double_Matrix* mat
   int n = mat->Frames();
   vec->SetGeom(1, n);
   for(int i=0;i<n; i++) {
-    vec->FastEl(i) = mat->FastEl_Flat(mat->FrameStartIdx(i) + cell_no);
+    vec->FastEl_Flat(i) = mat->FastEl_Flat(mat->FrameStartIdx(i) + cell_no);
   }
   return true;
 }
@@ -2918,7 +3078,7 @@ bool taMath_double::mat_correl(double_Matrix* correl_mat, const double_Matrix* s
     mat_cell_to_vec(&p1vals, src_mat, i);
     for(int j=0;j<n;j++) {
       mat_cell_to_vec(&p2vals, src_mat, j);
-      correl_mat->FastEl(j,i) = vec_correl(&p1vals, &p2vals);
+      correl_mat->FastEl2d(j,i) = vec_correl(&p1vals, &p2vals);
     }
   }
   return true;
@@ -2943,7 +3103,7 @@ bool taMath_double::mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_m
     double_Matrix* t1 = ((double_Matrix*)src_mat)->GetFrameSlice(i);
     taBase::Ref(t1);
     double val = vec_dist(t1, prjn_mat, metric, norm, tol);
-    prjn_vec->FastEl(i) = val;
+    prjn_vec->FastEl_Flat(i) = val;
     taBase::unRefDone(t1);
   }
   return true;
@@ -2988,10 +3148,11 @@ bool taMath_double::mat_frame_convolve(double_Matrix* out_vec, const double_Matr
       for(int j=0;j<kernel->size;j++) {
         int idx = i + j - off;
         if(idx < 0 || idx >= in_vec->Frames()) {
-          dnorm += kernel->FastEl(j);
+          dnorm += kernel->FastEl_Flat(j);
         }
         else {
-          sum += in_vec->FastEl_Flat(in_vec->FrameStartIdx(idx) + k) * kernel->FastEl(j);
+          sum += in_vec->FastEl_Flat(in_vec->FrameStartIdx(idx) + k) *
+            kernel->FastEl_Flat(j);
         }
       }
       if(dnorm > 0.0 && dnorm < 1.0) { // renorm

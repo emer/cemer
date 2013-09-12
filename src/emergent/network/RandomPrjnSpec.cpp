@@ -50,21 +50,21 @@ void RandomPrjnSpec::Connect_impl(Projection* prjn) {
     for (int j= 0; j < n_send_units; j++) {
       if (Random::BoolProb(p_con)) {
         cons->Set(1, i, j);
-        send_alloc->Set(send_alloc->FastEl(j) + 1, j);
-        recv_alloc->Set(recv_alloc->FastEl(i) + 1, i);
+        send_alloc->Set(send_alloc->FastEl1d(j) + 1, j);
+        recv_alloc->Set(recv_alloc->FastEl1d(i) + 1, i);
       }
     }
   }
 
   for (int i = 0; i < n_recv_units; i++)
-    prjn->layer->units.FastEl(i)->RecvConsPreAlloc(recv_alloc->FastEl(i), prjn);
+    prjn->layer->units.FastEl(i)->RecvConsPreAlloc(recv_alloc->FastEl1d(i), prjn);
 
   for (int j = 0; j < n_send_units; j++)
-    prjn->from->units.FastEl(j)->SendConsPreAlloc(send_alloc->FastEl(j), prjn);
+    prjn->from->units.FastEl(j)->SendConsPreAlloc(send_alloc->FastEl1d(j), prjn);
 
   for (int i = 0; i < n_recv_units; i++) {
     for (int j = 0; j < n_send_units; j++) {
-      if (cons->FastEl(i, j))
+      if (cons->FastEl2d(i, j))
         prjn->layer->units.FastEl(i)->ConnectFrom(prjn->from->units.FastEl(j), prjn);
     }
   }

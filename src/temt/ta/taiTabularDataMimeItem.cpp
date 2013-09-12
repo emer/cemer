@@ -80,7 +80,7 @@ void taiTabularDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
     int col = sel.col_fr;
     while (col <= sel.col_to) {
       if (!ReadTsvValue(istr, val, sep)) goto done;
-      int idx = mat->FastElIndex2D(col, row);
+      int idx = mat->FastElIndex2d(col, row);
       mat->SetFmStr_Flat(val, idx);
       if (sep == TSV_EOF) goto done;
       // if we've run out of col data, skip to next row

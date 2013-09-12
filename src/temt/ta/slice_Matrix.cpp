@@ -21,9 +21,9 @@ int_Matrix* slice_Matrix::Expand(int implicit_end) {
   // todo: could try to handle multi-dimensional case, but it is tricky due to
   // uneven sizes of internal dimensions..
   int_Matrix* rval = new int_Matrix;
-  int start = FastEl(0);
-  int end = FastEl(1);
-  int step = FastEl(2);
+  int start = FastEl_Flat(0);
+  int end = FastEl_Flat(1);
+  int step = FastEl_Flat(2);
   if(step == 0) step = 1;
   int sz = implicit_end;                // default size
   if(end > 0)                   // if end set, then it is size

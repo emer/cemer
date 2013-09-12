@@ -52,66 +52,66 @@ void V1EndStopPrjnSpec::InitStencils(Projection* prjn) {
     float cosx, siny;
     float angf = (float)ang * ang_inc;
     es_get_angles(angf, cosx, siny);
-    v1s_ang_slopes.FastEl(X, LINE, ang) = cosx;
-    v1s_ang_slopes.FastEl(Y, LINE, ang) = siny;
+    v1s_ang_slopes.FastEl3d(X, LINE, ang) = cosx;
+    v1s_ang_slopes.FastEl3d(Y, LINE, ang) = siny;
 
     es_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
-    v1s_ang_slopes.FastEl(X, ORTHO, ang) = cosx;
-    v1s_ang_slopes.FastEl(Y, ORTHO, ang) = siny;
+    v1s_ang_slopes.FastEl3d(X, ORTHO, ang) = cosx;
+    v1s_ang_slopes.FastEl3d(Y, ORTHO, ang) = siny;
   }
 
   v1c_es_stencils.SetGeom(4, 2, 2, 2, n_angles);
 
   if(n_angles == 4) {
-    v1c_es_stencils.FastEl(X, 0, 0, 0) = -end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 0, 0, 0) = -end_stop_dist;
-    v1c_es_stencils.FastEl(X, 1, 0, 0) = -end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 1, 0, 0) = end_stop_dist;
-    v1c_es_stencils.FastEl(X, 0, 1, 0) = end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 0, 1, 0) = -end_stop_dist;
-    v1c_es_stencils.FastEl(X, 1, 1, 0) = end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 1, 1, 0) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 0, 0, 0) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 0, 0, 0) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 1, 0, 0) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 1, 0, 0) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 0, 1, 0) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 0, 1, 0) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 1, 1, 0) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 1, 1, 0) = end_stop_dist;
 
-    v1c_es_stencils.FastEl(X, 0, 0, 2) = -end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 0, 0, 2) = -end_stop_dist;
-    v1c_es_stencils.FastEl(X, 1, 0, 2) = -end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 1, 0, 2) = end_stop_dist;
-    v1c_es_stencils.FastEl(X, 0, 1, 2) = end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 0, 1, 2) = -end_stop_dist;
-    v1c_es_stencils.FastEl(X, 1, 1, 2) = end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 1, 1, 2) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 0, 0, 2) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 0, 0, 2) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 1, 0, 2) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 1, 0, 2) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 0, 1, 2) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 0, 1, 2) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 1, 1, 2) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 1, 1, 2) = end_stop_dist;
 
-    v1c_es_stencils.FastEl(X, 0, 0, 1) = -end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 0, 0, 1) = 0;
-    v1c_es_stencils.FastEl(X, 1, 0, 1) = end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 1, 0, 1) = 0;
-    v1c_es_stencils.FastEl(X, 0, 1, 1) = 0;
-    v1c_es_stencils.FastEl(Y, 0, 1, 1) = -end_stop_dist;
-    v1c_es_stencils.FastEl(X, 1, 1, 1) = 0;
-    v1c_es_stencils.FastEl(Y, 1, 1, 1) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 0, 0, 1) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 0, 0, 1) = 0;
+    v1c_es_stencils.FastEl4d(X, 1, 0, 1) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 1, 0, 1) = 0;
+    v1c_es_stencils.FastEl4d(X, 0, 1, 1) = 0;
+    v1c_es_stencils.FastEl4d(Y, 0, 1, 1) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 1, 1, 1) = 0;
+    v1c_es_stencils.FastEl4d(Y, 1, 1, 1) = end_stop_dist;
 
-    v1c_es_stencils.FastEl(X, 0, 0, 3) = -end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 0, 0, 3) = 0;
-    v1c_es_stencils.FastEl(X, 1, 0, 3) = end_stop_dist;
-    v1c_es_stencils.FastEl(Y, 1, 0, 3) = 0;
-    v1c_es_stencils.FastEl(X, 0, 1, 3) = 0;
-    v1c_es_stencils.FastEl(Y, 0, 1, 3) = -end_stop_dist;
-    v1c_es_stencils.FastEl(X, 1, 1, 3) = 0;
-    v1c_es_stencils.FastEl(Y, 1, 1, 3) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 0, 0, 3) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 0, 0, 3) = 0;
+    v1c_es_stencils.FastEl4d(X, 1, 0, 3) = end_stop_dist;
+    v1c_es_stencils.FastEl4d(Y, 1, 0, 3) = 0;
+    v1c_es_stencils.FastEl4d(X, 0, 1, 3) = 0;
+    v1c_es_stencils.FastEl4d(Y, 0, 1, 3) = -end_stop_dist;
+    v1c_es_stencils.FastEl4d(X, 1, 1, 3) = 0;
+    v1c_es_stencils.FastEl4d(Y, 1, 1, 3) = end_stop_dist;
   }
   else {
     for(int ang=0; ang < n_angles; ang++) {
       for(int sidx=0; sidx < 2; sidx++) {
         int side = (sidx == 0) ? -1 : 1;
 
-        int sx = (int)(end_stop_dist * (float)side * v1s_ang_slopes.FastEl(X, LINE, ang));
-        int sy = (int)(end_stop_dist * (float)side * v1s_ang_slopes.FastEl(Y, LINE, ang));
+        int sx = (int)(end_stop_dist * (float)side * v1s_ang_slopes.FastEl3d(X, LINE, ang));
+        int sy = (int)(end_stop_dist * (float)side * v1s_ang_slopes.FastEl3d(Y, LINE, ang));
         for(int lpdx=0; lpdx < 2; lpdx++) {
           int lpt = (lpdx == 0) ? -1 : 1;
-          v1c_es_stencils.FastEl(X, lpdx, sidx, ang) = sx +
-            (int)(end_stop_dist *(float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang));
-          v1c_es_stencils.FastEl(Y, lpdx, sidx, ang) = sy +
-            (int)(end_stop_dist * (float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
+          v1c_es_stencils.FastEl4d(X, lpdx, sidx, ang) = sx +
+            (int)(end_stop_dist *(float)lpt * v1s_ang_slopes.FastEl3d(X, ORTHO, ang));
+          v1c_es_stencils.FastEl4d(Y, lpdx, sidx, ang) = sy +
+            (int)(end_stop_dist * (float)lpt * v1s_ang_slopes.FastEl3d(Y, ORTHO, ang));
         }
       }
     }
@@ -136,7 +136,7 @@ void V1EndStopPrjnSpec::InitStencils(Projection* prjn) {
         wt = adjang_wt;
       else
         wt = 1.0f;
-      v1c_es_angwts.FastEl(ang1, ang2) = wt;
+      v1c_es_angwts.FastEl2d(ang1, ang2) = wt;
     }
   }
 }
@@ -204,8 +204,8 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
 
             for(int sidx=0; sidx < 2; sidx++) {
               for(int lpdx=0; lpdx < 2; lpdx++) {
-                int xp = v1c_es_stencils.FastEl(X,lpdx,sidx,ang);
-                int yp = v1c_es_stencils.FastEl(Y,lpdx,sidx,ang);
+                int xp = v1c_es_stencils.FastEl4d(X,lpdx,sidx,ang);
+                int yp = v1c_es_stencils.FastEl4d(Y,lpdx,sidx,ang);
 
                 taVector2i suc = ruc;
                 suc.x += xp;  suc.y += yp;
@@ -216,7 +216,7 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
                 if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
                 for(int opang=0; opang<n_angles; opang++) {
-                  float angwt = v1c_es_angwts.FastEl(ang, opang);
+                  float angwt = v1c_es_angwts.FastEl2d(ang, opang);
                   if(angwt == 0.0f) continue;
 
                   int sui = sun.y * n_angles + opang;
@@ -264,7 +264,7 @@ void V1EndStopPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
     for(int sidx=0; sidx < 2; sidx++) {
       for(int lpdx=0; lpdx < 2; lpdx++) {
         for(int opang=0; opang<n_angles; opang++) {
-          float angwt = v1c_es_angwts.FastEl(rui, opang);
+          float angwt = v1c_es_angwts.FastEl2d(rui, opang);
           if(angwt == 0.0f) continue;
           cg->Cn(cnidx++,BaseCons::WT,net) = angwt;
         }

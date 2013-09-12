@@ -924,6 +924,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
 void LeabraUnitSpec::Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net) {
   int nt = net->threads.tasks.size;
   float nw_nt = 0.0f;
+  // todo: use incremented index counter instead of computing fresh
   if(net->NetinPerPrjn()) {	// always uses netin_tmp -- this is where inhib goes
     float nw_inhb = 0.0f;
     if(!net->threads.using_threads)
@@ -932,7 +933,7 @@ void LeabraUnitSpec::Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       float g_nw_nt = 0.0f;
       for(int j=0;j<nt;j++) {
-	g_nw_nt += net->send_netin_tmp.FastEl(u->flat_idx, g, j);
+	g_nw_nt += net->send_netin_tmp.FastEl3d(u->flat_idx, g, j);
       }
       recv_gp->net_delta = g_nw_nt;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
@@ -948,7 +949,7 @@ void LeabraUnitSpec::Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net) {
   else {
     if(net->threads.using_threads) {	// if not used, goes directly into unit vals
       for(int j=0;j<nt;j++) {
-	nw_nt += net->send_netin_tmp.FastEl(u->flat_idx, j);
+	nw_nt += net->send_netin_tmp.FastEl2d(u->flat_idx, j);
       }
       u->net_delta = nw_nt;
     }
@@ -1681,7 +1682,7 @@ void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
   float nw_nt = 0.0f;
   if(net->threads.using_threads) {	// if not used, goes directly into unit vals
     for(int j=0;j<nt;j++) {
-      nw_nt += net->send_netin_tmp.FastEl(u->flat_idx, j);
+      nw_nt += net->send_netin_tmp.FastEl2d(u->flat_idx, j);
     }
     u->net_ctxt = nw_nt;
   }

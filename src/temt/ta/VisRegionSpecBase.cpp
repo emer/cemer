@@ -167,19 +167,19 @@ bool VisRegionSpecBase::ColorRGBtoCMYK(float_Matrix& img) {
 
   for(int yi = 0; yi < img_size.y; yi++) {
     for(int xi = 0; xi < img_size.y; xi++) {
-      float r_val = img.FastEl(xi, yi, 0);
-      float g_val = img.FastEl(xi, yi, 1);
-      float b_val = img.FastEl(xi, yi, 2);
+      float r_val = img.FastEl3d(xi, yi, 0);
+      float g_val = img.FastEl3d(xi, yi, 1);
+      float b_val = img.FastEl3d(xi, yi, 2);
 
       float grey = 0.33333f * (r_val + g_val + b_val);
       float r_v_c = r_val - 0.5f * (g_val + b_val);
       float g_v_m = g_val - 0.5f * (r_val + b_val);
       float b_v_y = b_val - 0.5f * (r_val + g_val);
 
-      cur_img_grey.FastEl(xi, yi) = grey;
-      cur_img_rc.FastEl(xi, yi) = r_v_c;
-      cur_img_gm.FastEl(xi, yi) = g_v_m;
-      cur_img_by.FastEl(xi, yi) = b_v_y;
+      cur_img_grey.FastEl2d(xi, yi) = grey;
+      cur_img_rc.FastEl2d(xi, yi) = r_v_c;
+      cur_img_gm.FastEl2d(xi, yi) = g_v_m;
+      cur_img_by.FastEl2d(xi, yi) = b_v_y;
     }
   }
   return true;

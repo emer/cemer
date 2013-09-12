@@ -69,8 +69,8 @@ bool taImageProc::GetBorderColor_float_grey(float_Matrix& img_data, float& grey)
   float tavg = 0.0f;
   float bavg = 0.0f;
   for(int x=0;x<img_size.x;x++) {
-    tavg += img_data.FastEl(x, img_size.y-1);
-    bavg += img_data.FastEl(x, 0);
+    tavg += img_data.FastEl2d(x, img_size.y-1);
+    bavg += img_data.FastEl2d(x, 0);
   }
   tavg /= (float)(img_size.x);
   bavg /= (float)(img_size.x);
@@ -78,8 +78,8 @@ bool taImageProc::GetBorderColor_float_grey(float_Matrix& img_data, float& grey)
   float lavg = 0.0f;
   float ravg = 0.0f;
   for(int y=0;y<img_size.y;y++) {
-    ravg += img_data.FastEl(img_size.x-1, y);
-    lavg += img_data.FastEl(0, y);
+    ravg += img_data.FastEl2d(img_size.x-1, y);
+    lavg += img_data.FastEl2d(0, y);
   }
   lavg /= (float)(img_size.y);
   ravg /= (float)(img_size.y);
@@ -105,12 +105,12 @@ bool taImageProc::RenderBorder_float(float_Matrix& img_data) {
   taVector2i img_size(img_data.dim(0), img_data.dim(1));
 
   for(int x=0;x<img_size.x;x++) {
-    img_data.FastEl(x, img_size.y-1) = grey;
-    img_data.FastEl(x, 0) = grey;
+    img_data.FastEl2d(x, img_size.y-1) = grey;
+    img_data.FastEl2d(x, 0) = grey;
   }
   for(int y=1;y<img_size.y-1;y++) {
-    img_data.FastEl(img_size.x-1, y) = grey;
-    img_data.FastEl(0, y) = grey;
+    img_data.FastEl2d(img_size.x-1, y) = grey;
+    img_data.FastEl2d(0, y) = grey;
   }
   return true;
 }
@@ -127,20 +127,20 @@ bool taImageProc::FadeEdgesToBorder_float(float_Matrix& img_data, int fade_width
     return true;
   }
   taVector2i img_size(img_data.dim(0), img_data.dim(1));
-  float oavg = img_data.FastEl(0,0); // assuming already has renderborder called
+  float oavg = img_data.FastEl2d(0,0); // assuming already has renderborder called
   for(int wd=1; wd<=fade_width;wd++) {
     float pct = (float)wd / (float)(fade_width+1);
     float pct_c = 1.0f - pct;
     float oavgadd = pct_c * oavg;
     for(int x=wd;x<img_size.x-wd;x++) {
-      float& tv = img_data.FastEl(x, img_size.y-1-wd);
-      float& bv = img_data.FastEl(x, wd);
+      float& tv = img_data.FastEl2d(x, img_size.y-1-wd);
+      float& bv = img_data.FastEl2d(x, wd);
       tv = oavgadd + pct * tv;
       bv = oavgadd + pct * bv;
     }
     for(int y=wd+1;y<img_size.y-wd-1;y++) {
-      float& rv = img_data.FastEl(img_size.x-1-wd, y);
-      float& lv = img_data.FastEl(wd, y);
+      float& rv = img_data.FastEl2d(img_size.x-1-wd, y);
+      float& lv = img_data.FastEl2d(wd, y);
       rv = oavgadd + pct * rv;
       lv = oavgadd + pct * lv;
     }
@@ -165,10 +165,10 @@ bool taImageProc::RenderOccluderBorderColor_float(float_Matrix& img_data,
   ll.x = (int)(img_size.x * llx);  ll.y = (int)(img_size.y * lly);
   taVector2i ur;
   ur.x = (int)(img_size.x * urx);  ur.y = (int)(img_size.y * ury);
-  float oavg = img_data.FastEl(0,0); // assuming already has renderborder called
+  float oavg = img_data.FastEl2d(0,0); // assuming already has renderborder called
   for(int y = ll.y; y < ur.y; y++) {
     for(int x = ll.x; x < ur.x; x++) {
-      img_data.FastEl(x, y) = oavg;
+      img_data.FastEl2d(x, y) = oavg;
     }
   }
   return true;
@@ -186,11 +186,11 @@ bool taImageProc::RenderFill(float_Matrix& img_data, float r, float g, float b, 
     for(int xi = 0; xi < img_size.x; xi++) {
       if(nclrs > 1) {
 	for(int cl=0; cl < nclrs; cl++) {
-	  img_data.FastEl(xi,yi,cl) = clrs[cl];
+	  img_data.FastEl3d(xi,yi,cl) = clrs[cl];
 	}
       }
       else {
-	img_data.FastEl(xi,yi) = r; // just use r channel for gray
+	img_data.FastEl2d(xi,yi) = r; // just use r channel for gray
       }
     }
   }
@@ -225,10 +225,10 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
       }
       if(nclrs > 1) {
         for(int i=0;i<nclrs;i++)
-          xlated_img.FastEl(nx, ny, i) = orig_img.FastEl(ic.x, ic.y, i);
+          xlated_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
       }
       else {
-        xlated_img.FastEl(nx, ny) = orig_img.FastEl(ic.x, ic.y);
+        xlated_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
       }
     }
   }
@@ -317,24 +317,24 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
           if(ic.WrapClip(wrap, img_size)) {
             if(edge == CLIP) continue; // bail on clipping only
           }
-          float sc = sc_ary.FastEl(oxi + n_orig_pix, oyi + n_orig_pix);
+          float sc = sc_ary.FastEl2d(oxi + n_orig_pix, oyi + n_orig_pix);
           if(nclrs > 1) {
 	    for(int cl=0; cl < nclrs; cl++) {
-	      avgs[cl] += sc * orig_img.FastEl(ic.x, ic.y, cl);
+	      avgs[cl] += sc * orig_img.FastEl3d(ic.x, ic.y, cl);
 	    }
           }
           else {
-            avgs[0] += sc * orig_img.FastEl(ic.x, ic.y);
+            avgs[0] += sc * orig_img.FastEl2d(ic.x, ic.y);
           }
         }
       }
       if(nclrs > 1) {
 	for(int cl=0; cl < nclrs; cl++) {
-	  scaled_img.FastEl(x, y, cl) = avgs[cl];
+	  scaled_img.FastEl3d(x, y, cl) = avgs[cl];
 	}
       }
       else {
-        scaled_img.FastEl(x, y) = avgs[0];
+        scaled_img.FastEl2d(x, y) = avgs[0];
       }
     }
   }
@@ -405,7 +405,7 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
       int oxi, oyi;
       for(oyi=0;oyi<2;oyi++) {
         for(oxi=0;oxi<2;oxi++) {
-          sc_ary.FastEl(oxi, oyi) = pwx[oxi] + pwy[oyi];
+          sc_ary.FastEl2d(oxi, oyi) = pwx[oxi] + pwy[oyi];
         }
       }
       taMath_float::vec_norm_sum(&sc_ary);
@@ -421,21 +421,21 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
           }
           if(nclrs > 1) {
 	    for(int cl=0; cl < nclrs; cl++) {
-	      avgs[cl] += sc_ary.FastEl(oxi, oyi) * orig_img.FastEl(ic.x, ic.y, cl);
+	      avgs[cl] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl3d(ic.x, ic.y, cl);
 	    }
           }
           else {
-            avgs[0] += sc_ary.FastEl(oxi, oyi) * orig_img.SafeEl(ic.x, ic.y);
+            avgs[0] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl2d(ic.x, ic.y);
           }
         }
       }
       if(nclrs > 1) {
 	for(int cl=0; cl < nclrs; cl++) {
-	  rotated_img.FastEl(x,y,cl) = avgs[cl];
+	  rotated_img.FastEl3d(x,y,cl) = avgs[cl];
 	}
       }
       else {
-        rotated_img.FastEl(x,y) = avgs[0];
+        rotated_img.FastEl2d(x,y) = avgs[0];
       }
     }
   }
@@ -474,10 +474,10 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
 
       if(nclrs > 1) {
         for(int i=0;i<nclrs;i++)
-          crop_img.FastEl(nx, ny, i) = orig_img.FastEl(ic.x, ic.y, i);
+          crop_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
       }
       else {
-        crop_img.FastEl(nx, ny) = orig_img.FastEl(ic.x, ic.y);
+        crop_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
       }
     }
   }
@@ -561,29 +561,35 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
   int   half_int = (int)floor(half_sc);
   float extra = half_sc - (float)half_int;
   int n_orig_pix = half_int + 1; // number of pixels to get from original image for each scaled pixel
-  //    int tot_org_pix = 2 * n_orig_pix + 1;
-  float_Matrix sc_ary(false);
-  sc_ary.SetGeom(2, n_orig_pix*2 + 1, n_orig_pix*2 + 1);
-  int x, y;
-  for(y=-n_orig_pix; y<= n_orig_pix; y++) {
-    float ysc = extra;
-    if((y >= -half_int) && (y <= half_int))
-      ysc = 1.0f;
-    for(x=-n_orig_pix; x<= n_orig_pix; x++) {
-      float xsc = extra;
-      if((x >= -half_int) && (x <= half_int))
-        xsc = 1.0f;
-      sc_ary.Set(ysc * xsc, x + n_orig_pix, y + n_orig_pix);
+  // make this static so we don't end up re-doing it every time
+  static float_Matrix sc_ary(false);
+  static int last_dim = 0;
+  const int cur_dim = n_orig_pix*2 + 1;
+  if(last_dim != cur_dim) {
+    sc_ary.SetGeom(2, cur_dim, cur_dim);
+    int x, y;
+    for(y=-n_orig_pix; y<= n_orig_pix; y++) {
+      float ysc = extra;
+      if((y >= -half_int) && (y <= half_int))
+        ysc = 1.0f;
+      for(x=-n_orig_pix; x<= n_orig_pix; x++) {
+        float xsc = extra;
+        if((x >= -half_int) && (x <= half_int))
+          xsc = 1.0f;
+        sc_ary.Set(ysc * xsc, x + n_orig_pix, y + n_orig_pix);
+      }
     }
+    taMath_float::vec_norm_sum(&sc_ary);          // make it add to 1
+    last_dim = cur_dim;
   }
-
-  taMath_float::vec_norm_sum(&sc_ary);          // make it add to 1
 
   bool wrap = (edge == WRAP);
 
   int pcx[2];    int pcy[2];
   float pwx[2];  float pwy[2];
-  float_Matrix rot_ary(false);  rot_ary.SetGeom(2, 2, 2);
+
+  static float_Matrix rot_ary(false);
+  rot_ary.SetGeom(2, 2, 2);
 
   taVector2i wc;
   for(wc.y=0; wc.y<win_size.y; wc.y++) {
@@ -604,7 +610,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
           if(ic.WrapClip(wrap, img_size)) {
             if(edge == CLIP) continue; // bail on clipping only
           }
-          float sc = sc_ary.FastEl(oc.x + n_orig_pix, oc.y + n_orig_pix);
+          float sc = sc_ary.FastEl2d(oc.x + n_orig_pix, oc.y + n_orig_pix);
 
           if(rotate != 0.0f) {
             // now, for each scaling fuzzy-sampled point, correct for rotational aliasing..
@@ -614,7 +620,7 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
             int oxi, oyi;
             for(oyi=0;oyi<2;oyi++) {
               for(oxi=0;oxi<2;oxi++) {
-                rot_ary.FastEl(oxi, oyi) = pwx[oxi] + pwy[oyi];
+                rot_ary.FastEl2d(oxi, oyi) = pwx[oxi] + pwy[oyi];
               }
             }
             taMath_float::vec_norm_sum(&rot_ary);
@@ -629,15 +635,15 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
                   if(edge == CLIP) continue; // bail on clipping only
                 }
 
-                float rsc = rot_ary.FastEl(oxi, oyi);
+                float rsc = rot_ary.FastEl2d(oxi, oyi);
 
                 if(nclrs > 1) {
 		  for(int cl=0; cl < nclrs; cl++) {
-		    r_avgs[cl] += rsc * in_img.FastEl(ric.x, ric.y, cl);
+		    r_avgs[cl] += rsc * in_img.FastEl3d(ric.x, ric.y, cl);
 		  }
                 }
                 else {
-                  r_avgs[0] += rsc * in_img.SafeEl(ric.x, ric.y);
+                  r_avgs[0] += rsc * in_img.FastEl2d(ric.x, ric.y);
                 }
               }
             }
@@ -653,22 +659,22 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
           else {
             if(nclrs > 1) {
 	      for(int cl=0; cl < nclrs; cl++) {
-		avgs[cl] += sc * in_img.FastEl(ic.x, ic.y, cl);
+		avgs[cl] += sc * in_img.FastEl3d(ic.x, ic.y, cl);
 	      }
             }
             else {
-              avgs[0] += sc * in_img.FastEl(ic.x, ic.y);
+              avgs[0] += sc * in_img.FastEl2d(ic.x, ic.y);
             }
           }
         }
       }
       if(nclrs > 1) {
 	for(int cl=0; cl < nclrs; cl++) {
-	  out_img.FastEl(wc.x, wc.y, cl) = avgs[cl];
+	  out_img.FastEl3d(wc.x, wc.y, cl) = avgs[cl];
 	}
       }
       else {
-        out_img.FastEl(wc.x, wc.y) = avgs[0];
+        out_img.FastEl2d(wc.x, wc.y) = avgs[0];
       }
     }
   }
@@ -703,7 +709,7 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
       float dist_sq = dist_x * dist_x + dist_y * dist_y;
       if (dist_sq > r_sq) {
         float mult = (float) r_sq / (float) dist_sq;
-        mat.FastEl(x,y) *= mult;
+        mat.FastEl2d(x,y) *= mult;
       }
     }
   }
@@ -732,7 +738,7 @@ bool taImageProc::Blur(float_Matrix& img, int window_size, bool useOldConvolve) 
   taVector2i kern_size(kern.dim(0), kern.dim(1));
   for(int yi=0; yi<kern_size.y; yi++) {
     for(int xi=0; xi<kern_size.x; xi++) {
-      kern.FastEl(xi, yi) = 1;
+      kern.FastEl2d(xi, yi) = 1;
     }
   }
   rval = taMath_float::vec_norm_sum(&kern, 1.0);
@@ -779,7 +785,7 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
         float gd = (d-radius_eff) / gauss_eff;
         fv = expf(-(gd * gd)/2.0f);
       }
-      filt_wt.FastEl(xi, yi) = fv;
+      filt_wt.FastEl2d(xi, yi) = fv;
     }
   }
 
@@ -819,8 +825,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
               icw.x = ic.x + xi - filt_half;
               icw.y = ic.y + yi - filt_half;
               icw.WrapClip(wrap, img_size); // use edges if clipping
-              float iv = img.FastEl(icw.x, icw.y, rgb);
-              clr += filt_cnv.FastEl(xi, yi) * iv;
+              float iv = img.FastEl3d(icw.x, icw.y, rgb);
+              clr += filt_cnv.FastEl2d(xi, yi) * iv;
             }
           }
         }
@@ -832,8 +838,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
             if(icw.WrapClip(wrap, img_size)) {
               if(!wrap) continue;
             }
-            float& iv = img.FastEl(icw.x, icw.y, rgb);
-            float wt = filt_wt.FastEl(xi, yi);
+            float& iv = img.FastEl3d(icw.x, icw.y, rgb);
+            float wt = filt_wt.FastEl2d(xi, yi);
             float nw_iv = (1.0f - wt) * iv + wt * clr;
             iv = nw_iv;
           }
@@ -851,8 +857,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
             icw.x = ic.x + xi - filt_half;
             icw.y = ic.y + yi - filt_half;
             icw.WrapClip(wrap, img_size); // use edges if clipping
-            float iv = img.FastEl(icw.x, icw.y);
-            clr += filt_cnv.FastEl(xi, yi) * iv;
+            float iv = img.FastEl2d(icw.x, icw.y);
+            clr += filt_cnv.FastEl2d(xi, yi) * iv;
           }
         }
       }
@@ -864,8 +870,8 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
           if(icw.WrapClip(wrap, img_size)) {
             if(!wrap) continue;
           }
-          float& iv = img.FastEl(icw.x, icw.y);
-          float wt = filt_wt.FastEl(xi, yi);
+          float& iv = img.FastEl2d(icw.x, icw.y);
+          float wt = filt_wt.FastEl2d(xi, yi);
           float nw_iv = (1.0f - wt) * iv + wt * clr;
           iv = nw_iv;
         }
@@ -890,8 +896,8 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   mask_tmp.SetGeom(2, img_size.x, img_size.y);
   for(int yi=0; yi< img_size.y; yi++) {
     for(int xi=0; xi< img_size.x; xi++) {
-      mask.FastEl(xi, yi) = 0.0f;
-      mask_tmp.FastEl(xi, yi) = 0.0f;
+      mask.FastEl2d(xi, yi) = 0.0f;
+      mask_tmp.FastEl2d(xi, yi) = 0.0f;
     }
   }
  
@@ -907,8 +913,8 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   ndgridy.SetGeom(2, img_size.x, img_size.y);
   for(int yi=0; yi< img_size.y; yi++) {
     for(int xi=0; xi< img_size.x; xi++) {
-      ndgridx.FastEl(xi, yi) = (float)xi;
-      ndgridy.FastEl(xi, yi) = (float)yi;
+      ndgridx.FastEl2d(xi, yi) = (float)xi;
+      ndgridy.FastEl2d(xi, yi) = (float)yi;
     }
   }
 
@@ -920,15 +926,15 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
 
     // save the bubble coords
     if(bubble_coords != NULL) {
-      bubble_coords->FastEl(0, bubble) = xc;
-      bubble_coords->FastEl(1, bubble) = yc;
+      bubble_coords->FastEl2d(0, bubble) = xc;
+      bubble_coords->FastEl2d(1, bubble) = yc;
     }
 
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
-	float &mask_iv = mask_tmp.FastEl(xi, yi);
-	float ndgridx_val = ndgridx.FastEl(xi, yi);
-	float ndgridy_val = ndgridy.FastEl(xi, yi);
+	float &mask_iv = mask_tmp.FastEl2d(xi, yi);
+	float ndgridx_val = ndgridx.FastEl2d(xi, yi);
+	float ndgridy_val = ndgridy.FastEl2d(xi, yi);
 	// key formula -- note that bubble_sig is in normalized image coords here, assumes image is square (uses img_size.x)
 	mask_iv = expf(-(pow(ndgridx_val-xc,2.0f) + pow(ndgridy_val-yc,2.0f))/2.0f/pow(bubble_sig*float(img_size.x),2.0f));
       }
@@ -938,8 +944,8 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
     taMath_float::vec_norm_max(&mask_tmp);
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
-	float &mask_iv = mask.FastEl(xi, yi);
-	float mask_tmp_iv = mask_tmp.FastEl(xi, yi);
+	float &mask_iv = mask.FastEl2d(xi, yi);
+	float mask_tmp_iv = mask_tmp.FastEl2d(xi, yi);
 	mask_iv = MAX(mask_iv, mask_tmp_iv);
       }
     }
@@ -957,17 +963,17 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
     fg.SetGeom(2, img_size.x, img_size.y);
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
-	fg.FastEl(xi, yi) = brd_clr[0];
+	fg.FastEl2d(xi, yi) = brd_clr[0];
       }
     }
   }
   for(int yi=0; yi< img_size.y; yi++) {
     for(int xi=0; xi< img_size.x; xi++) {
-      float &img_iv = img.FastEl(xi, yi);
-      float mask_iv = mask.FastEl(xi, yi);
+      float &img_iv = img.FastEl2d(xi, yi);
+      float mask_iv = mask.FastEl2d(xi, yi);
       float foreground_iv;
-      if(foreground == NULL) {  foreground_iv = fg.FastEl(xi, yi); }
-      else { foreground_iv = foreground->FastEl(xi, yi); }
+      if(foreground == NULL) {  foreground_iv = fg.FastEl2d(xi, yi); }
+      else { foreground_iv = foreground->FastEl2d(xi, yi); }
       img_iv = mask_iv*img_iv + (1.0f-mask_iv)*foreground_iv;
     }
   }
@@ -1004,7 +1010,7 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
 				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
-				  float& val = img.FastEl(xi, yi, cl);
+				  float& val = img.FastEl3d(xi, yi, cl);
 				  val = ((val - brd_clr[cl])*new_contrast) + brd_clr[cl];
 				}
       }
@@ -1013,7 +1019,7 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg
   else { // grayscale
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {      	        	  	
-				float& iv = img.FastEl(xi, yi);
+				float& iv = img.FastEl2d(xi, yi);
 				iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
       }
     }
@@ -1045,18 +1051,18 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
 
   for(int yi=0; yi< img_size.y; yi++) {
     for(int xi=0; xi< img_size.x; xi++) {
-      const float i1alpha = img1.FastEl(xi, yi, 3); // much faster to cache these values!!
-      const float i1alpha_c = 1.0f - img1.FastEl(xi, yi, 3);
+      const float i1alpha = img1.FastEl3d(xi, yi, 3); // much faster to cache these values!!
+      const float i1alpha_c = 1.0f - img1.FastEl3d(xi, yi, 3);
       if(nclrs > 1) {
 				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
-				  float& i1clr = img1.FastEl(xi, yi, cl);
-	 	 			i1clr = i1clr * i1alpha + img2.FastEl(xi,yi,cl) * i1alpha_c; // assume img2 has no alpha channel
+				  float& i1clr = img1.FastEl3d(xi, yi, cl);
+	 	 			i1clr = i1clr * i1alpha + img2.FastEl3d(xi,yi,cl) * i1alpha_c; // assume img2 has no alpha channel
 				}
   		}
     	else {
 				for(int cl=0; cl < 3; cl++) {
-	  			float& i1clr = img1.FastEl(xi, yi, cl);
-	  			i1clr = i1clr * i1alpha + img2.FastEl(xi,yi) * i1alpha_c; // // assume img2 has no alpha channel
+	  			float& i1clr = img1.FastEl3d(xi, yi, cl);
+	  			i1clr = i1clr * i1alpha + img2.FastEl2d(xi,yi) * i1alpha_c; // // assume img2 has no alpha channel
 				}
     	}
   	}
@@ -1086,13 +1092,13 @@ bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {
     for(int xi=0; xi< img2.dim(0); xi++) {
       if(nclrs > 1) {
 	for(int di=0; di < nclrs; di++) {
-	  float& i1pix = img1.FastEl(xi+xoff, yi+yoff, di);
-	  i1pix = img2.FastEl(xi, yi, di);
+	  float& i1pix = img1.FastEl3d(xi+xoff, yi+yoff, di);
+	  i1pix = img2.FastEl3d(xi, yi, di);
 	}
       }
       else {
-	float& i1pix = img1.FastEl(xi+xoff, yi+yoff);
-	i1pix = img2.FastEl(xi, yi);
+	float& i1pix = img1.FastEl2d(xi+xoff, yi+yoff);
+	i1pix = img2.FastEl2d(xi, yi);
       }
     }
   }

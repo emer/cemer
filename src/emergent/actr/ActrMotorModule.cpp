@@ -233,7 +233,7 @@ String ActrMotorModule::PosToKey(int col, int row) {
     return _nilString;
   if(TestError(row > 6 || row < 0, "PosToKey", "row out of range: 0..6"))
     return _nilString;
-  return pos_to_key.FastEl(col, row);
+  return pos_to_key.FastEl2d(col, row);
 }
 
 bool ActrMotorModule::KeyToPos(int& col, int& row, const String& key) {
@@ -300,8 +300,8 @@ bool ActrMotorModule::SetFingerPos(int col, int row, Hand hand, Finger finger) {
                "hand:", (String)hand, "or finger:", (String)finger, "is out of range")) {
     return false;
   }
-  finger_pos.FastEl(COL, finger, hand) = col - hand_pos.SafeEl(COL, hand);
-  finger_pos.FastEl(ROW, finger, hand) = row - hand_pos.SafeEl(ROW, hand);
+  finger_pos.FastEl3d(COL, finger, hand) = col - hand_pos.SafeEl(COL, hand);
+  finger_pos.FastEl3d(ROW, finger, hand) = row - hand_pos.SafeEl(ROW, hand);
   return true;
 }
 
@@ -310,8 +310,8 @@ bool ActrMotorModule::SetHandPos(int col, int row, Hand hand) {
                "hand:", (String)hand, "is out of range")) {
     return false;
   }
-  hand_pos.FastEl(COL, hand) = col;
-  hand_pos.FastEl(ROW, hand) = row;
+  hand_pos.FastEl2d(COL, hand) = col;
+  hand_pos.FastEl2d(ROW, hand) = row;
   return true;
 }
 
@@ -352,18 +352,18 @@ bool ActrMotorModule::MoveHand(int& col, int& row, Hand hand,
     SetHandPos(col, row, hand);
   }
   if(hand == RIGHT) {
-    finger_pos.FastEl(COL, hand, INDEX) = 0; finger_pos.FastEl(ROW, hand, INDEX) = 0; 
-    finger_pos.FastEl(COL, hand, MIDDLE) = 1; finger_pos.FastEl(ROW, hand, MIDDLE) = 0; 
-    finger_pos.FastEl(COL, hand, RING) = 2; finger_pos.FastEl(ROW, hand, RING) = 0; 
-    finger_pos.FastEl(COL, hand, PINKIE) = 3; finger_pos.FastEl(ROW, hand, PINKIE) = 0; 
-    finger_pos.FastEl(COL, hand, THUMB) = -1; finger_pos.FastEl(ROW, hand, THUMB) = 2; 
+    finger_pos.FastEl3d(COL, hand, INDEX) = 0; finger_pos.FastEl3d(ROW, hand, INDEX) = 0; 
+    finger_pos.FastEl3d(COL, hand, MIDDLE) = 1; finger_pos.FastEl3d(ROW, hand, MIDDLE) = 0; 
+    finger_pos.FastEl3d(COL, hand, RING) = 2; finger_pos.FastEl3d(ROW, hand, RING) = 0; 
+    finger_pos.FastEl3d(COL, hand, PINKIE) = 3; finger_pos.FastEl3d(ROW, hand, PINKIE) = 0; 
+    finger_pos.FastEl3d(COL, hand, THUMB) = -1; finger_pos.FastEl3d(ROW, hand, THUMB) = 2; 
   }
   else {
-    finger_pos.FastEl(COL, hand, INDEX) = 0; finger_pos.FastEl(ROW, hand, INDEX) = 0; 
-    finger_pos.FastEl(COL, hand, MIDDLE) = -1; finger_pos.FastEl(ROW, hand, MIDDLE) = 0; 
-    finger_pos.FastEl(COL, hand, RING) = -2; finger_pos.FastEl(ROW, hand, RING) = 0; 
-    finger_pos.FastEl(COL, hand, PINKIE) = -3; finger_pos.FastEl(ROW, hand, PINKIE) = 0; 
-    finger_pos.FastEl(COL, hand, THUMB) = 1; finger_pos.FastEl(ROW, hand, THUMB) = 2; 
+    finger_pos.FastEl3d(COL, hand, INDEX) = 0; finger_pos.FastEl3d(ROW, hand, INDEX) = 0; 
+    finger_pos.FastEl3d(COL, hand, MIDDLE) = -1; finger_pos.FastEl3d(ROW, hand, MIDDLE) = 0; 
+    finger_pos.FastEl3d(COL, hand, RING) = -2; finger_pos.FastEl3d(ROW, hand, RING) = 0; 
+    finger_pos.FastEl3d(COL, hand, PINKIE) = -3; finger_pos.FastEl3d(ROW, hand, PINKIE) = 0; 
+    finger_pos.FastEl3d(COL, hand, THUMB) = 1; finger_pos.FastEl3d(ROW, hand, THUMB) = 2; 
   }
   return true;
 }

@@ -100,14 +100,6 @@ int MatrixGeom::SafeIndexFmDimsN(const MatrixIndex& indicies) const {
   return SafeIndexFmDims_(indicies.el);
 }
 
-int MatrixGeom::IndexFmDims_(const int* d) const {
-  int rval = d[0];
-  for(int i=1; i<n_dims; i++) {
-    rval += d[i] * elprod[i-1];
-  }
-  return rval;
-}
-
 int MatrixGeom::SafeIndexFmDims_(const int* d) const {
   if(TestError((dims() < 1), "SafeIndexFmDims",
                "matrix geometry has not been initialized"))

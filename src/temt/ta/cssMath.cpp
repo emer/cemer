@@ -77,7 +77,7 @@ double_Matrix* cssMath::eye(int size) {
   double_Matrix* rval = new double_Matrix;
   rval->SetGeom(2, size, size);
   for(int i=0;i<size; i++) {
-    rval->FastEl(i,i) = 1.0;
+    rval->FastEl2d(i,i) = 1.0;
   }
   return rval;
 }
@@ -101,7 +101,7 @@ double_Matrix* cssMath::diag(const double_Matrix* mat, int mat_zero) {
     double_Matrix* rval = new double_Matrix;
     rval->SetGeom(2, mat->size, mat->size);
     for(int i=0;i<mat->size; i++) {
-      rval->FastEl(i,i) = mat->FastEl_Flat(i);
+      rval->FastEl2d(i,i) = mat->FastEl_Flat(i);
     }
     return rval;
   }
@@ -114,7 +114,7 @@ double_Matrix* cssMath::diag(const double_Matrix* mat, int mat_zero) {
     int sz = mat->dim(0);
     rval->SetGeom(1, sz);
     for(int i=0;i<sz; i++) {
-      rval->FastEl_Flat(i) = mat->FastEl(i,i);
+      rval->FastEl_Flat(i) = mat->FastEl2d(i,i);
     }
     return rval;
   }
@@ -144,16 +144,16 @@ double_Matrix* cssMath::meshgrid(const slice_Matrix* dims) {
   int dm = dims->dim(1);
   MatrixGeom sliceg(dm);		// slice geometry
   for(int i=0; i < dm; i++) {
-    int start = dims->FastEl(0,i);
-    int end = dims->FastEl(1,i);
-    int step = dims->FastEl(2,i);
+    int start = dims->FastEl2d(0,i);
+    int end = dims->FastEl2d(1,i);
+    int step = dims->FastEl2d(2,i);
     if(end <= start) end = start + 100;
     if(step == 0) step = 1;
     int my_n = (end-start) / ABS(step); // number of guys in my slice
     sliceg.Set(i, my_n);
-    fixsmat.FastEl(0,i) = start; 
-    fixsmat.FastEl(1,i) = end; 
-    fixsmat.FastEl(2,i) = step;
+    fixsmat.FastEl2d(0,i) = start; 
+    fixsmat.FastEl2d(1,i) = end; 
+    fixsmat.FastEl2d(2,i) = step;
   }
   int tot_n = sliceg.Product();
   sliceg.AddDim(dm);		// one more outer dim to hold each coord set
@@ -163,9 +163,9 @@ double_Matrix* cssMath::meshgrid(const slice_Matrix* dims) {
   for(int i=0;i<tot_n; i++) {
     sliceg.DimsFmIndex(i, sidx); // get index into slice vals
     for(int d=0; d<dm; d++) {
-      int start = fixsmat.FastEl(0,d);
-      int end = fixsmat.FastEl(1,d);
-      int step = fixsmat.FastEl(2,d);
+      int start = fixsmat.FastEl2d(0,d);
+      int end = fixsmat.FastEl2d(1,d);
+      int step = fixsmat.FastEl2d(2,d);
       int sc;
       if(step > 0) {
 	sc = start + step * sidx[d];

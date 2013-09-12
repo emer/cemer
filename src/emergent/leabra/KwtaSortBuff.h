@@ -37,23 +37,23 @@ public:
   int_Matrix 	 sizes;		// #NO_SAVE kwta computation buffer sizes: number of current items in corresponding buf -- always 1d [gpidx]
 
   LeabraUnit*	Un(int unidx, int gpidx)
-  { return (LeabraUnit*)kbuff.FastEl(unidx, gpidx); }
+  { return (LeabraUnit*)kbuff.FastEl2d(unidx, gpidx); }
   // get unit pointer from given unit and group index
 
   int 		Size(int gpidx) {
-    return sizes.size > 0 ? sizes.FastEl(gpidx) : 0; }
+    return sizes.size > 0 ? sizes.FastEl1d(gpidx) : 0; }
   // get current used size of specified group -- returns reference that can be modified
 
   void		Set(LeabraUnit* un, int unidx, int gpidx)
-  { kbuff.FastEl(unidx, gpidx) = (void*)un; }
+  { kbuff.FastEl2d(unidx, gpidx) = (void*)un; }
   // set unit pointer at given unit and group index
 
   void		Add(LeabraUnit* un, int gpidx)
-  { kbuff.FastEl(sizes.FastEl(gpidx)++, gpidx) = (void*)un; }
+  { kbuff.FastEl2d(sizes.FastEl1d(gpidx)++, gpidx) = (void*)un; }
   // set unit pointer at given unit and group index, and increment size counter
 
   void		ResetGp(int gpidx)
-  { sizes.FastEl(gpidx) = 0; }
+  { sizes.FastEl1d(gpidx) = 0; }
   // reset list for subsequent adds (just resets size)
 
   void		ResetAll()

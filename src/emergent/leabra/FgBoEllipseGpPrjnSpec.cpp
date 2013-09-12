@@ -48,7 +48,7 @@ void FgBoEllipseGpPrjnEl::CreateStencil() {
       for(int sang_dx = 0; sang_dx < n_angles; sang_dx++) {
         for(int sdir = 0; sdir < 2; sdir++) { // integrate over sending directions
           float wt = ConWt(suc, sang_dx, sdir);
-          fgbo_weights.FastEl(xsuc_dx, ysuc_dx, sdir, sang_dx) = wt;
+          fgbo_weights.FastEl4d(xsuc_dx, ysuc_dx, sdir, sang_dx) = wt;
         }
       }
     }
@@ -218,7 +218,7 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
 
                 for(sun.x = 0; sun.x < sun_geo.x; sun.x++) {
                   for(sun.y = suy_st; sun.y < suy_st+2; sun.y++) {
-                    float wt = el->fgbo_weights.FastEl(del.x +el->con_radius,
+                    float wt = el->fgbo_weights.FastEl4d(del.x +el->con_radius,
                                                del.y+el->con_radius, sun.y-suy_st, sun.x);
                     if(wt <= el->con_thr) continue;
                     wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
@@ -310,7 +310,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
         suc.WrapMinDist(del, sgp_geo, ruc_s, sgp_geo_half);
       }
 
-      float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
+      float wt = el->fgbo_weights.FastEl4d(del.x + el->con_radius, del.y + el->con_radius,
                                          sun.y-suy_st, sun.x);
       wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
       cg->Cn(i,BaseCons::WT,net) = wt;
@@ -344,7 +344,7 @@ void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
         suc.WrapMinDist(del, sgp_geo, ruc_s, sgp_geo_half);
       }
 
-      float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
+      float wt = el->fgbo_weights.FastEl4d(del.x + el->con_radius, del.y + el->con_radius,
                                          sun.y-suy_st, sun.x);
       wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
       cg->Cn(i,BaseCons::WT,net) = wt;

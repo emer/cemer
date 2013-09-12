@@ -215,8 +215,8 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
       Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
       if(!su_gp) continue;
 
-      float wt = wt_mult * dog_wts.net_filter.FastEl(suc.x/convergence,
-                                                     suc.y/convergence);
+      float wt = wt_mult * dog_wts.net_filter.FastEl2d(suc.x/convergence,
+                                                       suc.y/convergence);
 
       if(wt > 0) {
         for(int sui=0;sui<su_gp->size;sui++) {

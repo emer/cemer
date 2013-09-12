@@ -133,47 +133,47 @@ void VisDisparityPrjnSpec::InitStencils(Projection* prjn) {
     int didx = disp + n_disps;
     int doff = disp * disp_spc;
     if(disp == 0) {             // focal
-      v1b_widths.FastEl(didx) = 1 + 2 * disp_range;
+      v1b_widths.FastEl1d(didx) = 1 + 2 * disp_range;
       for(int tw=-disp_range; tw<=disp_range; tw++) {
         int twidx = tw + disp_range;
         float fx = (float)tw / (float)disp_range;
-        v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
-        v1b_stencils.FastEl(twidx, didx) = doff + tw;
+        v1b_weights.FastEl2d(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+        v1b_stencils.FastEl2d(twidx, didx) = doff + tw;
       }
     }
     else if(disp == -n_disps) {
-      v1b_widths.FastEl(didx) = 1 + 2 * disp_range + end_ext;
+      v1b_widths.FastEl1d(didx) = 1 + 2 * disp_range + end_ext;
       for(int tw=-twe; tw<=disp_range; tw++) {
         int twidx = tw + twe;
         if(tw < 0)
-          v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(0.0f, gauss_sig);
+          v1b_weights.FastEl2d(twidx, didx) = taMath_float::gauss_den_sig(0.0f, gauss_sig);
         else {
           float fx = (float)tw / (float)disp_range;
-          v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+          v1b_weights.FastEl2d(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
         }
-        v1b_stencils.FastEl(twidx, didx) = doff + tw;
+        v1b_stencils.FastEl2d(twidx, didx) = doff + tw;
       }
     }
     else if(disp == n_disps) {
-      v1b_widths.FastEl(didx) = 1 + 2 * disp_range + end_ext;
+      v1b_widths.FastEl1d(didx) = 1 + 2 * disp_range + end_ext;
       for(int tw=-disp_range; tw<=twe; tw++) {
         int twidx = tw + disp_range;
         if(tw > 0)
-          v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(0.0f, gauss_sig);
+          v1b_weights.FastEl2d(twidx, didx) = taMath_float::gauss_den_sig(0.0f, gauss_sig);
         else {
           float fx = (float)tw / (float)disp_range;
-          v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+          v1b_weights.FastEl2d(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
         }
-        v1b_stencils.FastEl(twidx, didx) = doff + tw;
+        v1b_stencils.FastEl2d(twidx, didx) = doff + tw;
       }
     }
     else {
-      v1b_widths.FastEl(didx) = 1 + 2 * disp_range;
+      v1b_widths.FastEl1d(didx) = 1 + 2 * disp_range;
       for(int tw=-disp_range; tw<=disp_range; tw++) {
         int twidx = tw + disp_range;
         float fx = (float)tw / (float)disp_range;
-        v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
-        v1b_stencils.FastEl(twidx, didx) = doff + tw;
+        v1b_weights.FastEl2d(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+        v1b_stencils.FastEl2d(twidx, didx) = doff + tw;
       }
     }
   }
@@ -199,7 +199,7 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
         for(int didx=0; didx < tot_disps; didx++) {
-          int dwd = v1b_widths.FastEl(didx);
+          int dwd = v1b_widths.FastEl1d(didx);
 
           int strui = didx * su_n; // starting index
           for(int sui=0; sui<su_n; sui++) {
@@ -210,8 +210,8 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
               ru_u->RecvConsPreAlloc(dwd, prjn);
 
             for(int twidx = 0; twidx < dwd; twidx++) {
-              int off = v1b_stencils.FastEl(twidx, didx);
-              // float wt = v1b_weights.FastEl(twidx, didx);
+              int off = v1b_stencils.FastEl2d(twidx, didx);
+              // float wt = v1b_weights.FastEl2d(twidx, didx);
 
               taVector2i suc = ruc;
               suc.x += off;     // offset

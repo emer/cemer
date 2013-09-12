@@ -519,8 +519,8 @@ taMatrix* complex_Matrix::Transpose() const {
   complex_Matrix* rval = new complex_Matrix(3,2,d1,d0);
   for(int i=0;i<d0;i++) {
     for(int j=0;j<d1;j++) {
-      rval->FastEl(0,j,i) = this->FastEl(0,i,j);
-      rval->FastEl(1,j,i) = this->FastEl(1,i,j);
+      rval->FastEl3d(0,j,i) = this->FastEl3d(0,i,j);
+      rval->FastEl3d(1,j,i) = this->FastEl3d(1,i,j);
     }
   }
   return rval;

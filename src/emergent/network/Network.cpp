@@ -829,7 +829,7 @@ void Network::Send_Netin() {
         float nw_nt = 0.0f;
         for(int p=0;p<un->recv.size;p++) {
           for(int j=0;j<nt;j++) {
-            nw_nt += send_netin_tmp.FastEl(i, p, j);
+            nw_nt += send_netin_tmp.FastEl3d(i, p, j);
           }
         }
         un->Compute_SentNetin(this, nw_nt);
@@ -840,7 +840,7 @@ void Network::Send_Netin() {
         Unit* un = units_flat[i];
         float nw_nt = 0.0f;
         for(int p=0;p<un->recv.size;p++) {
-          nw_nt += send_netin_tmp.FastEl(i, p, 0); // use 0 thread
+          nw_nt += send_netin_tmp.FastEl3d(i, p, 0); // use 0 thread
         }
         un->Compute_SentNetin(this, nw_nt);
       }
@@ -852,7 +852,7 @@ void Network::Send_Netin() {
         Unit* un = units_flat[i];
         float nw_nt = 0.0f;
         for(int j=0;j<nt;j++) {
-          nw_nt += send_netin_tmp.FastEl(i, j);
+          nw_nt += send_netin_tmp.FastEl2d(i, j);
         }
         un->Compute_SentNetin(this, nw_nt);
       }
@@ -860,7 +860,7 @@ void Network::Send_Netin() {
     else {
       for(int i=1;i<nu;i++) {     // 0 = dummy idx
         Unit* un = units_flat[i];
-        float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
+        float nw_nt = send_netin_tmp.FastEl2d(i, 0); // use 0 thread
         un->Compute_SentNetin(this, nw_nt);
       }
     }

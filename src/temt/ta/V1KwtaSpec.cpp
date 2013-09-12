@@ -134,13 +134,14 @@ void V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& gc_i_mat) {
     for(int ix=0; ix < ixs; ix++) {
       for(int gy=0; gy < gys; gy++) {
         for(int gx=0; gx < gxs; gx++) {
-          gpmat.FastEl(gx, gy) = Compute_IThresh(g_bar_e * inputs.FastEl(gx, gy, ix, iy));
+          gpmat.FastEl2d(gx, gy) = 
+            Compute_IThresh(g_bar_e * inputs.FastEl4d(gx, gy, ix, iy));
         }
       }
       float top_k_avg, bot_k_avg;
       taMath_float::vec_kwta_avg(top_k_avg, bot_k_avg, &gpmat, gp_k, true);
       float nw_gi = bot_k_avg + kwta_pt * (top_k_avg - bot_k_avg);
-      gc_i_mat.FastEl(ix, iy) = nw_gi;
+      gc_i_mat.FastEl2d(ix, iy) = nw_gi;
       max_gi = MAX(max_gi, nw_gi);
     }
   }
@@ -148,9 +149,9 @@ void V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& gc_i_mat) {
     float gpg_eff = gp_g * max_gi;
     for(int iy=0; iy < iys; iy++) {
       for(int ix=0; ix < ixs; ix++) {
-        float gi = gc_i_mat.FastEl(ix, iy);
+        float gi = gc_i_mat.FastEl2d(ix, iy);
         gi = MAX(gi, gpg_eff);
-        gc_i_mat.FastEl(ix, iy) = gi;
+        gc_i_mat.FastEl2d(ix, iy) = gi;
       }
     }
   }
@@ -176,13 +177,13 @@ void V1KwtaSpec::Compute_Act(float_Matrix& inputs, float_Matrix& outputs,
 
   for(int iy=0; iy < iys; iy++) {
     for(int ix=0; ix < ixs; ix++) {
-      float gi = gc_i_mat.FastEl(ix, iy);
+      float gi = gc_i_mat.FastEl2d(ix, iy);
       for(int gy=0; gy < gys; gy++) {
         for(int gx=0; gx < gxs; gx++) {
-          float raw = inputs.FastEl(gx, gy, ix, iy);
+          float raw = inputs.FastEl4d(gx, gy, ix, iy);
           float ge = g_bar_e * raw;
           float act = Compute_ActFmIn(ge, gi);
-          outputs.FastEl(gx, gy, ix, iy) = act;
+          outputs.FastEl4d(gx, gy, ix, iy) = act;
         }
       }
     }
@@ -204,13 +205,13 @@ void V1KwtaSpec::Compute_Inhib_IThr(float_Matrix& inputs, float_Matrix& gc_i_mat
     for(int ix=0; ix < ixs; ix++) {
       for(int gy=0; gy < gys; gy++) {
         for(int gx=0; gx < gxs; gx++) {
-          gpmat.FastEl(gx, gy) = ithrs.FastEl(gx, gy, ix, iy);
+          gpmat.FastEl2d(gx, gy) = ithrs.FastEl4d(gx, gy, ix, iy);
         }
       }
       float top_k_avg, bot_k_avg;
       taMath_float::vec_kwta_avg(top_k_avg, bot_k_avg, &gpmat, gp_k, true);
       float nw_gi = bot_k_avg + kwta_pt * (top_k_avg - bot_k_avg);
-      gc_i_mat.FastEl(ix, iy) = nw_gi;
+      gc_i_mat.FastEl2d(ix, iy) = nw_gi;
       max_gi = MAX(max_gi, nw_gi);
     }
   }
@@ -218,9 +219,9 @@ void V1KwtaSpec::Compute_Inhib_IThr(float_Matrix& inputs, float_Matrix& gc_i_mat
     float gpg_eff = gp_g * max_gi;
     for(int iy=0; iy < iys; iy++) {
       for(int ix=0; ix < ixs; ix++) {
-        float gi = gc_i_mat.FastEl(ix, iy);
+        float gi = gc_i_mat.FastEl2d(ix, iy);
         gi = MAX(gi, gpg_eff);
-        gc_i_mat.FastEl(ix, iy) = gi;
+        gc_i_mat.FastEl2d(ix, iy) = gi;
       }
     }
   }
@@ -236,7 +237,8 @@ void V1KwtaSpec::Compute_All_IThr(float_Matrix& inputs, float_Matrix& ithrs) {
     for(int ix=0; ix < ixs; ix++) {
       for(int gy=0; gy < gys; gy++) {
         for(int gx=0; gx < gxs; gx++) {
-          ithrs.FastEl(gx, gy, ix, iy) = Compute_IThresh(g_bar_e * inputs.FastEl(gx, gy, ix, iy));
+          ithrs.FastEl4d(gx, gy, ix, iy) = 
+            Compute_IThresh(g_bar_e * inputs.FastEl4d(gx, gy, ix, iy));
         }
       }
     }

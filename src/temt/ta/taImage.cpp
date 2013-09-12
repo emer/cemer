@@ -172,7 +172,7 @@ bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
 
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
-      int gval = (int)(img_data.FastEl(x, y) * 255.0f);
+      int gval = (int)(img_data.FastEl2d(x, y) * 255.0f);
       QRgb pix = qRgb(gval, gval, gval);
       q_img.setPixel(x, ht-1-y, pix);
     }
@@ -190,9 +190,9 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
 
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
-      int rval = (int)(rgb_data.FastEl(x, y, 0) * 255.0f);
-      int gval = (int)(rgb_data.FastEl(x, y, 1) * 255.0f);
-      int bval = (int)(rgb_data.FastEl(x, y, 2) * 255.0f);
+      int rval = (int)(rgb_data.FastEl3d(x, y, 0) * 255.0f);
+      int gval = (int)(rgb_data.FastEl3d(x, y, 1) * 255.0f);
+      int bval = (int)(rgb_data.FastEl3d(x, y, 2) * 255.0f);
       QRgb pix = qRgb(rval, gval, bval);
       q_img.setPixel(x, ht-1-y, pix);
     }

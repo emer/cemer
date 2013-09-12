@@ -80,12 +80,12 @@ void LeabraV1LayerSpec::UpdateStencils() {
     float cosx, siny;
     float angf = (float)ang * ang_inc;
     v1_get_angles(angf, cosx, siny);
-    v1s_ang_slopes.FastEl(X, LINE, ang) = cosx;
-    v1s_ang_slopes.FastEl(Y, LINE, ang) = siny;
+    v1s_ang_slopes.FastEl3d(X, LINE, ang) = cosx;
+    v1s_ang_slopes.FastEl3d(Y, LINE, ang) = siny;
 
     v1_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
-    v1s_ang_slopes.FastEl(X, ORTHO, ang) = cosx;
-    v1s_ang_slopes.FastEl(Y, ORTHO, ang) = siny;
+    v1s_ang_slopes.FastEl3d(X, ORTHO, ang) = cosx;
+    v1s_ang_slopes.FastEl3d(Y, ORTHO, ang) = siny;
   }
   // config: x,y coords by tot_ni_len, by angles
   v1s_ni_stencils.SetGeom(3, 2, feat_inhib.tot_ni_len, feat_inhib.n_angles);
@@ -93,10 +93,10 @@ void LeabraV1LayerSpec::UpdateStencils() {
   for(int ang = 0; ang < feat_inhib.n_angles; ang++) { // angles
     for(int lpt=-feat_inhib.inhib_d; lpt <= feat_inhib.inhib_d; lpt++) {
       int lpdx = lpt + feat_inhib.inhib_d;
-      v1s_ni_stencils.FastEl(X, lpdx, ang) =
-        taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang)); // ortho
-      v1s_ni_stencils.FastEl(Y, lpdx, ang) =
-        taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
+      v1s_ni_stencils.FastEl3d(X, lpdx, ang) =
+        taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl3d(X, ORTHO, ang)); // ortho
+      v1s_ni_stencils.FastEl3d(Y, lpdx, ang) =
+        taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl3d(Y, ORTHO, ang));
     }
   }
 }
@@ -143,8 +143,8 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
         float feat_inhib_max = 0.0f;
         for(int lpdx=0; lpdx < feat_inhib.tot_ni_len; lpdx++) { // go out to neighs
           if(lpdx == feat_inhib.inhib_d) continue;                 // skip self
-          int xp = v1s_ni_stencils.FastEl(X,lpdx,ang);
-          int yp = v1s_ni_stencils.FastEl(Y,lpdx,ang);
+          int xp = v1s_ni_stencils.FastEl3d(X,lpdx,ang);
+          int yp = v1s_ni_stencils.FastEl3d(Y,lpdx,ang);
           oc.x = sc.x + xp;
           oc.y = sc.y + yp;
           if(oc.WrapClip(feat_inhib.wrap, lay->gp_geom)) {

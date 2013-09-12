@@ -262,7 +262,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
     DataTable* select_tmp = new DataTable; taBase::Ref(select_tmp);
     DataTable* one_cell_tmp = new DataTable; taBase::Ref(one_cell_tmp);
 
-    category = classes->FastEl(i);
+    category = classes->FastEl1d(i);
 
     M->cmp = "TRAIN";
     taDataProc::SelectRows(select_tmp, sorted_src_data, select_spec);
@@ -350,7 +350,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
 
   // Create class-level confusion matrix
   DataTable* confusion = new DataTable; taBase::Ref(confusion);
-  String col_nm = "TEST_YPRIME_" + classes->FastEl(0);
+  String col_nm = "TEST_YPRIME_" + classes->FastEl1d(0);
   String cm = "ConfusionMatrix";
   DataCol* TEST_YPRIME_0 = work->FindColName(col_nm);
   int d0 = TEST_YPRIME_0->GetCellGeom(0);
@@ -360,7 +360,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
 
   // Create target confusion matrix
   DataTable* confusion_target = new DataTable; taBase::Ref(confusion_target);
-  col_nm = "TEST_T_" + classes->FastEl(0);
+  col_nm = "TEST_T_" + classes->FastEl1d(0);
   cm = "ConfusionMatrixTarget";
   DataCol* TEST_T_0 = work->FindColName(col_nm);
   d0 = TEST_T_0->GetCellGeom(0);
@@ -380,7 +380,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   int_Matrix* class_lengths_mat = (int_Matrix*)class_lengths->FindColName("CL")->GetValAsMatrix(0);
 
   for (int i=0; i < classes->size; i++) {
-    class_mat = (double_Matrix*)work->FindColName("TEST_T_" + (String)classes->FastEl(i))->GetValAsMatrix(0);
+    class_mat = (double_Matrix*)work->FindColName("TEST_T_" + (String)classes->FastEl1d(i))->GetValAsMatrix(0);
     length = taMath_double::vec_count(class_mat, *rel);
     class_lengths->SetMatrixFlatVal(length, "CL", 0, i);
   }
@@ -422,7 +422,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   // maximal classifier response
   for (int j=0; j < n_classes; j++) {
 
-    class_length = class_lengths_mat->FastEl(j);
+    class_length = class_lengths_mat->FastEl1d(j);
 
     for (int k=0; k < class_length; k++) {
 
@@ -533,8 +533,8 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
   criterion_data->SetGeom(1, vec_signal->size + vec_noise->size);
 
   for (int i = 0; i < vec_signal->size; i++) {
-    criterion_data->Set(vec_signal->FastEl(i), i);
-    criterion_data->Set(vec_noise->FastEl(i), vec_noise->size + i);
+    criterion_data->Set(vec_signal->FastEl1d(i), i);
+    criterion_data->Set(vec_noise->FastEl1d(i), vec_noise->size + i);
   }
 
   taMath_double::vec_sort(criterion_data);
@@ -566,21 +566,21 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
   dest_data->AddRows(criterion_data->size + 1000);
 
   for (int i = 0; i < criterion_data->size; i++) {
-    double criterion = criterion_data->FastEl(i) - .000000001;
+    double criterion = criterion_data->FastEl1d(i) - .000000001;
     double tp = 0;
     double fp = 0;
     double fn = 0;
     double tn = 0;
 
     for (int j = 0; j < vec_signal->size; j++) {
-      if (vec_signal->FastEl(j) > criterion)
+      if (vec_signal->FastEl1d(j) > criterion)
 	tp += 1;
       else
 	fn += 1;
     }
 
     for (int j = 0; j < vec_noise->size; j++) {
-      if (vec_noise->FastEl(j) > criterion)
+      if (vec_noise->FastEl1d(j) > criterion)
 	fp += 1;
       else
 	tn += 1;
@@ -642,17 +642,17 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
     taMath_double::vec_regress_multi_lin_polynomial(vec_fpr, vec_tpr, coef_tmp, cov, degree, chisq);
 
     for (int i = 0; i < vec_fpr->size; i++) {
-      x = vec_fpr->FastEl(i);
-      y = coef_tmp->FastEl(0);
+      x = vec_fpr->FastEl1d(i);
+      y = coef_tmp->FastEl1d(0);
 
       for (int j = 1; j < degree; j++)
-	y += coef_tmp->FastEl(j) * pow(x, j);
+	y += coef_tmp->FastEl1d(j) * pow(x, j);
 	
       y_fit->Set_Flat(y, i);
     }
 
     fun_string = "Y = ";
-    for (int i = 0; i < degree; i++) fun_string += (String)coef_tmp->FastEl(i) + "*x^" + (String)i + " + ";
+    for (int i = 0; i < degree; i++) fun_string += (String)coef_tmp->FastEl1d(i) + "*x^" + (String)i + " + ";
     fun_string += "e";
 
     SSEA = taMath_double::vec_ss_dist(vec_tpr, y_fit);
@@ -688,8 +688,8 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
   int roc_max_idx;
   taMath_double::vec_min(tpr_smooth, roc_min_idx);
   taMath_double::vec_max(tpr_smooth, roc_max_idx);
-  dest_data->SetVal(tpr_smooth->FastEl(roc_min_idx), "MIN", 0);
-  dest_data->SetVal(tpr_smooth->FastEl(roc_max_idx), "MAX", 0);
+  dest_data->SetVal(tpr_smooth->FastEl1d(roc_min_idx), "MIN", 0);
+  dest_data->SetVal(tpr_smooth->FastEl1d(roc_max_idx), "MAX", 0);
   taBase::unRefDone(tpr_smooth);
 
   return true;
@@ -750,7 +750,7 @@ bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 	    }
 	  }
 	}
-	dist_mat->FastEl(br,ar) = cell_dist;
+	dist_mat->FastEl2d(br,ar) = cell_dist;
       }
     }
     return true;
@@ -800,7 +800,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 	dist_mat->AddBlankRow();
 	dist_mat->SetValAsString(nm, 0, -1);
 	for(int j=0;j<n;j++) {
-	  dist_mat->SetValAsFloat(dmat.FastEl(j,i), j+1, -1);
+	  dist_mat->SetValAsFloat(dmat.FastEl2d(j,i), j+1, -1);
 	}
       }
       dist_mat->StructUpdate(false);
@@ -878,7 +878,7 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 	    }
 	  }
 	}
-	dist_mat->FastEl(br,ar) = cell_dist;
+	dist_mat->FastEl2d(br,ar) = cell_dist;
       }
     }
     return true;
@@ -941,7 +941,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 	dist_mat->AddBlankRow();
 	dist_mat->SetValAsString(nm, 0, -1);
 	for(int j=0;j<col_n;j++) {
-	  dist_mat->SetValAsFloat(dmat.FastEl(j,i), j+1, -1);
+	  dist_mat->SetValAsFloat(dmat.FastEl2d(j,i), j+1, -1);
 	}
       }
       dist_mat->StructUpdate(false);
@@ -1103,7 +1103,7 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
   for(int i=0;i<eigen_vecs.dim(0);i++) {
     pca_data->AddBlankRow();
     for(int j=0;j<eigen_vecs.dim(1);j++) {
-      dmda->SetValAsFloatM(eigen_vecs.FastEl(i,j), -1, j);
+      dmda->SetValAsFloatM(eigen_vecs.FastEl2d(i,j), -1, j);
     }
   }
   pca_data->StructUpdate(false);
@@ -1141,7 +1141,7 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   {
     String msg;
     msg << "Component no: " << x_axis_c << " has eigenvalue: "
-	<< eigen_vals.FastEl(x_axis_c);
+	<< eigen_vals.FastEl1d(x_axis_c);
     taMisc::Info(msg);
   }
 
@@ -1150,7 +1150,7 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   {
     String msg;
     msg << "Component no: " << y_axis_c << " has eigenvalue: "
-	<< eigen_vals.FastEl(y_axis_c);
+	<< eigen_vals.FastEl1d(y_axis_c);
     taMisc::Info(msg);
   }
 
@@ -1180,8 +1180,8 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     prjn_data->AddBlankRow();
     if(nm)
       nm->SetValAsString(nmda->GetValAsString(i),-1);
-    xda->SetValAsFloat(xprjn.FastEl(i), -1);
-    yda->SetValAsFloat(yprjn.FastEl(i), -1);
+    xda->SetValAsFloat(xprjn.FastEl1d(i), -1);
+    yda->SetValAsFloat(yprjn.FastEl1d(i), -1);
   }
 
   if(view) prjn_data->FindMakeGraphView();
@@ -1235,8 +1235,8 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     prjn_data->AddBlankRow();
     if(nm)
       nm->SetValAsString(nmda->GetValAsString(i),-1);
-    xda->SetValAsFloat(xy_coords.FastEl(0, i), -1);
-    yda->SetValAsFloat(xy_coords.FastEl(1, i), -1);
+    xda->SetValAsFloat(xy_coords.FastEl2d(0, i), -1);
+    yda->SetValAsFloat(xy_coords.FastEl2d(1, i), -1);
   }
 
   if(view) prjn_data->FindMakeGraphView();
@@ -1299,8 +1299,8 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
     prjn_data->AddBlankRow();
     if(nm)
       nm->SetValAsString(nmda->GetValAsString(i),-1);
-    xda->SetValAsFloat(xprjn.FastEl(i), -1);
-    yda->SetValAsFloat(yprjn.FastEl(i), -1);
+    xda->SetValAsFloat(xprjn.FastEl1d(i), -1);
+    yda->SetValAsFloat(yprjn.FastEl1d(i), -1);
   }
 
   if(view) prjn_data->FindMakeGraphView();

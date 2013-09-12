@@ -92,7 +92,7 @@ void DoGFilter::GraphFilter(DataTable* graph_data) {
   int x,z;
   for(z=-filter_width; z<=filter_width; z++) {
     for(x=-filter_width; x<=filter_width; x++) {
-      float val = mat->FastEl(x+filter_width, z+filter_width);
+      float val = mat->FastEl2d(x+filter_width, z+filter_width);
       graph_data->AddBlankRow();
       xda->SetValAsFloat(x, -1);
       zda->SetValAsFloat(z, -1);

@@ -275,7 +275,7 @@ void SoImageEx::setImage2(const QImage& src) {
   //NOTE: we have to invert the data for Coin's bottom=0 addressing
   for (int y = d.y - 1; y >= 0; --y) {
     for (int x = 0; x < d.x; ++x) {
-      img.FastEl(x,y) = (byte)(qGray(src.pixel(x, y)));
+      img.FastEl2d(x,y) = (byte)(qGray(src.pixel(x, y)));
     }
   }
   texture->image.setValue(SbVec2s(d.y, d.x), 1, (const unsigned char*)img.data(),
@@ -327,13 +327,13 @@ void SoImageEx::setImage2(const taMatrix& src, bool top_zero) {
     if (top_zero) {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y) * 255.0f);
+	  img.FastEl2d(x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y) * 255.0f);
 	}
       }
     } else {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(x,y) = (byte)(src.FastElAsFloat(x, y) * 255.0f);
+	  img.FastEl2d(x,y) = (byte)(src.FastElAsFloat(x, y) * 255.0f);
 	}
       }
     }
@@ -345,13 +345,13 @@ void SoImageEx::setImage2(const taMatrix& src, bool top_zero) {
     if (top_zero) {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(x, d.y - 1 - y) = (byte)src.FastElAsFloat(x, y);
+	  img.FastEl2d(x, d.y - 1 - y) = (byte)src.FastElAsFloat(x, y);
 	}
       }
     } else {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(x,y) = (byte)src.FastElAsFloat(x, y);
+	  img.FastEl2d(x,y) = (byte)src.FastElAsFloat(x, y);
 	}
       }
     }
@@ -370,17 +370,17 @@ void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
     if (top_zero) {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(0,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 0) * 255.0f);
-	  img.FastEl(1,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 1) * 255.0f);
-	  img.FastEl(2,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 2) * 255.0f);
+	  img.FastEl3d(0,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 0) * 255.0f);
+	  img.FastEl3d(1,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 1) * 255.0f);
+	  img.FastEl3d(2,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 2) * 255.0f);
 	}
       }
     } else {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(0,x,y) = (byte)(src.FastElAsFloat(x, y, 0) * 255.0f);
-	  img.FastEl(1,x,y) = (byte)(src.FastElAsFloat(x, y, 1) * 255.0f);
-	  img.FastEl(2,x,y) = (byte)(src.FastElAsFloat(x, y, 2) * 255.0f);
+	  img.FastEl3d(0,x,y) = (byte)(src.FastElAsFloat(x, y, 0) * 255.0f);
+	  img.FastEl3d(1,x,y) = (byte)(src.FastElAsFloat(x, y, 1) * 255.0f);
+	  img.FastEl3d(2,x,y) = (byte)(src.FastElAsFloat(x, y, 2) * 255.0f);
 	}
       }
     }
@@ -389,17 +389,17 @@ void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
     if (top_zero) {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(0,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 0));
-	  img.FastEl(1,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 1));
-	  img.FastEl(2,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 2));
+	  img.FastEl3d(0,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 0));
+	  img.FastEl3d(1,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 1));
+	  img.FastEl3d(2,x,d.y - y - 1) = (byte)(src.FastElAsFloat(x, y, 2));
 	}
       }
     } else {
       for (int y = 0; y < d.y; ++y) {
 	for (int x = 0; x < d.x; ++x) {
-	  img.FastEl(0,x,y) = (byte)(src.FastElAsFloat(x, y, 0));
-	  img.FastEl(1,x,y) = (byte)(src.FastElAsFloat(x, y, 1));
-	  img.FastEl(2,x,y) = (byte)(src.FastElAsFloat(x, y, 2));
+	  img.FastEl3d(0,x,y) = (byte)(src.FastElAsFloat(x, y, 0));
+	  img.FastEl3d(1,x,y) = (byte)(src.FastElAsFloat(x, y, 1));
+	  img.FastEl3d(2,x,y) = (byte)(src.FastElAsFloat(x, y, 2));
 	}
       }
     }

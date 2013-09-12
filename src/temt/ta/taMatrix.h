@@ -229,9 +229,15 @@ public:
                                     int d4=0, int d5=0, int d6=0) const
   { return geom.IndexFmDims(d0, d1, d2, d3, d4, d5, d6); }
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
-  inline int            FastElIndex2D(int d0, int d1=0) const
-  { return (d1 * geom[0]) + d0; }
+  inline int            FastElIndex2d(int d0, int d1) const
+  { return d1 * geom.elprod[0] + d0; }
   // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
+  inline int            FastElIndex3d(int d0, int d1, int d2) const
+  { return d2 * geom.elprod[1] + d1 * geom.elprod[0] + d0; }
+  // #CAT_Access NO bounds check and return index as if the mat was only 3d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
+  inline int            FastElIndex4d(int d0, int d1, int d2, int d3) const
+  { return d3 * geom.elprod[2] + d2 * geom.elprod[1] + d1 * geom.elprod[0] + d0; }
+  // #CAT_Access NO bounds check and return index as if the mat was only 3d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
   inline int            FastElIndexN(const MatrixIndex& indices) const
   { return geom.IndexFmDimsN(indices); }
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE -- ignores any el_view that might be in effect
