@@ -24,6 +24,8 @@
 // declare all other types mentioned but not required to include:
 class float_Matrix; // 
 class int_Matrix; // 
+class taVector2f; //
+class taVector2i; //
 
 
 taTypeDef_Of(taImageProc);
@@ -89,6 +91,26 @@ public:
 					float rotate=0.0f, float scale=1.0f,
 					EdgeMode edge=BORDER);
   // #CAT_Transform #MENU_BUTTON #MENU_ON_Transform Sample a window of given width and height centered on given normalized coordinate location in input image, with scaling and rotation (in normalized 0-1 units) as specified
+
+  static bool	SampleImageWindow_float_wrap_mono
+    (float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+     taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+     int n_orig_pix, float rotate, float scale);
+  // #IGNORE
+  static bool	SampleImageWindow_float_wrap_rgb
+    (float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+     taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+     int n_orig_pix, float rotate, float scale);
+  // #IGNORE
+  static bool	SampleImageWindow_float_clip_mono
+    (float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+     taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+     int n_orig_pix, float rotate, float scale, EdgeMode edge);
+  static bool	SampleImageWindow_float_clip_rgb
+    (float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+     taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+     int n_orig_pix, float rotate, float scale, EdgeMode edge);
+  // #IGNORE
   
   static bool	AttentionFilter(float_Matrix& mat, float radius_pct);
   // #CAT_Filter #MENU_BUTTON #MENU_ON_Filter apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)

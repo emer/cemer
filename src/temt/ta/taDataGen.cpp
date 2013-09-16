@@ -570,11 +570,12 @@ void taDataGen::GSP_rotateLeft(int* v,int start,int n) {
 
 bool taDataGen::WritePoint(float_Matrix* mat, int x, int y, float color, bool wrap) {
   if(!CheckDims(mat, 2)) return false;
-  bool clipped = (taVector2i::WrapClipOne(wrap, x, mat->dim(0)) ||
-                  taVector2i::WrapClipOne(wrap, y, mat->dim(1)));
+  taVector2i vv(x,y);
+  taVector2i mx(mat->dim(0), mat->dim(1));
+  bool clipped = vv.WrapClip(wrap, mx);
   if(clipped)
     return false;
-  mat->FastEl2d(x,y) = color;
+  mat->FastEl2d(vv.x,vv.y) = color;
   return true;
 }
 

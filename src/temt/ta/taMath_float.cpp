@@ -56,6 +56,10 @@
 #include <math.h>
 #include <float.h>
 
+#ifdef USE_SSE8
+#include "vectorclass.h"
+#endif
+
 /////////////////////////////////////////////////////////////////////////////////
 // ExpLog: exponential and logarithmic functions
 
@@ -987,9 +991,23 @@ float taMath_float::vec_sum(const float_Matrix* vec) {
     }
   }
   else {
-    for(int i=0; i<vec->size; i++) {
-      rval += vec->FastEl_Flat(i);
+    const int sz = vec->size;
+    float* vecel = vec->el;
+#ifdef USE_SSE8
+    const int psz = 8 * (sz / 8);
+    int i;
+    for(i=0; i<psz; i+=8) {
+      Vec8f vf; vf.load(vecel + i);
+      rval += horizontal_add(vf);
     }
+    for(; i<sz; i++) {
+      rval += vecel[i];
+    }
+#else
+    for(int i=0; i<sz; i++) {
+      rval += vecel[i];
+    }
+#endif
   }
   return rval;
 }
@@ -1089,9 +1107,24 @@ float taMath_float::vec_ss_len(const float_Matrix* vec) {
     }
   }
   else {
-    for(int i=0; i<vec->size; i++) {
-      float val = vec->FastEl_Flat(i); rval += val * val;
+    const int sz = vec->size;
+    float* vecel = vec->el;
+#ifdef USE_SSE8
+    const int psz = 8 * (sz / 8);
+    int i;
+    for(i=0; i<psz; i+=8) {
+      Vec8f vf; vf.load(vecel + i);
+      vf *= vf;
+      rval += horizontal_add(vf);
     }
+    for(; i<sz; i++) {
+      rval = vecel[i] * vecel[i];
+    }
+#else
+    for(int i=0; i<sz; i++) {
+      float val = vecel[i]; rval += val * val;
+    }
+#endif
   }
   return rval;
 }
@@ -1730,23 +1763,98 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
   float act_sum = 0.0;
   float scale;
   if(vec->ElView()) {
-    TA_FOREACH_INDEX(i, *vec) {
-      act_sum += (vec->FastEl_Flat(i) - min_val);
+    if(min_val == 0.0f) {
+      TA_FOREACH_INDEX(i, *vec) {
+        act_sum += vec->FastEl_Flat(i);
+      }
+      if(act_sum == 0.0f) return 0.0;
+      scale = (sum / act_sum);
+      TA_FOREACH_INDEX(i, *vec) {
+        vec->FastEl_Flat(i) = vec->FastEl_Flat(i) * scale;
+      }
     }
-    if(act_sum == 0.0f) return 0.0;
-    scale = (sum / act_sum);
-    TA_FOREACH_INDEX(i, *vec) {
-      vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
+    else {
+      TA_FOREACH_INDEX(i, *vec) {
+        act_sum += (vec->FastEl_Flat(i) - min_val);
+      }
+      if(act_sum == 0.0f) return 0.0;
+      scale = (sum / act_sum);
+      TA_FOREACH_INDEX(i, *vec) {
+        vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
+      }
     }
   }
   else { // optimized
-    for(int i=0; i<vec->size; i++) {
-      act_sum += (vec->FastEl_Flat(i) - min_val);
-    }
-    if(act_sum == 0.0f) return 0.0;
-    scale = (sum / act_sum);
-    for(int i=0; i<vec->size; i++) {
-      vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
+    const int sz = vec->size;
+    float* vecel = vec->el;
+#ifdef USE_SSE8
+    const int psz = 8 * (sz / 8);
+#endif
+    if(min_val == 0.0f) {
+#ifdef USE_SSE8
+      int i;
+      for(i=0; i<psz; i+=8) {
+        Vec8f vf; vf.load(vecel + i);
+        act_sum += horizontal_add(vf);
+      }
+      for(; i<sz; i++) {
+        act_sum += vecel[i];
+      }
+      if(act_sum == 0.0f) return 0.0f;
+      scale = (sum / act_sum);
+      Vec8f sc(scale);
+      for(i=0; i<psz; i+=8) {
+        Vec8f vf; vf.load(vecel + i);
+        vf *= sc;
+        vf.store(vecel + i);
+      }
+      for(; i<sz; i++) {
+        vecel[i] *= scale;
+      }
+#else
+      for(int i=0; i<sz; i++) {
+        act_sum += vecel[i];
+      }
+      if(act_sum == 0.0f) return 0.0;
+      scale = (sum / act_sum);
+      for(int i=0; i<sz; i++) {
+        vecel[i] *= scale;
+      }
+#endif
+    }   
+    else {
+#ifdef USE_SSE8
+      Vec8f mv(min_val);
+      int i;
+      for(i=0; i<psz; i+=8) {
+        Vec8f vf; vf.load(vecel + i);
+        vf -= mv;
+        act_sum += horizontal_add(vf);
+      }
+      for(; i<sz; i++) {
+        act_sum += (vecel[i] - min_val);
+      }
+      if(act_sum == 0.0f) return 0.0;
+      scale = (sum / act_sum);
+      Vec8f sc(scale);
+      for(i=0; i<psz; i+=8) {
+        Vec8f vf; vf.load(vecel + i);
+        vf = ((vf - mv) * sc) + mv;
+        vf.store(vecel + i);
+      }
+      for(; i<sz; i++) {
+        vecel[i] = ((vecel[i] - min_val) * scale) + min_val;
+      }
+#else
+      for(int i=0; i<sz; i++) {
+        act_sum += (vec->FastEl_Flat(i) - min_val);
+      }
+      if(act_sum == 0.0f) return 0.0;
+      scale = (sum / act_sum);
+      for(int i=0; i<sz; i++) {
+        vecel[i] = ((vecel[i] - min_val) * scale) + min_val;
+      }
+#endif
     }
   }
   return scale;

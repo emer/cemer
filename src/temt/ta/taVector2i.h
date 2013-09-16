@@ -154,15 +154,15 @@ public:
 
   virtual bool  FitN(int n);            // adjust x and y to fit x total elements
 
-  void          SetGtEq(int n)  { x = MAX(n, x);  y = MAX(n, y); }
+  inline void   SetGtEq(int n)  { x = MAX(n, x);  y = MAX(n, y); }
   // set each to be greater than or equal to n
-  void          SetLtEq(int n)  { x = MIN(n, x);  y = MIN(n, y); }
+  inline void   SetLtEq(int n)  { x = MIN(n, x);  y = MIN(n, y); }
   // set each to be less than or equal to n
 
-  static int    WrapMax(int c, int max) {
+  static inline int    WrapMax(int c, int max) {
     int rval = c % max; if(rval < 0) rval += max;  return rval;
   }
-  static void   WrapMinDistOne(int& pos, int& dst, const int pos_max, const int cmp,
+  static inline void WrapMinDistOne(int& pos, int& dst, const int pos_max, const int cmp,
                                const int cmp_half) {
     if(cmp < cmp_half) {
       if(Absv((pos-pos_max) - cmp) < Absv(dst)) { pos -= pos_max; dst = pos - cmp; }
@@ -173,26 +173,48 @@ public:
   }
   // in computing the distance between two coord vals: dst = pos-cmp, consider whether the distance is shorter if pos is wrapped around as a function of pos_max size (condition on which side of the half-way point of the range for cmp value, cmp_half, for which way to wrap) -- if it is shorter, then update pos to new extended value (beyond normal range either - or +) and also update the distance value
 
-  void          WrapMinDist(taVector2i& dst, const taVector2i& max, const taVector2i& cmp,
+  inline void   WrapMinDist(taVector2i& dst, const taVector2i& max, const taVector2i& cmp,
                             const taVector2i& cmp_half) {
     WrapMinDistOne(x, dst.x, max.x, cmp.x, cmp_half.x);
     WrapMinDistOne(y, dst.y, max.y, cmp.y, cmp_half.y);
   }
   // in computing the distance between two coords: dst = this-cmp, consider whether the distance is shorter if this is wrapped around as a function of pos_max size (condition on which side of the half-way point of the range for cmp value, cmp_half, for which way to wrap) -- if it is shorter, then update this pos to new extended value (beyond normal range either - or +) and also update the distance value
 
-  static bool   WrapClipOne(bool wrap, int& c, int max);
-  // wrap-around or clip one dimension, true if out of range (clipped or more than half way around other side for wrap)
-  bool          WrapClip(bool wrap, const taVector2i& max) {
-    bool wcx = WrapClipOne(wrap, x, max.x); bool wcy = WrapClipOne(wrap, y, max.y);
-    return wcx || wcy;          // have to explicitly call else cond eval will avoid clip!
-  } // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
+  static inline void    WrapOne(int& c, int max)
+  { if(c >= 0 && c < max) return; if(c < 0) c = max + (c % max); else c = c % max; }
+  // wrap-around one dimension
+  inline void   Wrap(const taVector2i& max)
+  { WrapOne(x, max.x); WrapOne(y, max.y); }
+  // wrap-around coordinates within 0,0 - max range
 
+  static inline bool   WrapOneHalf(int& c, int max)
+  { if(c >= 0 && c < max) return false;  bool out_of_range = false;
+    if(c < 0) { if(c < -max/2) out_of_range = true; c = max + (c % max); }
+    else      { if(c > max + max/2) out_of_range = true; c = c % max; }
+    return out_of_range; }
+  // wrap-around one dimension, return true if out of range (more than half way around other side)
+  inline bool   WrapHalf(const taVector2i& max)
+  { bool wcx = WrapOneHalf(x, max.x); bool wcy = WrapOneHalf(y, max.y);
+    return wcx || wcy; }
+  // wrap-around coordinates within 0,0 - max range, return true if out of range (more than half way around other side)
+
+  static inline bool   ClipOne(int& c, int max)
+  { if(c >= 0 && c < max) return false; if(c < 0) c = 0; else c = max-1; return true; }
+  // clip one dimension, true if out of range
+  inline bool    Clip(const taVector2i& max)
+  { bool wcx = ClipOne(x, max.x); bool wcy = ClipOne(y, max.y);
+    return wcx || wcy; }
+  // clip coordinates within 0,0 - max range, true if out of range
 
   inline void   SetFmIndex(int idx, int x_size) {
     x = idx % x_size;
     y = idx / x_size;
   }
   // set x, y values from a "cell" index in a 2d matrix-like space organized with x as the inner loop and y as the outer loop, with a given x dimension size
+
+  inline bool   WrapClip(bool wrap, const taVector2i& max)
+  { if(wrap) { Wrap(max); return false; } return Clip(max); }
+  // wrap-around or clip coordinates within 0,0 - max range, true if clipped out of range -- for performance, it is better to use separate code for wrap and clip cases
 
 private:
   inline void   Copy_(const taVector2i& cp) { x = cp.x; y = cp.y; }

@@ -163,11 +163,19 @@ public:
   void          SetLtEq(int n)  // set each to be less than or equal to n
   { x = MIN(n, x);  y = MIN(n, y); z = MIN(n, z); }
 
-  bool          WrapClip(bool wrap, const taVector3i& max) {
-    bool wcxy = taVector2i::WrapClip(wrap, max); bool wcz = WrapClipOne(wrap, z, max.z);
-    return wcxy || wcz;
-  }  // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
-private:
+  inline void   Wrap(const taVector3i& max)
+  { taVector2i::Wrap(max); WrapOne(z, max.z); }
+  // wrap-around coordinates within 0,0,0 - max range
+
+  inline bool    Clip(const taVector3i& max)
+  { bool wcxy = taVector2i::Clip(max); bool wcz = ClipOne(z, max.z);
+    return wcxy || wcz; }
+  // clip coordinates within 0,0,0 - max range, true if out of range
+
+  inline bool   WrapClip(bool wrap, const taVector3i& max)
+  { if(wrap) { Wrap(max); return false; } return Clip(max); }
+  // wrap-around or clip coordinates within 0,0,0 - max range, true if clipped out of range -- for performance, it is better to use separate code for wrap and clip cases
+
   inline void   Copy_(const taVector3i& cp) { x = cp.x; y = cp.y; z = cp.z; }
   inline void   Initialize()            { x = y = z = 0; }
   inline void   Destroy()               { };

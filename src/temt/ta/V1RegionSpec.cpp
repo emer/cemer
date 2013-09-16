@@ -3284,13 +3284,13 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
         ic.y = half_sz.y + disp;
         ic.x = half_sz.x;
 
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
 
         for(int twidx = 0; twidx < dwd; twidx++) {
           int off = v1b_stencils.FastEl2d(twidx, didx);
           dc = ic;
           dc.x += off;
-          if(dc.WrapClip(true, max_sz)) continue;
+          if(dc.WrapHalf(max_sz)) continue;
           mat->FastEl2d(dc.x,dc.y) = v1b_weights.FastEl2d(twidx, didx);
         }
       }
@@ -3316,7 +3316,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
             ic.x += taMath_float::rint(dirsign * v1s_ang_slopes.FastEl3d(X, LINE, ang));
             ic.y += taMath_float::rint(dirsign * v1s_ang_slopes.FastEl3d(Y, LINE, ang));
 
-            if(ic.WrapClip(true, max_sz)) continue;
+            if(ic.WrapHalf(max_sz)) continue;
             mat->FastEl2d(ic.x,ic.y) = -0.5f;
 
             for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
@@ -3325,7 +3325,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
               int yp = v1m_stencils.FastEl(Y, twidx, mot, dir, ang, speed);
               ic.x = brd.x + xp + (motion_frames-1 -mot) * mot_rf_max;
               ic.y = half_sz.y + yp;
-              if(ic.WrapClip(true, max_sz)) continue;
+              if(ic.WrapHalf(max_sz)) continue;
               float mot_val = 1.0f; // color coding not necc: - (float)mot * (1.0f / (float)(motion_frames+2));
               mat->FastEl2d(ic.x,ic.y) = mot_val * v1m_weights.FastEl1d(twidx);
             }
@@ -3344,18 +3344,18 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       // first draw a bounding box
       for(int ys = -1; ys <= 4; ys++) {
         ic.x = brd.x-1; ic.y = brd.y + ys;
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = -.5;
         ic.x = brd.x+4; ic.y = brd.y + ys;
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = -.5;
       }
       for(int xs = -1; xs <= 4; xs++) {
         ic.x = brd.x+xs; ic.y = brd.y -1;
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = -.5;
         ic.x = brd.x+xs; ic.y = brd.y + 4;
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = -.5;
       }
       int nctrs = v1sg_stencils.FastEl3d(2, 0, ang);       // length stored here
@@ -3365,7 +3365,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
         ic.x = brd.x + xp;
         ic.y = brd.y + yp;
 
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = (ctrdx % 2 == 0) ? 1.0f: -1.0f;
       }
     }
@@ -3380,7 +3380,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
         sc.y = brd.y + ys;
         for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xsimple
           sc.x = brd.x + xs;
-          if(sc.WrapClip(true, max_sz)) continue;
+          if(sc.WrapHalf(max_sz)) continue;
           mat->FastEl2d(sc.x,sc.y) = si_weights.FastEl2d(xs, ys);
         }
       }
@@ -3396,7 +3396,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       for(int lpdx=0; lpdx < v1c_specs.len_sum_width; lpdx++) {
         ic.x = brd.x + v1ls_stencils.FastEl3d(X,lpdx,ang);
         ic.y = brd.y + v1ls_stencils.FastEl3d(Y,lpdx,ang);
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = 1.0f;
       }
     }
@@ -3410,13 +3410,13 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
         taVector2i ic;
         ic.x = brd.x + v1es_stencils.FastEl(X,0,ON,dir,ang);
         ic.y = brd.y + v1es_stencils.FastEl(Y,0,ON,dir,ang);
-        if(ic.WrapClip(true, max_sz)) continue;
+        if(ic.WrapHalf(max_sz)) continue;
         mat->FastEl2d(ic.x,ic.y) = 1.0f;
 
         for(int orthdx=0; orthdx < 3; orthdx++) {
           ic.x = brd.x + v1es_stencils.FastEl(X,orthdx,OFF,dir,ang);
           ic.y = brd.y + v1es_stencils.FastEl(Y,orthdx,OFF,dir,ang);
-          if(ic.WrapClip(true, max_sz)) continue;
+          if(ic.WrapHalf(max_sz)) continue;
           mat->FastEl2d(ic.x,ic.y) = -1.0f;
         }
       }
@@ -3440,7 +3440,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
             for(int i=0; i<cnt; i++) {
               ic.x = brd.x + v2ffbo_stencils.FastEl(X, i, sdir, sang, dir, ang);
               ic.y = brd.y + v2ffbo_stencils.FastEl(Y, i, sdir, sang, dir, ang);
-              if(ic.WrapClip(true, max_sz)) continue;
+              if(ic.WrapHalf(max_sz)) continue;
               mat->FastEl2d(ic.x,ic.y) = v2ffbo_weights.FastEl(i, sdir, sang, dir, ang);
             }
           }
@@ -3481,7 +3481,7 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //     for(y=input_size.border.y; y<= input_size.retina_size.y-input_size.border.y; y+= dog_specs.spacing.y) {
 //       for(x=input_size.border.x; x<= input_size.retina_size.x-input_size.border.x; x+=dog_specs.spacing.x) {
 //      ic.y = y; ic.x = x;
-//      ic.WrapClip(true, input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
+//      ic.WrapHalf(input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
 //       }
 //     }
 //   }
@@ -3502,15 +3502,15 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //      int ex,ey;
 //      for(ey=0; ey < v1s_specs.rf_size; ey++) {
 //        ec.y = ic.y + ey*dog_specs.spacing.y;  ec.x = ic.x;
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //        ec.y = ic.y + ey*dog_specs.spacing.y;  ec.x = ic.x + dog_specs.spacing.x * (v1s_specs.rf_size-1);
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //      }
 //      for(ex=0; ex < v1s_specs.rf_size; ex++) {
 //        ec.y = ic.y;    ec.x = ic.x + ex*dog_specs.spacing.x;
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //        ec.y = ic.y + dog_specs.spacing.y * (v1s_specs.rf_size-1); ec.x = ic.x + ex*dog_specs.spacing.x;
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //      }
 //       }
 //     }
@@ -3518,7 +3518,7 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //     for(y=brd.y; y<= input_size.retina_size.y-brd.y; y+= spc.y) {
 //       for(x=brd.x; x<= input_size.retina_size.x-brd.x; x+=spc.x) {
 //      ic.y = y; ic.x = x;
-//      ic.WrapClip(true, input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
+//      ic.WrapHalf(input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
 //       }
 //     }
 //   }
@@ -3543,22 +3543,22 @@ void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 //      int ex,ey;
 //      for(ey=0; ey < v1c_specs.spat_rf.y; ey++) {
 //        ec.y = ic.y + ey*spcb.y;  ec.x = ic.x;
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //        ec.y = ic.y + ey*spcb.y;  ec.x = ic.x + spcb.x * (v1c_specs.spat_rf.x-1);
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //      }
 //      for(ex=0; ex < v1c_specs.spat_rf.x; ex++) {
 //        ec.y = ic.y;    ec.x = ic.x + ex*spcb.x;
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //        ec.y = ic.y + spcb.y * (v1c_specs.spat_rf.y-1); ec.x = ic.x + ex*spcb.x;
-//        ec.WrapClip(true, input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
+//        ec.WrapHalf(input_size.retina_size); mat->FastEl2d(ec.x,ec.y) = 0.2f;
 //      }
 //       }
 //     }
 //     for(y=brd.y; y<= input_size.retina_size.y-brd.y; y+= spc.y) {
 //       for(x=brd.x; x<= input_size.retina_size.x-brd.x; x+=spc.x) {
 //      ic.y = y; ic.x = x;
-//      ic.WrapClip(true, input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
+//      ic.WrapHalf(input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
 //       }
 //     }
 //   }

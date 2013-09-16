@@ -304,7 +304,7 @@ void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
     for(y=input_size.border.y; y<= input_size.retina_size.y-input_size.border.y; y+= dog_specs.spacing) {
       for(x=input_size.border.x; x<= input_size.retina_size.x-input_size.border.x; x+=dog_specs.spacing) {
         ic.y = y; ic.x = x;
-        ic.WrapClip(true, input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
+        ic.WrapHalf(input_size.retina_size);      mat->FastEl2d(ic.x,ic.y) = 1.0f;
       }
     }
   }

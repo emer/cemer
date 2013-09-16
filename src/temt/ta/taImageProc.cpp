@@ -216,19 +216,37 @@ bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix
   bool wrap = (edge == WRAP);
 
   taVector2i ic;
-  for(int ny = 0; ny < img_size.y; ny++) {
-    ic.y = ny - img_off.y;
-    for(int nx = 0; nx < img_size.x; nx++) {
-      ic.x = nx - img_off.x;
-      if(ic.WrapClip(wrap, img_size)) {
-        if(edge == CLIP) continue; // bail on clipping only
+  if(wrap) {
+    for(int ny = 0; ny < img_size.y; ny++) {
+      ic.y = ny - img_off.y;
+      for(int nx = 0; nx < img_size.x; nx++) {
+        ic.x = nx - img_off.x;
+        ic.Wrap(img_size);      // d/c on half wrap
+        if(nclrs > 1) {
+          for(int i=0;i<nclrs;i++)
+            xlated_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
+        }
+        else {
+          xlated_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
+        }
       }
-      if(nclrs > 1) {
-        for(int i=0;i<nclrs;i++)
-          xlated_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
-      }
-      else {
-        xlated_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
+    }
+  }
+  else {
+    for(int ny = 0; ny < img_size.y; ny++) {
+      ic.y = ny - img_off.y;
+      for(int nx = 0; nx < img_size.x; nx++) {
+        ic.x = nx - img_off.x;
+        if(ic.Clip(img_size)) {
+          if(edge == CLIP) continue; // don't bail for BORDER
+        }
+        if(nclrs > 1) {
+          for(int i=0;i<nclrs;i++)
+            xlated_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
+        }
+        else {
+          xlated_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
+        }
       }
     }
   }
@@ -304,37 +322,73 @@ bool taImageProc::ScaleImage_float(float_Matrix& scaled_img, float_Matrix& orig_
   bool wrap = (edge == WRAP);
 
   taVector2i ic;
-  for(y=0; y<scaled_size.y; y++) {
-    int oyc = (int)floor(.5f + ((float)y / scale));
-    for(x=0; x<scaled_size.x; x++) {
-      int oxc = (int)floor(.5f + ((float)x / scale));
-      float avgs[4] = {};	// init to 0
-      int oxi, oyi;
-      for(oyi=-n_orig_pix; oyi<=n_orig_pix; oyi++) {
-        ic.y = oyc + oyi;
-        for(oxi=-n_orig_pix;oxi<=n_orig_pix;oxi++) {
-          ic.x = oxc + oxi;
-          if(ic.WrapClip(wrap, img_size)) {
-            if(edge == CLIP) continue; // bail on clipping only
-          }
-          float sc = sc_ary.FastEl2d(oxi + n_orig_pix, oyi + n_orig_pix);
-          if(nclrs > 1) {
-	    for(int cl=0; cl < nclrs; cl++) {
-	      avgs[cl] += sc * orig_img.FastEl3d(ic.x, ic.y, cl);
-	    }
-          }
-          else {
-            avgs[0] += sc * orig_img.FastEl2d(ic.x, ic.y);
+  if(wrap) {
+    for(y=0; y<scaled_size.y; y++) {
+      int oyc = (int)floor(.5f + ((float)y / scale));
+      for(x=0; x<scaled_size.x; x++) {
+        int oxc = (int)floor(.5f + ((float)x / scale));
+        float avgs[4] = {};	// init to 0
+        int oxi, oyi;
+        for(oyi=-n_orig_pix; oyi<=n_orig_pix; oyi++) {
+          ic.y = oyc + oyi;
+          for(oxi=-n_orig_pix;oxi<=n_orig_pix;oxi++) {
+            ic.x = oxc + oxi;
+            ic.Wrap(img_size);       // d/c on half wrap
+            float sc = sc_ary.FastEl2d(oxi + n_orig_pix, oyi + n_orig_pix);
+            if(nclrs > 1) {
+              for(int cl=0; cl < nclrs; cl++) {
+                avgs[cl] += sc * orig_img.FastEl3d(ic.x, ic.y, cl);
+              }
+            }
+            else {
+              avgs[0] += sc * orig_img.FastEl2d(ic.x, ic.y);
+            }
           }
         }
+        if(nclrs > 1) {
+          for(int cl=0; cl < nclrs; cl++) {
+            scaled_img.FastEl3d(x, y, cl) = avgs[cl];
+          }
+        }
+        else {
+          scaled_img.FastEl2d(x, y) = avgs[0];
+        }
       }
-      if(nclrs > 1) {
-	for(int cl=0; cl < nclrs; cl++) {
-	  scaled_img.FastEl3d(x, y, cl) = avgs[cl];
-	}
-      }
-      else {
-        scaled_img.FastEl2d(x, y) = avgs[0];
+    }
+  }
+  else {
+    for(y=0; y<scaled_size.y; y++) {
+      int oyc = (int)floor(.5f + ((float)y / scale));
+      for(x=0; x<scaled_size.x; x++) {
+        int oxc = (int)floor(.5f + ((float)x / scale));
+        float avgs[4] = {};	// init to 0
+        int oxi, oyi;
+        for(oyi=-n_orig_pix; oyi<=n_orig_pix; oyi++) {
+          ic.y = oyc + oyi;
+          for(oxi=-n_orig_pix;oxi<=n_orig_pix;oxi++) {
+            ic.x = oxc + oxi;
+            if(ic.Clip(img_size)) {
+              if(edge == CLIP) continue; // don't bail for BORDER
+            }
+            float sc = sc_ary.FastEl2d(oxi + n_orig_pix, oyi + n_orig_pix);
+            if(nclrs > 1) {
+              for(int cl=0; cl < nclrs; cl++) {
+                avgs[cl] += sc * orig_img.FastEl3d(ic.x, ic.y, cl);
+              }
+            }
+            else {
+              avgs[0] += sc * orig_img.FastEl2d(ic.x, ic.y);
+            }
+          }
+        }
+        if(nclrs > 1) {
+          for(int cl=0; cl < nclrs; cl++) {
+            scaled_img.FastEl3d(x, y, cl) = avgs[cl];
+          }
+        }
+        else {
+          scaled_img.FastEl2d(x, y) = avgs[0];
+        }
       }
     }
   }
@@ -412,20 +466,39 @@ bool taImageProc::RotateImage_float(float_Matrix& rotated_img, float_Matrix& ori
 
       float avgs[4] = {};	// init to 0
       taVector2i ic;
-      for(oyi=0;oyi<2;oyi++) {
-        ic.y = pcy[oyi];
-        for(oxi=0;oxi<2;oxi++) {
-          ic.x = pcx[oxi];
-          if(ic.WrapClip(wrap, img_size)) {
-            if(edge == CLIP) continue; // bail on clipping only
+      if(wrap) {
+        for(oyi=0;oyi<2;oyi++) {
+          ic.y = pcy[oyi];
+          for(oxi=0;oxi<2;oxi++) {
+            ic.x = pcx[oxi];
+            ic.Wrap(img_size);      // d/c on half wrap
+            if(nclrs > 1) {
+              for(int cl=0; cl < nclrs; cl++) {
+                avgs[cl] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl3d(ic.x, ic.y, cl);
+              }
+            }
+            else {
+              avgs[0] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl2d(ic.x, ic.y);
+            }
           }
-          if(nclrs > 1) {
-	    for(int cl=0; cl < nclrs; cl++) {
-	      avgs[cl] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl3d(ic.x, ic.y, cl);
-	    }
-          }
-          else {
-            avgs[0] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl2d(ic.x, ic.y);
+        }
+      }
+      else {
+        for(oyi=0;oyi<2;oyi++) {
+          ic.y = pcy[oyi];
+          for(oxi=0;oxi<2;oxi++) {
+            ic.x = pcx[oxi];
+            if(ic.Clip(img_size)) {
+              if(edge == CLIP) continue; // don't bail for BORDER
+            }
+            if(nclrs > 1) {
+              for(int cl=0; cl < nclrs; cl++) {
+                avgs[cl] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl3d(ic.x, ic.y, cl);
+              }
+            }
+            else {
+              avgs[0] += sc_ary.FastEl2d(oxi, oyi) * orig_img.FastEl2d(ic.x, ic.y);
+            }
           }
         }
       }
@@ -462,22 +535,40 @@ bool taImageProc::CropImage_float(float_Matrix& crop_img, float_Matrix& orig_img
     crop_img.SetGeom(2, crop_size.x, crop_size.y);
   }
 
+  bool wrap = (edge == WRAP);
+
   taVector2i ic;
-  for(int ny = 0; ny < crop_size.y; ny++) {
-    ic.y = img_off.y + ny;
-    for(int nx = 0; nx < crop_size.x; nx++) {
-      ic.x = img_off.x + nx;
-
-      if(ic.WrapClip(false, img_size)) { // always clip!
-        if(edge == CLIP) continue; // bail on clipping only
+  if(wrap) {
+    for(int ny = 0; ny < crop_size.y; ny++) {
+      ic.y = img_off.y + ny;
+      for(int nx = 0; nx < crop_size.x; nx++) {
+        ic.x = img_off.x + nx;
+        ic.Wrap(img_size);      // d/c on half wrap
+        if(nclrs > 1) {
+          for(int i=0;i<nclrs;i++)
+            crop_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
+        }
+        else {
+          crop_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
+        }
       }
-
-      if(nclrs > 1) {
-        for(int i=0;i<nclrs;i++)
-          crop_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
-      }
-      else {
-        crop_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
+    }
+  }
+  else {
+    for(int ny = 0; ny < crop_size.y; ny++) {
+      ic.y = img_off.y + ny;
+      for(int nx = 0; nx < crop_size.x; nx++) {
+        ic.x = img_off.x + nx;
+        if(ic.Clip(img_size)) {
+          if(edge == CLIP) continue; // don't bail for BORDER
+        }
+        if(nclrs > 1) {
+          for(int i=0;i<nclrs;i++)
+            crop_img.FastEl3d(nx, ny, i) = orig_img.FastEl3d(ic.x, ic.y, i);
+        }
+        else {
+          crop_img.FastEl2d(nx, ny) = orig_img.FastEl2d(ic.x, ic.y);
+        }
       }
     }
   }
@@ -584,6 +675,186 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
   }
 
   bool wrap = (edge == WRAP);
+  if(wrap) {
+    if(nclrs == 1) {
+      SampleImageWindow_float_wrap_mono(out_img, in_img, sc_ary, win_size, img_size,
+                                        win_ctr, img_ctr, n_orig_pix, rotate, scale);
+    }
+    else {
+      SampleImageWindow_float_wrap_rgb(out_img, in_img, sc_ary, win_size, img_size,
+                                        win_ctr, img_ctr, n_orig_pix, rotate, scale);
+    }
+  }     
+  else {
+    if(nclrs == 1) {
+      SampleImageWindow_float_clip_mono(out_img, in_img, sc_ary, win_size, img_size,
+                                        win_ctr, img_ctr, n_orig_pix, rotate, scale, edge);
+    }
+    else {
+      SampleImageWindow_float_clip_rgb(out_img, in_img, sc_ary, win_size, img_size,
+                                       win_ctr, img_ctr, n_orig_pix, rotate, scale, edge);
+    }
+  }
+
+  return true;
+}
+
+
+bool taImageProc::SampleImageWindow_float_wrap_mono
+(float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+ taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+ int n_orig_pix, float rotate, float scale) {
+  float rot_sin = sin(rotate);
+  float rot_cos = cos(rotate);
+
+  int pcx[2];    int pcy[2];
+  float pwx[2];  float pwy[2];
+  static float_Matrix rot_ary(false);
+  rot_ary.SetGeom(2, 2, 2);
+
+  taVector2i wc;
+  for(wc.y=0; wc.y<win_size.y; wc.y++) {
+    for(wc.x=0; wc.x<win_size.x; wc.x++) {
+      taVector2f wcd = ((taVector2f)wc) - win_ctr; // delta from ctr in window
+      taVector2f icd = wcd / scale;                    // scaled delta from ctr in img
+      taVector2f icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
+                     icd.y * rot_cos - icd.x * rot_sin);
+      taVector2i icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
+                     (int)floor(.5f + icr.y + img_ctr.y));
+
+      float avgs[4] = {};	// init to 0
+
+      taVector2i oc;             // offsets
+      for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
+        for(oc.x=-n_orig_pix;oc.x<=n_orig_pix;oc.x++) {
+          taVector2i ic = icc + oc;
+          ic.Wrap(img_size);      // d/c on half wrap
+          float sc = sc_ary.FastEl2d(oc.x + n_orig_pix, oc.y + n_orig_pix);
+
+          if(rotate != 0.0f) {
+            // now, for each scaling fuzzy-sampled point, correct for rotational aliasing..
+            GetWeightedPixels_float(ic.x, img_size.x, pcx, pwx);
+            GetWeightedPixels_float(ic.y, img_size.y, pcy, pwy);
+
+            int oxi, oyi;
+            for(oyi=0;oyi<2;oyi++) {
+              for(oxi=0;oxi<2;oxi++) {
+                rot_ary.FastEl2d(oxi, oyi) = pwx[oxi] + pwy[oyi];
+              }
+            }
+            taMath_float::vec_norm_sum(&rot_ary);
+
+            float r_avgs[4] = {};
+            taVector2i ric;
+            for(oyi=0;oyi<2;oyi++) {
+              ric.y = pcy[oyi];
+              for(oxi=0;oxi<2;oxi++) {
+                ric.x = pcx[oxi];
+                ric.Wrap(img_size);      // d/c on half wrap
+                float rsc = rot_ary.FastEl2d(oxi, oyi);
+                r_avgs[0] += rsc * in_img.FastEl2d(ric.x, ric.y);
+              }
+            }
+            avgs[0] += sc * r_avgs[0];
+          }
+          else {
+            avgs[0] += sc * in_img.FastEl2d(ic.x, ic.y);
+          }
+        }
+      }
+      out_img.FastEl2d(wc.x, wc.y) = avgs[0];
+    }
+  }
+  return true;
+}
+
+bool taImageProc::SampleImageWindow_float_wrap_rgb
+(float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+ taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+ int n_orig_pix, float rotate, float scale) {
+
+  float rot_sin = sin(rotate);
+  float rot_cos = cos(rotate);
+
+  int pcx[2];    int pcy[2];
+  float pwx[2];  float pwy[2];
+
+  static float_Matrix rot_ary(false);
+  rot_ary.SetGeom(2, 2, 2);
+
+  const int nclrs = in_img.dim(2);
+
+  taVector2i wc;
+  for(wc.y=0; wc.y<win_size.y; wc.y++) {
+    for(wc.x=0; wc.x<win_size.x; wc.x++) {
+      taVector2f wcd = ((taVector2f)wc) - win_ctr; // delta from ctr in window
+      taVector2f icd = wcd / scale;                    // scaled delta from ctr in img
+      taVector2f icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
+                     icd.y * rot_cos - icd.x * rot_sin);
+      taVector2i icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
+                     (int)floor(.5f + icr.y + img_ctr.y));
+
+      float avgs[4] = {};	// init to 0
+
+      taVector2i oc;             // offsets
+      for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
+        for(oc.x=-n_orig_pix;oc.x<=n_orig_pix;oc.x++) {
+          taVector2i ic = icc + oc;
+          ic.Wrap(img_size);      // d/c on half wrap
+          float sc = sc_ary.FastEl2d(oc.x + n_orig_pix, oc.y + n_orig_pix);
+
+          if(rotate != 0.0f) {
+            // now, for each scaling fuzzy-sampled point, correct for rotational aliasing..
+            GetWeightedPixels_float(ic.x, img_size.x, pcx, pwx);
+            GetWeightedPixels_float(ic.y, img_size.y, pcy, pwy);
+
+            int oxi, oyi;
+            for(oyi=0;oyi<2;oyi++) {
+              for(oxi=0;oxi<2;oxi++) {
+                rot_ary.FastEl2d(oxi, oyi) = pwx[oxi] + pwy[oyi];
+              }
+            }
+            taMath_float::vec_norm_sum(&rot_ary);
+
+            float r_avgs[4] = {};
+            taVector2i ric;
+            for(oyi=0;oyi<2;oyi++) {
+              ric.y = pcy[oyi];
+              for(oxi=0;oxi<2;oxi++) {
+                ric.x = pcx[oxi];
+                ric.Wrap(img_size);      // d/c on half wrap
+                float rsc = rot_ary.FastEl2d(oxi, oyi);
+
+                for(int cl=0; cl < nclrs; cl++) {
+                  r_avgs[cl] += rsc * in_img.FastEl3d(ric.x, ric.y, cl);
+                }
+              }
+            }
+            for(int cl=0; cl < nclrs; cl++) {
+              avgs[cl] += sc * r_avgs[cl];
+            }
+          }
+          else {
+            for(int cl=0; cl < nclrs; cl++) {
+              avgs[cl] += sc * in_img.FastEl3d(ic.x, ic.y, cl);
+            }
+          }
+        }
+      }
+      for(int cl=0; cl < nclrs; cl++) {
+        out_img.FastEl3d(wc.x, wc.y, cl) = avgs[cl];
+      }
+    }
+  }
+  return true;
+}
+
+bool taImageProc::SampleImageWindow_float_clip_mono
+(float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+ taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+ int n_orig_pix, float rotate, float scale, EdgeMode edge) {
+  float rot_sin = sin(rotate);
+  float rot_cos = cos(rotate);
 
   int pcx[2];    int pcy[2];
   float pwx[2];  float pwy[2];
@@ -597,9 +868,9 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
       taVector2f wcd = ((taVector2f)wc) - win_ctr; // delta from ctr in window
       taVector2f icd = wcd / scale;                    // scaled delta from ctr in img
       taVector2f icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
-                         icd.y * rot_cos - icd.x * rot_sin);
+                     icd.y * rot_cos - icd.x * rot_sin);
       taVector2i icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
-                    (int)floor(.5f + icr.y + img_ctr.y));
+                     (int)floor(.5f + icr.y + img_ctr.y));
 
       float avgs[4] = {};	// init to 0
 
@@ -607,8 +878,8 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
       for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
         for(oc.x=-n_orig_pix;oc.x<=n_orig_pix;oc.x++) {
           taVector2i ic = icc + oc;
-          if(ic.WrapClip(wrap, img_size)) {
-            if(edge == CLIP) continue; // bail on clipping only
+          if(ic.Clip(img_size)) {
+            if(edge == CLIP) continue; // don't bail for BORDER
           }
           float sc = sc_ary.FastEl2d(oc.x + n_orig_pix, oc.y + n_orig_pix);
 
@@ -631,56 +902,110 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
               ric.y = pcy[oyi];
               for(oxi=0;oxi<2;oxi++) {
                 ric.x = pcx[oxi];
-                if(ric.WrapClip(wrap, img_size)) {
-                  if(edge == CLIP) continue; // bail on clipping only
+                if(ric.Clip(img_size)) {
+                  if(edge == CLIP) continue; // don't bail for BORDER
                 }
-
                 float rsc = rot_ary.FastEl2d(oxi, oyi);
 
-                if(nclrs > 1) {
-		  for(int cl=0; cl < nclrs; cl++) {
-		    r_avgs[cl] += rsc * in_img.FastEl3d(ric.x, ric.y, cl);
-		  }
-                }
-                else {
-                  r_avgs[0] += rsc * in_img.FastEl2d(ric.x, ric.y);
-                }
+                r_avgs[0] += rsc * in_img.FastEl2d(ric.x, ric.y);
               }
             }
-            if(nclrs > 1) {
-	      for(int cl=0; cl < nclrs; cl++) {
-		avgs[cl] += sc * r_avgs[cl];
-	      }
-            }
-            else {
-              avgs[0] += sc * r_avgs[0];
-            }
+            avgs[0] += sc * r_avgs[0];
           }
           else {
-            if(nclrs > 1) {
-	      for(int cl=0; cl < nclrs; cl++) {
-		avgs[cl] += sc * in_img.FastEl3d(ic.x, ic.y, cl);
-	      }
-            }
-            else {
-              avgs[0] += sc * in_img.FastEl2d(ic.x, ic.y);
-            }
+            avgs[0] += sc * in_img.FastEl2d(ic.x, ic.y);
           }
         }
       }
-      if(nclrs > 1) {
-	for(int cl=0; cl < nclrs; cl++) {
-	  out_img.FastEl3d(wc.x, wc.y, cl) = avgs[cl];
-	}
-      }
-      else {
-        out_img.FastEl2d(wc.x, wc.y) = avgs[0];
-      }
+      out_img.FastEl2d(wc.x, wc.y) = avgs[0];
     }
   }
   return true;
 }
 
+bool taImageProc::SampleImageWindow_float_clip_rgb
+(float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
+ taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
+ int n_orig_pix, float rotate, float scale, EdgeMode edge) {
+  float rot_sin = sin(rotate);
+  float rot_cos = cos(rotate);
+
+  int pcx[2];    int pcy[2];
+  float pwx[2];  float pwy[2];
+
+  static float_Matrix rot_ary(false);
+  rot_ary.SetGeom(2, 2, 2);
+
+  const int nclrs = in_img.dim(2);
+
+  taVector2i wc;
+  for(wc.y=0; wc.y<win_size.y; wc.y++) {
+    for(wc.x=0; wc.x<win_size.x; wc.x++) {
+      taVector2f wcd = ((taVector2f)wc) - win_ctr; // delta from ctr in window
+      taVector2f icd = wcd / scale;                    // scaled delta from ctr in img
+      taVector2f icr(icd.x * rot_cos + icd.y * rot_sin, // rotated
+                     icd.y * rot_cos - icd.x * rot_sin);
+      taVector2i icc((int)floor(.5f + icr.x + img_ctr.x), // img center coord
+                     (int)floor(.5f + icr.y + img_ctr.y));
+
+      float avgs[4] = {};	// init to 0
+
+      taVector2i oc;             // offsets
+      for(oc.y=-n_orig_pix; oc.y<=n_orig_pix; oc.y++) {
+        for(oc.x=-n_orig_pix;oc.x<=n_orig_pix;oc.x++) {
+          taVector2i ic = icc + oc;
+          if(ic.Clip(img_size)) {
+            if(edge == CLIP) continue; // don't bail for BORDER
+          }
+          float sc = sc_ary.FastEl2d(oc.x + n_orig_pix, oc.y + n_orig_pix);
+
+          if(rotate != 0.0f) {
+            // now, for each scaling fuzzy-sampled point, correct for rotational aliasing..
+            GetWeightedPixels_float(ic.x, img_size.x, pcx, pwx);
+            GetWeightedPixels_float(ic.y, img_size.y, pcy, pwy);
+
+            int oxi, oyi;
+            for(oyi=0;oyi<2;oyi++) {
+              for(oxi=0;oxi<2;oxi++) {
+                rot_ary.FastEl2d(oxi, oyi) = pwx[oxi] + pwy[oyi];
+              }
+            }
+            taMath_float::vec_norm_sum(&rot_ary);
+
+            float r_avgs[4] = {};
+            taVector2i ric;
+            for(oyi=0;oyi<2;oyi++) {
+              ric.y = pcy[oyi];
+              for(oxi=0;oxi<2;oxi++) {
+                ric.x = pcx[oxi];
+                if(ric.Clip(img_size)) {
+                  if(edge == CLIP) continue; // don't bail for BORDER
+                }
+                float rsc = rot_ary.FastEl2d(oxi, oyi);
+
+                for(int cl=0; cl < nclrs; cl++) {
+                  r_avgs[cl] += rsc * in_img.FastEl3d(ric.x, ric.y, cl);
+                }
+              }
+            }
+            for(int cl=0; cl < nclrs; cl++) {
+              avgs[cl] += sc * r_avgs[cl];
+            }
+          }
+          else {
+            for(int cl=0; cl < nclrs; cl++) {
+              avgs[cl] += sc * in_img.FastEl3d(ic.x, ic.y, cl);
+            }
+          }
+        }
+      }
+      for(int cl=0; cl < nclrs; cl++) {
+        out_img.FastEl3d(wc.x, wc.y, cl) = avgs[cl];
+      }
+    }
+  }
+  return true;
+}
 
 bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   if(mat.dims() == 3) {    // an rgb guy

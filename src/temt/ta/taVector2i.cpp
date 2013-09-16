@@ -78,27 +78,3 @@ bool taVector2i::FitN(int n) {
   return true;
 }
 
-bool taVector2i::WrapClipOne(bool wrap, int& c, int max) {
-  bool out_of_range = false;
-  if(wrap) {
-    if(c >= max) {
-      if(c > max + max/2) out_of_range = true; // wraps past half way to other side
-      c = c % max;
-    }
-    else if(c < 0) {
-      if(c < -max/2) out_of_range = true; // wraps past half way to other side
-      c = max + (c % max);
-    }
-  }
-  else {
-    if(c >= max) {
-      out_of_range = true;
-      c = max-1;
-    }
-    else if(c < 0) {
-      out_of_range = true;
-      c = 0;
-    }
-  }
-  return out_of_range;
-}
