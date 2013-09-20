@@ -881,20 +881,28 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
   T.InitFromFloats(t_f);
   float D = taMath_float::vec_norm(&T);
 
-  if(D < 0.1) {
-    taMisc::Info("Target too close \n");
-    // moving the target away, maintaining direction
-    float Lfactor = 0.15/D;
-    trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
-    T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-    D = taMath_float::vec_norm(&T);
-  } else if( D >= (La+Lf)) {
-      taMisc::Info("Target too far \n");
-    // bringing the target closer, maintaining direction
-      float Lfactor = (La+Lf-0.01)/D;
+  int retry_cnt = 0;
+  while(D < 0.1 || D >= (La+Lf)) {
+    if(D < 0.1) {
+      // moving the target away, maintaining direction
+      float Lfactor = 1.1f;
       trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
       T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
       D = taMath_float::vec_norm(&T);
+    }
+    else if( D >= (La+Lf)) {
+      // bringing the target closer, maintaining direction
+      float Lfactor = 0.9f;
+      trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
+      T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
+      D = taMath_float::vec_norm(&T);
+    }
+    retry_cnt++;
+    if(retry_cnt > 100) {
+      taMisc::Warning("Could not get target within proper range -- dist:", String(D),
+                      "range = 0.1 to", String(La+Lf));
+      break;
+    }      
   }
 
   // From coordinates to angles as in (44)
@@ -1290,21 +1298,28 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
   T.InitFromFloats(t_f);
   float D = taMath_float::vec_norm(&T);
 
-// handling targets that are too far or too close
-  if(D < 0.1) {
-    taMisc::Info("Target too close \n");
-    // moving the target away, maintaining direction
-    float Lfactor = 0.15/D;
-    trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
-    T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-    D = taMath_float::vec_norm(&T);
-  } else if( D >= (La+Lf) ) {
-      taMisc::Info("Target too far \n");
-    // bringing the target closer, maintaining direction
-      float Lfactor = (La+Lf-0.01)/D;
+  int retry_cnt = 0;
+  while(D < 0.1 || D >= (La+Lf)) {
+    if(D < 0.1) {
+      // moving the target away, maintaining direction
+      float Lfactor = 1.1f;
       trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
       T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
       D = taMath_float::vec_norm(&T);
+    }
+    else if( D >= (La+Lf) ) {
+      // bringing the target closer, maintaining direction
+      float Lfactor = 0.9f;
+      trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
+      T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
+      D = taMath_float::vec_norm(&T);
+    }
+    retry_cnt++;
+    if(retry_cnt > 100) {
+      taMisc::Warning("Could not get target within proper range -- dist:", String(D),
+                      "range = 0.1 to", String(La+Lf));
+      break;
+    }      
   }
 
 // From coordinates to angles as in (44)
@@ -1452,7 +1467,8 @@ bool VEArm::TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, f
       // if muscle wraps around bending line (except for muscles 3(4) and 4(5))
       c1 = shoulderIP - p3; c2 = p3 - humerIP;
       trgLen.Set(c1.Mag()+c2.Mag(),i);
-    } else {
+    }
+    else {
       c1 = shoulderIP - humerIP;
       trgLen.Set(c1.Mag(),i);
     }
@@ -1509,21 +1525,28 @@ bool VEArm::NoisyTargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg
   T.InitFromFloats(t_f);
   float D = taMath_float::vec_norm(&T);
 
-// handling targets that are too far or too close
-  if(D < 0.1) {
-    taMisc::Info("Target too close \n");
-    // moving the target away, maintaining direction
-    float Lfactor = 0.15/D;
-    trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
-    T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
-    D = taMath_float::vec_norm(&T);
-  } else if( D >= (La+Lf) ) {
-      taMisc::Info("Target too far \n");
-    // bringing the target closer, maintaining direction
-      float Lfactor = (La+Lf-0.01)/D;
+  int retry_cnt = 0;
+  while(D < 0.1 || D >= (La+Lf)) {
+    if(D < 0.1) {
+      // moving the target away, maintaining direction
+      float Lfactor = 1.1f;
       trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
       T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
       D = taMath_float::vec_norm(&T);
+    }
+    else if( D >= (La+Lf) ) {
+      // bringing the target closer, maintaining direction
+      float Lfactor = 0.9f;
+      trg_x *= Lfactor; trg_y *= Lfactor; trg_z *= Lfactor;
+      T.SetFmVar(trg_x,0); T.SetFmVar(trg_y,1); T.SetFmVar(trg_z,2);
+      D = taMath_float::vec_norm(&T);
+    }
+    retry_cnt++;
+    if(retry_cnt > 100) {
+      taMisc::Warning("Could not get target within proper range -- dist:", String(D),
+                      "range = 0.1 to", String(La+Lf));
+      break;
+    }      
   }
 
 // From coordinates to angles as in (44)

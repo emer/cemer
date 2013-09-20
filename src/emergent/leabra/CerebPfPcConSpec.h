@@ -34,8 +34,8 @@ public:
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_PfPc(float& dwt, const float gran_act,
                                  const float purk_minus, const float purk_plus)
-  { dwt += cur_lrate * gran_act * (purk_plus - purk_minus); }
-  // #IGNORE  
+  { if(purk_plus == 0.0f) dwt += -cur_lrate * gran_act * purk_minus; }
+  // #IGNORE  only learn for zero case
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {

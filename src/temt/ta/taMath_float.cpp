@@ -60,6 +60,15 @@
 #include "vectorclass.h"
 #endif
 
+bool taMath_float::isnan(float val) {
+#ifdef TA_OS_WIN
+  if(isnan(val) || isinf(val)) return true;
+#else
+  if (std::isnan(val) || std::isinf(val)) return true;
+#endif
+  return false;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // ExpLog: exponential and logarithmic functions
 

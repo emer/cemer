@@ -15,6 +15,7 @@
 
 #include "VEJoint.h"
 #include <VEWorld>
+#include <taMath_float>
 
 
 void VEJointStops::Initialize() {
@@ -427,15 +428,6 @@ void VEJoint::Init_ODEParams() {
   }
 }
 
-static inline float get_val_no_nan(float val) {
-#ifdef TA_OS_WIN
-	if(isnan(val)) return 0.0f;
-#else
-	if (std::isnan(val)) return 0.0f;
-#endif
-	return val;
-}
-
 void VEJoint::CurFromODE(bool updt_disp) {
   if(HasJointFlag(OFF)) {
     return;
@@ -446,40 +438,40 @@ void VEJoint::CurFromODE(bool updt_disp) {
   dJointID jid = (dJointID)joint_id;
 
   dJointGetFeedback(jid);
-  cur_force1.x = get_val_no_nan(ode_fdbk_obj.f1[0]);
-  cur_force1.y = get_val_no_nan(ode_fdbk_obj.f1[1]);
-  cur_force1.z = get_val_no_nan(ode_fdbk_obj.f1[2]);
-  cur_force2.x = get_val_no_nan(ode_fdbk_obj.f2[0]);
-  cur_force2.y = get_val_no_nan(ode_fdbk_obj.f2[1]);
-  cur_force2.z = get_val_no_nan(ode_fdbk_obj.f2[2]);
-  cur_torque1.x = get_val_no_nan(ode_fdbk_obj.t1[0]);
-  cur_torque1.y = get_val_no_nan(ode_fdbk_obj.t1[1]);
-  cur_torque1.z = get_val_no_nan(ode_fdbk_obj.t1[2]);
-  cur_torque2.x = get_val_no_nan(ode_fdbk_obj.t2[0]);
-  cur_torque2.y = get_val_no_nan(ode_fdbk_obj.t2[1]);
-  cur_torque2.z = get_val_no_nan(ode_fdbk_obj.t2[2]);
+  cur_force1.x = taMath_float::no_nan(ode_fdbk_obj.f1[0]);
+  cur_force1.y = taMath_float::no_nan(ode_fdbk_obj.f1[1]);
+  cur_force1.z = taMath_float::no_nan(ode_fdbk_obj.f1[2]);
+  cur_force2.x = taMath_float::no_nan(ode_fdbk_obj.f2[0]);
+  cur_force2.y = taMath_float::no_nan(ode_fdbk_obj.f2[1]);
+  cur_force2.z = taMath_float::no_nan(ode_fdbk_obj.f2[2]);
+  cur_torque1.x = taMath_float::no_nan(ode_fdbk_obj.t1[0]);
+  cur_torque1.y = taMath_float::no_nan(ode_fdbk_obj.t1[1]);
+  cur_torque1.z = taMath_float::no_nan(ode_fdbk_obj.t1[2]);
+  cur_torque2.x = taMath_float::no_nan(ode_fdbk_obj.t2[0]);
+  cur_torque2.y = taMath_float::no_nan(ode_fdbk_obj.t2[1]);
+  cur_torque2.z = taMath_float::no_nan(ode_fdbk_obj.t2[2]);
 
   switch(joint_type) {
   case BALL:
     break;
   case HINGE:
-    pos = get_val_no_nan(dJointGetHingeAngle(jid));
-    vel = get_val_no_nan(dJointGetHingeAngleRate(jid));
+    pos = taMath_float::no_nan(dJointGetHingeAngle(jid));
+    vel = taMath_float::no_nan(dJointGetHingeAngleRate(jid));
     break;
   case SLIDER:
-    pos = get_val_no_nan(dJointGetSliderPosition(jid));
-    vel = get_val_no_nan(dJointGetSliderPositionRate(jid));
+    pos = taMath_float::no_nan(dJointGetSliderPosition(jid));
+    vel = taMath_float::no_nan(dJointGetSliderPositionRate(jid));
     break;
   case UNIVERSAL:
-    pos = get_val_no_nan(dJointGetUniversalAngle1(jid));
-    vel = get_val_no_nan(dJointGetUniversalAngle1Rate(jid));
-    pos2 = get_val_no_nan(dJointGetUniversalAngle2(jid));
-    vel2 = get_val_no_nan(dJointGetUniversalAngle2Rate(jid));
+    pos = taMath_float::no_nan(dJointGetUniversalAngle1(jid));
+    vel = taMath_float::no_nan(dJointGetUniversalAngle1Rate(jid));
+    pos2 = taMath_float::no_nan(dJointGetUniversalAngle2(jid));
+    vel2 = taMath_float::no_nan(dJointGetUniversalAngle2Rate(jid));
     break;
   case HINGE2:
-    pos = get_val_no_nan(dJointGetHinge2Angle1(jid));
-    vel = get_val_no_nan(dJointGetHinge2Angle1Rate(jid));
-    vel2 = get_val_no_nan(dJointGetHinge2Angle2Rate(jid));
+    pos = taMath_float::no_nan(dJointGetHinge2Angle1(jid));
+    vel = taMath_float::no_nan(dJointGetHinge2Angle1Rate(jid));
+    vel2 = taMath_float::no_nan(dJointGetHinge2Angle2Rate(jid));
     break;
   case FIXED:
     break;

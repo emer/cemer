@@ -72,7 +72,8 @@ else (WIN32) # assume gcc!!!
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     # only clang seems to be able to make the sse code go fast
     # SSE8 seems as good or better than 4 in all modern platforms, so using that
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_SSE8")
+    # -Wunsequenced is causing seemingly errouneous warnings for TA files
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_SSE8 -Wno-unsequenced")
   endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
 

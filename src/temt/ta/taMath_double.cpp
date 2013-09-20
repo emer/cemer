@@ -54,6 +54,16 @@
 
 using namespace std;
 
+
+bool taMath_double::isnan(double val) {
+#ifdef TA_OS_WIN
+  if(isnan(val) || isinf(val)) return true;
+#else
+  if (std::isnan(val) || std::isinf(val)) return true;
+#endif
+  return false;
+}
+
 #ifdef _WINDOWS
 //# include <stdlib.h>
 //# include "../../../3rdparty/misc/s_erf.c"

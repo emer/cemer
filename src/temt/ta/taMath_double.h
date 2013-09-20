@@ -38,6 +38,15 @@ INHERITED(taMath)
 public:
 
   /////////////////////////////////////////////////////////////////////////////////
+  // Basic number checking
+
+  static bool   isnan(double x);
+  // #CAT_Number returns true if the number is a 'not a number' nan value
+  static double  no_nan(double x) 
+  { if(isnan(x)) return 0.0; return x; }
+  // #CAT_Number returns 0.0 if the number is a nan, otherwise just the number
+
+  /////////////////////////////////////////////////////////////////////////////////
   // Arithmetic: basic arithmetic
 
   static double  add(double x, double y) { return x + y; }
