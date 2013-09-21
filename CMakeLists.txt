@@ -248,7 +248,8 @@ add_dependencies(emergent emergentlib)
 
 
 add_custom_target(ChangeLog 
-  COMMAND svn log --xml --verbose ../ | xsltproc /usr/local/svn2cl/svn2cl-0.14/svn2cl.xsl - > ../ChangeLog
+  COMMAND /usr/local/svn2cl/svn2cl-0.14/svn2cl.sh -i -a -o ../ChangeLog ../ 
+  COMMAND /usr/local/svn2cl/svn2cl-0.14/svn2cl.sh -i -a --html -o ../ChangeLog.html ../
 )
 
 ########### install files ###############
