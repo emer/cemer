@@ -246,6 +246,11 @@ add_dependencies(temt maketa)
 add_dependencies(emergentlib temt)
 add_dependencies(emergent emergentlib)
 
+
+add_custom_target(ChangeLog 
+  COMMAND svn log --xml --verbose ../ | xsltproc /usr/local/svn2cl/svn2cl-0.14/svn2cl.xsl - > ../ChangeLog
+)
+
 ########### install files ###############
 
 install(FILES AUTHORS ChangeLog COPYING COPYING.LIB
