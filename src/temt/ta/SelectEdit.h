@@ -191,8 +191,8 @@ protected:
   override void         UpdateAfterEdit_impl();
   virtual void          SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
-  virtual void          BaseAdded(taBase* ta);
-  virtual void          BaseRemoved(taBase* ta);
+  virtual void          BaseAdded(SelectEditItem* sei);
+  virtual void          BaseRemoved(SelectEditItem* sei);
   virtual void          RemoveField_impl(int idx);
   virtual void          RemoveFun_impl(int idx);
   virtual bool          SelectMember_impl(taBase* base, MemberDef* md,
@@ -206,16 +206,6 @@ private:
   void  Initialize();
   void  Destroy();
   void  Copy_(const SelectEdit& cp); //
-
-public: // legacy routines/members
-  SelectEditConfig config;      // #NO_SHOW #NO_SAVE special parameters for controlling the display
-
-  taBase_List   mbr_bases;      // #NO_SHOW #NO_SAVE #LINK_GROUP #READ_ONLY #AKA_bases the bases for each element in the list
-  String_Array  mbr_strs;       // #NO_SHOW #NO_SAVE #READ_ONLY #AKA_member_strs string names of mbrs on bases -- used for saving
-
-  taBase_List   meth_bases;     // #NO_SHOW #NO_SAVE #LINK_GROUP #READ_ONLY the bases for each element in the list
-  String_Array  meth_strs;      // #NO_SHOW #NO_SAVE #READ_ONLY string names of meths on bases -- used for saving
-  void          ConvertLegacy();
 };
 
 TA_SMART_PTRS(SelectEdit); //

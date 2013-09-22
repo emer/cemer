@@ -18,6 +18,7 @@
 #include <taGuiDialog>
 
 taTypeDef_Of(taProject);
+taTypeDef_Of(Program);
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -59,14 +60,12 @@ void SelectEdit::Copy_(const SelectEdit& cp) {
 void SelectEdit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {
-    ConvertLegacy(); // LEGACY
     // add all the bases, since they weren't available during load
-    // this is harmless if Convert actually did this instead
     FOREACH_ELEM_IN_GROUP(SelectEditItem, sei, mbrs) {
-      BaseAdded(sei->base);
+      BaseAdded(sei);
     }
     FOREACH_ELEM_IN_GROUP(SelectEditItem, sei, mths) {
-      BaseAdded(sei->base);
+      BaseAdded(sei);
     }
   }
 }
@@ -77,12 +76,20 @@ int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   return rval;
 }
 
-void SelectEdit::BaseAdded(taBase* base) {
-  if (!base) return;
-  base_refs.AddUnique(base);
+void SelectEdit::BaseAdded(SelectEditItem* sei) {
+  if(!sei->base) return;
+  bool add_base = true;
+  if(sei->InheritsFrom(&TA_EditMthItem)) {
+    add_base = false;         // in general don't add for meths
+    if(sei->base->InheritsFrom(&TA_Program))
+      add_base = true;       // except for programs
+  }
+  if(add_base)
+    base_refs.AddUnique(sei->base);
 }
 
-void SelectEdit::BaseRemoved(taBase* base) {
+void SelectEdit::BaseRemoved(SelectEditItem* sei) {
+  taBase* base = sei->base;
   if (!base) return;
   bool has = SelectEditItem::StatHasBase(&mbrs, base);
   if (has) return;
@@ -104,7 +111,6 @@ void SelectEdit::SigDestroying_Ref(taBase_RefList* src, taBase* base) {
 void SelectEdit::SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int sls, void* op1, void* op2)
 {
-  // simplest, is to just issue our own SigEmit
   if(sls < SLS_UPDATE_VIEWS)
     SigEmitUpdated();
 }
@@ -116,11 +122,11 @@ void SelectEdit::SigEmit_Group(taGroup_impl* grp,
   if (taMisc::is_loading) return; // note: base's aren't set yet, so we can't add
   if (sls == SLS_GROUP_ITEM_REMOVE) {
     SelectEditItem* ei = (SelectEditItem*)op1;
-    BaseRemoved(ei->base);
+    BaseRemoved(ei);
   }
   else if (sls == SLS_GROUP_ITEM_INSERT) {
     SelectEditItem* ei = (SelectEditItem*)op1;
-    BaseAdded(ei->base); // ignored if null, but shouldn't happen anyway
+    BaseAdded(ei); // ignored if null, but shouldn't happen anyway
   }
   //pretty much everything else as well, need to reshow
   //note: this is asynch, so multiple events (ex Compare, etc.) will only cause 1 reshow
@@ -370,70 +376,5 @@ int SelectEdit::FindMethBase(taBase* base, MethodDef* md) {
   int rval = -1;
   SelectEditItem::StatFindItemBase(&mths, base, md, rval);
   return rval;
-}
-
-void SelectEdit::ConvertLegacy() {
-  if (config.auto_edit || (mbr_bases.size > 0) || (meth_bases.size > 0)) {
-    auto_edit = config.auto_edit;
-    for (int i = 0; i < mbr_bases.size; ++i) {
-      EditMbrItem* item = (EditMbrItem*)mbrs.New(1);
-      item->base = mbr_bases.FastEl(i);
-      item->label = config.mbr_labels.SafeEl(i);
-      item->item_nm = mbr_strs.SafeEl(i);
-      if(item->label.nonempty()) item->label += " ";
-      item->label += item->item_nm;//md->GetLabel();
-    }
-    for (int i = 0; i < meth_bases.size; ++i) {
-      EditMthItem* item = (EditMthItem*)mths.New(1);
-      item->base = meth_bases.FastEl(i);
-      item->label = config.meth_labels.SafeEl(i);
-      item->item_nm = meth_strs.SafeEl(i);
-      if(item->label.nonempty()) item->label += " ";
-      item->label += item->item_nm;//md->GetLabel();
-    }
-    mbr_bases.Reset();
-    config.mbr_labels.Reset();
-    mbr_strs.Reset();
-    meth_bases.Reset();
-    config.meth_labels.Reset();
-    meth_strs.Reset();
-  }
-  { // load memberdefs -- this only needed for legacy, and for brief crossover period projs
-  FOREACH_ELEM_IN_GROUP_REV(EditMbrItem, item, this->mbrs) {
-    taBase* bs = item->base;
-    if (bs == NULL) { // didn't get loaded, bail..
-      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
-      item->Close();
-      continue;
-    }
-    if (!item->mbr && item->item_nm.nonempty()) {
-      String nm = item->item_nm;
-      item->mbr = bs->GetTypeDef()->members.FindName((const char*)nm);
-    }
-    if (item->mbr == NULL) {
-      taMisc::Warning("*** SelectEdit: couldn't find member:", item->item_nm, "in object to edit:",bs->GetPathNames());
-      item->Close();
-      continue;
-    }
-  }}
-  // GetMethsFmStrs()
-  {
-  FOREACH_ELEM_IN_GROUP_REV(EditMthItem, item, this->mths) {
-    taBase* bs = item->base;
-    if (bs == NULL) { // didn't get loaded, bail..
-      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
-      item->Close();
-      continue;
-    }
-    if (!item->mth && item->item_nm.nonempty()) {
-      String nm = item->item_nm;
-      item->mth = bs->GetTypeDef()->methods.FindName((const char*)nm);
-    }
-    if (item->mth == NULL) {
-      taMisc::Warning("*** SelectEdit: couldn't find method:", item->item_nm, "in object to edit:",bs->GetPathNames());
-      item->Close();
-      continue;
-    }
-  }}
 }
 

@@ -20,13 +20,20 @@ void KWTAVals::Initialize() {
   pct = .25f;
   pct_c = .75f;
   adth_k = 1;
+
+  InitVals();
+}
+
+void KWTAVals::InitVals() {
   k_ithr = 0.0f;
   k1_ithr = 0.0f;
-  ithr_r = 0.0f;
   ithr_diff = 0.0f;
   tie_brk_gain = 0.0f;
   eff_loser_gain = 1.0f;
   tie_brk = 0;
+  ffi = 0.0f;
+  fbi = 0.0f;
+  fbi_x = 0.0f;
 }
 
 void KWTAVals::Copy_(const KWTAVals& cp) {
@@ -36,11 +43,13 @@ void KWTAVals::Copy_(const KWTAVals& cp) {
   adth_k = cp.adth_k;
   k_ithr = cp.k_ithr;
   k1_ithr = cp.k1_ithr;
-  ithr_r = cp.ithr_r;
   ithr_diff = cp.ithr_diff;
   tie_brk_gain = cp.tie_brk_gain;
   eff_loser_gain = cp.eff_loser_gain;
   tie_brk = cp.tie_brk;
+  ffi = cp.ffi;
+  fbi = cp.fbi;
+  fbi_x = cp.fbi_x;
 }
 
 void KWTAVals::Compute_Pct(int n_units) {
@@ -49,13 +58,6 @@ void KWTAVals::Compute_Pct(int n_units) {
   else
     pct = 0.0f;
   pct_c = 1.0f - pct;
-}
-
-void KWTAVals::Compute_IThrR() {
-  if(k1_ithr <= 0.0f)
-    ithr_r = 0.0f;
-  else
-    ithr_r = logf(k_ithr / k1_ithr);
 }
 
 void AdaptIVals::Initialize() {
@@ -97,6 +99,7 @@ void LeabraInhib::Inhib_Initialize() {
 }
 
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
+  kwta.InitVals();
   i_val.Init();
   netin.InitVals();
   i_thrs.InitVals();

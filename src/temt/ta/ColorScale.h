@@ -36,7 +36,7 @@ class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 INHERITED(taNBase)
 public:
-  static const iColor   def_color;
+  static const iColor   def_color;      // #NO_COPY #NO_SAVE ignore me
 
   int                   chunks;         // number of chunks to divide scale into
   float                 min;

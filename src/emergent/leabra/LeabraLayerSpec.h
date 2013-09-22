@@ -41,21 +41,35 @@ public:
   enum InhibType {		// how to compute the inhibition
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)
     KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)
-    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std for non-gelin -- doesn't seem to work as well for gelin and is thus somewhat deprecated
-    KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
-    AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
-    MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
+    FF_FB_INHIB,                // simulated feedforward and feedback inhibitory interneuron inhibition, with supra-linear gain on the feedback inhibition to prevent runaway positive feedback, and to produce pop-out effects potentially
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
   InhibType	type;		// how to compute inhibition (g_i)
-  float		kwta_pt;	// #DEF_0.2;0.5;0.25;0.6 [Defaults: for gelin: .2 for KWTA_INHIB, .5 for KWTA_AVG, for non-gelin: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
-  float		avg_boost; 	// #MIN_0 proportion of the netin.avg value for unit's inhibitory group (unit group or layer) that increments the net inputs for each unit in inhib group, in proportion to the unit activation (only favors the "winners") -- this produces a more intuitive and plausible reflection of overall excitation levels on layer activity, counteracting the tendency of kwta to completely neutralize such effects 
-  bool		low0;		// CONDSHOW_ON_type:KWTA_INHIB||type:KWTA_AVG_INHIB use 0 for the low side of the kwta equation -- i.e., the kwta_pt sets the point between 0 and the either the top-k AVG or k'th unit inhib threshold -- ignore all the neurons below the top-k -- this may be more realistic and should give the most flexibility -- works a lot like the gp_g spreading inhib dynamic at the group level -- will generally need to set kwta_pt higher
+  float		kwta_pt;	// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0.2;0.5 [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] 
+  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels
+  float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput
+  float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no inhibition is computed
+  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1.6 overall inhibitory contribution from feedback inhibition -- computed from average activation
+  float         fb0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0 feedback zero point in terms of average activation -- below this level, no inhibition is computed
+  float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
+  float         fbx;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope
+  float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 
   float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
-  float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
-  float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
-  float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
+
+  inline float    FFInhib(const float netin) {
+    float ffi = 0.0f;
+    if(netin > ff0) ffi = ff * (netin - ff0);
+    return ffi;
+  }
+
+  inline float    FBInhib(const float act, float& fbi_x) {
+    float fbi = 0.0f;
+    fbi_x = 0.0f;
+    if(act > fb0) fbi = fb * (act - fb0);
+    if(act > infl) fbi_x = fbx * (act - infl);
+    return fbi + fbi_x;
+  }
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -416,22 +430,10 @@ public:
 			 Layer::AccessMode acc_md, int gpidx,
 			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of kwta avg-based inhibition computation
-    virtual void Compute_Inhib_kWTA_kv2k(LeabraLayer* lay,
+    virtual void Compute_Inhib_FfFb(LeabraLayer* lay,
 			 Layer::AccessMode acc_md, int gpidx,
 			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
-    // #IGNORE implementation of k vs. 2k wta avg-based inhibition computation
-    virtual void Compute_Inhib_kWTA_CompCost(LeabraLayer* lay,
-			 Layer::AccessMode acc_md, int gpidx,
-			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
-    // #IGNORE implementation of kwta competitor cost inhibition computation
-    virtual void Compute_Inhib_AvgMaxPt(LeabraLayer* lay,
-			 Layer::AccessMode acc_md, int gpidx,
-			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
-    // #IGNORE implementation of avg-max-pt inhibition computation
-    virtual void Compute_Inhib_Max(LeabraLayer* lay,
-			 Layer::AccessMode acc_md, int gpidx,
-			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
-    // #IGNORE implementation of max inhibition computation
+    // #IGNORE implementation of feed-forward, feed-back inhibition computation
 
     virtual void Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net);
     // #IGNORE compute extra dynamic inhibition for CtLeabra_X/CAL algorithm

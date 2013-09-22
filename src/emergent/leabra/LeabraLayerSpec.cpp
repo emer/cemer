@@ -23,8 +23,14 @@ eTypeDef_Of(MarkerConSpec);
 
 void LeabraInhibSpec::Initialize() {
   type = KWTA_AVG_INHIB;
-  avg_boost = 0.0f;
-  low0 = false;
+  gi = 1.0f;
+  ff = 1.0f;
+  ff0 = 0.1f;
+  fb = 1.6f;
+  fb0 = 0.0f;
+  infl = 0.3f;
+  fbx = 0.1f;
+  dt = 0.7f;
   min_i = 0.0f;
   Defaults_init();
 }
@@ -32,21 +38,14 @@ void LeabraInhibSpec::Initialize() {
 void LeabraInhibSpec::Defaults_init() {
   switch(type) {
   case KWTA_INHIB:
-  case KWTA_KV2K:
     kwta_pt = .2f;
     break;
   case KWTA_AVG_INHIB:
     kwta_pt = .5f;
     break;
-  case AVG_MAX_PT_INHIB:
-    kwta_pt = .2f;
-    break;
   default:
     break;
   }
-  comp_thr = .5f;
-  comp_gain = 2.0f;
-  gp_pt = .2f;
 }
 
 void KWTASpec::Initialize() {
@@ -348,12 +347,7 @@ void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->adapt_i.avg_avg = gpd->kwta.pct;
-      if(((inhib.type == LeabraInhibSpec::AVG_MAX_PT_INHIB)
-          || (inhib.type == LeabraInhibSpec::MAX_INHIB))
-         && (inhib_group != ENTIRE_LAYER))
-        gpd->adapt_i.i_kwta_pt = inhib.gp_pt;
-      else
-        gpd->adapt_i.i_kwta_pt = inhib.kwta_pt;
+      gpd->adapt_i.i_kwta_pt = inhib.kwta_pt;
       gpd->adapt_i.g_bar_i = us->g_bar.i;
       gpd->adapt_i.g_bar_l = us->g_bar.l;
     }
@@ -753,17 +747,8 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
     case LeabraInhibSpec::KWTA_AVG_INHIB:
       Compute_Inhib_kWTA_Avg(lay, acc_md, gpidx, thr, net, ispec);
       break;
-    case LeabraInhibSpec::KWTA_KV2K:
-      Compute_Inhib_kWTA_kv2k(lay, acc_md, gpidx, thr, net, ispec);
-      break;
-    case LeabraInhibSpec::KWTA_COMP_COST:
-      Compute_Inhib_kWTA_CompCost(lay, acc_md, gpidx, thr, net, ispec);
-      break;
-    case LeabraInhibSpec::AVG_MAX_PT_INHIB:
-      Compute_Inhib_AvgMaxPt(lay, acc_md, gpidx, thr, net, ispec);
-      break;
-    case LeabraInhibSpec::MAX_INHIB:
-      Compute_Inhib_Max(lay, acc_md, gpidx, thr, net, ispec);
+    case LeabraInhibSpec::FF_FB_INHIB:
+      Compute_Inhib_FfFb(lay, acc_md, gpidx, thr, net, ispec);
       break;
     case LeabraInhibSpec::UNIT_INHIB:
       break;
@@ -915,14 +900,9 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer* lay,
   Compute_Inhib_BreakTie(thr);
 
   // place kwta inhibition between k and k+1
-  float nw_gi;
-  if(inhib.low0)
-    nw_gi = ispec.kwta_pt * thr->kwta.k_ithr;
-  else
-    nw_gi = thr->kwta.k1_ithr + ispec.kwta_pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
+  float nw_gi = thr->kwta.k1_ithr + ispec.kwta_pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
   nw_gi = MAX(nw_gi, ispec.min_i);
   thr->i_val.kwta = nw_gi;
-  thr->kwta.Compute_IThrR();
 }
 
 void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
@@ -973,184 +953,28 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
 
   Compute_Inhib_BreakTie(thr);
 
-  float nw_gi;
-  if(inhib.low0)
-    nw_gi = pt * thr->kwta.k_ithr;
-  else
-    nw_gi = thr->kwta.k1_ithr + pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
-
-  nw_gi = MAX(nw_gi, ispec.min_i);
-  thr->i_val.kwta = nw_gi;
-  thr->kwta.Compute_IThrR();
-}
-
-void LeabraLayerSpec::Compute_Inhib_kWTA_kv2k(LeabraLayer* lay,
-                         Layer::AccessMode acc_md, int gpidx,
-                         LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits <= 1) {     // this is undefined
-    thr->Inhib_SetVals(ispec.kwta_pt);
-    return;
-  }
-
-  int k_eff = thr->kwta.k;
-  float k_net = FLT_MAX;
-  int k_idx = 0;
-
-  KwtaSortBuff* act_buff = lay->SortBuff(acc_md, KwtaSortBuff_List::ACTIVE);
-  KwtaSortBuff* inact_buff = lay->SortBuff(acc_md, KwtaSortBuff_List::INACT);
-
-  Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
-                          *act_buff, *inact_buff, k_eff, k_net, k_idx);
-
-  if(k_eff <= 0) {		// something bad happened
-    thr->Inhib_SetVals(ispec.kwta_pt);
-    return;
-  }
-
-  // active_buf now has k most active units, get average from act buf
-  int j;
-  float oth_avg = 0.0f;
-  float k_avg = 0.0f;
-  for(j=0; j < k_eff; j++)
-    k_avg += act_buff->Un(j, gpidx)->i_thr;
-  k_avg /= (float)k_eff;
-
-  int k2_eff = 2 * thr->kwta.k;
-  if(k2_eff >= nunits) {
-    // just use inact buf: same as kwta_avg in this case..
-    int iabsz = inact_buff->Size(gpidx);
-    for(j=0; j < iabsz; j++)
-      oth_avg += inact_buff->Un(j, gpidx)->i_thr;
-    if(iabsz > 0)
-      oth_avg /= (float)iabsz;
-  }
-  else {
-    // find 2k guys
-    float k2_net = FLT_MAX;
-    int k2_idx = 0;
-
-    KwtaSortBuff* act_buff2k = lay->SortBuff(acc_md, KwtaSortBuff_List::ACTIVE_2K);
-    KwtaSortBuff* inact_buff2k = lay->SortBuff(acc_md, KwtaSortBuff_List::INACT_2K);
-
-    Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
-                            *act_buff2k, *inact_buff2k, k2_eff, k2_net, k2_idx);
-
-    if(k2_eff <= 0) {		// something bad happened
-      thr->Inhib_SetVals(ispec.kwta_pt);
-      return;
-    }
-
-    for(j=0; j < k2_eff; j++)
-      oth_avg += act_buff2k->Un(j, gpidx)->i_thr;
-    oth_avg /= (float)k2_eff;
-  }
-
-  // place kwta inhibition between two averages
-  // this uses the adapting point!
-  float pt = ispec.kwta_pt;
-  if(adapt_i.type == AdaptISpec::KWTA_PT)
-    pt = thr->adapt_i.i_kwta_pt;
-  thr->kwta.k_ithr = k_avg;
-  thr->kwta.k1_ithr = oth_avg;
-
-  Compute_Inhib_BreakTie(thr);
-
   float nw_gi = thr->kwta.k1_ithr + pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
+
   nw_gi = MAX(nw_gi, ispec.min_i);
   thr->i_val.kwta = nw_gi;
-  thr->kwta.Compute_IThrR();
 }
 
-void LeabraLayerSpec::Compute_Inhib_kWTA_CompCost(LeabraLayer* lay,
+void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
                          Layer::AccessMode acc_md, int gpidx,
                          LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits <=  1) {    // this is undefined
-    thr->Inhib_SetVals(ispec.kwta_pt);
-    return;
-  }
 
-  int k_eff = thr->kwta.k;      // keep cutoff at k
-  float k_net = FLT_MAX;
-  int k_idx = 0;
+  float nw_ffi = ispec.FFInhib(thr->netin.avg);
+  float fbi_x;
+  float nw_fbi = ispec.FBInhib(thr->acts.avg, fbi_x);
 
-  KwtaSortBuff* act_buff = lay->SortBuff(acc_md, KwtaSortBuff_List::ACTIVE);
-  KwtaSortBuff* inact_buff = lay->SortBuff(acc_md, KwtaSortBuff_List::INACT);
+  thr->kwta.ffi = nw_ffi;
+  thr->kwta.fbi_x = fbi_x;
+  // dt only on fbi part
+  thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
 
-  Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
-                          *act_buff, *inact_buff, k_eff, k_net, k_idx);
-
-  if(k_eff <= 0) {		// something bad happened
-    thr->Inhib_SetVals(ispec.kwta_pt);
-    return;
-  }
-
-  LeabraUnit* k_u = act_buff->Un(k_idx, gpidx);
-  float k_ithr = k_u->i_thr;
-
-  float oth_sum = 0.0f;
-  int iabsz = inact_buff->Size(gpidx);
-  for(int j=0; j < iabsz; j++) {
-    float oth_nrm = inact_buff->Un(j,gpidx)->i_thr / k_ithr;
-    if(oth_nrm >= ispec.comp_thr)
-      oth_sum += oth_nrm;
-  }
-  if(iabsz > 0)
-    oth_sum /= (float)iabsz;
-
-  float pt = ispec.kwta_pt;
-//   if(adapt_i.type == AdaptISpec::KWTA_PT)  // this is not correct: adapt goes the wrong way!
-//     pt = thr->adapt_i.i_kwta_pt;
-
-  float nw_gi = k_ithr - pt * (1.0f - ispec.comp_gain * oth_sum);
-
-  thr->kwta.k_ithr = k_ithr;
-  thr->kwta.k1_ithr = nw_gi;
-
-//   Compute_Inhib_BreakTie(thr); // not applicable!
-
-  nw_gi = MAX(nw_gi, ispec.min_i);
-  thr->i_val.kwta = nw_gi;
-  thr->kwta.Compute_IThrR();
-}
-
-void LeabraLayerSpec::Compute_Inhib_AvgMaxPt(LeabraLayer* lay,
-                         Layer::AccessMode acc_md, int gpidx,
-                         LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  float pt = ispec.kwta_pt;
-  if(adapt_i.type == AdaptISpec::KWTA_PT)
-    pt = thr->adapt_i.i_kwta_pt;
-  else if((inhib_group != ENTIRE_LAYER) && ((LeabraInhib*)lay != thr))
-    pt = ispec.gp_pt;           // use sub-group version for sub-groups..
-
-  float oth_avg = thr->i_thrs.avg; // put between the avg
-  float k_avg = thr->i_thrs.max; // and the max..
-
-  float nw_gi = oth_avg + pt * (k_avg - oth_avg);
-  nw_gi = MAX(nw_gi, ispec.min_i);
-  thr->i_val.kwta = nw_gi;
-  thr->kwta.k_ithr = k_avg;
-  thr->kwta.k1_ithr = oth_avg;
-  thr->kwta.Compute_IThrR();
-}
-
-void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay,
-                         Layer::AccessMode acc_md, int gpidx,
-                         LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  float pt = ispec.kwta_pt;
-  if(adapt_i.type == AdaptISpec::KWTA_PT)
-    pt = thr->adapt_i.i_kwta_pt;
-  else if((inhib_group != ENTIRE_LAYER) && ((LeabraInhib*)lay != thr))
-    pt = ispec.gp_pt;           // use sub-group version for sub-groups..
-
-  float k_avg = thr->i_thrs.max; // and the max..
-  float nw_gi = k_avg - pt;
-  nw_gi = MAX(nw_gi, ispec.min_i);
-  thr->i_val.kwta = nw_gi;
-  thr->kwta.k_ithr = k_avg;
-  thr->kwta.k1_ithr = nw_gi;
-  thr->kwta.Compute_IThrR();
+  thr->i_val.kwta = ispec.gi * (thr->kwta.ffi + thr->kwta.fbi); // combine
+  thr->kwta.k_ithr = 0.0f;
+  thr->kwta.k1_ithr = 0.0f;
 }
 
 void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {

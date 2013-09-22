@@ -37,14 +37,17 @@ public:
   int		adth_k;		// #HIDDEN adapting threshold k value -- how many units can adapt per time
   float		k_ithr;		// inhib threshold for k unit (top k for kwta_avg)
   float		k1_ithr;	// inhib threshold for k+1 unit (other units for kwta_avg)
-  float		ithr_r;		// log of ratio of ithr values (indicates signal differentiation)
   float		ithr_diff;	// normalized difference ratio for k vs k+1 ithr values: (k_ithr - k1_ithr) / k_ithr
   float		tie_brk_gain;	// strength of the tie breaking mechanisms as a function of how bclosely tied the units are -- 1 if maximally tied, 0 if minimally tied -- used to modulate the tie breaking mechanisms: (tie_brk.diff_thr - ithr_diff) / tie_brk.diff_thr)
   float		eff_loser_gain;	// effective loser gain -- only computed if tie_brk in effect: 1 + loser_gain * tie_brk_gain
   int		tie_brk;	// was a tie break operation applied to this layer based on ithr_diff value?
+  float         ffi;            // for FF_FB_INHIB, the amount of feedforward inhibition
+  float         fbi;            // for FF_FB_INHIB, the amount of feedback inhibition (total)
+  float         fbi_x;          // for FF_FB_INHIB, the amount of extra feedback inhibition, above the inflection point
 
   void		Compute_Pct(int n_units);
-  void		Compute_IThrR(); // compute ithr_r ratio value
+  void          InitVals();
+  // initialize various state vals
 
   override String       GetTypeDecoKey() const { return "Layer"; }
 
@@ -103,8 +106,6 @@ class E_API LeabraInhib {
 public:
   LeabraSort 	active_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of active units
   LeabraSort 	inact_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of inactive units
-  LeabraSort 	active_2k_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of 2k active units
-  LeabraSort 	inact_2k_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of 2k inactive units
 
   AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
   AvgMaxVals	netin_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer

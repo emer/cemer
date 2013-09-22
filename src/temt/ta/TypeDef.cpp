@@ -2573,6 +2573,11 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
 void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
                                MemberDef* memb_def)
 {
+  if(trg_base == src_base) {
+    taMisc::Warning("CopyFromSameType: copying from self -- skipping type:", name);
+    return;
+  }
+  // taMisc::DebugInfo("copying type:", name);
   // if its void, odds are it is a fun pointer
   if(IsVoidPtr() || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     int lidx;
