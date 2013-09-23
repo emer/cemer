@@ -1686,8 +1686,13 @@ void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
 bool Network::LoadWeights(const String& fname, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
-  if(flr->istrm)
+  if(flr->istrm) {
     rval = LoadWeights_strm(*flr->istrm, quiet);
+  }
+  else {
+    TestError(true, "LoadWeights", "aborted due to inability to load weights file");
+    // the above should be unnecessary but we're not getting the error sometimes..
+  }
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;

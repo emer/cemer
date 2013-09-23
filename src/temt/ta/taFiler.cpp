@@ -284,7 +284,7 @@ istream* taFiler::open_read() {
     istrm = (istream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
-  if(!istrm || !istrm->good()) {
+  if(!istrm || !istrm->good() || istrm->bad()) {
     taMisc::Error("File:",FileName(),"could not be opened for reading");
     Close();
     return NULL;
