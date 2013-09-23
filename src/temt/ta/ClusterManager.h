@@ -71,11 +71,14 @@ public:
   // full path to cluster_svn_path/svn_repo/clustername/username/cluster_info.dat
   int GetLastChangedRevision(const String &path, bool quiet = false);
 
-  const String & getUsername();
-  const String & getFilename();
-  const String & getClusterName();
-  const String & getSvnRepo();
-  const String & getRepoUrl();
+  bool  HasBasicData(bool err = false);
+  // check that the current config has all the basic data needed to set paths and manage svn files: username, filename, clustername, svn repo, repo url -- if err then issue error for missing items
+
+  const String getUsername();
+  const String getFilename();
+  const String getClusterName();
+  const String getSvnRepo();
+  const String getRepoUrl();
 
 protected:
   // This exception class only used internally.
@@ -86,10 +89,9 @@ protected:
 
   void handleException(const SubversionClient::Exception &ex);
   void saveProject();
-  const String & promptForString(const String &str, const char *msg);
 
   bool showRepoDialog();
-  void setPaths();
+  bool setPaths();
   void runSearchAlgo();
   void initClusterInfoTable();
   bool loadTable(const String &filename, DataTable &table);

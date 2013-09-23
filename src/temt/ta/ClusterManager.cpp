@@ -68,7 +68,8 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
     return;
   }
 
-  setPaths();                   // always get paths
+  if(HasBasicData(false))
+    setPaths();                 // always get paths if possible, but not if not..
   m_valid = true;
 }
 
@@ -80,7 +81,8 @@ ClusterManager::~ClusterManager()
 
 
 void ClusterManager::Init() {
-  setPaths();
+  if(HasBasicData(false))       // no err if not
+    setPaths();
 }
 
 bool ClusterManager::CheckPrefs() {
@@ -105,21 +107,21 @@ ClusterManager::BeginSearch(bool prompt_user)
   if (!m_valid) return false; // Ensure proper construction.
   if(!CheckPrefs()) return false;
 
+  saveProject();
+
+  // Prompt the user if the flag is set; otherwise the user is
+  // only prompted if required fields are blank.
+  if (prompt_user) {
+    // Prompt user; quit early if they cancel the dialog.
+    if (!showRepoDialog()) return false;
+  }
+
+  taMisc::Info("Running project", getFilename(),
+               "\n  on cluster", getClusterName(),
+               "\n  using repository", getRepoUrl(),
+               "\n  Notes:", m_cluster_run.notes);
+
   try {
-    saveProject();
-
-    // Prompt the user if the flag is set; otherwise the user is
-    // only prompted if required fields are blank.
-    if (prompt_user) {
-      // Prompt user; quit early if they cancel the dialog.
-      if (!showRepoDialog()) return false;
-    }
-
-    taMisc::Info("Running project", getFilename(),
-      "\n  on cluster", getClusterName(),
-      "\n  using repository", getRepoUrl(),
-      "\n  Notes:", m_cluster_run.notes);
-
     updateWorkingCopy(); // creates the working copy if needed.
     runSearchAlgo();
 
@@ -171,10 +173,10 @@ ClusterManager::UpdateTables()
 {
   if (!m_valid) return false; // Ensure proper construction.
   if (!CheckPrefs()) return false;
+  if(!setPaths()) return false;
 
   try {
     // Get old revisions of the two tables in the working copy.
-    setPaths();
     bool quiet = true;
     int old_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
     int old_rev_done = GetLastChangedRevision(m_done_dat_filename, quiet);
@@ -342,20 +344,64 @@ ClusterManager::saveProject()
 
   // If filename is still empty, save failed somehow.
   if (m_proj->file_name.empty()) {
-    throw Exception("Please save project locally first.");
+    taMisc::Error("The project does not have a file name -- please save project locally first.");
   }
 }
 
-const String &
+bool ClusterManager::HasBasicData(bool err) {
+  if(m_proj->file_name.empty()) {
+    if(err) {
+      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+                    "project file name is empty -- must be specified to setup files -- try saving the project");
+    }
+    return false;
+  }
+  if(m_cluster_run.cluster.empty()) {
+    if(err) {
+      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+                    "cluster name is empty -- must be specified to setup files");
+    }
+    return false;
+  }
+  if(m_cluster_run.svn_repo.empty()) {
+    if(err) {
+      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+                    "svn repository name is empty -- must be specified to setup files");
+    }
+    return false;
+  }
+  if(m_cluster_run.svn_repo.empty()) {
+    if(err) {
+      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+                    "svn repository name is empty -- must be specified to setup files");
+    }
+    return false;
+  }
+  if(m_cluster_run.repo_url.empty()) {
+    if(err) {
+      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+                    "repository url is empty -- must be specified to setup files");
+    }
+    return false;
+  }
+  if(m_username.empty() && getUsername().empty()) {
+    if(err) {
+      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+                    "username is empty -- this is derived from svn repository data");
+    }
+    return false;
+  }
+  return true;
+}
+
+
+const String
 ClusterManager::getFilename()
 {
-  if (m_proj->file_name.empty()) {
-    saveProject();
-  }
   return m_proj->file_name;
 }
 
-const String &
+const String
 ClusterManager::getUsername()
 {
   // Get username if we haven't already.
@@ -368,59 +414,42 @@ ClusterManager::getUsername()
 
     // If still empty, can't proceed.
     if (m_username.empty()) {
-      throw Exception("A Subversion username is required.");
+      taMisc::Error("A Subversion username is required, but could not be found from the svn repository -- something went wrong with the initial repository creation -- try deleting the repository and starting over, and make sure that your user name on this machine is appropriate for using on the cluster, etc.");
     }
   }
   return m_username;
 }
 
-const String &
+const String
 ClusterManager::getClusterName()
 {
-  return promptForString(
-    m_cluster_run.cluster,
-    "A cluster name is required.");
+  return m_cluster_run.cluster;
 }
 
-const String &
+const String
 ClusterManager::getSvnRepo()
 {
-  return promptForString(
-    m_cluster_run.svn_repo,
-    "A valid svn repository name is required.");
+  return m_cluster_run.svn_repo;
 }
 
-const String &
+const String
 ClusterManager::getRepoUrl()
 {
-  return promptForString(
-    m_cluster_run.repo_url,
-    "A repository URL is required.");
+  return m_cluster_run.repo_url;
 }
 
-const String &
-ClusterManager::promptForString(const String &str, const char *msg)
-{
-  if (str.empty()) {
-    showRepoDialog();
-    // if (str.empty()) {
-    //   throw Exception(msg);
-    // }
-  }
-  return str;
-}
-
-void
+bool
 ClusterManager::setPaths() {
   String prv_path = m_wc_path;
 
-  if(!CheckPrefs()) return;
+  if(!CheckPrefs()) return false;
+  if(!HasBasicData(true)) return false; // this triggers err output -- if you don't want it, then test HasBasicData(false) in advance of calling setPaths
 
-  const String &username = getUsername();
-  const String &filename = getFilename();
-  const String &cluster = getClusterName();
-  const String &svn_repo = getSvnRepo();
-  const String &repo_url = getRepoUrl();
+  String username = getUsername();
+  String filename = getFilename();
+  String cluster = getClusterName();
+  String svn_repo = getSvnRepo();
+  String repo_url = getRepoUrl();
 
   // Create a URL to the user's directory in the repo.
   const char *opt_slash = repo_url.endsWith('/') ? "" : "/";
@@ -476,8 +505,14 @@ ClusterManager::setPaths() {
   if(m_wc_path != prv_path) {
     taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
     // make sure we've got a complete working copy here..
-    updateWorkingCopy();
+    try {
+      updateWorkingCopy(); // creates the working copy if needed.
+    }
+    catch (const SubversionClient::Exception &ex) {
+      handleException(ex);
+    }
   }
+  return true;
 }
 
 void
@@ -485,7 +520,7 @@ ClusterManager::updateWorkingCopy()
 {
   // If the user already has a working copy, update it.  Otherwise, create
   // it on the server and check it out.
-  setPaths();
+  if(!setPaths()) return;
   QFileInfo fi_wc(m_wc_path.chars());
   if (!fi_wc.exists()) {
     // This could be the first time the user has used Click-to-cluster.
@@ -561,7 +596,7 @@ void
 ClusterManager::saveSubmitTable()
 {
   // Save the datatable and add it to source control (if not already).
-  setPaths();
+  if(!setPaths()) return;
   deleteFile(m_submit_dat_filename);
   m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
   m_svn_client->Add(m_submit_dat_filename.chars());
@@ -571,7 +606,7 @@ void
 ClusterManager::saveDoneTable()
 {
   // Save the datatable and add it to source control (if not already).
-  setPaths();
+  if(!setPaths()) return;
   deleteFile(m_done_dat_filename);
   m_cluster_run.jobs_done.SaveData(m_done_dat_filename);
   m_svn_client->Add(m_done_dat_filename.chars());
@@ -581,7 +616,7 @@ void
 ClusterManager::initClusterInfoTable()
 {
   // Save a cluster info table to get format into server
-  setPaths();
+  if(!setPaths()) return;
   QFileInfo fi_wc(m_cluster_info_filename.chars());
   if(!fi_wc.exists()) {
     m_cluster_run.cluster_info.SaveData(m_cluster_info_filename);
@@ -623,7 +658,7 @@ void
 ClusterManager::commitFiles(const String &commit_msg)
 {
   // Ensure the working copy has been set.
-  setPaths();
+  if(!setPaths()) return;
 
   // Check in all files and directories that were created or updated.
   int rev = m_svn_client->Checkin(commit_msg);
