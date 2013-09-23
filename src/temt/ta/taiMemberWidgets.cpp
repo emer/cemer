@@ -19,17 +19,17 @@ taiMemberWidgets_List::~taiMemberWidgets_List() {
   Reset();
 }
 
-bool taiMemberWidgets_List::GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat) {
+bool taiMemberWidgets_List::GetFlatWidgetItem(int idx, MemberDef** mbr, taiWidget** dat) {
   for (int i = 0; i < size; ++i) {
     taiMemberWidgets* ms = FastEl(i);
-    int msd_size = ms->data_el.size;
+    int msd_size = ms->widget_el.size;
     if (idx >= msd_size) {
       idx -= msd_size;
       continue;
     }
     if (idx < msd_size) {
       if (mbr) *mbr = ms->memb_el.SafeEl(idx);
-      if (dat) *dat = ms->data_el.SafeEl(idx); // supposed to be 1:1, but safer
+      if (dat) *dat = ms->widget_el.SafeEl(idx); // supposed to be 1:1, but safer
       return true;
     }
     break; // out of range
@@ -37,39 +37,39 @@ bool taiMemberWidgets_List::GetFlatDataItem(int idx, MemberDef** mbr, taiWidget*
   return false;
 }
 
-int taiMemberWidgets_List::GetFlatDataIndex(taiWidget* dat) {
+int taiMemberWidgets_List::GetFlatWidgetIndex(taiWidget* dat) {
   if (!dat) return -1;
   int rval = 0;
   for (int i = 0; i < size; ++i) {
     taiMemberWidgets* ms = FastEl(i);
-    int ti_set = ms->data_el.FindEl(dat);
+    int ti_set = ms->widget_el.FindEl(dat);
     if (ti_set >= 0) {
       return (rval + ti_set);
     } else {
-      rval += ms->data_el.size;
+      rval += ms->widget_el.size;
     }
   }
   return -1;
 }
 
-int taiMemberWidgets_List::GetFlatDataIndex(MemberDef* mbr, taBase* base) {
+int taiMemberWidgets_List::GetFlatWidgetIndex(MemberDef* mbr, taBase* base) {
   if (!mbr || !base) return -1;
   int rval = 0;
   for (int i = 0; i < size; ++i) {
     taiMemberWidgets* ms = FastEl(i);
-    for (int j = 0; j < ms->data_el.size; ++j, ++rval) {
+    for (int j = 0; j < ms->widget_el.size; ++j, ++rval) {
       if (mbr != ms->memb_el.PosSafeEl(j)) continue;
-      if (ms->data_el.FastEl(j)->Base() == base) return rval;
+      if (ms->widget_el.FastEl(j)->Base() == base) return rval;
     }
   }
   return -1;
 }
 
-int taiMemberWidgets_List::GetDataSize() const {
+int taiMemberWidgets_List::GetWidgetSize() const {
   int rval = 0;
   for (int i = 0; i < size; ++i) {
     taiMemberWidgets* ms = FastEl(i);
-    rval += ms->data_el.size;
+    rval += ms->widget_el.size;
   }
   return rval;
 }
@@ -77,7 +77,7 @@ int taiMemberWidgets_List::GetDataSize() const {
 void taiMemberWidgets_List::ResetItems(bool data_only) {
   for (int i = size - 1; i >= 0; --i) {
     taiMemberWidgets* ms = FastEl(i);
-    ms->data_el.Reset();
+    ms->widget_el.Reset();
     if (!data_only) ms->memb_el.Reset();
   }
 }

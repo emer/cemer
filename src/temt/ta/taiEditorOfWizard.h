@@ -53,8 +53,8 @@ protected:
   String_PArray         page_names; // stores names, or blank if none
   override void         Constr_Strings();
   override void         Constr_Box();
-  override void         Constr_Data_Labels();
-  override void         Constr_Data_Labels_impl(int& idx, Member_List* ms,
+  override void         Constr_Widget_Labels();
+  override void         Constr_Widget_Labels_impl(int& idx, Member_List* ms,
      taiWidget_List* dl);
   override void         Constr_RegNotifies();
 //  override void       DoConstr_Dialog(iDialogEditor*& dlg);

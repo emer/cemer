@@ -27,12 +27,12 @@
 
 
 class TA_API taiListMemberWidgets {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains widget_els for one member of List
 public:
   TypeDef*       typ;
   taBase*        cur_base;
   Member_List    memb_el; // members
-  taiWidget_List data_el; // data elements for members
+  taiWidget_List widget_el; // widget elements for members
 
   taiListMemberWidgets(TypeDef* tp, taBase* base);
   virtual ~taiListMemberWidgets();

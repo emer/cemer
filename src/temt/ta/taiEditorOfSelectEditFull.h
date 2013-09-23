@@ -28,7 +28,6 @@ class TA_API taiEditorOfSelectEditFull : public taiEditorOfSelectEditBase {
 INHERITED(taiEditorOfSelectEditBase)
   Q_OBJECT
 public:
-
   taiEditorOfSelectEditFull(void* base, TypeDef* td, bool read_only_ = false,
         QObject* parent = 0);
   taiEditorOfSelectEditFull() { Initialize();};
@@ -40,7 +39,7 @@ protected slots:
 protected:
   override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
 
-  override void         Constr_Data_Labels();
+  override void         Constr_Widget_Labels();
   override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
   override void         GetImage_Membs_def();
   override void         GetValue_Membs_def();

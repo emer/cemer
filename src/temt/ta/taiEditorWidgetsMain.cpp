@@ -127,7 +127,7 @@ int taiEditorWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String& d
   return row;
 }
 
-int taiEditorWidgetsMain::AddNameData(int row, const String& name, const String& desc,
+int taiEditorWidgetsMain::AddNameWidget(int row, const String& name, const String& desc,
    QWidget* data, taiWidget* buddy, MemberDef* md, bool fill_hor)
 {
   if (row < 0)
@@ -156,7 +156,7 @@ int taiEditorWidgetsMain::AddNameData(int row, const String& name, const String&
   return row;
 }
 
-int taiEditorWidgetsMain::AddData(int row, QWidget* data, bool fill_hor)
+int taiEditorWidgetsMain::AddWidget(int row, QWidget* data, bool fill_hor)
 {
   if (row < 0)
     row = layBody->rowCount();
@@ -210,7 +210,7 @@ void taiEditorWidgetsMain::AddMultiColName(iEditGrid* multi_body, int col, const
   label->show(); //required to show when rebuilding
 }
 
-void taiEditorWidgetsMain::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data) {
+void taiEditorWidgetsMain::AddMultiWidget(iEditGrid* multi_body, int row, int col, QWidget* data) {
 //  SetMultiSize(row - 1, col - 1);
   SetMultiSize(row + 1, col + 1);
   QHBoxLayout* hbl = new QHBoxLayout();

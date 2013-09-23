@@ -41,7 +41,7 @@ public:
   taiWidgetComposite(TypeDef* typ_, IWidgetHost* host_, taiWidget* parent_, QWidget* gui_parent_, int flags = 0);
   override ~taiWidgetComposite();
 
-  taiWidget_List           data_el;
+  taiWidget_List        widget_el;
 
   QLayout*              GetLayout() {return (QLayout*)lay;} // override
   inline LayoutType     layType() const {return lay_type;}

@@ -27,13 +27,13 @@ class taBase;
 class taiWidget;
 
 class TA_API taiListTypeWidgets {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains data_els for one member of List
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS contains widget_els for one member of List
 public:
   TypeDef*      typ;
   taBase*       cur_base;
-  taiWidget*      data_el;        // data element provided by the typ->it
+  taiWidget*    widget_el;        // widget element provided by the typ->it
 
-  taiListTypeWidgets(TypeDef* tp, taBase* base, taiWidget* data_el = NULL);
+  taiListTypeWidgets(TypeDef* tp, taBase* base, taiWidget* widget_el = NULL);
   virtual ~taiListTypeWidgets();
 };
 

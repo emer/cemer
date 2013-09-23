@@ -29,7 +29,7 @@ class TA_API taiEditorOfListCompact : public taiEditorWidgetsMulti {
 INHERITED(taiEditorWidgetsMulti)
 public:
   taList_impl*               cur_lst;
-  taiListTypeWidgets_List     lst_data_el;    // list of (inline) data elements
+  taiListTypeWidgets_List     lst_widget_el;    // list of (inline) data elements
 
   taiEditorOfListCompact(void* base, TypeDef* typ_, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0); //(TypeDef* tp, void* base);
@@ -45,8 +45,8 @@ protected:
 
   override void         Constr_Strings();
   override void         Constr_MultiBody();
-  virtual void          Constr_ElData();
-  virtual void          Constr_ListData();      // construct list members themselves
+  virtual void          Constr_ElWidget();
+  virtual void          Constr_ListWidget();      // construct list members themselves
   override void         Constr_Final(); //TEMP
 };
 

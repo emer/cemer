@@ -45,12 +45,12 @@ bool taiEditorOfArray::ShowMember(MemberDef* md) const {
     return inherited::ShowMember(md);
 }
 
-void taiEditorOfArray::Constr_Data_Labels() {
-  inherited::Constr_Data_Labels();
-  Constr_AryData_Labels();
+void taiEditorOfArray::Constr_Widget_Labels() {
+  inherited::Constr_Widget_Labels();
+  Constr_AryWidget_Labels();
 }
 
-void taiEditorOfArray::Constr_AryData_Labels() {
+void taiEditorOfArray::Constr_AryWidget_Labels() {
   iLabel* lbl = new iLabel("Array items", body);
   AddSectionLabel(-1, lbl,
     "the data items in the array, one per line");
@@ -60,12 +60,12 @@ void taiEditorOfArray::Constr_AryData_Labels() {
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
     taiWidget* mb_dat = tit->GetWidgetRep(this, NULL, body);
-    data_el(array_set).Add(mb_dat);
+    widget_el(array_set).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
-    //int idx = AddData(-1, rep, fill_hor);
-    AddNameData(-1, nm, String(""), rep, mb_dat, NULL, fill_hor);
+    //int idx = AddWidget(-1, rep, fill_hor);
+    AddNameWidget(-1, nm, String(""), rep, mb_dat, NULL, fill_hor);
   }
 }
 
@@ -87,7 +87,7 @@ void taiEditorOfArray::GetImage_Membs() {
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
-    taiWidget* mb_dat = data_el(array_set).PosSafeEl(i);
+    taiWidget* mb_dat = widget_el(array_set).PosSafeEl(i);
     if (mb_dat == NULL) return; // unexpected end
     tit->GetImage(mb_dat, cur_ary->FastEl_(i));
   }
@@ -99,7 +99,7 @@ void taiEditorOfArray::GetValue_Membs() {
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i){
-    taiWidget* mb_dat = data_el(array_set).PosSafeEl(i);
+    taiWidget* mb_dat = widget_el(array_set).PosSafeEl(i);
     if (mb_dat == NULL) return; // unexpected
     tit->GetValue(mb_dat, cur_ary->FastEl_(i));
   }

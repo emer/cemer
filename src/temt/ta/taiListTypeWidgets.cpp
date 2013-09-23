@@ -16,10 +16,10 @@
 #include "taiListTypeWidgets.h"
 
 
-taiListTypeWidgets::taiListTypeWidgets(TypeDef* typ_, taBase* base, taiWidget* data_el_) {
+taiListTypeWidgets::taiListTypeWidgets(TypeDef* typ_, taBase* base, taiWidget* widget_el_) {
   typ = typ_;
   cur_base = base;
-  data_el = data_el_;
+  widget_el = widget_el_;
 }
 
 taiListTypeWidgets::~taiListTypeWidgets() {}

@@ -38,8 +38,8 @@ protected:
   override void         GetValue_Membs();
   override void         GetImage_Membs();
   override void         ClearBody_impl();
-  override void         Constr_Data_Labels();
-  virtual void          Constr_AryData_Labels();
+  override void         Constr_Widget_Labels();
+  virtual void          Constr_AryWidget_Labels();
 };
 
 #endif // taiEditorOfArray_h

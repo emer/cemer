@@ -69,7 +69,7 @@ void taiEditorOfWizard::Constr_Buttons() {
   connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );*/
 }
 
-void taiEditorOfWizard::Constr_Data_Labels()
+void taiEditorOfWizard::Constr_Widget_Labels()
 {
   // assert all the tabs -- note that the number can never change
   if (tabs->count() == 0) {
@@ -85,7 +85,7 @@ void taiEditorOfWizard::Constr_Data_Labels()
   }
 }
 
-void taiEditorOfWizard::Constr_Data_Labels_impl(int& idx, Member_List* ms,
+void taiEditorOfWizard::Constr_Widget_Labels_impl(int& idx, Member_List* ms,
      taiWidget_List* dl)
 {
 }

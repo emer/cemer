@@ -30,7 +30,7 @@ class TA_API taiEditorOfList : public taiEditorWidgetsMulti {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditorWidgetsMulti)
 public:
-  taiListMemberWidgets_List    lst_data_el;    // list of data elements
+  taiListMemberWidgets_List    lst_widget_el;    // list of widget elements
   taList_impl*               cur_lst;
 //  MemberSpace         lst_membs;      // list of members
   String_PArray         lst_membs; // list of members, by name
@@ -48,8 +48,8 @@ protected:
 
   override void         Constr_Strings();
   override void         Constr_MultiBody();
-  virtual void          Constr_ElData();
-  virtual void          Constr_ListData();      // construct list members themselves
+  virtual void          Constr_ElWidget();
+  virtual void          Constr_ListWidget();      // construct list members themselves
   virtual void          Constr_ListLabels();    // construct list labels themselves
   override void         Constr_Final(); //TEMP
 };

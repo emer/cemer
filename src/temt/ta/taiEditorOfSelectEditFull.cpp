@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taiEditorOfSelectEditFull.h"
-#include <SelectEdit>
+#include <ClusterRun>
 #include <iLabel>
 #include <iFlowLayout>
 #include <taiMember>
@@ -22,7 +22,6 @@
 
 #include <taMisc>
 #include <taiMisc>
-
 
 taiEditorOfSelectEditFull::taiEditorOfSelectEditFull(void* base, TypeDef* td,
   bool read_only_, QObject* parent)
@@ -42,7 +41,7 @@ void taiEditorOfSelectEditFull::ClearBody_impl() {
   // we also clear all the methods, and then rebuild them
   ta_menus.Reset();
   ta_menu_buttons.Reset();
-//  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
+//  meth_el.Reset(); // must defer deletion of these, because the MethodWidget objects are used in menu calls, so can't be
   if(frmMethButtons) {
     if(layMethButtons && (layMethButtons != (iFlowLayout*)frmMethButtons->layout())) {
       delete layMethButtons;
@@ -61,10 +60,13 @@ void taiEditorOfSelectEditFull::ClearBody_impl() {
   if (menu) {
     menu->Reset();
   }
+  for (int i = 0; i < srch_membs.size; ++i) {
+    srch_membs.FastEl(i).Reset();
+  }
   inherited::ClearBody_impl();
 }
 
-void taiEditorOfSelectEditFull::Constr_Data_Labels() {
+void taiEditorOfSelectEditFull::Constr_Widget_Labels() {
   // delete all previous sele members
   membs.ResetItems();
   dat_cnt = 0;
@@ -90,29 +92,35 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
-      taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
+
       memb_set->memb_el.Add(md);
-      memb_set->data_el.Add(mb_dat);
-      QWidget* data = mb_dat->GetRep();
-      //int row = AddData(-1, data);
 
-      help_text = item->GetDesc();
-      String new_lbl = item->caption();
-      AddNameData(-1, new_lbl, help_text, data, mb_dat, md);
-      ++dat_cnt;
-
-      if (item->is_numeric) {
+      bool added_search = false;
+      if (item->is_numeric && sele->InheritsFrom(&TA_ClusterRun)) {
         MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
         if (psmd) {
-          taiWidget* psmb_dat = psmd->im->GetWidgetRep(this, NULL, body);
-          psmb_dat->SetBase(item);
-          psmb_dat->SetMemberDef(psmd);
-          memb_set->memb_el.Add(psmd);
-          memb_set->data_el.Add(psmb_dat);
-          QWidget* ps_data = psmb_dat->GetRep();
-          AddData(cur_row, ps_data, true);
+          added_search = true;
+          taiWidgetMashup* mash_widg = taiPolyData::New(false, md->type, this, NULL, body);
+          mash_widg->AddChildMember(md);
+          mash_widg->AddChildMember(psmd);
+
+          memb_set->widget_el.Add(mash_widg);
+          QWidget* data = mash_widg->GetRep();
+          help_text = item->GetDesc();
+          String new_lbl = item->caption();
+          AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
           ++dat_cnt;
         }
+      }
+
+      if(!added_search) {
+        taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
+        memb_set->widget_el.Add(mb_dat);
+        QWidget* data = mb_dat->GetRep();
+        help_text = item->GetDesc();
+        String new_lbl = item->caption();
+        AddNameWidget(-1, new_lbl, help_text, data, mb_dat, md);
+        ++dat_cnt;
       }
     }
     def_grp = false;
@@ -122,7 +130,7 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
 
 void taiEditorOfSelectEditFull::DoRemoveSelEdit() {
    // removes the sel_item_index item
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
+  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
@@ -133,7 +141,7 @@ void taiEditorOfSelectEditFull::DoRemoveSelEdit() {
 void taiEditorOfSelectEditFull::FillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id)
 {
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_mbr, sel_item_base);
+  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_mbr, sel_item_base);
   if (sel_item_index < 0) return;
   //QAction* act =
   menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
@@ -143,14 +151,18 @@ void taiEditorOfSelectEditFull::GetImage_Membs_def() {
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
-    for (int i = 0; i < ms->data_el.size; ++i) {
-      taiWidget* mb_dat = ms->data_el.FastEl(i);
+    for (int i = 0; i < ms->widget_el.size; ++i) {
+      taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
         taMisc::DebugInfo("taiEditorOfSelectEditFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
+        if(mb_dat->InheritsFrom(&TA_taiWidgetMashup)) {
+          taiWidgetMashup* mash_widg = (taiWidgetMashup*)mb_dat;
+          mash_widg->SetBases(item->base, item);
+        }
         md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
       }
       ++itm_idx;
@@ -162,14 +174,10 @@ void taiEditorOfSelectEditFull::GetValue_Membs_def() {
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
-    for (int i = 0; i < ms->data_el.size; ++i) {
-      taiWidget* mb_dat = ms->data_el.FastEl(i);
+    for (int i = 0; i < ms->widget_el.size; ++i) {
+      taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
-      // the first "if" is a work in progress
-//      if (item != NULL && item->is_numeric) {
-//        item->param_search.search = true;
-//      }
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
         taMisc::DebugInfo("taiEditorOfSelectEditFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }

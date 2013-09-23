@@ -139,8 +139,8 @@ void taiMember::GetImage(taiWidget* dat, const void* base) {
     int img = !mbr->GetCondOptTest("CONDEDIT", typ, base);
     deck->GetImage(img); // this is the one that is visible
     // NOTE: we must *always* get both images, so the val img is valid if we switch to rw
-    GetArbitrateImage(deck->data_el.FastEl(0), base);
-    GetArbitrateImage(deck->data_el.FastEl(1), base);
+    GetArbitrateImage(deck->widget_el.FastEl(0), base);
+    GetArbitrateImage(deck->widget_el.FastEl(1), base);
   }
 }
 
@@ -200,7 +200,7 @@ void taiMember::GetMbrValue(taiWidget* dat, void* base, bool& first_diff) {
   } else { // note: we only do this if we aren't RO, otherwise there is no point
     QCAST_MBR_SAFE_EXIT(taiWidgetDeck*, deck, dat)
     // NOTE: we must *always* get the rw val in case we had switched editability
-    dat = deck->data_el.FastEl(0);
+    dat = deck->widget_el.FastEl(0);
     GetArbitrateMbrValue(dat, base, first_diff);
   }
   CmpOrigVal(dat, base, first_diff);

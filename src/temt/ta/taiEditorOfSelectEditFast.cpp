@@ -93,7 +93,7 @@ void taiEditorOfSelectEditFast::ClearBody_impl() {
   // we also clear all the methods, and then rebuild them
   ta_menus.Reset();
   ta_menu_buttons.Reset();
-//  meth_el.Reset(); // must defer deletion of these, because the MethodData objects are used in menu calls, so can't be
+//  meth_el.Reset(); // must defer deletion of these, because the MethodWidget objects are used in menu calls, so can't be
   // somehow separate..
   if(frmMethButtons) {
     if(layMethButtons && (layMethButtons != (iFlowLayout*)frmMethButtons->layout())) {
@@ -116,7 +116,7 @@ void taiEditorOfSelectEditFast::ClearBody_impl() {
 //??  inherited::ClearBody_impl();
 }
 
-void taiEditorOfSelectEditFast::Constr_Data_Labels() {
+void taiEditorOfSelectEditFast::Constr_Widget_Labels() {
   // delete all previous sele members
   membs.ResetItems();
   tw->clearSpans();

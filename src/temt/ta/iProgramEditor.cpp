@@ -477,7 +477,7 @@ void iProgramEditor::Controls_Add() {
         hbl->addSpacing(taiM->hspc_c);
       MemberDef* md = ms->memb_el.FastEl(i);
       taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body, NULL, flags);
-      ms->data_el.Add(mb_dat);
+      ms->widget_el.Add(mb_dat);
 
 //obs      QLabel* lbl = taiM->NewLabel(, body);
       String name;
@@ -661,9 +661,9 @@ void iProgramEditor::GetValue() {
   bool first_diff = true;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
-    for (int i = 0; i < ms->data_el.size; ++i) {
+    for (int i = 0; i < ms->widget_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
-      taiWidget* mb_dat = ms->data_el.FastEl(i);
+      taiWidget* mb_dat = ms->widget_el.FastEl(i);
       if (md && mb_dat) {
         md->im->GetMbrValue(mb_dat, base, first_diff);
       }
@@ -684,9 +684,9 @@ void iProgramEditor::GetImage() {
   ++m_changing;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
-    for (int i = 0; i < ms->data_el.size; ++i) {
+    for (int i = 0; i < ms->widget_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
-      taiWidget* mb_dat = ms->data_el.FastEl(i);
+      taiWidget* mb_dat = ms->widget_el.FastEl(i);
       if (md && mb_dat) {
         md->im->GetImage(mb_dat, base);
       }

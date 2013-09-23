@@ -98,7 +98,7 @@ void taiEditorOfUserData::ClearBody_impl() {
   tw->clear();
 }
 
-void taiEditorOfUserData::Constr_Data_Labels() {
+void taiEditorOfUserData::Constr_Widget_Labels() {
   // delete all previous udil members
   membs.ResetItems();
   tw->clearSpans();

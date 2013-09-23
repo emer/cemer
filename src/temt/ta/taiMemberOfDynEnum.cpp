@@ -49,11 +49,11 @@ taiWidget* taiMemberOfDynEnum::GetWidgetRep_impl(IWidgetHost* host_, taiWidget* 
   taiWidgetBitBox* bit_rep = new taiWidgetBitBox(typ, host_, rval, gui_parent_, flags_);
   taiWidgetField*  field_rep = new taiWidgetField(typ, host_, rval, gui_parent_, flags_); // read only
   taiWidgetComboBox* combo_rep = new taiWidgetComboBox(true, NULL, host_, rval, gui_parent_, flags_);
-  rval->data_el.Add(bit_rep);
+  rval->widget_el.Add(bit_rep);
   rval->AddChildWidget(bit_rep->rep());
-  rval->data_el.Add(field_rep);
+  rval->widget_el.Add(field_rep);
   rval->AddChildWidget(field_rep->rep());
-  rval->data_el.Add(combo_rep);
+  rval->widget_el.Add(combo_rep);
   rval->AddChildWidget(combo_rep->rep());
   rval->EndLayout();
   return rval;
@@ -92,20 +92,20 @@ void taiMemberOfDynEnum::GetImage_impl(taiWidget* dat, const void* base) {
   }
   if(isBit) {
     rval->GetImage(0);
-    taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->data_el.SafeEl(0));
+    taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->widget_el.SafeEl(0));
     if(!bit_rep) return;
     UpdateDynEnumBits(bit_rep, *dye);
   }
   else if (isReadOnly(dat)) {
     rval->GetImage(1);
-    taiWidgetField* field_rep = dynamic_cast<taiWidgetField*>(rval->data_el.SafeEl(1));
+    taiWidgetField* field_rep = dynamic_cast<taiWidgetField*>(rval->widget_el.SafeEl(1));
     if(!field_rep) return;
     String str = dye->NameVal();
     field_rep->GetImage(str);
   }
   else {
     rval->GetImage(2);
-    taiWidgetComboBox* combo_rep = dynamic_cast<taiWidgetComboBox*>(rval->data_el.SafeEl(2));
+    taiWidgetComboBox* combo_rep = dynamic_cast<taiWidgetComboBox*>(rval->widget_el.SafeEl(2));
     if(!combo_rep) return;
     UpdateDynEnumCombo(combo_rep, *dye);
   }
@@ -116,12 +116,12 @@ void taiMemberOfDynEnum::GetMbrValue_impl(taiWidget* dat, void* base) {
   taiWidgetDeck* rval = (taiWidgetDeck*)dat;
   if(!isReadOnly(dat)) {
     if(isBit) {
-      taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->data_el.SafeEl(0));
+      taiWidgetBitBox* bit_rep = dynamic_cast<taiWidgetBitBox*>(rval->widget_el.SafeEl(0));
       if(!bit_rep) return;
       bit_rep->GetValue(dye->value);
     }
     else {
-      taiWidgetComboBox* combo_rep = dynamic_cast<taiWidgetComboBox*>(rval->data_el.SafeEl(2));
+      taiWidgetComboBox* combo_rep = dynamic_cast<taiWidgetComboBox*>(rval->widget_el.SafeEl(2));
       if(!combo_rep) return;
       combo_rep->GetValue(dye->value);
     }

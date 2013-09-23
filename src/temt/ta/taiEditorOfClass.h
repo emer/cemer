@@ -82,10 +82,10 @@ public:
     {return membs.FastEl(i)->memb_el;}
   Member_List&          memb_el(int i) // the member defs, typically enumerated once
     {return membs.FastEl(i)->memb_el;}
-  const taiWidget_List&    data_el(int i) const // data items, typically rebuilt each reshow
-    {return membs.FastEl(i)->data_el;}
-  taiWidget_List&          data_el(int i) // data items, typically rebuilt each reshow
-    {return membs.FastEl(i)->data_el;}
+  const taiWidget_List&    widget_el(int i) const // data items, typically rebuilt each reshow
+    {return membs.FastEl(i)->widget_el;}
+  taiWidget_List&          widget_el(int i) // data items, typically rebuilt each reshow
+    {return membs.FastEl(i)->widget_el;}
 
   iPanelOfEditor*        dataPanel() {return panel;} // #IGNORE
   override void         guiParentDestroying() {panel = NULL;}
@@ -136,9 +136,9 @@ protected:
   override void         ClearBody_impl();
   override void         Constr_Strings();
   override void         Constr_Body();    // construct the data of the dialog
-  virtual void          Constr_Data_Labels(); // calls Data then Labels -- override to do your own
-  virtual void          Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
-  virtual void          Constr_Data_Labels_impl(int& idx, Member_List* ms,
+  virtual void          Constr_Widget_Labels(); // calls Widget then Labels -- override to do your own
+  virtual void          Constr_Inline(); // called instead of Widget/Labels when typ->requiresInline true
+  virtual void          Constr_Widget_Labels_impl(int& idx, Member_List* ms,
      taiWidget_List* dl);
   void                  Constr_MethButtons();
   override void         Constr_RegNotifies();

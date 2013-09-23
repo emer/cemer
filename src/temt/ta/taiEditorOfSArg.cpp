@@ -40,7 +40,7 @@ void taiEditorOfSArg::Constr_AryData() {
   QWidget* rep;
   for (int i=0; i < cur_ary->size; ++i) {
     taiWidget* mb_dat = it->GetWidgetRep(this, NULL, body);
-    data_el(array_set).Add(mb_dat);
+    widget_el(array_set).Add(mb_dat);
     rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";

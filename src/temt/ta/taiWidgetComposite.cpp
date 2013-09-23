@@ -39,20 +39,20 @@ taiWidgetComposite::~taiWidgetComposite() {
   mwidgets->clear();
   delete mwidgets;
   taiWidget* dat;
-  while (data_el.size > 0) {
-    dat = data_el.Pop();
+  while (widget_el.size > 0) {
+    dat = widget_el.Pop();
     dat->mparent = NULL; // don't call setParent, otherwise, calls our ChildRemove
   }
 }
 
 void taiWidgetComposite::ChildAdd(taiWidget* child) {
-  data_el.Add(child);
+  widget_el.Add(child);
 }
 
 void taiWidgetComposite::ChildRemove(taiWidget* child) {
   //NOTE: this will get called while being removed/deleted from an own list!
   //2004-08-31 workaround, change taListptr to remove items from list before deleting, thus item not found
-  data_el.RemoveEl(child);
+  widget_el.RemoveEl(child);
 }
 
 void taiWidgetComposite::InitLayout() { //virtual/overridable

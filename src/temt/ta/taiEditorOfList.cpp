@@ -33,12 +33,12 @@ taiEditorOfList::taiEditorOfList(void* base, TypeDef* typ_, bool read_only_,
 }
 
 taiEditorOfList::~taiEditorOfList() {
-  lst_data_el.Reset();
+  lst_widget_el.Reset();
   lst_membs.Reset();
 }
 
 void taiEditorOfList::ClearMultiBody_impl() {
-  lst_data_el.Reset();
+  lst_widget_el.Reset();
   lst_membs.Reset();
   num_lst_fields = 0;
   inherited::ClearMultiBody_impl();
@@ -64,17 +64,17 @@ void taiEditorOfList::Constr_Final() {
 
 void taiEditorOfList::Constr_MultiBody() {
   inherited::Constr_MultiBody(); 
-  Constr_ElData();
+  Constr_ElWidget();
   Constr_ListLabels();
-  Constr_ListData();
+  Constr_ListWidget();
 }
 
-void taiEditorOfList::Constr_ElData() {
+void taiEditorOfList::Constr_ElWidget() {
   for (int lf = 0; lf < cur_lst->size; ++lf) {
     taBase* tmp_lf = (taBase*)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
-    lst_data_el.Add(new taiListMemberWidgets(tmp_td, tmp_lf));
+    lst_widget_el.Add(new taiListMemberWidgets(tmp_td, tmp_lf));
     // add to the unique list of all showable members
     for (int i = 0; i < tmp_td->members.size; ++i) {
       MemberDef* md = tmp_td->members.FastEl(i);
@@ -85,9 +85,9 @@ void taiEditorOfList::Constr_ElData() {
   }
 } 
 
-void taiEditorOfList::Constr_ListData() {
-  for (int lf = 0; lf < lst_data_el.size; ++lf) {
-    taiListMemberWidgets* lf_el = lst_data_el.FastEl(lf);
+void taiEditorOfList::Constr_ListWidget() {
+  for (int lf = 0; lf < lst_widget_el.size; ++lf) {
+    taiListMemberWidgets* lf_el = lst_widget_el.FastEl(lf);
     String nm = String("[") + String(lf) + "]: (" + lf_el->typ->name + ")";
     AddMultiColName(lf, nm, String(""));
 
@@ -99,9 +99,9 @@ void taiEditorOfList::Constr_ListData() {
       cur_row = lst_idx; 
       taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, multi_body->dataGridWidget());
       lf_el->memb_el.Add(md);
-      lf_el->data_el.Add(mb_dat);
+      lf_el->widget_el.Add(mb_dat);
       //TODO: should get desc for this member, to add to tooltip for rep
-      AddMultiData(cur_row, lf, mb_dat->GetRep());
+      AddMultiWidget(cur_row, lf, mb_dat->GetRep());
     }
   }
 }
@@ -115,10 +115,10 @@ void taiEditorOfList::Constr_ListLabels() {
 
 void taiEditorOfList::GetValue_Membs() {
   bool rebuild = false;
-  if (lst_data_el.size != cur_lst->size) rebuild = true;
+  if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
-    for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
+    for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
+      if (lst_widget_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -134,9 +134,9 @@ void taiEditorOfList::GetValue_Membs() {
   // first for the List-structure members
   GetValue_Membs_def();
   // then the List elements
-  for (int lf=0;  lf < lst_data_el.size;  ++lf) {
-    taiListMemberWidgets* lf_el = lst_data_el.FastEl(lf);
-    GetValue_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
+  for (int lf=0;  lf < lst_widget_el.size;  ++lf) {
+    taiListMemberWidgets* lf_el = lst_widget_el.FastEl(lf);
+    GetValue_impl(&lf_el->memb_el, lf_el->widget_el, lf_el->cur_base);
     ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
@@ -145,10 +145,10 @@ void taiEditorOfList::GetValue_Membs() {
 
 void taiEditorOfList::GetImage_Membs() {
   bool rebuild = false;
-  if (lst_data_el.size != cur_lst->size) rebuild = true;
+  if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
-    for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
+    for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
+      if (lst_widget_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -157,7 +157,7 @@ void taiEditorOfList::GetImage_Membs() {
 
   if (rebuild) {
     RebuildMultiBody(); 
-  /*obs lst_data_el.Reset();
+  /*obs lst_widget_el.Reset();
     ivGlyphIndex i;
     for(i=lst_data_g->count()-1; i >= 0; i--)
       lst_data_g->remove(i);
@@ -166,16 +166,16 @@ void taiEditorOfList::GetImage_Membs() {
     lst_membs.Reset();
     Constr_ListMembs();
     Constr_Labels_impl(lst_membs);
-    Constr_ElData(); */
+    Constr_ElWidget(); */
   } 
 
   // first for the List-structure members
   GetImage_Membs_def();
 
   // then the elements
-  for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-    taiListMemberWidgets* lf_el = lst_data_el.FastEl(lf);
-    GetImage_impl(&lf_el->memb_el, lf_el->data_el, lf_el->cur_base);
+  for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
+    taiListMemberWidgets* lf_el = lst_widget_el.FastEl(lf);
+    GetImage_impl(&lf_el->memb_el, lf_el->widget_el, lf_el->cur_base);
   }
 }
 /* TODO

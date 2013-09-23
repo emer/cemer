@@ -34,11 +34,11 @@ taiEditorOfListCompact::taiEditorOfListCompact(void* base, TypeDef* typ_, bool r
 }
 
 taiEditorOfListCompact::~taiEditorOfListCompact() {
-  lst_data_el.Reset();
+  lst_widget_el.Reset();
 }
 
 void taiEditorOfListCompact::ClearMultiBody_impl() {
-  lst_data_el.Reset();
+  lst_widget_el.Reset();
   inherited::ClearMultiBody_impl();
 }
 
@@ -60,12 +60,12 @@ bool taiEditorOfListCompact::ShowMember(MemberDef* md) const {
   return md->ShowMember(show());
 }
 
-void taiEditorOfListCompact::Constr_ElData() {
+void taiEditorOfListCompact::Constr_ElWidget() {
   for (int lf = 0; lf < cur_lst->size; ++lf) {
     taBase* tmp_lf = (taBase*)cur_lst->FastEl_(lf);
     if (tmp_lf == NULL)	continue; // note: not supposed to have NULL values in lists
     TypeDef* tmp_td = tmp_lf->GetTypeDef();
-    lst_data_el.Add(new taiListTypeWidgets(tmp_td, tmp_lf));
+    lst_widget_el.Add(new taiListTypeWidgets(tmp_td, tmp_lf));
   }
 } 
 
@@ -76,29 +76,29 @@ void taiEditorOfListCompact::Constr_Final() {
 
 void taiEditorOfListCompact::Constr_MultiBody() {
   inherited::Constr_MultiBody(); 
-  Constr_ElData();
-  Constr_ListData();
+  Constr_ElWidget();
+  Constr_ListWidget();
 }
 
 
-void taiEditorOfListCompact::Constr_ListData() {
-  for (int i = 0; i < lst_data_el.size; ++i) {
-    taiListTypeWidgets* lf_el = lst_data_el.FastEl(i);
+void taiEditorOfListCompact::Constr_ListWidget() {
+  for (int i = 0; i < lst_widget_el.size; ++i) {
+    taiListTypeWidgets* lf_el = lst_widget_el.FastEl(i);
     String nm = String("[") + String(i) + "]: (" + lf_el->typ->name + ")";
     AddMultiRowName(i, nm, String(""));
     // note: the type better grok INLINE!!!!
     taiWidget* mb_dat = lf_el->typ->it->GetWidgetRep(this, NULL, multi_body->dataGridWidget(), NULL, taiWidget::flgInline);
-    lf_el->data_el = mb_dat;
-    AddMultiData(i, 1, mb_dat->GetRep());
+    lf_el->widget_el = mb_dat;
+    AddMultiWidget(i, 1, mb_dat->GetRep());
   }
 }
 
 void taiEditorOfListCompact::GetValue_Membs() {
   bool rebuild = false;
-  if (lst_data_el.size != cur_lst->size) rebuild = true;
+  if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
-    for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
+    for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
+      if (lst_widget_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -114,9 +114,9 @@ void taiEditorOfListCompact::GetValue_Membs() {
   // first for the List-structure members
   GetValue_Membs_def();
   // then the List elements
-  for (int lf=0;  lf < lst_data_el.size;  ++lf) {
-    taiListTypeWidgets* lf_el = lst_data_el.FastEl(lf);
-    lf_el->typ->it->GetValue(lf_el->data_el, lf_el->cur_base);
+  for (int lf=0;  lf < lst_widget_el.size;  ++lf) {
+    taiListTypeWidgets* lf_el = lst_widget_el.FastEl(lf);
+    lf_el->typ->it->GetValue(lf_el->widget_el, lf_el->cur_base);
     ((taBase*)lf_el->cur_base)->UpdateAfterEdit();
   }
   cur_lst->UpdateAfterEdit();	// call here too!
@@ -125,10 +125,10 @@ void taiEditorOfListCompact::GetValue_Membs() {
 
 void taiEditorOfListCompact::GetImage_Membs() {
   bool rebuild = false;
-  if (lst_data_el.size != cur_lst->size) rebuild = true;
+  if (lst_widget_el.size != cur_lst->size) rebuild = true;
   if (!rebuild) {		// check that same elements are present!
-    for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-      if (lst_data_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
+    for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
+      if (lst_widget_el.FastEl(lf)->cur_base != (taBase*)cur_lst->FastEl_(lf)) {
 	rebuild = true;
 	break;
       }
@@ -143,9 +143,9 @@ void taiEditorOfListCompact::GetImage_Membs() {
   GetImage_Membs_def();
 
   // then the elements
-  for (int lf = 0;  lf < lst_data_el.size;  ++lf) {
-    taiListTypeWidgets* lf_el = lst_data_el.FastEl(lf);
-    lf_el->typ->it->GetImage(lf_el->data_el, lf_el->cur_base);
+  for (int lf = 0;  lf < lst_widget_el.size;  ++lf) {
+    taiListTypeWidgets* lf_el = lst_widget_el.FastEl(lf);
+    lf_el->typ->it->GetImage(lf_el->widget_el, lf_el->cur_base);
   }
 }
 /* TODO

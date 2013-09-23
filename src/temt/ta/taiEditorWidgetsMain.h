@@ -80,15 +80,15 @@ protected:
   virtual void  SetMultiSize(int rows, int cols) {}
   int           AddSectionLabel(int row, QWidget* wid, const String& desc);
   // add a widget, usually a label or checkbox, that will span both columns (no data)
-  int           AddNameData(int row, const String& name, const String& desc,
+  int           AddNameWidget(int row, const String& name, const String& desc,
                             QWidget* data_wid, taiWidget* data_dat = NULL,
                             MemberDef* md = NULL, bool fill_hor = false);
-  // add a label item in first column, data item in second column; row<0 means "next row"; returns row
-  int           AddData(int row, QWidget* data_wid, bool fill_hor = false);
-  // add a data item with no label (spanning whole row); row<0 means "next row"; returns row
+  // add a label item in first column, widget item in second column; row<0 means "next row"; returns row
+  int           AddWidget(int row, QWidget* data_wid, bool fill_hor = false);
+  // add a widget item with no label (spanning whole row); row<0 means "next row"; returns row
   void          AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
   void          AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
-  void          AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
+  void          AddMultiWidget(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
   override void Constr_Box();
   virtual void  Constr_Body_impl();
   override void Constr_Final();

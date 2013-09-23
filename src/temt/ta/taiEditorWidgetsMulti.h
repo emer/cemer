@@ -40,8 +40,8 @@ public:
     {taiEditorOfClass::AddMultiRowName(multi_body, row, name, desc);} // adds a label item in first column of multi data area
   void          AddMultiColName(int col, const String& name, const String& desc)
     {taiEditorOfClass::AddMultiColName(multi_body, col, name, desc);} // adds descriptive column text to top of a multi data item
-  void          AddMultiData(int row, int col, QWidget* data)
-    {taiEditorOfClass::AddMultiData(multi_body, row, col, data);}  // add a data item in the multi-data area -- expands if necessary
+  void          AddMultiWidget(int row, int col, QWidget* data)
+    {taiEditorOfClass::AddMultiWidget(multi_body, row, col, data);}  // add a data item in the multi-data area -- expands if necessary
   override void         SetMultiSize(int rows, int cols); //note: can never shrink
 protected:
   int           multi_rows;

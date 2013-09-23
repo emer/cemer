@@ -21,6 +21,6 @@ taiListMemberWidgets::taiListMemberWidgets(TypeDef* tp, taBase* base) {
 }
 
 taiListMemberWidgets::~taiListMemberWidgets() {
-  data_el.Reset();
+  widget_el.Reset();
 }
 

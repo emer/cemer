@@ -30,23 +30,23 @@ taiEditorOfTypeItem::taiEditorOfTypeItem(TypeItem* ti_, TypeItem::TypeInfoKinds 
   tik = tik_;
 }
 
-void taiEditorOfTypeItem::Constr_Data_Labels() {
+void taiEditorOfTypeItem::Constr_Widget_Labels() {
 //  taiWidget* dat;
   int row = 0; // makes following more generic
   
   // name
 //  mb_dat = md->im->GetWidgetRep(this, NULL, body);
-//  data_el->Add(mb_dat);
+//  widget_el->Add(mb_dat);
 //    rep = mb_dat->GetRep();
   iCheckBox* chk = NULL;
   iLineEdit* rep = new iLineEdit(ti->name, body);
   rep->setReadOnly(true);
-  AddNameData(row++, "name", "name of the type item", rep, NULL, NULL, true);
+  AddNameWidget(row++, "name", "name of the type item", rep, NULL, NULL, true);
   
   // description
   rep = new iLineEdit(ti->desc, body);
   rep->setReadOnly(true);
-  AddNameData(row++, "description", "description of the type item", rep,
+  AddNameWidget(row++, "description", "description of the type item", rep,
     NULL, NULL, true);
   
   // opts
@@ -54,7 +54,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
   String tmp = ti->opts.AsString();
   rep = new iLineEdit(tmp, body);
   rep->setReadOnly(true);
-  AddNameData(row++, "options", "ta # options, including inherited",
+  AddNameWidget(row++, "options", "ta # options, including inherited",
     rep, NULL, NULL, true);
   
   // stuff shared for Members/Props
@@ -63,21 +63,21 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     // type
     rep = new iLineEdit(md->type->Get_C_Name(), body);
     rep->setReadOnly(true);
-    AddNameData(row++, "type", "type of the member/property",
+    AddNameWidget(row++, "type", "type of the member/property",
       rep, NULL, NULL, true);
     // static
     chk = new iCheckBox(md->is_static, body);
     chk->setReadOnly(true);
-    AddNameData(row++, "is_static", "static (non-instance) member/property",
+    AddNameWidget(row++, "is_static", "static (non-instance) member/property",
      chk, NULL, NULL, true);
     // read-only
     chk = new iCheckBox(md->isReadOnly(), body);
     chk->setReadOnly(true);
-    AddNameData(row++, "readOnly", "member/property is read-only (including in CSS/programs)", chk, NULL, NULL, true);
+    AddNameWidget(row++, "readOnly", "member/property is read-only (including in CSS/programs)", chk, NULL, NULL, true);
     // gui read-only
     chk = new iCheckBox(md->isGuiReadOnly(), body);
     chk->setReadOnly(true);
-    AddNameData(row++, "guiReadOnly", "member/property is read-only in the gui (but may be writable in CSS/programs)", chk, NULL, NULL, true);
+    AddNameWidget(row++, "guiReadOnly", "member/property is read-only in the gui (but may be writable in CSS/programs)", chk, NULL, NULL, true);
   }
   
   switch (tik) {
@@ -86,7 +86,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     // value
     rep = new iLineEdit(String(ed->enum_no), body);
     rep->setReadOnly(true);
-    AddNameData(row++, "value", "value of the enum", rep, NULL, NULL, true);
+    AddNameWidget(row++, "value", "value of the enum", rep, NULL, NULL, true);
     break;
     }
   case TypeItem::TIK_MEMBER:  {
@@ -96,7 +96,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     iSpinBox* repi = new iSpinBox(body);
     repi->setValue((ta_intptr_t)md->GetOff(NULL));
     repi->setReadOnly(true);
-    AddNameData(row++, "offset", "offset, in bytes, of the member", 
+    AddNameWidget(row++, "offset", "offset, in bytes, of the member", 
       repi, NULL, NULL, true);
     break;
     }
@@ -105,7 +105,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     // for properties only, indicate (so can distinguish from members in .properties)
     chk = new iCheckBox(true, body);
     chk->setReadOnly(true);
-    AddNameData(row++, "is_property", "this is a property (not a member)",
+    AddNameWidget(row++, "is_property", "this is a property (not a member)",
       chk, NULL, NULL, true);
     break;
     }
@@ -114,28 +114,28 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     // return type
     rep = new iLineEdit(md->type->Get_C_Name(), body);
     rep->setReadOnly(true);
-    AddNameData(row++, "return type", "return type of the method",
+    AddNameWidget(row++, "return type", "return type of the method",
       rep, NULL, NULL, true);
     
     // params
     rep = new iLineEdit(md->ParamsAsString(), body);
     rep->setReadOnly(true);
-    AddNameData(row++, "params", "params of the method", 
+    AddNameWidget(row++, "params", "params of the method", 
       rep, NULL, NULL, true);
     
     chk = new iCheckBox(md->is_static, body);
     chk->setReadOnly(true);
-    AddNameData(row++, "is_static", "static (non-instance) method",
+    AddNameWidget(row++, "is_static", "static (non-instance) method",
       chk, NULL, NULL, true);
     
     chk = new iCheckBox(md->is_virtual, body);
     chk->setReadOnly(true);
-    AddNameData(row++, "is_virtual", "virtual (overridable) method", 
+    AddNameWidget(row++, "is_virtual", "virtual (overridable) method", 
       chk, NULL, NULL, true);
     
     chk = new iCheckBox(md->is_override, body);
     chk->setReadOnly(true);
-    AddNameData(row++, "is_override", "virtual override of a base method", 
+    AddNameWidget(row++, "is_override", "virtual override of a base method", 
       chk, NULL, NULL, true);
     break;
     }
@@ -146,7 +146,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     iSpinBox* repi = new iSpinBox(body);
     repi->setValue(td->size);
     repi->setReadOnly(true);
-    AddNameData(row++, "size", "size, in bytes, of the type",
+    AddNameWidget(row++, "size", "size, in bytes, of the type",
       repi, NULL, NULL, true);
     
     // plugin, if any
@@ -156,7 +156,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     }
     rep = new iLineEdit(plg, body);
     rep->setReadOnly(true);
-    AddNameData(row++, "plugin class", "the classname of the IPlugin for the plugin in which this type was defined, if any",
+    AddNameWidget(row++, "plugin class", "the classname of the IPlugin for the plugin in which this type was defined, if any",
       rep, NULL, NULL, true);
     
     // parents
@@ -167,7 +167,7 @@ void taiEditorOfTypeItem::Constr_Data_Labels() {
     }
     rep = new iLineEdit(pars, body);
     rep->setReadOnly(true);
-    AddNameData(row++, "parents", "parent type(s)",
+    AddNameWidget(row++, "parents", "parent type(s)",
       rep, NULL, NULL, true);
     
     break;

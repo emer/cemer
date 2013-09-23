@@ -58,7 +58,7 @@ protected: //
   taBase_RefList        refs; // the data members from the Program
   taBase_RefList        refs_struct; // structural guys: arg and var lists themselves, gp
   override void         Enum_Members();
-  override void         Constr_Data_Labels();
+  override void         Constr_Widget_Labels();
   override void         Cancel_impl();
   override MemberDef*   GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play

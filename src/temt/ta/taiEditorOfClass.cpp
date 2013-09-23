@@ -160,7 +160,7 @@ void taiEditorOfClass::Cancel_impl() {
 void taiEditorOfClass::ClearBody_impl() {
   // delete ALL the data items -- Qt will automatically disconnect the signals/slots
   for (int i = 0; i < membs.size; ++i)
-    data_el(i).Reset();
+    widget_el(i).Reset();
   inherited::ClearBody_impl(); // deletes the body widgets, except structural ones
 }
 
@@ -208,18 +208,18 @@ void taiEditorOfClass::Constr_Body() {
     dat_cnt = 0;
     Constr_Inline();
   } else {
-    Constr_Data_Labels();
+    Constr_Widget_Labels();
   }
 }
 
-void taiEditorOfClass::Constr_Data_Labels() {
+void taiEditorOfClass::Constr_Widget_Labels() {
   int idx = 0; // basically a row counter
   dat_cnt = 0; // NOT advanced for the section rows
   // Normal members
   if (MS_NORM >= membs.def_size) return; // don't do those
   if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
-//    Constr_Data_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
-    Constr_Data_Labels_impl(idx, &memb_el(MS_NORM), &data_el(MS_NORM));
+//    Constr_Widget_impl(idx, &memb_el(MS_NORM), &widget_el(MS_NORM));
+    Constr_Widget_Labels_impl(idx, &memb_el(MS_NORM), &widget_el(MS_NORM));
   }
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
     if (j >= membs.def_size) return; // don't do those
@@ -234,23 +234,23 @@ void taiEditorOfClass::Constr_Data_Labels() {
     // if we are to show this section, then check the box, and build, else nothing else
     if (show_set(j)) {
       chk->setChecked(true);
-//      Constr_Data_impl(idx, &memb_el(j), &data_el(j));
-      Constr_Data_Labels_impl(idx, &memb_el(j), &data_el(j));
+//      Constr_Widget_impl(idx, &memb_el(j), &widget_el(j));
+      Constr_Widget_Labels_impl(idx, &memb_el(j), &widget_el(j));
     }
   }
 }
 
 void taiEditorOfClass::Constr_Inline() {
-  data_el(0).Reset(); // should already be clear
+  widget_el(0).Reset(); // should already be clear
   // specify inline flag, just to be sure
   taiWidget* mb_dat = typ->it->GetWidgetRep(this, NULL, body, NULL, taiWidget::flgInline);
-  data_el(0).Add(mb_dat);
+  widget_el(0).Add(mb_dat);
   QWidget* rep = mb_dat->GetRep();
   bool fill_hor = mb_dat->fillHor();
-  AddData(0, rep, fill_hor);
+  AddWidget(0, rep, fill_hor);
 }
 
-void taiEditorOfClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
+void taiEditorOfClass::Constr_Widget_Labels_impl(int& idx, Member_List* ms,
   taiWidget_List* dl)
 {
   String name;
@@ -263,13 +263,13 @@ void taiEditorOfClass::Constr_Data_Labels_impl(int& idx, Member_List* ms,
     dl->Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
-    //AddData(idx, rep, fill_hor);
+    //AddWidget(idx, rep, fill_hor);
 
     // create label
     name = "";
     desc = "";
     GetName(md, name, desc);
-    AddNameData(idx, name, desc, rep, mb_dat, md, fill_hor);
+    AddNameWidget(idx, name, desc, rep, mb_dat, md, fill_hor);
     ++idx;
     ++dat_cnt;
   }
@@ -407,7 +407,7 @@ MemberDef* taiEditorOfClass::GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc)
 {
   MemberDef* md = NULL;
-  if (!(membs.GetFlatDataItem(sel_idx, &md) && md))
+  if (!(membs.GetFlatWidgetItem(sel_idx, &md) && md))
     return NULL;
   taBase* rbase = Base();
   if (rbase) {
@@ -541,15 +541,15 @@ void taiEditorOfClass::GetImage_Membs() {
 }
 
 void taiEditorOfClass::GetImageInline_impl(const void* base) {
-  taiWidget* mb_dat = data_el(0).SafeEl(0);
+  taiWidget* mb_dat = widget_el(0).SafeEl(0);
   if (mb_dat)
     typ->it->GetImage(mb_dat, base);
 }
 
 void taiEditorOfClass::GetImage_Membs_def() {
   for (int i = 0; i < membs.def_size; ++i) {
-    if (show_set(i) && (data_el(i).size > 0))
-      GetImage_impl(&memb_el(i), data_el(i), root);
+    if (show_set(i) && (widget_el(i).size > 0))
+      GetImage_impl(&memb_el(i), widget_el(i), root);
   }
 }
 
@@ -609,8 +609,8 @@ void taiEditorOfClass::GetValue_Membs() {
 
 void taiEditorOfClass::GetValue_Membs_def() {
   for (int i = 0; i < membs.def_size; ++i) {
-    if (show_set(i) && (data_el(i).size > 0))
-      GetValue_impl(&memb_el(i), data_el(i), root);
+    if (show_set(i) && (widget_el(i).size > 0))
+      GetValue_impl(&memb_el(i), widget_el(i), root);
   }
 }
 
@@ -636,7 +636,7 @@ void taiEditorOfClass::GetValue_impl(const Member_List* ms, const taiWidget_List
 }
 
 void taiEditorOfClass::GetValueInline_impl(void* base) const {
-  taiWidget* mb_dat = data_el(0).SafeEl(0);
+  taiWidget* mb_dat = widget_el(0).SafeEl(0);
   if (mb_dat)
     typ->it->GetValue(mb_dat, base);
 }

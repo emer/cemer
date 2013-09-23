@@ -49,7 +49,7 @@ taiWidgetVariantBase::taiWidgetVariantBase(TypeDef* typ_, IWidgetHost* host_, ta
 }
 
 taiWidgetVariantBase::~taiWidgetVariantBase() {
-  data_el.Reset();
+  widget_el.Reset();
 }
 
 void taiWidgetVariantBase::Constr(QWidget* gui_parent_) {

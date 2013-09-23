@@ -28,8 +28,8 @@
 
 class TA_API taiMemberWidgets { // #IGNORE
 public:
-  Member_List           memb_el; // member elements (1:1 with data_el), empty in inline mode
-  taiWidget_List           data_el; // data elements (1:1 with memb_el WHEN section shown)
+  Member_List           memb_el; // member elements (1:1 with widget_el), empty in inline mode
+  taiWidget_List        widget_el; // widget elements (1:1 with memb_el WHEN section shown)
   String                text; // for non-default guys, the text in the label or checkbox
   String                desc; // for non-default guys, the tooltip text
   bool                  show; // flag to help by indicating whether to show or not
@@ -45,13 +45,13 @@ class TA_API taiMemberWidgets_List : public taPtrList<taiMemberWidgets> { // #IG
 public:
   int                   def_size; // set to how many you want to use default processing
   void                  SetMinSize(int n); // make sure there are at least n sets
-  void                  ResetItems(bool data_only = false); // calls Reset on all lists
-  bool                  GetFlatDataItem(int idx, MemberDef** mbr, taiWidget** dat = NULL);
+  void                  ResetItems(bool widget_only = false); // calls Reset on all lists
+  bool                  GetFlatWidgetItem(int idx, MemberDef** mbr, taiWidget** dat = NULL);
    // get the dat and/or mbr (both optional) from a flat idx
-  int                   GetFlatDataIndex(taiWidget* dat);
-  int                   GetFlatDataIndex(MemberDef* mbr, taBase* base);
+  int                   GetFlatWidgetIndex(taiWidget* dat);
+  int                   GetFlatWidgetIndex(MemberDef* mbr, taBase* base);
    // get the flat idx from a mbr/dat, -1 if not found
-  int                   GetDataSize() const; // # data items
+  int                   GetWidgetSize() const; // # widget items
 
   taiMemberWidgets_List()  {def_size = 0;}
   ~taiMemberWidgets_List();

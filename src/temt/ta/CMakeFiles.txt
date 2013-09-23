@@ -730,6 +730,7 @@ set(ta_HEADS_MAKETA_NOMOC
   T3Translate1Translator.h
   T3Translate2Translator.h
   SoScrollBar.h
+  taiWidgetMashup.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -1849,6 +1850,7 @@ set(ta_SRCS_MAKETA
   iViewPanelOfGraphTable.cpp
 
   iViewPanelOfVEWorld.cpp
+  taiWidgetMashup.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

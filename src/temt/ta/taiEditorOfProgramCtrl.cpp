@@ -77,7 +77,7 @@ void taiEditorOfProgramCtrl::Enum_Members() {
 }
 
 
-void taiEditorOfProgramCtrl::Constr_Data_Labels() {
+void taiEditorOfProgramCtrl::Constr_Widget_Labels() {
   dat_cnt = 0;
   Program* prog = this->prog();
   refs.Reset();
@@ -100,7 +100,7 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
     }
     int idx = 0;
     // we can just use the default worker bee routine
-    Constr_Data_Labels_impl(idx, &memb_el(MS_PROG), &data_el(MS_PROG));
+    Constr_Widget_Labels_impl(idx, &memb_el(MS_PROG), &widget_el(MS_PROG));
   }
 
 //   taiMemberWidgets* ms = membs.SafeEl(MS_GP);
@@ -176,12 +176,12 @@ void taiEditorOfProgramCtrl::Constr_Data_Labels() {
       }
       mb_dat->SetMemberDef(md); // usually done by im, but we are manual here...
 
-      data_el(j).Add(mb_dat);
+      widget_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
-      //int row = AddData(-1, data);
+      //int row = AddWidget(-1, data);
       nm = pv->name;
       help_text = pv->desc;
-      AddNameData(-1, nm, help_text, data, mb_dat/*, md*/);
+      AddNameWidget(-1, nm, help_text, data, mb_dat/*, md*/);
       refs.Add(pv);
       ++dat_cnt;
     }
@@ -228,7 +228,7 @@ MemberDef* taiEditorOfProgramCtrl::GetMemberPropsForSelect(int sel_idx, taBase**
   return NULL;
 /*
   MemberDef* md = NULL;
-  if (!(membs.GetFlatDataItem(sel_idx, &md) && md))
+  if (!(membs.GetFlatWidgetItem(sel_idx, &md) && md))
     return NULL;
   if (base) *base = cur_base;
   String tlbl = ((taBase*)cur_base)->GetName().elidedTo(16);
@@ -242,14 +242,14 @@ void taiEditorOfProgramCtrl::GetValue_Membs_def() {
   if (!prog) return;
 
   // prog stuff
-  if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
-    GetValue_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
+  if (show_set(MS_PROG) && (widget_el(MS_PROG).size > 0)) {
+    GetValue_impl(&memb_el(MS_PROG), widget_el(MS_PROG), prog);
   }
 
   // group stuff
-//   if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
+//   if (show_set(MS_GP) && (widget_el(MS_GP).size > 0)) {
 //     Program_Group* pg = GET_OWNER(prog, Program_Group);
-//     GetValue_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
+//     GetValue_impl(&memb_el(MS_GP), widget_el(MS_GP), pg);
 //   }
 
   bool first_diff = true;
@@ -268,7 +268,7 @@ void taiEditorOfProgramCtrl::GetValue_Membs_def() {
       if(!pv->HasVarFlag(ProgVar::CTRL_PANEL))
         continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
-      taiWidget* mb_dat = data_el(j).SafeEl(cnt++);
+      taiWidget* mb_dat = widget_el(j).SafeEl(cnt++);
       //note: code below is "risky" ex if visiblity update ctrl changes etc.
       // then the type values can be wrong -- so we strongly cast
       if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) continue; // do this after the cnt++!
@@ -329,8 +329,8 @@ void taiEditorOfProgramCtrl::GetImage_Membs()
   if (!prog) return;
 
   // prog stuff
-  if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
-    GetImage_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
+  if (show_set(MS_PROG) && (widget_el(MS_PROG).size > 0)) {
+    GetImage_impl(&memb_el(MS_PROG), widget_el(MS_PROG), prog);
   }
 
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
@@ -347,7 +347,7 @@ void taiEditorOfProgramCtrl::GetImage_Membs()
       ProgVar* pv = pvl->FastEl(i);
       if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
-      taiWidget* mb_dat = data_el(j).SafeEl(cnt++);
+      taiWidget* mb_dat = widget_el(j).SafeEl(cnt++);
       if (!md || !mb_dat) {
         taMisc::DebugInfo("taiEditorOfProgramCtrl:GetImage_impl: ran out of controls!");
         break;
