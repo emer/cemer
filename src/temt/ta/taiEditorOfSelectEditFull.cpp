@@ -88,7 +88,8 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
-      if (!md || (md->im == NULL)) continue; // should only happen if created manually (Bad!)
+      if (!md || (md->im == NULL))
+        continue; // should only happen if created manually (Bad!)
       taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
       memb_set->memb_el.Add(md);
       memb_set->data_el.Add(mb_dat);
@@ -97,9 +98,22 @@ void taiEditorOfSelectEditFull::Constr_Data_Labels() {
 
       help_text = item->GetDesc();
       String new_lbl = item->caption();
-      //obs GetName(md, nm, help_text); //note: we just call this to get the help text
       AddNameData(-1, new_lbl, help_text, data, mb_dat, md);
       ++dat_cnt;
+
+      if (item->is_numeric) {
+        MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
+        if (psmd) {
+          taiWidget* psmb_dat = psmd->im->GetWidgetRep(this, NULL, body);
+          psmb_dat->SetBase(item);
+          psmb_dat->SetMemberDef(psmd);
+          memb_set->memb_el.Add(psmd);
+          memb_set->data_el.Add(psmb_dat);
+          QWidget* ps_data = psmb_dat->GetRep();
+          AddData(cur_row, ps_data, true);
+          ++dat_cnt;
+        }
+      }
     }
     def_grp = false;
     ++set_idx;
@@ -152,6 +166,10 @@ void taiEditorOfSelectEditFull::GetValue_Membs_def() {
       taiWidget* mb_dat = ms->data_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
+      // the first "if" is a work in progress
+//      if (item != NULL && item->is_numeric) {
+//        item->param_search.search = true;
+//      }
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
         taMisc::DebugInfo("taiEditorOfSelectEditFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }
