@@ -1159,7 +1159,7 @@ int taMatrix::Dump_Save_Value(ostream& strm, taBase* par, int indent) {
   // save data, if not completely null
   int i;
   if (geom.dims() > 0) {
-    taMisc::indent(strm, indent);
+    taMisc::indent(strm, indent, 1);
     // dims
     strm << "[";
     for (i=0; i< geom.dims(); ++i) {

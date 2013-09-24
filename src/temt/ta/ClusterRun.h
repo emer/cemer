@@ -46,8 +46,8 @@ public:
   DataTable     jobs_running;   // #SHOW_TREE #EXPERT jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE #EXPERT jobs that have finished running
   DataTable     jobs_archive;   // #SHOW_TREE #EXPERT jobs that have been archived -- already analyzed but possibly still relevant to look at
-  DataTable     file_list;      // #NO_SAVE #SHOW_TREE #EXPERT list of files -- used for various operations -- transferring and deleting
-  DataTable     cluster_info;   // #NO_SAVE #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
+  DataTable     file_list;      // #SHOW_TREE #EXPERT list of files -- used for various operations -- transferring and deleting
+  DataTable     cluster_info;   // #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
 

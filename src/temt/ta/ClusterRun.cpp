@@ -68,6 +68,11 @@ void ClusterRun::UpdateAfterEdit_impl() {
       repo_url = rep.toString();
     }
   }
+  if(taMisc::is_loading) {
+    jobs_submit.Reset();          // get rid of any weirdness from prior bug
+    jobs_submitted.Reset(); 
+    FormatTables();
+  }
 }
 
 bool ClusterRun::initClusterManager() {
@@ -691,6 +696,8 @@ void ClusterRun::FormatTables() {
 void ClusterRun::FormatJobTable(DataTable& dt) {
   DataCol* dc;
 
+  dt.ClearDataFlag(DataTable::SAVE_ROWS);
+
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
   dc = dt.FindMakeCol("notes", VT_STRING);
@@ -784,6 +791,8 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
 void ClusterRun::FormatFileListTable(DataTable& dt) {
   DataCol* dc;
 
+  dt.ClearDataFlag(DataTable::SAVE_ROWS);
+
   dc = dt.FindMakeCol("file_name", VT_STRING);
   dc->desc = "name of file -- does not include any path information";
 
@@ -815,6 +824,8 @@ void ClusterRun::FormatFileListTable(DataTable& dt) {
 
 void ClusterRun::FormatClusterInfoTable(DataTable& dt) {
   DataCol* dc;
+
+  dt.ClearDataFlag(DataTable::SAVE_ROWS);
 
   dc = dt.FindMakeCol("queue", VT_STRING);
   dc->desc = "queue that this info relates to";

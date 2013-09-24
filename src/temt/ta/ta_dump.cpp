@@ -234,10 +234,10 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
   if (type->IsActualClassNoEff()) {
     if(type->IsTaBase()) {
       taBase* rbase = (taBase*)new_base;
-      rval = rbase->Dump_Save_PathR(strm, (taBase*)base, indent);
+      rval = rbase->Dump_Save_PathR(strm, (taBase*)par, indent);
     }
     else {
-      rval = type->Dump_Save_PathR(strm, new_base, (taBase*)base, indent);
+      rval = type->Dump_Save_PathR(strm, new_base, (taBase*)par, indent);
     }
   }
   else {
@@ -264,9 +264,10 @@ int MemberDef::Dump_Save_PathR(ostream& strm, void* base, void* par, int indent)
       if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
         strm << "\n";			// actually saving a path: put a newline
         taMisc::indent(strm, indent, 1);
-        tap->Dump_Save_Path(strm, (taBase*) base, indent);
+        tap->Dump_Save_Path(strm, (taBase*) base, indent+1);
         strm << " {";
-        if(tap->Dump_Save_PathR(strm, tap, indent+1))
+        rval = tap->Dump_Save_PathR(strm, tap, indent+1);
+        if(rval)
           taMisc::indent(strm, indent, 1);
         strm << "};\n";
       }
@@ -436,8 +437,8 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
       taBase* pl_par = NULL;//tabMisc::root
       plst->Dump_Save_Path(strm, pl_par, indent);
       strm << " { ";
-      if (plst->Dump_Save_PathR(strm, tabMisc::root, indent+1))
-        taMisc::indent(strm, indent, 1);
+      plst->Dump_Save_PathR(strm, tabMisc::root, indent+1);
+      taMisc::indent(strm, indent, 1);
       strm << "};\n";
       plst->Dump_Save_impl(strm, (taBase*)par, indent);
     }
@@ -445,8 +446,8 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     // now, write out the object itself
     rbase->Dump_Save_Path(strm, (taBase*)par, indent);
     strm << " { ";
-    if(rbase->Dump_Save_PathR(strm, (taBase*)par, indent+1))
-      taMisc::indent(strm, indent, 1);
+    rbase->Dump_Save_PathR(strm, rbase, indent+1); // becomes self-par at this point
+    taMisc::indent(strm, indent, 1);
     strm << "};\n";
     rbase->Dump_Save_impl(strm, (taBase*)par, indent);
   }
@@ -454,10 +455,11 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_Path(strm, base, par, indent);
     if (IsActualClassNoEff()) {
       strm << " { ";
-      if(Dump_Save_PathR(strm, base, par, indent))
-	taMisc::indent(strm, indent, 1);
+      Dump_Save_PathR(strm, base, base, indent); // becomes self-par at this point
+      taMisc::indent(strm, indent, 1);
       strm << "};\n";
-    } else {
+    }
+    else {
       strm << ";\n";
     }
 

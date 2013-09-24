@@ -722,7 +722,7 @@ int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
 
   strm << "\n";                 // actually saving a path: put a newline
   if (dump_my_path) {
-    taMisc::indent(strm, indent);
+    taMisc::indent(strm, indent, 1);
     Dump_Save_Path(strm, par, indent); // save my path!
     strm << " = [" << size << "] {\n";
     ++indent; // bump up
@@ -732,7 +732,7 @@ int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
 
   if (dump_my_path) {
     --indent;
-    taMisc::indent(strm, indent);
+    taMisc::indent(strm, indent, 1);
     strm << "};\n";
   }
   return true;
@@ -749,11 +749,11 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, taBase* par, int indent) {
     cnt++; // sure we are dumping something at this point
 
     if (El_Kind_(itm) == EK_LINK) { // a link, create a dummy placeholder
-      taMisc::indent(strm, indent);
+      taMisc::indent(strm, indent, 1);
       strm << itm->GetTypeDef()->name << " @[" << i << "] { };\n";
       continue;
     }
-    taMisc::indent(strm, indent);
+    taMisc::indent(strm, indent, 1);
     itm->Dump_Save_Path(strm, par, indent); // must be relative to parent!  not this!
     // can't put this in dump_save_path cuz don't want it during non PathR times..
     if (itm->InheritsFrom(TA_taList_impl)) {
@@ -765,8 +765,8 @@ int taList_impl::Dump_Save_PathR_impl(ostream& strm, taBase* par, int indent) {
     strm << " { ";
     // NOTE: incredibly sleazy trick, we pass par=this to flag the outer routine
     // not to redo our path etc. -- no easy workaround or redesign
-    if (itm->Dump_Save_PathR(strm, itm, indent+1))
-      taMisc::indent(strm, indent);
+    if(itm->Dump_Save_PathR(strm, itm, indent+1))
+      taMisc::indent(strm, indent, 1);
     strm << "};\n";
   }
   return cnt;
@@ -785,7 +785,7 @@ int taList_impl::Dump_SaveR(ostream& strm, taBase* par, int indent) {
       itm->Dump_Save_impl(strm, par, indent);
     }
     else if (ek == EK_LINK) {   // a link
-      taMisc::indent(strm, indent) << GetTypeDef()->name << " ";
+      taMisc::indent(strm, indent, 1) << GetTypeDef()->name << " ";
       if(par != NULL) strm << "@";
       strm << mypath << " = ";
       strm << "[" << i << "] = ";
