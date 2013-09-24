@@ -97,6 +97,7 @@ public:
   float_Matrix  spans;      // #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
 
   // overall state variables for the arm
+  float_Matrix  musc_gains;     // #READ_ONLY #SHOW muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
   float_Matrix  norm_lens;      // #READ_ONLY #SHOW normalized current muscle lengths
   float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW normalized target muscle lengths
   float_Matrix  norm_vels;      // #READ_ONLY #SHOW normalized muscle velocities
@@ -147,6 +148,15 @@ public:
 
   virtual bool ApplyStim(const float_Matrix& stims, float_Matrix &fs);
   // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns.
+
+  virtual bool SetMuscGains(const float_Matrix& gains);
+  // set the per-muscle gains to given values -- gains should be n_musc in length -- accessed in flat coordinates
+  virtual bool SetAllMuscGains(float all_gain = 1.0f);
+  // set all the per-muscle gains to given value
+  virtual float SetMuscGain(int musc_no, float gn = 1.0f);
+  // set gain for given muscle to given value -- return gain value
+  virtual float IncrMuscGain(int musc_no, float gain_inc);
+  // increment gain for given muscle to given value -- return gain value
 
   virtual bool VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs);
   // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. This will calculate the activation (multiplying both errors by the gain), calculate (and store) the resulting forces, and apply them. It does not take a step of the VEWorld, and does not udpate the muscle insertion points.

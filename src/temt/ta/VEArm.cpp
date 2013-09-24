@@ -281,8 +281,8 @@ bool VEArm::UpdateIPs() {
 
   //......... updating the normalized lengths ..........
   Lengths(norm_lens, true); // true = normalize
-
   Speeds(norm_vels, true); // true = normalize
+  musc_gains.SetGeom(1,n_musc);
   avg_vel_mag = 0.0f;
   for(int i=0; i<norm_vels.size; i++) {
     avg_vel_mag += fabsf(norm_vels.FastEl1d(i) - 0.5f); // offset from .5
@@ -509,6 +509,8 @@ void VEArm::InitMuscles() {
   max_lens.SetGeom(1,n_musc);
   min_lens.SetGeom(1,n_musc);
   rest_lens.SetGeom(1,n_musc);
+  musc_gains.SetGeom(1,n_musc);
+  SetAllMuscGains(1.0f);
   float pi  = taMath_float::pi;
 
   if(musc_geo == OLD_GEO) {
@@ -815,6 +817,8 @@ bool VEArm::ConfigArm(const String& name_prefix,
   norm_lens.SetGeom(1,n_musc); // setting the size of the normalized lengths float_Matrix
   norm_targ_lens.SetGeom(1,n_musc);
   norm_vels.SetGeom(1,n_musc);
+  musc_gains.SetGeom(1,n_musc); 
+  SetAllMuscGains(1.0f);
 
   UpdateIPs(); // attaching muscles to their corresponding insertion points
 
@@ -1780,6 +1784,42 @@ bool VEArm::ApplyStim(const float_Matrix& stims, float_Matrix &fs) {
   return true;
 }
 
+
+bool VEArm::SetMuscGains(const float_Matrix& gains) {
+  musc_gains.SetGeom(1,n_musc); // should be but justin
+  int mx = MIN(musc_gains.size, gains.size);
+  for(int i=0; i<mx; i++) {
+    musc_gains.FastEl_Flat(i) = gains.FastEl_Flat(i);
+  }
+  return true;
+}
+
+bool VEArm::SetAllMuscGains(float all_gain) {
+  musc_gains.SetGeom(1,n_musc); // should be but justin
+  for(int i=0; i<n_musc; i++) {
+    musc_gains.FastEl_Flat(i) = all_gain;
+  }
+  return true;
+}
+
+float VEArm::SetMuscGain(int musc_no, float gn) {
+  musc_gains.SetGeom(1,n_musc); // should be but justin
+  if(musc_no < n_musc) {
+    musc_gains.FastEl_Flat(musc_no) = gn;
+    return musc_gains.FastEl_Flat(musc_no);
+  }
+  return 0.0f;
+}
+
+float VEArm::IncrMuscGain(int musc_no, float gn_inc) {
+  musc_gains.SetGeom(1,n_musc); // should be but justin
+  if(musc_no < n_musc) {
+    musc_gains.FastEl_Flat(musc_no) += gn_inc;
+    return musc_gains.FastEl_Flat(musc_no);
+  }
+  return 0.0f;
+}
+
 bool VEArm::VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs) {
 // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. 
 // This will calculate the activation (multiplying both errors by the gain), calculate 
@@ -1798,8 +1838,13 @@ bool VEArm::VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs
     Lengths(lens, false);  // storing the lengths and speeds in lens and vels respectively
     Speeds(vels, false);
     len_error = lens - trg_lens;
+    if(musc_gains.size == n_musc)
+      len_error *= musc_gains;  // muscle specific
     len_error *= gain;
     vel_error = len_error + vels;
+    // multiply by gains again -- gain^2 at veolocity level
+    if(musc_gains.size == n_musc)
+      vel_error *= musc_gains;  // muscle specific
     vel_error *= gain;
     ApplyStim(vel_error, fs);
   }
@@ -1812,7 +1857,12 @@ bool VEArm::VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs
     }
     len_error = old_len - trg_lens;
     len_error *= gain;
+    if(musc_gains.size == n_musc)
+      len_error *= musc_gains;  // muscle specific
     vel_error = len_error + old_vel;
+    // multiply by gains again -- gain^2 at veolocity level
+    if(musc_gains.size == n_musc)
+      vel_error *= musc_gains;  // muscle specific
     vel_error *= gain;
     old_vel *= 0.06; //muscles[0]->mu;  // old_vel = mu*old_vel
     float_Matrix act(1,n_musc);
