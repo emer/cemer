@@ -56,7 +56,7 @@ taiWidgetPoly::taiWidgetPoly(TypeDef* typ_, IWidgetHost* host_, taiWidget* par,
 }
 
 taiWidgetPoly::~taiWidgetPoly() {
-  data_el.Reset();
+  widget_el.Reset();
 }
 
 bool taiWidgetPoly::ShowMember(MemberDef* md) const {
@@ -89,7 +89,7 @@ void taiWidgetPoly::Constr(QWidget* gui_parent_) {
 }
 
 void taiWidgetPoly::ChildRemove(taiWidget* child) {
-  int i = data_el.FindEl(child);
+  int i = widget_el.FindEl(child);
   if (i > 0)
     memb_el.RemoveIdx(i);
   inherited::ChildRemove(child);
@@ -101,7 +101,7 @@ void taiWidgetPoly::GetImage_impl(const void* base_) {
   }
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
-    taiWidget* mb_dat = data_el.FastEl(i);
+    taiWidget* mb_dat = widget_el.FastEl(i);
     md->im->GetImage(mb_dat, base_);
   }
 }
@@ -112,7 +112,7 @@ void taiWidgetPoly::GetValue_impl(void* base_) const {
   bool first_diff = true;
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
-    taiWidget* mb_dat = data_el.FastEl(i);
+    taiWidget* mb_dat = widget_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, base_, first_diff);
     if(m_child_base && !HasFlag(flgNoUAE)) {
       m_child_base->MemberUpdateAfterEdit(md, true); // edit dialog context

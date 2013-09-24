@@ -47,7 +47,7 @@ void taiEditorOfSArg::Constr_AryData() {
     String lbl = cur_ary->labels[i];
     if (!lbl.empty())
       nm = lbl + nm;
-    //int idx = AddData(-1, rep, fill_hor);
-    AddNameData(-1, nm, String(""), rep, mb_dat, NULL, fill_hor);
+    //int idx = AddWidget(-1, rep, fill_hor);
+    AddNameWidget(-1, nm, String(""), rep, mb_dat, NULL, fill_hor);
   }
 }

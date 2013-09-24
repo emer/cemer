@@ -42,6 +42,8 @@ public:
   override ~taiWidgetComposite();
 
   taiWidget_List        widget_el;
+  bool                  add_labels;   // if true (default yes), add labels to sub elements
+  int                   last_spc;       // space after last widget, -1 = none
 
   QLayout*              GetLayout() {return (QLayout*)lay;} // override
   inline LayoutType     layType() const {return lay_type;}
@@ -65,7 +67,6 @@ signals:
 #endif
 protected:
   QLayout*              lay; // may be ignored/unused by subclasses
-  int                   last_spc;       // space after last widget, -1 = none
   LayoutType            lay_type;
   mutable taBase*       m_child_base; // typically set in PolyData GetImage
   inline QHBoxLayout*   layHBox() const

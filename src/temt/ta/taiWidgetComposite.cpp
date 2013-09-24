@@ -31,6 +31,7 @@ taiWidgetComposite::taiWidgetComposite(TypeDef* typ_, IWidgetHost* host_, taiWid
   lay = NULL; // usually created in InitLayout;
   last_spc = -1;
   lay_type = LT_HBox; // default
+  add_labels = true;
   mwidgets = new QObjectList();
   m_child_base = NULL;
 }
@@ -91,30 +92,33 @@ void taiWidgetComposite::AddChildMember(MemberDef* md) {
   taiWidget* mb_dat = md->im->GetWidgetRep(host, this, wid, NULL, child_flags); //adds to list
   //nn, done by im mb_dat->SetMemberDef(md);
 
-  // get caption
-  String name;
-  String desc;
-  taiEditorWidgetsMain::GetName(md, name, desc);
-  iLabel* lbl = taiEditorWidgetsMain::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
-  lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
-
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(SigEmitNotify(taiWidget*)),
           this, SLOT(ChildSigEmit(taiWidget*)) );
 
-  // check for a compatible taiEditorWidgetsMain, and if so, connect context menu
-  if (host) {
+  iLabel* lbl = NULL;
+  String name;
+  String desc;
+  taiEditorWidgetsMain::GetName(md, name, desc);
+  // get caption
+  if(add_labels) {
+    lbl = taiEditorWidgetsMain::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
+    lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
 
-    taiEditorWidgetsMain* tadh = dynamic_cast<taiEditorWidgetsMain*>((QObject*)host->This());
-    if (tadh) {
-      connect(lbl, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
-        tadh, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)));
+    // check for a compatible taiEditorWidgetsMain, and if so, connect context menu
+    if (host) {
+      taiEditorWidgetsMain* tadh = dynamic_cast<taiEditorWidgetsMain*>((QObject*)host->This());
+      if (tadh) {
+        connect(lbl, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
+                tadh, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)));
+      }
     }
   }
 
   switch (lay_type) {
   case LT_HBox:
-    AddChildWidget(lbl, 1); // taiM->hsep_c);
+    if(add_labels)
+      AddChildWidget(lbl, 1); // taiM->hsep_c);
     AddChildWidget(ctrl, taiM->hsep_c);
     break;
   case LT_Flow:
@@ -122,14 +126,16 @@ void taiWidgetComposite::AddChildMember(MemberDef* md) {
     QHBoxLayout* hbl = new QHBoxLayout(wid);
     hbl->setMargin(0);
     hbl->setSpacing(taiM->hsep_c);
-    hbl->addWidget(lbl);
+    if(add_labels)
+      hbl->addWidget(lbl);
     hbl->addWidget(ctrl);
     AddChildWidget(wid, -1); // no explicit seps
     break;
   }
 
   if (!desc.empty()) {
-    lbl->setToolTip(desc);
+    if(add_labels)
+      lbl->setToolTip(desc);
     ctrl->setToolTip(desc);
   }
 }

@@ -19,6 +19,7 @@
 #include <iFlowLayout>
 #include <taiMember>
 #include <taiWidgetMenuBar>
+#include <taiWidgetMashup>
 
 #include <taMisc>
 #include <taiMisc>
@@ -60,9 +61,6 @@ void taiEditorOfSelectEditFull::ClearBody_impl() {
   if (menu) {
     menu->Reset();
   }
-  for (int i = 0; i < srch_membs.size; ++i) {
-    srch_membs.FastEl(i).Reset();
-  }
   inherited::ClearBody_impl();
 }
 
@@ -100,9 +98,12 @@ void taiEditorOfSelectEditFull::Constr_Widget_Labels() {
         MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
         if (psmd) {
           added_search = true;
-          taiWidgetMashup* mash_widg = taiPolyData::New(false, md->type, this, NULL, body);
+          taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+          mash_widg->add_labels = false;
+          mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
           mash_widg->AddChildMember(psmd);
+          mash_widg->EndLayout();
 
           memb_set->widget_el.Add(mash_widg);
           QWidget* data = mash_widg->GetRep();
@@ -159,11 +160,14 @@ void taiEditorOfSelectEditFull::GetImage_Membs_def() {
         taMisc::DebugInfo("taiEditorOfSelectEditFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
-        if(mb_dat->InheritsFrom(&TA_taiWidgetMashup)) {
-          taiWidgetMashup* mash_widg = (taiWidgetMashup*)mb_dat;
+        taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
+        if(mash_widg) {
           mash_widg->SetBases(item->base, item);
+          mash_widg->GetImage();
         }
-        md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
+        else {
+          md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
+        }
       }
       ++itm_idx;
     }
@@ -183,10 +187,16 @@ void taiEditorOfSelectEditFull::GetValue_Membs_def() {
       }
       else {
         bool first_diff = true;
-        md->im->GetMbrValue(mb_dat, item->base, first_diff);
-        if (!first_diff)
-          taiMember::EndScript(item->base);
-        item->base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+        taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
+        if(mash_widg) {
+          mash_widg->GetValue();
+        }
+        else {
+          md->im->GetMbrValue(mb_dat, item->base, first_diff);
+          if (!first_diff)
+            taiMember::EndScript(item->base);
+          item->base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+        }
       }
       ++itm_idx;
     }

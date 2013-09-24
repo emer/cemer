@@ -81,7 +81,7 @@ void cssiEditDialog::GetName(int idx, cssEl* md, String& name, String& desc) {
   else desc = "";
 }
 
-void cssiEditDialog::Constr_Data_Labels() {
+void cssiEditDialog::Constr_Widget_Labels() {
   String name;
   String desc;
   int index = 0;
@@ -100,12 +100,12 @@ void cssiEditDialog::Constr_Data_Labels() {
     type_el.Add(cit);
     // get the widget representation of the data
     taiWidget* mb_dat = cit->GetWidgetRep(this, NULL, body);
-    data_el(0).Add(mb_dat);
-    //AddData(index, mb_dat->GetRep());
+    widget_el(0).Add(mb_dat);
+    //AddWidget(index, mb_dat->GetRep());
     
     // now get label
     GetName(i, md, name, desc);
-    AddNameData(-1, name, desc, mb_dat->GetRep(), mb_dat);
+    AddNameWidget(-1, name, desc, mb_dat->GetRep(), mb_dat);
     
     ++index;
   }
@@ -130,7 +130,7 @@ int cssiEditDialog::Edit(bool modal_, int min_width, int min_height) {
 void cssiEditDialog::GetValue() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiWidget* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = widget_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     cit->GetValue(mb_dat);
     cit->orig_obj->UpdateAfterEdit();
@@ -142,7 +142,7 @@ void cssiEditDialog::GetValue() {
 void cssiEditDialog::GetImage_Membs() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
-    taiWidget* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = widget_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     cit->GetImage(mb_dat);
   }
@@ -445,7 +445,7 @@ taiArgType* cssiArgDialog::GetBestArgType(int aidx, TypeDef* argt, MethodDef* md
   return hi_arg->ArgTypeInst(aidx, argt, md, td);
 }
 
-void cssiArgDialog::Constr_Data_Labels() {
+void cssiArgDialog::Constr_Widget_Labels() {
   String name;
   String desc;
   // create the data fields
@@ -454,13 +454,13 @@ void cssiArgDialog::Constr_Data_Labels() {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
     taiWidget* mb_dat = art->GetWidgetRep(this, NULL, (QWidget*)body);
 
-    data_el(0).Add(mb_dat);
+    widget_el(0).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
-    //int row = AddData(-1, rep);
+    //int row = AddWidget(-1, rep);
     
     cssEl* md = obj->members->FastEl(i+stub_arg_off); // need to skip over arg[0] arg[1]
     GetName(j, md, name, desc);
-    AddNameData(-1, name, desc, rep, mb_dat);
+    AddNameWidget(-1, name, desc, rep, mb_dat);
   }
 }
 
@@ -468,7 +468,7 @@ void cssiArgDialog::GetValue() {
   err_flag = false;
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiWidget* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = widget_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetValue(mb_dat, root);
     if (art->err_flag)
@@ -491,7 +491,7 @@ void cssiArgDialog::GetValue() {
 void cssiArgDialog::GetImage(bool) {
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
-    taiWidget* mb_dat = data_el(0).SafeEl(i);
+    taiWidget* mb_dat = widget_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetImage(mb_dat, root);
   }
@@ -526,7 +526,7 @@ int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
     }
     else if(argt->IsBasePointerType()) {
       taiArgType* art = (taiArgType*)type_el.FastEl(hide_args);
-      taiWidget* mb_dat = data_el(0).SafeEl(hide_args);
+      taiWidget* mb_dat = widget_el(0).SafeEl(hide_args);
       if (mb_dat == NULL) return false; // shouldn't happen
       art->GetImage(mb_dat, root);
       taiWidgetTokenChooser* tokbut = (taiWidgetTokenChooser*)mb_dat;

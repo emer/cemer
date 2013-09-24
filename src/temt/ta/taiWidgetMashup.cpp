@@ -55,7 +55,7 @@ taiWidgetMashup::taiWidgetMashup(TypeDef* typ_, IWidgetHost* host_, taiWidget* p
 }
 
 taiWidgetMashup::~taiWidgetMashup() {
-  data_el.Reset();
+  widget_el.Reset();
 }
 
 bool taiWidgetMashup::ShowMember(MemberDef* md) const {
@@ -69,6 +69,14 @@ void taiWidgetMashup::AddChildMember(MemberDef* md) {
 
 void taiWidgetMashup::AddBase(taBase* b) {
   memb_bases.Add(b);
+}
+
+void taiWidgetMashup::GetImage() {
+  GetImage_impl(NULL);
+}
+  
+void taiWidgetMashup::GetValue() {
+  GetValue_impl(NULL);
 }
 
 void taiWidgetMashup::SetBases(taBase* b1, taBase* b2, taBase* b3,
@@ -103,7 +111,7 @@ void taiWidgetMashup::Constr(QWidget* gui_parent_) {
 }
 
 void taiWidgetMashup::ChildRemove(taiWidget* child) {
-  int i = data_el.FindEl(child);
+  int i = widget_el.FindEl(child);
   if (i > 0)
     memb_el.RemoveIdx(i);
   inherited::ChildRemove(child);
@@ -114,15 +122,14 @@ void taiWidgetMashup::GetImage_impl(const void* base_) {
     taMisc::Error("taiWidgetMashup: programmer error -- must call SetBases or AddBase so that memb_bases is same size as memb_el");
     return;
   }
-  // if (typ && typ->IsActualTaBase()) {
-  //   m_child_base = (taBase*)base_; // used for Seledit ctxt menus, and similar
-  // }
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
     taBase* bs = memb_bases.FastEl(i);
-    taiWidget* mb_dat = data_el.FastEl(i);
+    taiWidget* mb_dat = widget_el.FastEl(i);
+    m_child_base = bs;
     md->im->GetImage(mb_dat, bs);
   }
+  m_child_base = NULL;
 }
 
 void taiWidgetMashup::GetValue_impl(void* base_) const {
@@ -136,15 +143,17 @@ void taiWidgetMashup::GetValue_impl(void* base_) const {
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
     taBase* bs = memb_bases.FastEl(i);
-    taiWidget* mb_dat = data_el.FastEl(i);
+    m_child_base = bs;
+    taiWidget* mb_dat = widget_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, bs, first_diff);
     if(bs && !HasFlag(flgNoUAE)) {
       bs->MemberUpdateAfterEdit(md, true); // edit dialog context
     }
+    if (bs && !HasFlag(flgNoUAE)) {
+      bs->UpdateAfterEdit();   // hook to update the contents after an edit..
+    }
   }
-  if (bs && !HasFlag(flgNoUAE)) {
-    bs->UpdateAfterEdit();   // hook to update the contents after an edit..
-  }
+  m_child_base = NULL;
   taMisc::record_on = rec_on;
 }
 

@@ -49,6 +49,9 @@ public:
                                  taBase* b4=NULL, taBase* b5=NULL, taBase* b6=NULL);
   // convenience function for setting the memb_bases -- call this prior to GetImage and GetValue -- will reset bases first and then add these -- you can also do this manualy..
 
+  virtual void          GetImage(); // directly call get image
+  virtual void          GetValue(); // directly call get value
+
   ~taiWidgetMashup();
 
 protected:
