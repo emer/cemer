@@ -2125,3 +2125,8 @@ void VEArm::CurFromODE(bool updt_disp) {
   UpdateIPs();
   CurToODE();
 }
+
+void VEArm::Init() {
+  SetAllMuscGains(1.0f);
+  inherited::Init();
+}

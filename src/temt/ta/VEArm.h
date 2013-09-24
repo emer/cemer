@@ -182,6 +182,7 @@ public:
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc
   override void Step_pre();
   override void CurFromODE(bool updt_disp = false);
+  override void Init();
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:
