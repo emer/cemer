@@ -80,6 +80,7 @@ public:
   float         ev_gain;        // #AKA_gain #CONDSHOW_ON_ctrl_type:ERR_VEL gain factor for ERR_VEL control
   float         p_gain;         // #CONDSHOW_ON_ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
   float         i_gain;         // #CONDSHOW_ON_ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
+  float         pid_i_thr;      // #CONDSHOW_ON_ctrl_type:PID threshold on value of error for updating the integral term in PID -- the integral is best for building up strength of small persistent errors, so this prevents it from being swamped by large errors, and allows a larger effective i_gain value -- set to 0 or lower to disable
   float         d_gain;         // #CONDSHOW_ON_ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
   float         pid_dt;         // #CONDSHOW_ON_ctrl_type:PID effective time constant for PID integral and derivative terms
   float         pid_dra_dt;     // #CONDSHOW_ON_ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term

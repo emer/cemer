@@ -42,10 +42,11 @@ void VEArm::Initialize() {
   wrist_gap = 0.03f;
 
   stim_gain = 200.0f;
-  max_err = 0.2f;
+  max_err = 0.01f;
   ev_gain = 2.0f;
   p_gain = 4.0f;
   i_gain = 0.01f;
+  pid_i_thr = 0.001f;
   d_gain = 3.0f;
   pid_dt = .1f;
   pid_dra_dt = 1.0f;
@@ -1909,7 +1910,18 @@ bool VEArm::ComputeStim() {
 }
 
 bool VEArm::ComputeStim_PID() {
-  err_int += err * pid_dt;
+  if(pid_i_thr > 0.0f) {
+    for(int i=0; i<n_musc; i++) {
+      float er = err.FastEl1d(i);
+      if(fabsf(er) < pid_i_thr) {
+        float& ei = err_int.FastEl1d(i);
+        ei += er * pid_dt;
+      }
+    }
+  }
+  else {
+    err_int += err * pid_dt;
+  }
   err_deriv = err - err_prv;
   err_deriv /= pid_dt;
   const float dtc = (1.0f - pid_dra_dt);

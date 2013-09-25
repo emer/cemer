@@ -47,13 +47,13 @@ public:
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0.2;0.5 [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] 
-  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels
+  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- typically between 1-2
   float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput
   float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no inhibition is computed
-  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1.6 overall inhibitory contribution from feedback inhibition -- computed from average activation
+  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedback inhibition -- computed from average activation
   float         fb0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0 feedback zero point in terms of average activation -- below this level, no inhibition is computed
   float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
-  float         fbx;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope
+  float         fbx;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0;0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope
   float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 
   float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
 

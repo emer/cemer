@@ -23,13 +23,13 @@ eTypeDef_Of(MarkerConSpec);
 
 void LeabraInhibSpec::Initialize() {
   type = KWTA_AVG_INHIB;
-  gi = 1.0f;
+  gi = 1.8f;
   ff = 1.0f;
   ff0 = 0.1f;
-  fb = 1.6f;
+  fb = 1.0f;
   fb0 = 0.0f;
   infl = 0.3f;
-  fbx = 0.1f;
+  fbx = 0.0f;
   dt = 0.7f;
   min_i = 0.0f;
   Defaults_init();

@@ -1891,12 +1891,11 @@ void taBase::UpdateAfterEdit_NoGui() {
 void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   if (handled) return; // note: really shouldn't have been handled already if we are called...
   // only notify and UAE if it is an owned member object (but not list/group items)
-  taBase* mo = GetMemberOwner(false); // do not go to highest level -- each level
-  // kicks it up to the next level
-  if(mo) {
+  taBase* mo = child->GetMemberOwner(false);
+  if(mo == this) {
     handled = true;
     SigEmit(SLS_CHILD_ITEM_UPDATED); // this is trapped by some..
-    mo->UpdateAfterEdit();          // if a child has been updated, we need to get parent notified.. -- if this has aparent, it will kick up to it too..
+    UpdateAfterEdit();          // if a child has been updated, we need to get parent notified.. -- if this has a parent, it will kick up to it too..
   }
 }
 
