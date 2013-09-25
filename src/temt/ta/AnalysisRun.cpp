@@ -29,14 +29,21 @@
 bool AnalysisRun::Init(AnalysisType type, DataTable* src_table, const String& src_col_name, DataTable* result_table) {
   analysis_type = type;
 
-  bool rval = true;
-  if (src_table && result_table) {
-    params.Init(src_table, src_col_name, result_table);
+  if (src_table == NULL)
+    return false;
+  if (RequiresResultsTable(type) && result_table == NULL)
+    return false;
+  params.Init(src_table, src_col_name, result_table);
+  return true;
+}
+
+bool AnalysisRun::RequiresResultsTable(AnalysisType type) {
+  if (type == REGRESS_LINEAR) {
+    return false;
   }
   else {
-    rval = false;
+    return true;
   }
-  return rval;
 }
 
 bool AnalysisRun::Run() {
@@ -69,13 +76,22 @@ bool AnalysisRun::Run() {
           params.name_column_name, params.distance_metric, params.norm, params.tolerance, params.include_scalars);
     }
   }
+  else if (analysis_type == REGRESS_LINEAR) {
+    delete params.result_data_table;  // output added as column to src table
+    bool paramsSet = CollectParamsLinearRegress(params);
+    if (paramsSet) {
+      String equation = taDataAnal::RegressLinear(params.src_data_table, params.name_column_name, params.data_column_name, params.view); // reusing "view" bool for "render line"
+      rval = true;
+    }
+  }
+
   return rval;
 }
 
 // TODO - add popup to choose frame for graph
 
 bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
-  bool rval = true;
+  bool rval = false;
 
   taGuiDialog dlg;
   dlg.win_title = "Cluster Analysis";
@@ -226,7 +242,7 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
 }
 
 bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
-  bool rval = true;
+  bool rval = false;
 
   taGuiDialog dlg;
   dlg.win_title = "PCA 2D";
@@ -335,7 +351,7 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
 }
 
 bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
-  bool rval = true;
+  bool rval = false;
 
   taGuiDialog dlg;
   dlg.win_title = "PCA Eigen";
@@ -401,7 +417,7 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
 }
 
 bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
-  bool rval = true;
+  bool rval = false;
 
   taGuiDialog dlg;
   dlg.win_title = "Distance Matrix";
@@ -546,6 +562,86 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
     params.name_column_name = "";
   params.result_data_table->name = result_table_name;
   params.distance_metric = (taMath::DistMetric)combo_dist_metric->currentIndex();
+
+  if (drval != 0)
+    rval = true;
+
+  return rval;
+}
+
+bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
+  bool rval = false;
+
+  taGuiDialog dlg;
+  dlg.win_title = "Linear Regression";
+  dlg.width = 300;
+  dlg.height = 300;
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row("");
+  int space = 0;
+
+  row = "input_table";  // no spaces!
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String src_table_str = "Source Data Table: " + params.src_data_table->name;
+  src_table_str = "label=" + src_table_str + ";";
+  dlg.AddLabel("input_table_label", widget, row, src_table_str);
+
+  row = "X_var_data_column";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  String src_column_str = "Variable X: " + params.data_column_name;
+  src_column_str = "label=" + src_column_str + ";";
+  dlg.AddLabel("X_var_data_column_label", widget, row, src_column_str);
+
+  QComboBox* combo_Y_var_column = new QComboBox;
+  {
+    row = "Y_var_data_column";
+    dlg.AddSpace(space, vbox);
+    dlg.AddHBoxLayout(row, vbox);
+    dlg.AddLabel("Y_var_data_column_label", widget, row, "label= Variable Y: ;");
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) {
+      return false;
+    }
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) {
+      return false;
+    }
+    for (int idx = 0; idx < params.src_data_table->data.size; ++idx) {
+      String item = params.src_data_table->data[idx]->name;
+      if (item != params.data_column_name) {
+        combo_Y_var_column->addItem(item);
+      }
+    }
+    hbox->addWidget(combo_Y_var_column);
+    int idx_combo = combo_Y_var_column->findText("Name");
+    if (idx_combo >= 0) {
+      combo_Y_var_column->setCurrentIndex(idx_combo);
+    }
+  }
+
+  row = "separator_1";
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("separator_1_label", widget, row, "label=-------------------------------;");
+
+  row = "view";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("view_label", widget, row, "label=Render Line?;");
+  dlg.AddBoolCheckbox(&params.view, "view", widget, row,
+      "tooltip=If render_line is true, a column called regress_line' is created and the function is generated into it as data;");
+
+  bool modal = true;
+  int drval = dlg.PostDialog(modal);
+
+  params.name_column_name = combo_Y_var_column->itemText(combo_Y_var_column->currentIndex());
 
   if (drval != 0)
     rval = true;

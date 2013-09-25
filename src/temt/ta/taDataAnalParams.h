@@ -39,9 +39,9 @@ public:
   // these members used by most analyses
   DataTable*            src_data_table;
   DataTable*            result_data_table;
-  String                data_column_name;
-  String                name_column_name;
-  bool                  view; // does the user want the graph drawn after the analysis
+  String                data_column_name; // also for X var column in linear regression
+  String                name_column_name; // also for Y var column in linear regression
+  bool                  view; // does the user want the graph drawn after the analysis - also used for "render line" in linear regression
 
   // these members are used by some analyses
   taMath::DistMetric    distance_metric;

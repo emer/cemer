@@ -35,7 +35,8 @@ public:
     CLUSTER,
     PCA_2d,
     PCA_EIGEN,
-    DISTANCE_MATRIX
+    DISTANCE_MATRIX,
+    REGRESS_LINEAR
   };
 
   AnalysisType        analysis_type;
@@ -43,6 +44,7 @@ public:
 
 public:
   bool                Init(AnalysisType type, DataTable* src_table, const String& src_col_name, DataTable* result_table);
+  bool                RequiresResultsTable(AnalysisType type);  // call this before Init
   bool                Run();
 
   void Initialize() { };
@@ -54,6 +56,7 @@ protected:
   virtual bool        CollectParamsPCA_2d(taDataAnalParams& params);
   virtual bool        CollectParamsPCA_Eigen(taDataAnalParams& params);
   virtual bool        CollectParamsDistanceMatrix(taDataAnalParams& params);
+  virtual bool        CollectParamsLinearRegress(taDataAnalParams& params);
 
 private:
 };
