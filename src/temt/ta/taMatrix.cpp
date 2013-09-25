@@ -2040,7 +2040,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator+(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator+(t.toMatrix());
+    return operator+((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2111,7 +2111,7 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator-(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator-(t.toMatrix());
+    return operator-((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2213,7 +2213,7 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator*(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator*(t.toMatrix());
+    return operator*((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2286,7 +2286,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator/(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator/(t.toMatrix());
+    return operator/((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2350,7 +2350,7 @@ taMatrix* taMatrix::operator%(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator%(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator%(t.toMatrix());
+    return operator%((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     if(TestError(true, "%", "not supported for floating-point types"))
@@ -2414,7 +2414,7 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator^(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator^(t.toMatrix());
+    return operator^((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2486,7 +2486,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
 
 taMatrix* taMatrix::Max(const Variant& t) const {
   if(t.isMatrixType()) {
-    return Max(t.toMatrix());
+    return Max((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2603,7 +2603,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
 
 taMatrix* taMatrix::Min(const Variant& t) const {
   if(t.isMatrixType()) {
-    return Min(t.toMatrix());
+    return Min((const taMatrix&)*(t.toMatrix()));
   }
   if(GetDataValType() == VT_FLOAT) {
     float_Matrix* rval = new float_Matrix(this->geom);
@@ -2745,7 +2745,7 @@ void taMatrix::operator+=(const taMatrix& t) {
 
 void taMatrix::operator+=(const Variant& t) {
   if(t.isMatrixType()) {
-    operator+=(t.toMatrix());
+    operator+=((const taMatrix&)*(t.toMatrix()));
     return;
   }
   if(GetDataValType() == VT_FLOAT) {
@@ -2793,7 +2793,7 @@ void taMatrix::operator-=(const taMatrix& t) {
 
 void taMatrix::operator-=(const Variant& t) {
   if(t.isMatrixType()) {
-    operator-=(t.toMatrix());
+    operator-=((const taMatrix&)*(t.toMatrix()));
     return;
   }
   if(GetDataValType() == VT_FLOAT) {
@@ -2841,7 +2841,7 @@ void taMatrix::operator*=(const taMatrix& t) {
 
 void taMatrix::operator*=(const Variant& t) {
   if(t.isMatrixType()) {
-    operator*=(t.toMatrix());
+    operator*=((const taMatrix&)*(t.toMatrix()));
     return;
   }
   if(GetDataValType() == VT_FLOAT) {
@@ -2893,7 +2893,7 @@ void taMatrix::operator/=(const taMatrix& t) {
 
 void taMatrix::operator/=(const Variant& t) {
   if(t.isMatrixType()) {
-    operator/=(t.toMatrix());
+    operator/=((const taMatrix&)*(t.toMatrix()));
     return;
   }
   if(GetDataValType() == VT_FLOAT) {
@@ -2943,7 +2943,7 @@ void taMatrix::operator%=(const taMatrix& t) {
 
 void taMatrix::operator%=(const Variant& t) {
   if(t.isMatrixType()) {
-    operator%=(t.toMatrix());
+    operator%=((const taMatrix&)*(t.toMatrix()));
     return;
   }
   if(GetDataValType() == VT_FLOAT) {
@@ -2993,7 +2993,7 @@ taMatrix* taMatrix::operator<(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator<(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator<(t.toMatrix());
+    return operator<((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT) {
@@ -3046,7 +3046,7 @@ taMatrix* taMatrix::operator>(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator>(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator>(t.toMatrix());
+    return operator>((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT) {
@@ -3099,7 +3099,7 @@ taMatrix* taMatrix::operator<=(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator<=(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator<=(t.toMatrix());
+    return operator<=((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT) {
@@ -3152,7 +3152,7 @@ taMatrix* taMatrix::operator>=(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator>=(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator>=(t.toMatrix());
+    return operator>=((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT) {
@@ -3205,7 +3205,7 @@ taMatrix* taMatrix::operator==(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator==(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator==(t.toMatrix());
+    return operator==((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT) {
@@ -3258,7 +3258,7 @@ taMatrix* taMatrix::operator!=(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator!=(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator!=(t.toMatrix());
+    return operator!=((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT) {
@@ -3312,7 +3312,7 @@ taMatrix* taMatrix::operator&&(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator&&(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator&&(t.toMatrix());
+    return operator&&((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE) {
@@ -3367,7 +3367,7 @@ taMatrix* taMatrix::operator||(const taMatrix& t) const {
 
 taMatrix* taMatrix::operator||(const Variant& t) const {
   if(t.isMatrixType()) {
-    return operator||(t.toMatrix());
+    return operator||((const taMatrix&)*(t.toMatrix()));
   }
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE) {

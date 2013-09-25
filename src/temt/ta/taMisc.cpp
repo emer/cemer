@@ -238,8 +238,6 @@ taMisc::ViewerOptions   taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc:
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
-taMisc::EditStyle       taMisc::select_edit_style = taMisc::ES_ACTIVE_CONTROL;
-taMisc::EditStyle       taMisc::std_edit_style = taMisc::ES_ALL_CONTROLS;
 
 int     taMisc::antialiasing_level = 4;
 float   taMisc::text_complexity = .2f;

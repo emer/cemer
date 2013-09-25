@@ -474,7 +474,22 @@ taBase* taBase::GetThisOrOwner(TypeDef* td) {
   return GetOwner(td);
 }
 
-taBase* taBase::GetParent() const       {
+taBase* taBase::GetMemberOwner(bool highest) const {
+  taBase* rval = GetOwner();
+  if(!rval) return NULL;
+  char* st_addr = (char*)rval;
+  char* e_addr = st_addr + rval->GetTypeDef()->size;
+  char* my_addr = (char*)this;
+  if(my_addr < st_addr || my_addr >= e_addr) 
+    return NULL;                // I don't live within my owner
+  if(highest) {
+    taBase* high = rval->GetMemberOwner(true);
+    if(high) return high;
+  }
+  return rval;
+}
+
+taBase* taBase::GetParent() const {
   taBase* rval = GetOwner();
   while (rval && (rval->InheritsFrom(TA_taList_impl)))
     rval = rval->GetOwner();
@@ -1861,12 +1876,11 @@ void taBase::UpdateAfterEdit() {
   UpdateAfterEdit_impl();
   if(isDestroying()) return;    // could have decided to destroy during UAE
   SigEmitUpdated();
-  /*TEST */
   taBase* _owner = GetOwner();
   if (_owner ) {
     bool handled = false;
     _owner->ChildUpdateAfterEdit(this, handled);
-  } /* */
+  }
 }
 
 void taBase::UpdateAfterEdit_NoGui() {
@@ -1876,11 +1890,13 @@ void taBase::UpdateAfterEdit_NoGui() {
 
 void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   if (handled) return; // note: really shouldn't have been handled already if we are called...
-  // call notify if it is an owned member object (but not list/group items)
-  if (((char*)child >= ((char*)this)) && ((char*)child < ((char*)this + GetTypeDef()->size))) {
+  // only notify and UAE if it is an owned member object (but not list/group items)
+  taBase* mo = GetMemberOwner(false); // do not go to highest level -- each level
+  // kicks it up to the next level
+  if(mo) {
     handled = true;
-    SigEmit(SLS_CHILD_ITEM_UPDATED);
-    return;
+    SigEmit(SLS_CHILD_ITEM_UPDATED); // this is trapped by some..
+    mo->UpdateAfterEdit();          // if a child has been updated, we need to get parent notified.. -- if this has aparent, it will kick up to it too..
   }
 }
 

@@ -773,9 +773,11 @@ public:
   virtual taBase*       SetOwner(taBase*)               { return(NULL); } // #IGNORE
   virtual taBase*       GetOwner() const        { return(NULL); } // #CAT_ObjectMgmt
   virtual taBase*       GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt
-  virtual taBase*       GetThisOrOwner(TypeDef* td); // #CAT_ObjectMgmt get this obj or first owner that is of type td
+  virtual taBase*       GetThisOrOwner(TypeDef* td); // #IGNORE get this obj or first owner that is of type td
+  virtual taBase*       GetMemberOwner(bool highest = false) const;
+  // #CAT_ObjectMgmt get the object that owns this object as a member -- if this object is not a member of its Owner (or has no owner) then it returns NULL -- if highest then it proceeds recursively up to the highest member owner and returns that -- i.e., if this is a member of a member (which is an object) of larger object, this will return the largest such object that contains this as a member at some level
   virtual taBase*       GetParent() const;
-    // #CAT_ObjectMgmt typically the first non-list/group owner above this one
+  // #CAT_ObjectMgmt typically the first non-list/group owner above this one
   bool                  IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
   bool                  IsChildOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
 

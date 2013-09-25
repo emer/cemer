@@ -28,7 +28,7 @@ iPanelOfSelectEdit::iPanelOfSelectEdit(taiSigLink* dl_)
   SelectEdit* se_ = sele();
   se = NULL;
   if (se_) {
-    switch (taMisc::select_edit_style) {
+    /* switch (taMisc::select_edit_style) {
     case taMisc::ES_ALL_CONTROLS:
       se = new taiEditorOfSelectEditFull(se_, se_->GetTypeDef());
       break;
@@ -36,6 +36,8 @@ iPanelOfSelectEdit::iPanelOfSelectEdit(taiSigLink* dl_)
       se = new taiEditorOfSelectEditFast(se_, se_->GetTypeDef());
       break;
     }
+    */
+    se = new taiEditorOfSelectEditFull(se_, se_->GetTypeDef());
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bool ok;
       iColor bgcol = se_->GetEditColorInherit(ok);

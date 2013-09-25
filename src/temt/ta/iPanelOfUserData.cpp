@@ -28,14 +28,7 @@ iPanelOfUserData::iPanelOfUserData(taiSigLink* dl_)
   UserDataItem_List* se_ = udil();
   se = NULL;
   if (se_) {
-    switch (taMisc::select_edit_style) { // NOTE: the two below look identical to me...
-    case taMisc::ES_ALL_CONTROLS:
-      se = new taiEditorOfUserData(se_, se_->GetTypeDef());
-      break;
-    case taMisc::ES_ACTIVE_CONTROL:
-      se = new taiEditorOfUserData(se_, se_->GetTypeDef());
-      break;
-    }
+    se = new taiEditorOfUserData(se_, se_->GetTypeDef());
     if (taMisc::color_hints & taMisc::CH_EDITS) {
       bool ok;
       iColor bgcol = se_->GetEditColorInherit(ok);

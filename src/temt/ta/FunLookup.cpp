@@ -108,7 +108,7 @@ void FunLookup::UpdateAfterEdit_impl() {
 
 void FunLookup::AllocForRange() {
   // range is inclusive -- add some extra..
-  UpdateAfterEdit();
+  UpdateAfterEdit_impl();
   int sz = (int) (x_range.range / res) + 2;
   Alloc(sz);
   size = sz;

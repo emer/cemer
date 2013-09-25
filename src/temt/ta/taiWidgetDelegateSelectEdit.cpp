@@ -115,10 +115,6 @@ void taiWidgetDelegateSelectEdit::GetValue() const {
     }
   }
   base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
-  if(base->HasOption("INLINE")) { // inline classes should update their parents too
-    if(base->GetOwner() != NULL)
-      base->GetOwner()->UpdateAfterEdit();
-  }
 
   // update text of the cell, otherwise it usually ends up stale!
   edh->GetImage_Item(m_dat_row);

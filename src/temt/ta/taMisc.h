@@ -183,11 +183,6 @@ public:
 #endif
   };
 
-  enum EditStyle { // style of editor
-    ES_ALL_CONTROLS,   // #LABEL_All_Controls all the edit controls are displayed at the same time, which is slower but can present the data in a somewhat more readable fashion -- this is the original default for all edit dialogs
-    ES_ACTIVE_CONTROL, // #LABEL_Active_Control only display the currently-active edit control, with the rest of the information displayed as formatted text values -- this is much faster and is preferred for the select edit (control panel) displays, which otherwise can really slow down the system
-  };
-
   enum HelpDetail { // level of detail for generated help information
     HD_DEFAULT,         // standard level of help detail
     HD_DETAILS,         // full programming details -- offsets, comments, etc
@@ -271,8 +266,6 @@ public:
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors;   // #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
 #endif
-  static EditStyle      std_edit_style; // #SAVE #SHOW #READ_ONLY #CAT_GUI #EXPERT style to use for standard edit dialogs (i.e., non select-edit dialogs)
-  static EditStyle      select_edit_style; // #SAVE #CAT_GUI style to use for select edit dialogs (which are typically used for control panels, etc)
 
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering

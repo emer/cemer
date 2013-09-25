@@ -295,8 +295,8 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 
 void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
-  // check for embedded member
-  inherited_taBase::ChildUpdateAfterEdit(child, handled);
+  // do not do parent because that leads to too much propagation
+  //  inherited_taBase::ChildUpdateAfterEdit(child, handled);
   // otherwise, we assume it is an owned list member
   if (!handled) {
     SigEmit(SLS_LIST_ITEM_UPDATE, child);

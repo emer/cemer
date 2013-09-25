@@ -33,16 +33,28 @@ void VEArm::Initialize() {
   up_axis = Y;
   musc_geo = NEW_GEO;
   musc_type = LINEAR;
+  hill_mu = 0.06f;
+  ctrl_type = PID;
   // note: torso ref is self initializing
   La = 0.3f;
   Lf = 0.33f;
   elbow_gap = 0.03f; // space left between bodies so joint can rotate
   wrist_gap = 0.03f;
-  
-  gain = 20.0f;
+
+  stim_gain = 200.0f;
+  max_err = 0.2f;
+  ev_gain = 2.0f;
+  p_gain = 4.0f;
+  i_gain = 0.01f;
+  d_gain = 3.0f;
+  pid_dt = .1f;
+  pid_dra_dt = 1.0f;
+
   damping = 0.1f;
   damping_thr = 0.05f;
   vel_norm_gain = 15.0f;
+  norm_deriv_dt = 0.1f;
+  norm_err_dra_dt = 0.3f;
 
   float CT_f[] = {-1.0f, 0,    0,
                       0, 0,    1.0f,
@@ -279,15 +291,35 @@ bool VEArm::UpdateIPs() {
   }
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
-  //......... updating the normalized lengths ..........
+  GetNormVals();
+
+  return true;
+}
+
+bool VEArm::GetNormVals() {
+  norm_lens.SetGeom(1,n_musc);
+  norm_targ_lens.SetGeom(1,n_musc);
+  norm_vels.SetGeom(1,n_musc);
+  norm_err.SetGeom(1,n_musc);
+  norm_err_deriv.SetGeom(1,n_musc);
+  norm_err_dra.SetGeom(1,n_musc);
+  norm_err_prv.SetGeom(1,n_musc);
+
   Lengths(norm_lens, true); // true = normalize
   Speeds(norm_vels, true); // true = normalize
-  musc_gains.SetGeom(1,n_musc);
   avg_vel_mag = 0.0f;
   for(int i=0; i<norm_vels.size; i++) {
     avg_vel_mag += fabsf(norm_vels.FastEl1d(i) - 0.5f); // offset from .5
   }
   avg_vel_mag /= (float)norm_vels.size;
+
+  norm_err = norm_targ_lens - norm_lens;
+  norm_err_deriv = norm_err - norm_err_prv;
+  norm_err_deriv /= norm_deriv_dt;
+  const float dtc = (1.0f - norm_err_dra_dt);
+  norm_err_dra *= dtc;
+  norm_err_dra += (norm_err_deriv * norm_err_dra_dt);
+  norm_err_prv = norm_err;
   return true;
 }
 
@@ -814,9 +846,6 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   InitMuscles();  // Initializes insertion point matrices and the VEMuscle_List
  
-  norm_lens.SetGeom(1,n_musc); // setting the size of the normalized lengths float_Matrix
-  norm_targ_lens.SetGeom(1,n_musc);
-  norm_vels.SetGeom(1,n_musc);
   musc_gains.SetGeom(1,n_musc); 
   SetAllMuscGains(1.0f);
 
@@ -1751,8 +1780,8 @@ bool VEArm::Speeds(float_Matrix& vel, bool normalize) {
   return true;
 }
 
-bool VEArm::ApplyStim(const float_Matrix& stims, float_Matrix &fs) {
-  if(TestWarning(stims.count() != n_musc, "","The stimulus matrix doesn't match the number of muscles \n"))
+bool VEArm::ApplyStim(const float_Matrix& stm, float_Matrix &fs, bool flip_sign) {
+  if(TestWarning(stm.count() != n_musc, "","The stimulus matrix doesn't match the number of muscles \n"))
     return false;
   fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
 
@@ -1764,7 +1793,12 @@ bool VEArm::ApplyStim(const float_Matrix& stims, float_Matrix &fs) {
 
   taVector3f daforce(0.0f, 0.0f, 0.0f);
   for(int i=0; i<n_musc; i++) {
-    daforce = muscles[i]->Contract(stims.FastElAsFloat(i));
+    if(flip_sign) {
+      daforce = muscles[i]->Contract(-stim_gain * stm.FastElAsFloat(i));
+    }
+    else {
+      daforce = muscles[i]->Contract(stim_gain * stm.FastElAsFloat(i));
+    }
     fs.Set(daforce.x, 0, i);
     fs.Set(daforce.y, 1, i);
     fs.Set(daforce.z, 2, i);
@@ -1820,58 +1854,97 @@ float VEArm::IncrMuscGain(int musc_no, float gn_inc) {
   return 0.0f;
 }
 
-bool VEArm::VEP_Reach(const float_Matrix& trg_lens, float gain, float_Matrix &fs) {
+float VEArm::DecayMuscGain(int musc_no, float decay) {
+  musc_gains.SetGeom(1,n_musc); // should be but justin
+  if(musc_no < n_musc) {
+    float& mg = musc_gains.FastEl_Flat(musc_no);
+    mg += decay * (1.0f - mg);
+    return mg;
+  }
+  return 0.0f;
+}
+
+bool VEArm::ComputeStim() {
 // Do one step of reaching using the velocity-controlled Equilibrium Point algorithm. 
 // This will calculate the activation (multiplying both errors by the gain), calculate 
 // (and store) the resulting fs, and apply them.
 // It does not take a step of the VEWorld, and does not udpate the muscle insertion points.
 
-  if(TestWarning(trg_lens.count() != n_musc, "","The targets matrix doesn't match the number of muscles \n"))
+  if(TestWarning(targ_lens.count() != n_musc, "","The targets matrix doesn't match the number of muscles \n"))
     return false;
 
-  fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
-
-  float_Matrix len_error(1,n_musc), vel_error(1,n_musc);
-
+  // SetGeom is fast if already in that geom
+  lens.SetGeom(1,n_musc);
+  vels.SetGeom(1, n_musc);
   if(musc_type == LINEAR) {
-    float_Matrix lens(1,n_musc), vels(1,n_musc); 
-    Lengths(lens, false);  // storing the lengths and speeds in lens and vels respectively
+    Lengths(lens, false);
     Speeds(vels, false);
-    len_error = lens - trg_lens;
-    if(musc_gains.size == n_musc)
-      len_error *= musc_gains;  // muscle specific
-    len_error *= gain;
-    vel_error = len_error + vels;
-    // multiply by gains again -- gain^2 at veolocity level
-    if(musc_gains.size == n_musc)
-      vel_error *= musc_gains;  // muscle specific
-    vel_error *= gain;
-    ApplyStim(vel_error, fs);
   }
   else { // musc_type == HILL
-    float_Matrix old_len(1,n_musc), old_vel(1,n_musc);
-
     for(int i=0; i<n_musc; i++) {
-      old_len.Set(muscles[i]->Old_Length(),i); 
-      old_vel.Set(muscles[i]->Old_Speed(),i); 
+      lens.Set(muscles[i]->Old_Length(),i); 
+      vels.Set(muscles[i]->Old_Speed(),i); 
     }
-    len_error = old_len - trg_lens;
-    len_error *= gain;
-    if(musc_gains.size == n_musc)
-      len_error *= musc_gains;  // muscle specific
-    vel_error = len_error + old_vel;
-    // multiply by gains again -- gain^2 at veolocity level
-    if(musc_gains.size == n_musc)
-      vel_error *= musc_gains;  // muscle specific
-    vel_error *= gain;
-    old_vel *= 0.06; //muscles[0]->mu;  // old_vel = mu*old_vel
-    float_Matrix act(1,n_musc);
-    act = vel_error + old_vel;
-    ApplyStim(act, fs);
-    //String velst;
-    //act.Print(velst);
-    //taMisc::Info("applied stim: ", velst, "\n");
   }
+
+  err.SetGeom(1,n_musc);
+  err = targ_lens - lens;       // most need this anyway
+  err_int.SetGeom(1,n_musc);
+  err_deriv.SetGeom(1,n_musc);
+  err_dra.SetGeom(1,n_musc);
+  err_prv.SetGeom(1,n_musc);
+  stims.SetGeom(1,n_musc);
+  forces.SetGeom(2, 3, n_musc);
+
+  bool rval = true;
+  switch(ctrl_type) {
+  case PID:
+    rval = ComputeStim_PID();
+    break;
+  case ERR_VEL:
+    rval = ComputeStim_EV();
+    break;
+  }
+  return rval;
+}
+
+bool VEArm::ComputeStim_PID() {
+  err_int += err * pid_dt;
+  err_deriv = err - err_prv;
+  err_deriv /= pid_dt;
+  const float dtc = (1.0f - pid_dra_dt);
+  err_dra *= dtc;
+  err_dra += err_deriv * pid_dra_dt;
+  if(max_err > 0.0f) {
+    for(int i=0; i<n_musc; i++) {
+      float er = err.FastEl1d(i);
+      if(er > max_err) er = max_err;
+      else if(er < -max_err) er = -max_err;
+      stims.FastEl1d(i) = er * p_gain;
+    }
+  }
+  else {
+    stims = err * p_gain;
+  }
+  stims += err_int * i_gain;
+  stims += err_dra * d_gain;
+  err_prv = err;
+  if(musc_gains.size == n_musc)
+    stims *= musc_gains;  // muscle specific gain on final stimulation
+  ApplyStim(stims, forces);
+  return true;
+}
+
+bool VEArm::ComputeStim_EV() {
+  err *= ev_gain;
+  stims = err - vels;
+  stims *= ev_gain;
+  if(musc_type == HILL) {
+    stims += vels * hill_mu;
+  }
+  if(musc_gains.size == n_musc)
+    stims *= musc_gains;  // muscle specific gain on final stimulation
+  ApplyStim(stims, forces, true); // flip sign
   return true;
 }
 
@@ -2116,7 +2189,7 @@ bool VEArm::SetTargetLengthsFmTable(DataTable* len_table) {
 }
 
 void VEArm::Step_pre() {
-  VEP_Reach(targ_lens, gain, forces);
+  ComputeStim();
   inherited::Step_pre();
 }
 
@@ -2126,7 +2199,40 @@ void VEArm::CurFromODE(bool updt_disp) {
   CurToODE();
 }
 
-void VEArm::Init() {
+void VEArm::InitDynamicState() {
   SetAllMuscGains(1.0f);
+
+  norm_lens.SetGeom(1,n_musc);
+  norm_targ_lens.SetGeom(1,n_musc);
+  norm_vels.SetGeom(1,n_musc);
+  norm_err.SetGeom(1,n_musc);
+  norm_err_deriv.SetGeom(1,n_musc);
+  norm_err_dra.SetGeom(1,n_musc);
+  norm_err_prv.SetGeom(1,n_musc);
+
+  err.SetGeom(1,n_musc);
+  err_int.SetGeom(1,n_musc);
+  err_deriv.SetGeom(1,n_musc);
+  err_dra.SetGeom(1,n_musc);
+  err_prv.SetGeom(1,n_musc);
+  stims.SetGeom(1,n_musc);
+  forces.SetGeom(2, 3, n_musc);
+
+  err.InitVals(0.0f);
+  err_int.InitVals(0.0f);
+  err_deriv.InitVals(0.0f);
+  err_dra.InitVals(0.0f);
+  err_prv.InitVals(0.0f);
+  stims.InitVals(0.0f);
+  forces.InitVals(0.0f);
+
+  norm_err.InitVals(0.0f);
+  norm_err_deriv.InitVals(0.0f);
+  norm_err_dra.InitVals(0.0f);
+  norm_err_prv.InitVals(0.0f);
+}
+
+void VEArm::Init() {
+  InitDynamicState();
   inherited::Init();
 }
