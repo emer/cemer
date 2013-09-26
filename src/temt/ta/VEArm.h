@@ -80,15 +80,14 @@ public:
   float         ev_gain;        // #AKA_gain #CONDSHOW_ON_ctrl_type:ERR_VEL gain factor for ERR_VEL control
   float         p_gain;         // #CONDSHOW_ON_ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
   float         i_gain;         // #CONDSHOW_ON_ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
-  float         pid_i_thr;      // #CONDSHOW_ON_ctrl_type:PID threshold on value of error for updating the integral term in PID -- the integral is best for building up strength of small persistent errors, so this prevents it from being swamped by large errors, and allows a larger effective i_gain value -- set to 0 or lower to disable
   float         d_gain;         // #CONDSHOW_ON_ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
-  float         pid_dt;         // #CONDSHOW_ON_ctrl_type:PID effective time constant for PID integral and derivative terms
   float         pid_dra_dt;     // #CONDSHOW_ON_ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
   float         damping;        // angular damping factor
   float         damping_thr;    // angular damping threshold 
   float         vel_norm_gain;  // speed normalization gain factor for a sigmoidal compression function
-  float         norm_deriv_dt;  // effective time constant for computing norm_err_deriv -- divides by this number -- renormalizes range of derivatives
   float         norm_err_dra_dt; // time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
+  float         io_err_thr;      // threshold on norm_err_dra values for driving an Inferior Olivary error signal for training cerebellum
+  float         hand_vra_dt;     // hand velocity running average time constant
 
   float 	La;     // #READ_ONLY #SHOW the length of the humerus
   float 	Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
@@ -103,16 +102,47 @@ public:
   float_Matrix  ct;       // #EXPERT An autoinverse rotation matrix which transforms coordinates from one system (Y axis upwards) to another (Z axis upwards).
   taVector3f    should_loc; // #READ_ONLY #SHOW the location of the shoulder in World coordinates
   int           n_musc;  // #READ_ONLY the total number of muscles, as implied by the IP matrices
-  
+
+  taVector3f    targ_loc_abs;  // #READ_ONLY #SHOW #EXPERT current target coordinates, in absolute world coordinates
+  taVector3f    hand_loc_abs;  // #READ_ONLY #SHOW #EXPERT current hand coordinates, in absolute world coordinates
+  taVector3f    targ_loc_rel;  // #READ_ONLY #SHOW #EXPERT current target coordinates, in shoulder-relative coordinates
+  float         targ_rel_d;    // #READ_ONLY #SHOW #EXPERT distance to target (mag of targ_loc_rel)
+  taVector3f    hand_loc_rel;  // #READ_ONLY #SHOW #EXPERT current hand coordinates, in shoulder-relative coordinates
+  taVector3f    hand_loc_prv;  // #READ_ONLY #SHOW #EXPERT previous hand coordinates
+  taVector3f    hand_vel;       // #READ_ONLY #SHOW #EXPERT hand velocity
+  float         hand_vel_mag;   // #READ_ONLY #SHOW #EXPERT hand velocity
+  float         hand_vra;       // #READ_ONLY #SHOW #EXPERT temporal running average of hand_vel_mag using hand_vra_dt -- good measure of whether the reach has stopped
+  taVector3f    loc_err;     // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location
+  float         loc_err_mag;  // #READ_ONLY #SHOW #EXPERT total distance away from target location
   float_Matrix  targ_lens;  // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
+  float         targ_lens_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
+  float_Matrix  R;          // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
+  float         alpha;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         beta;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         gamma;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         delta;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+
+  float         arm_time;   // #GUI_READ_ONLY #SHOW #NO_SAVE time counter for arm integration
   float_Matrix  lens;       // #EXPERT #NO_SAVE current lengths, computed by ComputeStim
+  float         lens_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of lens
   float_Matrix  vels;       // #EXPERT #NO_SAVE current velocities, computed by ComputeStim
+  float         vels_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of vels
   float_Matrix  err;        // #EXPERT #NO_SAVE current errors (targ_lens - lens), computed by ComputeStim
+  float         err_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err computed
   float_Matrix  err_int;    // #EXPERT #NO_SAVE integrated error over time (I in PID)
+  float         err_int_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err_int computed
   float_Matrix  err_deriv;  // #EXPERT #NO_SAVE derivative of error over time (D in PID)
   float_Matrix  err_dra;    // #EXPERT #NO_SAVE running-average of err_deriv -- uses pid_dra_dt parameter -- this is what is actually used in PID controller, so set pid_dra_dt to 1 if you want literal std D factor
+  float         err_dra_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of running-average of err_deriv -- uses pid_dra_dt parameter
   float_Matrix  err_prv;    // #EXPERT #NO_SAVE previous error values in PID
+  float_Matrix  stims_p;    // #EXPERT #NO_SAVE PID p-driven stimulation values, computed by ComputeStim
+  float         stims_p_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_p computed
+  float_Matrix  stims_i;    // #EXPERT #NO_SAVE PID i-driven stimulation values, computed by ComputeStim
+  float         stims_i_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_i computed
+  float_Matrix  stims_d;    // #EXPERT #NO_SAVE PID d-driven stimulation values, computed by ComputeStim
+  float         stims_d_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_d computed
   float_Matrix  stims;      // #EXPERT #NO_SAVE stimulation values, computed by ComputeStim
+  float         stims_mag;  // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of stims computed
   float_Matrix  forces;     // #EXPERT #NO_SAVE forces, computed by ComputeStim
 
   float_Matrix  max_lens;   // #EXPERT maximum muscle lengths, initialized by ConfigArm, used to normalize lengths
@@ -121,17 +151,20 @@ public:
   float_Matrix  spans;      // #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
 
   // overall state variables for the arm
-  float_Matrix  musc_gains;     // #READ_ONLY #SHOW muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
-  float_Matrix  norm_lens;      // #READ_ONLY #SHOW normalized current muscle lengths
-  float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW normalized target muscle lengths
-  float_Matrix  norm_vels;      // #READ_ONLY #SHOW normalized muscle velocities
-  float_Matrix  norm_err;       // #READ_ONLY #SHOW normalized muscle errors
-  float_Matrix  norm_err_deriv; // #READ_ONLY #SHOW normalized muscle error derivatives
-  float_Matrix  norm_err_dra;   // #READ_ONLY #SHOW running average of norm_err_deriv using norm_err_dra_dt time constant -- these values can be useful for computing cerebellar control
-  float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW previous normalized muscle errors
-  float         avg_vel_mag;    // #READ_ONLY #SHOW average of normalized velocity magnitude (absolute value) -- useful to determine how much the arm is currently moving overall
-
+  float_Matrix  musc_gains;     // #READ_ONLY #SHOW #EXPERT muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
+  float         musc_gains_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of musc_gains
+  float_Matrix  norm_lens;      // #READ_ONLY #SHOW #EXPERT normalized current muscle lengths
+  float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW #EXPERT normalized target muscle lengths
+  float_Matrix  norm_vels;      // #READ_ONLY #SHOW #EXPERT normalized muscle velocities
+  float_Matrix  norm_err;       // #READ_ONLY #SHOW #EXPERT normalized muscle errors
+  float_Matrix  norm_err_deriv; // #READ_ONLY #SHOW #EXPERT normalized muscle error derivatives
+  float_Matrix  norm_err_dra;   // #READ_ONLY #SHOW #EXPERT running average of norm_err_deriv using norm_err_dra_dt time constant -- these values can be useful for computing cerebellar control
+  float_Matrix  io_err;         // #READ_ONLY #SHOW #EXPERT Inferior Olivary like error signal -- 1.0 if norm_err_dra[i] > io_err_thr else 0.0
+  float         io_err_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors 
+  float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
+
+
 
   virtual bool  CheckArm(bool quiet = false);
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
@@ -150,17 +183,24 @@ public:
   virtual void  InitDynamicState();
   // initialize all the dynamic state variables used for computing muscle stimulation over time (i.e., the integ and deriv values in the PID controller), including resetting all the muscle gains back to 1.0
 
+  virtual void SetTarget_impl(float trg_x, float trg_y, float trg_z,
+                              bool add_gamma_noise = false);
+  // #IGNORE impl sets up target info based on target coords -- computes R matrix and alpha.. angles in addition to all the targ_loc* values -- optionally add noise to gamma parameter
+  virtual void ComputeRMatrix(float alpha, float beta, float gamma, float delta);
+  // #IGNORE compute the magic R rotation matrix from angles (R is stored on Arm object)
+
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
   // #BUTTON place the hand at the specified target. This method can crash if the arm hasn't been set to its initial position. Returns true if a move is made (even if the target is not reachable).
 
   virtual bool TargetLengths(float trg_x, float trg_y, float trg_z);
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
-  virtual bool TargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
-  // #EXPERT Obtain the muscle lengths which position the hand at the given coordinates, and place them in the given matrix, which should have a length equal to the number of muscles. Returns false if failed.
   virtual bool NoisyTargetLengths(float trg_x, float trg_y, float trg_z);
   // Like TargetLengths, but noise is applied to the arm rotation (gamma angle). Useful to generate sensible muscle lengths for training purposes.
-  virtual bool NoisyTargetLengths_impl(float_Matrix &trgLen, float trg_x, float trg_y, float trg_z);
-  // #EXPERT Implements the main functionality of NoisyTargetLengths
+  virtual bool TargetLengths_impl(float_Matrix& tlens);
+  // #IGNORE Obtain the muscle lengths which position the hand at the coordinates set by SetTarget_impl, and place them in the given matrix, which will have a length equal to the number of muscles. Returns false if failed.
+  virtual bool AngToLengths(float_Matrix &tlens, float alpha, float beta, float gamma, float delta);
+  // #IGNORE Given the four angles describing arm position, calculate the muscle lengths at that position
+
 
   virtual void GetRandomTarget(float& trg_x, float& trg_y, float& trg_z,
                                float x_ang_min = 0.0f, float x_ang_max = 1.5f,
@@ -199,22 +239,28 @@ public:
   virtual bool ComputeStim_EV(); // ERR_VEL version of compute stim
   virtual bool ComputeStim_PID(); // PID version of compute stim
 
-  virtual bool AngToLengths(float_Matrix &Len, float alpha, float beta, float gamma, float delta);
-  // Given the four angles describing arm position, calculate the muscle lengths at that position
-
-  virtual bool NormLengthsToTable(DataTable* len_table);
+  virtual bool NormLengthsToTable(DataTable* table);
   // Write the normalized muscle lengths into a datatable, in column named "lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormTargLengthsToTable(DataTable* len_table);
+  virtual bool NormTargLengthsToTable(DataTable* table);
   // Write the normalized target muscle lengths into a datatable, in column named "targ_lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormSpeedsToTable(DataTable* len_table);
+  virtual bool NormSpeedsToTable(DataTable* table);
   // Write the normalized muscle contraction speeds into a datatable, in column named "speeds", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormHandCoordsToTable(DataTable* coords_table);
+  virtual bool NormHandCoordsToTable(DataTable* table);
   // Write the normalized XYZ shoulder-centered coordinates of the hand into a datatable, in a column named "hand_coords", formated in a 4 dimensional 1x1 by 1x3 geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x3 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool ArmStateToTable(DataTable* len_table);
+  virtual bool NormErrDraToTable(DataTable* table);
+  // Write the norm_err_dra (normalized error derivative running average) in column named "norm_err_dra", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
+  virtual bool IOErrToTable(DataTable* table);
+  // Write the io_err (inferior olive error values) in column named "io_err", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
+  virtual bool ArmStateToTable(DataTable* table);
   // Write normalized lengths, speeds, and target lengths to a datatable -- calls above functions -- all are formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
 
-  virtual bool SetTargetLengthsFmTable(DataTable* len_table);
+  virtual bool SetTargetLengthsFmTable(DataTable* table);
   // Update the unnormalized target lengths (targ_lens) using normalized values from a DataTable. The received DataTable must contain a float column named "lengths" with 4 dimensional cell geometry n x 1 by 1 x n_musc. n_musc is the number of muscles, and n is an integer equal or greater than 1.
+
+  virtual void FormatLogData(DataTable& dt);
+  // format a data table to contain a log of data about the arm
+  virtual void LogArmData(DataTable& dt);
+  // log current state information to given data table (should be formatted by FormatLogData)
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc

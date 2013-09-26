@@ -27,17 +27,17 @@
 eTypeDef_Of(CerebPfPcConSpec);
 
 class E_API CerebPfPcConSpec : public LeabraConSpec {
-  // The parallel-fiber to Purkinje cell connection spec -- special learning rule
+  // The parallel-fiber to Purkinje cell connection spec -- special learning rule driven by IO error values clamped onto the Purkinje cell -- if targ value is 0, then no error (weights slowly increase) else an error and LTD occurs
 INHERITED(LeabraConSpec)
 public:
-  float         pos_lrate;      // positive learning rate value -- when training signal is positive (no error) then weights increase at this rate * cur_lrate (i.e., this is relative to the basic learning rate -- typically smaller)
+  float         nerr_lrate;      // no-error learning rate value -- weights increase at this rate * cur_lrate (i.e., this is relative to the basic learning rate -- typically smaller)
 
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_PfPc(float& dwt, const float gran_act,
                                  const float purk_minus, const float purk_plus)
-  { if(purk_plus == 0.0f) dwt += -cur_lrate * gran_act * purk_minus;
-    else dwt += cur_lrate * pos_lrate * gran_act;  }
-  // #IGNORE only learn for zero case
+  { if(purk_plus != 0.0f) dwt += -cur_lrate * purk_plus * gran_act * purk_minus;
+    else dwt += cur_lrate * nerr_lrate * gran_act;  }
+  // #IGNORE
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) {
