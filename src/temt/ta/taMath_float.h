@@ -604,8 +604,6 @@ public:
   static bool mat_frame_convolve(float_Matrix* out_mat, const float_Matrix* in_mat,
                                  const float_Matrix* kernel);
   // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
-  static bool mat_frame_convolve_2(float_Matrix* out_mat, const float_Matrix* in_mat,
-                                 const float_Matrix* kernel);
 
   /////////////////////  Statistics
 

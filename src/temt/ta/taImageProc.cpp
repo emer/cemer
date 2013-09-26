@@ -1045,39 +1045,60 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   return true;
 }
 
-// jar - 9/5/2013 a work in progress -
-bool taImageProc::Blur(float_Matrix& img, int window_size, bool useOldConvolve) {
+// jar - 9/25/2013
+// todo: handle rgb
+// todo: other kernels weightings - not just equally weighted
+// todo: other kernel shapes - e.g. circular
+bool taImageProc::Blur(float_Matrix& img, int kernel_size) {
   bool rval = false;
 
   if (img.dims() > 2) {
     taMisc::Error("taImageProc::Blur", "image must be greyscale");
     return false;
   }
-  if (window_size < 3) {
+  if (kernel_size < 3) {
     taMisc::Error("taImageProc::Blur", "minimum window size is 3");
     return false;
   }
 
-  // create the kernel - equal weighting throughout
-  float_Matrix kern = float_Matrix(2, window_size, window_size);
-  taVector2i kern_size(kern.dim(0), kern.dim(1));
-  for(int yi=0; yi<kern_size.y; yi++) {
-    for(int xi=0; xi<kern_size.x; xi++) {
-      kern.FastEl2d(xi, yi) = 1;
+  // create the kernel - always square - equal weighting throughout
+  float_Matrix kernel = float_Matrix(2, kernel_size, kernel_size);
+  for(int yi=0; yi<kernel_size; yi++) {
+    for(int xi=0; xi<kernel_size; xi++) {
+      kernel.FastEl2d(xi, yi) = 1;
     }
   }
-  rval = taMath_float::vec_norm_sum(&kern, 1.0);
+  rval = taMath_float::vec_norm_sum(&kernel, 1.0);
 
-
-  // create matrix for result of convolution and convolve
+  // create matrix for result of the convolution
   float_Matrix* out_matrix;
   taVector2i img_size(img.dim(0), img.dim(1));
   out_matrix = new float_Matrix(2, img_size.x, img_size.y);
 
-  if (useOldConvolve)
-    rval = taMath_float::mat_frame_convolve(out_matrix, &img, &kern);
-  else
-    rval = taMath_float::mat_frame_convolve_2(out_matrix, &img, &kern);
+  int offset = (kernel_size-1)/2;
+
+  for(int i=0; i<img.Frames(); i++) {
+    for(int j=0; j<img.FrameSize(); j++) {
+      float sum = 0.0;
+      float dnorm = 0.0;
+      for(int m=0; m<kernel_size; m++) {
+        for(int n=0; n<kernel_size; n++) {
+          int iIdx = i+n-offset;
+          int jIdx = j+m-offset;
+          if (iIdx < 0 || iIdx >= img.Frames() || jIdx < 0 || jIdx >= img.FrameSize()) {
+            dnorm += kernel.FastEl2d(n,m);
+          }
+          else {
+            sum += kernel.FastEl2d(n,m)*img.FastEl2d(iIdx, jIdx);
+          }
+        }
+      }
+      if(dnorm > 0.0 && dnorm < 1.0) { // renorm
+        sum /= (1.0 - dnorm);
+      }
+      out_matrix->FastEl2d(i,j) = sum;
+    }
+  }
 
   img = out_matrix;
   return rval;
