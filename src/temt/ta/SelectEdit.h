@@ -48,6 +48,7 @@ public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
   bool                  auto_edit; // automatically bring up edit dialog upon loading
+  bool                  running_updt; // update the select edit while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
   EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the edit
   EditMthItem_Group     mths; // #TREE_EXPERT the mthods of the edit

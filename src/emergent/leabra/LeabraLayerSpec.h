@@ -49,13 +49,12 @@ public:
   float		kwta_pt;	// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0.2;0.5 [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] 
   float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- typically between 1-2
   float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput
-  float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no inhibition is computed
-  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedback inhibition -- computed from average activation
-  float         fb0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0 feedback zero point in terms of average activation -- below this level, no inhibition is computed
-  float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
-  float         fbx;           // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0;0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope
+  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- computed from average activation
+  float         fbx;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0;0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope -- not apparently needed for robust inhibition, but might be useful for some effects
+  float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB&&!fbx:0 #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
   float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 
-  float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
+  float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases.
+  float		min_i;		// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
 
   inline float    FFInhib(const float netin) {
     float ffi = 0.0f;
@@ -64,11 +63,9 @@ public:
   }
 
   inline float    FBInhib(const float act, float& fbi_x) {
-    float fbi = 0.0f;
-    fbi_x = 0.0f;
-    if(act > fb0) fbi = fb * (act - fb0);
-    if(act > infl) fbi_x = fbx * (act - infl);
-    return fbi + fbi_x;
+    float fbi = fb * act;
+    if(fbx != 0.0f && act > infl) fbi += fbx * (act - infl);
+    return fbi;
   }
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }

@@ -16,9 +16,9 @@
 #include "SelectEdit.h"
 #include <voidptr_PArray>
 #include <taGuiDialog>
+#include <Program>
 
 taTypeDef_Of(taProject);
-taTypeDef_Of(Program);
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -35,6 +35,7 @@ void SelectEdit::StatSigEmit_Group(taGroup_impl* grp, int sls,
 
 void SelectEdit::Initialize() {
   auto_edit = true;
+  running_updt = false;
   m_changing = 0;
   base_refs.setOwner(this);
 }
@@ -111,8 +112,15 @@ void SelectEdit::SigDestroying_Ref(taBase_RefList* src, taBase* base) {
 void SelectEdit::SigEmit_Ref(taBase_RefList* src, taBase* ta,
     int sls, void* op1, void* op2)
 {
-  if(sls < SLS_UPDATE_VIEWS)
-    SigEmitUpdated();
+  if(sls >= SLS_UPDATE_VIEWS) return;
+  if(!running_updt) {
+    if(Program::global_run_state == Program::RUN ||
+       Program::global_run_state == Program::INIT) {
+      if(ta && !ta->InheritsFrom(&TA_Program))
+        return;                     // skip any non-program updates while running!
+    }
+  }
+  SigEmitUpdated();
 }
 
 void SelectEdit::SigEmit_Group(taGroup_impl* grp,
