@@ -45,6 +45,7 @@ void PVConSpec::Defaults_init() {
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
   wt_sig.dwt_norm = false;      // bad news for pvlv
+  cur_dwt_norm = false;
 }
 
 void PVConSpec::UpdateAfterEdit_impl() {
@@ -55,5 +56,6 @@ void PVConSpec::UpdateAfterEdit_impl() {
   // actually now allowing sb!!
 //   lmix.err_sb = false;
   wt_sig.dwt_norm = false;      // bad news for pvlv
+  cur_dwt_norm = false;
 }
 

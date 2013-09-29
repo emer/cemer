@@ -514,7 +514,7 @@ inline void LeabraConSpec::Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit
 
 inline void LeabraConSpec::Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru,
                                             LeabraNetwork* net) {
-  if(!learn || !wt_sig.dwt_norm || cg->size < 2) return;
+  if(!learn || !cur_dwt_norm || cg->size < 2) return;
   float sum_dwt = 0.0f;
   for(int i=0; i<cg->size; i++) {
     sum_dwt += cg->PtrCn(i,DWT,net);

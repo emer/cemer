@@ -97,6 +97,7 @@ public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL
   bool		dwt_norm;	// #DEF_false normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection
+  int           dwt_norm_epcs;  // How many epochs at the start of training should have dwt_norm on, after which point it will be turned off -- often useful to have dwt_norm present at the start for a few epochs, to prevent significant imbalances and hog units, but after that point it becomes an impediment to further learning -- if 0 or less, then this is not used and the static setting of dwt_norm holds
 
   static inline float	SigFun(const float w, const float gn, const float of) {
     if(w <= 0.0f) return 0.0f;
@@ -345,6 +346,7 @@ public:
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   float		lrate;		// #CAT_Learning #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] #CONDSHOW_ON_learn learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
+  bool          cur_dwt_norm;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current effective dwt_norm value, based on dwt_norm_epcs if that is in effect, otherwise just copies wt_sig.dwt_norm
   LRSValue	lrs_value;	// #CAT_Learning #CONDSHOW_ON_learn what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs or as a function of performance, as determined by lrs_value (NOTE: these factors multiply lrate to give the cur_lrate value)
   bool          ignore_unlearnable; // #CAT_Learning ignore unlearnable trials
