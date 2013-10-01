@@ -22,6 +22,7 @@
 #include <taFiler>
 #include <iDialogPublishDocs>
 #include <taiEditorOfString>
+#include <ClusterRun>
 
 #include <ctime>
 
@@ -29,7 +30,6 @@ taTypeDef_Of(taDataProc);
 taTypeDef_Of(taDataAnal);
 taTypeDef_Of(taDataGen);
 taTypeDef_Of(taImageProc);
-taTypeDef_Of(ClusterRun);
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -206,6 +206,18 @@ taDoc* taProject::FindMakeDoc(const String& nm, const String& wiki_nm, const Str
   }
   rval->UpdateAfterEdit();
   return rval;
+}
+
+String taProject::GetClusterRunPath() {
+  if(!taMisc::interactive) {    // assume we are on the cluster
+    return taMisc::GetDirFmPath(proj_dir); // up one from this path
+  }
+  // otherwise we are on workstation -- get cr svn repo
+  ClusterRun* cr = (ClusterRun*)FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
+  if(cr) {
+    return cr->GetSvnPath();
+  }
+  return proj_dir;              // just current path otherwise
 }
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {

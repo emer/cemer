@@ -181,6 +181,9 @@ public:
   virtual bool  SelectRows(DataTable& dt, int st_row, int end_row);
   // select range of rows in given data table
 
+  virtual String GetSvnPath();
+  // returns the svn repository path currently in effect -- i.e., ClusterManager->GetWcProjPath()
+
   // view panel sets etc
 
   virtual iPanelSet* FindMyPanelSet();

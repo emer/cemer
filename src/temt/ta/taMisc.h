@@ -48,6 +48,7 @@ class taBase; //
 class UserDataItemBase; // 
 class MemberDef; // 
 class UserDataItem_List; //
+class taProject; //
 
 #ifndef NO_TA_BASE
 class QMainWindow;
@@ -777,6 +778,11 @@ public:
   // #CAT_File return path to system temporary file directory (e.g., /tmp) that user can write to
 
 #ifndef NO_TA_BASE		// all of these are not for maketa
+
+  static String ExpandFilePath(const String& path, taProject* proj = NULL);
+  // #CAT_File expand any special variables or shortcuts in the file path -- CR: unpacks to the current cluster run svn directory for this project (if available), CRR:, CRM: are results and models subdirs of CR, ~ is the current user's home directory (see CompressFilePath for inverse) -- called by all standard file operations
+  static String CompressFilePath(const String& path, taProject* proj = NULL);
+  // #CAT_File replace path elements with special variables or shortcuts -- CR: = the current cluster run svn directory for this project (if available), CRR:, CRM: are results and models subdirs of CR, ~ is the current user's home directory (see ExpandFilePath for inverse)
 
   static int64_t FileSize(const String& filename);
   // #CAT_File returns size of given file (0 if it does not exist -- see also FileExists)

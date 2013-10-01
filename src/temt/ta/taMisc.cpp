@@ -73,6 +73,7 @@ taTypeDef_Of(EnumDef);
 #include <errno.h>
 
 #ifndef NO_TA_BASE
+#include <taProject>
 # include "shlobj.h"
 #endif
 
@@ -2388,6 +2389,50 @@ String taMisc::GetTemporaryPath() {
 
 #ifndef NO_TA_BASE
 
+String taMisc::ExpandFilePath(const String& path, taProject* proj) {
+  String ep = path;
+  if(ep.startsWith('~')) {
+    ep = GetHomePath() + ep.after('~');
+  }
+  if(proj) {                    // only avail if project provided
+    if(ep.startsWith("CRR:")) {
+      ep = proj->GetClusterRunPath() + path_sep + "results" + path_sep + ep.after("CRR:");
+    }
+    else if(ep.startsWith("CRM:")) {
+      ep = proj->GetClusterRunPath() + path_sep + "models" + path_sep + ep.after("CRM:");
+    }
+    else if(ep.startsWith("CR:")) {
+      ep = proj->GetClusterRunPath() + path_sep + ep.after("CR:");
+    }
+  }
+  return ep;
+}
+
+String taMisc::CompressFilePath(const String& path, taProject* proj) {
+  String ep = path;
+  String hp = GetHomePath();
+  if(ep.startsWith('~')) {
+    ep = String("~") + ep.after(hp);
+  }
+  if(proj) {                    // only avail if project provided
+    String cr = proj->GetClusterRunPath();
+    if(ep.startsWith(cr)) {
+      String acr = ep.after(cr);
+      if(acr.startsWith(path_sep + "results" + path_sep)) {
+        ep = String("CRR:") + acr.after("results" + path_sep);
+      }
+      else if(acr.startsWith(path_sep + "models" + path_sep)) {
+        ep = String("CRM:") + acr.after("models" + path_sep);
+      }
+      else {
+        ep = String("CR:") + acr;
+      }
+    }
+  }
+  return ep;
+}
+
+
 int64_t taMisc::FileSize(const String& fname) {
   QFileInfo fi(fname);
   return fi.size();
@@ -2451,10 +2496,7 @@ bool taMisc::MakePath(const String& fn) {
 }
 
 bool taMisc::MakeSymLink(const String& file_name, const String& link_name) {
-  String fnm = file_name;
-  if(fnm.startsWith('~')) {
-    fnm = GetHomePath() + fnm.after('~');
-  }
+  String fnm = taMisc::ExpandFilePath(file_name);
   return QFile::link(fnm, link_name);
 }
 

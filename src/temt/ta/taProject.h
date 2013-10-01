@@ -148,6 +148,8 @@ public:
   virtual taDoc*        FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
                                     const String& web_url = "");
   // #CAT_Doc get doc document object of given name, or make one if not found -- also set the wiki name and web url if specified
+  virtual String        GetClusterRunPath();
+  // #CAT_Edit get the full path to the current cluster run repository associated with this project ---- if currently in non-interactive mode, assume we're actually running on the cluster, in which case the path is one up from the current project directory -- otherwise it is the svn repository path from the ClusterRun object -- if no such path is available, it just returns the current project directory path
 
   ///////////////////////////////////////////////////////////////////
   //    misc

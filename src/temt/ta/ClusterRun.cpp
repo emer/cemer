@@ -1224,6 +1224,12 @@ bool ClusterRun::SelectRows(DataTable& dt, int st_row, int end_row) {
 
 ///////////////////////////
 
+String ClusterRun::GetSvnPath() {
+  if(!initClusterManager())
+    return _nilString;
+  return m_cm->GetWcProjPath();
+}
+
 iPanelSet* ClusterRun::FindMyPanelSet() {
   if(!taMisc::gui_active) return NULL;
   taSigLink* link = sig_link();

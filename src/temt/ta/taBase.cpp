@@ -1456,27 +1456,31 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
         TypeDef* typ2 = GetTypeDef(); // we are the group
         AppendFilerInfo(typ2, exts, compress, filetypes);
       }
-    } else { // otherwise, loading over an item, so just get from us
+    }
+    else { // otherwise, loading over an item, so just get from us
       AppendFilerInfo(typ, exts, compress, filetypes);
     }
   }
   taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes);
   taRefN::Ref(flr);
 
+  taProject* proj = GET_MY_OWNER(taProject);
+
   if(fname.nonempty()) {
-    flr->SetFileName(fname);
+    flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
     flr->open_read();
-  } else {
+  }
+  else {
     String tfname;
     if (getset_file_name)
       tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
-    flr->SetFileName(tfname); // filer etc. does auto extension
+    flr->SetFileName(taMisc::ExpandFilePath(tfname, proj)); // filer etc. does auto extension
     flr->Open();
   }
   if(flr->istrm && getset_file_name) {
-    SetFileName(flr->FileName());
+    SetFileName(taMisc::CompressFilePath(flr->FileName(), proj));
   }
   return flr;
 }
@@ -1584,22 +1588,25 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   taFiler* flr = StatGetFiler(typ, exts, compress, filetypes);
   taRefN::Ref(flr);
 
+  taProject* proj = GET_MY_OWNER(taProject);
+
   if (fname.nonempty()) {
-    flr->SetFileName(fname);
+    flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
     flr->FixFileName();
     flr->Save();
-  } else {
+  }
+  else {
     String tfname;
     if (getset_file_name)
       tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
-    flr->SetFileName(tfname); // filer etc. does auto extension
-      flr->SaveAs(true, make_copy);
+    flr->SetFileName(taMisc::ExpandFilePath(tfname, proj)); // filer etc. does auto extension
+    flr->SaveAs(true, make_copy);
   }
 
   if (flr->ostrm && getset_file_name) {
-    SetFileName(flr->FileName());
+    SetFileName(taMisc::CompressFilePath(flr->FileName(), proj));
     // don't notify! very dangerous in middle of save, and also marks Dirty
    // SigEmitUpdated();
   }
@@ -1612,21 +1619,24 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
   taFiler* flr = GetFiler(NULL, ext, compress, filetypes);
   taRefN::Ref(flr);
 
+  taProject* proj = GET_MY_OWNER(taProject);
+
   if (fname.nonempty()) {
-    flr->SetFileName(fname);
+    flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
     flr->open_append();
-  } else {
+  }
+  else {
     String tfname;
     if (getset_file_name)
       tfname = GetFileName();
     if (tfname.empty())
       tfname = GetName();
-    flr->SetFileName(tfname); // filer etc. does auto extension
+    flr->SetFileName(taMisc::ExpandFilePath(tfname, proj)); // filer etc. does auto extension
     flr->Append();
   }
 
   if(flr->ostrm && getset_file_name) {
-    SetFileName(flr->FileName());
+    SetFileName(taMisc::CompressFilePath(flr->FileName()));
   }
   return flr;
 }
