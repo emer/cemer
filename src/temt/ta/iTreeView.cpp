@@ -26,10 +26,6 @@
 #include <taiObjectMimeFactory>
 #include <iBrowseHistory>
 #include <iVec2i>
-#include <ProgVar>
-#include <ProgVar_List>
-#include <Program>
-#include <LocalVars>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -273,10 +269,6 @@ void iTreeView::InsertEl(bool after) {
 }
 
 void iTreeView::InsertDefaultEl(bool after) {
-
-  bool doit = true;
-  ProgVar* pv = NULL;
-
   ISelectable* si = curItem();
   if(!si || !si->link())
     return;                // nothing selected
@@ -287,21 +279,14 @@ void iTreeView::InsertDefaultEl(bool after) {
     sbo = (taList_impl*)sb;
   }
   else {  // not a list
-    if(sb->InheritsFrom(&TA_ProgEl)) {
-      TypeDef* sb_td = sb->GetTypeDef();
-      String mbr = sb_td->OptionAfter("DEF_CHILD_");
-      if (!mbr.empty() && mbr == "local_vars") {
-        // these 2 lines put the new var in the "program vars" list
-//        Program* pgm = GET_OWNER(sb, Program);
-//        sbo = &pgm->vars;
-//        but we want to add the var to the "local vars" list
-        LocalVars* locals = dynamic_cast<ProgEl*>(sb)->FindLocalVarList();
-        if (locals) {
-          sbo = &locals->local_vars;  // the list of local vars
+    String mbr = sb->GetTypeDef()->OptionAfter("DEF_CHILD_");
+    if(mbr.nonempty()) {
+      MemberDef* md = sb->FindMember(mbr);
+      if(md) {   // should always be true
+        sbo = (taList_impl*)md->GetOff(sb);
+        if(sbo->size > 0) {     // only select def child if nothing in it yet -- otherwise you should be inside list to add
+          sbo = GET_OWNER(sb, taList_impl);
         }
-      }
-      else {
-        sbo = GET_OWNER(sb, taList_impl);
       }
     }
     else {

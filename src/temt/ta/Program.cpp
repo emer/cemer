@@ -183,6 +183,7 @@ void Program::UpdateAfterEdit_impl() {
   // with the runtime, in particular, do NOT invalidate the following state flags:
   //   m_stale, script_compiled
 
+  types.el_typ = &TA_DynEnumType;
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 

@@ -19,6 +19,7 @@
 
 void ProgType_List::Initialize() {
   SetBaseType(&TA_ProgType);
+  el_typ = &TA_DynEnumType;
   setUseStale(true);
 }
 
