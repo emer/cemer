@@ -958,7 +958,7 @@ def build_emergent():
 def rename_package():
   version = ''
   revision = ''
-  for line in open(os.path.join(emer_src, 'config.h')):
+  for line in open(os.path.join(emer_src, 'temt_version.h')):
     if 'VERSION' in line:
       version = line.split('"')[-2]
   for line in open(os.path.join(emer_build, 'src/temt/lib/svnrev.h')):
@@ -999,7 +999,7 @@ def rename_package():
       if fileExists(scp_exe) and askUser('\nOK to scp to grey?'):
         cygpath_exe = 'c:\\cygwin\\bin\\cygpath.exe'
         cygname = subprocess.check_output([cygpath_exe, new_path]).strip()
-        subprocess.call([scp_exe, cygname, 'dpfurlani@grey.colorado.edu:/home/dpfurlani/'])
+        subprocess.call([scp_exe, cygname, 'tmankad@grey.colorado.edu:/home/tmankad/'])
 
 ##############################################################################
 # Main
