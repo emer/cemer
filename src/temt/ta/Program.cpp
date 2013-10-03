@@ -258,6 +258,10 @@ int Program::CallInit(Program* caller) {
   if(last_init_timestamp == global_init_timestamp)
     return ret_val;		// already done it!
   last_init_timestamp = global_init_timestamp;
+  return CallInit_impl(caller);
+}
+
+int Program::CallInit_impl(Program* caller) {
   run_state = INIT;    // this is redundant if called from an existing INIT but otherwise needed
   SetAllBreakpoints();          // reinstate all active breakpoints
   Run_impl();

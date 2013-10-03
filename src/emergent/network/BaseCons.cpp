@@ -222,30 +222,42 @@ Unit* BaseCons::SafeUn(int idx) const {
 
 int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
                                      bool allow_null_unit) {
+  static bool warned_already = false;
   if(TestError(!OwnCons(), "ConnectUnOwnCn", "does not own cons!"))
     return -1;
   if(!allow_null_unit && un->flat_idx == 0)
     return -1; // null unit -- don't even connect!
   if(size >= alloc_size) {
-    TestError(!ignore_alloc_errs, "ConnectUnOwnCn", "size already at maximum allocated of",
-              String(alloc_size),"this is a programmer error -- please report the bug");
+    if(!taMisc::err_cancel) {
+      TestError(!ignore_alloc_errs && !warned_already, "ConnectUnOwnCn",
+                "size already at maximum allocated of",
+                String(alloc_size),"this is a programmer error -- please report the bug");
+    }
+    warned_already = true;
     return -1;
   }
+  warned_already = false;
   int rval = size;
   unit_idxs[size++] = (int32_t)un->flat_idx;
   return rval;
 }
 
 bool BaseCons::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
+  static bool warned_already = false;
   if(TestError(OwnCons(), "ConnectUnPtrCn", "is not a ptr cons!"))
     return false;
   if(un->flat_idx == 0)
     return false; // null unit -- don't even connect!
   if(size >= alloc_size) {
-    TestError(!ignore_alloc_errs, "ConnectUnPtrCn", "size already at maximum allocated of",
-              String(alloc_size),"this is a programmer error -- please report the bug");
+    if(!taMisc::err_cancel) {
+      TestError(!ignore_alloc_errs && !warned_already, "ConnectUnPtrCn",
+                "size already at maximum allocated of",
+                String(alloc_size),"this is a programmer error -- please report the bug");
+    }
+    warned_already = true;
     return false;
   }
+  warned_already = false;
   cons_idx[size] = con_idx;
   unit_idxs[size++] = (int32_t)un->flat_idx;
   return true;
@@ -664,6 +676,8 @@ int BaseCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& c
 
 int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
                                BaseCons::WtSaveFormat fmt, bool quiet) {
+  static bool warned_already = false;
+  static bool sz_warned_already = false;
   if((prjn == NULL) || (!(bool)prjn->from)) {
     return SkipWeights_strm(strm, fmt, quiet); // bail
   }
@@ -677,8 +691,9 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
     return taMisc::TAG_NONE;
   }
   if(sz < size) {
-    TestWarning(!quiet, "LoadWeights_strm", "weights file has fewer connections:", String(sz),
+    TestWarning(!quiet && !sz_warned_already, "LoadWeights_strm", "weights file has fewer connections:", String(sz),
                 "than existing group size of:", String(size));
+    sz_warned_already = true;
     // doesn't really make sense to nuke these -- maybe add a flag overall to enable this
 //     for(int i=size-1; i >= sz; i--) {
 //       Unit* su = Un(i);
@@ -687,16 +702,21 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
   }
   else if(sz > size) {
     if(sz > alloc_size) {
-      TestWarning(!quiet, "LoadWeights_strm", "weights file has more connections:", String(sz),
+      TestWarning(!quiet && !sz_warned_already, "LoadWeights_strm", "weights file has more connections:", String(sz),
                   "than allocated size:",
                   String(alloc_size), "-- only alloc_size will be loaded");
+      sz_warned_already = true;
       sz = alloc_size;
     }
     else {
-      TestWarning(!quiet, "LoadWeights_strm", "weights file has more connections:", String(sz),
+      TestWarning(!quiet && !sz_warned_already, "LoadWeights_strm", "weights file has more connections:", String(sz),
                   "than existing group size of:",
                   String(size), "-- but these will fit within alloc_size and will be loaded");
+      sz_warned_already = true;
     }
+  }
+  else {
+    sz_warned_already = false;
   }
   for(int i=0; i < sz; i++) {   // using load size as key factor
     int lidx;
@@ -712,9 +732,10 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
     }
     Unit* su = prjn->from->units.Leaf(lidx);
     if(!su) {
-      TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
+      TestWarning(!quiet && !warned_already, "LoadWeights_strm", "unit at leaf index: ",
                   String(lidx), "not found in layer:", prjn->from->name,
                   "removing this connection");
+      warned_already = true;
       if(size > i) {
         ru->DisConnectFrom(Un(i,net), prjn); // remove this guy to keep total size straight
       }
@@ -724,8 +745,10 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
     }
     SendCons* send_gp = su->send.SafeEl(prjn->send_idx);
     if(!send_gp) {
-      TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
-                  String(lidx), "does not have proper send group:", String(prjn->send_idx));
+      TestWarning(!quiet && !warned_already, "LoadWeights_strm", "unit at leaf index: ",
+                  String(lidx), "does not have proper send group:",
+                  String(prjn->send_idx));
+      warned_already = true;
       if(size > i)
         ru->DisConnectFrom(Un(i,net), prjn); // remove this guy to keep total size straight
       sz--;                            // now doing less..
@@ -733,22 +756,30 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
       continue;
     }
     if(i >= size) {             // new connection
-      ru->ConnectFromCk(su, prjn, false, true, wtval); // set init wt
+      // too many msgs with this:
+      TestWarning(!quiet && !warned_already, "LoadWeights_strm", "attempting to load beyond size of allocated connections -- cannot do this");
+      warned_already = true;
+      //      ru->ConnectFromCk(su, prjn, false, true, wtval); // set init wt
     }
     else if(su != Un(i,net)) {
       // not same unit -- note that at this point, the only viable strategy is to discon
       // all existing cons and start over, as otherwise everything will be hopelessly out
       // of whack
-      TestWarning(!quiet, "LoadWeights_strm", "unit at index:", String(i),
-                  "in cons group does not match the loaded unit",
-                  "-- removing all subsequent units and reconnecting");
-      for(int j=size-1; j >= i; j--) {
-        Unit* su = Un(j,net);
-        ru->DisConnectFrom(su, prjn);
-      }
-      ru->ConnectFromCk(su, prjn, false, true, wtval); // set init wt
+      TestWarning(!quiet && !warned_already, "LoadWeights_strm", "unit at index:",
+                  String(i),
+                  "in cons group does not match the loaded unit -- weights will be off");
+      warned_already = true;
+      Cn(i,WT,net) = wtval;
+
+      // this is not viable:
+      // for(int j=size-1; j >= i; j--) {
+      //   Unit* su = Un(j,net);
+      //   ru->DisConnectFrom(su, prjn);
+      // }
+      // ru->ConnectFromCk(su, prjn, false, true, wtval); // set init wt
     }
     else {                      // all good normal case, just set the weights!
+      warned_already = false;
       Cn(i,WT,net) = wtval;
     }
   }

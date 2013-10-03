@@ -415,7 +415,7 @@ bool ActrAction::DoAction(ActrProduction& prod,
   case PROG_RUN: {
     Program* prg = (Program*)dest.ptr();
     if(prg->run_state == Program::NOT_INIT) {
-      prg->CallInit(NULL);
+      prg->CallInit_impl(NULL);
     }
     if(TestError(prg->run_state == Program::NOT_INIT,
                  "cannot run program:", prg->name,
@@ -484,5 +484,5 @@ void ActrAction::InitProg() {
   if(action != PROG_RUN) return;
   Program* prg = (Program*)dest.ptr();
   if(!prg) return;
-  prg->CallInit(NULL);
+  prg->CallInit_impl(NULL);
 }

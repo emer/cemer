@@ -278,6 +278,8 @@ public:
   // #CAT_Run runs the program as a subprogram called from another running program, 0=success
   int                   CallInit(Program* caller);
   // #CAT_Run runs the program's Init from a superProg Init, 0=success
+  virtual int           CallInit_impl(Program* caller);
+  // #CAT_Run runs the program's Init from another Prog -- doesn't check for whether last_init_timestamp == global_init_timestamp -- essentially a force, 0=success
   virtual bool          SetVar(const String& var_nm, const Variant& value);
   // #CAT_Variables set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
   virtual bool          SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet = false);
