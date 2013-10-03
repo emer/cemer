@@ -42,6 +42,12 @@ class double_Matrix; //
 # ifdef max
 #   undef max
 # endif
+# ifdef isnan
+#   undef isnan
+# endif
+# ifdef isinf
+#   undef isinf
+# endif
 #endif
 
 taTypeDef_Of(taMath);

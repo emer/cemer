@@ -49,7 +49,6 @@
 # include <gsl/gsl_cdf.h>
 #endif
 
-#include <math.h>
 #include <float.h>
 
 using namespace std;
@@ -57,7 +56,7 @@ using namespace std;
 
 bool taMath_double::isnan(double val) {
 #ifdef TA_OS_WIN
-  if(isnan(val) || isinf(val)) return true;
+  if(_isnan(val) || !_finite(val)) return true;
 #else
   if (std::isnan(val) || std::isinf(val)) return true;
 #endif
