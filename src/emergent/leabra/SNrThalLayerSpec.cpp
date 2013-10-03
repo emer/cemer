@@ -17,6 +17,7 @@
 #include <LeabraNetwork>
 #include <MatrixLayerSpec>
 #include <PBWMUnGpData>
+#include <PFCLayerSpec>
 
 #include <taMisc>
 
@@ -135,7 +136,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   bool rval = true;
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
-                "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
+                "layer must have unit_groups = true (= stripes) (multiple are good for independent searching of gating space)!  I just set it for you -- you must configure groups now")) {
     lay->unit_groups = true;
     return false;
   }
@@ -154,6 +155,12 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
+void SNrThalLayerSpec::ResetMntCount(LeabraLayer* lay, int gp_idx) { // resets to -1 starting point for a single stripe
+	//Layer::AccessMode acc_md = Layer::ACC_GP;
+	PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gp_idx);
+	gpd->mnt_count = -1;
+}
+
 void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
@@ -165,6 +172,7 @@ void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->mnt_count--;	// more empty
     else
       gpd->mnt_count++;	// more maint
+
     gpd->go_fired_now = false;
     gpd->go_fired_trial = false;
     gpd->go_cycle = -1;
@@ -173,6 +181,46 @@ void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetUserData("n_fired_trial", 0);
   lay->SetUserData("n_fired_now", 0);
 }
+
+//
+//void SNrThalLayerSpec::Init_GateStats(LeabraLayer* lay, LeabraNetwork* net) {
+//  Layer::AccessMode acc_md = Layer::ACC_GP;
+//  int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
+//
+//  for(int mg=0; mg<lay->gp_geom.n; mg++) {
+//    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+//    // update mnt count at start of trial!
+//    if(gpd->mnt_count < 0)
+//      gpd->mnt_count--;	// more empty
+//    else
+//      gpd->mnt_count++;	// more maint
+//
+//    // per RAndy, can't access PFCLayerSpec here; do instead in PFCUnitSpec
+////    for(int u=0; u< lay->un_geom.n; u++) { 						// loop over all units of each group (always 1, for now; here for completeness)
+////      //LeabraUnit* snr_u = lay->units[mg * lay->un_geom.n + u];//
+////      LeabraUnit* snr_u = (LeabraUnit*)lay->UnitAccess(acc_md, u, mg);
+////      for(int scg_idx=0;scg_idx<snr_u->send.size; scg_idx++){
+////        SendCons* scg = snr_u->send[scg_idx];
+////        //if(scg->prjn->lay->spec.type != PFCLayerSpec) continue; // only care about PFC layers
+////        if(!scg->size) continue; 								// ignore if no. of cons is zero
+////        PFCLayerSpec* pfcls = scg->prjn->lay->spec.spec;	 	// get the actual spec in question
+////        if(pfcls->gate.max_maint == -1)
+////         continue; // already at fresh start
+////        else if(gpd->mnt_count > pfcls->gate.max_maint))
+////         gpd->mnt_count = -1;
+////      }
+////    }
+//
+//    gpd->go_fired_now = false;
+//    gpd->go_fired_trial = false;
+//    gpd->go_cycle = -1;
+//  }
+//
+//  lay->SetUserData("n_fired_trial", 0);
+//  lay->SetUserData("n_fired_now", 0);
+//}
+//
+//
 
 void SNrThalLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Trial_Init_Layer(lay, net);

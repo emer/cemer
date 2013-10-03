@@ -34,7 +34,7 @@ public:
   float         ctxt_decay;     // #MIN_0 #MAX_1 decay rate for context, per trial when no updating occurs
   int           max_maint;      // maximum maintenance duration (-1 = no limit) -- after this number trials, active maintenance will be terminated
   float         ctxt_drift;     // #MIN_0 #MAX_1 on non-gating trials, when something is maintained, how much the deep context information can drift toward the new context (reflecting current superficial activations) -- this drift happens prior to decay (and the two are somewhat in opposition to each other -- typically use one or the other but not both)
-  float		out_nogate_gain; // #MIN_0 #MAX_1 #DEF_0 how active are output gating units in absence of gating?
+  float			pregate_gain; // #MIN_0 #MAX_1 #DEF_0 how active are (superficial) PFC units prior to, or in the absence of, gating?
 
   float         ctxt_decay_c;   // #READ_ONLY #HIDDEN 1-ctxt_decay
 
@@ -62,7 +62,7 @@ public:
 
 
   virtual LeabraLayer* 	SNrThalLayer(LeabraLayer* lay);
-  // find the SNrThal layer that this pfc deep layer receives from
+  // find the SNrThal layer that this pfc layer receives from
 
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
 	int& n_in, int& n_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
@@ -77,8 +77,8 @@ public:
   virtual void  GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
                                     int gpidx, LeabraNetwork* net);
   // gate on the deep prjns using PFCDeepGatedConSpec 
-  virtual void  Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net);
-  // for output gating layer, only allow activation for trial immediately after gating -- called in CycleStats
+  virtual void  Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net);
+  // modulates how active a PFC (superficial) layer can get before being gated; special case, e.g., for output gating layer, can use to only allow activation for trial immediately after gating -- called in CycleStats
 
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);

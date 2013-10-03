@@ -79,7 +79,7 @@ void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_
       }
       u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
       u->p_act_p *= pfcls->gate.ctxt_decay_c; // no gating = decay
-      if(pfcls->gate.max_maint > 0 && gpd->mnt_count >= pfcls->gate.max_maint) {
+      if(pfcls->gate.max_maint > 0 && (gpd->mnt_count >= pfcls->gate.max_maint)) {
         u->act_ctxt = 0.0f;       // go all the way
         u->p_act_p = 0.0f;
       }

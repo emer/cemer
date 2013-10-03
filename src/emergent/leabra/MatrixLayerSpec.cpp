@@ -98,7 +98,7 @@ void MatrixLayerSpec::HelpConfig() {
  - Must recv from SNrThalLayerSpec to get final Go signal\n\
  - Go layer recv marker cons from NoGo, gets inhibition in proportion to avg NoGo act\n\
  - Other Recv conns are MatrixConSpec for learning based on the da-signal.\n\
- - Units must be organized into groups (stipes) of same number as PFC";
+ - Units must be organized into groups (stripes) of same number as PFC";
   taMisc::Confirm(help);
 }
 
@@ -115,7 +115,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   decay.phase2 = 0.0f;
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
-                "layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space!")) {
+                "layer must have unit_groups = true (= stripes) (multiple are good for independent searching of gating space!")) {
     return false;
   }
 

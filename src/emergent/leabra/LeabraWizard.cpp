@@ -2709,12 +2709,17 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
   }
 
   pfc_mnt_sp->pfc_type = SNrThalLayerSpec::MNT;
+  pfc_mnt_sp->gate.pregate_gain = 1.0f;
 
   pfc_in_sp->SetUnique("pfc_type",true);
   pfc_in_sp->pfc_type = SNrThalLayerSpec::INPUT;
+  pfc_in_sp->SetUnique("gate",true);
+  pfc_in_sp->gate.pregate_gain = 1.0f;
 
   pfc_out_sp->SetUnique("pfc_type",true);
   pfc_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
+  pfc_out_sp->SetUnique("gate",true);
+  pfc_out_sp->gate.pregate_gain = 0.0f;
 
   pfc_out_sp->SetUnique("gp_kwta",true);
   pfc_out_sp->gp_kwta.diff_act_pct = true;
@@ -2722,9 +2727,13 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns) {
 
   // pfc_mnt_out_sp->SetUnique("pfc_type",true);
   // pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
+  //pfc_mnt_out_sp->SetUnique("gate",true);
+  //pfc_mnt_out_sp->gate.pregate_gain = 1.0f;
 
   // pfc_out_mnt_sp->SetUnique("pfc_type",true);
   // pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
+  //pfc_out_mnt_sp->SetUnique("gate",true);
+  //pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
 
   // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
 

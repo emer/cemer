@@ -27,7 +27,7 @@ void PFCGateSpec::Initialize() {
   ctxt_decay_c = 1.0f - ctxt_decay;
   max_maint = -1;
   ctxt_drift = 0.0f;
-  out_nogate_gain = 0.0f;
+  pregate_gain = 1.0f;
 }
 
 void PFCGateSpec::UpdateAfterEdit_impl() {
@@ -170,8 +170,21 @@ void PFCLayerSpec::CopySNrThalGpData(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Trial_Init_Layer(lay, net);
-  CopySNrThalGpData(lay, net);
+  PFCLayerSpec* pfcls = (PFCLayerSpec*)lay->GetLayerSpec();
+  int snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
+  LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
+  SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
+
+  for(int g=0; g<lay->gp_geom.n; g++) {
+	  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
+	  if(snr_gpd->mnt_count >= pfcls->gate.max_maint) { 		// time to stop maintaining...
+		  //snr_gdp->mnt_count = -1;
+		  snrls->ResetMntCount(snr_lay, (snr_st_idx + g)); 	// reset stripe maint counter and start fresh
+	  }
+  }
+  CopySNrThalGpData(lay, net); // synch PFC guy back with SNrThal guy
 }
+
 
 void PFCLayerSpec::Compute_GateCycle(LeabraLayer* lay, LeabraNetwork* net) {
   CopySNrThalGpData(lay, net);
@@ -211,7 +224,7 @@ void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_m
   net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
 }
 
-void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCLayerSpec::Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   CopySNrThalGpData(lay, net);
 
   Layer::AccessMode acc_md = Layer::ACC_GP;
@@ -219,11 +232,11 @@ void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    if(!gpd->go_fired_trial) {
+    if(!gpd->go_fired_trial & (gpd->mnt_count <= 0)) {
       for(int i=0;i<nunits;i++) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;
-        ru->act *= gate.out_nogate_gain;
+        ru->act *= gate.pregate_gain;
         ru->act_lrn = ru->act_eq = ru->act_nd = ru->act;
         ru->da = 0.0f;            // I'm fully settled!
         ru->AddToActBuf(rus->syn_delay);
@@ -234,8 +247,9 @@ void PFCLayerSpec::Compute_OutGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_GateCycle(lay, net);
-  if(pfc_type & SNrThalLayerSpec::OUTPUT) {
-    Compute_OutGatedAct(lay, net);
+  //if(pfc_type & SNrThalLayerSpec::OUTPUT) {
+  if(pfc_type) { // & gpd->mnt_count < 0) {
+	  Compute_PreGatedAct(lay, net);
   }
   inherited::Compute_CycleStats(lay, net);
 }
