@@ -61,8 +61,9 @@ void ClusterRun::UpdateAfterEdit_impl() {
   if(svn_repo.nonempty()) {
     Variant rep = taMisc::svn_repos.GetVal(svn_repo);
     if(rep.isNull()) {
-      taMisc::Warning("ClusterRun: svn_repo:", svn_repo,
-                      "not found in list of registered svn repositories in Preferences / Options");
+      // this warning is kinda annoying
+      // taMisc::Warning("ClusterRun: svn_repo:", svn_repo,
+      //                 "not found in list of registered svn repositories in Preferences / Options");
     }
     else {
       repo_url = rep.toString();
@@ -1225,7 +1226,7 @@ bool ClusterRun::SelectRows(DataTable& dt, int st_row, int end_row) {
 ///////////////////////////
 
 String ClusterRun::GetSvnPath() {
-  if(!initClusterManager())
+  if(!m_cm)
     return _nilString;
   return m_cm->GetWcProjPath();
 }
