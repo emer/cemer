@@ -28,7 +28,7 @@
 taTypeDef_Of(DataVarProg);
 
 class TA_API DataVarProg : public DataOneProg { 
-  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported
+  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported, and enum to/from Matrix localist code also supported (see DataVarProgMatrix for accessing individual matrix cells)
 INHERITED(DataOneProg)
 public:
   enum RowType {
@@ -55,9 +55,13 @@ protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
-  override void		GenCssBody_impl(Program* prog);
-  virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no);
-  virtual bool	GenCss_OneVarMat(Program* prog, ProgVarRef& mat_var, const String& idnm, int var_no);
+  override void	GenCssBody_impl(Program* prog);
+  virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm,
+                              int var_no);
+  virtual bool	GenCss_OneVarMat(Program* prog, ProgVarRef& mat_var, const String& idnm,
+                                 int var_no);
+  virtual bool	GenCss_OneVarMatEnum(Program* prog, ProgVarRef& mat_var,
+                                     const String& idnm, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

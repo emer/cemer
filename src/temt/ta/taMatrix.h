@@ -255,9 +255,9 @@ public:
   int                   FrameViewFlatIdx(int idx) const;
   // #CAT_Access compute a flat index for access when frame view is in effect
 
-  virtual TypeDef*      GetDataTypeDef() const = 0;
+  virtual TypeDef*      GetDataTypeDef() const { return NULL; }
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
-  virtual ValType       GetDataValType() const = 0;
+  virtual ValType       GetDataValType() const { return VT_INT; }
   // #CAT_Access val_type of data
 
   ///////////////////////////////////////

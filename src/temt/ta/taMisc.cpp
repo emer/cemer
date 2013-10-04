@@ -1644,6 +1644,43 @@ void taMisc::Init_Types_Gui(bool gui) {
         }
       }
 
+#if 0
+      // do check for out-of-order methods or members -- key for using index-based optimization -- now fixed..
+      for(int pi=0; pi<MIN(1,td->parents.size); pi++) { // only first parent
+        TypeDef* par = td->parents.FastEl(pi);
+        bool got_mm = false;
+        for(int j=0; j<td->methods.size; j++) {
+          String mm = td->methods.FastEl(j)->name;
+          if(j < par->methods.size) {
+            String pm = par->methods.FastEl(j)->name;
+            if(pm != mm) {
+              taMisc::Info("meth mismatch:", td->name, par->name, String(j), mm, pm);
+              got_mm = true;
+            }
+          }
+          else if(got_mm) {
+            taMisc::Info("meth mismatch:", td->name, par->name, String(j), mm, "<none>");
+          }
+        }
+
+        got_mm = false;
+        for(int j=0; j<td->members.size; j++) {
+          String mm = td->members.FastEl(j)->name;
+          if(j < par->members.size) {
+            String pm = par->members.FastEl(j)->name;
+            if(pm != mm) {
+              taMisc::Info("memb mismatch:", td->name, par->name, String(j), mm, pm);
+              got_mm = true;
+            }
+          }
+          else if(got_mm) {
+            taMisc::Info("memb mismatch:", td->name, par->name, String(j), mm, "<none>");
+          }
+        }
+
+      }
+#endif
+
     } // td->IsActualClassNoEff()
 
   } // for each Type

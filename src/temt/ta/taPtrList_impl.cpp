@@ -809,10 +809,15 @@ void taPtrList_impl::BorrowUniqNameOldFirst(const taPtrList_impl& cp) {
   size = 0;                             // effectively reset us to 0, so all new links go at start
   for(int i=0; i < cp.size; i++) {
     void* it = cp.el[i];
-    if(Scratch_Find_(El_GetName_(it)) < 0)
+    int scr_idx = Scratch_Find_(El_GetName_(it));
+    if(scr_idx < 0)             // not found on our existing guys, add it
       Link_(it);
+    else {                     // found on our existing list, add OUR guy
+      AddOnly_(scratch_list.el[scr_idx]);
+      scratch_list.RemoveIdx(scr_idx); // we added this guy
+    }
   }
-  Stealth_Borrow(scratch_list); // now get everyone back from scratch
+  Stealth_Borrow(scratch_list); // now get everyone who wasn't on new list
   scratch_list.size = 0;
   ReBuildHashTable();           // needed if we have one
   UpdateAllIndicies();          // they are all whack now..

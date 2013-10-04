@@ -17,8 +17,6 @@
 #include <DataCol>
 #include <DataTable>
 
-
-
 void DataVarProg::Initialize() {
   row_spec = CUR_ROW;
   set_data = false;
@@ -72,11 +70,19 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& id
     var->object_type->InheritsFrom(&TA_taMatrix))
     return GenCss_OneVarMat(prog, var, idnm, var_no);
 
-  // todo: could do some verbose logging here..
-
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
+
+  if(dt && (var->var_type == ProgVar::T_HardEnum || var->var_type == ProgVar::T_DynEnum)) {
+    da = dt->FindColName(var->name);
+    if(da->isMatrix()) {
+      return GenCss_OneVarMatEnum(prog, var, idnm, var_no);
+    }
+  }
+
+  // todo: could do some verbose logging here..
+
   if(dt) {
     da = dt->FindColName(var->name);
     if(da && da->isString())
@@ -136,6 +142,42 @@ bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String&
   }
   else {
     prog->AddLine(this, var->name + ".CopyFrom(__tmp_mat);");
+  }
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  return true;
+}
+
+bool DataVarProg::GenCss_OneVarMatEnum(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
+  DataCol* da = NULL;
+  DataTable* dt = GetData();
+  String string_cvt = "";
+  if(dt) {
+    da = dt->FindColName(var->name);
+    if(da && da->isString())
+      string_cvt = "(String)";  // cast variant value to a string for setting!
+  }
+  // in all cases, we need a temp var that is ref counted, to hold the mat slice for the col
+  prog->AddLine(this, "{taMatrix* __tmp_mat;");
+  prog->IncIndent();
+  // first, get the mat slice
+  if (row_spec == CUR_ROW) {
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetMatrixDataByName(\"" + var->name + "\");");
+  }
+  else if (row_spec == ROW_NUM) {
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
+                  + row_var->name + ", " + String(quiet) + ");");
+  }
+  else if (row_spec == ROW_VAL) {
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
+                  + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
+  }
+  if(set_data) {
+    prog->AddLine(this, String("__tmp_mat.InitValsFmVar(0);"));
+    prog->AddLine(this, String("__tmp_mat.Set_Flat(1, ") + var->name + ");");
+  }
+  else {
+    prog->AddLine(this, var->name + " = __tmp_mat.FindVal_Flat(1);");
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
