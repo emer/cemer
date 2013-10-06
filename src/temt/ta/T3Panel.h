@@ -28,7 +28,7 @@
 class T3DataView; //
 class iT3Panel; //
 class QPixmap; //
-
+class T3DataViewMain; //
 
 /* T3Panel
 
@@ -69,6 +69,7 @@ public:
   };
 
   T3DataViewRoot        root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
+  T3DataView_List*      root_views; // #READ_ONLY #HIDDEN #NO_SAVE #NO_FIND pointer to root_view.children -- for selecting root views
   taColor               bg_color; // background color of the panel note: alpha transparency value is also used and will be reflected in saved images!
   taColor               text_color; // color to use for text in the panel -- may need to change this from default of black depending on the bg_color
   bool                  headlight_on; // turn the camera headlight on for illuminating the scene -- turn off only if there is another source of light within the scenegraph -- otherwise it will be dark!
@@ -79,6 +80,7 @@ public:
     {return (root_view.children.size == 1);}
     // true when one and only one child obj -- it can control some of our properties by default
   T3DataView*           singleChild() const; // return the single child
+  T3DataViewMain*       FirstChild() const; // return the first child, as a main
 
   inline iT3Panel* widget() {return (iT3Panel*)inherited::widget();} // lex override
   const iColor          GetBgColor() const; // #IGNORE get the effective bg color
@@ -122,6 +124,9 @@ public:
   void  GetCameraFocDist(int view_no, float& fd)
   { saved_views.GetCameraFocDist(view_no, fd); }
   // #CAT_Display for given view number, set camera focal distance
+
+  virtual void          EditView(T3DataViewMain* view);
+  // #CAT_Display #BUTTON #FROM_GROUP_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel
 
   override QPixmap      GrabImage(bool& got_image);
   override bool         SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);

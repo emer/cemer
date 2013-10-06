@@ -98,7 +98,7 @@ void iT3PanelViewer::DeletePanel(int tab_idx) {
 void iT3PanelViewer::PanelProperties(int tab_idx) {
   T3Panel* fr = viewPanel(tab_idx);
   if (!fr) return;
-  fr->EditDialog(true);
+  fr->EditDialog(false);        // non-modal so it can open other dialogs..
 }
 
 void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {

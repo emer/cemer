@@ -40,7 +40,6 @@ taBrainAtlas_List* Network::brain_atlases = NULL;
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
-  // view_objs = ?
 
   if(!brain_atlases)
     brain_atlases = &Network_Group::brain_atlases;
@@ -135,7 +134,6 @@ void Network::InitLinks() {
   proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(specs, this);
   taBase::Own(layers, this);
-  taBase::Own(view_objs, this);
   taBase::Own(max_disp_size, this);
   taBase::Own(max_disp_size2d, this);
 
@@ -191,7 +189,6 @@ void Network::CutLinks() {
   train_time.CutLinks();
   max_disp_size.CutLinks();
   max_disp_size2d.CutLinks();
-  view_objs.CutLinks();
   layers.CutLinks();            // then std kills
   specs.CutLinks();
   proj = NULL;
@@ -202,7 +199,6 @@ void Network::CutLinks() {
 void Network::Copy_(const Network& cp) {
   specs = cp.specs;
   layers = cp.layers;
-  view_objs = cp.view_objs;
 
   auto_build = cp.auto_build;
 
@@ -601,39 +597,6 @@ NetView* Network::NewView(T3Panel* fr) {
   return NetView::New(this, fr);
 }
 #endif
-
-NetViewObj* Network::NewViewText(const String& txt) {
-  StructUpdate(true);
-  NetViewObj* rval = view_objs.NewEl(1);
-  rval->obj_type = NetViewObj::TEXT;
-  if(txt.nonempty())
-    rval->text = txt;
-  StructUpdate(false);
-  return rval;
-}
-
-NetViewObj* Network::NewGlassBrain() {
-  StructUpdate(true);
-  NetViewObj* lh = view_objs.NewEl(1);
-  lh->name = "LeftHemisphere";
-  lh->desc = "left hemisphere of human cortex (glass brain)";
-  lh->obj_type = NetViewObj::OBJECT;
-  lh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_LH.iv";
-  lh->set_color = true;
-  lh->color.Set(.7f, .7f, .7f, .5f);
-  lh->pos.x = 1.25f; lh->pos.y = .5f; lh->pos.z = -1.0f;
-
-  NetViewObj* rh = view_objs.NewEl(1);
-  rh->name = "RightHemisphere";
-  rh->desc = "right hemisphere of human cortex (glass brain)";
-  rh->obj_type = NetViewObj::OBJECT;
-  rh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_RH.iv";
-  rh->set_color = true;
-  rh->color.Set(.7f, .7f, .7f, .5f);
-  rh->pos.x = -.25f; rh->pos.y = .5f; rh->pos.z = -1.0f;
-  StructUpdate(false);
-  return rh;
-}
 
 // Create an fMRI-style brain visualization to show activations
 // in defined brain areas.  If no frame is specified, a new one

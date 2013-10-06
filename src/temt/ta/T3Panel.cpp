@@ -41,6 +41,7 @@ void T3Panel::Initialize() {
   text_color.setColorName(taMisc::t3d_text_color);
   headlight_on = true;
   stereo_view = STEREO_NONE;
+  root_views = &root_view.children;
 }
 
 void T3Panel::Destroy() {
@@ -54,9 +55,12 @@ void T3Panel::InitLinks() {
   taBase::Own(bg_color, this);
   taBase::Own(text_color, this);
   taBase::Own(saved_views, this);
+
+  root_views = &root_view.children;
 }
 
 void T3Panel::CutLinks() {
+  root_views = NULL;
   bg_color.CutLinks();
   text_color.CutLinks();
   root_view.CutLinks();
@@ -146,6 +150,12 @@ T3DataView* T3Panel::singleChild() const {
   return rval;
 }
 
+T3DataViewMain* T3Panel::FirstChild() const {
+  T3DataViewMain* rval = (T3DataViewMain*)root_view.children.SafeEl(0);
+  if(!rval) return NULL;
+  if(!rval->InheritsFrom(&TA_T3DataViewMain)) return NULL;
+  return rval;
+}
 
 const iColor T3Panel::GetBgColor() const {
   iColor rval;
@@ -262,7 +272,10 @@ void T3Panel::SetAllSavedViews() {
   for(int i=0;i<saved_views.size;i++) {
     T3SavedView* sv = saved_views[i];
     if(sv->name.contains("T3SavedView")) {              // uninitialized
-      sv->name = "View " + String(i);
+      sv->name = "Vw_" + String(i);
+    }
+    if(sv->name.startsWith("View_")) {              // long init
+      sv->name = "Vw_" + String(i);
     }
     SetSavedView(i);
   }
@@ -422,6 +435,11 @@ void T3Panel::SetColorScheme(ColorScheme color_scheme) {
     case BLUE_ON_BLACK:  SetTextBgColor("blue",  "black"); break;
   }
   UpdateAfterEdit();
+}
+
+void T3Panel::EditView(T3DataViewMain* view) {
+  if(!view) return;
+  view->EditDialog(false);
 }
 
 void T3Panel::GridLayout(int n_horiz, float horiz_sp, float vert_sp, bool save_views) {

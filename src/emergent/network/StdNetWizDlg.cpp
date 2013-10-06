@@ -177,6 +177,7 @@ bool StdNetWizDlg::DoDialog() {
   network->Build();
   network->LayerZPos_Unitize();
   network->FindMakeView();
+  network->UpdateAfterEdit();   // update any special settings..
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(network, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(network, "BrowserSelectMe");

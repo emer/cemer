@@ -36,6 +36,7 @@ class iThumbWheel; //
 class QVBoxLayout; // 
 class QHBoxLayout; // 
 class QLabel; //
+class iMenuButton; //
 
 
 #ifndef __MAKETA__
@@ -101,6 +102,7 @@ public:
   QToolButton*    seek_button;     // (flashlight) -- zooms display to view clicked objects
   QToolButton*    snapshot_button; // (camera) -- save an image of the current view to a file
   QToolButton*    print_button;    // (printer) -- print current view to a file
+  iMenuButton*    annote_button;   // (+) -- add annotations to the view
 
   static const int   n_views;      // number of saved view parameters to save (length of saved_views)
   T3SavedView_List saved_views; // saved view information
@@ -194,6 +196,16 @@ public slots:
   void seekbuttonClicked();
   void snapshotbuttonClicked();
   void printbuttonClicked();
+
+  void annoteLineClicked();
+  void annoteArrowClicked();
+  void annoteDoubleArrowClicked();
+  void annoteRectangleClicked();
+  void annoteEllipseClicked();
+  void annoteCircleClicked();
+  void annoteTextClicked();
+  void annoteObjectClicked();
+  void annoteClearAllClicked();
 
   void gotoviewbuttonClicked(int view_no);
   void saveviewTriggered(int view_no);

@@ -248,15 +248,12 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     if (dc) {
       // make sure it is this col bound to the guy!
       dcs->setDataCol(dc);
-    } else { // no target found in table
-//       if (dcs->sticky) {
-//         dcs->setDataCol(NULL); //keep him, but unbind from any col
-//       } else {
-        children.RemoveIdx(i);
-//       }
+    }
+    else { // no target found in table
+      children.RemoveIdx(i);
     }
   }
-// items: add missing, order correctly, and update existing (will be only action 1st time)
+  // items: add missing, order correctly, and update existing (will be only action 1st time)
   for (i = 0; i < cols->size; ++i) {
     dc = cols->FastEl(i);
     bool first = false;
@@ -264,7 +261,8 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     if (fm >= 0) {
       dcs = (DataColView*)children.FastEl(fm);
       if (fm != i) children.MoveIdx(fm, i);
-    } else {
+    }
+    else {
       first = true;
       dcs = (DataColView*)taBase::MakeToken(children.el_typ); // of correct type for this
       children.Insert(dcs, i);
@@ -275,6 +273,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
 
 void DataTableView::BuildAll() {
   UpdateFromDataTable();
+  BuildAnnotations();
 }
 
 void DataTableView::Render_pre() {

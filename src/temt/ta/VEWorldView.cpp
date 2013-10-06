@@ -181,7 +181,8 @@ void VEWorldView::BuildAll() {
     children.Add(ov);
     ov->BuildAll();
   }
-  // taMisc::Info("WorldView", name, "BuildAll complete");
+
+  BuildAnnotations();
 }
 
 void VEWorldView::Render_pre() {

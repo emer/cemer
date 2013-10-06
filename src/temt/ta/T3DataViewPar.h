@@ -32,12 +32,11 @@ class TA_API T3DataViewPar: public T3DataView {
 typedef T3DataView inherited;
 #endif
 public:
-  T3DataView_List       children; // #SHOW #READ_ONLY #SHOW_TREE
+  T3DataView_List       children; // #SHOW #READ_ONLY #SHOW_TREE child view objects
   override bool         hasChildren() const {return (children.size > 0);}
 
   override void         OnWindowBind(iT3Panel* vw);
   override void         CloseChild(taDataView* child);
-  override void         ReInit(); //note: does a depth-first calls to children, before self
 
   override void         InitLinks();
   override void         CutLinks();
@@ -45,6 +44,8 @@ public:
 
 protected:
   override void         DoActionChildren_impl(DataViewAction acts);
+  override void         ReInit_impl();
+  //note: does a depth-first calls to children, before self
 
 private:
   void  Copy_(const T3DataViewPar& cp);

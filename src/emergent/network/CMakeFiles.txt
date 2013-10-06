@@ -49,8 +49,6 @@ set(network_HEADS_MAKETA
   UnitCallThreadMgr.h
   Layer_PtrList.h
 
-  NetViewObj.h
-  NetViewObj_Group.h
   taBrainAtlas.h
   taBrainAtlas_List.h
 
@@ -117,7 +115,6 @@ set(network_HEADS_MAKETA
   LayerView.h
   PrjnView.h
   LayerGroupView.h
-  NetViewObjView.h
   NetView.h
   iViewPanelOfNetwork.h
 
@@ -135,7 +132,6 @@ set(network_HEADS_MAKETA
   T3LayerNode.h
   T3PrjnNode.h
   T3LayerGroupNode.h
-  T3NetViewObj.h
   T3NetNode.h
   T3BrainNode.h
 )
@@ -222,9 +218,7 @@ set(network_SRCS
   Layer_PtrList.cpp
 
   UnitCallThreadMgr.cpp
-  NetViewObj.cpp
-  NetViewObj_Group.cpp
-  taBrainAtlas.cpp
+      taBrainAtlas.cpp
   taBrainAtlas_List.cpp
   BrainAtlasRegexpPopulator.cpp
   Network.cpp
@@ -288,8 +282,7 @@ set(network_SRCS
   T3LayerNode.cpp
   T3PrjnNode.cpp
   T3LayerGroupNode.cpp
-  T3NetViewObj.cpp
-  T3NetNode.cpp
+    T3NetNode.cpp
 
   ScaleRange.cpp
   ScaleRange_List.cpp
@@ -300,8 +293,7 @@ set(network_SRCS
   LayerView.cpp
   PrjnView.cpp
   LayerGroupView.cpp
-  NetViewObjView.cpp
-  NetView.cpp
+    NetView.cpp
   iViewPanelOfNetwork.cpp
 
   BrainAtlas.cpp

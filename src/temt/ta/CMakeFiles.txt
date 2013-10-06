@@ -655,6 +655,10 @@ set(ta_HEADS_MAKETA_NOMOC
   T3DataViewMain.h
   T3DataViewRoot.h
 
+  T3Annotation.h
+  T3Annotation_List.h
+  T3AnnotationView.h
+
   T3SavedView.h
   T3SavedView_List.h
 
@@ -703,6 +707,8 @@ set(ta_HEADS_MAKETA_NOMOC
 
   T3Color.h
   T3ColorBar.h
+
+  T3AnnotationNode.h
 
   T3GridColViewNode.h
   T3GridViewNode.h
@@ -1717,6 +1723,10 @@ set(ta_SRCS_MAKETA
   T3DataViewMain.cpp
   T3DataViewRoot.cpp
 
+  T3Annotation.cpp
+  T3Annotation_List.cpp
+  T3AnnotationView.cpp
+
   T3SavedView.cpp
   T3SavedView_List.cpp
 
@@ -1765,6 +1775,8 @@ set(ta_SRCS_MAKETA
 
   T3Color.cpp
   T3ColorBar.cpp
+
+  T3AnnotationNode.cpp
 
   T3GridColViewNode.cpp
   T3GridViewNode.cpp

@@ -18,7 +18,6 @@
 #include <iViewPanelOfNetwork>
 #include <LayerGroupView>
 #include <PrjnView>
-#include <NetViewObjView>
 #include <UnitGroupView>
 #include <UnitView>
 #include <NewViewHelper>
@@ -576,11 +575,7 @@ void NetView::BuildAll() { // populates all T3 guys
     }
   }
 
-  FOREACH_ELEM_IN_GROUP(NetViewObj, obj, net()->view_objs) {
-    NetViewObjView* ov = new NetViewObjView();
-    ov->SetObj(obj);
-    children.Add(ov);
-  }
+  BuildAnnotations();
 }
 
 void NetView::SetLayDispMode(const String& lay_nm, int disp_md) {

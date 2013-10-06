@@ -280,6 +280,8 @@ public:
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
 
+  override bool         ShowDraggers() const { return lay_mv; }
+
   override void         Dump_Load_post();
 #ifndef __MAKETA__
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);

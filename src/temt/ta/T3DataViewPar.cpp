@@ -39,21 +39,12 @@ void T3DataViewPar::DoActionChildren_impl(DataViewAction acts) {
   if (acts & CONSTR_MASK) {
     inherited::DoActionChildren_impl(acts);
     children.DoAction(acts);
-  } else {
+  }
+  else {
     children.DoAction(acts);
     inherited::DoActionChildren_impl(acts);
   }
 }
-
-/*nn??
-void T3DataViewPar::InsertItem(T3DataView* item, T3DataView* after) {
-  int where = 0;
-  // the Group list
-  if (after) {
-    where = children.Find(after) + 1; //note: we want it to actually go after
-  }
-  children.Insert(item, where);
-} */
 
 void T3DataViewPar::OnWindowBind(iT3Panel* vw) {
   inherited::OnWindowBind(vw);
@@ -63,10 +54,10 @@ void T3DataViewPar::OnWindowBind(iT3Panel* vw) {
   }
 }
 
-void T3DataViewPar::ReInit() {
+void T3DataViewPar::ReInit_impl() {
   for (int i = children.size - 1; i >= 0; --i) {
     T3DataView* item = children.FastEl(i);
     item->ReInit();
   }
-  ReInit_impl();
+  inherited::ReInit_impl();
 }

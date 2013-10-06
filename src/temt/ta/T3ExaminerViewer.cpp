@@ -18,9 +18,11 @@
 #include <T3QuarterWidget>
 #include <iT3Panel>
 #include <T3Panel>
+#include <T3DataViewMain>
 #include <iContextMenuButton>
 
 #include <iThumbWheel>
+#include <iMenuButton>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -61,7 +63,7 @@
 #define THUMB_PAGE_STEP 10
 #define THUMB_WRAP_THR 800
 
-const int T3ExaminerViewer::n_views = 6;
+const int T3ExaminerViewer::n_views = 8;
 
 bool T3ExaminerViewer::so_scrollbar_is_dragging = false;
 
@@ -274,6 +276,50 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   print_button->setToolTip("Print: print the current viewer image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
   connect(print_button, SIGNAL(clicked()), this, SLOT(printbuttonClicked()));
   rhs_button_vbox->addWidget(print_button);
+
+  annote_button = new iMenuButton(this);
+  taiM->FormatButton(annote_button, "+", taiMisc::fonBig);
+  annote_button->setToolTip("Add annotations (lines, text, etc) to the view");
+
+  QMenu* anmenu = new QMenu();
+  QAction* tmpact = new QAction("line", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteLineClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("arrow", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteArrowClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("double arrow", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteDoubleArrowClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("rectangle", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteRectangleClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("ellipse", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteEllipseClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("circle", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteCircleClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("text", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteTextClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("object", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteObjectClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("clear all", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteClearAllClicked()));
+  anmenu->addAction(tmpact);
+
+  annote_button->setMenu(anmenu);
+  rhs_button_vbox->addWidget(annote_button);
 }
 
 void T3ExaminerViewer::Constr_LHS_Buttons() {
@@ -287,7 +333,7 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
     T3SavedView* sv = saved_views[i];
     String nm = sv->name;
     if(nm.contains("T3SavedView")) {            // uninitialized
-      nm = "View " + String(i);
+      nm = "Vw_" + String(i);
       sv->name = nm;
     }
 
@@ -496,6 +542,78 @@ void T3ExaminerViewer::printbuttonClicked() {
   T3Panel* panl = GetPanel();
   if(!panl) return;
   panl->PrintImage();
+}
+
+void T3ExaminerViewer::annoteLineClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteLine");
+}
+
+void T3ExaminerViewer::annoteArrowClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteArrow");
+}
+
+void T3ExaminerViewer::annoteDoubleArrowClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteDoubleArrow");
+}
+
+void T3ExaminerViewer::annoteRectangleClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteRectangle");
+}
+
+void T3ExaminerViewer::annoteEllipseClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteEllipse");
+}
+
+void T3ExaminerViewer::annoteCircleClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteCircle");
+}
+
+void T3ExaminerViewer::annoteTextClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteText");
+}
+
+void T3ExaminerViewer::annoteObjectClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteObject");
+}
+
+void T3ExaminerViewer::annoteClearAllClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteClearAll"); // gives auto undo..
 }
 
 void T3ExaminerViewer::gotoviewbuttonClicked(int view_no) {

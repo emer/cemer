@@ -218,7 +218,7 @@ void LeabraNetwork::Initialize() {
   avg_send_pct_sum = 0.0f;
   avg_send_pct_n = 0;
 
-  maxda_stopcrit = .005f;
+  maxda_stopcrit = -1.0f;
   maxda = 0.0f;
 
   trg_max_act_stopcrit = 1.0f;  // disabled
@@ -274,8 +274,14 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(learn_rule != LEABRA_CHL)
+  if(learn_rule != LEABRA_CHL) {
     ct_time.use = true;		// has to be true for these guys
+    maxda_stopcrit = -1.0f;     // also has to be off
+  }
+  else {
+    if(maxda_stopcrit == -1.0f) // restore defaults
+      maxda_stopcrit = 0.005f;
+  }
 
   ct_time.UpdateAfterEdit_NoGui();
   ct_lrn_trig.UpdateAfterEdit_NoGui();

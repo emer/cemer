@@ -50,6 +50,8 @@ public:
   virtual void          setDataTable(DataTable* dt);
   // #MENU #NO_NULL build the view from the given table
 
+  override bool         ShowDraggers() const { return manip_ctrl_on; }
+
   void                  setDisplay(bool value); // use this to change display_on
   override void         setDirty(bool value); // set for all changes on us or below
   inline int            rows() const {return m_rows;}

@@ -23,7 +23,6 @@
 #include <NetworkRef>
 #include <BaseSpec_Group>
 #include <Layer_Group>
-#include <NetViewObj_Group>
 #include <taBrainAtlas_List>
 #include <TimeUsed>
 #include <UnitCallThreadMgr>
@@ -128,7 +127,6 @@ public:
 
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
-  NetViewObj_Group view_objs;   // #CAT_Display objects to display in the network 3d view
 
   NetFlags      flags;          // #CAT_Structure flags controlling various aspects of network function
 
@@ -379,10 +377,6 @@ public:
 
   virtual void  PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text data display (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change the scaling
-  virtual NetViewObj* NewViewText(const String& txt);
-  // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects -- this is an arbitrary fixed text label that can be placed anywhere in the display for annotating the model or other view elements
-  virtual NetViewObj* NewGlassBrain();
-  // #MENU #MENU_ON_Structure #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
   virtual BrainView* NewBrainView(T3Panel* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display Create an fMRI-style brain visualization to show activations in defined brain areas.
   virtual void  AssignVoxels();

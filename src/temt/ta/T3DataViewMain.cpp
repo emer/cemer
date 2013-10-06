@@ -16,15 +16,28 @@
 #include "T3DataViewMain.h"
 #include <T3Panel>
 #include <T3ExaminerViewer>
+#include <T3AnnotationView>
+#include <T3Annotation>
 
+void T3DataViewMain::Initialize() {
+}
 
 void T3DataViewMain::InitLinks() {
   inherited::InitLinks();
   taBase::Own(main_xform, this);
+  taBase::Own(annotations, this);
+  taBase::Own(annote_children, this);
+}
+
+void T3DataViewMain::CutLinks() {
+  annote_children.CutLinks();
+  inherited::CutLinks();
 }
 
 void T3DataViewMain::Copy_(const T3DataViewMain& cp) {
   main_xform = cp.main_xform;
+  annotations = cp.annotations;
+  annote_children = cp.annote_children;
 }
 
 
@@ -44,3 +57,143 @@ void T3DataViewMain::setInteractionModeOn(bool on_off, bool re_render) {
   }
 }
 
+void T3DataViewMain::CloseChild(taDataView* child) {
+  child->Reset();
+  children.RemoveEl(child);
+  annote_children.RemoveEl(child);
+}
+
+void T3DataViewMain::DoActionChildren_impl(DataViewAction acts) {
+  if (acts & CONSTR_MASK) {
+    inherited::DoActionChildren_impl(acts);
+    annote_children.DoAction(acts);
+  }
+  else {
+    annote_children.DoAction(acts);
+    inherited::DoActionChildren_impl(acts);
+  }
+}
+
+void T3DataViewMain::OnWindowBind(iT3Panel* vw) {
+  inherited::OnWindowBind(vw);
+  for (int i = 0; i < annote_children.size; ++i) {
+    T3DataView* item = annote_children.FastEl(i);
+    item->OnWindowBind(vw);
+  }
+}
+
+void T3DataViewMain::ReInit_impl() {
+  for (int i = annote_children.size - 1; i >= 0; --i) {
+    T3DataView* item = annote_children.FastEl(i);
+    item->ReInit();
+  }
+  inherited::ReInit_impl();
+}
+
+void T3DataViewMain::BuildAnnotations() {
+  annote_children.Reset();
+  for(int i=0; i<annotations.size; i++) {
+    T3Annotation* obj = annotations.FastEl(i);
+    T3AnnotationView* ov = new T3AnnotationView();
+    ov->SetAnno(obj);
+    annote_children.Add(ov);
+  }
+}
+
+void T3DataViewMain::ReBuildAll() {
+  Reset();
+  BuildAll();
+  Render();
+}
+
+T3Annotation* T3DataViewMain::AnnoteLine(float st_x, float st_y, float st_z,
+                                         float ed_x, float ed_y, float ed_z,
+                                         float line_width, const String& color) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("line_") + String(annotations.size-1);
+  obj->SetLine(st_x, st_y, st_z, ed_x, ed_y, ed_z, line_width, color);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteArrow(float st_x, float st_y, float st_z,
+                                          float ed_x, float ed_y, float ed_z,
+                                          float line_width, const String& color,
+                                          float arrow_size) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("arrow_") + String(annotations.size-1);
+  obj->SetArrow(st_x, st_y, st_z, ed_x, ed_y, ed_z, line_width, color, arrow_size);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteDoubleArrow(float st_x, float st_y, float st_z,
+                                                float ed_x, float ed_y, float ed_z,
+                                                float line_width, const String& color,
+                                                float arrow_size) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("double_arrow_") + String(annotations.size-1);
+  obj->SetDoubleArrow(st_x, st_y, st_z, ed_x, ed_y, ed_z, line_width, color, arrow_size);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteRectangle(float bot_left_x, float bot_left_y,
+                                              float bot_left_z,
+                                              float top_right_x, float top_right_y,
+                                              float top_right_z,
+                                              float line_width, const String& color) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("rectangle_") + String(annotations.size-1);
+  obj->SetRectangle(bot_left_x, bot_left_y, bot_left_z, top_right_x, top_right_y,
+                    top_right_z, line_width, color);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteEllipse(float bot_left_x, float bot_left_y,
+                                            float bot_left_z,
+                                            float top_right_x, float top_right_y,
+                                            float top_right_z,
+                                            float line_width, const String& color) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("ellipse_") + String(annotations.size-1);
+  obj->SetEllipse(bot_left_x, bot_left_y, bot_left_z, top_right_x, top_right_y,
+                  top_right_z, line_width, color);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteCircle(float ctr_x, float ctr_y, float ctr_z,
+                                           float radius,
+                                           float line_width, const String& color) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("circle_") + String(annotations.size-1);
+  obj->SetCircle(ctr_x, ctr_y, ctr_z, radius, line_width, color);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteText(const String& text,
+                                         float pos_x, float pos_y, float pos_z,
+                                         float font_size, const String& color) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("text_") + String(annotations.size-1);
+  obj->SetText(text, pos_x, pos_y, pos_z, font_size, color);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteObject(const String& obj_file_path,
+                                           float pos_x, float pos_y, float pos_z,
+                                           const String& color) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("object_") + String(annotations.size-1);
+  obj->SetObject(obj_file_path, pos_x, pos_y, pos_z, color);
+  ReBuildAll();
+  return obj;
+}
+
+void T3DataViewMain::AnnoteClearAll() {
+  annotations.Reset();
+}

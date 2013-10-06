@@ -208,7 +208,8 @@ void ISelectableHost::FillContextMenu(taiWidgetActions* menu) {
 
   if (sh_typ == ISelectable::GC_SINGLE_DATA) {
     FillContextMenu_int(sel_items, menu, 0, sh_typ);
-  } else { // dual, make submenus
+  }
+  else { // dual, make submenus
     String view_cap = "View";
     String obj_cap = "Object";
     item->GetContextCaptions(view_cap, obj_cap);
