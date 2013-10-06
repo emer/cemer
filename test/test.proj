@@ -1211,7 +1211,7 @@ LeabraProject .projects["test"] {
 	};
        };
 
-       T3SavedView_List @.saved_views = [8] {
+       T3SavedView_List @.saved_views = [10] {
 	T3SavedView @["Vw_0"] { };
 	T3SavedView @["Vw_1"] { };
 	T3SavedView @["Vw_2"] { };
@@ -1220,6 +1220,8 @@ LeabraProject .projects["test"] {
 	T3SavedView @["Vw_5"] { };
 	T3SavedView @["Vw_6"] { };
 	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
        };
       };
       T3Panel @["EpochOutputData"] { 
@@ -1236,21 +1238,17 @@ LeabraProject .projects["test"] {
 	  GraphColView @["epoch_time_usr"] { };
 	 };
 
-	 T3Annotation_List @.annotations = [3] {
+	 T3Annotation_List @.annotations = [1] {
 	  T3Annotation @["line_0"] { };
-	  T3Annotation @["rectangle_3"] { };
-	  T3Annotation @["double_arrow_2"] { };
 	 };
 
-	 T3DataView_List @.annote_children = [3] {
+	 T3DataView_List @.annote_children = [1] {
 	  T3AnnotationView @["line_0"] { };
-	  T3AnnotationView @["rectangle_3"] { };
-	  T3AnnotationView @["double_arrow_2"] { };
 	 };
 	};
        };
 
-       T3SavedView_List @.saved_views = [8] {
+       T3SavedView_List @.saved_views = [10] {
 	T3SavedView @["Vw_0"] { };
 	T3SavedView @["Vw_1"] { };
 	T3SavedView @["Vw_2"] { };
@@ -1259,6 +1257,8 @@ LeabraProject .projects["test"] {
 	T3SavedView @["Vw_5"] { };
 	T3SavedView @["Vw_6"] { };
 	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
        };
       };
      };
@@ -7977,6 +7977,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
        };
       };
       T3Panel @["EpochOutputData"] {
@@ -8072,53 +8086,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["line_0"] {
 	    name="line_0";
 	    type=RECTANGLE;
-	    start {x=0.1: y=0.5: z=0: };
-	    end {x=0.5: y=0.5: z=0: };
-	    bot_left {x=0: y=0: z=0: };
-	    top_right {x=1: y=1: z=1: };
-	    line_width=3;
-	    arrow_size=0.02;
-	    text="Live text updates";
-	    font_size=0.05;
-	    obj_fname="/usr/local/share/Emergent/3dobj_lib/banana.iv";
-	    color {r=0: g=0: b=0: a=1: };
-	    pos {x=-0.122274: y=-0.153772: z=-1.00956: };
-	    rot {x=-0.1295137: y=-0.9790894: z=0.1568759: rot=0.6876836: };
-	    scale {x=0.789315: y=0.7893149: z=0.7893149: };
-	   };
-	   T3Annotation @["rectangle_3"] {
-	    name="rectangle_3";
-	    type=RECTANGLE;
-	    start {x=0: y=0: z=0: };
-	    end {x=1: y=1: z=1: };
-	    bot_left {x=0.1: y=0.1: z=0: };
-	    top_right {x=0.5: y=0.5: z=0: };
+	    pos {x=0.170995: y=0.6007937: z=-2.216543e-7: };
+	    size {x=0.5: y=0.2: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
-	    pos {x=0.3003967: y=0.1109155: z=1.313165e-6: };
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["double_arrow_2"] {
-	    name="double_arrow_2";
-	    type=DOUBLEARROW;
-	    start {x=0.2: y=0.2: z=0: };
-	    end {x=0.5: y=0.5: z=0: };
-	    bot_left {x=0: y=0: z=0: };
-	    top_right {x=1: y=1: z=1: };
-	    line_width=1;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    pos {x=0.05083609: y=0.08472712: z=1.017002e-6: };
-	    rot {x=0: y=1: z=0: rot=0.03353931: };
-	    scale {x=1.588549: y=1.588549: z=1.588549: };
 	   };
 	  };
 	  annote_children {
@@ -8128,16 +8105,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3AnnotationView @["line_0"] {
 	    name="line_0";
 	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["EpochOutputData"].root_view.children["EpochOutputData_Graph"].annotations["line_0"]$$;
-	    m_transform=NULL;
-	   };
-	   T3AnnotationView @["rectangle_3"] {
-	    name="rectangle_3";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["EpochOutputData"].root_view.children["EpochOutputData_Graph"].annotations["rectangle_3"]$$;
-	    m_transform=NULL;
-	   };
-	   T3AnnotationView @["double_arrow_2"] {
-	    name="double_arrow_2";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["EpochOutputData"].root_view.children["EpochOutputData_Graph"].annotations["double_arrow_2"]$$;
 	    m_transform=NULL;
 	   };
 	  };
@@ -8532,6 +8499,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	T3SavedView @["Vw_7"] {
 	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };

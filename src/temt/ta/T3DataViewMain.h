@@ -60,30 +60,30 @@ public:
   virtual void          ReBuildAll();
   // calls Reset, BuildAll, Render -- a full rebuild -- when something structural has changed (outside of normal signal mechanism, which does this automatically on SigRecvStructUpdateEnd_impl
 
-  virtual T3Annotation*  AnnoteLine(float st_x, float st_y, float st_z,
-                                    float ed_x, float ed_y, float ed_z,
+  virtual T3Annotation*  AnnoteLine(float pos_x, float pos_y, float pos_z,
+                                    float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                     float line_width = 1.0, const String& color = "black");
   // #MENU_BUTTON #MENU_ON_Annote add a line annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteArrow(float st_x, float st_y, float st_z,
-                                     float ed_x, float ed_y, float ed_z,
+  virtual T3Annotation*  AnnoteArrow(float pos_x, float pos_y, float pos_z,
+                                     float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                      float line_width = 1.0, const String& color = "black",
                                      float arrow_size = 0.02);
   // #MENU_BUTTON add an arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteDoubleArrow(float st_x, float st_y, float st_z,
-                                           float ed_x, float ed_y, float ed_z,
-                                        float line_width = 1.0, const String& color = "black",
+  virtual T3Annotation*  AnnoteDoubleArrow(float pos_x, float pos_y, float pos_z,
+                                           float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
+                                           float line_width = 1.0, const String& color = "black",
                                            float arrow_size = 0.02);
   // #MENU_BUTTON add a double-arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteRectangle(float bot_left_x, float bot_left_y, float bot_left_z,
-                                         float top_right_x, float top_right_y, float top_right_z,
+  virtual T3Annotation*  AnnoteRectangle(float pos_x, float pos_y, float pos_z,
+                           float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
                                          float line_width = 1.0, const String& color = "black");
   // #MENU_BUTTON add a rectangle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteEllipse(float bot_left_x, float bot_left_y, float bot_left_z,
-                                       float top_right_x, float top_right_y, float top_right_z,
+  virtual T3Annotation*  AnnoteEllipse(float pos_x, float pos_y, float pos_z,
+                           float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
                                        float line_width = 1.0, const String& color = "black");
   // #MENU_BUTTON add an ellipse annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1), and define the bounding box for the ellipse
   virtual T3Annotation*  AnnoteCircle(float ctr_x, float ctr_y, float ctr_z,
-                                      float radius,
+                                      float radius = 0.25,
                                    float line_width = 1.0, const String& color = "black");
   // #MENU_BUTTON add a circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) (parameters converted to ellipse bounding box)
   virtual T3Annotation*  AnnoteText(const String& text,

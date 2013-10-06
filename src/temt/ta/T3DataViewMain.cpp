@@ -106,60 +106,56 @@ void T3DataViewMain::ReBuildAll() {
   Render();
 }
 
-T3Annotation* T3DataViewMain::AnnoteLine(float st_x, float st_y, float st_z,
-                                         float ed_x, float ed_y, float ed_z,
+T3Annotation* T3DataViewMain::AnnoteLine(float pos_x, float pos_y, float pos_z,
+                                         float size_x, float size_y, float size_z,
                                          float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("line_") + String(annotations.size-1);
-  obj->SetLine(st_x, st_y, st_z, ed_x, ed_y, ed_z, line_width, color);
+  obj->SetLine(pos_x, pos_y, pos_z, size_x, size_y, size_z, line_width, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteArrow(float st_x, float st_y, float st_z,
-                                          float ed_x, float ed_y, float ed_z,
+T3Annotation* T3DataViewMain::AnnoteArrow(float pos_x, float pos_y, float pos_z,
+                                          float size_x, float size_y, float size_z,
                                           float line_width, const String& color,
                                           float arrow_size) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("arrow_") + String(annotations.size-1);
-  obj->SetArrow(st_x, st_y, st_z, ed_x, ed_y, ed_z, line_width, color, arrow_size);
+  obj->SetArrow(pos_x, pos_y, pos_z, size_x, size_y, size_z, line_width, color, arrow_size);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteDoubleArrow(float st_x, float st_y, float st_z,
-                                                float ed_x, float ed_y, float ed_z,
+T3Annotation* T3DataViewMain::AnnoteDoubleArrow(float pos_x, float pos_y, float pos_z,
+                                                float size_x, float size_y, float size_z,
                                                 float line_width, const String& color,
                                                 float arrow_size) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("double_arrow_") + String(annotations.size-1);
-  obj->SetDoubleArrow(st_x, st_y, st_z, ed_x, ed_y, ed_z, line_width, color, arrow_size);
+  obj->SetDoubleArrow(pos_x, pos_y, pos_z, size_x, size_y, size_z, line_width, color, arrow_size);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteRectangle(float bot_left_x, float bot_left_y,
-                                              float bot_left_z,
-                                              float top_right_x, float top_right_y,
-                                              float top_right_z,
+T3Annotation* T3DataViewMain::AnnoteRectangle(float pos_x, float pos_y, float pos_z,
+                                              float size_x, float size_y, float size_z,
                                               float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("rectangle_") + String(annotations.size-1);
-  obj->SetRectangle(bot_left_x, bot_left_y, bot_left_z, top_right_x, top_right_y,
-                    top_right_z, line_width, color);
+  obj->SetRectangle(pos_x, pos_y, pos_z, size_x, size_y,
+                    size_z, line_width, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteEllipse(float bot_left_x, float bot_left_y,
-                                            float bot_left_z,
-                                            float top_right_x, float top_right_y,
-                                            float top_right_z,
+T3Annotation* T3DataViewMain::AnnoteEllipse(float pos_x, float pos_y, float pos_z,
+                                            float size_x, float size_y, float size_z,
                                             float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("ellipse_") + String(annotations.size-1);
-  obj->SetEllipse(bot_left_x, bot_left_y, bot_left_z, top_right_x, top_right_y,
-                  top_right_z, line_width, color);
+  obj->SetEllipse(pos_x, pos_y, pos_z, size_x, size_y,
+                  size_z, line_width, color);
   ReBuildAll();
   return obj;
 }

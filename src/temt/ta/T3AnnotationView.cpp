@@ -158,46 +158,46 @@ void T3AnnotationView::Render_impl() {
 
     // add the two new line vertices
     int pt_idx = point.getNum();
-    point.set1Value(pt_idx++, ob->start.x, ob->start.y, -ob->start.z);
-    point.set1Value(pt_idx++, ob->end.x, ob->end.y, -ob->end.z);
+    point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
+    point.set1Value(pt_idx++, ob->size.x, ob->size.y, -ob->size.z);
     // add num of vertices (2) of this new line
     line->numVertices.set1Value(line->numVertices.getNum(), 2);
 
     if(ob->type >= T3Annotation::ARROW) {
-      float ang = taMath_float::atan2(ob->end.y - ob->start.y, ob->end.x - ob->start.x);
+      float ang = taMath_float::atan2(ob->size.y - 0.0f, ob->size.x - 0.0f);
       float aa1 = ang + .75f * taMath_float::pi;
       float aa2 = ang - .75f * taMath_float::pi;
-      point.set1Value(pt_idx++, ob->end.x, ob->end.y, -ob->end.z);
+      point.set1Value(pt_idx++, ob->size.x, ob->size.y, -ob->size.z);
       point.set1Value(pt_idx++,
-                      ob->end.x + ob->arrow_size * taMath_float::cos(aa1),
-                      ob->end.y + ob->arrow_size * taMath_float::sin(aa1), -ob->end.z);
+                      ob->size.x + ob->arrow_size * taMath_float::cos(aa1),
+                      ob->size.y + ob->arrow_size * taMath_float::sin(aa1), -ob->size.z);
       // add num of vertices (2) of this new line
       line->numVertices.set1Value(line->numVertices.getNum(), 2);
 
-      point.set1Value(pt_idx++, ob->end.x, ob->end.y, -ob->end.z);
+      point.set1Value(pt_idx++, ob->size.x, ob->size.y, -ob->size.z);
       point.set1Value(pt_idx++,
-                      ob->end.x + ob->arrow_size * taMath_float::cos(aa2),
-                      ob->end.y + ob->arrow_size * taMath_float::sin(aa2), -ob->end.z);
+                      ob->size.x + ob->arrow_size * taMath_float::cos(aa2),
+                      ob->size.y + ob->arrow_size * taMath_float::sin(aa2), -ob->size.z);
       // add num of vertices (2) of this new line
       line->numVertices.set1Value(line->numVertices.getNum(), 2);
 
       if(ob->type == T3Annotation::DOUBLEARROW) {
-        float ang = taMath_float::atan2(ob->start.y - ob->end.y, ob->start.x - ob->end.x);
+        float ang = taMath_float::atan2(0.0f - ob->size.y, 0.0f - ob->size.x);
         float aa1 = ang + .75f * taMath_float::pi;
         float aa2 = ang - .75f * taMath_float::pi;
-        point.set1Value(pt_idx++, ob->start.x, ob->start.y, -ob->start.z);
+        point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
         point.set1Value(pt_idx++,
-                        ob->start.x + ob->arrow_size * taMath_float::cos(aa1),
-                        ob->start.y + ob->arrow_size * taMath_float::sin(aa1),
-                        -ob->start.z);
+                        0.0f + ob->arrow_size * taMath_float::cos(aa1),
+                        0.0f + ob->arrow_size * taMath_float::sin(aa1),
+                        0.0f);
         // add num of vertices (2) of this new line
         line->numVertices.set1Value(line->numVertices.getNum(), 2);
 
-        point.set1Value(pt_idx++, ob->start.x, ob->start.y, -ob->start.z);
+        point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
         point.set1Value(pt_idx++,
-                        ob->start.x + ob->arrow_size * taMath_float::cos(aa2),
-                        ob->start.y + ob->arrow_size * taMath_float::sin(aa2),
-                        -ob->start.z);
+                        0.0f + ob->arrow_size * taMath_float::cos(aa2),
+                        0.0f + ob->arrow_size * taMath_float::sin(aa2),
+                        0.0f);
         // add num of vertices (2) of this new line
         line->numVertices.set1Value(line->numVertices.getNum(), 2);
       }
@@ -221,11 +221,11 @@ void T3AnnotationView::Render_impl() {
 
     // add the two new line vertices
     int pt_idx = point.getNum();
-    point.set1Value(pt_idx++, ob->bot_left.x, ob->bot_left.y, -ob->bot_left.z);
-    point.set1Value(pt_idx++, ob->bot_left.x, ob->top_right.y, -ob->top_right.z);
-    point.set1Value(pt_idx++, ob->top_right.x, ob->top_right.y, -ob->top_right.z);
-    point.set1Value(pt_idx++, ob->top_right.x, ob->bot_left.y, -ob->bot_left.z);
-    point.set1Value(pt_idx++, ob->bot_left.x, ob->bot_left.y, -ob->bot_left.z);
+    point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
+    point.set1Value(pt_idx++, 0.0f, ob->size.y, -ob->size.z);
+    point.set1Value(pt_idx++, ob->size.x, ob->size.y, -ob->size.z);
+    point.set1Value(pt_idx++, ob->size.x, 0.0f, 0.0f);
+    point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
     // add num of vertices (5) of this new line
     line->numVertices.set1Value(line->numVertices.getNum(), 5);
 
