@@ -63,7 +63,7 @@
 #define THUMB_PAGE_STEP 10
 #define THUMB_WRAP_THR 800
 
-const int T3ExaminerViewer::n_views = 8;
+const int T3ExaminerViewer::n_views = 10;
 
 bool T3ExaminerViewer::so_scrollbar_is_dragging = false;
 

@@ -18,6 +18,7 @@
 #include <T3PanelViewer>
 #include <iT3Panel>
 #include <T3Panel>
+#include <T3DataViewMain>
 #include <iT3ViewspaceWidget>
 #include <iTabBarBase>
 #include <taiWidgetMenu>
@@ -101,6 +102,14 @@ void iT3PanelViewer::PanelProperties(int tab_idx) {
   fr->EditDialog(false);        // non-modal so it can open other dialogs..
 }
 
+void iT3PanelViewer::FirstViewProperties(int tab_idx) {
+  T3Panel* fr = viewPanel(tab_idx);
+  if (!fr) return;
+  T3DataViewMain* dvm = fr->FirstChild();
+  if(!dvm) return;
+  dvm->EditDialog(false);
+}
+
 void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
    menu->AddItem("&Add Panel", iAction::action,
                  this, SLOT(AddPanel()),_nilVariant);
@@ -113,6 +122,9 @@ void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
     // should always be at bottom:
     menu->AddItem("Panel &Properties...", iAction::int_act,
                   this, SLOT(PanelProperties(int)), tab_idx);
+
+    menu->AddItem("&1st View Properties...", iAction::int_act,
+                  this, SLOT(FirstViewProperties(int)), tab_idx);
 
   }
 }
