@@ -21,6 +21,7 @@
 
 // member includes:
 #include <ProgVarRef>
+#include <taGuiDialog>
 
 // declare all other types mentioned but not required to include:
 class Program; // 
@@ -141,7 +142,7 @@ public:
   // find local variable list at the closest level of scope to this program element
   virtual ProgVar*      MakeLocalVar(const String& var_nm);
   // make a new local variable with the given name -- creates a local vars if none found
-  virtual ProgVar*      FindVarNameInScope(const String& var_nm, bool else_make = false) const;
+  virtual ProgVar*      FindVarNameInScope(String& var_nm, bool else_make = false);
   // find variable name at the closest level of scope to this program element -- if else_make, then offer the option of creating the variable in global or local scope if not found
 
   virtual void          SetProgExprFlags() { };
