@@ -661,6 +661,7 @@ void iProgramEditor::GetValue() {
   bool first_diff = true;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
+    if(ms->memb_el.size == 0) continue; // something bad
     for (int i = 0; i < ms->widget_el.size; ++i) {
       MemberDef* md = ms->memb_el.SafeEl(i);
       taiWidget* mb_dat = ms->widget_el.FastEl(i);

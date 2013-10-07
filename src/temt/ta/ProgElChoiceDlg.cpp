@@ -69,8 +69,8 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(Program* prg, String& var_nm, int& loc
       combo_local_global->setCurrentIndex(0);//
   }
 
-  row = "local_global";
-   dlg.AddHBoxLayout(row, vbox);
+  //  row = "local_global";
+  //   dlg.AddHBoxLayout(row, vbox);
  //  dlg.AddLabel("local or global", widget, row, "label=Create a local or global variable;");
    String_Array var_types;
    var_types.FmDelimString("Int Real String Bool Object* Enum DynEnum UnDef");
