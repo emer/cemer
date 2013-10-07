@@ -1111,7 +1111,8 @@ float taMath_float::vec_ss_len(const float_Matrix* vec) {
   float rval = 0.0;
   if(vec->ElView()) {
     TA_FOREACH_INDEX(i, *vec) {
-      float val = vec->FastEl_Flat(i); rval += val * val;
+      float val = vec->FastEl_Flat(i);
+      rval += val * val;
     }
   }
   else {
@@ -1126,11 +1127,12 @@ float taMath_float::vec_ss_len(const float_Matrix* vec) {
       rval += horizontal_add(vf);
     }
     for(; i<sz; i++) {
-      rval = vecel[i] * vecel[i];
+      rval += vecel[i] * vecel[i];
     }
 #else
     for(int i=0; i<sz; i++) {
-      float val = vecel[i]; rval += val * val;
+      float val = vecel[i];
+      rval += val * val;
     }
 #endif
   }
