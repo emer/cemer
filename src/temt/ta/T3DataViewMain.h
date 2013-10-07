@@ -60,40 +60,43 @@ public:
   virtual void          ReBuildAll();
   // calls Reset, BuildAll, Render -- a full rebuild -- when something structural has changed (outside of normal signal mechanism, which does this automatically on SigRecvStructUpdateEnd_impl
 
-  virtual T3Annotation*  AnnoteLine(float pos_x, float pos_y, float pos_z,
+  virtual void          DataUnitsXForm(taVector3f& pos, taVector3f& size) { };
+  // transform position and size values into native units of the display (e.g., for a graph, the units of what is being graphed) -- override in implementations
+
+  virtual T3Annotation*  AnnoteLine(bool data_units, float pos_x, float pos_y, float pos_z,
                                     float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                     float line_width = 1.0, const String& color = "black");
-  // #MENU_BUTTON #MENU_ON_Annote add a line annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteArrow(float pos_x, float pos_y, float pos_z,
+  // #MENU_BUTTON #MENU_ON_Annote add a line annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
+  virtual T3Annotation*  AnnoteArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                      float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                      float line_width = 1.0, const String& color = "black",
                                      float arrow_size = 0.02);
-  // #MENU_BUTTON add an arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteDoubleArrow(float pos_x, float pos_y, float pos_z,
+  // #MENU_BUTTON add an arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1)  or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
+  virtual T3Annotation*  AnnoteDoubleArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                            float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                            float line_width = 1.0, const String& color = "black",
                                            float arrow_size = 0.02);
-  // #MENU_BUTTON add a double-arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteRectangle(float pos_x, float pos_y, float pos_z,
+  // #MENU_BUTTON add a double-arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
+  virtual T3Annotation*  AnnoteRectangle(bool data_units, float pos_x, float pos_y, float pos_z,
                            float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
                                          float line_width = 1.0, const String& color = "black");
-  // #MENU_BUTTON add a rectangle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
-  virtual T3Annotation*  AnnoteEllipse(float pos_x, float pos_y, float pos_z,
+  // #MENU_BUTTON add a rectangle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
+  virtual T3Annotation*  AnnoteEllipse(bool data_units, float pos_x, float pos_y, float pos_z,
                            float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
                                        float line_width = 1.0, const String& color = "black");
-  // #MENU_BUTTON add an ellipse annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1), and define the bounding box for the ellipse
-  virtual T3Annotation*  AnnoteCircle(float ctr_x, float ctr_y, float ctr_z,
+  // #MENU_BUTTON add an ellipse annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed), and define the bounding box for the ellipse
+  virtual T3Annotation*  AnnoteCircle(bool data_units, float ctr_x, float ctr_y, float ctr_z,
                                       float radius = 0.25,
                                    float line_width = 1.0, const String& color = "black");
-  // #MENU_BUTTON add a circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) (parameters converted to ellipse bounding box)
-  virtual T3Annotation*  AnnoteText(const String& text,
+  // #MENU_BUTTON add a circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed) (parameters converted to ellipse bounding box)
+  virtual T3Annotation*  AnnoteText(bool data_units, const String& text,
                                     float pos_x, float pos_y, float pos_z,
                                     float font_size = 0.05, const String& color = "black");
-  // #MENU_BUTTON add a text annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) for lower left start of text
-  virtual T3Annotation*  AnnoteObject(const String& obj_file_path,
+  // #MENU_BUTTON add a text annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed) for lower left start of text
+  virtual T3Annotation*  AnnoteObject(bool data_units, const String& obj_file_path,
                                       float pos_x, float pos_y, float pos_z,
                                       const String& color = "black");
-  // #MENU_BUTTON add an object (3D inventor file) annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1)
+  // #MENU_BUTTON add an object (3D inventor file) annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
   virtual void          AnnoteClearAll();
   // #MENU_BUTTON remove all existing annotations
 

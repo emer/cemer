@@ -167,6 +167,8 @@ public:
   
   inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}
 
+  override void         DataUnitsXForm(taVector3f& pos, taVector3f& size);
+
   override const iColor bgColor(bool& ok) const; // #IGNORE
   override void         UpdateName();
   override const String caption() const;

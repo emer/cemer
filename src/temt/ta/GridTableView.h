@@ -118,6 +118,8 @@ public:
   override const String caption() const;
   override bool         hasViewProperties() const { return true; }
 
+  override void         DataUnitsXForm(taVector3f& pos, taVector3f& size);
+
   const iColor          bgColor(bool& ok) const {
     ok = true; return colorscale.background;
   } // #IGNORE

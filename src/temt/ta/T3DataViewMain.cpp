@@ -106,86 +106,116 @@ void T3DataViewMain::ReBuildAll() {
   Render();
 }
 
-T3Annotation* T3DataViewMain::AnnoteLine(float pos_x, float pos_y, float pos_z,
+T3Annotation* T3DataViewMain::AnnoteLine(bool data_units, float pos_x, float pos_y, float pos_z,
                                          float size_x, float size_y, float size_z,
                                          float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("line_") + String(annotations.size-1);
-  obj->SetLine(pos_x, pos_y, pos_z, size_x, size_y, size_z, line_width, color);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size(size_x, size_y, size_z);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetLine(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteArrow(float pos_x, float pos_y, float pos_z,
+T3Annotation* T3DataViewMain::AnnoteArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                           float size_x, float size_y, float size_z,
                                           float line_width, const String& color,
                                           float arrow_size) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("arrow_") + String(annotations.size-1);
-  obj->SetArrow(pos_x, pos_y, pos_z, size_x, size_y, size_z, line_width, color, arrow_size);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size(size_x, size_y, size_z);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetArrow(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, arrow_size);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteDoubleArrow(float pos_x, float pos_y, float pos_z,
+T3Annotation* T3DataViewMain::AnnoteDoubleArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                                 float size_x, float size_y, float size_z,
                                                 float line_width, const String& color,
                                                 float arrow_size) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("double_arrow_") + String(annotations.size-1);
-  obj->SetDoubleArrow(pos_x, pos_y, pos_z, size_x, size_y, size_z, line_width, color, arrow_size);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size(size_x, size_y, size_z);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetDoubleArrow(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, arrow_size);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteRectangle(float pos_x, float pos_y, float pos_z,
+T3Annotation* T3DataViewMain::AnnoteRectangle(bool data_units, float pos_x, float pos_y, float pos_z,
                                               float size_x, float size_y, float size_z,
                                               float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("rectangle_") + String(annotations.size-1);
-  obj->SetRectangle(pos_x, pos_y, pos_z, size_x, size_y,
-                    size_z, line_width, color);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size(size_x, size_y, size_z);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetRectangle(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteEllipse(float pos_x, float pos_y, float pos_z,
+T3Annotation* T3DataViewMain::AnnoteEllipse(bool data_units, float pos_x, float pos_y, float pos_z,
                                             float size_x, float size_y, float size_z,
                                             float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("ellipse_") + String(annotations.size-1);
-  obj->SetEllipse(pos_x, pos_y, pos_z, size_x, size_y,
-                  size_z, line_width, color);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size(size_x, size_y, size_z);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetEllipse(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteCircle(float ctr_x, float ctr_y, float ctr_z,
+T3Annotation* T3DataViewMain::AnnoteCircle(bool data_units, float ctr_x, float ctr_y, float ctr_z,
                                            float radius,
                                            float line_width, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("circle_") + String(annotations.size-1);
-  obj->SetCircle(ctr_x, ctr_y, ctr_z, radius, line_width, color);
+  taVector3f pos(ctr_x, ctr_y, ctr_z);
+  taVector3f size(radius, 0.0f, 0.0f);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetCircle(pos.x, pos.y, pos.z, size.x, line_width, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteText(const String& text,
+T3Annotation* T3DataViewMain::AnnoteText(bool data_units, const String& text,
                                          float pos_x, float pos_y, float pos_z,
                                          float font_size, const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("text_") + String(annotations.size-1);
-  obj->SetText(text, pos_x, pos_y, pos_z, font_size, color);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size;
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetText(text, pos.x, pos.y, pos.z, font_size, color);
   ReBuildAll();
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteObject(const String& obj_file_path,
+T3Annotation* T3DataViewMain::AnnoteObject(bool data_units, const String& obj_file_path,
                                            float pos_x, float pos_y, float pos_z,
                                            const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("object_") + String(annotations.size-1);
-  obj->SetObject(obj_file_path, pos_x, pos_y, pos_z, color);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size;
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetObject(obj_file_path, pos.x, pos.y, pos.z, color);
   ReBuildAll();
   return obj;
 }

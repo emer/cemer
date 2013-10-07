@@ -961,6 +961,31 @@ void GraphTableView::UpdateFromDataTable_this(bool first) {
   InitFromUserData();
 }
 
+void GraphTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
+  if(x_axis.on) {
+    pos.x = x_axis.DataToPlot(pos.x);
+    size.x = x_axis.DistToPlot(size.x);
+  }
+  if(z_axis.on) {
+    pos.z = z_axis.DataToPlot(pos.z);
+    size.z = z_axis.DistToPlot(size.z);
+  }
+  if(graph_type == RASTER) {
+    pos.y = raster_axis.DataToPlot(pos.y);
+    size.y = raster_axis.DistToPlot(size.y);
+  }
+  else if(mainy) {
+    if(mainy->eff_y_axis) {
+      pos.y = mainy->eff_y_axis->DataToPlot(pos.y);
+      size.y = mainy->eff_y_axis->DistToPlot(size.y);
+    }
+    else {
+      pos.y = mainy->DataToPlot(pos.y);
+      size.y = mainy->DistToPlot(size.y);
+    }
+  }
+}
+
 ///////////////////////////////////////////////////////////////
 //      Actual Rendering of graph display
 

@@ -80,8 +80,9 @@ public:
   static bool	DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
 				const String& data_col_nm, const String& name_col_nm,
 				taMath::DistMetric metric, bool norm=false, float tol=0.0f,
-				bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if data_col_nm is blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across.  if name_col_nm is non-empty and valid, nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
+				bool incl_scalars=false, bool name_labels = true,
+                                bool gp_names=true);
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if data_col_nm is blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across.  if name_col_nm is non-empty and valid (and name_labels is false), nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created.  if name_labels and view, then name_col_nm labels are created as text annotations in grid view -- if gp_names then repeated names are grouped and only one label is generated
 
   static bool	CrossDistMatrix(float_Matrix* dist_mat,
 				DataTable* src_data_a, const String& data_col_nm_a,

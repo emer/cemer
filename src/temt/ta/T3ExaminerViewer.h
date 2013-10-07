@@ -206,6 +206,7 @@ public slots:
   void annoteTextClicked();
   void annoteObjectClicked();
   void annoteClearAllClicked();
+  void annoteEditAllClicked();
 
   void gotoviewbuttonClicked(int view_no);
   void saveviewTriggered(int view_no);

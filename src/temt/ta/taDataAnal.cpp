@@ -28,7 +28,8 @@
 #include <Relation>
 #include <int_Matrix>
 #include <ClustNode>
-
+#include <GridTableView>
+#include <T3Annotation>
 
 #include <taMisc>
 
@@ -775,9 +776,13 @@ bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
 				 const String& data_col_nm, const String& name_col_nm,
 				 taMath::DistMetric metric, bool norm, float tol,
-				 bool incl_scalars) {
+				 bool incl_scalars, bool name_labels, bool gp_names) {
   if(!src_data) {
     taMisc::Error("taDataAnal::DistMatrixTable -- src_data is NULL -- must pass in this data");
+    return false;
+  }
+  if(src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixTable -- src_data has no rows -- cannot compute distance matrix");
     return false;
   }
   float_Matrix dmat(false);
@@ -786,13 +791,16 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   GetDest(dist_mat, src_data, "DistMatrix");
   dist_mat->StructUpdate(true);
   dist_mat->Reset();	// get rid of any existing cols
-  if(!name_col_nm.empty()) {
+  if(!name_col_nm.empty() && !(view && name_labels)) {
     DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
     if(nmda) {
       dist_mat->NewColString("Name");
       int n = dmat.dim(0);
       for(int i=0;i<n;i++) {
 	String nm = nmda->GetValAsString(i);
+        if(dist_mat->data.FindNameIdx(nm) >= 0) { // prevent repeats
+          nm += String("_") + String(dist_mat->data.size);
+        }
 	dist_mat->NewColFloat(nm);
       }
       for(int i=0;i<n;i++) {
@@ -816,10 +824,102 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   dmda->SetUserData("TOP_ZERO", true);
   dist_mat->SetUserData("N_ROWS", 1);
   dist_mat->SetUserData("AUTO_SCALE", true);
+  dist_mat->SetUserData("HEADER_OFF", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
   dist_mat->StructUpdate(false);
-  if(view) dist_mat->FindMakeGridView();
+  if(view) {
+    GridTableView* gtv = dist_mat->FindMakeGridView();
+    if(name_labels && !name_col_nm.empty()) {
+      DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
+      if(nmda) {
+        gtv->AnnoteClearAll();
+        int n = dmat.dim(0);
+        float oneon = 1.0f / (float)n;
+        float txtlen = .20f;
+        float fontsz = .9f * oneon;
+        float lnwd = 2.0f;
+        if(gp_names) {
+          float_Array midcrds;
+          float_Array endcrds;
+          String_Array nms;
+          String lst_nm = nmda->GetValAsString(0);
+          nms.Add(lst_nm);
+          float lst_crd = 0.0f;
+          for(int i=1;i<n;i++) {
+            String nm = nmda->GetValAsString(i);
+            if(nm == lst_nm) continue;
+            float crd = (float)i * oneon;
+            float mcrd = .5f * (crd + lst_crd);
+            lst_crd = crd;
+            endcrds.Add(crd);
+            midcrds.Add(mcrd);
+            lst_nm = nm;
+            nms.Add(lst_nm);
+          }
+          float crd = (float)n * oneon;
+          float mcrd = .5f * (crd + lst_crd);
+          midcrds.Add(mcrd);
+          endcrds.Add(crd);
+
+          fontsz = 1.0f / (float)nms.size;
+          fontsz = MIN(0.05f, fontsz);
+          float exspc = 0.4f * oneon;
+          
+          for(int i=0;i<nms.size;i++) {
+            String nm = nms[i];
+            float crd = midcrds[i];
+            T3Annotation* t3a = gtv->AnnoteText(true, nm, -txtlen, 1.0f - crd - exspc,
+                                                0.0f, fontsz);
+            t3a->name = nm + "_r_" + String(i);
+          }
+          for(int i=0;i<nms.size;i++) {
+            String nm = nms[i];
+            float crd = midcrds[i];
+            T3Annotation* t3a = gtv->AnnoteText(true, nm, crd + exspc, 1.0f, 0.0f,
+                                                fontsz);
+            t3a->RotateAroundZ(90.0f);
+            t3a->name = nm + "_c_" + String(i);
+          }
+          for(int i=0;i<nms.size;i++) {
+            String nm = nms[i];
+            float ecrd = endcrds[i];
+            if(ecrd < 1.0f) {
+              T3Annotation* t3a = gtv->AnnoteLine(true, -txtlen, 1.0f - ecrd, 0.0f,
+                                                  1.0f+txtlen, 0.0f, 0.0f, lnwd);
+              t3a->name = nm + "_rl_" + String(i);
+            }
+          }
+          for(int i=0;i<nms.size;i++) {
+            String nm = nms[i];
+            float ecrd = endcrds[i];
+            if(ecrd < 1.0f) {
+              T3Annotation* t3a = gtv->AnnoteLine(true, ecrd, 0.0, 0.0f, 0.0f,
+                                                  1.0f + txtlen, 0.0f, lnwd);
+              t3a->name = nm + "_cl_" + String(i);
+            }
+          }
+        }
+        else {
+          for(int i=0;i<n;i++) {
+            String nm = nmda->GetValAsString(i);
+            float crd = (float)i * oneon;
+            T3Annotation* t3a = gtv->AnnoteText(true, nm, -txtlen, 1.0f - crd - fontsz,
+                                                0.0f, fontsz);
+            t3a->name = nm + "_r_" + String(i);
+          }
+          for(int i=0;i<n;i++) {
+            String nm = nmda->GetValAsString(i);
+            float crd = (float)i * oneon;
+            T3Annotation* t3a = gtv->AnnoteText(true, nm, crd + fontsz, 1.0f, 0.0f,
+                                                fontsz);
+            t3a->RotateAroundZ(90.0f);
+            t3a->name = nm + "_c_" + String(i);
+          }
+        }
+      }
+    }
+  }
   return true;
 }
 

@@ -318,6 +318,10 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteClearAllClicked()));
   anmenu->addAction(tmpact);
 
+  tmpact = new QAction("edit all", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteEditAllClicked()));
+  anmenu->addAction(tmpact);
+
   annote_button->setMenu(anmenu);
   rhs_button_vbox->addWidget(annote_button);
 }
@@ -614,6 +618,14 @@ void T3ExaminerViewer::annoteClearAllClicked() {
   T3DataViewMain* dvm = panl->FirstChild();
   if(!dvm) return;
   dvm->CallFun("AnnoteClearAll"); // gives auto undo..
+}
+
+void T3ExaminerViewer::annoteEditAllClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->annotations.BrowserSelectMe();
 }
 
 void T3ExaminerViewer::gotoviewbuttonClicked(int view_no) {

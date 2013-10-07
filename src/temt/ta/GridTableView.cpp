@@ -305,6 +305,46 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
   }
 }
 
+void GridTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
+  float gr_mg_sz2 = 2.0f * grid_margin;
+
+  int trow = (int)pos.y;
+  trow = MAX(0, trow);
+  float rrmdr = (pos.y - (float)trow);
+
+  pos.y = row_height * trow;
+  if(rrmdr != 0.0f) {
+    pos.y += grid_margin + rrmdr * (row_height - gr_mg_sz2);
+  }
+  size.y = (row_height - gr_mg_sz2) * size.y;
+
+  int tcol = (int)pos.x;
+  tcol = MAX(0, tcol);
+  float crmdr = (pos.x - (float)tcol);
+
+  pos.x = 0.0f;
+  int col_idx = 0;
+  int col_ctr = 0;
+  if(row_num_on)
+    pos.x = col_widths[col_idx++];
+
+  for (int col = col_range.min; col <= col_range.max; col++) {
+    GridColView* cvs = (GridColView*)colVis(col);
+    if (!cvs) continue;
+    DataCol* dc = cvs->dataCol();
+    if(col_ctr < tcol) {
+      pos.x += col_widths[col_idx++];
+      col_ctr++;
+      continue;
+    }
+    // this is our target column
+    if(crmdr != 0.0f) {
+      pos.x += grid_margin + crmdr * (col_widths[col_idx] - gr_mg_sz2);
+    }
+    size.x *= col_widths[col_idx];
+  }
+}
+
 void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb);
 
 void GridTableView::Render_pre() {

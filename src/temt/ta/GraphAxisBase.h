@@ -85,8 +85,12 @@ public:
   ///////////////////////////////////////////////////
   //    Rendering
 
-  inline float          DataToPlot(float data) // convert data value to plotting value
+  inline float          DataToPlot(float data)
   { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Normalize(data); }
+  // convert data value to plotting value
+  inline float          DistToPlot(float dist) // convert data value to plotting value
+  { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Scale() * dist; }
+  // convert a distance value in data units to plotting distance (doesn't subtract off min)
   virtual void          RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
   // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 

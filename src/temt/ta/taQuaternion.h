@@ -236,6 +236,8 @@ public:
   { FromEuler(theta_x, theta_y, theta_z); }
   taQuaternion(const taVector3f& euler)
   { FromEulerVec(euler); }
+  taQuaternion(const taAxisAngle& axa)
+  { FromAxisAngle(axa); }
 
   taQuaternion& operator=(const taAxisAngle& cp);
   taQuaternion& operator=(const taVector3f& cp)

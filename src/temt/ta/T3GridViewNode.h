@@ -17,7 +17,7 @@
 #define T3GridViewNode_h 1
 
 // parent includes:
-#include <T3NodeLeaf>
+#include <T3NodeParent>
 
 // member includes:
 
@@ -31,9 +31,9 @@ class T3TransformBoxDragger; //
 
 taTypeDef_Of(T3GridViewNode);
 
-class TA_API T3GridViewNode: public T3NodeLeaf {
+class TA_API T3GridViewNode: public T3NodeParent {
 #ifndef __MAKETA__
-typedef T3NodeLeaf inherited;
+typedef T3NodeParent inherited;
 
   SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
@@ -55,7 +55,7 @@ public:
   virtual void		setWidth(float wdth);
   virtual float		getWidth() { return width_; }
 
-  override void		addRemoveChildNode(SoNode* node, bool adding) {} // ignore 
+  //  override void		addRemoveChildNode(SoNode* node, bool adding) {}
   
   T3GridViewNode(T3DataView* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
   // dataview is a GridTableView object
