@@ -281,6 +281,7 @@ public:
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
 
   override bool         ShowDraggers() const { return lay_mv; }
+  override void         DataUnitsXForm(taVector3f& pos, taVector3f& size);
 
   override void         Dump_Load_post();
 #ifndef __MAKETA__

@@ -395,6 +395,11 @@ void NetView::CopyFromView(NetView* cp) {
   T3DataViewMain::CopyFromViewFrame(cp);
 }
 
+void NetView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
+  pos /= eff_max_size;
+  size /= eff_max_size;
+}
+
 String NetView::HistMemUsed() {
   String rval = "no units";
   if(net()) {

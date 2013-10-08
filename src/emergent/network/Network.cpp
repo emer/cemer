@@ -1682,6 +1682,21 @@ void Network::LayerPos_Cleanup() {
   UpdateMaxDispSize();          // must do that in case something moves
 }
 
+void Network::LayerPos_GridLayout_2d(int x_space, int y_space,
+                                     int gp_grid_x, int lay_grid_x) {
+  StructUpdate(true);
+  layers.LayerPos_GridLayout_2d(x_space, y_space, gp_grid_x, lay_grid_x);
+  UpdateMaxDispSize();          // must do that in case something moves
+  StructUpdate(false);
+}
+
+void Network::LayerPos_GridLayout_3d(int x_space, int y_space,
+                                     int z_size, int gp_grid_x, int lay_grid_x) {
+  StructUpdate(true);
+  layers.LayerPos_GridLayout_3d(x_space, y_space, z_size, gp_grid_x, lay_grid_x);
+  StructUpdate(false);
+}
+
 void Network::Compute_LayerDistances() {
   // first reset all
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {

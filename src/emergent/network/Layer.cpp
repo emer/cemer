@@ -123,9 +123,11 @@ void Layer::Copy_(const Layer& cp) {
     own_net->RemoveCons();
   }
 
-  layer_type = cp.layer_type;
+  desc = cp.desc;
   flags = cp.flags;
+  layer_type = cp.layer_type;
   pos = cp.pos;
+  pos2d = cp.pos2d;
   disp_scale = cp.disp_scale;
   un_geom = cp.un_geom;
   unit_groups = cp.unit_groups;
@@ -149,6 +151,9 @@ void Layer::Copy_(const Layer& cp) {
   icon_value = cp.icon_value;
   gp_unit_names_4d = cp.gp_unit_names_4d;
   unit_names = cp.unit_names;
+
+  brain_area = cp.brain_area;
+  voxel_fill_pct = cp.voxel_fill_pct;
 
   n_units = cp.n_units;         // note: v3compat obs
 
