@@ -49,7 +49,7 @@ public:
   };
 
   AnnoteType    type;           // type of annotation to create
-  ArrowType     arrow;          // #CONDSHOW_ON_LINE type of arrow to use for lines
+  ArrowType     arrow;          // #CONDSHOW_ON_type:LINE type of arrow to use for lines
   AnnoteType    rend_type;      // #READ_ONLY #NO_SAVE #HIDDEN type when rendered
   taVector3f    pos;            // 3d position of object (can be moved through a dragger in gui too) -- this is the starting point for lines & arrows, and the lower left-hand corner for rectangles and the bounding box of ellipses
   taVector3f    size;           // #CONDSHOW_OFF_type:TEXT,OBJECT size of the line, rectangle, or ellipse, in 3d dimensions (defines the bounding box for the ellipse)

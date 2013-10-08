@@ -286,8 +286,12 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteLineClicked()));
   anmenu->addAction(tmpact);
 
-  tmpact = new QAction("arrow", this);
-  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteArrowClicked()));
+  tmpact = new QAction("start arrow", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteStartArrowClicked()));
+  anmenu->addAction(tmpact);
+
+  tmpact = new QAction("end arrow", this);
+  connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteEndArrowClicked()));
   anmenu->addAction(tmpact);
 
   tmpact = new QAction("double arrow", this);
@@ -556,12 +560,20 @@ void T3ExaminerViewer::annoteLineClicked() {
   dvm->CallFun("AnnoteLine");
 }
 
-void T3ExaminerViewer::annoteArrowClicked() {
+void T3ExaminerViewer::annoteStartArrowClicked() {
   T3Panel* panl = GetPanel();
   if(!panl) return;
   T3DataViewMain* dvm = panl->FirstChild();
   if(!dvm) return;
-  dvm->CallFun("AnnoteArrow");
+  dvm->CallFun("AnnoteStartArrow");
+}
+
+void T3ExaminerViewer::annoteEndArrowClicked() {
+  T3Panel* panl = GetPanel();
+  if(!panl) return;
+  T3DataViewMain* dvm = panl->FirstChild();
+  if(!dvm) return;
+  dvm->CallFun("AnnoteEndArrow");
 }
 
 void T3ExaminerViewer::annoteDoubleArrowClicked() {

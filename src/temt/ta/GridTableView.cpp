@@ -342,6 +342,7 @@ void GridTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
       pos.x += grid_margin + crmdr * (col_widths[col_idx] - gr_mg_sz2);
     }
     size.x *= col_widths[col_idx];
+    break;
   }
 }
 

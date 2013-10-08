@@ -198,7 +198,8 @@ public slots:
   void printbuttonClicked();
 
   void annoteLineClicked();
-  void annoteArrowClicked();
+  void annoteStartArrowClicked();
+  void annoteEndArrowClicked();
   void annoteDoubleArrowClicked();
   void annoteRectangleClicked();
   void annoteEllipseClicked();
