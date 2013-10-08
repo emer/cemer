@@ -94,6 +94,8 @@ bool AnalysisRun::CollectParamsCluster(taDataAnalParams& params) {
   bool rval = false;
 
   taGuiDialog dlg;
+  taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
+
   dlg.win_title = "Cluster Analysis";
   dlg.width = 300;
   dlg.height = 400;
@@ -245,6 +247,8 @@ bool AnalysisRun::CollectParamsPCA_2d(taDataAnalParams& params) {
   bool rval = false;
 
   taGuiDialog dlg;
+  taBase::Ref(dlg);
+
   dlg.win_title = "PCA 2D";
   dlg.width = 300;
   dlg.height = 400;
@@ -354,6 +358,8 @@ bool AnalysisRun::CollectParamsPCA_Eigen(taDataAnalParams& params) {
   bool rval = false;
 
   taGuiDialog dlg;
+  taBase::Ref(dlg);
+
   dlg.win_title = "PCA Eigen";
   dlg.width = 300;
   dlg.height = 300;
@@ -420,6 +426,8 @@ bool AnalysisRun::CollectParamsDistanceMatrix(taDataAnalParams& params) {
   bool rval = false;
 
   taGuiDialog dlg;
+  taBase::Ref(dlg);
+
   dlg.win_title = "Distance Matrix";
   dlg.width = 300;
   dlg.height = 400;
@@ -573,6 +581,8 @@ bool AnalysisRun::CollectParamsLinearRegress(taDataAnalParams& params) {
   bool rval = false;
 
   taGuiDialog dlg;
+  taBase::Ref(dlg);
+
   dlg.win_title = "Linear Regression";
   dlg.width = 300;
   dlg.height = 300;
