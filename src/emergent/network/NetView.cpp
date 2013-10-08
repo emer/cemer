@@ -396,8 +396,22 @@ void NetView::CopyFromView(NetView* cp) {
 }
 
 void NetView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
-  pos /= eff_max_size;
-  size /= eff_max_size;
+  float tmpz = pos.z;
+  float tmpzs = size.z;
+  pos.x /= eff_max_size.x;
+  size.x /= eff_max_size.x;
+  if(lay_layout == THREE_D) {
+    pos.z = pos.y / eff_max_size.y;
+    size.z = size.y / eff_max_size.y;
+    pos.y = tmpz / eff_max_size.z;
+    size.y = tmpzs / eff_max_size.z;
+  }
+  else {
+    pos.z = pos.y / eff_max_size.y;
+    size.z = size.y / eff_max_size.y;
+    pos.y = tmpz;
+    size.y = tmpzs;
+  }
 }
 
 String NetView::HistMemUsed() {
