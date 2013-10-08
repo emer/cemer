@@ -50,7 +50,7 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(Program* prg, String& var_nm, int& loc
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("local or global", widget, row, "label=Create Variable As:;");
   String_Array choices;
-  choices.FmDelimString("Global Local");
+  choices.FmDelimString("Global Local Ignore");
 
   QComboBox* combo_local_global = new QComboBox;
   {
