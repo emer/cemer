@@ -71,8 +71,6 @@ void T3AnnotationView::Render_pre() {
   if(ob) {
     switch(ob->type) {
     case T3Annotation::LINE:
-    case T3Annotation::ARROW:
-    case T3Annotation::DOUBLEARROW:
     case T3Annotation::RECTANGLE: {
       SoDrawStyle* ds = new SoDrawStyle();
       ssep->addChild(ds);
@@ -142,9 +140,7 @@ void T3AnnotationView::Render_impl() {
   if(ob->type != ob->rend_type) return; // not safe!
 
   switch(ob->type) {
-  case T3Annotation::LINE:
-  case T3Annotation::ARROW:
-  case T3Annotation::DOUBLEARROW: {
+  case T3Annotation::LINE: {
     SoDrawStyle* ds = (SoDrawStyle*)ssep->getChild(ssep->getNumChildren()-2);
     ds->lineWidth.setValue(ob->line_width);
     SoLineSet* line = (SoLineSet*)ssep->getChild(ssep->getNumChildren()-1);
@@ -163,7 +159,27 @@ void T3AnnotationView::Render_impl() {
     // add num of vertices (2) of this new line
     line->numVertices.set1Value(line->numVertices.getNum(), 2);
 
-    if(ob->type >= T3Annotation::ARROW) {
+    if(ob->arrow == T3Annotation::START_ARROW || ob->arrow == T3Annotation::BOTH_ARROWS) {
+      float ang = taMath_float::atan2(0.0f - ob->size.y, 0.0f - ob->size.x);
+      float aa1 = ang + .75f * taMath_float::pi;
+      float aa2 = ang - .75f * taMath_float::pi;
+      point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
+      point.set1Value(pt_idx++,
+                      0.0f + ob->arrow_size * taMath_float::cos(aa1),
+                      0.0f + ob->arrow_size * taMath_float::sin(aa1),
+                      0.0f);
+      // add num of vertices (2) of this new line
+      line->numVertices.set1Value(line->numVertices.getNum(), 2);
+
+      point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
+      point.set1Value(pt_idx++,
+                      0.0f + ob->arrow_size * taMath_float::cos(aa2),
+                      0.0f + ob->arrow_size * taMath_float::sin(aa2),
+                      0.0f);
+      // add num of vertices (2) of this new line
+      line->numVertices.set1Value(line->numVertices.getNum(), 2);
+    }
+    if(ob->arrow == T3Annotation::END_ARROW || ob->arrow == T3Annotation::BOTH_ARROWS) {
       float ang = taMath_float::atan2(ob->size.y - 0.0f, ob->size.x - 0.0f);
       float aa1 = ang + .75f * taMath_float::pi;
       float aa2 = ang - .75f * taMath_float::pi;
@@ -180,27 +196,6 @@ void T3AnnotationView::Render_impl() {
                       ob->size.y + ob->arrow_size * taMath_float::sin(aa2), -ob->size.z);
       // add num of vertices (2) of this new line
       line->numVertices.set1Value(line->numVertices.getNum(), 2);
-
-      if(ob->type == T3Annotation::DOUBLEARROW) {
-        float ang = taMath_float::atan2(0.0f - ob->size.y, 0.0f - ob->size.x);
-        float aa1 = ang + .75f * taMath_float::pi;
-        float aa2 = ang - .75f * taMath_float::pi;
-        point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
-        point.set1Value(pt_idx++,
-                        0.0f + ob->arrow_size * taMath_float::cos(aa1),
-                        0.0f + ob->arrow_size * taMath_float::sin(aa1),
-                        0.0f);
-        // add num of vertices (2) of this new line
-        line->numVertices.set1Value(line->numVertices.getNum(), 2);
-
-        point.set1Value(pt_idx++, 0.0f, 0.0f, 0.0f);
-        point.set1Value(pt_idx++,
-                        0.0f + ob->arrow_size * taMath_float::cos(aa2),
-                        0.0f + ob->arrow_size * taMath_float::sin(aa2),
-                        0.0f);
-        // add num of vertices (2) of this new line
-        line->numVertices.set1Value(line->numVertices.getNum(), 2);
-      }
     }
 
     point.finishEditing();

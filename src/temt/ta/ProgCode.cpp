@@ -94,9 +94,7 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   return rval;
 }
 
-void ProgCode::UpdateAfterEdit_impl() {
-  SetProgExprFlags();
-  inherited::UpdateAfterEdit_impl();
+void ProgCode::ConvertToProgEl() {
   if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return;
@@ -126,6 +124,18 @@ void ProgCode::UpdateAfterEdit_impl() {
     tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
   }
 }
+
+void ProgCode::UpdateAfterEdit_impl() {
+  SetProgExprFlags();
+  inherited::UpdateAfterEdit_impl();
+  if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
+  if(!taMisc::gui_active) return;
+  ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
+  if(!own) return;
+  String code_str = trim(code.expr);
+  if(code_str.empty()) return;
+  tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
+}  
 
 String ProgCode::GetDisplayName() const {
   return code.expr;

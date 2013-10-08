@@ -67,11 +67,16 @@ public:
                                     float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                     float line_width = 1.0, const String& color = "black");
   // #MENU_BUTTON #MENU_ON_Annote add a line annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
-  virtual T3Annotation*  AnnoteArrow(bool data_units, float pos_x, float pos_y, float pos_z,
+  virtual T3Annotation*  AnnoteStartArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                      float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                      float line_width = 1.0, const String& color = "black",
                                      float arrow_size = 0.02);
-  // #MENU_BUTTON add an arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1)  or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
+  // #MENU_BUTTON add a line with a starting arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1)  or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
+  virtual T3Annotation*  AnnoteEndArrow(bool data_units, float pos_x, float pos_y, float pos_z,
+                                     float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
+                                     float line_width = 1.0, const String& color = "black",
+                                     float arrow_size = 0.02);
+  // #MENU_BUTTON add a line with an ending arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1)  or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
   virtual T3Annotation*  AnnoteDoubleArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                            float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                            float line_width = 1.0, const String& color = "black",

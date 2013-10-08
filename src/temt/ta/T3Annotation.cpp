@@ -21,6 +21,7 @@
 
 void T3Annotation::Initialize() {
   type = LINE;
+  arrow = NO_ARROW;
   rend_type = (AnnoteType)-1;
   size = 1.0f;
   line_width = 1.0f;
@@ -113,17 +114,34 @@ void T3Annotation::SetLine(float pos_x, float pos_y, float pos_z,
                            float size_x, float size_y, float size_z,
                            float ln_width , const String& clr) {
   type = LINE;
+  arrow = NO_ARROW;
   pos.SetXYZ(pos_x, pos_y, pos_z);
   size.SetXYZ(size_x, size_y, size_z);
   line_width = ln_width;
   xform_size = true;
   SetColor(clr);
 }
-void T3Annotation::SetArrow(float pos_x, float pos_y, float pos_z,
+
+void T3Annotation::SetStartArrow(float pos_x, float pos_y, float pos_z,
                             float size_x, float size_y, float size_z,
                             float ln_width , const String& clr,
                             float arrow_sz) {
-  type = ARROW;
+  type = LINE;
+  arrow = START_ARROW;
+  pos.SetXYZ(pos_x, pos_y, pos_z);
+  size.SetXYZ(size_x, size_y, size_z);
+  line_width = ln_width;
+  xform_size = true;
+  arrow_size = arrow_sz;
+  SetColor(clr);
+}
+
+void T3Annotation::SetEndArrow(float pos_x, float pos_y, float pos_z,
+                               float size_x, float size_y, float size_z,
+                               float ln_width , const String& clr,
+                               float arrow_sz) {
+  type = LINE;
+  arrow = END_ARROW;
   pos.SetXYZ(pos_x, pos_y, pos_z);
   size.SetXYZ(size_x, size_y, size_z);
   line_width = ln_width;
@@ -136,7 +154,8 @@ void T3Annotation::SetDoubleArrow(float pos_x, float pos_y, float pos_z,
                                   float size_x, float size_y, float size_z,
                                   float ln_width , const String& clr,
                                   float arrow_sz) {
-  type = DOUBLEARROW;
+  type = LINE;
+  arrow = BOTH_ARROWS;
   pos.SetXYZ(pos_x, pos_y, pos_z);
   size.SetXYZ(size_x, size_y, size_z);
   line_width = ln_width;

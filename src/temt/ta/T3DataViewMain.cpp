@@ -120,7 +120,7 @@ T3Annotation* T3DataViewMain::AnnoteLine(bool data_units, float pos_x, float pos
   return obj;
 }
 
-T3Annotation* T3DataViewMain::AnnoteArrow(bool data_units, float pos_x, float pos_y, float pos_z,
+T3Annotation* T3DataViewMain::AnnoteStartArrow(bool data_units, float pos_x, float pos_y, float pos_z,
                                           float size_x, float size_y, float size_z,
                                           float line_width, const String& color,
                                           float arrow_size) {
@@ -130,7 +130,22 @@ T3Annotation* T3DataViewMain::AnnoteArrow(bool data_units, float pos_x, float po
   taVector3f size(size_x, size_y, size_z);
   if(data_units)
     DataUnitsXForm(pos, size);
-  obj->SetArrow(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, arrow_size);
+  obj->SetStartArrow(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, arrow_size);
+  ReBuildAll();
+  return obj;
+}
+
+T3Annotation* T3DataViewMain::AnnoteEndArrow(bool data_units, float pos_x, float pos_y, float pos_z,
+                                          float size_x, float size_y, float size_z,
+                                          float line_width, const String& color,
+                                          float arrow_size) {
+  T3Annotation* obj = (T3Annotation*)annotations.New(1);
+  obj->name = String("arrow_") + String(annotations.size-1);
+  taVector3f pos(pos_x, pos_y, pos_z);
+  taVector3f size(size_x, size_y, size_z);
+  if(data_units)
+    DataUnitsXForm(pos, size);
+  obj->SetEndArrow(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, arrow_size);
   ReBuildAll();
   return obj;
 }

@@ -39,6 +39,9 @@ public:
   override String       GetToolbarName() const { return "code"; }
   override String       GetTypeDecoKey() const { return "Comment"; }
 
+  virtual void          ConvertToProgEl();
+  // converts the code to an appropriate program element -- called in a delayed gui callback routine
+
   static void           CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
                                          const String& code, ProgEl* scope_el);
   // #IGNORE
