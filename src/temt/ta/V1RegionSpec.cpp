@@ -439,6 +439,10 @@ void V1RegionSpec::UpdateGeom() {
   ///////////////////////////////////////////////////////////////
   //                    V1C Complex
 
+  if(v2_filters & V2_TL) {
+    v1c_filters = (ComplexFilters) (v1c_filters | (LEN_SUM | END_STOP)); // must be set
+  }
+
   int n_cmplx = 1;              // assume len sum
   if(v1c_filters & END_STOP) {
     v1c_filters = (ComplexFilters) (v1c_filters | LEN_SUM);     // must be set
@@ -479,12 +483,17 @@ void V1RegionSpec::UpdateGeom() {
 //   if(v2_filters & V2_BO) {
 //     v2_filters = (V2Filters) (v2_filters | V2_TL); // must be set
 //   }
-  if(v2_filters & V2_TL) {
-    v1c_filters = (ComplexFilters) (v1c_filters | (LEN_SUM | END_STOP)); // must be set
-  }
 
   ///////////////////////////////////////
   //  Spat Integ Geoms
+
+  if(!(v1c_filters & (LEN_SUM | END_STOP))) {
+    // if not doing complex, don't do SI_V1C
+    spat_integ = (SpatIntegFilters)(spat_integ & ~SI_V1C);
+  }
+  if(!(v2_filters & V2_BO)) {
+    spat_integ = (SpatIntegFilters)(spat_integ & ~SI_V2BO);
+  }
 
   if(region.edge_mode == VisRegionParams::WRAP) {
     si_specs.spat_border = 0;
