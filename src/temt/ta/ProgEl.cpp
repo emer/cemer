@@ -560,21 +560,6 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
 
   ProgVar* rval = FindVarNameInScope_impl(var_nm);
   if(!rval && else_make) {
-#if 0
-    String chs_str = "Program variable named: " + var_nm + " in program: " + prg->name
-      + " not found";
-    int chs = taMisc::Choice(chs_str, "Create as Global", "Create as Local", "Ignore");
-    if(chs == 0) {
-      rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
-      if(taMisc::gui_active)
-        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
-    }
-    if(chs == 1) {
-      rval = ((ProgEl*)this)->MakeLocalVar(var_nm);
-      if(taMisc::gui_active)
-        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
-    }
-#else
     ProgElChoiceDlg dlg;
     taBase::Ref(dlg);
     int choice = 2;
@@ -594,7 +579,6 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
       rval->var_type = var_type;
       rval->UpdateAfterEdit();
     }
-#endif
   }
   return rval;
 }
