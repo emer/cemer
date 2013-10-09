@@ -91,26 +91,8 @@ void ProgExprBase::UpdateAfterEdit_impl() {
   if(!HasExprFlag(NO_VAR_ERRS)) {
     ProgEl* pel = GET_MY_OWNER(ProgEl);
     if(!taMisc::is_loading && bad_vars.size > 0) {
-      String chs_str = "ProgExpr in program element:" + pel->GetDisplayName() +
-        "\n in program: " + prg->name +
-        " Errors in expression -- the following variable names could not be found: ";
       for(int i=0; i<bad_vars.size; i++) {
-        chs_str += " " + bad_vars[i];
-      }
-      int chs = taMisc::Choice(chs_str, "Create as Globals", "Create as Locals", "I will fix Expr");
-      if(chs == 0) {
-        for(int i=0; i<bad_vars.size; i++) {
-          ProgVar* nwvar = (ProgVar*)prg->vars.New(1, NULL, bad_vars[i]);
-          if(taMisc::gui_active && i==0)
-            tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
-        }
-      }
-      if(chs == 1) {
-        for(int i=0; i<bad_vars.size; i++) {
-          ProgVar* nwvar = pel->MakeLocalVar(bad_vars[i]);
-          if(taMisc::gui_active && i==0)
-            tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
-        }
+        pel->FindVarNameInScope(bad_vars[i], true);
       }
     }
   }
