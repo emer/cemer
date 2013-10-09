@@ -17,7 +17,7 @@
 #include <float_Matrix>
 #include <taMath_float>
 
-#include <taMisc>
+// #include <taMisc>
 
 void V1KwtaSpec::Initialize() {
   on = -1;                      // detect old loads
@@ -267,7 +267,7 @@ void V1KwtaSpec::Compute_Act(float_Matrix& inputs, float_Matrix& outputs,
   int ixs = inputs.dim(2);
   int iys = inputs.dim(3);
 
-  float avg_da = 0.0f;
+  // float avg_da = 0.0f;
   for(int iy=0; iy < iys; iy++) {
     for(int ix=0; ix < ixs; ix++) {
       float gig = gc_i_mat.FastEl2d(ix, iy);
@@ -277,17 +277,17 @@ void V1KwtaSpec::Compute_Act(float_Matrix& inputs, float_Matrix& outputs,
           float ge = g_bar_e * raw;
           float act = Compute_ActFmIn(ge, gig);
           float& out = outputs.FastEl4d(gx, gy, ix, iy);
-          float da = act - out;
-          avg_da += fabsf(da);
+          // float da = act - out;
+          // avg_da += fabsf(da);
           out = act;
         }
       }
     }
   }
-  avg_da /= (float)inputs.size;
-  if(mode == FFFB) {
-    taMisc::Info("avg_da:", String(avg_da));
-  }
+  // avg_da /= (float)inputs.size;
+  // if(mode == FFFB) {
+  //   taMisc::Info("avg_da:", String(avg_da));
+  // }
 }
 
 void V1KwtaSpec::Compute_Act_Extra(float_Matrix& inputs, float_Matrix& outputs,
@@ -297,7 +297,7 @@ void V1KwtaSpec::Compute_Act_Extra(float_Matrix& inputs, float_Matrix& outputs,
   int ixs = inputs.dim(2);
   int iys = inputs.dim(3);
 
-  float avg_da = 0.0f;
+  // float avg_da = 0.0f;
   for(int iy=0; iy < iys; iy++) {
     for(int ix=0; ix < ixs; ix++) {
       float gig = gc_i_mat.FastEl2d(ix, iy);
@@ -317,16 +317,16 @@ void V1KwtaSpec::Compute_Act_Extra(float_Matrix& inputs, float_Matrix& outputs,
           }
           float act = Compute_ActFmIn(ge, gi_eff);
           float& out = outputs.FastEl4d(gx, gy, ix, iy);
-          float da = act - out;
-          avg_da += fabsf(da);
+          // float da = act - out;
+          // avg_da += fabsf(da);
           out = act;
         }
       }
     }
   }
-  avg_da /= (float)inputs.size;
-  if(mode == FFFB) {
-    taMisc::Info("avg_da:", String(avg_da));
-  }
+  // avg_da /= (float)inputs.size;
+  // if(mode == FFFB) {
+  //   taMisc::Info("avg_da:", String(avg_da));
+  // }
 }
 
