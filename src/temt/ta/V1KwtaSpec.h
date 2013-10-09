@@ -44,7 +44,7 @@ public:
   float		kwta_pt; // #CONDSHOW_ON_mode:KWTA #DEF_0.5 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units (uses KWTA_AVG_BASED -- 0.5 is gelin default)
   float		ff;     // #HIDDEN #NO_SAVE #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput -- fixed to 1
   float		fb;     // #HIDDEN #NO_SAVE #DEF_0.5 overall inhibitory contribution from feedback inhibition -- computed from average activation -- fixed to 0.5
-  int           n_itr;  // #HIDDEN #NO_SAVE #DEF_3 number of iterations to perform on fffb inhib
+  int           n_itr;  // #CONDSHOW_ON_mode:FFFB #DEF_3 number of iterations to perform on fffb inhib
   float         fb_dt;  // #HIDDEN #NO_SAVE #DEF_0.7 time constant for integrating fb inhib
   float         ff0;    // #HIDDEN #NO_SAVE #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases -- fixed to 0.1
   float		gain;	 // #CONDSHOW_OFF_mode:OFF #DEF_40 gain on the NXX1 activation function (based on g_e - g_e_thr value -- i.e. the gelin version of the function)
