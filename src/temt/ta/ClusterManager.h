@@ -91,7 +91,7 @@ protected:
   void saveProject();
 
   bool showRepoDialog();
-  bool setPaths();
+  bool setPaths(bool updt_wc = true);
   void runSearchAlgo();
   void initClusterInfoTable();
   bool loadTable(const String &filename, DataTable &table);

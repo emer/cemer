@@ -69,7 +69,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   }
 
   if(HasBasicData(false))
-    setPaths();                 // always get paths if possible, but not if not..
+    setPaths(false);                 // always get paths if possible, but not if not..
   m_valid = true;
 }
 
@@ -82,7 +82,7 @@ ClusterManager::~ClusterManager()
 
 void ClusterManager::Init() {
   if(HasBasicData(false))       // no err if not
-    setPaths();
+    setPaths(false);
 }
 
 bool ClusterManager::CheckPrefs() {
@@ -439,7 +439,7 @@ ClusterManager::getRepoUrl()
 }
 
 bool
-ClusterManager::setPaths() {
+ClusterManager::setPaths(bool updt_wc) {
   String prv_path = m_wc_path;
 
   if(!CheckPrefs()) return false;
@@ -474,7 +474,10 @@ ClusterManager::setPaths() {
   // Set the working copy path and get a canonicalized version back.
   String clust_svn = taMisc::cluster_svn_path;
   clust_svn.gsub("~/", taMisc::GetHomePath() + "/");
-  taMisc::MakePath(clust_svn);  // ensure good..
+
+  if(updt_wc) {
+    taMisc::MakePath(clust_svn);  // ensure good..
+  }
 
   m_wc_path = clust_svn + '/' + svn_repo + '/' + cluster + '/' + username;
 
@@ -502,7 +505,7 @@ ClusterManager::setPaths() {
   m_archive_dat_filename = m_wc_submit_path + "/jobs_archive.dat";
   m_proj_copy_filename = m_wc_models_path + '/' + fi.fileName();
 
-  if(m_wc_path != prv_path) {
+  if(updt_wc && m_wc_path != prv_path) {
     taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
     // make sure we've got a complete working copy here..
     try {

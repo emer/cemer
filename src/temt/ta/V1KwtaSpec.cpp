@@ -28,8 +28,8 @@ void V1KwtaSpec::Initialize() {
   kwta_pt = 0.5f;
   ff = 1.0f;
   fb = 0.5f;
-  n_itr = 3;
-  fb_dt = 0.7f;
+  n_itr = 10;
+  fb_dt = 0.3f;
   ff0 = 0.1f;
   gain = 40.0f;
   nvar = 0.01f;
