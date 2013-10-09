@@ -869,15 +869,15 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
           for(int i=0;i<nms.size;i++) {
             String nm = nms[i];
             float crd = midcrds[i];
-            T3Annotation* t3a = gtv->AnnoteText(true, nm, -txtlen, 1.0f - crd - exspc,
-                                                0.0f, fontsz);
+            T3Annotation* t3a = gtv->AnnoteText(true, nm, 0.0f, 1.0f - crd - exspc,
+                                                0.0f, fontsz, T3Annotation::RIGHT);
             t3a->name = nm + "_r_" + String(i);
           }
           for(int i=0;i<nms.size;i++) {
             String nm = nms[i];
             float crd = midcrds[i];
             T3Annotation* t3a = gtv->AnnoteText(true, nm, crd + exspc, 1.0f, 0.0f,
-                                                fontsz);
+                                                fontsz, T3Annotation::LEFT);
             t3a->RotateAroundZ(90.0f);
             t3a->name = nm + "_c_" + String(i);
           }
@@ -904,15 +904,15 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
           for(int i=0;i<n;i++) {
             String nm = nmda->GetValAsString(i);
             float crd = (float)i * oneon;
-            T3Annotation* t3a = gtv->AnnoteText(true, nm, -txtlen, 1.0f - crd - fontsz,
-                                                0.0f, fontsz);
+            T3Annotation* t3a = gtv->AnnoteText(true, nm, 0.0f, 1.0f - crd - fontsz,
+                                                0.0f, fontsz, T3Annotation::RIGHT);
             t3a->name = nm + "_r_" + String(i);
           }
           for(int i=0;i<n;i++) {
             String nm = nmda->GetValAsString(i);
             float crd = (float)i * oneon;
             T3Annotation* t3a = gtv->AnnoteText(true, nm, crd + fontsz, 1.0f, 0.0f,
-                                                fontsz);
+                                                fontsz, T3Annotation::LEFT);
             t3a->RotateAroundZ(90.0f);
             t3a->name = nm + "_c_" + String(i);
           }

@@ -323,38 +323,42 @@ public:
 
   /////////// Binocular
   BinocularFilters v1b_filters; // #CONDSHOW_ON_region.ocularity:BINOCULAR which binocular (V1B) filtering to perform to compute disparity information across the two eyes
-  V1BinocularSpec  v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
-  RenormMode	v1b_renorm;	 // #CONDSHOW_ON_region.ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
-  DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
-  XYNGeom	v1b_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular disparity output -- disp order: near, focus, far -- [v1s_feats.n or x][tot_disps]
+  V1BinocularSpec  v1b_specs;
+  // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 specs for V1 binocular filters -- comes after V1 simple processing in binocular case
+  RenormMode	v1b_renorm;
+  // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 #DEF_LIN_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
+  DataSave	v1b_save;
+  // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 how to save the V1 binocular outputs for the current time step in the data table
+  XYNGeom	v1b_feat_geom;
+  // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular disparity output -- disp order: near, focus, far -- [v1s_feats.n or x][tot_disps]
 
   /////////// Complex
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
-  V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
-  RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
-  V1KwtaSpec	v1ls_kwta;	// k-winner-take-all inhibitory dynamics for length sum level
-  V1sNeighInhib	v1ls_neigh_inhib; // specs for V1 length-sum neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
-  DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
+  V1ComplexSpec v1c_specs;	// #CONDSHOW_OFF_v1c_filters:0 specs for V1 complex filters -- comes after V1 binocular processing 
+  RenormMode	v1c_renorm;	// #CONDSHOW_OFF_v1c_filters:0 #DEF_LIN_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
+  V1KwtaSpec	v1ls_kwta;	// #CONDSHOW_OFF_v1c_filters:0 k-winner-take-all inhibitory dynamics for length sum level
+  V1sNeighInhib	v1ls_neigh_inhib; // #CONDSHOW_OFF_v1c_filters:0 specs for V1 length-sum neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
+  DataSave	v1c_save;	// #CONDSHOW_OFF_v1c_filters:0 how to save the V1 complex outputs for the current time step in the data table
 
   XYNGeom	v1sg_img_geom; 	// #READ_ONLY size of v1 square grouping output image geometry -- input is v1s_img_geom, with either 2x2 or 4x4 spacing of square grouping operations reducing size by that amount
-  XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equal to v1sq_img_geom if sq_gp4 is on, or v1s_img_geom if not
-  XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- includes length sum and end stop in combined output -- configured automatically with x = n_angles
+  XYNGeom	v1c_img_geom; 	// #CONDSHOW_OFF_v1c_filters:0 #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equal to v1sq_img_geom if sq_gp4 is on, or v1s_img_geom if not
+  XYNGeom	v1c_feat_geom; 	// #CONDSHOW_OFF_v1c_filters:0 #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- includes length sum and end stop in combined output -- configured automatically with x = n_angles
 
   ////////// V2
   V2Filters	v2_filters;	// which V2 filtering to perform
-  V2BordOwnSpec	v2_specs;	// specs for V2 filtering
-  V2BordOwnStencilSpec	v2_ffbo; // specs for V2 feed-forward border-ownership computation
-  DataSave	v2_save;	// how to save the V2 complex outputs for the current time step in the data table
+  V2BordOwnSpec	v2_specs;	// #CONDSHOW_OFF_v2_filters:0 specs for V2 filtering
+  V2BordOwnStencilSpec	v2_ffbo; // #CONDSHOW_OFF_v2_filters:0 specs for V2 feed-forward border-ownership computation
+  DataSave	v2_save;	// #CONDSHOW_OFF_v2_filters:0 how to save the V2 complex outputs for the current time step in the data table
 
   SpatIntegFilters spat_integ;	// what to perform spatial integration over
-  VisSpatIntegSpec si_specs;	// spatial integration output specs
-  RenormMode	si_renorm;	// how to renormalize spat integ output prior to performing kwta
-  V1KwtaSpec	si_kwta;	// k-winner-take-all inhibitory dynamics for spatial integration output -- 
-  DataSave	si_save;	// how to save the spatial integration outputs for the current time step in the data table
-  XYNGeom	si_v1c_geom; 	// #READ_ONLY #SHOW size of spat integ v1c image output
+  VisSpatIntegSpec si_specs;	// #CONDSHOW_OFF_spat_integ:0 spatial integration output specs
+  RenormMode	si_renorm;	// #CONDSHOW_OFF_spat_integ:0 how to renormalize spat integ output prior to performing kwta
+  V1KwtaSpec	si_kwta;	// #CONDSHOW_OFF_spat_integ:0 k-winner-take-all inhibitory dynamics for spatial integration output -- 
+  DataSave	si_save;	// #CONDSHOW_OFF_spat_integ:0 how to save the spatial integration outputs for the current time step in the data table
+  XYNGeom	si_v1c_geom; 	// #CONDSHOW_OFF_spat_integ:0 #READ_ONLY #SHOW size of spat integ v1c image output
 
   OptionalFilters opt_filters; 	// optional filter outputs -- always rendered to separate tables in data table
-  DataSave	opt_save;	// how to save the optional outputs for the current time step in the data table
+  DataSave	opt_save;	// #CONDSHOW_OFF_opt_filters:0 how to save the optional outputs for the current time step in the data table
 
   //////////////////////////////////////////////////////////////
   //	Geometry and Stencils
@@ -404,7 +408,7 @@ public:
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
-  float_Matrix	v1s_ithr;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory threshold values -- intermediate vals used in computing kwta
+  float_Matrix	v1s_nimax;       // #READ_ONLY #NO_SAVE v1 simple cell neighbor inhibition values -- MAX of neighbor feature input activations
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1pi_out_r;  	 // #READ_ONLY #NO_SAVE polarity invariance over v1 simple cell output -- max over polarities, right eye [feat.x][1][img.x][img.y]
@@ -433,7 +437,7 @@ public:
   float_Matrix	v1ls_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_out;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
-  float_Matrix	v1ls_ithr;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory threshold values -- intermediate vals used in computing kwta
+  float_Matrix	v1ls_nimax;	 // #READ_ONLY #NO_SAVE neighbor inhibition max values -- [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1es_out;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
   float_Matrix	v1es_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
 

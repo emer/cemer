@@ -48,6 +48,12 @@ public:
     BOTH_ARROWS,                // both start and end arrows
   };
 
+  enum TextJust {               // justification for text
+    LEFT,                       // left justified text
+    CENTER,                     // center justified text
+    RIGHT,                      // right justified text
+  };
+
   AnnoteType    type;           // type of annotation to create
   ArrowType     arrow;          // #CONDSHOW_ON_type:LINE type of arrow to use for lines
   AnnoteType    rend_type;      // #READ_ONLY #NO_SAVE #HIDDEN type when rendered
@@ -56,6 +62,7 @@ public:
   float         line_width;     // #CONDSHOW_OFF_type:TEXT,OBJECT line thickness
   float         arrow_size;     // #CONDSHOW_ON_type:LINE&&!arrow:NO_ARROW size of the arrow head, in normalized coordinates
   String        text;           // #CONDSHOW_ON_type:TEXT text to displayobject
+  TextJust      justification;  // #CONDSHOW_ON_type:TEXT justification of the text (left, center, right)
   float         font_size;      // #CONDSHOW_ON_type:TEXT font size to display text in, in normalized units (the entire space is typically 1x1x1, so this should usually be a smaller fraction like .05)
   String        obj_fname;      // #CONDSHOW_ON_type:OBJECT #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Open Inventor file that contains the 3d geometry of the object
   taColor       color;          // color (a=alpha used for transparency)
@@ -113,8 +120,8 @@ public:
                           float ln_width = 1.0, const String& color = "black");
   // set to circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) (parameters converted to ellipse bounding box)
   virtual void  SetText(const String& text,
-                        float pos_x, float pos_y, float pos_z,
-                        float font_size = 0.05, const String& color = "black");
+                        float pos_x, float pos_y, float pos_z, float font_size = 0.05,
+                        TextJust just = LEFT, const String& color = "black");
   // set to text annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) for lower left start of text
   virtual void  SetObject(const String& obj_file_path,
                           float pos_x, float pos_y, float pos_z,

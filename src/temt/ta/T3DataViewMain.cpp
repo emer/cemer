@@ -209,14 +209,16 @@ T3Annotation* T3DataViewMain::AnnoteCircle(bool data_units, float ctr_x, float c
 
 T3Annotation* T3DataViewMain::AnnoteText(bool data_units, const String& text,
                                          float pos_x, float pos_y, float pos_z,
-                                         float font_size, const String& color) {
+                                         float font_size,
+                                         T3Annotation::TextJust just,
+                                         const String& color) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("text_") + String(annotations.size-1);
   taVector3f pos(pos_x, pos_y, pos_z);
   taVector3f size;
   if(data_units)
     DataUnitsXForm(pos, size);
-  obj->SetText(text, pos.x, pos.y, pos.z, font_size, color);
+  obj->SetText(text, pos.x, pos.y, pos.z, font_size, just, color);
   ReBuildAll();
   return obj;
 }

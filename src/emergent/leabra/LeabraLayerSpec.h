@@ -61,12 +61,14 @@ public:
     if(netin > ff0) ffi = ff * (netin - ff0);
     return ffi;
   }
+  // feedforward inhibition value as function of netinput
 
   inline float    FBInhib(const float act, float& fbi_x) {
     float fbi = fb * act;
     if(fbx != 0.0f && act > infl) fbi += fbx * (act - infl);
     return fbi;
   }
+  // feedback inhibition value as function of netinput
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6521
+// ta_Dump File v3.0 -- code v6.3.3.0 rev6541
 LeabraProject .projects["test"] { 
  taBase_Group @.templates = [0] {
  };
@@ -1497,69 +1497,69 @@ LeabraProject .projects["test"] {
 	 };
 
 	 T3Annotation_List @.annotations = [30] {
-	  T3Annotation @["text_0"] { };
-	  T3Annotation @["line_1"] { };
-	  T3Annotation @["text_2"] { };
-	  T3Annotation @["line_3"] { };
-	  T3Annotation @["text_4"] { };
-	  T3Annotation @["line_5"] { };
-	  T3Annotation @["text_6"] { };
-	  T3Annotation @["line_7"] { };
-	  T3Annotation @["text_8"] { };
-	  T3Annotation @["line_9"] { };
-	  T3Annotation @["text_10"] { };
-	  T3Annotation @["line_11"] { };
-	  T3Annotation @["text_12"] { };
-	  T3Annotation @["line_13"] { };
-	  T3Annotation @["text_14"] { };
-	  T3Annotation @["text_15"] { };
-	  T3Annotation @["line_16"] { };
-	  T3Annotation @["text_17"] { };
-	  T3Annotation @["line_18"] { };
-	  T3Annotation @["text_19"] { };
-	  T3Annotation @["line_20"] { };
-	  T3Annotation @["text_21"] { };
-	  T3Annotation @["line_22"] { };
-	  T3Annotation @["text_23"] { };
-	  T3Annotation @["line_24"] { };
-	  T3Annotation @["text_25"] { };
-	  T3Annotation @["line_26"] { };
-	  T3Annotation @["text_27"] { };
-	  T3Annotation @["line_28"] { };
-	  T3Annotation @["text_29"] { };
+	  T3Annotation @["checks_r_0"] { };
+	  T3Annotation @["mitvert_r_1"] { };
+	  T3Annotation @["midhoriz_r_2"] { };
+	  T3Annotation @["rdiag_r_3"] { };
+	  T3Annotation @["ldiag_r_4"] { };
+	  T3Annotation @["random1_r_5"] { };
+	  T3Annotation @["random2_r_6"] { };
+	  T3Annotation @["random_r_7"] { };
+	  T3Annotation @["checks_c_0"] { };
+	  T3Annotation @["mitvert_c_1"] { };
+	  T3Annotation @["midhoriz_c_2"] { };
+	  T3Annotation @["rdiag_c_3"] { };
+	  T3Annotation @["ldiag_c_4"] { };
+	  T3Annotation @["random1_c_5"] { };
+	  T3Annotation @["random2_c_6"] { };
+	  T3Annotation @["random_c_7"] { };
+	  T3Annotation @["checks_rl_0"] { };
+	  T3Annotation @["mitvert_rl_1"] { };
+	  T3Annotation @["midhoriz_rl_2"] { };
+	  T3Annotation @["rdiag_rl_3"] { };
+	  T3Annotation @["ldiag_rl_4"] { };
+	  T3Annotation @["random1_rl_5"] { };
+	  T3Annotation @["random2_rl_6"] { };
+	  T3Annotation @["checks_cl_0"] { };
+	  T3Annotation @["mitvert_cl_1"] { };
+	  T3Annotation @["midhoriz_cl_2"] { };
+	  T3Annotation @["rdiag_cl_3"] { };
+	  T3Annotation @["ldiag_cl_4"] { };
+	  T3Annotation @["random1_cl_5"] { };
+	  T3Annotation @["random2_cl_6"] { };
 	 };
 
 	 T3DataView_List @.annote_children = [30] {
-	  T3AnnotationView @["text_0"] { };
-	  T3AnnotationView @["line_1"] { };
-	  T3AnnotationView @["text_2"] { };
-	  T3AnnotationView @["line_3"] { };
-	  T3AnnotationView @["text_4"] { };
-	  T3AnnotationView @["line_5"] { };
-	  T3AnnotationView @["text_6"] { };
-	  T3AnnotationView @["line_7"] { };
-	  T3AnnotationView @["text_8"] { };
-	  T3AnnotationView @["line_9"] { };
-	  T3AnnotationView @["text_10"] { };
-	  T3AnnotationView @["line_11"] { };
-	  T3AnnotationView @["text_12"] { };
-	  T3AnnotationView @["line_13"] { };
-	  T3AnnotationView @["text_14"] { };
-	  T3AnnotationView @["text_15"] { };
-	  T3AnnotationView @["line_16"] { };
-	  T3AnnotationView @["text_17"] { };
-	  T3AnnotationView @["line_18"] { };
-	  T3AnnotationView @["text_19"] { };
-	  T3AnnotationView @["line_20"] { };
-	  T3AnnotationView @["text_21"] { };
-	  T3AnnotationView @["line_22"] { };
-	  T3AnnotationView @["text_23"] { };
-	  T3AnnotationView @["line_24"] { };
-	  T3AnnotationView @["text_25"] { };
-	  T3AnnotationView @["line_26"] { };
-	  T3AnnotationView @["text_27"] { };
-	  T3AnnotationView @["line_28"] { };
-	  T3AnnotationView @["text_29"] { };
+	  T3AnnotationView @["checks_r_0"] { };
+	  T3AnnotationView @["mitvert_r_1"] { };
+	  T3AnnotationView @["midhoriz_r_2"] { };
+	  T3AnnotationView @["rdiag_r_3"] { };
+	  T3AnnotationView @["ldiag_r_4"] { };
+	  T3AnnotationView @["random1_r_5"] { };
+	  T3AnnotationView @["random2_r_6"] { };
+	  T3AnnotationView @["random_r_7"] { };
+	  T3AnnotationView @["checks_c_0"] { };
+	  T3AnnotationView @["mitvert_c_1"] { };
+	  T3AnnotationView @["midhoriz_c_2"] { };
+	  T3AnnotationView @["rdiag_c_3"] { };
+	  T3AnnotationView @["ldiag_c_4"] { };
+	  T3AnnotationView @["random1_c_5"] { };
+	  T3AnnotationView @["random2_c_6"] { };
+	  T3AnnotationView @["random_c_7"] { };
+	  T3AnnotationView @["checks_rl_0"] { };
+	  T3AnnotationView @["mitvert_rl_1"] { };
+	  T3AnnotationView @["midhoriz_rl_2"] { };
+	  T3AnnotationView @["rdiag_rl_3"] { };
+	  T3AnnotationView @["ldiag_rl_4"] { };
+	  T3AnnotationView @["random1_rl_5"] { };
+	  T3AnnotationView @["random2_rl_6"] { };
+	  T3AnnotationView @["checks_cl_0"] { };
+	  T3AnnotationView @["mitvert_cl_1"] { };
+	  T3AnnotationView @["midhoriz_cl_2"] { };
+	  T3AnnotationView @["rdiag_cl_3"] { };
+	  T3AnnotationView @["ldiag_cl_4"] { };
+	  T3AnnotationView @["random1_cl_5"] { };
+	  T3AnnotationView @["line_29"] { };
 	 };
 	};
        };
@@ -4121,43 +4121,43 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [19 19 1] 5;5;5;5;1;1;1;1;3;3;
-3;3;3;3;3;3;1;1;1;5;
-5;5;5;1;1;1;1;3;3;3;
-3;3;3;3;3;1;1;1;5;5;
-5;5;1;1;1;1;3;3;3;3;
-3;3;3;3;1;1;1;5;5;5;
-5;1;1;1;1;3;3;3;3;3;
-3;3;3;1;1;1;1;1;1;1;
-5;5;5;1;1;1;1;1;1;1;
-1;1;0;0;0;1;1;1;1;5;
-5;5;1;1;1;1;1;1;1;1;
-1;0;0;0;1;1;1;1;5;5;
-5;1;1;1;1;1;1;1;1;1;
-0;0;0;1;1;1;1;1;1;1;
-5;1;1;1;1;1;1;1;1;1;
-1;1;3;3;3;3;1;1;1;1;
-5;5;5;5;1;1;1;1;1;1;
-1;3;3;3;3;1;1;1;1;5;
-5;5;5;1;1;1;1;1;1;1;
-3;3;3;3;1;1;1;1;5;5;
-5;5;1;1;1;1;1;1;1;3;
-3;3;3;1;1;1;1;5;5;5;
-5;1;1;1;1;1;1;1;3;3;
-3;3;1;1;1;1;1;1;1;1;
-5;5;5;5;1;1;1;3;3;3;
-3;1;1;1;1;1;1;1;1;5;
-5;5;5;1;1;1;3;3;3;3;
-1;1;1;1;1;1;1;1;5;5;
-5;5;1;1;1;3;3;3;3;1;
-1;1;1;1;1;1;1;5;5;5;
-5;1;1;1;1;1;1;1;0;0;
-0;1;1;1;1;1;1;1;1;1;
-5;5;5;1;1;1;1;0;0;0;
-1;1;1;1;1;1;1;1;1;5;
-5;5;1;1;1;1;0;0;0;1;
-1;1;1;1;1;1;1;1;5;5;
-5;      };
+      [19 19 1] 1;1;1;1;0.2;0.2;0.2;0.2;0.60000002;0.60000002;
+0.60000002;0.60000002;0.60000002;0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;1;
+1;1;1;0.2;0.2;0.2;0.2;0.60000002;0.60000002;0.60000002;
+0.60000002;0.60000002;0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;1;1;
+1;1;0.2;0.2;0.2;0.2;0.60000002;0.60000002;0.60000002;0.60000002;
+0.60000002;0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;1;1;1;
+1;0.2;0.2;0.2;0.2;0.60000002;0.60000002;0.60000002;0.60000002;0.60000002;
+0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+1;1;1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0;0;0;0.2;0.2;0.2;0.2;1;
+1;1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0;0;0;0.2;0.2;0.2;0.2;1;1;
+1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0;0;0;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.2;0.60000002;0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;0.2;
+1;1;1;1;0.2;0.2;0.2;0.2;0.2;0.2;
+0.2;0.60000002;0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;0.2;1;
+1;1;1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+0.60000002;0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;0.2;1;1;
+1;1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.60000002;
+0.60000002;0.60000002;0.60000002;0.2;0.2;0.2;0.2;1;1;1;
+1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.60000002;0.60000002;
+0.60000002;0.60000002;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+1;1;1;1;0.2;0.2;0.2;0.60000002;0.60000002;0.60000002;
+0.60000002;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;1;
+1;1;1;0.2;0.2;0.2;0.60000002;0.60000002;0.60000002;0.60000002;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;1;1;
+1;1;0.2;0.2;0.2;0.60000002;0.60000002;0.60000002;0.60000002;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;1;1;1;
+1;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0;0;
+0;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;
+1;1;1;0.2;0.2;0.2;0.2;0;0;0;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;1;
+1;1;0.2;0.2;0.2;0.2;0;0;0;0.2;
+0.2;0.2;0.2;0.2;0.2;0.2;0.2;0.2;1;1;
+1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -8982,11 +8982,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["line_0"] {
 	    name="line_0";
 	    type=RECTANGLE;
+	    arrow=NO_ARROW;
 	    pos {x=0.1709951: y=0.6007936: z=-2.216543e-7: };
 	    size {x=0.621227: y=-0.07530975: z=-3.668272e-8: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -8996,12 +8998,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   T3Annotation @["arrow_1"] {
 	    name="arrow_1";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.269051: y=0.391982: z=-1.73508e-7: };
 	    size {x=0.199769: y=-0.00614641: z=0.00741514: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9011,12 +9015,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   T3Annotation @["arrow_2"] {
 	    name="arrow_2";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0: y=0: z=0: };
 	    size {x=0.03846154: y=0.08000286: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9027,11 +9033,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["rectangle_3"] {
 	    name="rectangle_3";
 	    type=RECTANGLE;
+	    arrow=NO_ARROW;
 	    pos {x=0: y=0: z=0: };
 	    size {x=0.5: y=0.5: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=1: g=0.6470588: b=0: a=1: };
@@ -9042,11 +9050,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["rectangle_4"] {
 	    name="rectangle_4";
 	    type=RECTANGLE;
+	    arrow=NO_ARROW;
 	    pos {x=0.5: y=0.5: z=0: };
 	    size {x=0.5: y=0.5: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=1: g=0.6470588: b=0: a=1: };
@@ -9559,11 +9569,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["arrow_0"] {
 	    name="arrow_0";
 	    type=RECTANGLE;
+	    arrow=NO_ARROW;
 	    pos {x=0: y=0: z=0: };
 	    size {x=0.5: y=0.5: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=1: g=0: b=0: a=1: };
@@ -9574,11 +9586,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["T3Annotation_List_10_1"] {
 	    name="T3Annotation_List_10_1";
 	    type=RECTANGLE;
+	    arrow=NO_ARROW;
 	    pos {x=0.5: y=0.5: z=0: };
 	    size {x=0.5: y=0.5: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=1: g=0: b=0: a=1: };
@@ -9782,11 +9796,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["line_0"] {
 	    name="line_0";
 	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.5: y=0.5: z=0: };
 	    size {x=0.1: y=0.1: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9796,12 +9812,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   T3Annotation @["arrow_1"] {
 	    name="arrow_1";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.5360824: y=0.285: z=0: };
 	    size {x=0.02690243: y=0.095: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9811,12 +9829,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   T3Annotation @["arrow_2"] {
 	    name="arrow_2";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.7680412: y=0.665: z=0: };
 	    size {x=0.1159794: y=0.095: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9826,12 +9846,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   T3Annotation @["arrow_3"] {
 	    name="arrow_3";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.7680412: y=0.19: z=0: };
 	    size {x=0.1159794: y=0.095: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9842,11 +9864,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   T3Annotation @["line_4"] {
 	    name="line_4";
 	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.5: y=0: z=0: };
 	    size {x=-0.2: y=0.2: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -9856,12 +9880,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   T3Annotation @["arrow_5"] {
 	    name="arrow_5";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.536082: y=0.6: z=0: };
 	    size {x=0.0269024: y=0.1: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10021,12 +10047,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   T3Annotation @["arrow_0"] {
 	    name="arrow_0";
-	    type=ARROW;
+	    type=LINE;
+	    arrow=NO_ARROW;
 	    pos {x=0.5: y=0.5: z=0: };
 	    size {x=0.1: y=0.1: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10494,14 +10522,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   name="T3Annotation_List_13";
 	   el_typ=T3Annotation;
 	   el_def=0;
-	   T3Annotation @["text_0"] {
-	    name="text_0";
+	   T3Annotation @["checks_r_0"] {
+	    name="checks_r_0";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.8662105: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.8662105: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="checks";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10509,29 +10539,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_1"] {
-	    name="line_1";
-	    type=LINE;
-	    pos {x=-0.186: y=0.7836842: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_2"] {
-	    name="text_2";
+	   T3Annotation @["mitvert_r_1"] {
+	    name="mitvert_r_1";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.6856842: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.685684: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="mitvert";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10539,29 +10556,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_3"] {
-	    name="line_3";
-	    type=LINE;
-	    pos {x=-0.186: y=0.6289473: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_4"] {
-	    name="text_4";
+	   T3Annotation @["midhoriz_r_2"] {
+	    name="midhoriz_r_2";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.5825263: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.5825263: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="midhoriz";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10569,29 +10573,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_5"] {
-	    name="line_5";
-	    type=LINE;
-	    pos {x=-0.186: y=0.5773684: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_6"] {
-	    name="text_6";
+	   T3Annotation @["rdiag_r_3"] {
+	    name="rdiag_r_3";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.4535789: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.4535789: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="rdiag";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10599,29 +10590,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_7"] {
-	    name="line_7";
-	    type=LINE;
-	    pos {x=-0.186: y=0.3710527: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_8"] {
-	    name="text_8";
+	   T3Annotation @["ldiag_r_4"] {
+	    name="ldiag_r_4";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.2472632: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.2472632: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="ldiag";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10629,29 +10607,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_9"] {
-	    name="line_9";
-	    type=LINE;
-	    pos {x=-0.186: y=0.1647368: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_10"] {
-	    name="text_10";
+	   T3Annotation @["random1_r_5"] {
+	    name="random1_r_5";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.1183158: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.1183158: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="random1";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10659,29 +10624,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_11"] {
-	    name="line_11";
-	    type=LINE;
-	    pos {x=-0.186: y=0.1131579: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_12"] {
-	    name="text_12";
+	   T3Annotation @["random2_r_6"] {
+	    name="random2_r_6";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.06673684: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.06673684: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="random2";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10689,29 +10641,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_13"] {
-	    name="line_13";
-	    type=LINE;
-	    pos {x=-0.186: y=0.06157893: z=0: };
-	    size {x=1.2: y=0: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_14"] {
-	    name="text_14";
+	   T3Annotation @["random_r_7"] {
+	    name="random_r_7";
 	    type=TEXT;
-	    pos {x=-0.186: y=0.01515791: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=0: y=0.01515791: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="random";
+	    justification=RIGHT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10719,14 +10658,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["text_15"] {
-	    name="text_15";
+	   T3Annotation @["checks_c_0"] {
+	    name="checks_c_0";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.1337895: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="checks";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10734,29 +10675,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_16"] {
-	    name="line_16";
-	    type=LINE;
-	    pos {x=0.2163158: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_17"] {
-	    name="text_17";
+	   T3Annotation @["mitvert_c_1"] {
+	    name="mitvert_c_1";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.3143158: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="mitvert";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10764,29 +10692,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_18"] {
-	    name="line_18";
-	    type=LINE;
-	    pos {x=0.3710526: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_19"] {
-	    name="text_19";
+	   T3Annotation @["midhoriz_c_2"] {
+	    name="midhoriz_c_2";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.4174737: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="midhoriz";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10794,29 +10709,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_20"] {
-	    name="line_20";
-	    type=LINE;
-	    pos {x=0.4226316: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_21"] {
-	    name="text_21";
+	   T3Annotation @["rdiag_c_3"] {
+	    name="rdiag_c_3";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.5464211: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="rdiag";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10824,29 +10726,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_22"] {
-	    name="line_22";
-	    type=LINE;
-	    pos {x=0.6289473: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_23"] {
-	    name="text_23";
+	   T3Annotation @["ldiag_c_4"] {
+	    name="ldiag_c_4";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.7527369: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="ldiag";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10854,29 +10743,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_24"] {
-	    name="line_24";
-	    type=LINE;
-	    pos {x=0.8352632: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_25"] {
-	    name="text_25";
+	   T3Annotation @["random1_c_5"] {
+	    name="random1_c_5";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.8816842: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="random1";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10884,29 +10760,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_26"] {
-	    name="line_26";
-	    type=LINE;
-	    pos {x=0.8868421: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
-	    line_width=2;
-	    arrow_size=0.02;
-	    text="Select, Context Menu to Edit";
-	    font_size=0.05;
-	    obj_fname=;
-	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=1;
-	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
-	   };
-	   T3Annotation @["text_27"] {
-	    name="text_27";
+	   T3Annotation @["random2_c_6"] {
+	    name="random2_c_6";
 	    type=TEXT;
+	    arrow=NO_ARROW;
 	    pos {x=0.9332632: y=1: z=0: };
 	    size {x=1: y=1: z=1: };
 	    line_width=1;
 	    arrow_size=0.02;
 	    text="random2";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10914,14 +10777,33 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["line_28"] {
-	    name="line_28";
+	   T3Annotation @["random_c_7"] {
+	    name="random_c_7";
+	    type=TEXT;
+	    arrow=NO_ARROW;
+	    pos {x=0.9848421: y=1: z=0: };
+	    size {x=1: y=1: z=1: };
+	    line_width=1;
+	    arrow_size=0.02;
+	    text="random";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=0;
+	    rot {x=0: y=0: z=1: rot=1.570796: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["checks_rl_0"] {
+	    name="checks_rl_0";
 	    type=LINE;
-	    pos {x=0.9384211: y=0: z=0: };
-	    size {x=0: y=1.176: z=0: };
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.7836842: z=0: };
+	    size {x=1.2: y=0: z=0: };
 	    line_width=2;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
@@ -10929,19 +10811,225 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
-	   T3Annotation @["text_29"] {
-	    name="text_29";
-	    type=TEXT;
-	    pos {x=0.9848421: y=1: z=0: };
-	    size {x=1: y=1: z=1: };
-	    line_width=1;
+	   T3Annotation @["mitvert_rl_1"] {
+	    name="mitvert_rl_1";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.6289473: z=0: };
+	    size {x=1.2: y=0: z=0: };
+	    line_width=2;
 	    arrow_size=0.02;
-	    text="random";
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
-	    xform_size=0;
-	    rot {x=0: y=0: z=1: rot=1.570796: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["midhoriz_rl_2"] {
+	    name="midhoriz_rl_2";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.5773684: z=0: };
+	    size {x=1.2: y=0: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["rdiag_rl_3"] {
+	    name="rdiag_rl_3";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.3710527: z=0: };
+	    size {x=1.2: y=0: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["ldiag_rl_4"] {
+	    name="ldiag_rl_4";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.1647368: z=0: };
+	    size {x=1.2: y=0: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["random1_rl_5"] {
+	    name="random1_rl_5";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.1131579: z=0: };
+	    size {x=1.2: y=0: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["random2_rl_6"] {
+	    name="random2_rl_6";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=-0.186: y=0.06157893: z=0: };
+	    size {x=1.2: y=0: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["checks_cl_0"] {
+	    name="checks_cl_0";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.2163158: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["mitvert_cl_1"] {
+	    name="mitvert_cl_1";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.3710526: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["midhoriz_cl_2"] {
+	    name="midhoriz_cl_2";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.4226316: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["rdiag_cl_3"] {
+	    name="rdiag_cl_3";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.6289473: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["ldiag_cl_4"] {
+	    name="ldiag_cl_4";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.8352632: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["random1_cl_5"] {
+	    name="random1_cl_5";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.8868421: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["random2_cl_6"] {
+	    name="random2_cl_6";
+	    type=LINE;
+	    arrow=NO_ARROW;
+	    pos {x=0.9384211: y=0: z=0: };
+	    size {x=0: y=1.176: z=0: };
+	    line_width=2;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
 	   };
 	  };
@@ -10949,154 +11037,154 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   name="T3DataView_List_0";
 	   el_typ=T3DataView;
 	   el_def=0;
-	   T3AnnotationView @["text_0"] {
-	    name="text_0";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_0"]$$;
+	   T3AnnotationView @["checks_r_0"] {
+	    name="checks_r_0";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["checks_r_0"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_1"] {
-	    name="line_1";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_1"]$$;
+	   T3AnnotationView @["mitvert_r_1"] {
+	    name="mitvert_r_1";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["mitvert_r_1"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_2"] {
-	    name="text_2";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_2"]$$;
+	   T3AnnotationView @["midhoriz_r_2"] {
+	    name="midhoriz_r_2";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["midhoriz_r_2"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_3"] {
-	    name="line_3";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_3"]$$;
+	   T3AnnotationView @["rdiag_r_3"] {
+	    name="rdiag_r_3";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["rdiag_r_3"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_4"] {
-	    name="text_4";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_4"]$$;
+	   T3AnnotationView @["ldiag_r_4"] {
+	    name="ldiag_r_4";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["ldiag_r_4"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_5"] {
-	    name="line_5";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_5"]$$;
+	   T3AnnotationView @["random1_r_5"] {
+	    name="random1_r_5";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random1_r_5"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_6"] {
-	    name="text_6";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_6"]$$;
+	   T3AnnotationView @["random2_r_6"] {
+	    name="random2_r_6";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random2_r_6"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_7"] {
-	    name="line_7";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_7"]$$;
+	   T3AnnotationView @["random_r_7"] {
+	    name="random_r_7";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random_r_7"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_8"] {
-	    name="text_8";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_8"]$$;
+	   T3AnnotationView @["checks_c_0"] {
+	    name="checks_c_0";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["checks_c_0"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_9"] {
-	    name="line_9";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_9"]$$;
+	   T3AnnotationView @["mitvert_c_1"] {
+	    name="mitvert_c_1";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["mitvert_c_1"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_10"] {
-	    name="text_10";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_10"]$$;
+	   T3AnnotationView @["midhoriz_c_2"] {
+	    name="midhoriz_c_2";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["midhoriz_c_2"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_11"] {
-	    name="line_11";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_11"]$$;
+	   T3AnnotationView @["rdiag_c_3"] {
+	    name="rdiag_c_3";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["rdiag_c_3"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_12"] {
-	    name="text_12";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_12"]$$;
+	   T3AnnotationView @["ldiag_c_4"] {
+	    name="ldiag_c_4";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["ldiag_c_4"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_13"] {
-	    name="line_13";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_13"]$$;
+	   T3AnnotationView @["random1_c_5"] {
+	    name="random1_c_5";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random1_c_5"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_14"] {
-	    name="text_14";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_14"]$$;
+	   T3AnnotationView @["random2_c_6"] {
+	    name="random2_c_6";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random2_c_6"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_15"] {
-	    name="text_15";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_15"]$$;
+	   T3AnnotationView @["random_c_7"] {
+	    name="random_c_7";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random_c_7"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_16"] {
-	    name="line_16";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_16"]$$;
+	   T3AnnotationView @["checks_rl_0"] {
+	    name="checks_rl_0";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["checks_rl_0"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_17"] {
-	    name="text_17";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_17"]$$;
+	   T3AnnotationView @["mitvert_rl_1"] {
+	    name="mitvert_rl_1";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["mitvert_rl_1"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_18"] {
-	    name="line_18";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_18"]$$;
+	   T3AnnotationView @["midhoriz_rl_2"] {
+	    name="midhoriz_rl_2";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["midhoriz_rl_2"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_19"] {
-	    name="text_19";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_19"]$$;
+	   T3AnnotationView @["rdiag_rl_3"] {
+	    name="rdiag_rl_3";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["rdiag_rl_3"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_20"] {
-	    name="line_20";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_20"]$$;
+	   T3AnnotationView @["ldiag_rl_4"] {
+	    name="ldiag_rl_4";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["ldiag_rl_4"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_21"] {
-	    name="text_21";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_21"]$$;
+	   T3AnnotationView @["random1_rl_5"] {
+	    name="random1_rl_5";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random1_rl_5"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_22"] {
-	    name="line_22";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_22"]$$;
+	   T3AnnotationView @["random2_rl_6"] {
+	    name="random2_rl_6";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random2_rl_6"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_23"] {
-	    name="text_23";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_23"]$$;
+	   T3AnnotationView @["checks_cl_0"] {
+	    name="checks_cl_0";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["checks_cl_0"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_24"] {
-	    name="line_24";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_24"]$$;
+	   T3AnnotationView @["mitvert_cl_1"] {
+	    name="mitvert_cl_1";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["mitvert_cl_1"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_25"] {
-	    name="text_25";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_25"]$$;
+	   T3AnnotationView @["midhoriz_cl_2"] {
+	    name="midhoriz_cl_2";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["midhoriz_cl_2"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_26"] {
-	    name="line_26";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_26"]$$;
+	   T3AnnotationView @["rdiag_cl_3"] {
+	    name="rdiag_cl_3";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["rdiag_cl_3"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_27"] {
-	    name="text_27";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_27"]$$;
+	   T3AnnotationView @["ldiag_cl_4"] {
+	    name="ldiag_cl_4";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["ldiag_cl_4"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["line_28"] {
-	    name="line_28";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["line_28"]$$;
+	   T3AnnotationView @["random1_cl_5"] {
+	    name="random1_cl_5";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random1_cl_5"]$$;
 	    m_transform=NULL;
 	   };
-	   T3AnnotationView @["text_29"] {
-	    name="text_29";
-	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["text_29"]$$;
+	   T3AnnotationView @["line_29"] {
+	    name="line_29";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["StdInputData_DistMatrix"].root_view.children["StdInputData_DistMatrix_Grid"].annotations["random2_cl_6"]$$;
 	    m_transform=NULL;
 	   };
 	  };
@@ -11116,9 +11204,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  colorscale {
 	   name="ColorScale_0";
 	   chunks=133;
-	   min=-5;
-	   max=5;
-	   range=5;
+	   min=-1;
+	   max=1;
+	   range=1;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
 	   auto_scale=1;

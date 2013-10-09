@@ -27,6 +27,7 @@ void T3Annotation::Initialize() {
   line_width = 1.0f;
   arrow_size = .02f;
   text = "Select, Context Menu to Edit";
+  justification = LEFT;
   font_size = .05f;
   color.Set(0.0f, 0.0f, 0.0f);
   xform_size = true;
@@ -199,10 +200,11 @@ void T3Annotation::SetCircle(float ctr_x, float ctr_y, float ctr_z,
 
 void T3Annotation::SetText(const String& txt,
                            float pos_x, float pos_y, float pos_z,
-                           float font_sz, const String& clr) {
+                           float font_sz, TextJust just, const String& clr) {
   type = TEXT;
   text = txt;
   font_size = font_sz;
+  justification = just;
   pos.SetXYZ(pos_x, pos_y, pos_z);
   xform_size = false;
   SetColor(clr);

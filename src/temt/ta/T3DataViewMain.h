@@ -96,7 +96,9 @@ public:
   // #MENU_BUTTON add a circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed) (parameters converted to ellipse bounding box)
   virtual T3Annotation*  AnnoteText(bool data_units, const String& text,
                                     float pos_x, float pos_y, float pos_z,
-                                    float font_size = 0.05, const String& color = "black");
+                                    float font_size = 0.05,
+                                    T3Annotation::TextJust just = T3Annotation::LEFT,
+                                    const String& color = "black");
   // #MENU_BUTTON add a text annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed) for lower left start of text
   virtual T3Annotation*  AnnoteObject(bool data_units, const String& obj_file_path,
                                       float pos_x, float pos_y, float pos_z,

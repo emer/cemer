@@ -89,6 +89,12 @@ void T3AnnotationView::Render_pre() {
       fnt->size.setValue(ob->font_size);
       tsep->addChild(fnt);
       SoAsciiText* txt = new SoAsciiText();
+      if(ob->justification == T3Annotation::LEFT)
+        txt->justification = SoAsciiText::LEFT;
+      else if(ob->justification == T3Annotation::CENTER)
+        txt->justification = SoAsciiText::CENTER;
+      else if(ob->justification == T3Annotation::RIGHT)
+        txt->justification = SoAsciiText::RIGHT;
       SoMFString* mfs = &(txt->string);
       mfs->setValue(ob->text.chars());
       tsep->addChild(txt);
@@ -233,6 +239,12 @@ void T3AnnotationView::Render_impl() {
     SoFont* fnt = (SoFont*)tsep->getChild(1);
     fnt->size.setValue(ob->font_size);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(2);
+    if(ob->justification == T3Annotation::LEFT)
+      txt->justification = SoAsciiText::LEFT;
+    else if(ob->justification == T3Annotation::CENTER)
+      txt->justification = SoAsciiText::CENTER;
+    else if(ob->justification == T3Annotation::RIGHT)
+      txt->justification = SoAsciiText::RIGHT;
     SoMFString* mfs = &(txt->string);
     mfs->setValue(ob->text.chars());
     break;
