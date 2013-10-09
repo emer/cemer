@@ -76,9 +76,11 @@ void ClusterRun::UpdateAfterEdit_impl() {
   }
 }
 
-bool ClusterRun::initClusterManager() {
-  if(!ClusterManager::CheckPrefs())
-    return false;
+bool ClusterRun::initClusterManager(bool check_prefs) {
+  if(check_prefs) {
+    if(!ClusterManager::CheckPrefs())
+      return false;
+  }
   if(!m_cm)
     m_cm = new ClusterManager(*this);
   else
@@ -1226,7 +1228,7 @@ bool ClusterRun::SelectRows(DataTable& dt, int st_row, int end_row) {
 ///////////////////////////
 
 String ClusterRun::GetSvnPath() {
-  if(!m_cm)
+  if(!initClusterManager(false)) // fail silently, don't check prefs..
     return _nilString;
   return m_cm->GetWcProjPath();
 }

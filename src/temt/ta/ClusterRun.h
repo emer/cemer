@@ -69,7 +69,7 @@ public:
   bool          nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
 
 protected:
-  bool initClusterManager();
+  bool initClusterManager(bool check_prefs = true);
   ClusterManager *m_cm;
 
 public:

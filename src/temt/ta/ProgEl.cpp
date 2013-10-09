@@ -576,8 +576,10 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
         if(taMisc::gui_active)
           tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }
-      rval->var_type = var_type;
-      rval->UpdateAfterEdit();
+      if(rval) {
+        rval->var_type = var_type;
+        rval->UpdateAfterEdit();
+      }
     }
   }
   return rval;
