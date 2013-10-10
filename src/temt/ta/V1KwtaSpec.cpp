@@ -17,7 +17,7 @@
 #include <float_Matrix>
 #include <taMath_float>
 
-#include <taMisc>
+// #include <taMisc>
 
 void V1KwtaSpec::Initialize() {
   on = -1;                      // detect old loads
@@ -248,7 +248,7 @@ bool V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& outputs,
       if(max_da < max_da_crit)
         break;
     }
-    taMisc::Info("si: max_da:", String(max_da), "cyc:", String(cycle));
+    //    taMisc::Info("si: max_da:", String(max_da), "cyc:", String(cycle));
   }
   else {
     Compute_Kwta(inputs, gc_i_mat);
@@ -277,7 +277,7 @@ bool V1KwtaSpec::Compute_Inhib_Extra(float_Matrix& inputs, float_Matrix& outputs
       if(max_da < max_da_crit)
         break;
     }
-    taMisc::Info("v1s: max_da:", String(max_da), "cyc:", String(cycle));
+    //   taMisc::Info("v1s: max_da:", String(max_da), "cyc:", String(cycle));
   }
   else {
     Compute_Kwta(inputs, gc_i_mat);
