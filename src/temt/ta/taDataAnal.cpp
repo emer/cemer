@@ -838,7 +838,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
         float oneon = 1.0f / (float)n;
         float txtlen = .20f;
         float fontsz = .9f * oneon;
-        float lnwd = 2.0f;
+        float lnwd = 1.0f;
         if(gp_names) {
           float_Array midcrds;
           float_Array endcrds;
@@ -864,7 +864,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 
           fontsz = 1.0f / (float)nms.size;
           fontsz = MIN(0.05f, fontsz);
-          float exspc = 0.4f * oneon;
+          float exspc = 0.45f * fontsz;
           
           for(int i=0;i<nms.size;i++) {
             String nm = nms[i];
