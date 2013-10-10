@@ -71,6 +71,7 @@ IF (NOT WIN32)
     FIND_PATH(SUBVERSION_INCLUDE_DIR svn_version.h
         HINTS
         ${SUBVERSION_INSTALL_PATH}/include
+        ${SUBVERSION_INSTALL_PATH}/include/subversion-1
 	/opt/subversion/include/subversion-1
 	/opt/local/include
         PATH_SUFFIXES subversion-1

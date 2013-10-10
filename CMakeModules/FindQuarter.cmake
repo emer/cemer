@@ -32,6 +32,7 @@ else (WIN32)
     /usr/lib
     /usr/local/lib
     /opt/local/lib
+    ${COINDIR}/lib
   ) 
 endif (WIN32) 
 
