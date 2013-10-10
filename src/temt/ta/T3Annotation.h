@@ -72,21 +72,25 @@ public:
 
 
   virtual void  SetColor(const String& clr = "black");
-  // #MENU #MENU_ON_Object #DYN1 set the color to given color name (standard web/html color names) and update display
-  virtual void SetLineWidth(float ln_width = 1.0);
-  // #MENU #MENU_ON_Object #DYN1 set the line width and update display
-  virtual void SetArrowSize(float arrow_sz = 0.02);
-  // #MENU #MENU_ON_Object #DYN1 set the arrow size and update display
+  // #MENU #MENU_ON_Annotation #DYN1 set the color to given color name (standard web/html color names) and update display
   virtual void Translate(float mv_x, float mv_y, float mv_z);
-  // #MENU #MENU_ON_Object #DYN1 move the object given distance and update display
+  // #MENU #MENU_ON_Annotation #DYN1 move the object given distance and update display
   virtual void Scale(float sc = 1.0);
-  // #MENU #MENU_ON_Object #DYN1 scale the object by given factor and update display
+  // #MENU #MENU_ON_Annotation #DYN1 scale the object by given factor and update display
   virtual void SetSize(float sz_x, float sz_y, float sz_z);
-  // #MENU #MENU_ON_Object #DYN1 set the size of the object and update display
+  // #MENU #MENU_ON_Annotation #DYN1 set the size of the object and update display
   virtual void AddSize(float sz_x, float sz_y, float sz_z);
-  // #MENU #MENU_ON_Object #DYN1 add given amounts to the size of the object and update display
+  // #MENU #MENU_ON_Annotation #DYN1 add given amounts to the size of the object and update display
   virtual void RotateAroundZ(float rotate_deg);
-  // #MENU #MENU_ON_Object #DYN1 rotate the object around the Z (depth) axis (into the screen) by given degrees (0, 45, 90, etc) -- this achives most commonly used within-plane rotation
+  // #MENU #MENU_ON_Annotation #DYN1 rotate the object around the Z (depth) axis (into the screen) by given degrees (0, 45, 90, etc) -- this achives most commonly used within-plane rotation
+  virtual void SetLineWidth(float ln_width = 1.0);
+  // #MENU #MENU_ON_Annotation #DYN1 set the line width and update display
+  virtual void SetArrowSize(float arrow_sz = 0.02);
+  // #MENU #MENU_ON_Annotation #DYN1 set the arrow size and update display
+  virtual void SetFontSize(float font_size = 0.05);
+  // #MENU #MENU_ON_Annotation #DYN1 set the font size and update display
+  virtual void SetJustification(TextJust just);
+  // #MENU #MENU_ON_Annotation #DYN1 set the text justification update display
 
   virtual void  SetLine(float pos_x, float pos_y, float pos_z,
                         float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,

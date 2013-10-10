@@ -79,6 +79,16 @@ void T3Annotation::SetArrowSize(float arrow_sz) {
   UpdateAfterEdit();
 }
 
+void T3Annotation::SetFontSize(float font_sz) {
+  font_size = font_sz;
+  UpdateAfterEdit();
+}
+
+void T3Annotation::SetJustification(TextJust just) {
+  justification = just;
+  UpdateAfterEdit();
+}
+
 void T3Annotation::Translate(float mv_x, float mv_y, float mv_z) {
   pos.x += mv_x;
   pos.y += mv_y;
