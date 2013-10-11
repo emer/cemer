@@ -24,6 +24,11 @@ void GraphAxisView::Initialize() {
   row_num = false;
 }
 
+void GraphAxisView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(matrix_cell < 0) matrix_cell = 0; // can't have a -1 
+}
+
 void GraphAxisView::CopyFromView(GraphAxisView* cp){
   CopyFromView_base(cp);        // get the base
   row_num = cp->row_num;

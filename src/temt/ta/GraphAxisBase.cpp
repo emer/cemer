@@ -28,24 +28,11 @@
 #include <Inventor/fields/SoMFString.h>
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoBaseColor.h>
-// #include <Inventor/nodes/SoCube.h>
-// #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoFont.h>
-// #include <Inventor/nodes/SoLightModel.h>
 #include <Inventor/nodes/SoMaterial.h>
-// #include <Inventor/nodes/SoPerspectiveCamera.h>
-// #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
-// #include <Inventor/nodes/SoTransform.h>
-// #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoText2.h>
-// #include <Inventor/draggers/SoTransformBoxDragger.h>
-// #include <Inventor/nodes/SoEventCallback.h>
-// #include <Inventor/events/SoMouseButtonEvent.h>
-// #include <Inventor/actions/SoRayPickAction.h>
-// #include <Inventor/SoPickedPoint.h>
-// #include <Inventor/SoEventManager.h>
 
 
 #define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
@@ -56,6 +43,9 @@ void GraphAxisBase::Initialize() {
   on = true;
   axis = Y;
   col_lookup = NULL;
+  is_matrix = false;
+  n_cells = 1;
+  matrix_cell = 0;
   col_list = NULL;
   color.name = taMisc::t3d_text_color;
   n_ticks = 10;
@@ -108,6 +98,27 @@ void GraphAxisBase::UpdateAfterEdit_impl() {
   color.UpdateAfterEdit_NoGui();
   UpdateFmColLookup();
   UpdateOnFlag();
+  UpdateFmDataCol();
+}
+
+void GraphAxisBase::UpdateFmDataCol() {
+  DataCol* dc = GetDAPtr();
+  if(!dc) return;
+  is_matrix = dc->is_matrix;
+  if(is_matrix) {
+    n_cells = dc->cell_geom.Product();
+  }
+  else {
+    matrix_cell = 0;
+    n_cells = 1;
+  }
+  is_string = dc->isString();
+  if(is_matrix) {
+    if(matrix_cell >= n_cells) 
+      matrix_cell = n_cells-1;
+    if((axis != Y || is_string) && matrix_cell < 0) // no all case for non-data guys
+      matrix_cell = 0;
+  }
 }
 
 void GraphAxisBase::UpdateOnFlag() {
@@ -149,12 +160,6 @@ DataCol* GraphAxisBase::GetDAPtr() {
   GraphColView* cv = GetColPtr();
   if(!cv) return NULL;
   return cv->dataCol();
-}
-
-bool GraphAxisBase::isString() {
-  DataCol* da = GetDAPtr();
-  if(!da) return false;
-  return da->isString();
 }
 
 void GraphAxisBase::InitFromUserData() {
@@ -230,10 +235,26 @@ void GraphAxisBase::ComputeRange() {
   if(!on) return;
   GraphColView* gcv = GetColPtr();
   if(gcv) {
-    gcv->dataCol()->GetMinMaxScale(data_range);
+    DataCol* da = gcv->dataCol();
+    if(da->rows() == 0) {
+      data_range.Set(0.0f, 1.0f);
+    }
+    else {
+      if(is_matrix && matrix_cell >= 0) {
+        int rwn = da->rows();
+        float fval = da->GetValAsFloatM(0, matrix_cell);
+        data_range.Set(fval, fval);
+        for(int i = 1; i<rwn; i++) {
+          data_range.UpdateRange(da->GetValAsFloatM(i, matrix_cell));
+        }
+      }
+      else {
+        da->GetMinMaxScale(data_range);
+      }
+    }
   }
   else {
-    data_range.min = 0.0f; data_range.max = 1.0f;
+    data_range.Set(0.0f, 1.0f);
   }
   SetRange_impl(data_range.min, data_range.max);
 }

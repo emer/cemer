@@ -615,7 +615,7 @@ public:
   virtual void	Compute_ExtRew();
   // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
   virtual void	Compute_NormErr();
-  // #CAT_Statistic compute normalized binary error between act_m and targ unit values: called in TrialStats
+  // #CAT_Statistic compute normalized binary error between act_m and targ unit values: called in TrialStats -- per unit: if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is per layer based on k value: total possible err for both on and off errs is 2 * k (on or off alone is just k)
   virtual float  Compute_M2SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire network
   virtual float  Compute_M2SSE_Recon(bool unit_avg = false, bool sqrt = false);

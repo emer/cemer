@@ -67,7 +67,7 @@ INHERITED(taOBase)
 public:
   bool		on;		// whether to use neighborhood inhibition
   int		inhib_d; 	// #CONDSHOW_ON_on #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning
-  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8:1 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
+  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.6:1 [0.6 for FFFB, 0.8 for KWTA] gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
 
   int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
@@ -148,7 +148,7 @@ class TA_API V1ComplexSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		sg4;		// #DEF_false #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
-  bool		spc4;		// #DEF_true #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
+  bool		spc4;		// #DEF_false #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		es_thr;		// #DEF_0.2 threshold for end stopping activation -- there are typically many "ghost" end stops, so this filters those out
 
@@ -309,7 +309,7 @@ public:
 
   /////////// Simple
   V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
-  RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters -- applied prior to kwta
+  RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters -- applied prior to kwta
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
@@ -318,7 +318,7 @@ public:
 
   /////////// Motion
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 specs for V1 motion filters within the simple processing layer
-  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_LIN_RENORM how to renormalize the output of v1s motion filters
+  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   XYNGeom	v1m_feat_geom; 	// #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
 
   /////////// Binocular
@@ -326,7 +326,7 @@ public:
   V1BinocularSpec  v1b_specs;
   // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 specs for V1 binocular filters -- comes after V1 simple processing in binocular case
   RenormMode	v1b_renorm;
-  // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 #DEF_LIN_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
+  // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 #DEF_NO_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
   DataSave	v1b_save;
   // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_feat_geom;
@@ -335,7 +335,7 @@ public:
   /////////// Complex
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// #CONDSHOW_OFF_v1c_filters:0 specs for V1 complex filters -- comes after V1 binocular processing 
-  RenormMode	v1c_renorm;	// #CONDSHOW_OFF_v1c_filters:0 #DEF_LIN_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
+  RenormMode	v1c_renorm;	// #CONDSHOW_OFF_v1c_filters:0 #DEF_NO_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
   V1KwtaSpec	v1ls_kwta;	// #CONDSHOW_OFF_v1c_filters:0 k-winner-take-all inhibitory dynamics for length sum level
   V1sNeighInhib	v1ls_neigh_inhib; // #CONDSHOW_OFF_v1c_filters:0 specs for V1 length-sum neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   DataSave	v1c_save;	// #CONDSHOW_OFF_v1c_filters:0 how to save the V1 complex outputs for the current time step in the data table
@@ -352,7 +352,7 @@ public:
 
   SpatIntegFilters spat_integ;	// what to perform spatial integration over
   VisSpatIntegSpec si_specs;	// #CONDSHOW_OFF_spat_integ:0 spatial integration output specs
-  RenormMode	si_renorm;	// #CONDSHOW_OFF_spat_integ:0 how to renormalize spat integ output prior to performing kwta
+  RenormMode	si_renorm;	// #CONDSHOW_OFF_spat_integ:0 #DEF_NO_RENORM how to renormalize spat integ output prior to performing kwta
   V1KwtaSpec	si_kwta;	// #CONDSHOW_OFF_spat_integ:0 k-winner-take-all inhibitory dynamics for spatial integration output -- 
   DataSave	si_save;	// #CONDSHOW_OFF_spat_integ:0 how to save the spatial integration outputs for the current time step in the data table
   XYNGeom	si_v1c_geom; 	// #CONDSHOW_OFF_spat_integ:0 #READ_ONLY #SHOW size of spat integ v1c image output

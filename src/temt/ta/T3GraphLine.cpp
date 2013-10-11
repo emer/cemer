@@ -50,6 +50,7 @@ T3GraphLine::T3GraphLine(T3DataView* dataView_, float fnt_sz)
   font_size_ = fnt_sz;
   textSep_ = NULL;
   textColor_ = NULL;
+  lastText_ = 0.0f;
 
   complexity_ = new SoComplexity;
   complexity_->ref(); // we re-add to the labels group every clear

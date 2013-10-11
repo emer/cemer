@@ -23,11 +23,11 @@
 #include <FixedMinMax>
 #include <RGBA>
 #include <MinMax>
+#include <DataCol>
 
 // declare all other types mentioned but not required to include:
 class GraphColView; // 
 class T3DataView_List; // 
-class DataCol; // 
 class GraphTableView; // 
 class T3Axis; //
 
@@ -44,6 +44,10 @@ public:
   AxisType              axis;           // #READ_ONLY #SHOW type of axis this is, for rendering purposes
   GraphColView*         col_lookup;     // #NULL_OK #FROM_GROUP_col_list #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #NO_COPY lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String                col_name;       // name of column of data for this axis
+  bool                  is_string;      // #READ_ONLY #NO_COPY true if column is a string
+  bool                  is_matrix;      // #READ_ONLY #NO_COPY true if column is a matrix (else a scalar)
+  int                   n_cells;        // #READ_ONLY #NO_COPY number of cells if a matrix
+  int                   matrix_cell;    // #CONDSHOW_ON_is_matrix if column is a matrix, this is the cell within that matrix to plot -- specify -1 for all lines (only valid for data lines, not X or Z axes)
   FixedMinMax           fixed_range;    // fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
   RGBA                  color;          // color of the line and points
@@ -65,7 +69,19 @@ public:
   DataCol*              GetDAPtr();  // get dataarray ptr
   GraphTableView*       GetGTV()        { return (GraphTableView*)owner; }
 
-  bool                  isString(); // is this data a string?
+  bool                  isString()      { return is_string; }
+
+  inline float          GetDataVal(DataCol* dc, int row) {
+    if(dc->is_matrix) return dc->GetValAsFloatM(row, matrix_cell);
+    return dc->GetValAsFloat(row);
+  }
+  // main access to numerical data, dealing with matrix vs. not 
+  inline String         GetDataString(DataCol* dc, int row) {
+    if(dc->is_matrix) return dc->GetValAsStringM(row, matrix_cell);
+    return dc->GetValAsString(row);
+  }
+  // main access to string data, dealing with matrix vs. not 
+
 
   ///////////////////////////////////////////////////
   //    Range Management
@@ -104,6 +120,8 @@ public:
   // update the 'on' flag for this column, taking into account whether there is actually any data column set (if not, on must be false)
   virtual void          UpdateFmColLookup();
   // if col_lookup is set, update our values from it
+  virtual void          UpdateFmDataCol();
+  // update various settings from the DataCol (matrix, string, etc)
 
   void          CopyFromView_base(GraphAxisBase* cp);
   // special copy function that just copies user view options in a robust manner

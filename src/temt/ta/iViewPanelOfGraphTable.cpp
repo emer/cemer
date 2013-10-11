@@ -160,6 +160,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   pdtXAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
   layXAxis->addWidget(pdtXAxis->GetRep());
+  layXAxis->addSpacing(taiM->hsep_c);
+
+  lblcellXAxis = taiM->NewLabel("Mtx\nCel", widg, font_spec);
+  lblcellXAxis->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display.");
+  layXAxis->addWidget(lblcellXAxis);
+  cellXAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
+  layXAxis->addWidget(cellXAxis->GetRep());
 
   layXAxis->addStretch();
 
@@ -187,6 +194,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   pdtZAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
   layZAxis->addWidget(pdtZAxis->GetRep());
+  layZAxis->addSpacing(taiM->hsep_c);
+
+  lblcellZAxis = taiM->NewLabel("Mtx\nCel", widg, font_spec);
+  lblcellZAxis->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display.");
+  layZAxis->addWidget(lblcellZAxis);
+  cellZAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
+  layZAxis->addWidget(cellZAxis->GetRep());
 
   layZAxis->addStretch();
 
@@ -217,6 +231,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
     pdtYAxis[i] = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
     layYAxis[i]->addWidget(pdtYAxis[i]->GetRep());
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
+    lblcellYAxis[i] = taiM->NewLabel("Mtx\nCel", widg, font_spec);
+    lblcellYAxis[i]->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display -- enter -1 to display all lines at once.");
+    layYAxis[i]->addWidget(lblcellYAxis[i]);
+    cellYAxis[i] = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
+    cellYAxis[i]->setMinimum(-1);
+    layYAxis[i]->addWidget(cellYAxis[i]->GetRep());
 
     layYAxis[i]->addStretch();
   }
@@ -345,12 +367,14 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
   rncXAxis->setChecked(glv->x_axis.row_num);
   pdtXAxis->GetImage_(&(glv->x_axis.fixed_range));
+  cellXAxis->GetImage((String)glv->x_axis.matrix_cell);
 
   lelZAxis->GetImage(&(glv->children), glv->z_axis.GetColPtr());
   oncZAxis->setReadOnly(glv->z_axis.GetColPtr() == NULL);
   oncZAxis->setChecked(glv->z_axis.on);
   rncZAxis->setChecked(glv->z_axis.row_num);
   pdtZAxis->GetImage_(&(glv->z_axis.fixed_range));
+  cellZAxis->GetImage((String)glv->z_axis.matrix_cell);
 
   lelZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
@@ -364,6 +388,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
     lelYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->all_plots[i]->on);
     pdtYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->all_plots[i]->on);
     chkYAltY[i]->setChecked(glv->all_plots[i]->alt_y);
+    cellYAxis[i]->GetImage((String)glv->all_plots[i]->matrix_cell);
   }
 
   for(int i=0;i<max_plots; i++) {
@@ -413,6 +438,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->x_axis.row_num = rncXAxis->isChecked();
   pdtXAxis->GetValue_(&(glv->x_axis.fixed_range));
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
+  glv->x_axis.matrix_cell = (int)cellXAxis->GetValue();
 
   // if setting a col for 1st time, we automatically turn on (since it would be ro)
   GraphColView* tcol = (GraphColView*)lelZAxis->GetValue();
@@ -422,6 +448,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   pdtZAxis->GetValue_(&(glv->z_axis.fixed_range));
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
+  glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
 
   for(int i=0;i<max_plots; i++) {
     tcol = (GraphColView*)lelYAxis[i]->GetValue();
@@ -431,6 +458,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
     pdtYAxis[i]->GetValue_(&(glv->all_plots[i]->fixed_range)); // this can change, so update
     glv->all_plots[i]->alt_y = chkYAltY[i]->isChecked();
     glv->all_plots[i]->SetColPtr(tcol);
+    glv->all_plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();
   }
 
   for(int i=0;i<max_plots; i++) {

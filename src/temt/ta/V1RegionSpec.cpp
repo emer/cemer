@@ -179,7 +179,7 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 
 void V1ComplexSpec::Initialize() {
   sg4 = false;
-  spc4 = true;
+  spc4 = false;
   len_sum_len = 1;
   es_thr = 0.2f;
 
@@ -260,18 +260,18 @@ void VisSpatIntegSpec::UpdateAfterEdit_impl() {
 typedef void (V1RegionSpec::*V1RegionMethod)(int, int);
 
 void V1RegionSpec::Initialize() {
-  v1s_renorm = LIN_RENORM;
+  v1s_renorm = NO_RENORM;
   v1s_save = (DataSave)(SAVE_DATA | ONLY_GUI);
   v1s_feat_geom.SetXYN(4, 2, 8);
 
-  v1m_renorm = LIN_RENORM;
+  v1m_renorm = NO_RENORM;
 
   v1b_filters = BF_DEFAULT;
-  v1b_renorm = LIN_RENORM;
+  v1b_renorm = NO_RENORM;
   v1b_save = SAVE_DATA;
 
   v1c_filters = CF_DEFAULT;
-  v1c_renorm = LIN_RENORM;
+  v1c_renorm = NO_RENORM;
   v1c_save = SAVE_DATA;
 
   v2_filters = V2_DEFAULT;
@@ -284,18 +284,21 @@ void V1RegionSpec::Initialize() {
   opt_save = SAVE_DATA;
 
   v1s_kwta.mode = V1KwtaSpec::FFFB;
+  v1s_kwta.gi = 2.0f;
   v1s_kwta.gp_k = 1;
   v1s_kwta.gp_g = 0.02f;
+  v1s_neigh_inhib.inhib_g = 0.6f; // FFFB
 
   v1ls_kwta.mode = V1KwtaSpec::OFF;
   v1ls_kwta.gp_k = 1;
   v1ls_kwta.gp_g = 0.6f;
 
   v1ls_neigh_inhib.on = false;
-  v1ls_neigh_inhib.inhib_g = 0.8f;
+  v1ls_neigh_inhib.inhib_g = 0.6f; // FFFB
 
-  si_renorm = LIN_RENORM;
+  si_renorm = NO_RENORM;
   si_kwta.mode = V1KwtaSpec::FFFB;
+  si_kwta.gi = 1.8f;
   si_kwta.gp_k = 2;
   si_kwta.gp_g = 0.1f;
 

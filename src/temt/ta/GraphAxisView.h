@@ -42,6 +42,9 @@ public:
 
   SIMPLE_COPY(GraphAxisView);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
+protected:
+  override void         UpdateAfterEdit_impl();
+
 private:
   void                  Initialize();
   void                  Destroy() { };

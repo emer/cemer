@@ -48,6 +48,7 @@ public:
     XY,                         // standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well, if turned on)
     BAR,                        // gar graph -- for integer/nominal X axis values (optional error bars as well, if turned on)
     RASTER,                     // raster plot (flat lines stacked up using raster_axis), typically with color representing plot data value or thresholded lines (spike raster)
+    MATRIX,                     // plots all the values in a single matrix Y column -- see MatrixMode for options (a grid or depth plot)
   };
 
   enum PlotStyle {
@@ -70,7 +71,7 @@ public:
     COLOR_AXIS,                 // use the data column specified by the color_axis to determine the drawing color
   };
 
-  enum MatrixMode {             // how to display matrix data
+  enum MatrixMode {             // how to display matrix grid data
     SEP_GRAPHS,                 // each value in the matrix gets a separate graph, with graphs configured in the same layout as the matrix
     Z_INDEX,                    // values in the matrix are drawn in the same graph, arrayed in depth along the z axis
   };
@@ -96,23 +97,23 @@ public:
 
   GraphAxisView         x_axis;         // the x axis (horizontal, left-to-right)
   GraphAxisView         z_axis;         // the z axis (in depth, front-to-back)
-  GraphPlotView         plot_1;         // first column of data to plot (optional)
-  GraphPlotView         plot_2;         // second column of data to plot (optional)
-  GraphPlotView         plot_3;         // third column of data to plot (optional)
-  GraphPlotView         plot_4;         // fourth column of data to plot (optional)
-  GraphPlotView         plot_5;         // fifth column of data to plot (optional)
-  GraphPlotView         plot_6;         // fifth column of data to plot (optional)
-  GraphPlotView         plot_7;         // fifth column of data to plot (optional)
-  GraphPlotView         plot_8;         // fifth column of data to plot (optional)
+  GraphPlotView         plot_1;         // column of data to plot (optional)
+  GraphPlotView         plot_2;         // column of data to plot (optional)
+  GraphPlotView         plot_3;         // column of data to plot (optional)
+  GraphPlotView         plot_4;         // column of data to plot (optional)
+  GraphPlotView         plot_5;         // column of data to plot (optional)
+  GraphPlotView         plot_6;         // column of data to plot (optional)
+  GraphPlotView         plot_7;         // column of data to plot (optional)
+  GraphPlotView         plot_8;         // column of data to plot (optional)
 
-  GraphPlotView         err_1;          // data for error bars for plot_1 values
-  GraphPlotView         err_2;          // data for error bars for plot_2 values
-  GraphPlotView         err_3;          // data for error bars for plot_3 values
-  GraphPlotView         err_4;          // data for error bars for plot_4 values
-  GraphPlotView         err_5;          // data for error bars for plot_5 values
-  GraphPlotView         err_6;          // data for error bars for plot_5 values
-  GraphPlotView         err_7;          // data for error bars for plot_5 values
-  GraphPlotView         err_8;          // data for error bars for plot_5 values
+  GraphPlotView         err_1;          // data for error bars for plot values
+  GraphPlotView         err_2;          // data for error bars for plot values
+  GraphPlotView         err_3;          // data for error bars for plot values
+  GraphPlotView         err_4;          // data for error bars for plot values
+  GraphPlotView         err_5;          // data for error bars for plot values
+  GraphPlotView         err_6;          // data for error bars for plot values
+  GraphPlotView         err_7;          // data for error bars for plot values
+  GraphPlotView         err_8;          // data for error bars for plot values
   int                   err_spacing;    // #CONDEDIT_ON_graph_type:XY_ERR spacing between
   float                 err_bar_width;  // half-width of error bars, in view plot units
 
@@ -124,7 +125,7 @@ public:
   float                 thresh;         // #CONDEDIT_ON_plot_style:THRESH_LINE,THRESH_POINT threshold on raw data value for THRESH_LINE or THRESH_POINT plotting sytles
   float                 thr_line_len;   // #CONDEDIT_ON_plot_style:THRESH_LINE,THRESH_POINT length of line to draw when above threshold: value is subtracted and added to current X value to render line
 
-  MatrixMode            matrix_mode;    // how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
+  MatrixMode            matrix_mode;    // how to display matrix data for MATRIX mode (note that if a matrix column is selected, it is the only thing displayed)
   taMisc::MatrixView    mat_layout;     // #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
   bool                  mat_odd_vert;   // #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
 
@@ -195,7 +196,7 @@ public:
 protected:
   GraphPlotView*        mainy;                  // main y axis guy (first main_y_plots)
   GraphPlotView*        alty;                   // alt y axis guy (first alt_y_plots)
-  bool                  do_matrix_plot;         // if a data guy is a matrix, then find him
+  int                   first_mat;              // which is the matrix guy to plot
 
   float                 bar_width; // width of bar for bar charts
   T3Axis*               t3_x_axis;
@@ -232,13 +233,16 @@ protected:
 
   virtual void          RemoveGraph(); // remove all lines
 
-  virtual void          PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+  virtual void          PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
+                                    GraphPlotView& yax,
                                     T3GraphLine* t3gl, int mat_cell = -1);
   // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
-  virtual void          PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+  virtual void          PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv,
+                                     GraphPlotView& yax,
                                      T3GraphLine* t3gl, float bar_off, int mat_cell = -1);
   // plot bar data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
-  virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y, T3GraphLine* t3gl);
+  virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y,
+                                        T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
 
   override void         OnWindowBind_impl(iT3Panel* vw);

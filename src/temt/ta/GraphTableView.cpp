@@ -204,8 +204,9 @@ void GraphTableView::Initialize() {
 
   children.SetBaseType(&TA_GraphColView); // subclasses need to set this to their type!
 
+  first_mat = -1;
+
   n_plots = 1;
-  do_matrix_plot = false;
   t3_x_axis = NULL;
   t3_x_axis_top = NULL;
   t3_x_axis_far = NULL;
@@ -372,9 +373,8 @@ void GraphTableView::UpdateAfterEdit_impl(){
 
   main_y_plots.Reset();
   alt_y_plots.Reset();
-  do_matrix_plot = false;
   n_plots = 0;
-  int first_mat = -1;
+  first_mat = -1;
   for(int i=0;i<max_plots;i++) {
     GraphPlotView* pl = all_plots[i];
     if(!pl->on) continue;
@@ -382,14 +382,15 @@ void GraphTableView::UpdateAfterEdit_impl(){
     if(pl->alt_y) alt_y_plots.Add(i);
     else          main_y_plots.Add(i);
     GraphColView* plc = all_plots[i]->GetColPtr();
-    if(plc->dataCol()->is_matrix) {
-      if(!do_matrix_plot) first_mat = i;
-      do_matrix_plot = true;
+    if(graph_type == MATRIX) {
+      if(plc->dataCol()->is_matrix) {
+        if(first_mat < 0) first_mat = i;
+      }
     }
   }
-  if(do_matrix_plot && n_plots > 1) {
+  if(graph_type == MATRIX && n_plots > 1) {
     n_plots = 1;
-    taMisc::Warning("GraphTableView -- a data column to be plotted is a matrix, so all other plots are being turned off (matrix can only be plotted by itself)");
+    taMisc::Warning("GraphTableView -- for MATRIX graph type, only one matrix column can be plotted -- others being turned off");
     main_y_plots.Reset();
     alt_y_plots.Reset();
     for(int i=0;i<max_plots;i++) {
@@ -476,13 +477,6 @@ void GraphTableView::UpdateAfterEdit_impl(){
     if(x_axis.isString()) {
       x_axis.row_num = true;    // must be row num!
     }
-    if(!x_axis.row_num) {
-      GraphColView* xa = x_axis.GetColPtr();
-      if(xa->dataCol()->is_matrix) {
-        taMisc::Warning("GraphTableView -- column", x_axis.col_name, "is a matrix -- cannot be used for an X axis -- resetting to default");
-        FindDefaultXZAxes();
-      }
-    }
   }
 
   if(z_axis.isString()) {
@@ -499,14 +493,6 @@ void GraphTableView::UpdateAfterEdit_impl(){
         taMisc::Warning("GraphTableView -- graph_type = RASTER and no valid col_name found for raster_axis -- nothing will be plotted!");
       }
     }
-    else {
-      GraphColView* ra = raster_axis.GetColPtr();
-      if(ra->dataCol()->is_matrix) {
-        taMisc::Warning("GraphTableView -- column", raster_axis.col_name, "is a matrix -- cannot be used for raster_axis");
-        raster_axis.col_name = "";
-        raster_axis.on = false;
-      }
-    }
   }
 
   if(color_mode == COLOR_AXIS) {
@@ -515,14 +501,6 @@ void GraphTableView::UpdateAfterEdit_impl(){
     if(!color_axis.on) {
       if(!no_cols) {
         taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
-      }
-    }
-    else {
-      GraphColView* ca = color_axis.GetColPtr();
-      if(ca->dataCol()->is_matrix) {
-        taMisc::Warning("GraphTableView -- column", color_axis.col_name, "is a matrix -- cannot be used for color_axis");
-        color_axis.col_name = "";
-        color_axis.on = false;
       }
     }
   }
@@ -706,7 +684,7 @@ void GraphTableView::ComputeAxisRanges() {
   UpdateAfterEdit_impl();
 
   x_axis.ComputeRange();
-  if(do_matrix_plot && matrix_mode == Z_INDEX && mainy) {
+  if(graph_type == MATRIX && matrix_mode == Z_INDEX && mainy) {
     DataCol* da_y = mainy->GetDAPtr();
     if(da_y && da_y->is_matrix) {
       z_axis.SetRange_impl(0.0f, da_y->cell_size());
@@ -931,8 +909,10 @@ void GraphTableView::InitFromUserData() {
   }
   if(dt->HasUserData("MATRIX_MODE")) {
     int pstv = GetEnumVal(dt->GetUserDataAsString("MATRIX_MODE"), enum_tp_nm);
-    if(pstv >= 0)
+    if(pstv >= 0) {
+      graph_type = MATRIX;
       matrix_mode = (MatrixMode)pstv;
+    }
   }
   if(dt->HasUserData("LINE_WIDTH")) {
     line_width = dt->GetUserDataAsFloat("LINE_WIDTH");
@@ -996,7 +976,7 @@ void GraphTableView::RenderGraph() {
 
   RenderAxes();
 
-  if(do_matrix_plot && mainy && mainy->GetDAPtr()->is_matrix) {
+  if(graph_type == MATRIX && mainy && mainy->GetDAPtr()->is_matrix) {
     if(matrix_mode == SEP_GRAPHS)
       RenderGraph_Matrix_Sep();
     else
@@ -1254,43 +1234,60 @@ void GraphTableView::RenderGraph_XY() {
     gr1->addChild(lbox);
   }
 
+  int lncnt = 0;
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[main_y_plots[i]];
     T3GraphLine* ln = NULL;
-    if(gr1->getNumChildren() > i+1) {
-      ln = (T3GraphLine*)gr1->getChild(i+1);
+    if(gr1->getNumChildren() > lncnt+1) {
+      ln = (T3GraphLine*)gr1->getChild(lncnt+1);
       ln->clear();
     }
     else {
       ln = new T3GraphLine(pl, label_font_size);
       gr1->addChild(ln);
+      ln->clear();
     }
+    lncnt++;
     if(pl->isString()) {
       PlotData_String(*pl, *mainy, ln);
     }
     else {
-      PlotData_XY(*pl, *all_errs[main_y_plots[i]], *mainy, ln);
+      if(pl->is_matrix && pl->matrix_cell < 0) {
+        for(int ci = 0; ci < pl->n_cells; ci++) {
+          PlotData_XY(*pl, *all_errs[main_y_plots[i]], *mainy, ln, ci);
+        }
+      }
+      else {
+        PlotData_XY(*pl, *all_errs[main_y_plots[i]], *mainy, ln);
+      }
     }
   }
-
-  int stidx = main_y_plots.size + 1;
 
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[alt_y_plots[i]];
     T3GraphLine* ln = NULL;
-    if(gr1->getNumChildren() > stidx+i) {
-      ln = (T3GraphLine*)gr1->getChild(stidx+i);
+    if(gr1->getNumChildren() > lncnt+1) {
+      ln = (T3GraphLine*)gr1->getChild(lncnt+1);
       ln->clear();
     }
     else {
       ln = new T3GraphLine(pl, label_font_size);
       gr1->addChild(ln);
+      ln->clear();
     }
+    lncnt++;
     if(pl->isString()) {
       PlotData_String(*pl, *alty, ln);
     }
     else {
-      PlotData_XY(*pl, *all_errs[alt_y_plots[i]], *alty, ln);
+      if(pl->is_matrix && pl->matrix_cell < 0) {
+        for(int ci = 0; ci < pl->n_cells; ci++) {
+          PlotData_XY(*pl, *all_errs[alt_y_plots[i]], *alty, ln, ci);
+        }
+      }
+      else {
+        PlotData_XY(*pl, *all_errs[alt_y_plots[i]], *alty, ln);
+      }
     }
   }
 }
@@ -1314,13 +1311,19 @@ void GraphTableView::RenderGraph_Bar() {
   if(z_axis.on)
     boxd = depth;
 
-  int n_str = 0;
+  int n_tot = 0;
   for(int i=0;i<max_plots;i++) {
     GraphPlotView* pl = all_plots[i];
-    if(pl->on && pl->isString()) n_str++;
+    if(!pl->on || pl->is_string) continue;
+    if(pl->is_matrix && pl->matrix_cell < 0) {
+      n_tot += pl->n_cells + 1; // one extra space btwn groups
+    }
+    else {
+      n_tot++;
+    }
   }
 
-  bar_width = (1.0f - bar_space) / ((float)(n_plots - n_str));
+  bar_width = (1.0f - bar_space) / ((float)n_tot);
   float bar_off = - .5f * (1.0f - bar_space);
 
   // each graph has a box and lines..
@@ -1330,11 +1333,20 @@ void GraphTableView::RenderGraph_Bar() {
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[main_y_plots[i]];
     T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    ln->clear();
     if(pl->isString()) {
       PlotData_String(*pl, *mainy, ln);
     }
     else {
-      PlotData_Bar(*pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off);
+      if(pl->is_matrix && pl->matrix_cell < 0) {
+        for(int ci = 0; ci < pl->n_cells; ci++) {
+          PlotData_Bar(*pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off, ci);
+          bar_off += bar_width;
+        }
+      }
+      else {
+        PlotData_Bar(*pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off);
+      }
       bar_off += bar_width;
     }
   }
@@ -1342,11 +1354,20 @@ void GraphTableView::RenderGraph_Bar() {
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[alt_y_plots[i]];
     T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    ln->clear();
     if(pl->isString()) {
       PlotData_String(*pl, *alty, ln);
     }
     else {
-      PlotData_Bar(*pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off);
+      if(pl->is_matrix && pl->matrix_cell < 0) {
+        for(int ci = 0; ci < pl->n_cells; ci++) {
+          PlotData_Bar(*pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off, ci);
+          bar_off += bar_width;
+        }
+      }
+      else {
+        PlotData_Bar(*pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off);
+      }
       bar_off += bar_width;
     }
   }
@@ -1372,6 +1393,7 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   for(int i=0;i<da_1->cell_size();i++) {
     T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
     gr1->addChild(ln);
+    ln->clear();
     PlotData_XY(*mainy, *all_errs[main_y_plots[0]], *mainy, ln, i);
   }
 }
@@ -1423,6 +1445,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
         tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
         T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
         gr->addChild(ln);
+        ln->clear();
         if(mat_layout == taMisc::TOP_ZERO) {
           if(mgeom.dims() == 1)
             idx = MAX(geom_y-1-pos.y, pos.x);
@@ -1469,6 +1492,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
           tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
           T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
           gr->addChild(ln);
+          ln->clear();
           if(mat_layout == taMisc::TOP_ZERO)
             idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
           else
@@ -1509,6 +1533,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
             tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
             T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
             gr->addChild(ln);
+            ln->clear();
             if(mat_layout == taMisc::TOP_ZERO)
               idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
             else
@@ -1526,11 +1551,14 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
 
   if (ax_clr->range.Range() == 0) {
     clr = colorscale.GetColor((int)((.5f * (float)(colorscale.chunks-1)) + .5f));
-  } else if(val > ax_clr->range.max) {
+  }
+  else if(val > ax_clr->range.max) {
     clr = colorscale.maxout.color();
-  } else if(val < ax_clr->range.min) {
+  }
+  else if(val < ax_clr->range.min) {
     clr = colorscale.minout.color();
-  } else {
+  }
+  else {
     int chnk = colorscale.chunks-1;
     float rval = ax_clr->range.Normalize(val);
     int idx = (int) ((rval * (float)chnk) + .5);
@@ -1541,10 +1569,10 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
   return clr;
 }
 
-void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
+                                 GraphPlotView& yax,
                                  T3GraphLine* t3gl, int mat_cell) {
   if(!t3gl) return;
-  t3gl->clear();
 
   DataCol* da_y = plv.GetDAPtr();
   if(!da_y) return;
@@ -1564,6 +1592,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_er = erv.GetDAPtr();
+  erv.matrix_cell = plv.matrix_cell;
 
   GraphAxisBase* ax_clr = NULL;
   DataCol* da_clr = NULL;
@@ -1603,12 +1632,12 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     if(x_axis.row_num)
       last_z = view_range.min;
     else
-      last_z = da_z->GetValAsFloat(view_range.min);
+      last_z = z_axis.GetDataVal(da_z, view_range.min);
   }
   if(x_axis.row_num)
     last_x = view_range.min;
   else
-    last_x = da_x->GetValAsFloat(view_range.min);
+    last_x = x_axis.GetDataVal(da_x, view_range.min);
   iVec3f dat;                   // data point
   iVec3f plt;                   // plot coords
   iVec3f th_st;                 // start of thresholded line
@@ -1619,16 +1648,20 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     bool clr_ok = false;
     bool new_trace = false;
     bool new_trace_z = false;
-    if(x_axis.row_num)
+    if(x_axis.row_num) {
       dat.x = row;
-    else
-      dat.x = da_x->GetValAsFloat(row);
+    }
+    else {
+      dat.x = x_axis.GetDataVal(da_x, row);
+    }
     if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
     if(z_axis.on) {
-      if(z_axis.row_num)
+      if(z_axis.row_num) {
         dat.z = row;
-      else if(da_z)
-        dat.z = da_z->GetValAsFloat(row);
+      }
+      else if(da_z) {
+        dat.z = z_axis.GetDataVal(da_z, row);
+      }
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
     if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
@@ -1639,10 +1672,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
       yval = da_y->GetValAsFloatM(row, mat_cell);
     }
     else {
-      yval = da_y->GetValAsFloat(row);
+      yval = plv.GetDataVal(da_y, row);
     }
     if((graph_type == RASTER) && da_rst) {
-      dat.y = da_rst->GetValAsFloat(row);
+      dat.y = ax_rst->GetDataVal(da_rst, row);
     }
     else {
       dat.y = yval;
@@ -1672,7 +1705,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
         clr = GetValueColor(ax_clr, yval);
       }
       else {
-        clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
+        clr = GetValueColor(ax_clr, ax_clr->GetDataVal(da_clr, row));
       }
     }
 
@@ -1731,7 +1764,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
         err_dat = da_er->GetValAsFloatM(row, mat_cell);
       }
       else {
-        err_dat = da_er->GetValAsFloat(row);
+        err_dat = erv.GetDataVal(da_er, row);
       }
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
@@ -1777,6 +1810,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_er = erv.GetDAPtr();
+  erv.matrix_cell = plv.matrix_cell;
 
   GraphAxisBase* ax_clr = NULL;
   DataCol* da_clr = NULL;
@@ -1821,13 +1855,15 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     if(x_axis.row_num)
       dat.x = row;
     else
-      dat.x = da_x->GetValAsFloat(row);
+      dat.x = x_axis.GetDataVal(da_x, row);
     if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
     if(z_axis.on) {
-      if(z_axis.row_num)
+      if(z_axis.row_num) {
         dat.z = row;
-      else if(da_z)
-        dat.z = da_z->GetValAsFloat(row);
+      }
+      else if(da_z) {
+        dat.z = z_axis.GetDataVal(da_z, row);
+      }
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
     if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
@@ -1837,7 +1873,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
       dat.y = da_y->GetValAsFloatM(row, mat_cell);
     }
     else {
-      dat.y = da_y->GetValAsFloat(row);
+      dat.y = plv.GetDataVal(da_y, row);
     }
     if(dat.y < yax.range.min || dat.y > yax.range.max) continue;
 
@@ -1853,7 +1889,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
         clr = GetValueColor(ax_clr, dat.y);
       }
       else {
-        clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
+        clr = GetValueColor(ax_clr, ax_clr->GetDataVal(da_clr, row));
       }
     }
 
@@ -1886,7 +1922,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
         err_dat = da_er->GetValAsFloatM(row, mat_cell);
       }
       else {
-        err_dat = da_er->GetValAsFloat(row);
+        err_dat = erv.GetDataVal(da_er, row);
       }
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
@@ -1931,16 +1967,18 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
     if(x_axis.row_num)
       dat.x = row;
     else
-      dat.x = da_x->GetValAsFloat(row);
+      dat.x = x_axis.GetDataVal(da_x, row);
     if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
     if(z_axis.on) {
-      if(z_axis.row_num)
+      if(z_axis.row_num) {
         dat.z = row;
-      else if(da_z)
-        dat.z = da_z->GetValAsFloat(row);
+      }
+      else if(da_z) {
+        dat.z = z_axis.GetDataVal(da_z, row);
+      }
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
-    dat.y = da_y->GetValAsFloat(row);
+    dat.y = plv_y.GetDataVal(da_y, row);
     if(dat.y < plv_y.range.min || dat.y > plv_y.range.max) continue;
 
     plt.x = x_axis.DataToPlot(dat.x);
@@ -1948,7 +1986,7 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
     if(z_axis.on)
       plt.z = z_axis.DataToPlot(dat.z);
 
-    String str = da_str->GetValAsString(row);
+    String str = plv_str.GetDataString(da_str, row);
     if(!str.empty()) {
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
                    str.chars());

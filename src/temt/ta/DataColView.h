@@ -36,7 +36,6 @@ INHERITED(T3DataView)
 friend class DataTableView;
 public:
   bool          visible;        // is this column visible in display?
-  //  bool      sticky;         // #DEF_false set this to retain this colspec even if its column deletes -- not supported by the views and nonsensical, right?
 
   DataCol*              dataCol() const {return (DataCol*)data();}
   void                  setDataCol(DataCol* value, bool first_time = false);

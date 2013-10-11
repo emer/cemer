@@ -70,6 +70,7 @@ void V1KwtaSpec::UpdateAfterEdit_impl() {
   if(on != -1) {
     if(on == 0) mode = OFF;
     else mode = KWTA;           // preserve old
+    on = -1;
   }
 
   // these are all gelin defaults
