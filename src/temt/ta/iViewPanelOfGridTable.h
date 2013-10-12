@@ -47,48 +47,52 @@ public:
   QCheckBox*                chkRowNum;
   QCheckBox*                chk2dFont;
   QLabel*                   lblFontScale;
-  taiWidgetField*                 fldFontScale;
+  taiWidgetField*           fldFontScale;
   QPushButton*              butRefresh;
 
   QHBoxLayout*            layVals;
   QLabel*                   lblRows;
-  taiWidgetFieldIncr*             fldRows; // number of rows to display
+  taiWidgetFieldIncr*       fldRows; // number of rows to display
   QLabel*                   lblCols;
-  taiWidgetFieldIncr*             fldCols; // number of cols to display
+  taiWidgetFieldIncr*       fldCols; // number of cols to display
   QLabel*                   lblWidth;
-  taiWidgetField*                 fldWidth; // width of the display (height is always 1.0)
+  taiWidgetField*           fldWidth; // width of the display (height is always 1.0)
   QLabel*                   lblTxtMin;
-  taiWidgetField*                 fldTxtMin;
+  taiWidgetField*           fldTxtMin;
   QLabel*                   lblTxtMax;
-  taiWidgetField*                 fldTxtMax;
+  taiWidgetField*           fldTxtMax;
 
   QHBoxLayout*            layMatrix;
-  QLabel*                   lblMatrix;
   QCheckBox*                chkValText;
   QLabel*                   lblTrans;
-  taiWidgetField*                 fldTrans; // mat_trans parency
+  taiWidgetField*           fldTrans; // mat_trans parency
   QLabel*                   lblRot;
-  taiWidgetField*                 fldRot; // mat_rot ation
+  taiWidgetField*           fldRot; // mat_rot ation
+  QLabel*                   lblGridMarg;
+  taiWidgetField*           fldGridMarg;
+  QLabel*                   lblGridLine;
+  taiWidgetField*           fldGridLine;
   QLabel*                   lblBlockHeight;
-  taiWidgetField*                 fldBlockHeight; // mat_block_height
+  taiWidgetField*           fldBlockHeight; // mat_block_height
+  QLabel*                   lblBlockSpace;
+  taiWidgetField*           fldBlockSpace;
 
   QHBoxLayout*            layColorScale;
   QCheckBox*                chkAutoScale;
-  iColorScaleBar*                 cbar;             // colorbar
+  iColorScaleBar*           cbar;             // colorbar
   QPushButton*              butSetColor;
 
   QHBoxLayout*            layClickVals;
   QCheckBox*                chkClickVals;
   QLabel*                   lblLMBVal;
-  taiWidgetField*                 fldLMBVal;
+  taiWidgetField*           fldLMBVal;
   QLabel*                   lblMMBVal;
-  taiWidgetField*                 fldMMBVal;
+  taiWidgetField*           fldMMBVal;
 
   QHBoxLayout*            layRowNav;
-//   QLabel*               lblRowNav;
   QToolBar*                rowNavTB;
   QLabel*                   lblRowGoto;
-  taiWidgetField*                 fldRowGoto;
+  taiWidgetField*           fldRowGoto;
   QAction*                  actRowGoto;
   QAction*                  actRowBackAll;
   QAction*                  actRowBackPg;
@@ -98,10 +102,9 @@ public:
   QAction*                  actRowFwdAll;
 
   QHBoxLayout*            layColNav;
-//   QLabel*               lblColNav;
   QToolBar*                colNavTB;
   QLabel*                   lblColGoto;
-  taiWidgetField*                 fldColGoto;
+  taiWidgetField*           fldColGoto;
   QAction*                  actColGoto;
   QAction*                  actColBackAll;
   QAction*                  actColBackPg;

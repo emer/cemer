@@ -714,6 +714,7 @@ set(ta_HEADS_MAKETA_NOMOC
   T3GridViewNode.h
   T3Axis.h
   T3GraphLine.h
+  T3GraphBar.h
   T3GraphViewNode.h
 
   T3VEWorld.h
@@ -1783,6 +1784,7 @@ set(ta_SRCS_MAKETA
   T3GridViewNode.cpp
   T3Axis.cpp
   T3GraphLine.cpp
+  T3GraphBar.cpp
   T3GraphViewNode.cpp
 
   T3VEWorld.cpp

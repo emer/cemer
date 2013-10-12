@@ -146,6 +146,7 @@ void GraphAxisBase::SetColPtr(GraphColView* cgv) {
   taBase::SetPointer((taBase**)&col_lookup, cgv);
   UpdateFmColLookup();
   UpdateOnFlag();
+  UpdateFmDataCol();
 }
 
 
@@ -174,6 +175,8 @@ void GraphAxisBase::InitFromUserData() {
     fixed_range.fix_max = true;
     fixed_range.max = da->GetUserDataAsFloat("MAX");
   }
+  UpdateOnFlag();
+  UpdateFmDataCol();
 }
 
 void GraphAxisBase::SetRange_impl(float first, float last) {

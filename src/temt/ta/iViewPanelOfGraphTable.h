@@ -52,7 +52,8 @@ public:
   taiWidgetComboBox*        cmbGraphType;
   QLabel*                   lblPlotStyle;
   taiWidgetComboBox*        cmbPlotStyle;
-
+  QCheckBox*                chkNegDraw;
+  QCheckBox*                chkNegDrawZ;
   QPushButton*              butRefresh;
 
   QHBoxLayout*            layVals;
@@ -64,9 +65,6 @@ public:
   taiWidgetField*           fldPointSpacing;
   QLabel*                   lblLabelSpacing;
   taiWidgetField*           fldLabelSpacing;
-  QCheckBox*                chkNegDraw;
-  QCheckBox*                chkNegDrawZ;
-
   QLabel*                   lblWidth;
   taiWidgetField*           fldWidth; // width of the display (height is always 1.0)
   QLabel*                   lblDepth;
@@ -103,9 +101,6 @@ public:
   taiWidgetListElChooser*   lelErr[max_plots];
   iCheckBox*                oncErr[max_plots]; // on checkbox
 
-  QLabel*                   lblErrSpacing;
-  taiWidgetField*           fldErrSpacing;
-
   QHBoxLayout*            layCAxis;
   QLabel*                   lblColorMode;
   taiWidgetComboBox*        cmbColorMode;
@@ -113,15 +108,25 @@ public:
   taiWidgetListElChooser*   lelCAxis; // list element chooser
   QLabel*                   lblThresh;
   taiWidgetField*           fldThresh;
-
-  QHBoxLayout*            layColorScale;
-  iColorScaleBar*           cbar;             // colorbar
-  QPushButton*              butSetColor;
+  QLabel*                   lblErrSpacing;
+  taiWidgetField*           fldErrSpacing;
+  QLabel*                   lblLabelSz;
+  taiWidgetField*           fldLabelSz;
+  QLabel*                   lblAxisSz;
+  taiWidgetField*           fldAxisSz;
 
   QHBoxLayout*            layRAxis;
   QLabel*                   lblRAxis;
   taiWidgetListElChooser*   lelRAxis; // list element chooser
   taiWidgetPoly*            pdtRAxis; // fixed_range polydata (inline)
+  QLabel*                   lblBarSpace;
+  taiWidgetField*           fldBarSpace;
+  QLabel*                   lblBarDepth;
+  taiWidgetField*           fldBarDepth;
+
+  QHBoxLayout*            layColorScale;
+  iColorScaleBar*           cbar;             // colorbar
+  QPushButton*              butSetColor;
 
   override String       panel_type() const; // this string is on the subpanel button for this panel
   GraphTableView*       glv() {return (GraphTableView*)m_dv;}

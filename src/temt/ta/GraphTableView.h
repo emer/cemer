@@ -87,6 +87,7 @@ public:
   PointSize             point_size;     // size of point symbols
   int                   point_spacing;  // #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers
   float                 bar_space;      // #DEF_0.2 amount of space between bars
+  float                 bar_depth;      // #DEF_0.01 how deep to make the 3d bars
   int                   label_spacing;  // how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
   float                 width;          // how wide to make the display (height is always 1.0)
   float                 depth;          // how deep to make the display (height is always 1.0)
@@ -235,12 +236,14 @@ protected:
 
   virtual void          PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
                                     GraphPlotView& yax,
-                                    T3GraphLine* t3gl, int mat_cell = -1);
-  // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
-  virtual void          PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv,
-                                     GraphPlotView& yax,
-                                     T3GraphLine* t3gl, float bar_off, int mat_cell = -1);
-  // plot bar data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
+                                    T3GraphLine* t3gl, int mat_cell = -1, 
+                                    int clr_idx = -1);
+  // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0), and color override if clr_idx >= 0
+  virtual void          PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv,
+                                     GraphPlotView& erv, GraphPlotView& yax,
+                                     T3GraphLine* t3gl, float bar_off, int mat_cell = -1,
+                                     int clr_idx = -1);
+  // plot bar data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0), and color override if clr_idx >= 0
   virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y,
                                         T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column

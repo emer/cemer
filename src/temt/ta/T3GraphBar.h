@@ -13,35 +13,37 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgElChoiceDlg_h
-#define ProgElChoiceDlg_h 1
+#ifndef T3GraphBar_h
+#define T3GraphBar_h 1
 
 // parent includes:
-#include <taNBase>
+#include <T3NodeLeaf>
 
 // member includes:
-#include <Program>
-#include <ProgVar>
+#include <iVec3f>
 
 // declare all other types mentioned but not required to include:
-class taGuiDialog; //
+class T3Color; // 
 
-taTypeDef_Of(ProgElChoiceDlg);
+taTypeDef_Of(T3GraphBar);
 
-class TA_API ProgElChoiceDlg : public taNBase {
-  // #CAT_GUI choose where to create a new variable and what type it is
-  INHERITED(taNBase)
+class TA_API T3GraphBar : public T3NodeLeaf {
+  // a graph bar for bar graphs -- data is GraphColView
+#ifndef __MAKETA__
+typedef T3NodeLeaf inherited;
+
+  SO_NODE_HEADER(T3GraphBar);
+#endif // def __MAKETA__
 public:
-  taGuiDialog  dlg;
 
-  virtual int  GetLocalGlobalChoice(Program* prg, String& var_nm, int& local_global_choice, ProgVar::VarType& var_type_choice);
-  // #IGNORE
+  static void		initClass();
 
-  TA_SIMPLE_BASEFUNS(ProgElChoiceDlg);
+  virtual void          SetBar(iVec3f& pos, iVec3f& size, const T3Color& color);
 
- private:
-  void  Initialize() {}
-  void  Destroy() {}
+  T3GraphBar(T3DataView* dataView_ = NULL);
+
+protected:
+  ~T3GraphBar();
 };
 
-#endif // ProgElChoiceDlg_h
+#endif // T3GraphBar_h

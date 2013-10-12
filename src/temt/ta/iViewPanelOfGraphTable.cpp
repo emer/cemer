@@ -24,6 +24,7 @@
 #include <taiWidgetPoly>
 #include <iCheckBox>
 #include <BuiltinTypeDefs>
+#include <iLineEdit>
 
 #include <taMisc>
 #include <taiMisc>
@@ -106,6 +107,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addWidget(lblLineWidth);
   fldLineWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLineWidth->GetRep());
+  ((iLineEdit*)fldLineWidth->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
 
   lblPointSpacing = taiM->NewLabel("Pt\nSpc", widg, font_spec);
@@ -113,6 +115,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addWidget(lblPointSpacing);
   fldPointSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldPointSpacing->GetRep());
+  ((iLineEdit*)fldPointSpacing->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
 
   lblLabelSpacing = taiM->NewLabel("Lbl\nSpc", widg, font_spec);
@@ -120,6 +123,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addWidget(lblLabelSpacing);
   fldLabelSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLabelSpacing->GetRep());
+  ((iLineEdit*)fldLabelSpacing->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
@@ -127,6 +131,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addWidget(lblWidth);
   fldWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
+  ((iLineEdit*)fldWidth->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
 
   lblDepth = taiM->NewLabel("Depth", widg, font_spec);
@@ -134,6 +139,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addWidget(lblDepth);
   fldDepth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldDepth->GetRep());
+  ((iLineEdit*)fldDepth->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
 
   layVals->addStretch();
@@ -150,7 +156,6 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layXAxis->addWidget(lblXAxis);
   lelXAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layXAxis->addWidget(lelXAxis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
 
   rncXAxis = new QCheckBox("Row\nNum", widg); rncXAxis->setObjectName("rncXAxis");
   rncXAxis->setToolTip("Use row number instead of column value for axis value");
@@ -285,14 +290,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layCAxis->addWidget(lblCAxis);
   lelCAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layCAxis->addWidget(lelCAxis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
 
   lblThresh = taiM->NewLabel("Thresh", widg, font_spec);
   lblThresh->setToolTip("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold.");
   layCAxis->addWidget(lblThresh);
   fldThresh = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldThresh->GetRep());
-  layVals->addSpacing(taiM->hsep_c);
+  ((iLineEdit*)fldThresh->GetRep())->setCharWidth(6);
+  layCAxis->addSpacing(taiM->hsep_c);
 
   // Err Spacing
   lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
@@ -300,8 +305,57 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layCAxis->addWidget(lblErrSpacing);
   fldErrSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldErrSpacing->GetRep());
+  ((iLineEdit*)fldErrSpacing->GetRep())->setCharWidth(6);
+  layCAxis->addSpacing(taiM->hsep_c);
+
+  lblLabelSz = taiM->NewLabel("Lbl\nSz", widg, font_spec);
+  lblLabelSz->setToolTip("Font size for the labels (strings) in the graph -- in normalized units.");
+  layCAxis->addWidget(lblLabelSz);
+  fldLabelSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layCAxis->addWidget(fldLabelSz->GetRep());
+  ((iLineEdit*)fldLabelSz->GetRep())->setCharWidth(6);
+  layCAxis->addSpacing(taiM->hsep_c);
+
+  lblAxisSz = taiM->NewLabel("Axis\nSz", widg, font_spec);
+  lblAxisSz->setToolTip("Font size for the axis labels in the graph -- in normalized units.");
+  layCAxis->addWidget(lblAxisSz);
+  fldAxisSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layCAxis->addWidget(fldAxisSz->GetRep());
+  ((iLineEdit*)fldAxisSz->GetRep())->setCharWidth(6);
+  //  layCAxis->addSpacing(taiM->hsep_c);
 
   layCAxis->addStretch();
+
+  // Raster Axis
+  layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
+
+  lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
+  lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
+  layRAxis->addWidget(lblRAxis);
+  lelRAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
+  layRAxis->addWidget(lelRAxis->GetRep());
+  layRAxis->addSpacing(taiM->hsep_c);
+
+  pdtRAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
+  layRAxis->addWidget(pdtRAxis->GetRep());
+  layRAxis->addSpacing(taiM->hsep_c);
+
+  lblBarSpace = taiM->NewLabel("Bar\nSpc", widg, font_spec);
+  lblBarSpace->setToolTip("Spacing between bars in the BAR plot.");
+  layRAxis->addWidget(lblBarSpace);
+  fldBarSpace = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layRAxis->addWidget(fldBarSpace->GetRep());
+  ((iLineEdit*)fldBarSpace->GetRep())->setCharWidth(6);
+  layRAxis->addSpacing(taiM->hsep_c);
+
+  lblBarDepth = taiM->NewLabel("Bar\nDpth", widg, font_spec);
+  lblBarDepth->setToolTip("Depth in Z plane of bars in the BAR plot.");
+  layRAxis->addWidget(lblBarDepth);
+  fldBarDepth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layRAxis->addWidget(fldBarDepth->GetRep());
+  ((iLineEdit*)fldBarDepth->GetRep())->setCharWidth(6);
+
+  layRAxis->addStretch();
 
   // second row: color bar + button
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
@@ -315,22 +369,6 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
-
-
-  // Raster Axis
-  layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
-
-  lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
-  lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
-  layRAxis->addWidget(lblRAxis);
-  lelRAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
-  layRAxis->addWidget(lelRAxis->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
-  pdtRAxis = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
-  layRAxis->addWidget(pdtRAxis->GetRep());
-
-  layRAxis->addStretch();
 
   layWidg->addStretch();
 
@@ -398,6 +436,10 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   }
 
   fldErrSpacing->GetImage((String)glv->err_spacing);
+  fldLabelSz->GetImage((String)glv->label_font_size);
+  fldAxisSz->GetImage((String)glv->axis_font_size);
+  fldBarSpace->GetImage((String)glv->bar_space);
+  fldBarDepth->GetImage((String)glv->bar_depth);
 
   cmbColorMode->GetImage(glv->color_mode);
   lelCAxis->GetImage(&(glv->children), glv->color_axis.GetColPtr());
@@ -470,6 +512,10 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   }
 
   glv->err_spacing = (int)fldErrSpacing->GetValue();
+  glv->label_font_size = (float)fldLabelSz->GetValue();
+  glv->axis_font_size = (float)fldAxisSz->GetValue();
+  glv->bar_space = (float)fldBarSpace->GetValue();
+  glv->bar_depth = (float)fldBarDepth->GetValue();
 
   cmbColorMode->GetEnumValue(i); glv->color_mode = (GraphTableView::ColorMode)i;
   glv->color_axis.SetColPtr((GraphColView*)lelCAxis->GetValue());

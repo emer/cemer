@@ -23,6 +23,7 @@
 #include <NewViewHelper>
 #include <T3ExaminerViewer>
 #include <T3GraphLine>
+#include <T3GraphBar>
 #include <T3GraphViewNode>
 #include <iT3Panel>
 #include <T3Axis>
@@ -163,6 +164,7 @@ void GraphTableView::Initialize() {
   point_size = MEDIUM;
   point_spacing = 1;
   bar_space = .2f;
+  bar_depth = 0.01f;
   color_mode = VALUE_COLOR;
   negative_draw = false;
   negative_draw_z = true;
@@ -354,15 +356,21 @@ void GraphTableView::UpdateAfterEdit_impl(){
 
   x_axis.on = true;             // try to keep it on
   x_axis.UpdateOnFlag();
+  x_axis.UpdateFmDataCol();
   z_axis.UpdateOnFlag();
+  z_axis.UpdateFmDataCol();
   for(int i=0;i<max_plots;i++) {
     GraphPlotView* pl = all_plots[i];
     pl->UpdateOnFlag();
+    pl->UpdateFmDataCol();
     GraphPlotView* epl = all_errs[i];
     epl->UpdateOnFlag();
+    epl->UpdateFmDataCol();
   }
   color_axis.UpdateOnFlag();
+  color_axis.UpdateFmDataCol();
   raster_axis.UpdateOnFlag();
+  raster_axis.UpdateFmDataCol();
 
   DataTable* dt = dataTable();
   bool no_cols = true;
@@ -777,14 +785,12 @@ void GraphTableView::FindDefaultXZAxes() {
     if(da->HasUserData("X_AXIS")) {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
-      x_axis.UpdateOnFlag();
       set_x = true;
     }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
       z_axis.on = true;
       z_axis.InitFromUserData();
-      z_axis.UpdateOnFlag();
     }
   }
   if(set_x) return;
@@ -798,13 +804,11 @@ void GraphTableView::FindDefaultXZAxes() {
       z_axis.col_name = cvs->name;
       z_axis.on = true;         // found one
       z_axis.InitFromUserData();
-      z_axis.UpdateOnFlag();
       break;                    // done
     }
     else {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
-      x_axis.UpdateOnFlag();
       set_x = true;
     }
   }
@@ -815,7 +819,6 @@ void GraphTableView::FindDefaultXZAxes() {
       if(da->is_matrix || !da->isNumeric()) continue;
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
-      x_axis.UpdateOnFlag();
       set_x = true;
       break;
     }
@@ -830,7 +833,6 @@ void GraphTableView::FindDefaultPlot1() {
     if(da->HasUserData("PLOT_1")) {
       plot_1.col_name = cvs->name;
       plot_1.InitFromUserData();
-      plot_1.UpdateOnFlag();
       got_1 = true;
     }
   }
@@ -844,7 +846,6 @@ void GraphTableView::FindDefaultPlot1() {
     if(x_axis.col_name == cvs->name) continue; // don't make it same as X!
     plot_1.col_name = cvs->name;
     plot_1.InitFromUserData();
-    plot_1.UpdateOnFlag();
     break;                      // once you get one, that's it
   }
 }
@@ -862,23 +863,23 @@ void GraphTableView::InitFromUserData() {
       String pltst = "PLOT_" + String(i+1);
       if(da->HasUserData(pltst)) {
         all_plots[i]->col_name = cvs->name;  all_plots[i]->on = true;
-        all_plots[i]->InitFromUserData();    all_plots[i]->UpdateOnFlag();
+        all_plots[i]->InitFromUserData(); 
       }
     }
     for(int i=0; i<max_plots; i++) {
       String pltst = "ERR_" + String(i+1);
       if(da->HasUserData(pltst)) {
         all_errs[i]->col_name = cvs->name;  all_errs[i]->on = true;
-        all_errs[i]->InitFromUserData();    all_errs[i]->UpdateOnFlag();
+        all_errs[i]->InitFromUserData();
       }
     }
     if(da->HasUserData("COLOR_AXIS")) {
       color_axis.col_name = cvs->name;   color_axis.on = true;
-      color_axis.InitFromUserData();     color_axis.UpdateOnFlag();
+      color_axis.InitFromUserData();
     }
     if(da->HasUserData("RASTER_AXIS")) {
       raster_axis.col_name = cvs->name;  raster_axis.on = true;
-      raster_axis.InitFromUserData();    raster_axis.UpdateOnFlag();
+      raster_axis.InitFromUserData();
     }
   }
 
@@ -1208,53 +1209,32 @@ void GraphTableView::RenderGraph_XY() {
 
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();	// this is the "nuclear option" that ensures full redraw
-  // the code below also allows re-use, but this does NOT speed up rendering appreciably
-  // and appears to be introducing some artifacts..
 
-  SoSeparator* gr1 = NULL;
-  if(graphs->getNumChildren() == 1) {
-    gr1 = (SoSeparator*)graphs->getChild(0);
-  }
-  else {
-    gr1 = new SoSeparator;
-    graphs->addChild(gr1);
-  }
+  SoSeparator* gr1 = new SoSeparator;
+  graphs->addChild(gr1);
 
   float boxd = 0.0f;
   if(z_axis.on)
     boxd = depth;
 
   // each graph has a box and lines..
-  SoLineBox3d* lbox = NULL;
-  if(gr1->getNumChildren() > 0) {
-    lbox = (SoLineBox3d*)gr1->getChild(0);
-  }
-  else {
-    lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
-    gr1->addChild(lbox);
-  }
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
+  gr1->addChild(lbox);
 
-  int lncnt = 0;
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[main_y_plots[i]];
-    T3GraphLine* ln = NULL;
-    if(gr1->getNumChildren() > lncnt+1) {
-      ln = (T3GraphLine*)gr1->getChild(lncnt+1);
-      ln->clear();
-    }
-    else {
-      ln = new T3GraphLine(pl, label_font_size);
-      gr1->addChild(ln);
-      ln->clear();
-    }
-    lncnt++;
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+    gr1->addChild(ln);
     if(pl->isString()) {
       PlotData_String(*pl, *mainy, ln);
     }
     else {
       if(pl->is_matrix && pl->matrix_cell < 0) {
         for(int ci = 0; ci < pl->n_cells; ci++) {
-          PlotData_XY(*pl, *all_errs[main_y_plots[i]], *mainy, ln, ci);
+          int clr_inc = colorscale.chunks / pl->n_cells;
+          clr_inc = MAX(1, clr_inc);
+          int clr_idx = (ci * clr_inc) % colorscale.chunks;
+          PlotData_XY(*pl, *all_errs[main_y_plots[i]], *mainy, ln, ci, clr_idx);
         }
       }
       else {
@@ -1265,24 +1245,18 @@ void GraphTableView::RenderGraph_XY() {
 
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[alt_y_plots[i]];
-    T3GraphLine* ln = NULL;
-    if(gr1->getNumChildren() > lncnt+1) {
-      ln = (T3GraphLine*)gr1->getChild(lncnt+1);
-      ln->clear();
-    }
-    else {
-      ln = new T3GraphLine(pl, label_font_size);
-      gr1->addChild(ln);
-      ln->clear();
-    }
-    lncnt++;
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+    gr1->addChild(ln);
     if(pl->isString()) {
       PlotData_String(*pl, *alty, ln);
     }
     else {
       if(pl->is_matrix && pl->matrix_cell < 0) {
         for(int ci = 0; ci < pl->n_cells; ci++) {
-          PlotData_XY(*pl, *all_errs[alt_y_plots[i]], *alty, ln, ci);
+          int clr_inc = colorscale.chunks / pl->n_cells;
+          clr_inc = MAX(1, clr_inc);
+          int clr_idx = (ci * clr_inc) % colorscale.chunks;
+          PlotData_XY(*pl, *all_errs[alt_y_plots[i]], *alty, ln, ci, clr_idx);
         }
       }
       else {
@@ -1332,20 +1306,24 @@ void GraphTableView::RenderGraph_Bar() {
 
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[main_y_plots[i]];
-    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
-    ln->clear();
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+    gr1->addChild(ln);
     if(pl->isString()) {
       PlotData_String(*pl, *mainy, ln);
     }
     else {
       if(pl->is_matrix && pl->matrix_cell < 0) {
         for(int ci = 0; ci < pl->n_cells; ci++) {
-          PlotData_Bar(*pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off, ci);
+          int clr_inc = colorscale.chunks / pl->n_cells;
+          clr_inc = MAX(1, clr_inc);
+          int clr_idx = (ci * clr_inc) % colorscale.chunks;
+          PlotData_Bar(gr1, *pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off, ci,
+                       clr_idx);
           bar_off += bar_width;
         }
       }
       else {
-        PlotData_Bar(*pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off);
+        PlotData_Bar(gr1, *pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off);
       }
       bar_off += bar_width;
     }
@@ -1353,20 +1331,23 @@ void GraphTableView::RenderGraph_Bar() {
 
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[alt_y_plots[i]];
-    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
-    ln->clear();
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+    gr1->addChild(ln);
     if(pl->isString()) {
       PlotData_String(*pl, *alty, ln);
     }
     else {
       if(pl->is_matrix && pl->matrix_cell < 0) {
         for(int ci = 0; ci < pl->n_cells; ci++) {
-          PlotData_Bar(*pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off, ci);
+          int clr_inc = colorscale.chunks / pl->n_cells;
+          clr_inc = MAX(1, clr_inc);
+          int clr_idx = (ci * clr_inc) % colorscale.chunks;
+          PlotData_Bar(gr1, *pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off, ci, clr_idx);
           bar_off += bar_width;
         }
       }
       else {
-        PlotData_Bar(*pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off);
+        PlotData_Bar(gr1, *pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off);
       }
       bar_off += bar_width;
     }
@@ -1393,7 +1374,6 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   for(int i=0;i<da_1->cell_size();i++) {
     T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
     gr1->addChild(ln);
-    ln->clear();
     PlotData_XY(*mainy, *all_errs[main_y_plots[0]], *mainy, ln, i);
   }
 }
@@ -1445,7 +1425,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
         tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
         T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
         gr->addChild(ln);
-        ln->clear();
         if(mat_layout == taMisc::TOP_ZERO) {
           if(mgeom.dims() == 1)
             idx = MAX(geom_y-1-pos.y, pos.x);
@@ -1492,7 +1471,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
           tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
           T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
           gr->addChild(ln);
-          ln->clear();
           if(mat_layout == taMisc::TOP_ZERO)
             idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
           else
@@ -1533,7 +1511,6 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
             tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
             T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
             gr->addChild(ln);
-            ln->clear();
             if(mat_layout == taMisc::TOP_ZERO)
               idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
             else
@@ -1571,7 +1548,8 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
 
 void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
                                  GraphPlotView& yax,
-                                 T3GraphLine* t3gl, int mat_cell) {
+                                 T3GraphLine* t3gl, int mat_cell,
+                                 int clr_idx) {
   if(!t3gl) return;
 
   DataCol* da_y = plv.GetDAPtr();
@@ -1699,7 +1677,11 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       new_trace_z = true;
 
 
-    if(da_clr) {
+    if(clr_idx >= 0) {
+      clr_ok = true;
+      clr = colorscale.GetColor(clr_idx);
+    }
+    else if(da_clr) {
       clr_ok = true;
       if(color_mode == VALUE_COLOR) {
         clr = GetValueColor(ax_clr, yval);
@@ -1788,8 +1770,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   t3gl->finishBatch();
 }
 
-void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
-                                  T3GraphLine* t3gl, float bar_off, int mat_cell) {
+void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlotView& erv,
+                                  GraphPlotView& yax,
+                                  T3GraphLine* t3gl, float bar_off, int mat_cell,
+                                  int clr_idx) {
   t3gl->clear();
 
   DataCol* da_y = plv.GetDAPtr();
@@ -1883,7 +1867,11 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     if(z_axis.on || matz)
       plt.z = z_axis.DataToPlot(dat.z);
 
-    if(da_clr) {
+    if(clr_idx >= 0) {
+      clr_ok = true;
+      clr = colorscale.GetColor(clr_idx);
+    }
+    else if(da_clr) {
       clr_ok = true;
       if(color_mode == VALUE_COLOR) {
         clr = GetValueColor(ax_clr, dat.y);
@@ -1894,27 +1882,21 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     }
 
     iVec3f pt;
+    iVec3f size;
     // draw the line
+    pt = plt;  pt.x += bar_off_plt + bar_wd_plt * 0.5f;
+    pt.y = 0.0f; pt.z -= bar_depth;
+    size.x = bar_wd_plt;
+    size.y = plt.y;
+    size.z = bar_depth;
+    T3GraphBar* bar = new T3GraphBar(&plv);
     if(clr_ok) {
-      pt = plt;  pt.y = 0.0f;  pt.x += bar_off_plt;
-      t3gl->moveTo(pt, (T3Color)(clr));
-      pt.y = plt.y;
-      t3gl->lineTo(pt, (T3Color)(clr));
-      pt.x += bar_wd_plt;
-      t3gl->lineTo(pt, (T3Color)(clr));
-      pt.y = 0.0f;
-      t3gl->lineTo(pt, (T3Color)(clr));
+      bar->SetBar(pt, size, (T3Color)(clr));
     }
     else {
-      pt = plt;  pt.y = 0.0f;  pt.x += bar_off_plt;
-      t3gl->moveTo(pt);
-      pt.y = plt.y;
-      t3gl->lineTo(pt);
-      pt.x += bar_wd_plt;
-      t3gl->lineTo(pt);
-      pt.y = 0.0f;
-      t3gl->lineTo(pt);
+      bar->SetBar(pt, size, (T3Color)(plv.color.color()));
     }
+    gr1->addChild(bar);
 
     if(erv.on && da_er && (row % err_spacing == 0)) {
       float err_dat;

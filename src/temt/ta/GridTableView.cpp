@@ -138,7 +138,7 @@ void GridTableView::Initialize() {
   mat_val_text = false;
 
   grid_margin = 0.01f;
-  grid_line_size = 0.005f;
+  grid_line_size = 0.002f;
   row_num_width = 4;
 
   mat_block_spc = 0.1f;

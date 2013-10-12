@@ -128,10 +128,6 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
   layMatrix->setSpacing(2);     // plenty of room
 
-  lblMatrix = taiM->NewLabel("Matrix\nDisplay", widg, font_spec);
-  lblMatrix->setToolTip("This row contains parameters that control the display of matrix values (shown in a grid of colored blocks)");
-  layMatrix->addWidget(lblMatrix);
-
   chkValText =  new QCheckBox("Val\nTxt", widg); chkValText->setObjectName( "chkValText");
   chkValText->setToolTip("Whether to display text of the matrix block values.");
   connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -144,6 +140,39 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   fldTrans = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldTrans->GetRep());
   ((iLineEdit*)fldTrans->GetRep())->setCharWidth(8);
+  layMatrix->addSpacing(taiM->hsep_c);
+
+  lblGridMarg = taiM->NewLabel("Grid\nMarg", widg, font_spec);
+  lblGridMarg->setToolTip("Margin (spacing) between grids of blocks in normalized units -- this is the outer-most of the two forms of spacing (see Mat Spc for inner one).");
+  layMatrix->addWidget(lblGridMarg);
+  fldGridMarg = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix->addWidget(fldGridMarg->GetRep());
+  ((iLineEdit*)fldGridMarg->GetRep())->setCharWidth(8);
+  layMatrix->addSpacing(taiM->hsep_c);
+
+  lblGridLine = taiM->NewLabel("Grid\nLine", widg, font_spec);
+  lblGridLine->setToolTip("Width of the grid lines line between rows and columns, in normalized units.");
+  layMatrix->addWidget(lblGridLine);
+  fldGridLine = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix->addWidget(fldGridLine->GetRep());
+  ((iLineEdit*)fldGridLine->GetRep())->setCharWidth(8);
+  layMatrix->addSpacing(taiM->hsep_c);
+
+  lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
+  lblBlockHeight->setToolTip("Maximum height of matrix grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
+  layMatrix->addWidget(lblBlockHeight);
+  fldBlockHeight = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix->addWidget(fldBlockHeight->GetRep());
+  ((iLineEdit*)fldBlockHeight->GetRep())->setCharWidth(8);
+  layMatrix->addSpacing(taiM->hsep_c);
+
+  lblBlockSpace = taiM->NewLabel("Blk\nSpc", widg, font_spec);
+  lblBlockSpace->setToolTip("Space between matrix grid blocks, as a proportion of their overall X-Y size.");
+  layMatrix->addWidget(lblBlockSpace);
+  fldBlockSpace = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix->addWidget(fldBlockSpace->GetRep());
+  ((iLineEdit*)fldBlockSpace->GetRep())->setCharWidth(8);
+  layMatrix->addSpacing(taiM->hsep_c);
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
@@ -151,13 +180,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   fldRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldRot->GetRep());
   ((iLineEdit*)fldRot->GetRep())->setCharWidth(8);
-
-  lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
-  lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
-  layMatrix->addWidget(lblBlockHeight);
-  fldBlockHeight = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
-  layMatrix->addWidget(fldBlockHeight->GetRep());
-  ((iLineEdit*)fldBlockHeight->GetRep())->setCharWidth(8);
+  // layMatrix->addSpacing(taiM->hsep_c);
 
   layMatrix->addStretch();
 
@@ -335,8 +358,11 @@ void iViewPanelOfGridTable::GetValue_impl() {
   glv->text_size_range.max = fldTxtMax->GetValue();
   glv->mat_val_text = chkValText->isChecked();
   glv->mat_trans = (float)fldTrans->GetValue();
+  glv->grid_margin = (float)fldGridMarg->GetValue();
+  glv->grid_line_size = (float)fldGridLine->GetValue();
   glv->mat_rot = (float)fldRot->GetValue();
   glv->mat_block_height = (float)fldBlockHeight->GetValue();
+  glv->mat_block_spc = (float)fldBlockSpace->GetValue();
   glv->setScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max());
   glv->click_vals = chkClickVals->isChecked();
   glv->lmb_val = (float)fldLMBVal->GetValue();
@@ -372,8 +398,11 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
 
   chkValText->setChecked(glv->mat_val_text);
   fldTrans->GetImage((String)glv->mat_trans);
+  fldGridMarg->GetImage((String)glv->grid_margin);
+  fldGridLine->GetImage((String)glv->grid_line_size);
   fldRot->GetImage((String)glv->mat_rot);
   fldBlockHeight->GetImage((String)glv->mat_block_height);
+  fldBlockSpace->GetImage((String)glv->mat_block_spc);
 
   cbar->UpdateScaleValues();
   chkAutoScale->setChecked(glv->colorscale.auto_scale);

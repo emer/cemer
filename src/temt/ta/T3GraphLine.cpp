@@ -17,7 +17,6 @@
 #include <taString>
 #include <T3Misc>
 #include <taMath_float>
-#include <iVec3f>
 #include <T3Color>
 
 #include <taMisc>
@@ -83,6 +82,7 @@ T3GraphLine::T3GraphLine(T3DataView* dataView_, float fnt_sz)
   marker_size_ = MEDIUM;
   assertMarkerSet();		// just be done with it -- needed for batch updates anyway
   //  initValueColorMode();
+  clear();
 }
 
 T3GraphLine::~T3GraphLine()

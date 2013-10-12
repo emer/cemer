@@ -24,7 +24,6 @@
 
 // declare all other types mentioned but not required to include:
 class SoFont; // 
-class iVec3f; // 
 class T3Color; // 
 class SoComplexity; //
 

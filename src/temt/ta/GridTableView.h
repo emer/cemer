@@ -58,10 +58,10 @@ public:
   ColorScale    colorscale;     // contains current min,max,range,zero,auto_scale
 
   float         grid_margin;    // #DEF_0.01 #MIN_0 size of margin between grid cells (in normalized units)
-  float         grid_line_size; // #DEF_0.005 #MIN_0 size of grid lines (in normalized units)
+  float         grid_line_size; // #DEF_0.002 #MIN_0 size of grid lines (in normalized units)
   int           row_num_width;  // #DEF_4 width of row number column
   float         mat_block_spc;  // #DEF_0.1 space between matrix cell blocks, as a proportion of max of X, Y cell size
-  float         mat_block_height; // #DEF_0.2 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
+  float         mat_block_height; // #DEF_0 how tall (in Z dimension) to make the blocks (relative to the max of their X or Y size)
   float         mat_rot;          // #DEF_0 rotation of the matrix in the Z plane (in degrees) - allows for vertical stacks of grids to be displayed in depth
   float         mat_trans;        // #DEF_0.6 maximum transparency of zero values in matrix blocks -- set to 0 to make all blocks opaque
 
