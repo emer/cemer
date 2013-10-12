@@ -30,7 +30,7 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
 public:
-  float		go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active will fire
+  float	    go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active will fire
   int       min_cycle;      // #DEF_10:25 #MIN_0 minimum cycle for gating -- cannot gate before this cycle
   int       max_cycle;      // #DEF_20:40 #MIN_0 maximum cycle for gating -- cannot gate after this cycle
   
@@ -73,12 +73,8 @@ public:
   // update layer user data gating statistics which are useful to monitor for overall performance -- called at gate_cycle
 
   virtual void	ResetMntCount(LeabraLayer* lay, int gp_idx);
-  // resets gpd->mnt_count to -1 for a single stripe; called by PFCUnitSpec::TrialInit_Unit if last unit in stripe (after
-  // clearing everyone's act_ctxt and p_act_p
+  // resets gpd->mnt_count to -1 for a single stripe -- called by PFCLayerSpec when maintenance count has been exceeded
 
-  // we compute maint gating in postsettle pre stage of plus phase, output gating in cycle - NOTE: this is no longer mandatory -
-  // user can also treat output gating like every other gating; ALSO - there is now an option for gating effects to take
-  // effect during the minus phase (mid-minus) as in PBWMv3.2
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);

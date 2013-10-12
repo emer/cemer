@@ -176,11 +176,10 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
 
   for(int g=0; g<lay->gp_geom.n; g++) {
-	  PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
-	  if(snr_gpd->mnt_count >= pfcls->gate.max_maint) { 		// time to stop maintaining...
-		  //snr_gdp->mnt_count = -1;
-		  snrls->ResetMntCount(snr_lay, (snr_st_idx + g)); 	// reset stripe maint counter and start fresh
-	  }
+    PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
+    if(snr_gpd->mnt_count >= pfcls->gate.max_maint) { // time to stop maintaining...
+      snrls->ResetMntCount(snr_lay, (snr_st_idx + g)); 	// reset stripe maint counter and start fresh
+    }
   }
   CopySNrThalGpData(lay, net); // synch PFC guy back with SNrThal guy
 }
@@ -232,7 +231,7 @@ void PFCLayerSpec::Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
-    if(!gpd->go_fired_trial & (gpd->mnt_count <= 0)) {
+    if(!gpd->go_fired_trial && (gpd->mnt_count <= 0)) {
       for(int i=0;i<nunits;i++) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;
@@ -247,10 +246,7 @@ void PFCLayerSpec::Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_GateCycle(lay, net);
-  //if(pfc_type & SNrThalLayerSpec::OUTPUT) {
-  if(pfc_type) { // & gpd->mnt_count < 0) {
-	  Compute_PreGatedAct(lay, net);
-  }
+  Compute_PreGatedAct(lay, net);
   inherited::Compute_CycleStats(lay, net);
 }
 
