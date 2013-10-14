@@ -66,6 +66,8 @@ void KWTASpec::Defaults_init() {
 
 void GpInhibSpec::Initialize() {
   on = false;
+  fffb = false;
+  lay_gi = 2.0f;
   gp_g = 0.5f;
   diff_act_pct = false;
   pct_fm_frac = true;
@@ -126,6 +128,7 @@ void ClampSpec::Defaults_init() {
     }
   }
   gain = .2f;
+  minus_targ_gain = 0.0f;
 }
 
 void DecaySpec::Initialize() {
@@ -363,6 +366,9 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
 
   lay->norm_err = 0.0f;
   lay->cos_err = 0.0f;
+  lay->cos_err_prv = 0.0f;
+  lay->cos_err_vs_prv = 0.0f;
+  lay->cos_diff = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -1018,10 +1024,31 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
   }
   else if(inhib_group == UNIT_GROUPS) {
     if(unit_gp_inhib.on) {  // linking groups: get max from layer
-      for(int g=0; g < lay->gp_geom.n; g++) {
-        LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-        gpd->i_val.gp_g_i = lay->i_val.g_i;
-        gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+      if(inhib.type == LeabraInhibSpec::FF_FB_INHIB && unit_gp_inhib.fffb) {
+        float nw_ffi = inhib.FFInhib(lay->netin.avg);
+        float fbi_x;
+        float nw_fbi = inhib.FBInhib(lay->acts.avg, fbi_x);
+
+        lay->kwta.ffi = nw_ffi;
+        lay->kwta.fbi_x = fbi_x;
+        // dt only on fbi part
+        lay->kwta.fbi = inhib.dt * nw_fbi + (1.0f - inhib.dt) * lay->kwta.fbi;
+
+        lay->i_val.kwta = unit_gp_inhib.lay_gi * (lay->kwta.ffi + lay->kwta.fbi);
+        lay->i_val.g_i = lay->i_val.kwta;
+        
+        for(int g=0; g < lay->gp_geom.n; g++) {
+          LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+          gpd->i_val.gp_g_i = lay->i_val.g_i;
+          gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+        }        
+      }
+      else {
+        for(int g=0; g < lay->gp_geom.n; g++) {
+          LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+          gpd->i_val.gp_g_i = lay->i_val.g_i;
+          gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+        }
       }
     }
   }
@@ -1723,24 +1750,6 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   return lay->norm_err;
 }
 
-float LeabraLayerSpec::Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net,
-				     int& n_vals) {
-  n_vals = 0;
-  float sse = 0.0f;
-  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
-  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
-			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
-    return 0.0f;
-  }
-  bool has_targ = false;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    sse += u->Compute_M2SSE(net, has_targ);
-    if(has_targ) n_vals++;
-  }
-  return sse;
-}
-
 float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
 				     int& n_vals) {
   lay->cos_err = 0.0f;
@@ -1748,8 +1757,8 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   lay->cos_err_vs_prv = 0.0f;
   n_vals = 0;
   if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
-  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
-			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     (lay->HasExtFlag(Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
     return 0.0f;
   }
   float cosv = 0.0f;
@@ -1759,7 +1768,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   float sst = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) continue;
+    //    if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) continue;
     n_vals++;
     cosv += u->targ * u->act_m;
     ssm += u->act_m * u->act_m;
@@ -1785,33 +1794,8 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   return cosv;
 }
 
-float LeabraLayerSpec::Compute_M2CosErr(LeabraLayer* lay, LeabraNetwork* net,
-				     int& n_vals) {
-  n_vals = 0;
-  float cosv = 0.0f;
-  if(!lay->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
-  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) || (lay->HasExtFlag(Unit::COMP) &&
-			      lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
-    return 0.0f;
-  }
-  float ssm = 0.0f;
-  float sst = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) continue;
-    n_vals++;
-    cosv += u->targ * u->act_m2;
-    ssm += u->act_m2 * u->act_m2;
-    sst += u->targ * u->targ;
-  }
-  if(n_vals == 0) return 0.0f;
-  float dist = sqrtf(ssm * sst);
-  if(dist != 0.0f)
-    cosv /= dist;
-  return cosv;
-}
-
 float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->cos_diff = 0.0f;
   float cosv = 0.0f;
   float ssm = 0.0f;
   float sst = 0.0f;
@@ -1824,6 +1808,7 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   float dist = sqrtf(ssm * sst);
   if(dist != 0.0f)
     cosv /= dist;
+  lay->cos_diff = cosv;
   return cosv;
 }
 

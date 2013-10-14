@@ -396,6 +396,11 @@ public:
   float		avg_cos_err_vs_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) error on vs prv (see cos_err_vs_prv) (computed over previous epoch)
   float		avg_cos_err_vs_prv_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos err vs prv in this epoch
 
+  float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) difference between act_p and act_m activations on this trial -- excludes input layers which are represented in the cos_err measure
+  float		avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) diff (computed over previous epoch)
+  float		avg_cos_diff_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos diff in this epoch
+  int		avg_cos_diff_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cos diff value computation for this epoch
+
   bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
 
@@ -616,20 +621,12 @@ public:
   // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
   virtual void	Compute_NormErr();
   // #CAT_Statistic compute normalized binary error between act_m and targ unit values: called in TrialStats -- per unit: if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is per layer based on k value: total possible err for both on and off errs is 2 * k (on or off alone is just k)
-  virtual float  Compute_M2SSE(bool unit_avg = false, bool sqrt = false);
-  // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire network
-  virtual float  Compute_M2SSE_Recon(bool unit_avg = false, bool sqrt = false);
-  // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire network, only on input layers -- this is typically a reconstruction error signal
   virtual float	Compute_CosErr();
   // #CAT_Statistic compute cosine (normalized dot product) error between act_m and targ unit values
-  virtual float	Compute_M2CosErr();
-  // #CAT_Statistic compute cosine (normalized dot product) error between act_m2 and targ unit values
-  virtual float	Compute_M2CosErr_Recon();
-  // #CAT_Statistic compute cosine (normalized dot product) error between act_m2 and targ unit values
   virtual float	Compute_CosDiff();
-  // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values
+  // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual float	Compute_CosDiff2();
-  // #CAT_Statistic compute cosine (normalized dot product) phase difference 2 between act_m2 and act_p unit values
+  // #CAT_Statistic compute cosine (normalized dot product) phase difference 2 between act_m2 and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual void	Compute_MinusCycles();
   // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
   override void	Compute_TrialStats();
@@ -658,6 +655,8 @@ public:
   // #CAT_Statistic compute average cos_err (at an epoch-level timescale)
   virtual void	Compute_AvgSendPct();
   // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
+  virtual void	Compute_AvgCosDiff();
+  // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
   virtual void	Compute_CtLrnTrigAvgs();
   // #CAT_Statistic compute Ct learning trigger stats averages (at an epoch-level timescale)
   override void	Compute_EpochStats();

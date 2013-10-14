@@ -24,6 +24,7 @@ void V1KwtaSpec::Initialize() {
   mode = OFF;
   gp_k = 1;
   gi = 2.0f;
+  lay_gi = 1.5f;
   gp_g = 0.1f;
   kwta_pt = 0.5f;
   ff = 1.0f;
@@ -180,8 +181,11 @@ void V1KwtaSpec::Compute_FFFB(float_Matrix& inputs, float_Matrix& outputs,
   int ixs = inputs.dim(2);
   int iys = inputs.dim(3);
   float normval = 1.0f / (gxs * gys);
+  float lay_normval = 1.0f / (ixs * iys);
 
   float dtc = 1.0f - fb_dt;
+  float lay_avg_netin = 0.0f;
+  float lay_avg_act = 0.0f;
 
   float max_gi = 0.0f;
   for(int iy=0; iy < iys; iy++) {
@@ -199,6 +203,7 @@ void V1KwtaSpec::Compute_FFFB(float_Matrix& inputs, float_Matrix& outputs,
       else {
         avg_netin = gc_i_mat.FastEl3d(ix, iy, 2);
       }
+      lay_avg_netin += avg_netin;
       float avg_act = 0.0f;
       for(int gy=0; gy < gys; gy++) {
         for(int gx=0; gx < gxs; gx++) {
@@ -206,6 +211,7 @@ void V1KwtaSpec::Compute_FFFB(float_Matrix& inputs, float_Matrix& outputs,
         }
       }
       avg_act *= normval;
+      lay_avg_act += avg_act;
       float nw_ffi = FFInhib(avg_netin);
       float nw_fbi = FBInhib(avg_act);
 
@@ -217,14 +223,20 @@ void V1KwtaSpec::Compute_FFFB(float_Matrix& inputs, float_Matrix& outputs,
       max_gi = MAX(max_gi, nw_gi);
     }
   }
-  if(gp_g > 0.0f) {
-    float gpg_eff = gp_g * max_gi;
-    for(int iy=0; iy < iys; iy++) {
-      for(int ix=0; ix < ixs; ix++) {
-        float gig = gc_i_mat.FastEl3d(ix, iy, 0);
-        gig = MAX(gig, gpg_eff);
-        gc_i_mat.FastEl3d(ix, iy, 0) = gig;
-      }
+  lay_avg_netin *= lay_normval;
+  lay_avg_act *= lay_normval;
+
+  float nw_ffi = FFInhib(lay_avg_netin);
+  float nw_fbi = FBInhib(lay_avg_act);
+  float& fbi = gc_i_mat.FastEl3d(0, 0, 3); // 3 = extra guy for layer
+  fbi = fb_dt * nw_fbi + dtc * fbi;
+  float lay_i = lay_gi * (nw_ffi + nw_fbi);
+
+  for(int iy=0; iy < iys; iy++) {
+    for(int ix=0; ix < ixs; ix++) {
+      float gig = gc_i_mat.FastEl3d(ix, iy, 0);
+      gig = MAX(gig, lay_i);
+      gc_i_mat.FastEl3d(ix, iy, 0) = gig;
     }
   }
 }
@@ -240,7 +252,7 @@ bool V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& outputs,
     cycle = 0;
     int ixs = inputs.dim(2);
     int iys = inputs.dim(3);
-    gc_i_mat.SetGeom(3, ixs, iys, 3); // extra copy to hold onto fb inhib for temp integ, and for the avg_netin
+    gc_i_mat.SetGeom(3, ixs, iys, 4); // extra copy to hold onto fb inhib for temp integ, and for the avg_netin
     gc_i_mat.InitVals(0.0f);
     for(int i=0; i<n_cyc; i++) {
       Compute_FFFB(inputs, outputs, gc_i_mat);
@@ -269,7 +281,7 @@ bool V1KwtaSpec::Compute_Inhib_Extra(float_Matrix& inputs, float_Matrix& outputs
     cycle = 0;
     int ixs = inputs.dim(2);
     int iys = inputs.dim(3);
-    gc_i_mat.SetGeom(3, ixs, iys, 2);
+    gc_i_mat.SetGeom(3, ixs, iys, 4);
     gc_i_mat.InitVals(0.0f);
     for(int i=0; i<n_cyc; i++) {
       Compute_FFFB(inputs, outputs, gc_i_mat);

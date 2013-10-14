@@ -52,6 +52,7 @@ public:
   int		avg_netin_n;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   float		cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer
+  float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) difference between act_p and act_m on this trial for this layer -- computed by Compute_CosDiff -- must be called after SettleFinal in plus phase to get act_p values
   float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, for activations on previous trial (p_act_p) -- computed automatically during ti_mode
   float		cos_err_vs_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for ti_mode
   int		da_updt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
@@ -274,23 +275,16 @@ public:
   { return spec->Compute_NormErr(this, net); }
   // #CAT_Statistic compute normalized binary error across layer (returns normalized value or -1 for not applicable, averaged at network level -- see layerspec for more info)
 
-  float Compute_M2SSE(LeabraNetwork* net, int& n_vals)
-  { return spec->Compute_M2SSE(this, net, n_vals); }
-  // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
-
   float Compute_CosErr(LeabraNetwork* net, int& n_vals)
   { return spec->Compute_CosErr(this, net, n_vals); }
   // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
-  float Compute_M2CosErr(LeabraNetwork* net, int& n_vals)
-  { return spec->Compute_M2CosErr(this, net, n_vals); }
-  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m2 instead of act_m -- n_vals is number of units contributing
 
   float Compute_CosDiff(LeabraNetwork* net)
   { return spec->Compute_CosDiff(this, net); }
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   float Compute_CosDiff2(LeabraNetwork* net)
   { return spec->Compute_CosDiff2(this, net); }
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2 -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Parameter Adaptation over longer timesales

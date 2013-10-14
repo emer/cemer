@@ -605,6 +605,8 @@ public:
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents, not subtracting bias weights
       inline float Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents INCLUDING bias.wt
+      inline float Compute_IThreshNetinOnly(float netin);
+      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using only the provided net input value, along with the g_bar.l leak current in the unit spec
 
   inline float Compute_EThresh(LeabraUnit* u);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold

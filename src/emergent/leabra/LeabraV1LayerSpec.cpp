@@ -123,6 +123,8 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
     return;                     // don't do this during normal processing
   if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
 
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+
   for(int gpidx=0; gpidx < lay->gp_geom.n; gpidx++) {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(gpidx);
     LeabraInhib* thr = (LeabraInhib*)gpd;
@@ -151,12 +153,18 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
             if(!feat_inhib.wrap) continue; // bail on clipping only
           }
           LeabraUnit* oth_unit = (LeabraUnit*)lay->UnitAtGpCoord(oc, fc);
-          float oth_ithr = oth_unit->i_thr;
-          float ogi = feat_inhib.inhib_g * oth_ithr; // note: directly on ithr!
+          float oth_netin = oth_unit->net;
+          float ogi = feat_inhib.inhib_g * oth_netin; // note: directly on ithr!
           feat_inhib_max = MAX(feat_inhib_max, ogi);
         }
-
-        float gi_eff = MAX(inhib_val, feat_inhib_max);
+        float eig;
+        if(inhib.type == LeabraInhibSpec::FF_FB_INHIB) {
+          eig = inhib.gi * inhib.FFInhib(feat_inhib_max);
+        }
+        else {
+          eig = us->Compute_IThreshNetinOnly(us->g_bar.e * feat_inhib_max);
+        }
+        float gi_eff = MAX(inhib_val, eig);
         LeabraUnit* u = (LeabraUnit*)lay->UnitAtUnGpIdx((int)uidx, gpidx);
         u->Compute_ApplyInhib(net, gi_eff);
       }

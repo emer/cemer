@@ -122,7 +122,9 @@ class E_API GpInhibSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// compute grouped inhibition at the level specified (layers or unit groups within layers)
-  float		gp_g;		// #CONDSHOW_ON_on #MIN_0 #MAX_1 how much this item (layer or unit group) contributes to the pooled group-level inhibition values -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
+  bool          fffb;          // #CONDSHOW_ON_on (only valid when using FF_FB_INHIB inhibition) -- compute layer-level FFFB inhibition and apply that as a MAX relative to the unit-group level inhibition -- lay_gi is the layer-level inhibitory gain values -- typically you can use the same value used at the unit group level, and it just works..
+  float         lay_gi;         // #CONDSHOW_ON_on&&fffb gain value for layer-level FF and FB inhibition -- typically same value as the group-level inhib.gi parameter
+  float		gp_g;		// #CONDSHOW_ON_on&&!fffb #MIN_0 how much this item (layer or unit group) contributes to the pooled group-level inhibition values -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
   bool		diff_act_pct;	// #CONDSHOW_ON_on if true, adjust the expected overall layer activation by m-- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details
   float		act_pct_mult;	// #CONDSHOW_ON_on&&diff_act_pct #MIN_0 #MAX_1 multiplier for expected percent activity in the layer -- multiplies value set by kwta spec (including its own diff_act_pct setting if set), to take into account the effects of group-level inhibition as set by this spec -- for unit group inhibition, should be roughly <expected groups active> / <total number of groups> -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details.
   bool		pct_fm_frac;	// #CONDSHOW_ON_on&&diff_act_pct get the act_pct_mult from 1/act_denom -- often easier to express in terms of denominator of fraction rather than straight percent
@@ -206,6 +208,7 @@ public:
   bool		max_plus;	// #CONDSHOW_ON_hard when hard clamping target activation values, the clamped activations are set to the maximum activation in the minus phase plus some fixed offset
   float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0.01 the amount to add to max minus phase activation in clamping the plus phase
   float		min_clamp;	// #CONDSHOW_ON_hard&&max_plus #DEF_0.5 the minimum clamp value allowed in the max_plus clamping system
+  float         minus_targ_gain; // For TI models -- how much of the targ target value to add to the netinput during the minus phase
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
@@ -592,18 +595,13 @@ public:
   virtual float	Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error of unit targ vs. act_m -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse -- per unit: if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is based on k value per layer: total possible err for both on and off errs is 2 * k (on or off alone is just k)
 
-  virtual float	Compute_M2SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
-  // #CAT_Statistic compute sum squared error of act_m2 activation vs target over the entire layer
-
   virtual float  Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
   // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
-  virtual float  Compute_M2CosErr(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
-  // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m2 instead of act_m -- n_vals is number of units contributing
 
   virtual float  Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual float  Compute_CosDiff2(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2
+  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2 -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
 
 
   ////////////////////////////////////////////////////////////////////////////////

@@ -96,6 +96,11 @@ inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* ne
 	  thr_sub_e_rev_i);
 } 
 
+inline float LeabraUnitSpec::Compute_IThreshNetinOnly(float netin) {
+  return ((netin * e_rev_sub_thr.e + g_bar.l * e_rev_sub_thr.l) /
+	  thr_sub_e_rev_i);
+} 
+
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
   // including the ga and gh terms -- only way to affect anything
   return ((u->gc.i * e_rev_sub_thr.i + u->gc.l * e_rev_sub_thr.l

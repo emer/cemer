@@ -260,6 +260,11 @@ void LeabraNetwork::Initialize() {
   avg_cos_err_vs_prv = 1.0f;
   avg_cos_err_vs_prv_sum = 0.0f;
 
+  cos_diff = 0.0f;
+  avg_cos_diff = 1.0f;
+  avg_cos_diff_sum = 0.0f;
+  avg_cos_diff_n = 0;
+
   inhib_cons_used = false;
   init_netins_cycle_stat = false;
 }
@@ -384,6 +389,11 @@ void LeabraNetwork::Init_Stats() {
   avg_cos_err_prv_sum = 0.0f;
   avg_cos_err_vs_prv = 1.0f;
   avg_cos_err_vs_prv_sum = 0.0f;
+
+  cos_diff = 0.0f;
+  avg_cos_diff = 1.0f;
+  avg_cos_diff_sum = 0.0f;
+  avg_cos_diff_n = 0;
 
   lrn_trig.Init_Stats();
 }
@@ -1407,38 +1417,6 @@ void LeabraNetwork::Compute_NormErr() {
   }
 }
 
-float LeabraNetwork::Compute_M2SSE(bool unit_avg, bool sqrt) {
-  float sse = 0.0f;
-  int n_vals = 0;
-  int lay_vals = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned()) continue;
-    sse += l->Compute_M2SSE(this, lay_vals);
-    n_vals += lay_vals;
-  }
-  if(unit_avg && n_vals > 0)
-    sse /= (float)n_vals;
-  if(sqrt)
-    sse = sqrtf(sse);
-  return sse;
-}
-
-float LeabraNetwork::Compute_M2SSE_Recon(bool unit_avg, bool sqrt) {
-  float sse = 0.0f;
-  int n_vals = 0;
-  int lay_vals = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned() || l->layer_type != Layer::INPUT) continue;
-    sse += l->Compute_M2SSE(this, lay_vals);
-    n_vals += lay_vals;
-  }
-  if(unit_avg && n_vals > 0)
-    sse /= (float)n_vals;
-  if(sqrt)
-    sse = sqrtf(sse);
-  return sse;
-}
-
 float LeabraNetwork::Compute_CosErr() {
   float cosv = 0.0f;
   float cosvp = 0.0f;
@@ -1478,46 +1456,27 @@ float LeabraNetwork::Compute_CosErr() {
   return cosv;
 }
 
-float LeabraNetwork::Compute_M2CosErr() {
-  float cosv = 0.0f;
-  int n_lays = 0;
-  int lay_vals = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned()) continue;
-    cosv += l->Compute_M2CosErr(this, lay_vals);
-    if(lay_vals > 0)
-      n_lays++;
-  }
-  if(n_lays > 0)
-    cosv /= (float)n_lays;
-  return cosv;
-}
-
-float LeabraNetwork::Compute_M2CosErr_Recon() {
-  float cosv = 0.0f;
-  int n_lays = 0;
-  int lay_vals = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned() || l->layer_type != Layer::INPUT) continue;
-    cosv += l->Compute_M2CosErr(this, lay_vals);
-    if(lay_vals > 0)
-      n_lays++;
-  }
-  if(n_lays > 0)
-    cosv /= (float)n_lays;
-  return cosv;
-}
-
 float LeabraNetwork::Compute_CosDiff() {
   float cosv = 0.0f;
   int n_lays = 0;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
     if(l->lesioned()) continue;
-    cosv += l->Compute_CosDiff(this);
-    n_lays++;
+    float lcosv = l->Compute_CosDiff(this);
+    if(!l->HasExtFlag(Unit::TARG | Unit::COMP)) {
+      cosv += lcosv;
+      n_lays++;
+    }
   }
-  if(n_lays > 0)
+  if(n_lays > 0) {
     cosv /= (float)n_lays;
+
+    cos_diff = cosv;
+    avg_cos_diff_sum += cos_diff;
+    avg_cos_diff_n++;
+  }
+  else {
+    cos_diff = 0.0f;
+  }
   return cosv;
 }
 
@@ -1686,6 +1645,14 @@ void LeabraNetwork::Compute_AvgCosErr() {
   avg_cos_err_n = 0;
 }
 
+void LeabraNetwork::Compute_AvgCosDiff() {
+  if(avg_cos_diff_n > 0) {
+    avg_cos_diff = avg_cos_diff_sum / (float)avg_cos_diff_n;
+  }
+  avg_cos_diff_sum = 0.0f;
+  avg_cos_diff_n = 0;
+}
+
 void LeabraNetwork::Compute_CtLrnTrigAvgs() {
   if(lrn_trig.lrn_stats_n > 0) {
     float ltrign = (float)lrn_trig.lrn_stats_n;
@@ -1727,6 +1694,7 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgCycles();
   Compute_AvgNormErr();
   Compute_AvgCosErr();
+  Compute_AvgCosDiff();
   Compute_AvgExtRew();
   Compute_AvgSendPct();
   Compute_CtLrnTrigAvgs();

@@ -993,6 +993,9 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   if(u->HasExtFlag(Unit::EXT)) {
     tot_net += u->ext * ls->clamp.gain;
   }
+  else if(u->HasExtFlag(Unit::TARG)) {
+    tot_net += u->targ * ls->clamp.minus_targ_gain;
+  }
 
   if(net->ti_mode) {
     tot_net += u->act_ctxt;
