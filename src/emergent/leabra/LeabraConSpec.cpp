@@ -59,7 +59,6 @@ void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = true;
-  dwt_norm_epcs = 0;
   if(taMisc::is_loading) {
     taVersion v533(5, 3, 3);
     if(taMisc::loading_version < v533) { // default prior to 533 is off
@@ -204,7 +203,6 @@ void LeabraConSpec::Defaults_init() {
   rnd.var = .25f;
   lrate = .02f;
   cur_lrate = .02f;
-  cur_dwt_norm = wt_sig.dwt_norm;
 }
 
 void LeabraConSpec::InitLinks() {
@@ -234,18 +232,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
   if(mynet) {
     SetLearnRule(mynet);                // get current learning rule, just in case..
-    if(wt_sig.dwt_norm && !mynet->dwt_norm_enabled) {
-      mynet->dwt_norm_enabled = true; // don't have a way of turning this off..
-    }
-    if(wt_sig.dwt_norm_epcs > 0) {
-      if(mynet->epoch > wt_sig.dwt_norm_epcs)
-        cur_dwt_norm = false;
-      else
-        cur_dwt_norm = true;
-    }
-    else {
-      cur_dwt_norm = wt_sig.dwt_norm;
-    }
   }
 
   ClearBaseFlag(BF_MISC2);      // done..
@@ -301,14 +287,8 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
 
 void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
   cur_lrate = lrate;            // as a backup..
-  cur_dwt_norm = wt_sig.dwt_norm;
-
-  if(wt_sig.dwt_norm_epcs > 0) {
-    if(epoch > wt_sig.dwt_norm_epcs)
-      cur_dwt_norm = false;
-    else
-      cur_dwt_norm = true;
-  }
+  if(wt_sig.dwt_norm) net->dwt_norm_survey = true;
+  if(stable_mix.cos_diff_lrate) net->cos_diff_survey = true;
 
   if(lrs_value == NO_LRS) return;
 

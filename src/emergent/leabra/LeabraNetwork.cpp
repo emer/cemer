@@ -204,6 +204,8 @@ void LeabraNetwork::Initialize() {
   min_cycles = 15;
   min_cycles_phase2 = 35;
   dwt_norm_enabled = false;
+  cos_diff_on = false;
+  cos_diff_auto = false;
 
   thread_flags = TF_ALL;
 
@@ -560,10 +562,14 @@ void LeabraNetwork::Trial_Init_Phases() {
 }
 
 void LeabraNetwork::SetCurLrate() {
+  dwt_norm_survey = false;
+  cos_diff_survey = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->SetCurLrate(this, epoch);
   }
+  dwt_norm_enabled = dwt_norm_survey;
+  cos_diff_auto = cos_diff_survey;
 }
 
 void LeabraNetwork::Trial_Init_Unit() {
@@ -945,6 +951,9 @@ void LeabraNetwork::PostSettle() {
   }
   if(ti_mode) {
     TI_CtxtUpdate();
+  }
+  if((cos_diff_on || cos_diff_auto) && phase == LeabraNetwork::PLUS_PHASE) {
+    Compute_CosDiff();
   }
 }
 

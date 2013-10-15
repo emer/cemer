@@ -17,7 +17,6 @@
 
 void CerebPfPcConSpec::Initialize() {
   wt_sig.dwt_norm = false;      // dwt norm VERY VERY bad for this!!
-  cur_dwt_norm = false;
   stable_mix.stable_pct = 0.0f; // no point here either
   nerr_lrate = 0.1f;
 }

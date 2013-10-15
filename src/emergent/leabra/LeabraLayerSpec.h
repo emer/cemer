@@ -242,6 +242,36 @@ private:
   void	Defaults_init() { };  // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
+eTypeDef_Of(CosDiffLrateSpec);
+
+class E_API CosDiffLrateSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulation of learning rate by the recv layer cos_diff between act_p and act_m (0..1 measure of how similar plus and minus phase are across layer) -- maximum learning in the zone of proximal development with mid-range cos_diff values, relative to a running-average cos_diff value, which gets a lrate multiplier of 1
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // turn on cos_diff modulated learning as function of  normalized inner product (cosine) between act_p and act_m -- turning this on automatically turns on a network flag to call Compute_CosDiff at end of plus phase -- 
+  float		lo_diff;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 low end of the learning rate modulation function -- below this cos_diff level, use the constant lo_lrate value
+  float		lo_lrate;	// #CONDSHOW_ON_on #MIN_0 learning rate multiplier in effect below the lo_diff cos_diff value
+  float         hi_diff;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 high end of the learning rate modulation function -- below this cos_diff level, use the constant hi_lrate value
+  float		hi_lrate;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 learning rate mulitiplier in effect above the hi_diff cos_diff value
+  float		avg_dt;	        // #CONDSHOW_ON_on #MIN_0 time constant for computing running average cos_diff value
+
+  float	        LrateMod(const float diff_avg, const float cos_diff);
+  // get the learning rate modulation factor based on running-average diff and current cos_diff
+  void	        UpdtDiffAvg(float& diff_avg, const float cos_diff);
+  // update the running average diff value -- guarantees lo_diff < diff_avg < hi_diff
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(CosDiffLrateSpec);
+protected:
+  SPEC_DEFAULTS;
+  // void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(CtLayerInhibMod);
 
 class E_API CtLayerInhibMod : public SpecMemberBase {
@@ -308,11 +338,12 @@ public:
   KWTASpec	gp_kwta;	// #CONDSHOW_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   GpInhibSpec	lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
   GpInhibSpec	unit_gp_inhib;	// #CAT_Activation #CONDSHOW_ON_inhib_group:UNIT_GROUPS pooling of inhibition across unit groups within layers -- only applicable if the layer actually has unit groups -- each unit group's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given unit group is then a MAX of the individual unit group's original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak unit groups to drop out
-  KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
-  AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
+  CosDiffLrateSpec cos_diff_lrate;  // #CAT_Learning modulation of learning rate by the recv layer cos_diff between act_p and act_m -- maximum learning in the zone of proximal development
   CtLayerInhibMod  ct_inhib_mod; // layer-level inhibitory modulation parameters, to be used instead of network-level values where needed
+  KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
+  AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   LayAbsNetAdaptSpec abs_net_adapt; // #CAT_Learning adapt absolute netinput values (must call AbsRelNetin functions, and AdaptAbsNetin)
 
   ///////////////////////////////////////////////////////////////////////
