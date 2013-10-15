@@ -2463,3 +2463,12 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
   }
   return false;
 }
+
+taBase* Network::ChooseNew(taBase* origin) {
+  Network* ntwrk = NULL;
+  ProjectBase* prj = GET_OWNER(origin, ProjectBase);  // who initiated the choice/new datatable call?
+  if(prj) {
+    Network* ntwrk = (Network*)prj->networks.New(1);
+  }
+  return ntwrk;
+}

@@ -914,6 +914,7 @@ public:
   override String       GetTypeDecoKey() const { return "DataTable"; }
   override int          GetSpecialState() const;
   override taBase*      ChildDuplicate(const taBase* chld);
+  override taBase*      ChooseNew(taBase* origin);
 
   void  InitLinks();
   void  CutLinks();

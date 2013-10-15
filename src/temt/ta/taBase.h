@@ -612,6 +612,8 @@ public:
     const String& name = "(default name)")
     { return New_impl(n_objs, type, name);}
   // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
+
+  virtual taBase*       ChooseNew(taBase* origin)            { return NULL; }  // #IGNORE
 protected:
   virtual taBase*       New_impl(int n_objs, TypeDef* type,
     const String& nm) { return NULL; }

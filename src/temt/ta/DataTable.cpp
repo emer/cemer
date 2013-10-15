@@ -31,6 +31,7 @@
 #include <DataSelectEl>
 #include <AnalysisRun>
 #include <taProject>
+#include <iDialogChoice>
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -3582,3 +3583,40 @@ bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
   return rval;
 }
 
+taBase* DataTable::ChooseNew(taBase* origin) {
+  // location of new DataTable can be the current program, if one, and any subgroup of project data tables
+  taProject* prj = GET_OWNER(origin, taProject);  // who initiated the choice/new datatable call?
+  Program* pgrm = GET_OWNER(origin, Program);     // who initiated the choice/new datatable call?
+  DataTable_Group root_group = prj->data;  // top level
+
+  // create a string with the names of all subgroups
+  String delimiter = iDialogChoice::delimiter;
+  String chstr = delimiter;
+  taGroup_List* sub_groups = root_group.EditSubGps();
+  int n_sub_groups = sub_groups->size;
+  for (int i=0; i<n_sub_groups; i++) {
+    chstr += root_group.FastGp(i)->name + delimiter;
+  }
+  // add program to string of choices
+//  Program* pgrm = GET_OWNER(origin, Program);
+  if (pgrm) {
+    String str = "Program " + pgrm->name;
+    chstr += str;
+  }
+  // should we add a cancel option?
+  int chs = iDialogChoice::ChoiceDialog(NULL, "Create new DataTable in:", chstr);
+
+  DataTable* dt = NULL;
+  if (chs < n_sub_groups) { // one of the DataTable groups
+    DataTable_Group* grp = (DataTable_Group*)prj->data.FindMakeGpName(root_group.FastGp(chs)->name);
+    dt = grp->NewEl(1, NULL);   // add a new data table to the group
+  }
+  else {
+    if (pgrm) {
+      ProgObjList* objList = &pgrm->objs;
+      dt = objList->NewDataTable();   // add a new data table to the object group of the program
+    }
+  }
+
+  return dt;
+}

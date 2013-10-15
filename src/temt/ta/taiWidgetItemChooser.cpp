@@ -23,8 +23,6 @@
 
 #include <taiMisc>
 
-
-
 taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
                                IWidgetHost* host_, taiWidget* par,
                                QWidget* gui_parent_, int flags_,
@@ -161,7 +159,14 @@ bool taiWidgetItemChooser::OpenChooser() {
   iDialogItemChooser* ic = iDialogItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {
     rval = true;                // hit ok
-    // always update even if it says the item was the same, because we could have set a 
+    if (ic->selObj() && static_cast<taBase*>(ic->selObj())->HasName()) {
+      if (static_cast<taBase*>(ic->selObj())->GetName() == "create") {
+        taBase* newObj = static_cast<taBase*>(ic->selObj())->ChooseNew(this->Base());
+        delete static_cast<taBase*>(ic->selObj());
+        ic->setSelObj((void*)newObj);
+      }
+    }
+    // always update even if it says the item was the same, because we could have set a
     // default item during construction..
     UpdateImage(ic->selObj());
     if (mflags & flgAutoApply)

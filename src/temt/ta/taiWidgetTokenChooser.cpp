@@ -145,8 +145,18 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
       QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); //note: no desc
-      item->setData(1, Qt::DisplayRole, " ");
+      item->setData(1, Qt::DisplayRole, "NULL");
     }
+
+#if 0
+//    if (targ_typ->methods.FindName("ChooseNew")) {
+    if (true) {
+      taBase* placeHolder = taBase::MakeToken(targ_typ);
+      placeHolder->SetName("create");
+      QTreeWidgetItem* item = ic->AddItem("'CREATE NEW", NULL, (void*)placeHolder);
+      item->setData(1, Qt::DisplayRole, targ_typ->name);
+    }
+#endif
     BuildChooser_0(ic, targ_typ, NULL);
     ic->items->sortItems(0, Qt::AscendingOrder);
     break;
@@ -169,6 +179,7 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
       continue;
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
+
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp);
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);

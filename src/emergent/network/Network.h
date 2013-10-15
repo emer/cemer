@@ -572,6 +572,8 @@ public:
   override String       GetTypeDecoKey() const { return "Network"; }
 
   override bool ChangeMyType(TypeDef* new_type);
+  override taBase*      ChooseNew(taBase* origin);
+
 
   void  InitLinks();
   void  CutLinks();
