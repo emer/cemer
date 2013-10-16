@@ -573,7 +573,7 @@ public:
 
   override bool ChangeMyType(TypeDef* new_type);
   override taBase*      ChooseNew(taBase* origin);
-
+  override bool         HasChooseNew() { return true; }
 
   void  InitLinks();
   void  CutLinks();

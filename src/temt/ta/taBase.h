@@ -613,7 +613,10 @@ public:
     { return New_impl(n_objs, type, name);}
   // #CAT_ObjectMgmt Create n_objs objects of given type (type is optional)
 
-  virtual taBase*       ChooseNew(taBase* origin)            { return NULL; }  // #IGNORE
+  virtual taBase*       ChooseNew(taBase* origin) { return NULL; }
+  // #IGNORE called by taiWidgetTokenChooser to create a new object of this type from the chooser, if the user so chooses
+  virtual bool          HasChooseNew()            { return false; }
+  // #IGNORE return true if this class defines a ChooseNew function
 protected:
   virtual taBase*       New_impl(int n_objs, TypeDef* type,
     const String& nm) { return NULL; }

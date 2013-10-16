@@ -915,6 +915,7 @@ public:
   override int          GetSpecialState() const;
   override taBase*      ChildDuplicate(const taBase* chld);
   override taBase*      ChooseNew(taBase* origin);
+  override bool         HasChooseNew() { return true; }
 
   void  InitLinks();
   void  CutLinks();
