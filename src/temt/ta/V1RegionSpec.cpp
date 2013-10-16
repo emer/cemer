@@ -285,6 +285,7 @@ void V1RegionSpec::Initialize() {
 
   v1s_kwta.mode = V1KwtaSpec::FFFB;
   v1s_kwta.gi = 2.0f;
+  v1s_kwta.lay_gi = 1.5f;
   v1s_kwta.gp_k = 1;
   v1s_kwta.gp_g = 0.02f;
   v1s_neigh_inhib.inhib_g = 0.6f; // FFFB
@@ -298,7 +299,8 @@ void V1RegionSpec::Initialize() {
 
   si_renorm = NO_RENORM;
   si_kwta.mode = V1KwtaSpec::FFFB;
-  si_kwta.gi = 1.8f;
+  si_kwta.gi = 1.5f;
+  si_kwta.lay_gi = 1.5f;
   si_kwta.gp_k = 2;
   si_kwta.gp_g = 0.1f;
 

@@ -59,6 +59,7 @@ void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = true;
+  
   if(taMisc::is_loading) {
     taVersion v533(5, 3, 3);
     if(taMisc::loading_version < v533) { // default prior to 533 is off
@@ -74,6 +75,7 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 
 void StableMixSpec::Initialize() {
   stable_pct = 0.0f;  // 0.8f;  // it is too risky to use 0.8f b/c epoch call may not be there
+  cos_diff_lrate = false;
   if(taMisc::is_loading) {
     taVersion v630(6, 3, 0);
     if(taMisc::loading_version < v630) { // default prior to 6.3.0 is stable off
