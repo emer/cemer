@@ -29,8 +29,11 @@
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 
 
@@ -77,6 +80,25 @@ void T3AnnotationView::Render_pre() {
       SoLineSet* line = new SoLineSet();
       line->vertexProperty.setValue(new SoVertexProperty());
       ssep->addChild(line);
+      if(ob->type == T3Annotation::RECTANGLE && ob->fill) {
+        SoSeparator* csep = new SoSeparator();
+        csep->addChild(new SoTranslation());
+        csep->addChild(new SoMaterial());
+        csep->addChild(new SoCube());
+        ssep->addChild(csep);
+      }
+      break;
+    }
+    case T3Annotation::ELLIPSE: {
+      SoDrawStyle* ds = new SoDrawStyle();
+      ssep->addChild(ds);
+      SoLineSet* line = new SoLineSet();
+      line->vertexProperty.setValue(new SoVertexProperty());
+      ssep->addChild(line);
+      if(ob->fill) {
+        SoCylinder* cyl = new SoCylinder();
+        ssep->addChild(cyl);
+      }
       break;
     }
     case T3Annotation::TEXT: {
@@ -209,9 +231,26 @@ void T3AnnotationView::Render_impl() {
     break;
   }
   case T3Annotation::RECTANGLE: {
-    SoDrawStyle* ds = (SoDrawStyle*)ssep->getChild(ssep->getNumChildren()-2);
+    taMisc::Info("nc: ", String(ssep->getNumChildren()));
+    int sd = (int)node_so->showDrag();
+    if(ssep->getNumChildren() > 5 + sd) {
+      if(!ob->fill) {
+        ssep->removeChild(ssep->getChild(ssep->getNumChildren()-1));
+      }
+    }
+    else {
+      if(ob->fill) {
+        SoSeparator* csep = new SoSeparator();
+        csep->addChild(new SoTranslation());
+        csep->addChild(new SoMaterial());
+        csep->addChild(new SoCube());
+        ssep->addChild(csep);
+      }
+    }
+    int foff = ((int)ob->fill);
+    SoDrawStyle* ds = (SoDrawStyle*)ssep->getChild(ssep->getNumChildren()-2-foff);
     ds->lineWidth.setValue(ob->line_width);
-    SoLineSet* line = (SoLineSet*)ssep->getChild(ssep->getNumChildren()-1);
+    SoLineSet* line = (SoLineSet*)ssep->getChild(ssep->getNumChildren()-1-foff);
 
     line->numVertices.setNum(0);
     SoMFVec3f& point = ((SoVertexProperty*)line->vertexProperty.getValue())->vertex;
@@ -232,6 +271,18 @@ void T3AnnotationView::Render_impl() {
 
     point.finishEditing();
     line->numVertices.finishEditing();
+    if(ob->fill) {
+      SoSeparator* csep = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
+      SoTranslation* xlt = (SoTranslation*)csep->getChild(csep->getNumChildren()-3);
+      SoMaterial* cmat = (SoMaterial*)csep->getChild(csep->getNumChildren()-2);
+      SoCube* cube = (SoCube*)csep->getChild(csep->getNumChildren()-1);
+      cmat->diffuseColor.setValue(ob->fill_color.r, ob->fill_color.g, ob->fill_color.b);
+      cmat->transparency.setValue(1.0f - ob->fill_color.a);
+      xlt->translation.setValue(0.5f * ob->size.x, 0.5f * ob->size.y, 0.5f * ob->size.z);
+      cube->width = ob->size.x;
+      cube->depth = ob->size.z;
+      cube->height = ob->size.y;
+    }
     break;
   }
   case T3Annotation::TEXT: {

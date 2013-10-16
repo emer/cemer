@@ -35,6 +35,8 @@ public:
 
   T3AnnotationNode(T3DataView* dataView_ = NULL, bool show_drag = false);
 
+  bool          showDrag()  { return show_drag_; }
+
 protected:
   bool			 show_drag_;
   T3TransformBoxDragger* drag_;	// my position dragger

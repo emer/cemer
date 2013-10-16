@@ -29,7 +29,9 @@ void T3Annotation::Initialize() {
   text = "Select, Context Menu to Edit";
   justification = LEFT;
   font_size = .05f;
+  fill = false;
   color.Set(0.0f, 0.0f, 0.0f);
+  fill_color.Set(1.0f, 1.0f, 1.0f);
   xform_size = true;
   scale = 1.0f;
 }
@@ -66,6 +68,12 @@ void T3Annotation::UpdateGeom() {
 
 void T3Annotation::SetColor(const String& clr) {
   color.setColorName(clr);
+  UpdateAfterEdit();
+}
+
+void T3Annotation::SetFillColor(bool fill, const String& clr) {
+  fill = fill;
+  fill_color.setColorName(clr);
   UpdateAfterEdit();
 }
 
@@ -177,34 +185,43 @@ void T3Annotation::SetDoubleArrow(float pos_x, float pos_y, float pos_z,
 
 void T3Annotation::SetRectangle(float pos_x, float pos_y, float pos_z,
                                 float size_x, float size_y, float size_z,
-                                float ln_width , const String& clr) {
+                                float ln_width, const String& clr,
+                                bool fil, const String& fill_clr) {
   type = RECTANGLE;
   pos.SetXYZ(pos_x, pos_y, pos_z);
   size.SetXYZ(size_x, size_y, size_z);
   line_width = ln_width;
   xform_size = false;
+  fill = fil;
+  fill_color.setColorName(fill_clr);
   SetColor(clr);
 }
 
 void T3Annotation::SetEllipse(float pos_x, float pos_y, float pos_z,
                               float size_x, float size_y, float size_z,
-                              float ln_width , const String& clr) {
+                              float ln_width , const String& clr,
+                              bool fil, const String& fill_clr) {
   type = ELLIPSE;
   pos.SetXYZ(pos_x, pos_y, pos_z);
   size.SetXYZ(size_x, size_y, size_z);
   xform_size = false;
   line_width = ln_width;
+  fill = fil;
+  fill_color.setColorName(fill_clr);
   SetColor(clr);
 }
 
 void T3Annotation::SetCircle(float ctr_x, float ctr_y, float ctr_z,
                              float radius,
-                             float ln_width , const String& clr) {
+                             float ln_width , const String& clr,
+                             bool fil, const String& fill_clr) {
   type = ELLIPSE;
   pos.SetXYZ(ctr_x - radius, ctr_y - radius, ctr_z);
   size.SetXYZ(2.0f * radius, 2.0f * radius, 0.0f);
   xform_size = false;
   line_width = ln_width;
+  fill = fil;
+  fill_color.setColorName(fill_clr);
   SetColor(clr);
 }
 

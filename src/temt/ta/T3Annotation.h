@@ -66,6 +66,8 @@ public:
   float         font_size;      // #CONDSHOW_ON_type:TEXT font size to display text in, in normalized units (the entire space is typically 1x1x1, so this should usually be a smaller fraction like .05)
   String        obj_fname;      // #CONDSHOW_ON_type:OBJECT #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Open Inventor file that contains the 3d geometry of the object
   taColor       color;          // color (a=alpha used for transparency)
+  bool          fill;           // #CONDSHOW_ON_type:RECTANGLE,ELLIPSE fill the shape with a fill color?
+  taColor       fill_color;     // #CONDSHOW_ON_type:RECTANGLE,ELLIPSE&&fill color to use for filling a shape
   bool          xform_size;     // #CONDSHOW_OFF_type:TEXT,OBJECT when a transformation is applied in the gui to the rotation and/or scale of the object, should it update the size values instead?  this preserves the line width, and can be easier to fine tune -- does not apply to text and object
   taAxisAngle   rot;            // #CONDSHOW_OFF_xform_size 3d rotation of body, specifying an axis and a rot along that axis in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   taVector3f    scale;          // #CONDSHOW_OFF_xform_size 3d scaling of object along each dimension (applied prior to rotation)
@@ -73,6 +75,8 @@ public:
 
   virtual void  SetColor(const String& clr = "black");
   // #MENU #MENU_ON_Annotation #DYN1 set the color to given color name (standard web/html color names) and update display
+  virtual void  SetFillColor(bool fill, const String& clr = "white");
+  // #MENU #MENU_ON_Annotation #DYN1 set the fill color to given color name (standard web/html color names) and update display
   virtual void Translate(float mv_x, float mv_y, float mv_z);
   // #MENU #MENU_ON_Annotation #DYN1 move the object given distance and update display
   virtual void Scale(float sc = 1.0);
@@ -113,15 +117,18 @@ public:
   // set to line with double-arrow (both arrows) annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
   virtual void  SetRectangle(float pos_x, float pos_y, float pos_z,
                              float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
-                             float ln_width = 1.0, const String& color = "black");
+                             float ln_width = 1.0, const String& color = "black",
+                             bool fill = false, const String& fill_color = "white");
   // set to rectangle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) 
   virtual void  SetEllipse(float pos_x, float pos_y, float pos_z,
                            float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
-                           float ln_width = 1.0, const String& color = "black");
+                           float ln_width = 1.0, const String& color = "black",
+                           bool fill = false, const String& fill_color = "white");
   // set to ellipse annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1), and define the bounding box for the ellipse
   virtual void  SetCircle(float ctr_x, float ctr_y, float ctr_z,
                           float radius = 0.25,
-                          float ln_width = 1.0, const String& color = "black");
+                          float ln_width = 1.0, const String& color = "black",
+                          bool fill = false, const String& fill_color = "white");
   // set to circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) (parameters converted to ellipse bounding box)
   virtual void  SetText(const String& text,
                         float pos_x, float pos_y, float pos_z, float font_size = 0.05,

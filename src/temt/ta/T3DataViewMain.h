@@ -84,15 +84,19 @@ public:
   // #MENU_BUTTON add a double-arrow annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
   virtual T3Annotation*  AnnoteRectangle(bool data_units, float pos_x, float pos_y, float pos_z,
                            float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
-                                         float line_width = 1.0, const String& color = "black");
+                           float line_width = 1.0, const String& color = "black",
+                           bool fill = false, const String& fill_color = "white");
   // #MENU_BUTTON add a rectangle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed)
   virtual T3Annotation*  AnnoteEllipse(bool data_units, float pos_x, float pos_y, float pos_z,
                            float size_x = 0.5, float size_y = 0.5, float size_z = 0.0,
-                                       float line_width = 1.0, const String& color = "black");
+                           float line_width = 1.0, const String& color = "black",
+                           bool fill = false, const String& fill_color = "white");
   // #MENU_BUTTON add an ellipse annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed), and define the bounding box for the ellipse
   virtual T3Annotation*  AnnoteCircle(bool data_units, float ctr_x, float ctr_y, float ctr_z,
-                                      float radius = 0.25,
-                                   float line_width = 1.0, const String& color = "black");
+                                    float radius = 0.25,
+                           float line_width = 1.0, const String& color = "black",
+                           bool fill = false, const String& fill_color = "white");
+
   // #MENU_BUTTON add a circle annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1) or if data_units = true, in natural data units of the view (e.g., for a graph, the units of the data being graphed) (parameters converted to ellipse bounding box)
   virtual T3Annotation*  AnnoteText(bool data_units, const String& text,
                                     float pos_x, float pos_y, float pos_z,

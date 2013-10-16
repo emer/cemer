@@ -167,42 +167,45 @@ T3Annotation* T3DataViewMain::AnnoteDoubleArrow(bool data_units, float pos_x, fl
 
 T3Annotation* T3DataViewMain::AnnoteRectangle(bool data_units, float pos_x, float pos_y, float pos_z,
                                               float size_x, float size_y, float size_z,
-                                              float line_width, const String& color) {
+                                              float line_width, const String& color,
+                                              bool fil, const String& fill_clr) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("rectangle_") + String(annotations.size-1);
   taVector3f pos(pos_x, pos_y, pos_z);
   taVector3f size(size_x, size_y, size_z);
   if(data_units)
     DataUnitsXForm(pos, size);
-  obj->SetRectangle(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color);
+  obj->SetRectangle(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, fil, fill_clr);
   ReBuildAll();
   return obj;
 }
 
 T3Annotation* T3DataViewMain::AnnoteEllipse(bool data_units, float pos_x, float pos_y, float pos_z,
                                             float size_x, float size_y, float size_z,
-                                            float line_width, const String& color) {
+                                            float line_width, const String& color,
+                                            bool fil, const String& fill_clr) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("ellipse_") + String(annotations.size-1);
   taVector3f pos(pos_x, pos_y, pos_z);
   taVector3f size(size_x, size_y, size_z);
   if(data_units)
     DataUnitsXForm(pos, size);
-  obj->SetEllipse(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color);
+  obj->SetEllipse(pos.x, pos.y, pos.z, size.x, size.y, size.z, line_width, color, fil, fill_clr);
   ReBuildAll();
   return obj;
 }
 
 T3Annotation* T3DataViewMain::AnnoteCircle(bool data_units, float ctr_x, float ctr_y, float ctr_z,
                                            float radius,
-                                           float line_width, const String& color) {
+                                           float line_width, const String& color,
+                                           bool fil, const String& fill_clr) {
   T3Annotation* obj = (T3Annotation*)annotations.New(1);
   obj->name = String("circle_") + String(annotations.size-1);
   taVector3f pos(ctr_x, ctr_y, ctr_z);
   taVector3f size(radius, 0.0f, 0.0f);
   if(data_units)
     DataUnitsXForm(pos, size);
-  obj->SetCircle(pos.x, pos.y, pos.z, size.x, line_width, color);
+  obj->SetCircle(pos.x, pos.y, pos.z, size.x, line_width, color, fil, fill_clr);
   ReBuildAll();
   return obj;
 }
