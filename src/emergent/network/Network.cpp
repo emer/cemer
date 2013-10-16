@@ -2468,7 +2468,7 @@ taBase* Network::ChooseNew(taBase* origin) {
   Network* ntwrk = NULL;
   ProjectBase* prj = GET_OWNER(origin, ProjectBase);  // who initiated the choice/new datatable call?
   if(prj) {
-    Network* ntwrk = (Network*)prj->networks.New(1);
+    ntwrk = (Network*)prj->networks.New(1);
   }
   return ntwrk;
 }

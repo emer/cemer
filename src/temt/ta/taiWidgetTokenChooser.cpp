@@ -148,15 +148,13 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
       item->setData(1, Qt::DisplayRole, "NULL");
     }
 
-#if 0
-//    if (targ_typ->methods.FindName("ChooseNew")) {
-    if (true) {
-      taBase* placeHolder = taBase::MakeToken(targ_typ);
-      placeHolder->SetName("create");
-      QTreeWidgetItem* item = ic->AddItem("'CREATE NEW", NULL, (void*)placeHolder);
+    if(targ_typ->IsTaBase() && targ_typ->GetInstance() &&
+       ((taBase*)targ_typ->GetInstance())->HasChooseNew()) {
+      QTreeWidgetItem* item = ic->AddItem(" CREATE NEW", NULL,
+                                          (void*)(taBase*)targ_typ->GetInstance());
+      item->setData(0, iDialogItemChooser::NewFunRole, true); // flag to dialog to make
       item->setData(1, Qt::DisplayRole, targ_typ->name);
     }
-#endif
     BuildChooser_0(ic, targ_typ, NULL);
     ic->items->sortItems(0, Qt::AscendingOrder);
     break;

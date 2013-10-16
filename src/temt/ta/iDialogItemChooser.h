@@ -60,6 +60,7 @@ public:
   inline taiWidgetItemChooser* client() const {return m_client;} // only valid in Constr and between Choose...accept/reject
   void*                 selObj() const {return m_selObj;} // current selected object
   void                  setSelObj(void* value, bool force = false);     //
+  QTreeWidgetItem*      selItem() const {return m_selItem;}
 
   int                   catFilter() const {return m_cat_filter;}
   void                  setCatFilter(int value, bool force = false);

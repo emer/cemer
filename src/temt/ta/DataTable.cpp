@@ -3614,7 +3614,8 @@ taBase* DataTable::ChooseNew(taBase* origin) {
   else {
     if (pgrm) {
       ProgObjList* objList = &pgrm->objs;
-      dt = objList->NewDataTable();   // add a new data table to the object group of the program
+      //      dt = objList->NewDataTable();   // add a new data table to the object group of the program
+      dt = (DataTable*)objList->New(1, &TA_DataTable);
     }
   }
 

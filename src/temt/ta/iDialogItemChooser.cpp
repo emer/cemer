@@ -87,16 +87,24 @@ void iDialogItemChooser::accept() {
   else {
     itm = items->currentItem();
   }
+  m_selItem = itm;
 
   if(itm) {
     m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
     bool new_fun = itm->data(0, NewFunRole).toBool();
     if(new_fun && m_selObj) {
-      taBase* nw = ((taBase*)m_selObj)->New(1);
-      if(nw)
+      taBase* nw = NULL;
+      if(itm->text(0) == " CREATE NEW") { // special chooser guy
+        nw = ((taBase*)m_selObj)->ChooseNew(m_client->Base());
+      }
+      else {
+        nw = ((taBase*)m_selObj)->New(1);
+      }
+      if(nw) {
         m_selObj = nw;
-//       if(taMisc::gui_active && nw)
+//       if(taMisc::gui_active)
 //      tabMisc::DelayedFunCall_gui(nw, "BrowserSelectMe");
+      }
     }
   }
 
