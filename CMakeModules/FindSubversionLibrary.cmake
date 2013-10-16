@@ -94,24 +94,24 @@ IF (NOT WIN32)
         )
     ELSE(APR_CONFIG_PATH)
         FIND_PROGRAM(APR_CONFIG NAMES apr-config apr-1-config
+            PATHS
 	    /opt/local/bin
             /usr/local/apr/bin
-            PATHS
         )
     ENDIF(APR_CONFIG_PATH)
 
     IF(APU_CONFIG_PATH)
         FIND_PROGRAM(APU_CONFIG NAMES apu-config apu-1-config
-	    /opt/local/bin
-            /usr/local/apr/bin
             PATHS
             ${APU_CONFIG_PATH}
+	    /opt/local/bin
+            /usr/local/apr/bin
         )
     ELSE(APU_CONFIG_PATH)
         FIND_PROGRAM(APU_CONFIG NAMES apu-config apu-1-config
+            PATHS
 	    /opt/local/bin
             /usr/local/apr/bin
-            PATHS
         )
     ENDIF(APU_CONFIG_PATH)
 
