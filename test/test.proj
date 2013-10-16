@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6548
+// ta_Dump File v3.0 -- code v6.3.3.0 rev6558
 LeabraProject .projects["test"] { 
  taBase_Group @.templates = [0] {
  };
@@ -1787,6 +1787,7 @@ LeabraProject .projects["test"] {
  Network_Group @.networks = [1] {
   LeabraNetwork @["Network_0"] { 
    UserDataItem_List @*(.user_data_) {
+    UserDataItem @["cos_diff"] { };
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
@@ -10913,7 +10914,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=1;
+     value 6 0=0.9994666576385498;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -11282,6 +11283,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11299,6 +11302,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11307,7 +11312,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    name="arrow_2";
 	    type=LINE;
 	    arrow=NO_ARROW;
-	    pos {x=0: y=0: z=0: };
+	    pos {x=0.2051089: y=0.01834309: z=-3.72529e-8: };
 	    size {x=0.03846154: y=0.08000286: z=0: };
 	    line_width=1;
 	    arrow_size=0.02;
@@ -11316,6 +11321,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11324,18 +11331,20 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    name="rectangle_3";
 	    type=RECTANGLE;
 	    arrow=NO_ARROW;
-	    pos {x=0: y=0: z=0: };
+	    pos {x=0.4701865: y=0.129146: z=-5.571084e-8: };
 	    size {x=0.5: y=0.5: z=0: };
-	    line_width=1;
+	    line_width=10;
 	    arrow_size=0.02;
 	    text="Select, Context Menu to Edit";
 	    justification=LEFT;
 	    font_size=0.05;
 	    obj_fname=;
-	    color {r=1: g=0.6470588: b=0: a=1: };
+	    color {r=1: g=0.6431373: b=0: a=0.654902: };
+	    fill=1;
+	    fill_color {r=0.6: g=0.4: b=0.2: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
-	    scale {x=1: y=1: z=1: };
+	    scale {x=0.4308491: y=0.4308491: z=0.4308491: };
 	   };
 	   T3Annotation @["rectangle_4"] {
 	    name="rectangle_4";
@@ -11350,6 +11359,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=1: g=0.6470588: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11928,6 +11939,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11945,6 +11958,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11962,6 +11977,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11979,6 +11996,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -11996,6 +12015,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12013,6 +12034,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12030,6 +12053,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12047,6 +12072,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12064,6 +12091,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12081,6 +12110,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12098,6 +12129,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12115,6 +12148,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12132,6 +12167,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12149,6 +12186,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12166,6 +12205,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12183,6 +12224,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12200,6 +12243,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12217,6 +12262,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12234,6 +12281,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12251,6 +12300,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12268,6 +12319,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12285,6 +12338,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12302,6 +12357,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12319,6 +12376,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12336,6 +12395,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12353,6 +12414,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12370,6 +12433,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12387,6 +12452,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12404,6 +12471,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12421,6 +12490,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12438,6 +12509,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12455,6 +12528,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12472,6 +12547,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12489,6 +12566,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12506,6 +12585,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12523,6 +12604,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12540,6 +12623,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12557,6 +12642,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12574,6 +12661,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12591,6 +12680,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=1.570796: };
 	    scale {x=1: y=1: z=1: };
@@ -12608,6 +12699,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12625,6 +12718,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12642,6 +12737,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12659,6 +12756,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12676,6 +12775,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12693,6 +12794,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12710,6 +12813,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12727,6 +12832,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12744,6 +12851,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12761,6 +12870,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12778,6 +12889,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12795,6 +12908,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12812,6 +12927,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12829,6 +12946,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12846,6 +12965,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12863,6 +12984,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12880,6 +13003,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12897,6 +13022,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12914,6 +13041,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12931,6 +13060,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12948,6 +13079,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12965,6 +13098,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12982,6 +13117,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -12999,6 +13136,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13016,6 +13155,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13033,6 +13174,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13050,6 +13193,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13067,6 +13212,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13084,6 +13231,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13101,6 +13250,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13118,6 +13269,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13135,6 +13288,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13152,6 +13307,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13169,6 +13326,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13186,6 +13345,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13203,6 +13364,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13220,6 +13383,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13237,6 +13402,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13254,6 +13421,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13271,6 +13440,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13926,6 +14097,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=1;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -13943,6 +14116,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    font_size=0.05;
 	    obj_fname=;
 	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
 	    xform_size=0;
 	    rot {x=0: y=0: z=1: rot=0: };
 	    scale {x=1: y=1: z=1: };
@@ -14663,7 +14838,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.0405549630522728;
+       value 6 0=0.04053333401679993;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -14704,6 +14879,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="UserDataItem_List_7";
     el_typ=UserDataItem;
     el_def=0;
+    UserDataItem @["cos_diff"] {
+     name="cos_diff";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["cos_err"] {
      name="cos_err";
      value 1 0=1;
@@ -14843,12 +15023,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-       lay_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       unit_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
-       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
+       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
+       cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
        ct_inhib_mod {
 	manual_sravg=0;
 	sravg_delay=0;
@@ -14858,6 +15037,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	use_fin=0;
 	inhib_i=0;
        };
+       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
        abs_net_adapt {
 	on=0;
 	trg_net=0.5;
@@ -14881,12 +15062,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-     lay_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     unit_gp_inhib {on=0: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
-     adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
+     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
      decay {event=1: phase=0: phase2=0: };
+     cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
      ct_inhib_mod {
       manual_sravg=0;
       sravg_delay=0;
@@ -14896,6 +15076,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       use_fin=0;
       inhib_i=0;
      };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      abs_net_adapt {
       on=0;
       trg_net=0.5;
@@ -14996,7 +15178,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=1;
        lrate=0.02;
        cur_lrate=0.02;
-       cur_dwt_norm=1;
        lrs_value=EPOCH;
        lrate_sched {
 	name="Schedule_1";
@@ -15006,8 +15187,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        ignore_unlearnable=1;
-       wt_sig {gain=6: off=1: dwt_norm=1: dwt_norm_epcs=0: };
-       stable_mix {stable_pct=0.8: learn_pct=0.2: };
+       wt_sig {gain=6: off=1: dwt_norm=1: };
+       stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
@@ -15035,7 +15216,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      learn=1;
      lrate=0.02;
      cur_lrate=0.02;
-     cur_dwt_norm=1;
      lrs_value=EPOCH;
      lrate_sched {
       name="Schedule_2";
@@ -15045,8 +15225,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      ignore_unlearnable=1;
-     wt_sig {gain=6: off=1: dwt_norm=1: dwt_norm_epcs=0: };
-     stable_mix {stable_pct=0.8: learn_pct=0.2: };
+     wt_sig {gain=6: off=1: dwt_norm=1: };
+     stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
@@ -15397,6 +15577,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    off_errs=1;
    on_errs=1;
    cos_err_lrn_thr=-1;
+   cos_diff_on=0;
+   cos_diff_auto=0;
   };
  };
 };

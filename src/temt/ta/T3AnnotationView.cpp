@@ -231,7 +231,6 @@ void T3AnnotationView::Render_impl() {
     break;
   }
   case T3Annotation::RECTANGLE: {
-    taMisc::Info("nc: ", String(ssep->getNumChildren()));
     int sd = (int)node_so->showDrag();
     if(ssep->getNumChildren() > 5 + sd) {
       if(!ob->fill) {
@@ -280,7 +279,7 @@ void T3AnnotationView::Render_impl() {
       cmat->transparency.setValue(1.0f - ob->fill_color.a);
       xlt->translation.setValue(0.5f * ob->size.x, 0.5f * ob->size.y, 0.5f * ob->size.z);
       cube->width = ob->size.x;
-      cube->depth = ob->size.z;
+      cube->depth = MAX(ob->size.z, 0.001f);
       cube->height = ob->size.y;
     }
     break;
