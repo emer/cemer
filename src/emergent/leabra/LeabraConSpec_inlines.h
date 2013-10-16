@@ -262,6 +262,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_sse8(LeabraSendCons* cg,
 }
 #else
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_sse8(LeabraSendCons* cg,
+                                                         const float clrate,
                                                          LeabraUnit* su,
                                                          LeabraNetwork* net) {
 }
