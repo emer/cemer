@@ -896,13 +896,13 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
 }
 
 cssEl* cssEl::TAElem(taBase* ths, const Variant& i) const {
+  String elno = i.toString();   // i can dissappear in bad circumstances, so get this now
   Variant rval = ths->Elem(i);
   if(rval.isNull()) {
     cssMisc::Error(prog, "Element access failed for container object:", ths->GetName(),
 		   "type:", ths->GetTypeDef()->name);
     return &cssMisc::Void;
   }
-  String elno = i.toString();
   String nm = ths->GetName() + String("[") + elno + "]";
   return GetElFromVar(rval, nm, (MemberDef*)NULL, (cssEl*)this);
 }
