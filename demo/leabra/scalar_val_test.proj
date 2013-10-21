@@ -1920,7 +1920,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 14 September 2011, at 12:00.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 1,419 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 1,421 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
@@ -1940,7 +1940,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.351 secs. -->
+<!-- Served in 0.363 secs. -->
 	
 
 </body></html>";
@@ -4161,7 +4161,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
       ar {
        name=;
-      [2] 0.087489448;0.91251057;      };
+      [2] 0.33499423;0.66500574;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4203,10 +4203,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
       ar {
        name=;
-      [100] "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
+      [100] "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
@@ -4425,10 +4425,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
       ar {
        name=;
-      [1 1 100] 1;1;1;1;1;1;1;1;1;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+      [1 1 100] 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -4461,10 +4461,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
       ar {
        name=;
-      [1 1 100] 1;1;1;1;1;1;1;1;1;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+      [1 1 100] 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -4497,10 +4497,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
       ar {
        name=;
-      [1 1 100] 1;1;1;1;1;1;1;1;1;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+      [1 1 100] 1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -4533,16 +4533,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       width=0;
       ar {
        name=;
-      [100] 0.087489448;0.087489448;0.087489448;0.087489448;0.087489448;0.087489448;0.087489448;0.087489448;0.087489448;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
-0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;0.91251057;
+      [100] 0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;
+0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;
+0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;0.33499423;
+0.33499423;0.33499423;0.33499423;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
+0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
+0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
+0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
+0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
+0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
+0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;0.66500574;
       };
      };
     };
@@ -8567,7 +8567,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv1"] {
       name="sv1";
       var_type=T_Real;
-      real_val=0;
+      real_val=0.3399930000305176;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8577,7 +8577,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv2"] {
       name="sv2";
       var_type=T_Real;
-      real_val=0.1797129064798355;
+      real_val=0.3227014243602753;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8587,7 +8587,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv3"] {
       name="sv3";
       var_type=T_Real;
-      real_val=0.1279954612255096;
+      real_val=0.3774972856044769;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9901,7 +9901,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["prob1"] {
       name="prob1";
       var_type=T_Real;
-      real_val=0.08748945207356007;
+      real_val=0.3349942334308851;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9911,7 +9911,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["prob2"] {
       name="prob2";
       var_type=T_Real;
-      real_val=0.9125105479264399;
+      real_val=0.6650057665691149;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10144,7 +10144,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.003201707499101758;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -11267,7 +11267,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraUnitSpec @["SV1"] {
        name="SV1";
        desc=;
-       unique{ act_fun;act;dt;g_bar;       };
+       unique{        };
        children {
 	name=;
 	el_typ=LeabraUnitSpec;
@@ -11277,8 +11277,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        bias_con_type=LeabraCon;
        bias_spec {type=LeabraBiasSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$: };
        sse_tol=0.5;
-       act_fun=LINEAR;
-       act {gelin=1: thr=0.3: gain=20: nvar=0.01: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+       act_fun=NOISY_XX1;
+       act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
        act_lrn_on=0;
        act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
        spike {rise=0: decay=0.05: g_gain=9: window=3: eq_gain=10: eq_dt=0.02: };
@@ -11300,7 +11300,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        v_m_init {name="": type=UNIFORM: mean=0.300000011920929: var=0: par=1: };
        dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
        act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
-       g_bar {e=1: l=0.1: i=1: h=0.015: a=0.045: };
+       g_bar {e=0.9999999: l=0.1: i=0.9999999: h=0.015: a=0.0145: };
        e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
        hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
        acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
@@ -11397,7 +11397,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraUnitSpec @["SV3"] {
        name="SV3";
        desc=;
-       unique{ act;dt;       };
+       unique{ dt;       };
        children {
 	name=;
 	el_typ=LeabraUnitSpec;
@@ -11527,7 +11527,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ScalarValLayerSpec @["SV1"] {
        name="SV1";
        desc=;
-       unique{ kwta;compute_i;i_kwta_pt;scalar;unit_range;bias_val;inhib;       };
+       unique{ compute_i;i_kwta_pt;scalar;unit_range;bias_val;       };
        children {
 	name=;
 	el_typ=ScalarValLayerSpec;
@@ -11535,9 +11535,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        inhib_group=ENTIRE_LAYER;
        inhib {
-	type=KWTA_AVG_INHIB;
-	kwta_pt=0.9;
-	gi=2;
+	type=FF_FB_INHIB;
+	kwta_pt=0.25;
+	gi=2.2;
 	ff=1;
 	fb=0.5;
 	fbx=0;
@@ -11546,7 +11546,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ff0=0.1;
 	min_i=0;
        };
-       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: };
+       kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: };
        gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: };
        lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
@@ -11769,13 +11769,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraConSpec @["SV1Cons"] {
        name="SV1Cons";
        desc=;
-       unique{ rnd;wt_sig;lrate;lmix;       };
+       unique{ lmix;       };
        children {
 	name=;
 	el_typ=LeabraConSpec;
 	el_def=0;
        };
-       rnd {name="": type=UNIFORM: mean=0.1: var=0: par=1: };
+       rnd {name="": type=UNIFORM: mean=0.25: var=0.01: par=1: };
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
        learn_rule=CTLEABRA_XCAL;
        inhib=0;
@@ -11784,8 +11784,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.005;
-       cur_lrate=0.005;
+       lrate=0.002;
+       cur_lrate=0.002;
        lrs_value=NO_LRS;
        lrate_sched {
 	name=;
@@ -11795,7 +11795,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        ignore_unlearnable=1;
-       wt_sig {gain=1: off=1: dwt_norm=0: };
+       wt_sig {gain=6: off=1: dwt_norm=0: };
        stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
        lmix {hebb=0: err=1: err_sb=0: };
        xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
@@ -11829,8 +11829,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.01;
-       cur_lrate=0.01;
+       lrate=0.002;
+       cur_lrate=0.002;
        lrs_value=NO_LRS;
        lrate_sched {
 	name=;
@@ -11859,7 +11859,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraConSpec @["SV3Cons"] {
        name="SV3Cons";
        desc=;
-       unique{ lmix;       };
+       unique{ lmix;lrate;       };
        children {
 	name=;
 	el_typ=LeabraConSpec;
@@ -11874,8 +11874,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.01;
-       cur_lrate=0.01;
+       lrate=0.02;
+       cur_lrate=0.02;
        lrs_value=NO_LRS;
        lrate_sched {
 	name=;
@@ -11911,7 +11911,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      wt_scale_p {abs=1: rel=1: sem_extra=2: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
-     lrate=0.01;
+     lrate=0.002;
      cur_lrate=0.005;
      lrs_value=NO_LRS;
      lrate_sched {
