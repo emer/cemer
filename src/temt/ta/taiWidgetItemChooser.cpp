@@ -161,7 +161,7 @@ bool taiWidgetItemChooser::OpenChooser() {
     rval = true;                // hit ok
     // always update even if it says the item was the same, because we could have set a
     // default item during construction..
-    UpdateImage(ic->selObj());
+        UpdateImage(ic->selObj());
     if (mflags & flgAutoApply)
       applyNow();
     else

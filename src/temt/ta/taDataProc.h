@@ -82,10 +82,10 @@ public:
   static bool  Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order sort data from src into dest according to sorting specifications in spec; if src == dest, then it is sorted in-place, otherwise, dest is completely overwritten, and if dest is NULL, a new one is created in proj.data.AnalysisData
   static bool  SortInPlace(DataTable* dt, DataSortSpec* spec);
-  // #CAT_Order #MENU_BUTTON #MENU_ON_Order sort given data table in place (modifies data table) according to sorting specifications in spec
+  // #CAT_Order sort given data table in place (modifies data table) according to sorting specifications in spec
   // these only reorder the index that keeps track of the tables visible items
   static bool  SortThruIndex(DataTable* dt, DataSortSpec* spec);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order does the pre and post work needed for sorting using indexes - calls the sort implementation
   static bool  SortThruIndex_Compare(const DataTable* dt, const DataSortSpec* spec, int i, const DataTable& pivotRow, bool isLess);
   // #IGNORE helper function for sorting: compare values
   static void  SortThruIndex_impl(DataTable* dt, DataSortSpec* spec, int* arr, int left, int right, DataTable& pivot_row_table);
