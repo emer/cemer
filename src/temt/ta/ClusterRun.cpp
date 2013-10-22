@@ -70,9 +70,12 @@ void ClusterRun::UpdateAfterEdit_impl() {
     }
   }
   if(taMisc::is_loading) {
-    jobs_submit.Reset();          // get rid of any weirdness from prior bug
-    jobs_submitted.Reset(); 
-    FormatTables();
+    if(jobs_submit.cols() > jobs_running.cols() ||
+       jobs_submitted.cols() > jobs_running.cols()) {
+      jobs_submit.Reset();          // get rid of any weirdness from prior bug
+      jobs_submitted.Reset(); 
+      FormatTables();
+    }
   }
 }
 

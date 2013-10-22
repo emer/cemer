@@ -331,6 +331,9 @@ void taBase::Destroying() {
     dl->SigDestroying();
     delete dl; // NULLs our ref
   }
+  if(taMisc::is_loading) {
+    dumpMisc::update_after.RemoveEl(this); // justin case we're on the list!
+  }
 }
 
 void taBase::SetTypeDefaults_impl(TypeDef* ttd, taBase* scope) {
