@@ -1473,7 +1473,7 @@ void NetView::Render_wt_lines() {
       float wt = su->wt_prjn;
       if(fabsf(wt) < wt_line_thr) continue;
 
-      taVector3i su_pos; su->GetAbsPos(su_pos);
+      taVector2i su_pos; su->LayerDispPos(su_pos);
       dst.x = ((float)wt_prjn_lay_pos.x + (float)su_pos.x + .5f) / max_size.x;
       dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
 

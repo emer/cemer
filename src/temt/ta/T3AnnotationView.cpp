@@ -68,6 +68,7 @@ void T3AnnotationView::Render_pre() {
   SoSeparator* ssep = node_so()->shapeSeparator();
 
   T3Annotation* ob = Anno();
+  if(!ob) return;
 
   ob->rend_type = ob->type;
 
