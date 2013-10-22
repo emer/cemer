@@ -3614,8 +3614,10 @@ taBase* DataTable::ChooseNew(taBase* origin) {
   else {
     if (pgrm) {
       ProgObjList* objList = &pgrm->objs;
-      //      dt = objList->NewDataTable();   // add a new data table to the object group of the program
-      dt = (DataTable*)objList->New(1, &TA_DataTable);
+      tabMisc::DelayedFunCall_gui(objList, "OneNewTable");
+      // note: can't do a new call here because we're being called from same guy
+      // so we can't trample the editor in place
+      //      dt = (DataTable*)objList->New(1, &TA_DataTable);
     }
   }
 

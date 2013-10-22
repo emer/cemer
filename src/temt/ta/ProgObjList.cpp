@@ -22,6 +22,10 @@
 taTypeDef_Of(DataTable);
 
 
+DataTable* ProgObjList::OneNewTable() {
+  return (DataTable*)New(1, &TA_DataTable);
+}
+
 DataTable* ProgObjList::NewDataTable(int n_tables) {
   return (DataTable*)New_gui(n_tables, &TA_DataTable); // this is a gui op
 }
