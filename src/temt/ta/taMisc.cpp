@@ -176,10 +176,10 @@ bool    taMisc::save_old_fmt = false;
 
 // parameters that are strictly platform specific
 #ifdef TA_OS_MAC
-String  taMisc::font_name = "Lucida Grande";
-int     taMisc::font_size = 10;
-String  taMisc::console_font_name = "Andale Mono";
-int     taMisc::console_font_size = 10;
+String  taMisc::font_name = "LucidaGrande";
+int     taMisc::font_size = 12;
+String  taMisc::console_font_name = "AndaleMono";
+int     taMisc::console_font_size = 12;
 float   taMisc::doc_text_scale = 1.0f;
 #elif defined(TA_OS_WIN)
 String  taMisc::font_name = "Arial";

@@ -524,6 +524,7 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
   u->net_delta = 0.0f;
   u->g_i_raw = 0.0f;
   u->g_i_delta = 0.0f;
+  u->g_i_syn = 0.0f;
   //  u->net_ctxt = 0.0f;
 
   u->net = 0.0f;
@@ -542,9 +543,6 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   LeabraUnit* lu = (LeabraUnit*)u;
 
   Init_Netins(lu, (LeabraNetwork*)net);
-
-  lu->prv_net = 0.0f;
-  lu->prv_g_i = 0.0f;
 
   if(hyst.init) {
     lu->vcb.hyst = lu->vcb.g_h = 0.0f;
@@ -610,8 +608,8 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
 //   u->avg_ss -= decay * (u->avg_ss - act.avg_init);
 //   u->avg_s -= decay * (u->avg_s - act.avg_init);
 //   u->avg_m -= decay * (u->avg_m - act.avg_init);
-  u->prv_net -= decay * u->prv_net;
-  u->prv_g_i -= decay * u->prv_g_i;
+  u->net -= decay * u->net;
+  u->g_i_syn -= decay * u->g_i_syn;
   if(hyst.on && !hyst.trl)
     u->vcb.hyst -= decay * u->vcb.hyst;
   if(acc.on && !acc.trl)
@@ -826,7 +824,7 @@ void LeabraUnitSpec::Compute_NetinScale_Senders(LeabraUnit* u, LeabraNetwork* ne
 }
 
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraNetwork*) {
-  u->net = u->prv_net = u->ext;
+  u->net = u->ext;
   u->act_eq = clamp_range.Clip(u->ext);
   u->act_nd = u->act_eq;
   u->act_lrn = u->act_eq;
@@ -844,7 +842,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraNetwork*) {
 // NOTE: these two functions should always be the same modulo the clamp_range.Clip
 
 void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnit* u, LeabraNetwork*) {
-  u->net = u->prv_net = u->ext;
+  u->net = u->ext;
   //  u->act_eq = clamp_range.Clip(u->ext);
   u->act_eq = u->ext;
   u->act_nd = u->act_eq;
@@ -968,9 +966,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
       recv_gp->net_delta = 0.0f; // clear for next use
 
       // todo: not clear if we need this at this point..
-      // float dnet = dt.net * (tot_net - u->prv_net);
-      // u->net = u->prv_net + dnet;
-      // u->prv_net = u->net;
+      // u->net += dt.net * (tot_net - u->net);
       // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
     }
   }
@@ -978,15 +974,20 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   if(net->inhib_cons_used) {
     u->g_i_raw += u->g_i_delta;
     if(act_fun == SPIKE) {
-      u->gc.i = MAX(u->g_i_raw, 0.0f);
+      u->g_i_syn = MAX(u->g_i_syn, 0.0f);
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
-      u->prv_g_i = u->gc.i;
+      u->g_i_syn += dt.net * (u->g_i_raw - u->g_i_syn);
+      u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
-
+  else {
+    // clear so automatic inhibition can add to these values!
+    u->g_i_syn = 0.0f;
+    u->g_i_raw = 0.0f;
+  }
+  
   u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT)) + u->net_raw;
 
@@ -1010,9 +1011,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     Compute_NetinInteg_Spike_e(u, net);
   }
   else {
-    float dnet = dt.net * (tot_net - u->prv_net);
-    u->net = u->prv_net + dnet;
-    u->prv_net = u->net;
+    u->net += dt.net * (tot_net - u->net);
     u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
   }
 
@@ -1035,9 +1034,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
       sum += u->spike_e_buf->CircSafeEl(t);
     }
     sum /= (float)spike.window; // normalize over window
-    float dnet = spike.gg_decay * sum - (u->prv_net * spike.oneo_decay);
-    u->net = u->prv_net + dnet;
-    u->prv_net = u->net;
+    u->net += spike.gg_decay * sum - (u->net * spike.oneo_decay);
   }
   else {
     for(int t=0;t<mx;t++) {
@@ -1046,12 +1043,10 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
     }
-    u->net = sum;
     // from compute_netinavg
-    float dnet =  dt.net * (u->net - u->prv_net);
-    u->net = u->prv_net + dnet;
-    u->prv_net = u->net;
+    u->net += dt.net * (sum - u->net);
   }
+  u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
 }
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net) {
@@ -1066,9 +1061,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
       sum += u->spike_i_buf->CircSafeEl(t);
     }
     sum /= (float)spike.window; // normalize over window
-    float dnet = spike.gg_decay * sum - (u->prv_g_i * spike.oneo_decay);
-    u->gc.i = u->prv_g_i + dnet;
-    u->prv_g_i = u->gc.i;
+    u->g_i_syn += spike.gg_decay * sum - (u->g_i_syn * spike.oneo_decay);
   }
   else {
     for(int t=0;t<mx;t++) {
@@ -1077,12 +1070,9 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
     }
-    u->gc.i = sum;
-    // from compute_netinavg
-    float dnet =  dt.net * (u->gc.i - u->prv_g_i);
-    u->gc.i = u->prv_g_i + dnet;
-    u->prv_g_i = u->gc.i;
+    u->g_i_syn += dt.net * (sum - u->g_i_syn);
   }
+  u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
 }
 
 float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraNetwork* net) {
@@ -1169,7 +1159,6 @@ void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
 
   // total conductances
   float g_bar_i_val = g_bar.i;
-  float g_bar_e_val = g_bar.e;
   float g_bar_l_val = g_bar.l;
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->spec.SPtr();
   if((ls->adapt_i.type == AdaptISpec::G_BAR_I) || (ls->adapt_i.type == AdaptISpec::G_BAR_IL))
@@ -1177,7 +1166,7 @@ void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
   if(ls->adapt_i.type == AdaptISpec::G_BAR_IL)
     g_bar_l_val = lay->adapt_i.g_bar_l; // adapting value..
   u->gc.i *= g_bar_i_val;
-  u->net *= g_bar_e_val;
+  //  u->net *= g_bar_e_val; // do NOT do this -- keep in original units for dnet stuff
   u->gc.l = g_bar_l_val;
   u->gc.h = g_bar.h * u->vcb.g_h;
   u->gc.a = g_bar.a * u->vcb.g_a;
@@ -1215,15 +1204,16 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
   }
   else {
     float v_m_eff = u->v_m;
+    float net_eff = u->net * g_bar.e;
     if(dt.midpoint) {
       float I_net_1 =
-        (u->net * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) +
+        (net_eff * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) +
         (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
         (u->gc.a * (e_rev.a - v_m_eff));
       v_m_eff += .5f * dt.vm * I_net_1; // go half way
     }
     u->I_net =
-      (u->net * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) +
+      (net_eff * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) +
       (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
       (u->gc.a * (e_rev.a - v_m_eff));
 
@@ -1321,7 +1311,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
     }
     else {
       float g_e_thr = Compute_EThresh(u);
-      new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
+      new_act = Compute_ActValFmVmVal_rate(u->net * g_bar.e - g_e_thr);
     }
     if(net->cycle < dt.vm_eq_cyc) {
       new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
@@ -1366,7 +1356,7 @@ void LeabraUnitSpec::Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net) 
     }
     else {
       float g_e_thr = Compute_EThreshLrn(u);
-      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->net - g_e_thr, act_lrn, 
+      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->net * g_bar.e - g_e_thr, act_lrn, 
                                                     lrn_nxx1_fun);
     }
     if(net->cycle < dt.vm_eq_cyc) {

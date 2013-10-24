@@ -53,14 +53,13 @@ void LeabraUnit::Initialize() {
   in_subgp = false;
   net_scale = 0.0f;
   bias_scale = 0.0f;
-  prv_net = 0.0f;
-  prv_g_i = 0.0f;
 
   act_sent = 0.0f;
   net_raw = 0.0f;
   net_delta = 0.0f;
   g_i_raw = 0.0f;
   g_i_delta = 0.0f;
+  g_i_syn = 0.0f;
 
   i_thr = 0.0f;
   spk_amp = 1.0f;
@@ -144,13 +143,12 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // not: in_subgp
   net_scale = cp.net_scale;
   bias_scale = cp.bias_scale;
-  prv_net = cp.prv_net;
-  prv_g_i = cp.prv_g_i;
   act_sent = cp.act_sent;
   net_raw = cp.net_raw;
   net_delta = cp.net_delta;
   g_i_raw = cp.g_i_raw;
   g_i_delta = cp.g_i_delta;
+  g_i_syn = cp.g_i_syn;
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;

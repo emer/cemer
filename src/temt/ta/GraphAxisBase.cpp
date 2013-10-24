@@ -143,8 +143,13 @@ void GraphAxisBase::UpdateFmColLookup() {
 }
 
 void GraphAxisBase::SetColPtr(GraphColView* cgv) {
-  taBase::SetPointer((taBase**)&col_lookup, cgv);
-  UpdateFmColLookup();
+  if(!cgv) {
+    col_name = _nilString;
+  }
+  else {
+    taBase::SetPointer((taBase**)&col_lookup, cgv);
+    UpdateFmColLookup();
+  }
   UpdateOnFlag();
   UpdateFmDataCol();
 }

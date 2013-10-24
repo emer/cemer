@@ -10,6 +10,7 @@ echo "args are (special for plugins):"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
 echo "  --prefix=User|System         where to install plugin: user's home dir, or system;" 
 echo "                                 defaults to User if not specified"
+echo "  --suffix=<name>              add an extra custom suffix on the end of build files"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
 echo "  --build-dir=<name>           provide a custom build directory name (else auto)"
@@ -29,6 +30,12 @@ do
   preq=${1%=*}			# get part before =
   case $preq
   in
+    --suffix | -suffix | suffix)
+      extra_suffix=${1##*=}		# get part after =
+      cmake_cmd="$cmake_cmd -DEXTRA_SUFFIX=$extra_suffix"
+      build_dir="${build_dir}${extra_suffix}"
+      shift 1
+    ;;
     --debug | --enable-debug | debug | enable-debug | -debug | -enable-debug | d | -d)
       debug=true
       cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Debug"

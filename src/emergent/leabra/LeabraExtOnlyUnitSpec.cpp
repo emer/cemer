@@ -29,12 +29,12 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
   if(net->inhib_cons_used) {
     u->g_i_raw += u->g_i_delta;
     if(act_fun == SPIKE) {
-      u->gc.i = MAX(u->g_i_raw, 0.0f);
+      u->g_i_syn = MAX(u->g_i_raw, 0.0f);
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
-      u->prv_g_i = u->gc.i;
+      u->g_i_syn += dt.net * (u->g_i_raw - u->g_i_syn);
+      u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
 
@@ -72,9 +72,7 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
     Compute_NetinInteg_Spike_e(u,net);
   }
   else {
-    float dnet = dt.net * (tot_net - u->prv_net);
-    u->net = u->prv_net + dnet;
-    u->prv_net = u->net;
+    u->net += dt.net * (tot_net - u->net);
     u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
   }
 
