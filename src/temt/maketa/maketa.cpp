@@ -343,7 +343,8 @@ TypeDef* MTA::TypeAddUniqNameOld(const String& typ, TypeDef* td, TypeSpace* sp) 
   // template crap that nobody needs, and defines various things that interfere
   // with our own types
   if(typ.contains("template") && cur_fname.contains("type_traits")) {
-    td = new TypeDef("type_traits");
+    //    td = new TypeDef("type_traits");
+    td->name += "type_traits";
   }
   if(sp == NULL) sp = GetTypeSpace(td);
   TypeDef* rval = sp->AddUniqNameOld(td);
