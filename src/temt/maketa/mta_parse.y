@@ -41,7 +41,7 @@ int yylex();
 %}
 
 /* eleven expected shift-reduce conflicts */
-%expect 11
+%expect 12
 
 %union {
   TypeDef* 	typ;
@@ -102,7 +102,7 @@ int yylex();
 
 /* misc stuff */
 %type 	<typ>	type noreftype subtype constype combtype tyname ftype
-%type   <typ>   structype tdtype
+%type   <typ>   structype tdtype typenmtyp
 %type   <chr>	varname namespctyp
 %type   <rval>	ptrs
 
@@ -138,12 +138,10 @@ list:	/* nothing */		{ mta->ResetState(); mta->yy_state = MTA::YYRet_Exit; }
 
 typedefn: typedefns			{
   	  if($1 != NULL) {
-	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld($1);
+	    $$ = mta->TypeAddUniqNameOld("typedef", $1);
             // a typedef can never be literally a template or a template inst!
-            $$->ClearType(TypeDef::TEMPLATE);
-            $$->ClearType(TypeDef::TEMPL_INST);
-	    if($$ == $1) mta->TypeAdded("typedef", sp, $$); } }
+            if($$) { $$->ClearType(TypeDef::TEMPLATE);
+              $$->ClearType(TypeDef::TEMPL_INST); } } }
         ;
 
 typedefns:
@@ -203,9 +201,8 @@ tdtype:   type
         ;
 
 enumdefn: enumdsub			{
-            TypeSpace* sp = mta->GetTypeSpace($1);
-            $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) { mta->TypeAdded("enum", sp, $$); $$->source_end = mta->line-1; } }
+            $$ = mta->TypeAddUniqNameOld("enum", $1);
+	    if($$ == $1) { $$->source_end = mta->line-1; } }
         ;
 
 enumdsub: enumname enums '}' term
@@ -230,9 +227,7 @@ enumnm:   MP_ENUM tyname		{
 
 classdecl:
           classdecls			{
-	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) mta->TypeAdded("class", sp, $$);
+	    $$ = mta->TypeAddUniqNameOld("class", $1);
 	    mta->type_stack.Pop(); }
         ;
 
@@ -243,10 +238,8 @@ classdecls:
 
 classdefn:
           classdefns			{
-	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) { mta->TypeAdded("class", sp, $$); mta->FixClassTypes($$);
-              $$->source_end = mta->line-1; }
+	    $$ = mta->TypeAddUniqNameOld("class", $1);
+	    if($$ == $1) { mta->FixClassTypes($$); $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
 
@@ -343,9 +336,7 @@ classpmod: access
 
 templdecl:
           templdecls                 {
-	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) { mta->TypeAdded("template", sp, $$); }
+	    $$ = mta->TypeAddUniqNameOld("template", $1);
 	    mta->type_stack.Pop(); }
         ;
 
@@ -356,11 +347,8 @@ templdecls:
 
 templdefn:
           templdefns			{
-	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    $$ = sp->AddUniqNameOld($1);
-	    if($$ == $1) { mta->TypeAdded("template", sp, $$);
-              mta->FixClassTypes($$);
-	      $$->source_end = mta->line-1; }
+	    $$ = mta->TypeAddUniqNameOld("template", $1);
+	    if($$ == $1) { mta->FixClassTypes($$); $$->source_end = mta->line-1; }
 	    mta->type_stack.Pop(); }
         ;
 
@@ -457,7 +445,10 @@ templpars:
 templpar:
           MP_CLASS tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
         | MP_TYPENAME tyname		{ mta->cur_templ_pars.Link($2); $$ = $2; }
-        | MP_TYPENAME			{ $$ = new TypeDef("typename"); mta->cur_templ_pars.Add($$); }
+        | MP_TYPENAME			{
+          $$ = new TypeDef("typename"); mta->cur_templ_pars.Add($$); }
+        | MP_NAME MP_NAME    {  /* $1 is probably an unrecognized type name.. */
+          $$ = new TypeDef($2); mta->cur_templ_pars.Add($$); }
         | type				{ mta->cur_templ_pars.Link($1); $$ = $1; }
         | type tyname			{ mta->cur_templ_pars.Link($2); $$ = $2; }
           /* note: in_templ_pars prevents lexer from automatically nuking
@@ -485,6 +476,7 @@ fundecl:  funnm				{
               TypeDef* nt = new TypeDef($1->name, TypeDef::FUNCTION,0,0);
               mta->SetSource(nt, false);
               taMisc::types.Add(nt);
+              mta->Info(5, "added reg fun to types:", nt->name);
               nt->methods.AddUniqNameNew($1);
               taMisc::reg_funs.Link(nt); }
             mta->meth_stack.Pop(); }
@@ -709,6 +701,7 @@ methdefn: basicmeth
 	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
               TypeDef* nt = new TypeDef($3->name, TypeDef::FUNCTION,0,0);
               taMisc::types.Add(nt);
+              mta->Info(5, "added reg fun to types:", nt->name);
 	      nt->methods.AddUniqNameNew($3); $3->type = $2;
 	      mta->meth_stack.Pop();  $3->fun_argc = $4; $3->arg_types.size = $4;
 	      $3->is_static = true; /* consider these to be static functions */
@@ -719,6 +712,7 @@ methdefn: basicmeth
 	    if(tmp.contains("REG_FUN") && (mta->cur_is_trg)) {
               TypeDef* nt = new TypeDef($2->name, TypeDef::FUNCTION,0,0);
               taMisc::types.Add(nt);
+              mta->Info(5, "added reg fun to types:", nt->name);
 	      nt->methods.AddUniqNameNew($2); $2->type = &TA_int;
 	      mta->meth_stack.Pop();  $2->fun_argc = $3; $2->arg_types.size = $3;
 	      $2->is_static = true; /* consider these to be static functions */
@@ -887,13 +881,17 @@ noreftype:
 	  }
         ;
 
-constype: subtype
-        | MP_CONST subtype	{
+constype: typenmtyp
+        | MP_CONST typenmtyp	{
 	    TypeSpace* sp = mta->GetTypeSpace($2);
             int spsz = sp->size;
             $$ = $2->GetConstType_impl(*sp);
 	    if(sp->size != spsz) { mta->TypeAdded("const", sp, $$); }
 	  }
+        ;
+
+typenmtyp: subtype
+        | MP_TYPENAME subtype MP_SCOPER MP_NAME { $$ = $2; }
         ;
 
 subtype:  combtype
@@ -939,8 +937,7 @@ subtype:  combtype
               td = $1->Clone(); td->name = nm;
               td->SetTemplType($1, mta->cur_typ_templ_pars);
               TypeSpace* sp = mta->GetTypeSpace($1);
-              $$ = sp->AddUniqNameOld(td);
-              if($$ == td) mta->TypeAdded("template instance", sp, $$); }
+              $$ = mta->TypeAddUniqNameOld("template instance", td, sp); }
             else
               $$ = td; }
 	| MP_THISNAME typtemplopen templargs '>'	{ /* this template */
@@ -966,9 +963,8 @@ combtype: MP_TYPE
             nty->AssignType($1->type); // get from first guy
             nty->SetType($2->type);   // add from second
 	    TypeSpace* sp = mta->GetTypeSpace($2);
-	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) { mta->TypeAdded("combo", sp, $$);
-	      nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
+	    $$ = mta->TypeAddUniqNameOld("combo", nty, sp);
+	    if($$ == nty) { nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
 	    else { mta->TypeNotAdded("combo", sp, $$, nty); delete nty; }
 	  }
         ;
@@ -984,14 +980,33 @@ templargs:
 
 
 templarg:
-          type			{
+          typenmtyp		{
             mta->cur_typ_templ_pars.Link($1); }
         | MP_NAME		{
             $$ = new TypeDef($1); mta->cur_typ_templ_pars.Push($$); }
+        | MP_NAME ptrs		{
+            $$ = new TypeDef($1); mta->cur_typ_templ_pars.Push($$); }
+        | MP_NAME '&'		{
+            $$ = new TypeDef($1); mta->cur_typ_templ_pars.Push($$); }
+        | MP_NAME MP_ARRAY	{
+            $$ = new TypeDef($1); mta->cur_typ_templ_pars.Push($$); }
+        | MP_NAME '(' MP_NAME ')' {
+            $$ = new TypeDef($3); mta->cur_typ_templ_pars.Push($$); }
         | MP_NUMBER		{
             $$ = new TypeDef((String)$1);
             mta->cur_typ_templ_pars.Push($$); }
+        | templargmisc MP_NAME    {  
+          $$ = new TypeDef($2); mta->cur_templ_pars.Push($$); }
+        | templargmisc MP_TYPE    {  
+          $$ = $2; mta->cur_templ_pars.Link($2); }
+        | MP_NAME templargmisc    {  
+          $$ = new TypeDef($1); mta->cur_templ_pars.Push($$); }
 	;
+
+templargmisc:
+          MP_CONST
+        | MP_FUNTYPE
+        ;
 
 tdname:   MP_NAME
         | MP_TYPE		{ $$ = $1->name; }

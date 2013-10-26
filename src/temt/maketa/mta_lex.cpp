@@ -519,6 +519,24 @@ int MTA::lex() {
 	Getc();
       } 
 
+      if(LexBuf == "__attribute__") {
+        // stupid gcc thing -- need to look for subsequent (( )) stuff
+        int cc = skipwhite_peek();
+        if(cc == '(') {
+          Getc();
+          int depth = 0;
+          while (((c=Peekc()) != EOF) && !((c == ')') && (depth == 0))) {
+            if(c == '(') depth++;
+            if(c == ')') depth--;
+            // Info(5, "SKIP!!: =>", taMisc::LeadingZeros(line,5), ":\t", String((char)c),
+            //      "depth:", String(depth));
+            Getc();
+          }
+        }
+        if(c == ')') Getc();
+        continue;               // skip it
+      }
+
       int lx_tok;
       yylval.typ = FindName(LexBuf, lx_tok);
       

@@ -62,6 +62,14 @@ TypeSpace::~TypeSpace() {
 #endif
 }
 
+void TypeSpace::Add_(void* it, bool no_notify) {
+  taPtrList<TypeDef>::Add_(it, no_notify);
+  // use this for debugging what is adding various types to the typespace
+  // if(((TypeDef*)it)->name == "decay") {
+  //   taMisc::Info("added decay");
+  // }
+}
+
 TypeDef* TypeSpace::FindTypeR(const String& fqname) const {
   if (fqname.contains("::")) {
     TypeDef* td = FindName(fqname.before("::"));

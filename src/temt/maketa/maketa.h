@@ -200,10 +200,12 @@ public:
   // get appropriate type space for adding a new type derived from this one
   void          FixClassTypes(TypeDef* td);
   // make sure the class type settings are correct for an actual class obj
+  TypeDef*      TypeAddUniqNameOld(const String& typ, TypeDef* td, TypeSpace* sp = NULL);
+  // does GetTypeSpace on td and then does sp->AddUniqNameOld (and reports add) -- main addtype function
 
-  void		TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td);
+  void		TypeAdded(const String& typ, TypeSpace* sp, TypeDef* td);
   // report that type was added if verbose is on
-  void		TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td,
+  void		TypeNotAdded(const String& typ, TypeSpace* sp, TypeDef* ext_td,
 			     TypeDef* new_td);
   // report that type new_td was NOT added because of existing type ext_td (if verbose is on)
 

@@ -338,6 +338,21 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
   return rval;
 }
 
+TypeDef* MTA::TypeAddUniqNameOld(const String& typ, TypeDef* td, TypeSpace* sp) {
+  // don't add anything from type traits because it just has a bunch of horrible
+  // template crap that nobody needs, and defines various things that interfere
+  // with our own types
+  if(cur_fname.contains("type_traits")) {
+    td = new TypeDef("type_traits");
+  }
+  if(sp == NULL) sp = GetTypeSpace(td);
+  TypeDef* rval = sp->AddUniqNameOld(td);
+  if(rval == td) {
+    TypeAdded(typ, sp, td);
+  }
+  return rval;
+}
+
 void MTA::FixClassTypes(TypeDef* td) {
   if(td->name == "taString") {
     td->SetType(TypeDef::STRING);
@@ -357,14 +372,13 @@ void MTA::FixClassTypes(TypeDef* td) {
   }
 }
 
-void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
+void MTA::TypeAdded(const String& typ, TypeSpace* sp, TypeDef* td) {
   if(spc_keywords.FindEl(td) >= 0) {
     Error(0, "adding a keyword type to a new typelist -- this is VERY BAD and indicates a parsing error!", td->name,
 	  "to space:", sp->name, "typ:", typ);
   }
-  String typstr = typ;
-  if(!(typstr.contains("class") || typstr.contains("enum") ||  
-       typstr == "template")) {
+  if(!(typ.contains("class") || typ.contains("enum") ||  
+       typ == "template")) {
     td->source_file = taMisc::PathToUnixSep(cur_fname);
     td->source_start = line-1;
     td->source_end = line-1;
@@ -375,7 +389,7 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
        + "-" + String(td->source_end));
 }
 
-void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
+void MTA::TypeNotAdded(const String& typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
   if(spc_keywords.FindEl(new_td) >= 0) {
     Error(0, "new_td NOT adding a keyword type to a new typelist -- this is VERY BAD and indicates a parsing error!", new_td->name,
 	  "to space:", sp->name, "typ:", typ);
@@ -430,24 +444,33 @@ TypeDef* MTA::FindName(const char* nm, int& lex_token) {
       lex_token = MP_THISNAME;
       return cur_class;
     }
-    if((itm = cur_class->sub_types.FindName(nm)) != NULL)
+    if((itm = cur_class->sub_types.FindName(nm)) != NULL) {
+      Info(5, "FindName: found MP_TYPE in class sub_types:", nm);
       return itm;
-    if((itm = cur_class->templ_pars.FindName(nm)) != NULL)
+    }
+    if((itm = cur_class->templ_pars.FindName(nm)) != NULL) {
+      Info(5, "FindName: found MP_TYPE in class templ_pars:", nm);
       return itm;
+    }
   }
 
   if(((itm = spc_keywords.FindName(nm)) != NULL)) {
     lex_token = itm->idx;
     if(String(nm) == "struct") {
-      Info(5, "struct lookup:", String(lex_token), "MP_STRUCT:", String(MP_STRUCT),
-	   "file:", cur_fname_only, "line:", String(line));
+      Info(5, "FindName: struct lookup:", String(lex_token), "MP_STRUCT:",
+           String(MP_STRUCT), "file:", cur_fname_only, "line:", String(line));
+    }
+    else {
+      Info(5, "FindName: found keyword:", nm);
     }
     return itm;
   }
 
   TypeDef *rval = NULL;
-  if((itm = taMisc::types.FindName(nm)) != NULL)
+  if((itm = taMisc::types.FindName(nm)) != NULL) {
+    Info(5, "FindName: found type in types list:", nm);
     rval = itm;
+  }
 
   return rval;
 }
@@ -520,11 +543,11 @@ int MTA::Main(int argc, char* argv[]) {
 #if 0 // change to 1 for debugging
   mta_print_args(argc, argv);
   verbose = 2;
-  v_trg_only = true;
-  filter_errs = true;
-  filter_warns = true;
+  v_trg_only = false;
+  filter_errs = false;
+  filter_warns = false;
   dbg_constr = false;
-  //  v_src_trg = "type_traits.h";
+  v_src_trg = "type_traits";         // set to "" to get everything
   //  bool keep_tmp = true;
   bool keep_tmp = false;
 #else
