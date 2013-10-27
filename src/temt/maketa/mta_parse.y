@@ -469,6 +469,7 @@ templpar:
             mta->cur_templ_pars.Link($1); $$ = $1;
             mta->cur_templ_defs.Link($3);
           }
+        | error { $$ = NULL; }
         ;
 
 fundecl:  funnm				{
@@ -795,6 +796,7 @@ argdefn:  subargdefn			{
 	      mta->cur_meth->arg_defs.Add(ad);
 	      if(mta->cur_meth->fun_argd < 0)
 		mta->cur_meth->fun_argd = mta->cur_meth->arg_types.size - 1; } }
+        | error { $$ = 0; }
 	;
 
 subargdefn:
@@ -1001,6 +1003,7 @@ templarg:
           $$ = $2; mta->cur_templ_pars.Link($2); }
         | MP_NAME templargmisc    {  
           $$ = new TypeDef($1); mta->cur_templ_pars.Push($$); }
+        | error { $$ = NULL; }
 	;
 
 templargmisc:
