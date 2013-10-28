@@ -52,10 +52,12 @@ bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
 }
 
 bool ProgEl::NewProgVarCustChooser(taBase* base, taiWidgetItemChooser* chooser) {
-  if(!chooser || !base) return false;
+  if(!chooser || !base)
+    return false;
   Program* own_prg = GET_OWNER(base, Program);
-  if(!own_prg) return false;
-  chooser->setNewObj1(&(own_prg->vars), " New Global Var");
+  if(!own_prg)
+    return false;
+  chooser->setNewObj1(&(own_prg->vars), " CREATE GLOBAL VAR");
   ProgEl* pel = NULL;
   if(base->InheritsFrom(TA_ProgEl))
     pel = (ProgEl*)base;
@@ -64,7 +66,16 @@ bool ProgEl::NewProgVarCustChooser(taBase* base, taiWidgetItemChooser* chooser) 
   if(pel) {
     LocalVars* pvs = pel->FindLocalVarList();
     if(pvs) {
-      chooser->setNewObj2(&(pvs->local_vars), " New Local Var");
+      chooser->setNewObj2(&(pvs->local_vars), " CREATE LOCAL VAR");
+    }
+    else {
+      ProgEl_List* pelst = GET_OWNER(base, ProgEl_List);
+      if(pelst) {
+        pvs = new LocalVars;
+        if (pvs && pelst->Insert(pvs, 0)) {
+          chooser->setNewObj2(&(pvs->local_vars), " CREATE LOCAL VAR");
+        }
+      }
     }
   }
   return true;
@@ -564,7 +575,7 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
     taBase::Ref(dlg);
     int choice = 2;
     ProgVar::VarType var_type = ProgVar::T_UnDef;
-    int result = dlg.GetLocalGlobalChoice(prg, var_nm, choice, var_type);
+    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
     if (result == 1) {
       if(choice == 0) {
         rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
@@ -663,7 +674,7 @@ bool ProgEl::RevertToCode() {
   if(!own) return false;
   taProject* proj = GET_OWNER(own, taProject);
   if(proj) {
-    proj->undo_mgr.SaveUndo(own, "RevertToCode", own, false, own); 
+    proj->undo_mgr.SaveUndo(own, "RevertToCode", own, false, own);
   }
   ProgCode* cvt = new ProgCode;
   cvt->desc = desc;

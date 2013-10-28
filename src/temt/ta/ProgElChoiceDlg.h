@@ -34,7 +34,13 @@ class TA_API ProgElChoiceDlg : public taNBase {
 public:
   taGuiDialog  dlg;
 
-  virtual int  GetLocalGlobalChoice(Program* prg, String& var_nm, int& local_global_choice, ProgVar::VarType& var_type_choice);
+  enum LocalGlobalOption {
+      LOCAL,        // force local only choice
+      GLOBAL,       // force global only choice
+      LOCALGLOBAL   // local or global plus ignore
+    };
+
+  virtual int  GetLocalGlobalChoice(String& var_nm, int& local_global_choice, ProgVar::VarType& var_type_choice, LocalGlobalOption = LOCALGLOBAL);
   // #IGNORE
 
   TA_SIMPLE_BASEFUNS(ProgElChoiceDlg);

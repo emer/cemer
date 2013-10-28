@@ -89,14 +89,16 @@ void iDialogItemChooser::accept() {
   }
   m_selItem = itm;
 
+  inherited::accept();  // Do this BEFORE the new choose dialog!!! jar 10/27/13
+
   if(itm) {
     bool new_fun = itm->data(0, NewFunRole).toBool();
     if(new_fun) {
       taBase* new_base = (taBase*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
       if(new_base) {
         taBase* nw = NULL;
-        if(itm->text(0) == " CREATE NEW") { // special chooser guy
-          nw = new_base->ChooseNew(m_client->Base());
+        if(itm->text(0).contains(" CREATE")) { // special chooser guy
+            nw = new_base->ChooseNew(m_client->Base());
         }
         else {
           nw = new_base->New(1);
@@ -110,9 +112,7 @@ void iDialogItemChooser::accept() {
       m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
     }
   }
-
   m_client = NULL;
-  inherited::accept();
 }
 
 QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat, const QString& itm_txt,

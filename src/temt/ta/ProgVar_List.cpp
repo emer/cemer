@@ -20,7 +20,8 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
-
+#include <taBase>
+#include <ProgElChoiceDlg>
 
 void ProgVar_List::Initialize() {
   SetBaseType(&TA_ProgVar);
@@ -180,4 +181,31 @@ bool ProgVar_List::BrowserCollapseAll() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return false;
   return prog->BrowserCollapseAll_ProgItem(this);
+}
+
+taBase* ProgVar_List::ChooseNew(taBase* origin) {
+    String var_nm;
+    ProgVar* rval = NULL;
+    ProgElChoiceDlg dlg;
+    taBase::Ref(dlg);
+    int choice = 2;
+    ProgVar::VarType var_type = ProgVar::T_UnDef;
+    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
+    if (result == 1) {
+      if(choice == 0) {
+        rval = (ProgVar*)New(1, NULL, var_nm);
+        if(taMisc::gui_active)
+          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+      }
+      else if(choice == 1) {
+        rval = (ProgVar*)New(1, NULL, var_nm);
+        if(taMisc::gui_active)
+          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+       }
+     }
+    if(rval) {
+      rval->var_type = var_type;
+      rval->UpdateAfterEdit();
+    }
+    return rval;
 }

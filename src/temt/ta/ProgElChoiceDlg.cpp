@@ -26,10 +26,13 @@
 #include <QBoxLayout>
 
 
-int ProgElChoiceDlg::GetLocalGlobalChoice(Program* prg, String& var_nm, int& local_global_choice, ProgVar::VarType& var_type_choice) {
+int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
+    ProgVar::VarType& var_type_choice, LocalGlobalOption option) {
   String row;  // reuse for each widget
+  String chs_str;
 
-  String chs_str = "Program Variable   \'" + var_nm + "\'   Not Found;";
+  bool showInstruction = (var_nm != "");  // if we don't know the var name ask for it
+
   dlg.win_title = "Create Variable - Local or Global";
   dlg.width = 300;
   dlg.height = 125;
@@ -39,10 +42,19 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(Program* prg, String& var_nm, int& loc
   dlg.AddWidget(widget);
   dlg.AddVBoxLayout(vbox, "", widget);
 
-  row = "instrRow";
-  dlg.AddHBoxLayout(row, vbox);
-  String labelStr = "label=" + chs_str;
-  dlg.AddLabel("Instructions", widget, row, labelStr);
+  if (showInstruction) {
+    row = "instrRow";
+    dlg.AddHBoxLayout(row, vbox);
+    chs_str = "Program Variable   \'" + var_nm + "\'   Not Found;";
+    String labelStr = "label=" + chs_str;
+    dlg.AddLabel("Instructions", widget, row, labelStr);
+  }
+  else {
+    row = "var_name";
+    dlg.AddHBoxLayout(row, vbox);
+    dlg.AddLabel("var_name_label", widget, row, "label=New Var Name:;");
+    dlg.AddStringField(&var_nm, "var_name", widget, row, "tooltip=Enter a name for the new variable;");
+  }
 
   dlg.AddSpace(40, "mainv");
 
@@ -50,7 +62,17 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(Program* prg, String& var_nm, int& loc
   dlg.AddHBoxLayout(row, vbox);
   dlg.AddLabel("local or global", widget, row, "label=Create Variable As:;");
   String_Array choices;
-  choices.FmDelimString("Global Local Ignore");
+  switch (option) {
+  case LOCAL:
+    choices.FmDelimString("Local");
+    break;
+  case GLOBAL:
+    choices.FmDelimString("Global");
+    break;
+  default:
+    choices.FmDelimString("Global Local Ignore");
+    break;
+  }
 
   QComboBox* combo_local_global = new QComboBox;
   {

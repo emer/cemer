@@ -26,6 +26,7 @@ class Program; //
 class taNBase; // 
 class DataTable; // 
 class ProgVar; //
+class taBase;
 
 taTypeDef_Of(ProgVar_List);
 
@@ -59,6 +60,9 @@ public:
   override bool         BrowserSelectMe();
   override bool         BrowserExpandAll();
   override bool         BrowserCollapseAll();
+
+  override taBase*      ChooseNew(taBase* origin);
+  override bool         HasChooseNew() { return true; }
 
   void  setStale();
   TA_BASEFUNS(ProgVar_List);

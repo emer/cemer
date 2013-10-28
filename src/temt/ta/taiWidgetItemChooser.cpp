@@ -105,12 +105,12 @@ void taiWidgetItemChooser::BuildChooser(iDialogItemChooser* ic, int view) {
   if(new1_par) {
     QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par);
     item->setData(0, iDialogItemChooser::NewFunRole, true);
-    item->setData(1, Qt::DisplayRole, "Make a new object"); //note: no desc
+    item->setData(1, Qt::DisplayRole, targ_typ->name); //note: no desc
   }
   if(new2_par) {
     QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par);
     item->setData(0, iDialogItemChooser::NewFunRole, true);
-    item->setData(1, Qt::DisplayRole, "Make a new object"); //note: no desc
+    item->setData(1, Qt::DisplayRole, targ_typ->name); //note: no desc
   }
 }
 
@@ -161,7 +161,7 @@ bool taiWidgetItemChooser::OpenChooser() {
     rval = true;                // hit ok
     // always update even if it says the item was the same, because we could have set a
     // default item during construction..
-    UpdateImage(ic->selObj());
+      UpdateImage(ic->selObj());
     if (mflags & flgAutoApply)
       applyNow();
     else

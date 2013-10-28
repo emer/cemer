@@ -142,22 +142,23 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
   }
   switch (view) {
   case 0:
+  {
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
       QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); //note: no desc
       item->setData(1, Qt::DisplayRole, "NULL");
     }
-
-    if(targ_typ->IsTaBase() && targ_typ->GetInstance() &&
-       ((taBase*)targ_typ->GetInstance())->HasChooseNew()) {
+    if(!new1_par &&  targ_typ->IsTaBase() && targ_typ->GetInstance() &&  // if new1_par is set we already have a CREATE
+        ((taBase*)targ_typ->GetInstance())->HasChooseNew()) {
       QTreeWidgetItem* item = ic->AddItem(" CREATE NEW", NULL,
-                                          (void*)(taBase*)targ_typ->GetInstance());
+          (void*)(taBase*)targ_typ->GetInstance());
       item->setData(0, iDialogItemChooser::NewFunRole, true); // flag to dialog to make
       item->setData(1, Qt::DisplayRole, targ_typ->name);
     }
     BuildChooser_0(ic, targ_typ, NULL);
     ic->items->sortItems(0, Qt::AscendingOrder);
     break;
+  }
   default: break; // shouldn't happen
   }
 }
