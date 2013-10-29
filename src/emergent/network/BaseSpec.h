@@ -104,6 +104,9 @@ public:
   virtual String  WhereUsed();
   // #BUTTON #USE_RVAL returns a list of objects where this spec is used
 
+  override taBase*      ChooseNew(taBase* origin);
+  override bool         HasChooseNew() { return false; }
+
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(BaseSpec);

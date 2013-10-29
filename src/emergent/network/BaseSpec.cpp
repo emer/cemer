@@ -273,3 +273,11 @@ String BaseSpec::WhereUsed() {
   return rval;
 }
 
+taBase* BaseSpec::ChooseNew(taBase* origin) {
+  BaseSpec* spec = NULL;
+  BaseSpec_Group* spgp = GET_OWNER(origin, BaseSpec_Group);
+  if (spgp) {
+    spec = (BaseSpec*)spgp->New(1, this->GetTypeDef());
+  }
+  return spec;
+}
