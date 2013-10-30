@@ -1116,8 +1116,6 @@ void LeabraLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->cycle >= 0) && lay->hard_clamped)
     return;                     // don't do this during normal processing
 
-  if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
-
   if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
