@@ -274,10 +274,14 @@ String BaseSpec::WhereUsed() {
 }
 
 taBase* BaseSpec::ChooseNew(taBase* origin) {
-  BaseSpec* spec = NULL;
-  BaseSpec_Group* spgp = GET_OWNER(origin, BaseSpec_Group);
-  if (spgp) {
-    spec = (BaseSpec*)spgp->New(1, this->GetTypeDef());
+  BaseSpec* newSpec = NULL;
+
+  if (origin->GetTypeDef()->DerivesFrom(&TA_SpecPtr_impl)) {
+    SpecPtr_impl* sptr = (SpecPtr_impl*)origin;
+    BaseSpec_Group* spgp = sptr->GetSpecGroup();
+    if (spgp) {
+      newSpec = (BaseSpec*)spgp->New_gui(1, sptr->type);  // get the type not the instance because it might be set to NULL
+    }
   }
-  return spec;
+  return newSpec;
 }

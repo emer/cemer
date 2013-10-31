@@ -105,7 +105,7 @@ public:
   // #BUTTON #USE_RVAL returns a list of objects where this spec is used
 
   override taBase*      ChooseNew(taBase* origin);
-  override bool         HasChooseNew() { return false; }
+  override bool         HasChooseNew() { return true; }
 
   void	InitLinks();
   void	CutLinks();
