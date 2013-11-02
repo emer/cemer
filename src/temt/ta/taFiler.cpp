@@ -18,6 +18,7 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <taProject>
 
 #include <gzstream>
 
@@ -644,6 +645,16 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
   QList<QUrl> urls;
   taRootBase* root = tabMisc::root;
+  taProject* proj = NULL;
+  if(root->projects.size > 0) {
+    proj = root->projects.SafeEl(0);
+    if(proj) {
+      String crp = proj->GetClusterRunPath();
+      if(!crp.empty()) {
+        urls << QUrl::fromLocalFile(crp);
+      }
+    }
+  }
   for (int i=0; i<root->sidebar_paths.size; i++) {
     String sbp = root->sidebar_paths[i];
     if (sbp.empty()) continue;
@@ -723,7 +734,14 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
   // first persist the sidebars
   urls = fd->sidebarUrls();
-  for (int i=0; i<urls.count(); i++) {
+  int st_i = 0;
+  if(proj) {                    // don't save the CR: path
+    String crp = proj->GetClusterRunPath();
+    if(!crp.empty()) {
+      st_i++;
+    }
+  }
+  for (int i=st_i; i<urls.count(); i++) {
     String sbp = urls[i].toLocalFile();
     root->sidebar_paths.AddUnique(sbp); // save it!
   }
