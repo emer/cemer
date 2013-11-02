@@ -342,13 +342,13 @@ TypeDef* MTA::TypeAddUniqNameOld(const String& typ, TypeDef* td, TypeSpace* sp) 
   // don't add anything from type traits because it just has a bunch of horrible
   // template crap that nobody needs, and defines various things that interfere
   // with our own types
-  if(cur_fname.contains("type_traits")) {
+  if(sp == NULL) sp = GetTypeSpace(td);
+  if(sp == &taMisc::types && cur_fname.contains("type_traits")) {
     // if(td->name == "type") {
     //   taMisc::Info("got evil type type in type_traits");
     // }
     td->name += "_type_traits";
   }
-  if(sp == NULL) sp = GetTypeSpace(td);
   TypeDef* rval = sp->AddUniqNameOld(td);
   if(rval == td) {
     TypeAdded(typ, sp, td);

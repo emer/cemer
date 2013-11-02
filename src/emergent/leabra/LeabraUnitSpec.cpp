@@ -524,11 +524,11 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
   u->net_delta = 0.0f;
   u->g_i_raw = 0.0f;
   u->g_i_delta = 0.0f;
-  u->g_i_syn = 0.0f;
+  // u->g_i_syn = 0.0f;
   //  u->net_ctxt = 0.0f;
 
-  u->net = 0.0f;
-  u->gc.i = 0.0f;
+  // u->net = 0.0f;
+  // u->gc.i = 0.0f;
 
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -543,6 +543,10 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   LeabraUnit* lu = (LeabraUnit*)u;
 
   Init_Netins(lu, (LeabraNetwork*)net);
+
+  lu->net = 0.0f;               // these are not done in netins -- need to nuke
+  lu->g_i_syn = 0.0f;
+  lu->gc.i = 0.0f;
 
   if(hyst.init) {
     lu->vcb.hyst = lu->vcb.g_h = 0.0f;
@@ -610,6 +614,8 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
 //   u->avg_m -= decay * (u->avg_m - act.avg_init);
   u->net -= decay * u->net;
   u->g_i_syn -= decay * u->g_i_syn;
+  u->gc.i -= decay * u->gc.i;   // not really needed but visually..
+
   if(hyst.on && !hyst.trl)
     u->vcb.hyst -= decay * u->vcb.hyst;
   if(acc.on && !acc.trl)
