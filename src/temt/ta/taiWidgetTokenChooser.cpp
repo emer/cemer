@@ -207,8 +207,10 @@ int taiWidgetTokenChooser::columnCount(int view) const {
 
 void taiWidgetTokenChooser::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 {//NOTE: this routine is needed in case clients call the old GetImage renamed to GetImageScoped
-  scope_ref = NULL;
-  scope_typ = NULL;
+//  jar 11/1/13 fix for bug 1630 - don't  reset the scope_ref
+//  commenting out in case there is a side effect I didn't notice - If nothing shows up I'll delete the code
+//  scope_ref = NULL;
+//  scope_typ = NULL;
   inherited::GetImage(cur_sel_, targ_typ_);
 }
 
