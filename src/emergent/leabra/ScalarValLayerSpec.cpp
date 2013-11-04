@@ -433,21 +433,6 @@ void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
     LabelUnits(lay, net);
 }
 
-void ScalarValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay,
-                                                Layer::AccessMode acc_md, int gpidx,
-                                                AvgMaxVals& vals, ta_memb_ptr mb_off) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  vals.InitVals();
-  for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    if(i == 0) { continue; } // skip first unit
-    float val = *((float*)MemberDef::GetOff_static((void*)u, 0, mb_off));
-    vals.UpdtVals(val, i);
-  }
-  vals.CalcAvg(nunits);
-}
-
 void ScalarValLayerSpec::ClampValue_ugp(LeabraLayer* lay,
                                         Layer::AccessMode acc_md, int gpidx,
                                         LeabraNetwork*, float rescale) {
@@ -567,6 +552,9 @@ void ScalarValLayerSpec::ResetAfterClamp_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits > 2) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+    u->net = 0.0f;
+    u->gc.i = 0.0f;
+    u->g_i_syn = 0.0f;
     u->act = 0.0f;              // must reset so it doesn't contribute!
     u->act_lrn = 0.0f;
     u->act_eq = u->act_nd = u->ext;     // avoid clamp_range!
@@ -610,6 +598,10 @@ void ScalarValLayerSpec::Settle_Init_Unit0_ugp(LeabraLayer* lay,
   if(nunits > 2) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
     u->Settle_Init_Unit(net);
+    // these are not cleared for the first unit anymore
+    u->net = 0.0f;
+    u->g_i_syn = 0.0f;
+    u->gc.i = 0.0f;
   }
 }
 

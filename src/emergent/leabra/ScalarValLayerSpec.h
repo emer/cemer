@@ -192,11 +192,7 @@ public:
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-
-  // don't include first unit in averages..
-  override void Compute_AvgMaxVals_ugp(LeabraLayer* lay,
-				       Layer::AccessMode acc_md, int gpidx,
-				       AvgMaxVals& vals, ta_memb_ptr mb_off);
+  override int  LayerStatsStartUnitIdx() { return 1; } // skip first unit
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);

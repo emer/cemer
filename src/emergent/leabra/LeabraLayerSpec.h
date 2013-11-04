@@ -493,6 +493,9 @@ public:
   // #CAT_Statistic compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc
   // this does all the indented functions below
 
+    virtual int  LayerStatsStartUnitIdx() { return 0; }
+    // #IGNORE unit index to start on for computing layer statistics -- ScalarValLayers set this to 1
+
     virtual void Compute_AvgMaxVals_ugp(LeabraLayer* lay, 
 					Layer::AccessMode acc_md, int gpidx,
 					AvgMaxVals& vals, ta_memb_ptr mb_off);
