@@ -1233,10 +1233,17 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       int xp = (int)((pt[0] * geom_x));
       int yp = (int)((pt[1] * geom_y));
 
-      float val_to_set = 0.0f;
+      float val_to_set = 1.0f;
+      float val_to_unset = 0.0f;
       if(tgv->click_vals) {
-        if(left_but) val_to_set = tgv->lmb_val;
-        else val_to_set = tgv->mmb_val;
+        if(left_but) {
+          val_to_set = tgv->lmb_val;
+          val_to_unset = tgv->mmb_val;
+        }
+        else {
+          val_to_set = tgv->mmb_val;
+          val_to_unset = tgv->lmb_val;
+        }
         taProject* proj = (taProject*)tgv->GetOwner(&TA_taProject);
         // save undo state!
         if(proj && dcol) {
@@ -1249,18 +1256,24 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
         int ymax = matrix->dim(0);      // assumes odd_y
         int yeff = yp;
         if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = ymax-1-yp;
-        if(tgv->click_vals)
-          matrix->SetFmVar(val_to_set, yeff);
-        else
-          tgv->last_sel_val = matrix->SafeElAsFloat(yeff);
+        tgv->last_sel_val = matrix->SafeElAsFloat(yeff);
+        if(tgv->click_vals) {
+          if(tgv->last_sel_val == val_to_set)
+            matrix->SetFmVar(val_to_unset, yeff);
+          else
+            matrix->SetFmVar(val_to_set, yeff);
+        }
       }
       if(matrix->dims() == 2) {
         int yeff = yp;
         if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = geom_y-1-yp;
-        if(tgv->click_vals)
-          matrix->SetFmVar(val_to_set, xp, yeff);
-        else
-          tgv->last_sel_val = matrix->SafeElAsFloat(xp, yeff);
+        tgv->last_sel_val = matrix->SafeElAsFloat(xp, yeff);
+        if(tgv->click_vals) {
+          if(tgv->last_sel_val == val_to_set)
+            matrix->SetFmVar(val_to_unset, xp, yeff);
+          else
+            matrix->SetFmVar(val_to_set, xp, yeff);
+        }
       }
       if(matrix->dims() == 4) {
         yp--;                   // yp has 1 extra in 4d by some reason.. spacing..
@@ -1274,10 +1287,13 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
         if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) {
           iyeff = ymax-1-iyp;     oyeff = yymax-1-oyp;
         }
-        if(tgv->click_vals)
-          matrix->SetFmVar(val_to_set, ixp, iyeff, oxp, oyeff);
-        else
-          tgv->last_sel_val = matrix->SafeElAsFloat(ixp, iyeff, oxp, oyeff);
+        tgv->last_sel_val = matrix->SafeElAsFloat(ixp, iyeff, oxp, oyeff);
+        if(tgv->click_vals) {
+          if(tgv->last_sel_val == val_to_set)
+            matrix->SetFmVar(val_to_unset, ixp, iyeff, oxp, oyeff);
+          else
+            matrix->SetFmVar(val_to_set, ixp, iyeff, oxp, oyeff);
+        }
       }
       if(tgv->click_vals) {
         // this causes a crash
