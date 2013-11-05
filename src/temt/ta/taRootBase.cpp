@@ -894,6 +894,9 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     milestone |= SM_QAPP_OBJ;
   }
   QCoreApplication::instance()->setApplicationName(taMisc::app_name);
+  // this is an essential fix for having an OpenGL widget along with other widgets
+  // https://bugreports.qt-project.org/browse/QTBUG-28816
+  QCoreApplication::instance()->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
   // probably as good a place as any to init ODE
   dInitODE();
   return true;

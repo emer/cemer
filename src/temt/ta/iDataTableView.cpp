@@ -48,9 +48,9 @@ void iDataTableView::currentChanged(const QModelIndex& current, const QModelInde
 }
 
 void iDataTableView::dataChanged(const QModelIndex& topLeft,
-    const QModelIndex & bottomRight
+                                 const QModelIndex & bottomRight
 #if (QT_VERSION >= 0x050000)
-    const QVector<int> &roles
+                                 , const QVector<int> &roles
 #endif
 )
 {

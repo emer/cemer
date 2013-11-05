@@ -24,8 +24,13 @@
 iDataTableRowHeaderView::iDataTableRowHeaderView(QWidget* parent)
 :inherited(Qt::Vertical, parent) {
 
+#if (QT_VERSION >= 0x050000)
+  this->setSectionsClickable(true);
+  this->setSectionsMovable(true);
+#else
   this->setClickable(true);
   this->setMovable(true);
+#endif
   this->setSelectionMode(QAbstractItemView::ContiguousSelection);
   this->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->setContextMenuPolicy(Qt::CustomContextMenu);
