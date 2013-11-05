@@ -188,18 +188,10 @@ void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
           if(ic.WrapClip(wrap, input_size.retina_size)) {
             if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
           }
-          TestError(!dog_specs.net_filter.InRange(xf+dog_specs.filter_width,
-                                                  yf+dog_specs.filter_width),   
-                    "DOGthrd", "xf range");
-          TestError(!dog_img->InRange(ic.x, ic.y), "DOGthrd",
-                    "ic range");
-            
           cnv_sum += dog_specs.FilterPoint(xf, yf, dog_img->FastEl2d(ic.x, ic.y));
         }
       }
     }
-    TestError(!cur_out->InRange(1, chan, dc.x, dc.y), "DOGthrd",
-              "cur_out rnage");
     if(cnv_sum >= 0.0f) {
       cur_out->FastEl4d(0, chan, dc.x, dc.y) = cnv_sum; // feat x = 0 = on
       cur_out->FastEl4d(1, chan, dc.x, dc.y) = 0.0f;      // feat x = 1 = off
