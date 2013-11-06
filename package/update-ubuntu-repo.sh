@@ -30,7 +30,7 @@ if [ -n "$1" ]; then
 fi
 
 for REPO in $REPOS; do
-  for DIST in lucid maverick natty oneiric precise quantal raring; do
+  for DIST in lucid maverick natty oneiric precise quantal raring saucy; do
     for ARCH in i386 amd64; do
       echo "Copying ${ARCH} files ..."
       SUBDIR=dists/${DIST}/${REPO}/binary-${ARCH}
