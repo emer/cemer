@@ -48,10 +48,12 @@ public:
   override bool         BrowserExpandAll();
   override bool         BrowserCollapseAll();
 
+  override bool         RemoveIdx(int idx);   // override to delete brk_pt before ProgEl is removed
+
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 protected:
-  override void UpdateAfterEdit_impl();
+  override void         UpdateAfterEdit_impl();
 private:
   void  Copy_(const ProgEl_List& cp);
   void  Initialize();

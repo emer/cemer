@@ -738,6 +738,8 @@ set(ta_HEADS_MAKETA_NOMOC
   T3Translate2Translator.h
   SoScrollBar.h
   ProgElChoiceDlg.h
+  ProgBrkPt.h
+  ProgBrkPt_List.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -1359,6 +1361,8 @@ set(ta_SRCS_MAKETA
   ProgObjList.cpp
   Program_List.cpp
   Program.cpp
+  ProgBrkPt.cpp
+  ProgBrkPt_List.cpp
 
   ProgLibEl.cpp
   ProgLibEl_List.cpp

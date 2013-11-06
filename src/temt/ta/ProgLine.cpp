@@ -16,11 +16,19 @@
 #include "ProgLine.h"
 #include <ProgEl>
 #include <Program>
+#include <ProgBrkPt_List>
 
 #include <taMisc>
 
 #include <css_machine.h>
 
+void ProgLine::CutLinks() {
+  inherited::CutLinks();
+}
+
+void ProgLine::InitLinks() {
+  inherited::InitLinks();
+}
 
 void ProgLine::Initialize() {
   flags = PL_NONE;
@@ -43,7 +51,8 @@ const String ProgLine::CodeLineNo() {
 
 void ProgLine::SetBreakpoint() {
   Program* prog = GET_MY_OWNER(Program);
-  if(!prog) return;
+  if(!prog)
+    return;
   SetPLineFlag(ProgLine::BREAKPOINT);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
@@ -55,7 +64,8 @@ void ProgLine::SetBreakpoint() {
 
 void ProgLine::ClearBreakpoint() {
   Program* prog = GET_MY_OWNER(Program);
-  if(!prog) return;
+  if(!prog)
+    return;
   ClearPLineFlag(ProgLine::BREAKPOINT);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();

@@ -30,6 +30,7 @@
 #include <ProgEl_List>
 #include <Program_List>
 #include <ProgLine_List>
+#include <ProgBrkPt_List>
 #include <String_Array>
 
 // declare all other types mentioned but not required to include:
@@ -143,6 +144,8 @@ public:
   // global variables that are parameters (arguments) for callers
   ProgVar_List          vars;
   // global variables accessible outside and inside script
+  ProgBrkPt_List        brk_pts;
+    // a list of breakpoints each associated with a ProgLine where the program will be stopped if the ProgBrkPt is enabled
   Function_List         functions;
   // function code (for defining subroutines): goes at top of script and can be called from init or prog code
   ProgEl_List           init_code;
@@ -177,8 +180,8 @@ public:
   // #MIN_1 how many steps to take when stepping at this program level (i.e., when this program name is clicked on the Step button of any other program) -- also set by the step button dynamically
   ProgLine_List         script_list;
   // #HIDDEN #NO_SAVE list of the script lines with important meta-data etc -- this is official source of script listing
-
-  ProgEl_List           load_code; // #HIDDEN #NO_SAVE #OBSOLETE obsolete and will be removed later -- only here to elminate load warnings
+  ProgEl_List           load_code;
+  // #HIDDEN #NO_SAVE #OBSOLETE obsolete and will be removed later -- only here to elminate load warnings
 
   inline void           SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // #CAT_Flags set flag state on

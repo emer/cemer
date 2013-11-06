@@ -90,6 +90,7 @@ void Program::InitLinks() {
   taBase::Own(sub_progs_step, this);
   taBase::Own(step_prog, this);
   taBase::Own(script_list, this);
+  taBase::Own(brk_pts, this);
 
   taBase::Own(load_code, this); // todo: obsolete, remove
 
@@ -126,6 +127,7 @@ void Program::CutLinks() {
   args.CutLinks();
   types.CutLinks();
   objs.CutLinks();
+  brk_pts.CutLinks();
   prog_gp = NULL;
   inherited::CutLinks();
 }
@@ -146,6 +148,7 @@ void Program::Reset() {
   args.Reset();
   types.Reset();
   objs.Reset();
+  brk_pts.Reset();
 }
 
 void Program::Copy_(const Program& cp) {
@@ -172,6 +175,7 @@ void Program::Copy_(const Program& cp) {
   sub_progs_step.RemoveAll();
   sub_progs_all.RemoveAll();
   sub_progs_dir.RemoveAll();
+  brk_pts.RemoveAll();  // don't copy breakpoints
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
@@ -1000,9 +1004,11 @@ String Program::GetProgCodeInfo(int line_no, const String& code_str) {
 }
 
 void Program::ClearAllBreakpoints() {
-  if(!script) return;
+  if(!script)
+    return;
   script_list.ClearAllBreakpoints();
   script->DelAllBreaks();
+  brk_pts.Reset();
 }
 
 void Program::SetAllBreakpoints() {
@@ -1047,6 +1053,7 @@ void Program::SetBreakpoint_impl(ProgEl* pel) {
   ProgLine* pl = script_list.FastEl(start_ln);
   CmdShell();                 // should be using cmd shell if setting breakpoints
   script->SetBreak(start_ln);
+  brk_pts.AddBrkPt(pel);  // add a brk_pt object to the list of breakpoints - used for display/enable/disable gui
   DebugInfo("setting breakpoint to line:", String(start_ln), pl->code);
   String fh;
   script->PrintBreaks(fh);               // debugging help output
@@ -1058,6 +1065,7 @@ void Program::ClearBreakpoint_impl(ProgEl* pel) {
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   script->DelBreak(start_ln);
+  brk_pts.DeleteBrkPt(pel);
 }
 
 bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
