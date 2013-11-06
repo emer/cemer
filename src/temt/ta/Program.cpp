@@ -1071,8 +1071,12 @@ void Program::ClearBreakpoint_impl(ProgEl* pel) {
 bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
   end_ln = -1;
   start_ln = script_list.FindProgEl(pel, false); // NOT go in reverse
-  if(TestError((start_ln < 1 || !script), "ScriptLinesEl", "Program element was not found in listing -- you may need to press Init or Compile first to generate and compile code"))
-    return false;
+  if(start_ln < 1 || !script) {
+    Compile();
+    start_ln = script_list.FindProgEl(pel, false); // NOT go in reverse
+    if(start_ln < 1 || !script) // check again after compile
+      return false;
+  }
   // search forward to find last line with this guy
   end_ln = start_ln;
   taBase* lprog;
