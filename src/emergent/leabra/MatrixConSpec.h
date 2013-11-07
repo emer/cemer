@@ -80,7 +80,7 @@ public:
       const int sz = cg->size;
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
+        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // signal for gating for this stripe
         C_Compute_dWt_Matrix_Trace(dwts[i], ru->act_mid, sacts[i]);
       }
     }
@@ -88,7 +88,7 @@ public:
       const int sz = cg->size;
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(ru->misc_1 == 0.0f) continue; // signal for gating for this stripe
+        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // signal for gating for this stripe
         C_Compute_dWt_Matrix_LvDa(dwts[i], ru->dav, ru->act_mid, sacts[i]);
       }
     }

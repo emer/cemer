@@ -507,6 +507,8 @@ void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
   lu->vcb.acc = lu->vcb.g_a = 0.0f;
   lu->vcb.acc_on = false;
 
+  lu->ClearUnitFlag(Unit::LEARN);
+
   Init_ActAvg(lu, (LeabraNetwork*)net);
 }
 
@@ -696,6 +698,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
   DecayState(u, net, ls->decay.event);
   u->dav = 0.0f;
+  u->ClearUnitFlag(Unit::LEARN);
 }
 
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnit* u, LeabraNetwork* net) {

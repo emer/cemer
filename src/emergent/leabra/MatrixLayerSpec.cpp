@@ -394,7 +394,7 @@ void MatrixLayerSpec::Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
     if(u->lesioned()) continue;
     u->act_mid = 0.0f;
     u->act_lrn = u->act = u->act_nd = u->act_eq = 0.0f;
-    u->misc_1 = 0.0f;           // signal of non gating
+    u->ClearUnitFlag(Unit::LEARN);           // signal of non gating
     u->da = 0.0f;
   }
 }
@@ -407,7 +407,7 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_mid = u->act_eq;
-    u->misc_1 = 1.0f;           // signal of gating
+    u->SetUnitFlag(Unit::LEARN);           // signal of non gating
 
     // now save the sending unit activations at time of gating
     for(int g=0; g<u->recv.size; g++) {

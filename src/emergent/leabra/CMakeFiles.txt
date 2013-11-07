@@ -40,6 +40,7 @@ set(leabra_HEADS_MAKETA
 
   LeabraWizard.h
 
+  LeabraTICtxtLayerSpec.h
   LeabraTICtxtConSpec.h
   MarkerConSpec.h
   XCalSRAvgConSpec.h
@@ -109,8 +110,16 @@ set(leabra_HEADS_MAKETA
   PVLVDaLayerSpec.h
   PVLVTonicDaLayerSpec.h
 
+  LearnDriverLayerSpec.h
+  LearnFlagDeltaConSpec.h
+  PPTgLayerSpec.h
+    VTALayerSpec.h
+  PPTgUnitSpec.h
+  LHbRMTgUnitSpec.h
+
   PBWMUnGpData.h
   SNrThalLayerSpec.h
+  MatrixCon.h
   MatrixConSpec.h
   MatrixBiasSpec.h
   MatrixUnitSpec.h
@@ -136,8 +145,6 @@ set(leabra_HEADS_MAKETA
   PFCConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
-  LeabraTICtxtLayerSpec.h
-  MatrixCon.h
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -183,7 +190,9 @@ set(leabra_SRCS
 
   LeabraWizard.cpp
 
+  LeabraTICtxtLayerSpec.cpp
   LeabraTICtxtConSpec.cpp
+
   MarkerConSpec.cpp
   XCalSRAvgConSpec.cpp
   TrialSynDepCon.cpp
@@ -252,8 +261,16 @@ set(leabra_SRCS
   PVLVDaLayerSpec.cpp
   PVLVTonicDaLayerSpec.cpp
 
+  LearnDriverLayerSpec.cpp
+  LearnFlagDeltaConSpec.cpp
+  PPTgLayerSpec.cpp
+    VTALayerSpec.cpp
+  PPTgUnitSpec.cpp
+  LHbRMTgUnitSpec.cpp
+
   PBWMUnGpData.cpp
   SNrThalLayerSpec.cpp
+  MatrixCon.cpp
   MatrixConSpec.cpp
   MatrixBiasSpec.cpp
   MatrixUnitSpec.cpp
@@ -279,6 +296,4 @@ set(leabra_SRCS
   PFCConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
-  LeabraTICtxtLayerSpec.cpp
-  MatrixCon.cpp
 )

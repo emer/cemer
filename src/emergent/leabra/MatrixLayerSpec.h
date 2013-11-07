@@ -114,11 +114,11 @@ public:
   virtual void Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
                                            LeabraNetwork* net);
-  // set the activation state to zero and misc_1 flag to zero for subsequent learning -- for specific unit group (stripe) -- for stripes that did not gate at all this time around (enforces strong credit assignment)
+  // set the activation state to zero and clear LEARN flag to zero for subsequent learning -- for specific unit group (stripe) -- for stripes that did not gate at all this time around (enforces strong credit assignment)
   virtual void Compute_GoGatingAct_ugp(LeabraLayer* lay,
                                        Layer::AccessMode acc_md, int gpidx,
                                        LeabraNetwork* net);
-  // save acts to act_mid and set the misc_1 flag to 1.0 for subsequent learning -- for specific unit group (stripe) -- for stripes that did gate this time around
+  // save acts to act_mid and set the LEARN flag for subsequent learning -- for specific unit group (stripe) -- for stripes that did gate this time around
   virtual void Compute_ShowGatingAct_ugp(LeabraLayer* lay,
                                          Layer::AccessMode acc_md, int gpidx,
                                          LeabraNetwork* net);
