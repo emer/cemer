@@ -55,6 +55,7 @@ public: //
   enum UnitFlags { // #BITS misc flags for units
     UF_NONE             = 0,    // #NO_BIT no flags
     LESIONED            = 0x0001, // unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
+    LEARN               = 0x0002, // this unit is enabled to learn -- used by algorithms that have specific learning enabling conditions
   };
 
   UnitFlags     flags;
