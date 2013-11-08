@@ -19,6 +19,7 @@
 #include <LeabraTdUnit>
 #include <LeabraTdUnitSpec>
 #include <TDRewIntegLayerSpec>
+#include <OneToOnePrjnSpec>
 
 #include <taMisc>
 
@@ -92,13 +93,22 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)
         && fmlay->spec.SPtr()->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
-      if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
-                    "requires one recv projection with at least one unit!")) {
-        return false;
+      // if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
+      //                    "requires one recv projection with at least one unit!")) {
+      //   return false;
+      // }
+      if(recv_gp->size <= 0) {
+        OneToOnePrjnSpec* pspec = (OneToOnePrjnSpec*)recv_gp->prjn->spec.SPtr();
+        pspec->send_start = 1;
+        if(lay->CheckError(true, quiet, rval,
+                           "requires the OneToOnePrjnSpec to have send_start = 1 -- I just set this for you, but you will have to re-build the network and re-init -- save project after this change")) {
+        }
       }
-      if(lay->CheckError(!recv_gp->Un(0,net)->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
-                    "I need to receive from a LeabraTdUnit!")) {
-        return false;
+      else {
+        if(lay->CheckError(!recv_gp->Un(0,net)->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
+                           "I need to receive from a LeabraTdUnit!")) {
+          return false;
+        }
       }
     }
   }
@@ -164,15 +174,6 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
         ((LeabraTdUnit*)send_gp->Un(j,net))->dav = u->act;
       }
     }
-  }
-}
-
-void TdLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
-  // that's it: don't do any processing on this layer: set all idx to 0
-  lay->units_flat_idx = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-    if(un->lesioned()) continue;
-    un->flat_idx = 0;
   }
 }
 

@@ -36,7 +36,6 @@ public:
   virtual void	Send_Td(LeabraLayer* lay, LeabraNetwork* net);
   // send the td value to sending projections: every cycle
 
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
 

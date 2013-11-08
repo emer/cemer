@@ -17,6 +17,8 @@
 
 #include <LeabraNetwork>
 
+#include <taMisc>
+
 void LHbRMTgUnitSpec::Initialize() {
 
 }
@@ -24,6 +26,85 @@ void LHbRMTgUnitSpec::Initialize() {
 void LHbRMTgUnitSpec::Defaults_init() {
 
 }
+
+void LHbRMTgUnitSpec::HelpConfig() {
+  String help = "LHbRMTgUnitSpec (DA value) Computation:\n\
+ - Computes DA dips based on inputs from VS Matrix, Patch Direct and Indirect, and PV Pos & Neg.\n\
+ \nLHbRMTgUnitSpec Configuration:\n\
+ - Use the Wizard gdPVLV button to automatically configure layers.\n\
+ - Recv cons should be standard, with no learning";
+  taMisc::Confirm(help);
+}
+
+bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+  LeabraUnit* u = (LeabraUnit*)un;
+  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+
+//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  bool rval = true;
+
+  bool patch_dir = false;
+  bool patch_ind = false;
+  bool matrix_dir = false;
+  bool matrix_ind = false;
+  bool pv_pos = false;
+  bool pv_neg = false;
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+
+    if(from->name.contains("Patch")) {
+      if(from->name.contains("Ind")) {
+        patch_ind = true;
+      }
+      else {
+        patch_dir = true;
+      }
+    }
+    else if(from->name.contains("Matrix")) {
+      if(from->name.contains("Ind") || from->name.contains("NoGo")) {
+        matrix_ind = true;
+      }
+      else {
+        matrix_dir = true;
+      }
+    }
+    else if(from->name.contains("PosPV")) {
+      pv_pos = true;
+    }
+    else if(from->name.contains("NegPV")) {
+      pv_neg = true;
+    }
+  }
+
+  if(u->CheckError(!patch_dir, quiet, rval,
+                   "did not find VS Patch Direct recv projection -- searches for Patch and *not* Ind in layer name")) {
+    rval = false;
+  }
+  if(u->CheckError(!patch_ind, quiet, rval,
+                   "did not find VS Patch Indirect recv projection -- searches for Patch and Ind in layer name")) {
+    rval = false;
+  }
+  if(u->CheckError(!matrix_dir, quiet, rval,
+                   "did not find VS Matrix Direct recv projection -- searches for Matrix and *not* Ind or NoGo in layer name")) {
+    rval = false;
+  }
+  if(u->CheckError(!matrix_ind, quiet, rval,
+                   "did not find VS Matrix Indirect recv projection -- searches for Matrix and Ind or NoGo in layer name")) {
+    rval = false;
+  }
+  if(u->CheckError(!pv_pos, quiet, rval,
+                   "did not find PV Positive recv projection -- searches for PosPV in layer name")) {
+    rval = false;
+  }
+  if(u->CheckError(!pv_neg, quiet, rval,
+                   "did not find PV Negative recv projection -- searches for NegPV in layer name")) {
+    rval = false;
+  }
+
+  return rval;
+}
+
 
 void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
@@ -53,7 +134,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
         }
       }
       else if(from->name.contains("Matrix")) {
-        if(from->name.contains("Ind")) {
+        if(from->name.contains("Ind") || from->name.contains("NoGo")) {
           matrix_ind += recv_gp->net_raw;
         }
         else {

@@ -20,7 +20,6 @@
 #include <PViLayerSpec>
 #include <LViLayerSpec>
 #include <NVLayerSpec>
-#include <PVConSpec>
 #include <ExtRewLayerSpec>
 #include <OneToOnePrjnSpec>
 
@@ -53,7 +52,7 @@ void PVLVDaLayerSpec::HelpConfig() {
  - Computes DA value based on inputs from PVLV layers.\n\
  - No Learning\n\
  \nPVLVDaLayerSpec Configuration:\n\
- - Use the Wizard BG_PFC button to automatically configure BG_PFC layers.\n\
+ - Use the Wizard PVLV or PBWM button to automatically configure layers.\n\
  - Recv cons marked with a MarkerConSpec from PVLV\n\
  - This layer must be after recv layers in list of layers\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
@@ -137,18 +136,18 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   if(lay->CheckError(!lve_lay, quiet, rval,
                 "did not find LVe layer to get Da from!")) {
-    return false;
+    rval = false;
   }
   if(lay->CheckError(!lvi_lay, quiet, rval,
                 "did not find LVi layer to get Da from!")) {
-    return false;
+    rval = false;
   }
   if(lay->CheckError(!pvi_lay, quiet, rval,
                 "did not find PVi layer to get Da from!")) {
-    return false;
+    rval = false;
   }
 
-  return true;
+  return rval;
 }
 
 void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {

@@ -32,6 +32,9 @@ public:
 
   override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
 
+  override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
+  void  HelpConfig();   // #BUTTON get help message for configuring this spec
+
   TA_SIMPLE_BASEFUNS(LHbRMTgUnitSpec);
 protected:
   SPEC_DEFAULTS;

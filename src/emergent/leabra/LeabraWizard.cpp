@@ -566,11 +566,13 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   if(tdrpsp == NULL || ersp == NULL || tdintsp == NULL || tdsp == NULL) return false;
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
-  ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
+  OneToOnePrjnSpec* onetoone = (OneToOnePrjnSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
   if(fullprjn == NULL || onetoone == NULL) return false;
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
+
+  onetoone->send_start = 1;     // needed for new index based connections
 
   learn_cons->lmix.hebb = .01f; // .01 hebb on learn cons
 //   learn_cons->not_used_ok = true;
