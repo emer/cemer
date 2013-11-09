@@ -850,7 +850,15 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
+
+  // below attempt to get rid of VTAOneToOnePrjn warning message didn't work so abandoned
+  //OneToOnePrjnSpec* onetoone = (OneToOnePrjnSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
+  ////
+  //ProjectionSpec* vtaonetoone = (ProjectionSpec*)prjns->FindMakeSpec("VTAOneToOne", &TA_VTAOneToOnePrjnSpec);
+  //OneToOnePrjnSpec* vtaonetoone = (OneToOnePrjnSpec*)onetoone->FindMakeChild("VTAOneToOne", &TA_OneToOnePrjnSpec);
+  ////
   if(fullprjn == NULL || onetoone == NULL) return false;
+  //if(fullprjn == NULL || onetoone == NULL || vtaonetoone == NULL) return false; // NEW GUY
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
@@ -906,6 +914,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   lvisp->SetUnique("inhib", false);
 
   pv_units->SetUnique("g_bar", true);
+
+  //vtaonetoone->send_start = 1; // this scheme compiled, but didn't get rid of error message so abandoning
 
   // setup localist values!
   ScalarValLayerSpec* valspecs[6] = {pvesp, pvisp, lvesp, lvisp, pvrsp, nvsp};
@@ -1093,6 +1103,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     for(i=0;i<other_lays.size;i++) {
       Layer* ol = (Layer*)other_lays[i];
       net->FindMakePrjn(ol, vta, fullprjn, marker_cons);
+      //net->FindMakePrjn(ol, vta, vtaonetoone, marker_cons);
     }
   }
 
@@ -1376,8 +1387,7 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
 }
 
 bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-			int out_stripes, bool one_snr, bool make_deep_pfc, 
-                        bool topo_prjns) {
+			int out_stripes, bool one_snr, bool make_deep_pfc, bool topo_prjns) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -1407,6 +1417,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   net->ti_mode = true;
   net->RemoveUnits();
+
+  // TODO: Note below gets rid of LeabraWizard PBWM CHECK ERROR message -- works and seems safe to do
+  net->no_plus_test = false;
 
   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
@@ -1449,6 +1462,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraLayer* pfc_out = NULL;
   LeabraLayer* pfc_in = NULL;
   LeabraLayer* pfc_mnt_d = NULL;
+  LeabraLayer* pfc_out_d = NULL;
   LeabraLayer* pfc_in_d = NULL;
 
   LeabraLayer* matrix_go_in = NULL;
@@ -1495,6 +1509,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_out = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer("Matrix_NoGo_out", NULL,
 								  matrix_new);
     pfc_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFC_out", NULL, pfc_new);
+    if(make_deep_pfc) {
+    	pfc_out_d = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_out", NULL, pfcd_new);
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1514,7 +1531,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
        && lay != matrix_go_in && lay != matrix_go_mnt && lay != matrix_go_out
        && lay != matrix_nogo_in && lay != matrix_nogo_mnt && lay != matrix_nogo_out
        && lay != pfc_mnt && lay != pfc_out && lay != pfc_in
-       && lay != pfc_mnt_d && lay != pfc_in_d) {
+       && lay != pfc_mnt_d && lay != pfc_in_d && pfc_out_d) {
       other_lays.Link(lay);
       lay->GetAbsPos(lpos);
       if(lpos.z == 0) lay->pos.z+=2; // nobody allowed in 0!
@@ -1683,21 +1700,17 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   topomaster->wt_range.max = 0.5f;
   topomaster->grad_type = TopoWtsPrjnSpec::GAUSSIAN;
   topomaster->gauss_sig = 0.1f;
-  topomaster->use_recv_gps = true;
-  topomaster->use_send_gps = true;
+  topomaster->index_by_gps_recv.on = false;
+  topomaster->index_by_gps_send.on = false;
 
-  topofminput->SetUnique("grad_x", true);
-  topofminput->grad_x = false;
-  topofminput->SetUnique("grad_y", true);
-  topofminput->grad_y = true;
-  topofminput->SetUnique("grad_y_grad_x", true);
-  topofminput->grad_y_grad_x = true;
-  topofminput->SetUnique("wrap", true);
-  topofminput->wrap = false;
-  topofminput->SetUnique("use_recv_gps", true);
-  topofminput->use_recv_gps = true;
-  topofminput->SetUnique("use_send_gps", true);
-  topofminput->use_send_gps = false;
+  topofminput->SetUnique("topo_pattern", true);
+  topofminput->topo_pattern = TopoWtsPrjnSpec::Y2X;
+  topofminput->SetUnique("wrap_reflect", true);
+  topofminput->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  topofminput->SetUnique("index_by_gps_recv", true);
+  topofminput->index_by_gps_recv.on = true;
+  topofminput->SetUnique("index_by_gps_send", true);
+  topofminput->index_by_gps_send.on = false;
   topofminput->SetUnique("custom_send_range", true);
   topofminput->custom_send_range = true;
   topofminput->SetUnique("send_range_start", true);
@@ -1705,62 +1718,43 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   topofminput->send_range_start.y = 0;
   topofminput->SetUnique("send_range_end", true);
   topofminput->send_range_end.x = -1;
-  // topofminput->send_range_end.y = (n_stripes / 2)-1; // unlikely to be generally useful..
   topofminput->SetUnique("custom_recv_range", true);
   topofminput->custom_recv_range = false;
 
-  topomatrixpfc_self->SetUnique("grad_x", true);
-  topomatrixpfc_self->grad_x = true;
-  topomatrixpfc_self->SetUnique("grad_x_grad_y", true);
-  topomatrixpfc_self->grad_x_grad_y = false;
-  topomatrixpfc_self->SetUnique("grad_y", true);
-  topomatrixpfc_self->grad_y = true; // this is key diff for self vs. other
-  topomatrixpfc_self->SetUnique("grad_y_grad_x", true);
-  topomatrixpfc_self->grad_y_grad_x = false;
-  topomatrixpfc_self->SetUnique("wrap", true);
-  topomatrixpfc_self->wrap = true;
-  topomatrixpfc_self->SetUnique("use_recv_gps", true);
-  topomatrixpfc_self->use_recv_gps = true;
-  topomatrixpfc_self->SetUnique("use_send_gps", true);
-  topomatrixpfc_self->use_send_gps = true;
+  topomatrixpfc_self->SetUnique("topo_pattern", true);
+  topomatrixpfc_self->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
+  topomatrixpfc_self->SetUnique("wrap_reflect", true);
+  topomatrixpfc_self->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  topomatrixpfc_self->SetUnique("index_by_gps_recv", true);
+  topomatrixpfc_self->index_by_gps_recv.on = true;
+  topomatrixpfc_self->SetUnique("index_by_gps_send", true);
+  topomatrixpfc_self->index_by_gps_send.on = true;
   topomatrixpfc_self->SetUnique("custom_send_range", true);
   topomatrixpfc_self->custom_send_range = false;
   topomatrixpfc_self->SetUnique("custom_recv_range", true);
   topomatrixpfc_self->custom_recv_range = false;
 
-  topomatrixpfc_other->SetUnique("grad_x", true);
-  topomatrixpfc_other->grad_x = true;
-  topomatrixpfc_other->SetUnique("grad_x_grad_y", true);
-  topomatrixpfc_other->grad_x_grad_y = false;
-  topomatrixpfc_other->SetUnique("grad_y", true);
-  topomatrixpfc_other->grad_y = false;
-  topomatrixpfc_other->SetUnique("grad_y_grad_x", true);
-  topomatrixpfc_other->grad_y_grad_x = false;
-  topomatrixpfc_other->SetUnique("wrap", true);
-  topomatrixpfc_other->wrap = true;
-  topomatrixpfc_other->SetUnique("use_recv_gps", true);
-  topomatrixpfc_other->use_recv_gps = true;
-  topomatrixpfc_other->SetUnique("use_send_gps", true);
-  topomatrixpfc_other->use_send_gps = true;
+  topomatrixpfc_other->SetUnique("topo_pattern", true);
+  topomatrixpfc_other->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
+  topomatrixpfc_other->SetUnique("wrap_reflect", true);
+  topomatrixpfc_other->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  topomatrixpfc_other->SetUnique("index_by_gps_recv", true);
+  topomatrixpfc_other->index_by_gps_recv.on = true;
+  topomatrixpfc_other->SetUnique("index_by_gps_send", true);
+  topomatrixpfc_other->index_by_gps_send.on = true;
   topomatrixpfc_other->SetUnique("custom_send_range", true);
   topomatrixpfc_other->custom_send_range = false;
   topomatrixpfc_other->SetUnique("custom_recv_range", true);
   topomatrixpfc_other->custom_recv_range = false;
 
-  intrapfctopo->SetUnique("grad_x", true);
-  intrapfctopo->grad_x = true;
-  intrapfctopo->SetUnique("grad_x_grad_y", true);
-  intrapfctopo->grad_x_grad_y = false;
-  intrapfctopo->SetUnique("grad_y", true);
-  intrapfctopo->grad_y = false;
-  intrapfctopo->SetUnique("grad_y_grad_x", true);
-  intrapfctopo->grad_y_grad_x = false;
-  intrapfctopo->SetUnique("wrap", true);
-  intrapfctopo->wrap = true;
-  intrapfctopo->SetUnique("use_recv_gps", true);
-  intrapfctopo->use_recv_gps = true;
-  intrapfctopo->SetUnique("use_send_gps", true);
-  intrapfctopo->use_send_gps = true;
+  intrapfctopo->SetUnique("topo_pattern", true);
+  intrapfctopo->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
+  intrapfctopo->SetUnique("wrap_reflect", true);
+  intrapfctopo->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  intrapfctopo->SetUnique("index_by_gps_recv", true);
+  intrapfctopo->index_by_gps_recv.on = true;
+  intrapfctopo->SetUnique("index_by_gps_send", true);
+  intrapfctopo->index_by_gps_send.on = true;
   intrapfctopo->SetUnique("custom_send_range", true);
   intrapfctopo->custom_send_range = false;
   intrapfctopo->SetUnique("custom_recv_range", true);
@@ -1806,6 +1800,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
 
     pfc_out->SetLayerSpec(pfc_out_sp);  pfc_out->SetUnitSpec(pfc_units);
+    if(pfc_out_d) {
+    	pfc_out_d->SetLayerSpec(pfc_deep_sp); pfc_out_d->SetUnitSpec(pfcd_units);
+    }
     if(snrthal_out) {
       snrthal_out->SetLayerSpec(snrthalsp_out); snrthal_out->SetUnitSpec(snrthal_units);
     }
@@ -2118,6 +2115,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(pfc_out->brain_area.empty()) {
       pfc_out->brain_area = ".*/.*/.*/.*/BA44";
     }
+    if(pfc_out_d && pfc_mnt_d->brain_area.empty()) {
+    	pfc_out_d->brain_area = ".*/.*/.*/.*/BA44";
+    }
   }
 
   int lay_spc = 2;
@@ -2254,6 +2254,14 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     }
     lay_set_geom(pfc_out, out_stripes);
   }
+  if(pfc_out_d) {
+  	if(pfcd_new) {
+  		pfc_out_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_out->disp_geom.y + lay_spc, pfc_z);
+  		pfc_out_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+  	}
+  	lay_set_geom(pfc_out_d, out_stripes);
+  }
+  pfc_st_x += pfc_out->disp_geom.x + lay_spc;
 
   ///////////////	Now SNrThal
 
@@ -2371,6 +2379,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   }
   return true;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 //              PBWM Defaults
