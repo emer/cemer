@@ -670,7 +670,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
     }
     break;
   case X2X_Y2Y : // x maps to x and y maps to y
-    if(fabsf(sre.x - srs.x) < 0.011f || fabsf(rre.x - rrs.x < 0.011f)) { // either send or recv has geom in x-dimension == 1 -> x2x dist is misleading
+    if(fabsf(sre.x - srs.x) < 0.011f || fabsf(rre.x - rrs.x) < 0.011f) { // either send or recv has geom in x-dimension == 1 -> x2x dist is misleading
       if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) { dist = fabsf(si_y - ri_y); } // dist in y2y mapping is governing
       else { dist = 0.0f; }	// both mappings have geom == 1 -> min dist (-> max wt)
     }
@@ -710,7 +710,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
     }
     else { // x2y mapping geom > 1
       //if(sre.y - srs.y == 0) { dist = taMath_float::euc_dist(si_x, 0.0f, ri_x, 0.0f); }
-      if(fabsf(sre.y - srs.y) < 0.011f || fabsf(rre.x - rrs.x < 0.011f)) { dist = fabsf(si_x - ri_y); } // ..all about x2y
+      if(fabsf(sre.y - srs.y) < 0.011f || fabsf(rre.x - rrs.x) < 0.011f) { dist = fabsf(si_x - ri_y); } // ..all about x2y
       else { dist = taMath_float::euc_dist(si_x, si_y, ri_y, ri_x); } // both x2y and y2x matter
     }
     // TODO: adapt the X2X_Y2Y to here...
