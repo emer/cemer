@@ -94,7 +94,6 @@ public:
     CUR_FM_FILE         = 0x0040, // #NO_SHOW #READ_ONLY current flag setting load object image features from Inventor (iv) object file
     GRAVITY_ON          = 0x0080, // does gravitational force affect this body?
     VERBOSE             = 0x0100, // where applicable output verbose messages for this body (e.g., in carousel, lists names of objects being loaded)
-
     INIT_WAS_ABS        = 0x1000, // #NO_BIT init vals were specified in abs coords last time (not rel)
   };
     //    COLLIDE_FM_FILE       = 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
@@ -219,19 +218,21 @@ public:
 
   virtual void  GetInitFromRel();
   // #CAT_ODE #EXPERT if init_rel is on, this will compute init values from relative values -- called automatically during Init() and UAE
+  virtual void  UpdateCurFromRel();
+  // #CAT_ODE #EXPERT if init_rel is on, this will compute current position and rotation from relative offsets compared to the rel_body current values -- see also VEObject::UpdateCurToRels
   virtual void  UpdateCurRotFmQuat();
   // #CAT_ODE #EXPERT update current rotation parameters from cur_quat read from ODE or whenever cur_quat might be set externally (e.g., gui dragging)
   virtual void  InitRotFromCur();
   // #CAT_ODE #EXPERT set init rotation parameters from current rotation
 
-  virtual void  Translate(float dx, float dy, float dz, bool init);
-  // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos
+  virtual void  Translate(float dx, float dy, float dz, bool init, bool abs_pos = false);
+  // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos -- if abs_pos then set directly to coordinates instead of adding them to current values
   virtual void  Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
-  virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
-  virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
+  virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init, bool abs_rot = false);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values
+  virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool init, bool abs_rot = false);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- if abs_rot then set directly to coordinates instead of adding them to current values
 
   virtual void  AddForce(float fx, float fy, float fz, bool torque=false, bool rel=false);
   // #BUTTON #CAT_ODE add given force vector to object at its center of mass -- if torque then it is a torque (angular force), otherwise linear -- if rel then force is relative to the objects own frame of reference (orientation) -- otherwise it is in the global reference frame

@@ -218,6 +218,28 @@ void VEBody::GetInitFromRel() {
   init_rot = tquat;
 }
 
+void VEBody::UpdateCurFromRel() {
+  if(!init_rel) return;
+  if(!rel_body) return;
+
+  cur_pos = rel_body->cur_pos + rel_pos;
+  // cur_lin_vel = rel_body->cur_lin_vel + rel_lin_vel;
+  // cur_ang_vel = rel_body->cur_ang_vel + rel_ang_vel;
+
+  // todo: rotation is much more complicated, and needs to be taken into account in the pos too..
+  // taQuaternion tquat = rel_body->cur_quat;
+  // tquat.Normalize();
+  // if(HasBodyFlag(EULER_ROT)) {
+  //   tquat.RotateEuler(rel_euler.x, rel_euler.y, rel_euler.z);
+  // }
+  // else {
+  //   tquat.RotateAxis(rel_rot.x, rel_rot.y, rel_rot.z, rel_rot.rot);
+  // }
+  // cur_quat = tquat;
+  // UpdateCurRotFmQuat();
+  UpdateAfterEdit();
+}
+
 void VEBody::Init() {
   VEWorld::last_to_set_ode = this;
 
@@ -492,18 +514,35 @@ void VEBody::UpdateCurRotFmQuat() {
   }
 }
 
-void VEBody::Translate(float dx, float dy, float dz, bool init) {
+void VEBody::Translate(float dx, float dy, float dz, bool init, bool abs_pos) {
   if(init) {
-    init_pos.x += dx;
-    init_pos.y += dy;
-    init_pos.z += dz;
+    if(abs_pos) {
+      init_pos.SetXYZ(dx,dy,dz);
+    }
+    else {
+      init_pos.x += dx;
+      init_pos.y += dy;
+      init_pos.z += dz;
+    }
   }
   else {
-    cur_pos.x += dx;
-    cur_pos.y += dy;
-    cur_pos.z += dz;
+    if(abs_pos) {
+      cur_pos.SetXYZ(dx,dy,dz);
+    }
+    else {
+      cur_pos.x += dx;
+      cur_pos.y += dy;
+      cur_pos.z += dz;
+    }
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
+  VEObject* obj = GetObject();
+  if(obj && obj->auto_updt_rels) {
+    if(init)
+      obj->UpdateInitToRels();
+    else
+      obj->UpdateCurToRels();
+  }
 }
 
 void VEBody::Scale(float sx, float sy, float sz) {
@@ -534,34 +573,68 @@ void VEBody::Scale(float sx, float sy, float sz) {
   UpdateAfterEdit();
 }
 
-void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init, bool abs_rot) {
   if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
     "RotateAxis", "must specify a non-zero axis!"))
     return;
 
   if(init) {
-    init_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
+    if(abs_rot) {
+      init_quat.FromAxisAngle(x_ax, y_ax, z_ax, rot);
+    }
+    else {
+      init_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
+    }
     init_quat.ToAxisAngle(init_rot);
     init_quat.ToEulerVec(init_euler);
   }
   else {
-    cur_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
+    if(abs_rot) {
+      cur_quat.FromAxisAngle(x_ax, y_ax, z_ax, rot);
+    }
+    else {
+      cur_quat.RotateAxis(x_ax, y_ax, z_ax, rot);
+    }
     UpdateCurRotFmQuat();
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
+  VEObject* obj = GetObject();
+  if(obj && obj->auto_updt_rels) {
+    if(init)
+      obj->UpdateInitToRels();
+    else
+      obj->UpdateCurToRels();
+  }
 }
 
-void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
+void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init, bool abs_rot) {
   if(init) {
-    init_quat.RotateEuler(euler_x, euler_y, euler_z);
+    if(abs_rot) {
+      init_quat.FromEuler(euler_x, euler_y, euler_z);
+    }
+    else {
+      init_quat.RotateEuler(euler_x, euler_y, euler_z);
+    }
     init_quat.ToAxisAngle(init_rot);
     init_quat.ToEulerVec(init_euler);
   }
   else {
-    cur_quat.RotateEuler(euler_x, euler_y, euler_z);
+    if(abs_rot) {
+      cur_quat.FromEuler(euler_x, euler_y, euler_z);
+    }
+    else {
+      cur_quat.RotateEuler(euler_x, euler_y, euler_z);
+    }
     UpdateCurRotFmQuat();
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
+  VEObject* obj = GetObject();
+  if(obj && obj->auto_updt_rels) {
+    if(init)
+      obj->UpdateInitToRels();
+    else
+      obj->UpdateCurToRels();
+  }
 }
 
 void VEBody::CopyColorFrom(VEBody* cpy_fm) {

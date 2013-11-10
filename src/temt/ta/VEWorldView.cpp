@@ -300,7 +300,11 @@ void VEWorldView::SetupCameras() {
   if(cam_light) {
     obv->setCamLightOn(true);
     obv->setCamLightDir(cam_light->dir_norm.x, cam_light->dir_norm.y,
-                            -cam_light->dir_norm.z);
+                        cam_light->dir_norm.z);
+
+    SoDirectionalLight* caml = obv->getCamLight();
+    caml->intensity = cam_light->light.intensity;
+    caml->color.setValue(cam_light->light.color.r, cam_light->light.color.g, cam_light->light.color.b);
   }
   else {
     obv->setCamLightOn(false);
@@ -461,31 +465,9 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   cam_switch->whichChild = -1;  // switch off for regular viewing!
 
-  if(TestError(!ok, "GetCameraImage", "offscreen render failed!")) return img;
-
-  img = cam_renderer->getImage();
-//   img = QImage(cur_img_size.x, cur_img_size.y, QImage::Format_RGB32);
-
-//   uchar* gbuf = (uchar*)cam_renderer->getBuffer();
-
-//   int idx = 0;
-//   if(vecam->color_cam) {
-//     for(int y=cur_img_size.y-1; y>= 0; y--) {
-//       for(int x=0;x<cur_img_size.x;x++) {
-//      int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
-//      img.setPixel(x,y, qRgb(r,g,b));
-//       }
-//     }
-//   }
-//   else {
-//     for(int y=cur_img_size.y-1; y>= 0; y--) {
-//       for(int x=0;x<cur_img_size.x;x++) {
-//      int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
-//      img.setPixel(x,y, qGray(r,g,b));
-//       }
-//     }
-//   }
-
+  if(ok) {
+    img = cam_renderer->getImage();
+  }
   return img;
 }
 

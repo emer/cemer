@@ -44,12 +44,13 @@ public:
   };
 
   String        desc;           // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
-  VEBody_Group  bodies;
-  VEJoint_Group joints;
-
   void*         space_id;       // #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry space (cast to a dSpaceID which is dxspace*)
   SpaceType     space_type;     // type of space to use
   MinMaxInt     hash_levels;    // #CONDSHOW_ON_space_type:HASH_SPACE minimum and maximum spacing levels in hash space
+  bool          auto_updt_rels; // #DEF_true automatically update relative body positions of other linked bodies whenever a body in this object is translated or rotated with Translate or Rotate functions
+  VEBody_Group  bodies;
+  VEJoint_Group joints;
+
 
   override String       GetDesc() const { return desc; }
 
@@ -73,6 +74,10 @@ public:
 
   virtual void  CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init
+  virtual void  UpdateInitToRels();
+  // #BUTTON #CAT_ODE go through all the bodies in this object that have rel_body and init_rel set, and compute initial position and rotation from relative offsets compared to the rel_body init values -- called automatically if auto_updt_rels is set
+  virtual void  UpdateCurToRels();
+  // #BUTTON #CAT_ODE go through all the bodies in this object that have rel_body and init_rel set, and compute current position and rotation from relative offsets compared to the rel_body current values -- called automatically if auto_updt_rels is set
   virtual void  Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos
   virtual void  Scale(float sx, float sy, float sz);

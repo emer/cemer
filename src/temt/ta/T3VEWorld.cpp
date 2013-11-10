@@ -31,6 +31,10 @@ T3VEWorld::T3VEWorld(T3DataView* world)
 {
   SO_NODE_CONSTRUCTOR(T3VEWorld);
 
+  camera_switch = new SoSwitch;
+  camera_switch->whichChild = -1; // no cameras!
+  insertChildBefore(topSeparator(), camera_switch, childNodes());
+
   sun_light = new SoDirectionalLight;
   insertChildBefore(topSeparator(), sun_light, childNodes());
   sun_light->on = false;
@@ -41,10 +45,6 @@ T3VEWorld::T3VEWorld(T3DataView* world)
 
   light_group = new SoGroup;
   insertChildBefore(topSeparator(), light_group, childNodes());
-
-  camera_switch = new SoSwitch;
-  camera_switch->whichChild = -1; // no cameras!
-  insertChildBefore(topSeparator(), camera_switch, childNodes());
 
   textures = new SoSwitch;
   textures->whichChild = -1;	// don't render here!

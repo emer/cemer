@@ -22,6 +22,7 @@ void VEObject::Initialize() {
   space_type = SIMPLE_SPACE;
   cur_space_type = SIMPLE_SPACE;
   hash_levels.min = -3;  hash_levels.max = 10;
+  auto_updt_rels = true;
 }
 void VEObject::Destroy() {
   CutLinks();
@@ -105,6 +106,14 @@ void VEObject::CurFromODE(bool updt_disp) {
 
 void VEObject::CurToInit() {
   bodies.CurToInit();
+}
+
+void VEObject::UpdateInitToRels() {
+  bodies.UpdateInitToRels();
+}
+
+void VEObject::UpdateCurToRels() {
+  bodies.UpdateCurToRels();
 }
 
 void VEObject::SnapPosToGrid(float grid_size, bool init_pos) {

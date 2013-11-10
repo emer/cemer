@@ -53,4 +53,4 @@ void VECamera::CurFromODE(bool updt_disp) {
   dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
 }
 
-// in ta_virtenv_qtso.cpp:  void VECamera::ConfigCamera(SoPerspectiveCamera* cam)
+// in VEWorldView.cpp:  void VECamera::ConfigCamera(SoPerspectiveCamera* cam)

@@ -21,6 +21,7 @@
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/nodes/SoCallback.h>
 
+#include <taMisc>
 
 ////////////////////////////////////////////////////////
 //		Offscreen Renderer
@@ -148,15 +149,34 @@ pre_render_cb(void * userdata, SoGLRenderAction * action)
   action->setRenderingIsRemote(FALSE);
 }
 
+#if (QT_VERSION >= 0x050000)
+void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFramebufferObjectFormat& fmt) {
+#else
 void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& fmt) {
-  if(pbuff) delete pbuff;
+#endif
+  if(pbuff) {
+    if(pbuff->height() == height && pbuff->width() == width) return;
+  }
   viewport.setWindowSize(width, height);
+  cache_context = SoGLCacheContextElement::getUniqueCacheContext(); // unique per pixel buffer object, 
+  this->renderaction->setCacheContext(cache_context);
+#if (QT_VERSION >= 0x050000)
+  pbuff = new QGLFramebufferObject(width, height, fmt);
+#else
   pbuff = new QGLPixelBuffer(width, height, fmt);
-  cache_context = SoGLCacheContextElement::getUniqueCacheContext(); // unique per pixel buffer object, just to be sure
+#endif
 }
 
 void SoOffscreenRendererQt::makeMultisampleBuffer(int width, int height, int samples) {
   if(samples < 0) samples = 4;
+#if (QT_VERSION >= 0x050000)
+  QGLFramebufferObjectFormat fmt;
+  if(samples > 0) {
+    fmt.setSamples(samples);
+  }
+  fmt.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+  makeBuffer(width, height, fmt);
+#else
   QGLFormat fmt;
   if(samples > 0) {
     fmt.setSampleBuffers(true);
@@ -166,6 +186,7 @@ void SoOffscreenRendererQt::makeMultisampleBuffer(int width, int height, int sam
     fmt.setSampleBuffers(false);
   }
   makeBuffer(width, height, fmt);
+#endif
 }
 
 
@@ -175,20 +196,43 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
 {
   const SbVec2s fullsize = this->viewport.getViewportSizePixels();
 
+  // oldcontext is used to restore the previous context id, in case
+  // the render action is not allocated by us.
+  const uint32_t oldcontext = this->renderaction->getCacheContext();
+
   if(!pbuff) {
     makeMultisampleBuffer(fullsize[0], fullsize[1]); // use default
   }
   else if(pbuff->width() != fullsize[0] || pbuff->height() != fullsize[1]) {
+    taMisc::DebugInfo("making new pbuff of right size");
     // get the size right!
     makeMultisampleBuffer(fullsize[0], fullsize[1]); // use default
   }
 
-  pbuff->makeCurrent();		// activate us!
-
-  // oldcontext is used to restore the previous context id, in case
-  // the render action is not allocated by us.
-  const uint32_t oldcontext = this->renderaction->getCacheContext();
   this->renderaction->setCacheContext(cache_context);
+
+#if (QT_VERSION >= 0x050000)
+  pbuff->bind();
+
+  bool bad = false;
+  if(!pbuff->isValid()) {
+    taMisc::DebugInfo("SoOffscreenRendererQt: pbuff is not valid, rendering aborted");
+    bad = true;
+  }
+  if(!pbuff->isBound()) {
+    taMisc::DebugInfo("SoOffscreenRendererQt: pbuff is not bound, rendering aborted");
+    bad = true;
+  }
+  if(bad) {
+    pbuff->release();
+    delete pbuff;               // clear out old one -- will get new one next time..
+    pbuff = NULL;
+    this->renderaction->setCacheContext(oldcontext); // restore old
+    return FALSE;
+  }
+#else
+  pbuff->makeCurrent();		// activate us!
+#endif
 
   glEnable(GL_DEPTH_TEST);
   glClearColor(this->backgroundcolor[0],
@@ -212,7 +256,11 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
   this->renderaction->removePreRenderCallback(pre_render_cb, NULL);
 
 //   this->glcanvas.deactivateGLContext();
+#if (QT_VERSION >= 0x050000)
+  pbuff->release();
+#else
   pbuff->doneCurrent();
+#endif
 
   this->renderaction->setCacheContext(oldcontext); // restore old
 

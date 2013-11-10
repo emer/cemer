@@ -51,6 +51,18 @@ void VEBody_Group::CurToInit() {
   }
 }
 
+void VEBody_Group::UpdateInitToRels() {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
+    ob->GetInitFromRel();
+  }
+}
+
+void VEBody_Group::UpdateCurToRels() {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
+    ob->UpdateCurFromRel();
+  }
+}
+
 void VEBody_Group::SnapPosToGrid(float grid_size, bool init_pos) {
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->SnapPosToGrid(grid_size, init_pos);
