@@ -21,9 +21,10 @@
 #include <Inventor/SbColor.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 
-#include <QPaintDevice>         // need to define QT_VERSION in first place..
+#include <QImage>         // need to define QT_VERSION in first place..
 #if (QT_VERSION >= 0x050000)
-#include <QGLFramebufferObject>
+#include <QGLContext>
+#include <QOpenGLFramebufferObject>
 #else
 #include <QGLPixelBuffer>
 #endif
@@ -51,7 +52,7 @@ public:
   virtual SbBool render(SoPath * scene);
 
 #if (QT_VERSION >= 0x050000)
-  virtual void		makeBuffer(int width, int height, const QGLFramebufferObjectFormat& fmt);
+  virtual void		makeBuffer(int width, int height, const QOpenGLFramebufferObjectFormat& fmt);
 #else
   virtual void		makeBuffer(int width, int height, const QGLFormat& fmt);
 #endif
@@ -60,7 +61,7 @@ public:
   // create the pixel buffer of given size, setting the gl format information to use multisample antialiasing -- a -1 means use default value (4), otherwise use what is specified
 
 #if (QT_VERSION >= 0x050000)
-  QGLFramebufferObject* getBuffer() { return pbuff; }
+  QOpenGLFramebufferObject* getBuffer() { return pbuff; }
 #else
   QGLPixelBuffer*	getBuffer() { return pbuff; }
 #endif
@@ -75,7 +76,8 @@ protected:
   virtual SbBool renderFromBase(SoBase * base);
 
 #if (QT_VERSION >= 0x050000)
-  QGLFramebufferObject* pbuff;
+  QOpenGLFramebufferObject* pbuff;
+  QGLContext*               gl_ctxt; // this is the gl context active when pbuff was made -- always set this to be active again when using pbuff
 #else
   QGLPixelBuffer*	pbuff;
 #endif

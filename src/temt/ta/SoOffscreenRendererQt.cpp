@@ -47,6 +47,8 @@ void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
   this->viewport = vpr;
 
   this->pbuff = NULL;		// constructed later
+  this->gl_ctxt = NULL;
+  this->cache_context = 0;
 }
 
 /*!
@@ -150,7 +152,7 @@ pre_render_cb(void * userdata, SoGLRenderAction * action)
 }
 
 #if (QT_VERSION >= 0x050000)
-void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFramebufferObjectFormat& fmt) {
+void SoOffscreenRendererQt::makeBuffer(int width, int height, const QOpenGLFramebufferObjectFormat& fmt) {
 #else
 void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& fmt) {
 #endif
@@ -158,10 +160,10 @@ void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& f
     if(pbuff->height() == height && pbuff->width() == width) return;
   }
   viewport.setWindowSize(width, height);
-  cache_context = SoGLCacheContextElement::getUniqueCacheContext(); // unique per pixel buffer object, 
-  this->renderaction->setCacheContext(cache_context);
+  cache_context = SoGLCacheContextElement::getUniqueCacheContext();
+  gl_ctxt = (QGLContext*)QGLContext::currentContext(); // save current context
 #if (QT_VERSION >= 0x050000)
-  pbuff = new QGLFramebufferObject(width, height, fmt);
+  pbuff = new QOpenGLFramebufferObject(width, height, fmt);
 #else
   pbuff = new QGLPixelBuffer(width, height, fmt);
 #endif
@@ -170,11 +172,11 @@ void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& f
 void SoOffscreenRendererQt::makeMultisampleBuffer(int width, int height, int samples) {
   if(samples < 0) samples = 4;
 #if (QT_VERSION >= 0x050000)
-  QGLFramebufferObjectFormat fmt;
+  QOpenGLFramebufferObjectFormat fmt;
   if(samples > 0) {
     fmt.setSamples(samples);
   }
-  fmt.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+  fmt.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
   makeBuffer(width, height, fmt);
 #else
   QGLFormat fmt;
@@ -212,6 +214,7 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
   this->renderaction->setCacheContext(cache_context);
 
 #if (QT_VERSION >= 0x050000)
+  gl_ctxt->makeCurrent();       // always reinstate our original context
   pbuff->bind();
 
   bool bad = false;
