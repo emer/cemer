@@ -121,10 +121,11 @@ void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
   if (m_node_so.ptr())
     AddRemoveChildNode_impl(node, adding);
 #ifdef DEBUG
-  else {
-    taMisc::Warning("T3DataView::AddRemoveChildNode_impl",
-      "Attempt to access NULL node_so");
-  }
+  // this is not that interesting -- happens for reasonable reasons -- just don't complain 
+  // else {
+  //   taMisc::Warning("T3DataView::AddRemoveChildNode_impl",
+  //     "Attempt to access NULL node_so");
+  // }
 #endif
 }
 

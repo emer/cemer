@@ -75,7 +75,19 @@ public:
   inline void	FromEulerVec(const taVector3f& euler) {
     FromEuler(euler.x, euler.y, euler.z);
   }
-  // #CAT_Quaternion #BUTTON set quaternion from three Euler angles in vector form
+  // #CAT_Quaternion set quaternion from three Euler angles in vector form
+
+  inline void	FromVector(float d_x, float d_y, float d_z) {
+    float theta_x = atan2f(d_y, d_z);
+    float theta_y = atan2f(d_x * cosf(theta_x), d_z);
+    float theta_z = atan2(cosf(theta_x), sinf(theta_x) * sinf(theta_y));
+    FromEuler(theta_x, theta_y, theta_z);
+  }
+  // #CAT_Quaternion #BUTTON set quaternion from angles computed for a displacement vector
+  inline void	FromVectorVec(const taVector3f& dvec) {
+    FromVector(dvec.x, dvec.y, dvec.z);
+  }
+  // #CAT_Quaternion #BUTTON set quaternion from angles computed for a displacement vector
 
   inline void	ToEuler(float& theta_z, float& theta_y, float& theta_x, bool homogenous=true) const {
     float sqs = s*s;    

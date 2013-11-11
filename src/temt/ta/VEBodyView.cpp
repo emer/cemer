@@ -338,9 +338,7 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
 
   SbVec3f trans = dragger->translation.getValue();
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  taVector3f tr(trans[0], trans[1], trans[2]);
-  ob->cur_pos += tr;
-  ob->init_pos = ob->cur_pos;
+  ob->Translate(trans[0], trans[1], trans[2], false); // cur -- user can call cur to init
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
   taVector3f sc(scale[0], scale[1], scale[2]);
@@ -354,9 +352,7 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   float angle;
   dragger->rotation.getValue(axis, angle);
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-    ob->cur_quat.RotateAxis(axis[0], axis[1], axis[2], angle);
-    ob->UpdateCurRotFmQuat();
-    ob->InitRotFromCur();
+    ob->RotateAxis(axis[0], axis[1], axis[2], angle, false); // cur -- user can call cur to init
   }
 
 //   float h = 0.04f; // nominal amount of height, so we don't vanish

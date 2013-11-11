@@ -216,27 +216,30 @@ void VEBody::GetInitFromRel() {
   }
   tquat.ToEulerVec(init_euler);
   init_rot = tquat;
+
+  // rel_pos_ang.FromVectorVec(rel_pos);
+  // rel_pos_dist = rel_pos.Mag();
 }
 
 void VEBody::UpdateCurFromRel() {
   if(!init_rel) return;
   if(!rel_body) return;
 
-  cur_pos = rel_body->cur_pos + rel_pos;
-  // cur_lin_vel = rel_body->cur_lin_vel + rel_lin_vel;
-  // cur_ang_vel = rel_body->cur_ang_vel + rel_ang_vel;
+  cur_pos = rel_body->cur_pos;
+  // need to take into account any rotation of the body relative to its initial --
+  // rotate relative position in corresponding fashion
+  taQuaternion rdif = rel_body->cur_quat_raw / rel_body->init_quat;
+  taVector3f rprot = rel_pos;
+  rdif.RotateVec(rprot);
+  cur_pos += rprot;
 
-  // todo: rotation is much more complicated, and needs to be taken into account in the pos too..
-  // taQuaternion tquat = rel_body->cur_quat;
-  // tquat.Normalize();
-  // if(HasBodyFlag(EULER_ROT)) {
-  //   tquat.RotateEuler(rel_euler.x, rel_euler.y, rel_euler.z);
-  // }
-  // else {
-  //   tquat.RotateAxis(rel_rot.x, rel_rot.y, rel_rot.z, rel_rot.rot);
-  // }
-  // cur_quat = tquat;
-  // UpdateCurRotFmQuat();
+  CurRotFromInit();             // go back init
+  cur_quat *= rdif;              // then add increment
+  UpdateCurRotFmQuat();
+
+  cur_lin_vel = rel_body->cur_lin_vel + rel_lin_vel;
+  cur_ang_vel = rel_body->cur_ang_vel + rel_ang_vel;
+
   UpdateAfterEdit();
 }
 
@@ -329,9 +332,7 @@ void VEBody::Init_Pos() {
   }
 }
 
-void VEBody::Init_Rotation() {
-  dBodyID bid = (dBodyID)body_id;
-
+void VEBody::CurRotFromInit() {
   // capsules and cylinders need to have extra rotation as they are always Z axis oriented!
   cur_quat = init_quat;
   cur_quat_raw = cur_quat;
@@ -343,6 +344,12 @@ void VEBody::Init_Rotation() {
       cur_quat.RotateAxis(1.0f, 0.0f, 0.0f, -1.5708f);
     }
   }
+}
+
+void VEBody::Init_Rotation() {
+  dBodyID bid = (dBodyID)body_id;
+
+  CurRotFromInit();
 
   cur_quat.ToAxisAngle(cur_rot);
   cur_quat.ToEulerVec(cur_euler);

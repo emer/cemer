@@ -224,6 +224,8 @@ public:
   // #CAT_ODE #EXPERT update current rotation parameters from cur_quat read from ODE or whenever cur_quat might be set externally (e.g., gui dragging)
   virtual void  InitRotFromCur();
   // #CAT_ODE #EXPERT set init rotation parameters from current rotation
+  virtual void  CurRotFromInit();
+  // #EXPERT set current rotation from initial
 
   virtual void  Translate(float dx, float dy, float dz, bool init, bool abs_pos = false);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos -- if abs_pos then set directly to coordinates instead of adding them to current values
