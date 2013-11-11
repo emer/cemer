@@ -512,7 +512,6 @@ set(ta_HEADS_MAKETA_NOMOC
   taImage.h
   taCanvas.h
 
-  ImgProcCallThreadMgr.h
   ImgProcThreadBase.h
   ImageProcCall.h
 
@@ -1587,7 +1586,6 @@ set(ta_SRCS_MAKETA
   taImage.cpp
   taCanvas.cpp
 
-  ImgProcCallThreadMgr.cpp
   ImgProcThreadBase.cpp
   ImageProcCall.cpp
 
