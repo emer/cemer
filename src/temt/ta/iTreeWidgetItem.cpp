@@ -22,7 +22,6 @@
 #include <QScrollBar>
 #include <QPalette>
 
-
 iTreeWidgetItem::iTreeWidgetItem(iTreeWidget* parent)
 :inherited(parent)
 {
@@ -133,6 +132,17 @@ void iTreeWidgetItem::setTextColor(const QColor& color, int col) {
   }
 }
 
+void iTreeWidgetItem::setBackground(const QBrush& brush, int col)
+{
+  if (col < 0) {
+    for (int i = 0; i < columnCount(); ++i) {
+      setData(i, Qt::BackgroundRole, brush);
+    }
+  } else if (col < columnCount()) {
+    setData(col, Qt::BackgroundRole, brush);
+  }
+}
+
 void iTreeWidgetItem::resetBackgroundColor(int col) {
   QVariant var; // check for existing color, don't set if not necessary
   if (col < 0) {
@@ -160,6 +170,21 @@ void iTreeWidgetItem::resetTextColor(int col) {
     var = data(col, Qt::TextColorRole);
     if (var.isValid())
       setData(col, Qt::TextColorRole, QVariant());
+  }
+}
+
+void iTreeWidgetItem::resetBackground(int col) {
+  QVariant var; // check for existing background pattern, don't set if not necessary
+  if (col < 0) {
+    for (int i = 0; i < columnCount(); ++i) {
+      var = data(i, Qt::BackgroundRole);
+      if (var.isValid())
+        setData(i, Qt::BackgroundRole, QVariant());
+    }
+  } else if (col < columnCount()) {
+    var = data(col, Qt::BackgroundRole);
+    if (var.isValid())
+      setData(col, Qt::BackgroundRole, QVariant());
   }
 }
 

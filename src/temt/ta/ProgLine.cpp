@@ -56,9 +56,20 @@ void ProgLine::SetBreakpoint() {
   SetPLineFlag(ProgLine::BREAKPOINT);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
-    pel->SetProgFlag(ProgEl::BREAKPOINT);
-    pel->SigEmitUpdated();
+    EnableBreakpoint();
     prog->SetBreakpoint_impl(pel);
+  }
+}
+
+void ProgLine::EnableBreakpoint() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog)
+    return;
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    pel->EnableBreakpoint();
+    pel->SigEmitUpdated();
+    prog->EnableBreakpoint(pel);
   }
 }
 
@@ -66,12 +77,25 @@ void ProgLine::ClearBreakpoint() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog)
     return;
+//  DisableBreakpoint();
   ClearPLineFlag(ProgLine::BREAKPOINT);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
-    pel->ClearProgFlag(ProgEl::BREAKPOINT);
-    pel->SigEmitUpdated();
+    pel->ClearBreakpoint();
     prog->ClearBreakpoint_impl(pel);
+  }
+}
+
+void ProgLine::DisableBreakpoint() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog)
+    return;
+  ClearPLineFlag(ProgLine::BREAKPOINT);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    pel->DisableBreakpoint();
+    pel->SigEmitUpdated();
+    prog->DisableBreakpoint(pel);
   }
 }
 

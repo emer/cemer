@@ -75,6 +75,9 @@ public:
 
   void                  SetBreakpoint();        // set breakpoint here and in associated prog_el
   void                  ClearBreakpoint();      // clear breakpoint here and in associated prog_el
+  void                  DisableBreakpoint();    // disable breakpoint only
+  void                  EnableBreakpoint();     // enable breakpoint only
+
   void                  SetError();             // set error here and in associated prog_el
   void                  ClearError();           // clear error here and in associated prog_el
 

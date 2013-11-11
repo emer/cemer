@@ -405,6 +405,11 @@ public: // XxxGui versions provide feedback to the user
     // #IGNORE actually clear the breakpoint in css for this el
     void                ClearBreakpoint_impl(ProgEl* pel);
     // #IGNORE actually set the breakpoint in css for this el
+    void                EnableBreakpoint(ProgEl* pel);
+    // #IGNORE enable in css if existing and not already enabled
+    void                DisableBreakpoint(ProgEl* pel);
+    // #IGNORE disable in css if existing and not already disable
+
   virtual bool          ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln);
   // #IGNORE get the script code lines (in 1-based line numbers, as used in css) associated with the given program element
 

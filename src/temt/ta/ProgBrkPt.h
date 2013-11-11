@@ -31,17 +31,24 @@ class TA_API ProgBrkPt : public taNBase {
   // This class tracks program breakpoints and is the data for the breakpoint UI
 INHERITED(taNBase)
 public:
-  ProgElRef prog_el;
-  // #SHOW_TREE the program element on which the break is set
+  ProgElRef     prog_el;
+  // #HIDDEN #SHOW_TREE the program element on which the break is set
+  bool          enabled;
+  // #HIDDEN breakpoints can persist and be enabled or disabled
 
-  void  InitLinks();
-  void  CutLinks();
+  void          Enable();
+  // #MENU #DYN1 #GHOST_OFF_enabled enable existing disabled breakpoint
+  void          Disable();
+  // #MENU #DYN1 #GHOST_ON_enabled disable existing breakpoint but don't delete the breakpoint
+
+  void          InitLinks();
+  void          CutLinks();
   TA_BASEFUNS_NOCOPY(ProgBrkPt);
 
 protected:
 
 private:
-  void Initialize()  { };
+  void Initialize();
   void Destroy()     { };
 };
 

@@ -238,6 +238,7 @@ taMisc::ProjViewPref taMisc::proj_view_pref = taMisc::PVP_3PANE;
 taMisc::ViewerOptions   taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
+ViewBackground_List* taMisc::view_backgrounds = NULL;
 #endif
 
 int     taMisc::antialiasing_level = 4;

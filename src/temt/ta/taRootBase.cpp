@@ -25,6 +25,7 @@
 #include <taiEdit>
 #include <taApplication>
 #include <ViewColor_List>
+#include <ViewBackground_List>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 #include <ConsoleDockViewer>
@@ -49,6 +50,7 @@ taTypeDef_Of(PluginWizard);
 #include <QIcon>
 #include <QTimer>
 #include <QGLFormat>
+#include <QBrush>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -1417,6 +1419,7 @@ bool taRootBase::Startup_InitGui() {
     else
       taMisc::gui_active = true;        // officially active!
     Startup_InitViewColors();
+    Startup_InitViewBackgrounds();
   }
   else
 #endif // TA_GUI
@@ -1473,6 +1476,8 @@ bool taRootBase::Startup_InitViewColors() {
                                          false, _nilString, true, "gold");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpoint", "State: program element is set for a breakpoint",
                                          false, _nilString, true, "violet");
+  taMisc::view_colors->FindMakeViewColor("ProgElBreakpointDisabled", "State: program element is set for a breakpoint",
+                                         false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
                                          true, "firebrick", true, "firebrick1");
   taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",
@@ -1496,6 +1501,21 @@ bool taRootBase::Startup_InitViewColors() {
   taMisc::view_colors->FindMakeViewColor("Doc", "Documentation object",
                                          true, "azure4", true, "azure1");
   return true;
+}
+
+bool taRootBase::Startup_InitViewBackgrounds() {
+  if(!taMisc::view_backgrounds) {
+    taMisc::view_backgrounds = new ViewBackground_List;
+    taMisc::view_backgrounds->BuildHashTable(20);
+  }
+
+  // args are: name, description, background style (brush pattern)
+
+  taMisc::view_backgrounds->FindMakeViewBackground("ProgElBreakpoint",
+      "State: program element is set for an enabled breakpoint", Qt::SolidPattern);
+  taMisc::view_backgrounds->FindMakeViewBackground("ProgElBreakpointDisabled",
+      "State: program element is set for a disabled breakpoint", Qt::Dense5Pattern);
+ return true;
 }
 
 bool taRootBase::Startup_ConsoleType() {

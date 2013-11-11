@@ -13,35 +13,38 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgBrkPt_List_h
-#define ProgBrkPt_List_h 1
+#ifndef ViewBackground_List_h
+#define ViewBackground_List_h 1
 
 // parent includes:
-#include <ProgBrkPt>
+#include <ViewBackground>
 #include <taList>
 
 // member includes:
-#include <ProgEl>
+#ifndef __MAKETA__
+  #include <QBrush>
+#else
+  class QBrush; // #IGNORE
+#endif
 
 // declare all other types mentioned but not required to include:
 
 
+taTypeDef_Of(ViewBackground_List);
 
-taTypeDef_Of(ProgBrkPt_List);
-
-class TA_API ProgBrkPt_List : public taList<ProgBrkPt> {
-  // A list of breakpoints for an individual program to support viewing and enabling
-INHERITED(taList<ProgBrkPt> )
+class TA_API ViewBackground_List : public taList<ViewBackground> {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ViewBackground items
+INHERITED(taList<ViewBackground>)
 public:
-  ProgBrkPt*      AddBrkPt(ProgEl* prog_el, String codeline);
-  void            DeleteBrkPt(ProgEl* prog_el);
-  ProgBrkPt*      FindBrkPt(ProgEl* prog_el) const;
+#ifndef __MAKETA__
+        virtual bool  FindMakeViewBackground(const String& nm, const String& dsc, Qt::BrushStyle style);
+    // find view background (pattern) of given name -- if not there, make it, with given params (returns false if didn't already exist)
+#endif
 
-
-  TA_SIMPLE_BASEFUNS(ProgBrkPt_List);
+  TA_BASEFUNS_NOCOPY(ViewBackground_List);
 private:
-  void Initialize();
-  void Destroy()     { };
+  void  Initialize()            { SetBaseType(&TA_ViewBackground); }
+  void  Destroy()               { };
 };
 
-#endif // ProgBrkPt_List_h
+#endif // ViewBackground_List_h

@@ -13,35 +13,38 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgBrkPt_List_h
-#define ProgBrkPt_List_h 1
+#ifndef ViewBackground_h
+#define ViewBackground_h 1
 
 // parent includes:
-#include <ProgBrkPt>
-#include <taList>
+#include <taNBase>
 
 // member includes:
-#include <ProgEl>
+#ifndef __MAKETA__
+  #include <QBrush>
+#else
+  class QBrush; // #IGNORE
+#endif
 
 // declare all other types mentioned but not required to include:
 
+taTypeDef_Of(ViewBackground);
 
-
-taTypeDef_Of(ProgBrkPt_List);
-
-class TA_API ProgBrkPt_List : public taList<ProgBrkPt> {
-  // A list of breakpoints for an individual program to support viewing and enabling
-INHERITED(taList<ProgBrkPt> )
+class TA_API ViewBackground : public taNBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Display view background pattern specification -- name lookup of background pattern for view display
+INHERITED(taNBase)
 public:
-  ProgBrkPt*      AddBrkPt(ProgEl* prog_el, String codeline);
-  void            DeleteBrkPt(ProgEl* prog_el);
-  ProgBrkPt*      FindBrkPt(ProgEl* prog_el) const;
+  Qt::BrushStyle         style;  // the pattern for the background
+  String                 desc;   // description of this view color item
 
+  override String       GetDesc() const { return desc; }
 
-  TA_SIMPLE_BASEFUNS(ProgBrkPt_List);
+  void  InitLinks();
+  TA_BASEFUNS(ViewBackground);
 private:
+  SIMPLE_COPY(ViewBackground);
   void Initialize();
-  void Destroy()     { };
+  void Destroy();
 };
 
-#endif // ProgBrkPt_List_h
+#endif // ViewBackground_h

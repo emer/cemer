@@ -437,8 +437,10 @@ String ProgEl::GetStateDecoKey() const {
       return "ProgElError";
     if(HasProgFlag(WARNING))
       return "ProgElWarning";
-    if(HasProgFlag(BREAKPOINT))
+    if(HasProgFlag(BREAKPOINT_ENABLED))
       return "ProgElBreakpoint";
+    if(HasProgFlag(BREAKPOINT_DISABLED))
+      return "ProgElBreakpointDisabled";
     if(HasProgFlag(NON_STD))
       return "ProgElNonStd";
     if(HasProgFlag(NEW_EL))
@@ -512,7 +514,30 @@ void ProgEl::ToggleVerboseFlag() {
 void ProgEl::ToggleBreakpoint() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return;
-  prg->ToggleBreakpoint(this);  // this manages gui update
+  prg->ToggleBreakpoint(this);
+}
+
+void ProgEl::EnableBreakpoint() {
+  this->SetProgFlag(BREAKPOINT_ENABLED);
+  this->ClearProgFlag(BREAKPOINT_DISABLED); // clear, it might be enabled
+  SigEmitUpdated();
+}
+
+void ProgEl::DisableBreakpoint() {
+  this->ClearProgFlag(BREAKPOINT_ENABLED);
+  this->SetProgFlag(BREAKPOINT_DISABLED);
+  SigEmitUpdated();
+}
+
+void ProgEl::SetBreakpoint() {
+  this->SetProgFlag(BREAKPOINT_ENABLED);
+  SigEmitUpdated();
+}
+
+void ProgEl::ClearBreakpoint() {
+  this->ClearProgFlag(BREAKPOINT_ENABLED); // clear both, either could be enabled
+  this->ClearProgFlag(BREAKPOINT_DISABLED);
+  SigEmitUpdated();
 }
 
 void ProgEl::PreGen(int& item_id) {

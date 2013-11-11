@@ -44,11 +44,15 @@ public:
   void			setBackgroundColor(const QColor& base, int col = -1);
     // set bg color for indicated column, or all if col=-1 
   void			resetBackgroundColor(int col = -1);
-    // return text color for indicated column to default, or for all cols if col=-1
+    // return background color for indicated column to default, or for all cols if col=-1
   void			setTextColor(const QColor& color, int col = -1);
     // set text color for indicated column, or all if col=-1; note: statically hides Qt member
   void			resetTextColor(int col);
     // return text color for indicated column to default, or for all cols if col=-1
+  void      setBackground(const QBrush& base, int col = -1);
+     // set bg pattern for indicated column, or all if col=-1
+  void      resetBackground(int col = -1);
+     // return bg pattern for indicated column to default, or for all cols if col=-1
   bool			willHaveChildren() const;
     // only called when resolving lazy children status -- true if (likely) will have children
   

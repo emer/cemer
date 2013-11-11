@@ -279,7 +279,7 @@ int Program::CallInit_impl(Program* caller) {
 }
 
 void Program::Init() {
-//   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
+  //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
   if(AlreadyRunning()) return;
   ProjDirToCurrent();
@@ -295,7 +295,7 @@ void Program::Init() {
   // record new timestamp for this init session -- CallInit will check and not re-run
   QDateTime tm = QDateTime::currentDateTime();
   global_init_timestamp = tm.toTime_t();
-  
+
   SigEmit(SLS_ITEM_UPDATED_ND); // update button state
   // first run the Init code, THEN do the check.  this prevents a catch-22
   // with Init code that is designed to configure things so there won't be
@@ -315,13 +315,13 @@ void Program::Init() {
       SetAllBreakpoints();          // reinstate all active breakpoints
       bool did_struct_updt = false;
       if(!HasProgFlag(OBJS_UPDT_GUI)) {
-	objs.StructUpdateEls(true);
-	did_struct_updt = true;
+        objs.StructUpdateEls(true);
+        did_struct_updt = true;
       }
       script->SetDebug((int)HasProgFlag(TRACE));
       script->Run();
       if(did_struct_updt)
-	objs.StructUpdateEls(false);
+        objs.StructUpdateEls(false);
     }
   }
 
@@ -360,12 +360,12 @@ bool Program::PreCompileScript_impl() {
   script_list.ClearAllErrors(); // start fresh
   objs.GetVarsForObjs();
   UpdateProgVars();
-return true;
+  return true;
 }
 
 bool Program::AlreadyRunning() {
   if(run_state == RUN || run_state == INIT || global_run_state == RUN ||
-     global_run_state == INIT) {
+      global_run_state == INIT) {
     taMisc::Info("A Program is already running -- cannot run until it is done");
     return true;
   }
@@ -419,7 +419,7 @@ void Program::Run() {
     Init();                     // auto-reinit after errors!
   }
   if(TestError(run_state != DONE && run_state != STOP, "Run",
-               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
+      "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
   ProjDirToCurrent();
@@ -479,7 +479,7 @@ void Program::Step(Program* step_prg) {
     Init();                     // auto-press Init button!
   }
   if(TestError(run_state != DONE && run_state != STOP, "Step",
-               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
+      "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
   ProjDirToCurrent();
@@ -493,7 +493,7 @@ void Program::Step(Program* step_prg) {
     cur_step_prog = step_prog;
 
   if(TestError(!cur_step_prog || !cur_step_prog->owner, "Step",
-               "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
+      "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
     return;
   }
 
@@ -568,7 +568,7 @@ void Program::UpdateUi() {
 
 void Program::Stop() {
   if(TestError(run_state != RUN, "Stop",
-               "Program is not running")) {
+      "Program is not running")) {
     return;
   }
   SetStopReq(SR_USER_STOP, name);
@@ -583,8 +583,8 @@ void Program::Stop_impl() {
   last_stop_prog = this;
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   script->Stop();
-//   setRunState(STOP);
-//   SigEmit(SLS_ITEM_UPDATED_ND); // update button state
+  //   setRunState(STOP);
+  //   SigEmit(SLS_ITEM_UPDATED_ND); // update button state
 }
 
 bool Program::IsStepProg() {
@@ -623,7 +623,7 @@ void Program::StepCss() {
     Init();                     // auto-press Init button!
   }
   if(TestError(run_state != DONE && run_state != STOP, "StepCss",
-               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
+      "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
   SetAllBreakpoints();          // reinstate all active breakpoints
@@ -723,13 +723,13 @@ void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
 }
 
 void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& prognm,
-                            const String& topnm, const String& src_ln) {
+    const String& topnm, const String& src_ln) {
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   String fh;
   fh << "Program: " << name << " Stopped on breakpoint number: " << bpno
-     << " at css source line: " << src_ln_no << " in prog: "
-     << prognm << " pc: " << pc << " css top: " << topnm << "\n"
-     << src_ln;
+      << " at css source line: " << src_ln_no << " in prog: "
+      << prognm << " pc: " << pc << " css top: " << topnm << "\n"
+      << src_ln;
   if(taMisc::gui_active) {
     iDialogChoice::ConfirmDialog(NULL, fh);
     ViewProgEditor(src_ln_no);
@@ -771,11 +771,11 @@ void Program::setStale() {
     changed = true;
     m_stale = true;
     //note: actions in here will not recurse us, because m_stale is now set
-//     sub_prog_calls.RemoveAll(); // will need to re-enumerate
+    //     sub_prog_calls.RemoveAll(); // will need to re-enumerate
   }
   if (changed) { // user will need to recompile/INIT
     run_state = NOT_INIT;
-//obs    SigEmit(SLS_ITEM_UPDATED_ND); //note: doesn't recurse ud
+    //obs    SigEmit(SLS_ITEM_UPDATED_ND); //note: doesn't recurse ud
     SigEmitUpdated(); //note: doesn't recurse ud
   }
 }
@@ -804,7 +804,7 @@ bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet
   if(arg_str.empty()) return false; // no arg, no action
   bool rval = SetVar(var_nm, arg_str);
   if(TestError(!rval, "SetVarFmArg", "variable:",var_nm,
-               "not found in program:", name)) return false;
+      "not found in program:", name)) return false;
   if(!quiet)
     taMisc::Info("Set", var_nm, "in program:", name, "to:", arg_str);
   return true;
@@ -845,7 +845,7 @@ Program* Program::FindProgramName(const String& prog_nm, bool warn_not_found) co
   }
   if(warn_not_found && !rval) {
     taMisc::Warning("program", name, "is looking for a program named:",
-                    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+        prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
   }
   return rval;
 }
@@ -864,7 +864,7 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
   }
   if(warn_not_found && !rval) {
     taMisc::Warning("program", name, "is looking for a program containing:",
-                    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+        prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
   }
   return rval;
 }
@@ -880,7 +880,7 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
 }
 
 bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags,
-                      const String& desc) {
+    const String& desc) {
   String desc_oneline = desc;
   desc_oneline.gsub('\n', ' '); // no multiline in desc comments
   String rmdr = code;
@@ -926,9 +926,9 @@ bool Program::AddVerboseLine(ProgEl* prog_el, bool insert_at_start, const String
 }
 
 void Program::VerboseOut(Program* prg, int code_line,
-                         const char* a, const char* b, const char* c,
-                         const char* d, const char* e, const char* f,
-                         const char* g, const char* h, const char* i) {
+    const char* a, const char* b, const char* c,
+    const char* d, const char* e, const char* f,
+    const char* g, const char* h, const char* i) {
   if(!prg) return;
   String msg;
   taProject* proj = GET_OWNER(prg, taProject);
@@ -980,7 +980,7 @@ void Program::AddDescString(taBase* prog_el, const String& dsc) {
 }
 
 String Program::GetProgCodeInfo(int line_no, const String& code_str) {
-//   return String("info on line: ") + String(line_no) + " str: " + code_str;
+  //   return String("info on line: ") + String(line_no) + " str: " + code_str;
   ProgVar* pv = FindVarName(code_str);
   if(pv && !pv->HasVarFlag(ProgVar::LOCAL_VAR)) {
     if(pv->var_type == ProgVar::T_Object && pv->object_val) {
@@ -1011,6 +1011,7 @@ void Program::ClearAllBreakpoints() {
   brk_pts.Reset();
 }
 
+// TODO - add brk_pt class code
 void Program::SetAllBreakpoints() {
   if(!script) return;
   int nbp = 0;
@@ -1023,7 +1024,7 @@ void Program::SetAllBreakpoints() {
     if(pl->prog_el && pl->prog_el->InheritsFrom(&TA_ProgEl))
       pel = (ProgEl*)pl->prog_el.ptr();
     if(pl->HasPLineFlag(ProgLine::BREAKPOINT) ||
-       (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT))) {
+        (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT_ENABLED))) {
       last_pel_set = pel;                     // don't repeat
       pl->SetPLineFlag(ProgLine::BREAKPOINT); // make sure
       script->SetBreak(i);    // set it
@@ -1037,7 +1038,7 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return false;
   ProgLine* pl = script_list.FastEl(start_ln);
-  if(pel->HasProgFlag(ProgEl::BREAKPOINT)) {
+  if(pel->HasProgFlag(ProgEl::BREAKPOINT_ENABLED)) {
     pl->ClearBreakpoint();	// calls impl below
   }
   else {
@@ -1046,25 +1047,43 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   return true;
 }
 
-void Program::SetBreakpoint_impl(ProgEl* pel) {
+void Program::EnableBreakpoint(ProgEl* pel) {
   int start_ln, end_ln;
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   ProgLine* pl = script_list.FastEl(start_ln);
   CmdShell();                 // should be using cmd shell if setting breakpoints
   script->SetBreak(start_ln);
-  brk_pts.AddBrkPt(pel);  // add a brk_pt object to the list of breakpoints - used for display/enable/disable gui
-  DebugInfo("setting breakpoint to line:", String(start_ln), pl->code);
-  String fh;
-  script->PrintBreaks(fh);               // debugging help output
-  script->DisplayOutput(fh, false);	 // no pager
+  ProgBrkPt* bp = brk_pts.FindBrkPt(pel);
+  if (bp) {
+    bp->enabled = true;
+    SigEmit(SLS_ITEM_UPDATED_ND);
+  }
 }
 
-void Program::ClearBreakpoint_impl(ProgEl* pel) {
+void Program::DisableBreakpoint(ProgEl* pel) {
   int start_ln, end_ln;
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   script->DelBreak(start_ln);
+  ProgBrkPt* bp = brk_pts.FindBrkPt(pel);
+  if (bp) {
+    bp->enabled = false;
+    SigEmit(SLS_ITEM_UPDATED_ND);
+  }
+}
+
+void Program::SetBreakpoint_impl(ProgEl* pel) {
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return;
+  ProgLine* pl = script_list.FastEl(start_ln);
+  ProgBrkPt* bp = brk_pts.AddBrkPt(pel, pl->code);  // add a brk_pt object to the list of breakpoints - used for display/enable/disable gui
+  EnableBreakpoint(pel);
+}
+
+void Program::ClearBreakpoint_impl(ProgEl* pel) {
+  DisableBreakpoint(pel);
   brk_pts.DeleteBrkPt(pel);
 }
 
@@ -1090,7 +1109,7 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
 
 void Program::GetSubProgsAll(int depth) {
   if(TestError((depth >= 100), "GetSubProgsAll",
-               "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
+      "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
   sub_progs_updtd = true;
   sub_progs_all.Reset();
@@ -1174,7 +1193,7 @@ const String Program::scriptString() {
   // first, make sure any sub-progs are compiled
   if(sub_prog_calls.size > 0) {
     AddLine(this, "// First compile any subprogs that could be called from this one",
-            ProgLine::COMMENT);
+        ProgLine::COMMENT);
     AddLine(this, "{ Program* target;");
     IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
@@ -1198,7 +1217,7 @@ const String Program::scriptString() {
     if(init_code.size > 0)
       AddLine(this, "");
     AddLine(this, "// Then call init on any subprogs that could be called from this one",
-            ProgLine::COMMENT);
+        ProgLine::COMMENT);
     AddLine(this, "{ Program* target;");
     IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
@@ -1241,7 +1260,7 @@ const String Program::scriptString() {
   AddLine(this, "}");
 
   TestWarning(cur_indent != 0, "scriptString",
-              "programmer error -- current indentation at end of script generation is != 0");
+      "programmer error -- current indentation at end of script generation is != 0");
 
   m_scriptCache.truncate(0);
   script_list.FullListing(m_scriptCache);
@@ -1292,14 +1311,14 @@ void  Program::UpdateProgVars() {
 
   // add the ones in the object -- note, we use *pointers* to these
   // these are already installed by the InstallThis routine!!
-//   cssEl* el = NULL;
-//   el = new cssCPtr_enum(&run_state, 1, "run_state",
-//                      TA_Program.sub_types.FindName("RunState"));
-//   script->prog_vars.Push(el);
-//   el = new cssCPtr_int(&ret_val, 1, "ret_val");
-//   script->prog_vars.Push(el);
-//   el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
-//   script->prog_vars.Push(el);
+  //   cssEl* el = NULL;
+  //   el = new cssCPtr_enum(&run_state, 1, "run_state",
+  //                      TA_Program.sub_types.FindName("RunState"));
+  //   script->prog_vars.Push(el);
+  //   el = new cssCPtr_int(&ret_val, 1, "ret_val");
+  //   script->prog_vars.Push(el);
+  //   el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
+  //   script->prog_vars.Push(el);
 
   // add new in the program
   for (int i = 0; i < args.size; ++i) {
@@ -1352,7 +1371,7 @@ void Program::SaveToProgLib(ProgLibs library) {
   QFileInfo qfi(fname);
   if(qfi.isFile()) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
-                             "Ok", "Cancel");
+        "Ok", "Cancel");
     if(chs == 1) return;
   }
   SaveAs(fname);
@@ -1378,8 +1397,8 @@ int Program::GetSpecialState() const {
 void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
-               "cannot load a program group file into a single program!")) return;
-//   Reset();
+      "cannot load a program group file into a single program!")) return;
+  //   Reset();
   prog_type->LoadProgram(this);
 }
 
@@ -1450,12 +1469,12 @@ String Program::RenderGlobalTrace(bool html) {
     if(sp->own_program) {
       taProject* proj = GET_OWNER(sp->own_program, taProject);
       if(html) {
-	rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
-	     << "#progln_" << ln << "\">"
-	     << sp->own_program->name << "</a></td>";
+        rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
+	         << "#progln_" << ln << "\">"
+	         << sp->own_program->name << "</a></td>";
       }
       else {
-	rval << sp->own_program->name;
+        rval << sp->own_program->name;
       }
     }
     else {
@@ -1597,10 +1616,10 @@ bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
   if(forbidden_names.size == 0)
     InitForbiddenNames();
   if((forbidden_names.FindEl(chk_nm) < 0) &&
-     !(bool)TypeDef::FindGlobalTypeName(chk_nm,false)) return false;
+      !(bool)TypeDef::FindGlobalTypeName(chk_nm,false)) return false;
   if(!warn) return true;
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
-                "is a css reserved name used for something else -- please choose another name");
+      "is a css reserved name used for something else -- please choose another name");
   return true;
 }
 
@@ -1618,7 +1637,7 @@ void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
 }
 
 Program* Program::MakeTemplate() {
-//TODO: this will probably get nuked and replaced with a generic maker on .root
+  //TODO: this will probably get nuked and replaced with a generic maker on .root
   Program* prog = new Program;
   {ProgVar* o = new ProgVar; o->SetName("NewProgVar"); prog->vars.Add(o);}
   //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
@@ -1630,7 +1649,7 @@ Program* Program::MakeTemplate() {
 }
 
 bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label,
-                                    const String& sub_gp_nm) {
+    const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
@@ -1676,9 +1695,9 @@ iPanelSet* Program::FindMyPanelSet() {
   taSigLinkItr itr;
   iPanelSet* el;
   FOR_DLC_EL_OF_TYPE(iPanelSet, el, link, itr) {
-//     if (el->data() == this) {
-      return el;
-//     }
+    //     if (el->data() == this) {
+    return el;
+    //     }
   }
   return NULL;
 }
@@ -1709,7 +1728,7 @@ bool Program::ViewCssScript(int src_ln_no) {
   dps->setCurrentPanelId(2);
   if(src_ln_no >= 0) {
     iPanelOfProgramScript* pnl =
-      dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
+        dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
     if(pnl && pnl->vs) {
       pnl->vs->setHighlightLines(src_ln_no, 1);
     }

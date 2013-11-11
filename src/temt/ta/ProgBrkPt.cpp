@@ -19,6 +19,10 @@
 #include <taSigLink>
 #include <SigLinkSignal>
 
+void ProgBrkPt::Initialize() {
+  enabled = true;
+}
+
 void ProgBrkPt::InitLinks() {
   taBase::Own(prog_el, this);
   inherited::InitLinks();
@@ -31,9 +35,38 @@ void ProgBrkPt::CutLinks() {
       // start the clear the progline - not from the program
       int code_line = prog->script_list.FindMainLine(prog_el);
       ProgLine* pl = prog->script_list.SafeEl(code_line);
-      pl->ClearBreakpoint();
+      prog_el->ClearBreakpoint();
+      if (pl) {
+        pl->ClearBreakpoint();
+      }
     }
     prog_el.CutLinks();
   }
   inherited::CutLinks();
+}
+
+void ProgBrkPt::Enable() {
+  if (enabled == true)
+    return;
+  enabled = true;
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    int code_line = prog->script_list.FindMainLine(prog_el);
+    ProgLine* pl = prog->script_list.SafeEl(code_line);
+    pl->SetBreakpoint();
+  }
+  SigEmitUpdated();
+}
+
+void ProgBrkPt::Disable() {
+  if (enabled == false)
+    return;
+  enabled = false;
+  Program* prog = GET_MY_OWNER(Program);
+  if (prog) {
+    int code_line = prog->script_list.FindMainLine(prog_el);
+    ProgLine* pl = prog->script_list.SafeEl(code_line);
+    pl->DisableBreakpoint();
+  }
+  SigEmitUpdated();
 }

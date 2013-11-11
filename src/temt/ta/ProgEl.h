@@ -75,11 +75,12 @@ public:
     NEW_EL              = 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
     VERBOSE             = 0x0008, // print informative message about the operation of this program element to std output (e.g., css console or during -nogui startup) -- useful for debugging and for logging key steps during startup
     QUIET               = 0x0010, // turn off warning messages if they are not relevant
-    BREAKPOINT          = 0x0100, // #NO_SHOW breakpoint set at this prog el
     PROG_ERROR          = 0x0200, // #NO_SHOW css error was triggered at this prog el
     WARNING             = 0x0400, // #NO_SHOW css warning was triggered at this prog el
     CAN_REVERT_TO_CODE  = 0x0800, // #NO_SHOW can revert to program code string -- computes whether this prog el can revert back to a ProgCode -- used for enabling button
-  };
+    BREAKPOINT_ENABLED  = 0x1000, // #NO_SHOW breakpoint (ENABLED & DISABLED are mutually exclusive)
+    BREAKPOINT_DISABLED = 0x2000, // #NO_SHOW breakpoint exists but is currently disabled
+};
 
   String                desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
   ProgFlags             flags;  // flags for modifying program element function or providing information about the status of this program element
@@ -131,8 +132,7 @@ public:
   void                  ToggleVerboseFlag();
   // #MENU #MENU_ON_Object #DYN1 toggle verbose flag to opposite of current state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
   void                  ToggleBreakpoint();
-  // #MENU #MENU_ON_Object #DYN1 toggle breakpoint flag to opposite of current state: will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
-
+  // #MENU #MENU_ON_Object #DYN1 add or remove a breakpoint: a breakpoint will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
   virtual bool          RevertToCode();
   // #BUTTON #GHOST_OFF_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
 
@@ -167,6 +167,10 @@ public:
   override const String GetToolTip(const KeyString& key) const;
   override String       GetColText(const KeyString& key, int itm_idx = -1) const;
   bool                  IsVerbose() const { return HasProgFlag(VERBOSE); }
+  void                  EnableBreakpoint();
+  void                  DisableBreakpoint();
+  void                  SetBreakpoint();
+  void                  ClearBreakpoint();
 
   virtual String        GetToolbarName() const;
   // name of the program element as represented in the programming toolbar

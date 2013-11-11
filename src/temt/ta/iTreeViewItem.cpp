@@ -16,9 +16,11 @@
 #include "iTreeViewItem.h"
 #include <taiSigLink>
 #include <ViewColor_List>
+#include <ViewBackground_List>
 #include <iColor>
 #include <iClipData>
 #include <taiWidgetMenu>
+#include <QBrush>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -187,17 +189,30 @@ void iTreeViewItem::DecorateDataNode() {
     String dec_key = link->GetStateDecoKey();
     if(dec_key.nonempty()) {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+      ViewBackground* bg_brush = taMisc::view_backgrounds->FindName(dec_key);
       if(vc) {
-        if(vc->use_bg)          // prefer bg color; always set bg so no conflict with type info
-          setBackgroundColor(vc->bg_color.color());
+        if(vc->use_bg) {
+          // prefer bg color; always set bg so no conflict with type info
+          if (bg_brush) { // not just a special color, also a special background brush
+            QBrush brush;
+            brush.setStyle(bg_brush->style);
+            brush.setColor(vc->bg_color.color());
+            setBackground(brush);
+          }
+          else {
+            setBackgroundColor(vc->bg_color.color());
+          }
+        }
         else if(vc->use_fg)
           setBackgroundColor(vc->fg_color.color());
       }
       else {
+        resetBackground();
         resetBackgroundColor();//setHighlightIndex(0);
       }
     }
     else {
+      resetBackground();
       resetBackgroundColor();//setHighlightIndex(0);
     }
   }

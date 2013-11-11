@@ -227,6 +227,8 @@ set(ta_HEADS_MAKETA_NOMOC
   ColorScale.h
   ViewColor.h
   ViewColor_List.h
+  ViewBackground.h
+  ViewBackground_List.h
     
   iFont.h
   taFontSpec.h
@@ -739,7 +741,8 @@ set(ta_HEADS_MAKETA_NOMOC
   SoScrollBar.h
   ProgElChoiceDlg.h
   ProgBrkPt.h
-  ProgBrkPt_List.h
+  ProgBrkPt_List.h  
+  
 )
 
 # need both maketa and moc -- relatively rare
@@ -802,7 +805,7 @@ set(ta_HEADS_MAKETA_MOC
   iViewPanelOfGraphTable.h
 
   iViewPanelOfVEWorld.h
-)
+ )
 
 set(ta_HEADS_NOMAKETA_MOC
   iAutoSaver.h
@@ -1870,6 +1873,8 @@ set(ta_SRCS_MAKETA
 
   iViewPanelOfVEWorld.cpp
   ProgElChoiceDlg.cpp
+  ViewBackground.cpp
+  ViewBackground_List.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

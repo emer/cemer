@@ -121,6 +121,8 @@ public:
   // #IGNORE initialize gui system
   static bool   Startup_InitViewColors();
   // #IGNORE initialize default view colors
+  static bool   Startup_InitViewBackgrounds();
+  // #IGNORE initialize default view backgrounds - brushes
   static bool   Startup_ConsoleType();
   // #IGNORE arbitrate type of console, based on user options, and app context
   static bool   Startup_MakeWizards();

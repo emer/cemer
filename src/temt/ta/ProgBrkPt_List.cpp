@@ -16,19 +16,24 @@
 #include "ProgBrkPt_List.h"
 #include <ProgBrkPt>
 #include <ProgEl>
+#include <ProgLine>
 
 void ProgBrkPt_List::Initialize() {
   SetBaseType(&TA_ProgBrkPt);
   setUseStale(true);
 }
 
-void ProgBrkPt_List::AddBrkPt(ProgEl* prog_el) {
+ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, String codeline) {
   if (!prog_el)
-    return;
-  if (FindBrkPt(prog_el) == NULL) {
+    return NULL;
+  ProgBrkPt* bp = FindBrkPt(prog_el);
+  if (bp == NULL) {
     ProgBrkPt* bp = (ProgBrkPt*)New(1);
     bp->prog_el = prog_el;
+    bp->name = "Breakpoint:" + codeline.elidedTo(50);
+    SigEmitUpdated();
   }
+  return bp;
 }
 
 void ProgBrkPt_List::DeleteBrkPt(ProgEl* prog_el) {
