@@ -47,7 +47,10 @@ void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
   this->viewport = vpr;
 
   this->pbuff = NULL;		// constructed later
+#if (QT_VERSION >= 0x050000)
   this->gl_ctxt = NULL;
+  this->gl_widg = NULL;
+#endif
   this->cache_context = 0;
 }
 
@@ -76,6 +79,9 @@ SoOffscreenRendererQt::SoOffscreenRendererQt(SoGLRenderAction * action)
 SoOffscreenRendererQt::~SoOffscreenRendererQt()
 {
   if(pbuff) delete pbuff;
+#if (QT_VERSION >= 0x050000)
+  if(gl_widg) delete gl_widg;
+#endif
   if (this->didallocation) { delete this->renderaction; }
 }
 
@@ -156,13 +162,18 @@ void SoOffscreenRendererQt::makeBuffer(int width, int height, const QOpenGLFrame
 #else
 void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& fmt) {
 #endif
-  if(pbuff) {
-    if(pbuff->height() == height && pbuff->width() == width) return;
-  }
   viewport.setWindowSize(width, height);
   cache_context = SoGLCacheContextElement::getUniqueCacheContext();
-  gl_ctxt = (QGLContext*)QGLContext::currentContext(); // save current context
 #if (QT_VERSION >= 0x050000)
+  gl_ctxt = (QGLContext*)QGLContext::currentContext(); // save current context
+  if(!gl_ctxt) {
+    QGLFormat glf;
+    glf.setSampleBuffers(true);
+    glf.setSamples(4);
+    gl_widg = new QGLWidget(glf);
+    gl_widg->show();
+    gl_ctxt = gl_widg->context();
+  }
   pbuff = new QOpenGLFramebufferObject(width, height, fmt);
 #else
   pbuff = new QGLPixelBuffer(width, height, fmt);

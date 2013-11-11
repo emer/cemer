@@ -24,6 +24,7 @@
 #include <QImage>         // need to define QT_VERSION in first place..
 #if (QT_VERSION >= 0x050000)
 #include <QGLContext>
+#include <QGLWidget>
 #include <QOpenGLFramebufferObject>
 #else
 #include <QGLPixelBuffer>
@@ -78,6 +79,7 @@ protected:
 #if (QT_VERSION >= 0x050000)
   QOpenGLFramebufferObject* pbuff;
   QGLContext*               gl_ctxt; // this is the gl context active when pbuff was made -- always set this to be active again when using pbuff
+  QGLWidget*                gl_widg; // our own gl widget if no active context
 #else
   QGLPixelBuffer*	pbuff;
 #endif
