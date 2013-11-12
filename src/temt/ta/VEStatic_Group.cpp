@@ -33,9 +33,23 @@ void VEStatic_Group::SnapPosToGrid(float grid_size) {
   }
 }
 
+void VEStatic_Group::UpdateCurToRels() {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
+    ob->UpdateCurFromRel();
+  }
+}
+
+void VEStatic_Group::SaveCurAsPrv() {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
+    ob->SaveCurAsPrv();
+  }
+}
+
 void VEStatic_Group::Translate(float dx, float dy, float dz) {
   FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
-    ob->Translate(dx, dy, dz);
+    if(!(ob->relative && ob->rel_static)) { // rels will be dealt with in updt
+      ob->Translate(dx, dy, dz);
+    }
   }
 }
 
@@ -47,13 +61,17 @@ void VEStatic_Group::Scale(float sx, float sy, float sz) {
 
 void VEStatic_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot) {
   FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
-    ob->RotateAxis(x_ax, y_ax, z_ax, rot);
+    if(!(ob->relative && ob->rel_static)) { // rels will be dealt with in updt
+      ob->RotateAxis(x_ax, y_ax, z_ax, rot);
+    }
   }
 }
 
 void VEStatic_Group::RotateEuler(float euler_x, float euler_y, float euler_z) {
   FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
-    ob->RotateEuler(euler_x, euler_y, euler_z);
+    if(!(ob->relative && ob->rel_static)) { // rels will be dealt with in updt
+      ob->RotateEuler(euler_x, euler_y, euler_z);
+    }
   }
 }
 

@@ -116,6 +116,10 @@ void VEObject::UpdateCurToRels() {
   bodies.UpdateCurToRels();
 }
 
+void VEObject::SaveCurAsPrv() {
+  bodies.SaveCurAsPrv();
+}
+
 void VEObject::SnapPosToGrid(float grid_size, bool init_pos) {
   bodies.SnapPosToGrid(grid_size, init_pos);
 }

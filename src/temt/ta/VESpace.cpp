@@ -94,6 +94,14 @@ void VESpace::SnapPosToGrid(float grid_size) {
   static_els.SnapPosToGrid(grid_size);
 }
 
+void VESpace::UpdateCurToRels() {
+  static_els.UpdateCurToRels();
+}
+
+void VESpace::SaveCurAsPrv() {
+  static_els.SaveCurAsPrv();
+}
+
 void VESpace::Translate(float dx, float dy, float dz) {
   static_els.Translate(dx, dy, dz);
 }

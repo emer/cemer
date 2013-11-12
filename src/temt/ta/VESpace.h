@@ -61,6 +61,10 @@ public:
   // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
   virtual void  SetValsToODE() { Init(); }
   // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
+  virtual void  UpdateCurToRels();
+  // #CAT_ODE go through all the statics in this space that have rel_static and relative set, and compute current position and rotation from relative offsets compared to the rel_body current values
+  virtual void  SaveCurAsPrv();
+  // #IGNORE go through all the statis in this space and save current vals as prv_* -- needed for UpdateCurToRels
 
   virtual void  Translate(float dx, float dy, float dz);
   // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)

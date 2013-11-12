@@ -220,6 +220,8 @@ public:
   // #CAT_ODE #EXPERT if init_rel is on, this will compute init values from relative values -- called automatically during Init() and UAE
   virtual void  UpdateCurFromRel();
   // #CAT_ODE #EXPERT if init_rel is on, this will compute current position and rotation from relative offsets compared to the rel_body current values -- see also VEObject::UpdateCurToRels
+  virtual void  SaveCurAsPrv();
+  // #IGNORE save current vals as prv_* -- needed for UpdateCurToRels
   virtual void  UpdateCurRotFmQuat();
   // #CAT_ODE #EXPERT update current rotation parameters from cur_quat read from ODE or whenever cur_quat might be set externally (e.g., gui dragging)
   virtual void  InitRotFromCur();
@@ -287,6 +289,9 @@ public:
 protected:
   Shape         cur_shape;      // #IGNORE current shape that was previously set -- for detecting updates
   LongAxis      cur_long_axis;  // #IGNORE long axis that was previously set -- for detecting updates
+  taVector3f    prv_pos;      // #IGNORE previous cur_pos value -- set prior to a Translate function move, for use by UpdateCurFromRel
+  taQuaternion  prv_quat;      // #IGNORE previous cur_quat rotation value -- set prior to a Rotate function rotation, for use by UpdateCurFromRel
+
 
   override void         UpdateAfterEdit_impl();
 private:

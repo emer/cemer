@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "VEBody_Group.h"
+#include <VEObject>
 
 void VEBody_Group::Init() {
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
@@ -63,6 +64,12 @@ void VEBody_Group::UpdateCurToRels() {
   }
 }
 
+void VEBody_Group::SaveCurAsPrv() {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
+    ob->SaveCurAsPrv();
+  }
+}
+
 void VEBody_Group::SnapPosToGrid(float grid_size, bool init_pos) {
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->SnapPosToGrid(grid_size, init_pos);
@@ -70,8 +77,11 @@ void VEBody_Group::SnapPosToGrid(float grid_size, bool init_pos) {
 }
 
 void VEBody_Group::Translate(float dx, float dy, float dz, bool init) {
+  VEObject* obj = GET_MY_OWNER(VEObject);
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
-    ob->Translate(dx, dy, dz, init);
+    if(!(obj && obj->auto_updt_rels && ob->init_rel && ob->rel_body)) { // rels will be dealt with in updt
+      ob->Translate(dx, dy, dz, init);
+    }
   }
 }
 
@@ -82,14 +92,20 @@ void VEBody_Group::Scale(float sx, float sy, float sz) {
 }
 
 void VEBody_Group::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+  VEObject* obj = GET_MY_OWNER(VEObject);
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
-    ob->RotateAxis(x_ax, y_ax, z_ax, rot, init);
+    if(!(obj && obj->auto_updt_rels && ob->init_rel && ob->rel_body)) { // rels will be dealt with in updt
+      ob->RotateAxis(x_ax, y_ax, z_ax, rot, init);
+    }
   }
 }
 
 void VEBody_Group::RotateEuler(float euler_x, float euler_y, float euler_z, bool init) {
+  VEObject* obj = GET_MY_OWNER(VEObject);
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
-    ob->RotateEuler(euler_x, euler_y, euler_z, init);
+    if(!(obj && obj->auto_updt_rels && ob->init_rel && ob->rel_body)) { // rels will be dealt with in updt
+      ob->RotateEuler(euler_x, euler_y, euler_z, init);
+    }
   }
 }
 

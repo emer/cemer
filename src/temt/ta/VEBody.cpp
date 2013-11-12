@@ -221,28 +221,6 @@ void VEBody::GetInitFromRel() {
   // rel_pos_dist = rel_pos.Mag();
 }
 
-void VEBody::UpdateCurFromRel() {
-  if(!init_rel) return;
-  if(!rel_body) return;
-
-  cur_pos = rel_body->cur_pos;
-  // need to take into account any rotation of the body relative to its initial --
-  // rotate relative position in corresponding fashion
-  taQuaternion rdif = rel_body->cur_quat_raw / rel_body->init_quat;
-  taVector3f rprot = rel_pos;
-  rdif.RotateVec(rprot);
-  cur_pos += rprot;
-
-  CurRotFromInit();             // go back init
-  cur_quat *= rdif;              // then add increment
-  UpdateCurRotFmQuat();
-
-  cur_lin_vel = rel_body->cur_lin_vel + rel_lin_vel;
-  cur_ang_vel = rel_body->cur_ang_vel + rel_ang_vel;
-
-  UpdateAfterEdit();
-}
-
 void VEBody::Init() {
   VEWorld::last_to_set_ode = this;
 
@@ -521,7 +499,34 @@ void VEBody::UpdateCurRotFmQuat() {
   }
 }
 
+void VEBody::SaveCurAsPrv() {
+  prv_quat = cur_quat;
+  prv_pos = cur_pos;
+}
+
+void VEBody::UpdateCurFromRel() {
+  if(!init_rel || !rel_body) return;
+
+  // need to take into account any rotation of the body relative to its initial --
+  // rotate relative position in corresponding fashion
+  cur_pos += rel_body->cur_pos - rel_body->prv_pos; // translate
+  taQuaternion rdif = rel_body->cur_quat / rel_body->prv_quat;
+  taVector3f rprot = cur_pos - rel_body->cur_pos;
+  rdif.RotateVec(rprot);
+  cur_pos = rel_body->cur_pos + rprot;
+
+  cur_quat *= rdif;              // add increment
+  UpdateCurRotFmQuat();
+
+  // we don't update this, so just leave it alone..
+  // cur_lin_vel = rel_body->cur_lin_vel + rel_lin_vel;
+  // cur_ang_vel = rel_body->cur_ang_vel + rel_ang_vel;
+
+  UpdateAfterEdit();
+}
+
 void VEBody::Translate(float dx, float dy, float dz, bool init, bool abs_pos) {
+  VEObject* obj = GetObject();
   if(init) {
     if(abs_pos) {
       init_pos.SetXYZ(dx,dy,dz);
@@ -533,6 +538,9 @@ void VEBody::Translate(float dx, float dy, float dz, bool init, bool abs_pos) {
     }
   }
   else {
+    if(obj && obj->auto_updt_rels) {
+      obj->SaveCurAsPrv();
+    }
     if(abs_pos) {
       cur_pos.SetXYZ(dx,dy,dz);
     }
@@ -543,7 +551,6 @@ void VEBody::Translate(float dx, float dy, float dz, bool init, bool abs_pos) {
     }
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
-  VEObject* obj = GetObject();
   if(obj && obj->auto_updt_rels) {
     if(init)
       obj->UpdateInitToRels();
@@ -585,6 +592,7 @@ void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init
     "RotateAxis", "must specify a non-zero axis!"))
     return;
 
+  VEObject* obj = GetObject();
   if(init) {
     if(abs_rot) {
       init_quat.FromAxisAngle(x_ax, y_ax, z_ax, rot);
@@ -596,6 +604,9 @@ void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init
     init_quat.ToEulerVec(init_euler);
   }
   else {
+    if(obj && obj->auto_updt_rels) {
+      obj->SaveCurAsPrv();
+    }
     if(abs_rot) {
       cur_quat.FromAxisAngle(x_ax, y_ax, z_ax, rot);
     }
@@ -605,7 +616,6 @@ void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init
     UpdateCurRotFmQuat();
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
-  VEObject* obj = GetObject();
   if(obj && obj->auto_updt_rels) {
     if(init)
       obj->UpdateInitToRels();
@@ -615,6 +625,7 @@ void VEBody::RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init
 }
 
 void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init, bool abs_rot) {
+  VEObject* obj = GetObject();
   if(init) {
     if(abs_rot) {
       init_quat.FromEuler(euler_x, euler_y, euler_z);
@@ -626,6 +637,9 @@ void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init,
     init_quat.ToEulerVec(init_euler);
   }
   else {
+    if(obj && obj->auto_updt_rels) {
+      obj->SaveCurAsPrv();
+    }
     if(abs_rot) {
       cur_quat.FromEuler(euler_x, euler_y, euler_z);
     }
@@ -635,7 +649,6 @@ void VEBody::RotateEuler(float euler_x, float euler_y, float euler_z, bool init,
     UpdateCurRotFmQuat();
   }
   UpdateAfterEdit();            // calls CurToODE and updates display
-  VEObject* obj = GetObject();
   if(obj && obj->auto_updt_rels) {
     if(init)
       obj->UpdateInitToRels();

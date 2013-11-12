@@ -171,10 +171,22 @@ void VEStatic::GetInitFromRel() {
     tquat /= rquat;             // take away the rel rotation, what's left is relative
     tquat.ToEulerVec(rel_euler);
     rel_rot = tquat;
+    rel_quat = tquat;
     ClearStaticFlag(INIT_WAS_ABS); // no longer..
   }
 
   pos = rel_static->pos + rel_pos;
+
+  // get rel_quat and keep sync'd
+  if(rel_static->HasStaticFlag(EULER_ROT)) {
+    rel_quat = rel_euler;
+    rel_quat.ToAxisAngle(rel_rot);
+  }
+  else {
+    rel_quat = rel_rot;
+    rel_quat.ToEulerVec(rot_euler);
+  }
+
   taQuaternion tquat;
   if(rel_static->HasStaticFlag(EULER_ROT)) {
     tquat = rel_static->rot_euler;
@@ -278,11 +290,52 @@ void VEStatic::SnapPosToGrid(float grid_size) {
   SigEmitUpdated(); // update displays..
 }
 
-void VEStatic::Translate(float dx, float dy, float dz) {
-  pos.x += dx;
-  pos.y += dy;
-  pos.z += dz;
-  SigEmitUpdated(); // update displays..
+void VEStatic::SaveCurAsPrv() {
+  prv_quat = rot_quat;
+  prv_pos = pos;
+}
+
+void VEStatic::UpdateCurFromRel() {
+  if(!relative || !rel_static) return;
+
+  taQuaternion rdif = rel_static->rot_quat / rel_static->prv_quat;
+  rdif.RotateVec(rel_pos);
+
+  // don't need to compound extra additions at all..
+
+  GetInitFromRel();
+  UpdateAfterEdit();
+}
+
+void VEStatic::Translate(float dx, float dy, float dz, bool abs_pos) {
+  VESpace* obj = GetSpace();
+  if(obj) {
+    obj->SaveCurAsPrv();
+  }
+  if(relative && rel_static) {
+    if(abs_pos) {
+      rel_pos.SetXYZ(dx, dy, dz);
+    }
+    else {
+      rel_pos.x += dx;
+      rel_pos.y += dy;
+      rel_pos.z += dz;
+    }
+  }
+  else {
+    if(abs_pos) {
+      pos.SetXYZ(dx, dy, dz);
+    }
+    else {
+      pos.x += dx;
+      pos.y += dy;
+      pos.z += dz;
+    }
+  }
+  UpdateAfterEdit();
+  if(obj) {
+    obj->UpdateCurToRels();
+  }
 }
 
 void VEStatic::Scale(float sx, float sy, float sz) {
@@ -315,22 +368,108 @@ void VEStatic::Scale(float sx, float sy, float sz) {
   SigEmitUpdated(); // update displays..
 }
 
-void VEStatic::RotateAxis(float x_ax, float y_ax, float z_ax, float rt) {
+void VEStatic::RotateAxis(float x_ax, float y_ax, float z_ax, float rt, bool abs_rot) {
   if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
     "RotateAxis", "must specify a non-zero axis!"))
     return;
 
-  rot_quat.RotateAxis(x_ax, y_ax, z_ax, rt);
-  rot = rot_quat;
-  rot_quat.ToEulerVec(rot_euler);
-  SigEmitUpdated(); // update displays..
+  VESpace* obj = GetSpace();
+  if(obj) {
+    obj->SaveCurAsPrv();
+  }
+
+  if(relative && rel_static) {
+    taQuaternion tquat;
+    if(abs_rot) {
+      if(rel_static->HasStaticFlag(EULER_ROT)) {
+        tquat.FromAxisAngle(x_ax, y_ax, z_ax, rt);
+        tquat.Normalize();
+        tquat.ToEulerVec(rel_euler);
+      }
+      else {
+        rel_rot.SetXYZR(x_ax, y_ax, z_ax, rt);
+      }
+    }
+    else {
+      if(rel_static->HasStaticFlag(EULER_ROT)) {
+        tquat.FromEulerVec(rel_euler);
+      }
+      else {
+        tquat.FromAxisAngle(rel_rot);
+      }
+      tquat.RotateAxis(x_ax, y_ax, z_ax, rt);
+      if(rel_static->HasStaticFlag(EULER_ROT)) {
+        tquat.ToEulerVec(rel_euler);
+      }
+      else {
+        tquat.ToAxisAngle(rel_rot);
+      }
+    }
+  }
+  else {
+    if(abs_rot) {
+      rot_quat.FromAxisAngle(x_ax, y_ax, z_ax, rt);
+    }
+    else {
+      rot_quat.RotateAxis(x_ax, y_ax, z_ax, rt);
+    }
+    InitRotFromCur();
+  }
+
+  UpdateAfterEdit();
+  if(obj) {
+    obj->UpdateCurToRels();
+  }
 }
 
-void VEStatic::RotateEuler(float euler_x, float euler_y, float euler_z) {
-  rot_quat.RotateEuler(euler_x, euler_y, euler_z);
-  rot = rot_quat;
-  rot_quat.ToEulerVec(rot_euler);
-  SigEmitUpdated(); // update displays..
+void VEStatic::RotateEuler(float euler_x, float euler_y, float euler_z, bool abs_rot) {
+  VESpace* obj = GetSpace();
+  if(obj) {
+    obj->SaveCurAsPrv();
+  }
+
+  if(relative && rel_static) {
+    taQuaternion tquat;
+    if(abs_rot) {
+      if(rel_static->HasStaticFlag(EULER_ROT)) {
+        rel_euler.SetXYZ(euler_x, euler_y, euler_z);
+      }
+      else {
+        tquat.FromEuler(euler_x, euler_y, euler_z);
+        tquat.Normalize();
+        tquat.ToAxisAngle(rel_rot);
+      }
+    }
+    else {
+      if(rel_static->HasStaticFlag(EULER_ROT)) {
+        tquat.FromEulerVec(rel_euler);
+      }
+      else {
+        tquat.FromAxisAngle(rel_rot);
+      }
+      tquat.RotateEuler(euler_x, euler_y, euler_z);
+      if(rel_static->HasStaticFlag(EULER_ROT)) {
+        tquat.ToEulerVec(rel_euler);
+      }
+      else {
+        tquat.ToAxisAngle(rel_rot);
+      }
+    }
+  }
+  else {
+    if(abs_rot) {
+      rot_quat.FromEuler(euler_x, euler_y, euler_z);
+    }
+    else {
+      rot_quat.RotateEuler(euler_x, euler_y, euler_z);
+    }
+    InitRotFromCur();
+  }
+
+  UpdateAfterEdit();
+  if(obj) {
+    obj->UpdateCurToRels();
+  }
 }
 
 void VEStatic::CopyColorFrom(VEStatic* cpy_fm) {

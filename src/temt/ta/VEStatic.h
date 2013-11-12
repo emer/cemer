@@ -81,11 +81,12 @@ public:
 
   bool          relative;       // position and rotation are relative to another static object
   VEStaticRef   rel_static;     // #CONDSHOW_ON_relative other static body that our position and rotatio are computed relative to -- in general better if rel_static is before this one in list of objects, especially if it is also relative to something else, so everything gets updated in the proper order.  definitely avoid loops!
-  taVector3f    rel_pos;        // #CONDEDIT_OFF_shape:PLANE||!relative relative position of static item, relative to rel_static
-  taAxisAngle   rel_rot;        // #CONDEDIT_OFF_flags:EULER_ROT||!relative relative rotation of static item compared to rel_static in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
-  taVector3f    rel_euler;      // #CONDEDIT_ON_flags:EULER_ROT&&relative relative rotation of static item compard to rel_static (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taVector3f    rel_pos;        // #CONDSHOW_OFF_shape:PLANE||!relative relative position of static item, relative to rel_static
+  taAxisAngle   rel_rot;        // #CONDSHOW_OFF_flags:EULER_ROT||!relative relative rotation of static item compared to rel_static in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taVector3f    rel_euler;      // #CONDSHOW_ON_flags:EULER_ROT&&relative relative rotation of static item compard to rel_static (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
+  taQuaternion  rel_quat;      // #READ_ONLY final quat for either rel_rot or rel_euler -- doesn't have the final correction for capsule axis etc
 
-  taVector3f    pos;            // #CONDEDIT_OFF_shape:PLANE||relative position of static item
+  taVector3f    pos;            // #CONDSHOW_OFF_shape:PLANE||relative position of static item
   taAxisAngle   rot;            // #CONDEDIT_OFF_flags:EULER_ROT||relative rotation of static item in terms of axis and angle (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
   taVector3f    rot_euler;      // #CONDEDIT_ON_flags:EULER_ROT&&!relative rotation of static item (rot is in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) -- not applicable to PLANE shape
   taQuaternion  rot_quat;       // #READ_ONLY quaternion representation of the rotation -- automatically converted from rot or rot_euler depending on EULER_ROT flag
@@ -142,9 +143,13 @@ public:
   // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
 
   virtual void  GetInitFromRel();
-  // #CAT_ODE #EXPERT if init_rel is on, this will compute init values from relative values -- called automatically during Init() and UAE
+  // #CAT_ODE #EXPERT if relative is on, this will compute init values from relative values -- called automatically during Init() and UAE
   virtual void  InitRotFromCur();
   // #IGNORE set init rotation parameters from current rotation (rot_quat)
+  virtual void  UpdateCurFromRel();
+  // #CAT_ODE #EXPERT if relative is on, this will compute current position and rotation from relative offsets compared to the rel_static current values -- see also VEStatic::UpdateCurToRels
+  virtual void  SaveCurAsPrv();
+  // #IGNORE save current vals as prv_* -- needed for UpdateCurToRels
 
   virtual void  Init_Shape();   // #CAT_ODE set shape information
   virtual void  Init_PosRot();  // #CAT_ODE set position and rotation
@@ -153,14 +158,14 @@ public:
                                 (HasStaticFlag(FM_FILE) == HasStaticFlag(CUR_FM_FILE))); }
   // #CAT_ODE is the ODE guy actually configured for the current shape or not?
 
-  virtual void  Translate(float dx, float dy, float dz);
-  // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once)
+  virtual void  Translate(float dx, float dy, float dz, bool abs_pos = false);
+  // #BUTTON #DYN1 #CAT_ODE move object given distance (can select multiple and operate on all at once) -- if abs_pos then set directly to coordinates instead of adding them to current values
   virtual void  Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
-  virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
-  virtual void  RotateEuler(float euler_x, float euler_y, float euler_z);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values
+  virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool abs_rot = false);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values
+  virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool abs_rot = false);
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if abs_rot then set directly to coordinates instead of adding them to current values
   virtual void  SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static body to grid of given size
   virtual void  CopyColorFrom(VEStatic* cpy_fm);
@@ -172,6 +177,8 @@ public:
   TA_BASEFUNS(VEStatic);
 protected:
   Shape         cur_shape;      // current shape that was previously set
+  taVector3f    prv_pos;      // #IGNORE previous cur_pos value -- set prior to a Translate function move, for use by UpdateCurFromRel
+  taQuaternion  prv_quat;      // #IGNORE previous cur_quat rotation value -- set prior to a Rotate function rotation, for use by UpdateCurFromRel
 
   override void         UpdateAfterEdit_impl();
 private:

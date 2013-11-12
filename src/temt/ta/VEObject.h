@@ -75,9 +75,12 @@ public:
   virtual void  CurToInit();
   // #BUTTON #CAT_ODE set the current position, rotation, etc values to the initial values that will be used for an Init
   virtual void  UpdateInitToRels();
-  // #BUTTON #CAT_ODE go through all the bodies in this object that have rel_body and init_rel set, and compute initial position and rotation from relative offsets compared to the rel_body init values -- called automatically if auto_updt_rels is set
+  // #CAT_ODE go through all the bodies in this object that have rel_body and init_rel set, and compute initial position and rotation from relative offsets compared to the rel_body init values -- called automatically if auto_updt_rels is set
   virtual void  UpdateCurToRels();
-  // #BUTTON #CAT_ODE go through all the bodies in this object that have rel_body and init_rel set, and compute current position and rotation from relative offsets compared to the rel_body current values -- called automatically if auto_updt_rels is set
+  // #CAT_ODE go through all the bodies in this object that have rel_body and init_rel set, and compute current position and rotation from relative offsets compared to the rel_body current values -- called automatically if auto_updt_rels is set
+  virtual void  SaveCurAsPrv();
+  // #IGNORE go through all the bodies in this object and save current vals as prv_* -- needed for UpdateCurToRels
+
   virtual void  Translate(float dx, float dy, float dz, bool init);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos
   virtual void  Scale(float sx, float sy, float sz);
