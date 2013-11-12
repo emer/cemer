@@ -262,10 +262,11 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, RecvCons* cg, Unit* ru,
       }
     }
   }
-  else { // not using send gps
+  else { // index_by_gps_send.on == false - not using gps in either dimension!
     if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
       Unit* su = cg->Un(i,net);
       send_lay->UnitLogPos(su, su_pos);
+      si_geom = send_lay->un_geom;
     }
     else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
       Unit* su = cg->Un(i,net);
@@ -281,9 +282,10 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, RecvCons* cg, Unit* ru,
       //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
       su_pos.x += send_lay->un_geom.x * sgp_pos.x;
       su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+      si_geom = send_lay->un_geom * send_lay->gp_geom;
     }
     si_pos = su_pos;
-    si_geom = send_lay->flat_geom;
+    //si_geom = send_lay->flat_geom;
     //si_geom = send_lay->un_geom * send_lay->gp_geom;
     //si_geom.x = send_lay->un_geom.x * send_lay->gp_geom.x;
     //si_geom.y = send_lay->un_geom.y * send_lay->gp_geom.y;
@@ -497,21 +499,32 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
       }
     }
   }
-  else { // index_by_gps_send.on == false -> send is all flat// everything is flat - needed here to cover user error!
-    int sunidx = 0;
-    //int sgpidx = 0;
-    send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
-    su_pos.x = sunidx % send_lay->un_geom.x;
-    su_pos.y = sunidx / send_lay->un_geom.y;
-    sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
-    // convert to planar x, y across whole layer
-    su_pos.x += send_lay->un_geom.x * sgp_pos.x;
-    su_pos.y += send_lay->un_geom.y * sgp_pos.y;
-    si_pos.x = su_pos.x;
-    si_pos.y = su_pos.y;
-    si_geom.x = send_lay->un_geom.x * send_lay->gp_geom.x;
-    si_geom.y = send_lay->un_geom.y * send_lay->gp_geom.y;
-  }
+
+  else { // index_by_gps_send.on == false - not using gps in either dimension!
+  	if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
+  		Unit* su = cg->Un(i,net);
+  		send_lay->UnitLogPos(su, su_pos);
+  		si_geom = send_lay->un_geom;
+  	}
+  	else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
+  		Unit* su = cg->Un(i,net);
+  		int sunidx = 0;
+  		int sgpidx = 0;
+  		send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
+
+  		su_pos.x = sunidx % send_lay->un_geom.x;
+  		su_pos.y = sunidx / send_lay->un_geom.x;
+  		taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+
+  		// convert to planar x, y across whole layer
+  		//su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
+  		su_pos.x += send_lay->un_geom.x * sgp_pos.x;
+  		su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+  		si_geom = send_lay->un_geom * send_lay->gp_geom;
+  	}
+  	si_pos = su_pos;
+  } // END else { // index_by_gps_send.on == false - not using gps in either dimension!
+
   // now we don't care if we're using gps in each dimension or not!
 
   float dist = 1.0f;
