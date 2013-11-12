@@ -559,6 +559,26 @@ void VEBody::Translate(float dx, float dy, float dz, bool init, bool abs_pos) {
   }
 }
 
+void VEBody::MoveDirDistAxis(float dist, float x_ax, float y_ax, float z_ax, float rot) {
+  taQuaternion tquat;
+  tquat = cur_quat_raw;
+  tquat.RotateAxis(x_ax, y_ax, z_ax, rot);
+  taVector3f del;
+  del.SetXYZ(dist, 0.0f, 0.0f); // 1,0,0 is 0 rotation
+  tquat.RotateVec(del);
+  Translate(del.x, del.y, del.z, false, false);
+}
+
+void VEBody::MoveDirDistEuler(float dist, float euler_x, float euler_y, float euler_z) {
+  taQuaternion tquat;
+  tquat = cur_quat_raw;
+  tquat.RotateEuler(euler_x, euler_y, euler_z);
+  taVector3f del;
+  del.SetXYZ(dist, 0.0f, 0.0f); // 1,0,0 is 0 rotation
+  tquat.RotateVec(del);
+  Translate(del.x, del.y, del.z, false, false);
+}
+
 void VEBody::Scale(float sx, float sy, float sz) {
   switch(shape) {
   case SPHERE:

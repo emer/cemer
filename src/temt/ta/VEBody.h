@@ -231,12 +231,17 @@ public:
 
   virtual void  Translate(float dx, float dy, float dz, bool init, bool abs_pos = false);
   // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once)  -- if init is true, then apply to init_pos, else to cur_pos -- if abs_pos then set directly to coordinates instead of adding them to current values
+  virtual void  MoveDirDistAxis(float dist, float x_ax=0.0, float y_ax=1.0, float z_ax=0.0, float rot=0.0);
+  // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once) along given direction (specified by axis and angle) RELATIVE TO CURRENT rotation, compared to 0 rotation direction which is along positive X axis -- if you want to go straight forward, just leave direction values at initial defaults (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) 
+  virtual void  MoveDirDistEuler(float dist, float euler_x=0.0, float euler_y=0.0,
+                                 float euler_z=0.0);
+  // #BUTTON #DYN1 #CAT_ODE move body given distance (can select multiple and operate on all at once) along given direction (specified by Euler angles) RELATIVE TO CURRENT rotation, compared to 0 rotation direction which is along positive X axis -- if you want to go straight forward, just leave direction values at initial defaults (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) 
   virtual void  Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
   virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init, bool abs_rot = false);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool init, bool abs_rot = false);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- if abs_rot then set directly to coordinates instead of adding them to current values
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
 
   virtual void  AddForce(float fx, float fy, float fz, bool torque=false, bool rel=false);
   // #BUTTON #CAT_ODE add given force vector to object at its center of mass -- if torque then it is a torque (angular force), otherwise linear -- if rel then force is relative to the objects own frame of reference (orientation) -- otherwise it is in the global reference frame

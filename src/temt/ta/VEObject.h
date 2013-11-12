@@ -86,9 +86,9 @@ public:
   virtual void  Scale(float sx, float sy, float sz);
   // #BUTTON #DYN1 #CAT_ODE scale size of body --  (can select multiple and operate on all at once)
   virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool init);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool init);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   virtual void  SnapPosToGrid(float grid_size=0.05f, bool init_pos=true);
   // #BUTTON #DYN1 #CAT_ODE snap the position of bodies to grid of given size -- operates on initial position if init_pos is set, otherwise on cur_pos
   virtual void  CopyColorFrom(VEBody* cpy_fm);

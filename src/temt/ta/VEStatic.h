@@ -163,9 +163,9 @@ public:
   virtual void  Scale(float sx, float sy=0.0f, float sz=0.0f);
   // #BUTTON #DYN1 #CAT_ODE scale size of object -- if sy or sz is 0, then sx is used for that dimension (can select multiple and operate on all at once)
   virtual void  RotateAxis(float x_ax, float y_ax, float z_ax, float rot, bool abs_rot = false);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool abs_rot = false);
-  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if abs_rot then set directly to coordinates instead of adding them to current values
+  // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation using given Euler angles to current rotation values -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   virtual void  SnapPosToGrid(float grid_size=0.05f);
   // #BUTTON #DYN1 #CAT_ODE snap the position of static body to grid of given size
   virtual void  CopyColorFrom(VEStatic* cpy_fm);
