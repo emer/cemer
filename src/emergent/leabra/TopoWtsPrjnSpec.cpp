@@ -305,7 +305,7 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, RecvCons* cg, Unit* ru,
   }
   // SPECIAL CASE: only one send unit in range so everyone gets max wt!
   if(sre.x - srs.x == 0 && sre.y - srs.y == 0) { // only one sending unit!
-    dist = 1.0f;
+    dist = 0.0f;
     return dist;
   }
   // if in-range, normalize the send range (for topological congruence to recv range)
@@ -473,8 +473,9 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
 	si_geom.y = send_lay->un_geom.y * send_lay->gp_geom.y;
       }
     }
-    else { // index_by_gps_send.x = false
+    else { // i.e., index_by_gps_send.x = true
       if(index_by_gps_send.y) { // using gps in both x-, y-dimensions - easy!
+      	// TODO: this must be the a source of my problem..
 	si_pos.x = sgp_pos.x;
 	si_pos.y = sgp_pos.y;
 	si_geom.x = send_lay->gp_geom.x;
@@ -525,7 +526,9 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
   	si_pos = su_pos;
   } // END else { // index_by_gps_send.on == false - not using gps in either dimension!
 
-  // now we don't care if we're using gps in each dimension or not!
+  /////////////////////////////////////////////////////////////////
+  // *** now we don't care if we're using gps in each dimension or not!
+  /////////////////////////////////////////////////////////////////
 
   float dist = 1.0f;
   // sending unit in range?  -- get next unit if not
@@ -539,7 +542,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
   }
   // SPECIAL CASE: only one send unit in range so everyone gets max wt!
   if(sre.x - srs.x == 0 && sre.y - srs.y == 0) { // only one sending unit!
-    dist = 1.0f;
+    dist = 0.0f;
     return dist;
   }
   // if in-range, normalize the send range (for topological congruence to recv range)
