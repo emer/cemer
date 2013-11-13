@@ -82,9 +82,12 @@ public:
 
   virtual void          ConfigCamera(SoPerspectiveCamera* cam);
   // #IGNORE config So camera parameters
+  virtual void          UpdtDirNorm();
+  // update dir_norm from cur_quat rotation
 
   override void Init();
   override void CurFromODE(bool updt_disp = false);
+  override void CurToODE();
 
   TA_SIMPLE_BASEFUNS(VECamera);
 private:
