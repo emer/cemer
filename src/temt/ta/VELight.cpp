@@ -29,23 +29,27 @@ void VELight::Initialize() {
   length = .01f;
 }
 
-// in ta_virtenv_qtso.cpp: SoLight* VELight::CreateLight()
+// in VEWorldView.cpp: SoLight* VELight::CreateLight()
 
-// in ta_virtenv_qtso.cpp: void VELight::ConfigLight(SoLight* lgt)
+// in VEWorldView.cpp: void VELight::ConfigLight(SoLight* lgt)
+
+void VELight::UpdtDirNorm() {
+  taVector3f dn(0.0f, 0.0f, -1.0f);
+  cur_quat.RotateVec(dn);
+  dir_norm = dn;
+}
 
 void VELight::Init() {
   inherited::Init();
-  SbVec3f dn(0.0f, 0.0f, -1.0f);
-  SbRotation sbrot(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
-  sbrot.multVec(dn, dn);
-  dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
+  UpdtDirNorm();
 }
 
 void VELight::CurFromODE(bool updt_disp) {
   inherited::CurFromODE(updt_disp);
-  SbVec3f dn(0.0f, 0.0f, -1.0f);
-  SbRotation sbrot(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
-  sbrot.multVec(dn, dn);
-  dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
+  UpdtDirNorm();
 }
 
+void VELight::CurToODE() {
+  inherited::CurToODE();
+  UpdtDirNorm();
+}

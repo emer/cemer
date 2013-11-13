@@ -57,9 +57,12 @@ public:
   // #IGNORE config So light parameters
   virtual bool          UpdateLight();
   // #BUTTON if environment is already initialized and viewed, this will update the light in the display based on current settings
+  virtual void          UpdtDirNorm();
+  // update dir_norm from cur_quat rotation
 
   override void Init();
   override void CurFromODE(bool updt_disp = false);
+  override void CurToODE();
 
   TA_SIMPLE_BASEFUNS(VELight);
 private:

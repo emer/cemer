@@ -148,13 +148,12 @@ void TdLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork*) {
 
 void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork* net) {
   int ri_prjn_idx;
-  FindLayerFmSpec(lay, ri_prjn_idx, &TA_TDRewIntegLayerSpec);
+  LeabraLayer* ri_lay = FindLayerFmSpec(lay, ri_prjn_idx, &TA_TDRewIntegLayerSpec);
+  // just taking the first unit = scalar val
+  LeabraTdUnit* su = (LeabraTdUnit*)ri_lay->units.SafeEl(0);
 
   lay->dav = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraTdUnit, u, lay->units) {
-    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[ri_prjn_idx];
-    // just taking the first unit = scalar val
-    LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(0,net);
     u->dav = su->act_eq - su->act_m; // subtract current minus previous!
     u->ext = u->dav;
     u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -177,9 +176,10 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void TdLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+void TdLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_Td(lay, net); // now get the td and clamp it to layer
   Send_Td(lay, net);
+  inherited::Compute_CycleStats(lay, net);
 }
 
 void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

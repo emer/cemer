@@ -616,6 +616,7 @@ void VELight::ConfigLight(SoLight* lgt) {
 }
 
 bool VELight::UpdateLight() {
+  UpdtDirNorm();
   bool rval = false;
   VEWorld* wrld = GET_MY_OWNER(VEWorld);
   if(!wrld) return false;

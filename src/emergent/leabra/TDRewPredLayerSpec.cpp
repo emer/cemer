@@ -142,7 +142,8 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase_ugp(LeabraLayer* lay, Layer::Access
   Compute_SavePred(lay, acc_md, gpidx, net);    // first, always save current predictions!
 
   LeabraTdUnit* u = (LeabraTdUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  u->ext = u->act_m + u->dav;
+  LeabraTdUnit* u2 = (LeabraTdUnit*)lay->UnitAccess(acc_md, 1, gpidx);
+  u->ext = u->act_m + u2->dav;
   ClampValue_ugp(lay, acc_md, gpidx, net);              // apply new value
   Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);       // copy ext values to act_p
 }

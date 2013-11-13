@@ -37,7 +37,7 @@ public:
   // send the td value to sending projections: every cycle
 
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   // never learn
   override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
