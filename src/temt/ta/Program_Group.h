@@ -53,6 +53,9 @@ public:
 
   virtual void  ToggleTrace();
   // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state for all programs in the group: flag indicates whether to record a trace of program execution in the css console or not
+  virtual void  ClearAllBreakpoints();
+  // #MENU #MENU_ON_Object #DYN1 remove breakpoints for all programs in the group:
+
 
   virtual bool  RunStartupProgs();
   // run programs marked as STARTUP_RUN -- typically only done by system at startup -- returns true if any run

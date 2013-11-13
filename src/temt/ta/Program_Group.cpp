@@ -95,6 +95,12 @@ void Program_Group::ToggleTrace() {
   }
 }
 
+void Program_Group::ClearAllBreakpoints() {
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
+    prog->ClearAllBreakpoints();
+  }
+}
+
 bool Program_Group::RunStartupProgs() {
   bool any_run = false;
   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
