@@ -29,11 +29,20 @@ void taCanvas::Copy_(const taCanvas& cp) {
 }
 
 void taCanvas::InitCanvas() {
+  ImageChanging();
   if(q_img.isNull()) {
     SetImageSize(256,256);
   }
+  ImageChanged();
+  m_init = true;
+}
+
+void taCanvas::ImageChanging() {
   if(q_painter.isActive())
     q_painter.end();
+}
+
+void taCanvas::ImageChanged() {
   q_painter.begin(&q_img);
   DeletePath();
   q_painter.setBackgroundMode(Qt::OpaqueMode);
@@ -52,7 +61,6 @@ void taCanvas::InitCanvas() {
     q_painter.translate(0, cur_ht); // could be 1.0 instead..
     q_painter.scale(cur_wd, -cur_ht);
   }
-  m_init = true;
 }
 
 void taCanvas::EraseRGBA(float r, float g, float b, float a) {

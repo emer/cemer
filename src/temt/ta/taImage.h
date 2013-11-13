@@ -90,6 +90,10 @@ public:
   virtual bool	SetImageSize(int width, int height);
   // #BUTTON #CAT_Image set size of current image -- if currently same size, then returns false and nothing happens; otherwise, a new image data structure of given size is created, using ARGB32 format
 
+  virtual void  ImageChanging() { };
+  // #IGNORE call this when the image object will be changed in some significant way (before it does, when the current image is still valid) -- important for derived classes e.g., taCanvas that attach things to the image
+  virtual void  ImageChanged() { };
+  // #IGNORE call this AFTER the image object has been changed in some significant way
 
   ////////////////////////////////////
   // Obsolete Interfaces: do not use:

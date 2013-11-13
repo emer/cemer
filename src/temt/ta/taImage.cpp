@@ -24,7 +24,9 @@ void taImage::Initialize() {
 }
 
 void taImage::Copy_(const taImage& cp) {
+  ImageChanging();
   q_img = cp.q_img;
+  ImageChanged();
 }
 
 bool taImage::LoadImage(const String& fname) {
@@ -43,10 +45,13 @@ bool taImage::LoadImage(const String& fname) {
     name = taMisc::StringCVar(name); // make names C legal names -- just much safer
   }
   QString fn = (const char*)fnm;
+  ImageChanging();
   if(!q_img.load(fn)) {
     taMisc::Error("LoadImage: could not read image file:", fnm);
+    ImageChanged();
     return false;
   }
+  ImageChanged();
   return true;
 }
 
@@ -168,6 +173,7 @@ bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
   int wd = img_data.dim(0);
   int ht = img_data.dim(1);
 
+  ImageChanging();
   q_img = QImage(wd, ht, QImage::Format_RGB32);
 
   for(int y=0; y<ht; y++) {
@@ -177,6 +183,7 @@ bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
       q_img.setPixel(x, ht-1-y, pix);
     }
   }
+  ImageChanged();
   return true;
 }
 
@@ -186,6 +193,7 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
   int wd = rgb_data.dim(0);
   int ht = rgb_data.dim(1);
 
+  ImageChanging();
   q_img = QImage(wd, ht, QImage::Format_RGB32);
 
   for(int y=0; y<ht; y++) {
@@ -197,6 +205,7 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
       q_img.setPixel(x, ht-1-y, pix);
     }
   }
+  ImageChanged();
   return true;
 }
 
@@ -277,6 +286,7 @@ bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
   wd = da->GetCellGeom(0);
   ht = da->GetCellGeom(1);
 
+  ImageChanging();
   q_img = QImage(wd, ht, QImage::Format_RGB32);
 
   taMatrixPtr mat; mat = da->GetValAsMatrix(row);
@@ -322,6 +332,7 @@ bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
     }
   }
 
+  ImageChanged();
   DataUpdate(false);
 
   return rval;
@@ -353,6 +364,7 @@ bool taImage::ScaleImage(float sx, float sy, bool smooth) {
   if(q_img.isNull()) {
     return false;
   }
+  ImageChanging();
   int wd = q_img.width();
   int ht = q_img.height();
   int nw_wd = (int)(sx * (float)wd);
@@ -361,6 +373,7 @@ bool taImage::ScaleImage(float sx, float sy, bool smooth) {
     q_img = q_img.scaled(nw_wd, nw_ht, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
   else
     q_img = q_img.scaled(nw_wd, nw_ht); // default is fast
+  ImageChanged();
   return true;
 }
 
@@ -368,6 +381,7 @@ bool taImage::RotateImage(float norm_deg, bool smooth) {
   if(q_img.isNull()) {
     return false;
   }
+  ImageChanging();
   float deg = norm_deg * 360.0f;
   QMatrix mat;
   mat.rotate(deg);
@@ -375,6 +389,7 @@ bool taImage::RotateImage(float norm_deg, bool smooth) {
     q_img = q_img.transformed(mat, Qt::SmoothTransformation);
   else
     q_img = q_img.transformed(mat); // default is fast
+  ImageChanged();
   return true;
 }
 
@@ -382,6 +397,7 @@ bool taImage::TranslateImage(float move_x, float move_y, bool smooth) {
   if(q_img.isNull()) {
     return false;
   }
+  ImageChanging();
   int wd = q_img.width();
   int ht = q_img.height();
   int nw_move_x= (int)(move_x * (float)wd);
@@ -392,6 +408,7 @@ bool taImage::TranslateImage(float move_x, float move_y, bool smooth) {
     q_img = q_img.transformed(mat, Qt::SmoothTransformation);
   else
     q_img = q_img.transformed(mat); // default is fast
+  ImageChanged();
   return true;
 }
 
@@ -408,7 +425,9 @@ bool taImage::SetImageSize(int width, int height) {
   int cur_wd, cur_ht;
   GetImageSize(cur_wd, cur_ht);
   if(width == cur_wd && height == cur_ht) return false;
+  ImageChanging();
   q_img = QImage(QSize(width,height), QImage::Format_ARGB32);
+  ImageChanged();
   return true;
 }
 
