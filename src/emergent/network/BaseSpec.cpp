@@ -273,6 +273,21 @@ String BaseSpec::WhereUsed() {
   return rval;
 }
 
+void BaseSpec::SetParam(const String& param_path, const String& value) {
+  TypeDef* td = GetTypeDef();
+  ta_memb_ptr net_mbr_off = 0;
+  int net_base_off = 0;
+  MemberDef* smd = TypeDef::FindMemberPathStatic(td, net_base_off, net_mbr_off,
+                                                 param_path, false); // no warn
+  void* sbaddr = MemberDef::GetOff_static(this, net_base_off, net_mbr_off);
+
+  smd->type->SetValStr(value, sbaddr, NULL, smd);
+  UpdateAfterEdit();
+
+  children.SetParam(&TA_BaseSpec, param_path, value); // use base spec here to not restrict type any further in children
+}
+
+
 taBase* BaseSpec::ChooseNew(taBase* origin) {
   BaseSpec* newSpec = NULL;
 

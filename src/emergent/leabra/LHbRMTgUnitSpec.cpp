@@ -20,7 +20,7 @@
 #include <taMisc>
 
 void LHbRMTgUnitSpec::Initialize() {
-
+  vs_matrix_gain = 1.0f;
 }
 
 void LHbRMTgUnitSpec::Defaults_init() {
@@ -85,14 +85,15 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
                    "did not find VS Patch Indirect recv projection -- searches for Patch and Ind in layer name")) {
     rval = false;
   }
-  if(u->CheckError(!matrix_dir, quiet, rval,
-                   "did not find VS Matrix Direct recv projection -- searches for Matrix and *not* Ind or NoGo in layer name")) {
-    rval = false;
-  }
-  if(u->CheckError(!matrix_ind, quiet, rval,
-                   "did not find VS Matrix Indirect recv projection -- searches for Matrix and Ind or NoGo in layer name")) {
-    rval = false;
-  }
+  // matrix is optional
+  // if(u->CheckError(!matrix_dir, quiet, rval,
+  //                  "did not find VS Matrix Direct recv projection -- searches for Matrix and *not* Ind or NoGo in layer name")) {
+  //   rval = false;
+  // }
+  // if(u->CheckError(!matrix_ind, quiet, rval,
+  //                  "did not find VS Matrix Indirect recv projection -- searches for Matrix and Ind or NoGo in layer name")) {
+  //   rval = false;
+  // }
   if(u->CheckError(!pv_pos, quiet, rval,
                    "did not find PV Positive recv projection -- searches for PosPV in layer name")) {
     rval = false;
@@ -154,7 +155,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     // now do the proper subtractions, and individually rectify each term
     // this individual rectification is important so that system is not 
     // sensitive to overshoot of predictor relative to its comparison value
-    float matrix_net = matrix_ind - matrix_dir; // net positive dipping action from matrix
+    float matrix_net = vs_matrix_gain * (matrix_ind - matrix_dir); // net positive dipping action from matrix
     matrix_net = MAX(0.0f, matrix_net);
 
     float pv_neg_net = pv_neg - patch_dir; // dir cancels neg

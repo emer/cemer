@@ -104,6 +104,9 @@ public:
   virtual String  WhereUsed();
   // #BUTTON #USE_RVAL returns a list of objects where this spec is used
 
+  virtual void  SetParam(const String& param_path, const String& value);
+  // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
+
   override taBase*      ChooseNew(taBase* origin);
   override bool         HasChooseNew() { return true; }
 

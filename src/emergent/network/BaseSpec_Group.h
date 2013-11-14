@@ -58,6 +58,8 @@ public:
 
   override String 	GetTypeDecoKey() const;
 
+  virtual void  SetParam(TypeDef* spec_type, const String& param_path, const String& value);
+  // #BUTTON #DYN1 #TYPE_ON_el_base Set parameter at given path to given value, for all the specs inheriting from given type within this group, and all the child specs underneath these specs
 
   virtual void	Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt for all specs in this group: restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value

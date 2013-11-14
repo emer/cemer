@@ -151,7 +151,6 @@ bool VTALayerSpec::GetRecvLayers(LeabraLayer* lay,
 }
 
 void VTALayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
-
   LeabraLayer* pptg_lay = NULL;
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
@@ -211,9 +210,10 @@ void VTALayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void VTALayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+void VTALayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_Da(lay, net);
   Send_Da(lay, net);
+  inherited::Compute_CycleStats(lay, net);
 }
 
 void VTALayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

@@ -115,6 +115,7 @@ set(leabra_HEADS_MAKETA
   PPTgUnitSpec.h
   LHbRMTgUnitSpec.h
   VTALayerSpec.h
+  VSPatchLayerSpec.h
 
   PBWMUnGpData.h
   SNrThalLayerSpec.h
@@ -265,6 +266,7 @@ set(leabra_SRCS
   PPTgUnitSpec.cpp
   LHbRMTgUnitSpec.cpp
   VTALayerSpec.cpp
+  VSPatchLayerSpec.cpp
 
   PBWMUnGpData.cpp
   SNrThalLayerSpec.cpp

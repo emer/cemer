@@ -70,7 +70,7 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
     choices.FmDelimString("Global");
     break;
   default:
-    choices.FmDelimString("Global Local Ignore");
+    choices.FmDelimString("Local Global Ignore");
     break;
   }
 

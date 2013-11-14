@@ -211,9 +211,10 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PVLVDaLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+void PVLVDaLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_Da(lay, net);
   Send_Da(lay, net);
+  inherited::Compute_CycleStats(lay, net);
 }
 
 void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

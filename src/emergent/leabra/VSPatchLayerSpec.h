@@ -13,36 +13,38 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LHbRMTgUnitSpec_h
-#define LHbRMTgUnitSpec_h 1
+#ifndef VSPatchLayerSpec_h
+#define VSPatchLayerSpec_h 1
 
 // parent includes:
-#include <LeabraUnitSpec>
+#include <LeabraLayerSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(LHbRMTgUnitSpec);
+eTypeDef_Of(VSPatchLayerSpec);
 
-class E_API LHbRMTgUnitSpec : public LeabraUnitSpec {
-  // combined lateral habenula and RMTg units -- receives from Patch and Matrix Direct and Indirect pathways, along with primary value (PV) positive and negative valence drivers, and computes dopamine dip signals, represented as positive activations in these units, which are then translated into dips through a projection to the VTALayerSpec
-INHERITED(LeabraUnitSpec)
+class E_API VSPatchLayerSpec : public LeabraLayerSpec {
+  // simulates the ventral striatum patch units, both direct (recv from negative valence) and indirect (positive valence) -- get a MarkerConSpec from PV layer units which drive plus phase clamped value at all times -- other connections from sensory and BLA can learn to predict -- use LeabraDeltaConSpec
+INHERITED(LeabraLayerSpec)
 public:
-  float         vs_matrix_gain;    // how much to weight the vs matrix inputs -- may want to turn these down compared to patch
 
-  override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  virtual void  Compute_PVPlus(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the PV-driven plus phase activations
 
-  override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
+  override void PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  TA_SIMPLE_BASEFUNS(LHbRMTgUnitSpec);
+  TA_SIMPLE_BASEFUNS(VSPatchLayerSpec);
 protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
   void  Destroy()     { };
-  void	Defaults_init();
+  void  Defaults_init();
 };
 
-#endif // LHbRMTgUnitSpec_h
+#endif // VSPatchLayerSpec_h
