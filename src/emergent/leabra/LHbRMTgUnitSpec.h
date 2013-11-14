@@ -23,13 +23,36 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(LHbRMTgGains);
+
+class E_API LHbRMTgGains : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for LHbRMTg inputs
+INHERITED(SpecMemberBase)
+public:
+  float         all;            // #MIN_0 final overall gain on everything
+  float         patch_dir;      // #MIN_0 VS patch direct pathway versus negative PV outcomes
+  float         patch_ind;      // #MIN_0 VS patch indirect pathway versus positive PV outcomes
+  float         matrix;         // #MIN_0 VS matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LHbRMTgGains);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()       { };
+  void  Defaults_init();
+};
+
+
 eTypeDef_Of(LHbRMTgUnitSpec);
 
 class E_API LHbRMTgUnitSpec : public LeabraUnitSpec {
   // combined lateral habenula and RMTg units -- receives from Patch and Matrix Direct and Indirect pathways, along with primary value (PV) positive and negative valence drivers, and computes dopamine dip signals, represented as positive activations in these units, which are then translated into dips through a projection to the VTALayerSpec
 INHERITED(LeabraUnitSpec)
 public:
-  float         vs_matrix_gain;    // how much to weight the vs matrix inputs -- may want to turn these down compared to patch
+  LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs
 
   override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
 

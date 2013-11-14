@@ -19,12 +19,20 @@
 
 #include <taMisc>
 
+void LHbRMTgGains::Initialize() {
+  all = 1.0f;
+  patch_dir = 1.0f;
+  patch_ind = 1.0f;
+  matrix = 0.0f;
+}
+
+void LHbRMTgGains::Defaults_init() {
+}
+
 void LHbRMTgUnitSpec::Initialize() {
-  vs_matrix_gain = 1.0f;
 }
 
 void LHbRMTgUnitSpec::Defaults_init() {
-
 }
 
 void LHbRMTgUnitSpec::HelpConfig() {
@@ -40,7 +48,9 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)un;
   if(!inherited::CheckConfig_Unit(un, quiet)) return false;
 
-//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  LeabraNetwork* net = (LeabraNetwork*)un->own_net();
+  net->SetNetFlag(Network::NETIN_PER_PRJN); // this is required for this computation!
+
   bool rval = true;
 
   bool patch_dir = false;
@@ -155,16 +165,16 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     // now do the proper subtractions, and individually rectify each term
     // this individual rectification is important so that system is not 
     // sensitive to overshoot of predictor relative to its comparison value
-    float matrix_net = vs_matrix_gain * (matrix_ind - matrix_dir); // net positive dipping action from matrix
+    float matrix_net = gains.matrix * (matrix_ind - matrix_dir); // net positive dipping action from matrix
     matrix_net = MAX(0.0f, matrix_net);
 
-    float pv_neg_net = pv_neg - patch_dir; // dir cancels neg
+    float pv_neg_net = gains.patch_dir * (pv_neg - patch_dir); // dir cancels neg
     pv_neg_net = MAX(0.0f, pv_neg_net);
 
-    float pv_pos_net = patch_ind - pv_pos; // ind cancels pos
+    float pv_pos_net = gains.patch_ind * (patch_ind - pv_pos); // ind cancels pos
     pv_pos_net = MAX(0.0f, pv_pos_net);
 
-    u->net_raw = matrix_net + pv_neg_net + pv_pos_net;
+    u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
   }
 
   // the rest of this should all be standard..
