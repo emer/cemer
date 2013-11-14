@@ -353,7 +353,7 @@ public: // XxxGui versions provide feedback to the user
 #endif
 
   virtual void          ClearAllBreakpoints();
-  // #MENU #MENU_SEP_BEFORE #MENU_ON_Script #MENU_CONTEXT #CAT_Code clear all breakpoints that might have been set in the program elements
+  // #MENU #MENU_SEP_BEFORE #MENU_ON_Script #DYN1 #CAT_Code clear all breakpoints that might have been set in the program elements
   virtual void          SetAllBreakpoints();
   // #IGNORE re-set all the breakpoints in the code to be currently active -- after recompiling, need to reinstate them all
 

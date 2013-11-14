@@ -37,6 +37,7 @@ public:
   void            DeleteBrkPt(ProgEl* prog_el);
   ProgBrkPt*      FindBrkPt(ProgEl* prog_el) const;
 
+  bool            BrowserExpandAll();
 
   TA_SIMPLE_BASEFUNS(ProgBrkPt_List);
 private:

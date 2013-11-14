@@ -17,6 +17,8 @@
 #include <ProgBrkPt>
 #include <ProgEl>
 #include <ProgLine>
+#include <tabMisc>
+#include <Program>
 
 void ProgBrkPt_List::Initialize() {
   SetBaseType(&TA_ProgBrkPt);
@@ -32,6 +34,7 @@ ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, String codeline) {
     bp->prog_el = prog_el;
     bp->name = "Breakpoint:" + codeline.elidedTo(50);
     SigEmitUpdated();
+    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
   return bp;
 }
@@ -57,3 +60,11 @@ ProgBrkPt* ProgBrkPt_List::FindBrkPt(ProgEl* prog_el) const {
   }
   return NULL;
 }
+
+bool ProgBrkPt_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+
