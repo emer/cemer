@@ -875,7 +875,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
       //int rgpidx = 0;
       recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
       ru_pos.x = runidx % recv_lay->un_geom.x;
-      ru_pos.y = runidx / recv_lay->un_geom.y;
+      ru_pos.y = runidx / recv_lay->un_geom.x;
       rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
       // convert to planar x, y across whole layer
       ru_pos.x += recv_lay->un_geom.x * rgp_pos.x;
@@ -894,7 +894,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
       //int rgpidx = 0;
       recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
       //su_pos.x = sunidx % send_lay->un_geom.x;
-      ru_pos.y = runidx / recv_lay->un_geom.y;
+      ru_pos.y = runidx / recv_lay->un_geom.x;
       rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
       // convert to planar x, y across whole layer
       //su_pos.x += send_lay->un_geom.x * sgp_pos.x;
@@ -907,6 +907,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
 
   // is recv un_gp (and ru) in range?  -- if not, init wts and get next cg/ru
   bool dbl_add = false;
+  // YIKES!!!! ri_pos.y is a flat index, but rre.y is a gp index
   if(ri_pos.x < rrs.x || ri_pos.x > rre.x || ri_pos.y < rrs.y || ri_pos.y > rre.y) {
     for(int i=0; i<cg->size; i++) {
       dbl_add = false;
@@ -1198,7 +1199,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
       //int rgpidx = 0;
       recv_lay->UnGpIdxFmUnitIdx(ru->idx, runidx, rgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp)
       //su_pos.x = sunidx % send_lay->un_geom.x;
-      ru_pos.y = runidx / recv_lay->un_geom.y;
+      ru_pos.y = runidx / recv_lay->un_geom.x;
       rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // group position relative to gp geom
       // convert to planar x, y across whole layer
       //su_pos.x += send_lay->un_geom.x * sgp_pos.x;
