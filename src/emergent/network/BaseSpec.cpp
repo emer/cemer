@@ -295,7 +295,7 @@ taBase* BaseSpec::ChooseNew(taBase* origin) {
     SpecPtr_impl* sptr = (SpecPtr_impl*)origin;
     BaseSpec_Group* spgp = sptr->GetSpecGroup();
     if (spgp) {
-      newSpec = (BaseSpec*)spgp->New_gui(1, sptr->type);  // get the type not the instance because it might be set to NULL
+      newSpec = (BaseSpec*)spgp->New(1, sptr->type); // get the type not the instance because it might be set to NULL
     }
   }
   return newSpec;
