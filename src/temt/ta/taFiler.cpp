@@ -621,6 +621,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
   QStringList filter_list;
   String filtext = FilterText(true, &filter_list);
+  QList<QUrl> urls;
 
   // note: no static FileDialog!!! causes many issues:
   // * compression extension thing not always working
@@ -631,36 +632,54 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   //  QScopedPointer<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
   std::auto_ptr<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
 
-  int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
-  int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
-  fd->resize(nw_wd, nw_ht);
-
-  taiFileDialogExtension* fde = new taiFileDialogExtension();
-  fd->setExtension(fde);
-
 #ifdef TA_OS_MAC
   // native dialog does not support compression stuff
   fd->setOptions(QFileDialog::DontUseNativeDialog);
 #endif
 
-  QList<QUrl> urls;
   taRootBase* root = tabMisc::root;
   taProject* proj = NULL;
-  if(root->projects.size > 0) {
-    proj = root->projects.SafeEl(0);
-    if(proj) {
-      String crp = proj->GetClusterRunPath();
-      if(!crp.empty()) {
-        urls << QUrl::fromLocalFile(crp);
-      }
+
+  if(root->filedlg_setary.size > 0) {
+    // restore from saved
+    QByteArray fdset(root->filedlg_setary.el, root->filedlg_setary.size);
+    fd->restoreState(fdset);
+    // set defaults
+    int nw_wd = root->filedlg_size.x;
+    int nw_ht = root->filedlg_size.y;
+    if(nw_wd > 0 && nw_ht > 0) {
+      fd->resize(nw_wd, nw_ht);
     }
   }
-  for (int i=0; i<root->sidebar_paths.size; i++) {
-    String sbp = root->sidebar_paths[i];
-    if (sbp.empty()) continue;
-    urls << QUrl::fromLocalFile(sbp);
+  else {
+    int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
+    int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
+    fd->setMinimumSize(nw_wd, nw_ht);
+
+    if(root->projects.size > 0) {
+      proj = root->projects.SafeEl(0);
+      if(proj) {
+        String crp = proj->GetClusterRunPath();
+        if(!crp.empty()) {
+          urls << QUrl::fromLocalFile(crp);
+        }
+      }
+    }
+    for (int i=0; i<root->sidebar_paths.size; i++) {
+      String sbp = root->sidebar_paths[i];
+      if (sbp.empty()) continue;
+      urls << QUrl::fromLocalFile(sbp);
+    }
+    fd->setSidebarUrls(urls);
+    //  fd->setOrientation(Qt::Vertical);
+    fd->setViewMode(QFileDialog::Detail);
   }
-  fd->setSidebarUrls(urls);
+
+  // we keep more history than the default..
+  fd->setHistory(hist_paths);
+
+  taiFileDialogExtension* fde = new taiFileDialogExtension();
+  // fd->setExtension(fde);
 
   fd->setDirectory(eff_dir);
 #if (QT_VERSION >= 0x050000)
@@ -720,9 +739,6 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   // we always make and set the extension, but don't always show it
   fde->cbCompress->setEnabled(CompressEnabled());
   fde->cbCompress->setChecked(is_default_filename_compressed);
-  //  fd->setOrientation(Qt::Vertical);
-  fd->setViewMode(QFileDialog::Detail);
-  fd->setHistory(hist_paths);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   int rval = fd->exec();
@@ -730,6 +746,19 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
   if (rval != QDialog::Accepted) {
     return false;
+  }
+
+  { // save state
+    QByteArray fdset = fd->saveState();
+    int sz = fdset.size();
+    root->filedlg_setary.SetSize(sz);
+    for(int i=0; i<sz; i++) {
+      root->filedlg_setary[i] = fdset[i];
+    }
+
+    QSize qsz = fd->size();
+    root->filedlg_size.x = qsz.width();
+    root->filedlg_size.y = qsz.height();
   }
 
   // first persist the sidebars

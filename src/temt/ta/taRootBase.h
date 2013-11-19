@@ -30,6 +30,8 @@
 #include <taiMimeFactory_List>
 #include <ColorScaleSpec_Group>
 #include <String_Array>
+#include <char_Array>
+#include <taVector2i>
 #include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
@@ -63,6 +65,8 @@ public:
   String_Array          recent_files;   // #NO_SHOW recently loaded files
   String_Array          recent_paths;   // #NO_SHOW recently used paths
   String_Array          sidebar_paths;  // #NO_SHOW for the file chooser dialog -- sidebar paths that are saved and reloaded
+  char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
+  taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
 
   void          OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application

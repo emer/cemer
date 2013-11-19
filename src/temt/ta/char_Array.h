@@ -40,9 +40,9 @@ protected:
   { int rval=-1; if(*((char*)a) > *((char*)b)) rval=1; else if(*((char*)a) == *((char*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
     { return (*((char*)a) == *((char*)b)); }
-  String        El_GetStr_(const void* it) const { return (*((char*)it)); }
+  String        El_GetStr_(const void* it) const { return String((int)*((char*)it)); }
   void          El_SetFmStr_(void* it, const String& val)
-  { char tmp = val[0]; *((char*)it) = tmp; }
+  { int tmp = (int)val; *((char*)it) = (char)tmp; }
 private:
   NOCOPY(char_Array)
   void Initialize()     {err = ' ';};

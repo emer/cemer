@@ -70,21 +70,11 @@ public:
   // #MENU Insert (n_els) item(s) at indx (-1 for end) in the array
   int   FindEl(const T& item, int indx=0) const { return FindEl_((void*)&item, indx); }
   // #MENU #USE_RVAL Find item starting from indx in the array (-1 if not there)
-//  virtual bool        Remove(const T& item)           { return Remove_((void*)&item); }
-//  virtual bool        Remove(uint indx, int n_els=1)  { return taArray_impl::Remove(indx,n_els); }
-  // Remove (n_els) item(s) at indx, returns success
   virtual bool  RemoveEl(const T& item)         { return RemoveEl_((void*)&item); }
   // remove given item, returns success
   virtual void  InitVals(const T& item, int start=0, int end=-1) { InitVals_((void*)&item, start, end); }
   // set array elements to specified value starting at start through end (-1 = size)
 
-/*  taArray()                           { el = NULL; } // no_tokens is assumed
-  ~taArray()                            { SetArray_(NULL); }
-
-  void  UnSafeCopy(taBase* cp) {
-    if(cp->InheritsFrom(taArray::StatTypeDef(0))) Copy(*((taArray<T>*)cp));
-    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
-  void  CastCopyTo(taBase* cp)            { taArray<T>& rf = *((taArray<T>*)cp); rf.Copy(*this); } //*/
   TA_TMPLT_BASEFUNS_NOCOPY(taArray,T); //
 public:
   void*         FastEl_(int i)          { return &(el[i]); }// #IGNORE
