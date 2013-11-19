@@ -886,7 +886,11 @@ bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
       return true;              // we absorb this event
     }
   }
-  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+  if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+                                          || e->key() == 0x2211   // weird mac key
+#endif
+                                          )) { // copy
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
     return true;                // we absorb this event
   }
@@ -912,7 +916,11 @@ bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
       return true;              // we absorb this event
     }
   }
-  if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
+  if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+                                          || e->key() == 0x2211   // weird mac key
+#endif
+                                          )) { // copy
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
     return true;                // we absorb this event
   }

@@ -1257,6 +1257,14 @@ bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e) {
     case Qt::Key_L: // move right between regions
       MoveFocusRight();
       return true;
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+    case 0x2206:                // J
+      MoveFocusLeft();
+      return true;
+    case 0xAC:                  // L
+      MoveFocusRight();
+      return true;
+#endif
     }
   }
   return false;

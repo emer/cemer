@@ -172,7 +172,12 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
     }
   }
   else if(e->modifiers() & Qt::AltModifier) {
-    if(e->key() == Qt::Key_W) { // copy
+    if(e->key() == Qt::Key_W
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+        || e->key() == 0x2211   // weird mac key
+#endif
+      ) {
+      // copy
       e->accept();
       copy();
       clearExtSelection();

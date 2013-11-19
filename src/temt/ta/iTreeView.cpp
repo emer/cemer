@@ -622,10 +622,9 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     }
   }
   // if((e->modifiers() & Qt::AltModifier)) {
-  //   QString txt = e->text();
   //   String ky;
   //   ky.convert(e->key(), "%X");
-  //   taMisc::Info("alt", txt.toLatin1(), ky);
+  //   taMisc::Info("alt", ky);
   // } 
   if((e->modifiers() & Qt::AltModifier) && (e->key() == Qt::Key_F
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
