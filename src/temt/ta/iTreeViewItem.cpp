@@ -247,16 +247,15 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
 }
 
 void iTreeViewItem::FillContextMenu_impl(taiWidgetActions* menu,
-  GuiContext sh_typ) {
-  //iAction* mel =
-  menu->AddItem("Find from here (Alt+F)...", taiWidgetMenu::use_default,
-                iAction::men_act, treeView(), SLOT(mnuFindFromHere(iAction*)), this);
-  menu->AddItem("Replace in selected (Alt+R)...", taiWidgetMenu::use_default,
-                iAction::men_act, treeView(), SLOT(mnuReplaceFromHere(iAction*)), this);
-  // note: this causes it to always search from the first one entered!  need to trap
-  // specific keyboard input
-//   menu->AddItem("Find from here...", iAction::men_act, treeView(),
-//              SLOT(mnuFindFromHere(iAction*)), this, QKeySequence("Alt+F"));
+                                         GuiContext sh_typ) {
+  TypeDef* td = GetDataTypeDef();
+  if(td && td->InheritsFrom(&TA_taList_impl)) {
+    // only really needed for list guys
+    menu->AddItem("Find from here (Alt+F)...", taiWidgetMenu::use_default,
+                  iAction::men_act, treeView(), SLOT(mnuFindFromHere(iAction*)), this);
+    menu->AddItem("Replace in selected (Alt+R)...", taiWidgetMenu::use_default,
+                  iAction::men_act, treeView(), SLOT(mnuReplaceFromHere(iAction*)), this);
+  }
   IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
 }
 

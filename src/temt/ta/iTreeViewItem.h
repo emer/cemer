@@ -132,10 +132,11 @@ public: // ISelectable interface
   override iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
     int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
 protected:
-  override void         FillContextMenu_impl(taiWidgetActions* menu,
-    GuiContext sh_typ); // this is the one to extend in inherited classes
+  override void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ);
+  // this is the one to extend in inherited classes
   override void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
-    GuiContext sh_typ) const;  // OR's in allowed; OR's in forbidden
+                                                GuiContext sh_typ) const;
+  // OR's in allowed; OR's in forbidden
 
 #ifndef __MAKETA__
 protected:

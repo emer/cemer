@@ -28,7 +28,7 @@
 // declare all other types mentioned but not required to include:
 
 /*
-  The clipboard/Drag-Drop model of PDP involves single or lists of data items that can be
+  The clipboard/Drag-Drop model involves single or lists of data items that can be
   transferred to/from the clipboard, or transfered via drag/drop (dragdrop is mostly the
   same as clipboard, so unless otherwise noted, dd is assumed in clipboard.) Both in-process
   (inside one instance) as well as external (across instances) operations are supported.
@@ -66,7 +66,7 @@
     * getData -- get the streamed data of the object (note: usually only used for external objects)
     * notifyTaken -- notifies the source that Cut/Moved data was taken
 
-  PDP supplies clipboard data as follows:
+  Emergent supplies clipboard data as follows:
   Higher level objects may also supply a graphical image (ex. image of the network.)
 
   MIME TYPE "tacss/common" -- common header info for any tacss items
@@ -95,14 +95,11 @@
 
     The data is the rep (ext dump save text) of the object.
 
-  
   MIME TYPE "text/plain"
     
     taccs/objectdesc
       The same string as the objectdesc string (primarily for diagnostic purposes).
       
-    
-
 iClipData -- sender
 
   iClipData is the class used by senders to supply tacss data to the clipboard system.
@@ -110,7 +107,6 @@ iClipData -- sender
   operations.
 
   This class uses taiClipSrc
-
 
 To Extend taiMimeSource:
 
@@ -132,16 +128,16 @@ public:
 
     EA_CUT		= 0x00000010,
     EA_COPY		= 0x00000020,
-    EA_DUPE		= 0x00008000, // duplicate at point of selection
     EA_PASTE		= 0x00000040, // ex. esp for putting an item as a peer to another
-    EA_PASTE_INTO	= 0x00000400, // ex. when pasting an item into a list itself
-    EA_PASTE_APPEND	= 0x00001000, // ex. for pasting new data rows into tables
-    EA_PASTE_ASSIGN	= 0x00004000, // set sel object from obj on clipboard
     EA_DELETE		= 0x00000080,
-    EA_CLEAR		= 0x00002000, // ex. for grid cells
     EA_UNLINK		= 0x00000100,
     EA_LINK		= 0x00000200,
+    EA_PASTE_INTO	= 0x00000400, // ex. when pasting an item into a list itself
     EA_LINK_INTO	= 0x00000800,
+    EA_PASTE_APPEND	= 0x00001000, // ex. for pasting new data rows into tables
+    EA_CLEAR		= 0x00002000, // ex. for grid cells
+    EA_PASTE_ASSIGN	= 0x00004000, // set sel object from obj on clipboard
+    EA_DUPE		= 0x00008000, // duplicate at point of selection
     EA_CLIP_OP_MASK	= 0x000FFFF0, // masks the clipboard op codes
 
     EA_DRAG		= 0x00100000, // initiation of a drag -- note that src can't distinguish move/copy/link ops

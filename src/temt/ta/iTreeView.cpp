@@ -621,7 +621,18 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_F) {
+  // if((e->modifiers() & Qt::AltModifier)) {
+  //   QString txt = e->text();
+  //   String ky;
+  //   ky.convert(e->key(), "%X");
+  //   taMisc::Info("alt", txt.toLatin1(), ky);
+  // } 
+  if((e->modifiers() & Qt::AltModifier) && (e->key() == Qt::Key_F
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+                                            // freaky new key for Alt+F
+                                            || e->key() == 0x191
+#endif
+                                            )) {
     ISelectable* si = curItem();
     if(si && si->link()) {
       taiSigLink* link = si->link();
@@ -631,7 +642,12 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_R) {
+  if((e->modifiers() & Qt::AltModifier) && (e->key() == Qt::Key_R
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+                                            // freaky new key for Alt+R
+                                            || e->key() == 0xAE
+#endif
+                                            )) {
     ISelectable* si = curItem();
     if(si && si->link()) {
       taiSigLink* link = si->link();

@@ -15,6 +15,7 @@
 
 #include "taiListNode.h"
 #include <iPanelOfList>
+#include <taiWidgetMenu>
 
 
 taiListNode::taiListNode(int num_, iPanelOfList* panel_,
@@ -66,6 +67,11 @@ QString taiListNode::text(int col) const {
     return inherited::text(col);
   else
     return QString::number(num);
+}
+
+void taiListNode::FillContextMenu_impl(taiWidgetActions* menu,
+                                       GuiContext sh_typ) {
+  inherited::FillContextMenu_impl(menu, sh_typ);
 }
 
 

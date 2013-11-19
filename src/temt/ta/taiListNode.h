@@ -52,6 +52,9 @@ public: // ISigLinkClient interface
 public: // ISelectable interface
   override taiSigLink* par_link() const; // we get from the panel, which gets from the viewer window
 //obs  override MemberDef*      par_md() const; // as for par_link
+protected:
+  override void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ);
+  // this is the one to extend in inherited classes
 };
 
 #endif // taiListNode_h
