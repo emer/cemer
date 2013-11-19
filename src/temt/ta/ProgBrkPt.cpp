@@ -46,8 +46,6 @@ void ProgBrkPt::CutLinks() {
 }
 
 void ProgBrkPt::Enable() {
-  if (enabled == true)
-    return;
   enabled = true;
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
@@ -59,8 +57,6 @@ void ProgBrkPt::Enable() {
 }
 
 void ProgBrkPt::Disable() {
-  if (enabled == false)
-    return;
   enabled = false;
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
@@ -69,4 +65,21 @@ void ProgBrkPt::Disable() {
     pl->DisableBreakpoint();
   }
   SigEmitUpdated();
+}
+
+void ProgBrkPt::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (enabled)  // did the state change?
+    Enable();
+  else
+    Disable();
+}
+
+String ProgBrkPt::GetStateDecoKey() const {
+  String rval = inherited::GetStateDecoKey();
+  if(rval.empty()) {
+    if(!enabled)
+      return "NotEnabled";
+  }
+return rval;
 }

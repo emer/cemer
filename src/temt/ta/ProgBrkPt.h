@@ -34,12 +34,19 @@ public:
   ProgElRef     prog_el;
   // #HIDDEN #SHOW_TREE the program element on which the break is set
   bool          enabled;
-  // #HIDDEN breakpoints can persist and be enabled or disabled
+  // #SHOW breakpoints can persist and be enabled or disabled
+  String                desc;
+  // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
 
   void          Enable();
   // #MENU #DYN1 #GHOST_OFF_enabled enable existing disabled breakpoint
   void          Disable();
   // #MENU #DYN1 #GHOST_ON_enabled disable existing breakpoint but don't delete the breakpoint
+
+  override String       GetDesc() const {return desc;}
+  override String       GetStateDecoKey() const;
+  override void         UpdateAfterEdit_impl();
+
 
   void          InitLinks();
   void          CutLinks();
