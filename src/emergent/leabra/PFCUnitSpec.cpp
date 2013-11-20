@@ -60,9 +60,42 @@ void PFCUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
+// original version
+//void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+//  inherited::Trial_Init_Unit(u, net, thread_no);
+//  // this is called *BEFORE* the PFC layer grabs the updated info from the snrthal, so we pretend like we're at the end of the last trial here..
+//  PFCLayerSpec* pfcls = NULL;
+//  PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
+//  if(gpd) {
+//    bool gated_last_trial = gpd->go_fired_trial; // TODO: Note: actually is two trials back!
+//    // TODO: have to think through all this CAREFULLY!!!!
+//    if(gated_last_trial) {
+//      u->misc_1 = 1.0f;
+//      u->p_act_p = u->act_p;    // grab the activation signal -- just gets it earlier it is avail for full trial right after gating
+//    }
+//    else {
+//      u->misc_1 = 0.0f;
+//      if(gpd->mnt_count > 0 && pfcls->gate.ctxt_drift > 0.0f) {
+//        u->act_ctxt = u->act_ctxt + pfcls->gate.ctxt_drift * (u->net_ctxt - u->act_ctxt);
+//        u->p_act_p = u->p_act_p + pfcls->gate.ctxt_drift * (u->act_p - u->p_act_p);
+//      }
+//      u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
+//      u->p_act_p *= pfcls->gate.ctxt_decay_c; // no gating = decay
+//      if(pfcls->gate.max_maint >= 0 && gpd->mnt_count >= (pfcls->gate.max_maint -1)) {
+//      	// NOTE! above mnt_count test needs two indexing offsets: 1) max_maint is a count/total; and 2) PFC layer hasn't grabbed latest mnt_count yet
+//      	// No, it's even worse for < 2 because the mnt_count goes backward (-2,-3) and these are what get compared!
+//        u->act_ctxt = 0.0f;       // go all the way
+//        u->p_act_p = 0.0f;
+//      }
+//    }
+//  }
+//}
+
+// Tom's new version - tweaked to cover case of PFC_out-type layers using max_maint = 1 for only the gating trial
 void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   inherited::Trial_Init_Unit(u, net, thread_no);
-  // this is called *BEFORE* the PFC layer grabs the updated info from the snrthal, so we pretend like we're at the end of the last trial here..
+  // units get init'd before layers - thus called *BEFORE* the SNrThallayer does Init_GateStats and PFC layer later grabs that updated info (PFC and SnrThal *ARE* synch'd-up however!
+  // ...i.e., so NOTE that we are pretending like we're at the end of the last trial here!
   PFCLayerSpec* pfcls = NULL;
   PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
   if(gpd) {
@@ -77,12 +110,16 @@ void PFCUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_
         u->act_ctxt = u->act_ctxt + pfcls->gate.ctxt_drift * (u->net_ctxt - u->act_ctxt);
         u->p_act_p = u->p_act_p + pfcls->gate.ctxt_drift * (u->act_p - u->p_act_p);
       }
-      u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating = decay
-      u->p_act_p *= pfcls->gate.ctxt_decay_c; // no gating = decay
-      if(pfcls->gate.max_maint > 0 && (gpd->mnt_count >= pfcls->gate.max_maint)) {
-        u->act_ctxt = 0.0f;       // go all the way
-        u->p_act_p = 0.0f;
-      }
+      u->act_ctxt *= pfcls->gate.ctxt_decay_c; // no gating so decay..
+      u->p_act_p *= pfcls->gate.ctxt_decay_c;
+
+    }
+    // need to do below whether gated_last_trial, or not!
+    if(pfcls->gate.max_maint >= 0 && gpd->mnt_count >= (pfcls->gate.max_maint -1)) {
+    	// NOTE! above mnt_count test needs two indexing offsets - 1ST: max_maint is a count/total - 2ND: mnt_count is one behind!
+    	// NOTE - outside of else block to cover case of max_maint == 1 (maint only for gated trial)
+    	u->act_ctxt = 0.0f;       // go all the way
+    	u->p_act_p = 0.0f;
     }
   }
 }
@@ -94,10 +131,8 @@ void PFCUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     PFCLayerSpec* pfcls = NULL;
     PBWMUnGpData* gpd = PFCUnGpData(u, net, pfcls);
     if(gpd) {
-      bool gated_last_trial = (gpd->mnt_count == 1) ||
-        (gpd->mnt_count == 0 && gpd->prv_mnt_count == 1);
-      // either we gated last trial and are still maintaining, or just gated and last guy
-      // maintained for 1 trial (note: mnt_count updated at start of trial so will be 1)
+      bool gated_last_trial = (gpd->mnt_count == 1) || // gated trial before one just settled...
+      		(gpd->mnt_count == 0 && gpd->prv_mnt_count == 1); // ...or gated twice in row
       if(gated_last_trial) {
         u->misc_1 = 1.0f;
         // p_act_p was just encoded as previous act_p value..  this is redundant with the

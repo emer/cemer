@@ -217,6 +217,7 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
     if(gpd->go_fired_trial) {
       n_fired_trial++;
       gpd->go_fired_now = false;
+      // TODO: NOTE! although below 'else' assigns to true, the above assign to false is not getting reflected in to the ungp_data[0] ControlPanel
       u->act_lrn = u->act = u->act_eq = u->act_nd = u->act_mid;
     }
     else {

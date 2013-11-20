@@ -131,8 +131,16 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     us->acc.init = false;
   }
 
+  PFCLayerSpec* pfcls = (PFCLayerSpec*)lay->GetLayerSpec();
+  if(lay->CheckError(gate.max_maint==0, quiet, rval,
+  		"max_maint == 0 is forbidden! I just set it to 1 for you in spec:",
+  		pfcls->name,"This will maintain only for the trial during which gating occurred - you need to change it if not what you want!)")) {
+  	pfcls->SetUnique("gate.max_maint", 1);
+  	pfcls->gate.max_maint = 1;
+  }
+
   // SNrThalLayerSpec* snrls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
-//  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  //  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
 
   LeabraLayer* snr_lay = SNrThalLayer(lay);
   if(lay->CheckError(!snr_lay, quiet, rval,
@@ -177,7 +185,8 @@ void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
   for(int g=0; g<lay->gp_geom.n; g++) {
     PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + g);
-    if(snr_gpd->mnt_count >= pfcls->gate.max_maint) { // time to stop maintaining...
+    //if(snr_gpd->mnt_count >= pfcls->gate.max_maint) { // time to stop maintaining...
+    if(pfcls->gate.max_maint > 0 && snr_gpd->mnt_count >= pfcls->gate.max_maint) { // time to stop maintaining...
       snrls->ResetMntCount(snr_lay, (snr_st_idx + g)); 	// reset stripe maint counter and start fresh
     }
   }

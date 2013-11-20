@@ -301,6 +301,7 @@ float MatrixLayerSpec::Compute_RefractInhib_ugp(LeabraLayer* lay,
   if(matrix.refract_inhib == 0.0f) return 0.0f;
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   if(gpd->mnt_count == 1) {	// only true if gated last trial
+  	// NOTE! mnt_count test above depends critically on when updating occurs relative to this call!!
     return matrix.refract_inhib;
   }
   return 0.0f;
@@ -311,13 +312,13 @@ void MatrixLayerSpec::Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net) 
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+    // PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi); // apparently not used
 
     float nogo_i = Compute_NoGoInhibGo_ugp(lay, acc_md, gi, net);
     float refract_i = Compute_RefractInhib_ugp(lay, acc_md, gi, net);
 
-    gpd->nogo_inhib = nogo_i;
-    gpd->refract_inhib = refract_i;
+    //gpd->nogo_inhib = nogo_i; // apparently redundant, not used!
+    //gpd->refract_inhib = refract_i; // apparently redundant, not used!
       
     float mult_fact = 1.0f;
     if(nogo_i > 0.0f) mult_fact *= (1.0f - nogo_i);
