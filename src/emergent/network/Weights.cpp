@@ -15,6 +15,8 @@
 
 #include "Weights.h"
 
+#include <taMisc>
+
 void Weights::Initialize() {
   batch = 0;
   epoch = 0;
@@ -24,8 +26,10 @@ void Weights::Initialize() {
 
 void Weights::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(auto_load && load_file.nonempty()) {
+  if(taMisc::is_loading && auto_load && load_file.nonempty()) {
+    taMisc::Info("Auto loading weights file:", load_file);
     LoadWeights(load_file);
+    taMisc::Info("Done", load_file);
   }
 }
 

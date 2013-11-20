@@ -279,9 +279,9 @@ public:
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  SaveToWeights(Weights* wts);
-  // #BUTTON #MENU #NULL_OK write weight values out to given weights object (null = make a new one)
+  // #BUTTON #MENU #NULL_OK #NULL_TEXT_NewWeightsObj write weight values out to given weights object (NULL = make a new one)
   virtual bool  LoadFmWeights(Weights* wts, bool quiet = false);
-  // #MENU load weight values from given weights object
+  // #MENU #FROM_GROUP_weights load weight values from given weights object
 
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
