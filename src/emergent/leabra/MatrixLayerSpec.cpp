@@ -312,13 +312,13 @@ void MatrixLayerSpec::Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net) 
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    // PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi); // apparently not used
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
 
     float nogo_i = Compute_NoGoInhibGo_ugp(lay, acc_md, gi, net);
     float refract_i = Compute_RefractInhib_ugp(lay, acc_md, gi, net);
 
-    //gpd->nogo_inhib = nogo_i; // apparently redundant, not used!
-    //gpd->refract_inhib = refract_i; // apparently redundant, not used!
+    gpd->nogo_inhib = nogo_i; // this is for stats and monitoring purposes
+    gpd->refract_inhib = refract_i; // this is for stats and monitoring purposes
       
     float mult_fact = 1.0f;
     if(nogo_i > 0.0f) mult_fact *= (1.0f - nogo_i);

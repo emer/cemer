@@ -29,14 +29,14 @@ class E_API PBWMUnGpData : public LeabraUnGpData {
   // PBWM version of data to maintain for independent unit groups of competing units within a single layer -- contains extra information for PBWM state
 INHERITED(LeabraUnGpData)
 public:
-  bool		go_fired_now;	// #CAT_Activation has Go fired on this cycle?  only true for one cycle
-  bool		go_fired_trial;	// #CAT_Activation has Go fired on this trial -- false until it fires
-  int			go_cycle;	// #CAT_Activation cycle on which Go fired, if it did on this trial (-1 if no Go)
-  int			mnt_count;	// #CAT_Activation current counter of number of trials in maint or empty state -- 0 = gating just happened -- will only be true on trial when go_fired_trial is true -- 1+ = maint for a trial or a more (increments at start of each trial, 1 = trial right after gating, etc) -- -1- = empty for a trial or more (also increments at start of each trial)
-  int			prv_mnt_count;	// #CAT_Activation previous counter of number of trials in maint or empty state, just prior to last gating event (only updated at time of gating) -- enables determination of whether a current Go signal was to a maintaining stripe (go_fired_trial && prv_mnt_count > 0) or an empty stripe (otherwise)
-  float		nogo_inhib;	// #CAT_Activation amount of nogo inhibition for this stripe -- only valid in Matrix Go layers
-  float		refract_inhib;	// #CAT_Activation amount of refractory inhibition for  this stripe -- only valid in Matrix Go layers
-  float		nogo_deep;	// #CAT_Activation amount of enhanced netinput gain from PFC deep layers onto NoGo units to bias nogo for continued maintenance
+  bool	        go_fired_now;	// #CAT_Activation has Go fired on this cycle?  only true for one cycle
+  bool	        go_fired_trial;	// #CAT_Activation has Go fired on this trial -- false until it fires
+  int           go_cycle;	// #CAT_Activation cycle on which Go fired, if it did on this trial (-1 if no Go)
+  int           mnt_count;	// #CAT_Activation current counter of number of trials in maint or empty state -- 0 = gating just happened -- will only be true on trial when go_fired_trial is true -- 1+ = maint for a trial or a more (increments at start of each trial, 1 = trial right after gating, etc) -- -1- = empty for a trial or more (also increments at start of each trial)
+  int           prv_mnt_count;	// #CAT_Activation previous counter of number of trials in maint or empty state, just prior to last gating event (only updated at time of gating) -- enables determination of whether a current Go signal was to a maintaining stripe (go_fired_trial && prv_mnt_count > 0) or an empty stripe (otherwise)
+  float         nogo_inhib;	// #CAT_Activation amount of nogo inhibition for this stripe -- only valid in Matrix Go layers
+  float	        refract_inhib;	// #CAT_Activation amount of refractory inhibition for  this stripe -- only valid in Matrix Go layers
+  float	        nogo_deep;	// #CAT_Activation amount of enhanced netinput gain from PFC deep layers onto NoGo units to bias nogo for continued maintenance
 
   override void	Init_State();
 

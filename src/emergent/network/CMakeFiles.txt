@@ -52,6 +52,9 @@ set(network_HEADS_MAKETA
   taBrainAtlas.h
   taBrainAtlas_List.h
 
+  Weights.h
+  Weights_List.h
+
   Network.h
   Network_Group.h
 
@@ -156,11 +159,10 @@ set(network_HEADS_NOMAKETA
   FSLBrainAtlasFileComposer.h
   NetworkVoxelMapper.h
   iBrainViewEditDialog.h
-  NiftiReader.h
-
   znzlib.h
   nifti1.h
   nifti1_io.h
+  NiftiReader.h
 )
 
 # all heads -- both kinds
@@ -218,9 +220,13 @@ set(network_SRCS
   Layer_PtrList.cpp
 
   UnitCallThreadMgr.cpp
-      taBrainAtlas.cpp
+  taBrainAtlas.cpp
   taBrainAtlas_List.cpp
   BrainAtlasRegexpPopulator.cpp
+
+  Weights.cpp
+  Weights_List.cpp
+
   Network.cpp
   Network_Group.cpp
 
@@ -282,7 +288,7 @@ set(network_SRCS
   T3LayerNode.cpp
   T3PrjnNode.cpp
   T3LayerGroupNode.cpp
-    T3NetNode.cpp
+  T3NetNode.cpp
 
   ScaleRange.cpp
   ScaleRange_List.cpp
@@ -293,7 +299,7 @@ set(network_SRCS
   LayerView.cpp
   PrjnView.cpp
   LayerGroupView.cpp
-    NetView.cpp
+  NetView.cpp
   iViewPanelOfNetwork.cpp
 
   BrainAtlas.cpp
@@ -316,10 +322,10 @@ set(network_SRCS
   T3BrainNode.cpp
   iViewPanelOfBrain.cpp
   iBrainViewEditDialog.cpp
-  NetworkVoxelMapper.cpp
-  NiftiReader.cpp
   znzlib.c
   nifti1_io.c
+  NetworkVoxelMapper.cpp
+  NiftiReader.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

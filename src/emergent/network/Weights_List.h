@@ -13,29 +13,29 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef Voxel_List_h
-#define Voxel_List_h 1
+#ifndef Weights_List_h
+#define Weights_List_h 1
 
 // parent includes:
 #include "network_def.h"
 #include <taList>
-#include <Voxel>
+#include <Weights>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class Voxel;
 
-eTypeDef_Of(Voxel_List);
+eTypeDef_Of(Weights_List);
 
-class E_API Voxel_List : public taList<Voxel> {
-  // #NO_TOKENS #NO_UPDATE_AFTER List of voxels
-  INHERITED(taList<Voxel>)
+class E_API Weights_List : public taList<Weights> {
+  // #NO_TOKENS #NO_UPDATE_AFTER List of weights objects
+INHERITED(taList<Weights>)
 public:
-  TA_BASEFUNS_NOCOPY(Voxel_List);
+
+  TA_BASEFUNS_NOCOPY(Weights_List);
 private:
-  void  Initialize()            { SetBaseType(&TA_Voxel); }
-  void  Destroy()               { };
+  void Initialize()  { SetBaseType(&TA_Weights); };
+  void Destroy()     { };
 };
 
-#endif // Voxel_List_h
+#endif // Weights_List_h

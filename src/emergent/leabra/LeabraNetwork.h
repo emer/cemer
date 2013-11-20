@@ -372,6 +372,7 @@ public:
   float		pvlv_nv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV novelty value for the current trial -- updated on a cycle-by-cycle basis
   float		pvlv_dav;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV phasic dopamine value for the current trial -- updated on a cycle-by-cycle basis
   float		pvlv_tonic_da;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV tonic dopamine level for the current trial -- updated on a cycle-by-cycle basis
+  float		pvlv_sev;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV serotonin (5HT) value for the current trial -- updated on a cycle-by-cycle basis
   bool		pv_detected;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV detected a situation where primary reward value is expected to be available, based on learned encoding of similar such situations in the past -- computed by the PVrLayerSpec continuously in the minus phase
   float		avg_ext_rew_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch

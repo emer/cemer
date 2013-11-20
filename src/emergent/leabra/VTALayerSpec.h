@@ -49,13 +49,35 @@ private:
 };
 
 
+eTypeDef_Of(LVBlockSpec);
+
+class E_API LVBlockSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for how PV and dip signals block LV signals in dopamine
+INHERITED(SpecMemberBase)
+public:
+  float         pos_pv;         // down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
+  float         dip;            // down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LVBlockSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()       { };
+  void  Defaults_init() { Initialize(); }
+};
+
+
 eTypeDef_Of(VTALayerSpec);
 
 class E_API VTALayerSpec : public LeabraLayerSpec {
-  // computes gdPVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect
+  // Models the Ventral Tegmental Area: computes gdPVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect
 INHERITED(LeabraLayerSpec)
 public:
   gdPVLVDaSpec    da;             // parameters for the pvlv da computation
+  LVBlockSpec     lv_block;       // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 
   virtual void  Send_Da(LeabraLayer* lay, LeabraNetwork* net);
   // send the da value to sending projections: every cycle

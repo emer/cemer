@@ -47,6 +47,7 @@ public:
   CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average activation accumulation values -- for normalizing averages and state field provides ultimate determination of when and how sravg is computed
   float		avg_l_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation layer-wise average of avg_l values in the layers
   float		dav;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
+  float		sev;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning serotonin-like modulatory value (where applicable)
   AvgMaxVals	avg_netin;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
   AvgMaxVals	avg_netin_sum;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
   int		avg_netin_n;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average

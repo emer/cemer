@@ -32,6 +32,8 @@
 eTypeDef_Of(FullPrjnSpec);
 eTypeDef_Of(CustomPrjnSpec);
 
+#include <sstream>
+
 using namespace std;
 
 
@@ -134,6 +136,7 @@ void Network::InitLinks() {
   proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(specs, this);
   taBase::Own(layers, this);
+  taBase::Own(weights, this);
   taBase::Own(max_disp_size, this);
   taBase::Own(max_disp_size2d, this);
 
@@ -1659,6 +1662,42 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;
+}
+
+void Network::SaveToWeights(Weights* wts) {
+  if(wts == NULL) {
+    wts = (Weights*)weights.New(1);
+  }
+  ostringstream oss;
+  SaveWeights_strm(oss, TEXT);  // always use text for this
+  wts->wt_file = oss.str().c_str();
+  wts->epoch = epoch;
+  wts->batch = batch;
+  if(wts->name.contains("Weights") && file_name.nonempty()) {
+    wts->SetName(file_name);
+  }
+  wts->SigEmitUpdated();
+}
+
+bool Network::LoadFmWeights(Weights* wts, bool quiet) {
+  if(TestError(!wts, "LoadFmWeights", "Weights object is NULL")) {
+    return false;
+  }
+  if(!wts->HasWeights(true)) return false;
+  istringstream iss(wts->wt_file.chars());
+  return LoadWeights_strm(iss, quiet);
+}
+
+void Weights::WeightsFmNet() {
+  Network* net = GET_MY_OWNER(Network);
+  if(!net) return;
+  net->SaveToWeights(this);
+}
+
+bool Weights::WeightsToNet() {
+  Network* net = GET_MY_OWNER(Network);
+  if(!net) return false;
+  return net->LoadFmWeights(this, quiet_load);
 }
 
 void Network::LayerZPos_Unitize() {

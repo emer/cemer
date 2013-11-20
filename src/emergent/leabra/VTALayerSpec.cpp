@@ -34,6 +34,11 @@ void gdPVLVDaSpec::Initialize() {
   vsp_thr = 0.1f;
 }
 
+void LVBlockSpec::Initialize() {
+  pos_pv = 1.0f;
+  dip = 1.0f;
+}
+
 void VTALayerSpec::Initialize() {
   SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
@@ -56,7 +61,6 @@ void VTALayerSpec::HelpConfig() {
  \nVTALayerSpec Configuration:\n\
  - Use the Wizard gdPVLV button to automatically configure layers.\n\
  - Recv cons marked with a MarkerConSpec from inputs\n\
- - This layer must be after recv layers in list of layers\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
   taMisc::Confirm(help);
@@ -90,12 +94,6 @@ bool VTALayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     us->clamp_range.max = 2.0f;
     us->clamp_range.min = -2.0f;
     us->clamp_range.UpdateAfterEdit();
-  }
-  if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.0f;
   }
 
   // check recv connection
@@ -166,7 +164,11 @@ void VTALayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   float pospv_da = pospv - vspvi;
   pospv_da = MAX(pospv_da, 0.0f); // can't dip through this!
 
-  float net_da = da.pv_gain * pospv_da + da.burst_gain * burst_da - da.dip_gain * dip_da;
+  float net_block = (1.0f - (lv_block.pos_pv * pospv_da + lv_block.dip * dip_da));
+  net_block = MAX(0.0f, net_block);
+
+  float net_da = da.pv_gain * pospv_da + net_block * da.burst_gain * burst_da -
+    da.dip_gain * dip_da;
   net_da *= da.da_gain;
 
   // also set the network ext rew pv settings

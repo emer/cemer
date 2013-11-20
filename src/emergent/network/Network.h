@@ -24,6 +24,7 @@
 #include <BaseSpec_Group>
 #include <Layer_Group>
 #include <taBrainAtlas_List>
+#include <Weights_List>
 #include <TimeUsed>
 #include <UnitCallThreadMgr>
 #include <UnitPtrList>
@@ -127,6 +128,7 @@ public:
 
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
+  Weights_List  weights;        // #CAT_Structure saved weights objects
 
   NetFlags      flags;          // #CAT_Structure flags controlling various aspects of network function
 
@@ -275,6 +277,12 @@ public:
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual bool  LoadWeights(const String& fname="", bool quiet = false);
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+
+  virtual void  SaveToWeights(Weights* wts);
+  // #BUTTON #MENU #NULL_OK write weight values out to given weights object (null = make a new one)
+  virtual bool  LoadFmWeights(Weights* wts, bool quiet = false);
+  // #MENU load weight values from given weights object
+
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
 
