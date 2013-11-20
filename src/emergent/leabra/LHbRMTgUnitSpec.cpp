@@ -24,6 +24,7 @@ void LHbRMTgGains::Initialize() {
   patch_dir = 1.0f;
   patch_ind = 1.0f;
   matrix = 0.0f;
+  matrix_td = true;
 }
 
 void LHbRMTgGains::Defaults_init() {
@@ -122,7 +123,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
   if(lay->hard_clamped) return;
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
-  if(net->NetinPerPrjn()) {
+  if(net->NetinPerPrjn()) {     // this is set to be true automatically
     float patch_dir = 0.0f;
     float patch_ind = 0.0f;
     float matrix_dir = 0.0f;
@@ -165,7 +166,13 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     // now do the proper subtractions, and individually rectify each term
     // this individual rectification is important so that system is not 
     // sensitive to overshoot of predictor relative to its comparison value
-    float matrix_net = gains.matrix * (matrix_ind - matrix_dir); // net positive dipping action from matrix
+    float matrix_net = 0.0f;
+    if(gains.matrix_td) {
+      matrix_net = gains.matrix * (u->misc_1 - matrix_ind); // misc_1 holds prior -- looking for dips so sign is reversed!
+    }
+    else {
+      matrix_net = gains.matrix * (matrix_ind - matrix_dir); // net positive dipping action from matrix
+    }
     matrix_net = MAX(0.0f, matrix_net);
 
     float pv_neg_net = gains.patch_dir * (pv_neg - patch_dir); // dir cancels neg
@@ -227,5 +234,23 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     u->net += Compute_Noise(u, net);
   }
   u->i_thr = Compute_IThresh(u, net);
+}
+
+void LHbRMTgUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::PostSettle(u, net);
+  if(gains.matrix_td) {
+    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+      float matrix_ind = 0.0f;
+      for(int g=0; g<u->recv.size; g++) {
+        LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+        LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
+        if(from->name.contains("Matrix") && (from->name.contains("Ind") ||
+                                             from->name.contains("NoGo"))) {
+          matrix_ind += recv_gp->net_raw;
+        }
+      }
+      u->misc_1 = matrix_ind;       // save for next time -- this is the raw net..
+    }
+  }
 }
 

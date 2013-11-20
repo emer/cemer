@@ -32,7 +32,8 @@ public:
   float         all;            // #MIN_0 final overall gain on everything
   float         patch_dir;      // #MIN_0 VS patch direct pathway versus negative PV outcomes
   float         patch_ind;      // #MIN_0 VS patch indirect pathway versus positive PV outcomes
-  float         matrix;         // #MIN_0 VS matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
+  float         matrix;         // #MIN_0 VS gain on matrix pathway 
+  bool          matrix_td;      // compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
 
   override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
@@ -55,6 +56,7 @@ public:
   LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs
 
   override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  override void	PostSettle(LeabraUnit* u, LeabraNetwork* net);
 
   override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
