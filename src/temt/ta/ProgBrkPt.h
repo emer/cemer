@@ -35,8 +35,8 @@ public:
   // #HIDDEN #SHOW_TREE the program element on which the break is set
   bool          enabled;
   // #SHOW breakpoints can persist and be enabled or disabled
-  String                desc;
-  // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
+  String        desc;
+  // #READ_ONLY #SHOW
 
   void          Enable();
   // #MENU #DYN1 #GHOST_OFF_enabled enable existing disabled breakpoint

@@ -32,7 +32,8 @@ ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, String codeline) {
   if (bp == NULL) {
     ProgBrkPt* bp = (ProgBrkPt*)New(1);
     bp->prog_el = prog_el;
-    bp->name = "Breakpoint:" + codeline.elidedTo(50);
+    bp->desc = codeline.elidedTo(-1);
+    bp->Enable();
     SigEmitUpdated();
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }

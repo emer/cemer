@@ -17,6 +17,7 @@
 #include <Program>
 #include <ProgLine>
 #include <taSigLink>
+#include <taMisc>
 #include <SigLinkSignal>
 
 void ProgBrkPt::Initialize() {
@@ -68,11 +69,12 @@ void ProgBrkPt::Disable() {
 }
 
 void ProgBrkPt::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if (enabled)  // did the state change?
-    Enable();
-  else
-    Disable();
+  if(!taMisc::is_loading) {
+    if (enabled)  // did the state change?
+      Enable();
+    else
+      Disable();
+  }
 }
 
 String ProgBrkPt::GetStateDecoKey() const {
