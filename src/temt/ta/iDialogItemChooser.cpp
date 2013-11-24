@@ -363,7 +363,11 @@ void iDialogItemChooser::Refresh() {
     // set current item; if NO NULL and none, then first item by default
     void* tsel = m_client->sel();
     if (!tsel) {
-      if(items->topLevelItemCount() > 1) {
+      if(items->topLevelItemCount() > 0) {  // if NULL ok - first choice when no current selection
+        if(m_client->HasFlag(taiWidget::flgNullOk))
+          SetCurrentItemByData(NULL);
+      }
+      else if(items->topLevelItemCount() > 1) {
         tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(1)->data(0, ObjDataRole));
       }
       else if(items->topLevelItemCount() > 0) {
@@ -394,15 +398,26 @@ bool iDialogItemChooser::SetCurrentItemByData(void* value) {
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Selectable);
   QTreeWidgetItem* item;
   bool is_first = true;
+  QTreeWidgetItem* null_item = NULL;  // hold on to this one in case we don't find an item that matches value
+  bool null_is_first = is_first;  // save this info also in case we don't find a match to value
   while ((item = *it)) {
     void* data = (void*)QVARIANT_TO_INTPTR(item->data(0, ObjDataRole));
-    if (value == data) {
+    if (data == 0) { // just save this info - don't select or return
+      null_item = item;
+      null_is_first = is_first;
+    }
+    if (value == data) { // if client wants the NULL option selected - do it
       SelectItem(item, is_first);
       m_selItem = item; // cache for showEvent
       return true;
     }
     is_first = false;
     ++it;
+  }
+  if (null_item != NULL) { // if we didn't find a match and there is a NULL item - choose it
+    SelectItem(item, is_first);
+    m_selItem = item;
+    return true;
   }
   // not found
   items->selectionModel()->clear();
