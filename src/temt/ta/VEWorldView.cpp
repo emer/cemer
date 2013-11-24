@@ -435,7 +435,12 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   if(!cam_renderer) {
     taMisc::Info("GetCameraImage", String(cam_no), "cam_renderer building");
-    cam_renderer = new SoOffscreenRendererQt(vpreg);
+    QGLWidget* qglwidg = NULL;
+    T3ExaminerViewer* exvw = GetViewer();
+    if(exvw) {
+      qglwidg = exvw->quarter;
+    }
+    cam_renderer = new SoOffscreenRendererQt(vpreg, qglwidg);
     SoGLRenderAction* action = cam_renderer->getGLRenderAction();
     action->setSmoothing(true);
     action->setTransparencyType(SoGLRenderAction::BLEND);

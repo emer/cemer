@@ -31,7 +31,7 @@
 #define PUBLIC(p) p
 
 void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
-				   SoGLRenderAction * glrenderaction) {
+				   SoGLRenderAction * glrenderaction, QGLWidget* glwidg) {
   this->backgroundcolor.setValue(0,0,0);
 	
   if (glrenderaction) {
@@ -46,10 +46,12 @@ void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
   this->didallocation = glrenderaction ? FALSE : TRUE;
   this->viewport = vpr;
 
+  this->gl_widg = glwidg;
+
   this->pbuff = NULL;		// constructed later
 #if (QT_VERSION >= 0x050000)
   this->gl_ctxt = NULL;
-  this->gl_widg = NULL;
+  this->own_gl_widg = NULL;
 #endif
   this->cache_context = 0;
 }
@@ -58,9 +60,10 @@ void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
   Constructor. Argument is the \a viewportregion we should use when
   rendering. An internal SoGLRenderAction will be constructed.
 */
-SoOffscreenRendererQt::SoOffscreenRendererQt(const SbViewportRegion & viewportregion)
+SoOffscreenRendererQt::SoOffscreenRendererQt(const SbViewportRegion & viewportregion,
+                                             QGLWidget* glwidg)
 {
-  Constr(viewportregion);
+  Constr(viewportregion, NULL, glwidg);
 }
 
 /*!
@@ -68,9 +71,9 @@ SoOffscreenRendererQt::SoOffscreenRendererQt(const SbViewportRegion & viewportre
   scene graph when rendering the scene. Information about the
   viewport is extracted from the \a action.
 */
-SoOffscreenRendererQt::SoOffscreenRendererQt(SoGLRenderAction * action)
+SoOffscreenRendererQt::SoOffscreenRendererQt(SoGLRenderAction * action, QGLWidget* glwidg)
 {
-  Constr(action->getViewportRegion(), action);
+  Constr(action->getViewportRegion(), action, glwidg);
 }
 
 /*!
@@ -80,7 +83,7 @@ SoOffscreenRendererQt::~SoOffscreenRendererQt()
 {
   if(pbuff) delete pbuff;
 #if (QT_VERSION >= 0x050000)
-  if(gl_widg) delete gl_widg;
+  if(own_gl_widg) delete own_gl_widg;
 #endif
   if (this->didallocation) { delete this->renderaction; }
 }
@@ -165,15 +168,21 @@ void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& f
   viewport.setWindowSize(width, height);
   cache_context = SoGLCacheContextElement::getUniqueCacheContext();
 #if (QT_VERSION >= 0x050000)
-  gl_ctxt = (QGLContext*)QGLContext::currentContext(); // save current context
-  if(!gl_ctxt) {
-    QGLFormat glf;
-    glf.setSampleBuffers(true);
-    glf.setSamples(4);
-    gl_widg = new QGLWidget(glf);
-    gl_widg->show();
+  if(gl_widg) {
     gl_ctxt = gl_widg->context();
   }
+  if(!gl_ctxt) {
+    // need to make our own
+    if(!own_gl_widg) {
+      QGLFormat glf;
+      glf.setSampleBuffers((fmt.samples() > 0));
+      glf.setSamples(fmt.samples());
+      own_gl_widg = new QGLWidget(glf);
+      own_gl_widg->show();      // have to show it for it to work -- makes current
+    }
+    gl_ctxt = own_gl_widg->context();
+  }
+  gl_ctxt->makeCurrent();       // always reinstate our original context
   pbuff = new QOpenGLFramebufferObject(width, height, fmt);
 #else
   pbuff = new QGLPixelBuffer(width, height, fmt);
@@ -217,7 +226,7 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
     makeMultisampleBuffer(fullsize[0], fullsize[1]); // use default
   }
   else if(pbuff->width() != fullsize[0] || pbuff->height() != fullsize[1]) {
-    taMisc::DebugInfo("making new pbuff of right size");
+    // taMisc::DebugInfo("making new pbuff of right size");
     // get the size right!
     makeMultisampleBuffer(fullsize[0], fullsize[1]); // use default
   }
