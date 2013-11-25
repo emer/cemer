@@ -84,6 +84,7 @@ public:
   bool                  negative_draw;  // continue same line when X value resets in negative axis direction?
   bool                  negative_draw_z; // continue same line when Z value resets in negative axis direction?
   float                 line_width;     // width of line -- 0 means use default
+  float                 dev_pix_ratio;  // #NO_SAVE multiplier on display device -- for multiplying line_width 
   PointSize             point_size;     // size of point symbols
   int                   point_spacing;  // #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers
   float                 bar_space;      // #DEF_0.2 amount of space between bars

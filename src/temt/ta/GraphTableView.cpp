@@ -30,6 +30,7 @@
 #include <T3Color>
 #include <SoLineBox3d>
 #include <taVector2i>
+#include <QGuiApplication>
 
 #include <SoScrollBar>
 #include <SoImageEx>
@@ -161,6 +162,7 @@ void GraphTableView::Initialize() {
   graph_type = XY;
   plot_style = LINE;
   line_width = 2.0f;
+  dev_pix_ratio = 1.0f;
   point_size = MEDIUM;
   point_spacing = 1;
   bar_space = .2f;
@@ -616,6 +618,8 @@ void GraphTableView::Render_impl() {
   T3GraphViewNode* node_so = this->node_so(); // cache
   if(!node_so || !dataTable())
     return;
+
+  dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
 
   node_so->setWidth(width);     // does a render too -- ensure always up to date on width
   int orig_rows;
@@ -1142,7 +1146,7 @@ void GraphTableView::RenderAxes() {
 void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl) {
   t3gl->clear();
   t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
   t3gl->setValueColorMode(false);
   t3gl->setDefaultColor((T3Color)(plv.color.color()));
@@ -1566,7 +1570,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   plv.eff_y_axis = &yax;                // set this for point clicking!
 
   t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_er = erv.GetDAPtr();
@@ -1790,7 +1794,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   plv.eff_y_axis = &yax;                // set this for point clicking!
 
   t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_er = erv.GetDAPtr();

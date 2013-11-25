@@ -117,8 +117,13 @@ void iDialogSearch::Constr() {
   connect(btnStop, SIGNAL(clicked()), this, SLOT(stop_clicked()) );
   connect(results, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
     this, SLOT(results_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
+#if (QT_VERSION >= 0x050000)
+  connect(results, SIGNAL(highlighted(const QString&)),
+    status_bar, SLOT(showMessage(const QString&)) );
+#else
   connect(results, SIGNAL(highlighted(const QString&)),
     status_bar, SLOT(message(const QString&)) );
+#endif
   search->setFocus();
 }
 

@@ -299,8 +299,6 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
   }
   if(TestWarning(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
     return;
-  if(TestWarning(params.empty(), "ImportData", "params is empty for tag:", tag))
-    return;
   String tag_svn = tag.before("_");
   String tag_job = tag.after("_");
   String res_path = m_cm->GetWcResultsPath();
