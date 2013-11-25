@@ -30,7 +30,9 @@
 #include <T3Color>
 #include <SoLineBox3d>
 #include <taVector2i>
+#if (QT_VERSION >= 0x050000)
 #include <QGuiApplication>
+#endif
 
 #include <SoScrollBar>
 #include <SoImageEx>
@@ -619,7 +621,9 @@ void GraphTableView::Render_impl() {
   if(!node_so || !dataTable())
     return;
 
+#if (QT_VERSION >= 0x050000)
   dev_pix_ratio = ((QGuiApplication*)QGuiApplication::instance())->devicePixelRatio();
+#endif
 
   node_so->setWidth(width);     // does a render too -- ensure always up to date on width
   int orig_rows;
