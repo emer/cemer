@@ -18,11 +18,14 @@
 
 // parent includes:
 #include <SelectEdit>
+#include <taSmartRefT>
+#include <taSmartPtrT>
 
 // member includes:
 #include <DataTable>
 #include <ParamSearchAlgo_List>
 #include <ParamSearchAlgo>
+#include <taDateTime>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
@@ -30,6 +33,9 @@ class iDataTableEditor; //
 class ClusterManager; //
 class DataTable_Group; //
 class iPanelSet; //
+
+class ClusterRun; //
+TA_SMART_PTRS(ClusterRun); // ClusterRunRef
 
 taTypeDef_Of(GridSearch);
 
@@ -51,6 +57,7 @@ public:
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
 
+  int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
   String        extra_files;    // space separated list of extra files to check into the repository along with this project
@@ -180,6 +187,10 @@ public:
   // get selected rows in editor
   virtual bool  SelectRows(DataTable& dt, int st_row, int end_row);
   // select range of rows in given data table
+  virtual void  ClearSelection(DataTable& dt);
+  // clear any existing selection
+  virtual void  ClearAllSelections();
+  // clear any existing selection for all cluster run tables
 
   virtual String GetSvnPath();
   // returns the svn repository path currently in effect -- i.e., ClusterManager->GetWcProjPath()
@@ -191,12 +202,22 @@ public:
   virtual bool       ViewPanelNumber(int panel_no);
   // #CAT_Display select the edit/middle panel view of this object to be the given number (0 = SelectEdit, 1 = jobs_running, 2 = jobs_done, 3 = jobs_archive, 4 = file_list, 5 = cluster_info, 6 = Properties)
 
+  virtual void      AutoUpdateMe(bool clear_sels = true);
+  // set this cluster run to auto-update to the next revision after one that was just committed -- if clear_sels then clear all selections in tables (action is done -- generally should be true)
+  static bool       WaitProcAutoUpdate();
+  // auto update to given target revision 
+
   SIMPLE_COPY(ClusterRun);
   SIMPLE_CUTLINKS(ClusterRun);
   void InitLinks();
   TA_BASEFUNS(ClusterRun);
 protected:
   override void UpdateAfterEdit_impl();
+
+  static ClusterRunRef  wait_proc_updt; // this cluster run object is in auto-update mode
+  static int            wait_proc_trg_rev; // this is target revision for it
+  static taDateTime     wait_proc_start; // when we first started
+  static taDateTime     wait_proc_last_updt; // last time we did an update
 
 private:
   void  Initialize();

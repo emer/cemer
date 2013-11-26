@@ -25,10 +25,12 @@
 #include <taiWidgetActions_List>
 #include <taiMemberWidgets>
 #include <taiWidget_List>
+#include <iWidget_List>
 #else
 class taiWidgetActions_List;
 class taiMemberWidgets;
 class taiWidget_List;
+class iWidget_List;
 #endif
 
 // declare all other types mentioned but not required to include:
@@ -57,21 +59,23 @@ public:
     MS_CNT      = 3 // number of default members
   };
 
-  taiWidgetActions_List          ta_menus;       // menu representations (from methods, non-menubuttons only)
-  taiWidgetActions_List          ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
-  taiWidgetActions*           cur_menu;       // current menu to add to (if not otherwise spec'd)
-  taiWidgetActions*           cur_menu_but; // current menu button to add to (if not otherwise spec'd)
+  taiWidgetActions_List ta_menus;       // menu representations (from methods, non-menubuttons only)
+  taiWidgetActions_List ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
+  taiWidgetActions*     cur_menu;       // current menu to add to (if not otherwise spec'd)
+  taiWidgetActions*     cur_menu_but; // current menu button to add to (if not otherwise spec'd)
 
 #ifdef TA_OS_MAC
   // See bug 1518.
-  taiWidgetActions*           menu; // menu bar
+  taiWidgetActions*     menu; // menu bar
 #else
-  taiWidgetMenuBar*           menu; // menu bar
+  taiWidgetMenuBar*     menu; // menu bar
 #endif
 
-  taiMemberWidgets_List          membs;
+  taiMemberWidgets_List membs;
   QButtonGroup*         bgrp; // group used for set checkboxes
-  taiWidget_List           meth_el;        // method elements
+  taiWidget_List        meth_el;        // method elements
+  iWidget_List          methbox_labels;    // labels in method box..
+  MemberSpace           methbox_members;   // members that drive labels in method box
 
   //NOTE: we provide indexed access to references here for convenience, but be careful!
   const bool&           show_set(int i) const // whether the set is shown
@@ -161,6 +165,11 @@ protected:
   void                  DoAddMethButton(QWidget* but);
   void                  DoRaise_Panel(); // what Raise() calls for panels
   override void         DoConstr_Dialog(iDialogEditor*& dlg);
+  
+  virtual void          Constr_Methbox_Labels();
+  // construct #METHBOX_LABELS items
+  virtual void          Update_Methbox_Labels();
+  // update #METHBOX_LABELS items
 
   override bool         eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return

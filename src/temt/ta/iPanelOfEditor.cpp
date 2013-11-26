@@ -82,7 +82,7 @@ void iPanelOfEditor::UpdatePanel() {
 
 void iPanelOfEditor::Render_impl() {
   inherited::Render_impl();
-  taiEditorOfClass* edh = editDataHost();
+  taiEditorOfClass* edh = EditorOfClass();
   if (edh->state >= taiEditorWidgetsMain::CONSTRUCTED) return;
 
   edh->ConstrDeferred();
@@ -99,12 +99,12 @@ void iPanelOfEditor::ResolveChanges_impl(CancelOp& cancel_op) {
 }
 
 QWidget* iPanelOfEditor::firstTabFocusWidget() {
-  return editDataHost()->firstTabFocusWidget();
+  return EditorOfClass()->firstTabFocusWidget();
 }
 
 void iPanelOfEditor::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  taiEditorOfClass* edh = editDataHost();
+  taiEditorOfClass* edh = EditorOfClass();
   if(edh && edh->state >= taiEditorWidgetsMain::CONSTRUCTED)  {
     edh->GetButtonImage();              // update buttons whenver we show!
   }

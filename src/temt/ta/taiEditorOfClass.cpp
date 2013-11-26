@@ -334,18 +334,23 @@ void taiEditorOfClass::Constr_Methods_impl() {
       AddMethButton(mth_rep);
       meth_el.Add(mth_rep);
     }
-/*obs    // add to menu if a menu item
-    if (mth_rep->is_menu_item) {
-      if(md->HasOption("MENU_BUTTON")) {
-        SetCurMenuButton(md);
-        mth_rep->AddToMenu(cur_menu_but);
-      } else {
-        SetCurMenu(md);
-        mth_rep->AddToMenu(cur_menu);
-      }
-    } else {
-      AddMethButton(mth_rep);
-    }*/
+  }
+
+  Constr_Methbox_Labels();
+}
+
+void taiEditorOfClass::Constr_Methbox_Labels() {
+  for(int i=0;i<typ->members.size; i++) {
+    MemberDef* md = typ->members[i];
+    if(!md->HasOption("METHBOX_LABEL")) continue;
+    QLabel* lab = new QLabel;
+    lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
+    lab->setFont(taiM->nameFont(taiMisc::sizSmall));
+    lab->setText(md->name + ": ");
+    lab->setToolTip(md->desc);
+    layMethButtons->addWidget(lab);
+    methbox_labels.Add(lab);
+    methbox_members.Link(md);
   }
 }
 
@@ -489,6 +494,17 @@ void taiEditorOfClass::GetButtonImage(bool force) {
       continue;
 
     mth_rep->UpdateButtonRep();
+  }
+
+  Update_Methbox_Labels();
+}
+
+void taiEditorOfClass::Update_Methbox_Labels() {
+  int sz = MIN(methbox_members.size, methbox_labels.size);
+  for(int i=0; i< sz; i++) {
+    MemberDef* md = methbox_members[i];
+    QLabel* lab = (QLabel*)methbox_labels[i];
+    lab->setText(md->name + ": " + md->type->GetValStr(md->GetOff(root), root, md));
   }
 }
 

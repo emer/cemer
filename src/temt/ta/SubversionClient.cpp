@@ -876,7 +876,7 @@ SubversionClient::Update(int rev)
   }
 
   // Should only be one element updated since we just provided one path.
-  taMisc::Info("Number of elements updated:", String(result_revs->nelts));
+  // taMisc::Info("Number of elements updated:", String(result_revs->nelts));
   svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
   return updateRev;
 }
@@ -950,7 +950,7 @@ SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
   }
 
   // Should only be one element updated since we just provided one path.
-  taMisc::Info("Number of elements updated:", String(result_revs->nelts));
+  // taMisc::Info("Number of elements updated:", String(result_revs->nelts));
   svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
   return updateRev;
 }

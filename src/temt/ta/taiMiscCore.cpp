@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <dumpMisc>
 #include <taiTypeBase>
+#include <ClusterRun>
 
 #include <signal.h>
 
@@ -106,6 +107,7 @@ int taiMiscCore::RunPending() {
 }
 
 void taiMiscCore::WaitProc() {
+  ClusterRun::WaitProcAutoUpdate();
   if(!taMisc::do_wait_proc && taMisc::err_cancel) { // only count if not calling back
     taMisc::err_waitproc_cnt++;
     if(taMisc::err_waitproc_cnt > taMisc::err_waitproc_thr) { // over threshold, cancel cancel

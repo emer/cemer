@@ -35,7 +35,7 @@ INHERITED(iPanel)
 friend class taiEditorOfClass;
 public:
   iColor*               bgcol; // temp holding spot
-  taiEditorOfClass*      editDataHost() {return owner;}
+  taiEditorOfClass*     EditorOfClass() {return owner;}
   override String       panel_type() const; // this string is on the subpanel button for this panel
   override void         Closing(CancelOp& cancel_op);
   override const iColor GetTabColor(bool selected, bool& ok) const; // special color for tab; NULL means use default

@@ -16,7 +16,10 @@
 #include "iPanel.h"
 #include <iPanelSet>
 
+#include <taiMisc>
+
 #include <QHBoxLayout>
+#include <QLabel>
 
 
 iPanel::iPanel(taiSigLink* dl_)
@@ -25,10 +28,32 @@ iPanel::iPanel(taiSigLink* dl_)
   m_dps = NULL;
   m_minibar_ctrls = NULL;
   lay_minibar_ctrls = NULL;
+  
+  // AddMiniBarMembers();
 }
 
 iPanel::~iPanel() {
 }
+
+// void iPanel::AddMiniBarMembers() {
+//   if(!link() || !link()->isBase()) 
+//     return;
+
+//   taBase* obj = link()->taData();
+//   if(!obj) return;
+
+//   TypeDef* td = obj->GetTypeDef();
+//   for(int i=0;i<td->members.size; i++) {
+//     MemberDef* md = td->members[i];
+//     if(!md->HasOption("MINIBAR")) continue;
+//     QLabel* lab = new QLabel;
+//     lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
+//     lab->setFont(taiM->nameFont(taiMisc::sizSmall));
+//     lab->setText(md->name + ": " + md->type->GetValStr(md->GetOff(obj), obj, md));
+//     lab->setToolTip(md->desc);
+//     AddMinibarWidget(lab);
+//   }
+// }
 
 void iPanel::AddMinibarWidget(QWidget* ctrl) {
   if (!m_minibar_ctrls) {

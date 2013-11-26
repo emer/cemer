@@ -20,7 +20,6 @@
 #include <taRootBase>
 #include <taiMisc>
 
-
 taRootBase* tabMisc::root = NULL;
 taBase*     tabMisc::cur_undo_save_top = NULL;
 taBase*     tabMisc::cur_undo_mod_obj = NULL;
@@ -73,7 +72,7 @@ void tabMisc::WaitProc() {
   did |= rval;
 
   if(!did) {
-    DoAutoSave();               // only once it is quiet
+    did = DoAutoSave();               // only once it is quiet
   }
   --in_wait_proc;
 }

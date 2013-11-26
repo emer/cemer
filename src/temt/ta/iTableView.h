@@ -36,97 +36,97 @@ class CellRange; //
 class TA_API iTableView: public QTableView {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER table editor; model flattens >2d into 2d by frames
   INHERITED(QTableView)
-      Q_OBJECT
+  Q_OBJECT
 public:
-      enum ContextArea { // where ctxt menu was requested
-        CA_EMPTY    = 0x01,
-        CA_GRID     = 0x02,
-        CA_COL_HDR  = 0x04,
-        CA_ROW_HDR  = 0x08,
-        CA_HDR_MASK = 0x0C
-      };
+  enum ContextArea { // where ctxt menu was requested
+    CA_EMPTY    = 0x01,
+    CA_GRID     = 0x02,
+    CA_COL_HDR  = 0x04,
+    CA_ROW_HDR  = 0x08,
+    CA_HDR_MASK = 0x0C
+  };
 
 #ifndef __MAKETA__
-      QPointer<iMainWindowViewer> m_window; // used for tab processing etc
+  QPointer<iMainWindowViewer> m_window; // used for tab processing etc
 #endif
 
-      virtual bool          isFixedRowCount() const { return false; } // true, ex. for tab mat cells with fixed rows
-      virtual bool          isFixedColCount() const { return false; } // true, ex. for tab mat cells with fixed geom
-      virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
-      virtual void          selectCurCell();           // call clearExtSelection and then select current index
+  virtual bool          isFixedRowCount() const { return false; } // true, ex. for tab mat cells with fixed rows
+  virtual bool          isFixedColCount() const { return false; } // true, ex. for tab mat cells with fixed geom
+  virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
+  virtual void          selectCurCell();           // call clearExtSelection and then select current index
 
-      /////////////////////////////////////////////////////////////////
-      //            ScrollArea Management
+  /////////////////////////////////////////////////////////////////
+  //            ScrollArea Management
 
-      virtual void          SaveScrollPos();
-      // save the current vertical scroll position for later restore
-      virtual void          RestoreScrollPos();
-      // restore the current vertical scroll position
-      virtual void          ScrollTo(int scr_pos);
-      // scroll vertically to given position -- directly controls vertical scroll bar
-      virtual void          CenterOn(QWidget* widg);
-      // center the scrollbar on center of given widget
-      virtual void          KeepInView(QWidget* widg);
-      // ensure that the given widget is fully in view -- just move up or down as needed to keep fully in view
-      virtual bool          PosInView(int scr_pos);
-      // is given position within the main scroll area (in coordinates relative to central widget) within view?
-      virtual QPoint        MapToTree(QWidget* widg, const QPoint& pt);
-      // map coordinate point within given child widget on panel to the coordinates of the panel scroll area
-      virtual int           MapToTreeV(QWidget* widg, int pt_y);
-      // map vertical coordinate value within given child widget on panel to the coordinates of the panel scroll area
-      virtual bool		SelectedRows(int& st_row, int& end_row);
-      // return start and end range of selected rows in the view
-      virtual bool		SelectRows(int st_row, int end_row);
-      // select given range of rows
+  virtual void          SaveScrollPos();
+  // save the current vertical scroll position for later restore
+  virtual void          RestoreScrollPos();
+  // restore the current vertical scroll position
+  virtual void          ScrollTo(int scr_pos);
+  // scroll vertically to given position -- directly controls vertical scroll bar
+  virtual void          CenterOn(QWidget* widg);
+  // center the scrollbar on center of given widget
+  virtual void          KeepInView(QWidget* widg);
+  // ensure that the given widget is fully in view -- just move up or down as needed to keep fully in view
+  virtual bool          PosInView(int scr_pos);
+  // is given position within the main scroll area (in coordinates relative to central widget) within view?
+  virtual QPoint        MapToTree(QWidget* widg, const QPoint& pt);
+  // map coordinate point within given child widget on panel to the coordinates of the panel scroll area
+  virtual int           MapToTreeV(QWidget* widg, int pt_y);
+  // map vertical coordinate value within given child widget on panel to the coordinates of the panel scroll area
+  virtual bool		SelectedRows(int& st_row, int& end_row);
+  // return start and end range of selected rows in the view
+  virtual bool		SelectRows(int st_row, int end_row);
+  // select given range of rows
 
-      iTableView(QWidget* parent = NULL);
+  iTableView(QWidget* parent = NULL);
 
 #ifndef __MAKETA__
-      signals:
-      void                  hasFocus(iTableView* sender); // we emit anytime something happens which implies we are focused
+ signals:
+  void                  hasFocus(iTableView* sender); // we emit anytime something happens which implies we are focused
 #endif
 
-      public slots: // cliphandler i/f
-      virtual void          EditAction(int ea) {}
-      virtual void          GetEditActionsEnabled(int& ea) {}
+ public slots: // cliphandler i/f
+  virtual void          EditAction(int ea) {}
+  virtual void          GetEditActionsEnabled(int& ea) {}
 
-      virtual void          ViewAction(int va) {}
+  virtual void          ViewAction(int va) {}
 #ifndef __MAKETA__
-      signals:
-      void                  UpdateUi();
+ signals:
+  void                  UpdateUi();
 #endif
 
-      protected:
-      enum RowColOpCode {
-        OP_APPEND                 = 0x001,
-        OP_INSERT                 = 0x002,
-        OP_DUPLICATE              = 0x004,
-        OP_DELETE                 = 0x008,
-        OP_INSERT_AFTER           = 0X010,
-        OP_DELETE_UNSELECTED      = 0X020,
-        OP_ROW                    = 0x040,
-        OP_COL                    = 0x080,
-        OP_RESIZE_TO_CONTENT      = 0x100,
-        OP_RESIZE_TO_CONTENT_ALL  = 0x200
-      };
+ protected:
+  enum RowColOpCode {
+    OP_APPEND                 = 0x001,
+    OP_INSERT                 = 0x002,
+    OP_DUPLICATE              = 0x004,
+    OP_DELETE                 = 0x008,
+    OP_INSERT_AFTER           = 0X010,
+    OP_DELETE_UNSELECTED      = 0X020,
+    OP_ROW                    = 0x040,
+    OP_COL                    = 0x080,
+    OP_RESIZE_TO_CONTENT      = 0x100,
+    OP_RESIZE_TO_CONTENT_ALL  = 0x200
+  };
 
-      bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
-      int                   m_saved_scroll_pos;
+  bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
+  int                   m_saved_scroll_pos;
 
-      override bool         event(QEvent* ev);
-      override void         keyPressEvent(QKeyEvent* e);
-      override bool         eventFilter(QObject* obj, QEvent* event);
-      virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
-          const CellRange& sel);
-      virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
+  override bool         event(QEvent* ev);
+  override void         keyPressEvent(QKeyEvent* e);
+  override bool         eventFilter(QObject* obj, QEvent* event);
+  virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
+                                             const CellRange& sel);
+  virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
 
-      public slots:
-      void                  this_customContextMenuRequested(const QPoint& pos);
-      void                  hor_customContextMenuRequested(const QPoint& pos);
-      void                  ver_customContextMenuRequested(const QPoint& pos);
+ public slots:
+  void                  this_customContextMenuRequested(const QPoint& pos);
+  void                  hor_customContextMenuRequested(const QPoint& pos);
+  void                  ver_customContextMenuRequested(const QPoint& pos);
 
-      protected slots:
-      void                  RowColOp(int op_code); // based on selection
+ protected slots:
+  void                  RowColOp(int op_code); // based on selection
 };
 
 #endif // iTableView_h

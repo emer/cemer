@@ -42,6 +42,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   , m_valid(false)      // set true if all goes well
   , m_svn_client(0)     // initialized in ctor body
   , m_proj(0)           // initialized in ctor body
+  , m_cur_svn_rev(-1)
   , m_username()
   , m_wc_path()
   , m_repo_user_url()
@@ -518,12 +519,12 @@ ClusterManager::setPaths(bool updt_wc) {
   return true;
 }
 
-void
+int
 ClusterManager::updateWorkingCopy()
 {
   // If the user already has a working copy, update it.  Otherwise, create
   // it on the server and check it out.
-  if(!setPaths()) return;
+  if(!setPaths()) return -1;
   QFileInfo fi_wc(m_wc_path.chars());
   if (!fi_wc.exists()) {
     // This could be the first time the user has used Click-to-cluster.
@@ -536,13 +537,13 @@ ClusterManager::updateWorkingCopy()
 
     // Check out a working copy (possibly just an empty directory if we
     // just created it for the first time).
-    int rev = m_svn_client->Checkout(m_repo_user_url);
-    taMisc::Info("Working copy checked out for revision", String(rev));
+    m_cur_svn_rev = m_svn_client->Checkout(m_repo_user_url);
+    taMisc::Info("Working copy checked out for revision", String(m_cur_svn_rev));
   }
   else {
     // Update the existing wc.
-    int rev = m_svn_client->Update();
-    taMisc::Info("Working copy was updated to revision", String(rev));
+    m_cur_svn_rev = m_svn_client->Update();
+    taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
   }
 
   initClusterInfoTable();
@@ -553,6 +554,7 @@ ClusterManager::updateWorkingCopy()
   m_svn_client->TryMakeDir(m_wc_submit_path);
   m_svn_client->TryMakeDir(m_wc_models_path);
   m_svn_client->TryMakeDir(m_wc_results_path);
+  return m_cur_svn_rev;
 }
 
 void
@@ -664,8 +666,8 @@ ClusterManager::commitFiles(const String &commit_msg)
   if(!setPaths()) return;
 
   // Check in all files and directories that were created or updated.
-  int rev = m_svn_client->Checkin(commit_msg);
-  taMisc::Info("Committed files in revision:", String(rev));
+  m_cur_svn_rev = m_svn_client->Checkin(commit_msg);
+  taMisc::Info("Committed files in revision:", String(m_cur_svn_rev));
 }
 
 void

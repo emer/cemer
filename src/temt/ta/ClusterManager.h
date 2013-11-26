@@ -52,9 +52,11 @@ public:
 
   void commitFiles(const String &commit_msg);
   // commit current working copy files
-  void updateWorkingCopy();
-  // update current working copy files
+  int updateWorkingCopy();
+  // update current working copy files -- returns the current svn revision number
 
+  int   GetCurSvnRev() const { return m_cur_svn_rev; }
+  // get the current svn revision number
   String GetWcProjPath() const;
   // full path to cluster_svn_path/svn_repo/clustername/username/projname/ -- root of the svn repo for this project
   String GetWcResultsPath() const;
@@ -106,6 +108,7 @@ protected:
   SubversionClient *m_svn_client;
   taProject *m_proj;
 
+  int    m_cur_svn_rev;
   String m_username;
   String m_wc_path;
   String m_repo_user_url;

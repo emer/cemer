@@ -19,7 +19,6 @@
 #include <iDataTableEditor>
 #include <iPanelOfDataTable>
 #include <iDataTableView>
-#include <taDateTime>
 #include <taDataProc>
 #include <DataTable_Group>
 #include <taProject>
@@ -34,6 +33,11 @@
 
 String ClusterRun::timestamp_fmt = "yyyy_MM_dd_hh_mm_ss";
 
+ClusterRunRef ClusterRun::wait_proc_updt;
+int ClusterRun::wait_proc_trg_rev = -1;
+taDateTime ClusterRun::wait_proc_start;
+taDateTime ClusterRun::wait_proc_last_updt;
+
 void ClusterRun::InitLinks() {
   inherited::InitLinks();
   InitLinks_taAuto(&TA_ClusterRun);
@@ -41,6 +45,7 @@ void ClusterRun::InitLinks() {
 }
 
 void ClusterRun::Initialize() {
+  cur_svn_rev = -1;
   ram_gb = 0;
   n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
@@ -114,8 +119,10 @@ void ClusterRun::Run() {
       for (int row = 0; row < jobs_submit.rows; ++row) {
         jobs_submit.SetValColName(submit_rev, "submit_svn", row);
       }
+      cur_svn_rev = submit_rev;
       // move them over to submitted now!
       taDataProc::AppendRows(&jobs_submitted, &jobs_submit);
+      AutoUpdateMe();
     }
   }
 }
@@ -133,6 +140,7 @@ bool ClusterRun::Update() {
   bool has_sel_archive = SelectedRows(jobs_archive, st_row_archive, end_row_archive);
 
   bool has_updates = m_cm->UpdateTables();
+  cur_svn_rev = m_cm->GetCurSvnRev();
   SortClusterInfoTable();
   jobs_done.Sort("tag", true);  // also sort jobs done by tag
   jobs_archive.Sort("tag", true);  // also sort jobs done by tag
@@ -147,6 +155,7 @@ bool ClusterRun::Update() {
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
+  SigEmitUpdated();
   return has_updates;
 }
 
@@ -173,6 +182,7 @@ void ClusterRun::Cont() {
   if (cur_search_algo && cur_search_algo->CreateJobs()) {
     // Commit the table to submit the jobs.
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
 }
 
@@ -191,6 +201,7 @@ void ClusterRun::Kill() {
 
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs were killed");
@@ -210,6 +221,7 @@ void ClusterRun::GetData() {
     }
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe(false);        // keep selected so we can do Import
   }
   else if (SelectedRows(jobs_done, st_row, end_row)) {
     jobs_submit.ResetData();
@@ -218,6 +230,7 @@ void ClusterRun::GetData() {
     }
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe(false);
   }
   else {
     taMisc::Warning("No rows selected -- no data fetched");
@@ -259,6 +272,7 @@ void ClusterRun::ImportData(bool remove_existing) {
   else {
     taMisc::Warning("No rows selected -- no data fetched");
   }
+  ClearAllSelections();       // done
 }
 
 void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
@@ -378,6 +392,7 @@ void ClusterRun::Probe() {
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
   // Commit the table.
   m_cm->CommitJobSubmissionTable();
+  AutoUpdateMe();
 }
 
 void ClusterRun::ListJobFiles(bool include_data) {
@@ -405,7 +420,8 @@ void ClusterRun::ListJobFiles(bool include_data) {
   else {
     taMisc::Warning("No rows selected -- no files selected");
   }
-  
+
+  ClearAllSelections();       // done
   ViewPanelNumber(4);
 }
 
@@ -523,6 +539,7 @@ void ClusterRun::GetFiles() {
     GetFilesJob(files_str);
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
   else {
     taMisc::Warning("No rows selected -- no files fetched");
@@ -545,6 +562,7 @@ void ClusterRun::RemoveFiles() {
       file_list.RemoveRows(row);
     }
     m_cm->RemoveFiles(files, true, false); // force, keep_local
+    AutoUpdateMe();
   }
   else {
     if (SelectedRows(jobs_done, st_row, end_row)) {
@@ -595,6 +613,7 @@ void ClusterRun::GetProjAtRev() {
   if(TestError(svn_rev < 0, "GetProjAtRev", "valid svn revision not found"))
     return;
   m_cm->GetProjectAtRev(svn_rev);
+  AutoUpdateMe();
 }
 
 void ClusterRun::ArchiveJobs() {
@@ -608,6 +627,7 @@ void ClusterRun::ArchiveJobs() {
       GetArchiveJob(jobs_done, row);
     }
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs archived");
@@ -630,6 +650,7 @@ void ClusterRun::RemoveJobs() {
     }
     RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
@@ -642,6 +663,7 @@ void ClusterRun::RemoveJobs() {
     }
     RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs removed");
@@ -660,8 +682,10 @@ void ClusterRun::RemoveKilledJobs() {
     GetRemoveJob(jobs_done, row);
   }
   RemoveAllFilesInList();
-  if(jobs_submit.rows > 0)
+  if(jobs_submit.rows > 0) {
     m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
+  }
 }
 
 void ClusterRun::RemoveAllFilesInList() {
@@ -673,8 +697,10 @@ void ClusterRun::RemoveAllFilesInList() {
     files.Add(fpath);
   }
   file_list.ResetData();
-  if(files.size > 0)
+  if(files.size > 0) {
     m_cm->RemoveFiles(files, true, false); // force, keep_local
+    AutoUpdateMe();
+  }
 }
 
 void ClusterRun::FormatTables() {
@@ -1226,6 +1252,20 @@ bool ClusterRun::SelectRows(DataTable& dt, int st_row, int end_row) {
   return rval;
 }
 
+void ClusterRun::ClearSelection(DataTable& dt) {
+  iDataTableEditor* ed = DataTableEditor(dt);
+  if(!ed || !ed->tvTable) return;
+  ed->tvTable->clearExtSelection();
+}
+
+void ClusterRun::ClearAllSelections() {
+  ClearSelection(jobs_submit);
+  ClearSelection(jobs_running);
+  ClearSelection(jobs_done);
+  ClearSelection(jobs_archive);
+  ClearSelection(file_list);
+}
+
 ///////////////////////////
 
 String ClusterRun::GetSvnPath() {
@@ -1254,3 +1294,40 @@ bool ClusterRun::ViewPanelNumber(int panel_no) {
 }
 
 
+void ClusterRun::AutoUpdateMe(bool clear_sels) {
+  if(clear_sels) {
+    ClearAllSelections();
+  }
+  cur_svn_rev = m_cm->GetCurSvnRev(); // always update to latest..
+  wait_proc_updt = this;
+  wait_proc_trg_rev = cur_svn_rev + 1;
+  wait_proc_start.currentDateTime();
+  wait_proc_last_updt.currentDateTime();
+  SigEmitUpdated();             // get the latest revision
+}
+
+bool ClusterRun::WaitProcAutoUpdate() {
+  if(!wait_proc_updt) return false;
+  taDateTime curtime;
+  curtime.currentDateTime();
+  int delay = wait_proc_last_updt.secsTo(curtime);
+  if(delay < 10) {
+    return false;
+  }
+  wait_proc_updt->Update();
+  wait_proc_updt->SigEmitUpdated();
+  wait_proc_last_updt.currentDateTime();
+  if(wait_proc_updt->cur_svn_rev >= wait_proc_trg_rev) {
+    taMisc::Info("ClusterRun: updated to target revision:", wait_proc_updt->name);
+    wait_proc_updt = NULL;
+    wait_proc_trg_rev = -1;
+    return true;
+  }
+  if(wait_proc_last_updt.secsTo(curtime) > 120) {
+    taMisc::Info("ClusterRun: time out on updating cluster run:", wait_proc_updt->name);
+    wait_proc_updt = NULL;
+    wait_proc_trg_rev = -1;
+    return true;
+  }
+  return true;
+}

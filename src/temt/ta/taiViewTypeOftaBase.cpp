@@ -34,7 +34,7 @@ iPanelBase* taiViewTypeOftaBase::CreateDataPanel(taiSigLink* dl_) {
   iPanelBase* rval = inherited::CreateDataPanel(dl_);
   // if more than one panel, then move the edit menu and methods to outside panelset
   if (m_dps) {
-    taiEditorOfClass* edh = edit_panel->editDataHost();
+    taiEditorOfClass* edh = edit_panel->EditorOfClass();
     // move the menu -- note: QMenu on linux/win, QToolBar on mac
     m_dps->SetMenu(edh->menu->GetRep());
     m_dps->SetMethodBox(edh->frmMethButtons, edh);
