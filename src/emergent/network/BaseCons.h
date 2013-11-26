@@ -102,11 +102,11 @@ public:
   inline float*          OwnCnVar(int var_no) const
   { return cons_own[var_no]; }
 #endif
-  // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index
+  // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline float&          OwnCn(int idx, int var_no) const
   { return cons_own[var_no][idx]; }
-  // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access
+  // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline const int32_t& UnIdx(int idx) const
   { return unit_idxs[idx]; }
@@ -118,7 +118,7 @@ public:
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
   inline Unit*          UnFmLst(int idx, Unit** flat_units) const
   { return flat_units[unit_idxs[idx]]; }
-  // #CAT_Access fast access (no range checking) to unit pointer at given index (goes through flat index at network level) -- this is the unit on the other end of this connection 
+  // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given index (goes through flat index at network level) -- this is the unit on the other end of this connection 
   Unit*                 SafeUn(int idx) const;
   // #CAT_Access safe access (range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection -- mainly for program access
   inline bool           SetUn(int idx, Unit* un);
@@ -136,19 +136,20 @@ public:
 
   inline float&         PtrCn(int idx, int var_no, Network* net) const
   { return UnCons(idx, net)->OwnCn(PtrCnIdx(idx), var_no); }
-  // #IGNORE #CAT_Access fast access (no range or own_cons checking) to connection value at given index -- this is MUCH slower than OwnCn due to several index accesses, so where ever possible computations should be performed on the side that owns the connections
-
-  // inline bool           SetPtrCn(int idx, Connection* cn)
-  // { if(!InRange(idx) || OwnCons()) return false; cons_idx[idx] = cn; return true; }
-  // #CAT_Modify set unit pointer at given index -- returns false if out of range
+  // #IGNORE #CAT_Access fast access (no range or own_cons checking) to connection value at given index -- this is MUCH slower than OwnCn due to several index accesses, so where ever possible computations should be performed on the side that owns the connections -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline float&         Cn(int idx, int var_no, Network* net) const
   { if(OwnCons()) return OwnCn(idx, var_no); return PtrCn(idx, var_no, net); }
-  // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- no range checking -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- no range checking -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   float&                SafeCn(int idx, int var_no) const;
-  // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- this is mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   float&                SafeCnName(int idx, const String& var_nm) const;
-  // #CAT_Access generic safe access of connection variable value by name at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  // #CAT_Access generic safe access of connection variable value by name (e.g., wt, dwt, pdw, etc) at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+
+  bool                  SetCnVal(float val, int idx, int var_no);
+  // #CAT_Access set connection variable to given value -- for use by programs, which cannot assign the value through the SafeCn function -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- 
+  bool                  SetCnValName(float val, int idx, const String& var_nm);
+  // #CAT_Access set connection variable (specified by name, e.g., wt, dwt, pdw) to given value -- for use by programs, which cannot assign the value through the SafeCn function 
 
   virtual int            ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
                                      bool ignore_alloc_errs = false,

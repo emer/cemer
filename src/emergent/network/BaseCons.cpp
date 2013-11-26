@@ -208,6 +208,33 @@ float& BaseCons::SafeCnName(int idx, const String& var_nm) const {
   return SafeCn(idx, md->idx);
 }
 
+bool BaseCons::SetCnVal(float val, int idx, int var_no) {
+  if(TestError(!InRange(idx),"SetCnVal", "index out of range:", String(idx),
+               "size:", String(size))) {
+    return false;
+  }
+  if(TestError(var_no < 0 || var_no >= con_type->members.size,
+               "SetCnVal", "variable number out of range:", String(var_no),
+               "number of variables:", String(con_type->members.size))) {
+    return false;
+  }
+  Unit* un = GET_MY_OWNER(Unit);
+  if(!un) return false;
+  Network* net = un->own_net();
+  if(!net) return false;
+  Cn(idx, var_no, net) = val;
+  return true;
+}
+
+bool BaseCons::SetCnValName(float val, int idx, const String& var_nm) {
+  MemberDef* md = con_type->members.FindName(var_nm);
+  if(TestError(!md, "SetCnValName", "variable named:", String(var_nm),
+               "not found in connection of type:", con_type->name)) {
+    return false;
+  }
+  return SetCnVal(val, idx, md->idx);
+}
+
 Unit* BaseCons::SafeUn(int idx) const {
   if(TestError(!InRange(idx),"SafeUn", "index out of range:", String(idx),
                "size:", String(size))) {
