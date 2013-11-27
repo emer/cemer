@@ -67,6 +67,7 @@
 #include <QSettings>
 #include <QStyle>
 #include <QTextDocument>
+#include <QNetworkProxy>
 
 #include <QAuthenticator>
 #include <QNetworkReply>
@@ -78,13 +79,21 @@ iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
   : QNetworkAccessManager(parent)
   , m_main_win(0)
 {
-  connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
-          SLOT(authenticationRequired(QNetworkReply*, QAuthenticator*)));
+  QObject::connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+                   &m_auth_saver, SLOT(provideAuthentication(QNetworkReply*, QAuthenticator*)));
 #ifndef QT_NO_OPENSSL
-  connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
-          SLOT(sslErrors(QNetworkReply*, const QList<QSslError>&)));
+  QObject::connect(this, SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError>&)),
+                   SLOT(handleSslErrors(QNetworkReply*, const QList<QSslError>&)));
 #endif
   loadSettings();
+
+#if (QT_VERSION >= 0x050000) && defined(TA_OS_MAC)
+  // this is a hack workaround for https://bugreports.qt-project.org/browse/QTBUG-30434
+  // see http://stackoverflow.com/questions/15707124/on-macosx-qnetworkaccessmanager-gets-into-an-infinite-loop-when-invalid-auth-cr/15707366#15707366
+  QNetworkProxy prox = proxy();
+  prox.setHostName(" ");
+  setProxy(prox);
+#endif
 
   // #if QT_VERSION >= 0x040500
   //     QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
@@ -93,6 +102,11 @@ iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
   //     diskCache->setCacheDirectory(location);
   //     setCache(diskCache);
   // #endif
+}
+
+void iNetworkAccessManager::setMainWindow(QMainWindow* mw) {
+  m_main_win = mw;
+  m_auth_saver.m_main_win = mw;
 }
 
 void iNetworkAccessManager::loadSettings()
@@ -142,42 +156,6 @@ void iNetworkAccessManager::loadSettings()
   sslCfg.setCaCertificates(ca_list);
   QSslConfiguration::setDefaultConfiguration(sslCfg);
 #endif
-}
-
-void iNetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthenticator *auth)
-{
-//   QString realm = Qt::escape(auth->realm());
-//   QString url_str = Qt::escape(reply->url().toString());
-//   QString host = Qt::escape(reply->url().host());
-  QString realm = auth->realm();
-  QString url_str = reply->url().toString();
-  QString host = reply->url().host();
-
-  bool same_place = (realm == m_last_realm && host == m_last_host);
-  m_last_realm = realm;
-  m_last_host = host;
-
-  QString user;
-  QString password;
-  bool found = m_auth_saver.findAuthRecord(user, password, realm, host);
-  if (found && !same_place) {
-    auth->setUser(user);
-    auth->setPassword(password);
-    return;
-  }
-
-  QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
-  introMessage = introMessage.arg(realm).arg(url_str);
-
-  bool saveFlag = false;
-  if (getUsernamePassword(user, password, introMessage, &saveFlag, m_main_win)) {
-    auth->setUser(user);
-    auth->setPassword(password);
-
-    if (saveFlag) {
-      m_auth_saver.saveAuthRecord(user, password, realm, host);
-    }
-  }
 }
 
 // void iNetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth)
@@ -244,7 +222,7 @@ static QString certToFormattedString(QSslCertificate cert)
   return resultstring;
 }
 
-void iNetworkAccessManager::sslErrors(QNetworkReply *reply, const QList<QSslError> &error)
+void iNetworkAccessManager::handleSslErrors(QNetworkReply *reply, const QList<QSslError> &error)
 {
   QSettings settings;
   QList<QSslCertificate> ca_merge = QSslCertificate::fromData(settings.value(QLatin1String("CaCertificates")).toByteArray());
@@ -427,6 +405,57 @@ bool iAuthSaver::saveAuthRecord(const QString& user, const QString& password,
   }
   save();
   return rval;
+}
+
+void iAuthSaver::provideAuthentication(QNetworkReply *reply, QAuthenticator *auth) {
+//   QString realm = Qt::escape(auth->realm());
+//   QString url_str = Qt::escape(reply->url().toString());
+//   QString host = Qt::escape(reply->url().host());
+  QString realm = auth->realm();
+  QString url_str = reply->url().toString();
+  QString host = reply->url().host();
+
+  qDebug() << "auth of: " << realm << " and: " << host;
+
+  bool same_place = (realm == m_last_realm && host == m_last_host);
+
+  bool use_auth = true;
+  if(same_place) {
+    int delay = m_last_time.secsTo(QDateTime::currentDateTime());
+    if(delay <= 2) {            // this is a retry 
+      use_auth = false;
+      qDebug() << "retry of: " << realm << " and: " << host;
+    }
+  }
+
+  m_last_time = QDateTime::currentDateTime();
+  m_last_realm = realm;
+  m_last_host = host;
+
+  QString user;
+  QString password;
+
+  if(use_auth) {
+    bool found = findAuthRecord(user, password, realm, host);
+    if (found) {
+      auth->setUser(user);
+      auth->setPassword(password);
+      return;
+    }
+  }
+
+  QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
+  introMessage = introMessage.arg(realm).arg(url_str);
+
+  bool saveFlag = false;
+  if (getUsernamePassword(user, password, introMessage, &saveFlag, m_main_win)) {
+    auth->setUser(user);
+    auth->setPassword(password);
+
+    if (saveFlag) {
+      saveAuthRecord(user, password, realm, host);
+    }
+  }
 }
 
 /////////////////////////////////////////////////////////////////

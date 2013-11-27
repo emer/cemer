@@ -19,6 +19,7 @@
 #include <qnetworkaccessmanager.h>
 
 class QDataStream;
+class QMainWindow;
 
 class iAuthRecord : public QObject {
   // #IGNORE one authentication record
@@ -50,6 +51,7 @@ public:
   ~iAuthSaver();
 
   QList<iAuthRecord>  savedAuths;
+  QMainWindow*  m_main_win;
 
   bool  findAuthRecord(QString& user, QString& password, const QString& realm,
                        const QString& host) const;
@@ -61,33 +63,34 @@ public:
 public slots:
   void  load();                 // save to persistent file storage
   void  save();                 // load from persistent file storage
+
+private slots:
+  void provideAuthentication(QNetworkReply *reply, QAuthenticator *auth);
+  //     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
+
+private:
+  QString       m_last_realm;
+  QString       m_last_host;
+  QDateTime     m_last_time;
 };
 
-
-class QMainWindow;
 class iNetworkAccessManager : public QNetworkAccessManager {
   Q_OBJECT
 public:
   iNetworkAccessManager(QObject *parent = 0);
 
-  void  setMainWindow(QMainWindow* mw) { m_main_win = mw; }
+  void  setMainWindow(QMainWindow* mw);
 
 protected:
   QMainWindow*  m_main_win;
   iAuthSaver    m_auth_saver;
 
-private:
-  QString       m_last_realm;
-  QString       m_last_host;
-
 public slots:
   void loadSettings();
 
 private slots:
-  void authenticationRequired(QNetworkReply *reply, QAuthenticator *auth);
-  //     void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *auth);
 #ifndef QT_NO_OPENSSL
-  void sslErrors(QNetworkReply *reply, const QList<QSslError> &error);
+  void handleSslErrors(QNetworkReply *reply, const QList<QSslError> &error);
 #endif
 };
 
