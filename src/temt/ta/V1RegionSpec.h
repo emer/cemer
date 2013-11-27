@@ -248,6 +248,7 @@ public:
     CF_NONE	= 0, // #NO_BIT
     LEN_SUM	= 0x0001, // length summing cells -- just average along oriented line
     END_STOP	= 0x0002, // end stop cells -- len sum minus single same orientation point after a gap -- requires LEN_SUM
+    V1C_V1S     = 0x0004, // include V1 simple (polarized) in the V1C output -- this is independent of SI_V1S_SG -- use for cases where SI is not used -- if sg4 is on, then the V1S will first be integrated over sg4
     CF_DEFAULT  = LEN_SUM | END_STOP,  // #IGNORE #NO_BIT this is the default setup
   };
 
@@ -433,13 +434,19 @@ public:
   float		v1b_avgsum_out;	 // #READ_ONLY #NO_SAVE v1b avgsum output (single scalar value which is average summary of disparity values)
 
   ///////////////////  V1C Complex Output ////////////////////////
-  float_Matrix	v1sg_out;	 // #READ_ONLY #NO_SAVE square 4x4 grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
-  float_Matrix	v1ls_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
-  float_Matrix	v1ls_out;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1sg_out_r;	 // #READ_ONLY #NO_SAVE square 4x4 grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
+  float_Matrix	v1sg_out_l;	 // #READ_ONLY #NO_SAVE square 4x4 grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
+  float_Matrix	v1ls_out_raw_r;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1ls_out_raw_l;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1ls_out_r;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1ls_out_l;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1ls_nimax;	 // #READ_ONLY #NO_SAVE neighbor inhibition max values -- [feat.x][1][v1c_img.x][v1c_img.y]
-  float_Matrix	v1es_out;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
+  float_Matrix	v1es_out_r;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
+  float_Matrix	v1es_out_l;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
   float_Matrix	v1es_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
+  float_Matrix	v1cs_sg_out_r;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
+  float_Matrix	v1cs_sg_out_l;	 // #READ_ONLY #NO_SAVE square grouping of v1s polarized
 
   ///////////////////  V2 Output ////////////////////////
   float_Matrix	v2tl_out;	 // #READ_ONLY #NO_SAVE V2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
@@ -555,6 +562,16 @@ protected:
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
+  virtual void 	V1ComplexFilter_SqGp4(float_Matrix* pi_in, float_Matrix* sg_out);
+  // square-group4 if selected
+  virtual void 	V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_out_raw,
+                                       float_Matrix* ls_out);
+  // length-sum
+  virtual void 	V1ComplexFilter_EndStop(float_Matrix* pi_in, float_Matrix* ls_in,
+                                        float_Matrix* es_out);
+  // end stop
+  virtual void  V1ComplexFilter_V1S_SqGp4(float_Matrix* v1s_in, float_Matrix* sg_out);
+  // v1s sg4
   virtual void 	V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no);
   // square-group4 if selected
   virtual void 	V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no);
@@ -604,6 +621,11 @@ protected:
   virtual bool V1BOutputToTable(DataTable* dtab, bool fmt_only = false);
   // binocular to output table
   virtual bool V1COutputToTable(DataTable* dtab, bool fmt_only = false);
+  // complex to output table
+  virtual bool V1COutputToTable_impl(DataTable* dtab, float_Matrix* ls_out,
+                                     float_Matrix* es_out, float_Matrix* sg_out, 
+                                     float_Matrix* v1sc_sg_out, float_Matrix* v1s_out,
+                                     const String& col_sufx, bool fmt_only = false);
   // complex to output table
   virtual bool V2OutputToTable(DataTable* dtab, bool fmt_only = false);
   // V2 to output table

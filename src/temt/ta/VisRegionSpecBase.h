@@ -154,6 +154,11 @@ protected:
   float_Matrix* cur_img;	// cur image -- only valid during filter call
   float_Matrix* cur_in;		// cur input buffer -- only valid during filter call
   float_Matrix* cur_out;	// cur output buffer -- only valid during filter call
+  float_Matrix* cur_in2;	// cur input buffer -- only valid during filter call
+  float_Matrix* cur_in_r;	// cur input buffer -- only valid during filter call
+  float_Matrix* cur_out_r;	// cur output buffer -- only valid during filter call
+  float_Matrix* cur_in_l;	// cur input buffer -- only valid during filter call
+  float_Matrix* cur_out_l;	// cur output buffer -- only valid during filter call
   CircMatrix*	cur_circ;	// current circular buffer index
   bool		rgb_img;	// is current image rgb?
   bool		wrap;		// whether edge_mode == WRAP

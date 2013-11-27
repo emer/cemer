@@ -613,7 +613,7 @@ void ClusterRun::GetProjAtRev() {
   if(TestError(svn_rev < 0, "GetProjAtRev", "valid svn revision not found"))
     return;
   m_cm->GetProjectAtRev(svn_rev);
-  AutoUpdateMe();
+  taMisc::Info("Note: GetProjAtRev does NOT require a new checkin -- do not hit Update or wait for auto-update -- the file will be in the main project directory now, or very soon.");
 }
 
 void ClusterRun::ArchiveJobs() {
@@ -1323,7 +1323,7 @@ bool ClusterRun::WaitProcAutoUpdate() {
     wait_proc_trg_rev = -1;
     return true;
   }
-  if(wait_proc_last_updt.secsTo(curtime) > 120) {
+  if(wait_proc_start.secsTo(curtime) > 120) {
     taMisc::Info("ClusterRun: time out on updating cluster run:", wait_proc_updt->name);
     wait_proc_updt = NULL;
     wait_proc_trg_rev = -1;

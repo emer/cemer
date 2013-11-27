@@ -52,10 +52,17 @@ void VisRegionSpecBase::Initialize() {
   cur_img_r = NULL;
   cur_img_l = NULL;
   cur_img = NULL;
+  cur_in = NULL;
   cur_out = NULL;
+  cur_in2 = NULL;
+  cur_in_r = NULL;
+  cur_out_r = NULL;
+  cur_in_l = NULL;
+  cur_out_l = NULL;
   cur_circ = NULL;
   rgb_img = false;
   wrap = false;
+  cur_mot_only = false;
 }
 
 void VisRegionSpecBase::UpdateAfterEdit_impl() {
