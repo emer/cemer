@@ -87,7 +87,7 @@ iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
 #endif
   loadSettings();
 
-#if (QT_VERSION >= 0x050000) && defined(TA_OS_MAC)
+#if (QT_VERSION >= 0x050000) && defined(Q_OS_MAC)
   // this is a hack workaround for https://bugreports.qt-project.org/browse/QTBUG-30434
   // see http://stackoverflow.com/questions/15707124/on-macosx-qnetworkaccessmanager-gets-into-an-infinite-loop-when-invalid-auth-cr/15707366#15707366
   QNetworkProxy prox = proxy();
