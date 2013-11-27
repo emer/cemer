@@ -415,7 +415,7 @@ void iAuthSaver::provideAuthentication(QNetworkReply *reply, QAuthenticator *aut
   QString url_str = reply->url().toString();
   QString host = reply->url().host();
 
-  qDebug() << "auth of: " << realm << " and: " << host;
+  //  qDebug() << "auth of: " << realm << " and: " << host;
 
   bool same_place = (realm == m_last_realm && host == m_last_host);
 
@@ -424,7 +424,7 @@ void iAuthSaver::provideAuthentication(QNetworkReply *reply, QAuthenticator *aut
     int delay = m_last_time.secsTo(QDateTime::currentDateTime());
     if(delay <= 2) {            // this is a retry 
       use_auth = false;
-      qDebug() << "retry of: " << realm << " and: " << host;
+      // qDebug() << "retry of: " << realm << " and: " << host;
     }
   }
 
