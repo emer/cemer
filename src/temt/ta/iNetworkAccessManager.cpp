@@ -73,7 +73,6 @@
 #include <QNetworkReply>
 #include <QSslConfiguration>
 #include <QSslError>
-#include <QDateTime>
 
 iNetworkAccessManager::iNetworkAccessManager(QObject *parent)
   : QNetworkAccessManager(parent)

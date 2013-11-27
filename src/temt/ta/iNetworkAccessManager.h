@@ -17,6 +17,7 @@
 #define iNetworkAccessManager_h 1
 
 #include <qnetworkaccessmanager.h>
+#include <QDateTime>
 
 class QDataStream;
 class QMainWindow;
