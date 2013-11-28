@@ -304,7 +304,11 @@ void iPanelOfDocView::UpdatePanel_impl() {
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);
 
+#if (QT_VERSION >= 0x050000)
+  float trg_font_sz = 14.0f;    // fonts got upsized..
+#else
   float trg_font_sz = 12.0f;
+#endif
   if(doc_->url.empty() || doc_->url == "local")
     trg_font_sz = 14.0f;
   webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size * ((float)taMisc::font_size / trg_font_sz));

@@ -341,7 +341,12 @@ QWebView* iHelpBrowser::AddWebView(const String& label) {
   ++m_changing;
   QWebView* brow = new iWebView;
   QWebPage* wp = brow->page();
-  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_size / 12.0f));
+#if (QT_VERSION >= 0x050000)
+  float trg_font_sz = 14.0f;    // fonts got upsized..
+#else
+  float trg_font_sz = 12.0f;
+#endif
+  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_size / trg_font_sz));
   wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
   wp->setNetworkAccessManager(taiMisc::net_access_mgr);
   int tidx = tab->addTab(brow, label.toQString());
