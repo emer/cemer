@@ -467,6 +467,8 @@ public:
   // #CAT_Modify return a string no more than len long, no line breaks, eliding chars if needed and adding ... marks; -1 is no eliding
   taString                elidedToFirstLine() const;
   // #CAT_Modify if has newlines, elide to first line
+  taString                wrap(int max_width) const;
+  // #CAT_Modify add newlines every max_width chars
 
   void                  del(const taString& y, int startpos = 0);
   void                  del(const char* t, int startpos = 0);

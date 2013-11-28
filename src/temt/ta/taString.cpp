@@ -1517,3 +1517,57 @@ int taString::freq(char c) const
   return(found);
 }
 
+taString taString::wrap(int width) const {
+  if (length() <= width)
+    return *this;
+
+  int len = length();
+  int i = 0;
+  int k, counter;
+  const char* long_string = chars(); // source string
+  char wrapped_string[len]; // modified string
+
+  while(i < len)
+  {
+    // copy string until the end of the line is reached
+    for (counter = 0; counter < width; counter++)
+    {
+      // check if end of string reached
+      if (i == len)
+      {
+        wrapped_string[i] = 0;
+        return wrapped_string;
+      }
+      wrapped_string[i] = long_string[i];
+      // check for newlines embedded in the original input
+      // and reset the index
+      if (wrapped_string[i] == '\n')
+      {
+        counter = 1;
+      }
+      i++;
+    }
+    // check for whitespace
+    if (isspace(long_string[i]))
+    {
+      wrapped_string[i] = '\n';
+      i++;
+    }
+    else
+    {
+      // check for nearest whitespace back in string
+      for (k = i; k > 0; k--)
+      {
+        if (isspace(long_string[k]))
+        {
+          wrapped_string[k] = '\n';
+          // set string index back to character after this one
+          i = k + 1;
+          break;
+        }
+      }
+    }
+  }
+  wrapped_string[i] = 0;
+  return wrapped_string;
+}
