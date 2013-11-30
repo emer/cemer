@@ -556,7 +556,11 @@ void taiMisc::PurgeDialogs() {
 }
 
 void taiMisc::RestoreWinCursors() {
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+    // restore does not actually crash, but until set is fixed, we don't want to get out of sync
+#else
   QApplication::restoreOverrideCursor();
+#endif
 }
 
 void taiMisc::ScriptRecordingGui_(bool start){
