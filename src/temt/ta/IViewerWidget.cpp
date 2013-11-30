@@ -69,9 +69,9 @@ void IViewerWidget::OnClosing_impl(CancelOp& cancel_op) {
 }
 
 void IViewerWidget::Refresh() {
-  taMisc::Busy(true);
+  // taMisc::Busy(true);
   Refresh_impl();
-  taMisc::Busy(false);
+  // taMisc::Busy(false);
 }
 
 iMainWindowViewer* IViewerWidget::viewerWindow() const {

@@ -576,12 +576,20 @@ void taiMisc::SetWinCursors() {
     is_rec = true;
   // busy trumps recording...
   if (is_busy) {
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+    // there is a bug here that crashes if this is called..
+#else
     QApplication::setOverrideCursor(*taiM->wait_cursor);
+#endif
     goto bail;
   }
 
   if (is_rec) {
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+    // there is a bug here that crashes if this is called..
+#else
     QApplication::setOverrideCursor(*taiM->record_cursor);
+#endif
     goto bail;
   }
 
