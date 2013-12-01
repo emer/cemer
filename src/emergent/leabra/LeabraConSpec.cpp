@@ -105,6 +105,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
+  bool thr_l_err = false;
   thr_l_mix = 0.01f;
   s_mix = 0.9f;
   d_rev = 0.10f;

@@ -17,7 +17,7 @@
 #define MinMax_h 1
 
 // parent includes:
-#include <taBase>
+#include <taOBase>
 
 #ifndef __MAKETA__
 # include <math.h>
@@ -30,9 +30,9 @@ class float_Matrix; //
 
 taTypeDef_Of(MinMax);
 
-class TA_API MinMax : public taBase {
+class TA_API MinMax : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math minimum-maximum values
-  INHERITED(taBase)
+  INHERITED(taOBase)
 public:
   float         min;    // minimum value
   float         max;    // maximum value

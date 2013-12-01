@@ -280,22 +280,38 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     clrate *= rlay->cos_diff_lrate;
   }
 
-#ifdef USE_SSE8
-  Compute_dWt_CtLeabraXCAL_sse8(cg, clrate, su, net);
-#else 
-  const float su_avg_s = su->avg_s;
-  const float su_avg_m = su->avg_m;
-  const float su_act_mult = xcal.thr_l_mix * su->avg_m;
+  if(xcal.thr_l_err) {
+    const float su_avg_s = su->avg_s;
+    const float su_avg_m = su->avg_m;
 
-  float* dwts = cg->OwnCnVar(DWT);
+    float* dwts = cg->OwnCnVar(DWT);
 
-  const int sz = cg->size;
-  for(int i=0; i<sz; i++) {
-    LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-    C_Compute_dWt_CtLeabraXCAL_trial(dwts[i], clrate, ru->avg_s, ru->avg_m, ru->avg_l,
-                                     su_avg_s, su_avg_m, su_act_mult);
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(dwts[i], clrate, ru->avg_s,
+                                               ru->avg_m, ru->avg_l,
+                                               su_avg_s, su_avg_m);
+    }
   }
+  else {
+#ifdef USE_SSE8
+    Compute_dWt_CtLeabraXCAL_sse8(cg, clrate, su, net);
+#else 
+    const float su_avg_s = su->avg_s;
+    const float su_avg_m = su->avg_m;
+    const float su_act_mult = xcal.thr_l_mix * su->avg_m;
+
+    float* dwts = cg->OwnCnVar(DWT);
+
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      C_Compute_dWt_CtLeabraXCAL_trial(dwts[i], clrate, ru->avg_s, ru->avg_m, ru->avg_l,
+                                       su_avg_s, su_avg_m, su_act_mult);
+    }
 #endif
+  }
 }
 
 /////////////////////////////////////
