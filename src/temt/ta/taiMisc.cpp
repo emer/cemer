@@ -112,11 +112,12 @@ void taiMisc::Init(bool gui) {
   if (taMisc::not_constr || taMisc::in_init)
     return;
 
-  QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
-    wait_cursor_bits, QImage::Format_MonoLSB);
-  QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
-    wait_mask_bits, QImage::Format_MonoLSB);
-  wait_cursor = new QCursor(waiter, waiter_m, wait_cursor_x_hot, wait_cursor_y_hot);
+  // QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
+  //   wait_cursor_bits, QImage::Format_MonoLSB);
+  // QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
+  //   wait_mask_bits, QImage::Format_MonoLSB);
+  // wait_cursor = new QCursor(waiter, waiter_m, wait_cursor_x_hot, wait_cursor_y_hot);
+  wait_cursor = new QCursor(Qt::BusyCursor);
 
   // Record cursor
   QBitmap recorder = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height),
@@ -556,7 +557,7 @@ void taiMisc::PurgeDialogs() {
 }
 
 void taiMisc::RestoreWinCursors() {
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+#if 0 && defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
     // restore does not actually crash, but until set is fixed, we don't want to get out of sync
 #else
   QApplication::restoreOverrideCursor();
@@ -580,7 +581,7 @@ void taiMisc::SetWinCursors() {
     is_rec = true;
   // busy trumps recording...
   if (is_busy) {
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+#if 0 && defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
     // there is a bug here that crashes if this is called..
 #else
     QApplication::setOverrideCursor(*taiM->wait_cursor);
@@ -589,7 +590,7 @@ void taiMisc::SetWinCursors() {
   }
 
   if (is_rec) {
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+#if 0 && defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
     // there is a bug here that crashes if this is called..
 #else
     QApplication::setOverrideCursor(*taiM->record_cursor);

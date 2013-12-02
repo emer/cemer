@@ -6,5 +6,5 @@
 CONFIG += qt debug
 QT += opengl
 SOURCES += qt5_bug.cpp 
-# HEADERS += qt5_bug.h
+HEADERS += qt5_bug.h
 
