@@ -2,7 +2,7 @@
 #include <QTreeWidgetItem>
 #include <QApplication>
 #include <QHBoxLayout>
-#include <QGLwidget>
+#include <QGLWidget>
 #include <QCursor>
 
 int
