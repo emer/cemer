@@ -38,6 +38,7 @@ void LeabraUnit::Initialize() {
   avg_s = 0.15f;
   avg_m = 0.15f;
   avg_l = 0.15f;
+  avg_l_nrm = 1.0f;
   act_ctxt = 0.0f;
   net_ctxt = 0.0f;
   p_act_p = 0.0f;
@@ -123,6 +124,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   avg_ss = cp.avg_ss;
   avg_m = cp.avg_m;
   avg_l = cp.avg_l;
+  avg_l_nrm = cp.avg_l_nrm;
   act_ctxt = cp.act_ctxt;
   net_ctxt = cp.net_ctxt;
   p_act_p = cp.p_act_p;
