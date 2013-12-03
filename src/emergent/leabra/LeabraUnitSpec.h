@@ -289,8 +289,10 @@ class E_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float		l_up_dt;	// #DEF_0.6;0.006 rate constant for increases in long time-average activation: avg_l -- should be faster than dn_dt
-  float		l_dn_dt;	// #DEF_0.05;0.0005 rate constant for decreases in long time-average activation: avg_l -- should be slower than up_dt
+  bool          l_up_add;       // l_up is additive, not multiplicative -- no upper limit for the hoggies..
+  bool          l_dn_pct;       // l_dn is multiplied by the layer's kwta.pct target activity level -- this means that lower expected activation layers decay less quickly, producing a rough normalization of the long-term running averages -- when using this, l_dn_dt should be multiplied by roughly 4 times its default value (e.g., .2)
+  float		l_up_dt;	// #DEF_0.6;0.05;0.006 rate constant for increases in long time-average activation: avg_l -- should be faster than dn_dt, except when using l_up_add
+  float		l_dn_dt;	// #DEF_0.2;0.05;0.0005 rate constant for decreases in long time-average activation: avg_l -- should be slower than up_dt
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
   float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
   float		ss_dt;		// #DEF_1;0.1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value

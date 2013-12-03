@@ -51,6 +51,7 @@ void KWTASpec::Initialize() {
   k_from = USE_PCT;
   k = 12;
   pct = .25f;
+  avg_dt = 0.005f;
   pat_q = .2f;
   diff_act_pct = false;
   act_pct = .1f;
@@ -70,7 +71,8 @@ void GpInhibSpec::Initialize() {
   lay_gi = 2.0f;
   gp_g = 0.5f;
   diff_act_pct = false;
-  pct_fm_frac = true;
+  act_pct_mult = 0.5f;
+  pct_fm_frac = false;
   act_denom = 3.0f;
   if(pct_fm_frac)
     act_pct_mult = 1.0f / act_denom;
@@ -371,10 +373,12 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     u->Init_Weights(net);
   }
+  lay->acts_m_avg.InitForTimeAvg(lay->kwta.pct, 0.9f);
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->Init_State();
+      gpd->acts_m_avg.InitForTimeAvg(lay->kwta.pct, 0.9f);
     }
   }
   Init_Inhib(lay, net);         // initialize inhibition at start..
@@ -1527,10 +1531,12 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts;
+  lay->acts_m_avg.UpdtTimeAvg(lay->acts_m, kwta.avg_dt);
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts;
+      gpd->acts_m_avg.UpdtTimeAvg(gpd->acts_m, kwta.avg_dt);
     }
   }
 }

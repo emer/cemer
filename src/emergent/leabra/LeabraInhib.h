@@ -114,6 +114,7 @@ public:
   AvgMaxVals	acts_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
+  AvgMaxVals	acts_m_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation time-averaged minus-phase activation stats for the layer
   AvgMaxVals	acts_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation TI act_ctxt activation stats for the layer
   float		phase_dif_ratio; // #NO_SAVE #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
   AvgMaxVals	acts_m2;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation second minus-phase activation stats for the layer

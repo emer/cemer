@@ -118,6 +118,13 @@ NetMonItem* NetMonitor::AddNetRel() {
   return nmi;
 }
 
+NetMonItem* NetMonitor::AddLayActAvg() {
+  NetMonItem* nmi = AddObject(network, "acts_m_avg.avg");
+  nmi->var_label = "avg_act";
+  nmi->UpdateAfterEdit();
+  return nmi;
+}
+
 void NetMonitor::RemoveMonitors() {
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);

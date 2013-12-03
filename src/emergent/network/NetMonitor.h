@@ -68,6 +68,8 @@ public:
   // #BUTTON #CAT_Monitor For Leabra only: add a monitor item to monitor the avg_netin.max variable at the network level (for all layers in the network), which is very useful in Leabra for tuning the network parameters to ensure a proper range of max netinput values -- must also turn on compute_rel_netin flags at the Trial and Epoch programs for this data to be computed in the first place
   NetMonItem* 	AddNetRel();
   // #BUTTON #CAT_Monitor add a monitor item to monitor the prjns.avg_netin_rel variable at the network level (for all layers and projections in the network), which is very useful in Leabra for tuning the network parameters to achieve desired relative netinput contributions across different projections -- must also turn on compute_rel_netin flags at the Trial and Epoch programs for this data to be computed in the first place
+  NetMonItem* 	AddLayActAvg();
+  // #BUTTON #CAT_Monitor For Leabra only: add a monitor item to monitor the acts_m_avg.avg variable at the network level (for all layers in the network), which is very useful in Leabra for tuning the network parameters -- this value tells you how much activity on average there is in each layer over time -- it should match the target pct activity value relatively closely, for the netinput scaling and other calculations to be accurate
 
   void 		UpdateDataTable(bool reset_first = false);
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first

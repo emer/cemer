@@ -25,3 +25,14 @@ void AvgMaxVals::Copy_(const AvgMaxVals& cp) {
   avg = cp.avg; max = cp.max; max_i = cp.max_i;
 }
 
+void AvgMaxVals::UpdtTimeAvg(const AvgMaxVals& cp, float dt) {
+  if(max_i < 0) {
+    Copy_(cp);
+    max_i = 1;                  // first data point
+  }
+  else {
+    avg += dt * (cp.avg - avg);
+    max += dt * (cp.max - max);
+    max_i++;                    // keep track of number of updates
+  }
+}

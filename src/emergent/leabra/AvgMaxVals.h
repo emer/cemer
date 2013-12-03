@@ -40,12 +40,23 @@ public:
   int 		max_i;		// index of unit with maximum value
 
   inline void	InitVals()	{ avg = 0.0f; max = -FLT_MAX; max_i = -1; }
+  // init for computing update from new data
   inline void	UpdtVals(float val, int idx)
   { avg += val; if(val > max) { max = val; max_i = idx; } }
+  // update from data as it comes in
   inline void	CalcAvg(int n) { if(n > 0) avg /= (float)n; }
+  // compute the avg after doing UpdtVals on all the data
 
   inline void	UpdtFmAvgMax(const AvgMaxVals& oth, int gpn, int idx)
   { avg += oth.avg * (float)gpn; if(oth.max > max) { max = oth.max; max_i = idx; } }
+  // update a higher-order guy from a lower-level guy (e.g., layer from unit group)
+
+  inline void   InitForTimeAvg(float init_avg = 0.25f, float init_max = 0.9f)
+  { avg = init_avg; max = init_max; max_i = -1; }
+  // initialize for computing a time average of AvgMaxVals (max_i = -1 indicates init -- used in update to copy on first update to avoid biasing from initial defaults)
+  
+  void   UpdtTimeAvg(const AvgMaxVals& src, float dt);
+  // update the time average from a source guy, using given time constant for runnign average integration
 
   override String       GetTypeDecoKey() const { return "Layer"; }
 

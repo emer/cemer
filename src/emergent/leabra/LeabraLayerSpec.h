@@ -97,6 +97,7 @@ public:
   int		k;		// #CONDSHOW_ON_k_from:USE_K desired number of active units in the layer
   float		pct;		// #CONDSHOW_ON_k_from:USE_PCT desired proportion of activity (used to compute a k value based on layer size, .25 std)
   float		pat_q;		// #CONDSHOW_ON_k_from:USE_PAT_K #DEF_0.2;0.5 threshold for pat_k based activity level: add to k if ext > pat_q
+  float         avg_dt;         // #DEF_0.005 #MIN_0 time constant for integrating time-average values at the layer level -- e.g., acts_m_avg, which is useful for providing an estimate of actual expected activity levels in a layer, to compare against pct
   bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for expected overall layer activation -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default.  Read the Leabra NetinScaling section of the online wiki docs for full details
   float		act_pct;	// #CONDSHOW_ON_diff_act_pct actual percent activity to put in kwta.pct field of layer -- see diff_act_pct for implications for netinput scaling, and read the Leabra NetinScaling section of the online wiki docs for full details
 

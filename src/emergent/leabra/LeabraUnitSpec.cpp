@@ -195,6 +195,8 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraActAvgSpec::Initialize() {
+  l_up_add = false;
+  l_dn_pct = false;
   l_up_dt = 0.6f;
   l_dn_dt = 0.05f;
   m_dt = 0.1f;
@@ -714,10 +716,28 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 
   if(net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C) {
     float lval = u->avg_m;
-    if(lval > u->avg_l)
-      u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
-    else
-      u->avg_l += act_avg.l_dn_dt * (lval - u->avg_l);
+    if(act_avg.l_up_add) {
+      if(lval > opt_thresh.send) {          // active, even just a bit
+        u->avg_l += lval * act_avg.l_up_dt; // additive up
+      }
+      else {
+        float eff_dt = act_avg.l_dn_dt;
+        if(act_avg.l_dn_pct)
+          eff_dt *= u->own_lay()->kwta.pct;
+        u->avg_l += eff_dt * (lval - u->avg_l); // mult down
+      }
+    }
+    else {
+      if(lval > u->avg_l) {
+        u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
+      }
+      else {
+        float eff_dt = act_avg.l_dn_dt;
+        if(act_avg.l_dn_pct)
+          eff_dt *= u->own_lay()->kwta.pct;
+        u->avg_l += eff_dt * (lval - u->avg_l);
+      }
+    }
   }
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {

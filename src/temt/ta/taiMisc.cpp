@@ -557,11 +557,7 @@ void taiMisc::PurgeDialogs() {
 }
 
 void taiMisc::RestoreWinCursors() {
-#if 0 && defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-    // restore does not actually crash, but until set is fixed, we don't want to get out of sync
-#else
   QApplication::restoreOverrideCursor();
-#endif
 }
 
 void taiMisc::ScriptRecordingGui_(bool start){
@@ -581,20 +577,12 @@ void taiMisc::SetWinCursors() {
     is_rec = true;
   // busy trumps recording...
   if (is_busy) {
-#if 0 && defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-    // there is a bug here that crashes if this is called..
-#else
     QApplication::setOverrideCursor(*taiM->wait_cursor);
-#endif
     goto bail;
   }
 
   if (is_rec) {
-#if 0 && defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-    // there is a bug here that crashes if this is called..
-#else
     QApplication::setOverrideCursor(*taiM->record_cursor);
-#endif
     goto bail;
   }
 
