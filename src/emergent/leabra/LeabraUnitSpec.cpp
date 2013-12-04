@@ -195,14 +195,24 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraActAvgSpec::Initialize() {
-  l_up_add = false;
-  l_dn_pct = false;
-  l_up_dt = 0.6f;
-  l_dn_dt = 0.05f;
+  l_up_add = true;
+  l_dn_pct = true;
+  l_up_dt = 0.25f;
+  l_dn_dt = 0.4f;
   m_dt = 0.1f;
   s_dt = 0.2f;
   ss_dt = 1.0f;
   use_nd = false;
+
+  if(taMisc::is_loading) {
+    taVersion v634(6, 3, 4);
+    if(taMisc::loading_version < v634) { // default prior to 634 is off
+      l_up_add = false;
+      l_dn_pct = false;
+      l_up_dt = 0.6f;
+      l_dn_dt = 0.05f;
+    }
+  }
 
   l_time = 1.0f / l_dn_dt;
   m_time = 1.0f / m_dt;

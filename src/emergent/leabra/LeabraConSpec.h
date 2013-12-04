@@ -155,7 +155,7 @@ class E_API StableMixSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra stable weight mixing specs
 INHERITED(SpecMemberBase)
 public:
-  float		stable_pct;	// #DEF_0.8 #MIN_0 #MAX_1 proportion (0..1) of the stable weight value contributing to the overall weight value that is used for sending net inputs -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights if this value is > 0
+  float		stable_pct;	// #DEF_0;0.8 #MIN_0 #MAX_1 [0 for off, else 0.8 std] proportion (0..1) of the stable weight value contributing to the overall weight value that is used for sending net inputs -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights if this value is > 0
 
   float         learn_pct;       // #READ_ONLY #SHOW proportion that learned weight contributes to the overall weight value -- automatically computed as 1 - stable_pct
   bool          cos_diff_lrate;  // if true, use learning rate value computed on the recv layer based on cos_diff between act_p and act_m -- requires the layer specs to be turned on
@@ -203,8 +203,8 @@ class E_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
-  bool          thr_l_err;      // multiply the thr_l_mix value by the error magnitude fabs(ss - mm) to get the effective mag
-  float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 std] #MIN_0 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
+  bool          thr_l_err;      // #DEF_true multiply the thr_l_mix value by the error magnitude |ss - mm| to get the effective thr_l_mix value -- this allows much higher and more effective thr_l_mix values to be used, up to the maximum value of 1 (.5 is recommended default though) -- this also automatically adapts the mixture of error-driven and self-organizing depending on the magnitude of error signals in a given layer, which can vary widely
+  float		thr_l_mix;	// #DEF_0.001:1.0 [0.5 std for thr_l_err, 0.01 otherwise] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
@@ -500,7 +500,7 @@ public:
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
     float lthr = su_act_mult * ru_avg_l;
     float effthr = xcal.thr_m_mix * srm + lthr;
-    effthr = MIN(effthr, 1.0f);
+    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
@@ -517,7 +517,7 @@ public:
     float efflmix = xcal.thr_l_mix * err;
     float lthr = efflmix * su_avg_m * ru_avg_l;
     float effthr = (1.0f - efflmix) * srm + lthr;
-    effthr = MIN(effthr, 1.0f);
+    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, thr_l_err version

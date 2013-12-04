@@ -74,14 +74,8 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 }
 
 void StableMixSpec::Initialize() {
-  stable_pct = 0.0f;  // 0.8f;  // it is too risky to use 0.8f b/c epoch call may not be there
+  stable_pct = 0.0f;  // it is too risky to use 0.8f b/c epoch call may not be there, and in fact it is not needed in many cases..
   cos_diff_lrate = false;
-  if(taMisc::is_loading) {
-    taVersion v630(6, 3, 0);
-    if(taMisc::loading_version < v630) { // default prior to 6.3.0 is stable off
-      stable_pct = 0.0f;
-    }
-  }
   learn_pct = 1.0f - stable_pct;
 }
 
@@ -105,8 +99,17 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  bool thr_l_err = false;
-  thr_l_mix = 0.01f;
+  bool thr_l_err = true;
+  thr_l_mix = 0.5f;
+
+  if(taMisc::is_loading) {
+    taVersion v634(6, 3, 4);
+    if(taMisc::loading_version < v634) { // default prior to 634 is off
+      thr_l_err = false;
+      thr_l_mix = 0.01f;
+    }
+  }
+
   s_mix = 0.9f;
   d_rev = 0.10f;
   d_thr = 0.0001f;

@@ -289,10 +289,10 @@ class E_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  bool          l_up_add;       // l_up is additive, not multiplicative -- no upper limit for the hoggies..
-  bool          l_dn_pct;       // l_dn is multiplied by the layer's kwta.pct target activity level -- this means that lower expected activation layers decay less quickly, producing a rough normalization of the long-term running averages -- when using this, l_dn_dt should be multiplied by roughly 4 times its default value (e.g., .2)
-  float		l_up_dt;	// #DEF_0.6;0.05;0.006 rate constant for increases in long time-average activation: avg_l -- should be faster than dn_dt, except when using l_up_add
-  float		l_dn_dt;	// #DEF_0.2;0.05;0.0005 rate constant for decreases in long time-average activation: avg_l -- should be slower than up_dt
+  bool          l_up_add;       // #DEF_true l_up is an additive constant, added every time the activation is above opt_thresh.send (in proportion to activity) -- if false, then it is multiplicative rate of approaching act -- key difference is that additive has no upper bound, so over-active units will keep increasing until the effects on the xcal BCM learning component cause it to be turned off
+  bool          l_dn_pct;       // #DEF_true l_dn is multiplied by the layer's kwta.pct target activity level -- this means that lower expected activation layers decay less quickly, producing a rough normalization of the long-term running averages -- when using this, l_dn_dt defaults to .4 instead of .05
+  float		l_up_dt;	// #DEF_0.2;0.25;0.6;0.006 [.25 std for l_up_add, else .6] rate constant for increases in long time-average activation (avg_l) -- if l_up_add then this is an additive increase for all units with activity > opt_thresh.send (in proportion to act), else it is rate constant for approaching act -- see l_up_add for more info
+  float		l_dn_dt;	// #DEF_0.4;0.05;0.0005 [.4 std for l_dn_pct, else .05] rate constant for decreases in long time-average activation (avg_l) -- if l_dn_pct then this is multiplied by layer kwta.pct target activity (important to make that value accurate) 
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
   float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
   float		ss_dt;		// #DEF_1;0.1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
