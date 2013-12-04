@@ -517,7 +517,6 @@ void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
 void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u, LeabraNetwork* net) {
   u->act_avg = act.avg_init;
   u->avg_l = act.avg_init;
-  u->avg_l_nrm = 1.0f;
 }
 
 void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
@@ -693,7 +692,7 @@ void LeabraUnitSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
 void LeabraUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   Trial_DecayState(u, net);
   Trial_NoiseInit(u, net);
-  // Trial_Init_SRAvg(u, net); // now done at layer level to support avg_l_nrm computation
+  Trial_Init_SRAvg(u, net);
 }
 
 void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {

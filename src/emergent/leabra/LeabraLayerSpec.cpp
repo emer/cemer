@@ -540,21 +540,9 @@ void LeabraLayerSpec::Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
-  float avg_val = 0.0f;
-  int cnt = 0;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     u->Trial_Init_SRAvg(net);
-    avg_val += u->avg_l;
-    cnt++;
-  }
-
-  if(cnt > 0) {
-    avg_val = (float)cnt / avg_val;
-    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-      if(u->lesioned()) continue;
-      u->avg_l_nrm = u->avg_l * avg_val;
-    }
   }
 }
 

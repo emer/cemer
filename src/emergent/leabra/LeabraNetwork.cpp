@@ -520,7 +520,7 @@ void LeabraNetwork::Trial_Init() {
   Trial_Init_Unit(); // performs following at unit-level
 //   Trial_DecayState();
   Trial_NoiseInit();            // run for kpos case
-  Trial_Init_SRAvg();
+  //  Trial_Init_SRAvg();
   Trial_Init_Layer();
 }
 
