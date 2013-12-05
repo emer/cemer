@@ -42,6 +42,7 @@ class iPanelViewer; //
 class ISelectableHost; //
 class iPanelBase; //
 class QSplitter; //
+class QSignalMapper; //
 class iRect; //
 
 
@@ -78,8 +79,9 @@ public:
 
   iAction_List        actions; // our own list of all created actions
   iBrowseHistory*       brow_hist;
-  taiWidgetMenuBar*           menu;           // menu bar -- note: we use the window's built-in QMenu
+  taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
   QSplitter*            body;           // #IGNORE body of the window
+  QSignalMapper*        signalMapper;   // #IGNORE used to map several actions to one action and pass a value - useful when the sender is the same in all cases
 
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
@@ -133,6 +135,14 @@ public:
   iAction*            viewSplitHorizontalAction;
   iAction*            viewCloseCurrentViewAction;
   iAction*            viewSetSaveViewAction;
+
+  iAction*            viewBrowseOnlyAction;   // all possible combinations of the main frames
+  iAction*            viewPanelsOnlyAction;
+  iAction*            viewBrowseAndPanelsAction;
+  iAction*            viewT3OnlyAction;
+  iAction*            viewBrowseAndT3Action;
+  iAction*            viewPanelsAndT3Action;
+  iAction*            viewAllFramesAction;
 
   iAction*            toolsTypeInfoBrowseAction;
   iAction*            toolsHelpBrowseAction;
@@ -274,6 +284,7 @@ public slots:
   virtual void  viewRefresh() { Refresh(); UpdateUi(); } // manually rebuild/refresh the current view
   virtual void  viewSaveView(); // save the current view state
 
+  virtual void  ShowHideFrames(int combo);
   virtual void  showMenu_aboutToShow();
   virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
 

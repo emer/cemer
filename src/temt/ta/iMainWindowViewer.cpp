@@ -55,6 +55,7 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include <QKeyEvent>
+#include <QSignalMapper>
 
 
 
@@ -574,6 +575,14 @@ void iMainWindowViewer::Constr_EditMenu()
 
 void iMainWindowViewer::Constr_ViewMenu()
 {
+  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", QKeySequence(cmd_str + "1"), "viewBrowseOnlyAction"));
+  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", QKeySequence(cmd_str + "2"), "viewPanelsOnlyAction"));
+  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", QKeySequence(cmd_str + "3"), "viewBrowseAndPanelsAction"));
+  viewT3OnlyAction = AddAction(new iAction("viewT3Only", QKeySequence(cmd_str + "4"), "viewT3OnlyAction"));
+  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", QKeySequence(cmd_str + "5"), "viewBrowseAndT3Action"));
+  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", QKeySequence(cmd_str + "6"), "viewPanelsAndT3Action"));
+  viewAllFramesAction = AddAction(new iAction("viewAllFrames", QKeySequence(cmd_str + "7"), "viewAllFramesAction"));
+
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 
   // Forward and back buttons -- note: on Win the icons don't show up if Action has text
@@ -622,6 +631,25 @@ void iMainWindowViewer::Constr_ViewMenu()
     this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
 
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
+
+  signalMapper = new QSignalMapper (this) ;
+  connect (viewBrowseOnlyAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  connect (viewPanelsOnlyAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  connect (viewBrowseAndPanelsAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  connect (viewT3OnlyAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  connect (viewBrowseAndT3Action, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  connect (viewAllFramesAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+
+  signalMapper->setMapping (viewBrowseOnlyAction, 1) ;
+  signalMapper->setMapping (viewPanelsOnlyAction, 2) ;
+  signalMapper->setMapping (viewBrowseAndPanelsAction, 3) ;
+  signalMapper->setMapping (viewT3OnlyAction, 4) ;
+  signalMapper->setMapping (viewBrowseAndT3Action, 5) ;
+  signalMapper->setMapping (viewPanelsAndT3Action, 6) ;
+  signalMapper->setMapping (viewAllFramesAction, 7) ;
+
+  connect (signalMapper, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
 }
 
 void iMainWindowViewer::Constr_ShowMenu()
@@ -1978,6 +2006,63 @@ void iMainWindowViewer::changeEvent(QEvent* ev) {
   inherited::changeEvent(ev);
 }
 
+void iMainWindowViewer::ShowHideFrames(int combo) {
+  PanelViewer* pv_browse = (PanelViewer*)viewer()->GetLeftBrowser();
+  PanelViewer* pv_panels = (PanelViewer*)viewer()->GetMiddlePanel();
+  PanelViewer* pv_T3 = (PanelViewer*)viewer()->GetRightViewer();
+
+  bool show_pv_browse = false;
+  bool show_pv_panels = false;
+  bool show_pv_T3 = false;
+
+  switch (combo) {
+  case 1:
+    show_pv_browse = true;
+    break;
+  case 2:
+    show_pv_panels = true;
+    break;
+  case 3:
+    show_pv_browse = true;
+    show_pv_panels = true;
+    break;
+  case 4:
+    show_pv_T3 = true;
+    break;
+  case 5:
+    show_pv_browse = true;
+    show_pv_T3 = true;
+    break;
+  case 6:
+    show_pv_panels = true;
+    show_pv_T3 = true;
+    break;
+  case 7:
+    show_pv_browse = true;
+    show_pv_panels = true;
+    show_pv_T3 = true;
+    break;
+  }
+
+  if (pv_browse) {
+    if (show_pv_browse)
+      pv_browse->Show();
+    else
+      pv_browse->Hide();
+  }
+  if (pv_panels) {
+    if (show_pv_panels)
+      pv_panels->Show();
+    else
+      pv_panels->Hide();
+  }
+  if (pv_T3) {
+    if (show_pv_T3)
+      pv_T3->Show();
+    else
+      pv_T3->Hide();
+  }
+}
 
 //////////////////////////////////
 //   taBase                     //
@@ -2106,4 +2191,3 @@ bool taBase::GuiFindFromMe(const String& find_str) {
   }
   return rval;
 }
-
