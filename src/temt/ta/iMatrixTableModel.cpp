@@ -63,7 +63,7 @@ QVariant iMatrixTableModel::data(const QModelIndex& index, int role) const {
   switch (role) {
   case Qt::DisplayRole: 
   case Qt::EditRole:
-    return m_mat->SafeElAsStr_Flat(matIndex(index));
+    return static_cast<const char *>(m_mat->SafeElAsStr_Flat(matIndex(index)));
 //Qt::DecorationRole
 //Qt::ToolTipRole
 //Qt::StatusTipRole

@@ -77,7 +77,7 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
     else {
       int dx;
       if(m_dt->idx(index.row(), dx))
-        return col->GetValAsString(dx);
+        return static_cast<const char *>(col->GetValAsString(dx));
       else
         return QVariant();      // nil
     }

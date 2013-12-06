@@ -107,7 +107,7 @@ int taiWidgetMethodDefChooser::BuildChooser_1(iDialogItemChooser* ic, TypeDef* t
     ++rval;
     cat = mth->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);
-    QVariant proto = mth->prototype(); // share
+    QVariant proto = static_cast<const char *>(mth->prototype()); // share
     item->setData(0, Qt::ToolTipRole, proto);
     item->setData(1, Qt::DisplayRole, mth->name);
     item->setData(1, Qt::ToolTipRole, proto);

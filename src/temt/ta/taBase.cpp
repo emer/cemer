@@ -2713,8 +2713,8 @@ String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
 
 const QVariant taBase::GetColData(const KeyString& key, int role) const {
 // these are just the defaults -- later guys can override to trap anything
-       if (role == Qt::StatusTipRole) return statusTip(key);
-  else if (role == Qt::ToolTipRole) return GetToolTip(key);
+       if (role == Qt::StatusTipRole) return static_cast<const char *>(statusTip(key));
+  else if (role == Qt::ToolTipRole) return static_cast<const char *>(GetToolTip(key));
   else return QVariant();
 }
 
