@@ -48,6 +48,9 @@ set(temtlib_SRCS
   )
 
 EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)
+if (WIN32)
+  set_target_properties(temt PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
+endif (WIN32)
 
 ########### get svn revision ###############
 # http://stackoverflow.com/questions/3780667/use-cmake-to-get-build-time-svn-revision
@@ -84,6 +87,12 @@ EMERGENT_LINK_LIBRARIES(temt "")
 if (WIN32)
   add_definitions(-DTA_DLL -DTA_EXPORTS)
 endif (WIN32)
+
+# Defining nominmax will remove all ambiguities regarding the windows.h macros,
+# not just the one in qdatetime.h
+if (WIN32 AND QT_USE_5)
+  add_definitions(-DNOMINMAX)
+endif (WIN32 AND QT_USE_5)
 
 ########### install files ###############
 

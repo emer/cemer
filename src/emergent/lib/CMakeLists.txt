@@ -77,6 +77,9 @@ set(emergentlib_SRCS
 )
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})
+if (WIN32)
+  set_target_properties(emergentlib PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
+endif (WIN32)
 
 # experiment for vectormath.h intel shared lib -- avoid at all costs and use a 
 # lookup table instead
