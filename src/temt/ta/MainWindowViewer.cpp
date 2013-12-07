@@ -596,3 +596,13 @@ T3PanelViewer* MainWindowViewer::GetRightViewer() {
   return pv;
 }
 
+DockViewer* MainWindowViewer::FindDockViewerByName(const String& dv_name) {
+  DockViewer* dv = NULL;
+  for (int i = 0; i < docks.size; ++i) {
+    DockViewer* dv = docks.FastEl(i);
+    taMisc::DebugInfo(dv->name);
+    if (dv->name == dv_name)
+      return dv;
+  }
+  return dv;
+}

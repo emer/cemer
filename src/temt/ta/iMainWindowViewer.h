@@ -357,6 +357,7 @@ protected:
   bool                  m_is_proj_viewer; // true if this is a project viewer
   bool                  m_close_proj_now; // flag used to pass command to close proj
   int                   m_unique_id;
+  bool                  tools_dock_was_visible;  // holds on to the visibility of the programming dock so it can be restored when the either the tree or the panels are restored
 
   override void         closeEvent(QCloseEvent* ev);
 //nn  override void             customEvent(QEvent* ev);

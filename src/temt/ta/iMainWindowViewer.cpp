@@ -2011,6 +2011,12 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
   PanelViewer* pv_panels = (PanelViewer*)viewer()->GetMiddlePanel();
   PanelViewer* pv_T3 = (PanelViewer*)viewer()->GetRightViewer();
 
+  DockViewer* dv = viewer()->FindDockViewerByName("Tools");
+  if (dv) {
+    if ((pv_browse && pv_browse->isVisible()) || (pv_panels && pv_panels->isVisible()))
+      tools_dock_was_visible = dv->isVisible();  // save the state for case when dock is hidden because the browse and panel frames are hidden
+  }
+
   bool show_pv_browse = false;
   bool show_pv_panels = false;
   bool show_pv_T3 = false;
@@ -2028,6 +2034,8 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
     break;
   case 4:
     show_pv_T3 = true;
+    if (dv)
+      dv->Hide();
     break;
   case 5:
     show_pv_browse = true;
@@ -2045,14 +2053,20 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
   }
 
   if (pv_browse) {
-    if (show_pv_browse)
+    if (show_pv_browse) {
       pv_browse->Show();
+      if (dv && tools_dock_was_visible)  // make sure dock is visible if was previously visible
+        dv->Show();
+    }
     else
       pv_browse->Hide();
   }
   if (pv_panels) {
-    if (show_pv_panels)
+    if (show_pv_panels) {
       pv_panels->Show();
+      if (dv && tools_dock_was_visible)  // make sure dock is visible if was previously visible
+        dv->Show();
+    }
     else
       pv_panels->Hide();
   }

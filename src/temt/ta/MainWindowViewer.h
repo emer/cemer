@@ -110,6 +110,7 @@ public:
   FrameViewer*          AddFrameByType(TypeDef* typ, int at_index = -1);
     // add a new frame of given type at index (-1 at end); no window made yet
 
+  DockViewer*           FindDockViewerByName(const String& dv_name);
   ToolBar*              FindToolBarByType(TypeDef* typ, const String& tb_name); // finds existing toolbar by name and type; NULL if not found
   bool                  AddToolBar(ToolBar* tb); // add a new toolbar; true if added (won't add a duplicate)
   ToolBar*              AddToolBarByType(TypeDef* typ, const String& tb_name); // add a new toolbar by type; return inst if added (won't add a duplicate)
