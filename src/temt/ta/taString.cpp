@@ -1521,36 +1521,28 @@ taString taString::wrap(int width) const {
   if (length() <= width)
     return *this;
 
-  int len = length();
   int i = 0;
   int k, counter;
-  const char* long_string = chars(); // source string
-  char wrapped_string[len]; // modified string
-
-  while(i < len)
+  while(i < length())
   {
-    // copy string until the end of the line is reached
     for (counter = 0; counter < width; counter++)
     {
       // check if end of string reached
-      if (i == len)
+      if (i == length())
       {
-        wrapped_string[i] = 0;
-        return wrapped_string;
+        return *this;
       }
-      wrapped_string[i] = long_string[i];
-      // check for newlines embedded in the original input
-      // and reset the index
-      if (wrapped_string[i] == '\n')
+      // if we find a newline reset the counter
+      if (mrep->s[i] == '\n')
       {
         counter = 1;
       }
       i++;
     }
     // check for whitespace
-    if (isspace(long_string[i]))
+    if (isspace(mrep->s[i]))
     {
-      wrapped_string[i] = '\n';
+      mrep->s[i] = '\n';
       i++;
     }
     else
@@ -1558,9 +1550,9 @@ taString taString::wrap(int width) const {
       // check for nearest whitespace back in string
       for (k = i; k > 0; k--)
       {
-        if (isspace(long_string[k]))
+        if (isspace(mrep->s[k]))
         {
-          wrapped_string[k] = '\n';
+          mrep->s[k] = '\n';
           // set string index back to character after this one
           i = k + 1;
           break;
@@ -1568,6 +1560,6 @@ taString taString::wrap(int width) const {
       }
     }
   }
-  wrapped_string[i] = 0;
-  return wrapped_string;
+  return *this;
 }
+
