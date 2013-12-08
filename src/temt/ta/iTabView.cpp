@@ -69,7 +69,7 @@ void iTabView::Init() {
   if (!mwv->isDialog()) {
     tbPanels->addTab("");
     connect(tbPanels, SIGNAL(currentChanged(int)),
-      this, SLOT(panelSelected(int)) );
+        this, SLOT(panelSelected(int)) );
   }
 }
 
@@ -155,10 +155,7 @@ void iTabView::DataPanelDestroying(iPanelBase* panel) {
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   iPanelBase* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
-  iAction* act = new iAction(tab_idx, "&Add Tab",  QKeySequence());
-  act->connect(iAction::int_act, this,  SLOT(AddTab(int)));
-  act->setParent(contextMenu);
-  contextMenu->addAction(act);
+  iAction* act = NULL;
   // only add Close if on a tab
   if (tab_idx >= 0) {
     // always add for consistency, even if on an empty or locked guy
@@ -200,13 +197,13 @@ iPanelBase* iTabView::GetDataPanel(taiSigLink* link) {
   if (rval != NULL) {
     AddPanel(rval);
     //note: we don't do a show() here because it automatically raises the panel
-//    rval->show(); //needed!
+    //    rval->show(); //needed!
   }
   return rval;
 }
 
 void iTabView::GetWinState() {
-//TODO: may want to save state of what panels are active
+  //TODO: may want to save state of what panels are active
   for (int i = 0; i < panelCount(); ++i) {
     iPanelBase* pn = panel(i);
     if (pn) pn->GetWinState();
@@ -214,7 +211,7 @@ void iTabView::GetWinState() {
 }
 
 void iTabView::SetWinState() {
-//TODO: may want to get state of what panels are active
+  //TODO: may want to get state of what panels are active
   for (int i = 0; i < panelCount(); ++i) {
     iPanelBase* pn = panel(i);
     if (pn) pn->SetWinState();
@@ -222,9 +219,9 @@ void iTabView::SetWinState() {
 }
 
 void iTabView::ShowTab(iPanelBase* panel, bool show, bool focus) {
-// this is for ctrl panel frames that go visible, to show their ctrl panel tabs
-// note that we are assuming for simplicity that we can focus the default or 0th tab
-// when removing a tab for a visible ctrl guy
+  // this is for ctrl panel frames that go visible, to show their ctrl panel tabs
+  // note that we are assuming for simplicity that we can focus the default or 0th tab
+  // when removing a tab for a visible ctrl guy
   if (show) {
     // may be there already, prob most recent...
     int tb = -1;
@@ -365,7 +362,7 @@ void iTabView::ShowPanel(iPanelBase* panel, bool not_in_cur) {
 
   // replace curr if allowed and it is not locked, pinned, or dirty+autocommit
   if (!not_in_cur && cur_pn && (!cur_pn->lockInPlace() && !cur_pn->pinned() &&
-     (!cur_pn->dirty() || autoCommit())))
+      (!cur_pn->dirty() || autoCommit())))
   {
     bool proceed = true;
     if (cur_pn->dirty()) { // must be autocommit
@@ -463,17 +460,17 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;
     }
-//     else if(e->key() == Qt::Key_T) {
-//       AddTab(tbPanels->currentIndex());
-//       e->accept();
-//       return;
-//     }
+    //     else if(e->key() == Qt::Key_T) {
+    //       AddTab(tbPanels->currentIndex());
+    //       e->accept();
+    //       return;
+    //     }
     // I don't think it is useful to have a command for this -- too obscure and dangerous
-//     else if(e->key() == Qt::Key_D) {
-//       CloseTab(tbPanels->currentIndex());
-//       e->accept();
-//       return;
-//     }
+    //     else if(e->key() == Qt::Key_D) {
+    //       CloseTab(tbPanels->currentIndex());
+    //       e->accept();
+    //       return;
+    //     }
   }
   QWidget::keyPressEvent(e);
 }
