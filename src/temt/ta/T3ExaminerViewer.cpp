@@ -64,6 +64,9 @@
 #define THUMB_WRAP_THR 800
 
 const int T3ExaminerViewer::n_views = 10;
+const float fixed_pan_distance = .025;   // how much to move on each key press
+const float fixed_rotate_distance = .025;   // how much to rotate on each key press
+
 
 bool T3ExaminerViewer::so_scrollbar_is_dragging = false;
 
@@ -682,36 +685,74 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  if(e->key() == Qt::Key_I) {
+  else if(e->key() == Qt::Key_I) {
     setInteractionModeOn(true);
     e->accept();
     return;
   }
-  if(e->key() == Qt::Key_V) {
+  else if(e->key() == Qt::Key_V) {
     setInteractionModeOn(false);
     e->accept();
     return;
   }
-  if((e->key() == Qt::Key_Home) || (e->key() == Qt::Key_H)) {
+  else if((e->key() == Qt::Key_Home) || (e->key() == Qt::Key_H)) {
     gotoView(0);                        // 0 is base guy
     e->accept();
     return;
   }
-  if(e->key() == Qt::Key_A) {
+  else if(e->key() == Qt::Key_A) {
     viewAll();
     e->accept();
     return;
   }
-  if(e->key() == Qt::Key_S) {   // seek
+  else if(e->key() == Qt::Key_S) {   // seek
     quarter->seek();
+    e->accept();
+    return;
+  }
+  else if(e->key() == Qt::Key_Left) {
+    if(e->modifiers() & Qt::ShiftModifier) {
+      horizPanView(-fixed_pan_distance);
+    }
+    else {
+      horizRotateView(-fixed_rotate_distance);
+    }
+    e->accept();
+    return;
+  }
+  else if(e->key() == Qt::Key_Right) {
+    if(e->modifiers() & Qt::ShiftModifier) {
+      horizPanView(fixed_pan_distance);
+    }
+    else {
+      horizRotateView(fixed_rotate_distance);
+    }
+    e->accept();
+    return;
+  }
+  else if(e->key() == Qt::Key_Up) {
+    if(e->modifiers() & Qt::ShiftModifier) {
+      vertPanView(-fixed_pan_distance);
+    }
+    else {
+      vertRotateView(-fixed_rotate_distance);
+    }
+    e->accept();
+    return;
+  }
+  else if(e->key() == Qt::Key_Down) {
+    if(e->modifiers() & Qt::ShiftModifier) {
+      vertPanView(fixed_pan_distance);
+    }
+    else {
+      vertRotateView(fixed_rotate_distance);
+    }
     e->accept();
     return;
   }
   emit unTrappedKeyPressEvent(e);
   QWidget::keyPressEvent(e);
 }
-
-
 
 ///////////////////////////////////////////////////////////////
 //              Actual functions
