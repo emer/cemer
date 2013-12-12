@@ -731,6 +731,7 @@ void T3ExaminerViewer::viewAll() {
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
   // restore camera position to head-on
+  quarter->seek();  // stop the rotation
   cam->orientation.setValue(SbVec3f(-1.0f, 0.0f, 0.0f), 0.0f);
   quarter->viewAll();
   zoomView(-.35f);              // zoom in !!
