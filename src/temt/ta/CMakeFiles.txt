@@ -958,6 +958,7 @@ set(ta_HEADS_NOMAKETA_MOC
   T3QuarterWidget.h
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
+  iDialogColorChooser.h
 )
 
 set(ta_HEADS_NOMAKETA_NOMOC
@@ -1873,6 +1874,7 @@ set(ta_SRCS_MAKETA
   ProgElChoiceDlg.cpp
   ViewBackground.cpp
   ViewBackground_List.cpp
+  iDialogColorChooser.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

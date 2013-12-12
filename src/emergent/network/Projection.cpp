@@ -21,6 +21,7 @@
 
 #include <tabMisc>
 #include <taMisc>
+#include <iDialogColorChooser>
 
 using namespace std;
 
@@ -375,6 +376,11 @@ bool Projection::UpdateConSpecs(bool force) {
     }
   }
   return true;
+}
+
+void Projection::SetConColor()
+{
+  m_con_clr = iDialogColorChooser::getColor();
 }
 
 bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
