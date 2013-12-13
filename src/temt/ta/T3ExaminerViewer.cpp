@@ -710,7 +710,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  else if(e->key() == Qt::Key_Left) {
+  else if(e->key() == Qt::Key_Left && !interactionModeOn()) {
     if(e->modifiers() & Qt::ShiftModifier) {
       horizPanView(-fixed_pan_distance);
     }
@@ -720,7 +720,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  else if(e->key() == Qt::Key_Right) {
+  else if(e->key() == Qt::Key_Right && !interactionModeOn()) {
     if(e->modifiers() & Qt::ShiftModifier) {
       horizPanView(fixed_pan_distance);
     }
@@ -730,7 +730,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  else if(e->key() == Qt::Key_Up) {
+  else if(e->key() == Qt::Key_Up && !interactionModeOn()) {
     if(e->modifiers() & Qt::ShiftModifier) {
       vertPanView(-fixed_pan_distance);
     }
@@ -740,7 +740,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  else if(e->key() == Qt::Key_Down) {
+  else if(e->key() == Qt::Key_Down && !interactionModeOn()) {
     if(e->modifiers() & Qt::ShiftModifier) {
       vertPanView(fixed_pan_distance);
     }
