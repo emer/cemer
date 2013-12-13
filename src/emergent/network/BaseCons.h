@@ -141,6 +141,10 @@ public:
   inline float&         Cn(int idx, int var_no, Network* net) const
   { if(OwnCons()) return OwnCn(idx, var_no); return PtrCn(idx, var_no, net); }
   // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- no range checking -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  inline float&         SafeFastCn(int idx, int var_no, Network* net) const
+  { if(OwnCons()) { if(InRange(idx)) return OwnCn(idx, var_no); return null_rval; }
+    return UnCons(idx, net)->SafeFastCn(PtrCnIdx(idx), var_no, net); }
+  // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- does range checking but doesn't issue messages, and is otherwise as fast as possible -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   float&                SafeCn(int idx, int var_no) const;
   // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- this is mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   float&                SafeCnName(int idx, const String& var_nm) const;

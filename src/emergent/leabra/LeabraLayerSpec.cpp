@@ -70,6 +70,7 @@ void GpInhibSpec::Initialize() {
   fffb = false;
   lay_gi = 2.0f;
   gp_g = 0.5f;
+  self_g = 1.0f;
   diff_act_pct = false;
   act_pct_mult = 0.5f;
   pct_fm_frac = false;
@@ -79,7 +80,7 @@ void GpInhibSpec::Initialize() {
 }
 
 void GpInhibSpec::Defaults_init() {
-  // no sensible defaults
+  self_g = 1.0f;
 }
 
 void GpInhibSpec::UpdateAfterEdit_impl() {
@@ -1140,6 +1141,9 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay,
 {
   int nunits = lay->UnitAccess_NUnits(acc_md);
   float inhib_val = thr->i_val.g_i;
+  if(unit_gp_inhib.on && (inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
+    inhib_val *= unit_gp_inhib.self_g;
+  }
   if(thr->kwta.tie_brk == 1) {
     float inhib_thr = thr->kwta.k_ithr;
     float inhib_loser = thr->kwta.eff_loser_gain * thr->i_val.g_i;

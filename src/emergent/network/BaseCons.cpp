@@ -196,7 +196,10 @@ float& BaseCons::SafeCn(int idx, int var_no) const {
   if(!un) return null_rval;
   Network* net = un->own_net();
   if(!net) return null_rval;
-  return Cn(idx, var_no, net);
+  if(OwnCons()) {
+    return OwnCn(idx, var_no);
+  }
+  return UnCons(idx, net)->SafeCn(PtrCnIdx(idx), var_no);
 }
 
 float& BaseCons::SafeCnName(int idx, const String& var_nm) const {
