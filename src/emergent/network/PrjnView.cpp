@@ -50,10 +50,10 @@ void PrjnView::DoHighlightColor(bool apply) {
     // Color and transparency are assigned from a constant and from NetView, respectively
     // Width is also assigned from NetView, just not here. 
     // Projection objects contain other parameters/attributes, like display on/off
-    mat->diffuseColor.setValue(prjn->m_con_clr);//SbColor(1.0f, .9f, .5f)); // very light orange
+    mat->diffuseColor.setValue(SbColor(prjn->prjn_clr.r, prjn->prjn_clr.g, prjn->prjn_clr.b));
     mat->transparency.setValue(prjn_trans);
   }
-  nd->setArrowColor(prjn->m_con_clr/*SbColor(1.0f, .8f, 0.0f)*/, prjn_trans);
+  nd->setArrowColor(SbColor(prjn->prjn_clr.r, prjn->prjn_clr.g, prjn->prjn_clr.b), prjn_trans);
 }
 
 void PrjnView::Render_pre() {

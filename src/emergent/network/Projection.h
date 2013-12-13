@@ -24,7 +24,7 @@
 #include <ProjectionSpec>
 #include <LayerRef>
 #include <RecvCons>
-#include <T3Color>
+#include <taColor>
 
 // declare all other types mentioned but not required to include:
 
@@ -72,7 +72,7 @@ public:
   bool                  projected;       // #HIDDEN #CAT_Structure t/f if connected
 
   PrjnDirection         direction;      // #CAT_Structure which direction does this projection go (in terms of distance from input and output layers) -- auto computed by Compute_PrjnDirection or you can manually set; optionally used by only some algorithms
-  T3Color               m_con_clr;      // #HIDDEN #CAT_Structure Default color for the projection line and arrow (subservient to the Type-defined color, if applicable)
+  taColor               prjn_clr;       // #CAT_Structure Default color for the projection line and arrow (subservient to the Type-defined color, if applicable)
 
   inline ConSpec*       GetConSpec()    { return con_spec.spec.ptr(); }
   // #CAT_Structure get the connection spec for this projection
@@ -139,8 +139,6 @@ public:
   virtual bool  UpdateConSpecs(bool force = false);
   // #CAT_Structure update con specs for all connection groups for this projection in the network to use con_spec (only if changed from last update -- force = do regardless); returns true if changed and all cons can use given spec
 
-  virtual void  SetConColor(); // #BUTTON #CAT_Structure
- 
   virtual bool  SetPrjnSpec(ProjectionSpec* sp);
   // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the projection spec (connectivity pattern) for this projection
   virtual bool  SetConSpec(ConSpec* sp);

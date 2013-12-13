@@ -41,6 +41,7 @@ void Projection::Initialize() {
   projected = false;
   direction = DIR_UNKNOWN;
   m_prv_con_spec = NULL;
+  prjn_clr.Set(1.0f, .9f, .5f); // very light orange
 }
 
 void Projection::Destroy(){
@@ -376,11 +377,6 @@ bool Projection::UpdateConSpecs(bool force) {
     }
   }
   return true;
-}
-
-void Projection::SetConColor()
-{
-  m_con_clr = iDialogColorChooser::getColor();
 }
 
 bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
