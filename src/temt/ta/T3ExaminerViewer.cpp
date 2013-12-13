@@ -66,6 +66,7 @@
 const int T3ExaminerViewer::n_views = 10;
 const float fixed_pan_distance = .025;   // how much to move on each key press
 const float fixed_rotate_distance = .025;   // how much to rotate on each key press
+const float fixed_zoom_delta = .025;   // how much to rotate on each key press
 
 
 bool T3ExaminerViewer::so_scrollbar_is_dragging = false;
@@ -747,6 +748,16 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     else {
       vertRotateView(fixed_rotate_distance);
     }
+    e->accept();
+    return;
+  }
+  else if(e->key() == '+' && !interactionModeOn()) {
+    zoomView(-fixed_zoom_delta);
+    e->accept();
+    return;
+  }
+  else if(e->key() == '-' && !interactionModeOn()) {
+    zoomView(fixed_zoom_delta);
     e->accept();
     return;
   }
