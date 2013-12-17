@@ -965,6 +965,16 @@ set(ta_HEADS_NOMAKETA_NOMOC
   ta_stdef.h
   ta_def.h
   ta_type_constr.h
+  
+  vectorclass.h
+  vectormath.h
+  instrset.h
+  vectorf128.h
+  vectorf256.h
+  vectorf256e.h
+  vectori128.h
+  vectori256.h
+  vectori256e.h
 
   SigLinkSignal.h
 

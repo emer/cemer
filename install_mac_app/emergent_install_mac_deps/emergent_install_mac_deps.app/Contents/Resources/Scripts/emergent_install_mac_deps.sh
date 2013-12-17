@@ -4,15 +4,23 @@
 # see http://grey.colorado.edu/emergent
 
 # this should be the only thing you need to update: grab the latest versions
-QT_DMG=qt-mac-opensource-4.8.4.dmg
+QT_DMG=qt-mac-opensource-5.2.0-clang-offline.dmg
 COIN_DMG=Coin-4.0.0a.dmg
-QUARTER_DMG=quarter_mac64_qt4.dmg
+QUARTER_DMG=quarter_mac64_qt52.dmg
 CMAKE_DMG=cmake-2.8.10.2-Darwin64-universal.dmg
 SVN_DMG=Subversion-1.7.8_10.8.x.dmg
 MISC_DMG=emergent_misc_deps_mac64.dmg
  
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 FTP_CMD="/usr/bin/ftp -ai"
+
+# this is needed b/c installer doesn't work properly if it is not
+QT_DIR=/usr/local/Qt5.2.0
+ 
+if [[ ! -d $QT_DIR ]]
+then
+  sudo mkdir $QT_DIR
+fi
 
 DOWNLOAD_DIR=$HOME/Desktop
  
