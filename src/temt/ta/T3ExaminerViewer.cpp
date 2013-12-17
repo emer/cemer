@@ -751,12 +751,12 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  else if((e->key() == '+' || e->key() == '=') && !interactionModeOn()) {
+  else if(e->key() == '+' || e->key() == '=') {
     zoomView(-fixed_zoom_delta);
     e->accept();
     return;
   }
-  else if(e->key() == '-' && !interactionModeOn()) {
+  else if(e->key() == '-') {
     zoomView(fixed_zoom_delta);
     e->accept();
     return;
