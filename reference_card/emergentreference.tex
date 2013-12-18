@@ -82,6 +82,16 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Ctrl+V/Y! & Paste.
 \end{tabular}
 
+\section{css console and text fields}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y. \\
+\verb!Ctrl+K! & Kill text until end of line. \\
+\verb!Ctrl+right! & Move cursor one word forward. \\
+\verb!Ctrl+left! & Move cursor one word backwards. \\
+\verb!Ctrl+shift+right! & Highlight one word forward. \\
+\verb!Ctrl+shift+left! & Highlight one word backwards.
+\end{tabular}
+
 \section{Global project}
 \begin{tabular}{@{}ll@{}}
 \verb!Standard!    & Tab \\
@@ -93,11 +103,21 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Ctrl/Alt+L! & Move global focus right
 \end{tabular}
 
+\section{Window frames}
+\begin{tabular}{@{}ll@{}}
+\verb!Cmd+1!    & Tree browser only \\
+\verb!Cmd+2!    & Panel frame only \\
+\verb!Cmd+3!    & Tree \& panel frame \\
+\verb!Cmd+4!    & 3D frame only \\
+\verb!Cmd+5!    & Tree \& 3D frame \\
+\verb!Cmd+6!    & Panels \& 3D frame \\
+\verb!Cmd+7!    & All frames \\
+\end{tabular}
+
 \section{Control panels}
 \begin{tabular}{@{}ll@{}}
 \verb!Init,Run,Step,Stop,Abort!    & F8,F9,F10,F11,F12
 \end{tabular}
-
 
 \section{Project tree and program tree}
 \settowidth{\MyLen}{\texttt{multicol}}
@@ -106,75 +126,43 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \end{tabular}
 \begin{tabular}{@{}ll@{}}
 \verb!Standard!    & Page,Ctrl+Space/F/B/N/P/D/G/X/W/C/V/Y. \\
-\verb!Any 1-3 chars!    & Find as you type. Moves cursor to next matching line. \\
+\verb!Any 1-3 chars!    & Find as you type. Moves cursor to next matching line.\\
 \verb!Ctrl+I!    & New item below cursor. \\
 \verb!Alt+F!  & Find from selected node. \\
 \verb!Ctrl+M!  & Duplicate element(s).
 \end{tabular}
 
 \subsection{New elements in project tree}
+Click on any group or navigate to group by typing first 1-3 chars, then Ctrl+I.\\
+Examples.\\
 \begin{tabular}{@{}ll@{}}
-\verb!do Ctrl+I!    & New Doc \\
 \verb!da Ctrl+I!    & New DataTable \\
 \verb!la Ctrl+I!    & New Layer \\
-\verb!P Ctrl+I!    & New Project \\
 \verb!pr Ctrl+I!    & New Program \\
-\verb!n Ctrl+I!    & New Network \\
 \verb!sp Ctrl+I!    & New Spec
 \end{tabular}
+\\
+New elements can also be created by pressing Return (Enter). No chooser dialog will appear. Works for all project elements.
 
 \subsection{New elements in program tree}
-These sequences insert new items. Press Ctrl+left,left afterwards to navigate back to where you were. \\
+These sequences insert new items by displaying a chooser dialog. Press Ctrl+left to navigate back to where you were before the insert.\\
+Examples \\
 \begin{tabular}{@{}ll@{}}
-\verb!obj Ctrl+I Type!    & New obj of Type \\
+\verb!obj Ctrl+I Type!    & New obj \\
 \verb!var Ctrl+I!    & New var \\
-\verb!arg Ctrl+I!    & New arg \\
 \verb!fun Ctrl+I!    & New fun \\
-\verb!init Ctrl+I Name!    & New init code Name \\
-\verb!prog Ctrl+I Name!    & New prog code Name
 \end{tabular}
-
-\section{css console and text fields}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y. \\
-\verb!Ctrl+K! & Kill text until end of line. \\
-\verb!Ctrl+right! & Move cursor one word forward. \\
-\verb!Ctrl+left! & Move cursor one word backwards. \\
-\verb!Ctrl+shift+right! & Highlight one word forward. \\
-\verb!Ctrl+shift+left! & Highlight one word backwards.
-\end{tabular}
-
-\subsection{css console}
-\includegraphics[width=209.5px]{console.png} \\
-\begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Clear console buffer history. \\
-\verb!Ctrl+L!    & Delete highlighted text.
-\end{tabular}
+\\
+New elements can also be created by pressing Return (Enter). No chooser dialog will appear. Works for all program elements.
 
 \subsection{Text fields}
 \includegraphics[width=205px]{path.png} \\
 \begin{tabular}{@{}ll@{}}
 \verb!Ctrl+L!    & Text completion lookup.  \\
 \verb!Ctrl+U!    & Highlight all.
-\end{tabular} 
-
-\section{Help Browser}
-\includegraphics[width=240px]{helpbrowser.png}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Tab,Page,Ctrl+F/B/N/P/A/E/X/W/C/V/Y. \\
-\verb!F1!  & Help Browser. \\
-\verb!Ctrl+S!  & Toggle Search/Find focus.
 \end{tabular}
 
-\section{DataTables and matrices}
-\includegraphics[width=215.5px]{datatable.png}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Page,Ctrl+F/B/N/P/A/E/C/V/D/G/Y. \\
-\verb!Ctrl+T!    & Switch between table and matrix focus. \\
-\verb!Ctrl+I!    & Insert new row. \\
-\verb!Ctrl+M!    & Duplicate row. \\
-\verb!Ctrl+Space!    & Start editing cell.
-\end{tabular}
+\columnbreak
 
 \section{Edit panels}
 See the ``Text fields'' section for shortcuts that work on the text
@@ -191,10 +179,38 @@ fields of edit panels.
 \verb!Ctrl+L!    & (expression fields) Lookup information.
 \end{tabular}
 
+\section{DataTables and matrices}
+\includegraphics[width=215.5px]{datatable.png}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Page,Ctrl+F/B/N/P/A/E/C/V/D/G/Y. \\
+\verb!Ctrl+T!    & Switch between table and matrix focus. \\
+\verb!Ctrl+I!    & Insert new row. \\
+\verb!Ctrl+M!    & Duplicate row. \\
+\verb!Ctrl+Space!    & Start editing cell.
+\end{tabular}
+
 \section{Choosers}
 \includegraphics[width=213px]{progel.png} \\
 \begin{tabular}{@{}ll@{}}
 \verb!Standard!  & Tab,Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y.
+\end{tabular}
+
+\section{3D View}
+\begin{tabular}{@{}ll@{}}
+\verb!Arrow keys!    & Rotate\\
+\verb!Shift + Arrow keys!    & Pan\\
+\verb!-!    & Zoom-Out\\
+\verb!+ or =! & Zoom-In.
+\end{tabular}
+
+\newpage
+
+\section{Help Browser}
+\includegraphics[width=240px]{helpbrowser.png}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Tab,Page,Ctrl+F/B/N/P/A/E/X/W/C/V/Y. \\
+\verb!F1!  & Help Browser. \\
+\verb!Ctrl+S!  & Toggle Search/Find focus.
 \end{tabular}
 
 \section{Docs}
@@ -203,6 +219,12 @@ fields of edit panels.
 \verb!Standard!  & Tab,Space,Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y.
 \end{tabular}
 
+\subsection{css console}
+\includegraphics[width=209.5px]{console.png} \\
+\begin{tabular}{@{}ll@{}}
+\verb!Ctrl+L!    & Clear console buffer history. \\
+\verb!Ctrl+L!    & Delete highlighted text.
+\end{tabular}
 
 \end{multicols}
 
