@@ -4,32 +4,38 @@
 
 
 # Configuration directories and files
-SourceDirectory: /Users/mingus/emergent
-BuildDirectory: /Users/mingus/emergent
+SourceDirectory: /Users/rohrlich/emergent
+BuildDirectory: /Users/rohrlich/emergent
+
+# Where to place the cost data store
+CostDataFile: 
 
 # Site is something like machine.domain, i.e. pragmatic.crd
-Site: mightyme.local
+Site: air.local
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
 BuildName: Darwin-c++
 
 # Submission information
 IsCDash: TRUE
+CDashVersion: 
+QueryCDashVersion: 
 DropSite: grey.colorado.edu
 DropLocation: /CDash/submit.php?project=Emergent
 DropSiteUser: 
 DropSitePassword: 
 DropSiteMode: 
 DropMethod: http
-TriggerSite: http://grey.colorado.edu/cgi-bin/Submit-Random-TestingResults.cgi
+TriggerSite: 
 ScpCommand: /usr/bin/scp
 
 # Dashboard start time
 NightlyStartTime: 04:00:00 EST
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/local/bin/cmake" "/Users/mingus/emergent"
+ConfigureCommand: "/Applications/CMake 2.8-10.app/Contents/bin/cmake" "/Users/rohrlich/emergent"
 MakeCommand: /usr/bin/make -i
+DefaultCTestConfigurationType: Release
 
 # CVS options
 # Default is "-d -P -A"
@@ -37,26 +43,52 @@ CVSCommand: /usr/bin/cvs
 CVSUpdateOptions: -d -A -P
 
 # Subversion options
-SVNCommand: /usr/local/bin/svn
+SVNCommand: /usr/bin/svn
+SVNOptions: 
 SVNUpdateOptions: 
 
+# Git options
+GITCommand: /opt/local/bin/git
+GITUpdateOptions: 
+GITUpdateCustom: 
+
 # Generic update command
-UpdateCommand: /usr/local/bin/svn
+UpdateCommand: /usr/bin/svn
 UpdateOptions: 
 UpdateType: svn
 
-# Dynamic analisys and coverage
+# Compiler info
+Compiler: /usr/bin/c++
+
+# Dynamic analysis (MemCheck)
 PurifyCommand: 
 ValgrindCommand: 
 ValgrindCommandOptions: 
 MemoryCheckCommand: MEMORYCHECK_COMMAND-NOTFOUND
 MemoryCheckCommandOptions: 
 MemoryCheckSuppressionFile: 
+
+# Coverage
 CoverageCommand: /usr/bin/gcov
+CoverageExtraFlags: -l
+
+# Cluster commands
+SlurmBatchCommand: SLURM_SBATCH_COMMAND-NOTFOUND
+SlurmRunCommand: SLURM_SRUN_COMMAND-NOTFOUND
 
 # Testing options
 # TimeOut is the amount of time in seconds to wait for processes
 # to complete during testing.  After TimeOut seconds, the
-# process will be summaily terminated.
+# process will be summarily terminated.
 # Currently set to 25 minutes
 TimeOut: 1500
+
+UseLaunchers: 
+CurlOptions: 
+# warning, if you add new options here that have to do with submit,
+# you have to update cmCTestSubmitCommand.cxx
+
+# For CTest submissions that timeout, these options
+# specify behavior for retrying the submission
+CTestSubmitRetryDelay: 5
+CTestSubmitRetryCount: 3

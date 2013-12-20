@@ -30,7 +30,7 @@ class DataTable; //
 taTypeDef_Of(DynEnumType);
 
 class TA_API DynEnumType : public ProgType {
-  // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write
+  // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTypeFromDTColumn
 INHERITED(ProgType)
 public:
   DynEnumItem_List      enums;  // enumerated values for this type
