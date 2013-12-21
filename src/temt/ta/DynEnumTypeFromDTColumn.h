@@ -21,9 +21,9 @@
 
 // member includes:
 #include <taSmartRef>
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
-class DataTable;
 class DataCol;
 
 taTypeDef_Of(DynEnumTypeFromDTColumn);
@@ -32,6 +32,9 @@ class TA_API DynEnumTypeFromDTColumn : public DynEnumType {
   // Enum that is generated from a datatable column and is updated based on notification of updates from the table
 INHERITED(DynEnumType)
 public:
+      DataTableRef        srcTable;
+      String              srcColumn;
+
       void  InitLinks();
       void  CutLinks();
 
@@ -46,8 +49,7 @@ public:
    TA_BASEFUNS(DynEnumTypeFromDTColumn);
 
 protected:
-    taSmartRef        srcTable;
-    String            srcColumn;
+   override void UpdateAfterEdit_impl();
 
 private:
     void Initialize();

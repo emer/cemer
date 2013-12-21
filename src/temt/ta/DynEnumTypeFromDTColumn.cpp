@@ -36,14 +36,20 @@ void DynEnumTypeFromDTColumn::CutLinks() {
 }
 
 bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& col) {
-//bool DynEnumTypeFromDTColumn::SetTableAndColumn(DataTable* dt, const Variant& col) {
-  if(TestError(!dt, "SetTableAndColumn", "data table is null"))
+  if(TestError(!dt, "SetTableAndColumn", "data table is null")) {
+    enums.StructUpdate(true);
+    enums.Reset();
+    enums.StructUpdate(false);
     return false;
+  }
   DataCol* da = dt->GetColData(col);
-  if(TestError(!da, "SetTableAndColumn", "column not found"))
+  if(TestError(!da, "SetTableAndColumn", "column not found")) {
+    enums.StructUpdate(true);
+    enums.Reset();
+    enums.StructUpdate(false);
     return false;
-
-  srcTable = (taBase*)dt;
+  }
+  srcTable = dt;
   srcColumn = da->name;
 
   enums.StructUpdate(true);
@@ -88,3 +94,17 @@ void DynEnumTypeFromDTColumn::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
   }
   enums.StructUpdate(false);
 }
+
+void DynEnumTypeFromDTColumn::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // any illegal combination of table and column leads to removal of all enums
+  if (srcTable && srcColumn != "") {
+    EnumsFromDataTable(srcTable, srcColumn);
+  }
+  else {
+    enums.StructUpdate(true);
+    enums.Reset();
+    enums.StructUpdate(false);
+  }
+}
+
