@@ -25,6 +25,7 @@
 // declare all other types mentioned but not required to include:
 class Program; // 
 class DynEnumType; // 
+class DynEnumTypeFromDTColumn; //
 class taBase; // 
 
 
@@ -39,6 +40,8 @@ public:
 
   virtual DynEnumType* NewDynEnum();
   // #BUTTON #MENU_CONTEXT create a new DynEnumType (shortcut)
+  virtual DynEnumTypeFromDTColumn* NewDynEnumFromDTColumn();
+  // #BUTTON #MENU_CONTEXT create a new DynEnumTypeFromDTColumn (shortcut)
 
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on list

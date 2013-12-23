@@ -16,6 +16,7 @@
 #include "ProgType_List.h"
 #include <Program>
 #include <DynEnumType>
+#include <DynEnumTypeFromDTColumn>
 
 void ProgType_List::Initialize() {
   SetBaseType(&TA_ProgType);
@@ -32,6 +33,10 @@ void ProgType_List::El_SetIndex_(void* it_, int idx) {
 
 DynEnumType* ProgType_List::NewDynEnum() {
   return (DynEnumType*)New_gui(1, &TA_DynEnumType); // gui op
+}
+
+DynEnumTypeFromDTColumn* ProgType_List::NewDynEnumFromDTColumn() {
+  return (DynEnumTypeFromDTColumn*)New_gui(1, &TA_DynEnumTypeFromDTColumn); // gui op
 }
 
 taBase* ProgType_List::FindTypeName(const String& nm)  const {

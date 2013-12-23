@@ -54,7 +54,7 @@ public:
   // output type information in C++ syntax
 
   virtual bool  EnumsFromDataTable(DataTable* dt, const Variant& col);
-  // #BUTTON initialize enum values from values in given data table column (can be number or name) -- WARNING: replaces any existing enums.  handy for providing chooser access to column values
+  // #BUTTON initialize enum values from values in given data table column (TIP: DynEnumTypeFromDTColumn is a better choice - updates automatically whenever the column values change or rows are added)
 
   override taList_impl* children_() {return &enums;}
   override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
