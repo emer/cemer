@@ -17,20 +17,19 @@
 #define DynEnumTypeFromDTColumn_h 1
 
 // parent includes:
-#include <DynEnumType>
+#include <DynEnumBase>
 
 // member includes:
 #include <taSmartRef>
 #include <DataTable>
 
 // declare all other types mentioned but not required to include:
-class DataCol;
 
 taTypeDef_Of(DynEnumTypeFromDTColumn);
 
-class TA_API DynEnumTypeFromDTColumn : public DynEnumType {
+class TA_API DynEnumTypeFromDTColumn : public DynEnumBase {
   // Enum that is generated from a datatable column and is updated based on notification of updates from the table
-INHERITED(DynEnumType)
+INHERITED(DynEnumBase)
 public:
       DataTableRef        srcTable;
       String              srcColumn;
@@ -40,8 +39,6 @@ public:
 
       virtual bool    EnumsFromDataTable(DataTable* dt, const Variant& col);
       // #BUTTON initialize enum values from values in given data table column (can be number or name). Updates to column will automatically be reflected in the enum
-      virtual DynEnumItem*  NewEnum() {return NULL;};
-      // no manual creation of enums for this type - updates automatically with changes to data table
 
       override void   SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
       override void   SmartRef_SigEmit(taSmartRef* ref, taBase* obj, int sls, void* op1_, void* op2_);
@@ -49,11 +46,12 @@ public:
    TA_BASEFUNS(DynEnumTypeFromDTColumn);
 
 protected:
-   override void UpdateAfterEdit_impl();
+   override void      UpdateAfterEdit_impl();
 
 private:
-    void Initialize();
-    void Destroy() {CutLinks();}
+   void Copy_(const DynEnumTypeFromDTColumn& cp);
+   void Initialize();
+   void Destroy() {CutLinks();}
 };
 
 #endif // DynEnumTypeFromDTColumn_h

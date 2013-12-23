@@ -35,6 +35,11 @@ void DynEnumTypeFromDTColumn::CutLinks() {
   inherited::CutLinks();
 }
 
+void DynEnumTypeFromDTColumn::Copy_(const DynEnumTypeFromDTColumn& cp) {
+  srcTable = cp.srcTable;
+  srcColumn = cp.srcColumn;
+}
+
 bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& col) {
   if(TestError(!dt, "SetTableAndColumn", "data table is null")) {
     enums.StructUpdate(true);
@@ -107,4 +112,5 @@ void DynEnumTypeFromDTColumn::UpdateAfterEdit_impl() {
     enums.StructUpdate(false);
   }
 }
+
 

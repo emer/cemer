@@ -17,68 +17,35 @@
 #define DynEnumType_h 1
 
 // parent includes:
-#include <ProgType>
+#include <DynEnumBase>
 
 // member includes:
-#include <DynEnumItem_List>
 
 // declare all other types mentioned but not required to include:
-class DynEnumItem; // 
-class DataTable; // 
-
+class DynEnumItem; //
+class DataTable; //
 
 taTypeDef_Of(DynEnumType);
 
-class TA_API DynEnumType : public ProgType {
-  // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTypeFromDTColumn
-INHERITED(ProgType)
+class TA_API DynEnumType : public DynEnumBase {
+//   #NO_UPDATE_AFTER  dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTypeFromDTColumn
+INHERITED(DynEnumBase)
 public:
-  DynEnumItem_List      enums;  // enumerated values for this type
-  bool                  bits;   // each item represents a separate bit value, which can be orthogonally set from each other, instead of mutually exclusive alternatives
-
   virtual DynEnumItem*  NewEnum();
   // #BUTTON create a new enum item
-  virtual DynEnumItem*  AddEnum(const String& nm, int val);
-  // add a new enum item with given name/label and value
   virtual void          SeqNumberItems(int first_val = 0);
   // #BUTTON assign values to items sequentially, starting with given first value
   virtual bool          CopyToAllProgs();
   // #BUTTON #CONFIRM copy this type information to all programs that have an enum with this same name in their types section -- provides a convenient way to update when multiple programs use the same dynamic enum types
-
-  virtual int   FindNumIdx(int val) const { return enums.FindNumIdx(val); }
-  // find index of given numerical value
-  virtual int   FindNameIdx(const String& nm) const { return enums.FindNameIdx(nm); }
-  // find index of given name value
-
-  virtual std::ostream& OutputType(std::ostream& fh) const;
-  // output type information in C++ syntax
-
-  virtual bool  EnumsFromDataTable(DataTable* dt, const Variant& col);
+  virtual bool          EnumsFromDataTable(DataTable* dt, const Variant& col);
   // #BUTTON initialize enum values from values in given data table column (TIP: DynEnumTypeFromDTColumn is a better choice - updates automatically whenever the column values change or rows are added)
-
-  override taList_impl* children_() {return &enums;}
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
-  { return enums.Elem(idx, mode); }
-
-  override void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
-
-  override taBase*      FindTypeName(const String& nm) const;
-  override String       GetDisplayName() const;
-
-  override bool         BrowserSelectMe();
-  override bool         BrowserExpandAll();
-  override bool         BrowserCollapseAll();
 
   TA_SIMPLE_BASEFUNS(DynEnumType);
 protected:
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         GenCssPre_impl(Program* prog);
-  override void         GenCssBody_impl(Program* prog);
-  override void         GenCssPost_impl(Program* prog);
 
 private:
-  void  Initialize();
-  void  Destroy()       {}
+  void  Initialize()    {};
+  void  Destroy()       {};
 };
 
 SmartRef_Of(DynEnumType); // DynEnumTypeRef

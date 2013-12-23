@@ -273,8 +273,9 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgType.h
   DynEnumItem.h
   DynEnumItem_List.h
-  DynEnumTypeFromDTColumn.h
+  DynEnumBase.h
   DynEnumType.h
+  DynEnumTypeFromDTColumn.h
   DynEnum.h
   ProgType_List.h
   ProgVar.h
@@ -1357,6 +1358,7 @@ set(ta_SRCS_MAKETA
   ProgType.cpp
   DynEnumItem.cpp
   DynEnumItem_List.cpp
+  DynEnumBase.cpp
   DynEnumType.cpp
   DynEnumTypeFromDTColumn.cpp
   DynEnum.cpp
