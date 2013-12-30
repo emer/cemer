@@ -99,13 +99,13 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  bool thr_l_err = true;
+  l_mix = X_ERR;
   thr_l_mix = 0.5f;
 
   if(taMisc::is_loading) {
     taVersion v634(6, 3, 4);
     if(taMisc::loading_version < v634) { // default prior to 634 is off
-      thr_l_err = false;
+      l_mix = L_MIX;
       thr_l_mix = 0.01f;
     }
   }
