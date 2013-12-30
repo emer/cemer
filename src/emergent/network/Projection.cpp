@@ -75,6 +75,7 @@ void Projection::InitLinks() {
   inherited::InitLinks();
   taBase::Own(spec, this);
   taBase::Own(con_spec, this);
+  taBase::Own(prjn_clr, this);
   Network* mynet = GET_MY_OWNER(Network);
   if(mynet) {
     mynet->SetProjectionDefaultTypes(this);
@@ -102,6 +103,7 @@ void Projection::Copy_(const Projection& cp) {
   recvcons_type = cp.recvcons_type;
   sendcons_type = cp.sendcons_type;
   con_spec = cp.con_spec;
+  prjn_clr = cp.prjn_clr;
   // note: these are not copied; fixed after network copy in FixPrjnIndexes
 //   recv_idx = cp.recv_idx;
 //   send_idx = cp.send_idx;
