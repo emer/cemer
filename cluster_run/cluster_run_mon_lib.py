@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
@@ -706,7 +706,8 @@ class SubversionPoller(object):
 
             # anytime we issue a command or the status of a job changes 
             if self.got_submit or self.status_change:
-                self._get_cluster_info() 
+                self._get_cluster_info()
+                self._update_running_jobs(True)  # get latest info on all running jobs
 
             # 3. Commit the changes.
             self._commit_changes()
@@ -942,8 +943,13 @@ class SubversionPoller(object):
         submit_job = str(row)
         tag = '_'.join((submit_svn, submit_job))
 
+        tag_proj = proj.split(".proj")[0] + "_" + tag + ".proj"
+        if len(proj.split(".proj")) == 2:
+            tag_proj = tag_proj + proj.split(".proj")[1]  # in case of .gz or something
+        shutil.copy(proj, tag_proj)  # we get our own private copy of proj
+
         cmd = cmd.replace("<TAG>", "_" + tag)  # leading ubar added here only
-        cmd = cmd.replace("<PROJ_FILENAME>", proj)
+        cmd = cmd.replace("<PROJ_FILENAME>", tag_proj)
 
         cmdsub = []
         if mpi_nodes <= 1:
@@ -1344,6 +1350,14 @@ class SubversionPoller(object):
             all_files = self._get_dat_files(tag)
             self.jobs_running.set_val(row, "dat_files", all_files[0])
             self.jobs_running.set_val(row, "other_files", all_files[1])
+
+    def _update_running_jobs(self, force_updt = False):
+        for filename in self.all_running_files:
+            self._get_cur_jobs_files(filename) # get all the file names for this dir
+            self._load_cur_files()   # and load jobs and running files -- must exist here
+            self._update_running_job(row, force_updt)
+            # write the new jobs status
+            self._save_cur_files()
 
     def _update_done_job(self, row, force_updt = False):
         # first load job_out info
