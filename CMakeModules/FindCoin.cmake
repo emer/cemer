@@ -42,15 +42,15 @@ if (WIN32)
         ${COINDIR}/lib
       )
     endif (CMAKE_BUILD_TYPE MATCHES "Debug")
-  else (WIN32)
-    FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATHS
-      /usr/lib
-      /usr/local/lib
-      /opt/local/lib
-      /Library/Frameworks/Inventor.framework/Libraries
-      ${COINDIR}/lib
-    )
   endif (QT_USE_5)
+else (WIN32)
+  FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATHS
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
+    /Library/Frameworks/Inventor.framework/Libraries
+    ${COINDIR}/lib
+  )
 endif (WIN32) 
 
 #MESSAGE("COIN_LIBRARY=" ${COIN_LIBRARY})
