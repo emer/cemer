@@ -22,24 +22,36 @@ FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
 # anyways, and must use the debug version (because of runtime linkage) when in Debug anyways
 
 if (WIN32)
-  if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    FIND_LIBRARY(COIN_LIBRARY NAMES coin3d PATHS
+  if (QT_USE_5)
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+      FIND_LIBRARY(COIN_LIBRARY NAMES coin4d PATHS
+        ${COINDIR}/lib
+      )
+    else (CMAKE_BUILD_TYPE MATCHES "Debug") 
+      FIND_LIBRARY(COIN_LIBRARY NAMES coin4 PATHS
+        ${COINDIR}/lib
+      )
+    endif (CMAKE_BUILD_TYPE MATCHES "Debug")
+  else (QT_USE_5)
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+      FIND_LIBRARY(COIN_LIBRARY NAMES coin3d PATHS
+        ${COINDIR}/lib
+      )
+    else (CMAKE_BUILD_TYPE MATCHES "Debug") 
+      FIND_LIBRARY(COIN_LIBRARY NAMES coin3 PATHS
+        ${COINDIR}/lib
+      )
+    endif (CMAKE_BUILD_TYPE MATCHES "Debug")
+  else (WIN32)
+    FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATHS
+      /usr/lib
+      /usr/local/lib
+      /opt/local/lib
+      /Library/Frameworks/Inventor.framework/Libraries
       ${COINDIR}/lib
     )
-  else (CMAKE_BUILD_TYPE MATCHES "Debug") 
-    FIND_LIBRARY(COIN_LIBRARY NAMES coin3 PATHS
-      ${COINDIR}/lib
-    )
-  endif (CMAKE_BUILD_TYPE MATCHES "Debug")
-else (WIN32)
-  FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATHS
-    /usr/lib
-    /usr/local/lib
-    /opt/local/lib
-    /Library/Frameworks/Inventor.framework/Libraries
-    ${COINDIR}/lib
-  )
- endif (WIN32) 
+  endif (QT_USE_5)
+endif (WIN32) 
 
 #MESSAGE("COIN_LIBRARY=" ${COIN_LIBRARY})
 # special work-around for Coin Framework
