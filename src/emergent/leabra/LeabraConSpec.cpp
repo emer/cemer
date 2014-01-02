@@ -99,8 +99,8 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  l_mix = X_ERR;
-  thr_l_mix = 0.5f;
+  l_mix = X_COS_DIFF;
+  thr_l_mix = 0.1f;
 
   if(taMisc::is_loading) {
     taVersion v634(6, 3, 4);
@@ -294,7 +294,8 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
 void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
   cur_lrate = lrate;            // as a backup..
   if(wt_sig.dwt_norm) net->dwt_norm_survey = true;
-  if(stable_mix.cos_diff_lrate) net->cos_diff_survey = true;
+  if(stable_mix.cos_diff_lrate || xcal.l_mix == XCalLearnSpec::X_COS_DIFF)
+    net->cos_diff_survey = true;
 
   if(lrs_value == NO_LRS) return;
 

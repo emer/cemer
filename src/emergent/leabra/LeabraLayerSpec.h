@@ -250,12 +250,12 @@ class E_API CosDiffLrateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulation of learning rate by the recv layer cos_diff between act_p and act_m (0..1 measure of how similar plus and minus phase are across layer) -- maximum learning in the zone of proximal development with mid-range cos_diff values, relative to a running-average cos_diff value, which gets a lrate multiplier of 1
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // turn on cos_diff modulated learning as function of  normalized inner product (cosine) between act_p and act_m -- turning this on automatically turns on a network flag to call Compute_CosDiff at end of plus phase -- 
+  bool          on;             // #DEF_true enable (but don't necessarily engage -- settings determined in LeabraConSpec) cos_diff modulated learning as function of  normalized inner product (cosine) between act_p and act_m -- turning this on automatically turns on a network flag to call Compute_CosDiff at end of plus phase -- only avg_dt is used for l_mix = X_COS_DIFF in LeabraConSpec, rest is used if cos_diff_lrate is selected
   float		lo_diff;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 low end of the learning rate modulation function -- below this cos_diff level, use the constant lo_lrate value
   float		lo_lrate;	// #CONDSHOW_ON_on #MIN_0 learning rate multiplier in effect below the lo_diff cos_diff value
   float         hi_diff;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 high end of the learning rate modulation function -- below this cos_diff level, use the constant hi_lrate value
   float		hi_lrate;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 learning rate mulitiplier in effect above the hi_diff cos_diff value
-  float		avg_dt;	        // #CONDSHOW_ON_on #MIN_0 time constant for computing running average cos_diff value
+  float		avg_dt;	        // #DEF_0.01 #CONDSHOW_ON_on #MIN_0 time constant for computing running average cos_diff value
 
   float	        LrateMod(const float diff_avg, const float cos_diff);
   // get the learning rate modulation factor based on running-average diff and current cos_diff

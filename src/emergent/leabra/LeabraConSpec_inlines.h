@@ -279,21 +279,24 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   float* dwts = cg->OwnCnVar(DWT);
   const int sz = cg->size;
 
-  if(xcal.l_mix == XCalLearnSpec::X_ERR) {
-    for(int i=0; i<sz; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-      C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(dwts[i], clrate, ru->avg_s,
-                                  ru->avg_m, ru->avg_l, su_avg_s, su_avg_m);
-    }
-  }
-  else if(xcal.l_mix == XCalLearnSpec::X_COS_DIFF) {
+  if(xcal.l_mix == XCalLearnSpec::X_COS_DIFF) {
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     const float rlay_cos_diff_avg = 1.0f - rlay->cos_diff_avg;
+    const float efflmix = xcal.thr_l_mix * rlay_cos_diff_avg;
+    const float effmmix = 1.0f - efflmix;
+    const float su_act_mult = efflmix * su_avg_m;
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(dwts[i], clrate, ru->avg_s,
                                     ru->avg_m, ru->avg_l, su_avg_s, su_avg_m,
-                                               rlay_cos_diff_avg);
+                                               su_act_mult, effmmix);
+    }
+  }
+  else if(xcal.l_mix == XCalLearnSpec::X_ERR) {
+    for(int i=0; i<sz; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(dwts[i], clrate, ru->avg_s,
+                                  ru->avg_m, ru->avg_l, su_avg_s, su_avg_m);
     }
   }
   else {                        // L_MIX

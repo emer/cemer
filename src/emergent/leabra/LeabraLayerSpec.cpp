@@ -141,12 +141,12 @@ void DecaySpec::Initialize() {
 }
 
 void CosDiffLrateSpec::Initialize() {
-  on = false;
+  on = true;
   lo_diff = 0.0f;
   lo_lrate = 0.01f;
   hi_diff = 1.0f;
   hi_lrate = 0.01f;
-  avg_dt = 0.002f;
+  avg_dt = 0.01f;
 }
 
 void CosDiffLrateSpec::Defaults_init() {

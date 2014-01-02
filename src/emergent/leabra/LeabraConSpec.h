@@ -205,13 +205,13 @@ INHERITED(SpecMemberBase)
 public:
 
   enum ThrLMix {               // how to compute the thr_l_mix value
+    X_COS_DIFF,                // multiply thr_l_mix by 1 - layer.cos_diff_avg -- running average of the cos diff value between act_m and act_p -- no diff is 1, max diff is 0 -- in comparison with X_ERR, this provides a more consistent mix based only on recv layer average errors -- allows for self-organizing to take place even when there are no errors, as originally conceived -- this is generally the most effective -- automatically turns on the computation of cos_diff_avg in LayerSpecs
     X_ERR,                     // multiply thr_l_mix by error magnitude |ss - mm| to get the effective thr_l_mix value -- this allows much higher and more effective thr_l_mix values to be used, up to the maximum value of 1 (.5 is recommended default though) -- this also automatically adapts the mixture of error-driven and self-organizing depending on the magnitude of error signals in a given layer, which can vary widely
-    X_COS_DIFF,                // multiply thr_l_mix by 1 - layer.cos_diff_avg -- running average of the cos diff value between act_m and act_p -- no diff is 1, max diff is 0 -- in comparison with X_ERR, this provides a more consistent mix based only on recv layer average errors -- allows for self-organizing to take place even when there are no errors, as originally conceived
     L_MIX,                     // just use the thr_l_mix parameter directly with no additional modulation 
   };
 
-  ThrLMix       l_mix;          // how to compute the actual thr_l_mix value used in mixing the long-term (self organizing, BCM-style) threshold with the medium term error-driven value
-  float		thr_l_mix;	// #DEF_0.001:1.0 [0.5 std for X_ERR, 0.01 otherwise] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
+  ThrLMix       l_mix;          // #DEF_X_COS_DIFF how to compute the actual thr_l_mix value used in mixing the long-term (self organizing, BCM-style) threshold with the medium term error-driven value
+  float		thr_l_mix;	// #DEF_0.001:1.0 [0.1 std for X_COS_DIFF, 0.5 for X_ERR, 0.01 otherwise] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
@@ -512,6 +512,22 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
 
+  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(float& dwt, 
+                                                 const float clrate,
+                                      const float ru_avg_s, const float ru_avg_m,
+                                      const float ru_avg_l, const float su_avg_s,
+                                      const float su_avg_m, const float su_act_mult,
+                                                         const float effmmix) 
+  { float srs = ru_avg_s * su_avg_s;
+    float srm = ru_avg_m * su_avg_m;
+    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+    float lthr = su_act_mult * ru_avg_l;
+    float effthr = effmmix * srm + lthr;
+    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
+    dwt += clrate * xcal.dWtFun(sm_mix, effthr);
+  }
+  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
+
   inline void 	C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(float& dwt, 
                                                  const float clrate,
                                       const float ru_avg_s, const float ru_avg_m,
@@ -527,23 +543,7 @@ public:
     effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, thr_l_err version
-
-  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(float& dwt, 
-                                                 const float clrate,
-                                      const float ru_avg_s, const float ru_avg_m,
-                                      const float ru_avg_l, const float su_avg_s,
-                                      const float su_avg_m, const float rlay_cos_diff_avg) 
-  { float srs = ru_avg_s * su_avg_s;
-    float srm = ru_avg_m * su_avg_m;
-    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float efflmix = xcal.thr_l_mix * rlay_cos_diff_avg;
-    float lthr = efflmix * su_avg_m * ru_avg_l;
-    float effthr = (1.0f - efflmix) * srm + lthr;
-    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
-    dwt += clrate * xcal.dWtFun(sm_mix, effthr);
-  }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, thr_l_err version
+  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_ERR version
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                  LeabraNetwork* net);
