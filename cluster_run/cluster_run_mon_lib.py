@@ -931,6 +931,10 @@ class SubversionPoller(object):
                 self._clean_job_files(filename, rev, row)
             elif status == 'ARCHIVEJOB':
                 self._move_job_to_archive(filename, rev, row)
+            elif status == 'UPDTRUN':
+                # nop -- submit will trigger update automatically
+                if debug:
+                    print "update runniung jobs for project root %s" % self.cur_proj_root
             elif status == 'PROBE':
                 self._query_running_jobs(self.cur_running_file, True)  # True = force updt
                 if debug:
@@ -1402,7 +1406,7 @@ class SubversionPoller(object):
             for row in reversed(range(self.jobs_running.n_rows())):
                 status = self.jobs_running.get_val(row, "status")
                 tag = self.jobs_running.get_val(row, "tag")
-                if status == 'RUNNING'
+                if status == 'RUNNING':
                     self._update_running_job(row, force_updt)
             # write the new jobs status
             self._save_cur_files()
