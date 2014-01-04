@@ -1349,6 +1349,8 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
   String proj_base_nm = proj->file_name;
   if(proj_base_nm.contains(".proj"))
     proj_base_nm = proj_base_nm.before(".proj",-1);
+  if(proj_base_nm.contains(tag))  // cluster run appends tag to project files..
+    proj_base_nm = proj_base_nm.before(tag,-1);
   String base_dir = taMisc::NoFinalPathSep(proj->proj_dir);
   String fnm = taMisc::GetFileFmPath(proj_base_nm);
   // this is special support for the ClusterRun system -- checks for 

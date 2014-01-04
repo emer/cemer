@@ -90,6 +90,8 @@ public:
   // #BUTTON Run this model on a cluster using the parameters as specified here -- commits project file to repository -- if cur_search_algo is selected then this will launch a parameter search process -- otherwise it will just run with current parameters
   virtual bool  Update();
   // #BUTTON updates jobs_running and jobs_done tables based on latest results from the cluster -- returns true if new data or status was available -- cluster will only send updates if a job was Run or a Probe was sent from this project, while the script is running
+  virtual void  UpdtRunning();
+  // #BUTTON pings the cluster to update status of running jobs -- outside of this command, cluster will only send updates if a job was Run or a Probe was sent from this project, while the script is running
   virtual void  Cont();
   // #BUTTON Continue the search process by submitting the next batch of jobs.
   virtual void  Kill();

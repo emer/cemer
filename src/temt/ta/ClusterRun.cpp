@@ -174,6 +174,20 @@ void ClusterRun::SortClusterInfoTable() {
   cluster_info.Sort("state", true);
 }
 
+void ClusterRun::UpdtRunning() {
+  if(!initClusterManager())
+    return;
+  
+  jobs_submit.ResetData();
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("UPDTRUN", "status", dst_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+  // Commit the table.
+  m_cm->CommitJobSubmissionTable();
+  // todo: maybe don't update?
+  AutoUpdateMe();
+}
+
 void ClusterRun::Cont() {
   if(!initClusterManager())
     return;
