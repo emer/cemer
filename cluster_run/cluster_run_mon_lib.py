@@ -1399,7 +1399,11 @@ class SubversionPoller(object):
         for filename in self.all_running_files:
             self._get_cur_jobs_files(filename) # get all the file names for this dir
             self._load_cur_files()   # and load jobs and running files -- must exist here
-            self._update_running_job(row, force_updt)
+            for row in reversed(range(self.jobs_running.n_rows())):
+                status = self.jobs_running.get_val(row, "status")
+                tag = self.jobs_running.get_val(row, "tag")
+                if status == 'RUNNING'
+                    self._update_running_job(row, force_updt)
             # write the new jobs status
             self._save_cur_files()
 
