@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.4.0 rev6687
+// ta_Dump File v3.0 -- code v6.3.3.0 rev6570
 LeabraProject .projects["LeabraFlex"] { 
  taBase_Group @.templates = [0] {
  };
@@ -297,66 +297,18 @@ LeabraProject .projects["LeabraFlex"] {
   DataTable_Group @.gp["ConfigData"] = [1] { 
    DataTable @["ConfigTable"] { 
     DataTableCols @.data = [15] {
-     String_Data @["config_id"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     String_Data @["config_desc"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     String_Data @["init_prog"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     String_Data @["run_prog"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     String_Data @["startup_prog"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["train_epochs"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["trials_per_epoch"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["save_final_wts"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["save_wts_interval"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["test_interval"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["log_trials"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     int_Data @["load_weights"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     String_Data @["config_id"] { };
+     String_Data @["config_desc"] { };
+     String_Data @["init_prog"] { };
+     String_Data @["run_prog"] { };
+     String_Data @["startup_prog"] { };
+     int_Data @["train_epochs"] { };
+     int_Data @["trials_per_epoch"] { };
+     int_Data @["save_final_wts"] { };
+     int_Data @["save_wts_interval"] { };
+     int_Data @["test_interval"] { };
+     int_Data @["log_trials"] { };
+     int_Data @["load_weights"] { };
      String_Data @["weights_file"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -426,9 +378,6 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["batch_str"] { };
     ProgVar @["batch_start"] { };
     ProgVar @["startup_prog"] { };
-   };
-
-   ProgBrkPt_List @.brk_pts = [0] {
    };
 
    Function_List @.functions = [1] {
@@ -621,9 +570,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["SampleEpochOutData"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -690,9 +636,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["max_batch"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -727,7 +670,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     ProgType_List @.types = [1] {
-     DynEnumTypeFromDTColumn @["ConfigOptions"] { 
+     DynEnumType @["ConfigOptions"] { 
       DynEnumItem_List @.enums = [1] {
        DynEnumItem @["basic_train"] { };
       };
@@ -745,9 +688,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["run_prog"] { };
      ProgVar @["init_prog"] { };
      ProgVar @["stop_train"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -812,9 +752,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["Config"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -845,9 +782,6 @@ LeabraProject .projects["LeabraFlex"] {
 
      ProgVar_List @.vars = [1] {
       ProgVar @["lay_lesion_list"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -904,9 +838,6 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["train_epochs"] { };
       ProgVar @["update_net_view"] { };
       ProgVar @["StdInputData"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -984,9 +915,6 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["BasicTrainTime"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1116,9 +1044,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["input_idx"] { };
      ProgVar @["dmem_rows"] { };
      ProgVar @["PermIdxTable"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [3] {
@@ -1295,9 +1220,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["event_idx"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1338,9 +1260,6 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["LayerWriter_0"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1405,9 +1324,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["weights_file"] { };
      ProgVar @["load_st_epc"] { };
      ProgVar @["lrs_step_epochs"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1484,9 +1400,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["rnd_seeds"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1519,9 +1432,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["i"] { };
      ProgVar @["laygp_nm"] { };
      ProgVar @["laygp"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1631,9 +1541,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["laygp"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1724,9 +1631,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["dmem_rnd_seed"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1803,9 +1707,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["Train"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1849,9 +1750,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["BasicTrainTime"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1891,9 +1789,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["compute_rel_netin"] { };
      ProgVar @["save_wts_interval"] { };
      ProgVar @["stable_wt_update_interval"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1981,9 +1876,6 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [0] {
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -2016,9 +1908,6 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [2] {
      ProgVar @["compute_rel_netin"] { };
      ProgVar @["update_net_view"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -2075,9 +1964,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["i"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -2126,9 +2012,6 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [0] {
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -2164,9 +2047,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["i"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -2198,9 +2078,6 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["update_net_view"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -2238,9 +2115,6 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["epoch_str"] { };
      ProgVar @["batch_str"] { };
      ProgVar @["final_tag"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -2325,9 +2199,6 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["trial_netmon"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -2402,9 +2273,6 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["epoch_mon_data"] { };
       ProgVar @["epoch_netmon"] { };
       ProgVar @["epoch_timer"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -2688,9 +2556,6 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
    };
-
-   Weights_List @.weights = [0] {
-   };
   };
  };
 };
@@ -2740,12 +2605,10 @@ LeabraProject .projects["LeabraFlex"] {
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-nojs\"><head>
+   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
 <meta charset=\"UTF-8\"><title>LeabraFlexProgs - Emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.22alpha\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/emergent/api.php?action=rsd\">
@@ -2762,7 +2625,269 @@ LeabraProject .projects["LeabraFlex"] {
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
 
-<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20131021T011027Z\"></script></head></html>";
+<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20131021T011027Z\"></script>
+<script>if(window.mw){
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+}</script><script>if(window.mw){
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
+\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,
+\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:9e91be8826d7f1fe1dbad0bfb34cc246 */
+}</script>
+<script>if(window.mw){
+mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
+}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=gumaxdd&amp;version=20131021T164637Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20131021T164637Z&amp;*\"></script>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20131021T164638Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131021T011655Z&amp;*\"></script></head>
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd action-view\">
+<div id=\"gumax-page\">
+	<!--///===== Drop Down menu script =====///-->
+
+	<!--/// no need for mediawiki 1.17.0 and up
+	<script type=\"text/javascript\" src=\"/emergent/skins/gumaxdd/scripts/jquery-1.4.2.min.js?303\"></script>
+	    ///-->
+
+	<!--/// click style ///-->
+	<script type=\"text/javascript\" src=\"/emergent/skins/gumaxdd/scripts/jquery.droppy-0.1.2.js?303\"></script>
+	<script type=\"text/javascript\">jQuery(document).ready( function($){  $(function(){ $('#gumax-nav').droppy({trigger: 'click'}); })  } );</script>
+
+	<!--/// auto style 
+	<script type=\"text/javascript\" src=\"/emergent/skins/gumaxdd/scripts/jquery.droppy.js?303\"></script>
+	<script type=\"text/javascript\">jQuery(document).ready( function($){  $(function(){ $('#gumax-nav').droppy({speed: 10}); })  } );</script>
+	    ///-->
+
+	<!--///===== End of Drop Down menu =====///-->
+
+
+	<div id=\"gumax-header\">
+
+		<div id=\"gumax-p-login\">
+				<!--li><a href=\"#\">My Accounts</a-->
+		<ul>
+			<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li>
+			<li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\">Log in</a></li>
+		</ul>
+	<!--/li-->
+		</div> <!-- end of Login Tools -->
+
+		<div id=\"gumax-p-logo\">
+				<div id=\"p-logo\">
+		<a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\"></a>
+	</div>
+	<script type=\"text/javascript\"> if (window.isMSIE55) fixalpha(); </script>
+		</div> <!-- end of gumax-p-logo -->
+
+		
+	<div id=\"gumax-p-search\">
+		<!--h5><label for=\"searchInput\">Search</label></h5-->
+		<div id=\"gumax-searchBody\">
+			<form action=\"/emergent/index.php/Special:Search\" id=\"searchform\"><div>
+				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\">
+				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\">&nbsp;
+				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\">
+			</div></form>
+		</div>
+	</div>
+
+	</div> <!-- ///// end of gumax-header ///// -->
+
+	<div style=\"clear:both\"></div>
+
+
+	<div id=\"gumax-p-navigation\">
+		 	<ul id=\"gumax-nav\" class=\"droppy\">
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Navigation  ª</a>
+				<ul>
+ 					<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\">Main page</a></li>
+ 					<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\">Recent changes</a></li>
+ 					<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
+ 					<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
+ 					<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\">Bug tracker</a></li>
+ 					<li id=\"n-Mailing-list\"><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">Mailing list</a></li>
+				<li><p style=\"margin:0; padding: 7px 0;\"></p></li>
+ 				</ul>
+			</li>
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Tools  ª</a>
+			<ul>
+				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
+				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
+<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
+				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li>			</ul>
+			</li>
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Print/export  ª</a>
+				<ul>
+ 					<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlexProgs\">Create a book</a></li>
+ 					<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlexProgs&amp;oldid=9226&amp;writer=rl\">Download as PDF</a></li>
+ 					<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\">Printable version</a></li>
+				<li><p style=\"margin:0; padding: 7px 0;\"></p></li>
+ 				</ul>
+			</li>
+	</ul>
+	</div> <!-- end of Navigation Menu -->
+
+	<div style=\"clear:both\"></div>
+
+	<!-- gumax-content-actions -->
+	<div id=\"gumax-content-actions\">
+				<ul>
+
+			 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/LeabraFlexProgs\">Page</a></li>
+			 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\">Discussion</a></li>
+			 <li id=\"ca-viewsource\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">View source</a></li>
+			 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\">History</a></li>
+		</ul>
+
+	</div>
+	<!-- end of gumax-content-actions -->
+
+	<div class=\"gumax-p-navigation-spacer\"></div>
+
+	<!-- gumax-article-picture -->
+		<!-- end of gumax-article-picture -->
+
+	<!-- gumax-content-body -->
+		<div id=\"gumax-content-body\">
+		<div class=\"gumax-firstHeading\">LeabraFlexProgs</div>
+		<div class=\"visualClear\"></div>
+		<!-- content -->
+		<div id=\"content\">
+			<a name=\"top\" id=\"top\"></a>
+						<div id=\"bodyContent\" class=\"gumax-bodyContent\">
+				<h3 id=\"siteSub\">From Emergent</h3>
+				<div id=\"contentSub\"></div>
+												<div id=\"jump-to-nav\">Jump to: <a href=\"#column-one\">navigation</a>, <a href=\"#searchInput\">search</a></div>				<!-- start content -->
+				<div id=\"mw-content-text\" lang=\"en\" dir=\"ltr\" class=\"mw-content-ltr\"><p>Documentation for the <code>LeabraFlex</code> project template (also avail in <code>demo/leabra/leabra_flex_progs.proj</code>), which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\" title=\"Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
+</p>
+<div id=\"toc\" class=\"toc\"><div id=\"toctitle\"><h2>Contents</h2><span class=\"toctoggle\">&nbsp;[<a href=\"#\" class=\"internal\" id=\"togglelink\">hide</a>]&nbsp;</span></div>
+<ul>
+<li class=\"toclevel-1 tocsection-1\"><a href=\"#ConfigData.2FConfigTable\"><span class=\"tocnumber\">1</span> <span class=\"toctext\">ConfigData/ConfigTable</span></a></li>
+<li class=\"toclevel-1 tocsection-2\"><a href=\"#Program_Hierarchy\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Program Hierarchy</span></a></li>
+<li class=\"toclevel-1 tocsection-3\"><a href=\"#UtilProgs\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">UtilProgs</span></a></li>
+<li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
+</ul>
+</div>
+<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span></h1>
+<p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
+</p>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span></h1>
+<p>The call sequence is:
+</p>
+<ul><li> <b>MasterTrain</b>
+</li></ul>
+<dl><dd><ul><li> <b>InitProgs[init_prog]</b> (as spec'd in ConfigTable)
+</li><li> loop over <b>MasterRun</b> until stop_train is set to true
+</li></ul>
+<dl><dd><ul><li> <b>RunProgs[run_prog]</b> (as spec'd in ConfigTable)
+</li></ul>
+<dl><dd><ul><li> typically calls one or more <b>TaskProgs</b>, increments counters and does appropriate Epoch and higher-level housekeeping as necessary.
+</li></ul>
+</dd></dl>
+</dd></dl>
+</dd></dl>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span></h1>
+<p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
+</p>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span></h1>
+<p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
+</p>
+<ul><li> After common weight initialization etc, the <b>TrainStart</b> program will generate a new random seed just before starting the Epoch -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.
+</li></ul>
+<ul><li> It is <b>essential</b> that the different nodes still end up calling <b>Compute_Weights</b> the same number of times, after roughly the same amount of overall computation -- this is where the weight changes are synchronized across processors -- the simulation will lock up and hang if these do not align.
+</li></ul>
+<ul><li> The <b>epoch_trials</b> value gets divided by dmem_nprocs in StdGlobalsInit, such that each processor runs this reduced number of trials, <i>with the network-&gt;trial counter going from 0 to this lower epoch_trials value</i> -- it does not do the interleaving that is done in the hierarchical programs.  This also means that trial numbers will be duplicated if you merge separate trial log data tables into a single table, which is not necessarily a problem, but you may need to do things a bit differently in analyzing the data.
+</li></ul>
+<ul><li> If you are using a traditional list of events in an input_data table, use ChoosePermutedEvent and it will work properly with dmem, just like the standard programs.  This program maintains its own internal counter, and simply iterates in a permuted order through the events and then repeats -- it does not need to be synchronized with the trial and epoch structure of the programs (to achieve this, simply ensure that the epoch_trials is the same as the number of rows in the input data table).
+</li></ul>
+
+<!-- 
+NewPP limit report
+CPU time usage: 0.060 seconds
+Real time usage: 0.063 seconds
+Preprocessor visited node count: 15/1000000
+Preprocessor generated node count: 20/1000000
+Post?expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20131021034730
+ -->
+</div><div class=\"printfooter\">
+Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
+				<div class=\"visualClear\"></div>
+			</div> <!-- end of bodyContent -->
+		</div> <!-- end of content -->
+	</div> <!-- end of gumax-content-body -->
+
+
+	<!-- end of gumax-content-body -->
+
+
+	<div class=\"gumax-footer-spacer\"></div>
+
+
+	<div id=\"gumax-footer\">
+
+		<!-- personal specia tools  -->
+		
+		<div id=\"gumax-special-tools\">
+			<ul>
+					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
+					<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
+	<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
+					<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li>			</ul>
+		</div>
+
+		<!-- end of personal specia tools  -->
+
+		<!-- gumax-f-message -->
+		
+		<div id=\"gumax-article-message\">
+			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</span>
+			<span id=\"f-viewcount\">This page has been accessed 7,688 times. </span>
+					</div>
+
+		<!-- end of gumax-f-message -->
+
+		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
+mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready\"});
+}</script>
+<script>if(window.mw){
+mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\"],null,true);
+}</script>
+<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
+
+	</div> <!-- ///// end of gumax-footer ///// -->
+
+
+	<!-- gumax-f-list -->
+	
+		<div id=\"gumax-credit-list\">
+			<ul>
+								<li id=\"about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
+								<li id=\"f-poweredby\"><a href=\"http://mediawiki.org\" target=\"_blank\">Powered by MediaWiki</a></li>
+				<li id=\"f-designedby\"><a href=\"http://paulgu.com\" target=\"_blank\">Designed by Paul Gu</a></li>
+			</ul>
+		</div>
+
+	<!-- end of gumax-f-list -->
+
+
+</div> <!-- ===== end of gumax-page ===== -->
+
+	<div style=\"clear:both\"></div>
+
+	<div id=\"gumax_page_spacer\"></div>
+
+
+<!-- Served in 0.365 secs. -->
+
+
+
+
+	
+</body></html>";
   };
  };
  wizards {
@@ -5033,16 +5158,6 @@ LeabraProject .projects["LeabraFlex"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["config_id"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_61";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="config_id";
       desc="identifier for this type of configuration";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5057,19 +5172,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] "basic_train";"test";      };
+      [1] "basic_train";      };
      };
      String_Data @["config_desc"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_62";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="config_desc";
       desc="description of this configuration";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5084,19 +5189,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] "default basic training";;      };
+      [1] "default basic training";      };
      };
      String_Data @["init_prog"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_63";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="init_prog";
       desc="program to run to initialize at start of training";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5111,19 +5206,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] "BasicInit";;      };
+      [1] "BasicInit";      };
      };
      String_Data @["run_prog"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_64";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="run_prog";
       desc="program controlling each step of running";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5138,19 +5223,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] "BasicRun";;      };
+      [1] "BasicRun";      };
      };
      String_Data @["startup_prog"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_65";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="startup_prog";
       desc="program for handling startup args specific to this environment";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5165,19 +5240,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] "BasicStartup";;      };
+      [1] "BasicStartup";      };
      };
      int_Data @["train_epochs"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_66";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="train_epochs";
       desc="number of total epochs to train for";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5192,19 +5257,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 200;0;      };
+      [1] 200;      };
      };
      int_Data @["trials_per_epoch"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_67";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="trials_per_epoch";
       desc="number of individual trials per epoch";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5219,19 +5274,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 50;0;      };
+      [1] 50;      };
      };
      int_Data @["save_final_wts"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_68";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="save_final_wts";
       desc="save final weights after training (1 = yes, 0 = no)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5246,19 +5291,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 1;0;      };
+      [1] 1;      };
      };
      int_Data @["save_wts_interval"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_69";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="save_wts_interval";
       desc="how frequently to save weights during training (in epochs)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5273,19 +5308,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 200;0;      };
+      [1] 200;      };
      };
      int_Data @["test_interval"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_70";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="test_interval";
       desc="how frequently to test performance without training -- only applicable to training cases";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5300,19 +5325,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 1000;0;      };
+      [1] 1000;      };
      };
      int_Data @["log_trials"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_71";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="log_trials";
       desc="whether to log trial-level data or not (1 = yes, 0 = no)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5327,19 +5342,9 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 0;0;      };
+      [1] 0;      };
      };
      int_Data @["load_weights"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_72";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.3125;
-	val_type_fixed=0;
-       };
-      };
       name="load_weights";
       desc="whether to load weights at start";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5354,7 +5359,7 @@ LeabraProject .projects["LeabraFlex"] {
       width=0;
       ar {
        name=;
-      [2] 0;0;      };
+      [1] 0;      };
      };
      String_Data @["weights_file"] {
       UserDataItem_List @*(.user_data_) {
@@ -5363,7 +5368,7 @@ LeabraProject .projects["LeabraFlex"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.2593750059604645;
+	value 6 0=0.2614770531654358;
 	val_type_fixed=0;
        };
       };
@@ -5378,10 +5383,10 @@ LeabraProject .projects["LeabraFlex"] {
       dim_names {
        name=;
       [0]       };
-      width=83;
+      width=0;
       ar {
        name=;
-      [2] ;;      };
+      [1] ;      };
      };
      int_Data @["load_st_epc"] {
       UserDataItem_List @*(.user_data_) {
@@ -5390,7 +5395,7 @@ LeabraProject .projects["LeabraFlex"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1124999970197678;
+	value 6 0=0.113772451877594;
 	val_type_fixed=0;
        };
       };
@@ -5405,10 +5410,10 @@ LeabraProject .projects["LeabraFlex"] {
       dim_names {
        name=;
       [0]       };
-      width=36;
+      width=0;
       ar {
        name=;
-      [2] 1;0;      };
+      [1] 1;      };
      };
      int_Data @["lrs_step_epochs"] {
       UserDataItem_List @*(.user_data_) {
@@ -5422,7 +5427,7 @@ LeabraProject .projects["LeabraFlex"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1468749940395355;
+	value 6 0=0.1497005969285965;
 	val_type_fixed=0;
        };
       };
@@ -5437,10 +5442,10 @@ LeabraProject .projects["LeabraFlex"] {
       dim_names {
        name=;
       [0]       };
-      width=47;
+      width=0;
       ar {
        name=;
-      [2] 50;0;      };
+      [1] 50;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -5521,6 +5526,7 @@ LeabraProject .projects["LeabraFlex"] {
    short_nm="Startup";
    tags="Leabra, Startup";
    desc="run project in the background (replaces leabra_startup.css)
+
 command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xxx]";
    flags=STARTUP_RUN;
    objs {
@@ -5677,11 +5683,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      init_from=NULL;
     };
-   };
-   brk_pts {
-    name=;
-    el_typ=ProgBrkPt;
-    el_def=0;
    };
    functions {
     name=;
@@ -6721,11 +6722,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -7034,11 +7030,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -7164,7 +7155,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=DynEnumType;
      el_def=0;
-     DynEnumTypeFromDTColumn @["ConfigOptions"] {
+     DynEnumType @["ConfigOptions"] {
       name="ConfigOptions";
       desc=;
       enums {
@@ -7178,8 +7169,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       bits=0;
-      srcTable=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
-      srcColumn="config_id";
      };
     };
     args {
@@ -7217,7 +7206,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="cur_config";
       var_type=T_DynEnum;
       dyn_enum_val {
-       enum_type=NULL;
+       enum_type=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].types["ConfigOptions"]$$;
        value=0;
       };
       objs_ptr=0;
@@ -7266,11 +7255,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="set this var from any other program to stop training";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -7552,11 +7536,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -7669,11 +7648,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="layers to lesion for this run";
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name=;
@@ -7914,11 +7888,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name=;
@@ -8234,11 +8203,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -8802,11 +8766,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -9405,11 +9364,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -9575,11 +9529,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -9898,11 +9847,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -10265,11 +10209,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -10402,11 +10341,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -10898,11 +10832,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -11314,11 +11243,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -11617,11 +11541,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -11772,11 +11691,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -11933,11 +11847,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -12193,11 +12102,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=ProgVar;
      el_def=0;
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -12309,11 +12213,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="determines whether to update any network view displays after trial is completed";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -12494,11 +12393,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -12651,11 +12545,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_typ=ProgVar;
      el_def=0;
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -12779,11 +12668,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -12890,11 +12774,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -12949,6 +12828,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     short_nm="SavWts";
     tags="Weights, Specs";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
+
 also save specs.";
     flags=NO_STOP_STEP;
     objs {
@@ -13061,11 +12941,6 @@ also save specs.";
       desc="batch + epoch";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -13734,11 +13609,6 @@ also save specs.";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -14373,11 +14243,6 @@ also save specs.";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -14636,16 +14501,27 @@ also save specs.";
       };
       Comment @[6] {
        desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
+
 http://grey.colorado.edu/emergent/index.php/Test_Programs
+
 quick summary here:
+
 * Add computed, data_agg, op = LAST items to epoch_netmon to grab from the EpochTestOutputData table.
+
 * duplicate this program, call the new one LeabraEpochMonitor_postest, remove all netmon items for training, leaving only test,
+
   turn off rmv_orphan_cols flag, and set arg for UpdateMonitors in init_code to false
+
 * in original LeabraEpochMonitor, click OFF flag for WriteClose() line
+
 * in LeabraEpoch add call to LeabraEpochTest, then _posttest after the first LeabraEpochMonitor call.
+
 This will ensure that training data is monitored first, right after the training epoch, and then the test epoch is run,
+
 and the testing data is updated.  The first epoch monitor should have all the items, so that it formats the data table correctly.
+
  
+
 ";
        flags=0;
        orig_prog_code=;
@@ -14673,17 +14549,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.04897494241595268;
+     value 6 0=0.0492359921336174;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9972144961357117;
+     value 6 0=0.9973333477973938;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7972665429115295;
+     value 6 0=0.7979626655578613;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -14693,7 +14569,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABVgAAAosAAAFRAQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAAAAAADAAABDwAAAmwAAAN4AQAAAAcBAAAAAQ==";
      val_type_fixed=0;
     };
    };
@@ -15621,17 +15497,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.0182232353836298;
+       value 6 0=0.007640067953616381;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.06058495864272118;
+       value 6 0=0.04053333401679993;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7050113677978516;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -15658,12 +15534,19 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  save_as_only=0;
  auto_name=1;
  last_change_desc="* everything is now in Layer_Groups and spec groups, for portability between projects
+
 * integrated highvis model for objrec, with separate img filtering pathways, etc
+
 * two 'ticks' per trial: fixate, then recognize -- RobotTrial coordinates -- other progs conditionalize on network.tick
+
 * objs_per_epc in lesson -- only present a limited # of objects per epoch repeatedly over the lesson -- makes the carousel much more efficient
+
   this is all impl in the new Build_Presentation_Robot
+
 * need to change camera fov for objrec -- not enough resolution for fovea otherwise
+
 * added load_0_epc in lesson -- reinit network.epoch after loading weights -- we load pretrained eye weights, but want to start counter over..
+
 ";
  networks {
   name=;
@@ -15821,7 +15704,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="RandomSpec_6": type=UNIFORM: mean=0.3: var=0: par=1: };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
+     act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
@@ -15933,7 +15816,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_sig {gain=6: off=1: dwt_norm=1: };
        stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
-       xcal {thr_l_err=0: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
        rel_net_adapt {
 	on=0;
@@ -16013,7 +15896,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      wt_sig {gain=6: off=1: dwt_norm=1: };
      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {thr_l_err=0: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
      rel_net_adapt {
       on=0;
@@ -16056,10 +15939,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ff0=0.1;
 	min_i=0;
        };
-       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
        cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
@@ -16095,10 +15978,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ff0=0.1;
       min_i=0;
      };
-     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
+     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
      decay {event=1: phase=0: phase2=0: };
      cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
@@ -16226,7 +16109,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Output"] {
@@ -16246,7 +16128,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
      };
@@ -16312,7 +16193,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
-       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
      };
@@ -16341,11 +16221,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
-   };
-   weights {
-    name=;
-    el_typ=Weights;
-    el_def=0;
    };
    flags=0;
    auto_build=AUTO_BUILD;
