@@ -107,6 +107,8 @@ job_out_bytes_total = 4096
 #   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
 #   GETFILES  tell cluster to check in all files listed in this other_files entry
 #   REMOVEJOB remove given tag job from the jobs done list
+#   CLEANJOBFILES tell cluster to remove job files associated with tags
+#   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
 #   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
@@ -620,6 +622,8 @@ class SubversionPoller(object):
         self.model_files = ""
         self.all_running_files = set()
         self.cur_proj_root = ""  # current project root directory (parent of subdirs)
+        self.cur_proj_file = ""
+        self.cur_tag_proj_file = ""  # project file with tag appended
         self.cur_submit_file = ""
         self.cur_running_file = ""
         self.cur_done_file = ""
@@ -731,6 +735,12 @@ class SubversionPoller(object):
                                    for m in [self.mod_re_comp.match(l)] if m]
         return self.submit_files
 
+    def _get_tag_proj_file(self, tag):
+        self.cur_tag_proj_file = self.cur_proj_file.split(".proj")[0] + "_" + tag + ".proj"
+        if len(self.cur_proj_file.split(".proj")) == 2:
+            self.cur_tag_proj_file = self.cur_tag_proj_file + self.cur_proj_file.split(".proj")[1]  # in case of .gz or something
+        
+
     def _process_new_submission(self, filename):
         try:
             # Check if the commit author matches (if requested).
@@ -790,6 +800,7 @@ class SubversionPoller(object):
     def _get_cur_jobs_files(self, filename):
         self.cur_proj_root = os.path.dirname(filename)
         self.cur_proj_root = os.path.dirname(self.cur_proj_root)
+        self.cur_proj_file = self.cur_proj_root + "/models/" + os.path.basename(self.cur_proj_root) + ".proj"  # this is not accurate if .gz proj
         self.cur_submit_file = self.cur_proj_root + '/submit/jobs_submit.dat'
         self.cur_running_file = self.cur_proj_root + '/submit/jobs_running.dat'
         self.cur_done_file = self.cur_proj_root + '/submit/jobs_done.dat'
@@ -912,8 +923,12 @@ class SubversionPoller(object):
                 self._getdata_job(filename, rev, row)
             elif status == 'GETFILES':
                 self._getfiles_job(filename, rev, row)
+            elif status == 'REMOVEFILES':
+                self._removefiles_job(filename, rev, row)
             elif status == 'REMOVEJOB':
                 self._remove_job(filename, rev, row)
+            elif status == 'CLEANJOBFILES':
+                self._clean_job_files(filename, rev, row)
             elif status == 'ARCHIVEJOB':
                 self._move_job_to_archive(filename, rev, row)
             elif status == 'PROBE':
@@ -930,6 +945,7 @@ class SubversionPoller(object):
 
         proj = self.model_files[0]  
         proj = os.path.abspath(proj)
+        self.cur_proj_file = proj
 
         cmd = self.jobs_submit.get_val(row, "command")
         params = self.jobs_submit.get_val(row, "params")
@@ -943,13 +959,12 @@ class SubversionPoller(object):
         submit_job = str(row)
         tag = '_'.join((submit_svn, submit_job))
 
-        tag_proj = proj.split(".proj")[0] + "_" + tag + ".proj"
-        if len(proj.split(".proj")) == 2:
-            tag_proj = tag_proj + proj.split(".proj")[1]  # in case of .gz or something
-        shutil.copy(proj, tag_proj)  # we get our own private copy of proj
+        self._get_tag_proj_file(tag)
+
+        shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
 
         cmd = cmd.replace("<TAG>", "_" + tag)  # leading ubar added here only
-        cmd = cmd.replace("<PROJ_FILENAME>", tag_proj)
+        cmd = cmd.replace("<PROJ_FILENAME>", self.cur_tag_proj_file)
 
         cmdsub = []
         if mpi_nodes <= 1:
@@ -1045,7 +1060,7 @@ class SubversionPoller(object):
         if donerow >= 0:
             job_out_file = self.jobs_done.get_val(donerow, "job_out_file")
             job_no = self.jobs_done.get_val(donerow, "job_no")
-            self._remove_job_files(job_out_file, job_no)
+            self._remove_job_files(job_out_file, job_no, tag)
             self.jobs_archive.append_row_from(self.jobs_done, donerow)
             self.jobs_done.remove_row(donerow)
         else:
@@ -1105,6 +1120,25 @@ class SubversionPoller(object):
                        '--non-interactive', fdf]
                 # Don't check_output, just dump it to stdout (or nohup.out).
                 subprocess.call(cmd)
+
+    def _removefiles_job(self, filename, rev, row):
+        other_files = self.jobs_submit.get_val(row, "other_files")
+        self._remove_files("no tag", other_files)
+
+    def _remove_files(self, tag, dat_files):
+        if len(dat_files) == 0:
+            return
+        dats = dat_files.split()
+        resdir = self.cur_proj_root + "/results/"
+        for df in dats:
+            fdf = resdir + df
+            # print "dat file: %s" % fdf
+            if os.path.exists(fdf):
+                cmd = ['svn', 'delete', '--username', self.username,
+                       '--non-interactive', fdf]
+                # Don't check_output, just dump it to stdout (or nohup.out).
+                subprocess.call(cmd)
+                os.remove(fdf)  # for good measure, just nuke it directly
 
     def _unexpected_file(self, filename, rev):
         print 'Ignoring file committed to "submit" folder ' \
@@ -1301,12 +1335,22 @@ class SubversionPoller(object):
         # print "from out file: %s got job out: %s" % (job_out_file, job_out)
         return job_out
 
-    def _remove_job_files(self, job_out_file, job_no):
+    def _clean_job_files(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        donerow = self.jobs_done.find_val("tag", tag)
+        if donerow >= 0:
+            job_out_file = self.jobs_done.get_val(donerow, "job_out_file")
+            job_no = self.jobs_done.get_val(donerow, "job_no")
+            self._remove_job_files(job_out_file, job_no, tag)
+
+    def _remove_job_files(self, job_out_file, job_no, tag):
         if os.path.exists(job_out_file):
             os.remove(job_out_file)
         jsh = "JOB." + job_no + ".sh"   # another likely suspect
         if os.path.exists(jsh):
             os.remove(jsh)
+        self._get_tag_proj_file(tag)
+        os.remove(self.cur_tag_proj_file)
 
     def _get_dat_files(self, tag):
         # next look for output files
@@ -1383,8 +1427,8 @@ class SubversionPoller(object):
             all_files = self._get_dat_files(tag)
             self.jobs_done.set_val(row, "dat_files", all_files[0])
             self.jobs_done.set_val(row, "other_files", all_files[1])
-        elif deadtime.seconds > job_update_window * 60: # dead long enough to cleanup
-            self._remove_job_files(job_out_file, job_no)
+#        elif deadtime.seconds > job_update_window * 60: # dead long enough to cleanup
+#            self._remove_job_files(job_out_file, job_no, tag)
 
     def _move_job_to_done(self, row):
         self.status_change = True
@@ -1452,8 +1496,8 @@ class SubversionPoller(object):
                     continue
                 job_out_file = self.jobs_done.get_val(row, "job_out_file")
                 job_no = self.jobs_done.get_val(row, "job_no")
-                self._remove_job_files(job_out_file, job_no)  # nuke now!
                 tag = self.jobs_done.get_val(row, "tag")
+                self._remove_job_files(job_out_file, job_no, tag)  # nuke now!
                 if tag == trg_tag:
                     continue  # skip the target guy
                 self.jobs_done.remove_row(row) # done with it!

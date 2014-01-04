@@ -105,10 +105,16 @@ public:
   // #MENU_BUTTON #MENU_ON_Files list all the files currently in the results subdirectory of this project's svn repository -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  GetFiles();
   // #MENU_BUTTON #MENU_ON_Files tell the cluster to check in the files selected in file_list tab -- you can then do Update after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval), and then access the files as you wish
+  virtual void  CleanJobFiles();
+  // #MENU_BUTTON #MENU_ON_Files #CONFIRM #MENU_SEP_BEFORE remove all the job management files associated with the jobs selected in jobs_done or jobs_archive lists -- these are the JOB.* files and the tagged copy of the project that was used to launch the job(s) -- they are also automatically removed when a job is moved to archived
   virtual void  RemoveFiles();
-  // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the files selected in the file_list tab -- or associated with selected tabs -- this does an svn remove and also removes the files locally -- for cleaning up stuff you are done with
+  // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the files selected in the file_list tab -- or associated with selected jobs -- this does an svn remove and also removes the files locally -- for cleaning up stuff you are done with
+  virtual void  RemoveNonDataFiles();
+  // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the non-data files associated with jobs selected in the jobs_done or jobs_archive lists -- these are typically larger files such as weight files, which it is good to clean up eventually
   virtual void  GetProjAtRev();
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
+  virtual void  ListOtherUserFiles(const String user_name);
+  // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE list the files checked into svn for given other user name, for this same project -- once the files are displayed, you can select files and click on GetFiles to copy those files to your directory
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();
@@ -157,14 +163,18 @@ public:
     // #IGNORE impl
   virtual void  CancelJob(int running_row);
   // cancel a job at the given row of the jobs_running data table
-  virtual void  GetDataJob(const DataTable& table, int row);
+  virtual void  SubmitGetData(const DataTable& table, int row);
   // add to jobs_submit for get data for job at the given row of the given table
-  virtual void  GetRemoveJob(const DataTable& table, int row);
+  virtual void  SubmitRemoveJob(const DataTable& table, int row);
   // add to jobs_submit for remove job for job at the given row of the given table
-  virtual void  GetArchiveJob(const DataTable& table, int row);
+  virtual void  SubmitArchiveJob(const DataTable& table, int row);
   // add to jobs_submit for move job to archive for job at the given row of the given table
-  virtual void  GetFilesJob(const String& files);
+  virtual void  SubmitCleanJobFiles(const DataTable& table, int row);
+  // add to jobs_submit for clean job files for job at the given row of the given table
+  virtual void  SubmitGetFiles(const String& files);
   // add to jobs_submit for get files for given list of files (space separated)
+  virtual void  SubmitRemoveFiles(const String& files);
+  // add to jobs_submit for remove files for given list of files (space separated)
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);
   // count the number of jobs in given table with given status value 
 

@@ -217,7 +217,7 @@ void ClusterRun::GetData() {
   if (SelectedRows(jobs_running, st_row, end_row)) {
     jobs_submit.ResetData();
     for (int row = st_row; row <= end_row; ++row) {
-      GetDataJob(jobs_running, row); 
+      SubmitGetData(jobs_running, row); 
     }
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
@@ -226,7 +226,7 @@ void ClusterRun::GetData() {
   else if (SelectedRows(jobs_done, st_row, end_row)) {
     jobs_submit.ResetData();
     for (int row = st_row; row <= end_row; ++row) {
-      GetDataJob(jobs_done, row); 
+      SubmitGetData(jobs_done, row); 
     }
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
@@ -536,13 +536,33 @@ void ClusterRun::GetFiles() {
     }
     String files_str = files.ToDelimString(" ");
     jobs_submit.ResetData();
-    GetFilesJob(files_str);
+    SubmitGetFiles(files_str);
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
   }
   else {
     taMisc::Warning("No rows selected -- no files fetched");
+  }
+}
+
+void ClusterRun::CleanJobFiles() {
+  if(!initClusterManager())
+    return;
+
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    jobs_submit.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SubmitCleanJobFiles(jobs_done, row);
+    }
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe(false);
+  }
+  else {
+    taMisc::Warning("No rows selected -- no job files cleaned");
   }
 }
 
@@ -554,14 +574,28 @@ void ClusterRun::RemoveFiles() {
   int st_row, end_row;
   if (SelectedRows(file_list, st_row, end_row)) {
     String_PArray files;
+    String_Array rmt_files;
     for (int row = end_row; row >= st_row; --row) {
       String fpath = file_list.GetVal("file_path", row).toString();
-      if(!taMisc::FileExists(fpath))
-        continue;               // skip any files that don't actually exist locally
-      files.Add(fpath);
+      if(!taMisc::FileExists(fpath)) {
+        String fl = file_list.GetVal("file_name", row).toString();
+        rmt_files.Add(fl);
+      }
+      else {
+        files.Add(fpath);
+      }
       file_list.RemoveRows(row);
     }
-    m_cm->RemoveFiles(files, true, false); // force, keep_local
+    if(files.size > 0) {
+      m_cm->RemoveFiles(files, true, false); // force, keep_local
+    }
+    if(rmt_files.size > 0) {
+      String files_str = rmt_files.ToDelimString(" ");
+      jobs_submit.ResetData();
+      SubmitRemoveFiles(files_str);
+      // Commit the table.
+      m_cm->CommitJobSubmissionTable();
+    }
     AutoUpdateMe();
   }
   else {
@@ -582,6 +616,31 @@ void ClusterRun::RemoveFiles() {
     else {
       taMisc::Warning("No rows selected in either file_list or jobs_done or jobs_archive -- no files removed");
     }
+  }
+}
+
+void ClusterRun::RemoveNonDataFiles() {
+  if(!initClusterManager())
+    return;
+
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SelectFiles_impl(jobs_done, row, false); // NOT include data
+    }
+    RemoveAllFilesInList();
+  }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    file_list.ResetData();
+    for (int row = end_row; row >= st_row; --row) {
+      SelectFiles_impl(jobs_archive, row, false); // NOT include data
+    }
+    RemoveAllFilesInList();
+  }
+  else {
+    taMisc::Warning("No rows selected in jobs_done or jobs_archive -- no files removed");
   }
 }
 
@@ -616,6 +675,12 @@ void ClusterRun::GetProjAtRev() {
   taMisc::Info("Note: GetProjAtRev does NOT require a new checkin -- do not hit Update or wait for auto-update -- the file will be in the main project directory now, or very soon.");
 }
 
+void ClusterRun::ListOtherUserFiles(const String user_name) {
+  if(!initClusterManager())
+    return;
+  
+}
+
 void ClusterRun::ArchiveJobs() {
   if(!initClusterManager())
     return;
@@ -624,7 +689,7 @@ void ClusterRun::ArchiveJobs() {
   if (SelectedRows(jobs_done, st_row, end_row)) {
     jobs_submit.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      GetArchiveJob(jobs_done, row);
+      SubmitArchiveJob(jobs_done, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
@@ -646,7 +711,7 @@ void ClusterRun::RemoveJobs() {
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
       SelectFiles_impl(jobs_done, row, true); // include data
-      GetRemoveJob(jobs_done, row);
+      SubmitRemoveJob(jobs_done, row);
     }
     RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
@@ -659,7 +724,7 @@ void ClusterRun::RemoveJobs() {
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
       SelectFiles_impl(jobs_archive, row, true); // include data
-      GetRemoveJob(jobs_archive, row);
+      SubmitRemoveJob(jobs_archive, row);
     }
     RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
@@ -679,7 +744,7 @@ void ClusterRun::RemoveKilledJobs() {
     String status = jobs_done.GetVal("status", row).toString();
     if(status != "KILLED") continue;
     SelectFiles_impl(jobs_done, row, true); // include data
-    GetRemoveJob(jobs_done, row);
+    SubmitRemoveJob(jobs_done, row);
   }
   RemoveAllFilesInList();
   if(jobs_submit.rows > 0) {
@@ -690,15 +755,32 @@ void ClusterRun::RemoveKilledJobs() {
 
 void ClusterRun::RemoveAllFilesInList() {
   String_PArray files;
+  String_Array rmt_files;
   for(int i=0;i<file_list.rows; i++) {
     String fpath = file_list.GetVal("file_path", i).toString();
-    if(!taMisc::FileExists(fpath))
-      continue;               // skip any files that don't actually exist locally
-    files.Add(fpath);
+    if(!taMisc::FileExists(fpath)) {
+      String fl = file_list.GetVal("file_name", i).toString();
+      rmt_files.Add(fl);
+    }
+    else {
+      files.Add(fpath);
+    }
   }
   file_list.ResetData();
+  bool updt = false;
   if(files.size > 0) {
     m_cm->RemoveFiles(files, true, false); // force, keep_local
+    updt = true;
+  }
+  if(rmt_files.size > 0) {
+    String files_str = rmt_files.ToDelimString(" ");
+    jobs_submit.ResetData();
+    SubmitRemoveFiles(files_str);
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
+    updt = true;
+  }
+  if(updt) {
     AutoUpdateMe();
   }
 }
@@ -742,6 +824,8 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
   //   GETDATA   get the data for the associated tag -- causes cluster to check in dat_files
   //   GETFILES  tell cluster to check in all files listed in this other_files entry
   //   REMOVEJOB tell cluster to remove given tags from jobs_done
+  //   CLEANJOBFILES tell cluster to remove job files associated with tags
+  //   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
   //   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
   // The cluster script sets this field in the running/done tables to:
   //   SUBMITTED after job successfully submitted to a queue.
@@ -1114,7 +1198,7 @@ ClusterRun::CancelJob(int running_row)
 }
 
 void
-ClusterRun::GetDataJob(const DataTable& table, int tab_row)
+ClusterRun::SubmitGetData(const DataTable& table, int tab_row)
 {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("GETDATA", "status", dst_row);
@@ -1124,7 +1208,7 @@ ClusterRun::GetDataJob(const DataTable& table, int tab_row)
 }
 
 void
-ClusterRun::GetRemoveJob(const DataTable& table, int tab_row)
+ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
 {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REMOVEJOB", "status", dst_row);
@@ -1134,7 +1218,7 @@ ClusterRun::GetRemoveJob(const DataTable& table, int tab_row)
 }
 
 void
-ClusterRun::GetArchiveJob(const DataTable& table, int tab_row)
+ClusterRun::SubmitArchiveJob(const DataTable& table, int tab_row)
 {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("ARCHIVEJOB", "status", dst_row);
@@ -1144,9 +1228,27 @@ ClusterRun::GetArchiveJob(const DataTable& table, int tab_row)
 }
 
 void
-ClusterRun::GetFilesJob(const String& files) {
+ClusterRun::SubmitCleanJobFiles(const DataTable& table, int tab_row)
+{
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("CLEANJOBFILES", "status", dst_row);
+  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
+  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
+ClusterRun::SubmitGetFiles(const String& files) {
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("GETFILES", "status", dst_row);
+  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+  jobs_submit.SetVal(files, "other_files",  dst_row); 
+}
+
+void
+ClusterRun::SubmitRemoveFiles(const String& files) {
+  int dst_row = jobs_submit.AddBlankRow();
+  jobs_submit.SetVal("REMOVEFILES", "status", dst_row);
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
   jobs_submit.SetVal(files, "other_files",  dst_row); 
 }
