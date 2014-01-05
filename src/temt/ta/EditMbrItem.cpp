@@ -47,8 +47,11 @@ void EditMbrItem::UpdateAfterEdit_impl() {
   if(mbr && !mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY")) {
     if(mbr->type->IsAtomic() || mbr->type->IsAtomicEff()) {
       is_single = true;
-      if(mbr->type->IsInt() || mbr->type->IsEnum() || mbr->type->IsFloat()) {
+      if(mbr->type->IsInt() || mbr->type->IsFloat()) {
         is_numeric = true;
+      }
+      if(base && base->InheritsFrom(&TA_DynEnum)) {
+        is_numeric = false;     // nix
       }
     }
   }
