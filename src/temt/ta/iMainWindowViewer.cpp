@@ -366,7 +366,6 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   toolsMenu = menu->AddSubMenu("&Tools");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
-
   helpMenu = menu->AddSubMenu("&Help");;
 }
 
@@ -384,6 +383,7 @@ void iMainWindowViewer::Constr_Menu_impl()
   Constr_ControlMenu();
   Constr_ToolsMenu();
   Constr_HelpMenu();
+  Constr_WindowMenu();
 }
 
 void iMainWindowViewer::Constr_FileMenu()
@@ -669,6 +669,12 @@ void iMainWindowViewer::Constr_ShowMenu()
       this, SLOT(ShowChange(iAction*)), 3);
   show_menu->AddItem("&Hidden", taiWidgetMenu::toggle, iAction::men_act,
       this, SLOT(ShowChange(iAction*)), 4);
+}
+
+void iMainWindowViewer::Constr_WindowMenu()
+{
+  dummyWindowAction = AddAction(new iAction("Dummy Action", QKeySequence(), "dummyWindowAction"));
+  windowMenu->AddAction(dummyWindowAction);
 }
 
 void iMainWindowViewer::Constr_ControlMenu()

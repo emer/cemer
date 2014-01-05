@@ -106,8 +106,8 @@ public:
   iAction*            fileSaveAsTemplateAction;
   iAction*            fileUpdateChangeLogAction;
   iAction*            fileSaveAllAction;
-  taiWidgetMenu*              fileOpenFromWebMenu;
-  taiWidgetMenu*              filePublishDocsOnWebMenu;
+  taiWidgetMenu*      fileOpenFromWebMenu;
+  taiWidgetMenu*      filePublishDocsOnWebMenu;
   iAction*            filePublishProjectOnWebAction;
   iAction*            fileCloseAction;
   iAction*            fileOptionsAction;
@@ -153,6 +153,9 @@ public:
   iAction*            helpHelpAction;
   iAction*            helpAboutAction;
   iAction*            helpFileBugAction;
+
+  // Hack - Qt5.2 & OS X 10.9 window menu not appearing - add dummy action to make it visible until a window is created
+  iAction*            dummyWindowAction;
 
   QObject*              clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
 
@@ -384,6 +387,7 @@ private:
   void Constr_ControlMenu();
   void Constr_ToolsMenu();
   void Constr_HelpMenu();
+  void Constr_WindowMenu();
 
   static const QString cmd_str;
   QObject* last_clip_handler; //we need to remember this, because you can't anonymously disconnect signals from your own slots
