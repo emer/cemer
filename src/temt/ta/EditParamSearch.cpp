@@ -15,9 +15,11 @@
 
 #include "EditParamSearch.h"
 
+#include <taMisc>
 
 void EditParamSearch::Initialize() {
   search = false;
+  srch = NO;
   min_val = 0.0f;
   max_val = 1.0f;
   next_val = 0.0f;
@@ -27,3 +29,12 @@ void EditParamSearch::Initialize() {
 void EditParamSearch::Destroy() {
 }
 
+void EditParamSearch::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    if(search) {
+      search = false;
+      srch = SET;
+    }
+  }
+}

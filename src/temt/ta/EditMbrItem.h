@@ -33,7 +33,8 @@ class TA_API EditMbrItem: public SelectEditItem {
 public:
   MemberDef*            mbr; // #READ_ONLY #SHOW the mbr type
   bool                  is_numeric;   // #READ_ONLY is this a single numeric type (float, double, int)
-  EditParamSearch       param_search; // #CONDSHOW_ON_is_numeric specifications for parameter searching, only for numeric items
+  bool                  is_single;   // #READ_ONLY is this a single item, not a composite item
+  EditParamSearch       param_search; // #CONDSHOW_ON_is_single specifications for parameter searching, only for numeric items
 
   ///////////////////////////////////
   //        Param Search

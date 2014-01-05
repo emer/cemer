@@ -117,7 +117,7 @@ public: // public API
 
   virtual EditMbrItem*  PSearchNext(int& st_idx)
   { return mbrs.PSearchNext(st_idx); }
-  // #CAT_ParamSearch get the next active param search item starting from the given start index -- null if this was the last one -- must have param_search.search = true -- increments st_idx to next item to search so it can be called continuously
+  // #CAT_ParamSearch get the next active param search item starting from the given start index -- null if this was the last one -- must have param_search.srch = SRCH -- increments st_idx to next item to search so it can be called continuously
 
   virtual bool          PSearchMinToCur_All()
   { return mbrs.PSearchMinToCur_All(); }
@@ -138,9 +138,9 @@ public: // public API
   { return mbrs.PSearchRecordData(dat, all_nums, add_eval, eval_val); }
   // #CAT_ParamSearch record current search parameters (or all numeric values if specified) in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided -- does not add a new row to table -- can be used in conjunction with other net monitor data etc
 
-  virtual bool&         PSearchOn(const String& mbr_nm, const String& label = "")
+  virtual bool         PSearchOn(const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchOn(mbr_nm, label); }
-  // #CAT_PSearch_Access gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
+  // #CAT_PSearch_Access returns whether given member name (and, optionally if non-empty, the associated label) is being searched
   virtual bool          PSearchOn_Set(bool psearch, const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchOn_Set(psearch, mbr_nm, label); }
   // #CAT_PSearch_Access set the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process

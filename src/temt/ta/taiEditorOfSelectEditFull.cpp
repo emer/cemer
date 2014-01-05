@@ -94,7 +94,7 @@ void taiEditorOfSelectEditFull::Constr_Widget_Labels() {
       memb_set->memb_el.Add(md);
 
       bool added_search = false;
-      if (item->is_numeric && sele->InheritsFrom(&TA_ClusterRun)) {
+      if(item->is_single && sele->InheritsFrom(&TA_ClusterRun)) {
         MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
         if (psmd) {
           added_search = true;

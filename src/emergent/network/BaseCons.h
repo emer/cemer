@@ -126,6 +126,8 @@ public:
 
   inline BaseCons*      UnCons(int idx, Network* net) const;
   // #IGNORE get BaseCons for this projection in unit at given index at other end of this connection
+  inline BaseCons*      SafeUnCons(int idx, Network* net) const;
+  // #IGNORE get BaseCons for this projection in unit at given index at other end of this connection -- uses safe access
 
   inline const int32_t& PtrCnIdx(int idx) const
   { return cons_idx[idx]; }
@@ -143,7 +145,8 @@ public:
   // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- no range checking -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   inline float&         SafeFastCn(int idx, int var_no, Network* net) const
   { if(OwnCons()) { if(InRange(idx)) return OwnCn(idx, var_no); return null_rval; }
-    return UnCons(idx, net)->SafeFastCn(PtrCnIdx(idx), var_no, net); }
+    BaseCons* bc = SafeUnCons(idx, net);
+    if(bc) return bc->SafeFastCn(PtrCnIdx(idx), var_no, net); return null_rval; }
   // #IGNORE #CAT_Access generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- does range checking but doesn't issue messages, and is otherwise as fast as possible -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   float&                SafeCn(int idx, int var_no) const;
   // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- this is mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)

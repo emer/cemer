@@ -30,13 +30,25 @@ class TA_API EditParamSearch: public taOBase {
   // #INLINE parameter searching values
   INHERITED(taOBase)
 public:
-  bool                  search;         // include this item in parameter search
-  double                min_val;        // #CONDSHOW_ON_search minimum value to consider for parameter searching purposes
-  double                max_val;        // #CONDSHOW_ON_search maximum value to consider for parameter searching purposes
-  double                next_val;       // #CONDSHOW_ON_search computed next value to assign to this item in the parameter search
-  double                incr;           // #CONDSHOW_ON_search suggested increment to use in searching this parameter (e.g., for grid search)
+  enum SearchMode { // whether and how to search this item
+    NO,             // do not search or set this item in the startup arguments -- for display and online editing only
+    SET,            // set this parameter to its current value -- this will be set on the startup arguments and recorded in the cluster run parameters -- use this for manual parameter searches
+    SRCH,           // search over this parameter using the currently-selected search algorithm -- this is only for numeric items
+  };
+
+  SearchMode            srch;           // whether to use this parameter for the currently-selected search algorithm, or set it as a fixed parameter on the startup arguments
+
+  double                min_val;        // #CONDSHOW_ON_srch:SRCH minimum value to consider for parameter searching purposes
+  double                max_val;        // #CONDSHOW_ON_srch:SRCH maximum value to consider for parameter searching purposes
+  double                next_val;       // #CONDSHOW_ON_srch:SRCH computed next value to assign to this item in the parameter search
+  double                incr;           // #CONDSHOW_ON_srch:SRCH suggested increment to use in searching this parameter (e.g., for grid search)
+
+  bool                  search;         // #HIDDEN #NO_SAVE obsolete -- replaced by enum -- include this item in parameter search
 
   TA_SIMPLE_BASEFUNS(EditParamSearch);
+protected:
+  void                  UpdateAfterEdit_impl();
+private:
   void  Initialize();
   void  Destroy();
 };

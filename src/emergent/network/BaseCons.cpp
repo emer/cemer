@@ -316,7 +316,7 @@ int BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
     }
   }
   if(con >= 0 && set_init_wt) {
-    Cn(con, WT, net) = init_wt;
+    SafeFastCn(con, WT, net) = init_wt;
   }
   return con;
 }

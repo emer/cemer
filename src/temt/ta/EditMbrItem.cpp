@@ -20,6 +20,7 @@
 void EditMbrItem::Initialize() {
   mbr = NULL;
   is_numeric = false;
+  is_single = false;
 }
 
 void EditMbrItem::Destroy() {
@@ -42,12 +43,20 @@ void EditMbrItem::UpdateAfterEdit_impl() {
     prv_desc = desc;
   }
   is_numeric = false;
-  if(mbr && mbr->type->IsAtomic()) {
-    if(mbr->type->InheritsFrom(&TA_float) || mbr->type->InheritsFrom(&TA_double)
-       || mbr->type->InheritsFrom(&TA_int) || mbr->type->InheritsFrom(&TA_int64_t)) {
-      if(!mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY"))
+  is_single = false;
+  if(mbr && !mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY")) {
+    if(mbr->type->IsAtomic() || mbr->type->IsAtomicEff()) {
+      is_single = true;
+      if(mbr->type->IsInt() || mbr->type->IsEnum() || mbr->type->IsFloat()) {
         is_numeric = true;
+      }
     }
+  }
+  if(!is_single) {
+    param_search.srch = EditParamSearch::NO;
+  }
+  else if(!is_numeric && param_search.srch == EditParamSearch::SRCH) {
+    param_search.srch = EditParamSearch::SET;
   }
 }
 
@@ -58,7 +67,7 @@ String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
 }
 
 bool EditMbrItem::PSearchValidTest() {
-  if(TestError(!mbr, "PSearchValidTest", "item does not have member def set -- not valide parameter search item"))
+  if(TestError(!mbr, "PSearchValidTest", "item does not have member def set -- not valid parameter search item"))
     return false;
   if(TestError(!is_numeric, "PSearchValidTest", "item is not numeric and thus not a valid parameter search item.  member name:", mbr->name, "label:", label))
     return false;
@@ -82,7 +91,11 @@ String EditMbrItem::CurValAsString() {
 }
 
 bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
-  if(!PSearchValidTest()) return false;
+  //  if(!PSearchValidTest()) return false;
+  if(TestError(!mbr, "PSearchCurVal_Set", "item does not have member def set -- not valid parameter search item"))
+    return false;
+  if(TestError(!is_single, "PSearchCurVal_Set", "item is not a single atomic value and thus not a valid parameter search item.  member name:", mbr->name, "label:", label))
+    return false;
   mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
   base->UpdateAfterEdit();
   return true;

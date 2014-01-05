@@ -37,4 +37,8 @@ inline BaseCons* BaseCons::UnCons(int idx, Network* net) const
 { if(IsRecv()) return Un(idx, net)->send.FastEl(other_idx);
   return Un(idx, net)->recv.FastEl(other_idx); }
 
+inline BaseCons* BaseCons::SafeUnCons(int idx, Network* net) const
+{ if(IsRecv()) return Un(idx, net)->send.SafeEl(other_idx);
+  return Un(idx, net)->recv.SafeEl(other_idx); }
+
 #endif // BaseCons_inlines_h

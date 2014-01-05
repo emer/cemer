@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.4.0 rev6702
+// ta_Dump File v3.0 -- code v6.3.4.0 rev6707
 LeabraProject .projects["param_search"] { 
  taBase_Group @.templates = [0] {
  };
@@ -17,13 +17,16 @@ LeabraProject .projects["param_search"] {
 
  SelectEdit_Group @.edits = [1] {
   ClusterRun @["ClusterRun"] { 
-   EditMbrItem_Group @.mbrs = [6] {
+   EditMbrItem_Group @.mbrs = [9] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
     EditMbrItem @[2] { };
     EditMbrItem @[3] { };
     EditMbrItem @[4] { };
     EditMbrItem @[5] { };
+    EditMbrItem @[6] { };
+    EditMbrItem @[7] { };
+    EditMbrItem @[8] { };
    };
 
    EditMthItem_Group @.mths = [0] {
@@ -2743,8 +2746,9 @@ When it has finished, open the objs within the param search grid program to see 
      base=.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"]$$;
      mbr=LeabraConSpec::lrate;
      is_numeric=1;
+     is_single=1;
      param_search {
-      search=1;
+      srch=SET;
       min_val=0.05;
       max_val=0.2;
       next_val=0.05;
@@ -2758,8 +2762,9 @@ When it has finished, open the objs within the param search grid program to see 
      base=.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"].lmix$$;
      mbr=LearnMixSpec::hebb;
      is_numeric=1;
+     is_single=1;
      param_search {
-      search=1;
+      srch=SET;
       min_val=0;
       max_val=0.1;
       next_val=0;
@@ -2773,8 +2778,9 @@ When it has finished, open the objs within the param search grid program to see 
      base=.projects["param_search"].networks["Network_0"].specs["HiddenLayer"].kwta$$;
      mbr=KWTASpec::pct;
      is_numeric=1;
+     is_single=1;
      param_search {
-      search=1;
+      srch=SET;
       min_val=0.1;
       max_val=0.3;
       next_val=0;
@@ -2788,8 +2794,9 @@ When it has finished, open the objs within the param search grid program to see 
      base=.projects["param_search"].programs["LeabraStartup"].vars["batches"]$$;
      mbr=ProgVar::int_val;
      is_numeric=1;
+     is_single=1;
      param_search {
-      search=1;
+      srch=NO;
       min_val=0;
       max_val=1;
       next_val=0;
@@ -2803,8 +2810,9 @@ When it has finished, open the objs within the param search grid program to see 
      base=.projects["param_search"].programs["LeabraStartup"].vars["epochs"]$$;
      mbr=ProgVar::int_val;
      is_numeric=1;
+     is_single=1;
      param_search {
-      search=1;
+      srch=NO;
       min_val=0;
       max_val=1;
       next_val=0;
@@ -2818,12 +2826,61 @@ When it has finished, open the objs within the param search grid program to see 
      base=.projects["param_search"].networks["Network_0"].specs["LeabraUnitSpec_0"].act$$;
      mbr=LeabraActFunSpec::nvar;
      is_numeric=1;
+     is_single=1;
      param_search {
-      search=1;
+      srch=SET;
       min_val=0.001;
       max_val=0.01;
       next_val=0;
       incr=0.001;
+     };
+    };
+    EditMbrItem @[6] {
+     label="l_mix";
+     desc="[Default: X_COS_DIFF]  how to compute the actual thr_l_mix value used in mixing the long-term (self organizing, BCM-style) threshold with the medium term error-driven value<br> * X COS DIFF:  multiply thr_l_mix by 1 - layer.cos_diff_avg -- running average of the cos diff value between act_m and act_p -- no diff is 1, max diff is 0 -- in comparison with X_ERR, this provides a more consistent mix based only on recv layer average errors -- allows for self-organizing to take place even when there are no errors, as originally conceived -- this is generally the most effective -- automatically turns on the computation of cos_diff_avg in LayerSpecs<br> * X ERR:  multiply thr_l_mix by error magnitude |ss - mm| to get the effective thr_l_mix value -- this allows much higher and more effective thr_l_mix values to be used, up to the maximum value of 1 (.5 is recommended default though) -- this also automatically adapts the mixture of error-driven and self-organizing depending on the magnitude of error signals in a given layer, which can vary widely<br> * L MIX:  just use the thr_l_mix parameter directly with no additional modulation ";
+     cust_desc=0;
+     base=.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"].xcal$$;
+     mbr=XCalLearnSpec::l_mix;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=SET;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1;
+     };
+    };
+    EditMbrItem @[7] {
+     label="LeabraConSpec_0_name";
+     desc=" name of the object";
+     cust_desc=0;
+     base=$.projects["param_search"].networks["Network_0"].specs["LeabraConSpec_0"]$;
+     mbr=taNBase::name;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      srch=SET;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1;
+     };
+    };
+    EditMbrItem @[8] {
+     label="rnd_init";
+     desc=" current integer value";
+     cust_desc=0;
+     base=.projects["param_search"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["rnd_init"].dyn_enum_val$$;
+     mbr=DynEnum::value;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=SET;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1;
      };
     };
    };
@@ -3501,7 +3558,7 @@ When it has finished, open the objs within the param search grid program to see 
     keygen 4 0=0;
     row_indexes {
      name=;
-    [0]     };
+    [1] 0;    };
    };
    jobs_done {
     name="jobs_done";
@@ -4171,7 +4228,7 @@ When it has finished, open the objs within the param search grid program to see 
     keygen 4 0=0;
     row_indexes {
      name=;
-    [2] 1;0;    };
+    [3] 1;2;0;    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -5233,12 +5290,7 @@ When it has finished, open the objs within the param search grid program to see 
     keygen 4 0=0;
     row_indexes {
      name=;
-    [55] 2;3;0;1;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;21;22;23;24;25;26;27;28;29;
-30;31;32;33;34;35;36;37;38;39;
-40;41;42;43;44;45;46;47;48;49;
-50;51;52;53;54;    };
+    [7] 2;3;0;1;6;4;5;    };
    };
    search_algos {
     name=;
@@ -5250,7 +5302,7 @@ When it has finished, open the objs within the param search grid program to see 
     };
    };
    cur_search_algo=NULL;
-   last_submit_time="2014_01_04_01_31_11";
+   last_submit_time="2014_01_05_01_43_17";
    notes="test";
    extra_files=;
    svn_repo="grey_run";
@@ -17884,7 +17936,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.02717101760208607;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -19215,7 +19267,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-       decay {event=1: phase=1: phase2=0: };
+       decay {event=1: phase=0: phase2=0: };
        cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
        ct_inhib_mod {
 	manual_sravg=0;
@@ -19254,7 +19306,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-     decay {event=1: phase=1: phase2=0: };
+     decay {event=1: phase=0: phase2=0: };
      cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
      ct_inhib_mod {
       manual_sravg=0;
@@ -19307,7 +19359,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
-       learn_rule=LEABRA_CHL;
+       learn_rule=CTLEABRA_XCAL;
        inhib=0;
        wt_scale {abs=1: rel=1: sem_extra=2: };
        diff_scale_p=0;
@@ -19325,10 +19377,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        ignore_unlearnable=1;
-       wt_sig {gain=6: off=1.25: dwt_norm=0: };
+       wt_sig {gain=6: off=1: dwt_norm=0: };
        stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
-       xcal {l_mix=L_MIX: thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
        rel_net_adapt {
 	on=0;
@@ -19345,7 +19397,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
-     learn_rule=LEABRA_CHL;
+     learn_rule=CTLEABRA_XCAL;
      inhib=0;
      wt_scale {abs=1: rel=1: sem_extra=2: };
      diff_scale_p=0;
@@ -19363,10 +19415,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      ignore_unlearnable=1;
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
+     wt_sig {gain=6: off=1: dwt_norm=0: };
      stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {l_mix=L_MIX: thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {l_mix=X_COS_DIFF: thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
      rel_net_adapt {
       on=0;
@@ -19709,7 +19761,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=42: y=20: z=3: };
    max_disp_size2d {x=20: y=55: };
-   learn_rule=LEABRA_CHL;
+   learn_rule=CTLEABRA_XCAL;
    ti_mode=0;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
@@ -19718,11 +19770,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    time_inc=1;
    cycle_max=60;
    mid_minus_cycle=-1;
-   min_cycles=15;
-   min_cycles_phase2=35;
+   min_cycles=0;
+   min_cycles_phase2=0;
    dwt_norm_enabled=0;
    ct_time {
-    use=0;
+    use=1;
     minus=50;
     plus=20;
     inhib=1;
@@ -19790,7 +19842,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     cyc_syn_dep=0;
     syn_dep_int=20;
    };
-   maxda_stopcrit=0.005;
+   maxda_stopcrit=-1;
    trg_max_act_stopcrit=1;
    norew_val=0.5;
    off_errs=1;

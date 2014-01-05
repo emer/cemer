@@ -66,7 +66,7 @@ void SelectEditsFmArgs::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "for(int j=0;j<" + sel_edit_var->name + ".mbrs.leaves;j++) {");
   prog->IncIndent();
   prog->AddLine(this, "EditMbrItem* sei = " + sel_edit_var->name + ".mbrs.Leaf(j);");
-  prog->AddLine(this, "if(!sei->is_numeric) continue;");
+  prog->AddLine(this, "if(!sei->is_single) continue;");
   prog->AddLine(this, "sefma_lbl = sei->label;");
   prog->AddLine(this, "sefma_argval = taMisc::FindArgByName(sefma_lbl);");
   prog->AddLine(this, "if(sefma_argval.empty()) continue;");
