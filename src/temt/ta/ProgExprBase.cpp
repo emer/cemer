@@ -255,7 +255,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     // not found -- check to see if it is some other thing:
     taBase* ptyp = prog->FindTypeName(vnm);
     if(ptyp) {
-      if(ptyp->InheritsFrom(&TA_DynEnumType)) {
+      if(ptyp->InheritsFrom(&TA_DynEnumBase)) {
         cssEnumType* etyp = new cssEnumType(ptyp->GetName());
         pe->parse_tmp->Push(etyp);
         el_ptr.SetDirect(etyp);
@@ -678,10 +678,10 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     }
     else {                      // now try for local enums
       ProgType* pt = own_prg->types.FindName(base_path);
-      if(pt && pt->InheritsFrom(&TA_DynEnumType)) {
+      if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
         taiWidgetTokenChooser* varlkup =  new taiWidgetTokenChooser(&TA_DynEnumItem, NULL, NULL,
                                                             NULL, 0, lookup_seed);
-        varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
+        varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumBase); // scope to this guy
         bool okc = varlkup->OpenChooser();
         if(okc && varlkup->token()) {
           rval = prepend_before + varlkup->token()->GetName();

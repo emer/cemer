@@ -125,7 +125,7 @@ void Switch::CasesFmEnum_hard() {
 void Switch::CasesFmEnum_dyn() {
   if(TestError(!switch_var->dyn_enum_val.enum_type.ptr(), "CasesFmEnum", "switch_var dyn enum_type not set!"))
     return;
-  DynEnumType* et = switch_var->dyn_enum_val.enum_type.ptr();
+  DynEnumBase* et = switch_var->dyn_enum_val.enum_type.ptr();
   int i;  int ti;
   CaseBlock* pe;
   DynEnumItem* ei;

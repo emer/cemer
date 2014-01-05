@@ -20,7 +20,7 @@
 #include <taOBase>
 
 // member includes:
-#include <DynEnumType>
+#include <DynEnumBase>
 
 // declare all other types mentioned but not required to include:
 
@@ -35,7 +35,7 @@ class TA_API DynEnum : public taOBase {
   // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
-  DynEnumTypeRef        enum_type; // enum type information (list of enum labels)
+  DynEnumBaseRef        enum_type; // enum type information (list of enum labels)
   int                   value;     // #DYNENUM_ON_enum_type current integer value
 
   inline bool   IsSet() const { return (bool)enum_type; }

@@ -54,4 +54,6 @@ private:
    void Destroy() {CutLinks();}
 };
 
+SmartRef_Of(DynEnumTypeFromDTColumn); // DynEnumTypeRef
+
 #endif // DynEnumTypeFromDTColumn_h
