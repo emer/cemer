@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6570
+// ta_Dump File v3.0 -- code v6.3.4.0 rev6701
 LeabraProject .projects["LeabraFlex"] { 
  taBase_Group @.templates = [0] {
  };
@@ -297,18 +297,66 @@ LeabraProject .projects["LeabraFlex"] {
   DataTable_Group @.gp["ConfigData"] = [1] { 
    DataTable @["ConfigTable"] { 
     DataTableCols @.data = [15] {
-     String_Data @["config_id"] { };
-     String_Data @["config_desc"] { };
-     String_Data @["init_prog"] { };
-     String_Data @["run_prog"] { };
-     String_Data @["startup_prog"] { };
-     int_Data @["train_epochs"] { };
-     int_Data @["trials_per_epoch"] { };
-     int_Data @["save_final_wts"] { };
-     int_Data @["save_wts_interval"] { };
-     int_Data @["test_interval"] { };
-     int_Data @["log_trials"] { };
-     int_Data @["load_weights"] { };
+     String_Data @["config_id"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["config_desc"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["init_prog"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["run_prog"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["startup_prog"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["train_epochs"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["trials_per_epoch"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["save_final_wts"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["save_wts_interval"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["test_interval"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["log_trials"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["load_weights"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
      String_Data @["weights_file"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -378,6 +426,9 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["batch_str"] { };
     ProgVar @["batch_start"] { };
     ProgVar @["startup_prog"] { };
+   };
+
+   ProgBrkPt_List @.brk_pts = [0] {
    };
 
    Function_List @.functions = [1] {
@@ -570,6 +621,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["SampleEpochOutData"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -636,6 +690,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["max_batch"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -670,7 +727,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     ProgType_List @.types = [1] {
-     DynEnumType @["ConfigOptions"] { 
+     DynEnumTypeFromDTColumn @["ConfigOptions"] { 
       DynEnumItem_List @.enums = [1] {
        DynEnumItem @["basic_train"] { };
       };
@@ -690,14 +747,16 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["stop_train"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
-    ProgEl_List @.init_code = [4] {
+    ProgEl_List @.init_code = [3] {
      AssignExpr @[0] { };
-     UserScript @[1] { };
-     AssignExpr @[2] { };
-     WtInitPrompt @[3] { 
+     AssignExpr @[1] { };
+     WtInitPrompt @[2] { 
       ProgEl_List @.yes_code = [3] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -752,6 +811,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["Config"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -782,6 +844,9 @@ LeabraProject .projects["LeabraFlex"] {
 
      ProgVar_List @.vars = [1] {
       ProgVar @["lay_lesion_list"] { };
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -838,6 +903,9 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["train_epochs"] { };
       ProgVar @["update_net_view"] { };
       ProgVar @["StdInputData"] { };
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -915,6 +983,9 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["BasicTrainTime"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1044,6 +1115,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["input_idx"] { };
      ProgVar @["dmem_rows"] { };
      ProgVar @["PermIdxTable"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [3] {
@@ -1220,6 +1294,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["event_idx"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1260,6 +1337,9 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["LayerWriter_0"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1324,6 +1404,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["weights_file"] { };
      ProgVar @["load_st_epc"] { };
      ProgVar @["lrs_step_epochs"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1400,6 +1483,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["rnd_seeds"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1432,6 +1518,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["i"] { };
      ProgVar @["laygp_nm"] { };
      ProgVar @["laygp"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1541,6 +1630,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["laygp"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1631,6 +1723,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["dmem_rnd_seed"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1707,6 +1802,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["Train"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1750,6 +1848,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["BasicTrainTime"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1789,6 +1890,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["compute_rel_netin"] { };
      ProgVar @["save_wts_interval"] { };
      ProgVar @["stable_wt_update_interval"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1876,6 +1980,9 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [0] {
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -1908,6 +2015,9 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [2] {
      ProgVar @["compute_rel_netin"] { };
      ProgVar @["update_net_view"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1964,6 +2074,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["i"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -2012,6 +2125,9 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar_List @.vars = [0] {
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -2047,6 +2163,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["i"] { };
     };
 
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
     Function_List @.functions = [0] {
     };
 
@@ -2078,6 +2197,9 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["update_net_view"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -2115,6 +2237,9 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["epoch_str"] { };
      ProgVar @["batch_str"] { };
      ProgVar @["final_tag"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -2199,6 +2324,9 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["trial_netmon"] { };
      };
 
+     ProgBrkPt_List @.brk_pts = [0] {
+     };
+
      Function_List @.functions = [0] {
      };
 
@@ -2273,6 +2401,9 @@ LeabraProject .projects["LeabraFlex"] {
       ProgVar @["epoch_mon_data"] { };
       ProgVar @["epoch_netmon"] { };
       ProgVar @["epoch_timer"] { };
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -2556,6 +2687,9 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
    };
+
+   Weights_List @.weights = [0] {
+   };
   };
  };
 };
@@ -2609,6 +2743,8 @@ LeabraProject .projects["LeabraFlex"] {
 <meta charset=\"UTF-8\"><title>LeabraFlexProgs - Emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.22alpha\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/emergent/api.php?action=rsd\">
@@ -2620,24 +2756,46 @@ LeabraProject .projects["LeabraFlex"] {
 <!--[if IE 6]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE60Fixes.css?303\" media=\"screen\" /><![endif]-->
 <!--[if IE 7]><link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/IE70Fixes.css?303\" media=\"screen\" /><![endif]-->
 <link rel=\"stylesheet\" href=\"/emergent/skins/gumaxdd/gumax_print.css?303\" media=\"print\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style>
+.qtip,.qtip{position:absolute;left:-28000px;top:-28000px;display:none;max-width:280px;min-width:50px;font-size:10.5px;line-height:12px;direction:ltr}.qtip-content{position:relative;padding:5px 9px;overflow:hidden;text-align:left;word-wrap:break-word}.qtip-titlebar{position:relative;padding:5px 35px 5px 10px;overflow:hidden;border-width:0 0 1px;font-weight:bold}.qtip-titlebar + .qtip-content{border-top-width:0 !important} .qtip-close{position:absolute;right:-9px;top:-9px;cursor:pointer;outline:medium none;border-width:1px;border-style:solid;border-color:transparent}.qtip-titlebar .qtip-close{right:4px;top:50%;margin-top:-9px}* html .qtip-titlebar .qtip-close{top:16px} .qtip-titlebar .ui-icon,.qtip-icon .ui-icon{display:block;text-indent:-1000em;direction:ltr;vertical-align:middle}.qtip-icon,.qtip-icon .ui-icon{-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;text-decoration:none}.qtip-icon .ui-icon{width:18px;height:14px;text-align:center;text-indent:0;font:normal bold 10px/13px Tahoma,sans-serif;color:inherit;background:transparent none no-repeat -100em -100em} .qtip-focus{} .qtip-hover{} .qtip-default{border-width:1px;border-style:solid;border-color:#F1D031;background-color:#FFFFA3;color:#555}.qtip-default .qtip-titlebar{background-color:#FFEF93}.qtip-default .qtip-icon{border-color:#CCC;background:#F1F1F1;color:#777}.qtip-default .qtip-titlebar .qtip-close{border-color:#AAA;color:#111} .qtip-light{background-color:white;border-color:#E2E2E2;color:#454545}.qtip-light .qtip-titlebar{background-color:#f1f1f1} .qtip-dark{background-color:#505050;border-color:#303030;color:#f3f3f3}.qtip-dark .qtip-titlebar{background-color:#404040}.qtip-dark .qtip-icon{border-color:#444}.qtip-dark .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-cream{background-color:#FBF7AA;border-color:#F9E98E;color:#A27D35}.qtip-cream .qtip-titlebar{background-color:#F0DE7D}.qtip-cream .qtip-close .qtip-icon{background-position:-82px 0} .qtip-red{background-color:#F78B83;border-color:#D95252;color:#912323}.qtip-red .qtip-titlebar{background-color:#F06D65}.qtip-red .qtip-close .qtip-icon{background-position:-102px 0}.qtip-red .qtip-icon{border-color:#D95252}.qtip-red .qtip-titlebar .ui-state-hover{border-color:#D95252} .qtip-green{background-color:#CAED9E;border-color:#90D93F;color:#3F6219}.qtip-green .qtip-titlebar{background-color:#B0DE78}.qtip-green .qtip-close .qtip-icon{background-position:-42px 0} .qtip-blue{background-color:#E5F6FE;border-color:#ADD9ED;color:#5E99BD}.qtip-blue .qtip-titlebar{background-color:#D0E9F5}.qtip-blue .qtip-close .qtip-icon{background-position:-2px 0} .qtip-shadow{-webkit-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);-moz-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15)} .qtip-rounded,.qtip-tipsy,.qtip-bootstrap{-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px} .qtip-youtube{-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;-webkit-box-shadow:0 0 3px #333;-moz-box-shadow:0 0 3px #333;box-shadow:0 0 3px #333;color:white;border-width:0;background:#4A4A4A;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#4A4A4A),color-stop(100%,black));background-image:-webkit-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-moz-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-ms-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-o-linear-gradient(top,#4A4A4A 0,black 100%)}.qtip-youtube .qtip-titlebar{background-color:#4A4A4A;background-color:rgba(0,0,0,0)}.qtip-youtube .qtip-content{padding:.75em;font:12px arial,sans-serif;filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#4a4a4a,EndColorStr=#000000);-ms-filter:\"progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#4a4a4a,EndColorStr=#000000);\"}.qtip-youtube .qtip-icon{border-color:#222}.qtip-youtube .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-jtools{background:#232323;background:rgba(0,0,0,0.7);background-image:-webkit-gradient(linear,left top,left bottom,from(#717171),to(#232323));background-image:-moz-linear-gradient(top,#717171,#232323);background-image:-webkit-linear-gradient(top,#717171,#232323);background-image:-ms-linear-gradient(top,#717171,#232323);background-image:-o-linear-gradient(top,#717171,#232323);border:2px solid #ddd;border:2px solid rgba(241,241,241,1);-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;-webkit-box-shadow:0 0 12px #333;-moz-box-shadow:0 0 12px #333;box-shadow:0 0 12px #333} .qtip-jtools .qtip-titlebar{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A)\"}.qtip-jtools .qtip-content{filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323)\"}.qtip-jtools .qtip-titlebar,.qtip-jtools .qtip-content{background:transparent;color:white;border:0 dashed transparent}.qtip-jtools .qtip-icon{border-color:#555}.qtip-jtools .qtip-titlebar .ui-state-hover{border-color:#333} .qtip-cluetip{-webkit-box-shadow:4px 4px 5px rgba(0,0,0,0.4);-moz-box-shadow:4px 4px 5px rgba(0,0,0,0.4);box-shadow:4px 4px 5px rgba(0,0,0,0.4);background-color:#D9D9C2;color:#111;border:0 dashed transparent}.qtip-cluetip .qtip-titlebar{background-color:#87876A;color:white;border:0 dashed transparent}.qtip-cluetip .qtip-icon{border-color:#808064}.qtip-cluetip .qtip-titlebar .ui-state-hover{border-color:#696952;color:#696952} .qtip-tipsy{background:black;background:rgba(0,0,0,.87);color:white;border:0 solid transparent;font-size:11px;font-family:'Lucida Grande',sans-serif;font-weight:bold;line-height:16px;text-shadow:0 1px black}.qtip-tipsy .qtip-titlebar{padding:6px 35px 0 10;background-color:transparent}.qtip-tipsy .qtip-content{padding:6px 10}.qtip-tipsy .qtip-icon{border-color:#222;text-shadow:none}.qtip-tipsy .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-tipped{border:3px solid #959FA9;-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;background-color:#F9F9F9;color:#454545;font-weight:normal;font-family:serif}.qtip-tipped .qtip-titlebar{border-bottom-width:0;color:white;background:#3A79B8;background-image:-webkit-gradient(linear,left top,left bottom,from(#3A79B8),to(#2E629D));background-image:-webkit-linear-gradient(top,#3A79B8,#2E629D);background-image:-moz-linear-gradient(top,#3A79B8,#2E629D);background-image:-ms-linear-gradient(top,#3A79B8,#2E629D);background-image:-o-linear-gradient(top,#3A79B8,#2E629D);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8,endColorstr=#2E629D);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8,endColorstr=#2E629D)\"}.qtip-tipped .qtip-icon{border:2px solid #285589;background:#285589}.qtip-tipped .qtip-icon .ui-icon{background-color:#FBFBFB;color:#555} .qtip-bootstrap{ font-size:14px;line-height:20px;color:#333333; padding:1px;background-color:#ffffff;border:1px solid #ccc;border:1px solid rgba(0,0,0,0.2);-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);box-shadow:0 5px 10px rgba(0,0,0,0.2);-webkit-background-clip:padding-box;-moz-background-clip:padding;background-clip:padding-box}.qtip-bootstrap .qtip-titlebar{ padding:8px 14px;margin:0;font-size:14px;font-weight:normal;line-height:18px;background-color:#f7f7f7;border-bottom:1px solid #ebebeb;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.qtip-bootstrap .qtip-titlebar .qtip-close{ right:11px;top:45%;border-style:none}.qtip-bootstrap .qtip-content{ padding:9px 14px}.qtip-bootstrap .qtip-icon{ background:transparent}.qtip-bootstrap .qtip-icon .ui-icon{ width:auto;height:auto; float:right;font-size:20px;font-weight:bold;line-height:18px;color:#000000;text-shadow:0 1px 0 #ffffff;opacity:0.2;filter:alpha(opacity=20)}.qtip-bootstrap .qtip-icon .ui-icon:hover{ color:#000000;text-decoration:none;cursor:pointer;opacity:0.4;filter:alpha(opacity=40)} .qtip:not(.ie9haxors) div.qtip-content,.qtip:not(.ie9haxors) div.qtip-titlebar{filter:none;-ms-filter:none} .qtip .qtip-tip{margin:0 auto;overflow:hidden;z-index:10}.qtip .qtip-tip,.qtip .qtip-tip .qtip-vml{position:absolute;color:#123456;background:transparent;border:0 dashed transparent}.qtip .qtip-tip canvas{top:0;left:0}.qtip .qtip-tip .qtip-vml{behavior:url(#default#VML);display:inline-block;visibility:visible} #qtip-overlay{position:fixed;left:-10000em;top:-10000em} #qtip-overlay.blurs{cursor:pointer} #qtip-overlay div{position:absolute;left:0;top:0;width:100%;height:100%;background-color:black;opacity:0.7;filter:alpha(opacity=70);-ms-filter:\"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)\"} .qtipmodal-ie6fix{position:absolute !important}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:41ffaee069228769025644e340c1e368 */
+div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}  span.smwbuiltin,span.smwttactiveinline span.smwbuiltin{font-style:italic} div.smwpre{white-space:pre;font-family:monospace;padding:1em;border:1px dashed #2f6fab;color:black;background-color:#f9f9f9;line-height:1.1em;margin-bottom:0.5em;margin-top:0.5em} #smwfootbr{clear:both} span.smwsortkey{display:none} a.sortheader:hover{text-decoration:none} div.smwtimeline{border:1px solid #AAAAAA;background-color:#F9F9F9;  }span.smwtlevent,span.smwtlband,span.smwtlsize,span.smwtlposition{display:none;speak:none}span.smwtlcomment{font-style:italic;padding:5px} div.smwfact{clear:both;background-color:#F9F9F9;padding:5px;margin-top:1em;border:1px solid #AAAAAA;font-size:95%}div.smwfact td,div.smwfact tr,div.smwfact table{background-color:#F9F9F9}span.smwfactboxhead{font-size:110%;font-weight:bold;float:left}table.smwfacttable{border-top:1px dotted #AAAAAA;width:100%;clear:both}td.smwpropname,th.smwpropname,td.smwspecname{text-align:right;vertical-align:top;padding-right:1em}td.smwprops,td.smwspecs{vertical-align:top;width:75%}div.smwhr hr{background-color:#DDDDDD;color:#DDDDDD} span.smwwarning{color:#888888;font-style:italic;font-size:90%} span.smwsearchicon{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALySURBVDgRlcFraNVlHMDx7+95nv/zP+d/LnObeVtz2uyCrRUVDAIHMbIXltUgKRYR7kWvupjYDSEkgkgoKCiJfGeRzqw0CvYuahBWyrZWuWihuWNrZ+e2c87OZf//U1DB8EXU52P27XuV9takiiVS95ZjV+xdjK3uxbO0sFi15ewnlBYO1pZqP9YbTZQSLmeUOF1eNs+fj219QXdt1i2rfXwPlpxKho3qbpme3B7+/N2wUoyKCJcz9VB2ZFfdcKDtxh7p3hiRiMFSDfKFJjadwF/fd+V8pfhmYXK83ynJgLCSKanU47Et18qmDsc1axXtAlPzEekOS7XhSK3SmNt6uuemJnc2K5VDog0rmaptvWXtmgRBLKJNBL/h8DyhPRBqScGKI31dB2c8c2exsHhIW8tKZtmm/MBGFIohZ2oRQaDYkFYECgLAOjBa0ajVk8VSGc+3rGSa+Us18XQ8bIREgSKIC74G5aAdsEAjjCgXioXSYgVTX0bE8Q+zMD0xVs2V7tKtCepNiJRQB1JAClgjwskvvuXCzOypWn2ZeLiEA5wD58DkZs69fO7UyYGBPQ/FYxoi51D8JRBhNl/i05FRWlpaLtzReZbOxiSzRcNcCXIVMErL2E+fffSYNe61/t33pUxbEgeIwOmpGY6/fQxj4mzrTe/vyUz0zzflLU/CeSOgcRhRiqhZPzx+/OjEr998tXdDd2dfPBHT1flc4eL0Lyc6OzeeXt9WHu52Xw5etTk9UP0+f2szsg87XMEhGP4kWiNEXxczmQfERQSpBIXMHKVcka1XO/QP76/rvr9rsOf2IezIu3f/PpY/8lvRewTIGv4mImjPw/MtnvXwYhbtB9jqefzKxaMfj+R74+u6nrh+1xDN8MiO7Gj+8ELZDhv+lcOJRhtTuZRt7Hn9xQ/do88MPnnz0BAPyns73ziRf8fwH/lWu9mF5acPHvggevalXU+137QN9fn4PYb/wfN0M1cKn3tl/7FNbVt6tk9L39k/AH8KLAsrDQkDAAAAAElFTkSuQmCC) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/search_icon.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a{padding-right:16px;margin-right:2px;color:#000000;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.smwmap a{padding-right:20px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.smwmap a:hover{padding-right:20px;color:#0000FF;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.rdflink{float:right}#bodyContent span.rdflink a{padding-right:20px;color:#888888;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2013-10-21T02:01:40Z) center right no-repeat!ie}#bodyContent span.rdflink a:hover{text-decoration:none;color:#0000FF;padding-right:20px;margin-right:0px;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2013-10-21T02:01:40Z) center right no-repeat!ie} table.smwb-factbox{border-left:8px solid #DDDDDD;width:100% }tr.smwb-title{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-title td{padding-left:5px;border-bottom:2px solid white}tr.smwb-propvalue{width:100%;background-color:#EEEEEE}tr.smwb-propvalue th{text-align:right;vertical-align:top;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:2px solid white;border-top:2px solid white}tr.smwb-propvalue td{padding-left:0.4em;background-color:#EEEEEE;border:0px solid white;border-bottom:2px solid white;border-top:2px solid white;width:90%}tr.smwb-center{background-color:#DDDDDD}span.smwb-value{} table.smwb-ifactbox{border-right:8px solid #DDDDDD;width:100% }tr.smwb-ititle{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-ititle td{padding-left:5px;border-bottom:2px solid white}tr.smwb-ipropvalue{width:100%;background-color:#EEEEEE;text-align:right}tr.smwb-ipropvalue th{text-align:left;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:3px solid white;border-top:3px solid white}tr.smwb-ipropvalue td{background-color:#EEEEEE;border-bottom:3px solid white;border-top:3px solid white;padding-right:1em;width:90%}span.smwb-ivalue{} .smw-spinner .text{padding-left:2.1em;font-size:12px;vertical-align:middle} .smw-spinner.left.mw-small-spinner{background-position:left;vertical-align:middle;display:inline-block;padding:0px !important} .smw-spinner.center.mw-small-spinner{vertical-align:middle;display:inline-block;padding:0px !important}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:57b0779c7ae87120ec57ea615db087da */
+div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2013-10-21T02:01:40Z) no-repeat left bottom!ie}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:02a16b43cb75db5e0462b83dd8f8091d */</style><style>
+.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(http://grey.colorado.edu/emergent/resources/mediawiki.action/images/green-checkmark.png?2013-10-21T01:10:00Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:7f253083ce0f254387893cbce4822552 */
+#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */
+.ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute !important;clip:rect(1px 1px 1px 1px);clip:rect(1px,1px,1px,1px)}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:before,.ui-helper-clearfix:after{content:\"\";display:table}.ui-helper-clearfix:after{clear:both}.ui-helper-clearfix{zoom:1}.ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:Verdana,Arial,sans-serif;font-size:1.1em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:Verdana,Arial,sans-serif;font-size:1em}.ui-widget-content{border:1px solid #aaaaaa;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_75_ffffff_40x100.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;color:#222222}.ui-widget-content a{color:#222222}.ui-widget-header{border:1px solid #aaaaaa;background:#cccccc url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_highlight-soft_75_cccccc_1x100.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #d3d3d3;background:#e6e6e6 url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_75_e6e6e6_1x400.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;font-weight:normal;color:#555555}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#555555;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #999999;background:#dadada url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_75_dadada_1x400.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;font-weight:normal;color:#212121}.ui-state-hover a,.ui-state-hover a:hover{color:#212121;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #aaaaaa;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_65_ffffff_1x400.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;font-weight:normal;color:#212121}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#212121;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #fcefa1;background:#fbf9ee url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_55_fbf9ee_1x400.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#fef1ec url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_glass_95_fef1ec_1x400.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;color:#cd0a0a}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#cd0a0a}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#cd0a0a}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px;background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2013-10-21T01:10:00Z)}.ui-widget-content .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2013-10-21T01:10:00Z)}.ui-widget-header .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_222222_256x240.png?2013-10-21T01:10:00Z)}.ui-state-default .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_888888_256x240.png?2013-10-21T01:10:00Z)}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_454545_256x240.png?2013-10-21T01:10:00Z)}.ui-state-active .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_454545_256x240.png?2013-10-21T01:10:00Z)}.ui-state-highlight .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_2e83ff_256x240.png?2013-10-21T01:10:00Z)}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-icons_cd0a0a_256x240.png?2013-10-21T01:10:00Z)} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-all,.ui-corner-top,.ui-corner-left,.ui-corner-tl{-moz-border-radius-topleft:4px;-webkit-border-top-left-radius:4px;-khtml-border-top-left-radius:4px;border-top-left-radius:4px}.ui-corner-all,.ui-corner-top,.ui-corner-right,.ui-corner-tr{-moz-border-radius-topright:4px;-webkit-border-top-right-radius:4px;-khtml-border-top-right-radius:4px;border-top-right-radius:4px}.ui-corner-all,.ui-corner-bottom,.ui-corner-left,.ui-corner-bl{-moz-border-radius-bottomleft:4px;-webkit-border-bottom-left-radius:4px;-khtml-border-bottom-left-radius:4px;border-bottom-left-radius:4px}.ui-corner-all,.ui-corner-bottom,.ui-corner-right,.ui-corner-br{-moz-border-radius-bottomright:4px;-webkit-border-bottom-right-radius:4px;-khtml-border-bottom-right-radius:4px;border-bottom-right-radius:4px} .ui-widget-overlay{background:#aaaaaa url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_0_aaaaaa_40x100.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;opacity:.3;filter:Alpha(Opacity=30)}.ui-widget-shadow{margin:-8px 0 0 -8px;padding:8px;background:#aaaaaa url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/default/images/ui-bg_flat_0_aaaaaa_40x100.png?2013-10-21T01:10:00Z) 50% 50% repeat-x;opacity:.3;filter:Alpha(Opacity=30);-moz-border-radius:8px;-khtml-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:f765117bad102de17eac097c978ec9e3 */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */
+.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:20fb64404f61afb1bdaf2e8ff9fc570d */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=gumaxdd&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20131021T011027Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"John.rohrlich\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgUserId\":1533,\"wgUserEditCount\":57,\"wgUserRegistration\":1339707274000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
-mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
-\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,
-\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:9e91be8826d7f1fe1dbad0bfb34cc246 */
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
+\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,
+\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"rohrlich\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"d529aeffe64ee0773f7c3dae97e53ce4a016eb1c\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"4aa35d1ded96c730910146b104ea77de+\\\\\",\"patrolToken\":false,\"watchToken\":\"efa3ef10a93c9c8eacec0aa028200130+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:c1ceec46492dd4c725355d8056e2ca63 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=gumaxdd&amp;version=20131021T164637Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20131021T164637Z&amp;*\"></script>
-<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20131021T164638Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131021T011655Z&amp;*\"></script></head>
+}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=gumaxdd&amp;version=20131219T201129Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20131219T201129Z&amp;*\"></script>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cmediawiki.page.watch.ajax&amp;skin=gumaxdd&amp;version=20131221T083947Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131219T201121Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd action-view\">
 <div id=\"gumax-page\">
 	<!--///===== Drop Down menu script =====///-->
@@ -2681,7 +2839,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 		<!--h5><label for=\"searchInput\">Search</label></h5-->
 		<div id=\"gumax-searchBody\">
 			<form action=\"/emergent/index.php/Special:Search\" id=\"searchform\"><div>
-				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\">
+				<input id=\"searchInput\" name=\"search\" type=\"text\" value=\"\" autocomplete=\"off\">
 				<input type=\"submit\" name=\"go\" class=\"searchButton\" id=\"searchGoButton\" value=\"Go\">&nbsp;
 				<input type=\"submit\" name=\"fulltext\" class=\"searchButton\" id=\"mw-searchButton\" value=\"Search\">
 			</div></form>
@@ -2695,7 +2853,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 	<div id=\"gumax-p-navigation\">
 		 	<ul id=\"gumax-nav\" class=\"droppy\">
-			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Navigation  Âª</a>
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Navigation  »</a>
 				<ul>
  					<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\">Main page</a></li>
  					<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\">Recent changes</a></li>
@@ -2706,14 +2864,15 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 				<li><p style=\"margin:0; padding: 7px 0;\"></p></li>
  				</ul>
 			</li>
-			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Tools  Âª</a>
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Tools  »</a>
 			<ul>
 				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
+<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
 <li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li>			</ul>
 			</li>
-			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Print/export  Âª</a>
+			<li><a id=\"gumax-nav-heading\" href=\"#\" class=\"has-subnav\">Print/export  »</a>
 				<ul>
  					<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlexProgs\">Create a book</a></li>
  					<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlexProgs&amp;oldid=9226&amp;writer=rl\">Download as PDF</a></li>
@@ -2732,8 +2891,12 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 			 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/LeabraFlexProgs\">Page</a></li>
 			 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\">Discussion</a></li>
-			 <li id=\"ca-viewsource\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">View source</a></li>
+			 <li id=\"ca-edit\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">Edit</a></li>
 			 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\">History</a></li>
+			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=delete\">Delete</a></li>
+			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlexProgs\">Move</a></li>
+			 <li id=\"ca-watch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=watch&amp;token=fb3e99e291b886b3329d21fc7672ba7c%2B%5C\">Watch</a></li>
+			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=purge\">Refresh</a></li>
 		</ul>
 
 	</div>
@@ -2765,10 +2928,10 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 <li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
 </ul>
 </div>
-<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span></h1>
+<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
 </p>
-<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span></h1>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The call sequence is:
 </p>
 <ul><li> <b>MasterTrain</b>
@@ -2783,10 +2946,10 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 </dd></dl>
 </dd></dl>
 </dd></dl>
-<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span></h1>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
 </p>
-<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span></h1>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
 <p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
 </p>
 <ul><li> After common weight initialization etc, the <b>TrainStart</b> program will generate a new random seed just before starting the Epoch -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.
@@ -2800,8 +2963,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.060 seconds
-Real time usage: 0.063 seconds
+CPU time usage: 0.040 seconds
+Real time usage: 0.044 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2810,7 +2973,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20131021034730
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140105035525
  -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
@@ -2835,6 +2998,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 			<ul>
 					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 					<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
+	<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
 	<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 					<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li>			</ul>
 		</div>
@@ -2844,19 +3008,22 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		<!-- gumax-f-message -->
 		
 		<div id=\"gumax-article-message\">
-			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 7,688 times. </span>
+			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 07:39.</span>
+			<span id=\"f-viewcount\">This page has been accessed 8,942 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
 
 		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
-mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready\"});
+mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"loading\"});
 }</script>
 <script>if(window.mw){
-mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\"],null,true);
+mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\"],null,true);
 }</script>
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
+<script>if(window.mw){
+mw.loader.state({\"user.groups\":\"ready\"});
+}</script>
 
 	</div> <!-- ///// end of gumax-footer ///// -->
 
@@ -2874,14 +3041,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	<!-- end of gumax-f-list -->
 
 
-</div> <!-- ===== end of gumax-page ===== -->
+</div><div class=\"suggestions\" style=\"display: none; font-size: 12px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div> <!-- ===== end of gumax-page ===== -->
 
 	<div style=\"clear:both\"></div>
 
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.365 secs. -->
+<!-- Served in 0.447 secs. -->
 
 
 
@@ -2928,9 +3095,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      cust_desc=1;
      base=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["cur_config"].dyn_enum_val$$;
      mbr=DynEnum::value;
-     is_numeric=1;
+     is_numeric=0;
+     is_single=1;
      param_search {
-      search=0;
+      srch=NO;
       min_val=0;
       max_val=1;
       next_val=0;
@@ -2944,8 +3112,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      base=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"].vars["update_net_view"]$$;
      mbr=ProgVar::bool_val;
      is_numeric=0;
+     is_single=1;
      param_search {
-      search=0;
+      srch=NO;
       min_val=0;
       max_val=1;
       next_val=0;
@@ -5158,6 +5327,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      el_typ=String_Data;
      el_def=0;
      String_Data @["config_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_61";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="config_id";
       desc="identifier for this type of configuration";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5175,6 +5354,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] "basic_train";      };
      };
      String_Data @["config_desc"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_62";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="config_desc";
       desc="description of this configuration";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5192,6 +5381,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] "default basic training";      };
      };
      String_Data @["init_prog"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_63";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="init_prog";
       desc="program to run to initialize at start of training";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5209,6 +5408,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] "BasicInit";      };
      };
      String_Data @["run_prog"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_64";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="run_prog";
       desc="program controlling each step of running";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5226,6 +5435,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] "BasicRun";      };
      };
      String_Data @["startup_prog"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_65";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="startup_prog";
       desc="program for handling startup args specific to this environment";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5243,6 +5462,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] "BasicStartup";      };
      };
      int_Data @["train_epochs"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_66";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="train_epochs";
       desc="number of total epochs to train for";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5260,6 +5489,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] 200;      };
      };
      int_Data @["trials_per_epoch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_67";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="trials_per_epoch";
       desc="number of individual trials per epoch";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5277,6 +5516,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] 50;      };
      };
      int_Data @["save_final_wts"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_68";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="save_final_wts";
       desc="save final weights after training (1 = yes, 0 = no)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5294,6 +5543,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] 1;      };
      };
      int_Data @["save_wts_interval"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_69";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="save_wts_interval";
       desc="how frequently to save weights during training (in epochs)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5311,6 +5570,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] 200;      };
      };
      int_Data @["test_interval"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_70";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="test_interval";
       desc="how frequently to test performance without training -- only applicable to training cases";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5328,6 +5597,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] 1000;      };
      };
      int_Data @["log_trials"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_71";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="log_trials";
       desc="whether to log trial-level data or not (1 = yes, 0 = no)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5345,6 +5624,16 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [1] 0;      };
      };
      int_Data @["load_weights"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_72";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1798561215400696;
+	val_type_fixed=0;
+       };
+      };
       name="load_weights";
       desc="whether to load weights at start";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5368,7 +5657,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.2614770531654358;
+	value 6 0=0.2607913613319397;
 	val_type_fixed=0;
        };
       };
@@ -5383,7 +5672,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       dim_names {
        name=;
       [0]       };
-      width=0;
+      width=145;
       ar {
        name=;
       [1] ;      };
@@ -5395,7 +5684,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.113772451877594;
+	value 6 0=0.1133093535900116;
 	val_type_fixed=0;
        };
       };
@@ -5410,7 +5699,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       dim_names {
        name=;
       [0]       };
-      width=0;
+      width=63;
       ar {
        name=;
       [1] 1;      };
@@ -5427,7 +5716,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1497005969285965;
+	value 6 0=0.1492805778980255;
 	val_type_fixed=0;
        };
       };
@@ -5442,7 +5731,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       dim_names {
        name=;
       [0]       };
-      width=0;
+      width=83;
       ar {
        name=;
       [1] 50;      };
@@ -5536,7 +5825,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    };
    types {
     name=;
-    el_typ=DynEnumType;
+    el_typ=DynEnumBase;
     el_def=0;
    };
    args {
@@ -5683,6 +5972,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      init_from=NULL;
     };
+   };
+   brk_pts {
+    name=;
+    el_typ=ProgBrkPt;
+    el_def=0;
    };
    functions {
     name=;
@@ -6636,7 +6930,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -6721,6 +7015,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -6976,7 +7275,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -7029,6 +7328,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="maximum number of batch runs to perform";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -7153,9 +7457,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
-     DynEnumType @["ConfigOptions"] {
+     DynEnumTypeFromDTColumn @["ConfigOptions"] {
       name="ConfigOptions";
       desc=;
       enums {
@@ -7169,6 +7473,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
       bits=0;
+      srcTable=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
+      srcColumn="config_id";
      };
     };
     args {
@@ -7256,6 +7562,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       init_from=NULL;
      };
     };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
     functions {
      name=;
      el_typ=Function;
@@ -7274,15 +7585,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr="false";
       };
      };
-     UserScript @[1] {
-      desc="update list of enum options from data table";
-      flags=0;
-      orig_prog_code=;
-      script {
-       expr="this.types.ConfigOptions.EnumsFromDataTable(Config, \"config_id\");";
-      };
-     };
-     AssignExpr @[2] {
+     AssignExpr @[1] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -7291,7 +7594,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr="cur_config";
       };
      };
-     WtInitPrompt @[3] {
+     WtInitPrompt @[2] {
       desc="don't initialize weights without checking";
       flags=0;
       orig_prog_code=;
@@ -7481,7 +7784,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -7535,6 +7838,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -7605,7 +7913,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      types {
       name=;
-      el_typ=DynEnumType;
+      el_typ=DynEnumBase;
       el_def=0;
      };
      args {
@@ -7648,6 +7956,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc="layers to lesion for this run";
        init_from=NULL;
       };
+     };
+     brk_pts {
+      name=;
+      el_typ=ProgBrkPt;
+      el_def=0;
      };
      functions {
       name=;
@@ -7814,7 +8127,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      };
      types {
       name=;
-      el_typ=DynEnumType;
+      el_typ=DynEnumBase;
       el_def=0;
      };
      args {
@@ -7888,6 +8201,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        desc=;
        init_from=NULL;
       };
+     };
+     brk_pts {
+      name=;
+      el_typ=ProgBrkPt;
+      el_def=0;
      };
      functions {
       name=;
@@ -8148,7 +8466,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -8203,6 +8521,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -8681,7 +9004,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -8766,6 +9089,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -9330,7 +9658,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -9363,6 +9691,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="event to present";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -9484,7 +9817,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -9529,6 +9862,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -9693,7 +10031,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -9847,6 +10185,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -10174,7 +10517,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -10208,6 +10551,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -10266,7 +10614,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -10341,6 +10689,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -10746,7 +11099,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -10831,6 +11184,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -11157,7 +11515,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -11242,6 +11600,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -11496,7 +11859,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -11540,6 +11903,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -11646,7 +12014,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -11691,6 +12059,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -11784,7 +12157,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -11847,6 +12220,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -12078,7 +12456,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12100,6 +12478,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     vars {
      name=;
      el_typ=ProgVar;
+     el_def=0;
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
      el_def=0;
     };
     functions {
@@ -12170,7 +12553,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12213,6 +12596,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="determines whether to update any network view displays after trial is completed";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -12329,7 +12717,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12392,6 +12780,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -12521,7 +12914,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12543,6 +12936,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     vars {
      name=;
      el_typ=ProgVar;
+     el_def=0;
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
      el_def=0;
     };
     functions {
@@ -12624,7 +13022,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12667,6 +13065,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -12740,7 +13143,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12773,6 +13176,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -12838,7 +13246,7 @@ also save specs.";
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -12941,6 +13349,11 @@ also save specs.";
       desc="batch + epoch";
       init_from=NULL;
      };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
     };
     functions {
      name=;
@@ -13563,7 +13976,7 @@ also save specs.";
      };
      types {
       name=;
-      el_typ=DynEnumType;
+      el_typ=DynEnumBase;
       el_def=0;
      };
      args {
@@ -13608,6 +14021,11 @@ also save specs.";
        desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
        init_from=NULL;
       };
+     };
+     brk_pts {
+      name=;
+      el_typ=ProgBrkPt;
+      el_def=0;
      };
      functions {
       name=;
@@ -14186,7 +14604,7 @@ also save specs.";
      };
      types {
       name=;
-      el_typ=DynEnumType;
+      el_typ=DynEnumBase;
       el_def=0;
      };
      args {
@@ -14242,6 +14660,11 @@ also save specs.";
        desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
        init_from=NULL;
       };
+     };
+     brk_pts {
+      name=;
+      el_typ=ProgBrkPt;
+      el_def=0;
      };
      functions {
       name=;
@@ -14554,7 +14977,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9973333477973938;
+     value 6 0=0.9968684911727905;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -14569,7 +14992,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABDwAAAmwAAAN4AQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAEAAAADAAABWQAAAjAAAAOGAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -15497,17 +15920,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007640067953616381;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04053333401679993;
+       value 6 0=0.04592901840806007;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 6 0=0.7342954277992249;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -15704,7 +16127,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="RandomSpec_6": type=UNIFORM: mean=0.3: var=0: par=1: };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
+     act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
@@ -15816,7 +16239,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_sig {gain=6: off=1: dwt_norm=1: };
        stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
-       xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
        rel_net_adapt {
 	on=0;
@@ -15896,7 +16319,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      wt_sig {gain=6: off=1: dwt_norm=1: };
      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
      rel_net_adapt {
       on=0;
@@ -15939,10 +16362,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ff0=0.1;
 	min_i=0;
        };
-       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
        cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
@@ -15978,10 +16401,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ff0=0.1;
       min_i=0;
      };
-     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
      decay {event=1: phase=0: phase2=0: };
      cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
@@ -16109,6 +16532,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Output"] {
@@ -16128,6 +16552,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
      };
@@ -16193,6 +16618,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
      };
@@ -16221,6 +16647,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      voxel_fill_pct=1;
      spec {type=LeabraLayerSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
+   };
+   weights {
+    name=;
+    el_typ=Weights;
+    el_def=0;
    };
    flags=0;
    auto_build=AUTO_BUILD;
