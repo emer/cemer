@@ -53,6 +53,7 @@ typedef QMap<int, ColorEntry> ColorMap;
 iTreeWidget::iTreeWidget(QWidget* parent)
 :inherited(parent)
 {
+  scrollTimerId = 0;
   init();
 }
 
@@ -122,6 +123,8 @@ void iTreeWidget::doItemExpanded(QTreeWidgetItem* item_, bool expanded) {
 }
 
 void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
+  if(!scrollTimerId)
+    scrollTimerId = startTimer(100);
   ext_select_on = false;
   //note: we accept autoscroll decision regardless
   inherited::dragMoveEvent(ev);
@@ -470,5 +473,29 @@ void iTreeWidget::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
   if (!item) return;
   ext_select_on = false;
   scrollTo(indexFromItem(item), hint);
+}
+
+
+void iTreeWidget::timerEvent(QTimerEvent* e) {
+#if (QT_VERSION >= 0x050000)
+  // this fix is only needed for qt5
+  if(e->timerId() == scrollTimerId)
+    dragScroll();
+#endif
+  inherited::timerEvent(e);
+}
+
+void iTreeWidget::dragScroll() {
+  QModelIndex index = indexAt(mapFromGlobal(QCursor::pos()));
+  QModelIndex indexB = indexBelow(index);
+  QRect vRect = visualRect(indexB);
+  if( height() <= vRect.y() + (vRect.height()))
+    scrollTo(indexB);
+  else if( y() >= visualRect(indexAbove(index)).y())
+    scrollTo(indexAbove(index));
+  else {
+    killTimer(scrollTimerId);
+    scrollTimerId=0;
+  }
 }
 

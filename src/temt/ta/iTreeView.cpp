@@ -969,3 +969,4 @@ void iTreeView::ScrollTo(int scr_pos) {
 bool iTreeView::PosInView(int scr_pos) {
   return taiMisc::PosInView_SA(this, scr_pos);
 }
+

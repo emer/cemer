@@ -73,22 +73,26 @@ protected:
   bool			m_sibling_sel; // if true, only siblings (items at same level) can be selected -- items at different levels of the tree will not be selected -- true by default
   bool			ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   mutable void*		m_highlightColors; // a QMap
+  int                   scrollTimerId;
   
   void*			highlightColors() const; // insures map exists
-  void 			drawRow(QPainter* painter,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const; //override
-  void 			dragMoveEvent(QDragMoveEvent* ev);  //override
-  void			dropEvent(QDropEvent* e); // override
-  bool 			dropMimeData(QTreeWidgetItem* parent, int index, 
-    const QMimeData* data, Qt::DropAction action); // override -- we always delegate to the item, and always return false (we handle item manipulation manually)
-  void 			contextMenuEvent(QContextMenuEvent* e); // override
-  void			doItemExpanded(QTreeWidgetItem* item, bool expanded);
+  override void 	drawRow(QPainter* painter,
+    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  override void 	dragMoveEvent(QDragMoveEvent* ev);
+  override void		dropEvent(QDropEvent* e);
+  override bool 	dropMimeData(QTreeWidgetItem* parent, int index, 
+    const QMimeData* data, Qt::DropAction action); // we always delegate to the item, and always return false (we handle item manipulation manually)
+  override void 	contextMenuEvent(QContextMenuEvent* e);
+  override void		doItemExpanded(QTreeWidgetItem* item, bool expanded);
+  override void         timerEvent(QTimerEvent* e);
   Qt::DropActions	supportedDropActions() const;
   void 			setSelection(const QRect &rect,
 				     QItemSelectionModel::SelectionFlags command);
+  // this is workaround for drag scrolling bug in qt5.2
+  virtual  void         dragScroll();
 
   override void 	keyPressEvent(QKeyEvent* e);	// override
-  
+
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);
   void			this_itemCollapsed(QTreeWidgetItem* item);
