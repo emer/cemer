@@ -79,12 +79,19 @@ else (WIN32)
   endmacro(SET_TA_PROPS)
 endif (WIN32)
 
+if (MAKETA_CMD)
+  message(STATUS "using MAKETA_CMD = ${MAKETA_CMD}")
+else (MAKETA_CMD)
+  message(STATUS "MAKETA_CMD ${MAKETA_CMD} not set -- using maketa")
+  set(MAKETA_CMD "maketa")
+endif (MAKETA_CMD)
+
 macro(CREATE_MAKETA_COMMAND infile outfile)
   MAKETA_GET_INC_DIRS(maketa_includes)
   
   add_custom_command(
     OUTPUT ${outfile}
-    COMMAND maketa ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
+    COMMAND ${MAKETA_CMD} ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
     DEPENDS ${infile}
   )
   # IMPORTANT: setting these props triggers a full rebuild of the source whenever

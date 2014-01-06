@@ -83,7 +83,7 @@ bool SetUnitsVar::GetInputDataVar() {
 bool SetUnitsVar::GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& idnm, DataTable* idat) {
   int colno;
   if((bool)un && (bool)un->dyn_enum_val.enum_type) {
-    DynEnumType* det = un->dyn_enum_val.enum_type.ptr();
+    DynEnumBase* det = un->dyn_enum_val.enum_type.ptr();
     colno = idat->FindColNameIdx(det->name, true);
     if(TestError(colno < 0, "GenCss",
                  "data table column:",det->name,"not found in input data table:",

@@ -113,6 +113,8 @@ include(${mod_path}/MacroLibrary.cmake)
 # this one does all the configure checks to set various variables
 include(${mod_path}/ConfigureChecks.cmake)
 # all the support for maketa:
+set(MAKETA_CMD "${EMERGENT_INSTALL_PREFIX}/bin/maketa")
+#message(STATUS "Set MAKETA_CMD to ${MAKETA_CMD}")
 include(${mod_path}/Maketa.cmake)
 
 # use this instead of TARGET_LINK_LIBRARIES -- sets suffix and other properties

@@ -18,6 +18,7 @@
 #include <Network>
 #include <GridTableView>
 #include <T3Panel>
+#include <DynEnumType>
 
 #include <tabMisc>
 #include <taMisc>
