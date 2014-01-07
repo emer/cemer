@@ -1683,6 +1683,8 @@ void taMatrix::ResetColorScale() {
 
 ColorScale* taMatrix::GetColorScale() {
   if(isDestroying()) return NULL;
+  if(GetDataValType() != VT_FLOAT && GetDataValType() != VT_DOUBLE)
+    return NULL;                // only for real-valued numerical types
   if(!colorscale) {
     colorscale = new ColorScale;
     taBase::Own(colorscale, this);
