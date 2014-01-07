@@ -34,7 +34,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(DataVarProgMatrix);
 protected:
-  override bool	GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no);
+  override bool GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

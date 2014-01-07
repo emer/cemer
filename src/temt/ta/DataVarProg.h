@@ -37,15 +37,16 @@ public:
     ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
   };
 
-  bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
-  RowType	row_spec;	// how the row number within data table is specified
-  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
-  bool		quiet;		// #CONDSHOW_OFF_row_spec:CUR_ROW do not generate an error if the row_var value is not found (either row num beyond bounds, or row_val not found -- just don't set anything)
+  bool		    set_data;	  // if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
+  RowType	    row_spec;	  // how the row number within data table is specified
+  ProgVarRef	row_var;	  // #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
+  bool		    quiet;		  // #CONDSHOW_OFF_row_spec:CUR_ROW do not generate an error if the row_var value is not found (either row num beyond bounds, or row_val not found -- just don't set anything)
+  bool        all_matches;// if true will set any variable whose name matches a column name of specified data table
 
-  ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_3;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_1;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_2;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_3;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_4;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "data=vars"; }
@@ -56,12 +57,10 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
   override void	GenCssBody_impl(Program* prog);
-  virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm,
-                              int var_no);
-  virtual bool	GenCss_OneVarMat(Program* prog, ProgVarRef& mat_var, const String& idnm,
-                                 int var_no);
-  virtual bool	GenCss_OneVarMatEnum(Program* prog, ProgVarRef& mat_var,
-                                     const String& idnm, int var_no);
+  virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
+  virtual bool  GenCss_OneVarMat(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
+  virtual bool  GenCss_OneVarMatEnum(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
+
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

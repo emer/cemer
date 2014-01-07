@@ -22,7 +22,7 @@
 void DataVarProgMatrix::Initialize() {
 }
 
-bool DataVarProgMatrix::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
+bool DataVarProgMatrix::GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no) {
   if(!var) return false;
   DataCol* da = NULL;
   String col_nm = var->name.before('_', -1);

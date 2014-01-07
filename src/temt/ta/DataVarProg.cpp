@@ -20,6 +20,7 @@
 void DataVarProg::Initialize() {
   row_spec = CUR_ROW;
   set_data = false;
+  all_matches = false;
 }
 
 void DataVarProg::UpdateAfterEdit_impl() {
@@ -63,7 +64,7 @@ String DataVarProg::GetDisplayName() const {
   return rval;
 }
 
-bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
+bool DataVarProg::GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no) {
   if (!var) return false;
   // if the var is a matrix, then delegate to our Mat handler
   if ((var->var_type == ProgVar::T_Object) &&
@@ -113,7 +114,7 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& id
   return true;
 }
 
-bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
+  bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVar* var, const String& idnm, int var_no) {
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
@@ -148,7 +149,7 @@ bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String&
   return true;
 }
 
-bool DataVarProg::GenCss_OneVarMatEnum(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
+  bool DataVarProg::GenCss_OneVarMatEnum(Program* prog, ProgVar* var, const String& idnm, int var_no) {
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
@@ -196,8 +197,24 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
   String idnm = data_var->name;
   prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
-  GenCss_OneVar(prog, var_1, idnm, 0);
-  GenCss_OneVar(prog, var_2, idnm, 1);
-  GenCss_OneVar(prog, var_3, idnm, 2);
-  GenCss_OneVar(prog, var_4, idnm, 3);
+  if (!all_matches) {
+    GenCss_OneVar(prog, var_1, idnm, 0);
+    GenCss_OneVar(prog, var_2, idnm, 1);
+    GenCss_OneVar(prog, var_3, idnm, 2);
+    GenCss_OneVar(prog, var_4, idnm, 3);
+  }
+  else {
+    DataTable* dt = GetData();
+    ProgVar_List all_vars = program()->vars;
+    for (int i = 0; i < all_vars.size; i++) {
+      String var_name = all_vars.SafeEl(i)->name;
+      if (var_name != row_var->name) {  // don't try to set the row variable itself - this is just the key to which row to use
+        int idx = dt->FindColNameIdx(var_name);
+        if (idx >= 0) {
+          ProgVar* pvar = all_vars.SafeEl(i);
+          GenCss_OneVar(prog, pvar, idnm, 0);
+        }
+      }
+    }
+  }
 }
