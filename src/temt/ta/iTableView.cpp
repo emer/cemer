@@ -266,6 +266,8 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
 
   act = menu->AddItem("&View", taiWidgetMenu::normal,
       iAction::int_act, this, SLOT(ViewAction(int)), 1);
+  act = menu->AddItem("&Reset Colors", taiWidgetMenu::normal,
+      iAction::int_act, this, SLOT(ResetColorsAction(int)), 1);
 
 }
 

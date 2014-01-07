@@ -68,6 +68,12 @@ void iMatrixTableView::ViewAction(int ea) {
   taMisc::Confirm("contents of cell(s):\n", str);
 }
 
+void iMatrixTableView::ResetColorsAction(int ea) {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return;
+  mat->ResetColorScale();
+}
+
 void iMatrixTableView::GetEditActionsEnabled(int& ea) {
   int allowed = 0;
   int forbidden = 0;

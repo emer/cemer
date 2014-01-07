@@ -97,11 +97,9 @@ T3GridViewNode::T3GridViewNode(T3DataView* dataView_, float wdth, bool show_drag
     insertChildAfter(ss, frame_, material());
   }
 
-  float vert_off = frame_margin + 2.0f * frame_width;
+  float vert_off = frame_margin; //  + 2.0f * frame_width;
 
   col_sb_tx_ = new SoTransform;
-  //  col_sb_tx_->translation.setValue(0.0f, -vert_off, -frame_width); // Z is to go below label
-  // from graph:
   col_sb_tx_->translation.setValue(0.5f * width_, -vert_off, -frame_width);
   col_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
   topSeparator()->addChild(col_sb_tx_);
@@ -109,7 +107,7 @@ T3GridViewNode::T3GridViewNode(T3DataView* dataView_, float wdth, bool show_drag
   topSeparator()->addChild(col_scroll_bar_);
 
   SoTransform* scrtx = new SoTransform;
-  scrtx->translation.setValue(.5f + frame_margin + 2.0f * frame_width,
+  scrtx->translation.setValue(.5f + 2.0f * frame_width,
 			      0.5f + vert_off, frame_width);
   scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), (float)(-.5f * taMath_float::pi)); // vertical!
   topSeparator()->addChild(scrtx);
@@ -137,19 +135,20 @@ void T3GridViewNode::render() {
   float vert_off = frame_margin + frmg2;
 
   if(show_drag_) {
-    String expr = "oA = vec3f(" + String(.5f * width_) + " + A[0], "
-      + String(.5f) + " + A[1], A[2])";
+    String expr = "oA = vec3f(" + String(.5f * width_ + 1.5f * frame_width) + " + A[0], "
+      + String(.5f - frame_margin) + " + A[1], A[2])";
 
     drag_->trans_calc_->expression = expr.chars();
-    frame_->setDimensions(width_ + frmg2, 1.0f + frmg2,
+    frame_->setDimensions(width_ + frmg2 + 2.0 * frame_width, 1.0f + frmg2 * 2.0f,
                           frame_width, frame_width);
-    txfm_shape()->translation.setValue(.5f * width_, .5f, 0.0f);
+    txfm_shape()->translation.setValue(.5f * width_ + 1.5f * frame_width,
+                                       .5f-frame_margin, 0.0f);
   }
 
   txlt_stage_->translation.setValue(0.0f, 1.0f, 0.0f);
   col_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
   // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
-  transformCaption(iVec3f(0.1f, -((float)font->size.getValue() + frame_margin), 0.02f)); // move caption below the frame
+  transformCaption(iVec3f(0.0f, -((float)font->size.getValue() + frame_margin), 0.02f)); // move caption below the frame
 }
 

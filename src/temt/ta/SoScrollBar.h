@@ -27,6 +27,7 @@ class SoSeparator; //
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SoSwitch; //
 class SoMaterial; //
 class SoTranslate1Dragger; //
 class SoTranslation; // 
@@ -53,7 +54,7 @@ typedef SoSeparator inherited;
 public:
   static void		initClass();
   SoScrollBar(int min_=0, int max_=10, int val_=0, int ps_=5, int ss_=1,
-	      float wdth_ = .05f, float dpth_ = .01f);
+	      float wdth_ = .025f, float dpth_ = .01f);
 
   int	value() const		{ return value_; }	
   int	minimum() const		{ return minimum_; }
@@ -99,7 +100,8 @@ protected:
   SoScrollBarCB	valueChanged_cb_; // value has changed callback
   void*		valueChanged_ud_; // user data
 
-  // listed as ordered elements under overall sep
+  // listed as ordered elements -- everything lives within the switch
+  SoSwitch* 	  switch_;	// switch
   SoMaterial* 	  box_mat_;	// box material
   SoCube* 	  box_;		// containing box for slider
   SoMaterial* 	  slide_mat_;	// slider material (inactive)

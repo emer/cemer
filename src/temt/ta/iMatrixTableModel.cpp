@@ -19,12 +19,14 @@
 #include <MatrixIndex>
 #include <CellRange>
 #include <taProject>
+#include <ColorScale>
 
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
 #include <QColor>
+#include <QBrush>
 #include <QMimeData>
 
 
@@ -72,12 +74,22 @@ QVariant iMatrixTableModel::data(const QModelIndex& index, int role) const {
 //Qt::FontRole--  QFont: font for the text
   case Qt::TextAlignmentRole:
     return m_mat->defAlignment();
-  case Qt::BackgroundColorRole : //-- QColor
+  case Qt::BackgroundRole: {
+    //-- QColor
  /* note: only used when !(option.showDecorationSelected && (option.state
     & QStyle::State_Selected)) */
     if (!(flags(index) & Qt::ItemIsEditable))
-      return QColor(Qt::lightGray);
+      return QBrush(Qt::lightGray);
+    ColorScale* cs = m_mat->GetColorScale();
+    if(cs) {
+      float val = m_mat->SafeElAsFloat_Flat(matIndex(index));
+      cs->UpdateMinMax(val); // lame attempt to keep in range -- probably ok tho
+      float sc_val;
+      iColor ic = cs->GetColor(val, sc_val);
+      return (QBrush)(QColor)ic;
+    }
     break;
+  }
 /*Qt::TextColorRole
   QColor: color of text
 Qt::CheckStateRole*/

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6647
+// ta_Dump File v3.0 -- code v6.3.4.0 rev6711
 LeabraProject .projects["test"] { 
  taBase_Group @.templates = [0] {
  };
@@ -211,9 +211,21 @@ LeabraProject .projects["test"] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["StdInputData"] { 
     DataTableCols @.data = [3] {
-     String_Data @["Name"] { };
-     float_Data @["Input"] { };
-     float_Data @["Output"] { };
+     String_Data @["Name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Input"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
    };
   };
@@ -1217,9 +1229,146 @@ LeabraProject .projects["test"] {
     };
    };
 
-   FrameViewer_List @.frames = [2] {
+   FrameViewer_List @.frames = [3] {
     BrowseViewerTaBase @["Tree"] { };
     PanelViewer @["Panels"] { };
+    T3PanelViewer @["T3Frames"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
+     T3Panel_List @.panels = [4] {
+      T3Panel @["Network_0"] { 
+       T3DataView_List @.root_view.children = [1] {
+	NetView @["Network_0_View"] { 
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 ScaleRange_List @.scale_ranges = [1] {
+	  ScaleRange @[0] { };
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["EpochOutputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GraphTableView @["EpochOutputData_Graph"] { 
+	 T3DataView_List @.children = [8] {
+	  GraphColView @["batch"] { };
+	  GraphColView @["epoch"] { };
+	  GraphColView @["avg_sse"] { };
+	  GraphColView @["cnt_err"] { };
+	  GraphColView @["avg_ext_rew"] { };
+	  GraphColView @["avg_cycles"] { };
+	  GraphColView @["epoch_time_tot"] { };
+	  GraphColView @["epoch_time_usr"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["StdInputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GridTableView @["StdInputData_Grid"] { 
+	 T3DataView_List @.children = [3] {
+	  GridColView @["Name"] { };
+	  GridColView @["Input"] { };
+	  GridColView @["Output"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["TrialOutputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GridTableView @["TrialOutputData_Grid"] { 
+	 T3DataView_List @.children = [9] {
+	  GridColView @["batch"] { };
+	  GridColView @["epoch"] { };
+	  GridColView @["trial"] { };
+	  GridColView @["trial_name"] { };
+	  GridColView @["group_name"] { };
+	  GridColView @["phase_no"] { };
+	  GridColView @["minus_cycles"] { };
+	  GridColView @["sse"] { };
+	  GridColView @["ext_rew"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+     };
+    };
    };
 
    DockViewer_List @.docks = [1] {
@@ -3003,6 +3152,16 @@ LeabraProject .projects["test"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["Name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_57";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -3019,6 +3178,16 @@ LeabraProject .projects["test"] {
       [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      float_Data @["Input"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_58";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
       name="Input";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -3050,6 +3219,16 @@ LeabraProject .projects["test"] {
       };
      };
      float_Data @["Output"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_59";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
       name="Output";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -3103,7 +3282,7 @@ LeabraProject .projects["test"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_10";
+       name="UserDataItem_List_62";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3125,11 +3304,18 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_11";
+       name="UserDataItem_List_63";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3151,11 +3337,18 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 0;0;0;0;0;0;1;1;1;1;
+1;1;2;2;2;2;2;2;3;3;
+3;3;3;3;4;4;4;4;4;4;
+5;5;5;5;5;5;6;6;6;6;
+6;6;7;7;7;7;7;7;8;8;
+8;8;8;8;9;9;9;9;9;9;
+10;10;10;10;10;10;11;11;11;11;
+11;11;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_12";
+       name="UserDataItem_List_64";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3177,7 +3370,14 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 0;1;2;3;4;5;0;1;2;3;
+4;5;0;1;2;3;4;5;0;1;
+2;3;4;5;0;1;2;3;4;5;
+0;1;2;3;4;5;0;1;2;3;
+4;5;0;1;2;3;4;5;0;1;
+2;3;4;5;0;1;2;3;4;5;
+0;1;2;3;4;5;0;1;2;3;
+4;5;      };
      };
      String_Data @["trial_name"] {
       name="trial_name";
@@ -3193,7 +3393,14 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] "ldiag";"rdiag";"midhoriz";"random";"mitvert";"checks";"midhoriz";"random";"checks";"mitvert";
+"ldiag";"rdiag";"rdiag";"mitvert";"random";"ldiag";"checks";"midhoriz";"ldiag";"mitvert";
+"checks";"midhoriz";"rdiag";"random";"midhoriz";"mitvert";"ldiag";"rdiag";"random";"checks";
+"random";"rdiag";"checks";"mitvert";"midhoriz";"ldiag";"rdiag";"ldiag";"random";"midhoriz";
+"checks";"mitvert";"random";"midhoriz";"ldiag";"checks";"mitvert";"rdiag";"checks";"rdiag";
+"random";"ldiag";"mitvert";"midhoriz";"random";"ldiag";"checks";"mitvert";"rdiag";"midhoriz";
+"ldiag";"mitvert";"random";"rdiag";"midhoriz";"checks";"random";"midhoriz";"ldiag";"mitvert";
+"rdiag";"checks";      };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -3209,11 +3416,18 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] ;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;      };
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_13";
+       name="UserDataItem_List_65";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3235,7 +3449,14 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 2;2;2;2;2;2;2;2;2;2;
+2;2;2;2;2;2;2;2;2;2;
+2;2;2;2;2;2;2;2;2;2;
+2;2;2;2;2;2;2;2;2;2;
+2;2;2;2;2;2;2;2;2;2;
+2;2;2;2;2;2;2;2;2;2;
+2;2;2;2;2;2;2;2;2;2;
+2;2;      };
      };
      float_Data @["minus_cycles"] {
       name="minus_cycles";
@@ -3251,7 +3472,14 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;50;50;50;50;50;50;
+50;50;      };
      };
      float_Data @["sse"] {
       name="sse";
@@ -3267,7 +3495,14 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 7.8639712;5.8151407;5.3720698;7.6855354;6.4639702;4.2979684;5.1548772;6.4259238;3.5197849;3.2002859;
+4.8024416;6.6860557;4.6726723;3.1639631;3.1665056;1.4879907;0;2.9531364;0;3.4328089;
+0;3.792017;2.7545936;2.9709182;2.4634449;2.2282364;0;3.2334607;2.3744836;0;
+0.99867684;3.0667067;0;2.6128428;2.8480773;0;2.313694;0;0.96343708;1.6710582;
+0;0.98061782;0.65982485;0.95891309;0;0;0.76016223;1.6742231;0;0.928316;
+0;0;0.32180598;0;0;0;0;0;0.64046472;0;
+0;0;0;0.45387504;0;0;0;0;0;0;
+0.2923924;0;      };
      };
      float_Data @["ext_rew"] {
       name="ext_rew";
@@ -3283,7 +3518,14 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [72] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3292,7 +3534,14 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name=;
-    [0]     };
+    [72] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;    };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -3303,7 +3552,7 @@ LeabraProject .projects["test"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_12";
+       name="UserDataItem_List_58";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3325,11 +3574,12 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 0;0;0;0;0;0;0;0;0;0;
+0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_13";
+       name="UserDataItem_List_59";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3351,7 +3601,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 0;1;2;3;4;5;6;7;8;9;
+10;11;      };
      };
      float_Data @["avg_sse"] {
       name="avg_sse";
@@ -3367,7 +3618,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 6.2497764;4.9648948;2.5740447;2.1583898;1.7166042;1.5877174;0.98813456;0.67552048;0.20835365;0.10674412;
+0.075645842;0.048732068;      };
      };
      float_Data @["cnt_err"] {
       name="cnt_err";
@@ -3383,7 +3635,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 6;6;5;4;4;4;4;4;2;1;
+1;1;      };
      };
      float_Data @["avg_ext_rew"] {
       name="avg_ext_rew";
@@ -3399,7 +3652,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 0;0;0;0;0;0;0;0;0;0;
+0;0;      };
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
@@ -3415,7 +3669,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 50;50;50;50;50;50;50;50;50;50;
+50;50;      };
      };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
@@ -3431,7 +3686,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 0.31;0.16;0.17;0.17;0.16;0.17;0.17;0.17;0.2;0.17;
+0.17;0.17;      };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -3447,7 +3703,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [12] 0.25;0.15000001;0.16;0.16;0.16;0.16;0.16;0.16;0.17;0.16;
+0.16;0.16;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3456,7 +3713,8 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name=;
-    [0]     };
+    [12] 0;1;2;3;4;5;6;7;8;9;
+10;11;    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -3547,7 +3805,7 @@ LeabraProject .projects["test"] {
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -3950,7 +4208,7 @@ LeabraProject .projects["test"] {
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
      DynEnumType @["RndInitType"] {
       name="RndInitType";
@@ -4032,7 +4290,7 @@ LeabraProject .projects["test"] {
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=0;
+      int_val=11;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4066,7 +4324,7 @@ LeabraProject .projects["test"] {
      ProgVar @["err_stopcrit"] {
       name="err_stopcrit";
       var_type=T_Real;
-      real_val=-1;
+      real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4758,7 +5016,7 @@ LeabraProject .projects["test"] {
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -4807,7 +5065,7 @@ LeabraProject .projects["test"] {
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=5;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4967,7 +5225,7 @@ LeabraProject .projects["test"] {
      };
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
-      flags=0;
+      flags=OFF;
       orig_prog_code=;
       result_var=NULL;
       obj=.projects["test"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["trial_mon_data"]$$;
@@ -5263,7 +5521,7 @@ LeabraProject .projects["test"] {
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -5300,7 +5558,7 @@ LeabraProject .projects["test"] {
      ProgVar @["phase_no"] {
       name="phase_no";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5578,7 +5836,7 @@ LeabraProject .projects["test"] {
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -5615,7 +5873,7 @@ LeabraProject .projects["test"] {
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=20;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5940,7 +6198,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -6073,7 +6331,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -6579,7 +6837,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -7079,7 +7337,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -7430,7 +7688,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     types {
      name=;
-     el_typ=DynEnumType;
+     el_typ=DynEnumBase;
      el_def=0;
     };
     args {
@@ -7719,17 +7977,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 6 0=0.001065530115738511;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 6 0=0.1146010160446167;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9989355802536011;
+     value 6 0=0.9989344477653503;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -7744,7 +8002,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAACAAABAAAAAfwBAAAABwEAAAABAQ==";
+     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -7795,6 +8053,1229 @@ and the testing data is updated.  The first epoch monitor should have all the it
      m_data=NULL;
      visible=1;
     };
+    T3PanelViewer @["T3Frames"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_93";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="T3Frames";
+     m_data=NULL;
+     visible=1;
+     panels {
+      name="T3DataViewFrame_List_0";
+      el_typ=T3Panel;
+      el_def=0;
+      T3Panel @["Network_0"] {
+       name="Network_0";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=NetView;
+	 el_def=0;
+	 NetView @["Network_0_View"] {
+	  name="Network_0_View";
+	  m_data=$.projects["test"].networks["Network_0"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
+	  annotations {
+	   name=;
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  display=1;
+	  lay_layout=THREE_D;
+	  lay_mv=1;
+	  net_text=1;
+	  show_iconified=0;
+	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
+	  net_text_rot=-90;
+	  cur_unit_vals{ act;	  };
+	  unit_src_path=".layers[2].units[0]";
+	  con_type=ANY_CON;
+	  hist_idx=0;
+	  hist_save=1;
+	  hist_max=100;
+	  hist_ff=5;
+	  unit_disp_mode=UDM_BLOCK;
+	  unit_text_disp=UTD_NONE;
+	  max_size {x=5: y=5: z=2.333333: };
+	  max_size2d {x=5: y=18: z=1: };
+	  eff_max_size {x=5: y=5: z=2.333333: };
+	  font_sizes {
+	   net_name=0.05;
+	   net_vals=0.05;
+	   layer=0.04;
+	   layer_min=0.01;
+	   layer_vals=0.03;
+	   prjn=0.01;
+	   unit=0.02;
+	   un_nm_len=3;
+	  };
+	  view_params {
+	   xy_square=0;
+	   unit_spacing=0.05;
+	   prjn_disp=L_R_B;
+	   prjn_name=0;
+	   prjn_width=0.002;
+	   prjn_trans=0.5;
+	   lay_trans=0.5;
+	   unit_trans=0.6;
+	   laygp_width=1;
+	   show_laygp=1;
+	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.8;
+	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
+	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
+	  scale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
+	   auto_scale=0;
+	  };
+	  scale_ranges {
+	   name="ScaleRange_List_0";
+	   el_typ=ScaleRange;
+	   el_def=0;
+	   ScaleRange @[0] {
+	    var_name="act";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	  };
+	  lay_disp_modes{ Input=-1;Hidden=-1;Output=-1;	  };
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_0";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.9127705: z=2.325769: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.524852;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3Panel @["EpochOutputData"] {
+       name="EpochOutputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=GraphTableView;
+	 el_def=0;
+	 GraphTableView @["EpochOutputData_Graph"] {
+	  name="EpochOutputData_Graph";
+	  m_data=$.projects["test"].data.gp["OutputData"]["EpochOutputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["batch"] {
+	    name="batch";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch"] {
+	    name="epoch";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=11: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_sse"] {
+	    name="avg_sse";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0.0487321: fix_max=0: max=6.24978: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["cnt_err"] {
+	    name="cnt_err";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=1: fix_max=0: max=6: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_ext_rew"] {
+	    name="avg_ext_rew";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_ext_rew"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_cycles"] {
+	    name="avg_cycles";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_tot"] {
+	    name="epoch_time_tot";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_usr"] {
+	    name="epoch_time_usr";
+	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name=;
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name=;
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=5;
+	  view_range {min=0: max=4: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   name="GraphAxisView_0";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=11: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   name="GraphAxisView_1";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="batch";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   name="GraphPlotView_0";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_sse";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0.04873207: fix_max=0: max=6.249776: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   name="GraphPlotView_1";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="cnt_err";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=1: fix_max=0: max=6: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   name="GraphPlotView_2";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   name="GraphPlotView_3";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   name="GraphPlotView_4";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   name="GraphPlotView_5";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   name="GraphPlotView_6";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   name="GraphPlotView_7";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  err_1 {
+	   name="GraphPlotView_8";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   name="GraphPlotView_9";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   name="GraphPlotView_10";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   name="GraphPlotView_11";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   name="GraphPlotView_12";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   name="GraphPlotView_13";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   name="GraphPlotView_14";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   name="GraphPlotView_15";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED_COLOR;
+	  color_axis {
+	   name="GraphAxisView_2";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   name="GraphAxisView_3";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_2";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=1.465: y=0.4449999: z=1.802307: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.312307;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3Panel @["StdInputData"] {
+       name="StdInputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["StdInputData_Grid"] {
+	  name="StdInputData_Grid";
+	  m_data=$.projects["test"].data.gp["InputData"]["StdInputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["Name"] {
+	    name="Name";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Input"] {
+	    name="Input";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Input"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output"] {
+	    name="Output";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["Output"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="T3Annotation_List_10";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="T3DataView_List_0";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10;
+	  view_range {min=0: max=5: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.002;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_6";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=1.5: y=0.45: z=1.697154: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.694654;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3Panel @["TrialOutputData"] {
+       name="TrialOutputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["TrialOutputData_Grid"] {
+	  name="TrialOutputData_Grid";
+	  m_data=$.projects["test"].data.gp["OutputData"]["TrialOutputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.9715639: y=-0.004739355: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["batch"] {
+	    name="batch";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["batch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["epoch"] {
+	    name="epoch";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["epoch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["trial"] {
+	    name="trial";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["trial"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["trial_name"] {
+	    name="trial_name";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["trial_name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["group_name"] {
+	    name="group_name";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["group_name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["phase_no"] {
+	    name="phase_no";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["phase_no"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["minus_cycles"] {
+	    name="minus_cycles";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["minus_cycles"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["sse"] {
+	    name="sse";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["ext_rew"] {
+	    name="ext_rew";
+	    m_data=.projects["test"].data.gp["OutputData"]["TrialOutputData"].data["ext_rew"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.9715639: y=-0.004739355: z=0: }: };
+	  annotations {
+	   name="T3Annotation_List_11";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="T3DataView_List_0";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10;
+	  view_range {min=62: max=71: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=4: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.002;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_8";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=1.5: y=0.4482143: z=1.518828: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.525078;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
    };
    docks {
     name="DockViewer_List_0";
@@ -7817,7 +9298,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04044704511761665;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -8000,10 +9481,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	ff0=0.1;
 	min_i=0;
        };
-       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
        cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
@@ -8039,10 +9520,10 @@ and the testing data is updated.  The first epoch monitor should have all the it
       ff0=0.1;
       min_i=0;
      };
-     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: diff_act_pct=0: act_pct=0.1: };
-     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
+     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
+     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
      decay {event=1: phase=0: phase2=0: };
      cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
@@ -8099,7 +9580,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="RandomSpec_0": type=UNIFORM: mean=0.3: var=0: par=1: };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
+     act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
@@ -8169,7 +9650,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        wt_sig {gain=6: off=1: dwt_norm=1: };
        stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
-       xcal {thr_l_err=0: thr_l_mix=0.01: thr_m_mix=0.99: nrm_l=0: l_mult=0.5: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
        rel_net_adapt {
 	on=0;
@@ -8207,7 +9688,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      wt_sig {gain=6: off=1: dwt_norm=1: };
      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {thr_l_err=0: thr_l_mix=0.01: thr_m_mix=0.99: nrm_l=0: l_mult=0.5: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
      rel_net_adapt {
       on=0;
@@ -8326,6 +9807,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Output"] {
@@ -8345,6 +9827,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
      };
@@ -8410,6 +9893,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
        trg_netin_rel=-1;
       };
      };

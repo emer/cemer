@@ -18,6 +18,7 @@
 #include <int_Matrix>
 #include <MatrixIndex>
 #include <iMatrixTableModel>
+#include <ColorScale>
 #include <CellRange>
 #include <taMatrix_PList>
 #include <byte_Matrix>
@@ -86,6 +87,7 @@ void taMatrix::Initialize() {
   slice_par = NULL;
   fixed_dealloc = NULL;
   table_model = NULL;
+  colorscale = NULL;
   el_view_mode = IDX_UNK;
 }
 
@@ -103,6 +105,10 @@ void taMatrix::Destroy() {
   if (slices) {
     delete slices;
     slices = NULL;
+  }
+  if (colorscale) {
+    delete colorscale;
+    colorscale = NULL;
   }
   if (table_model) {
     //note: hopefully dudes won't call us back during this!
@@ -1664,8 +1670,31 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
   return true;
 }
 
+void taMatrix::ResetColorScale() {
+  if(!colorscale || size == 0) return;
+  float min = FastElAsFloat_Flat(0);
+  float max = FastElAsFloat_Flat(0);
+  for(int i=1; i<size; i++) {
+    min = MIN(min, FastElAsFloat_Flat(i));
+    max = MAX(max, FastElAsFloat_Flat(i));
+  }
+  colorscale->SetMinMax(min, max);
+}
+
+ColorScale* taMatrix::GetColorScale() {
+  if(isDestroying()) return NULL;
+  if(!colorscale) {
+    colorscale = new ColorScale;
+    taBase::Own(colorscale, this);
+    ResetColorScale();
+  }
+  return colorscale;
+}
+
 iMatrixTableModel* taMatrix::GetTableModel() {
-  if (!table_model && !isDestroying()) {
+  if(isDestroying()) return NULL;
+  if(!table_model) {
+    GetColorScale();
     table_model = new iMatrixTableModel(this);
     table_model->setPat4D(true); // always
   }

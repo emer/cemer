@@ -91,6 +91,7 @@ public:
   virtual void          GetEditActionsEnabled(int& ea) {}
 
   virtual void          ViewAction(int va) {}
+  virtual void          ResetColorsAction(int va) {}
 #ifndef __MAKETA__
  signals:
   void                  UpdateUi();

@@ -20,6 +20,7 @@
 
 #include <Inventor/draggers/SoTranslate1Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoCylinder.h>
@@ -65,25 +66,29 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   depth_ = dpth_;
   fixValues();
 
+  switch_  = new SoSwitch;
+  switch_->whichChild = SO_SWITCH_ALL;
+  addChild(switch_);
+
   box_mat_ = new SoMaterial;
   box_mat_->diffuseColor.setValue(T3Misc::frame_clr_r, T3Misc::frame_clr_g, T3Misc::frame_clr_b);
   box_mat_->transparency.setValue(T3Misc::frame_clr_tr);
-  addChild(box_mat_);
+  switch_->addChild(box_mat_);
 
   box_ = new SoCube;
   box_->width = 1.0f;
   box_->height = width_;
   box_->depth = depth_;
-  addChild(box_);
+  switch_->addChild(box_);
 
   slide_mat_ = new SoMaterial;
   slide_mat_->diffuseColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
   slide_mat_->emissiveColor.setValue(T3Misc::drag_inact_clr_r, T3Misc::drag_inact_clr_g, T3Misc::drag_inact_clr_b);
   slide_mat_->transparency.setValue(T3Misc::drag_inact_clr_tr);
-  addChild(slide_mat_);
+  switch_->addChild(slide_mat_);
 
   pos_ = new SoTranslation;
-  addChild(pos_);
+  switch_->addChild(pos_);
 
   slider_sep_ = new SoSeparator;
   slider_tx_ = new SoTransform;
@@ -109,7 +114,7 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   dragger_->addFinishCallback(SoScrollBar_DragFinishCB, (void*)this);
   dragger_->addStartCallback(SoScrollBar_DragStartCB, (void*)this);
   dragger_->addMotionCallback(SoScrollBar_DraggingCB, (void*)this);
-  addChild(dragger_);
+  switch_->addChild(dragger_);
 
 //   pos_->translation.connectFrom(&dragger_->translation);
 
@@ -173,6 +178,12 @@ void SoScrollBar::repositionSlider() {
   fixValues();
   float slsz = sliderSize();
   slider_->height = slsz;
+  if(slsz >= .999f) {
+    switch_->whichChild = SO_SWITCH_NONE;
+  }
+  else {
+    switch_->whichChild = SO_SWITCH_ALL;
+  }
   pos_->translation.setValue(getPos()-.5f + .5f * slsz, 0.0f, 0.0f);
 }
 
