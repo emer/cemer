@@ -105,6 +105,18 @@ void ODEWorldParams::UpdateAfterEdit_impl() {
   if(max_col_pts < 0) max_col_pts = 1;
 }
 
+void VEShadowParams::Initialize() {
+  on = false;
+  precision = 0.5f;
+  quality = 0.5f;
+  smoothing = 0.0f;
+  near_radius = -1.0f;
+  far_radius = -1.0f;
+  threshold = 0.1f;
+  epsilon = 0.00001f;
+}
+
+
 void VEWorld::Initialize() {
   world_id = NULL;
   space_id = NULL;
@@ -113,7 +125,6 @@ void VEWorld::Initialize() {
   cur_space_type = HASH_SPACE;
   hash_levels.min = -3;  hash_levels.max = 10;
   gravity.y = -9.81f;
-  shadows = false;
   updt_display = true;
   step_type = STD_STEP;
   stepsize = .01f;

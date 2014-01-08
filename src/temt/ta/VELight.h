@@ -47,8 +47,8 @@ public:
 
   LightType     light_type;     // type of light
   VELightParams light;          // light parameters
-  float         drop_off_rate;  // #CONDSHOW_ON_light_type:SPOT_LIGHT (0-1) how fast light drops off with increasing angle from the direction angle
-  float         cut_off_angle;  // #CONDSHOW_ON_light_type:SPOT_LIGHT (45 default) angle in degrees from the direction vector where there will be no light
+  float         drop_off_rate;  // #CONDSHOW_ON_light_type:SPOT_LIGHT (0-1) how fast light drops off with increasing angle from the direction angle -- this only really has an effect when shadows are turned on
+  float         cut_off_angle;  // #CONDSHOW_ON_light_type:SPOT_LIGHT (30 default) angle in degrees from the direction vector where there will be no light -- the smaller the value, the stronger the shadow effect when shadows are on -- with 45 shadows are very light
   taVector3f    dir_norm;       // #READ_ONLY #SHOW normal vector for where the camera is facing
 
   virtual SoLight*      CreateLight();

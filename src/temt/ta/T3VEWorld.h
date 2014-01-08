@@ -54,7 +54,11 @@ public:
   SoSwitch*             getTextureSwitch() { return textures; } // #IGNORE 
   SoSwitch*             getTextureXformSwitch() { return texture_xforms; } // #IGNORE 
 
-  void                  setShadows(bool on);
+  SoShadowGroup*        getShadowGroup() { return shadow_group; } // #IGNORE
+  
+  void                  setShadows(bool on, float precision, float quality,
+                                   float smoothing, float near_radius,
+                                   float far_radius, float threshold, float epsilon);
   bool                  getShadows() { return shadows; }
 
   override SoSeparator*	childNodes();

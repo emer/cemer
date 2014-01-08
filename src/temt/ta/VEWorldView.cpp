@@ -257,7 +257,9 @@ void VEWorldView::Render_impl() {
 //   font->size.setValue(font_size); // is in same units as geometry units of network
 //   obv->setCaption(caption().chars());
 
-  obv->setShadows(wl->shadows);
+  obv->setShadows(wl->shadows.on, wl->shadows.precision, wl->shadows.quality,
+                  wl->shadows.smoothing, wl->shadows.near_radius, wl->shadows.far_radius,
+                  wl->shadows.threshold, wl->shadows.epsilon);
 
   SetupCameras();
   SetupLights();
@@ -615,7 +617,10 @@ void VELight::ConfigLight(SoLight* lgt) {
   case SPOT_LIGHT:
     SoSpotLight* sl = (SoSpotLight*)lgt;
     sl->direction.setValue(dir_norm.x, dir_norm.y, dir_norm.z);
-    sl->location.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
+    float hl = .5f * length;
+    sl->location.setValue(cur_pos.x + dir_norm.x * hl,
+                          cur_pos.y + dir_norm.y * hl,
+                          cur_pos.z + dir_norm.z * hl);
     sl->dropOffRate = drop_off_rate;
     sl->cutOffAngle = cut_off_angle * taMath_float::rad_per_deg;
     break;

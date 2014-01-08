@@ -33,42 +33,35 @@ T3VEWorld::T3VEWorld(T3DataView* world)
 {
   SO_NODE_CONSTRUCTOR(T3VEWorld);
 
+  camera_switch = new SoSwitch;
+  camera_switch->whichChild = -1; // no cameras!
+  addChild(camera_switch);
+
+  sun_light = new SoDirectionalLight;
+  addChild(sun_light);
+  sun_light->on = false;
+
   shadow_group = new SoShadowGroup;
   addChild(shadow_group);
 
-  camera_switch = new SoSwitch;
-  camera_switch->whichChild = -1; // no cameras!
-  shadow_group->addChild(camera_switch);
-  //  insertChildBefore(topSeparator(), camera_switch, childNodes());
-
-  sun_light = new SoDirectionalLight;
-  shadow_group->addChild(sun_light);
-  //  insertChildBefore(topSeparator(), sun_light, childNodes());
-  sun_light->on = false;
-
   cam_light = new SoDirectionalLight;
   shadow_group->addChild(cam_light);
-  //  insertChildBefore(topSeparator(), cam_light, childNodes());
   cam_light->on = false;
 
   light_group = new SoGroup;
   shadow_group->addChild(light_group);
-  //  insertChildBefore(topSeparator(), light_group, childNodes());
 
   textures = new SoSwitch;
   textures->whichChild = -1;	// don't render here!
   shadow_group->addChild(textures);
-  //  insertChildBefore(topSeparator(), textures, childNodes());
 
   texture_xforms = new SoSwitch;
   texture_xforms->whichChild = -1;	// don't render here!
   shadow_group->addChild(texture_xforms);
-  //  insertChildBefore(topSeparator(), texture_xforms, childNodes());
 
   shadow_style = new SoShadowStyle;
   shadow_style->style = SoShadowStyle::CASTS_SHADOW_AND_SHADOWED;
   shadow_group->addChild(shadow_style);
-  //  insertChildBefore(topSeparator(), shadow_style, childNodes());
 
   childNodes();                 // build the child nodes
 
@@ -96,8 +89,17 @@ void T3VEWorld::setCamLightDir(float x_dir, float y_dir, float z_dir) {
   cam_light->direction = SbVec3f(x_dir, y_dir, z_dir);
 }
 
-void T3VEWorld::setShadows(bool on) {
+void T3VEWorld::setShadows(bool on, float precision, float quality,
+                           float smoothing, float near_radius,
+                           float far_radius, float threshold, float epsilon) {
   shadow_group->isActive = on;            // just high-level toggle
+  shadow_group->precision = precision;
+  shadow_group->quality = quality;
+  shadow_group->smoothBorder = smoothing;
+  shadow_group->visibilityNearRadius = near_radius;
+  shadow_group->visibilityRadius = far_radius;
+  shadow_group->epsilon = epsilon;
+  shadow_group->threshold = threshold;
 }
 
 SoSeparator* T3VEWorld::childNodes() {

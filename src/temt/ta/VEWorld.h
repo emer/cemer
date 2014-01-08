@@ -53,12 +53,34 @@ public:
   float         contact_depth;  // #DEF_0.001 depth of the surface layer arond all geometry objects -- allows things to go this deep into a surface before actual contact is made -- increased value can help prevent jittering
   int           max_col_pts;    // #DEF_4 maximum number of collision points to get (must be less than 64, which is a hard maximum)
 
-  void  Initialize();
-  void  Destroy()       { };
   SIMPLE_COPY(ODEWorldParams);
   TA_BASEFUNS(ODEWorldParams);
 protected:
   void  UpdateAfterEdit_impl();
+private:
+  void  Initialize();
+  void  Destroy()       { };
+};
+
+taTypeDef_Of(VEShadowParams);
+
+class TA_API VEShadowParams : public taOBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv shadow parameters for virtual environment
+  INHERITED(taOBase)
+public:
+  bool          on;             // turn on generation of shadows -- incurs a roughly 2x hit in rendering performance when this is turned on
+  float         epsilon;       // #CONDSHOW_ON_on #DEF_1e-05 used to offset the shadow map depth from the model depth. Should be set to as low a number as possible without causing flickering in the shadows or on non-shadowed objects -- strongly affects the perceived intensity of the shadows, and depends on how far away the camera is. 
+  float         precision;      // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.5 controls how large the shadow map is, 1 = maximum size
+  float         quality;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.5 Can be used to tune the shader program complexity. A higher value will mean that more calculations are done per-fragment instead of per-vertex. Default value is 0.5.
+  float         near_radius;    // #CONDSHOW_ON_on #DEF_-1 manuall specify near clipping plane for the shadow -- if a negative number, then it will be auto-computed
+  float         far_radius;    // #CONDSHOW_ON_on #DEF_-1 manuall specify far clipping plane for the shadow -- if a negative number, then it will be auto-computed
+  float         threshold;     // #CONDSHOW_ON_on #DEF_0.1 Can be used to avoid light bleeding in merged shadows cast from different objects -- experiment with diff numbers if this is a problem -- a threshold to completely eliminate all light bleeding can be computed from the ratio of overlapping occluder distances from the light's perspective. See http://forum.beyond3d.com/showthread.php?t=38165 for a discussion about this problem
+  float         smoothing;      // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0 NOTE: not currently in effect.  Used to add shadow border smoothing -- this is currently done as a post processing step on the shadow map. The algorithm used is Gauss Smoothing.  The value should be a number between 0 (no smoothing), and 1 (max smoothing) -- .1 seems to work best.
+
+  TA_SIMPLE_BASEFUNS(VEShadowParams);
+private:
+  void  Initialize();
+  void  Destroy()       { };
 };
 
 taTypeDef_Of(VEWorld);
@@ -87,8 +109,8 @@ public:
   float         stepsize;       // how big of a step to take
   int           quick_iters;    // #CONDSHOW_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
   taVector3f    gravity;        // gravitational setting for world (0,0,-9.81) is std
-  bool          shadows;        // if true, render shadows from lights
   bool          updt_display;   // if true, will update any attached display after each time step
+  VEShadowParams shadows;       // parameters for generating shadows of objects -- shadows require at least one spot light -- works better with spotlight cut_off_angle of 30 or so, with a drop_off_rate of about .1 or so
   ODEWorldParams ode_params;    // parameters for tuning the ODE engine
 
   VEObject_Group objects;       // objects in the world
