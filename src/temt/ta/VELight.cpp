@@ -18,15 +18,15 @@
 #include <Inventor/SbLinear.h>
 
 void VELight::Initialize() {
-  light_type = SPOT_LIGHT;
+  light_type = DIRECTIONAL_LIGHT;
   drop_off_rate = 0.0f;
   cut_off_angle = 45.0f;
   dir_norm.x = 0.0f; dir_norm.y = 0.0f; dir_norm.z = -1.0f;
-  shape = NO_SHAPE;             // having a shape will interfere with light!  but might want to see where it is sometimes..
+  shape = NO_SHAPE; // CYLINDER;  // having a shape will interfere with spotlight!  but might want to see where it is sometimes..
   long_axis = LONG_Z;
-  mass = .01f;
-  radius = .01f;
-  length = .01f;
+  mass = .1f;
+  radius = .1f;
+  length = .1f;
 }
 
 // in VEWorldView.cpp: SoLight* VELight::CreateLight()

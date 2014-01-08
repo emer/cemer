@@ -85,6 +85,10 @@ void GraphAxisBase::CutLinks() {
   inherited::CutLinks();
 }
 
+GraphTableView* GraphAxisBase::GetGTV() {
+  return GET_MY_OWNER(GraphTableView);
+}
+
 void GraphAxisBase::CopyFromView_base(GraphAxisBase* cp){
   on = cp->on;
   col_name = cp->col_name;
@@ -157,7 +161,7 @@ void GraphAxisBase::SetColPtr(GraphColView* cgv) {
 
 GraphColView* GraphAxisBase::GetColPtr() {
   if(col_name.empty()) return NULL;
-  GraphTableView* gv = (GraphTableView*)owner;
+  GraphTableView* gv = GET_MY_OWNER(GraphTableView);
   if(!gv) return NULL;
   return (GraphColView*)gv->children.FindName(col_name);
 }

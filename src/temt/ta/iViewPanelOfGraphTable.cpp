@@ -25,6 +25,8 @@
 #include <iCheckBox>
 #include <BuiltinTypeDefs>
 #include <iLineEdit>
+#include <iStripeWidget>
+#include <iFormLayout>
 
 #include <taMisc>
 #include <taiMisc>
@@ -142,6 +144,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   ((iLineEdit*)fldDepth->GetRep())->setCharWidth(6);
   layVals->addSpacing(taiM->hsep_c);
 
+  lblNPlots = taiM->NewLabel("N Plots", widg, font_spec);
+  lblNPlots->setToolTip("Number of different plots available to display in this graph -- can increase to up to 64 -- just takes more room in the control panel");
+  layVals->addWidget(lblNPlots);
+  fldNPlots = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
+  layVals->addWidget(fldNPlots->GetRep());
+  ((iLineEdit*)fldNPlots->GetRep())->setCharWidth(5);
+  layVals->addSpacing(taiM->hsep_c);
+
   layVals->addStretch();
 
   //    Axes
@@ -209,70 +219,9 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   layZAxis->addStretch();
 
-  // Y AXes
-
-  for(int i=0;i<max_plots; i++) {
-    layYAxis[i] = new QHBoxLayout; layWidg->addLayout(layYAxis[i]);
-
-    String lbl = "Y" + String(i+1) + ":";
-    lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
-    lblYAxis[i]->setToolTip("Column of data to plot (optional)");
-    layYAxis[i]->addWidget(lblYAxis[i]);
-    lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
-    layYAxis[i]->addWidget(lelYAxis[i]->GetRep());
-    layYAxis[i]->addSpacing(taiM->hsep_c);
-
-    oncYAxis[i] = new iCheckBox("On", widg);
-    oncYAxis[i]->setToolTip("Display this column's data or not?");
-    connect(oncYAxis[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-    layYAxis[i]->addWidget(oncYAxis[i]);
-    layYAxis[i]->addSpacing(taiM->hsep_c);
-
-    chkYAltY[i] =  new QCheckBox("Alt\nY", widg); 
-    chkYAltY[i]->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
-    connect(chkYAltY[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-    layYAxis[i]->addWidget(chkYAltY[i]);
-    layYAxis[i]->addSpacing(taiM->hsep_c);
-
-    pdtYAxis[i] = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
-    layYAxis[i]->addWidget(pdtYAxis[i]->GetRep());
-    layYAxis[i]->addSpacing(taiM->hsep_c);
-
-    lblcellYAxis[i] = taiM->NewLabel("Mtx\nCel", widg, font_spec);
-    lblcellYAxis[i]->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display -- enter -1 to display all lines at once.");
-    layYAxis[i]->addWidget(lblcellYAxis[i]);
-    cellYAxis[i] = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
-    cellYAxis[i]->setMinimum(-1);
-    layYAxis[i]->addWidget(cellYAxis[i]->GetRep());
-
-    layYAxis[i]->addStretch();
-  }
-
-  // Error bars
-  layErr[0] = new QHBoxLayout; layWidg->addLayout(layErr[0]);
-  layErr[1] = new QHBoxLayout; layWidg->addLayout(layErr[1]);
-
-  for(int i=0;i<max_plots; i++) {
-    int rw = (i < 4) ? 0 : 1;
-    String lbl = String(i+1) + " Err:";
-    lblErr[i] = taiM->NewLabel(lbl, widg, font_spec);
-    lblErr[i]->setToolTip("Column of for this column's error bar data");
-    layErr[rw]->addWidget(lblErr[i]);
-    layErr[rw]->addSpacing(taiM->hsep_c);
-
-    lelErr[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
-    layErr[rw]->addWidget(lelErr[i]->GetRep());
-    layErr[rw]->addSpacing(taiM->hsep_c);
-
-    oncErr[i] = new iCheckBox("On", widg);
-    oncErr[i]->setToolTip("Display error bars for this column's data?");
-    connect(oncErr[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-    layErr[rw]->addWidget(oncErr[i]);
-    layErr[rw]->addSpacing(taiM->hsep_c);
-  }
-
-  layErr[0]->addStretch();
-  layErr[1]->addStretch();
+  plotsWidg = new iStripeWidget(widg);
+  layWidg->addWidget(plotsWidg);
+  cur_built_plots = 0;
 
   //    Colors
 
@@ -382,11 +331,116 @@ void iViewPanelOfGraphTable::InitPanel_impl() {
   // nothing structural here (could split out cols, but not worth it)
 }
 
+bool iViewPanelOfGraphTable::BuildPlots() {
+  const int LAYBODY_MARGIN = 1;
+  const int LAYBODY_SPACING = 0;
+  int font_spec = taiMisc::fonMedium;
+  int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply | taiWidget::flgNoHelp;
+
+  GraphTableView* glv = this->glv(); //cache
+  if (!glv) return false; // probably destructing
+
+  int pltsz = MIN(max_plots, glv->plots.size);
+
+  if(cur_built_plots == pltsz)
+    return false;
+
+  row_height = taiM->max_control_height(taiM->ctrl_size);
+
+  plotsWidg->setHiLightColor(QColor(220, 220, 220));
+  plotsWidg->setStripeHeight(row_height + (9 * LAYBODY_MARGIN));
+
+  if(plotsWidg->layout()) {
+    delete plotsWidg->layout();
+    taiMisc::DeleteChildrenLater(plotsWidg);
+  }
+  
+  layPlots = new iFormLayout(plotsWidg);
+  layPlots->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
+  layPlots->setLabelAlignment(Qt::AlignLeft);
+  layPlots->setRowWrapPolicy(iFormLayout::DontWrapRows);
+  layPlots->setHorizontalSpacing(2 * LAYBODY_MARGIN);
+  layPlots->setVerticalSpacing(2 * LAYBODY_MARGIN);
+  layPlots->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
+  layPlots->setFieldGrowthPolicy(iFormLayout::AllNonFixedFieldsGrow); // TBD
+
+  // Y AXes
+  for(int i=0;i<pltsz; i++) {
+    layYAxis[i] = new QHBoxLayout;
+    layYAxis[i]->setMargin(0);
+    layYAxis[i]->addStrut(row_height); // make it full height, so controls center
+
+    String lbl = "Y" + String(i+1) + ":";
+    lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
+    lblYAxis[i]->setToolTip("Column of data to plot (optional)");
+    lblYAxis[i]->setFixedHeight(row_height);
+    layYAxis[i]->addWidget(lblYAxis[i]);
+    lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg,
+                                                    list_flags));
+    QWidget* lw = lelYAxis[i]->GetRep();
+    lw->setFixedHeight(row_height);
+    layYAxis[i]->addWidget(lw);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
+    oncYAxis[i] = new iCheckBox("On", widg);
+    oncYAxis[i]->setToolTip("Display this column's data or not?");
+    oncYAxis[i]->setFixedHeight(row_height);
+    connect(oncYAxis[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layYAxis[i]->addWidget(oncYAxis[i]);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
+    chkYAltY[i] =  new QCheckBox("Alt\nY", widg); 
+    chkYAltY[i]->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
+    chkYAltY[i]->setFixedHeight(row_height);
+    connect(chkYAltY[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layYAxis[i]->addWidget(chkYAltY[i]);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
+    pdtYAxis[i] = dl.Add(taiWidgetPoly::New(true, &TA_FixedMinMax, this, NULL, widg));
+    QWidget* pw = pdtYAxis[i]->GetRep();
+    pw->setFixedHeight(row_height);
+    layYAxis[i]->addWidget(pw);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
+    lblcellYAxis[i] = taiM->NewLabel("Mtx\nCel", widg, font_spec);
+    lblcellYAxis[i]->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display -- enter -1 to display all lines at once.");
+    lblcellYAxis[i]->setFixedHeight(row_height);
+    layYAxis[i]->addWidget(lblcellYAxis[i]);
+    cellYAxis[i] = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
+    cellYAxis[i]->setMinimum(-1);
+    QWidget* cw = cellYAxis[i]->GetRep();
+    cw->setFixedHeight(row_height);
+    layYAxis[i]->addWidget(cw);
+
+    oncErr[i] = new iCheckBox("Err On", widg);
+    oncErr[i]->setToolTip("Display error bars for this column's data?");
+    oncErr[i]->setFixedHeight(row_height);
+    connect(oncErr[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+    layYAxis[i]->addWidget(oncErr[i]);
+    layYAxis[i]->addSpacing(taiM->hsep_c);
+
+    lelErr[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg,
+                                                  list_flags));
+    QWidget* ew = lelErr[i]->GetRep();
+    ew->setFixedHeight(row_height);
+    layYAxis[i]->addWidget(ew);
+
+    layYAxis[i]->addStretch();
+
+    layPlots->addRow(layYAxis[i]);
+  }
+
+  cur_built_plots = pltsz;
+  return true;
+}
+
 void iViewPanelOfGraphTable::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
 
   GraphTableView* glv = this->glv(); //cache
   if (!glv) return; // probably destructing
+
+  BuildPlots();
 
   chkDisplay->setChecked(glv->display_on);
   chkManip->setChecked(glv->manip_ctrl_on);
@@ -401,6 +455,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   chkNegDrawZ->setChecked(glv->negative_draw_z);
   fldWidth->GetImage((String)glv->width);
   fldDepth->GetImage((String)glv->depth);
+  fldNPlots->GetImage((String)glv->tot_plots);
 
   lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
   rncXAxis->setChecked(glv->x_axis.row_num);
@@ -418,21 +473,21 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
   pdtZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
 
-  for(int i=0;i<max_plots; i++) {
-    lelYAxis[i]->GetImage(&(glv->children), glv->all_plots[i]->GetColPtr());
-    oncYAxis[i]->setReadOnly(glv->all_plots[i]->GetColPtr() == NULL);
-    oncYAxis[i]->setChecked(glv->all_plots[i]->on);
-    pdtYAxis[i]->GetImage_(&(glv->all_plots[i]->fixed_range));
-    lelYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->all_plots[i]->on);
-    pdtYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->all_plots[i]->on);
-    chkYAltY[i]->setChecked(glv->all_plots[i]->alt_y);
-    cellYAxis[i]->GetImage((String)glv->all_plots[i]->matrix_cell);
-  }
+  int pltsz = MIN(max_plots, glv->plots.size);
 
-  for(int i=0;i<max_plots; i++) {
-    lelErr[i]->GetImage(&(glv->children), glv->all_errs[i]->GetColPtr());
-    oncErr[i]->setReadOnly(glv->all_errs[i]->GetColPtr() == NULL);
-    oncErr[i]->setChecked(glv->all_errs[i]->on);
+  for(int i=0;i<pltsz; i++) {
+    lelYAxis[i]->GetImage(&(glv->children), glv->plots[i]->GetColPtr());
+    oncYAxis[i]->setReadOnly(glv->plots[i]->GetColPtr() == NULL);
+    oncYAxis[i]->setChecked(glv->plots[i]->on);
+    pdtYAxis[i]->GetImage_(&(glv->plots[i]->fixed_range));
+    lelYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->plots[i]->on);
+    pdtYAxis[i]->SetFlag(taiWidget::flgReadOnly, !glv->plots[i]->on);
+    chkYAltY[i]->setChecked(glv->plots[i]->alt_y);
+    cellYAxis[i]->GetImage((String)glv->plots[i]->matrix_cell);
+
+    lelErr[i]->GetImage(&(glv->children), glv->errbars[i]->GetColPtr());
+    oncErr[i]->setReadOnly(glv->errbars[i]->GetColPtr() == NULL);
+    oncErr[i]->setChecked(glv->errbars[i]->on);
   }
 
   fldErrSpacing->GetImage((String)glv->err_spacing);
@@ -474,6 +529,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->negative_draw_z = chkNegDrawZ->isChecked();
   glv->width = (float)fldWidth->GetValue();
   glv->depth = (float)fldDepth->GetValue();
+  glv->tot_plots = (float)fldNPlots->GetValue();
 
   glv->setScaleData(false, cbar->min(), cbar->max());
 
@@ -492,23 +548,23 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
 
-  for(int i=0;i<max_plots; i++) {
-    tcol = (GraphColView*)lelYAxis[i]->GetValue();
-    if (tcol && !glv->all_plots[i]->GetColPtr())
-      oncYAxis[i]->setChecked(true);
-    glv->all_plots[i]->on = oncYAxis[i]->isChecked();
-    pdtYAxis[i]->GetValue_(&(glv->all_plots[i]->fixed_range)); // this can change, so update
-    glv->all_plots[i]->alt_y = chkYAltY[i]->isChecked();
-    glv->all_plots[i]->SetColPtr(tcol);
-    glv->all_plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();
-  }
+  int pltsz = MIN(max_plots, glv->plots.size);
 
-  for(int i=0;i<max_plots; i++) {
+  for(int i=0;i<pltsz; i++) {
+    tcol = (GraphColView*)lelYAxis[i]->GetValue();
+    if (tcol && !glv->plots[i]->GetColPtr())
+      oncYAxis[i]->setChecked(true);
+    glv->plots[i]->on = oncYAxis[i]->isChecked();
+    pdtYAxis[i]->GetValue_(&(glv->plots[i]->fixed_range)); // this can change, so update
+    glv->plots[i]->alt_y = chkYAltY[i]->isChecked();
+    glv->plots[i]->SetColPtr(tcol);
+    glv->plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();
+
     tcol = (GraphColView*)lelErr[i]->GetValue();
-    if (tcol && !glv->all_errs[i]->GetColPtr())
+    if (tcol && !glv->errbars[i]->GetColPtr())
       oncErr[i]->setChecked(true);
-    glv->all_errs[i]->on = oncErr[i]->isChecked();
-    glv->all_errs[i]->SetColPtr(tcol);
+    glv->errbars[i]->on = oncErr[i]->isChecked();
+    glv->errbars[i]->SetColPtr(tcol);
   }
 
   glv->err_spacing = (int)fldErrSpacing->GetValue();

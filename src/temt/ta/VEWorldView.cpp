@@ -257,6 +257,8 @@ void VEWorldView::Render_impl() {
 //   font->size.setValue(font_size); // is in same units as geometry units of network
 //   obv->setCaption(caption().chars());
 
+  obv->setShadows(wl->shadows);
+
   SetupCameras();
   SetupLights();
 

@@ -67,7 +67,7 @@ public:
   virtual void          SetColPtr(GraphColView* cgv);
   GraphColView*         GetColPtr(); // get column pointer from col_name
   DataCol*              GetDAPtr();  // get dataarray ptr
-  GraphTableView*       GetGTV()        { return (GraphTableView*)owner; }
+  GraphTableView*       GetGTV();
 
   bool                  isString()      { return is_string; }
 

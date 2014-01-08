@@ -24,8 +24,9 @@
 // declare all other types mentioned but not required to include:
 class SoDirectionalLight; // #IGNORE
 class SoGroup; // 
-class SoSwitch; // 
-
+class SoSwitch; //
+class SoShadowStyle; //
+class SoShadowGroup; //
 
 taTypeDef_Of(T3VEWorld);
 
@@ -53,13 +54,21 @@ public:
   SoSwitch*             getTextureSwitch() { return textures; } // #IGNORE 
   SoSwitch*             getTextureXformSwitch() { return texture_xforms; } // #IGNORE 
 
+  void                  setShadows(bool on);
+  bool                  getShadows() { return shadows; }
+
+  override SoSeparator*	childNodes();
+
 protected:
+  SoShadowGroup*        shadow_group; // this owns everything..
   SoDirectionalLight*   sun_light;
   SoDirectionalLight*   cam_light;
   SoGroup*              light_group;
   SoSwitch*             camera_switch; // switching between diff cameras
   SoSwitch*             textures;      // group of shared textures (always switched off -- used by nodes)
   SoSwitch*             texture_xforms;      // group of shared textures (always switched off -- used by nodes)
+  SoShadowStyle*        shadow_style;
+  bool                  shadows;             // cast shadows?
 
   ~T3VEWorld();
 };

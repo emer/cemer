@@ -81,4 +81,18 @@ private:
   void                  Destroy() { };
 };
 
+
+taTypeDef_Of(GraphPlotView_List);
+
+class TA_API GraphPlotView_List : public taList<GraphPlotView> {
+  // #NO_TOKENS #NO_UPDATE_AFTER list of graph plot view objects
+INHERITED(taList<GraphPlotView>)
+public:
+  TA_BASEFUNS_NOCOPY(GraphPlotView_List);
+private:
+  void  Initialize()            { SetBaseType(&TA_GraphPlotView); }
+  void  Destroy()               { };
+};
+
+
 #endif // GraphPlotView_h

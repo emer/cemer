@@ -23,6 +23,26 @@
 
 // declare all other types mentioned but not required to include:
 
+/*
+  See T3Node for more docs
+
+  T3NodeParent:
+
+  this: SoSeparator (aka "topSeparator")
+      transform: SoTransform
+      shapeSeparator: SoSeparator
+        txfm_shape: SoTransform
+        material: SoMaterial
+        shape: (type-specific shape, if any)
+      [captionFont]: SoFont - only created if accessed -- NOTE: inherited by childNodes
+      [captionSeparator]: SoSeparator (node and subnodes only created if non-blank caption set)
+        captionTransform: SoTransform
+        captionNode: SoAsciiText
+      [class-dependent child node modifiers, inserted here, before childNodes]
+      childNodes: SoSeparator -- the T3Node children, if any -- AUTOCREATED
+*/
+
+
 taTypeDef_Of(T3NodeParent);
 
 class TA_API T3NodeParent: public T3Node {
@@ -37,8 +57,8 @@ public:
 
   SoFont*		captionFont(bool auto_create = false); // override
   SoSeparator*		shapeSeparator() {return shapeSeparator_;}
-  SoSeparator*		childNodes(); // use this to set/get T3Node children
-
+  virtual SoSeparator*	childNodes(); // use this to set/get T3Node children
+  
   void			addRemoveChildNode(SoNode* node, bool adding); // override
 
   T3NodeParent(T3DataView* dataView_ = NULL);
@@ -47,7 +67,7 @@ protected:
   SoSeparator*		captionSeparator(bool auto_create = false); // override
 
   ~T3NodeParent();
-private:
+protected:
   SoSeparator*		shapeSeparator_; // #IGNORE
   SoSeparator*		childNodes_; // #IGNORE
 };

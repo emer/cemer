@@ -76,9 +76,6 @@ public:
     Z_INDEX,                    // values in the matrix are drawn in the same graph, arrayed in depth along the z axis
   };
 
-  static const int      max_plots = 8; // maximum number of y axis data plots (fixed by plot_x guys below)
-  // IMPORTANT: must sync one in panel to be same as this one!!
-
   GraphType             graph_type;     // type of graph to draw
   PlotStyle             plot_style;     // how to plot the data
   bool                  negative_draw;  // continue same line when X value resets in negative axis direction?
@@ -99,23 +96,10 @@ public:
 
   GraphAxisView         x_axis;         // the x axis (horizontal, left-to-right)
   GraphAxisView         z_axis;         // the z axis (in depth, front-to-back)
-  GraphPlotView         plot_1;         // column of data to plot (optional)
-  GraphPlotView         plot_2;         // column of data to plot (optional)
-  GraphPlotView         plot_3;         // column of data to plot (optional)
-  GraphPlotView         plot_4;         // column of data to plot (optional)
-  GraphPlotView         plot_5;         // column of data to plot (optional)
-  GraphPlotView         plot_6;         // column of data to plot (optional)
-  GraphPlotView         plot_7;         // column of data to plot (optional)
-  GraphPlotView         plot_8;         // column of data to plot (optional)
+  int                   tot_plots;      // total number of plots to make avail for this graph -- just sets the default size of plots and errs lists
+  GraphPlotView_List    plots;          // columns of data to plot for Y axis
+  GraphPlotView_List    errbars;        // error bar columns of data to plot, in correspondence with plots
 
-  GraphPlotView         err_1;          // data for error bars for plot values
-  GraphPlotView         err_2;          // data for error bars for plot values
-  GraphPlotView         err_3;          // data for error bars for plot values
-  GraphPlotView         err_4;          // data for error bars for plot values
-  GraphPlotView         err_5;          // data for error bars for plot values
-  GraphPlotView         err_6;          // data for error bars for plot values
-  GraphPlotView         err_7;          // data for error bars for plot values
-  GraphPlotView         err_8;          // data for error bars for plot values
   int                   err_spacing;    // #CONDEDIT_ON_graph_type:XY_ERR spacing between
   float                 err_bar_width;  // half-width of error bars, in view plot units
 
@@ -150,6 +134,9 @@ public:
   ///////////////////////////////////////////////////
   // misc housekeeping
 
+  GraphPlotView*   MainY();  // get the main y axis (or NULL)
+  GraphPlotView*   AltY();  // get the alt y axis (or NULL)
+
   void          FindDefaultXZAxes();
   // set X and Z axis columns to user data spec or the last INT columns -- if that doesn't work, then choose the first numeric columns
   void          FindDefaultPlot1();
@@ -180,6 +167,8 @@ public:
 
   virtual void          CopyFromView(GraphTableView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
+  virtual void          DefaultPlotStyles();
+  // #BUTTON set the default plot styles for all plots
 
   void  InitLinks();
   void  CutLinks();
@@ -190,14 +179,28 @@ public:
   // NOTE: following are for read-only access only!!
 
   int                   n_plots;                // #IGNORE number of active plots
-  GraphPlotView*        all_plots[max_plots];   // #IGNORE just pointers to all the plot_ guys for ease
-  GraphPlotView*        all_errs[max_plots];    // #IGNORE just pointers to all the err_ guys for ease
   int_Array             main_y_plots;           // #IGNORE indicies of active guys using main y axis
   int_Array             alt_y_plots;            // #IGNORE indicies of active guys using alt y axis
 
+  GraphPlotView         plot_1;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_2;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_3;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_4;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_5;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_6;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_7;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         plot_8;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+
+  GraphPlotView         err_1;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_2;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_3;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_4;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_5;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_6;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_7;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+  GraphPlotView         err_8;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
+
 protected:
-  GraphPlotView*        mainy;                  // main y axis guy (first main_y_plots)
-  GraphPlotView*        alty;                   // alt y axis guy (first alt_y_plots)
   int                   first_mat;              // which is the matrix guy to plot
 
   float                 bar_width; // width of bar for bar charts
@@ -248,6 +251,8 @@ protected:
   virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y,
                                         T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
+
+  void  LoadObsoletePlotData(); // #IGNORE
 
   override void         OnWindowBind_impl(iT3Panel* vw);
   override void         Clear_impl();

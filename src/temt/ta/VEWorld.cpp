@@ -113,6 +113,7 @@ void VEWorld::Initialize() {
   cur_space_type = HASH_SPACE;
   hash_levels.min = -3;  hash_levels.max = 10;
   gravity.y = -9.81f;
+  shadows = false;
   updt_display = true;
   step_type = STD_STEP;
   stepsize = .01f;

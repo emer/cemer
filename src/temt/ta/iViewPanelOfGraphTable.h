@@ -34,6 +34,8 @@ class QHBoxLayout; //
 class QCheckBox; //
 class QPushButton; //
 class QLabel; //
+class iStripeWidget; //
+class iFormLayout; //
 
 
 taTypeDef_Of(iViewPanelOfGraphTable);
@@ -42,8 +44,7 @@ class TA_API iViewPanelOfGraphTable: public iViewPanelOfDataTable {
   Q_OBJECT
 INHERITED(iViewPanelOfDataTable)
 public:
-  static const int      max_plots = 8; // maximum number of y axis data plots (fixed by plot_x guys below)
-  // IMPORTANT: above copied from GraphTableView -- must be same
+  static const int      max_plots = 64; // maximum number of y axis data plots that can be displayed in the control panel
 
   QHBoxLayout*            layTopCtrls;
   QCheckBox*                chkDisplay;
@@ -69,6 +70,8 @@ public:
   taiWidgetField*           fldWidth; // width of the display (height is always 1.0)
   QLabel*                   lblDepth;
   taiWidgetField*           fldDepth; // depth of the display (height is always 1.0)
+  QLabel*                   lblNPlots;
+  taiWidgetField*           fldNPlots;
 
   QHBoxLayout*            layXAxis;
   QLabel*                   lblXAxis;
@@ -87,6 +90,11 @@ public:
   QLabel*                   lblcellZAxis;
   taiWidgetFieldIncr*       cellZAxis; // matrix cell
 
+  iStripeWidget*          plotsWidg; // plot holding widget
+  iFormLayout*            layPlots; // all the plots
+  int                     cur_built_plots; // number of plots that are currently built
+  int                     row_height;
+
   QHBoxLayout*            layYAxis[max_plots];
   iCheckBox*                oncYAxis[max_plots];
   QLabel*                   lblYAxis[max_plots];
@@ -95,11 +103,10 @@ public:
   QCheckBox*                chkYAltY[max_plots];
   QLabel*                   lblcellYAxis[max_plots];
   taiWidgetFieldIncr*       cellYAxis[max_plots]; // matrix cell
-
-  QHBoxLayout*            layErr[2]; // two rows
-  QLabel*                   lblErr[max_plots];
   taiWidgetListElChooser*   lelErr[max_plots];
   iCheckBox*                oncErr[max_plots]; // on checkbox
+
+  //  QLabel*                   lblErr[max_plots];
 
   QHBoxLayout*            layCAxis;
   QLabel*                   lblColorMode;
@@ -139,6 +146,7 @@ protected:
   override void         UpdatePanel_impl(); // called on structural changes
   override void         GetValue_impl();
   override void         CopyFrom_impl();
+  virtual bool          BuildPlots();
 
 public: // ISigLinkClient interface
   override void*        This() {return (void*)this;}

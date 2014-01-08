@@ -87,6 +87,7 @@ public:
   float         stepsize;       // how big of a step to take
   int           quick_iters;    // #CONDSHOW_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
   taVector3f    gravity;        // gravitational setting for world (0,0,-9.81) is std
+  bool          shadows;        // if true, render shadows from lights
   bool          updt_display;   // if true, will update any attached display after each time step
   ODEWorldParams ode_params;    // parameters for tuning the ODE engine
 
