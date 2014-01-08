@@ -423,7 +423,7 @@ void T3GraphLine::setLineStyle(LineStyle value, float line_width) {
     pattern = 0xffff; // 1111111111111111
     break;
   case DOT:
-    pattern = 0x3333; // 0011001100110011
+    pattern = 0x3030; // 0011000000110000
     break;
   case DASH:
     pattern = 0x0f0f; // 0000111100001111

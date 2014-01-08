@@ -211,12 +211,6 @@ void GraphTableView::InitLinks() {
   taBase::Own(main_y_plots, this);
   taBase::Own(alt_y_plots, this);
 
-  if(plots.size != tot_plots) {
-    errbars.SetSize(tot_plots);     // always keep sync'd
-    plots.SetSize(tot_plots);
-    DefaultPlotStyles();
-  }
-
   // below are obsolete:
   taBase::Own(plot_1, this);
   taBase::Own(plot_2, this);
@@ -348,11 +342,11 @@ void GraphTableView::UpdateAfterEdit_impl(){
   z_axis.UpdateFmDataCol();
   for(int i=0;i<plots.size;i++) {
     GraphPlotView* pl = plots[i];
-    pl->name = name + "_plot_" + String(i);
+    pl->name = name + "_plot_" + String(i+1);
     pl->UpdateOnFlag();
     pl->UpdateFmDataCol();
     GraphPlotView* epl = errbars[i];
-    epl->name = name + "_err_" + String(i);
+    epl->name = name + "_err_" + String(i+1);
     epl->UpdateOnFlag();
     epl->UpdateFmDataCol();
     epl->axis = GraphAxisBase::Y;
