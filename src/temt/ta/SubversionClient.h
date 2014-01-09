@@ -22,6 +22,7 @@
 #include <string>
 
 class String_PArray; //
+class int_PArray; //
 
 // TODO: pimpl this so all of emergent doesn't have to depend on APR/SVN?
 //#include <apr_pools.h>
@@ -99,6 +100,14 @@ public:
 
   int Checkout(const char *url, int rev = -1, bool recurse = true);
   // Checkout a working copy and return the revision checked out.
+
+  void List(String_PArray& file_names, String_PArray& file_paths, int_PArray& file_sizes,
+            int_PArray& file_revs, int_PArray& file_times, String_PArray& file_authors,
+            const char* url, int rev = -1, bool recurse = true);
+  // list files in the repository url at given url -- fills in the arrays with coordinated values for each file
+
+  void SaveFile(const char* from_url, const char* to_path, int rev = -1);
+  // copy a file from given fully-specified url to a file at given to_path, using given revision (-1 = head)
 
   int Update(int rev = -1);
   // Update the working copy and return the revision.

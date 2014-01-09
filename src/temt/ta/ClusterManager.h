@@ -57,6 +57,8 @@ public:
 
   int   GetCurSvnRev() const { return m_cur_svn_rev; }
   // get the current svn revision number
+  String GetFullUrl() const { return m_repo_user_url; }
+  // get the full url to repository
   String GetWcProjPath() const;
   // full path to cluster_svn_path/svn_repo/clustername/username/projname/ -- root of the svn repo for this project
   String GetWcResultsPath() const;

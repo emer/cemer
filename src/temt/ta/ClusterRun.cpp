@@ -22,6 +22,7 @@
 #include <taDataProc>
 #include <DataTable_Group>
 #include <taProject>
+#include <SubversionClient>
 
 #include <taSigLinkItr>
 #include <iPanelSet>
@@ -55,10 +56,13 @@ void ClusterRun::Initialize() {
   pb_nodes = 0;
   nowin_x = false;
   m_cm = 0;
+  svn_other = NULL;
 }
 
 void ClusterRun::Destroy() {
   delete m_cm; m_cm = 0;
+  if(svn_other) delete svn_other;
+  svn_other = NULL;
 }
 
 void ClusterRun::UpdateAfterEdit_impl() {
@@ -689,10 +693,142 @@ void ClusterRun::GetProjAtRev() {
   taMisc::Info("Note: GetProjAtRev does NOT require a new checkin -- do not hit Update or wait for auto-update -- the file will be in the main project directory now, or very soon.");
 }
 
-void ClusterRun::ListOtherUserFiles(const String user_name) {
+ClusterRun::Exception::Exception(const char *msg)
+  : std::runtime_error(msg) {
+  taMisc::Error(msg);
+}
+
+void ClusterRun::InitOtherSvn(const String& svn_wc_path, const String& svn_url) {
+  if(!svn_other) {
+    try {
+      svn_other = new SubversionClient;
+    }
+    catch (const ClusterRun::Exception &ex) {
+      taMisc::Error("Error creating other SubversionClient.\n", ex.what());
+      return;
+    }
+  }
+
+  svn_other->SetWorkingCopyPath(svn_wc_path.chars());
+  svn_other_wc_path = svn_other->GetWorkingCopyPath().c_str();
+  svn_other_url = svn_url;
+  taMisc::Info("ClusterRun Other SVN set to url:", svn_other_url, "working copy:",
+               svn_other_wc_path);
+}
+
+void ClusterRun::ListOtherSvn(int rev, bool recurse) {
+  if(!svn_other) return;
+
+  String_PArray file_names;
+  String_PArray file_paths;
+  int_PArray    file_sizes;
+  int_PArray    file_revs;
+  int_PArray    file_times;
+  String_PArray file_authors;
+  
+  try {
+    svn_other->List(file_names, file_paths, file_sizes, file_revs, file_times,
+                    file_authors, svn_other_url, rev, recurse);
+  }
+  catch (const ClusterRun::Exception &ex) {
+    taMisc::Error("Error doing List in other SubversionClient.\n", ex.what());
+    return;
+  }
+
+  FormatTables();               // ensure tables are formatted properly
+  file_list.ResetData();
+  for(int i=0; i<file_paths.size; i++) {
+    int row = file_list.AddBlankRow();
+    file_list.SetVal(file_names[i], "file_name",  row);
+    file_list.SetVal(file_paths[i], "file_path",  row);
+    String szstr = taMisc::GetSizeString(file_sizes[i], 3, true); // 3 prec, power of 2
+    file_list.SetVal(szstr, "size",  row);
+    QDateTime dm = QDateTime::fromTime_t(file_times[i]);
+    String dmstr = dm.toString(timestamp_fmt);
+    file_list.SetVal(dmstr, "date_modified",  row);
+    file_list.SetVal(String("svn_other:") + file_authors[i], "tag", row);
+    file_list.SetVal(svn_other_url, "svn_file_path", row);
+  }
+  ViewPanelNumber(4);
+}
+
+void ClusterRun::ListOtherUserFiles(const String& user_name) {
   if(!initClusterManager())
     return;
-  
+
+  String url = m_cm->GetFullUrl();
+  if(TestError(url.empty(), "ListOtherUserFiles", "our url is empty -- do probe or update first"))
+    return;
+  String us_user = m_cm->getUsername();
+  String wc_path = m_cm->GetWcResultsPath();
+  String proj_path = wc_path.after(us_user,-1);
+
+  String wc_sub = wc_path.after(svn_repo);
+  String wc_base = wc_path.through(svn_repo);
+
+  wc_sub.gsub(us_user, user_name); // we don't actually use the wc anyway..
+  wc_path = wc_base + "/" + wc_sub;
+
+  url.gsub(us_user, user_name);
+  url += proj_path;
+
+  InitOtherSvn(wc_path, url);
+  ListOtherSvn();               // use defaults
+}
+
+void ClusterRun::ListOtherProjFiles(const String& proj_name) {
+  if(!initClusterManager())
+    return;
+
+  String url = m_cm->GetFullUrl();
+  if(TestError(url.empty(), "ListOtherProjFiles", "our url is empty -- do probe or update first"))
+    return;
+  String us_user = m_cm->getUsername();
+  String cur_proj = taMisc::GetFileFmPath(m_cm->getFilename());
+  cur_proj = cur_proj.before(".proj");
+  String wc_path = m_cm->GetWcResultsPath();
+  String proj_path = wc_path.after(us_user,-1);
+  proj_path.gsub(cur_proj, proj_name);
+  url += proj_path;
+  wc_path.gsub(cur_proj, proj_name);
+
+  InitOtherSvn(wc_path, url);
+  ListOtherSvn();               // use defaults
+}
+
+void ClusterRun::GetOtherFiles() {
+  if(!initClusterManager())
+    return;
+
+  String wc_path = m_cm->GetWcResultsPath();
+
+  // Get the (inclusive) range of rows to process
+  int st_row, end_row;
+  if (SelectedRows(file_list, st_row, end_row)) {
+    String_Array files;
+    for (int row = st_row; row <= end_row; ++row) {
+      String fl = file_list.GetVal("file_name", row).toString();
+      String svnp = file_list.GetVal("svn_file_path", row).toString();
+      String furl = svnp + "/" + fl;
+      String ofl = wc_path + "/" + fl;
+      if(taMisc::FileExists(ofl)) {
+        taMisc::Error("In attempt to saving file from url:", furl, "to:", ofl,
+                      "target file already exists!  Please double check and remove target file if you want to replace");
+        continue;
+      }
+      taMisc::Info("saving file from url:", furl, "to:", ofl);
+      try {
+        svn_other->SaveFile(furl, ofl);
+      }
+      catch (const ClusterRun::Exception &ex) {
+        taMisc::Error("Error doing SafeFile in other SubversionClient.\n", ex.what());
+        return;
+      }
+    }
+  }
+  else {
+    taMisc::Warning("No rows selected -- no files fetched");
+  }
 }
 
 void ClusterRun::ArchiveJobs() {

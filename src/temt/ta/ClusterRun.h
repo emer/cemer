@@ -33,6 +33,7 @@ class iDataTableEditor; //
 class ClusterManager; //
 class DataTable_Group; //
 class iPanelSet; //
+class SubversionClient; //
 
 class ClusterRun; //
 TA_SMART_PTRS(ClusterRun); // ClusterRunRef
@@ -77,7 +78,18 @@ public:
 
 protected:
   bool initClusterManager(bool check_prefs = true);
-  ClusterManager *m_cm;
+  ClusterManager*       m_cm;
+  SubversionClient*     svn_other; // other user or project svn client
+  String                svn_other_wc_path; // working copy path
+  String                svn_other_url;     // url
+
+  // This exception class only used internally.
+#ifndef __MAKETA__
+  class Exception : public std::runtime_error {
+  public:
+    explicit Exception(const char *msg);
+  };
+#endif
 
 public:
 
@@ -115,8 +127,12 @@ public:
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the non-data files associated with jobs selected in the jobs_done or jobs_archive lists -- these are typically larger files such as weight files, which it is good to clean up eventually
   virtual void  GetProjAtRev();
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
-  virtual void  ListOtherUserFiles(const String user_name);
-  // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE list the files checked into svn for given other user name, for this same project -- once the files are displayed, you can select files and click on GetFiles to copy those files to your directory
+  virtual void  ListOtherUserFiles(const String& user_name);
+  // #MENU_BUTTON #MENU_ON_OtherFiles #MENU_SEP_BEFORE list the files checked into svn for given other user name, for this same project -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
+  virtual void  ListOtherProjFiles(const String& proj_name);
+  // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
+  virtual void  GetOtherFiles();
+  // #MENU_BUTTON #MENU_ON_OtherFiles get selected files in file_list from ListOtherUserFiles or ListOtherProjFiles
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();
@@ -206,6 +222,11 @@ public:
 
   virtual String GetSvnPath();
   // returns the svn repository path currently in effect -- i.e., ClusterManager->GetWcProjPath()
+
+  virtual void  InitOtherSvn(const String& svn_wc_path, const String& svn_url);
+  // initialize the svn_other subversion setup for accessing other subversion info
+  virtual void  ListOtherSvn(int rev=-1, bool recurse=true);
+  // list files in other svn at given revision (-1 for current), and wether to recurse into subdirectories
 
   // view panel sets etc
 

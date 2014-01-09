@@ -16,6 +16,7 @@
 #include "SubversionClient.h"
 #include <iNetworkAccessManager>
 
+#include <int_PArray>
 #include <taMisc>
 
 #include <QDir>
@@ -768,6 +769,8 @@ SubversionClient::Checkout(const char *url, int rev, bool recurse)
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
 
+  const char* url_cln = svn_uri_canonicalize(url, m_pool);
+
   // Out parameter -- the value of the revision checked out from the
   // repository.
   svn_revnum_t result_rev = 0;
@@ -795,7 +798,7 @@ SubversionClient::Checkout(const char *url, int rev, bool recurse)
 
   if (svn_error_t *error = svn_client_checkout3(
         &result_rev, // out param
-        url,
+        url_cln,
         m_wc_path,
         &peg_revision,
         &revision,
@@ -811,6 +814,129 @@ SubversionClient::Checkout(const char *url, int rev, bool recurse)
 
   return result_rev;
 }
+
+class SvnFileInfoPtrs {
+public:
+  String_PArray* file_names;
+  String_PArray* file_paths;
+  int_PArray*    file_sizes;
+  int_PArray*    file_revs;
+  int_PArray*    file_times;
+  String_PArray* file_authors;
+};
+
+static svn_error_t* mysvn_list_callback(void *baton, const char *path,
+                                        const svn_dirent_t *dirent,
+                                        const svn_lock_t *lock, const char *abs_path,
+                                        apr_pool_t *pool) {
+  SvnFileInfoPtrs* fi = (SvnFileInfoPtrs*)baton;
+  if(dirent->size > 0) {
+    fi->file_names->Add(path);
+    fi->file_paths->Add(abs_path);
+    fi->file_sizes->Add(dirent->size);
+    fi->file_revs->Add(dirent->created_rev);
+    fi->file_times->Add(dirent->time / 1000000); // microseconds -> seconds
+    fi->file_authors->Add(dirent->last_author);
+  }
+  return NULL;
+}
+
+void
+SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
+                       int_PArray& file_sizes,
+                       int_PArray& file_revs, int_PArray& file_times,
+                       String_PArray& file_authors,
+                       const char *url, int rev, bool recurse) {
+
+  const char* url_cln = svn_uri_canonicalize(url, m_pool);
+  
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_unspecified;
+
+  // Set the revision number, if provided.  Otherwise get HEAD revision.
+  svn_opt_revision_t revision;
+  if (rev < 0) {
+    revision.kind = svn_opt_revision_head;
+  }
+  else {
+    revision.kind = svn_opt_revision_number;
+    revision.value.number = rev;
+  }
+
+  // Set the depth of subdirectories to be checked out.
+  svn_depth_t depth = recurse ? svn_depth_infinity : svn_depth_empty;
+
+  SvnFileInfoPtrs svn_fi_baton;
+  svn_fi_baton.file_names = &file_names;
+  svn_fi_baton.file_paths = &file_paths;
+  svn_fi_baton.file_sizes = &file_sizes;
+  svn_fi_baton.file_revs = &file_revs;
+  svn_fi_baton.file_times = &file_times;
+  svn_fi_baton.file_authors = &file_authors;
+
+  if (svn_error_t *error = svn_client_list2
+      (url_cln,
+       &peg_revision,
+       &revision,
+       depth,
+       SVN_DIRENT_ALL,
+       false,                   // don't fetch locks
+       mysvn_list_callback,
+       (void*)&svn_fi_baton,
+       m_ctx,
+       m_pool))
+    {
+      throw Exception("Subversion list error", error);
+    }
+}
+
+void 
+SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
+
+  const char* url_cln = svn_uri_canonicalize(from_url, m_pool);
+
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_unspecified;
+
+  // Set the revision number, if provided.  Otherwise get HEAD revision.
+  svn_opt_revision_t revision;
+  if (rev < 0) {
+    revision.kind = svn_opt_revision_head;
+  }
+  else {
+    revision.kind = svn_opt_revision_number;
+    revision.value.number = rev;
+  }
+
+  const char* to_path_cln = svn_path_canonicalize(to_path, m_pool);
+
+  svn_stream_t* out_strm;
+
+  if(svn_error_t* error = svn_stream_open_writable
+     (&out_strm,
+      to_path_cln,
+      m_pool,
+      m_pool))
+    {
+      throw Exception("Subversion SaveFile error -- couldn't write file", error);
+    }
+
+  if (svn_error_t *error = svn_client_cat2
+      (out_strm,
+       url_cln,
+       &peg_revision,
+       &revision,
+       m_ctx,
+       m_pool))
+    {
+      throw Exception("Subversion SaveFile cat2 error", error);
+    }
+
+  svn_stream_close(out_strm);
+}
+
 
 int
 SubversionClient::Update(int rev)
