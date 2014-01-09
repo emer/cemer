@@ -769,7 +769,9 @@ SubversionClient::Checkout(const char *url, int rev, bool recurse)
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
 
-  const char* url_cln = svn_uri_canonicalize(url, m_pool);
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  url = svn_uri_canonicalize(url, m_pool);
+#endif
 
   // Out parameter -- the value of the revision checked out from the
   // repository.
@@ -798,7 +800,7 @@ SubversionClient::Checkout(const char *url, int rev, bool recurse)
 
   if (svn_error_t *error = svn_client_checkout3(
         &result_rev, // out param
-        url_cln,
+        url,
         m_wc_path,
         &peg_revision,
         &revision,
@@ -848,7 +850,9 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
                        String_PArray& file_authors,
                        const char *url, int rev, bool recurse) {
 
-  const char* url_cln = svn_uri_canonicalize(url, m_pool);
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  url = svn_uri_canonicalize(url, m_pool);
+#endif
   
   // We don't want to use peg revisions, so set to unspecified.
   svn_opt_revision_t peg_revision;
@@ -876,7 +880,7 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
   svn_fi_baton.file_authors = &file_authors;
 
   if (svn_error_t *error = svn_client_list2
-      (url_cln,
+      (url,
        &peg_revision,
        &revision,
        depth,
@@ -894,7 +898,9 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
 void 
 SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 
-  const char* url_cln = svn_uri_canonicalize(from_url, m_pool);
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  url = svn_uri_canonicalize(url, m_pool);
+#endif
 
   // We don't want to use peg revisions, so set to unspecified.
   svn_opt_revision_t peg_revision;
@@ -925,7 +931,7 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 
   if (svn_error_t *error = svn_client_cat2
       (out_strm,
-       url_cln,
+       url,
        &peg_revision,
        &revision,
        m_ctx,
