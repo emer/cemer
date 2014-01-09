@@ -27,7 +27,10 @@
 #include <ParamSearchAlgo>
 #include <taDateTime>
 
+#ifndef __MAKETA__
+// todo: this crashes maketa!
 #include <stdexcept>
+#endif
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
