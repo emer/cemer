@@ -27,6 +27,8 @@
 #include <ParamSearchAlgo>
 #include <taDateTime>
 
+#include <stdexcept>
+
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class iDataTableEditor; //
