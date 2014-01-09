@@ -899,7 +899,7 @@ void
 SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
-  url = svn_uri_canonicalize(url, m_pool);
+  from_url = svn_uri_canonicalize(from_url, m_pool);
 #endif
 
   // We don't want to use peg revisions, so set to unspecified.
@@ -931,7 +931,7 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 
   if (svn_error_t *error = svn_client_cat2
       (out_strm,
-       url,
+       from_url,
        &peg_revision,
        &revision,
        m_ctx,
