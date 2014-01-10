@@ -26,9 +26,10 @@
 // declare all other types mentioned but not required to include:
 class iLineEdit; //
 class iTableView; //
-class iSubversionModel; //
+class iSvnFileListModel; //
 class iSpinBox; //
 class QAction; //
+class QSortFilterProxyModel; //
 
 //taTypeDef_Of(iSubversionBrowser);
 
@@ -37,7 +38,8 @@ class TA_API iSubversionBrowser : public QMainWindow {
 INHERITED(QMainWindow)
   Q_OBJECT
 public:
-  iSubversionModel*     svn_model;
+  iSvnFileListModel*     svn_file_model;
+  QSortFilterProxyModel* svn_file_sort;
 
   iLineEdit*            url_text;
   iLineEdit*            wc_text;
@@ -64,8 +66,8 @@ public:
   ~iSubversionBrowser();
 
 protected slots:
-  void                  go_clicked(); // or return in url_text
-
+  void          goClicked(); // or return in url_text
+  void          fileCellDoubleClicked(const QModelIndex& index);
 };
 
 #endif // iSubversionBrowser_h

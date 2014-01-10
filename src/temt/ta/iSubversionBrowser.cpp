@@ -15,7 +15,7 @@
 
 #include "iSubversionBrowser.h"
 
-#include <iSubversionModel>
+#include <iSvnFileListModel>
 #include <iLineEdit>
 #include <iTableView>
 #include <QVBoxLayout>
@@ -24,6 +24,7 @@
 #include <QToolBar>
 #include <iSpinBox>
 #include <QFrame>
+#include <QSortFilterProxyModel>
 
 #include <taMisc>
 #include <taiMisc>
@@ -34,7 +35,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   int font_spec = taiMisc::fonMedium;
   this->setWindowTitle("Subversion Browser");
 
-  svn_model = new iSubversionModel(this);
+  svn_file_model = new iSvnFileListModel(this);
 
   QFrame* body = new QFrame(this);
   body->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -88,7 +89,11 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lay_body->addSpacing(taiM->hsep_c);
 
   file_table = new iTableView(body);
-  file_table->setModel(svn_model);
+
+  svn_file_sort = new QSortFilterProxyModel(this);
+  svn_file_sort->setSourceModel(svn_file_model);
+
+  file_table->setModel(svn_file_sort);
   file_table->setSortingEnabled(true);
   lay_body->addWidget(file_table);
 
@@ -116,11 +121,14 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   file_table->verticalHeader()->setVisible(false);
   setCentralWidget(body);
 
-  connect(url_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
-  connect(wc_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
-  connect(subdir_text, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
-  connect(rev_box, SIGNAL(valueChanged(int)), this, SLOT(go_clicked()) );
-  connect(actGo, SIGNAL(triggered()), this, SLOT(go_clicked()) );
+  connect(url_text, SIGNAL(returnPressed()), this, SLOT(goClicked()) );
+  connect(wc_text, SIGNAL(returnPressed()), this, SLOT(goClicked()) );
+  connect(subdir_text, SIGNAL(returnPressed()), this, SLOT(goClicked()) );
+  connect(rev_box, SIGNAL(valueChanged(int)), this, SLOT(goClicked()) );
+  connect(actGo, SIGNAL(triggered()), this, SLOT(goClicked()) );
+  connect(file_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
+          SLOT(fileCellDoubleClicked(const QModelIndex&)));
+
 
   iSize sz = taiM->dialogSize(taiMisc::dlgMedium | taiMisc::dlgVer);
   resize(sz.width(), (int)(1.2f * (float)sz.height())); // a bit bigger than .6h
@@ -132,29 +140,29 @@ iSubversionBrowser::~iSubversionBrowser() {
 
 void iSubversionBrowser::setUrl(const String& url) {
   url_text->setText(url);
-  svn_model->setUrl(url);
+  svn_file_model->setUrl(url);
 }
 
 void iSubversionBrowser::setWCPath(const String& wc_path) {
   wc_text->setText(wc_path);
-  svn_model->setWCPath(wc_path);
+  svn_file_model->setWCPath(wc_path);
 }
 
 void iSubversionBrowser::setSubDir(const String& path) {
   subdir_text->setText(path);
-  svn_model->setSubDir(path);
+  svn_file_model->setSubDir(path);
 }
 
 void iSubversionBrowser::setRev(int rev) {
   rev_box->setValue(rev);
-  svn_model->setRev(rev);
+  svn_file_model->setRev(rev);
 }
 
 void iSubversionBrowser::setUrlWCPath(const String& url, const String& wc_path, int rev) {
   url_text->setText(url);
   wc_text->setText(wc_path);
   rev_box->setValue(rev);
-  svn_model->setUrlWCPath(url, wc_path, rev);
+  svn_file_model->setUrlWCPath(url, wc_path, rev);
 }
 
 void iSubversionBrowser::setUrlWCPathSubDir(const String& url, const String& wc_path,
@@ -163,11 +171,11 @@ void iSubversionBrowser::setUrlWCPathSubDir(const String& url, const String& wc_
   wc_text->setText(wc_path);
   subdir_text->setText(subdir);
   rev_box->setValue(rev);
-  svn_model->setUrlWCPath(url, wc_path, rev);
-  svn_model->setSubDir(subdir); // should have one fun for this..
+  svn_file_model->setUrlWCPath(url, wc_path, rev);
+  svn_file_model->setSubDir(subdir); // should have one fun for this..
 }
 
-void iSubversionBrowser::go_clicked() {
+void iSubversionBrowser::goClicked() {
   String urltxt = url_text->text();
   if(urltxt.empty()) {
     taMisc::Error("url is empty -- must specify a valid url");
@@ -179,3 +187,15 @@ void iSubversionBrowser::go_clicked() {
   setUrlWCPathSubDir(urltxt, wctxt, subtxt, rev);
 }
 
+void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
+  QVariant qfn = svn_file_sort->data(index);
+  String fnm = qfn.toString();
+  if(fnm.nonempty() && fnm != ".") {
+    String subtxt = subdir_text->text();
+    if(subtxt.nonempty())
+      subtxt += "/";
+    subtxt += fnm;
+    subtxt = taMisc::NoFinalPathSep(subtxt);
+    setSubDir(subtxt);
+  }
+}

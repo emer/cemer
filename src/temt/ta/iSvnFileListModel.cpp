@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "iSubversionModel.h"
+#include "iSvnFileListModel.h"
 
 #include <SubversionClient>
 #include <QDateTime>
@@ -22,7 +22,7 @@
 
 #define SVN_N_COLS 5
 
-iSubversionModel::iSubversionModel(QObject* parent)
+iSvnFileListModel::iSvnFileListModel(QObject* parent)
   : inherited(parent)
   , svn_client(0)
   , svn_rev(-1)
@@ -30,18 +30,18 @@ iSubversionModel::iSubversionModel(QObject* parent)
 
 }
 
-iSubversionModel::~iSubversionModel() {
+iSvnFileListModel::~iSvnFileListModel() {
   if(svn_client)
     delete svn_client;
   svn_client = NULL;
 }
 
-bool iSubversionModel::initSvnClient() {
+bool iSvnFileListModel::initSvnClient() {
   if(!svn_client) {
     try {
       svn_client = new SubversionClient;
     }
-    catch (const iSubversionModel::Exception &ex) {
+    catch (const iSvnFileListModel::Exception &ex) {
       taMisc::Error("Error creating SubversionClient.\n", ex.what());
       return false;
     }
@@ -49,7 +49,7 @@ bool iSubversionModel::initSvnClient() {
   return true;
 }
 
-bool iSubversionModel::setUrl(const QString& url, int rev) {
+bool iSvnFileListModel::setUrl(const QString& url, int rev) {
   if(!initSvnClient())
     return false;
   svn_url = url;
@@ -58,7 +58,7 @@ bool iSubversionModel::setUrl(const QString& url, int rev) {
   return refresh();
 }
 
-bool iSubversionModel::setWCPath(const QString& wc_path) {
+bool iSvnFileListModel::setWCPath(const QString& wc_path) {
   if(!initSvnClient())
     return false;
   svn_client->SetWorkingCopyPath(wc_path.toLatin1());
@@ -68,33 +68,33 @@ bool iSubversionModel::setWCPath(const QString& wc_path) {
   return true;
 }
 
-bool iSubversionModel::setUrlWCPath(const QString& url, const QString& wc_path, int rev) {
+bool iSvnFileListModel::setUrlWCPath(const QString& url, const QString& wc_path, int rev) {
   if(!setWCPath(url)) return false;
   return setUrl(url, rev);
 }
 
-bool iSubversionModel::setSubDir(const QString& subdir) {
+bool iSvnFileListModel::setSubDir(const QString& subdir) {
   if(!svn_client) {
-    taMisc::Error("iSubversionModel::setSubDir -- svn_client has not been initialized with setUrl or setWCPath");
+    taMisc::Error("iSvnFileListModel::setSubDir -- svn_client has not been initialized with setUrl or setWCPath");
     return false;
   }
   svn_subdir = subdir;
   return refresh();
 }
 
-bool iSubversionModel::setRev(int rev) {
+bool iSvnFileListModel::setRev(int rev) {
   if(!svn_client) {
-    taMisc::Error("iSubversionModel::setRev -- svn_client has not been initialized with setUrl or setWCPath");
+    taMisc::Error("iSvnFileListModel::setRev -- svn_client has not been initialized with setUrl or setWCPath");
     return false;
   }
   svn_rev = rev;
   return refresh();
 }
 
-bool iSubversionModel::refresh() {
+bool iSvnFileListModel::refresh() {
   if(!svn_client) {
     emit layoutAboutToBeChanged();
-    taMisc::Error("iSubversionModel::refresh -- svn_client has not been initialized with setUrl or setWCPath");
+    taMisc::Error("iSvnFileListModel::refresh -- svn_client has not been initialized with setUrl or setWCPath");
     emit layoutChanged();
     return false;
   }
@@ -125,7 +125,7 @@ bool iSubversionModel::refresh() {
     svn_client->List(file_names, file_paths, file_sizes, file_revs, file_times,
                      file_authors, svn_url_full.toLatin1(), svn_rev, false); // no recurse
   }
-  catch (const iSubversionModel::Exception &ex) {
+  catch (const iSvnFileListModel::Exception &ex) {
     taMisc::Error("Error doing List in SubversionClient.\n", ex.what());
     emit layoutChanged();
     return false;
@@ -137,11 +137,11 @@ bool iSubversionModel::refresh() {
   return true;
 }
 
-int iSubversionModel::columnCount(const QModelIndex& parent) const {
+int iSvnFileListModel::columnCount(const QModelIndex& parent) const {
   return SVN_N_COLS;
 }
 
-bool iSubversionModel::validateIndex(const QModelIndex& index) const {
+bool iSvnFileListModel::validateIndex(const QModelIndex& index) const {
   if (!svn_client) return false;
   int idx = index.row();
   if(idx >= file_names.size) return false;
@@ -150,7 +150,7 @@ bool iSubversionModel::validateIndex(const QModelIndex& index) const {
   return true;
 }
 
-QVariant iSubversionModel::data(const QModelIndex& index, int role) const {
+QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
   if (!validateIndex(index)) return QVariant();
   int idx = index.row();
   int col = index.column();
@@ -214,7 +214,7 @@ Qt::CheckStateRole*/
   return QVariant();
 }
 
-Qt::ItemFlags iSubversionModel::flags(const QModelIndex& index) const {
+Qt::ItemFlags iSvnFileListModel::flags(const QModelIndex& index) const {
   Qt::ItemFlags rval = 0;
   if (validateIndex(index)) {
     rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
@@ -231,7 +231,7 @@ to find i1,i2... from index:
 2. divide by d1 gives 2d-frame
 */
 
-QVariant iSubversionModel::headerData(int section, 
+QVariant iSvnFileListModel::headerData(int section, 
   Qt::Orientation orientation, int role) const
 {
   if (orientation == Qt::Horizontal) {
@@ -250,23 +250,23 @@ QVariant iSubversionModel::headerData(int section,
   return QAbstractItemModel::headerData(section, orientation, role);
 }
 
-int iSubversionModel::rowCount(const QModelIndex& parent) const {
+int iSvnFileListModel::rowCount(const QModelIndex& parent) const {
   if(!svn_client) return 0;
   return file_names.size;
 }
 
-bool iSubversionModel::setData(const QModelIndex& index, const QVariant & value, int role) {
+bool iSvnFileListModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   return false;
 }
 
-QModelIndex iSubversionModel::index(int row, int column, const QModelIndex &parent) const {
+QModelIndex iSvnFileListModel::index(int row, int column, const QModelIndex &parent) const {
   if(!svn_client) return QModelIndex();
   if (column < 0 || column >= SVN_N_COLS || row < 0 || row > file_names.size)
     return QModelIndex();
   return createIndex(row, column);
 }
 
-QModelIndex iSubversionModel::parent(const QModelIndex &child) const {
+QModelIndex iSvnFileListModel::parent(const QModelIndex &child) const {
   return QModelIndex();
 }
 

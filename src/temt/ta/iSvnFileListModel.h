@@ -1,4 +1,4 @@
-
+// Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef iSubversionModel_h
-#define iSubversionModel_h 1
+#ifndef iSvnFileListModel_h
+#define iSvnFileListModel_h 1
 
 // parent includes:
 #include "ta_def.h"
@@ -31,16 +31,16 @@
 // declare all other types mentioned but not required to include:
 class SubversionClient; //
 
-taTypeDef_Of(iSubversionModel);
+taTypeDef_Of(iSvnFileListModel);
 
-class TA_API iSubversionModel : public QAbstractItemModel {
-  // #NO_INSTANCE #NO_CSS Qt model for subversion client data
+class TA_API iSvnFileListModel : public QAbstractItemModel {
+  // #NO_INSTANCE #NO_CSS Qt model for subversion client list of files in repository and working copy
 INHERITED(QAbstractItemModel)
   Q_OBJECT
 public:
 
-  iSubversionModel(QObject *parent = 0);
-  ~iSubversionModel();
+  iSvnFileListModel(QObject *parent = 0);
+  ~iSvnFileListModel();
 
   // one of the following set functions must be called before data will be avail
   virtual bool  setUrlWCPath(const QString& url, const QString& wc_path, int rev = -1);
@@ -106,4 +106,4 @@ protected:
 #endif
 };
 
-#endif // iSubversionModel_h
+#endif // iSvnFileListModel_h
