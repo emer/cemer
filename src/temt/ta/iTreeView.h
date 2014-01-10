@@ -25,6 +25,7 @@
 // member includes:
 #ifndef __MAKETA__
 #include <QPointer>
+#include <QElapsedTimer>
 #endif
 #include <TypeItem>
 
@@ -212,10 +213,19 @@ protected:
   int                   in_mouse_press; // ugly hack
   int                   m_saved_scroll_pos;
 
+  iTreeWidgetItem*      currentDropTargetItem;
+  iTreeWidgetItem*      possibleDropTargetItem;
+  iTreeWidgetItem*      oldestAncestorDropTargetExpanded;
+  bool                  currentDropTargetItemWasExpanded;
+  QElapsedTimer         possibleDropTimer;
+
+
   QFont&                italicFont() const; // so we don't create a new guy each node
 
   override void         focusInEvent(QFocusEvent* ev); // override
   override void         mousePressEvent(QMouseEvent* ev); //for exp/coll all
+  override void         dragMoveEvent(QDragMoveEvent* ev);
+  override void         dropEvent(QDropEvent* ev);
   override void         mouseDoubleClickEvent(QMouseEvent* ev); //for exp/coll all
   override void         showEvent(QShowEvent* ev); // override, for expand all
 

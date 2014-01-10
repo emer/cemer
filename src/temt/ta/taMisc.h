@@ -285,7 +285,9 @@ public:
   static short          num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save
   static short          num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_50 number of browse history items to keep
 
-  ////////////////////////////////////////////////////////
+  static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
+  static short          spring_loaded_delay; // #SAVE #DEF_500 #MIN_500 #MAX_2000 delay in milliseconds for expanding
+ ////////////////////////////////////////////////////////
   //    File/Paths Info
 
   static int            strm_ver;       // #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)

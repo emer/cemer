@@ -58,6 +58,11 @@ void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
 iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
+  currentDropTargetItem = NULL;
+  possibleDropTargetItem = NULL;
+  currentDropTargetItemWasExpanded = false;
+  oldestAncestorDropTargetExpanded = NULL;
+
   focus_next_widget = NULL;
   focus_prev_widget = NULL;
   main_window = NULL;
@@ -970,3 +975,56 @@ bool iTreeView::PosInView(int scr_pos) {
   return taiMisc::PosInView_SA(this, scr_pos);
 }
 
+void iTreeView::dragMoveEvent(QDragMoveEvent* ev) {
+  if (taMisc::tree_spring_loaded) {
+    bool newTarget = false;
+    QModelIndex index = indexAt(ev->pos());
+    iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
+    if (item) {
+      if (possibleDropTargetItem == NULL || item != possibleDropTargetItem) { // still over same item?
+        if (item->parent() != currentDropTargetItem) { // drag item over new target - is it a child of prior target?
+          if (oldestAncestorDropTargetExpanded != NULL) { // No not child
+            oldestAncestorDropTargetExpanded->setExpanded(false); // so collapse the one just left
+          }
+        }
+        // keep moving - new possible target
+        possibleDropTargetItem = item;
+        possibleDropTimer.restart();
+        newTarget = false;  // only possible - too soon to know
+      }
+      else {  // still over same possible target
+        if (possibleDropTimer.elapsed() > taMisc::spring_loaded_delay) {
+          if (item == possibleDropTargetItem) { // we hovered long enough
+            newTarget = true;
+          }
+        }
+      }
+      if (item != currentDropTargetItem && newTarget) {
+        if (currentDropTargetItemWasExpanded && currentDropTargetItem != item->parent()) {
+          currentDropTargetItem->setExpanded(false); // collapse the one just left
+          oldestAncestorDropTargetExpanded = NULL;
+        }
+        else {
+          if (oldestAncestorDropTargetExpanded == NULL)
+            oldestAncestorDropTargetExpanded = currentDropTargetItem;
+        }
+        currentDropTargetItem = item;  // new current item
+        if (!currentDropTargetItem->isExpanded()) {
+          currentDropTargetItem->setExpanded(true);
+          currentDropTargetItemWasExpanded = true;
+        }
+      }
+    }
+  }
+  inherited::dragMoveEvent(ev);
+}
+
+void iTreeView::dropEvent(QDropEvent* e) {
+  // reset all of the springing item info
+  currentDropTargetItem = NULL;
+  possibleDropTargetItem = NULL;
+  currentDropTargetItemWasExpanded = false;
+  oldestAncestorDropTargetExpanded = NULL;
+
+  inherited::dropEvent(e);
+}
