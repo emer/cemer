@@ -146,6 +146,10 @@ public:
 
   iAction*            toolsTypeInfoBrowseAction;
   iAction*            toolsHelpBrowseAction;
+  iAction*            toolsSvnBrowseActionEmergent;
+  iAction*            toolsSvnBrowseActionSvn1;
+  iAction*            toolsSvnBrowseActionSvn2;
+  iAction*            toolsSvnBrowseActionSvn3;
 
   iAction*            ctrlStopAction;
   iAction*            ctrlContAction;
@@ -293,6 +297,10 @@ public slots:
 
   void          toolsTypeInfoBrowser();
   void          toolsHelpBrowser();
+  void          toolsSvnBrowserEmergent();
+  void          toolsSvnBrowserSvn1();
+  void          toolsSvnBrowserSvn2();
+  void          toolsSvnBrowserSvn3();
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();

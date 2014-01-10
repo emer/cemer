@@ -953,6 +953,8 @@ set(ta_HEADS_NOMAKETA_MOC
 
   iHelpBrowser.h
   iTypeInfoBrowser.h
+  iSubversionModel.h
+  iSubversionBrowser.h
 
   iT3PanelViewer.h
   iT3Panel.h
@@ -1885,6 +1887,7 @@ set(ta_SRCS_MAKETA
   iViewPanelOfGraphTable.cpp
 
   iViewPanelOfVEWorld.cpp
+
   ProgElChoiceDlg.cpp
   ViewBackground.cpp
   ViewBackground_List.cpp
@@ -2038,6 +2041,8 @@ set(ta_SRCS_NOMAKETA
 
   iHelpBrowser.cpp
   iTypeInfoBrowser.cpp
+  iSubversionModel.cpp
+  iSubversionBrowser.cpp
 
   iT3PanelViewer.cpp
   iT3Panel.cpp

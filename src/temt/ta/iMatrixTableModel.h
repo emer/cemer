@@ -72,15 +72,14 @@ protected: // only from matrix
 
 public: // required implementations
 #ifndef __MAKETA__
-  int                   columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant              data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags         flags(const QModelIndex& index) const; // override, for editing
-  QVariant              headerData(int section, Qt::Orientation orientation,
-    int role = Qt::DisplayRole) const; // override
-  int                   rowCount(const QModelIndex& parent = QModelIndex()) const; // override
-  bool                  setData(const QModelIndex& index, const QVariant& value,
-    int role = Qt::EditRole); // override, for editing
-
+  override int          columnCount(const QModelIndex& parent = QModelIndex()) const;
+  override QVariant     data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+  override Qt::ItemFlags flags(const QModelIndex& index) const;
+  override QVariant     headerData(int section, Qt::Orientation orientation,
+                                   int role = Qt::DisplayRole) const;
+  override int          rowCount(const QModelIndex& parent = QModelIndex()) const;
+  override bool         setData(const QModelIndex& index, const QVariant& value,
+                                int role = Qt::EditRole);
 signals:
   void                  matSigEmit(int col_idx); // only emited during dataChanged if col_idx valid
 

@@ -738,6 +738,7 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
   FormatTables();               // ensure tables are formatted properly
   file_list.ResetData();
   for(int i=0; i<file_paths.size; i++) {
+    if(file_sizes[i] == 0) continue; // skip dirs
     int row = file_list.AddBlankRow();
     file_list.SetVal(file_names[i], "file_name",  row);
     file_list.SetVal(file_paths[i], "file_path",  row);

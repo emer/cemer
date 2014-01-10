@@ -832,14 +832,12 @@ static svn_error_t* mysvn_list_callback(void *baton, const char *path,
                                         const svn_lock_t *lock, const char *abs_path,
                                         apr_pool_t *pool) {
   SvnFileInfoPtrs* fi = (SvnFileInfoPtrs*)baton;
-  if(dirent->size > 0) {
-    fi->file_names->Add(path);
-    fi->file_paths->Add(abs_path);
-    fi->file_sizes->Add(dirent->size);
-    fi->file_revs->Add(dirent->created_rev);
-    fi->file_times->Add(dirent->time / 1000000); // microseconds -> seconds
-    fi->file_authors->Add(dirent->last_author);
-  }
+  fi->file_names->Add(path);
+  fi->file_paths->Add(abs_path);
+  fi->file_sizes->Add(dirent->size);
+  fi->file_revs->Add(dirent->created_rev);
+  fi->file_times->Add(dirent->time / 1000000); // microseconds -> seconds
+  fi->file_authors->Add(dirent->last_author);
   return NULL;
 }
 
@@ -869,7 +867,7 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
   }
 
   // Set the depth of subdirectories to be checked out.
-  svn_depth_t depth = recurse ? svn_depth_infinity : svn_depth_empty;
+  svn_depth_t depth = recurse ? svn_depth_infinity : svn_depth_immediates;
 
   SvnFileInfoPtrs svn_fi_baton;
   svn_fi_baton.file_names = &file_names;

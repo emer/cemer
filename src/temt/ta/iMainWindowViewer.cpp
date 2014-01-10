@@ -42,6 +42,7 @@
 #include <iTabView>
 #include <T3PanelViewer>
 #include <iHelpBrowser>
+#include <iSubversionBrowser>
 #include <iTextBrowser>
 #include <iWidget_List>
 #include <iRect>
@@ -699,17 +700,33 @@ void iMainWindowViewer::Constr_ControlMenu()
 void iMainWindowViewer::Constr_ToolsMenu()
 {
   toolsHelpBrowseAction = AddAction(new iAction(0, "&Help Browser", QKeySequence(), "toolsHelpBrowseAction"));
+  toolsSvnBrowseActionEmergent = AddAction(new iAction(0, "&SVN Browser Emergent", QKeySequence(), "toolsSvnBrowseActionEmergent"));
+  toolsSvnBrowseActionSvn1 = AddAction(new iAction(0, "SVN Browser Repo 1", QKeySequence(), "toolsSvnBrowseActionSvn1"));
+  toolsSvnBrowseActionSvn2 = AddAction(new iAction(0, "SVN Browser Repo 2", QKeySequence(), "toolsSvnBrowseActionSvn2"));
+  toolsSvnBrowseActionSvn3 = AddAction(new iAction(0, "SVN Browser Repo 3", QKeySequence(), "toolsSvnBrowseActionSvn3"));
   toolsTypeInfoBrowseAction = AddAction(new iAction(0, "Type Info Browser", QKeySequence(), "toolsTypeInfoBrowseAction"));
 
   // Build menu items.
   if (toolsMenu) {
     toolsMenu->AddAction(toolsHelpBrowseAction);
+    toolsMenu->AddAction(toolsSvnBrowseActionEmergent);
+    toolsMenu->AddAction(toolsSvnBrowseActionSvn1);
+    toolsMenu->AddAction(toolsSvnBrowseActionSvn2);
+    toolsMenu->AddAction(toolsSvnBrowseActionSvn3);
     toolsMenu->AddAction(toolsTypeInfoBrowseAction);
   }
 
   // Make connetions.
   connect(toolsHelpBrowseAction, SIGNAL(triggered()),
     this, SLOT(toolsHelpBrowser()));
+  connect(toolsSvnBrowseActionEmergent, SIGNAL(triggered()),
+    this, SLOT(toolsSvnBrowserEmergent()));
+  connect(toolsSvnBrowseActionSvn1, SIGNAL(triggered()),
+    this, SLOT(toolsSvnBrowserSvn1()));
+  connect(toolsSvnBrowseActionSvn2, SIGNAL(triggered()),
+    this, SLOT(toolsSvnBrowserSvn2()));
+  connect(toolsSvnBrowseActionSvn3, SIGNAL(triggered()),
+    this, SLOT(toolsSvnBrowserSvn3()));
   connect(toolsTypeInfoBrowseAction, SIGNAL(triggered()),
     this, SLOT(toolsTypeInfoBrowser()));
 }
@@ -1874,6 +1891,47 @@ void iMainWindowViewer::toolsTypeInfoBrowser() {
 void iMainWindowViewer::toolsHelpBrowser() {
  // iHelpBrowser* tdd =
   iHelpBrowser::instance();
+}
+
+void iMainWindowViewer::toolsSvnBrowserEmergent() {
+  iSubversionBrowser* svb = new iSubversionBrowser;
+  svb->setUrl("http://grey.colorado.edu/svn/emergent/emergent/trunk");
+  svb->show();
+  svb->raise();
+  // anythign else??
+}
+
+void iMainWindowViewer::toolsSvnBrowserSvn1() {
+  iSubversionBrowser* svb = new iSubversionBrowser;
+  if(taMisc::svn_repos.size < 1 || taMisc::clusters.size == 0) return;
+  // ideally want username in here!
+  String url = taMisc::svn_repos[0].value.toString() + "/" + taMisc::clusters[0].name;
+  svb->setUrl(url);
+  svb->show();
+  svb->raise();
+  // anythign else??
+}
+
+void iMainWindowViewer::toolsSvnBrowserSvn2() {
+  iSubversionBrowser* svb = new iSubversionBrowser;
+  if(taMisc::svn_repos.size < 2 || taMisc::clusters.size == 0) return;
+  // ideally want username in here!
+  String url = taMisc::svn_repos[1].value.toString() + "/" + taMisc::clusters[0].name;
+  svb->setUrl(url);
+  svb->show();
+  svb->raise();
+  // anythign else??
+}
+
+void iMainWindowViewer::toolsSvnBrowserSvn3() {
+  iSubversionBrowser* svb = new iSubversionBrowser;
+  if(taMisc::svn_repos.size < 3 || taMisc::clusters.size == 0) return;
+  // ideally want username in here!
+  String url = taMisc::svn_repos[2].value.toString() + "/" + taMisc::clusters[0].name;
+  svb->setUrl(url);
+  svb->show();
+  svb->raise();
+  // anythign else??
 }
 
 void iMainWindowViewer::this_SaveView(iAction* me) {
