@@ -30,6 +30,7 @@ class iSvnFileListModel; //
 class iSpinBox; //
 class QAction; //
 class QSortFilterProxyModel; //
+class QModelIndex; //
 
 //taTypeDef_Of(iSubversionBrowser);
 
@@ -61,6 +62,9 @@ public:
   // set the current subdirectory within repository
   virtual void  setRev(int rev);
   // set the revision
+
+  virtual void  updateView();
+  // shouldn't need this, but need to call it to get it to resize to contents
 
   iSubversionBrowser(QWidget* parent = NULL);
   ~iSubversionBrowser();

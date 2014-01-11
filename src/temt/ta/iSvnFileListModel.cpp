@@ -144,7 +144,7 @@ int iSvnFileListModel::columnCount(const QModelIndex& parent) const {
 bool iSvnFileListModel::validateIndex(const QModelIndex& index) const {
   if (!svn_client) return false;
   int idx = index.row();
-  if(idx >= file_names.size) return false;
+  if(idx > file_names.size) return false; // +1
   int col = index.column();
   if(col > SVN_N_COLS) return false;
   return true;
@@ -152,16 +152,19 @@ bool iSvnFileListModel::validateIndex(const QModelIndex& index) const {
 
 QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
   if (!validateIndex(index)) return QVariant();
-  int idx = index.row();
+  int idx = index.row() - 1;    // +1 for ..
   int col = index.column();
 
-  int sz = file_sizes[idx];
+  int sz = 0;
+  if(idx >= 0) sz = file_sizes[idx];
 
   switch (role) {
   case Qt::DisplayRole: 
   case Qt::EditRole: {
     switch(col) {
     case 0: {
+      if(idx < 0)
+        return QString("..");
       if(idx == 0)
         return QString(".");
       QString nm = static_cast<const char *>(file_names[idx]);
@@ -172,23 +175,26 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
     }
     case 1: {
       if(sz == 0)
-        return QString("dir");
+        return QString("--");
       QString szstr = static_cast<const char *>
         (taMisc::GetSizeString(sz, 3, true)); // 3 prec, power of 2
       return szstr;
       break;
     }
     case 2: {
+      if(idx < 0) return QVariant();
       return file_revs[idx];
       break;
     }
     case 3: {
+      if(idx < 0) return QVariant();
       QDateTime dm = QDateTime::fromTime_t(file_times[idx]);
       QString dmstr = dm.toString("yyyy_MM_dd_hh_mm_ss");
       return dmstr;
       break;
     }
     case 4: {
+      if(idx < 0) return QVariant();
       return static_cast<const char *>(file_authors[idx]);
       break;
     }
@@ -252,7 +258,7 @@ QVariant iSvnFileListModel::headerData(int section,
 
 int iSvnFileListModel::rowCount(const QModelIndex& parent) const {
   if(!svn_client) return 0;
-  return file_names.size;
+  return file_names.size+1;
 }
 
 bool iSvnFileListModel::setData(const QModelIndex& index, const QVariant & value, int role) {

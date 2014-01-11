@@ -94,13 +94,13 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   svn_file_sort->setSourceModel(svn_file_model);
 
   file_table->setModel(svn_file_sort);
-  file_table->setSortingEnabled(true);
   lay_body->addWidget(file_table);
 
   QHeaderView *header = file_table->horizontalHeader();
 
   // Don't highlight the header cells when a selection is made (looks dumb).
   header->setHighlightSections(false);
+  header->setSortIndicator(0, Qt::AscendingOrder);
 
   // Resize the index column to fit the contents.
   for(int i=0; i<5; i++) {
@@ -110,6 +110,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
     header->setResizeMode(i, QHeaderView::ResizeToContents);
 #endif
   }
+  file_table->setSortingEnabled(true);
+
   // Disallow complex selections.
   file_table->setSelectionMode(QAbstractItemView::SingleSelection);
 
@@ -138,24 +140,32 @@ iSubversionBrowser::~iSubversionBrowser() {
   
 }
 
+void iSubversionBrowser::updateView() {
+  file_table->resizeColumnsToContents();
+}
+
 void iSubversionBrowser::setUrl(const String& url) {
   url_text->setText(url);
   svn_file_model->setUrl(url);
+  updateView();
 }
 
 void iSubversionBrowser::setWCPath(const String& wc_path) {
   wc_text->setText(wc_path);
   svn_file_model->setWCPath(wc_path);
+  updateView();
 }
 
 void iSubversionBrowser::setSubDir(const String& path) {
   subdir_text->setText(path);
   svn_file_model->setSubDir(path);
+  updateView();
 }
 
 void iSubversionBrowser::setRev(int rev) {
   rev_box->setValue(rev);
   svn_file_model->setRev(rev);
+  updateView();
 }
 
 void iSubversionBrowser::setUrlWCPath(const String& url, const String& wc_path, int rev) {
@@ -163,6 +173,7 @@ void iSubversionBrowser::setUrlWCPath(const String& url, const String& wc_path, 
   wc_text->setText(wc_path);
   rev_box->setValue(rev);
   svn_file_model->setUrlWCPath(url, wc_path, rev);
+  updateView();
 }
 
 void iSubversionBrowser::setUrlWCPathSubDir(const String& url, const String& wc_path,
@@ -173,6 +184,7 @@ void iSubversionBrowser::setUrlWCPathSubDir(const String& url, const String& wc_
   rev_box->setValue(rev);
   svn_file_model->setUrlWCPath(url, wc_path, rev);
   svn_file_model->setSubDir(subdir); // should have one fun for this..
+  updateView();
 }
 
 void iSubversionBrowser::goClicked() {
@@ -190,12 +202,17 @@ void iSubversionBrowser::goClicked() {
 void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
   QVariant qfn = svn_file_sort->data(index);
   String fnm = qfn.toString();
-  if(fnm.nonempty() && fnm != ".") {
-    String subtxt = subdir_text->text();
+  if(fnm.empty() || fnm == ".") return;
+  String subtxt = subdir_text->text();
+  if(fnm == "..") {
+    if(subtxt.empty()) return;
+    subtxt = taMisc::GetDirFmPath(subtxt);
+  }
+  else {
     if(subtxt.nonempty())
       subtxt += "/";
     subtxt += fnm;
-    subtxt = taMisc::NoFinalPathSep(subtxt);
-    setSubDir(subtxt);
   }
+  subtxt = taMisc::NoFinalPathSep(subtxt);
+  setSubDir(subtxt);
 }
