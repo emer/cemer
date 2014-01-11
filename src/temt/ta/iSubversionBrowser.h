@@ -24,13 +24,16 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class iSvnFileListModel; //
+class iSvnRevLogModel; //
+class QSortFilterProxyModel; //
+class QFileSystemModel; //
 class iLineEdit; //
 class iTableView; //
-class iSvnFileListModel; //
 class iSpinBox; //
 class QAction; //
-class QSortFilterProxyModel; //
 class QModelIndex; //
+class iSplitter; //
 
 //taTypeDef_Of(iSubversionBrowser);
 
@@ -39,15 +42,29 @@ class TA_API iSubversionBrowser : public QMainWindow {
 INHERITED(QMainWindow)
   Q_OBJECT
 public:
+  iSvnRevLogModel*       svn_log_model;
   iSvnFileListModel*     svn_file_model;
+  QFileSystemModel*      svn_wc_model;
+  QSortFilterProxyModel* svn_log_sort;
   QSortFilterProxyModel* svn_file_sort;
+  QSortFilterProxyModel* svn_wc_sort;
+
+  iSplitter*            split;
+
+  iSpinBox*             end_rev_box;
+  iSpinBox*             n_entries_box;
+  QAction*              lb_act_go;
+  iTableView*           log_table;
 
   iLineEdit*            url_text;
-  iLineEdit*            wc_text;
   iLineEdit*            subdir_text;
   iSpinBox*             rev_box;
-  QAction*              actGo;
+  QAction*              fb_act_go;
   iTableView*           file_table;
+
+  iLineEdit*            wc_text;
+  QAction*              wb_act_go;
+  iTableView*           wc_table;
 
   virtual void  setUrl(const String& url);
   // set the url for the repository and update display to that
@@ -62,6 +79,8 @@ public:
   // set the current subdirectory within repository
   virtual void  setRev(int rev);
   // set the revision
+  virtual void  setEndRev(int end_rev, int n_entries);
+  // set the ending revision and n_entries for the log browser
 
   virtual void  updateView();
   // shouldn't need this, but need to call it to get it to resize to contents
@@ -70,8 +89,12 @@ public:
   ~iSubversionBrowser();
 
 protected slots:
-  void          goClicked(); // or return in url_text
+  void          lBrowGoClicked();
+  void          fBrowGoClicked();
+  void          wBrowGoClicked();
   void          fileCellDoubleClicked(const QModelIndex& index);
+  void          logCellDoubleClicked(const QModelIndex& index);
+  void          wcCellDoubleClicked(const QModelIndex& index);
 };
 
 #endif // iSubversionBrowser_h

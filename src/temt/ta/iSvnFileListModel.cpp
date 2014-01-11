@@ -17,6 +17,7 @@
 
 #include <SubversionClient>
 #include <QDateTime>
+#include <QColor>
 
 #include <taMisc>
 
@@ -146,7 +147,7 @@ bool iSvnFileListModel::validateIndex(const QModelIndex& index) const {
   int idx = index.row();
   if(idx > file_names.size) return false; // +1
   int col = index.column();
-  if(col > SVN_N_COLS) return false;
+  if(col >= SVN_N_COLS) return false;
   return true;
 }
 
@@ -209,8 +210,12 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
   // case Qt::TextAlignmentRole:
   //   return m_mat->defAlignment();
   //   break;
-  // case Qt::BackgroundRole: {
-    //-- QColor
+    case Qt::BackgroundRole: {
+      if(idx % 2 == 0)
+        return QColor(240, 240, 240); // light grey
+      return QVariant();
+      break;
+    }
   }
 /*Qt::TextColorRole
   QColor: color of text
@@ -229,13 +234,6 @@ Qt::ItemFlags iSvnFileListModel::flags(const QModelIndex& index) const {
   //    rval |= Qt::ItemIsEditable;
   return rval; 
 }
-
-/*
-  index = i0 + ((i1*d0) + i2)*d1 etc.
-to find i1,i2... from index:
-1. divide by d0 gives rowframe -- remainder is i1
-2. divide by d1 gives 2d-frame
-*/
 
 QVariant iSvnFileListModel::headerData(int section, 
   Qt::Orientation orientation, int role) const

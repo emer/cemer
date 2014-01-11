@@ -103,11 +103,17 @@ public:
 
   void List(String_PArray& file_names, String_PArray& file_paths, int_PArray& file_sizes,
             int_PArray& file_revs, int_PArray& file_times, String_PArray& file_authors,
-            const char* url, int rev = -1, bool recurse = true);
-  // list files in the repository url at given url -- fills in the arrays with coordinated values for each file
+            const char* url, int rev = -1, bool recurse = false);
+  // list files in the repository url at given url -- fills in the arrays with coordinated values for each file -- times are seconds since 1970 standard time, sizes are in bytes -- rev -1 = head (current), recurse = get all the subdirectories under url too (expensive)
 
   void SaveFile(const char* from_url, const char* to_path, int rev = -1);
   // copy a file from given fully-specified url to a file at given to_path, using given revision (-1 = head)
+
+  void GetLogs(int_PArray& revs, String_PArray& commit_msgs, String_PArray& authors,
+               int_PArray& times, int_PArray& files_start_idx,
+               int_PArray& files_n, String_PArray& files, String_PArray& actions,
+               const char* url, int end_rev = -1, int n_entries = 50);
+  // get logs of commits made to repository, with coordinated info in each array, and files listed (full paths from url) at files_start_idx into files array, with files_n per each one -- end at given revision (-1 = head or current) and go back given number of log entries
 
   int Update(int rev = -1);
   // Update the working copy and return the revision.

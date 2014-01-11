@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef iSvnFileListModel_h
-#define iSvnFileListModel_h 1
+#ifndef iSvnRevLogModel_h
+#define iSvnRevLogModel_h 1
 
 // parent includes:
 #include "ta_def.h"
@@ -31,37 +31,28 @@
 // declare all other types mentioned but not required to include:
 class SubversionClient; //
 
-taTypeDef_Of(iSvnFileListModel);
+taTypeDef_Of(iSvnRevLogModel);
 
-class TA_API iSvnFileListModel : public QAbstractItemModel {
-  // #NO_INSTANCE #NO_CSS Qt model for subversion client list of files in repository
+class TA_API iSvnRevLogModel : public QAbstractItemModel {
+  // #NO_INSTANCE #NO_CSS Qt model for subversion client log of revisions to repository
 INHERITED(QAbstractItemModel)
   Q_OBJECT
 public:
 
-  iSvnFileListModel(QObject *parent = 0);
-  ~iSvnFileListModel();
+  iSvnRevLogModel(QObject *parent = 0);
+  ~iSvnRevLogModel();
 
   // one of the following set functions must be called before data will be avail
-  virtual bool  setUrlWCPath(const QString& url, const QString& wc_path, int rev = -1);
-  // init the svn client, set the url, wc_path and read the data from that url
-  virtual bool  setWCPath(const QString& wc_path);
-  // init the svn client, set the working copy path -- resets subdir to empty
-  virtual bool  setUrl(const QString& url, int rev = -1);
-  // init the svn client, set the url and read the data from that url  -- resets subdir to empty
-  virtual bool  setSubDir(const QString& path);
-  // set the current subdirectory within repository
-  virtual bool  setRev(int rev);
-  // set the revision
+  virtual bool  setUrl(const QString& url, int end_rev = -1, int n_entries = 50);
+  // init the svn client, set the url and read the data from that url, for given ending revision and (maximum) number of entries
+  virtual bool  setRev(int end_rev, int n_entries);
+  // set the ending revision and (maximum) number of entries to get log for -- gets data
   virtual bool  refresh();
-  // read the data from the currently set url and subdir
+  // read the data from the currently set url and revision
 
   const QString& url() const { return svn_url; } 
-  int            rev() const { return svn_rev; } 
-  const QString& wc_path() const { return svn_wc_path; } 
-  const QString& subdir() const { return svn_subdir; } 
-  const QString& url_full() const { return svn_url_full; } 
-  const QString& wc_path_full() const { return svn_wc_path_full; } 
+  int            end_rev() const { return svn_end_rev; } 
+  int            n_entries() const { return svn_n_entries; } 
 
 public: // required model implementations
 #ifndef __MAKETA__
@@ -78,12 +69,14 @@ public: // required model implementations
   override QModelIndex  parent(const QModelIndex &child) const;
 
   // this is how we store the raw data -- interface with SubversionClient
-  String_PArray file_names;
-  String_PArray file_paths;
-  int_PArray    file_sizes;
-  int_PArray    file_revs;
-  int_PArray    file_times;
-  String_PArray file_authors;
+  int_PArray    revs;            // one per rev -- revision number
+  String_PArray commit_msgs;     // one per rev -- the commit message
+  String_PArray authors;         // one per rev -- author of rev
+  int_PArray    times;           // one per rev -- time as secs since 1970
+  int_PArray    files_start_idx; // one per rev -- starting index in files/actions
+  int_PArray    files_n;    // one per rev -- number of files in files/actions
+  String_PArray files;      // raw list of all files for all logs
+  String_PArray actions; // one-to-one with files, mod action for each file
 
 protected:
   // This exception class only used internally.
@@ -94,11 +87,8 @@ protected:
 
   SubversionClient*     svn_client; // our client
   QString               svn_url;    // current url
-  int                   svn_rev;    // svn revision number
-  QString               svn_wc_path; // current working copy path
-  QString               svn_subdir;  // current subdirectory within
-  QString               svn_url_full; // current full url = url + subdir
-  QString               svn_wc_path_full; // current full wc_path = wc_path + subdir
+  int                   svn_end_rev; // svn ending revision number
+  int                   svn_n_entries; // svn number of entries to get
 
   virtual bool  initSvnClient();
 
@@ -106,4 +96,4 @@ protected:
 #endif
 };
 
-#endif // iSvnFileListModel_h
+#endif // iSvnRevLogModel_h

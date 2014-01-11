@@ -34,8 +34,10 @@
 #include <svn_client.h>
 #include <svn_path.h>
 #include <svn_pools.h>
+#include <svn_props.h>
+#include <svn_time.h>
 #include <svn_wc.h>
-
+#include <svn_sorts.h>
 
 namespace {
   template<typename T>
@@ -459,7 +461,11 @@ void
 SubversionClient::SetWorkingCopyPath(const char *working_copy_path)
 {
   // Canonicalize the working copy path.
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
   m_wc_path = svn_path_canonicalize(working_copy_path, m_pool);
+#else
+  m_wc_path = svn_dirent_canonicalize(working_copy_path, m_pool);
+#endif
 }
 
 std::string
@@ -831,6 +837,8 @@ static svn_error_t* mysvn_list_callback(void *baton, const char *path,
                                         const svn_dirent_t *dirent,
                                         const svn_lock_t *lock, const char *abs_path,
                                         apr_pool_t *pool) {
+  if(dirent == NULL)
+    return NULL;
   SvnFileInfoPtrs* fi = (SvnFileInfoPtrs*)baton;
   fi->file_names->Add(path);
   fi->file_paths->Add(abs_path);
@@ -914,7 +922,11 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
     revision.value.number = rev;
   }
 
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
   const char* to_path_cln = svn_path_canonicalize(to_path, m_pool);
+#else
+  const char* to_path_cln = svn_dirent_canonicalize(to_path, m_pool);
+#endif
 
   svn_stream_t* out_strm;
 
@@ -941,6 +953,186 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
   svn_stream_close(out_strm);
 }
 
+class SvnLogInfoPtrs {
+public:
+  int_PArray* revs;
+  String_PArray* commit_msgs;
+  String_PArray* authors;
+  int_PArray* times;
+  int_PArray* files_start_idx;
+  int_PArray* files_n;
+  String_PArray* files;
+  String_PArray* actions;
+};
+
+static svn_error_t* mysvn_log_callback(void *baton, svn_log_entry_t* log_entry,
+                                       apr_pool_t *pool) {
+  if (log_entry == NULL)
+    return NULL;
+  SvnLogInfoPtrs* li = (SvnLogInfoPtrs*)baton;
+  li->revs->Add(log_entry->revision);
+
+  static const String svnLog(SVN_PROP_REVISION_LOG);
+  static const String svnDate(SVN_PROP_REVISION_DATE);
+  static const String svnAuthor(SVN_PROP_REVISION_AUTHOR);
+
+  bool got_msg = false;
+  bool got_auth = false;
+  bool got_date = false;
+  if(log_entry->revprops) {
+    for(apr_hash_index_t *index = apr_hash_first (pool, log_entry->revprops);
+        index != NULL;
+        index = apr_hash_next(index))
+      {
+        // extract next entry from hash
+        const char* key = NULL;
+        ptrdiff_t keyLen;
+        const char** val = NULL;
+
+        apr_hash_this(index, reinterpret_cast<const void**>(&key),
+                      &keyLen, reinterpret_cast<void**>(&val));
+
+        String name = key;
+        String value = *val;
+
+        if(name == svnLog && !got_msg) {
+          li->commit_msgs->Add(value);
+          got_msg = true;
+        }
+        else if(name == svnAuthor && !got_auth) {
+          li->authors->Add(value);
+          got_auth = true;
+        }
+        else if(name == svnDate && !got_date) {
+          apr_time_t ts;
+          svn_time_from_cstring(&ts, *val, pool);
+          li->times->Add(ts / 1000000); // microseconds -> seconds
+        }
+      }
+  }
+  if(!got_msg)
+    li->commit_msgs->Add("");
+  if(!got_auth)
+    li->authors->Add("");
+  if(!got_date)
+    li->times->Add(0);
+
+  int files_start = li->files->size;
+  li->files_start_idx->Add(files_start); // starting idx
+
+  // changed_paths2 is for 1.6 and above -- that is all we support
+  if (log_entry->changed_paths2 != NULL) {
+    apr_array_header_t* sorted_paths
+        = svn_sort__hash (log_entry->changed_paths2, svn_sort_compare_items_as_paths,
+                          pool);
+
+      for(int i = 0, count = sorted_paths->nelts; i < count; ++i) {
+        // find the item in the hash
+        svn_sort__item_t* item = &(APR_ARRAY_IDX(sorted_paths, i, svn_sort__item_t));
+
+        String path = (const char*)item->key;
+        li->files->Add(path);
+
+        // decode the action
+        svn_log_changed_path2_t* log_item
+          = (svn_log_changed_path2_t*) apr_hash_get (log_entry->changed_paths2,
+                                                     item->key, item->klen);
+        String action = log_item->action; // char A, D, R, M
+        li->actions->Add(action);
+
+        // decode copy-from info
+        // if(log_item->copyfrom_path
+        //    && SVN_IS_VALID_REVNUM (log_item->copyfrom_rev))
+        //   {
+        //     entry.copyFromPath = SVN::MakeUIUrlOrPath (log_item->copyfrom_path);
+        //     entry.copyFromRev = log_item->copyfrom_rev;
+        //   }
+        // else
+        //   {
+        //     entry.copyFromRev = 0;
+        //   }
+
+        // entry.text_modified = log_item->text_modified;
+        // entry.props_modified = log_item->props_modified;
+      }
+  }
+
+  li->files_n->Add(li->files->size - files_start); // how many we added
+  return NULL;
+}
+
+void
+SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
+                          String_PArray& authors,
+                          int_PArray& times, int_PArray& files_start_idx,
+                          int_PArray& files_n, String_PArray& files,
+                          String_PArray& actions,
+                          const char* url, int end_rev, int n_entries) {
+
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  url = svn_uri_canonicalize(url, m_pool);
+#endif
+
+  n_entries = MAX(1, n_entries);
+
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_unspecified;
+
+  // create an array containing a single element which is the url target
+  apr_array_header_t *targets = apr_array_make(m_pool, 1, sizeof(const char *));
+  APR_ARRAY_PUSH(targets, const char *) = url;
+
+
+  svn_opt_revision_range_t revision_range;
+  if(end_rev < 0) {
+    // we can't support head just yet unfortunately, and  this was deadly
+    revision_range.end.kind = svn_opt_revision_number;
+    revision_range.end.value.number = n_entries+1;
+
+    revision_range.start.kind = svn_opt_revision_number;
+    revision_range.start.value.number = 1; // just go all the way back, and let limit settle it..
+  }
+  else {
+    revision_range.end.kind = svn_opt_revision_number;
+    revision_range.end.value.number = end_rev;
+
+    revision_range.start.kind = svn_opt_revision_number;
+    revision_range.start.value.number = MAX(1, end_rev-n_entries+1);
+  }
+
+  apr_array_header_t* revision_ranges
+    = apr_array_make (m_pool, 1, sizeof(apr_array_header_t*));
+  APR_ARRAY_PUSH(revision_ranges, svn_opt_revision_range_t*) = &revision_range;
+
+
+  SvnLogInfoPtrs svn_li_baton;
+  svn_li_baton.revs = &revs;
+  svn_li_baton.commit_msgs = &commit_msgs;
+  svn_li_baton.authors = &authors;
+  svn_li_baton.times = &times;
+  svn_li_baton.files_start_idx = &files_start_idx;
+  svn_li_baton.files_n = &files_n;
+  svn_li_baton.files = &files;
+  svn_li_baton.actions = &actions;
+
+  if(svn_error_t *error = svn_client_log5
+    (targets,
+    &peg_revision,
+    revision_ranges,
+    n_entries,
+    true, // discover_changed_paths
+    false, // strict_node_history,
+    true, // include_merged_revisions,
+    NULL, // revprops -- get all
+    mysvn_log_callback,
+    (void*)&svn_li_baton,
+    m_ctx,
+    m_pool))
+    {
+      throw Exception("Subversion log error", error);
+    }
+}
 
 int
 SubversionClient::Update(int rev)
@@ -1026,7 +1218,11 @@ SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
   // create an array containing a single element which is the input path to be updated
   apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
   for(int i=0; i< files.size; i++) {
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
     APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
+#else
+    APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(files[i], m_pool);
+#endif
   }
 
   // Set the revision number, if provided. Otherwise get HEAD revision.
@@ -1091,7 +1287,11 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
   m_cancelled = false;
 
   // canonicalize the path
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
   file_or_dir = svn_path_canonicalize(file_or_dir, m_pool);
+#else
+  file_or_dir = svn_dirent_canonicalize(file_or_dir, m_pool);
+#endif
 
   // if adding dir, the depth of subdirectories to be added
   svn_depth_t depth = recurse ? svn_depth_infinity : svn_depth_empty;
@@ -1123,7 +1323,11 @@ SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
   for(int i=0; i< files.size; i++) {
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
     APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
+#else
+    APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(files[i], m_pool);
+#endif
   }
 
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
@@ -1277,7 +1481,11 @@ SubversionClient::CheckinFiles(const String_PArray& files, const char *comment) 
 
   apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
   for(int i=0; i< files.size; i++) {
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
     APR_ARRAY_PUSH(paths, const char *) = svn_path_canonicalize(files[i], m_pool);
+#else
+    APR_ARRAY_PUSH(paths, const char *) = svn_dirent_canonicalize(files[i], m_pool);
+#endif
   }
 
   // commit changes to the children of the paths
