@@ -20,6 +20,7 @@
 #include <ISelectableHost>
 #ifndef __MAKETA__
 #include <iTreeWidget>
+#include <iTreeWidgetItem_List>
 #endif
 
 // member includes:
@@ -213,11 +214,9 @@ protected:
   int                   in_mouse_press; // ugly hack
   int                   m_saved_scroll_pos;
 
-  iTreeWidgetItem*      currentDropTargetItem;
+  iTreeWidgetItem_List  expandedItemList;   // used as stack to keep track of expanded items
   iTreeWidgetItem*      possibleDropTargetItem;
-  iTreeWidgetItem*      oldestAncestorDropTargetExpanded;
-  bool                  currentDropTargetItemWasExpanded;
-  QElapsedTimer         possibleDropTimer;
+  QElapsedTimer         dropTimer;
 
 
   QFont&                italicFont() const; // so we don't create a new guy each node

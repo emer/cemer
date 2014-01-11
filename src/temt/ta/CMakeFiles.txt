@@ -996,6 +996,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
   iToolBar_List.h
   iTabView_PtrList.h
   iAction_List.h
+  iTreeWidgetItem_List.h
 
   gzstream.h
   VPUnref.h
@@ -2070,6 +2071,7 @@ set(ta_SRCS_NOMAKETA
   iToolBar_List.cpp
   iTabView_PtrList.cpp
   iAction_List.cpp
+  iTreeWidgetItem_List.cpp
 
   gzstream.cpp
   VPUnref.cpp
