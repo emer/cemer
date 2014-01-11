@@ -1123,7 +1123,7 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
     n_entries,
     true, // discover_changed_paths
     false, // strict_node_history,
-    true, // include_merged_revisions,
+    false, // include_merged_revisions -- this causes a crash!!!
     NULL, // revprops -- get all
     mysvn_log_callback,
     (void*)&svn_li_baton,
