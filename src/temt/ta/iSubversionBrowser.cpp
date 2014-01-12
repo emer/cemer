@@ -28,6 +28,9 @@
 #include <QFrame>
 #include <QSortFilterProxyModel>
 #include <iSplitter>
+#include <iCheckBox>
+#include <taiEditorOfString>
+#include <SubversionClient>
 
 #include <taMisc>
 #include <taiMisc>
@@ -42,8 +45,43 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   svn_file_model = new iSvnFileListModel(this);
   svn_wc_model = new QFileSystemModel(this);
 
+  QWidget* body = new QWidget;
+  setCentralWidget(body);
+  
+  QVBoxLayout* lay_bd = new QVBoxLayout(body);
+  lay_bd->setMargin(0);
+
+  ////////////////////////////////////////////////////////////////////////
+  // top-level toolbar
+
+  main_tb = new QToolBar;
+  lay_bd->addWidget(main_tb);
+
+  a_view_file = main_tb->addAction("View File");
+  connect(a_view_file, SIGNAL(triggered()), this, SLOT(a_view_file_do()));
+  a_view_diff = main_tb->addAction("View Diff");
+  connect(a_view_diff, SIGNAL(triggered()), this, SLOT(a_view_diff_do()));
+  a_save_file = main_tb->addAction("Save File");
+  connect(a_save_file, SIGNAL(triggered()), this, SLOT(a_save_file_do()));
+  a_add_file =  main_tb->addAction("Add File");
+  connect(a_save_file, SIGNAL(triggered()), this, SLOT(a_save_file_do()));
+  a_rm_file =   main_tb->addAction("Del File");
+  connect(a_rm_file, SIGNAL(triggered()), this, SLOT(a_rm_file_do()));
+
+  main_tb->addSeparator();
+  a_update    = main_tb->addAction("Update");
+  connect(a_update, SIGNAL(triggered()), this, SLOT(a_update_do()));
+  a_commit    = main_tb->addAction("Commit");
+  connect(a_commit, SIGNAL(triggered()), this, SLOT(a_commit_do()));
+  a_checkout  = main_tb->addAction("Checkout");
+  connect(a_checkout, SIGNAL(triggered()), this, SLOT(a_checkout_do()));
+
+  main_tb->addSeparator();
+  a_list_mod  = main_tb->addAction("Show Modified");
+  connect(a_list_mod, SIGNAL(triggered()), this, SLOT(a_list_mod_do()));
+
   split = new iSplitter;
-  setCentralWidget(split);
+  lay_bd->addWidget(split);
 
   QLabel* lbl = NULL;
   QHeaderView* header = NULL;
@@ -92,15 +130,29 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   // Don't highlight the header cells when a selection is made (looks dumb).
   header->setHighlightSections(false);
   header->setSortIndicator(0, Qt::DescendingOrder);
+  header->setDefaultSectionSize(200);
   for(int i=0; i<svn_log_model->columnCount(); i++) {
-    if(i != 2 && i != 4) {
 #if (QT_VERSION >= 0x050000)
-      header->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-#else
-      header->setResizeMode(i, QHeaderView::ResizeToContents);
-#endif
+    if(i == 2) {
+      header->setSectionResizeMode(i, QHeaderView::Interactive); // takes default
     }
+    else {
+      header->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+    }
+#else
+    if(i == 2) {
+      header->setResizeMode(i, QHeaderView::Interactive);
+    }
+    else {
+      header->setResizeMode(i, QHeaderView::ResizeToContents);
+    }
+#endif
   }
+#if (QT_VERSION >= 0x050000)
+  log_table->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#else
+  log_table->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#endif
   log_table->setSortingEnabled(true);
   log_table->setWordWrap(true);
 
@@ -146,6 +198,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   subdir_text = new iLineEdit(fbrow);
   tool_bar->addWidget(subdir_text);
 
+  sd_up = tool_bar->addAction("Up..");
+
   lbl = new QLabel(" rev:");
   lbl->setToolTip("current revision to operate on -- use -1 for head (current)");
   tool_bar->addWidget(lbl);
@@ -154,6 +208,13 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   rev_box->setMinimum(-10000);
   rev_box->setValue(svn_file_model->rev());
   tool_bar->addWidget(rev_box);
+
+  lbl = new QLabel(" only:");
+  lbl->setToolTip("only show files from specified revision");
+  tool_bar->addWidget(lbl);
+
+  rev_only = new iCheckBox(fbrow);
+  tool_bar->addWidget(rev_only);
 
   fb_act_go = tool_bar->addAction("Go");
 
@@ -253,7 +314,9 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 
   connect(url_text, SIGNAL(returnPressed()), this, SLOT(fBrowGoClicked()) );
   connect(subdir_text, SIGNAL(returnPressed()), this, SLOT(fBrowGoClicked()) );
+  connect(sd_up, SIGNAL(triggered()), this, SLOT(subDirUp()) );
   connect(rev_box, SIGNAL(editingFinished()), this, SLOT(fBrowGoClicked()) );
+  connect(rev_only, SIGNAL(clicked(bool)), this, SLOT(fBrowGoClicked()) );
   connect(fb_act_go, SIGNAL(triggered()), this, SLOT(fBrowGoClicked()) );
   connect(file_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(fileCellDoubleClicked(const QModelIndex&)));
@@ -263,8 +326,18 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   connect(wc_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(wcCellDoubleClicked(const QModelIndex&)));
 
-  iSize sz = taiM->dialogSize(taiMisc::dlgBig);
-  resize(sz.width(), (int)(1.2f * (float)sz.height())); // a bit bigger than .6h
+  // almost full screen:
+  iSize sz = taiM->scrn_s;
+  sz.set((int)(.9f * sz.width()), (int)(0.9f * (float)sz.height()));
+  resize(sz.w, sz.h);
+
+  QList<int> cur_sz = split->sizes();
+  if(cur_sz.count() == 3) {     // should be
+    cur_sz[0] = (int)(.4f * sz.w);
+    cur_sz[1] = (int)(.3f * sz.w);
+    cur_sz[2] = (int)(.3f * sz.w);
+    split->setSizes(cur_sz);
+  }
 }
 
 iSubversionBrowser::~iSubversionBrowser() {
@@ -272,14 +345,27 @@ iSubversionBrowser::~iSubversionBrowser() {
 }
 
 void iSubversionBrowser::updateView() {
-//  log_table->resizeColumnsToContents();
+  bool filt_rev = rev_only->isChecked();
+  if(filt_rev) {
+    int rev = rev_box->value();
+    svn_file_sort->setFilterKeyColumn(2);    
+    svn_file_sort->setFilterRegExp(QRegExp(QString::number(rev), Qt::CaseInsensitive,
+                                            QRegExp::FixedString));
+  }
+  else {
+    svn_file_sort->setFilterKeyColumn(2);    
+    svn_file_sort->setFilterRegExp(QRegExp());
+  }
+
+  log_table->resizeRowsToContents();
   file_table->resizeColumnsToContents();
   wc_table->resizeColumnsToContents();
 }
 
 void iSubversionBrowser::setUrl(const String& url) {
-  url_text->setText(url);
   svn_file_model->setUrl(url);
+  String ur = svn_file_model->url();
+  url_text->setText(ur);
   if(svn_log_model->end_rev() < 0 && svn_file_model->file_revs.size > 0) {
     int end_rev = svn_file_model->file_revs[0]; // should be the last commit at top level
     end_rev_box->setValue(end_rev);
@@ -287,21 +373,31 @@ void iSubversionBrowser::setUrl(const String& url) {
     svn_log_model->setUrl(url, end_rev, svn_log_model->n_entries());
   }
   else {
-    svn_log_model->setUrl(url);
+    if(svn_log_model->url() != url)
+      svn_log_model->setUrl(url);
   }
   updateView();
 }
 
 void iSubversionBrowser::setWCPath(const String& wc_path) {
-  wc_text->setText(wc_path);
-  svn_wc_model->setRootPath(wc_path);
+  svn_file_model->setWCPath(wc_path);
+  String wc = svn_file_model->wc_path();
+  wc_text->setText(wc);
+  svn_wc_model->setRootPath(wc);
+  wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc)));
+  updateView();
+}
+
+void iSubversionBrowser::setWCView(const String& wc_path) {
+  wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc_path)));
   updateView();
 }
 
 void iSubversionBrowser::setSubDir(const String& path) {
   subdir_text->setText(path);
   svn_file_model->setSubDir(path);
-  wc_table->setRootIndex(svn_wc_model->index(path));
+  String wc = svn_file_model->wc_path_full();
+  setWCView(wc);
   updateView();
 }
 
@@ -320,25 +416,16 @@ void iSubversionBrowser::setEndRev(int end_rev, int n_entries) {
 
 void iSubversionBrowser::setUrlWCPath(const String& url, const String& wc_path, int rev) {
   setUrl(url);
-  wc_text->setText(wc_path);
-  svn_wc_model->setRootPath(wc_path);
-  rev_box->setValue(rev);
-  svn_file_model->setWCPath(wc_path);
-  svn_file_model->setRev(rev);
-  updateView();
+  setWCPath(wc_path);
+  setRev(rev);
 }
 
 void iSubversionBrowser::setUrlWCPathSubDir(const String& url, const String& wc_path,
       const String& subdir, int rev) {
   setUrl(url);
-  wc_text->setText(wc_path);
-  svn_wc_model->setRootPath(wc_path);
-  subdir_text->setText(subdir);
-  rev_box->setValue(rev);
-  svn_file_model->setWCPath(wc_path);
-  svn_file_model->setRev(rev);
-  svn_file_model->setSubDir(subdir); // should have one fun for this..
-  updateView();
+  setWCPath(wc_path);
+  setSubDir(subdir);
+  setRev(rev);
 }
 
 void iSubversionBrowser::lBrowGoClicked() {
@@ -358,10 +445,15 @@ void iSubversionBrowser::fBrowGoClicked() {
     taMisc::Error("url is empty -- must specify a valid url");
     return;
   }
-  String wctxt = wc_text->text();
-  String subtxt = subdir_text->text();
+  if(urltxt != svn_file_model->url()) {
+    setUrl(urltxt);
+  }
   int rev = rev_box->value();
-  setUrlWCPathSubDir(urltxt, wctxt, subtxt, rev);
+  if(rev != svn_file_model->rev()) {
+    setRev(rev);
+  }
+  String subtxt = subdir_text->text();
+  setSubDir(subtxt);
 }
 
 void iSubversionBrowser::wBrowGoClicked() {
@@ -373,27 +465,138 @@ void iSubversionBrowser::logCellDoubleClicked(const QModelIndex& index) {
   QModelIndex rw0 = index.child(index.row(), 0);
   QVariant qrev = svn_log_sort->data(rw0);
   int rev = qrev.toInt();
+  rev_only->setChecked(true);   // filter
   setRev(rev);
-  // todo: want to filter browser to show only the files in log rev!
 }
 
 void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
-  QVariant qfn = svn_file_sort->data(index);
-  String fnm = qfn.toString();
-  if(fnm.empty() || fnm == ".") return;
-  String subtxt = subdir_text->text();
-  if(fnm == "..") {
-    if(subtxt.empty()) return;
-    subtxt = taMisc::GetDirFmPath(subtxt);
-  }
-  else {
+  int col = index.column();
+  if(col < 2) {
+    QModelIndex rw0 = index.child(index.row(), 0);
+    QVariant qfn = svn_file_sort->data(rw0);
+    String fnm = qfn.toString();
+    if(fnm.empty() || fnm == ".") return;
+    String subtxt = subdir_text->text();
+    if(fnm == "..") {
+      subDirUp();
+      return;
+    }
     if(subtxt.nonempty())
       subtxt += "/";
     subtxt += fnm;
+    subtxt = taMisc::NoFinalPathSep(subtxt);
+    setSubDir(subtxt);
   }
+  else {
+    QModelIndex rw2 = index.child(index.row(), 2);
+    QVariant qrv = svn_file_sort->data(rw2);
+    int rev = qrv.toInt();
+    setEndRev(rev, svn_log_model->n_entries());
+  }
+}
+
+void iSubversionBrowser::subDirUp() {
+  String subtxt = subdir_text->text();
+  if(subtxt.empty()) return;
+  subtxt = taMisc::GetDirFmPath(subtxt);
   subtxt = taMisc::NoFinalPathSep(subtxt);
   setSubDir(subtxt);
 }
 
 void iSubversionBrowser::wcCellDoubleClicked(const QModelIndex& index) {
+  QModelIndex fidx = svn_wc_sort->mapToSource(index);
+  String fnm = svn_wc_model->fileName(fidx);
+  if(fnm.empty()) return;
+  String subtxt = subdir_text->text();
+  if(subtxt.nonempty())
+    subtxt += "/";
+  subtxt += fnm;
+  subtxt = taMisc::NoFinalPathSep(subtxt);
+  setSubDir(subtxt);
 }
+
+String iSubversionBrowser::selSvnFile() {
+  QModelIndexList sels = file_table->selectionModel()->selectedIndexes();
+  if(sels.count() == 0) {
+    return "";
+  }
+  QModelIndex idx = sels.at(0); // only support single sel
+  QModelIndex fidx = svn_file_sort->mapToSource(idx);
+  String fnm = svn_file_model->fileName(fidx);
+  return fnm;
+}
+
+String iSubversionBrowser::selWcFile() {
+  QModelIndexList sels = wc_table->selectionModel()->selectedIndexes();
+  if(sels.count() == 0) {
+    return "";
+  }
+  QModelIndex idx = sels.at(0); // only support single sel
+  QModelIndex fidx = svn_wc_sort->mapToSource(idx);
+  String fnm = svn_wc_model->fileName(fidx);
+  return fnm;
+}
+
+void iSubversionBrowser::viewSvnFile(const String& fnm) {
+  TypeDef* td = &TA_iSubversionBrowser;
+  MemberDef* md = td->members.FindName("view_svn_file");
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, true);
+  // args are: read_only, modal, parent, line_nos, rich_text
+  host_->Constr("Selected Svn File: " + fnm);
+  host_->Edit(false);
+}
+
+void iSubversionBrowser::a_view_file_do() {
+  String fnm = selSvnFile();
+  if(fnm.nonempty()) {
+    if(!svn_file_model->svn_client)
+      return;
+    String path = svn_file_model->url_full();
+    path = taMisc::FinalPathSep(path);
+    path += fnm;
+    String tmpfile = taMisc::GetTemporaryPath() + "/svnb_tmp"; // todo: gross hack -- fix!
+    if(taMisc::FileExists(tmpfile))
+      taMisc::RemoveFile(tmpfile);
+    svn_file_model->svn_client->SaveFile(path, tmpfile, svn_file_model->rev());
+    view_svn_file.LoadFromFile(tmpfile);
+    if(taMisc::FileExists(tmpfile))
+      taMisc::RemoveFile(tmpfile);
+    viewSvnFile(fnm);
+  }
+  else {
+    fnm = selWcFile();
+    if(fnm.nonempty()) {
+    }
+  }
+}
+
+void iSubversionBrowser::a_view_diff_do() {
+
+}
+
+void iSubversionBrowser::a_save_file_do() {
+}
+
+void iSubversionBrowser::a_add_file_do() {
+
+}
+
+void iSubversionBrowser::a_rm_file_do() {
+
+}
+
+void iSubversionBrowser::a_update_do() {
+}
+
+void iSubversionBrowser::a_commit_do() {
+
+}
+
+void iSubversionBrowser::a_checkout_do() {
+
+}
+
+void iSubversionBrowser::a_list_mod_do() {
+
+}
+

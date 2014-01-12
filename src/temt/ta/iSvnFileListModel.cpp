@@ -62,7 +62,8 @@ bool iSvnFileListModel::setUrl(const QString& url, int rev) {
 bool iSvnFileListModel::setWCPath(const QString& wc_path) {
   if(!initSvnClient())
     return false;
-  svn_client->SetWorkingCopyPath(wc_path.toLatin1());
+  String wp = taMisc::ExpandFilePath(wc_path);
+  svn_client->SetWorkingCopyPath(wp);
   svn_wc_path = svn_client->GetWorkingCopyPath().c_str();
   svn_subdir = "";
   svn_wc_path_full = svn_wc_path;
@@ -92,6 +93,51 @@ bool iSvnFileListModel::setRev(int rev) {
   return refresh();
 }
 
+QString iSvnFileListModel::fileName(const QModelIndex& index) {
+  if(validateIndex(index)) {
+    int idx = index.row() - 1;    // +1 for ..
+    if(idx >= 0)
+      return static_cast<const char*>(file_names[idx]);
+  }
+  return QString();
+}
+
+int iSvnFileListModel::fileSize(const QModelIndex& index) {
+  if(validateIndex(index)) {
+    int idx = index.row() - 1;    // +1 for ..
+    if(idx >= 0)
+      return file_sizes[idx];
+  }
+  return 0;
+}
+
+int iSvnFileListModel::fileRev(const QModelIndex& index) {
+  if(validateIndex(index)) {
+    int idx = index.row() - 1;    // +1 for ..
+    if(idx >= 0)
+      return file_revs[idx];
+  }
+  return 0;
+}
+
+int iSvnFileListModel::fileTime(const QModelIndex& index) {
+  if(validateIndex(index)) {
+    int idx = index.row() - 1;    // +1 for ..
+    if(idx >= 0)
+      return file_times[idx];
+  }
+  return 0;
+}
+
+QString iSvnFileListModel::fileAuthor(const QModelIndex& index) {
+  if(validateIndex(index)) {
+    int idx = index.row() - 1;    // +1 for ..
+    if(idx >= 0)
+      return static_cast<const char*>(file_authors[idx]);
+  }
+  return QString();
+}
+
 bool iSvnFileListModel::refresh() {
   if(!svn_client) {
     emit layoutAboutToBeChanged();
@@ -101,19 +147,20 @@ bool iSvnFileListModel::refresh() {
   }
 
   emit layoutAboutToBeChanged();
+
+  svn_url = static_cast<const char*>(taMisc::NoFinalPathSep(svn_url));
   svn_url_full = svn_url;
   if(!svn_subdir.isEmpty()) {
-    if(!svn_url_full.endsWith("/"))
-      svn_url_full += "/";
-    svn_url_full += svn_subdir;
+    svn_url_full += QString("/") + svn_subdir;
   }
+  svn_url_full = static_cast<const char*>(taMisc::NoFinalPathSep(svn_url_full));
 
+  svn_wc_path = static_cast<const char*>(taMisc::NoFinalPathSep(svn_wc_path));
   svn_wc_path_full = svn_wc_path;
   if(!svn_subdir.isEmpty()) {
-    if(!svn_wc_path_full.endsWith("/"))
-      svn_wc_path_full += "/";
-    svn_wc_path_full += svn_subdir;
+    svn_wc_path_full += QString("/") + svn_subdir;
   }
+  svn_wc_path_full = static_cast<const char*>(taMisc::NoFinalPathSep(svn_wc_path_full));
 
   file_names.Reset();
   file_paths.Reset();
@@ -190,7 +237,7 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
     case 3: {
       if(idx < 0) return QVariant();
       QDateTime dm = QDateTime::fromTime_t(file_times[idx]);
-      QString dmstr = dm.toString("yyyy_MM_dd_hh_mm_ss");
+      QString dmstr = dm.toString("yyyy MM/dd hh:mm:ss");
       return dmstr;
       break;
     }
@@ -205,7 +252,9 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
 //Qt::ToolTipRole
 //Qt::StatusTipRole
 //Qt::WhatsThisRole
-//Qt::SizeHintRole -- QSize
+    // case Qt::SizeHintRole: {
+    //   break;
+    // }
 //Qt::FontRole--  QFont: font for the text
   // case Qt::TextAlignmentRole:
   //   return m_mat->defAlignment();

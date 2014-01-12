@@ -1897,7 +1897,7 @@ void iMainWindowViewer::toolsHelpBrowser() {
 
 void iMainWindowViewer::toolsSvnBrowserEmergent() {
   iSubversionBrowser* svb = new iSubversionBrowser;
-  svb->setUrl("http://grey.colorado.edu/svn/emergent/emergent/trunk");
+  svb->setUrlWCPath("http://grey.colorado.edu/svn/emergent/emergent/trunk", "~/emergent");
   svb->show();
   svb->raise();
   // anythign else??

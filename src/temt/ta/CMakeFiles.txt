@@ -806,6 +806,8 @@ set(ta_HEADS_MAKETA_MOC
   iViewPanelOfGraphTable.h
 
   iViewPanelOfVEWorld.h
+
+  iSubversionBrowser.h
  )
 
 set(ta_HEADS_NOMAKETA_MOC
@@ -955,7 +957,6 @@ set(ta_HEADS_NOMAKETA_MOC
   iTypeInfoBrowser.h
   iSvnFileListModel.h
   iSvnRevLogModel.h
-  iSubversionBrowser.h
 
   iT3PanelViewer.h
   iT3Panel.h

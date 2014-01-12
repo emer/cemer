@@ -17,6 +17,7 @@
 #define SUBVERSION_CLIENT_H_
 
 #include "ta_def.h"
+#include <taString>
 #include <apr.h>  // apr_off_t
 #include <stdexcept>
 #include <string>
@@ -108,6 +109,9 @@ public:
 
   void SaveFile(const char* from_url, const char* to_path, int rev = -1);
   // copy a file from given fully-specified url to a file at given to_path, using given revision (-1 = head)
+
+  void GetFile(const char* from_url, String& to_str, int rev = -1);
+  // get file from given fully-specified url to a string at given to_path, using given revision (-1 = head)
 
   void GetLogs(int_PArray& revs, String_PArray& commit_msgs, String_PArray& authors,
                int_PArray& times, int_PArray& files_start_idx,

@@ -18,6 +18,7 @@
 #include <SubversionClient>
 #include <QDateTime>
 #include <QColor>
+#include <QSize>
 
 #include <taMisc>
 
@@ -131,7 +132,7 @@ QVariant iSvnRevLogModel::data(const QModelIndex& index, int role) const {
     case 1: {
       if(idx < 0) return QVariant();
       QDateTime dm = QDateTime::fromTime_t(times[idx]);
-      QString dmstr = dm.toString("yyyy_MM_dd_hh_mm_ss");
+      QString dmstr = dm.toString("yyyy MM/dd hh:mm:ss");
       return dmstr;
       break;
     }
@@ -148,7 +149,9 @@ QVariant iSvnRevLogModel::data(const QModelIndex& index, int role) const {
       int sti = files_start_idx[idx];
       int ni = files_n[idx];
       for(int i = 0; i<ni; i++) {
-        rval += files[sti + i] + " (" + actions[sti + i] + "); ";
+        rval += files[sti + i] + " (" + actions[sti + i] + ")";
+        if(i < ni-1)
+          rval += "\n";
       }
       return static_cast<const char *>(rval);
       break;
@@ -159,7 +162,6 @@ QVariant iSvnRevLogModel::data(const QModelIndex& index, int role) const {
 //Qt::ToolTipRole
 //Qt::StatusTipRole
 //Qt::WhatsThisRole
-//Qt::SizeHintRole -- QSize
 //Qt::FontRole--  QFont: font for the text
   // case Qt::TextAlignmentRole:
   //   return m_mat->defAlignment();
@@ -194,6 +196,12 @@ QVariant iSvnRevLogModel::headerData(int section,
   Qt::Orientation orientation, int role) const
 {
   if (orientation == Qt::Horizontal) {
+    if(role == Qt::SizeHintRole) {
+      if(section == 4 || section == 2) {
+        return QSize(300, 1);
+      }
+    }
+
     if (role != Qt::DisplayRole)
       return QVariant();
 

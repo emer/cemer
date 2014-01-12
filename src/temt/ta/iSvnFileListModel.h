@@ -63,6 +63,17 @@ public:
   const QString& url_full() const { return svn_url_full; } 
   const QString& wc_path_full() const { return svn_wc_path_full; } 
 
+  virtual QString      fileName(const QModelIndex& index);
+  // get file name at index
+  virtual int           fileSize(const QModelIndex& index);
+  // get author at index
+  virtual int           fileRev(const QModelIndex& index);
+  // get revsion at index
+  virtual int           fileTime(const QModelIndex& index);
+  // get time at index
+  virtual QString      fileAuthor(const QModelIndex& index);
+  // get author at index
+
 public: // required model implementations
 #ifndef __MAKETA__
   override int          columnCount(const QModelIndex& parent = QModelIndex()) const;
@@ -85,6 +96,8 @@ public: // required model implementations
   int_PArray    file_times;
   String_PArray file_authors;
 
+  SubversionClient*     svn_client; // our client
+
 protected:
   // This exception class only used internally.
   class Exception : public std::runtime_error {
@@ -92,7 +105,6 @@ protected:
     explicit Exception(const char *msg);
   };
 
-  SubversionClient*     svn_client; // our client
   QString               svn_url;    // current url
   int                   svn_rev;    // svn revision number
   QString               svn_wc_path; // current working copy path

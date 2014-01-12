@@ -902,6 +902,11 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
 }
 
 void 
+SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
+  
+}
+
+void 
 SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
@@ -1007,6 +1012,7 @@ static svn_error_t* mysvn_log_callback(void *baton, svn_log_entry_t* log_entry,
           apr_time_t ts;
           svn_time_from_cstring(&ts, *val, pool);
           li->times->Add(ts / 1000000); // microseconds -> seconds
+          got_date = true;
         }
       }
   }
