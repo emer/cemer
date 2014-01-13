@@ -286,7 +286,7 @@ public:
   static short          num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_50 number of browse history items to keep
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
-  static short          spring_loaded_delay; // #SAVE #DEF_500 #MIN_500 #MAX_2000 delay in milliseconds for expanding
+  static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
  ////////////////////////////////////////////////////////
   //    File/Paths Info
 
