@@ -31,9 +31,12 @@
 #include <iCheckBox>
 #include <taiEditorOfString>
 #include <SubversionClient>
+#include <MethodDef>
+#include <taGuiDialog>
 
 #include <taMisc>
 #include <taiMisc>
+
 
 iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 :inherited(taiMisc::main_window)
@@ -107,6 +110,13 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   end_rev_box->setMinimum(-10000);
   end_rev_box->setValue(svn_log_model->end_rev());
   lb_tb->addWidget(end_rev_box);
+
+  end_rev_pgup = lb_tb->addAction("^^");
+  end_rev_pgup->setToolTip("page-up on end_rev -- increase end_rev by n_entries");
+  end_rev_pgdn = lb_tb->addAction("vv");
+  end_rev_pgdn->setToolTip("page-down on end_rev -- decrease end_rev by n_entries");
+  connect(end_rev_pgup, SIGNAL(triggered()), this, SLOT(endRevPgUp()));
+  connect(end_rev_pgdn, SIGNAL(triggered()), this, SLOT(endRevPgDn()));
 
   lbl = new QLabel(" n revs:");
   lbl->setToolTip("number of revisions to get log data for");
@@ -366,8 +376,8 @@ void iSubversionBrowser::setUrl(const String& url) {
   svn_file_model->setUrl(url);
   String ur = svn_file_model->url();
   url_text->setText(ur);
-  if(svn_log_model->end_rev() < 0 && svn_file_model->file_revs.size > 0) {
-    int end_rev = svn_file_model->file_revs[0]; // should be the last commit at top level
+  if(svn_log_model->end_rev() < 0 && svn_file_model->svn_head_rev >= 0) {
+    int end_rev = svn_file_model->svn_head_rev;
     end_rev_box->setValue(end_rev);
     n_entries_box->setValue(svn_log_model->n_entries());
     svn_log_model->setUrl(url, end_rev, svn_log_model->n_entries());
@@ -409,7 +419,10 @@ void iSubversionBrowser::setRev(int rev) {
 
 void iSubversionBrowser::setEndRev(int end_rev, int n_entries) {
   end_rev_box->setValue(end_rev);
-  n_entries_box->setValue(n_entries);
+  if(n_entries > 0)
+    n_entries_box->setValue(n_entries);
+  else
+    n_entries = n_entries_box->value();
   svn_log_model->setRev(end_rev, n_entries);
   updateView();
 }
@@ -473,26 +486,53 @@ void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
   int col = index.column();
   if(col < 2) {
     QModelIndex rw0 = index.child(index.row(), 0);
-    QVariant qfn = svn_file_sort->data(rw0);
-    String fnm = qfn.toString();
+    QModelIndex fidx = svn_file_sort->mapToSource(rw0);
+    String fnm = svn_file_model->fileName(fidx);
     if(fnm.empty() || fnm == ".") return;
-    String subtxt = subdir_text->text();
     if(fnm == "..") {
       subDirUp();
       return;
     }
-    if(subtxt.nonempty())
-      subtxt += "/";
-    subtxt += fnm;
-    subtxt = taMisc::NoFinalPathSep(subtxt);
-    setSubDir(subtxt);
+    bool is_dir = svn_file_model->isDir(fidx);
+    if(is_dir) {
+      String subtxt = subdir_text->text();
+      if(subtxt.nonempty())
+        subtxt += "/";
+      subtxt += fnm;
+      subtxt = taMisc::NoFinalPathSep(subtxt);
+      setSubDir(subtxt);
+    }
+    else {
+      if(svn_file_model->fileToString(fnm, view_svn_file)) {
+        // todo: if only then do diff instead
+        viewSvnFile(fnm);
+      }
+    }
   }
   else {
     QModelIndex rw2 = index.child(index.row(), 2);
-    QVariant qrv = svn_file_sort->data(rw2);
-    int rev = qrv.toInt();
-    setEndRev(rev, svn_log_model->n_entries());
+    QModelIndex fidx = svn_file_sort->mapToSource(rw2);
+    int rev = svn_file_model->fileRev(fidx);
+    setEndRev(rev);
   }
+}
+
+void iSubversionBrowser::endRevPgUp() {
+  int end_rev = end_rev_box->value();
+  int n_entries = n_entries_box->value();
+  end_rev += n_entries;
+  if(svn_file_model->svn_head_rev >= 0) {
+    end_rev = MIN(end_rev, svn_file_model->svn_head_rev);
+  }
+  setEndRev(end_rev);
+}
+
+void iSubversionBrowser::endRevPgDn() {
+  int end_rev = end_rev_box->value();
+  int n_entries = n_entries_box->value();
+  end_rev -= n_entries;
+  end_rev = MAX(end_rev, n_entries);
+  setEndRev(end_rev);
 }
 
 void iSubversionBrowser::subDirUp() {
@@ -540,7 +580,7 @@ String iSubversionBrowser::selWcFile() {
 void iSubversionBrowser::viewSvnFile(const String& fnm) {
   TypeDef* td = &TA_iSubversionBrowser;
   MemberDef* md = td->members.FindName("view_svn_file");
-  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, true);
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
   // args are: read_only, modal, parent, line_nos, rich_text
   host_->Constr("Selected Svn File: " + fnm);
   host_->Edit(false);
@@ -549,23 +589,16 @@ void iSubversionBrowser::viewSvnFile(const String& fnm) {
 void iSubversionBrowser::a_view_file_do() {
   String fnm = selSvnFile();
   if(fnm.nonempty()) {
-    if(!svn_file_model->svn_client)
-      return;
-    String path = svn_file_model->url_full();
-    path = taMisc::FinalPathSep(path);
-    path += fnm;
-    String tmpfile = taMisc::GetTemporaryPath() + "/svnb_tmp"; // todo: gross hack -- fix!
-    if(taMisc::FileExists(tmpfile))
-      taMisc::RemoveFile(tmpfile);
-    svn_file_model->svn_client->SaveFile(path, tmpfile, svn_file_model->rev());
-    view_svn_file.LoadFromFile(tmpfile);
-    if(taMisc::FileExists(tmpfile))
-      taMisc::RemoveFile(tmpfile);
-    viewSvnFile(fnm);
+    if(svn_file_model->fileToString(fnm, view_svn_file)) {
+      viewSvnFile(fnm);
+    }
   }
   else {
     fnm = selWcFile();
     if(fnm.nonempty()) {
+      if(svn_file_model->fileToString(fnm, view_svn_file)) {
+        viewSvnFile(fnm);
+      }
     }
   }
 }
@@ -575,10 +608,19 @@ void iSubversionBrowser::a_view_diff_do() {
 }
 
 void iSubversionBrowser::a_save_file_do() {
+  String fnm = selSvnFile();
+  if(fnm.nonempty()) {
+    // if(svn_file_model->foileToString(fnm, view_svn_file)) {
+    //   viewSvnFile(fnm);
+    // }
+  }
 }
 
 void iSubversionBrowser::a_add_file_do() {
-
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    // svn_file_model->addFile(fnm);
+  }
 }
 
 void iSubversionBrowser::a_rm_file_do() {
@@ -586,10 +628,40 @@ void iSubversionBrowser::a_rm_file_do() {
 }
 
 void iSubversionBrowser::a_update_do() {
+  svn_file_model->svn_client->Update();
 }
 
 void iSubversionBrowser::a_commit_do() {
+  taGuiDialog dlg;
+  taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
 
+  dlg.win_title = "Cluster Analysis";
+  dlg.width = 300;
+  dlg.height = 400;
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row("lbl");
+  int space = 50;
+
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("msg_lbl", widget, row, "label=Commit Message:;");
+
+  String cmt_msg;
+
+  row = "msg";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddStringField(&cmt_msg, "cmt_msg", widget, row, "tooltip=Enter the message describing what his happening here;");
+
+  int drval = dlg.PostDialog(true);
+  if(drval) {
+    svn_file_model->svn_client->Checkin(cmt_msg);
+  }
 }
 
 void iSubversionBrowser::a_checkout_do() {

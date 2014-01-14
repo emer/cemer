@@ -830,6 +830,7 @@ public:
   int_PArray*    file_sizes;
   int_PArray*    file_revs;
   int_PArray*    file_times;
+  int_PArray*    file_kinds;
   String_PArray* file_authors;
 };
 
@@ -845,6 +846,7 @@ static svn_error_t* mysvn_list_callback(void *baton, const char *path,
   fi->file_sizes->Add(dirent->size);
   fi->file_revs->Add(dirent->created_rev);
   fi->file_times->Add(dirent->time / 1000000); // microseconds -> seconds
+  fi->file_kinds->Add(dirent->kind);
   fi->file_authors->Add(dirent->last_author);
   return NULL;
 }
@@ -853,7 +855,7 @@ void
 SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
                        int_PArray& file_sizes,
                        int_PArray& file_revs, int_PArray& file_times,
-                       String_PArray& file_authors,
+                       int_PArray& file_kinds, String_PArray& file_authors,
                        const char *url, int rev, bool recurse) {
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
@@ -883,6 +885,7 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
   svn_fi_baton.file_sizes = &file_sizes;
   svn_fi_baton.file_revs = &file_revs;
   svn_fi_baton.file_times = &file_times;
+  svn_fi_baton.file_kinds = &file_kinds;
   svn_fi_baton.file_authors = &file_authors;
 
   if (svn_error_t *error = svn_client_list2
@@ -903,7 +906,44 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
 
 void 
 SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
-  
+
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  from_url = svn_uri_canonicalize(from_url, m_pool);
+#endif
+
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_unspecified;
+
+  // Set the revision number, if provided.  Otherwise get HEAD revision.
+  svn_opt_revision_t revision;
+  if (rev < 0) {
+    revision.kind = svn_opt_revision_head;
+  }
+  else {
+    revision.kind = svn_opt_revision_number;
+    revision.value.number = rev;
+  }
+
+  apr_pool_t* strpool = svn_pool_create(0);
+
+  svn_stringbuf_t* stringbuf = svn_stringbuf_create_ensure(1024, strpool);
+  svn_stream_t *out_strm = svn_stream_from_stringbuf(stringbuf, strpool);
+
+  if (svn_error_t *error = svn_client_cat2
+      (out_strm,
+       from_url,
+       &peg_revision,
+       &revision,
+       m_ctx,
+       m_pool))
+    {
+      throw Exception("Subversion SaveFile cat2 error", error);
+    }
+
+  svn_stream_close(out_strm);
+  to_str = stringbuf->data;
+  svn_pool_destroy(strpool);
 }
 
 void 
@@ -1555,6 +1595,43 @@ SubversionClient::GetLastChangedRevision(const char *path)
 
   return m_last_changed_revision;
 }
+
+void
+SubversionClient::GetUrlFromPath(String& url, const char *path) {
+  const char* url_str;
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
+  if(svn_error_t *error = svn_client_url_from_path2
+    (&url_str,
+     path,
+     m_ctx,,
+     m_pool,
+     m_pool))
+#else
+  if(svn_error_t *error = svn_client_url_from_path
+     (&url_str,
+      path,
+      m_pool))
+#endif
+  {
+    throw Exception("Subversion error getting path", error);
+  }
+  url = url_str;
+}
+
+void
+SubversionClient::GetRootUrlFromPath(String& url, const char *path) {
+  const char* url_str;
+  if(svn_error_t *error = svn_client_root_url_from_path
+    (&url_str,
+     path,
+     m_ctx,
+     m_pool))
+  {
+    throw Exception("Subversion error getting root path", error);
+  }
+  url = url_str;
+}
+
 
 void
 SubversionClient::Cancel()

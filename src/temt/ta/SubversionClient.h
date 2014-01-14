@@ -95,56 +95,62 @@ public:
   SubversionClient();
   virtual ~SubversionClient();
 
-  void SetWorkingCopyPath(const char *working_copy_path);
+  void  SetWorkingCopyPath(const char *working_copy_path);
   std::string GetWorkingCopyPath() const;
   std::string GetUsername(const char *url, UsernameSource source) const;
 
-  int Checkout(const char *url, int rev = -1, bool recurse = true);
+  int   Checkout(const char *url, int rev = -1, bool recurse = true);
   // Checkout a working copy and return the revision checked out.
 
-  void List(String_PArray& file_names, String_PArray& file_paths, int_PArray& file_sizes,
-            int_PArray& file_revs, int_PArray& file_times, String_PArray& file_authors,
+  void  List(String_PArray& file_names, String_PArray& file_paths, int_PArray& file_sizes,
+            int_PArray& file_revs, int_PArray& file_times, int_PArray& file_kinds,
+            String_PArray& file_authors,
             const char* url, int rev = -1, bool recurse = false);
-  // list files in the repository url at given url -- fills in the arrays with coordinated values for each file -- times are seconds since 1970 standard time, sizes are in bytes -- rev -1 = head (current), recurse = get all the subdirectories under url too (expensive)
+  // list files in the repository url at given url -- fills in the arrays with coordinated values for each file -- times are seconds since 1970 standard time, kind = svn_node_kind_t -- svn_node_file or svn_node_dir, sizes are in bytes -- rev -1 = head (current), recurse = get all the subdirectories under url too (expensive)
 
-  void SaveFile(const char* from_url, const char* to_path, int rev = -1);
+  void  SaveFile(const char* from_url, const char* to_path, int rev = -1);
   // copy a file from given fully-specified url to a file at given to_path, using given revision (-1 = head)
 
-  void GetFile(const char* from_url, String& to_str, int rev = -1);
+  void  GetFile(const char* from_url, String& to_str, int rev = -1);
   // get file from given fully-specified url to a string at given to_path, using given revision (-1 = head)
 
-  void GetLogs(int_PArray& revs, String_PArray& commit_msgs, String_PArray& authors,
+  void  GetLogs(int_PArray& revs, String_PArray& commit_msgs, String_PArray& authors,
                int_PArray& times, int_PArray& files_start_idx,
                int_PArray& files_n, String_PArray& files, String_PArray& actions,
                const char* url, int end_rev = -1, int n_entries = 50);
   // get logs of commits made to repository, with coordinated info in each array, and files listed (full paths from url) at files_start_idx into files array, with files_n per each one -- end at given revision (-1 = head or current) and go back given number of log entries
 
-  int Update(int rev = -1);
+  int   Update(int rev = -1);
   // Update the working copy and return the revision.
-  int UpdateFiles(const String_PArray& files, int rev = -1);
+  int   UpdateFiles(const String_PArray& files, int rev = -1);
   // Update specific list of files and return the revision -- if files empty upates the entire working copy
 
-  void Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
+  void  Add(const char *file_or_dir, bool recurse = true, bool add_parents = true);
   // Add files to the working copy and schedule for future commit -- Does not throw if file is already versioned.
 
-  void Delete(const String_PArray& files, bool force, bool keep_local);
+  void  Delete(const String_PArray& files, bool force, bool keep_local);
   // Delete listed files (or directories) from the repository, with force and keep_local options
 
   // All functions return true if a new directory was created.
-  bool MakeDir(const char *new_dir, bool make_parents = true);
+  bool  MakeDir(const char *new_dir, bool make_parents = true);
   // Create a directory in the working copy -- returns true if directory created
-  bool TryMakeDir(const char *new_dir, bool make_parents = true);
+  bool  TryMakeDir(const char *new_dir, bool make_parents = true);
   // Create a directory in the working copy -- returns true if directory created -- no error if the dir already exists
-  bool MakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
+  bool  MakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
   // Create a directory in the repository -- returns true if directory created
-  bool TryMakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
+  bool  TryMakeUrlDir(const char *url, const char *comment = 0, bool make_parents = true);
   // Create a directory in the repository -- returns true if directory created -- no error if the dir already exists.
 
-  int Checkin(const char *comment = 0);
+  int   Checkin(const char *comment = 0);
   // Checkin (commit) working copy -- returns the new revision number or -1 if nothing to commit.
-  int CheckinFiles(const String_PArray& files, const char *comment = 0);
+  int   CheckinFiles(const String_PArray& files, const char *comment = 0);
   // Checkin specific list of files in given array -- if empty, the whole working copy will be committed -- returns the new revision number or -1 if nothing to commit.
-  int GetLastChangedRevision(const char *path);
+  int   GetLastChangedRevision(const char *path);
+
+  void  GetUrlFromPath(String& url, const char *path);
+  // get the server url from path to local file
+  void  GetRootUrlFromPath(String& url, const char *path);
+  // get the server root url from path to local file
 
   void Cancel();
   // Call to cancel current operation in progress.

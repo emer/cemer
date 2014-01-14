@@ -18,8 +18,12 @@
 #include <SubversionClient>
 #include <QDateTime>
 #include <QColor>
+#include <QIcon>
+#include <QFileIconProvider>
 
 #include <taMisc>
+
+#include <svn_types.h>
 
 #define SVN_N_COLS 5
 
@@ -27,14 +31,18 @@ iSvnFileListModel::iSvnFileListModel(QObject* parent)
   : inherited(parent)
   , svn_client(0)
   , svn_rev(-1)
+  , svn_head_rev(-1)
 {
-
+  file_icon_provider = new QFileIconProvider;
 }
 
 iSvnFileListModel::~iSvnFileListModel() {
   if(svn_client)
     delete svn_client;
   svn_client = NULL;
+  if(file_icon_provider)
+    delete file_icon_provider;
+  file_icon_provider = NULL;
 }
 
 bool iSvnFileListModel::initSvnClient() {
@@ -56,7 +64,11 @@ bool iSvnFileListModel::setUrl(const QString& url, int rev) {
   svn_url = url;
   svn_rev = rev;
   svn_subdir = "";
-  return refresh();
+  bool rval = refresh();
+  if(rval && file_revs.size > 0) {
+    svn_head_rev = file_revs[0];
+  }
+  return rval;
 }
 
 bool iSvnFileListModel::setWCPath(const QString& wc_path) {
@@ -129,6 +141,22 @@ int iSvnFileListModel::fileTime(const QModelIndex& index) {
   return 0;
 }
 
+int iSvnFileListModel::fileKind(const QModelIndex& index) {
+  if(validateIndex(index)) {
+    int idx = index.row() - 1;    // +1 for ..
+    if(idx >= 0)
+      return file_kinds[idx];
+  }
+  return svn_node_none;
+}
+
+bool iSvnFileListModel::isDir(const QModelIndex& index) {
+  int kind = fileKind(index);
+  if(kind == svn_node_dir)
+    return true;
+  return false;
+}
+
 QString iSvnFileListModel::fileAuthor(const QModelIndex& index) {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
@@ -136,6 +164,16 @@ QString iSvnFileListModel::fileAuthor(const QModelIndex& index) {
       return static_cast<const char*>(file_authors[idx]);
   }
   return QString();
+}
+
+bool iSvnFileListModel::fileToString(const String& fnm, String& to_file) {
+  if(!svn_client)
+    return false;
+  String path = url_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  svn_client->GetFile(path, to_file, rev());
+  return true;
 }
 
 bool iSvnFileListModel::refresh() {
@@ -171,7 +209,7 @@ bool iSvnFileListModel::refresh() {
 
   try {
     svn_client->List(file_names, file_paths, file_sizes, file_revs, file_times,
-                     file_authors, svn_url_full.toLatin1(), svn_rev, false); // no recurse
+                     file_kinds, file_authors, svn_url_full.toLatin1(), svn_rev, false); // no recurse
   }
   catch (const iSvnFileListModel::Exception &ex) {
     taMisc::Error("Error doing List in SubversionClient.\n", ex.what());
@@ -205,6 +243,8 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
 
   int sz = 0;
   if(idx >= 0) sz = file_sizes[idx];
+  int kind = svn_node_none;
+  if(idx >= 0) kind = file_kinds[idx];
 
   switch (role) {
   case Qt::DisplayRole: 
@@ -216,13 +256,13 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
       if(idx == 0)
         return QString(".");
       QString nm = static_cast<const char *>(file_names[idx]);
-      if(sz == 0)
+      if(kind == svn_node_dir)
         return nm + "/";
       return nm;
       break;
     }
     case 1: {
-      if(sz == 0)
+      if(idx < 0 || kind == svn_node_dir)
         return QString("--");
       QString szstr = static_cast<const char *>
         (taMisc::GetSizeString(sz, 3, true)); // 3 prec, power of 2
@@ -248,7 +288,20 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
     }
     }
     break;
-//Qt::DecorationRole
+  }
+  case Qt::DecorationRole: {
+    if(col == 0) {
+      // from: /usr/local/Trolltech/qt-everywhere-opensource-src-4.8.2/src/gui/dialogs/
+      // qfilesystemmodel.cpp
+      if(idx < 0) 
+        return file_icon_provider->icon(QFileIconProvider::Folder);
+      else if(kind == svn_node_dir)
+        return file_icon_provider->icon(QFileIconProvider::Folder);
+      else
+        return file_icon_provider->icon(QFileIconProvider::File);
+    }
+    break;
+  }
 //Qt::ToolTipRole
 //Qt::StatusTipRole
 //Qt::WhatsThisRole
@@ -259,12 +312,11 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
   // case Qt::TextAlignmentRole:
   //   return m_mat->defAlignment();
   //   break;
-    case Qt::BackgroundRole: {
-      if(idx % 2 == 0)
-        return QColor(240, 240, 240); // light grey
-      return QVariant();
-      break;
-    }
+  case Qt::BackgroundRole: {
+    if(idx % 2 == 0)
+      return QColor(240, 240, 240); // light grey
+    return QVariant();
+    break;
   }
 /*Qt::TextColorRole
   QColor: color of text

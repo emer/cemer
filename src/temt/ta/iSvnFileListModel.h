@@ -30,6 +30,7 @@
 
 // declare all other types mentioned but not required to include:
 class SubversionClient; //
+class QFileIconProvider; //
 
 taTypeDef_Of(iSvnFileListModel);
 
@@ -63,16 +64,23 @@ public:
   const QString& url_full() const { return svn_url_full; } 
   const QString& wc_path_full() const { return svn_wc_path_full; } 
 
-  virtual QString      fileName(const QModelIndex& index);
+  virtual QString fileName(const QModelIndex& index);
   // get file name at index
-  virtual int           fileSize(const QModelIndex& index);
+  virtual int     fileSize(const QModelIndex& index);
   // get author at index
-  virtual int           fileRev(const QModelIndex& index);
+  virtual int     fileRev(const QModelIndex& index);
   // get revsion at index
-  virtual int           fileTime(const QModelIndex& index);
+  virtual int     fileTime(const QModelIndex& index);
   // get time at index
-  virtual QString      fileAuthor(const QModelIndex& index);
+  virtual int     fileKind(const QModelIndex& index);
+  // get file kind at index -- should be svn_node_file or svn_node_dir
+  virtual bool    isDir(const QModelIndex& index);
+  // return true if this is a directory at index
+  virtual QString fileAuthor(const QModelIndex& index);
   // get author at index
+
+  virtual bool    fileToString(const String& fnm, String& to_file);
+  // get file to string -- file is relative to current url and subdir
 
 public: // required model implementations
 #ifndef __MAKETA__
@@ -88,15 +96,20 @@ public: // required model implementations
                               const QModelIndex &parent = QModelIndex()) const;
   override QModelIndex  parent(const QModelIndex &child) const;
 
+  int           svn_head_rev;
+  // head (current) revision -- obtained when setUrl is called -- gets it from the first entry in directory 
+
   // this is how we store the raw data -- interface with SubversionClient
   String_PArray file_names;
   String_PArray file_paths;
   int_PArray    file_sizes;
   int_PArray    file_revs;
   int_PArray    file_times;
+  int_PArray    file_kinds;
   String_PArray file_authors;
 
   SubversionClient*     svn_client; // our client
+  QFileIconProvider*    file_icon_provider;
 
 protected:
   // This exception class only used internally.

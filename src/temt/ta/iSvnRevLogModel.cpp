@@ -28,7 +28,7 @@ iSvnRevLogModel::iSvnRevLogModel(QObject* parent)
   : inherited(parent)
   , svn_client(0)
   , svn_end_rev(-1)
-  , svn_n_entries(20)
+  , svn_n_entries(10)
 {
 
 }

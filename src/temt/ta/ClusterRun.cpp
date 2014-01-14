@@ -724,11 +724,12 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
   int_PArray    file_sizes;
   int_PArray    file_revs;
   int_PArray    file_times;
+  int_PArray    file_kinds;
   String_PArray file_authors;
   
   try {
     svn_other->List(file_names, file_paths, file_sizes, file_revs, file_times,
-                    file_authors, svn_other_url, rev, recurse);
+                    file_kinds, file_authors, svn_other_url, rev, recurse);
   }
   catch (const ClusterRun::Exception &ex) {
     taMisc::Error("Error doing List in other SubversionClient.\n", ex.what());

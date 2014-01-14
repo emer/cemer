@@ -62,7 +62,7 @@ public:
   // set the current subdirectory within repository
   virtual void  setRev(int rev);
   // set the revision
-  virtual void  setEndRev(int end_rev, int n_entries);
+  virtual void  setEndRev(int end_rev, int n_entries = -1);
   // set the ending revision and n_entries for the log browser
 
   virtual void  setWCView(const String& wc_path);
@@ -82,25 +82,29 @@ public:
   ~iSubversionBrowser();
 
 protected slots:
-  void          lBrowGoClicked();
-  void          fBrowGoClicked();
-  void          wBrowGoClicked();
-  void          subDirUp();
-  void          fileCellDoubleClicked(const QModelIndex& index);
-  void          logCellDoubleClicked(const QModelIndex& index);
-  void          wcCellDoubleClicked(const QModelIndex& index);
+  void    lBrowGoClicked();
+  void    fBrowGoClicked();
+  void    wBrowGoClicked();
 
-  void a_view_file_do();
-  void a_view_diff_do();
-  void a_save_file_do();
-  void a_add_file_do();
-  void a_rm_file_do();
+  void    endRevPgUp();
+  void    endRevPgDn();
 
-  void a_update_do();
-  void a_commit_do();
-  void a_checkout_do();
+  void    subDirUp();
+  void    fileCellDoubleClicked(const QModelIndex& index);
+  void    logCellDoubleClicked(const QModelIndex& index);
+  void    wcCellDoubleClicked(const QModelIndex& index);
 
-  void a_list_mod_do();
+  void    a_view_file_do();
+  void    a_view_diff_do();
+  void    a_save_file_do();
+  void    a_add_file_do();
+  void    a_rm_file_do();
+          
+  void    a_update_do();
+  void    a_commit_do();
+  void    a_checkout_do();
+
+  void    a_list_mod_do();
 
 protected:
   iSvnRevLogModel*       svn_log_model;
@@ -126,6 +130,8 @@ protected:
   iSplitter*            split;
 
   iSpinBox*             end_rev_box;
+  QAction*              end_rev_pgup;
+  QAction*              end_rev_pgdn;
   iSpinBox*             n_entries_box;
   QAction*              lb_act_go;
   iTableView*           log_table;
