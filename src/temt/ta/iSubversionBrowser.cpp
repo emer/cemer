@@ -628,9 +628,12 @@ void iSubversionBrowser::a_rm_file_do() {
 
 void iSubversionBrowser::a_update_do() {
   int rev = svn_file_model->svn_client->Update();
-  setEndRev(rev);
-  rev_only->setChecked(true);   // filter
-  setRev(rev);
+  if(rev > svn_file_model->svn_head_rev) {
+    setEndRev(rev);
+    rev_only->setChecked(true);   // filter
+    setRev(rev);
+    svn_file_model->svn_head_rev = rev;
+  }
 }
 
 void iSubversionBrowser::a_commit_do() {
