@@ -255,7 +255,7 @@ short                   taMisc::num_recent_files = 10;
 short                   taMisc::num_recent_paths = 10;
 short                   taMisc::num_browse_history = 20;
 
-bool                    taMisc::tree_spring_loaded = false;
+bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
 
 ////////////////////////////////////////////////////////
