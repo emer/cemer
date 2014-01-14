@@ -164,14 +164,14 @@ private:
   bool isCancelled();
   void notify(const svn_wc_notify_t *notify);
   void notifyProgress(apr_off_t progress, apr_off_t total);
-  std::string getCommitMessage();
+  String getCommitMessage(const String& com_itm_str);
 
   const char *m_wc_path;
   const char *m_url;
   apr_pool_t *m_pool;
   svn_client_ctx_t *m_ctx;
   bool m_cancelled;
-  const char *m_commit_message;
+  String      m_commit_message;
   int m_last_changed_revision;
 };
 

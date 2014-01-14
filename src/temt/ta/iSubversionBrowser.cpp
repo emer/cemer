@@ -32,7 +32,6 @@
 #include <taiEditorOfString>
 #include <SubversionClient>
 #include <MethodDef>
-#include <taGuiDialog>
 
 #include <taMisc>
 #include <taiMisc>
@@ -628,40 +627,14 @@ void iSubversionBrowser::a_rm_file_do() {
 }
 
 void iSubversionBrowser::a_update_do() {
-  svn_file_model->svn_client->Update();
+  int rev = svn_file_model->svn_client->Update();
+  setEndRev(rev);
+  rev_only->setChecked(true);   // filter
+  setRev(rev);
 }
 
 void iSubversionBrowser::a_commit_do() {
-  taGuiDialog dlg;
-  taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
-
-  dlg.win_title = "Cluster Analysis";
-  dlg.width = 300;
-  dlg.height = 400;
-
-  String widget("main");
-  String vbox("mainv");
-  dlg.AddWidget(widget);
-  dlg.AddVBoxLayout(vbox, "", widget);
-
-  String row("lbl");
-  int space = 50;
-
-  dlg.AddSpace(space, vbox);
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("msg_lbl", widget, row, "label=Commit Message:;");
-
-  String cmt_msg;
-
-  row = "msg";
-  dlg.AddSpace(space, vbox);
-  dlg.AddHBoxLayout(row, vbox);
-  dlg.AddStringField(&cmt_msg, "cmt_msg", widget, row, "tooltip=Enter the message describing what his happening here;");
-
-  int drval = dlg.PostDialog(true);
-  if(drval) {
-    svn_file_model->svn_client->Checkin(cmt_msg);
-  }
+  svn_file_model->svn_client->Checkin(""); // will prompt
 }
 
 void iSubversionBrowser::a_checkout_do() {

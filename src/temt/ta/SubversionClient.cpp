@@ -19,6 +19,8 @@
 #include <int_PArray>
 #include <taMisc>
 
+#include <taGuiDialog>
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -233,14 +235,13 @@ struct SubversionClient::Glue
   }
 
   static
-  std::string
-  replaceLineEndingsWithLF(const std::string &msg)
+  String
+  replaceLineEndingsWithLF(const String&msg)
   {
-    std::string lfMsg;
-    lfMsg.reserve(msg.size());
-    for (unsigned i = 0; i < msg.size(); ++i) {
+    String lfMsg;
+    for (unsigned i = 0; i < msg.length(); ++i) {
       if (msg[i] == '\r') { // CR
-        if (i + 1 < msg.size() && msg[i] == '\n') { // LF
+        if (i + 1 < msg.length() && msg[i] == '\n') { // LF
           // Skip the CR, next char is LF.
         }
         else {
@@ -266,15 +267,50 @@ struct SubversionClient::Glue
     *tmp_file = 0;
     *log_msg = 0; // Should cause the operation to be cancelled if not set.
     if (SubversionClient *sub = reinterpret_cast<SubversionClient *>(baton)) {
-      std::string msg = sub->getCommitMessage();
+
+      String com_itm_str;
+      for (int i = 0; i < commit_items->nelts; i++) {
+        svn_client_commit_item3_t *item
+          = APR_ARRAY_IDX(commit_items, i, svn_client_commit_item3_t *);
+        String path;
+        char text_mod = '_', prop_mod = ' ';
+
+        if(item->path)
+          path = item->path;
+        else if (item->url)
+          path = item->url;
+        else 
+          path = ".";
+
+        if ((item->state_flags & SVN_CLIENT_COMMIT_ITEM_DELETE)
+            && (item->state_flags & SVN_CLIENT_COMMIT_ITEM_ADD))
+          text_mod = 'R';
+        else if (item->state_flags & SVN_CLIENT_COMMIT_ITEM_ADD)
+          text_mod = 'A';
+        else if (item->state_flags & SVN_CLIENT_COMMIT_ITEM_DELETE)
+          text_mod = 'D';
+        else if (item->state_flags & SVN_CLIENT_COMMIT_ITEM_TEXT_MODS)
+          text_mod = 'M';
+
+        if (item->state_flags & SVN_CLIENT_COMMIT_ITEM_PROP_MODS)
+          prop_mod = 'M';
+
+        path += String(" ") + String(text_mod) + String(prop_mod);
+        if (item->state_flags & SVN_CLIENT_COMMIT_ITEM_IS_COPY)
+          path += "+ ";
+        else
+          path += " ";
+        com_itm_str += path + "\n";
+      }
+      String msg = sub->getCommitMessage(com_itm_str);
       if (!msg.empty()) {
         // TODO: Remove following line once testing is complete.
         // It's only here so we don't spam the dev email list.
-        msg += " (quiet)";
+        //        msg += " (quiet)";
 
         // Subversion requires that only line feeds be used, no CRLF or CR.
         msg = replaceLineEndingsWithLF(msg);
-        *log_msg = apr_pstrdup(pool, msg.c_str());
+        *log_msg = apr_pstrdup(pool, msg);
       }
     }
     return 0;
@@ -1600,17 +1636,17 @@ void
 SubversionClient::GetUrlFromPath(String& url, const char *path) {
   const char* url_str;
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  if(svn_error_t *error = svn_client_url_from_path2
-    (&url_str,
-     path,
-     m_ctx,,
-     m_pool,
-     m_pool))
-#else
   if(svn_error_t *error = svn_client_url_from_path
      (&url_str,
       path,
       m_pool))
+#else
+  if(svn_error_t *error = svn_client_url_from_path2
+    (&url_str,
+     path,
+     m_ctx,
+     m_pool,
+     m_pool))
 #endif
   {
     throw Exception("Subversion error getting path", error);
@@ -1660,11 +1696,45 @@ SubversionClient::notifyProgress(apr_off_t progress, apr_off_t total)
   // TODO.
 }
 
-std::string
-SubversionClient::getCommitMessage()
+String
+SubversionClient::getCommitMessage(const String& com_itm_str)
 {
-  // TODO: if m_commit_message is null, prompt user using dialog.
-  if (!m_commit_message) return "Automated checkin from emergent";
+  if(m_commit_message.nonempty())
+    return m_commit_message;
+  
+  taGuiDialog dlg;
+  taBase::Ref(dlg);   // no need to UnRef - will be deleted at end of method
 
-  return m_commit_message;
+  dlg.win_title = "Svn Commit Message";
+  dlg.width = 400;
+  dlg.height = 200;
+
+  String widget("main");
+  String vbox("mainv");
+  dlg.AddWidget(widget);
+  dlg.AddVBoxLayout(vbox, "", widget);
+
+  String row("");
+  int space = 5;
+
+  row = "prompt";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("msg_lbl", widget, row, "label=Provide Commit Message:;");
+
+  row = "itms";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("msg_lbl", widget, row, "label=" + com_itm_str +";");
+
+  row = "msg";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddStringField(&m_commit_message, "commit_message", widget, row, "tooltip=Enter the message describing what is happening on this commit;");
+
+  int drval = dlg.PostDialog(true);
+  if(drval) {
+    return m_commit_message;
+  }
+  return "";
 }
