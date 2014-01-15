@@ -93,7 +93,7 @@ bool iSvnRevLogModel::refresh() {
     svn_client->GetLogs(revs, commit_msgs, authors, times, files_start_idx, files_n,
                        files, actions, svn_url.toLatin1(), svn_end_rev, svn_n_entries);
   }
-  catch (const iSvnRevLogModel::Exception &ex) {
+  catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Error doing GetLog in SubversionClient.\n", ex.what());
     emit layoutChanged();
     return false;

@@ -29,6 +29,8 @@
 iMatrixTableView::iMatrixTableView(QWidget* parent)
 :inherited(parent)
 {
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+          SLOT(this_customContextMenuRequested(const QPoint&)) );
 }
 
 taMatrix* iMatrixTableView::mat() const {

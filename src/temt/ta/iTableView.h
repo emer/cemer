@@ -122,9 +122,9 @@ public:
   virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
 
  public slots:
-  void                  this_customContextMenuRequested(const QPoint& pos);
-  void                  hor_customContextMenuRequested(const QPoint& pos);
-  void                  ver_customContextMenuRequested(const QPoint& pos);
+  virtual void          this_customContextMenuRequested(const QPoint& pos);
+  virtual void          hor_customContextMenuRequested(const QPoint& pos);
+  virtual void          ver_customContextMenuRequested(const QPoint& pos);
 
  protected slots:
   void                  RowColOp(int op_code); // based on selection

@@ -32,6 +32,8 @@
 #include <taiEditorOfString>
 #include <SubversionClient>
 #include <MethodDef>
+#include <taiWidgetMenu>
+#include <QPoint>
 
 #include <taMisc>
 #include <taiMisc>
@@ -349,10 +351,16 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   connect(file_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(fileCellDoubleClicked(const QModelIndex&)));
 
+  connect(file_table, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+          SLOT(file_table_customContextMenuRequested(const QPoint&)) );
+
   connect(wc_text, SIGNAL(returnPressed()), this, SLOT(wBrowGoClicked()) );
   connect(wb_act_go, SIGNAL(triggered()), this, SLOT(wBrowGoClicked()) );
   connect(wc_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(wcCellDoubleClicked(const QModelIndex&)));
+
+  connect(wc_table, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+          SLOT(wc_table_customContextMenuRequested(const QPoint&)) );
 
   // almost full screen:
   iSize sz = taiM->scrn_s;
@@ -401,8 +409,10 @@ void iSubversionBrowser::setUrl(const String& url) {
     svn_log_model->setUrl(url, end_rev, svn_log_model->n_entries());
   }
   else {
+    int end_rev = end_rev_box->value();
+    int n_entries = n_entries_box->value();
     if(svn_log_model->url() != url)
-      svn_log_model->setUrl(url);
+      svn_log_model->setUrl(url, end_rev, n_entries);
   }
   updateView();
 }
@@ -521,9 +531,16 @@ void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
       setSubDir(subtxt);
     }
     else {
-      if(svn_file_model->fileToString(fnm, view_svn_file, rev)) {
-        // todo: if only then do diff instead
-        viewSvnFile(fnm);
+      bool filt_rev = rev_only->isChecked();
+      if(filt_rev) {
+        if(svn_file_model->diffToString(fnm, view_svn_file, rev)) {
+          viewSvnDiffs(fnm);
+        }
+      }
+      else {
+        if(svn_file_model->fileToString(fnm, view_svn_file, rev)) {
+          viewSvnFile(fnm);
+        }
       }
     }
   }
@@ -584,6 +601,22 @@ void iSubversionBrowser::wcCellDoubleClicked(const QModelIndex& index) {
   setSubDir(subtxt);
 }
 
+void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos) {
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+  iAction* act = NULL;
+  act = menu->AddItem("View &File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_view_file_do()), 1);
+  act = menu->AddItem("View &Diffs", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_view_diff_do()), 1);
+
+  menu->exec(file_table->mapToGlobal(pos));
+  delete menu;
+}
+
+void iSubversionBrowser::wc_table_customContextMenuRequested(const QPoint& pos) {
+
+}
+
 String iSubversionBrowser::selSvnFile(int& rev) {
   QModelIndexList sels = file_table->selectionModel()->selectedIndexes();
   if(sels.count() == 0) {
@@ -625,6 +658,24 @@ void iSubversionBrowser::viewWcFile(const String& fnm) {
   host_->Edit(false);
 }
 
+void iSubversionBrowser::viewSvnDiffs(const String& fnm) {
+  TypeDef* td = &TA_iSubversionBrowser;
+  MemberDef* md = td->members.FindName("view_svn_diffs");
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
+  // args are: read_only, modal, parent, line_nos, rich_text
+  host_->Constr("Selected Svn Diffs: " + fnm);
+  host_->Edit(false);
+}
+
+void iSubversionBrowser::viewWcDiffs(const String& fnm) {
+  TypeDef* td = &TA_iSubversionBrowser;
+  MemberDef* md = td->members.FindName("view_wc_diffs");
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
+  // args are: read_only, modal, parent, line_nos, rich_text
+  host_->Constr("Selected Working Copy Diffs: " + fnm);
+  host_->Edit(false);
+}
+
 void iSubversionBrowser::a_view_file_do() {
   int rev;
   String fnm = selSvnFile(rev);
@@ -644,18 +695,18 @@ void iSubversionBrowser::a_view_file_do() {
 }
 
 void iSubversionBrowser::a_view_diff_do() {
-  int rev;
+  int rev = 0;
   String fnm = selSvnFile(rev);
   if(fnm.nonempty()) {
-    if(svn_file_model->diffToString(fnm, view_svn_file, rev)) {
-      viewSvnFile(fnm);
+    if(svn_file_model->diffToString(fnm, view_svn_diffs, rev)) {
+      viewSvnDiffs(fnm);
     }
   }
   else {
     fnm = selWcFile();
     if(fnm.nonempty()) {
-      if(svn_file_model->diffToString(fnm, view_wc_file, -1)) {
-        viewWcFile(fnm);
+      if(svn_file_model->diffToString(fnm, view_wc_diffs, -1)) {
+        viewWcDiffs(fnm);
       }
     }
   }

@@ -48,6 +48,10 @@ void taiWidgetMenu::exec(const iVec2i& pos) {
   menu()->exec((QPoint)pos);
 }
 
+void taiWidgetMenu::exec(const QPoint& pos) {
+  menu()->exec(pos);
+}
+
 iAction* taiWidgetMenu::insertItem(const char* val, const QObject *receiver, const char* member, const QKeySequence* accel) {
   iAction* mel = AddItem(val, use_default, iAction::none, receiver, member);
   if (accel != NULL) mel->setShortcut(*accel);

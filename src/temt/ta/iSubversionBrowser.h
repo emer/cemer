@@ -38,6 +38,7 @@ class QModelIndex; //
 class iSplitter; //
 class iCheckBox; //
 class QToolBar; //
+class QPoint; //
 
 taTypeDef_Of(iSubversionBrowser);
 
@@ -52,6 +53,8 @@ public:
 
   String                 view_svn_file; // subversion file for viewing
   String                 view_wc_file;  // working copy file for viewing
+  String                 view_svn_diffs; // subversion diffs for viewing
+  String                 view_wc_diffs;  // working copy diffs for viewing
 
   virtual void  setUrl(const String& url);
   // set the url for the repository and update display to that
@@ -83,6 +86,10 @@ public:
   // view the view_svn_file file
   virtual void   viewWcFile(const String& fnm);
   // view the view_wc_file file
+  virtual void   viewSvnDiffs(const String& fnm);
+  // view the view_svn_diffs
+  virtual void   viewWcDiffs(const String& fnm);
+  // view the view_wc_diffs
 
   iSubversionBrowser(QWidget* parent = NULL);
   ~iSubversionBrowser();
@@ -99,6 +106,9 @@ protected slots:
   void    fileCellDoubleClicked(const QModelIndex& index);
   void    logCellDoubleClicked(const QModelIndex& index);
   void    wcCellDoubleClicked(const QModelIndex& index);
+
+  void    file_table_customContextMenuRequested(const QPoint& pos);
+  void    wc_table_customContextMenuRequested(const QPoint& pos);
 
   void    a_view_file_do();
   void    a_view_diff_do();

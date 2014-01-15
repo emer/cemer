@@ -22,7 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class iVec2i;
+class iVec2i; //
+class QPoint; //
 
 class TA_API taiWidgetMenu : public taiWidgetActions {
   // (possibly) hierarchical menu for selecting a single item
@@ -38,6 +39,7 @@ public:
   ~taiWidgetMenu();
 
   void         exec(const iVec2i& pos);
+  void         exec(const QPoint& pos);
   iAction*     insertItem(const char* val, const QObject *receiver = NULL,
                           const char* member = NULL,
                           const QKeySequence* accel = NULL);

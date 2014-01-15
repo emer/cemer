@@ -35,6 +35,9 @@ iDataTableView::iDataTableView(QWidget* parent)
   setSelectionMode(QAbstractItemView::ContiguousSelection);   // mode for table items (not headers)
   gui_edit_op = false;
 
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
+          SLOT(this_customContextMenuRequested(const QPoint&)) );
+
   col_header = new iDataTableColHeaderView(this); // subclass header
   this->setHorizontalHeader(col_header);
 
