@@ -554,10 +554,22 @@ void iSubversionBrowser::endRevPgDn() {
 
 void iSubversionBrowser::subDirUp() {
   String subtxt = subdir_text->text();
-  if(subtxt.empty()) return;
-  subtxt = taMisc::GetDirFmPath(subtxt);
-  subtxt = taMisc::NoFinalPathSep(subtxt);
-  setSubDir(subtxt);
+  if(subtxt.empty()) {
+    String ur = url_text->text();
+    String wc = wc_text->text();
+    ur = taMisc::GetDirFmPath(ur);
+    ur = taMisc::NoFinalPathSep(ur);
+    wc = taMisc::GetDirFmPath(wc);
+    wc = taMisc::NoFinalPathSep(wc);
+    int rev = rev_box->value();
+    setUrlWcPath(ur, wc, rev);
+    // move up on the paths
+  }
+  else {
+    subtxt = taMisc::GetDirFmPath(subtxt);
+    subtxt = taMisc::NoFinalPathSep(subtxt);
+    setSubDir(subtxt);
+  }
 }
 
 void iSubversionBrowser::wcCellDoubleClicked(const QModelIndex& index) {

@@ -492,7 +492,11 @@ bool taGuiDialog::AddStringField(String* dvar, const String& nm, const String& p
     return false;
   taGuiWidget* par = FindWidget(parent, true);
   if(!par) return false;
-  taiWidgetField* taidata = new taiWidgetField(&TA_int, data_host, NULL, par->widget);
+  int flags = 0;
+  { String att = GetAttribute("edit_dialog=", attributes);
+    if(att.nonempty()) flags = taiWidget::flgEditDialog;  }
+  taiWidgetField* taidata = new taiWidgetField(&TA_int, data_host, NULL, par->widget,
+                                               flags);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "StringField", layout, attributes,
                                   Variant((void*)dvar), _nilString, taidata);
   return (bool)w;

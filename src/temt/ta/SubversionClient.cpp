@@ -1807,7 +1807,7 @@ SubversionClient::getCommitMessage(const String& com_itm_str)
   row = "msg";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddStringField(&m_commit_message, "commit_message", widget, row, "tooltip=Enter the message describing what is happening on this commit;");
+  dlg.AddStringField(&m_commit_message, "commit_message", widget, row, "tooltip=Enter the message describing what is happening on this commit;edit_dialog=true");
 
   int drval = dlg.PostDialog(true);
   if(drval) {
