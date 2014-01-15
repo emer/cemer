@@ -114,6 +114,9 @@ public:
   void  GetFile(const char* from_url, String& to_str, int rev = -1);
   // get file from given fully-specified url to a string at given to_path, using given revision (-1 = head)
 
+  void  GetDiffToPrev(const char* from_url, String& to_str, int rev);
+  // get diff to previous revision for given url at given rev -- must specify the revision explicitly (don't use -1), formatted diff output goes into given string
+
   void  GetLogs(int_PArray& revs, String_PArray& commit_msgs, String_PArray& authors,
                int_PArray& times, int_PArray& files_start_idx,
                int_PArray& files_n, String_PArray& files, String_PArray& actions,

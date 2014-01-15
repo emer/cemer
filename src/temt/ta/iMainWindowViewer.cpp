@@ -137,6 +137,8 @@ void iMainWindowViewer::Init() {
   fileSaveAction = NULL;
   fileSaveAsAction = NULL;
   fileSaveNotesAction = NULL;
+  fileOpenSvnBrowserAction = NULL;
+  fileSvnCommitAction = NULL;
   fileUpdateChangeLogAction = NULL;
   fileSaveAllAction = NULL;
   fileOpenFromWebMenu = NULL;
@@ -407,6 +409,9 @@ void iMainWindowViewer::Constr_FileMenu()
   fileUpdateChangeLogAction = AddAction(new iAction("&Updt Change Log", QKeySequence(), "fileUpdateChangeLogAction"));
   fileSaveAllAction = AddAction(new iAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
 
+  fileOpenSvnBrowserAction = AddAction(new iAction("SVN Browser", QKeySequence(), "fileOpenSvnBrowserAction"));
+  fileSvnCommitAction = AddAction(new iAction("SVN Commit", QKeySequence(), "fileSvnCommitAction"));
+
   // fileOpenFromWebMenu and filePublishDocsOnWebMenu created below as submenus.
   filePublishProjectOnWebAction = AddAction(new iAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
 
@@ -427,6 +432,10 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->AddAction(fileSaveAsTemplateAction);
   fileMenu->AddAction(fileUpdateChangeLogAction);
   fileMenu->AddAction(fileSaveAllAction);
+  fileMenu->insertSeparator();
+
+  fileMenu->AddAction(fileOpenSvnBrowserAction);
+  fileMenu->AddAction(fileSvnCommitAction);
 
   fileMenu->insertSeparator();
   fileOpenFromWebMenu = fileMenu->AddSubMenu("Open Project from &Web");
@@ -467,6 +476,9 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(fileSaveAsTemplateAction, SIGNAL(Action()), this, SLOT(fileSaveAsTemplate()));
     connect(fileUpdateChangeLogAction, SIGNAL(Action()), this, SLOT(fileUpdateChangeLog()));
 
+    connect(fileOpenSvnBrowserAction, SIGNAL(Action()), this, SLOT(fileOpenSvnBrowser()));
+    connect(fileSvnCommitAction, SIGNAL(Action()), this, SLOT(fileSvnCommit()));
+
     // Connect "publish" options only for project windows.
     if (filePublishDocsOnWebMenu) {
       connect(filePublishDocsOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishDocsOnWeb_aboutToShow()));
@@ -484,6 +496,9 @@ void iMainWindowViewer::Constr_FileMenu()
     fileSaveAsTemplateAction->setEnabled(false);
     fileUpdateChangeLogAction->setEnabled(false);
     fileCloseAction->setEnabled(false);
+
+    fileOpenSvnBrowserAction->setEnabled(false);
+    fileSvnCommitAction->setEnabled(false);
   }
 
   // Disable "Publish Project" -- won't be enabled until docs are first published.
@@ -1020,6 +1035,18 @@ void iMainWindowViewer::fileUpdateChangeLog() {
   taProject* proj = curProject();
   if (!proj) return;
   proj->UpdateChangeLog();
+}
+
+void iMainWindowViewer::fileOpenSvnBrowser() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->SvnBrowser();
+}
+
+void iMainWindowViewer::fileSvnCommit() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->SvnCommit();
 }
 
 void iMainWindowViewer::fileSaveAll() {
@@ -1896,44 +1923,29 @@ void iMainWindowViewer::toolsHelpBrowser() {
 }
 
 void iMainWindowViewer::toolsSvnBrowserEmergent() {
-  iSubversionBrowser* svb = new iSubversionBrowser;
-  svb->setUrlWCPath("http://grey.colorado.edu/svn/emergent/emergent/trunk", "~/emergent");
-  svb->show();
-  svb->raise();
-  // anythign else??
+  iSubversionBrowser::OpenBrowser("http://grey.colorado.edu/svn/emergent/emergent/trunk",
+                                  "~/emergent");
 }
 
 void iMainWindowViewer::toolsSvnBrowserSvn1() {
-  iSubversionBrowser* svb = new iSubversionBrowser;
   if(taMisc::svn_repos.size < 1) return;
   // ideally want username in here!
   String url = taMisc::svn_repos[0].value.toString();
   if(url.contains("cluster") && taMisc::clusters.size > 0)
     url += "/" + taMisc::clusters[0].name;
-  svb->setUrl(url);
-  svb->show();
-  svb->raise();
-  // anythign else??
+  iSubversionBrowser::OpenBrowser(url,"");  
 }
 
 void iMainWindowViewer::toolsSvnBrowserSvn2() {
-  iSubversionBrowser* svb = new iSubversionBrowser;
   if(taMisc::svn_repos.size < 2) return;
   String url = taMisc::svn_repos[1].value.toString();
-  svb->setUrl(url);
-  svb->show();
-  svb->raise();
-  // anythign else??
+  iSubversionBrowser::OpenBrowser(url,"");  
 }
 
 void iMainWindowViewer::toolsSvnBrowserSvn3() {
-  iSubversionBrowser* svb = new iSubversionBrowser;
   if(taMisc::svn_repos.size < 3) return;
   String url = taMisc::svn_repos[2].value.toString();
-  svb->setUrl(url);
-  svb->show();
-  svb->raise();
-  // anythign else??
+  iSubversionBrowser::OpenBrowser(url,"");  
 }
 
 void iMainWindowViewer::this_SaveView(iAction* me) {

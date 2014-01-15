@@ -36,6 +36,25 @@
 #include <taMisc>
 #include <taiMisc>
 
+iSubversionBrowser* iSubversionBrowser::OpenBrowser(const String& url,
+                                                    const String& wc_path) {
+  iSubversionBrowser* svb = new iSubversionBrowser;
+  if(url.nonempty() && wc_path.nonempty()) {
+    svb->setUrlWcPath(url, wc_path);
+  }
+  else if(url.nonempty()) {
+    svb->setUrl(url);
+  }
+  else if(wc_path.nonempty()) {
+    svb->setWcPath(wc_path);
+    String wc_url;
+    if(svb->svn_file_model->getUrlFromPath(wc_url, wc_path))
+      svb->setUrl(wc_url);
+  }
+  svb->show();
+  svb->raise();
+  return svb;
+}
 
 iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 :inherited(taiMisc::main_window)
@@ -66,7 +85,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   a_save_file = main_tb->addAction("Save File");
   connect(a_save_file, SIGNAL(triggered()), this, SLOT(a_save_file_do()));
   a_add_file =  main_tb->addAction("Add File");
-  connect(a_save_file, SIGNAL(triggered()), this, SLOT(a_save_file_do()));
+  connect(a_add_file, SIGNAL(triggered()), this, SLOT(a_add_file_do()));
   a_rm_file =   main_tb->addAction("Del File");
   connect(a_rm_file, SIGNAL(triggered()), this, SLOT(a_rm_file_do()));
 
@@ -388,8 +407,8 @@ void iSubversionBrowser::setUrl(const String& url) {
   updateView();
 }
 
-void iSubversionBrowser::setWCPath(const String& wc_path) {
-  svn_file_model->setWCPath(wc_path);
+void iSubversionBrowser::setWcPath(const String& wc_path) {
+  svn_file_model->setWcPath(wc_path);
   String wc = svn_file_model->wc_path();
   wc_text->setText(wc);
   svn_wc_model->setRootPath(wc);
@@ -397,7 +416,7 @@ void iSubversionBrowser::setWCPath(const String& wc_path) {
   updateView();
 }
 
-void iSubversionBrowser::setWCView(const String& wc_path) {
+void iSubversionBrowser::setWcView(const String& wc_path) {
   wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc_path)));
   updateView();
 }
@@ -406,7 +425,7 @@ void iSubversionBrowser::setSubDir(const String& path) {
   subdir_text->setText(path);
   svn_file_model->setSubDir(path);
   String wc = svn_file_model->wc_path_full();
-  setWCView(wc);
+  setWcView(wc);
   updateView();
 }
 
@@ -426,16 +445,16 @@ void iSubversionBrowser::setEndRev(int end_rev, int n_entries) {
   updateView();
 }
 
-void iSubversionBrowser::setUrlWCPath(const String& url, const String& wc_path, int rev) {
+void iSubversionBrowser::setUrlWcPath(const String& url, const String& wc_path, int rev) {
   setUrl(url);
-  setWCPath(wc_path);
+  setWcPath(wc_path);
   setRev(rev);
 }
 
-void iSubversionBrowser::setUrlWCPathSubDir(const String& url, const String& wc_path,
+void iSubversionBrowser::setUrlWcPathSubDir(const String& url, const String& wc_path,
       const String& subdir, int rev) {
   setUrl(url);
-  setWCPath(wc_path);
+  setWcPath(wc_path);
   setSubDir(subdir);
   setRev(rev);
 }
@@ -470,7 +489,7 @@ void iSubversionBrowser::fBrowGoClicked() {
 
 void iSubversionBrowser::wBrowGoClicked() {
   String wctxt = wc_text->text();
-  setWCPath(wctxt);
+  setWcPath(wctxt);
 }
 
 void iSubversionBrowser::logCellDoubleClicked(const QModelIndex& index) {
@@ -484,9 +503,9 @@ void iSubversionBrowser::logCellDoubleClicked(const QModelIndex& index) {
 void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
   int col = index.column();
   if(col < 2) {
-    QModelIndex rw0 = index.child(index.row(), 0);
-    QModelIndex fidx = svn_file_sort->mapToSource(rw0);
+    QModelIndex fidx = svn_file_sort->mapToSource(index);
     String fnm = svn_file_model->fileName(fidx);
+    int rev = svn_file_model->fileRev(fidx);
     if(fnm.empty() || fnm == ".") return;
     if(fnm == "..") {
       subDirUp();
@@ -502,15 +521,14 @@ void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
       setSubDir(subtxt);
     }
     else {
-      if(svn_file_model->fileToString(fnm, view_svn_file)) {
+      if(svn_file_model->fileToString(fnm, view_svn_file, rev)) {
         // todo: if only then do diff instead
         viewSvnFile(fnm);
       }
     }
   }
   else {
-    QModelIndex rw2 = index.child(index.row(), 2);
-    QModelIndex fidx = svn_file_sort->mapToSource(rw2);
+    QModelIndex fidx = svn_file_sort->mapToSource(index);
     int rev = svn_file_model->fileRev(fidx);
     setEndRev(rev);
   }
@@ -554,7 +572,7 @@ void iSubversionBrowser::wcCellDoubleClicked(const QModelIndex& index) {
   setSubDir(subtxt);
 }
 
-String iSubversionBrowser::selSvnFile() {
+String iSubversionBrowser::selSvnFile(int& rev) {
   QModelIndexList sels = file_table->selectionModel()->selectedIndexes();
   if(sels.count() == 0) {
     return "";
@@ -562,6 +580,7 @@ String iSubversionBrowser::selSvnFile() {
   QModelIndex idx = sels.at(0); // only support single sel
   QModelIndex fidx = svn_file_sort->mapToSource(idx);
   String fnm = svn_file_model->fileName(fidx);
+  rev = svn_file_model->fileRev(fidx);
   return fnm;
 }
 
@@ -585,29 +604,54 @@ void iSubversionBrowser::viewSvnFile(const String& fnm) {
   host_->Edit(false);
 }
 
+void iSubversionBrowser::viewWcFile(const String& fnm) {
+  TypeDef* td = &TA_iSubversionBrowser;
+  MemberDef* md = td->members.FindName("view_wc_file");
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
+  // args are: read_only, modal, parent, line_nos, rich_text
+  host_->Constr("Selected Working Copy File: " + fnm);
+  host_->Edit(false);
+}
+
 void iSubversionBrowser::a_view_file_do() {
-  String fnm = selSvnFile();
+  int rev;
+  String fnm = selSvnFile(rev);
   if(fnm.nonempty()) {
-    if(svn_file_model->fileToString(fnm, view_svn_file)) {
+    if(svn_file_model->fileToString(fnm, view_svn_file, rev)) {
       viewSvnFile(fnm);
     }
   }
   else {
     fnm = selWcFile();
     if(fnm.nonempty()) {
-      if(svn_file_model->fileToString(fnm, view_svn_file)) {
-        viewSvnFile(fnm);
+      if(svn_file_model->fileToString(fnm, view_wc_file, -1)) {
+        viewWcFile(fnm);
       }
     }
   }
 }
 
 void iSubversionBrowser::a_view_diff_do() {
-
+  int rev;
+  String fnm = selSvnFile(rev);
+  if(fnm.nonempty()) {
+    if(svn_file_model->diffToString(fnm, view_svn_file, rev)) {
+      viewSvnFile(fnm);
+    }
+  }
+  else {
+    fnm = selWcFile();
+    if(fnm.nonempty()) {
+      if(svn_file_model->diffToString(fnm, view_wc_file, -1)) {
+        viewWcFile(fnm);
+      }
+    }
+  }
 }
 
 void iSubversionBrowser::a_save_file_do() {
-  String fnm = selSvnFile();
+  int rev;
+  String fnm = selSvnFile(rev);
   if(fnm.nonempty()) {
     // if(svn_file_model->foileToString(fnm, view_svn_file)) {
     //   viewSvnFile(fnm);
@@ -618,26 +662,42 @@ void iSubversionBrowser::a_save_file_do() {
 void iSubversionBrowser::a_add_file_do() {
   String fnm = selWcFile();
   if(fnm.nonempty()) {
-    // svn_file_model->addFile(fnm);
+    svn_file_model->addFile(fnm);
   }
 }
 
 void iSubversionBrowser::a_rm_file_do() {
-
+  int rev;
+  String fnm = selSvnFile(rev);
+  if(fnm.nonempty()) {
+    int chs = taMisc::Choice(String("Are you sure you want to delete file: ") + fnm,
+                             "Ok", "Cancel");
+    if(chs == 0)
+      svn_file_model->delFile(fnm, false, false); // filling in options here..
+  }
+  else {
+    fnm = selWcFile();
+    if(fnm.nonempty()) {
+      int chs = taMisc::Choice(String("Are you sure you want to delete file: ") + fnm,
+                               "Ok", "Cancel");
+      if(chs == 0)
+        svn_file_model->delFile(fnm, false, false); // filling in options here..
+    }
+  }
 }
 
 void iSubversionBrowser::a_update_do() {
-  int rev = svn_file_model->svn_client->Update();
-  if(rev > svn_file_model->svn_head_rev) {
+  bool updt = svn_file_model->update();
+  if(updt) {
+    int rev = svn_file_model->svn_head_rev;
     setEndRev(rev);
     rev_only->setChecked(true);   // filter
     setRev(rev);
-    svn_file_model->svn_head_rev = rev;
   }
 }
 
 void iSubversionBrowser::a_commit_do() {
-  svn_file_model->svn_client->Checkin(""); // will prompt
+  svn_file_model->commit(""); // will prompt
 }
 
 void iSubversionBrowser::a_checkout_do() {

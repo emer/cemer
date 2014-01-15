@@ -51,9 +51,13 @@ void iApplicationToolBar::Constr_post() {
   tb->addAction(win->fileSaveAction);
   tb->addAction(win->fileSaveAsAction);
   // tb->addAction(win->fileSaveNotesAction);
-  tb->addAction(win->fileUpdateChangeLogAction);
+  //  tb->addAction(win->fileUpdateChangeLogAction);
   tb->addAction(win->fileCloseAction);
   // tb->addAction(win->filePrintAction);
+  tb->addSeparator();
+
+  tb->addAction(win->fileOpenSvnBrowserAction);
+  tb->addAction(win->fileSvnCommitAction);
 
   tb->addSeparator();
   tb->addAction(win->editUndoAction);

@@ -154,6 +154,11 @@ public:
   ///////////////////////////////////////////////////////////////////
   //    misc
 
+  virtual void          SvnBrowser();
+  // #BUTTON #CAT_File open a subversion browser for the directory that this project is in
+  virtual void          SvnCommit();
+  // #BUTTON #CAT_File commit this project file (saves first) into svn (only if already added to svn repository -- use SvnBrowser to do that if necessary)
+
   virtual void          UpdateChangeLog();
   // #BUTTON #CAT_File update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded
   virtual void          UndoStats(bool show_list = false, bool show_diffs = false);

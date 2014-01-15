@@ -40,6 +40,7 @@
 #include <svn_time.h>
 #include <svn_wc.h>
 #include <svn_sorts.h>
+#include <apr_xlate.h>          // for APR_*_CHARSET
 
 namespace {
   template<typename T>
@@ -900,16 +901,18 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
   
   // We don't want to use peg revisions, so set to unspecified.
   svn_opt_revision_t peg_revision;
-  peg_revision.kind = svn_opt_revision_unspecified;
 
   // Set the revision number, if provided.  Otherwise get HEAD revision.
   svn_opt_revision_t revision;
   if (rev < 0) {
     revision.kind = svn_opt_revision_head;
+    peg_revision.kind = svn_opt_revision_unspecified;
   }
   else {
     revision.kind = svn_opt_revision_number;
     revision.value.number = rev;
+    peg_revision.kind = svn_opt_revision_number;
+    peg_revision.value.number = rev;
   }
 
   // Set the depth of subdirectories to be checked out.
@@ -949,16 +952,18 @@ SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
 
   // We don't want to use peg revisions, so set to unspecified.
   svn_opt_revision_t peg_revision;
-  peg_revision.kind = svn_opt_revision_unspecified;
 
   // Set the revision number, if provided.  Otherwise get HEAD revision.
   svn_opt_revision_t revision;
   if (rev < 0) {
     revision.kind = svn_opt_revision_head;
+    peg_revision.kind = svn_opt_revision_unspecified;
   }
   else {
     revision.kind = svn_opt_revision_number;
     revision.value.number = rev;
+    peg_revision.kind = svn_opt_revision_number;
+    peg_revision.value.number = rev;
   }
 
   apr_pool_t* strpool = svn_pool_create(0);
@@ -991,16 +996,18 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
 
   // We don't want to use peg revisions, so set to unspecified.
   svn_opt_revision_t peg_revision;
-  peg_revision.kind = svn_opt_revision_unspecified;
 
   // Set the revision number, if provided.  Otherwise get HEAD revision.
   svn_opt_revision_t revision;
   if (rev < 0) {
     revision.kind = svn_opt_revision_head;
+    peg_revision.kind = svn_opt_revision_unspecified;
   }
   else {
     revision.kind = svn_opt_revision_number;
     revision.value.number = rev;
+    peg_revision.kind = svn_opt_revision_number;
+    peg_revision.value.number = rev;
   }
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
@@ -1032,6 +1039,76 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
     }
 
   svn_stream_close(out_strm);
+}
+
+void 
+SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
+
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  from_url = svn_uri_canonicalize(from_url, m_pool);
+#endif
+
+  if(rev < 0) {
+    taMisc::Error("GetDiffToPrev: must specify revision to diff to explicitly -- can't use -1");
+    return;
+  }
+
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_number;
+  peg_revision.value.number = rev;
+
+  // Set the revision number, if provided.  Otherwise get HEAD revision.
+  svn_opt_revision_t revision;
+  revision.kind = svn_opt_revision_number;
+  revision.value.number = rev;
+
+  svn_opt_revision_t prv_revision;
+  prv_revision.kind = svn_opt_revision_number;
+  prv_revision.value.number = rev-1;
+
+  apr_file_t* outfile;
+  apr_file_t* errfile;
+  apr_status_t status;
+  char tmp_fnm[] = "svn_diff_tmp_out_XXXXXX";
+  if((status = apr_file_mktemp(&outfile, tmp_fnm,
+                               APR_CREATE | APR_WRITE,
+                               m_pool))) {
+    taMisc::Error("cannot open diff tmp out");
+    return;
+  }
+
+  if((status = apr_file_open_stderr(&errfile, m_pool))) {
+    taMisc::Error("cannot open stderr");
+    return;
+  }
+
+  svn_depth_t depth = svn_depth_infinity;
+
+  if(svn_error_t *error = svn_client_diff4
+     (NULL, // const apr_array_header_t *diff_options,
+      from_url,                 // const char *	path1,
+      &prv_revision,
+      from_url,                 // const char *	path2,
+      &revision,
+      NULL,
+      depth,
+      true, // svn_boolean_t 	ignore_ancestry,
+      true, // svn_boolean_t 	no_diff_deleted,
+      false, // svn_boolean_t 	ignore_content_type,
+      APR_LOCALE_CHARSET, // const char * header_encoding,
+      outfile,
+      errfile,
+      NULL, // const apr_array_header_t * changelists,
+      m_ctx,
+      m_pool))
+    {
+      throw Exception("Subversion SaveFile cat2 error", error);
+    }
+
+  apr_file_close(outfile);
+  to_str.LoadFromFile(tmp_fnm);
+  taMisc::RemoveFile(tmp_fnm);
 }
 
 class SvnLogInfoPtrs {

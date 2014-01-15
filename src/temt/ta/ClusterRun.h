@@ -138,6 +138,8 @@ public:
   // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
   virtual void  GetOtherFiles();
   // #MENU_BUTTON #MENU_ON_OtherFiles get selected files in file_list from ListOtherUserFiles or ListOtherProjFiles
+  virtual void  OpenSvnBrowser();
+  // #MENU_BUTTON #MENU_ON_OtherFiles open subversion browser for this repository
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();

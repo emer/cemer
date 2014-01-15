@@ -104,6 +104,8 @@ public:
   iAction*            fileSaveAsAction;
   iAction*            fileSaveNotesAction;
   iAction*            fileSaveAsTemplateAction;
+  iAction*            fileOpenSvnBrowserAction;
+  iAction*            fileSvnCommitAction;
   iAction*            fileUpdateChangeLogAction;
   iAction*            fileSaveAllAction;
   taiWidgetMenu*      fileOpenFromWebMenu;
@@ -272,6 +274,8 @@ public slots:
   virtual void  fileSaveAs();   // SaveAs Project (only enabled if viewer)
   virtual void  fileSaveNotes();        // SaveNoteChanges Project (only enabled if viewer)
   virtual void  fileSaveAsTemplate();   // SaveAsTemplate Project (only enabled if viewer)
+  virtual void  fileOpenSvnBrowser();   // open svn browser for project
+  virtual void  fileSvnCommit();        // commit project file to svn
   virtual void  fileUpdateChangeLog();  // UpdateChangeLog Project (only enabled if viewer)
   virtual void  fileSaveAll();          // Save All Projects (always enabled)
   virtual void  fileOpenFromWeb_aboutToShow();

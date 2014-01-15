@@ -46,16 +46,20 @@ class TA_API iSubversionBrowser : public QMainWindow {
 INHERITED(QMainWindow)
   Q_OBJECT
 public:
+
+  static iSubversionBrowser*   OpenBrowser(const String& url, const String& wc_path);
+  // open a new browser for given paths -- if only wc_path is specified, then it tries to find url from that working copy path
+
   String                 view_svn_file; // subversion file for viewing
   String                 view_wc_file;  // working copy file for viewing
 
   virtual void  setUrl(const String& url);
   // set the url for the repository and update display to that
-  virtual void  setWCPath(const String& wc_path);
+  virtual void  setWcPath(const String& wc_path);
   // set the url for the repository and update display to that
-  virtual void  setUrlWCPath(const String& url, const String& wc_path, int rev = -1);
+  virtual void  setUrlWcPath(const String& url, const String& wc_path, int rev = -1);
   // set the url and working copy path for the repository and update display to that
-  virtual void  setUrlWCPathSubDir(const String& url, const String& wc_path, 
+  virtual void  setUrlWcPathSubDir(const String& url, const String& wc_path, 
                                    const String& subdir, int rev = -1);
   // set the url and working copy path and subdir for the repository and update display to that
   virtual void  setSubDir(const String& path);
@@ -65,18 +69,20 @@ public:
   virtual void  setEndRev(int end_rev, int n_entries = -1);
   // set the ending revision and n_entries for the log browser
 
-  virtual void  setWCView(const String& wc_path);
+  virtual void  setWcView(const String& wc_path);
   // set only what is being viewed in the working copy guy -- nothing else
 
   virtual void  updateView();
   // shouldn't need this, but need to call it to get it to resize to contents
 
-  virtual String selSvnFile();
+  virtual String selSvnFile(int& rev);
   // get currently selected svn browser file name (empty if none)
   virtual String selWcFile();
   // get currently selected working copy browser file name (empty if none)
   virtual void   viewSvnFile(const String& fnm);
   // view the view_svn_file file
+  virtual void   viewWcFile(const String& fnm);
+  // view the view_wc_file file
 
   iSubversionBrowser(QWidget* parent = NULL);
   ~iSubversionBrowser();

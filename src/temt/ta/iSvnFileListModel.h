@@ -39,14 +39,17 @@ class TA_API iSvnFileListModel : public QAbstractItemModel {
 INHERITED(QAbstractItemModel)
   Q_OBJECT
 public:
+  static bool   CommitFile(const String& file_path, const String& msg = "");
+  // commit file at given file_path to its repository, with optional commit message (will prompt if empty) -- uses the model to manage the svn_client
+ 
 
   iSvnFileListModel(QObject *parent = 0);
   ~iSvnFileListModel();
 
   // one of the following set functions must be called before data will be avail
-  virtual bool  setUrlWCPath(const QString& url, const QString& wc_path, int rev = -1);
+  virtual bool  setUrlWcPath(const QString& url, const QString& wc_path, int rev = -1);
   // init the svn client, set the url, wc_path and read the data from that url
-  virtual bool  setWCPath(const QString& wc_path);
+  virtual bool  setWcPath(const QString& wc_path);
   // init the svn client, set the working copy path -- resets subdir to empty
   virtual bool  setUrl(const QString& url, int rev = -1);
   // init the svn client, set the url and read the data from that url  -- resets subdir to empty
@@ -64,23 +67,39 @@ public:
   const QString& url_full() const { return svn_url_full; } 
   const QString& wc_path_full() const { return svn_wc_path_full; } 
 
-  virtual QString fileName(const QModelIndex& index);
+  virtual QString fileName(const QModelIndex& index) const;
   // get file name at index
-  virtual int     fileSize(const QModelIndex& index);
+  virtual int     fileSize(const QModelIndex& index) const;
   // get author at index
-  virtual int     fileRev(const QModelIndex& index);
+  virtual int     fileRev(const QModelIndex& index) const;
   // get revsion at index
-  virtual int     fileTime(const QModelIndex& index);
+  virtual int     fileTime(const QModelIndex& index) const;
   // get time at index
-  virtual int     fileKind(const QModelIndex& index);
+  virtual int     fileKind(const QModelIndex& index) const;
   // get file kind at index -- should be svn_node_file or svn_node_dir
-  virtual bool    isDir(const QModelIndex& index);
+  virtual bool    isDir(const QModelIndex& index) const;
   // return true if this is a directory at index
-  virtual QString fileAuthor(const QModelIndex& index);
+  virtual QString fileAuthor(const QModelIndex& index) const;
   // get author at index
 
-  virtual bool    fileToString(const String& fnm, String& to_file);
+  //////////////////////////////////////////////////////////
+  // actions supported as an interface to the svn client
+
+  virtual bool    fileToString(const String& file_name, String& to_string, int rev);
   // get file to string -- file is relative to current url and subdir
+  virtual bool    diffToString(const String& file_name, String& to_string, int rev);
+  // get diff to prev for file to string -- file is relative to current url and subdir
+  virtual bool    addFile(const String& file_name);
+  // add file to repository -- file is relative to current wc_path and subdir
+  virtual bool    delFile(const String& file_name, bool force, bool keep_local);
+  // delete file from repository and locally -- file is relative to current wc_path and subdir -- does NOT confirm -- just does it..
+  virtual bool    update();
+  // update svn repository to latest version -- returns true if did update -- svn_head_rev is updated as well
+  virtual bool    commit(const String& msg);
+  // check in any changes in the current subdir
+  virtual bool    getUrlFromPath(String& url, const String& path);
+  // get the server url from path to local file
+
 
 public: // required model implementations
 #ifndef __MAKETA__

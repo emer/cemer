@@ -23,6 +23,8 @@
 #include <iDialogPublishDocs>
 #include <taiEditorOfString>
 #include <ClusterRun>
+#include <iSubversionBrowser>
+#include <iSvnFileListModel>
 
 #include <ctime>
 
@@ -688,6 +690,21 @@ void taProject::setDirty(bool value) {
   if (!value) m_no_save = false;
 }
 
+
+void taProject::SvnBrowser() {
+  String path = taMisc::GetDirFmPath(GetFileName());
+  if(path.nonempty()) {
+    iSubversionBrowser* svb = iSubversionBrowser::OpenBrowser("", path);
+  }
+}
+
+void taProject::SvnCommit() {
+  Save();
+  String path = GetFileName();
+  if(path.nonempty()) {
+    iSvnFileListModel::CommitFile(path);
+  }
+}
 
 void taProject::UpdateChangeLog() {
 #ifdef TA_GUI

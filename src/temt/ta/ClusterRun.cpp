@@ -23,6 +23,7 @@
 #include <DataTable_Group>
 #include <taProject>
 #include <SubversionClient>
+#include <iSubversionBrowser>
 
 #include <taSigLinkItr>
 #include <iPanelSet>
@@ -831,6 +832,16 @@ void ClusterRun::GetOtherFiles() {
   else {
     taMisc::Warning("No rows selected -- no files fetched");
   }
+}
+
+void ClusterRun::OpenSvnBrowser() {
+  if(!initClusterManager())
+    return;
+  String url = m_cm->GetFullUrl();
+  String us_user = m_cm->getUsername();
+  String wc_path = m_cm->GetWcResultsPath();
+  String wc_root = wc_path.through(us_user,-1);
+  iSubversionBrowser::OpenBrowser(url, wc_root);
 }
 
 void ClusterRun::ArchiveJobs() {

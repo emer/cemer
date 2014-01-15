@@ -27,6 +27,21 @@
 
 #define SVN_N_COLS 5
 
+bool iSvnFileListModel::CommitFile(const String& file_path, const String& msg) {
+  iSvnFileListModel* svn_file_model = new iSvnFileListModel();
+  String path = taMisc::GetDirFmPath(file_path);
+  svn_file_model->setWcPath(path);
+  String wc_url;
+  bool rval = false;
+  if(svn_file_model->getUrlFromPath(wc_url, path)) {
+    svn_file_model->setUrl(wc_url);
+    svn_file_model->commit(msg);
+    rval = true;
+  }
+  delete svn_file_model;
+  return rval;
+}
+
 iSvnFileListModel::iSvnFileListModel(QObject* parent)
   : inherited(parent)
   , svn_client(0)
@@ -71,25 +86,31 @@ bool iSvnFileListModel::setUrl(const QString& url, int rev) {
   return rval;
 }
 
-bool iSvnFileListModel::setWCPath(const QString& wc_path) {
+bool iSvnFileListModel::setWcPath(const QString& wc_path) {
   if(!initSvnClient())
     return false;
   String wp = taMisc::ExpandFilePath(wc_path);
-  svn_client->SetWorkingCopyPath(wp);
+  try {
+    svn_client->SetWorkingCopyPath(wp);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in setWcPath\n", ex.what());
+    return false;
+  }
   svn_wc_path = svn_client->GetWorkingCopyPath().c_str();
   svn_subdir = "";
   svn_wc_path_full = svn_wc_path;
   return true;
 }
 
-bool iSvnFileListModel::setUrlWCPath(const QString& url, const QString& wc_path, int rev) {
-  if(!setWCPath(url)) return false;
+bool iSvnFileListModel::setUrlWcPath(const QString& url, const QString& wc_path, int rev) {
+  if(!setWcPath(url)) return false;
   return setUrl(url, rev);
 }
 
 bool iSvnFileListModel::setSubDir(const QString& subdir) {
   if(!svn_client) {
-    taMisc::Error("iSvnFileListModel::setSubDir -- svn_client has not been initialized with setUrl or setWCPath");
+    taMisc::Error("iSvnFileListModel::setSubDir -- svn_client has not been initialized with setUrl or setWcPath");
     return false;
   }
   svn_subdir = subdir;
@@ -98,23 +119,24 @@ bool iSvnFileListModel::setSubDir(const QString& subdir) {
 
 bool iSvnFileListModel::setRev(int rev) {
   if(!svn_client) {
-    taMisc::Error("iSvnFileListModel::setRev -- svn_client has not been initialized with setUrl or setWCPath");
+    taMisc::Error("iSvnFileListModel::setRev -- svn_client has not been initialized with setUrl or setWcPath");
     return false;
   }
   svn_rev = rev;
   return refresh();
 }
 
-QString iSvnFileListModel::fileName(const QModelIndex& index) {
+QString iSvnFileListModel::fileName(const QModelIndex& index) const {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
     if(idx >= 0)
       return static_cast<const char*>(file_names[idx]);
+    return "..";
   }
   return QString();
 }
 
-int iSvnFileListModel::fileSize(const QModelIndex& index) {
+int iSvnFileListModel::fileSize(const QModelIndex& index) const {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
     if(idx >= 0)
@@ -123,7 +145,7 @@ int iSvnFileListModel::fileSize(const QModelIndex& index) {
   return 0;
 }
 
-int iSvnFileListModel::fileRev(const QModelIndex& index) {
+int iSvnFileListModel::fileRev(const QModelIndex& index) const {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
     if(idx >= 0)
@@ -132,7 +154,7 @@ int iSvnFileListModel::fileRev(const QModelIndex& index) {
   return 0;
 }
 
-int iSvnFileListModel::fileTime(const QModelIndex& index) {
+int iSvnFileListModel::fileTime(const QModelIndex& index) const {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
     if(idx >= 0)
@@ -141,23 +163,28 @@ int iSvnFileListModel::fileTime(const QModelIndex& index) {
   return 0;
 }
 
-int iSvnFileListModel::fileKind(const QModelIndex& index) {
+int iSvnFileListModel::fileKind(const QModelIndex& index) const {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
     if(idx >= 0)
       return file_kinds[idx];
+    return svn_node_dir;        // -1 is dir
   }
   return svn_node_none;
 }
 
-bool iSvnFileListModel::isDir(const QModelIndex& index) {
+bool iSvnFileListModel::isDir(const QModelIndex& index) const {
   int kind = fileKind(index);
+  if(kind == svn_node_file)
+    return false;
   if(kind == svn_node_dir)
     return true;
+  int sz = fileSize(index);
+  if(sz == 0) return true;      // fall back on size if we don't get full info
   return false;
 }
 
-QString iSvnFileListModel::fileAuthor(const QModelIndex& index) {
+QString iSvnFileListModel::fileAuthor(const QModelIndex& index) const {
   if(validateIndex(index)) {
     int idx = index.row() - 1;    // +1 for ..
     if(idx >= 0)
@@ -166,20 +193,142 @@ QString iSvnFileListModel::fileAuthor(const QModelIndex& index) {
   return QString();
 }
 
-bool iSvnFileListModel::fileToString(const String& fnm, String& to_file) {
+bool iSvnFileListModel::fileToString(const String& fnm, String& to_file, int rv) {
   if(!svn_client)
     return false;
   String path = url_full();
   path = taMisc::FinalPathSep(path);
   path += fnm;
-  svn_client->GetFile(path, to_file, rev());
+  try {
+    svn_client->GetFile(path, to_file, rv);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in fileToString\n", ex.what());
+    return false;
+  }
+  return true;
+}
+
+bool iSvnFileListModel::diffToString(const String& fnm, String& to_file, int rv) {
+  if(!svn_client)
+    return false;
+  String path = url_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  if(rv < 0)
+    rv = svn_head_rev;
+  try {
+    svn_client->GetDiffToPrev(path, to_file, rv); // must be real rev
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in diffToString\n", ex.what());
+    return false;
+  }
+  return true;
+}
+
+bool iSvnFileListModel::addFile(const String& fnm) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only add from working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  try {
+    svn_client->Add(path);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in addFile\n", ex.what());
+    return false;
+  }
+
+  taMisc::Info("subversion added path:", path);
+  return true;
+}
+
+bool iSvnFileListModel::delFile(const String& fnm, bool force, bool keep_local) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only delete from working copy");
+    return false;
+  }
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  String_PArray files;
+  files.Add(path);
+  try {
+    svn_client->Delete(files, force, keep_local);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in delFile\n", ex.what());
+    return false;
+  }
+  taMisc::Info("subversion deleted path:", path);
+  return true;
+}
+
+bool iSvnFileListModel::update() {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only update with working copy");
+    return false;
+  }
+  int nw_rv = -1;
+  try {
+    nw_rv = svn_client->Update();
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in update\n", ex.what());
+    return false;
+  }
+  if(nw_rv > svn_head_rev) {
+    svn_head_rev = nw_rv;
+    return true;
+  }
+  return false;                 // not updated!
+}
+
+bool iSvnFileListModel::commit(const String& msg) {
+  if(!svn_client)
+    return false;
+  if(wc_path().isEmpty()) {
+    taMisc::Error("working copy path is empty -- can only commit with working copy");
+    return false;
+  }
+  int nw_rv = -1;
+  try {
+    nw_rv = svn_client->Checkin(msg);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in commit\n", ex.what());
+    return false;
+  }
+  return true;
+}
+
+bool iSvnFileListModel::getUrlFromPath(String& url, const String& path) {
+  if(!svn_client)
+    return false;
+  try {
+    svn_client->GetUrlFromPath(url, path);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in GetUrlFromPath\n", ex.what());
+    return false;
+  }
   return true;
 }
 
 bool iSvnFileListModel::refresh() {
   if(!svn_client) {
     emit layoutAboutToBeChanged();
-    taMisc::Error("iSvnFileListModel::refresh -- svn_client has not been initialized with setUrl or setWCPath");
+    taMisc::Error("iSvnFileListModel::refresh -- svn_client has not been initialized with setUrl or setWcPath");
     emit layoutChanged();
     return false;
   }
@@ -205,13 +354,14 @@ bool iSvnFileListModel::refresh() {
   file_sizes.Reset();
   file_revs.Reset();
   file_times.Reset();
+  file_kinds.Reset();
   file_authors.Reset();
 
   try {
     svn_client->List(file_names, file_paths, file_sizes, file_revs, file_times,
                      file_kinds, file_authors, svn_url_full.toLatin1(), svn_rev, false); // no recurse
   }
-  catch (const iSvnFileListModel::Exception &ex) {
+  catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Error doing List in SubversionClient.\n", ex.what());
     emit layoutChanged();
     return false;
@@ -243,8 +393,7 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
 
   int sz = 0;
   if(idx >= 0) sz = file_sizes[idx];
-  int kind = svn_node_none;
-  if(idx >= 0) kind = file_kinds[idx];
+  bool isdir = isDir(index);
 
   switch (role) {
   case Qt::DisplayRole: 
@@ -256,13 +405,13 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
       if(idx == 0)
         return QString(".");
       QString nm = static_cast<const char *>(file_names[idx]);
-      if(kind == svn_node_dir)
+      if(isdir)
         return nm + "/";
       return nm;
       break;
     }
     case 1: {
-      if(idx < 0 || kind == svn_node_dir)
+      if(idx < 0 || isdir)
         return QString("--");
       QString szstr = static_cast<const char *>
         (taMisc::GetSizeString(sz, 3, true)); // 3 prec, power of 2
@@ -295,7 +444,7 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
       // qfilesystemmodel.cpp
       if(idx < 0) 
         return file_icon_provider->icon(QFileIconProvider::Folder);
-      else if(kind == svn_node_dir)
+      else if(isdir)
         return file_icon_provider->icon(QFileIconProvider::Folder);
       else
         return file_icon_provider->icon(QFileIconProvider::File);

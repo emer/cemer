@@ -183,6 +183,7 @@ int taiMiscCore::Exec() {
   }
   catch(...) {
     taMisc::in_event_loop = false;
+    taMisc::Error_nogui("Otherwise uncaught exception caught in taiMiscCore::Exec() general exception trap");
     raise(SIGABRT);
   }
   taMisc::in_event_loop = false;
