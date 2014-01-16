@@ -112,9 +112,12 @@ protected slots:
 
   void    a_view_file_do();
   void    a_view_diff_do();
+  void    a_view_file_wc_do();
+  void    a_view_diff_wc_do();
   void    a_save_file_do();
   void    a_add_file_do();
   void    a_rm_file_do();
+  void    a_rm_file_wc_do();
           
   void    a_update_do();
   void    a_commit_do();

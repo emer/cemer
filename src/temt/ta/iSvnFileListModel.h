@@ -20,8 +20,6 @@
 #include "ta_def.h"
 #ifndef __MAKETA__
 #include <QAbstractItemModel>
-// todo: this crashes maketa!
-#include <stdexcept>
 #endif
 
 // member includes:
@@ -33,6 +31,9 @@ class SubversionClient; //
 class QFileIconProvider; //
 
 taTypeDef_Of(iSvnFileListModel);
+
+// note: this class uses Qt-style naming conventions b/c it is extending Qt functionality
+// and could be used by someone as a basis for an official qt version..
 
 class TA_API iSvnFileListModel : public QAbstractItemModel {
   // #NO_INSTANCE #NO_CSS Qt model for subversion client list of files in repository
@@ -89,14 +90,22 @@ public:
   // get file to string -- file is relative to current url and subdir
   virtual bool    diffToString(const String& file_name, String& to_string, int rev);
   // get diff to prev for file to string -- file is relative to current url and subdir
+  virtual bool    fileToStringWc(const String& file_name, String& to_string);
+  // get working copy file to string -- file is relative to current wc_path and subdir
+  virtual bool    diffToStringWc(const String& file_name, String& to_string);
+  // get working copy diff to prev for file to string -- file is relative to current wc_path and subdir
   virtual bool    addFile(const String& file_name);
   // add file to repository -- file is relative to current wc_path and subdir
   virtual bool    delFile(const String& file_name, bool force, bool keep_local);
   // delete file from repository and locally -- file is relative to current wc_path and subdir -- does NOT confirm -- just does it..
+  virtual bool    saveFile(const String& fnm, const String& to_fnm, int rev);
+  // save file in repository to given file name -- if to_fnm is empty, then pulls up dialog
   virtual bool    update();
   // update svn repository to latest version -- returns true if did update -- svn_head_rev is updated as well
   virtual bool    commit(const String& msg);
   // check in any changes in the current subdir
+  virtual bool    checkout(String& to_path, int rev);
+  // check out currently-set url at given rev to given path - if empty, then prompts for it, and fills it in to to_path
   virtual bool    getUrlFromPath(String& url, const String& path);
   // get the server url from path to local file
 
@@ -131,12 +140,6 @@ public: // required model implementations
   QFileIconProvider*    file_icon_provider;
 
 protected:
-  // This exception class only used internally.
-  class Exception : public std::runtime_error {
-  public:
-    explicit Exception(const char *msg);
-  };
-
   QString               svn_url;    // current url
   int                   svn_rev;    // svn revision number
   QString               svn_wc_path; // current working copy path

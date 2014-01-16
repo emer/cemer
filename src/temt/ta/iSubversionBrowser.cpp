@@ -99,9 +99,9 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   a_checkout  = main_tb->addAction("Checkout");
   connect(a_checkout, SIGNAL(triggered()), this, SLOT(a_checkout_do()));
 
-  main_tb->addSeparator();
-  a_list_mod  = main_tb->addAction("Show Modified");
-  connect(a_list_mod, SIGNAL(triggered()), this, SLOT(a_list_mod_do()));
+  // main_tb->addSeparator();
+  // a_list_mod  = main_tb->addAction("Show Modified");
+  // connect(a_list_mod, SIGNAL(triggered()), this, SLOT(a_list_mod_do()));
 
   split = new iSplitter;
   lay_bd->addWidget(split);
@@ -109,6 +109,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   QLabel* lbl = NULL;
   QHeaderView* header = NULL;
   QToolBar* tool_bar = NULL;
+  QHBoxLayout* hb = NULL;
 
   ////////////////////////////////////////////////////////////////////////
   // first is revision browser
@@ -117,7 +118,16 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lbrow->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
 
   QVBoxLayout* lay_lb = new QVBoxLayout(lbrow);
-  lay_lb->setMargin(0);
+  lay_lb->setMargin(0); lay_lb->setSpacing(2);
+
+  hb = new QHBoxLayout;
+  hb->setMargin(0);
+  lbl = new QLabel("<b>Svn Revision Log</b>");
+  lbl->setToolTip("shows the log of revisions for files for current repository url (shown in middle panel) -- double click on a revision to view it in the repository file viewer");
+  hb->addStretch();
+  hb->addWidget(lbl);
+  hb->addStretch();
+  lay_lb->addLayout(hb);
 
   QToolBar* lb_tb = new QToolBar(lbrow);
   lay_lb->addWidget(lb_tb);
@@ -206,7 +216,16 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   fbrow->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
 
   QVBoxLayout* lay_fb = new QVBoxLayout(fbrow);
-  lay_fb->setMargin(0);
+  lay_fb->setMargin(0);  lay_fb->setSpacing(2);
+
+  hb = new QHBoxLayout;
+  hb->setMargin(0);
+  lbl = new QLabel("<b>Svn Repository Files</b>");
+  lbl->setToolTip("shows the files checked into the repository at current url, and subdirectory -- double click on a file to view the file or diff if 'only' flag is set (so only given revision is being shown), or a directory to open it up -- keeps working copy and url coordinated");
+  hb->addStretch();
+  hb->addWidget(lbl);
+  hb->addStretch();
+  lay_fb->addLayout(hb);
 
   QToolBar* fb_tb = new QToolBar(fbrow);
   lay_fb->addWidget(fb_tb);
@@ -288,7 +307,16 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   wbrow->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
 
   QVBoxLayout* lay_wb = new QVBoxLayout(wbrow);
-  lay_wb->setMargin(0);
+  lay_wb->setMargin(0);  lay_wb->setSpacing(2);
+
+  hb = new QHBoxLayout;
+  hb->setMargin(0);
+  lbl = new QLabel("<b>Working Copy Files</b>");
+  lbl->setToolTip("shows the files in the currently checked-out working copy, and subdirectory -- double click on a file to view the file, or a directory to open it up -- keeps working copy and url coordinated");
+  hb->addStretch();
+  hb->addWidget(lbl);
+  hb->addStretch();
+  lay_wb->addLayout(hb);
 
   tool_bar = new QToolBar(wbrow);
   lay_wb->addWidget(tool_bar);
@@ -533,7 +561,7 @@ void iSubversionBrowser::fileCellDoubleClicked(const QModelIndex& index) {
     else {
       bool filt_rev = rev_only->isChecked();
       if(filt_rev) {
-        if(svn_file_model->diffToString(fnm, view_svn_file, rev)) {
+        if(svn_file_model->diffToString(fnm, view_svn_diffs, rev)) {
           viewSvnDiffs(fnm);
         }
       }
@@ -608,13 +636,29 @@ void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos
                       iAction::int_act, this, SLOT(a_view_file_do()), 1);
   act = menu->AddItem("View &Diffs", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_view_diff_do()), 1);
+  act = menu->AddItem("&Save File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_save_file_do()), 1);
+  act = menu->AddItem("&Del File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_rm_file_do()), 1);
 
   menu->exec(file_table->mapToGlobal(pos));
   delete menu;
 }
 
 void iSubversionBrowser::wc_table_customContextMenuRequested(const QPoint& pos) {
+  taiWidgetMenu* menu = new taiWidgetMenu(this, taiWidgetMenu::normal, taiMisc::fonSmall);
+  iAction* act = NULL;
+  act = menu->AddItem("View &File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_view_file_wc_do()), 1);
+  act = menu->AddItem("View &Diffs", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_view_diff_wc_do()), 1);
+  act = menu->AddItem("&Add File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_add_file_do()), 1);
+  act = menu->AddItem("&Del File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_rm_file_wc_do()), 1);
 
+  menu->exec(wc_table->mapToGlobal(pos));
+  delete menu;
 }
 
 String iSubversionBrowser::selSvnFile(int& rev) {
@@ -677,7 +721,7 @@ void iSubversionBrowser::viewWcDiffs(const String& fnm) {
 }
 
 void iSubversionBrowser::a_view_file_do() {
-  int rev;
+  int rev = 0;
   String fnm = selSvnFile(rev);
   if(fnm.nonempty()) {
     if(svn_file_model->fileToString(fnm, view_svn_file, rev)) {
@@ -685,12 +729,7 @@ void iSubversionBrowser::a_view_file_do() {
     }
   }
   else {
-    fnm = selWcFile();
-    if(fnm.nonempty()) {
-      if(svn_file_model->fileToString(fnm, view_wc_file, -1)) {
-        viewWcFile(fnm);
-      }
-    }
+    a_view_file_wc_do();
   }
 }
 
@@ -703,22 +742,33 @@ void iSubversionBrowser::a_view_diff_do() {
     }
   }
   else {
-    fnm = selWcFile();
-    if(fnm.nonempty()) {
-      if(svn_file_model->diffToString(fnm, view_wc_diffs, -1)) {
-        viewWcDiffs(fnm);
-      }
+    a_view_diff_wc_do();
+  }
+}
+
+void iSubversionBrowser::a_view_file_wc_do() {
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    if(svn_file_model->fileToStringWc(fnm, view_wc_file)) {
+      viewWcFile(fnm);
+    }
+  }
+}
+
+void iSubversionBrowser::a_view_diff_wc_do() {
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    if(svn_file_model->diffToStringWc(fnm, view_wc_diffs)) {
+      viewWcDiffs(fnm);
     }
   }
 }
 
 void iSubversionBrowser::a_save_file_do() {
-  int rev;
+  int rev = 0;
   String fnm = selSvnFile(rev);
   if(fnm.nonempty()) {
-    // if(svn_file_model->foileToString(fnm, view_svn_file)) {
-    //   viewSvnFile(fnm);
-    // }
+    svn_file_model->saveFile(fnm, "", rev); // prompt for where to save to
   }
 }
 
@@ -735,16 +785,23 @@ void iSubversionBrowser::a_rm_file_do() {
   if(fnm.nonempty()) {
     int chs = taMisc::Choice(String("Are you sure you want to delete file: ") + fnm,
                              "Ok", "Cancel");
-    if(chs == 0)
+    if(chs == 0) {
       svn_file_model->delFile(fnm, false, false); // filling in options here..
+    }
   }
   else {
-    fnm = selWcFile();
-    if(fnm.nonempty()) {
-      int chs = taMisc::Choice(String("Are you sure you want to delete file: ") + fnm,
-                               "Ok", "Cancel");
-      if(chs == 0)
-        svn_file_model->delFile(fnm, false, false); // filling in options here..
+    a_rm_file_wc_do();
+  }
+}
+
+void iSubversionBrowser::a_rm_file_wc_do() {
+  int rev;
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    int chs = taMisc::Choice(String("Are you sure you want to delete file: ") + fnm,
+                             "Ok", "Cancel");
+    if(chs == 0) {
+      svn_file_model->delFile(fnm, false, false); // filling in options here..
     }
   }
 }
@@ -764,7 +821,12 @@ void iSubversionBrowser::a_commit_do() {
 }
 
 void iSubversionBrowser::a_checkout_do() {
-
+  int rev = rev_box->value();
+  String new_wc;
+  if(svn_file_model->checkout(new_wc, rev)) { // will prompt, and fill in new_wc
+    String new_url = svn_file_model->url_full(); // change to full url
+    setUrlWcPath(new_url, new_wc);
+  }
 }
 
 void iSubversionBrowser::a_list_mod_do() {

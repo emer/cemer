@@ -537,7 +537,7 @@ ClusterManager::updateWorkingCopy()
 
     // Check out a working copy (possibly just an empty directory if we
     // just created it for the first time).
-    m_cur_svn_rev = m_svn_client->Checkout(m_repo_user_url);
+    m_cur_svn_rev = m_svn_client->Checkout(m_repo_user_url, m_wc_path);
     taMisc::Info("Working copy checked out for revision", String(m_cur_svn_rev));
   }
   else {

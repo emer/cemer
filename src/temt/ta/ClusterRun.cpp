@@ -694,17 +694,12 @@ void ClusterRun::GetProjAtRev() {
   taMisc::Info("Note: GetProjAtRev does NOT require a new checkin -- do not hit Update or wait for auto-update -- the file will be in the main project directory now, or very soon.");
 }
 
-ClusterRun::Exception::Exception(const char *msg)
-  : std::runtime_error(msg) {
-  taMisc::Error(msg);
-}
-
 void ClusterRun::InitOtherSvn(const String& svn_wc_path, const String& svn_url) {
   if(!svn_other) {
     try {
       svn_other = new SubversionClient;
     }
-    catch (const ClusterRun::Exception &ex) {
+    catch (const SubversionClient::Exception &ex) {
       taMisc::Error("Error creating other SubversionClient.\n", ex.what());
       return;
     }
@@ -732,7 +727,7 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
     svn_other->List(file_names, file_paths, file_sizes, file_revs, file_times,
                     file_kinds, file_authors, svn_other_url, rev, recurse);
   }
-  catch (const ClusterRun::Exception &ex) {
+  catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Error doing List in other SubversionClient.\n", ex.what());
     return;
   }
@@ -823,7 +818,7 @@ void ClusterRun::GetOtherFiles() {
       try {
         svn_other->SaveFile(furl, ofl);
       }
-      catch (const ClusterRun::Exception &ex) {
+      catch (const SubversionClient::Exception &ex) {
         taMisc::Error("Error doing SafeFile in other SubversionClient.\n", ex.what());
         return;
       }

@@ -99,7 +99,8 @@ public:
   std::string GetWorkingCopyPath() const;
   std::string GetUsername(const char *url, UsernameSource source) const;
 
-  int   Checkout(const char *url, int rev = -1, bool recurse = true);
+  int   Checkout(const char *url, const char *to_wc_path, 
+                 int rev = -1, bool recurse = true);
   // Checkout a working copy and return the revision checked out.
 
   void  List(String_PArray& file_names, String_PArray& file_paths, int_PArray& file_sizes,
@@ -116,6 +117,8 @@ public:
 
   void  GetDiffToPrev(const char* from_url, String& to_str, int rev);
   // get diff to previous revision for given url at given rev -- must specify the revision explicitly (don't use -1), formatted diff output goes into given string
+  void  GetDiffWc(const char* from_url, String& to_str);
+  // get diff of working copy file relative to base in repository
 
   void  GetLogs(int_PArray& revs, String_PArray& commit_msgs, String_PArray& authors,
                int_PArray& times, int_PArray& files_start_idx,
@@ -169,8 +172,8 @@ private:
   void notifyProgress(apr_off_t progress, apr_off_t total);
   String getCommitMessage(const String& com_itm_str);
 
-  const char *m_wc_path;
-  const char *m_url;
+  String  m_wc_path;
+  String  m_url;
   apr_pool_t *m_pool;
   svn_client_ctx_t *m_ctx;
   bool m_cancelled;

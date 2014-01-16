@@ -46,8 +46,7 @@ Subversion::Checkout(const String &working_copy_path, const String &url, int rev
   // Returns -1 on error.
   try {
     SubversionClient client;
-    client.SetWorkingCopyPath(working_copy_path.chars());
-    return client.Checkout(url.chars(), rev, recurse);
+    return client.Checkout(url.chars(), working_copy_path.chars(), rev, recurse);
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Could not complete checkout.\n", ex.what());

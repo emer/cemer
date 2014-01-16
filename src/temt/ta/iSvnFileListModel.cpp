@@ -20,8 +20,10 @@
 #include <QColor>
 #include <QIcon>
 #include <QFileIconProvider>
+#include <QFileDialog>
 
 #include <taMisc>
+#include <taFiler>
 
 #include <svn_types.h>
 
@@ -65,7 +67,7 @@ bool iSvnFileListModel::initSvnClient() {
     try {
       svn_client = new SubversionClient;
     }
-    catch (const iSvnFileListModel::Exception &ex) {
+    catch (const SubversionClient::Exception &ex) {
       taMisc::Error("Error creating SubversionClient.\n", ex.what());
       return false;
     }
@@ -227,6 +229,32 @@ bool iSvnFileListModel::diffToString(const String& fnm, String& to_file, int rv)
   return true;
 }
 
+bool iSvnFileListModel::fileToStringWc(const String& fnm, String& to_file) {
+  if(!svn_client)
+    return false;
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  to_file.LoadFromFile(path);
+  return true;
+}
+
+bool iSvnFileListModel::diffToStringWc(const String& fnm, String& to_file) {
+  if(!svn_client)
+    return false;
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  try {
+    svn_client->GetDiffWc(path, to_file);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in diffToStringWc\n", ex.what());
+    return false;
+  }
+  return true;
+}
+
 bool iSvnFileListModel::addFile(const String& fnm) {
   if(!svn_client)
     return false;
@@ -265,10 +293,42 @@ bool iSvnFileListModel::delFile(const String& fnm, bool force, bool keep_local) 
     svn_client->Delete(files, force, keep_local);
   }
   catch (const SubversionClient::Exception &ex) {
-    taMisc::Error("Subversion client error in delFile\n", ex.what());
-    return false;
+    taMisc::RemoveFile(path);   // if svn fails, then try locally
   }
   taMisc::Info("subversion deleted path:", path);
+  return true;
+}
+
+bool iSvnFileListModel::saveFile(const String& fnm, const String& to_fnm, int rv) {
+  if(!svn_client)
+    return false;
+  String out_fnm = to_fnm;
+  if(out_fnm.empty()) {
+    taFiler* flr = taFiler::New();
+    taRefN::Ref(flr);
+    String wc_path = wc_path_full();
+    wc_path = taMisc::FinalPathSep(wc_path);
+    flr->SetFileName(wc_path); // filer etc. does auto extension
+    flr->SaveAs(false, false);
+    out_fnm = flr->FileName();
+    flr->Close();
+    taMisc::RemoveFile(out_fnm); // now nuke it
+    taRefN::unRefDone(flr);
+    if(out_fnm.empty()) {
+      taMisc::Error("saveFile -- save to file is still empty -- need to choose one");
+      return false;
+    }
+  }
+  String path = url_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  try {
+    svn_client->SaveFile(path, out_fnm, rv);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in SaveFile\n", ex.what());
+    return false;
+  }
   return true;
 }
 
@@ -309,6 +369,33 @@ bool iSvnFileListModel::commit(const String& msg) {
     taMisc::Error("Subversion client error in commit\n", ex.what());
     return false;
   }
+  return true;
+}
+
+bool iSvnFileListModel::checkout(String& to_path, int rv) {
+  if(!svn_client)
+    return false;
+  if(to_path.empty()) {
+    String wc_path = wc_path_full();
+    wc_path = taMisc::FinalPathSep(wc_path);
+    QString op = QFileDialog::getExistingDirectory
+      (NULL, "select directory to checkout into", wc_path,
+       QFileDialog::ShowDirsOnly);
+    if(op.isEmpty()) {
+      taMisc::Error("checkout -- no directory to check out into -- choose one");
+      return false;
+    }
+    to_path = op;
+  }
+  String path = url_full();
+  try {
+    svn_client->Checkout(path, to_path, rv);
+  }
+  catch (const SubversionClient::Exception &ex) {
+    taMisc::Error("Subversion client error in checkout\n", ex.what());
+    return false;
+  }
+  taMisc::Info("Subversion url:", path, "checked out to:", to_path);
   return true;
 }
 

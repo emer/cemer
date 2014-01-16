@@ -27,11 +27,6 @@
 #include <ParamSearchAlgo>
 #include <taDateTime>
 
-#ifndef __MAKETA__
-// todo: this crashes maketa!
-#include <stdexcept>
-#endif
-
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
 class iDataTableEditor; //
@@ -87,14 +82,6 @@ protected:
   SubversionClient*     svn_other; // other user or project svn client
   String                svn_other_wc_path; // working copy path
   String                svn_other_url;     // url
-
-  // This exception class only used internally.
-#ifndef __MAKETA__
-  class Exception : public std::runtime_error {
-  public:
-    explicit Exception(const char *msg);
-  };
-#endif
 
 public:
 

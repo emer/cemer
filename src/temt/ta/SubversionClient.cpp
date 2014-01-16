@@ -508,7 +508,7 @@ SubversionClient::SetWorkingCopyPath(const char *working_copy_path)
 std::string
 SubversionClient::GetWorkingCopyPath() const
 {
-  return m_wc_path;
+  return m_wc_path.chars();
 }
 
 namespace { // anonymous, helpers for GetUsername().
@@ -806,11 +806,15 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
 }
 
 int
-SubversionClient::Checkout(const char *url, int rev, bool recurse)
+SubversionClient::Checkout(const char *url, const char* to_wc, int rev, bool recurse)
 {
   m_cancelled = false;
 
   // Working copy doesn't exist yet, so create it by checking out the URL.
+
+  if(to_wc) {
+    SetWorkingCopyPath(to_wc);
+  }
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
@@ -841,17 +845,17 @@ SubversionClient::Checkout(const char *url, int rev, bool recurse)
   svn_boolean_t ignore_externals = false;
   svn_boolean_t allow_unver_obstructions = true;
 
-  if (svn_error_t *error = svn_client_checkout3(
-        &result_rev, // out param
-        url,
-        m_wc_path,
-        &peg_revision,
-        &revision,
-        depth,
-        ignore_externals,
-        allow_unver_obstructions,
-        m_ctx,
-        m_pool))
+  if (svn_error_t *error = svn_client_checkout3
+      (&result_rev, // out param
+       url,
+       m_wc_path,
+       &peg_revision,
+       &revision,
+       depth,
+       ignore_externals,
+       allow_unver_obstructions,
+       m_ctx,
+       m_pool))
   {
     throw Exception(
       std::string("Subversion checkout error for URL ") + url, error);
@@ -1103,7 +1107,69 @@ SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
       m_ctx,
       m_pool))
     {
-      throw Exception("Subversion SaveFile cat2 error", error);
+      throw Exception("Subversion SaveFile diff4 fm prev error", error);
+    }
+
+  apr_file_close(outfile);
+  to_str.LoadFromFile(tmp_fnm);
+  taMisc::RemoveFile(tmp_fnm);
+}
+
+void 
+SubversionClient::GetDiffWc(const char* from_url, String& to_str) {
+
+#if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
+  from_url = svn_uri_canonicalize(from_url, m_pool);
+#endif
+
+  // We don't want to use peg revisions, so set to unspecified.
+  svn_opt_revision_t peg_revision;
+  peg_revision.kind = svn_opt_revision_base;
+
+  // Set the revision numbers to compare wc against base checkout version
+  svn_opt_revision_t revision;
+  revision.kind = svn_opt_revision_working;
+
+  svn_opt_revision_t prv_revision;
+  prv_revision.kind = svn_opt_revision_base;
+
+  apr_file_t* outfile;
+  apr_file_t* errfile;
+  apr_status_t status;
+  char tmp_fnm[] = "svn_diff_tmp_out_XXXXXX";
+  if((status = apr_file_mktemp(&outfile, tmp_fnm,
+                               APR_CREATE | APR_WRITE,
+                               m_pool))) {
+    taMisc::Error("cannot open diff tmp out");
+    return;
+  }
+
+  if((status = apr_file_open_stderr(&errfile, m_pool))) {
+    taMisc::Error("cannot open stderr");
+    return;
+  }
+
+  svn_depth_t depth = svn_depth_infinity;
+
+  if(svn_error_t *error = svn_client_diff4
+     (NULL, // const apr_array_header_t *diff_options,
+      from_url,                 // const char *	path1,
+      &prv_revision,
+      from_url,                 // const char *	path2,
+      &revision,
+      NULL,
+      depth,
+      true, // svn_boolean_t 	ignore_ancestry,
+      true, // svn_boolean_t 	no_diff_deleted,
+      false, // svn_boolean_t 	ignore_content_type,
+      APR_LOCALE_CHARSET, // const char * header_encoding,
+      outfile,
+      errfile,
+      NULL, // const apr_array_header_t * changelists,
+      m_ctx,
+      m_pool))
+    {
+      throw Exception("Subversion SaveFile diff4 wc error", error);
     }
 
   apr_file_close(outfile);
