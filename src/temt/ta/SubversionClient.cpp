@@ -1091,12 +1091,16 @@ SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
   apr_file_t* outfile;
   apr_file_t* errfile;
   apr_status_t status;
-  char tmp_fnm[] = "svn_diff_tmp_out_XXXXXX";
-  if((status = apr_file_mktemp(&outfile, tmp_fnm,
+  
+  const char* tmp_dir;
+  apr_temp_dir_get(&tmp_dir, m_pool);
+
+  String tmp_fnm = String(tmp_dir) + "/svn_diff_tmp_out_XXXXXX";
+  if((status = apr_file_mktemp(&outfile, (char*)tmp_fnm.chars(),
                                APR_CREATE | APR_WRITE,
                                m_pool))) {
     svn_pool_destroy(m_pool);
-    taMisc::Error("cannot open diff tmp out");
+    taMisc::Error("cannot open diff tmp out at:", tmp_fnm);
     return;
   }
 
