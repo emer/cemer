@@ -838,6 +838,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iTreeWidget.h
   iNumberBar.h
   iNumberedTextView.h
+  iDiffTextView.h
   iThumbWheel.h
   iConsole.h
   iColorScaleBar.h
@@ -1926,6 +1927,7 @@ set(ta_SRCS_NOMAKETA
   iTreeWidget.cpp
   iNumberBar.cpp
   iNumberedTextView.cpp
+  iDiffTextView.cpp
   iThumbWheel.cpp
   iConsole.cpp
   iColorScaleBar.cpp

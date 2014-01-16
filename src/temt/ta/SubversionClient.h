@@ -174,7 +174,7 @@ private:
 
   String  m_wc_path;
   String  m_url;
-  apr_pool_t *m_pool;
+  apr_pool_t *m_pool_perm;      // permanent pool for persistent things
   svn_client_ctx_t *m_ctx;
   bool m_cancelled;
   String      m_commit_message;

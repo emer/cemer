@@ -35,6 +35,7 @@ public:
   MemberDef*            mbr; // the member being edited (doesn't have to be String)
   bool                  line_nos; // display line numbers in the editor view
   bool                  rich_text; // string has rich text, not plain
+  bool                  diffs;      // string contains diffs..
 
   void                  Constr(const char* prompt = "", const char* win_title = "");
   using inherited::GetImage;
@@ -50,15 +51,16 @@ public:
 
   taiEditorOfString(MemberDef* mbr, void* base, TypeDef* typ_ = NULL,
                     bool read_only_ = false, bool modal_ = false, QObject* parent = 0,
-                    bool line_nos_ = false, bool rich_text_ = false);
+                    bool line_nos_ = false, bool rich_text_ = false,
+                    bool diffs_ = false);
   ~taiEditorOfString();
-
 
 protected slots:
   void          btnPrint_clicked();
 
 protected:
   QPushButton*          btnPrint;
+  QWidget*              fancy_edit; // fancy editor if created
 
   void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
   override void         Constr_Strings();

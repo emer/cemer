@@ -258,11 +258,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   rev_box->setValue(svn_file_model->rev());
   tool_bar->addWidget(rev_box);
 
-  lbl = new QLabel(" only:");
-  lbl->setToolTip("only show files from specified revision");
-  tool_bar->addWidget(lbl);
-
-  rev_only = new iCheckBox(fbrow);
+  rev_only = new iCheckBox(" only", fbrow);
+  rev_only->setToolTip("only show files from specified revision");
   tool_bar->addWidget(rev_only);
 
   fb_act_go = tool_bar->addAction("Go");
@@ -328,6 +325,10 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   wc_text = new iLineEdit(wbrow);
   tool_bar->addWidget(wc_text);
 
+  wc_updt = new iCheckBox("updt", wbrow);
+  wc_updt->setToolTip("update the working copy display");
+  tool_bar->addWidget(wc_updt);
+
   wb_act_go = tool_bar->addAction("Go");
 
   wc_table = new iTableView(wbrow);
@@ -383,6 +384,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
           SLOT(file_table_customContextMenuRequested(const QPoint&)) );
 
   connect(wc_text, SIGNAL(returnPressed()), this, SLOT(wBrowGoClicked()) );
+  connect(wc_updt, SIGNAL(clicked(bool)), this, SLOT(wBrowGoClicked()) );
   connect(wb_act_go, SIGNAL(triggered()), this, SLOT(wBrowGoClicked()) );
   connect(wc_table, SIGNAL(doubleClicked(const QModelIndex &)), this, 
           SLOT(wcCellDoubleClicked(const QModelIndex&)));
@@ -449,14 +451,20 @@ void iSubversionBrowser::setWcPath(const String& wc_path) {
   svn_file_model->setWcPath(wc_path);
   String wc = svn_file_model->wc_path();
   wc_text->setText(wc);
-  svn_wc_model->setRootPath(wc);
-  wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc)));
-  updateView();
+  bool updt = wc_updt->isChecked();
+  if(updt) {
+    svn_wc_model->setRootPath(wc);
+    wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc)));
+    updateView();
+  }
 }
 
 void iSubversionBrowser::setWcView(const String& wc_path) {
-  wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc_path)));
-  updateView();
+  bool updt = wc_updt->isChecked();
+  if(updt) {
+    wc_table->setRootIndex(svn_wc_sort->mapFromSource(svn_wc_model->index(wc_path)));
+    updateView();
+  }
 }
 
 void iSubversionBrowser::setSubDir(const String& path) {
@@ -528,6 +536,11 @@ void iSubversionBrowser::fBrowGoClicked() {
 void iSubversionBrowser::wBrowGoClicked() {
   String wctxt = wc_text->text();
   setWcPath(wctxt);
+  bool updt = wc_updt->isChecked();
+  if(updt) {
+    String subtxt = subdir_text->text();
+    setSubDir(subtxt);
+  }
 }
 
 void iSubversionBrowser::logCellDoubleClicked(const QModelIndex& index) {
@@ -621,12 +634,20 @@ void iSubversionBrowser::wcCellDoubleClicked(const QModelIndex& index) {
   QModelIndex fidx = svn_wc_sort->mapToSource(index);
   String fnm = svn_wc_model->fileName(fidx);
   if(fnm.empty()) return;
-  String subtxt = subdir_text->text();
-  if(subtxt.nonempty())
-    subtxt += "/";
-  subtxt += fnm;
-  subtxt = taMisc::NoFinalPathSep(subtxt);
-  setSubDir(subtxt);
+  bool is_dir = svn_wc_model->isDir(fidx);
+  if(is_dir) {
+    String subtxt = subdir_text->text();
+    if(subtxt.nonempty())
+      subtxt += "/";
+    subtxt += fnm;
+    subtxt = taMisc::NoFinalPathSep(subtxt);
+    setSubDir(subtxt);
+  }
+  else {
+    if(svn_file_model->diffToStringWc(fnm, view_wc_diffs)) {
+      viewWcDiffs(fnm);
+    }
+  }
 }
 
 void iSubversionBrowser::file_table_customContextMenuRequested(const QPoint& pos) {
@@ -705,8 +726,8 @@ void iSubversionBrowser::viewWcFile(const String& fnm) {
 void iSubversionBrowser::viewSvnDiffs(const String& fnm) {
   TypeDef* td = &TA_iSubversionBrowser;
   MemberDef* md = td->members.FindName("view_svn_diffs");
-  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
-  // args are: read_only, modal, parent, line_nos, rich_text
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false, true);
+  // args are: read_only, modal, parent, line_nos, rich_text, diffs
   host_->Constr("Selected Svn Diffs: " + fnm);
   host_->Edit(false);
 }
@@ -714,8 +735,8 @@ void iSubversionBrowser::viewSvnDiffs(const String& fnm) {
 void iSubversionBrowser::viewWcDiffs(const String& fnm) {
   TypeDef* td = &TA_iSubversionBrowser;
   MemberDef* md = td->members.FindName("view_wc_diffs");
-  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false);
-  // args are: read_only, modal, parent, line_nos, rich_text
+  taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false, true);
+  // args are: read_only, modal, parent, line_nos, rich_text, diffs
   host_->Constr("Selected Working Copy Diffs: " + fnm);
   host_->Edit(false);
 }
@@ -812,6 +833,7 @@ void iSubversionBrowser::a_update_do() {
     int rev = svn_file_model->svn_head_rev;
     setEndRev(rev);
     rev_only->setChecked(true);   // filter
+    wc_updt->setChecked(false);  // no updt
     setRev(rev);
   }
 }

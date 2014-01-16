@@ -164,6 +164,7 @@ protected:
   iTableView*           file_table;
 
   iLineEdit*            wc_text;
+  iCheckBox*            wc_updt;
   QAction*              wb_act_go;
   iTableView*           wc_table;
 };

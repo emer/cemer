@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.5.0 rev6740
+// ta_Dump File v3.0 -- code v6.3.5.0 rev6741
 LeabraProject .projects["test"] { 
  taBase_Group @.templates = [0] {
  };
@@ -1266,7 +1266,7 @@ LeabraProject .projects["test"] {
      T3Panel_List @.panels = [2] {
       T3Panel @["Network_1"] { 
        T3DataView_List @.root_view.children = [1] {
-	NetView @["Network_1_View"] { 
+	NetView @["Network_0_View"] { 
 	 T3Annotation_List @.annotations = [0] {
 	 };
 
@@ -1385,7 +1385,7 @@ LeabraProject .projects["test"] {
  };
 
  Network_Group @.networks = [1] {
-  LeabraNetwork @["Network_1"] { 
+  LeabraNetwork @["Network_0"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["cos_diff"] { };
     UserDataItem @["cos_err"] { };
@@ -3794,7 +3794,7 @@ LeabraProject .projects["test"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=.projects["test"].networks["Network_1"]$$;
+      object_val=.projects["test"].networks["Network_0"]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4222,7 +4222,7 @@ LeabraProject .projects["test"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4364,7 +4364,7 @@ LeabraProject .projects["test"] {
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["test"].networks["Network_1"].train_time$$;
+      object_val=.projects["test"].networks["Network_0"].train_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5005,7 +5005,7 @@ LeabraProject .projects["test"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5075,7 +5075,7 @@ LeabraProject .projects["test"] {
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects["test"].networks["Network_1"].epoch_time$$;
+      object_val=.projects["test"].networks["Network_0"].epoch_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5510,7 +5510,7 @@ LeabraProject .projects["test"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5825,7 +5825,7 @@ LeabraProject .projects["test"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6187,7 +6187,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6266,7 +6266,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      LayerWriter @["LayerWriter_0"] {
       name="LayerWriter_0";
       data=$.projects["test"].data.gp["InputData"]["StdInputData"]$;
-      network=$.projects["test"].networks["Network_1"]$;
+      network=$.projects["test"].networks["Network_0"]$;
       layer_data {
        name=;
        el_typ=LayerWriterEl;
@@ -6320,7 +6320,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6523,7 +6523,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6555,7 +6555,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6587,7 +6587,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6619,7 +6619,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6651,7 +6651,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6683,7 +6683,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="phase_no";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="phase_no";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6715,7 +6715,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="minus_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="minus_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6747,7 +6747,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6779,7 +6779,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -6808,7 +6808,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["test"].networks["Network_1"]$;
+      network=$.projects["test"].networks["Network_0"]$;
       data=$.projects["test"].data.gp["OutputData"]["TrialOutputData"]$;
       rmv_orphan_cols=1;
      };
@@ -6826,7 +6826,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7055,7 +7055,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7087,7 +7087,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7119,7 +7119,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7151,7 +7151,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7183,7 +7183,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="avg_ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7215,7 +7215,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$.projects["test"].networks["Network_1"]$;
+	object=$.projects["test"].networks["Network_0"]$;
 	variable="avg_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -7308,7 +7308,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$.projects["test"].networks["Network_1"]$;
+      network=$.projects["test"].networks["Network_0"]$;
       data=.projects["test"].data.gp["OutputData"]["EpochOutputData"]$$;
       rmv_orphan_cols=1;
      };
@@ -7326,7 +7326,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7364,7 +7364,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$.projects["test"].networks["Network_1"].epoch_time$;
+      object_val=$.projects["test"].networks["Network_0"].epoch_time$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7677,7 +7677,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$.projects["test"].networks["Network_1"]$;
+      object_val=$.projects["test"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8061,9 +8061,9 @@ and the testing data is updated.  The first epoch monitor should have all the it
 	 name="T3DataView_List_0";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
-	 NetView @["Network_1_View"] {
-	  name="Network_1_View";
-	  m_data=$.projects["test"].networks["Network_1"]$;
+	 NetView @["Network_0_View"] {
+	  name="Network_0_View";
+	  m_data=$.projects["test"].networks["Network_0"]$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
@@ -9195,7 +9195,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
   name="Network_Group_0";
   el_typ=LeabraNetwork;
   el_def=0;
-  LeabraNetwork @["Network_1"] {
+  LeabraNetwork @["Network_0"] {
    UserDataItem_List @*(.user_data_) {
     name="UserDataItem_List_50";
     el_typ=UserDataItem;
@@ -9306,7 +9306,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      val_type_fixed=1;
     };
    };
-   name="Network_1";
+   name="Network_0";
    desc=;
    specs {
     name="BaseSpec_Group_166";
@@ -9417,7 +9417,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects["test"].networks["Network_1"].specs["LeabraBiasSpec_1"]$$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects["test"].networks["Network_0"].specs["LeabraBiasSpec_1"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
@@ -9559,7 +9559,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects["test"].networks["Network_1"].specs["LeabraUnitSpec_1"]$$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects["test"].networks["Network_0"].specs["LeabraUnitSpec_1"]$$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -9569,7 +9569,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_1"].specs["HiddenLayer"]$$: };
+     spec {type=LeabraLayerSpec: spec=.projects["test"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
     LeabraLayer @["Hidden"] {
      name="Hidden";
@@ -9604,7 +9604,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects["test"].networks["Network_1"].specs["LeabraUnitSpec_1"]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraUnitSpec_1"]$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -9614,7 +9614,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_1"].specs["HiddenLayer"]$: };
+     spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_0"].specs["HiddenLayer"]$: };
     };
     LeabraLayer @["Output"] {
      name="Output";
@@ -9649,7 +9649,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects["test"].networks["Network_1"].specs["LeabraUnitSpec_1"]$: };
+     unit_spec {type=LeabraUnitSpec: spec=$.projects["test"].networks["Network_0"].specs["LeabraUnitSpec_1"]$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -9659,7 +9659,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_1"].specs["HiddenLayer"]$: };
+     spec {type=LeabraLayerSpec: spec=$.projects["test"].networks["Network_0"].specs["HiddenLayer"]$: };
     };
    };
    weights {

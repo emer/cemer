@@ -464,7 +464,7 @@ struct SubversionClient::Glue
 SubversionClient::SubversionClient()
   : m_wc_path(0)
   , m_url(0)
-  , m_pool(0) // initialized below
+  , m_pool_perm(0) // initialized below
   , m_ctx(0)
   , m_cancelled(false)
   , m_commit_message(0)
@@ -472,7 +472,7 @@ SubversionClient::SubversionClient()
 {
   // Set up APR and a pool.
   Apr::initializeOnce(); // must be done prior to any other APR calls.
-  m_pool = svn_pool_create(0);
+  m_pool_perm = svn_pool_create(0);
 
   // Set the error handler to one that doesn't abort!
   // We'll check for these errors and convert to exceptions.
@@ -491,7 +491,7 @@ SubversionClient::~SubversionClient()
   m_ctx = 0;
 
   // Clean up the pool and APR context.
-  svn_pool_destroy(m_pool);
+  svn_pool_destroy(m_pool_perm);
 }
 
 void
@@ -499,9 +499,9 @@ SubversionClient::SetWorkingCopyPath(const char *working_copy_path)
 {
   // Canonicalize the working copy path.
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
-  m_wc_path = svn_path_canonicalize(working_copy_path, m_pool);
+  m_wc_path = svn_path_canonicalize(working_copy_path, m_pool_perm);
 #else
-  m_wc_path = svn_dirent_canonicalize(working_copy_path, m_pool);
+  m_wc_path = svn_dirent_canonicalize(working_copy_path, m_pool_perm);
 #endif
 }
 
@@ -606,7 +606,7 @@ SubversionClient::GetUsername(const char *url, UsernameSource source) const
           &userAuthDirPath,
           0, // config_dir
           SVN_CONFIG_SECTION_AUTH,
-          m_pool))
+          m_pool_perm))
     {
       // Couldn't get config dir, so no way to check the cache.
       // Ignore this error and skip down to the PROMPT logic.
@@ -649,7 +649,7 @@ SubversionClient::createContext()
 {
   // Allocate a new context object from the pool.
   svn_client_ctx_t *ctx = 0;
-  if (svn_error_t *error = svn_client_create_context(&ctx, m_pool)) {
+  if (svn_error_t *error = svn_client_create_context(&ctx, m_pool_perm)) {
     // The documentation says this call won't error in current implementation,
     // but in case a future implementation does error, we should handle it.
     // Don't want calling code to have an uninitialized SubversionClient
@@ -666,7 +666,7 @@ SubversionClient::createContext()
         &userConfigDirPath,
         0, // config_dir
         0, // set to SVN_CONFIG_CATEGORY_CONFIG to get the config file.
-        m_pool))
+        m_pool_perm))
   {
     throw Exception("Subversion error getting configuration directory", error);
   }
@@ -676,7 +676,7 @@ SubversionClient::createContext()
   if (svn_error_t *error = svn_config_get_config(
         &ctx->config,
         userConfigDirPath,
-        m_pool))
+        m_pool_perm))
   {
     throw Exception("Subversion error getting configuration info", error);
   }
@@ -688,7 +688,7 @@ SubversionClient::createContext()
   // Initialize the authentication baton.
   apr_array_header_t *providers = createAuthProviders(ctx->config);
   ctx->auth_baton = 0;
-  svn_auth_open(&ctx->auth_baton, providers, m_pool);
+  svn_auth_open(&ctx->auth_baton, providers, m_pool_perm);
 
   // Tell the auth_baton where to cache credentials.
   svn_auth_set_parameter(
@@ -744,7 +744,7 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
   if (svn_error_t *error = svn_auth_get_platform_specific_client_providers(
         &providers,
         configData,
-        m_pool))
+        m_pool_perm))
   {
     throw Exception("Subversion error getting authentication providers", error);
   }
@@ -757,9 +757,9 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
   // for cached credentials.
   svn_auth_provider_object_t *provider = 0;
   svn_auth_get_simple_provider2(
-    &provider, Glue::svn_auth_plaintext_prompt_func, 0, m_pool);
+    &provider, Glue::svn_auth_plaintext_prompt_func, 0, m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-  svn_auth_get_username_provider(&provider, m_pool);
+  svn_auth_get_username_provider(&provider, m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
 
     /* The server-cert, client-cert, and client-cert-password providers. */
@@ -767,7 +767,7 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
         &provider,
         "windows",
         "ssl_server_trust",
-        m_pool))
+        m_pool_perm))
   {
     // Not fatal, just clear the error.
     svn_error_clear(error);
@@ -777,12 +777,12 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
     APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
   }
 
-  svn_auth_get_ssl_server_trust_file_provider(&provider, m_pool);
+  svn_auth_get_ssl_server_trust_file_provider(&provider, m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-  svn_auth_get_ssl_client_cert_file_provider(&provider, m_pool);
+  svn_auth_get_ssl_client_cert_file_provider(&provider, m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
   svn_auth_get_ssl_client_cert_pw_file_provider2(
-    &provider, Glue::svn_auth_plaintext_prompt_func, 0, m_pool);
+    &provider, Glue::svn_auth_plaintext_prompt_func, 0, m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
 
   // Add our own simple username/password auth provider.
@@ -791,7 +791,7 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
     Glue::svn_auth_simple_prompt_func,
     0, // baton
     1, // retries
-    m_pool);
+    m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
 
   svn_auth_get_username_prompt_provider(
@@ -799,7 +799,7 @@ SubversionClient::createAuthProviders(apr_hash_t *config)
     Glue::svn_auth_username_prompt_func,
     0, // baton
     1, // retries
-    m_pool);
+    m_pool_perm);
   APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
 
   return providers;
@@ -815,6 +815,8 @@ SubversionClient::Checkout(const char *url, const char* to_wc, int rev, bool rec
   if(to_wc) {
     SetWorkingCopyPath(to_wc);
   }
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
@@ -857,10 +859,11 @@ SubversionClient::Checkout(const char *url, const char* to_wc, int rev, bool rec
        m_ctx,
        m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception(
       std::string("Subversion checkout error for URL ") + url, error);
   }
-
+  svn_pool_destroy(m_pool);
   return result_rev;
 }
 
@@ -898,6 +901,8 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
                        int_PArray& file_revs, int_PArray& file_times,
                        int_PArray& file_kinds, String_PArray& file_authors,
                        const char *url, int rev, bool recurse) {
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
@@ -943,12 +948,16 @@ SubversionClient::List(String_PArray& file_names, String_PArray& file_paths,
        m_ctx,
        m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion list error", error);
     }
+  svn_pool_destroy(m_pool);
 }
 
 void 
 SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -983,16 +992,20 @@ SubversionClient::GetFile(const char* from_url, String& to_str, int rev) {
        m_ctx,
        m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion SaveFile cat2 error", error);
     }
 
   svn_stream_close(out_strm);
   to_str = stringbuf->data;
   svn_pool_destroy(strpool);
+  svn_pool_destroy(m_pool);
 }
 
 void 
 SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -1028,6 +1041,7 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
       m_pool,
       m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion SaveFile error -- couldn't write file", error);
     }
 
@@ -1039,14 +1053,17 @@ SubversionClient::SaveFile(const char* from_url, const char* to_path, int rev) {
        m_ctx,
        m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion SaveFile cat2 error", error);
     }
 
   svn_stream_close(out_strm);
+  svn_pool_destroy(m_pool);
 }
 
 void 
 SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
+  apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -1078,11 +1095,13 @@ SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
   if((status = apr_file_mktemp(&outfile, tmp_fnm,
                                APR_CREATE | APR_WRITE,
                                m_pool))) {
+    svn_pool_destroy(m_pool);
     taMisc::Error("cannot open diff tmp out");
     return;
   }
 
   if((status = apr_file_open_stderr(&errfile, m_pool))) {
+    svn_pool_destroy(m_pool);
     taMisc::Error("cannot open stderr");
     return;
   }
@@ -1107,16 +1126,19 @@ SubversionClient::GetDiffToPrev(const char* from_url, String& to_str, int rev) {
       m_ctx,
       m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion SaveFile diff4 fm prev error", error);
     }
 
   apr_file_close(outfile);
   to_str.LoadFromFile(tmp_fnm);
   taMisc::RemoveFile(tmp_fnm);
+  svn_pool_destroy(m_pool);
 }
 
 void 
 SubversionClient::GetDiffWc(const char* from_url, String& to_str) {
+  apr_pool_t* m_pool = svn_pool_create(0);
 
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   from_url = svn_uri_canonicalize(from_url, m_pool);
@@ -1140,11 +1162,13 @@ SubversionClient::GetDiffWc(const char* from_url, String& to_str) {
   if((status = apr_file_mktemp(&outfile, tmp_fnm,
                                APR_CREATE | APR_WRITE,
                                m_pool))) {
+    svn_pool_destroy(m_pool);
     taMisc::Error("cannot open diff tmp out");
     return;
   }
 
   if((status = apr_file_open_stderr(&errfile, m_pool))) {
+    svn_pool_destroy(m_pool);
     taMisc::Error("cannot open stderr");
     return;
   }
@@ -1169,12 +1193,15 @@ SubversionClient::GetDiffWc(const char* from_url, String& to_str) {
       m_ctx,
       m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion SaveFile diff4 wc error", error);
     }
 
   apr_file_close(outfile);
   to_str.LoadFromFile(tmp_fnm);
   taMisc::RemoveFile(tmp_fnm);
+  svn_pool_destroy(m_pool);
+
 }
 
 class SvnLogInfoPtrs {
@@ -1294,6 +1321,8 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
                           String_PArray& actions,
                           const char* url, int end_rev, int n_entries) {
 
+  apr_pool_t* m_pool = svn_pool_create(0);
+
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR >= 7)
   url = svn_uri_canonicalize(url, m_pool);
 #endif
@@ -1355,14 +1384,19 @@ SubversionClient::GetLogs(int_PArray& revs, String_PArray& commit_msgs,
     m_ctx,
     m_pool))
     {
+      svn_pool_destroy(m_pool);
       throw Exception("Subversion log error", error);
     }
+
+  svn_pool_destroy(m_pool);
 }
 
 int
 SubversionClient::Update(int rev)
 {
   m_cancelled = false;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   // The value of the revision(s) checked out from the repository will be
   // populated into this array.
@@ -1419,18 +1453,22 @@ SubversionClient::Update(int rev)
         m_pool))
 #endif
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion update error", error);
   }
 
   // Should only be one element updated since we just provided one path.
   // taMisc::Info("Number of elements updated:", String(result_revs->nelts));
   svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
+  svn_pool_destroy(m_pool);
   return updateRev;
 }
 
 int
 SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
   m_cancelled = false;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   if(files.size == 0) {
     return Update(rev);
@@ -1497,12 +1535,14 @@ SubversionClient::UpdateFiles(const String_PArray& files, int rev) {
         m_pool))
 #endif
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion update error", error);
   }
 
   // Should only be one element updated since we just provided one path.
   // taMisc::Info("Number of elements updated:", String(result_revs->nelts));
   svn_revnum_t updateRev = APR_ARRAY_IDX(result_revs, 0, svn_revnum_t);
+  svn_pool_destroy(m_pool);
   return updateRev;
 }
 
@@ -1510,6 +1550,8 @@ void
 SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
 {
   m_cancelled = false;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   // canonicalize the path
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
@@ -1536,14 +1578,18 @@ SubversionClient::Add(const char *file_or_dir, bool recurse, bool add_parents)
         m_ctx,
         m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error adding files", error);
   }
+  svn_pool_destroy(m_pool);
 }
 
 void
 SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local)
 {
   m_cancelled = false;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   // create an array containing a single path to be created
   apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
@@ -1577,14 +1623,18 @@ SubversionClient::Delete(const String_PArray& files, bool force, bool keep_local
        m_ctx,
        m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error removing files", error);
   }
+  svn_pool_destroy(m_pool);
 }
 
 bool
 SubversionClient::MakeDir(const char *new_dir, bool make_parents)
 {
   m_cancelled = false;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   // won't be used unless we make an immediate commit after adding files (by setting revprop_table)
   svn_commit_info_t *commit_info_p = svn_create_commit_info(m_pool);
@@ -1605,9 +1655,10 @@ SubversionClient::MakeDir(const char *new_dir, bool make_parents)
         m_ctx,
         m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error making directory", error);
   }
-
+  svn_pool_destroy(m_pool);
   return true;
 }
 
@@ -1652,6 +1703,8 @@ SubversionClient::Checkin(const char *comment) {
   m_cancelled = false;
   m_commit_message = comment;
 
+  apr_pool_t* m_pool = svn_pool_create(0);
+
   // 'files' is a comma or newline separated list of files and/or directories.
   // If empty, the whole working copy will be committed.
   apr_array_header_t *paths = apr_array_make(m_pool, 1, sizeof(const char *));
@@ -1689,10 +1742,13 @@ SubversionClient::Checkin(const char *comment) {
         m_ctx,
         m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error committing files", error);
   }
 
-  return commit_info_p ? commit_info_p->revision : SVN_INVALID_REVNUM;
+  int rval = commit_info_p ? commit_info_p->revision : SVN_INVALID_REVNUM;
+  svn_pool_destroy(m_pool);
+  return rval;
 }
 
 int
@@ -1703,6 +1759,8 @@ SubversionClient::CheckinFiles(const String_PArray& files, const char *comment) 
   if(files.size == 0) {
     return Checkin(comment);
   }
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   apr_array_header_t *paths = apr_array_make(m_pool, files.size, sizeof(const char *));
   for(int i=0; i< files.size; i++) {
@@ -1744,10 +1802,13 @@ SubversionClient::CheckinFiles(const String_PArray& files, const char *comment) 
         m_ctx,
         m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error committing files", error);
   }
 
-  return commit_info_p ? commit_info_p->revision : SVN_INVALID_REVNUM;
+  int rval = commit_info_p ? commit_info_p->revision : SVN_INVALID_REVNUM;
+  svn_pool_destroy(m_pool);
+  return rval;
 }
 
 int
@@ -1755,6 +1816,8 @@ SubversionClient::GetLastChangedRevision(const char *path)
 {
   m_cancelled = false;
   m_last_changed_revision = -1;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
 
   // This call makes a callback to svn_info_receiver(), which
   // sets our m_last_changed_revision member variable.
@@ -1769,15 +1832,20 @@ SubversionClient::GetLastChangedRevision(const char *path)
         m_ctx,
         m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error getting revision info", error);
   }
 
+  svn_pool_destroy(m_pool);
   return m_last_changed_revision;
 }
 
 void
 SubversionClient::GetUrlFromPath(String& url, const char *path) {
   const char* url_str;
+
+  apr_pool_t* m_pool = svn_pool_create(0);
+
 #if (SVN_VER_MAJOR == 1 && SVN_VER_MINOR < 7)
   if(svn_error_t *error = svn_client_url_from_path
      (&url_str,
@@ -1792,23 +1860,29 @@ SubversionClient::GetUrlFromPath(String& url, const char *path) {
      m_pool))
 #endif
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error getting path", error);
   }
   url = url_str;
+  svn_pool_destroy(m_pool);
 }
 
 void
 SubversionClient::GetRootUrlFromPath(String& url, const char *path) {
   const char* url_str;
+  apr_pool_t* m_pool = svn_pool_create(0);
+
   if(svn_error_t *error = svn_client_root_url_from_path
     (&url_str,
      path,
      m_ctx,
      m_pool))
   {
+    svn_pool_destroy(m_pool);
     throw Exception("Subversion error getting root path", error);
   }
   url = url_str;
+  svn_pool_destroy(m_pool);
 }
 
 

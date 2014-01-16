@@ -16,6 +16,7 @@
 #include "taiEditorOfString.h"
 #include <iTextBrowser>
 #include <iNumberedTextView>
+#include <iDiffTextView>
 #include <MemberDef>
 #include <iTextEdit>
 #include <iDialog>
@@ -34,7 +35,7 @@
 
 taiEditorOfString::taiEditorOfString(MemberDef* mbr_, void* base_, TypeDef* typ_,
      bool read_only_, bool modal_, QObject* parent, bool line_nos_,
-                                     bool rich_text_)
+                                     bool rich_text_, bool diffs_)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
   root = base_;
@@ -43,6 +44,8 @@ taiEditorOfString::taiEditorOfString(MemberDef* mbr_, void* base_, TypeDef* typ_
   btnPrint = NULL;
   line_nos = line_nos_;
   rich_text = rich_text_;
+  diffs = diffs_;
+  fancy_edit = NULL;
 }
 
 taiEditorOfString::~taiEditorOfString() {
@@ -53,10 +56,16 @@ void taiEditorOfString::Constr(const char* prompt, const char* win_title) {
 }
 
 void taiEditorOfString::Constr_Box() {
-  if(line_nos) {
+  if(diffs) {
+    iDiffTextView* ntv = new iDiffTextView(widget());
+    vblDialog->addWidget(ntv, 1);
+    fancy_edit = ntv;
+  }
+  else if(line_nos) {
     iNumberedTextView* ntv = new iNumberedTextView(widget());
     edit = ntv->textEdit();
     vblDialog->addWidget(ntv, 1);
+    fancy_edit = ntv;
   }
   else {
     if(read_only) {
@@ -68,8 +77,10 @@ void taiEditorOfString::Constr_Box() {
     }
     vblDialog->addWidget(edit, 1);
   }
-  edit->installEventFilter(this); // hopefully everyone below body will get it too!
-  edit->setFontPointSize(taMisc::font_size);
+  if(edit) {
+    edit->installEventFilter(this); // hopefully everyone below body will get it too!
+    edit->setFontPointSize(taMisc::font_size);
+  }
 }
 
 void taiEditorOfString::Constr_RegNotifies() {
@@ -114,21 +125,35 @@ void taiEditorOfString::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2
 
 void taiEditorOfString::DoConstr_Dialog(iDialogEditor*& dlg) {
   inherited::DoConstr_Dialog(dlg);
-  dlg->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
+  if(diffs) {
+    iSize sz = taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer);
+    sz.w *= 2;
+    dlg->resize( sz );
+  }
+  else {
+    dlg->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
+  }
 }
 
 
 void taiEditorOfString::GetImage() {
   const String val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
-  if(rich_text)
+  if(diffs) {
+    ((iDiffTextView*)fancy_edit)->setDiffString(val);
+  }
+  else if(rich_text) {
     edit->setHtml(val);
-  else
+  }
+  else {
     edit->setPlainText(val);
+  }
 }
 
 void taiEditorOfString::GetValue() {
-  String val = edit->toPlainText();
-  mbr->type->SetValStr(val, mbr->GetOff(root), root, mbr);
+  if(!diffs) {
+    String val = edit->toPlainText();
+    mbr->type->SetValStr(val, mbr->GetOff(root), root, mbr);
+  }
 }
 
 void taiEditorOfString::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
