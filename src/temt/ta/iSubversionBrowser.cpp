@@ -325,8 +325,8 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   wc_text = new iLineEdit(wbrow);
   tool_bar->addWidget(wc_text);
 
-  wc_updt = new iCheckBox("updt", wbrow);
-  wc_updt->setToolTip("update the working copy display");
+  wc_updt = new iCheckBox("view", wbrow);
+  wc_updt->setToolTip("view the working copy files -- this can be somewhat slow and memory intensive for large directories (e.g., emergent/src/temt/ta)");
   tool_bar->addWidget(wc_updt);
 
   wb_act_go = tool_bar->addAction("Go");
