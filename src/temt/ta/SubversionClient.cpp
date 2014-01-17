@@ -1941,17 +1941,17 @@ SubversionClient::getCommitMessage(const String& com_itm_str)
   row = "prompt";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("msg_lbl", widget, row, "label=Provide Commit Message:;");
+  dlg.AddLabel("prmpt_lbl", widget, row, "label=Provide Commit Message:;");
 
   row = "itms";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("msg_lbl", widget, row, "label=" + com_itm_str +";");
+  dlg.AddLabel("itms_lbl", widget, row, "label=" + com_itm_str +";");
 
   row = "msg";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddStringField(&m_commit_message, "commit_message", widget, row, "tooltip=Enter the message describing what is happening on this commit;edit_dialog=true");
+  dlg.AddStringField(&m_commit_message, "commit_message", widget, row, "tooltip=Enter the message describing what is happening on this commit; edit_dialog=true;");
 
   int drval = dlg.PostDialog(true);
   if(drval) {

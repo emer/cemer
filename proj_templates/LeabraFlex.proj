@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.4.0 rev6701
+// ta_Dump File v3.0 -- code v6.3.5.0 rev6744
 LeabraProject .projects["LeabraFlex"] { 
  taBase_Group @.templates = [0] {
  };
@@ -2550,6 +2550,44 @@ LeabraProject .projects["LeabraFlex"] {
 
 	 T3DataView_List @.annote_children = [0] {
 	 };
+
+	 GraphPlotView_List @.plots = [16] {
+	  GraphPlotView @["EpochOutputData_Graph_plot_1"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_2"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_3"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_4"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_5"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_6"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_7"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_8"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_9"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_10"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_11"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_12"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_13"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_14"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_15"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_16"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [16] {
+	  GraphPlotView @["EpochOutputData_Graph_err_1"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_2"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_3"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_4"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_5"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_6"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_7"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_8"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_9"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_10"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_11"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_12"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_13"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_14"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_15"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_16"] { };
+	 };
 	};
        };
 
@@ -2743,8 +2781,6 @@ LeabraProject .projects["LeabraFlex"] {
 <meta charset=\"UTF-8\"><title>LeabraFlexProgs - Emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.22alpha\">
 <link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/emergent/api.php?action=rsd\">
@@ -2785,17 +2821,17 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20131021T011027Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"John.rohrlich\",\"wgUserGroups\":[\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgUserId\":1533,\"wgUserEditCount\":57,\"wgUserRegistration\":1339707274000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
-mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
+mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,
 \"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,
-\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"rohrlich\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"d529aeffe64ee0773f7c3dae97e53ce4a016eb1c\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"4aa35d1ded96c730910146b104ea77de+\\\\\",\"patrolToken\":false,\"watchToken\":\"efa3ef10a93c9c8eacec0aa028200130+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:c1ceec46492dd4c725355d8056e2ca63 */
+\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:91cf05d66a23ab5974b5e4f00eb08acf */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=gumaxdd&amp;version=20131219T201129Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20131219T201129Z&amp;*\"></script>
-<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cmediawiki.page.watch.ajax&amp;skin=gumaxdd&amp;version=20131221T083947Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131219T201121Z&amp;*\"></script></head>
+}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=gumaxdd&amp;version=20140109T140417Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20140109T140417Z&amp;*\"></script>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20140109T140419Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131219T201121Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd action-view\">
 <div id=\"gumax-page\">
 	<!--///===== Drop Down menu script =====///-->
@@ -2868,7 +2904,6 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 			<ul>
 				<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 				<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
-<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
 <li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 				<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li>			</ul>
 			</li>
@@ -2891,12 +2926,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 			 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/emergent/index.php/LeabraFlexProgs\">Page</a></li>
 			 <li id=\"ca-talk\" class=\"new\"><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\">Discussion</a></li>
-			 <li id=\"ca-edit\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">Edit</a></li>
+			 <li id=\"ca-viewsource\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">View source</a></li>
 			 <li id=\"ca-history\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\">History</a></li>
-			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=delete\">Delete</a></li>
-			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlexProgs\">Move</a></li>
-			 <li id=\"ca-watch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=watch&amp;token=fb3e99e291b886b3329d21fc7672ba7c%2B%5C\">Watch</a></li>
-			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=purge\">Refresh</a></li>
 		</ul>
 
 	</div>
@@ -2928,10 +2959,10 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 <li class=\"toclevel-1 tocsection-4\"><a href=\"#DMem_.28MPI.29\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">DMem (MPI)</span></a></li>
 </ul>
 </div>
-<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=1\" title=\"Edit section: ConfigData/ConfigTable\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"ConfigData.2FConfigTable\">ConfigData/ConfigTable</span></h1>
 <p>The <a href=\"/emergent/index.php/DataTable\" title=\"DataTable\">DataTable</a> in ConfigData/ConfigTable is key for the flex progs -- each row specifies a different configuration, which can call different Init, Run, and even Startup programs, to achieve very different behavior or configurations all within the same project.  This makes it very easy to add new functionality into the system without adding spaghetti or complex conditionals in existing programs -- just add a new config and a new program at the right level, to achieve new functionality.
 </p>
-<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=2\" title=\"Edit section: Program Hierarchy\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"Program_Hierarchy\">Program Hierarchy</span></h1>
 <p>The call sequence is:
 </p>
 <ul><li> <b>MasterTrain</b>
@@ -2946,10 +2977,10 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 </dd></dl>
 </dd></dl>
 </dd></dl>
-<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=3\" title=\"Edit section: UtilProgs\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"UtilProgs\">UtilProgs</span></h1>
 <p>The UtilProgs contain all the basic functionality for training a network and monitoring, etc -- the task programs should consist of calls to these util programs in the desired order to achieve whatever form of processing is required.  The built-in BasicTrain program just does the equivalent of a standard LeabraTrial.
 </p>
-<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit&amp;section=4\" title=\"Edit section: DMem (MPI)\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h1>
+<h1><span class=\"mw-headline\" id=\"DMem_.28MPI.29\">DMem (MPI)</span></h1>
 <p>The most efficient way to use multiple distributed memory (dmem) processors (via MPI) is to split different events across processors.  The standard Leabra programs do this by interleaving trials according to dmem processor (e.g., for 10 processors, proc 0 gets trials 0, 10, 20, ..; proc 1 gets 1, 11, 21, etc..).  For these flex progs, which can have interactive behavior and ill-defined sequences of events, this strategy is not always possible (the <b>ChoosePermutedEvent</b> program in EnviroProgs does implement this behavior however).  Here are some tips:
 </p>
 <ul><li> After common weight initialization etc, the <b>TrainStart</b> program will generate a new random seed just before starting the Epoch -- each processor at this point will be operating with their own random seed, so any dynamic event generation code that uses random numbers (hint: it should!) will result in different things on different nodes.  However, as a result of this, <b>every run of the simulation will be different</b>, even if using common initial starting seeds.
@@ -2963,8 +2994,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.040 seconds
-Real time usage: 0.044 seconds
+CPU time usage: 0.028 seconds
+Real time usage: 0.033 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2973,7 +3004,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140105035525
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140116203739
  -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
@@ -2998,7 +3029,6 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 			<ul>
 					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\">What links here</a></li>
 					<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\">Related changes</a></li>
-	<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\">Upload file</a></li>
 	<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\">Special pages</a></li>
 					<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">Permanent link</a></li>			</ul>
 		</div>
@@ -3008,22 +3038,19 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		<!-- gumax-f-message -->
 		
 		<div id=\"gumax-article-message\">
-			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 07:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 8,942 times. </span>
+			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</span>
+			<span id=\"f-viewcount\">This page has been accessed 9,108 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
 
 		<script>/*<![CDATA[*/window.jQuery && jQuery.ready();/*]]>*/</script><script>if(window.mw){
-mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"loading\"});
+mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready\"});
 }</script>
 <script>if(window.mw){
-mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\"],null,true);
+mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\"],null,true);
 }</script>
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
-<script>if(window.mw){
-mw.loader.state({\"user.groups\":\"ready\"});
-}</script>
 
 	</div> <!-- ///// end of gumax-footer ///// -->
 
@@ -3048,7 +3075,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.447 secs. -->
+<!-- Served in 0.429 secs. -->
 
 
 
@@ -6848,6 +6875,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      row_spec=ROW_VAL;
      row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
      quiet=0;
+     all_matches=0;
      var_1=.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$$;
      var_2=NULL;
      var_3=NULL;
@@ -7675,6 +7703,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_spec=ROW_VAL;
       row_var=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["config_id"]$;
       quiet=0;
+      all_matches=0;
       var_1=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["init_prog"]$$;
       var_2=.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterTrain"].vars["run_prog"]$$;
       var_3=NULL;
@@ -10219,6 +10248,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_spec=ROW_VAL;
       row_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].args["config_id"]$$;
       quiet=0;
+      all_matches=0;
       var_1=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["train_epochs"]$$;
       var_2=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["trials_per_epoch"]$$;
       var_3=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["save_final_wts"]$$;
@@ -10233,6 +10263,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_spec=ROW_VAL;
       row_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].args["config_id"]$;
       quiet=0;
+      all_matches=0;
       var_1=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["test_interval"]$$;
       var_2=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["log_trials"]$$;
       var_3=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["load_weights"]$$;
@@ -10247,6 +10278,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       row_spec=ROW_VAL;
       row_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].args["config_id"]$;
       quiet=0;
+      all_matches=0;
       var_1=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["weights_file"]$$;
       var_2=NULL;
       var_3=.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"].vars["load_st_epc"]$$;
@@ -14977,7 +15009,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9968684911727905;
+     value 6 0=0.9968034029006958;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -15460,309 +15492,624 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   axis_length=1;
 	   row_num=0;
 	  };
-	  plot_1 {
-	   name="GraphPlotView_0";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="avg_sse";
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
+	  tot_plots=16;
+	  plots {
+	   name=;
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
+	    name="EpochOutputData_Graph_plot_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="avg_sse";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_2"] {
+	    name="EpochOutputData_Graph_plot_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="avg_norm_err";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_3"] {
+	    name="EpochOutputData_Graph_plot_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="cnt_err";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=1;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_4"] {
+	    name="EpochOutputData_Graph_plot_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
+	    name="EpochOutputData_Graph_plot_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
+	    name="EpochOutputData_Graph_plot_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
+	    name="EpochOutputData_Graph_plot_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
+	    name="EpochOutputData_Graph_plot_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=MINUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
+	    name="EpochOutputData_Graph_plot_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_10"] {
+	    name="EpochOutputData_Graph_plot_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_11"] {
+	    name="EpochOutputData_Graph_plot_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_12"] {
+	    name="EpochOutputData_Graph_plot_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
+	    name="EpochOutputData_Graph_plot_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
+	    name="EpochOutputData_Graph_plot_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
+	    name="EpochOutputData_Graph_plot_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
+	    name="EpochOutputData_Graph_plot_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=MINUS;
+	    alt_y=0;
+	   };
 	  };
-	  plot_2 {
-	   name="GraphPlotView_1";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="avg_norm_err";
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
-	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=SQUARE;
-	   alt_y=0;
-	  };
-	  plot_3 {
-	   name="GraphPlotView_2";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="cnt_err";
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
-	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=DIAMOND;
-	   alt_y=1;
-	  };
-	  plot_4 {
-	   name="GraphPlotView_3";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=TRIANGLE;
-	   alt_y=0;
-	  };
-	  plot_5 {
-	   name="GraphPlotView_4";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=PLUS;
-	   alt_y=0;
-	  };
-	  plot_6 {
-	   name="GraphPlotView_5";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CROSS;
-	   alt_y=0;
-	  };
-	  plot_7 {
-	   name="GraphPlotView_6";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=STAR;
-	   alt_y=0;
-	  };
-	  plot_8 {
-	   name="GraphPlotView_7";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=MINUS;
-	   alt_y=0;
-	  };
-	  err_1 {
-	   name="GraphPlotView_8";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_2 {
-	   name="GraphPlotView_9";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_3 {
-	   name="GraphPlotView_10";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_4 {
-	   name="GraphPlotView_11";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_5 {
-	   name="GraphPlotView_12";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_6 {
-	   name="GraphPlotView_13";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_7 {
-	   name="GraphPlotView_14";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_8 {
-	   name="GraphPlotView_15";
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   is_string=0;
-	   is_matrix=0;
-	   n_cells=1;
-	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
+	  errbars {
+	   name=;
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
+	    name="EpochOutputData_Graph_err_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_2"] {
+	    name="EpochOutputData_Graph_err_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_3"] {
+	    name="EpochOutputData_Graph_err_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_4"] {
+	    name="EpochOutputData_Graph_err_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_5"] {
+	    name="EpochOutputData_Graph_err_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_6"] {
+	    name="EpochOutputData_Graph_err_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_7"] {
+	    name="EpochOutputData_Graph_err_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_8"] {
+	    name="EpochOutputData_Graph_err_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_9"] {
+	    name="EpochOutputData_Graph_err_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_10"] {
+	    name="EpochOutputData_Graph_err_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_11"] {
+	    name="EpochOutputData_Graph_err_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_12"] {
+	    name="EpochOutputData_Graph_err_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_13"] {
+	    name="EpochOutputData_Graph_err_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_14"] {
+	    name="EpochOutputData_Graph_err_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_15"] {
+	    name="EpochOutputData_Graph_err_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_16"] {
+	    name="EpochOutputData_Graph_err_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
@@ -15925,7 +16272,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04592901840806007;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -16127,7 +16474,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="RandomSpec_6": type=UNIFORM: mean=0.3: var=0: par=1: };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
+     act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
@@ -16236,10 +16583,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
-       wt_sig {gain=6: off=1: dwt_norm=1: };
+       wt_sig {gain=6: off=1: dwt_norm=0: };
        stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
-       xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
        rel_net_adapt {
 	on=0;
@@ -16316,10 +16663,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      ignore_unlearnable=1;
-     wt_sig {gain=6: off=1: dwt_norm=1: };
+     wt_sig {gain=6: off=1: dwt_norm=0: };
      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {l_mix=X_COS_DIFF: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
      rel_net_adapt {
       on=0;
@@ -16368,7 +16715,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
-       cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
        ct_inhib_mod {
 	manual_sravg=0;
 	sravg_delay=0;
@@ -16407,7 +16754,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
      decay {event=1: phase=0: phase2=0: };
-     cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+     cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
      ct_inhib_mod {
       manual_sravg=0;
       sravg_delay=0;
