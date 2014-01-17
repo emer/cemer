@@ -239,6 +239,16 @@ bool iSvnFileListModel::fileToStringWc(const String& fnm, String& to_file) {
   return true;
 }
 
+bool iSvnFileListModel::editFileWc(const String& fnm) {
+  if(!svn_client)
+    return false;
+  String path = wc_path_full();
+  path = taMisc::FinalPathSep(path);
+  path += fnm;
+  taMisc::EditFile(path);
+  return true;
+}
+
 bool iSvnFileListModel::diffToStringWc(const String& fnm, String& to_file) {
   if(!svn_client)
     return false;

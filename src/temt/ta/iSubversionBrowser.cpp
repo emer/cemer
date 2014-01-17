@@ -671,6 +671,8 @@ void iSubversionBrowser::wc_table_customContextMenuRequested(const QPoint& pos) 
   iAction* act = NULL;
   act = menu->AddItem("View &File", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_view_file_wc_do()), 1);
+  act = menu->AddItem("&Edit File", taiWidgetMenu::normal,
+                      iAction::int_act, this, SLOT(a_edit_file_wc_do()), 1);
   act = menu->AddItem("View &Diffs", taiWidgetMenu::normal,
                       iAction::int_act, this, SLOT(a_view_diff_wc_do()), 1);
   act = menu->AddItem("&Add File", taiWidgetMenu::normal,
@@ -773,6 +775,13 @@ void iSubversionBrowser::a_view_file_wc_do() {
     if(svn_file_model->fileToStringWc(fnm, view_wc_file)) {
       viewWcFile(fnm);
     }
+  }
+}
+
+void iSubversionBrowser::a_edit_file_wc_do() {
+  String fnm = selWcFile();
+  if(fnm.nonempty()) {
+    svn_file_model->editFileWc(fnm);
   }
 }
 

@@ -321,6 +321,7 @@ NamedURL        taMisc::svn_repo5_url;
 NamedURL        taMisc::svn_repo6_url;
 
 NameVar_PArray  taMisc::svn_repos;
+NameVar_PArray  taMisc::svn_wc_dirs;
 
 String_PArray   taMisc::css_include_paths;
 String_PArray   taMisc::load_paths;
@@ -475,13 +476,27 @@ void taMisc::LoadConfig() {
 #endif
 }
 
+#ifndef NO_TA_BASE
 namespace {
+  void addCluster(ClusterSpecs &cl) {
+    if (cl.name.nonempty()) {
+      cl.UpdateProcs();
+      taMisc::cluster_names.Add(cl.name);
+      taMisc::clusters.Add(cl);
+    }
+  }
   void addUrl(NameVar_PArray &arr, const NamedURL &nurl) {
     if (nurl.name.nonempty() && nurl.url.nonempty()) {
       arr.Add(NameVar(nurl.name, nurl.url));
     }
   }
+  void addWcDir(NameVar_PArray &arr, const NamedURL &nurl) {
+    if (nurl.name.nonempty() && nurl.url.nonempty()) {
+      arr.Add(NameVar(nurl.name, nurl.local_dir)); // even if empty, keep in corresp with url
+    }
+  }
 }
+#endif
 
 void taMisc::UpdateAfterEdit() {
 #ifndef NO_TA_BASE
@@ -495,51 +510,15 @@ void taMisc::UpdateAfterEdit() {
 
   cluster_names.Reset();
   clusters.Reset();
-  if (cluster1.name.nonempty()) {
-    cluster1.UpdateProcs();
-    cluster_names.Add(taMisc::cluster1.name);
-    clusters.Add(taMisc::cluster1);
-  }
-  if (cluster2.name.nonempty()) {
-    cluster2.UpdateProcs();
-    cluster_names.Add(taMisc::cluster2.name);
-    clusters.Add(taMisc::cluster2);
-  }
-  if (cluster3.name.nonempty()) {
-    cluster3.UpdateProcs();
-    cluster_names.Add(taMisc::cluster3.name);
-    clusters.Add(taMisc::cluster3);
-  }
-  if (cluster4.name.nonempty()) {
-    cluster4.UpdateProcs();
-    cluster_names.Add(taMisc::cluster4.name);
-    clusters.Add(taMisc::cluster4);
-  }
-  if (cluster5.name.nonempty()) {
-    cluster5.UpdateProcs();
-    cluster_names.Add(taMisc::cluster5.name);
-    clusters.Add(taMisc::cluster5);
-  }
-  if (cluster6.name.nonempty()) {
-    cluster6.UpdateProcs();
-    cluster_names.Add(taMisc::cluster6.name);
-    clusters.Add(taMisc::cluster6);
-  }
-  if (cluster7.name.nonempty()) {
-    cluster7.UpdateProcs();
-    cluster_names.Add(taMisc::cluster7.name);
-    clusters.Add(taMisc::cluster7);
-  }
-  if (cluster8.name.nonempty()) {
-    cluster8.UpdateProcs();
-    cluster_names.Add(taMisc::cluster8.name);
-    clusters.Add(taMisc::cluster8);
-  }
-  if (cluster9.name.nonempty()) {
-    cluster9.UpdateProcs();
-    cluster_names.Add(taMisc::cluster9.name);
-    clusters.Add(taMisc::cluster9);
-  }
+  addCluster(cluster1);
+  addCluster(cluster2);
+  addCluster(cluster3);
+  addCluster(cluster4);
+  addCluster(cluster5);
+  addCluster(cluster6);
+  addCluster(cluster7);
+  addCluster(cluster8);
+  addCluster(cluster9);
 
   svn_repos.Reset();
   addUrl(svn_repos, svn_repo1_url);
@@ -548,6 +527,15 @@ void taMisc::UpdateAfterEdit() {
   addUrl(svn_repos, svn_repo4_url);
   addUrl(svn_repos, svn_repo5_url);
   addUrl(svn_repos, svn_repo6_url);
+
+  svn_wc_dirs.Reset();
+  addWcDir(svn_wc_dirs, svn_repo1_url);
+  addWcDir(svn_wc_dirs, svn_repo2_url);
+  addWcDir(svn_wc_dirs, svn_repo3_url);
+  addWcDir(svn_wc_dirs, svn_repo4_url);
+  addWcDir(svn_wc_dirs, svn_repo5_url);
+  addWcDir(svn_wc_dirs, svn_repo6_url);
+
 #endif
 }
 

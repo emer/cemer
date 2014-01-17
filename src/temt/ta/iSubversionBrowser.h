@@ -125,6 +125,8 @@ protected slots:
 
   void    a_list_mod_do();
 
+  void    a_edit_file_wc_do();
+
 protected:
   iSvnRevLogModel*       svn_log_model;
   iSvnFileListModel*     svn_file_model;

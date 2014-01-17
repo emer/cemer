@@ -92,6 +92,8 @@ public:
   // get diff to prev for file to string -- file is relative to current url and subdir
   virtual bool    fileToStringWc(const String& file_name, String& to_string);
   // get working copy file to string -- file is relative to current wc_path and subdir
+  virtual bool    editFileWc(const String& file_name);
+  // edit working copy file -- file is relative to current wc_path and subdir
   virtual bool    diffToStringWc(const String& file_name, String& to_string);
   // get working copy diff to prev for file to string -- file is relative to current wc_path and subdir
   virtual bool    addFile(const String& file_name);

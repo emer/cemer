@@ -359,14 +359,16 @@ public:
 
   static String         cluster_svn_path; // #SAVE #CAT_File path to the local directory where cluster run svn repositories should be checked out -- typically ~/svn_clusterun/ or something like that -- ~/ will be replaced by user's home directory -- this is where all the local copies of cluster data in the svn repository will reside
 
-  static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository.
-  static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository.
-  static NamedURL       svn_repo3_url; // #SAVE #CAT_File short name and url for Subversion repository.
-  static NamedURL       svn_repo4_url; // #SAVE #CAT_File short name and url for Subversion repository.
-  static NamedURL       svn_repo5_url; // #SAVE #CAT_File short name and url for Subversion repository.
-  static NamedURL       svn_repo6_url; // #SAVE #CAT_File short name and url for Subversion repository.
+  static NamedURL       svn_repo1_url; // #SAVE #CAT_File short name and url for Subversion repository, including local directory = working copy checkout location
+  static NamedURL       svn_repo2_url; // #SAVE #CAT_File short name and url for Subversion repository, including local directory = working copy checkout location
+  static NamedURL       svn_repo3_url; // #SAVE #CAT_File short name and url for Subversion repository, including local directory = working copy checkout location
+  static NamedURL       svn_repo4_url; // #SAVE #CAT_File short name and url for Subversion repository, including local directory = working copy checkout location
+  static NamedURL       svn_repo5_url; // #SAVE #CAT_File short name and url for Subversion repository, including local directory = working copy checkout location
+  static NamedURL       svn_repo6_url; // #SAVE #CAT_File short name and url for Subversion repository, including local directory = working copy checkout location
   static NameVar_PArray svn_repos;
   // #NO_SAVE #READ_ONLY #HIDDEN the non-empty repo names and urls from the above set of repos -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
+  static NameVar_PArray svn_wc_dirs;
+  // #NO_SAVE #READ_ONLY #HIDDEN the non-empty repo names and local_dirs = working copy checkout directories from the above set of repos -- for actual programmatic use -- above list is just for simple gui editing in preferences/options
 
   // don't save these paths: they are generated from above which are saved, and can
   // be modified more reliably in a .cssinitrc or similar..

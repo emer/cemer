@@ -31,7 +31,8 @@ class TA_API NamedURL {
   // ##INLINE a named URL
 public:
   String        name;           // the name of the website
-  String        url;            // the URL -- uniform resource location path
+  String        url;            // the URL -- uniform resource location path (e.g., website)
+  String        local_dir;      // where applicable, the local directory corresponding to the URL (e.g., the working copy of an SVN directory)
 
   NamedURL()    { };
   NamedURL(const String& nm, const String& rl)  { name = nm; url = rl; }

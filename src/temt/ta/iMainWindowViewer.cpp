@@ -718,9 +718,15 @@ void iMainWindowViewer::Constr_ToolsMenu()
   toolsTypeInfoBrowseAction = AddAction(new iAction(0, "Type Info Browser", QKeySequence(), "toolsTypeInfoBrowseAction"));
 
   toolsSvnBrowseActionEmergent = AddAction(new iAction(0, "&SVN Browser Emergent", QKeySequence(), "toolsSvnBrowseActionEmergent"));
-  toolsSvnBrowseActionSvn1 = AddAction(new iAction(0, "SVN Browser Repo 1", QKeySequence(), "toolsSvnBrowseActionSvn1"));
-  toolsSvnBrowseActionSvn2 = AddAction(new iAction(0, "SVN Browser Repo 2", QKeySequence(), "toolsSvnBrowseActionSvn2"));
-  toolsSvnBrowseActionSvn3 = AddAction(new iAction(0, "SVN Browser Repo 3", QKeySequence(), "toolsSvnBrowseActionSvn3"));
+  toolsSvnBrowseActionSvn1 = AddAction
+    (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo1_url.name, 
+                 QKeySequence(), "toolsSvnBrowseActionSvn1"));
+  toolsSvnBrowseActionSvn2 = AddAction
+    (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo2_url.name, 
+                 QKeySequence(), "toolsSvnBrowseActionSvn2"));
+  toolsSvnBrowseActionSvn3 = AddAction
+    (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name, 
+                 QKeySequence(), "toolsSvnBrowseActionSvn3"));
 
   // Build menu items.
   if (toolsMenu) {
@@ -728,9 +734,12 @@ void iMainWindowViewer::Constr_ToolsMenu()
     toolsMenu->AddAction(toolsTypeInfoBrowseAction);
     toolsMenu->insertSeparator();
     toolsMenu->AddAction(toolsSvnBrowseActionEmergent);
-    toolsMenu->AddAction(toolsSvnBrowseActionSvn1);
-    toolsMenu->AddAction(toolsSvnBrowseActionSvn2);
-    toolsMenu->AddAction(toolsSvnBrowseActionSvn3);
+    if(taMisc::svn_repo1_url.name.nonempty())
+      toolsMenu->AddAction(toolsSvnBrowseActionSvn1);
+    if(taMisc::svn_repo2_url.name.nonempty())
+      toolsMenu->AddAction(toolsSvnBrowseActionSvn2);
+    if(taMisc::svn_repo3_url.name.nonempty())
+      toolsMenu->AddAction(toolsSvnBrowseActionSvn3);
   }
 
   // Make connetions.
@@ -1929,23 +1938,23 @@ void iMainWindowViewer::toolsSvnBrowserEmergent() {
 
 void iMainWindowViewer::toolsSvnBrowserSvn1() {
   if(taMisc::svn_repos.size < 1) return;
-  // ideally want username in here!
   String url = taMisc::svn_repos[0].value.toString();
-  if(url.contains("cluster") && taMisc::clusters.size > 0)
-    url += "/" + taMisc::clusters[0].name;
-  iSubversionBrowser::OpenBrowser(url,"");  
+  String wc = taMisc::svn_wc_dirs[0].value.toString();
+  iSubversionBrowser::OpenBrowser(url,wc);  
 }
 
 void iMainWindowViewer::toolsSvnBrowserSvn2() {
   if(taMisc::svn_repos.size < 2) return;
   String url = taMisc::svn_repos[1].value.toString();
-  iSubversionBrowser::OpenBrowser(url,"");  
+  String wc = taMisc::svn_wc_dirs[1].value.toString();
+  iSubversionBrowser::OpenBrowser(url,wc);
 }
 
 void iMainWindowViewer::toolsSvnBrowserSvn3() {
   if(taMisc::svn_repos.size < 3) return;
   String url = taMisc::svn_repos[2].value.toString();
-  iSubversionBrowser::OpenBrowser(url,"");  
+  String wc = taMisc::svn_wc_dirs[2].value.toString();
+  iSubversionBrowser::OpenBrowser(url,wc);  
 }
 
 void iMainWindowViewer::this_SaveView(iAction* me) {
