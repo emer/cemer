@@ -28,7 +28,7 @@ class DynEnumItem; //
 taTypeDef_Of(DynEnumBase);
 
 class TA_API DynEnumBase : public ProgType {
-  // ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program base class for a user-definable list of labeled values that make code easier to read and write
+  // #VIRT_BASE ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program base class for a user-definable list of labeled values that make code easier to read and write
 INHERITED(ProgType)
 public:
   DynEnumItem_List      enums;  // enumerated values for this type
