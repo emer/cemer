@@ -973,6 +973,7 @@ bool iTreeView::PosInView(int scr_pos) {
 }
 
 void iTreeView::dragMoveEvent(QDragMoveEvent* ev) {
+#if (QT_VERSION >= 0x040700)
   iTreeWidgetItem* foo;
   if (taMisc::tree_spring_loaded) {
     int item_idx = -1;
@@ -1006,6 +1007,7 @@ void iTreeView::dragMoveEvent(QDragMoveEvent* ev) {
       }
     }
   }
+#endif
   inherited::dragMoveEvent(ev);
 }
 

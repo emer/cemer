@@ -26,7 +26,9 @@
 // member includes:
 #ifndef __MAKETA__
 #include <QPointer>
+#if (QT_VERSION >= 0x040700)
 #include <QElapsedTimer>
+#endif
 #endif
 #include <TypeItem>
 
@@ -216,8 +218,9 @@ protected:
 
   iTreeWidgetItem_List  expandedItemList;   // used as stack to keep track of expanded items
   iTreeWidgetItem*      possibleDropTargetItem;
+#if (QT_VERSION >= 0x040700)
   QElapsedTimer         dropTimer;
-
+#endif
 
   QFont&                italicFont() const; // so we don't create a new guy each node
 
