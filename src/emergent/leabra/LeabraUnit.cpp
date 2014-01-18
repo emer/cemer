@@ -60,6 +60,7 @@ void LeabraUnit::Initialize() {
   g_i_raw = 0.0f;
   g_i_delta = 0.0f;
   g_i_syn = 0.0f;
+  g_i_self = 0.0f;
 
   i_thr = 0.0f;
   spk_amp = 1.0f;
@@ -149,6 +150,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   g_i_raw = cp.g_i_raw;
   g_i_delta = cp.g_i_delta;
   g_i_syn = cp.g_i_syn;
+  g_i_self = cp.g_i_self;
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;

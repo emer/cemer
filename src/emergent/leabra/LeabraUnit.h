@@ -118,6 +118,7 @@ public:
   float		g_i_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
   float		g_i_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta inhibitory net input received from sending units
   float		g_i_syn;	// #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of g_i_raw -- this is added with layer-level inhibition (fffb, kwta) to get the full inhibition in gc.i
+  float         g_i_self;       // #NO_SAVE #CAT_Activation time-averaged self inhibition value -- needs to be separate variable to allow time-averaging to prevent severe oscillations
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
@@ -222,12 +223,14 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  void	Compute_ApplyInhib(LeabraNetwork* net, float inhib_val)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, net, inhib_val); }
+  void	Compute_ApplyInhib(LeabraLayerSpec* lspec, LeabraNetwork* net, float inhib_val)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, lspec, net, inhib_val); }
   // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance
-  void	Compute_ApplyInhib_LoserGain(LeabraNetwork* net, float inhib_thr,
+  void	Compute_ApplyInhib_LoserGain(LeabraLayerSpec* lspec, LeabraNetwork* net,
+                                     float inhib_thr,
 				     float inhib_top, float inhib_loser)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib_LoserGain(this, net, inhib_thr, inhib_top, inhib_loser); }
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib_LoserGain(this, lspec, net,
+ inhib_thr, inhib_top, inhib_loser); }
   // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance -- when eff_loser_gain in effect
 
   ///////////////////////////////////////////////////////////////////////

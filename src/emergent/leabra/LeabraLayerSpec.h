@@ -50,6 +50,7 @@ public:
   float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- typically between 1-2
   float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput
   float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- computed from average activation
+  float		self_fb;	// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;0.02;0 individual unit self feedback inhibition -- important for producing proportional activation behavior
   float         fbx;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0;0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope -- not apparently needed for robust inhibition, but might be useful for some effects
   float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB&&!fbx:0 #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
   float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 

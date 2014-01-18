@@ -34,6 +34,7 @@ class Network; //
 class LeabraNetwork; // 
 class LeabraUnit; // 
 class DataTable; // 
+class LeabraLayerSpec; //
 
 eTypeDef_Of(LeabraActFunSpec);
 
@@ -495,6 +496,7 @@ public:
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
   RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .3, var = 0 std)
+  RandomSpec	act_init;	// #CAT_Activation what to initialize the activation to (mean = 0 var = 0 std)
   LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
@@ -618,9 +620,14 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  inline void	Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork* net, float inhib_val);
+  inline void	Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                                   LeabraNetwork* net);
+  // #CAT_Activation #IGNORE compute self inhibition value, for fffb g_i_self inhib val
+  inline void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                                   LeabraNetwork* net, float inhib_val);
   // #CAT_Activation #IGNORE apply computed (kwta) inhibition value to unit inhibitory conductance
-  inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraNetwork*,
+  inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                                             LeabraNetwork* net,
                                              float inhib_thr,
 					     float inhib_top, float inhib_loser);
   // #CAT_Activation #IGNORE apply computed (kwta) inhibition value to unit inhibitory conductance -- when eff_loser_gain in effect

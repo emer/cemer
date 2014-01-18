@@ -22,19 +22,31 @@
 
 // declare all other types mentioned but not required to include:
 
-inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork*,
+inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
+                                              LeabraNetwork* net) {
+  if(lspec->inhib.type == LeabraInhibSpec::FF_FB_INHIB) {
+    float nw_fbi = lspec->inhib.self_fb * u->act_eq;
+    u->g_i_self = lspec->inhib.dt * nw_fbi + (1.0f - lspec->inhib.dt) * u->g_i_self;
+  }
+}
+
+inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
+                                               LeabraNetwork* net,
                                                float inhib_val) {
-  u->gc.i = inhib_val + u->g_i_syn; // add synaptic and imposed inhibition
+  Compute_SelfInhib(u, lspec, net);
+  u->gc.i = inhib_val + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
 }
 
 inline void LeabraUnitSpec::Compute_ApplyInhib_LoserGain(LeabraUnit* u,
-				 LeabraNetwork*, float inhib_thr, float inhib_top,
+                                 LeabraLayerSpec* lspec, LeabraNetwork* net,
+                                 float inhib_thr, float inhib_top,
 				 float inhib_loser) {
+  Compute_SelfInhib(u, lspec, net);
   if(u->i_thr >= inhib_thr) {
-    u->gc.i = inhib_top + u->g_i_syn; // add synaptic and imposed inhibition
+    u->gc.i = inhib_top + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
   }
   else {
-    u->gc.i = inhib_loser + u->g_i_syn; // add synaptic and imposed inhibition
+    u->gc.i = inhib_loser + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
   }
 }
 

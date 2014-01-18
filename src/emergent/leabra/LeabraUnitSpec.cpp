@@ -340,9 +340,13 @@ void LeabraUnitSpec::Defaults_init() {
   e_rev.h = 1.0f;
   e_rev.a = 0.0f;
 
-  v_m_init.type = Random::UNIFORM;
+  v_m_init.type = Random::NONE;
   v_m_init.mean = e_rev.l;
   v_m_init.var = 0.0f;
+
+  act_init.type = Random::NONE;
+  act_init.mean = 0.0f;
+  act_init.var = 0.0f;
 
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
@@ -560,6 +564,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
 
   lu->net = 0.0f;               // these are not done in netins -- need to nuke
   lu->g_i_syn = 0.0f;
+  lu->g_i_self = 0.0f;
   lu->gc.i = 0.0f;
 
   if(hyst.init) {
@@ -579,9 +584,9 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->vm_dend = 0.0f;
   lu->adapt = 0.0f;
   lu->da = 0.0f;
-  lu->act = 0.0f;
-  lu->act_eq = 0.0f;
-  lu->act_nd = 0.0f;
+  lu->act = act_init.Gen();
+  lu->act_eq = lu->act;
+  lu->act_nd = lu->act_eq;
   lu->act_p = lu->act_m = lu->act_dif = 0.0f;
   lu->act_m2 = lu->act_mid = lu->act_dif2 = 0.0f;
   lu->avg_ss = act.avg_init;
@@ -618,16 +623,17 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
   u->v_m -= decay * (u->v_m - v_m_init.mean);
   u->vm_dend -= decay * u->vm_dend;
   u->adapt -= decay * u->adapt;
-  u->act -= decay * u->act;
-  u->act_nd -= decay * u->act_nd;
-  u->act_eq -= decay * u->act_eq;
-  u->p_act_p -= decay * u->p_act_p; // reset this for ti guys
+  u->act -= decay * (u->act - act_init.mean);
+  u->act_nd -= decay * (u->act_nd - act_init.mean);
+  u->act_eq -= decay * (u->act_eq - act_init.mean);
+  u->p_act_p -= decay * (u->p_act_p - act_init.mean); // reset this for ti guys
   // note: this is causing a problem in learning with xcal:
 //   u->avg_ss -= decay * (u->avg_ss - act.avg_init);
 //   u->avg_s -= decay * (u->avg_s - act.avg_init);
 //   u->avg_m -= decay * (u->avg_m - act.avg_init);
   u->net -= decay * u->net;
   u->g_i_syn -= decay * u->g_i_syn;
+  u->g_i_self -= decay * u->g_i_self;
   u->gc.i -= decay * u->gc.i;   // not really needed but visually..
 
   if(hyst.on && !hyst.trl)

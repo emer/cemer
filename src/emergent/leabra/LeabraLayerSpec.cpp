@@ -27,6 +27,7 @@ void LeabraInhibSpec::Initialize() {
   ff = 1.0f;
   ff0 = 0.1f;
   fb = 0.5f;
+  self_fb = 0.0f;
   fbx = 0.0f;
   infl = 0.3f;
   dt = 0.7f;
@@ -1150,14 +1151,14 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay,
     for(int i=0; i<nunits; i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
       if(u->lesioned()) continue;
-      u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_val, inhib_loser);
+      u->Compute_ApplyInhib_LoserGain(this, net, inhib_thr, inhib_val, inhib_loser);
     }
   }
   else {
     for(int i=0; i<nunits; i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
       if(u->lesioned()) continue;
-      u->Compute_ApplyInhib(net, inhib_val);
+      u->Compute_ApplyInhib(this, net, inhib_val);
     }
   }
 }
