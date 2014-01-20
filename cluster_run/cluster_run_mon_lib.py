@@ -652,10 +652,10 @@ class SubversionPoller(object):
     def get_initial_wc(self):
         # Either checkout or update the directory.
         if os.path.isdir(self.repo_dir):
-            cmd = ['svn', 'up', '--username', self.username, '--force',
+            cmd = ['svn', 'update', '--username', self.username, '--force',
                    '--accept', 'theirs-full', self.repo_dir]
         else:
-            cmd = ['svn', 'co', '--username', self.username,
+            cmd = ['svn', 'checkout', '--username', self.username,
                    self.repo_url, self.repo_dir]
 
         # Run command and make sure the directory exists afterwards.
@@ -720,7 +720,7 @@ class SubversionPoller(object):
             time.sleep(self.delay)
 
     def _check_for_updates(self):
-        cmd = ['svn', 'up', '--username', self.username, '--force',
+        cmd = ['svn', 'update', '--username', self.username, '--force',
                '--accept', 'theirs-full', '--non-interactive', self.repo_dir]
         svn_update = check_output(cmd)
 
@@ -1138,7 +1138,7 @@ class SubversionPoller(object):
             fdf = resdir + df
             # print "dat file: %s" % fdf
             if os.path.exists(fdf):
-                cmd = ['svn', 'delete', '--username', self.username,
+                cmd = ['svn', 'delete', '--force', '--username', self.username,
                        '--non-interactive', fdf]
                 # Don't check_output, just dump it to stdout (or nohup.out).
                 subprocess.call(cmd)
@@ -1516,7 +1516,7 @@ class SubversionPoller(object):
 
     def _commit_changes(self, message='Updates from cluster'):
         # Commit the whole repo (should only be files under 'submit').
-        cmd = ['svn', 'ci', '--username', self.username, '-m', message,
+        cmd = ['svn', 'commit', '--username', self.username, '-m', message,
                '--non-interactive', self.repo_dir]
 
         # Don't check_output, just dump it to stdout (or nohup.out).
