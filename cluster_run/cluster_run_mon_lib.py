@@ -1142,7 +1142,8 @@ class SubversionPoller(object):
                        '--non-interactive', fdf]
                 # Don't check_output, just dump it to stdout (or nohup.out).
                 subprocess.call(cmd)
-                os.remove(fdf)  # for good measure, just nuke it directly
+                try: os.remove(fdf)  # for good measure, just nuke it directly
+                except: pass
 
     def _unexpected_file(self, filename, rev):
         print 'Ignoring file committed to "submit" folder ' \
@@ -1354,7 +1355,8 @@ class SubversionPoller(object):
         if os.path.exists(jsh):
             os.remove(jsh)
         self._get_tag_proj_file(tag)
-        os.remove(self.cur_tag_proj_file)
+        try: os.remove(self.cur_tag_proj_file)
+        except: pass
 
     def _get_dat_files(self, tag):
         # next look for output files
