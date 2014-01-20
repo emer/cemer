@@ -31,12 +31,16 @@ class TA_API DataTable_Group : public taGroup<DataTable> {
   // ##CAT_Data ##EXPAND_DEF_1 group of data objects
 INHERITED(taGroup<DataTable>)
 public:
+  bool          save_tables;    // #DEF_true save the data tables in this group -- turn this off for groups of data tables that are all temporary and should not be saved -- saves space for headers etc in dump file
+
   override String       GetTypeDecoKey() const { return "DataTable"; }
+
+  override bool         Dump_QuerySaveChildren() { return save_tables; }
 
   TA_BASEFUNS(DataTable_Group);
 private:
-  NOCOPY(DataTable_Group)
-  void  Initialize()            { SetBaseType(&TA_DataTable); }
+  SIMPLE_COPY(DataTable_Group);
+  void  Initialize()            { SetBaseType(&TA_DataTable); save_tables = true; }
   void  Destroy()               { };
 };
 

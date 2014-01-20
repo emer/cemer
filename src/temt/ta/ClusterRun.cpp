@@ -264,6 +264,7 @@ void ClusterRun::ImportData(bool remove_existing) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return;
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
+  dgp->save_tables = false;     // don't save -- prevents project bloat
   if(remove_existing) {
     dgp->Reset();
   }
@@ -871,9 +872,9 @@ void ClusterRun::RemoveJobs() {
       SelectFiles_impl(jobs_done, row, true); // include data
       SubmitRemoveJob(jobs_done, row);
     }
-    RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
+    RemoveAllFilesInList();
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
@@ -884,9 +885,9 @@ void ClusterRun::RemoveJobs() {
       SelectFiles_impl(jobs_archive, row, true); // include data
       SubmitRemoveJob(jobs_archive, row);
     }
-    RemoveAllFilesInList();
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
+    RemoveAllFilesInList();
   }
   else {
     taMisc::Warning("No rows selected -- no jobs removed");
@@ -904,11 +905,11 @@ void ClusterRun::RemoveKilledJobs() {
     SelectFiles_impl(jobs_done, row, true); // include data
     SubmitRemoveJob(jobs_done, row);
   }
-  RemoveAllFilesInList();
   if(jobs_submit.rows > 0) {
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
   }
+  RemoveAllFilesInList();
 }
 
 void ClusterRun::RemoveAllFilesInList() {

@@ -1346,10 +1346,10 @@ taBase* taBase::GetUndoBarrier() {
 String taBase::GetFileNameFmProject(const String& ext, const String& tag, const String& subdir, bool dmem_proc_no) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return _nilString;
-  String proj_base_nm = proj->file_name;
-  if(proj_base_nm.contains(".proj"))
-    proj_base_nm = proj_base_nm.before(".proj",-1);
-  if(proj_base_nm.contains(tag))  // cluster run appends tag to project files..
+  String proj_base_nm = proj->name; // use the actual name which should be what was saved
+  // and thus doesn't change when we use cluster run or something else that might use
+  // a different filename
+  if(proj_base_nm.contains(tag)) // this should be unnecessary but just in case..
     proj_base_nm = proj_base_nm.before(tag,-1);
   String base_dir = taMisc::NoFinalPathSep(proj->proj_dir);
   String fnm = taMisc::GetFileFmPath(proj_base_nm);

@@ -27,7 +27,7 @@
 eTypeDef_Of(LearnFlagDeltaConSpec);
 
 class E_API LearnFlagDeltaConSpec : public LeabraConSpec {
-  // basic delta-rule
+  // requires recv unit to have LEARN flag activated, and also includes optional dopamine modulation, on top of a basic delta rule -- used for gdPVLV learning in subcortical areas
 INHERITED(LeabraConSpec)
 public:
   enum DaModType {
