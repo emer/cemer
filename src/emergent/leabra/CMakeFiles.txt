@@ -55,6 +55,7 @@ set(leabra_HEADS_MAKETA
   FastWtCon.h
   FastWtConSpec.h
   LeabraDeltaConSpec.h
+  DaDeltaConSpec.h
   LeabraSpikeCon.h
   LeabraXCALSpikeConSpec.h
   LeabraLimPrecConSpec.h
@@ -207,6 +208,7 @@ set(leabra_SRCS
   FastWtCon.cpp
   FastWtConSpec.cpp
   LeabraDeltaConSpec.cpp
+  DaDeltaConSpec.cpp
   LeabraSpikeCon.cpp
   LeabraXCALSpikeConSpec.cpp
   LeabraLimPrecConSpec.cpp
