@@ -97,6 +97,8 @@ void MTA::InitKeyWords() {
   ky = new TypeDef("explicit");  spc_keywords.Add(ky); ky->idx = MP_FUNTYPE;
   ky = new TypeDef("volatile");  spc_keywords.Add(ky); ky->idx = MP_FUNTYPE;
   ky = new TypeDef("virtual");  spc_keywords.Add(ky); ky->idx = MP_VIRTUAL;
+  ky = new TypeDef("override");  spc_keywords.Add(ky); ky->idx = MP_OVERRIDE;
+  ky = new TypeDef("final");     spc_keywords.Add(ky); ky->idx = MP_OVERRIDE; // just call it the same thing -- we don't care..
   ky = new TypeDef("static");   spc_keywords.Add(ky); ky->idx = MP_STATIC;
   ky = new TypeDef("const");    spc_keywords.Add(ky); ky->idx = MP_CONST;
   ky = new TypeDef("operator"); spc_keywords.Add(ky); ky->idx = MP_OPERATOR;

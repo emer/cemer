@@ -66,7 +66,7 @@ int yylex();
 %token	<typ>	MP_PUBLIC MP_PRIVATE MP_PROTECTED
 
 /* class member stuff */
-%token	<typ>	MP_OPERATOR MP_FRIEND MP_THISNAME MP_REGFUN MP_VIRTUAL
+%token	<typ>	MP_OPERATOR MP_FRIEND MP_THISNAME MP_REGFUN MP_VIRTUAL MP_OVERRIDE
 
 
 /* top-level types */
@@ -759,6 +759,12 @@ fundefn:  term				{ $$ = ""; }
         | MP_COMMENT term		{ $$ = $1; }
         | MP_COMMENT funsubdefn		{ $$ = $1; }
         | MP_COMMENT funsubdecl term	{ $$ = $1; }
+        | MP_OVERRIDE term	        { $$ = ""; }
+        | MP_OVERRIDE funsubdefn	{ $$ = $2; }
+        | MP_OVERRIDE funsubdecl term	{ $$ = $2; }
+        | MP_OVERRIDE MP_COMMENT term		 { $$ = $2; }
+        | MP_OVERRIDE MP_COMMENT funsubdefn	 { $$ = $2; }
+        | MP_OVERRIDE MP_COMMENT funsubdecl term { $$ = $2; }
         ;
 
 funsubdefn:

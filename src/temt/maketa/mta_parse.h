@@ -67,7 +67,8 @@
      MP_FRIEND = 283,
      MP_THISNAME = 284,
      MP_REGFUN = 285,
-     MP_VIRTUAL = 286
+     MP_VIRTUAL = 286,
+     MP_OVERRIDE = 287
    };
 #endif
 /* Tokens.  */
@@ -100,6 +101,7 @@
 #define MP_THISNAME 284
 #define MP_REGFUN 285
 #define MP_VIRTUAL 286
+#define MP_OVERRIDE 287
 
 
 
@@ -116,7 +118,7 @@ typedef struct YYSTYPE
   int	   	rval;
 }
 /* Line 1529 of yacc.c.  */
-#line 120 "y.tab.h"
+#line 122 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
