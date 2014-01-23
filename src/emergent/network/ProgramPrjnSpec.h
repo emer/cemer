@@ -32,14 +32,14 @@ INHERITED(ProjectionSpec)
 public:
   ProgramRef	prog;		// program to call to connect layers -- prjn arg value (must exist) is set to current projection and then it is called
 
-  void	Connect_impl(Projection* prj) CPP11_OVERRIDE;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE {}
+  void	Connect_impl(Projection* prj) override;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override {}
     // NOTE: if you allow init_wts you must set wts in your script
 
   TA_SIMPLE_BASEFUNS(ProgramPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
+  void CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void	Initialize();
   void 	Destroy();

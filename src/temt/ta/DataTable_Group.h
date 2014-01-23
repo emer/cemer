@@ -33,9 +33,9 @@ INHERITED(taGroup<DataTable>)
 public:
   bool          save_tables;    // #DEF_true save the data tables in this group -- turn this off for groups of data tables that are all temporary and should not be saved -- saves space for headers etc in dump file
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  String       GetTypeDecoKey() const override { return "DataTable"; }
 
-  bool         Dump_QuerySaveChildren() CPP11_OVERRIDE { return save_tables; }
+  bool         Dump_QuerySaveChildren() override { return save_tables; }
 
   TA_BASEFUNS(DataTable_Group);
 private:

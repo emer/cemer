@@ -105,19 +105,19 @@ public:
   virtual void     InitProg();
   // #CAT_ActR initialize program if in use
 
-  String  GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
-  String  GetDisplayName() const CPP11_OVERRIDE;
-  String& Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
-  String  GetDesc() const CPP11_OVERRIDE;
-  int     GetEnabled() const CPP11_OVERRIDE { return !HasActionFlag(OFF); }
-  void    SetEnabled(bool value) CPP11_OVERRIDE { SetActionFlagState(OFF, !value); }
+  String  GetTypeDecoKey() const override { return "Function"; }
+  String  GetDisplayName() const override;
+  String& Print(String& strm, int indent = 0) const override;
+  String  GetDesc() const override;
+  int     GetEnabled() const override { return !HasActionFlag(OFF); }
+  void    SetEnabled(bool value) override { SetActionFlagState(OFF, !value); }
 
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ActrAction);
 protected:
-  void  UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   SIMPLE_COPY(ActrAction);

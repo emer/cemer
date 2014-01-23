@@ -147,12 +147,12 @@ public slots:
     void                Unpin() {setPinned(false);}
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelBase;}
-  bool         ignoreSigEmit() const CPP11_OVERRIDE {return (!isVisible());}
-  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) CPP11_OVERRIDE
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelBase;}
+  bool         ignoreSigEmit() const override {return (!isVisible());}
+  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) override
     {SigEmit_impl(sls, op1, op2);} // called when the data item has changed, esp. ex lists and groups
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE {} // called by SigLink when it is destroying --
+  void         SigLinkDestroying(taSigLink* dl) override {} // called by SigLink when it is destroying --
 
 protected:
   bool                  m_pinned;
@@ -164,9 +164,9 @@ protected:
   QVBoxLayout*          layOuter;
   QScrollArea*          scr; // central scrollview
   int                   m_saved_scroll_pos;
-  void         customEvent(QEvent* ev_) CPP11_OVERRIDE;
-  void         hideEvent(QHideEvent* ev) CPP11_OVERRIDE; // auto-apply
-  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
+  void         customEvent(QEvent* ev_) override;
+  void         hideEvent(QHideEvent* ev) override; // auto-apply
+  void         showEvent(QShowEvent* ev) override;
   virtual void          SigEmit_impl(int sls, void* op1, void* op2); // tab name may have changed
   virtual void          OnWindowBind_impl(iPanelViewer* itv) {}
   virtual void          Render_impl() {} // only called once, when content needs to be created

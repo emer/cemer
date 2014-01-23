@@ -34,9 +34,9 @@ public:
   String        script_string; // #EDIT_DIALOG script text to use for the script
   String        script_filename; // #HIDDEN #READ_ONLY #FILE_DIALOG_LOAD file name for the script -- used only for saving and loading
 
-  ScriptSource scriptSource() CPP11_OVERRIDE;
-  const String scriptFilename() CPP11_OVERRIDE;
-  const String scriptString() CPP11_OVERRIDE {return script_string;}
+  ScriptSource scriptSource() override;
+  const String scriptFilename() override;
+  const String scriptString() override {return script_string;}
 
   virtual void  LoadScript(const String& file_nm);
   // load script from script file and compile it

@@ -39,15 +39,15 @@ public:
   ~iDockViewer();
 
 public: // ItaViewerWidget i/f
-  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  QWidget*     widget() override {return this;}
 protected:
-//  void               Constr_impl() CPP11_OVERRIDE;
+//  void               Constr_impl() override;
 
 protected:
-  void         closeEvent(QCloseEvent* ev) CPP11_OVERRIDE;
+  void         closeEvent(QCloseEvent* ev) override;
   bool                  event(QEvent* ev);
-  void                  hideEvent(QHideEvent* e); // override
-  void                  showEvent(QShowEvent* e); // override
+  void                  hideEvent(QHideEvent* e) override;
+  void                  showEvent(QShowEvent* e) override;
   virtual void          Showing(bool showing); // #IGNORE called by the show/hide handlers
 
 private:

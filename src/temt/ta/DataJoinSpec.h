@@ -50,10 +50,10 @@ public:
   virtual void 	ClearColumns();
   // clear column pointers (don't keep these guys hanging around)
 
-  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetDisplayName() const override;
   TA_SIMPLE_BASEFUNS(DataJoinSpec);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void  Initialize();
   void 	Destroy()		{ };

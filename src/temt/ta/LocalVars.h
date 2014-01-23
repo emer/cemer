@@ -47,21 +47,21 @@ public:
   virtual ProgVar*	AddVarMatrix();
   // #BUTTON add a new Variant_Matrix* variable -- these have to be in local vars so are frequently created..
 
-  ProgVar*	FindVarName(const String& var_nm) const CPP11_OVERRIDE;
+  ProgVar*	FindVarName(const String& var_nm) const override;
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
-  taList_impl*	children_() CPP11_OVERRIDE {return &local_vars;}
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "loc vars"; }
+  taList_impl*	children_() override {return &local_vars;}
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  String	GetToolbarName() const override { return "loc vars"; }
 
   PROGEL_SIMPLE_BASEFUNS(LocalVars);
 protected:
-  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
-  const String	GenListing_children(int indent_level) CPP11_OVERRIDE;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override;
+  const String	GenListing_children(int indent_level) override;
 
 private:
   void	Initialize();

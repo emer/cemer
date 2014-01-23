@@ -116,10 +116,10 @@ public:
   ProgVar* operator=(const Variant& value);
 
   void GetSelectText(MemberDef* mbr, String xtra_lbl,
-    String& full_lbl, String& desc) const CPP11_OVERRIDE;
-  String GetDesc() const CPP11_OVERRIDE { return desc; }
-  String GetDisplayName() const CPP11_OVERRIDE;
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
+    String& full_lbl, String& desc) const override;
+  String GetDesc() const override { return desc; }
+  String GetDisplayName() const override;
+  String GetTypeDecoKey() const override { return "ProgVar"; }
 
   virtual TypeDef*      act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   virtual MemberDef*    GetValMemberDef();
@@ -154,14 +154,14 @@ public:
   virtual ProgVar*      GetInitFromVar(bool warn = true);
   // get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
 
-  int          GetEnabled() const CPP11_OVERRIDE;
-  int          GetSpecialState() const CPP11_OVERRIDE;
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  int          GetEnabled() const override;
+  int          GetSpecialState() const override;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
-  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE; // don't save the unused vals
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override; // don't save the unused vals
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ProgVar);
@@ -171,11 +171,11 @@ protected:
 
   virtual bool          CheckUndefType(const String& function_context) const;
   // #IGNORE check if var_type == T_UnDef and emit a warning if so -- returns true if undefined..
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
   virtual String        GetSchemaSig() const;
   // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
-  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE; //object, if any
+  void         CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) override; //object, if any
   virtual const String  GenCssArg_impl();
   virtual const String  GenCssVar_impl();
 private:

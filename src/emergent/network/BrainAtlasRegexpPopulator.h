@@ -36,12 +36,12 @@ class E_API BrainAtlasRegexpPopulator : public iDialogRegexpPopulator {
   // #NO_MEMBERS #NO_CSS
 public:
   BrainAtlasRegexpPopulator();
-  QStringList getHeadings(bool editor_mode, int& extra_cols) const CPP11_OVERRIDE;
-  QStringList getLabels() const CPP11_OVERRIDE;
-  void setLabels(const QStringList& labels) CPP11_OVERRIDE;
-  QString getSeparator() const CPP11_OVERRIDE;
-  void    setSource(const void *fieldOwner) CPP11_OVERRIDE;
-  void adjustTitle(QString &title, const void *fieldOwner) const CPP11_OVERRIDE;
+  QStringList getHeadings(bool editor_mode, int& extra_cols) const override;
+  QStringList getLabels() const override;
+  void setLabels(const QStringList& labels) override;
+  QString getSeparator() const override;
+  void    setSource(const void *fieldOwner) override;
+  void adjustTitle(QString &title, const void *fieldOwner) const override;
 
 #ifndef __MAKETA__
   QList<QColor> getColors() const;

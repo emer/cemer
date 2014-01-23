@@ -91,11 +91,11 @@ private:
     {                                    \
       Destroy();                         \
     }                                    \
-    TypeDef* GetTypeDef() const CPP11_OVERRIDE \
+    TypeDef* GetTypeDef() const override \
     {                                    \
       return &TA_##x;                    \
     }                                    \
-    x* ArgTypeInst(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) const CPP11_OVERRIDE \
+    x* ArgTypeInst(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) const override \
     {                                    \
       return new x(aidx, argt, md, td);  \
     }

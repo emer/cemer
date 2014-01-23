@@ -134,7 +134,7 @@ protected:
   void			assertText();
     // makes sure text separator is created;
   void			initValueColorMode(); // called in several places
-  void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
+  void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
   ~T3GraphLine();
 };
 

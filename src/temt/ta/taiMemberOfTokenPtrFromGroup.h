@@ -34,7 +34,7 @@ public:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiWidget* dat, const void* base);
-  void GetMbrValue(taiWidget* dat, void* base, bool& first_diff) CPP11_OVERRIDE;
+  void GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
 
   virtual MemberDef*    GetFromMd();
   virtual taList_impl*       GetList(MemberDef* from_md, const void* base);

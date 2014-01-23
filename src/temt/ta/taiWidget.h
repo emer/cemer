@@ -136,7 +136,7 @@ public:
   virtual bool          fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
   bool                  visible() const {return m_visible;}
   bool                  setVisible(bool value); // for CONDSHOW guys, makes lbl/rep vis or not, also triggers VisibleChanged if changes; ret true if visible changed
-  bool                  eventFilter(QObject* watched, QEvent* ev); // override
+  bool                  eventFilter(QObject* watched, QEvent* ev) override;
   virtual QWidget*      GetRep()        { return m_rep; }
   virtual QLayout*      GetLayout() {return NULL;} // returns a top layout, if one is used
   inline int            flags() const {return mflags;}

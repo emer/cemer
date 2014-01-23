@@ -48,15 +48,15 @@ public:
   ProgVarRef	var_3;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
   ProgVarRef	var_4;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "data=vars"; }
+  String	GetDisplayName() const override;
+  String	GetToolbarName() const override { return "data=vars"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
-  void	GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void	GenCssBody_impl(Program* prog) override;
   virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMat(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMatEnum(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);

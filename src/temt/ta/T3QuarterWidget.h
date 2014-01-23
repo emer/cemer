@@ -46,7 +46,7 @@ public:
 #endif
 
 protected:
-  void paintEvent ( QPaintEvent * event ) CPP11_OVERRIDE;
+  void paintEvent ( QPaintEvent * event ) override;
 };
 
 #endif // T3QuarterWidget_h

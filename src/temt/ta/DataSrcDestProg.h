@@ -41,10 +41,10 @@ public:
   virtual void	UpdateSpecDataTable() { };
   // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
 
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  String 	GetTypeDecoKey() const override { return "DataTable"; }
   PROGEL_SIMPLE_BASEFUNS(DataSrcDestProg);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

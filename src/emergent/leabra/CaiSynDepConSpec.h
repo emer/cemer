@@ -54,7 +54,7 @@ public:
     return cao_thr * cao_thr;
   }
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   SIMPLE_COPY(CaiSynDepSpec);
   TA_BASEFUNS(CaiSynDepSpec);
@@ -100,7 +100,7 @@ public:
   { effwt = wt * ca_dep.SynDep(cai); }
   // #IGNORE connection-level synaptic depression: ca mediated
   inline void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net)  CPP11_OVERRIDE
+                                         LeabraNetwork* net)  override
   { Compute_Cai(cg, su, net);
     float* wts = cg->OwnCnVar(WT);
     float* cais = cg->OwnCnVar(CAI);
@@ -128,18 +128,18 @@ public:
   // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
   inline void C_Init_Weights_post(BaseCons* cg, const int idx,
-                                           Unit* ru, Unit* su, Network* net) CPP11_OVERRIDE {
+                                           Unit* ru, Unit* su, Network* net) override {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
     cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net); cg->Cn(idx,CAI,net) = 0.0f;
   }
   // #IGNORE 
 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                const int thread_no, const float su_act_delta) CPP11_OVERRIDE
+                                const int thread_no, const float su_act_delta) override
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
   // #IGNORE use effwt instead of wt
 
-  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net)  CPP11_OVERRIDE {
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net)  override {
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt

@@ -42,17 +42,17 @@ public:
   virtual Program*	GetOtherProg();
   // safe call to get other program: emits error if other_prog is null (used by program)
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "oth prg var"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "Program"; }
+  String	GetToolbarName() const override { return "oth prg var"; }
 
   PROGEL_SIMPLE_BASEFUNS(OtherProgramVar);
 protected:
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
-  void	GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
-  void	GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
-  void	GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  void	GenCssPre_impl(Program* prog) override; 
+  void	GenCssBody_impl(Program* prog) override;
+  void	GenCssPost_impl(Program* prog) override; 
   virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no);
 private:
   void	Initialize();

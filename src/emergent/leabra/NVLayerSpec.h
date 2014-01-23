@@ -34,7 +34,7 @@ public:
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the prior NV delta value (nvd = NV - val_thr) to subtract away in computing the net NV dopamine signal (NV DA = nvd_t - prior_gain * nvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (nvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(NVSpec);
 protected:
@@ -62,12 +62,12 @@ public:
   virtual void  Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net);
   // update the prior Nv value, stored in nv unit misc_1 values
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) CPP11_OVERRIDE { return false; }
-  void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
+  void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override;
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

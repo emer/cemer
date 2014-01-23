@@ -43,7 +43,7 @@ protected:
   taiWidget_List   meth_el;        // method elements
 
   using inherited::GetImage_impl;
-  void         GetImage_impl(const void* base) CPP11_OVERRIDE;
+  void         GetImage_impl(const void* base) override;
   virtual void          GetMethMenus();
   virtual void          SetLabel();
 

@@ -73,7 +73,7 @@ public:
   int                   dn_flags; // any of DataNodeFlags
   String                given_name; // name given to the obj during init or setName -- used as default for col0
 
-  bool         canAcceptDrop(const QMimeData* mime) const CPP11_OVERRIDE;
+  bool         canAcceptDrop(const QMimeData* mime) const override;
   void*                 linkData() const;
   virtual void          setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
   iTreeViewItem*        parent() const; // strongly typed version of base
@@ -81,7 +81,7 @@ public:
 
   virtual const String  GetColText(int col, const String& def = _nilString) const;
 
-  void         CreateChildren() CPP11_OVERRIDE;
+  void         CreateChildren() override;
   void                  SigEmit(int sls, void* op1, void* op2)
   { SigEmit_impl(sls, op1, op2); }
   // primarily to support Refresh
@@ -112,30 +112,30 @@ public: // qt3 compatability functions, for convenience
   void                  swapChildren(int n1_idx, int n2_idx);
 
 public: // ITypedObject interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iTreeViewItem;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iTreeViewItem;}
 
 public: // ISigLinkClient interface
-  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) CPP11_OVERRIDE
+  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) override
   { SigEmit(sls, op1, op2); }
   // called when the data item has changed, esp. ex lists and groups -- relays it onward
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
+  void         SigLinkDestroying(taSigLink* dl) override;
   // called by SigLink when it is destroying --
 
 public: // ISelectable interface
-  taiSigLink*  link() const CPP11_OVERRIDE {return ISigLinkClient::link();}
-  MemberDef*   md() const CPP11_OVERRIDE {return m_md;}
-  ISelectable* par() const CPP11_OVERRIDE;
-  ISelectableHost* host() const CPP11_OVERRIDE;
+  taiSigLink*  link() const override {return ISigLinkClient::link();}
+  MemberDef*   md() const override {return m_md;}
+  ISelectable* par() const override;
+  ISelectableHost* host() const override;
   iClipData*   GetClipDataSingle(int src_edit_action, bool for_drag,
-                                          GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE;
+                                          GuiContext sh_typ = GC_DEFAULT) const override;
   iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
-    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE;
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const override;
 protected:
-  void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ) CPP11_OVERRIDE;
+  void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ) override;
   // this is the one to extend in inherited classes
   void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
-                                                GuiContext sh_typ) const CPP11_OVERRIDE;
+                                                GuiContext sh_typ) const override;
   // OR's in allowed; OR's in forbidden
 
 #ifndef __MAKETA__
@@ -143,10 +143,10 @@ protected:
   MemberDef*            m_md; // for members, the MemberDef (otherwise NULL)
 
   void         dropped(const QMimeData* mime, const QPoint& pos,
-                                int key_mods, WhereIndicator where) CPP11_OVERRIDE;
+                                int key_mods, WhereIndicator where) override;
   virtual void          SigEmit_impl(int sls, void* op1, void* op2);
   // called for each node when the data item has changed, esp. ex lists and groups
-  void         itemExpanded(bool value) CPP11_OVERRIDE;
+  void         itemExpanded(bool value) override;
 
   virtual bool          ShowNode_impl(int show, const String& context) const;
 private:

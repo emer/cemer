@@ -37,7 +37,7 @@ public:
   static void ptbp_add_widget(iToolBoxDockViewer* tb, int sec, TypeDef* td);
 
 protected:
-  void         Constr_post() CPP11_OVERRIDE;
+  void         Constr_post() override;
 };
 
 #endif // iProgramToolBar_h

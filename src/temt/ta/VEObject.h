@@ -52,7 +52,7 @@ public:
   VEJoint_Group joints;
 
 
-  String       GetDesc() const CPP11_OVERRIDE { return desc; }
+  String       GetDesc() const override { return desc; }
 
   virtual VEWorld* GetWorld();  // #CAT_ODE get world object (parent of this guy)
   virtual void* GetWorldID();   // #CAT_ODE get world id value
@@ -96,7 +96,7 @@ public:
 
   SIMPLE_COPY(VEObject);
   SIMPLE_INITLINKS(VEObject);
-  void CutLinks() CPP11_OVERRIDE;
+  void CutLinks() override;
   TA_BASEFUNS(VEObject);
 protected:
   SpaceType     cur_space_type; // current type that was previously set

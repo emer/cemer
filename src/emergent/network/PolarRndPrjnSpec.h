@@ -49,8 +49,8 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
+  void	Connect_impl(Projection* prjn) override;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
   // uses weight values equal to the distance probability
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
@@ -65,7 +65,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(PolarRndPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };

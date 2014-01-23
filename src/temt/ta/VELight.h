@@ -60,9 +60,9 @@ public:
   virtual void          UpdtDirNorm();
   // update dir_norm from cur_quat rotation
 
-  void Init() CPP11_OVERRIDE;
-  void CurFromODE(bool updt_disp = false) CPP11_OVERRIDE;
-  void CurToODE() CPP11_OVERRIDE;
+  void Init() override;
+  void CurFromODE(bool updt_disp = false) override;
+  void CurToODE() override;
 
   TA_SIMPLE_BASEFUNS(VELight);
 private:

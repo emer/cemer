@@ -34,7 +34,7 @@ public:
   taOBase*              data() {return (taOBase*)m_data;}
   taOBase*              data() const {return (taOBase*)m_data;}
 
-  MemberDef*   GetDataMemberDef() const CPP11_OVERRIDE;
+  MemberDef*   GetDataMemberDef() const override;
 
   taSigLinkTaOBase(taOBase* data_);
   SL_FUNS(taSigLinkTaOBase); //
@@ -47,15 +47,15 @@ public: // for taLists, and default children (where defined) in taOBase
 
   taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
     taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
-    const String& node_name, int dn_flags) CPP11_OVERRIDE;
-  taiSigLink* GetListChild(int itm_idx) CPP11_OVERRIDE;
-  taiSigLink* GetListChild(void* el) CPP11_OVERRIDE;
-   int         NumListCols() const CPP11_OVERRIDE; // number of columns in a list view for this item type
-  const KeyString GetListColKey(int col) const CPP11_OVERRIDE; // #IGNORE
-  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE; // #IGNORE
+    const String& node_name, int dn_flags) override;
+  taiSigLink* GetListChild(int itm_idx) override;
+  taiSigLink* GetListChild(void* el) override;
+   int         NumListCols() const override; // number of columns in a list view for this item type
+  const KeyString GetListColKey(int col) const override; // #IGNORE
+  String       GetColHeading(const KeyString& key) const override; // #IGNORE
   String       ChildGetColText(taSigLink* child, const KeyString& key,
-    int itm_idx = -1) const CPP11_OVERRIDE;    // #IGNORE
-//   bool              HasChildItems() CPP11_OVERRIDE {return true;} // at very least, has the 'items' subnode
+    int itm_idx = -1) const override;    // #IGNORE
+//   bool              HasChildItems() override {return true;} // at very least, has the 'items' subnode
 
 };
 

@@ -115,7 +115,7 @@ public:
 
   virtual void          InitFromUserData();
   // initialize various settings from the user data of the data column
-  bool         hasViewProperties() const CPP11_OVERRIDE { return true; }
+  bool         hasViewProperties() const override { return true; }
   virtual void          UpdateOnFlag();
   // update the 'on' flag for this column, taking into account whether there is actually any data column set (if not, on must be false)
   virtual void          UpdateFmColLookup();
@@ -135,7 +135,7 @@ protected:
   void          RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false);
   void          RenderAxis_Y(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 private:
   void                  Initialize();
   void                  Destroy();

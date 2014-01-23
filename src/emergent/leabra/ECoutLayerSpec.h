@@ -30,9 +30,9 @@ class E_API ECoutLayerSpec : public ThetaPhaseLayerSpec {
 INHERITED(ThetaPhaseLayerSpec)
 public:
   // following is main hook into code:
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
-  void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
+  void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override { };
   // no mid minus -- could overwrite!
 
   virtual void 	ClampFromECin(LeabraLayer* lay, LeabraNetwork* net);

@@ -44,15 +44,15 @@ public:
   ~taiTreeNode();
 
 public: // ITypedObject interface
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNode;}
+  TypeDef*     GetTypeDef() const override {return &TA_taiTreeNode;}
 public: // ISelectable interface
 protected:
   taiTreeNode*      last_member_node;
   // #IGNORE last member node created, so we know where to start list/group items
   taiTreeNode*      last_child_node;
   // #IGNORE last child node created, so we can pass to createnode
-  void         willHaveChildren_impl(bool& will) const CPP11_OVERRIDE;
-  void         CreateChildren_impl() CPP11_OVERRIDE;
+  void         willHaveChildren_impl(bool& will) const override;
+  void         CreateChildren_impl() override;
 private:
   void                  init(taiSigLink* link_, int dn_flags_); // #IGNORE
 };

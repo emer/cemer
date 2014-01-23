@@ -85,8 +85,8 @@ public:
   void		UpdateNetworkPtrs();
   // #IGNORE update pointers to objects within current network
 
-  taList_impl*	children_() CPP11_OVERRIDE {return &items;}
-  String	GetDisplayName() const CPP11_OVERRIDE;
+  taList_impl*	children_() override {return &items;}
+  String	GetDisplayName() const override;
   
   void	InitLinks();
   void	CutLinks();
@@ -95,8 +95,8 @@ public:
   
 protected:
   void	UpdateAfterEdit_impl();
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void	CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void	CheckChildConfig_impl(bool quiet, bool& rval) override;
 private:
   void		Initialize();
   void		Destroy() {CutLinks();}

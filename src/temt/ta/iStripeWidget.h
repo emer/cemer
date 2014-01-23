@@ -24,7 +24,7 @@
 
 class TA_API iStripeWidget: public QWidget { // #IGNORE provides a horizontal striped background, to highlight items
 public:
-  QSize 		minimumSizeHint () const; // override
+  QSize 		minimumSizeHint () const override;
   void 			setColors(const QColor& hilight, const QColor& bg); 
     // convenient way to set both
   void			setHiLightColor(const QColor& val);
@@ -43,7 +43,7 @@ protected:
   int			mtopMargin; // default is 0;
   int			mbottomMargin; // default is 0, suggest: 15;
 
-  void		paintEvent(QPaintEvent* pev); // override
+  void		paintEvent(QPaintEvent* pev) override;
 };
 
 

@@ -33,29 +33,29 @@ class TA_API String_Data : public DataColT<String_Matrix> {
 INHERITED(DataColT<String_Matrix>)
 friend class DataTable;
 public:
-  bool         isString() const CPP11_OVERRIDE {return true;}
-  ValType      valType() const  CPP11_OVERRIDE {return VT_STRING;}
-  TypeDef*     valTypeDef() const  CPP11_OVERRIDE {return &TA_taString;}
+  bool         isString() const override {return true;}
+  ValType      valType() const  override {return VT_STRING;}
+  TypeDef*     valTypeDef() const  override {return &TA_taString;}
 
   TA_BASEFUNS_NOCOPY(String_Data);
 
 protected:
-  double       GetValAsDouble_impl(int row, int cell) const CPP11_OVERRIDE
+  double       GetValAsDouble_impl(int row, int cell) const override
   { return (double)GetValAsString_impl(row, cell); }
-  float        GetValAsFloat_impl(int row, int cell) const CPP11_OVERRIDE
+  float        GetValAsFloat_impl(int row, int cell) const override
   { return (float)GetValAsString_impl(row, cell); }
-  int          GetValAsInt_impl(int row, int cell) const CPP11_OVERRIDE
+  int          GetValAsInt_impl(int row, int cell) const override
   { return (int)GetValAsString_impl(row, cell); }
-  byte         GetValAsByte_impl(int row, int cell) const CPP11_OVERRIDE
+  byte         GetValAsByte_impl(int row, int cell) const override
   { return GetValAsString_impl(row, cell)[0]; }
 
-  bool  SetValAsDouble_impl(double val, int row, int cell) CPP11_OVERRIDE
+  bool  SetValAsDouble_impl(double val, int row, int cell) override
   { return SetValAsString_impl((String)val, row, cell); }
-  bool  SetValAsFloat_impl(float val, int row, int cell) CPP11_OVERRIDE
+  bool  SetValAsFloat_impl(float val, int row, int cell) override
   { return SetValAsString_impl((String)val, row, cell); }
-  bool  SetValAsInt_impl(int val, int row, int cell) CPP11_OVERRIDE
+  bool  SetValAsInt_impl(int val, int row, int cell) override
   { return SetValAsString_impl((String)val, row, cell); }
-  bool  SetValAsByte_impl(byte val, int row, int cell) CPP11_OVERRIDE
+  bool  SetValAsByte_impl(byte val, int row, int cell) override
   { return SetValAsString_impl((String)val, row, cell); }
 
 private:

@@ -135,7 +135,7 @@ public:
 
   static bool Blur(float_Matrix& img, int kernel_size);
 
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  String 	GetTypeDecoKey() const override { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
 private:
   void 	Initialize();

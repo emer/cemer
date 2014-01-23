@@ -33,12 +33,12 @@ INHERITED(taSigLinkTypeItemSpace)
 public:
   MemberSpace*          data() {return (MemberSpace*)m_data;}
   using inherited::GetListChild;
-  taiSigLink* GetListChild(int itm_idx) CPP11_OVERRIDE; // returns NULL when no more
-  int          NumListCols() const CPP11_OVERRIDE;
-  const KeyString GetListColKey(int col) const CPP11_OVERRIDE;
-  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
+  taiSigLink* GetListChild(int itm_idx) override; // returns NULL when no more
+  int          NumListCols() const override;
+  const KeyString GetListColKey(int col) const override;
+  String       GetColHeading(const KeyString& key) const override;
   String       ChildGetColText(taSigLink* child, const KeyString& key,
-    int itm_idx = -1) const CPP11_OVERRIDE;
+    int itm_idx = -1) const override;
 
   taSigLinkMemberSpace(MemberSpace* data_);
   SL_FUNS(taSigLinkMemberSpace) //

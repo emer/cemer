@@ -34,7 +34,7 @@ public:
     MD_SMART_PTR,       // taSmartPtr -- acts almost identical to taBase*
     MD_SMART_REF        // taSmartRef
   };
-  bool handlesReadOnly() const CPP11_OVERRIDE { return true; } // uses a RO tokenptr button
+  bool handlesReadOnly() const override { return true; } // uses a RO tokenptr button
   taBase*       GetTokenPtr(const void* base) const; // depends on mode
   TypeDef*      GetMinType(const void* base);
   int           BidForType(TypeDef* td);

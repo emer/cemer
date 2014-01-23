@@ -47,15 +47,15 @@ public:
   void*         addr;           // address of static member
   bool          fun_ptr;        // true if this is a pointer to a function
 
-  bool         isReadOnly() const CPP11_OVERRIDE;
-  bool         isGuiReadOnly() const CPP11_OVERRIDE;
+  bool         isReadOnly() const override;
+  bool         isGuiReadOnly() const override;
 
-  void*        This() CPP11_OVERRIDE {return this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_MemberDef;}
-  TypeInfoKinds TypeInfoKind() const CPP11_OVERRIDE {return TIK_MEMBER;}
+  void*        This() override {return this;}
+  TypeDef*     GetTypeDef() const override {return &TA_MemberDef;}
+  TypeInfoKinds TypeInfoKind() const override {return TIK_MEMBER;}
 
   bool ValIsDefault(const void* base,
-                    int for_show=IS_EXPERT) const CPP11_OVERRIDE;
+                    int for_show=IS_EXPERT) const override;
   // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void          Copy(const MemberDef& cp);
@@ -72,11 +72,11 @@ public:
   // get offset of member relative to overall class base pointer
   static void*          GetOff_static(const void* base, int base_off_, ta_memb_ptr off_);
   // get offset of member -- static version that takes args
-  const String GetPathName() const CPP11_OVERRIDE;
+  const String GetPathName() const override;
     // name used for saving a reference in stream files, can be used to lookup again
 
-  const Variant GetValVar(const void* base) const CPP11_OVERRIDE;
-  void          SetValVar(const Variant& val, void* base, void* par = NULL) CPP11_OVERRIDE;
+  const Variant GetValVar(const void* base) const override;
+  void          SetValVar(const Variant& val, void* base, void* par = NULL) override;
     // note: par is only needed really needed for owned taBase ptrs)
 
   DefaultStatus         GetDefaultStatus(const void* base);

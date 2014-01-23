@@ -27,11 +27,11 @@ class TA_API taiWidgetEnumTypeDefChooser : public taiWidgetTypeDefChooser {
 //
 INHERITED(taiWidgetTypeDefChooser)
 public:
-  int                   columnCount(int view) const; // override
-  const String          headerText(int index, int view) const; // override
+  int                   columnCount(int view) const override;
+  const String          headerText(int index, int view) const override;
 
-  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
-  void         btnHelp_clicked() CPP11_OVERRIDE;
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
+  void         btnHelp_clicked() override;
 
   taiWidgetEnumTypeDefChooser(TypeDef* typ_, IWidgetHost* host,
                        taiWidget* par, QWidget* gui_parent_, int flags_ = 0,

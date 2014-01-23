@@ -29,8 +29,8 @@ taTypeDef_Of(taiTypeOfColor);
 class TA_API taiTypeOfColor : public taiTypeOfClass { // special editor for colors, add dialog
   TAI_TYPEBASE_SUBCLASS(taiTypeOfColor, taiTypeOfClass);
 public:
-  bool handlesReadOnly() const CPP11_OVERRIDE { return true; }
-  bool requiresInline() const  CPP11_OVERRIDE { return true; }
+  bool handlesReadOnly() const override { return true; }
+  bool requiresInline() const  override { return true; }
   int           BidForType(TypeDef* td);
 protected:
   taiWidget*      GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,

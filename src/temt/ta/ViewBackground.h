@@ -37,7 +37,7 @@ public:
   Qt::BrushStyle         style;  // the pattern for the background
   String                 desc;   // description of this view color item
 
-  String       GetDesc() const CPP11_OVERRIDE { return desc; }
+  String       GetDesc() const override { return desc; }
 
   void  InitLinks();
   TA_BASEFUNS(ViewBackground);

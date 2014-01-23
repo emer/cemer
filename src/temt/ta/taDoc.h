@@ -56,11 +56,11 @@ public:
   virtual String        GetURL();
   // get a full url based on url specified plus any absolute refs needed
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Doc"; }
+  String       GetTypeDecoKey() const override { return "Doc"; }
 
   TA_BASEFUNS(taDoc);
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
   static const String   init_text; // ##IGNORE initial text
 
 private:

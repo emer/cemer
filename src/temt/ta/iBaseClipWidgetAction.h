@@ -50,8 +50,8 @@ public:
 protected:
   taSmartRef            m_inst;
 
-  QMimeData*   mimeData() const CPP11_OVERRIDE; // delegates to the inst
-  QStringList  mimeTypes() const CPP11_OVERRIDE; // the ta custom type
+  QMimeData*   mimeData() const override; // delegates to the inst
+  QStringList  mimeTypes() const override; // the ta custom type
 private:
   void                  Init(taBase* inst, String tooltip = _nilString);
 };

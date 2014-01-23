@@ -94,8 +94,8 @@ public:
   iDialogObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~iDialogObjDiffBrowser();
 protected slots:
-  void         accept() CPP11_OVERRIDE;
-  void         reject() CPP11_OVERRIDE;
+  void         accept() override;
+  void         reject() override;
   virtual  void         toggleAllA();
   virtual  void         setFilteredA();
   virtual  void         toggleAllB();

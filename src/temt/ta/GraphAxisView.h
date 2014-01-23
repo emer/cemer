@@ -33,9 +33,9 @@ public:
 
   bool          row_num;        // display row number instead of column value for this axis
 
-  void         ComputeRange() CPP11_OVERRIDE;
-  bool         UpdateRange() CPP11_OVERRIDE;
-  void         UpdateOnFlag() CPP11_OVERRIDE;
+  void         ComputeRange() override;
+  bool         UpdateRange() override;
+  void         UpdateOnFlag() override;
 
   void          CopyFromView(GraphAxisView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
@@ -43,7 +43,7 @@ public:
   SIMPLE_COPY(GraphAxisView);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 
 private:
   void                  Initialize();

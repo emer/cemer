@@ -115,14 +115,14 @@ public:
   void          TriggerContextUpdate();
   // #CAT_Activation for context layers, manually triggers the update
 
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
+  String GetTypeDecoKey() const override { return "Layer"; }
 
   void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(Layer_Group);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
   virtual void  BuildLayers_impl();
   virtual void  BuildPrjns_impl();
   virtual void  Clean_impl() {}

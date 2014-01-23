@@ -37,7 +37,7 @@ public:
   virtual void          RenderWizDoc();
   // #IGNORE render the wizard doc, providing the interface that the user sees to select wizard elements -- called in InitLinks -- calls header, impl, footer -- use impl to override raw text render
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Wizard"; }
+  String       GetTypeDecoKey() const override { return "Wizard"; }
 
   void  InitLinks();
   TA_BASEFUNS(taWizard);

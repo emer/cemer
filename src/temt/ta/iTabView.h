@@ -101,7 +101,7 @@ public slots:
 protected:
   iPanelViewer*   m_viewer_win;
 
-  void keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
+  void keyPressEvent(QKeyEvent* e) override;
 
 private:
   iPanelBase_PtrList    panels; // no external hanky-panky with this puppie

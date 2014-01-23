@@ -44,7 +44,7 @@ public:
   float		g_h;		// #NO_VIEW hysteresis conductance
   float		g_a;		// #NO_VIEW accomodation conductance
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Unit"; }
+  String       GetTypeDecoKey() const override { return "Unit"; }
 
   void 	Copy_(const VChanBasis& cp);
   TA_BASEFUNS(VChanBasis);
@@ -64,7 +64,7 @@ public:
   float		h;		// hysteresis (Ca)
   float		a;		// accomodation (K)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Unit"; }
+  String       GetTypeDecoKey() const override { return "Unit"; }
 
   void 	Copy_(const LeabraUnitChans& cp);
   TA_BASEFUNS(LeabraUnitChans);
@@ -333,7 +333,7 @@ public:
   //	Misc Housekeeping, non Compute functions
 
   void	GetInSubGp();
-  bool	BuildUnits() CPP11_OVERRIDE;
+  bool	BuildUnits() override;
 
   void	InitLinks();
   void	CutLinks();

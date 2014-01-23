@@ -33,7 +33,7 @@ public:
   const TypeItem::TypeInfoKinds    tik;
   TypeDef*              type() const {return m_type;}
 
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE;
+  TypeDef*     GetDataTypeDef() const override;
 
   SL_FUNS(taSigLinkClass); //
 

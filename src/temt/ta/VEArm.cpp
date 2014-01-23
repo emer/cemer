@@ -515,20 +515,20 @@ void VEArm::InitMuscles() {
   rest_lens.SetGeom(1,n_musc);
   musc_gains.SetGeom(1,n_musc);
   SetAllMuscGains(1.0f);
-  float pi  = taMath_float::pi;
+  const float pi  = taMath_float::pi;
 
   if(musc_geo == OLD_GEO) {
     // these are the angles at which muscles attain their maximum length for right arms
-    float alphaM[] = {pi/2, pi/4, pi/300, pi/300, -.7*pi, .3*pi, -.7*pi, .3*pi, pi, pi/300, pi/300};
-    float betaM[] = {.03*pi, .8*pi, pi/300, pi/300, .6*pi, .6*pi, .6*pi, .6*pi, pi/30, pi/300,pi/300}; 
+    float alphaM[] = {pi/2, pi/4, pi/300, pi/300, -.7f*pi, .3f*pi, -.7f*pi, .3f*pi, pi, pi/300, pi/300};
+    float betaM[] = {.03f*pi, .8f*pi, pi/300, pi/300, .6f*pi, .6f*pi, .6f*pi, .6f*pi, pi/30, pi/300,pi/300}; 
     float gammaM[] = {pi/2, 0, -1.3f, 1.3f, -1.4f, .5f, -1.0f, -pi/2, 1.0f, 0, 0};
-    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9*pi, 0};
+    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9f*pi, 0};
 
     // these are the angles at which muscles attain their minimum length for right arms
-    float alpham[] = {pi/2, pi/2, pi/300, pi/300, pi/5, -.7*pi, pi/5, -.7*pi, pi/4/ pi/300, pi/300};
-    float betam[] = {.7*pi, .03*pi, pi/300, pi/300, .7*pi, .6*pi, .3*pi, .3*pi, pi/30, pi/300, pi/300};
+    float alpham[] = {pi/2, pi/2, pi/300, pi/300, pi/5, -.7f*pi, pi/5, -.7f*pi, pi/4/ pi/300, pi/300};
+    float betam[] = {.7f*pi, .03f*pi, pi/300, pi/300, .7f*pi, .6f*pi, .3f*pi, .3f*pi, pi/30, pi/300, pi/300};
     float gammam[] = {pi/2, -pi/2, 1.2f, -1.2f, pi/2, 1.0f, 1.0f, 1.4f, 0.2f, 0, 0};
-    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0.8*pi, 0, 0.8*pi};
+    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0.8f*pi, 0, 0.8f*pi};
 
     if(arm_side == LEFT_ARM) {  // switching arm side reverses alpha and gamma
       for(int i=0; i<n_musc; i++) {
@@ -548,16 +548,16 @@ void VEArm::InitMuscles() {
     }
   } else { // musc_geo == NEW_GEO
     // these are the angles at which muscles attain their maximum length for right arms
-    float alphaM[] = {pi/7, pi-pi/7, -pi/2, pi/300, pi/300, -.7*pi, .3*pi, -.7*pi, .3*pi, pi, pi/300, pi/300};
-    float betaM[] = {pi/20, pi/20, .8*pi, pi/300, pi/300, .6*pi, .6*pi, .6*pi, .6*pi, pi/30, pi/300,pi/300}; 
+    float alphaM[] = {pi/7, pi-pi/7, -pi/2, pi/300, pi/300, -.7f*pi, .3f*pi, -.7f*pi, .3f*pi, pi, pi/300, pi/300};
+    float betaM[] = {pi/20, pi/20, .8f*pi, pi/300, pi/300, .6f*pi, .6f*pi, .6f*pi, .6f*pi, pi/30, pi/300,pi/300}; 
     float gammaM[] = {1.4f, 1.0f, 1.4f, -1.45f, 1.45f, -.5f, .5f, -.5f, -.5f, 1.0f, 0, 0};
-    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9*pi, 0};
+    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9f*pi, 0};
 
     // these are the angles at which muscles attain their minimum length for right arms
-    float alpham[] = {-pi/2, -pi/2, pi/2, pi/300, pi/300, pi/5, -.7*pi, pi/5, -.7*pi, pi/4, pi/300, pi/300};
-    float betam[] = {.8*pi, .8*pi, pi/20, pi/300, pi/300, .7*pi, .6*pi, .3*pi, .3*pi, pi/30, pi/300, pi/300};
+    float alpham[] = {-pi/2, -pi/2, pi/2, pi/300, pi/300, pi/5, -.7f*pi, pi/5, -.7f*pi, pi/4, pi/300, pi/300};
+    float betam[] = {.8f*pi, .8f*pi, pi/20, pi/300, pi/300, .7f*pi, .6f*pi, .3f*pi, .3f*pi, pi/30, pi/300, pi/300};
     float gammam[] = {pi/2, pi/2, -pi/2, 1.45f, -1.45f, pi/2, -.5f, 0, 1.4f, 0.2f, 0, 0};
-    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.8*pi, 0, 0.8*pi};
+    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.8f*pi, 0, 0.8f*pi};
 
     if(arm_side == LEFT_ARM) {   // switching arm side reverses alpha and gamma
       for(int i=0; i<n_musc; i++) {
@@ -964,7 +964,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
   if(up_axis == Z) {
     humerus->RotateEuler(beta,gamma,alpha,false);
-    float HumCM_f[] = {0.0f,0.0f,(-La+(elbow_gap/2.0))/2.0};  // humerus' geometrical center at rest
+    float HumCM_f[] = {0.0f,0.0f,(-La+(elbow_gap/2.0f))/2.0f};  // humerus' geometrical center at rest
     float_Matrix HumCM(2,1,3);
     HumCM.InitFromFloats(HumCM_f);
 
@@ -976,8 +976,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
     float UlnaCM_f[] = {0,0,-(ulna->length/2 + elbow_gap/2)};  // Ulna 'CM' with origin at elbow
     //float Wrist_f[] = {0,0,-(ulna->length + elbow_gap/2 + wrist_gap/2)};  // wrist coords with origin at elbow
     float elbow_rot_f[] = {1 , 0, 0,
-                  0, cos(delta), -sin(delta),
-                  0, sin(delta), cos(delta)};
+                  0, cosf(delta), -sinf(delta),
+                  0, sinf(delta), cosf(delta)};
     float_Matrix UlnaCM(2,1,3);
     UlnaCM.InitFromFloats(UlnaCM_f);
     //float_Matrix Wrist(2,1,3);
@@ -1045,8 +1045,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
  
     float UlnaCM_f[] = {0,-(ulna->length/2 + elbow_gap/2),0};  // Ulna 'CM' with origin at elbow
     float elbow_rot_f[] = {1 , 0, 0,
-                  0, cos(delta),  sin(delta),
-                  0, -sin(delta), cos(delta)};
+                  0, cosf(delta),  sinf(delta),
+                  0, -sinf(delta), cosf(delta)};
     float_Matrix UlnaCM(2,1,3);
     UlnaCM.InitFromFloats(UlnaCM_f);
     float_Matrix elbow_rot(2,3,3);

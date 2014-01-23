@@ -31,9 +31,9 @@ INHERITED(LeabraUnitSpec)
 public:
   float		lambda;		// exponential decay parameter for updating activation trace values over time: these trace values are used in learning.  in principle this should also include the effects of the discount (gamma) parameter from the TdRewInteg layer
 
-  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
-  void Init_Weights(Unit* u, Network* net) CPP11_OVERRIDE;
-  void EncodeState(LeabraUnit* u, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Init_Acts(Unit* u, Network* net) override;
+  void Init_Weights(Unit* u, Network* net) override;
+  void EncodeState(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);
 protected:

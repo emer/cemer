@@ -37,17 +37,17 @@ public:
   ProgExpr		expr;
   // expression to assign to variable
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "var="; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  String	GetToolbarName() const override { return "var="; }
 
   PROGEL_SIMPLE_BASEFUNS(AssignExpr);
 protected:
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

@@ -43,25 +43,25 @@ public:
   virtual int           GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   void                  GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
 
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  QWidget*     firstTabFocusWidget() override;
 
   iPanelOfDataTable(taiSigLink* dl_);
   ~iPanelOfDataTable();
 
 protected:
-  void         GetWinState_impl() CPP11_OVERRIDE; // when saving view state
-  void         SetWinState_impl() CPP11_OVERRIDE; // when showing, from view state
+  void         GetWinState_impl() override; // when saving view state
+  void         SetWinState_impl() override; // when showing, from view state
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfDataTable;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfDataTable;}
 protected:
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
-//  int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override; //
+//  int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL) override;
 
 protected:
-  void         Render_impl() CPP11_OVERRIDE;
-  void         UpdatePanel_impl() CPP11_OVERRIDE;
+  void         Render_impl() override;
+  void         UpdatePanel_impl() override;
 
 protected slots:
   void                  tv_hasFocus(iTableView* sender); // for both tableviews

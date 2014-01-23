@@ -35,27 +35,27 @@ INHERITED(ProgEl)
 public:
   ProgEl_List	    	prog_code; // list of Program elements: the block of code
 
-  int 		ProgElChildrenCount() const CPP11_OVERRIDE { return prog_code.size; }
+  int 		ProgElChildrenCount() const override { return prog_code.size; }
 
  virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new program code element
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
-//no  taList_impl*	children_() CPP11_OVERRIDE {return &prog_code;}	
-  ProgVar*	FindVarName(const String& var_nm) const CPP11_OVERRIDE;
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "block"; }
+//no  taList_impl*	children_() override {return &prog_code;}	
+  ProgVar*	FindVarName(const String& var_nm) const override;
+  String	GetDisplayName() const override;
+  String	GetToolbarName() const override { return "block"; }
 
   PROGEL_SIMPLE_BASEFUNS(CodeBlock);
 protected:
-  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
-  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
-  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
-  const String	GenListing_children(int indent_level) CPP11_OVERRIDE;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		PreGenChildren_impl(int& item_id) override;
+  void		GenCssPre_impl(Program* prog) override; 
+  void		GenCssBody_impl(Program* prog) override;
+  void		GenCssPost_impl(Program* prog) override; 
+  const String	GenListing_children(int indent_level) override;
 
 private:
   void	Initialize();

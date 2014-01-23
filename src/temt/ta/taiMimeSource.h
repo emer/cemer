@@ -65,11 +65,11 @@ public:
 #ifndef __MAKETA__
   int			data(const QString& mimeType, std::istringstream& result) const; // #IGNORE provides data to an istrstream; returns # bytes
 #endif
-  QStringList 		formats() const; // override
+  QStringList 	        formats() const;
   bool			hasFormat(const QString& mimeType) const;
   const QMimeData*	mimeData() const {return m_md;}
   int			srcAction() const {return m_src_action;}
-  bool			isThisProcess() const {return m_this_proc;} // override
+  bool			isThisProcess() const {return m_this_proc;}
   
   taiObjectsMimeItem*	objects() const; // convenience GetMimeItem accessor for this type -- NULL if not tacss on clipboard
 

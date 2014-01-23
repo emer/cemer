@@ -127,7 +127,7 @@ public:
   void operator=(const cssEl& s);
   void PtrAssignPtr(const cssEl& s);
   // for ArgCopy and ptr_cnt >= 2 -- assign our pointer
-  bool AssignCheckSource(const cssEl& s) CPP11_OVERRIDE;
+  bool AssignCheckSource(const cssEl& s) override;
   // make sure source is typedef compatible
   virtual bool AssignObjCheck(const cssEl& s);
   // do basic checks on us and source for Copy value assignment
@@ -198,9 +198,9 @@ public:
   void 	InitAssign(const cssEl& s); // reset our object type to match source!
   
   void PtrAssignPtr(const cssEl& s);
-  bool PtrAssignPtrPtr(void* new_ptr_val) CPP11_OVERRIDE;
+  bool PtrAssignPtrPtr(void* new_ptr_val) override;
   // use SetPointer..
-  void PtrAssignNull() CPP11_OVERRIDE;
+  void PtrAssignNull() override;
 
   void UpdateAfterEdit();
 
@@ -233,7 +233,7 @@ public:
   taMatrix* 	GetMatrixPtr() 	const { return (taMatrix*)GetTAPtr(); }
   // return matrix pointer for this object
 
-  bool	IsTaMatrix() const CPP11_OVERRIDE { return true; }
+  bool	IsTaMatrix() const override { return true; }
 
   cssTA_Matrix() : cssTA_Base()	    { }
   cssTA_Matrix(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
@@ -255,7 +255,7 @@ public:
 
   cssEl* operator[](const Variant& idx) const;
 
-  bool AssignCheckSource(const cssEl& s) CPP11_OVERRIDE;
+  bool AssignCheckSource(const cssEl& s) override;
 
   void* 	GetVoidPtrOfType(TypeDef* td) const;
   void* 	GetVoidPtrOfType(const String& td) const;

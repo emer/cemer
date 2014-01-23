@@ -48,13 +48,13 @@ public:
   taBase*               GetBase_Flat(int idx) const;
     // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
 
-  int          NumListCols() const CPP11_OVERRIDE {return 4;}
+  int          NumListCols() const override {return 4;}
   // base name, base type, meth name, memb label
-  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const override;
   // header text for the indicated column
-  const KeyString GetListColKey(int col) const CPP11_OVERRIDE;
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "SelectEdit"; }
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  const KeyString GetListColKey(int col) const override;
+  String       GetTypeDecoKey() const override { return "SelectEdit"; }
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   void  InitLinks();
   TA_BASEFUNS(EditMthItem_Group);
 #ifdef __MAKETA__ // dummy to supress New

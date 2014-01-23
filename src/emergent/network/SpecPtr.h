@@ -54,12 +54,12 @@ public:
   // check for proper type of object (obj_td) that is using this spec (if obj_td is null, it is set to owner type -- can be diff for various other cases) -- just a check -- no message or anything (message is in CheckSpec
 
   taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
-						 taBase* new_par) CPP11_OVERRIDE;
-  int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) CPP11_OVERRIDE;
+						 taBase* new_par) override;
+  int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
 
   TA_BASEFUNS(SpecPtr_impl);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -76,9 +76,9 @@ public:
 
   inline T*		SPtr() const		{ return spec.ptr(); }
   // use this call to access the spec pointer value in all client calls -- fast!
-  BaseSpec*	GetSpec() const	CPP11_OVERRIDE { return SPtr(); }
+  BaseSpec*	GetSpec() const	override { return SPtr(); }
 
-  bool		SetSpec(BaseSpec* es) CPP11_OVERRIDE  {
+  bool		SetSpec(BaseSpec* es) override  {
     if (spec.ptr() == es) return true; // low level setting, ex. streaming, handled in UAE
     if(!owner) return false;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {

@@ -61,7 +61,7 @@ public:
 protected:
   taGuiWidget_QObj*    m_helper;
 
-//   void              UpdateAfterEdit_impl() CPP11_OVERRIDE;
+//   void              UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy();

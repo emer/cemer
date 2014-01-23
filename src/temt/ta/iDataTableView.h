@@ -40,16 +40,16 @@ public:
 
   DataTable*            dataTable() const;
 
-  bool         isFixedRowCount() const CPP11_OVERRIDE {return false;}
-  bool         isFixedColCount() const CPP11_OVERRIDE {return false;}
+  bool         isFixedRowCount() const override {return false;}
+  bool         isFixedColCount() const override {return false;}
 
   iDataTableView(QWidget* parent = NULL);
 
 public: // cliphandler i/f
-  void         EditAction(int ea) CPP11_OVERRIDE;
-  void         GetEditActionsEnabled(int& ea) CPP11_OVERRIDE;
+  void         EditAction(int ea) override;
+  void         GetEditActionsEnabled(int& ea) override;
 
-  void         ViewAction(int ea) CPP11_OVERRIDE;
+  void         ViewAction(int ea) override;
 
 #ifndef __MAKETA__
   signals:
@@ -60,18 +60,18 @@ public: // cliphandler i/f
 
 protected:
   void         currentChanged(const QModelIndex& current,
-      const QModelIndex& previous) CPP11_OVERRIDE;
+      const QModelIndex& previous) override;
 #if (QT_VERSION >= 0x050000)
   void         dataChanged(const QModelIndex& topLeft,
-      const QModelIndex & bottomRight, const QVector<int> &roles = QVector<int>()) CPP11_OVERRIDE;
+      const QModelIndex & bottomRight, const QVector<int> &roles = QVector<int>()) override;
 #else
-  void         dataChanged(const CPP11_OVERRIDE QModelIndex& topLeft,
+  void         dataChanged(const override QModelIndex& topLeft,
       const QModelIndex & bottomRight);
 #endif
 // refresh mat cell if in here
   void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
-      const CellRange& sel) CPP11_OVERRIDE;
-  void         RowColOp_impl(int op_code, const CellRange& sel) CPP11_OVERRIDE;
+      const CellRange& sel) override;
+  void         RowColOp_impl(int op_code, const CellRange& sel) override;
 
 };
 

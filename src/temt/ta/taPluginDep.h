@@ -40,7 +40,7 @@ public:
   
   TA_BASEFUNS(taPluginDep); //
 protected:
-  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE; // only for _deps
+  void CheckThisConfig_impl(bool quiet, bool& rval) override; // only for _deps
 private:
   void	Initialize();
   void	Destroy() {}

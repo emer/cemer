@@ -44,7 +44,7 @@ public:
   bool		slw_sat;	// #DEF_true does fast weight contribute to saturation of slow weights?
   DecayMode	dk_mode;	// how to apply the decay of fast weights back to the slow weight (swt) value
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   SIMPLE_COPY(FastWtSpec);
   TA_BASEFUNS(FastWtSpec);
@@ -71,17 +71,17 @@ public:
 
   FastWtSpec	fast_wt;	// fast weight specs: fast weights are added in separately to overall weight value as an increment (
 
-  // inline void C_Init_Weights_post(BaseCons* cg, const CPP11_OVERRIDE int idx,
+  // inline void C_Init_Weights_post(BaseCons* cg, const override int idx,
   //                                          Unit* ru, Unit* su, Network* net) {
   //   inherited::C_Init_Weights_post(cg, idx, ru, su, net);
   //   cg->Cn(idx,SWT,net) = cg->Cn(idx,WT,net);
   // }
 
   inline void C_Init_dWt(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                  Network* net) CPP11_OVERRIDE
+                                  Network* net) override
   { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->Cn(idx,SDWT,net)=0.0f; }
   // #IGNORE 
-  void SetCurLrate(LeabraNetwork* net, int epoch) CPP11_OVERRIDE;
+  void SetCurLrate(LeabraNetwork* net, int epoch) override;
 
   // inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraSendCons* cg,
   //       			  float lin_wt, float ru_act, float su_act)

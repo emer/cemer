@@ -114,9 +114,9 @@ public:
   bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement
   int                   m_saved_scroll_pos;
 
-  bool         event(QEvent* ev) CPP11_OVERRIDE;
-  void         keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
-  bool         eventFilter(QObject* obj, QEvent* event) CPP11_OVERRIDE;
+  bool         event(QEvent* ev) override;
+  void         keyPressEvent(QKeyEvent* e) override;
+  bool         eventFilter(QObject* obj, QEvent* event) override;
   virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
                                              const CellRange& sel);
   virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}

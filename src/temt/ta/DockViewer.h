@@ -47,10 +47,10 @@ public:
   TA_DATAVIEWFUNS(DockViewer, TopLevelViewer) //
 
 protected:
-  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE;
-  //void               MakeWinName_impl() CPP11_OVERRIDE; each subguy will need this
-  void         GetWinState_impl() CPP11_OVERRIDE;
-  void         SetWinState_impl() CPP11_OVERRIDE;
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) override;
+  //void               MakeWinName_impl() override; each subguy will need this
+  void         GetWinState_impl() override;
+  void         SetWinState_impl() override;
 
 private:
   void  Copy_(const DockViewer& cp)

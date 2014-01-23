@@ -33,12 +33,12 @@ class TA_API SubMatrixOpEl : public DataOpEl {
 public:
   MatrixGeom		offset;
 
-  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetDisplayName() const override;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(SubMatrixOpEl);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 
 #endif // SubMatrixOpEl_h

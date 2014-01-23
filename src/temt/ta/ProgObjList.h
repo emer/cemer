@@ -40,14 +40,14 @@ public:
   virtual DataTable* OneNewTable();
   // #EXPERT goofy callback for ChooseNew callback
 
-  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   virtual void  GetVarsForObjs();
   // automatically create variables for objects in parent program
 
   virtual void  StructUpdateEls(bool begin);
   // runs StructUpdate(begin) on all the elements in the list
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
+  String       GetTypeDecoKey() const override { return "ProgVar"; }
 
   TA_BASEFUNS_NOCOPY(ProgObjList);
 protected:

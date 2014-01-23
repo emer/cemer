@@ -61,7 +61,7 @@ public:
   virtual bool          RemoveTo(Layer* to);
   // #MENU #CAT_Structure remove sending connections to given layer
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Connection"; }
+  String       GetTypeDecoKey() const override { return "Connection"; }
 
   TA_BASEFUNS_NOCOPY(SendCons_List);
 private:

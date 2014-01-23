@@ -50,18 +50,18 @@ public:
   bool          SetName(const String& nm)       { name = nm; return true; }
   String        GetName() const                 { return name; }
 
-  String GetDisplayName() const CPP11_OVERRIDE;
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgArg"; }
+  String GetDisplayName() const override;
+  String GetTypeDecoKey() const override { return "ProgArg"; }
 
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ProgArg);
 protected:
-  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void  Copy_(const ProgArg& cp);
   void  Initialize();

@@ -50,14 +50,14 @@ public:
   virtual bool	ApplyInputData();
   // #CAT_LayerWriter apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
-  taList_impl*	children_() CPP11_OVERRIDE {return &layer_data;}
-  String	GetDisplayName() const CPP11_OVERRIDE;
+  taList_impl*	children_() override {return &layer_data;}
+  String	GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS(LayerWriter);
 protected:
   void	UpdateAfterEdit_impl();
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void CheckChildConfig_impl(bool quiet, bool& rval) override;
     
 private:
   void	Initialize();

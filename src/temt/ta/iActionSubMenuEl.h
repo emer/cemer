@@ -31,8 +31,8 @@ class TA_API iActionSubMenuEl: public iAction { // an action used exclusively to
 public:
   taiWidgetMenu*              sub_menu_data; // the taiWidgetMenu for this submenu
 
-  QMenu*                SubMenu()       { return menu(); } // override
-  bool                  isSubMenu()     { return true; } // override
+  QMenu*                SubMenu()   override    { return menu(); }
+  bool                  isSubMenu() override    { return true; }
 
 protected: // only allowed to be used internally when creating submenus
   void          this_triggered_toggled(bool checked) {} // override submenu items don't signal anything

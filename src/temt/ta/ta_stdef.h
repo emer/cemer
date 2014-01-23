@@ -190,11 +190,16 @@
 
 // Useful pseudo keywords, for C++
 
-// No! 'override' is a keyword as of C++11, making this macro a monstrous horrorshow!
-//#define override virtual  // makes override situation more clear -- use for all descendants
-
-// Use this instead. Define it as 'override' for C++11 compilers.
-#define CPP11_OVERRIDE //override
+// deals with 'override' keyword in c++11, defined to nothing in older compilers
+#if (__cplusplus >= 201103L) || (defined (_MSC_VER) && _MSC_VER >= 1700)
+//#pragma message "C++11 supported compiler, NOT defining override"
+#ifdef override
+#undef override
+#endif
+#else
+//#pragma message "C++11 NOT supported by compiler, defining override"
+#define override
+#endif
 
 #ifdef TA_OS_WIN
 # define _USE_MATH_DEFINES

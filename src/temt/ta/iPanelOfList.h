@@ -35,19 +35,19 @@ typedef iPanel inherited;
 public:
   iTreeView*            list; //actually an iLDPListView
 
-  String       panel_type() const CPP11_OVERRIDE; // this string is on the subpanel button for this panel
+  String       panel_type() const override; // this string is on the subpanel button for this panel
   void                  ClearList(); // for when data changes -- we just rebuild the list
   void                  FillList();
   void                  RenumberList();
 
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  QWidget*     firstTabFocusWidget() override;
 
   iPanelOfList(taiSigLink* dl_, const String& custom_name = _nilString);
   ~iPanelOfList();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfList;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfList;}
 
 public slots:
   void                  list_itemDoubleClicked(QTreeWidgetItem* item, int col);
@@ -56,9 +56,9 @@ public slots:
 protected:
   String                m_custom_name; // used instead of "List View", typically for defchild lists
   void                  ConfigHeader();
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
-  void         UpdatePanel_impl() CPP11_OVERRIDE;
-  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override; //
+  void         UpdatePanel_impl() override;
+  void         OnWindowBind_impl(iPanelViewer* itv) override;
 };
 
 #endif // iPanelOfList_h

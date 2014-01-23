@@ -42,7 +42,7 @@ INHERITED(taTask)
 public:
   ThreadImgProcCall* img_proc_call;	// #IGNORE method to call on the object
 
-  void run() CPP11_OVERRIDE;
+  void run() override;
   // runs specified chunk of computation
 
   ImgProcCallThreadMgr* mgr() { return (ImgProcCallThreadMgr*)owner->GetOwner(); }

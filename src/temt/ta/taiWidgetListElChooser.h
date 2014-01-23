@@ -29,12 +29,12 @@ class TA_API taiWidgetListElChooser : public taiWidgetListElChooser_base {
 public:
   taList_impl*               list;
 
-  const String titleText() CPP11_OVERRIDE;
+  const String titleText() override;
 
   using inherited::GetImage;
   void                  GetImage(taList_impl* base_lst, taBase* it);
 
-  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
 
   taiWidgetListElChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                    QWidget* gui_parent_, int flags_ = 0,

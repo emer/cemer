@@ -38,11 +38,11 @@ public:
   Member_List&          memb_el(int i) // the member defs, typically enumerated once
     {return membs.FastEl(i)->memb_el;}
 
-//  void               GetImage() CPP11_OVERRIDE;
-//  void               GetValue() CPP11_OVERRIDE;
-  void         Constr_Buttons() CPP11_OVERRIDE;//
+//  void               GetImage() override;
+//  void               GetValue() override;
+  void         Constr_Buttons() override;//
 
-//  bool       eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+//  bool       eventFilter(QObject *obj, QEvent *event) override;
   // event filter to trigger apply button on Ctrl+Return
 
   taiEditorOfWizard(taWizard* base, TypeDef* typ_ = NULL,
@@ -51,16 +51,16 @@ public:
 
 protected:
   String_PArray         page_names; // stores names, or blank if none
-  void         Constr_Strings() CPP11_OVERRIDE;
-  void         Constr_Box() CPP11_OVERRIDE;
+  void         Constr_Strings() override;
+  void         Constr_Box() override;
   virtual void         Constr_Widget_Labels();
   virtual void         Constr_Widget_Labels_impl(int& idx, Member_List* ms,
      taiWidget_List* dl);
-  void         Constr_RegNotifies() CPP11_OVERRIDE;
-//  void       DoConstr_Dialog(iDialogEditor*& dlg) CPP11_OVERRIDE;
+  void         Constr_RegNotifies() override;
+//  void       DoConstr_Dialog(iDialogEditor*& dlg) override;
   virtual void         Enum_Members(); // called by Constr_impl to fill memb_el[]
-  void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) CPP11_OVERRIDE;
-  void         Ok_impl() CPP11_OVERRIDE;
+  void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) override;
+  void         Ok_impl() override;
 };
 
 #endif // taiEditorOfWizard_h

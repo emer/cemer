@@ -50,15 +50,15 @@ public:
   int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][sum_line=2][max_line=2][angles]
   float_Matrix	v1c_es_angwts;  // #READ_ONLY #NO_SAVE weights for different angles relative to a given angle [n_angles][n_angles]
 
-  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
+  void	Connect_impl(Projection* prjn) override;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
 
   virtual void	InitStencils(Projection* prjn);
   // initialize stencils -- does not depend on prjn, only params (spec can be reused for any prjn)
 
   TA_SIMPLE_BASEFUNS(V1EndStopPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };

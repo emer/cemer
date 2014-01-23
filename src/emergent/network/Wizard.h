@@ -75,12 +75,12 @@ public:
   virtual bool	FixOldProgs();
   // #MENU_BUTTON #MENU_ON_Programs #MENU_SEP_BEFORE #CONFIRM fix programs from versions earlier than 5.0.2 to have default NO_STOP_STEP flags and short names..
 
-  void RenderWizDoc() CPP11_OVERRIDE;
+  void RenderWizDoc() override;
 
   void	UpdateAfterEdit();
   TA_SIMPLE_BASEFUNS(Wizard);
 protected:
-  void RenderWizDoc_impl() CPP11_OVERRIDE;
+  void RenderWizDoc_impl() override;
   virtual String RenderWizDoc_intro(); // introductory code
   virtual String RenderWizDoc_network(); // network-level functions
   virtual String RenderWizDoc_data(); // datatable functions

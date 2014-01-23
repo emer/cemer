@@ -46,7 +46,7 @@ public:
   MemberDef*    mbr;
 
   taiMember*            LowerBidder() { return static_cast<taiMember*>(next_lower_bidder); }
-  bool         handlesReadOnly() const CPP11_OVERRIDE;
+  bool         handlesReadOnly() const override;
   bool                  isCondEdit() const;
   bool                  isCondShow() const;
 
@@ -59,15 +59,15 @@ public:
 //   // default member action is to pass thru to the type
 //
   taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) override;
   // get taiWidget rep of type -- delegates to mbr's it
   DefaultStatus         GetDefaultStatus(String memb_val);
     // get status of value, if is default value or not
-  void         GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
+  void         GetImage(taiWidget* dat, const void* base) override;
   // generate the gui representation of the data -- same rules as GetWidgetRep
   virtual void          GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
   // this is the one to call to get a member value (GetValue is not used)
-  // TODO: should this class void GetValue(taiWidget* dat, void * base) CPP11_OVERRIDE; as a noop?
+  // TODO: should this class void GetValue(taiWidget* dat, void * base) override; as a noop?
 
   virtual TypeDef*      GetTargetType(const void* base);
   // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
@@ -99,11 +99,11 @@ protected:
   virtual void          GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff);
 
   taiWidget*     GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
-    QWidget* gui_parent_, int flags_, MemberDef* mbr) CPP11_OVERRIDE;
-  void         GetImage_impl(taiWidget* dat, const void* base) CPP11_OVERRIDE;
+    QWidget* gui_parent_, int flags_, MemberDef* mbr) override;
+  void         GetImage_impl(taiWidget* dat, const void* base) override;
   // generate the gui representation of the data -- same rules as GetWidgetRep
   virtual void          GetMbrValue_impl(taiWidget* dat, void* base);
-  bool         isReadOnly(taiWidget* dat, IWidgetHost* host_ = NULL) CPP11_OVERRIDE; // used dlg, par, and member directives to determine if RO
+  bool         isReadOnly(taiWidget* dat, IWidgetHost* host_ = NULL) override; // used dlg, par, and member directives to determine if RO
   void                  CheckProcessCondEnum(taiTypeOfEnum* et, taiWidget* dat, const void* base);
 };
 
@@ -116,10 +116,10 @@ protected:
   } \
   x() { Initialize(); } \
   ~x() { Destroy(); } \
-  TypeDef* GetTypeDef() const CPP11_OVERRIDE { \
+  TypeDef* GetTypeDef() const override { \
     return &TA_##x; \
   } \
-  x* MembInst(MemberDef* md, TypeDef* td) const CPP11_OVERRIDE { \
+  x* MembInst(MemberDef* md, TypeDef* td) const override { \
     return new x(md, td); \
   }
 

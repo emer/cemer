@@ -31,15 +31,15 @@ taTypeDef_Of(taiViewTypeOftaBase);
 class TA_API taiViewTypeOftaBase: public taiViewType { // for taBase and descendants
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOftaBase, taiViewType)
 public:
-  int          BidForView(TypeDef*) CPP11_OVERRIDE;
-  const iColor GetEditColorInherit(taiSigLink* dl, bool& ok) const CPP11_OVERRIDE;// #IGNORE background color for edit
-  iPanelBase*  CreateDataPanel(taiSigLink* dl_) CPP11_OVERRIDE;
-  taiSigLink* GetSigLink(void* data_, TypeDef* el_typ) CPP11_OVERRIDE;
+  int          BidForView(TypeDef*) override;
+  const iColor GetEditColorInherit(taiSigLink* dl, bool& ok) const override;// #IGNORE background color for edit
+  iPanelBase*  CreateDataPanel(taiSigLink* dl_) override;
+  taiSigLink* GetSigLink(void* data_, TypeDef* el_typ) override;
   void                  Initialize() { edit_panel = NULL; }
   void                  Destroy() {}
 protected:
   virtual taiSigLink*  CreateSigLink_impl(taBase* data_);
-  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
+  void         CreateDataPanel_impl(taiSigLink* dl_) override;
 private:
   iPanelOfEditor*        edit_panel; // cached during construction
 };

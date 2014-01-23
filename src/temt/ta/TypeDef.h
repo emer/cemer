@@ -251,9 +251,9 @@ public:
   { return (init_flag & iflg); }
   // check if init_flag is set
 
-       TypeInfoKinds TypeInfoKind() const CPP11_OVERRIDE {return TIK_TYPE;}
-  void*        This() CPP11_OVERRIDE {return this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_TypeDef;}
+       TypeInfoKinds TypeInfoKind() const override {return TIK_TYPE;}
+  void*        This() override {return this;}
+  TypeDef*     GetTypeDef() const override {return &TA_TypeDef;}
   void          Copy(const TypeDef& cp);
   TypeDef();
   TypeDef(const char* nm);
@@ -294,7 +294,7 @@ public:
   /////////////////////////////////////////////////////////////
   //		Parents, Inheritance
 
-  TypeDef*     GetOwnerType() const CPP11_OVERRIDE
+  TypeDef*     GetOwnerType() const override
   { if (owner) return owner->owner; else return NULL; }
   TypeDef*              GetParent() const { return parents.SafeEl(0); }
   // gets (first) parent of this type (assumes no multiple inheritance)
@@ -343,7 +343,7 @@ public:
   // gets a string of pointer symbols (*) corresponding to the number ptrs
   String                Get_C_Name() const;
   // get the C-code name for this type
-  const String GetPathName() const CPP11_OVERRIDE;
+  const String GetPathName() const override;
   String                GetUniqueName() const;
   // get the unique name for this type -- includes owner type name if we are a subtype, using underscores to separate -- suitable for labeling things uniquely for this obj
 

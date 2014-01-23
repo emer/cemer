@@ -34,7 +34,7 @@ class E_API V3SoProject : public V3ProjectBase {
 INHERITED(V3ProjectBase)
 public:
 
-  bool	ConvertToV4_impl() CPP11_OVERRIDE; 
+  bool	ConvertToV4_impl() override; 
 
   void	Initialize() {};
   void	Destroy() 	{ };

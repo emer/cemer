@@ -28,20 +28,20 @@ class TA_API taiWidgetMemberDefChooser : public taiWidgetItemChooser {
   INHERITED(taiWidgetItemChooser)
 public:
   inline MemberDef*     md() const {return (MemberDef*)m_sel;}
-  int                   columnCount(int view) const; // override
-  const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 2;} // override
-  const String          viewText(int index) const; // override
+  int                   columnCount(int view) const override;
+  const String          headerText(int index, int view) const override;
+  int                   viewCount() const override {return 2;}
+  const String          viewText(int index) const override;
 
   using inherited::GetImage;
   void                  GetImage(MemberDef* cur_sel, TypeDef* targ_typ)
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   MemberDef*            GetValue() {return md();}
 
-  void         BuildChooser(iDialogItemChooser* ic, int view = 0) CPP11_OVERRIDE; //
+  void         BuildChooser(iDialogItemChooser* ic, int view = 0) override;
 
   virtual bool          ShowMember(MemberDef* mbr);
-  void         btnHelp_clicked() CPP11_OVERRIDE;
+  void         btnHelp_clicked() override;
 
   taiWidgetMemberDefChooser(TypeDef* typ_, IWidgetHost* host,
                      taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -50,7 +50,7 @@ protected:
   const String          itemTag() const {return "Member: ";}
   const String          labelNameNonNull() const;
 
-  void         BuildCategories_impl() CPP11_OVERRIDE;
+  void         BuildCategories_impl() override;
   void                  BuildChooser_0(iDialogItemChooser* ic);
   void                  BuildChooser_1(iDialogItemChooser* ic);
 };

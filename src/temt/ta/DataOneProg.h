@@ -37,10 +37,10 @@ public:
   virtual DataTable* GetData() const;
   // get actual data table pointer from variable
 
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  String 	GetTypeDecoKey() const override { return "DataTable"; }
   PROGEL_SIMPLE_BASEFUNS(DataOneProg);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

@@ -41,11 +41,11 @@ public:
   
 public: // TAI_xxx instance interface -- used for dynamic creation
   taiMimeItem* Extract(taiMimeSource* ms, 
-    const String& mimetype = _nilString) CPP11_OVERRIDE;
+    const String& mimetype = _nilString) override;
 
 protected:
   mutable signed char	m_all_base; // 0=unknown; -1 no, 1=yes
-  bool		Constr_impl(const String&) CPP11_OVERRIDE;
+  bool		Constr_impl(const String&) override;
 private:
   void	Initialize();
   void	Destroy() {}

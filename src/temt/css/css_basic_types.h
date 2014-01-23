@@ -56,9 +56,9 @@ public:
   operator bool() const	 	{ return val; }
 
   // allow NULL, which is an int, to convert to a NULL of any type..
-  void* GetVoidPtrOfType(TypeDef* td) const CPP11_OVERRIDE
+  void* GetVoidPtrOfType(TypeDef* td) const override
   { if(val!=0) CvtErr(td->name); return NULL; }
-  void* GetVoidPtrOfType(const String& td) const CPP11_OVERRIDE
+  void* GetVoidPtrOfType(const String& td) const override
   { if(val!=0) CvtErr(td); return NULL; }
 
   void* 	NullPtrCvt(const String& typ_nm) const

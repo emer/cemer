@@ -113,13 +113,13 @@ public:
   // for fast-hard-clamp-net: call this first
   virtual void	Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no=-1);
 
-  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
-  void	Compute_Netin(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_dWt(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_Weights(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Init_Acts(Unit* u, Network* net) override;
+  void	Compute_Netin(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
+  void Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
+  void Compute_dWt(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Weights(Unit* u, Network* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(RBpUnitSpec);
 protected:
@@ -218,19 +218,19 @@ public:
 
   virtual void	CopyContext(RBpUnit* u);
   // copy the values in to the context units: called by trial CopyContext under control of a script..
-  void 		Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void 		Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
   // nullify all other functions..
-  void 		Compute_Netin(Unit*, Network* net, int thread_no=-1) 	CPP11_OVERRIDE { };
-  void 		Init_dWt(Unit*, Network* net) 	CPP11_OVERRIDE { };
-  void 		Compute_dWt(Unit*, Network* net, int thread_no=-1) 	CPP11_OVERRIDE { };
-  void 		Compute_Weights(Unit*, Network* net, int thread_no=-1) 	CPP11_OVERRIDE { };
+  void 		Compute_Netin(Unit*, Network* net, int thread_no=-1) 	override { };
+  void 		Init_dWt(Unit*, Network* net) 	override { };
+  void 		Compute_dWt(Unit*, Network* net, int thread_no=-1) 	override { };
+  void 		Compute_Weights(Unit*, Network* net, int thread_no=-1) 	override { };
 
   // bp special functions
-  void	Compute_HardClampNet(RBpUnit*, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE { };
-  void Compute_Error(BpUnit*, BpNetwork* net, int thread_no=-1)	CPP11_OVERRIDE { };
-  void Compute_dEdA(BpUnit*, BpNetwork* net, int thread_no=-1)		CPP11_OVERRIDE { };
-  void Compute_dEdNet(BpUnit*, BpNetwork* net, int thread_no=-1)	CPP11_OVERRIDE { }; //
+  void	Compute_HardClampNet(RBpUnit*, BpNetwork* net, int thread_no=-1) override { };
+  void Compute_Error(BpUnit*, BpNetwork* net, int thread_no=-1)	override { };
+  void Compute_dEdA(BpUnit*, BpNetwork* net, int thread_no=-1)		override { };
+  void Compute_dEdNet(BpUnit*, BpNetwork* net, int thread_no=-1)	override { }; //
 
 //obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
 
@@ -259,7 +259,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(NoisyRBpUnitSpec);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -283,12 +283,12 @@ public:
 //obs  virtual void	ToRBPEvents(Environment* env, int targ_time = 2);
   // #MENU_BUTTON convert events to format suitable for training by RBP, with inputs coming on first, and then targets coming on after targ_time time steps
 
-  bool	StdProgs() CPP11_OVERRIDE;
-  bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) CPP11_OVERRIDE;
+  bool	StdProgs() override;
+  bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) override;
 
   TA_BASEFUNS_NOCOPY(BpWizard);
 protected:
-  String RenderWizDoc_network() CPP11_OVERRIDE;
+  String RenderWizDoc_network() override;
 private:
   void 	Initialize();
   void 	Destroy()	{ };

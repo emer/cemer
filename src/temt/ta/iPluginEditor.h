@@ -74,8 +74,8 @@ protected:
   iPluginEditor();
   ~iPluginEditor();
 
-  void closeEvent(QCloseEvent* ev) CPP11_OVERRIDE;
-  bool eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  void closeEvent(QCloseEvent* ev) override;
+  bool eventFilter(QObject *obj, QEvent *event) override;
 
 protected slots:
   void                  save_clicked();

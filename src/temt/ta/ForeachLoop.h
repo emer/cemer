@@ -36,21 +36,21 @@ public:
   ProgVarRef	    	el_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable that will represent each element in the list of items
   ProgExprBase	    	in; 	// expression for container list of items to iterate over -- typically a [ ] selection over items in a List, Group, or Matrix
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
-  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
+  bool		IsCtrlProgEl() 	override { return true; }
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  void		SetProgExprFlags() CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "foreach"; }
+  String	GetDisplayName() const override;
+  void		SetProgExprFlags() override;
+  String	GetToolbarName() const override { return "foreach"; }
 
   PROGEL_SIMPLE_BASEFUNS(ForeachLoop);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
   bool		ParentForeachLoopVarClashes(); // true if a parent For loop is also using the loop_var
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
-  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssPre_impl(Program* prog) override; 
+  void		GenCssPost_impl(Program* prog) override; 
 private:
   void	Initialize();
   void	Destroy()	{}

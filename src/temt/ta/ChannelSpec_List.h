@@ -34,9 +34,9 @@ INHERITED(taList<ChannelSpec>)
 public:
   void          UpdateDataBlockSchema(DataBlock* db);
 
-  int          NumListCols() const CPP11_OVERRIDE {return 6;}
-  const        KeyString GetListColKey(int col) const CPP11_OVERRIDE;
-  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
+  int          NumListCols() const override {return 6;}
+  const        KeyString GetListColKey(int col) const override;
+  String       GetColHeading(const KeyString& key) const override;
   String GetColHeadingIdx(int col) const;
 
   TA_BASEFUNS_NOCOPY(ChannelSpec_List);

@@ -170,8 +170,8 @@ protected:
   MemberDef*            sel_item_mbr; // used (and only valid!) for context menus
   taBase*               sel_item_base; // used (and only valid!) for context menus
 
-  void         customEvent(QEvent* ev_) CPP11_OVERRIDE;
-  bool         eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  void         customEvent(QEvent* ev_) override;
+  bool         eventFilter(QObject *obj, QEvent *event) override;
   // event filter to trigger apply button on Ctrl+Return
 
   virtual void          Base_Remove(); // removes base and deletes the current set of edit controls

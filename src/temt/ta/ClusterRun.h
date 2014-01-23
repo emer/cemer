@@ -239,7 +239,7 @@ public:
   void InitLinks();
   TA_BASEFUNS(ClusterRun);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 
   static ClusterRunRef  wait_proc_updt; // this cluster run object is in auto-update mode
   static int            wait_proc_trg_rev; // this is target revision for it

@@ -47,8 +47,8 @@ public:
   int                   col_idx; // when this is a DataTable mat cell, the view sets this, otherwise it is -1 -- used in cell updated signal to iDataTableModel
 #ifndef __MAKETA__
   int                   matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
-  QMimeData*   mimeData (const QModelIndexList& indexes) const CPP11_OVERRIDE;
-  QStringList  mimeTypes () const CPP11_OVERRIDE;
+  QMimeData*   mimeData (const QModelIndexList& indexes) const override;
+  QStringList  mimeTypes () const override;
   int                   matView() const; // taMisc::MatrixView
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*             mat() const {return m_mat;}
@@ -72,23 +72,23 @@ protected: // only from matrix
 
 public: // required implementations
 #ifndef __MAKETA__
-  int          columnCount(const QModelIndex& parent = QModelIndex()) const CPP11_OVERRIDE;
-  QVariant     data(const QModelIndex& index, int role = Qt::DisplayRole) const CPP11_OVERRIDE;
-  Qt::ItemFlags flags(const QModelIndex& index) const CPP11_OVERRIDE;
+  int          columnCount(const QModelIndex& parent = QModelIndex()) const override;
+  QVariant     data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags flags(const QModelIndex& index) const override;
   QVariant     headerData(int section, Qt::Orientation orientation,
-                                   int role = Qt::DisplayRole) const CPP11_OVERRIDE;
-  int          rowCount(const QModelIndex& parent = QModelIndex()) const CPP11_OVERRIDE;
+                                   int role = Qt::DisplayRole) const override;
+  int          rowCount(const QModelIndex& parent = QModelIndex()) const override;
   bool         setData(const QModelIndex& index, const QVariant& value,
-                                int role = Qt::EditRole) CPP11_OVERRIDE;
+                                int role = Qt::EditRole) override;
 signals:
   void                  matSigEmit(int col_idx); // only emited during dataChanged if col_idx valid
 
 public: // ISigLinkClient i/f
-  void*        This() CPP11_OVERRIDE {return this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iMatrixTableModel;}
-//  bool               ignoreSigEmit() const CPP11_OVERRIDE;
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
-  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
+  void*        This() override {return this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iMatrixTableModel;}
+//  bool               ignoreSigEmit() const override;
+  void         SigLinkDestroying(taSigLink* dl) override;
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 protected:
   taMatrix*             m_mat;

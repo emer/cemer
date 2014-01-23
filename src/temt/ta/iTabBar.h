@@ -59,9 +59,9 @@ public:
 protected:
   QPalette      defPalette;
 
-  bool focusNextPrevChild(bool next) CPP11_OVERRIDE;
-  void contextMenuEvent(QContextMenuEvent * e) CPP11_OVERRIDE;
-  void mousePressEvent(QMouseEvent* e) CPP11_OVERRIDE;
+  bool focusNextPrevChild(bool next) override;
+  void contextMenuEvent(QContextMenuEvent * e) override;
+  void mousePressEvent(QMouseEvent* e) override;
 };
 
 #endif // iTabBar_h

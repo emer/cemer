@@ -29,12 +29,12 @@ class E_API NetCounterInit: public NetCounterBase {
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(NetCounterBase)
 public:
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "net ctr init"; }
+  String	GetDisplayName() const override;
+  String	GetToolbarName() const override { return "net ctr init"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
 protected:
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize() { };

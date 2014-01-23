@@ -37,7 +37,7 @@ public:
   float         min;
   float         max;
 
-  bool FindCheck(const String& nm) const CPP11_OVERRIDE
+  bool FindCheck(const String& nm) const override
   { return (var_name == nm); }
 
   void          SetFromScale(ColorScale& cs);
@@ -45,7 +45,7 @@ public:
 
   TA_BASEFUNS(ScaleRange);
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 
 private:
   void          Copy_(const ScaleRange &cp)

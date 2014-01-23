@@ -42,10 +42,10 @@ public:
   virtual void   ModImaginalChunk(ActrEvent& event);
   // #CAT_ActR actually do the modifcation -- delayed
 
-  void  InitModule() CPP11_OVERRIDE;
-  void  ProcessEvent(ActrEvent& event) CPP11_OVERRIDE;
-  bool  SetParam(const String& param_nm, Variant par1, Variant par2) CPP11_OVERRIDE;
-  void  Init() CPP11_OVERRIDE;
+  void  InitModule() override;
+  void  ProcessEvent(ActrEvent& event) override;
+  bool  SetParam(const String& param_nm, Variant par1, Variant par2) override;
+  void  Init() override;
 
   TA_SIMPLE_BASEFUNS(ActrImaginalModule);
 private:

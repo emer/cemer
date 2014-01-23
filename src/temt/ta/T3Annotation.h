@@ -147,7 +147,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(T3Annotation);
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 
 private:
   void Initialize();

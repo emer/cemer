@@ -61,7 +61,7 @@ public:
 			      TypeDef* trg_typ, const String& trg_nm);
   // after an initial FindFromPath, do some checking and re-finding to make sure to get the right object given saved trg_typ and trg_nm (if those are null, just returns init_find)
 
-  void	Reset() CPP11_OVERRIDE;
+  void	Reset() override;
   
   DumpPathTokenList();
   ~DumpPathTokenList()          { Reset(); }

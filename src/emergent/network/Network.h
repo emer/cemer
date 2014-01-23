@@ -573,15 +573,15 @@ public:
   // #CAT_DMem distribute units to different nodes
 #endif
 
-  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) CPP11_OVERRIDE;
-  int  Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
-  int  Dump_Save_impl(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
+  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
+  int  Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
+  int  Dump_Save_impl(std::ostream& strm, taBase* par=NULL, int indent=0) override;
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
+  String       GetTypeDecoKey() const override { return "Network"; }
 
-  bool ChangeMyType(TypeDef* new_type) CPP11_OVERRIDE;
-  taBase*      ChooseNew(taBase* origin) CPP11_OVERRIDE;
-  bool         HasChooseNew() CPP11_OVERRIDE { return true; }
+  bool ChangeMyType(TypeDef* new_type) override;
+  taBase*      ChooseNew(taBase* origin) override;
+  bool         HasChooseNew() override { return true; }
 
   void  InitLinks();
   void  CutLinks();
@@ -589,9 +589,9 @@ public:
   TA_BASEFUNS(Network);
 
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
+  void CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void CheckChildConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void  Initialize();

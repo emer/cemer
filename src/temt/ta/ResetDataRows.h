@@ -30,12 +30,12 @@ class TA_API ResetDataRows: public DataOneProg {
   // clear out all existing rows of data in data table
 INHERITED(DataOneProg)
 public:
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "reset rows"; }
+  String	GetDisplayName() const override;
+  String	GetToolbarName() const override { return "reset rows"; }
 
   TA_BASEFUNS_NOCOPY(ResetDataRows);
 protected:
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) override;
 private:
   void	Initialize();
   void	Destroy()	{ }

@@ -83,11 +83,11 @@ protected:
   void                  SetCurMenuButton(MethodDef* md);
 
 public: // ITypedObject i/f (common to IDLC and IDH)
-  void*         This() {return this;} // override
-  TypeDef*      GetTypeDef() const {return &TA_iMethodButtonMgr;} // override
+  void*         This() override {return this;}
+  TypeDef*      GetTypeDef() const override {return &TA_iMethodButtonMgr;}
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
-  void          SigLinkDestroying(taSigLink* dl);
-  void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  void          SigLinkDestroying(taSigLink* dl) override;
+  void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 private:
   void          Init();

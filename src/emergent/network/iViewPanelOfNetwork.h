@@ -142,18 +142,18 @@ public:
   ~iViewPanelOfNetwork();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;} //
-//  void               SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
-//  void               SigLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc) CPP11_OVERRIDE;
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanelOfNetwork;}
+  void*        This() override {return (void*)this;} //
+//  void               SigLinkDestroying(taSigLink* dl) override;
+//  void               SigLinkClientRemoving(taSigLink* dl, ISigLinkClient* dlc) override;
+  TypeDef*     GetTypeDef() const override {return &TA_iViewPanelOfNetwork;}
 
 protected:
   BaseSpec*             m_cur_spec; // cur spec chosen -- only compared, so ok if stale
   bool                  req_full_render; // when updating, call Render on netview
   bool                  req_full_build;  // when updating, call Build on netview
-  void         UpdatePanel_impl() CPP11_OVERRIDE;
-  void         GetValue_impl() CPP11_OVERRIDE;
-  void         CopyFrom_impl() CPP11_OVERRIDE;
+  void         UpdatePanel_impl() override;
+  void         GetValue_impl() override;
+  void         CopyFrom_impl() override;
   void                  setHighlightSpec(BaseSpec* spec, bool force = false);
 
 public slots:

@@ -36,26 +36,26 @@ public:
   taiEditorOfDoc*      de; // the doc editor
 
   taDoc*                doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
-  String       panel_type() const CPP11_OVERRIDE {return "Doc Source";}
+  String       panel_type() const override {return "Doc Source";}
 
-  bool         HasChanged() CPP11_OVERRIDE; // 'true' if user has unsaved changes
+  bool         HasChanged() override; // 'true' if user has unsaved changes
   void                  FillList();
 
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  QWidget*     firstTabFocusWidget() override;
 
   iPanelOfDocEdit(taiSigLink* dl_);
   ~iPanelOfDocEdit();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfDocEdit;}
-  bool         ignoreSigEmit() const CPP11_OVERRIDE;
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfDocEdit;}
+  bool         ignoreSigEmit() const override;
 
 protected:
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
-  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
-  void         UpdatePanel_impl() CPP11_OVERRIDE;
-  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override; //
+  void         OnWindowBind_impl(iPanelViewer* itv) override;
+  void         UpdatePanel_impl() override;
+  void         ResolveChanges_impl(CancelOp& cancel_op) override;
 };
 
 #endif // iPanelOfDocEdit_h

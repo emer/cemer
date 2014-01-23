@@ -60,14 +60,14 @@ public:
 
   virtual bool          deleteOnWinClose() const {return false;}
   inline IViewerWidget* dvwidget() const {return m_dvwidget;} // #IGNORE
-  bool         isMapped() const CPP11_OVERRIDE; // only true if in gui mode and gui stuff exists
+  bool         isMapped() const override; // only true if in gui mode and gui stuff exists
   MainWindowViewer*     parent() const;
-  TypeDef*     parentType() const CPP11_OVERRIDE {return &TA_MainWindowViewer;}
+  TypeDef*     parentType() const override {return &TA_MainWindowViewer;}
   QWidget*              widget(); // #IGNORE
   virtual iMainWindowViewer* viewerWindow() const;
   // #IGNORE valid if is, or is within, a main window
 
-  bool         isTopLevelView() const CPP11_OVERRIDE {return true;} //
+  bool         isTopLevelView() const override {return true;} //
 
   // view state properties (don't require to be mapped)
   virtual bool          isVisible() const; // whether we are supposed to be showing or not (view state)
@@ -83,7 +83,7 @@ public:
 
   virtual void          FrameSizeToSize(iSize& sz) {} // #IGNORE converts a frame size to a window/widget size -- only applies to top level wins, and is hacky/OS-dependent (we don't need the reverse, because we call frameGeometry() to get that)
 
-  virtual bool          GetWinState(); // copy gui state to us (impl) CPP11_OVERRIDE; true if done (ie mapped)
+  virtual bool          GetWinState(); // copy gui state to us (impl) override; true if done (ie mapped)
   virtual bool          SetWinState(); // set gui state from us (override impl)
 
   virtual void          ResolveChanges(CancelOp& cancel_op); // resolve all changes (if mapped)
@@ -106,12 +106,12 @@ public:
 
 protected:
   // from taDataView
-  void         CloseWindow_impl() CPP11_OVERRIDE; // closes the widget, only called if mapped, default calls the Close on the IDVW
+  void         CloseWindow_impl() override; // closes the widget, only called if mapped, default calls the Close on the IDVW
 
   virtual IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) {return NULL;}
     // implement this to create and set the m_widget instance -- only called if !m_widget
-  void         Constr_post() CPP11_OVERRIDE;
-  void         Dump_Save_pre() CPP11_OVERRIDE;
+  void         Constr_post() override;
+  void         Dump_Save_pre() override;
   virtual void          WidgetDeleting_impl(); // lets us do any cleanup -- override the impl
   virtual void          GetWinState_impl() {} // set gui state; only called if mapped
   virtual void          SetWinState_impl() {} // fetch gui state; only called if mapped

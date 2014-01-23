@@ -31,7 +31,7 @@ class TA_API UndoDiffTask : public taTask {
   // threading task for computing the diff on undo save data -- fork this off to save time
 INHERITED(taTask)
 public:
-  void run() CPP11_OVERRIDE;
+  void run() override;
   // runs specified chunk of computation (encode diff)
 
   UndoDiffThreadMgr* mgr() { return (UndoDiffThreadMgr*)owner->GetOwner(); }

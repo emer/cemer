@@ -34,8 +34,8 @@ public:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 protected:
-  void GetImage_impl(taiWidget* dat, const void* base) CPP11_OVERRIDE;
-  void GetMbrValue_impl(taiWidget* dat, void* base) CPP11_OVERRIDE;
+  void GetImage_impl(taiWidget* dat, const void* base) override;
+  void GetMbrValue_impl(taiWidget* dat, void* base) override;
 private:
   void          Initialize();
   void          Destroy() {};

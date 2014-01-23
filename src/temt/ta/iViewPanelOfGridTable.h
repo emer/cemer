@@ -113,21 +113,21 @@ public:
   QAction*                  actColFwdPg;
   QAction*                  actColFwdAll;
 
-  String       panel_type() const CPP11_OVERRIDE; // this string is on the subpanel button for this panel
+  String       panel_type() const override; // this string is on the subpanel button for this panel
   GridTableView*        glv() {return (GridTableView*)m_dv;}
 
   iViewPanelOfGridTable(GridTableView* glv);
   ~iViewPanelOfGridTable();
 
 protected:
-  void         InitPanel_impl() CPP11_OVERRIDE; // called on structural changes
-  void         UpdatePanel_impl() CPP11_OVERRIDE; // called on structural changes
-  void         GetValue_impl() CPP11_OVERRIDE;
-  void         CopyFrom_impl() CPP11_OVERRIDE;
+  void         InitPanel_impl() override; // called on structural changes
+  void         UpdatePanel_impl() override; // called on structural changes
+  void         GetValue_impl() override;
+  void         CopyFrom_impl() override;
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanelOfGridTable;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iViewPanelOfGridTable;}
 
 protected slots:
   void          butRefresh_pressed();

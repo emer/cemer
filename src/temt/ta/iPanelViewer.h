@@ -55,23 +55,23 @@ public:
 public slots:
   virtual void          AddTab(); // causes tab bar to open a new tab, on current panel
   virtual void          CloseTab(); // causes current tab to close (unless only 1 tab)
-  void                  Closing(CancelOp& cancel_op); // override
+  virtual void          Closing(CancelOp& cancel_op);
 
 protected: // IViewerWidget i/f
-  void         Refresh_impl() CPP11_OVERRIDE;
+  void         Refresh_impl() override;
 
 protected:
   iTabView*             m_curTabView; // tab view (split) that currently has the focus
   ISelectable*          cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   ContextFlag           tab_changing; // lets us ignore spurious re-entrant tab changes, ex. bugID:817
 
-  void         Constr_post() CPP11_OVERRIDE; // called virtually, in DV::Constr_post
-  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
-  void         SelectionChanged_impl(ISelectableHost* src_host) CPP11_OVERRIDE; // called when sel changes
-  void         GetWinState_impl() CPP11_OVERRIDE;
-  void         SetWinState_impl() CPP11_OVERRIDE;
+  void         Constr_post() override; // called virtually, in DV::Constr_post
+  void         ResolveChanges_impl(CancelOp& cancel_op) override;
+  void         SelectionChanged_impl(ISelectableHost* src_host) override; // called when sel changes
+  void         GetWinState_impl() override;
+  void         SetWinState_impl() override;
 
-  void         focusInEvent(QFocusEvent* ev) CPP11_OVERRIDE;
+  void         focusInEvent(QFocusEvent* ev) override;
 
 private:
   void                  Init();

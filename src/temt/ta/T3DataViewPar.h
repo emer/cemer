@@ -33,18 +33,18 @@ typedef T3DataView inherited;
 #endif
 public:
   T3DataView_List       children; // #SHOW #READ_ONLY #SHOW_TREE child view objects
-  bool         hasChildren() const CPP11_OVERRIDE {return (children.size > 0);}
+  bool         hasChildren() const override {return (children.size > 0);}
 
-  void         OnWindowBind(iT3Panel* vw) CPP11_OVERRIDE;
-  void         CloseChild(taDataView* child) CPP11_OVERRIDE;
+  void         OnWindowBind(iT3Panel* vw) override;
+  void         CloseChild(taDataView* child) override;
 
-  void         InitLinks() CPP11_OVERRIDE;
-  void         CutLinks() CPP11_OVERRIDE;
+  void         InitLinks() override;
+  void         CutLinks() override;
   T3_DATAVIEWFUNS(T3DataViewPar, T3DataView)
 
 protected:
-  void         DoActionChildren_impl(DataViewAction acts) CPP11_OVERRIDE;
-  void         ReInit_impl() CPP11_OVERRIDE;
+  void         DoActionChildren_impl(DataViewAction acts) override;
+  void         ReInit_impl() override;
   //note: does a depth-first calls to children, before self
 
 private:

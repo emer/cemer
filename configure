@@ -21,6 +21,7 @@ echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for ma
 echo "  --not-native                 don't define -march=native for compilation, which is otherwise the default -- only needed for making packages that will run more broadly"
 echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro var to qt install dir (e.g., home/Qt5.0.0/5.0.0/clang_64)"
+echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
 echo "  --sse8                       define USE_SSE8 to take advantage of 8-way parallel SIMD (SSE) ops -- only useful for clang compiler, where it is auto-enabled"
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
@@ -111,6 +112,11 @@ do
 
     --sse8 | -sse8 | sse8)
       cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-DUSE_SSE8"
+      shift 1
+    ;;
+
+    --c++11 | -c++11 | c++11)
+      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-std=c++11"
       shift 1
     ;;
 

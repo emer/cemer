@@ -49,7 +49,7 @@ public:
   inline void   UpdateNfmXY()   { n = x * y; UpdateFlag(); }
   // update x,y from N
 
-  bool FitN(int no) CPP11_OVERRIDE
+  bool FitN(int no) override
   { bool rval = inherited::FitN(no); n = no; UpdateFlag(); return rval; }
 
   TA_BASEFUNS_LITE(XYNGeom);

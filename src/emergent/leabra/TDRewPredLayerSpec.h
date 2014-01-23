@@ -41,12 +41,12 @@ public:
 					 LeabraNetwork* net);
     // #IGNORE 
 
-  void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
 
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

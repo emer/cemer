@@ -28,18 +28,18 @@ class TA_API taiWidgetMethodDefChooser : public taiWidgetItemChooser {
   INHERITED(taiWidgetItemChooser)
 public:
   inline MethodDef*     md() const {return (MethodDef*)m_sel;}
-  int                   columnCount(int view) const; // override
-  const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 3;} // override
-  const String          viewText(int index) const; // override
+  int                   columnCount(int view) const override;
+  const String          headerText(int index, int view) const override;
+  int                   viewCount() const override {return 3;}
+  const String          viewText(int index) const override;
 
   using inherited::GetImage;
   void                  GetImage(MethodDef* cur_sel, TypeDef* targ_typ)
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   MethodDef*            GetValue() {return md();}
 
-  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
-  void         btnHelp_clicked() CPP11_OVERRIDE;
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
+  void         btnHelp_clicked() override;
 
   taiWidgetMethodDefChooser(TypeDef* typ_, IWidgetHost* host,
                      taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -50,7 +50,7 @@ protected:
   const String          itemTag() const {return "Method: ";}
   const String          labelNameNonNull() const;
 
-  void         BuildCategories_impl() CPP11_OVERRIDE;
+  void         BuildCategories_impl() override;
   void                  BuildChooser_0(iDialogItemChooser* ic);
   int                   BuildChooser_1(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively

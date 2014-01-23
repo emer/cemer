@@ -92,12 +92,12 @@ public:
   // #CAT_LayerData get channel index from data block: depends on source or sink (override in subclass)
 
   String	GetName() const			{ return chan_name; }
-  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);
 protected:
   void  UpdateAfterEdit_impl();
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void	Initialize();

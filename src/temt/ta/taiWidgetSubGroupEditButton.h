@@ -29,7 +29,7 @@ public:
   String        label;
   taiWidgetSubGroupEditButton(void* base, const char* nm,
         TypeDef* tp, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_ = 0);
-  void         SetLabel() CPP11_OVERRIDE;
+  void         SetLabel() override;
 };
 
 #endif // taiWidgetSubGroupEditButton_h

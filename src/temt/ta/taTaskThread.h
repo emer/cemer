@@ -106,7 +106,7 @@ protected:
   volatile bool		m_active;
   bool			m_log;
   
-  void 	run() CPP11_OVERRIDE;
+  void 	run() override;
   void			SetAffinity(); // called from run() in thread
 };
 

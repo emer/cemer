@@ -30,7 +30,7 @@ public:
   MethodDef*    md;
   MethodSpace*  sp;
 
-  void         GetMenu() CPP11_OVERRIDE {GetMenu(NULL);}
+  void         GetMenu() override {GetMenu(NULL);}
   virtual void          GetMenu(const iMenuAction* actn);
   virtual void          UpdateMenu(const iMenuAction* actn = NULL);
 

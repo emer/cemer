@@ -59,11 +59,11 @@ public:
   taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
   IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taList what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
-  TypeDef*     GetElType() const CPP11_OVERRIDE {return el_typ;}
+  TypeDef*     GetElType() const override {return el_typ;}
   // #IGNORE Default type for objects in group
-  TypeDef*     El_GetType_(void* it) const CPP11_OVERRIDE
+  TypeDef*     El_GetType_(void* it) const override
   { return ((taBase*)it)->GetTypeDef(); } // #IGNORE
-  taList_impl* children_() CPP11_OVERRIDE {return this;}
+  taList_impl* children_() override {return this;}
 
   virtual Variant       VarEl(int idx) const;
   // #CAT_Access #EXPERT get element at index as a Variant -- does safe range checking -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc) - this uses LeafElem interface and is thus fully generic
@@ -72,56 +72,56 @@ public:
   virtual void          LinkCopyLeaves(const taList_impl& cp);
   // #CAT_ObjectMgmt #EXPERT create links in this list to all terminal leaf items in source list (i.e., Borrow) -- this is used for creating shallow container copies with different views -- does NOT copy full hierarchical substructure or anything -- just links leaves for accessor routines
 
-  bool         IsContainer()   CPP11_OVERRIDE { return true; }
-  taMatrix*    ElView() const  CPP11_OVERRIDE { return (taMatrix*)el_view.ptr(); }
-  IndexMode    ElViewMode() const  CPP11_OVERRIDE { return el_view_mode; }
-  int          ElemCount() const CPP11_OVERRIDE { return size; }
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE;
-  Variant      IterElem(taBaseItr* itr) const CPP11_OVERRIDE;
-  taBaseItr*   Iter() const CPP11_OVERRIDE;
+  bool         IsContainer()   override { return true; }
+  taMatrix*    ElView() const  override { return (taMatrix*)el_view.ptr(); }
+  IndexMode    ElViewMode() const  override { return el_view_mode; }
+  int          ElemCount() const override { return size; }
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override;
+  Variant      IterElem(taBaseItr* itr) const override;
+  taBaseItr*   Iter() const override;
   virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members
   virtual taList_impl*  NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
   // #CAT_Access #EXPERT make a new view of this list -- returns a new pointer list with view set
 
-  String       GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const CPP11_OVERRIDE;
-  String       GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const CPP11_OVERRIDE;
-  String       GetPathNames(taBase* ta=NULL, taBase* par_stop=NULL) const CPP11_OVERRIDE;
+  String       GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const override;
+  String       GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const override;
+  String       GetPathNames(taBase* ta=NULL, taBase* par_stop=NULL) const override;
 
-  void*        FindMembeR(const String& nm, MemberDef*& ret_md) const CPP11_OVERRIDE;
+  void*        FindMembeR(const String& nm, MemberDef*& ret_md) const override;
 
-  void Close() CPP11_OVERRIDE;
-  bool Close_Child(taBase* obj) CPP11_OVERRIDE;
-  bool CloseLater_Child(taBase* obj) CPP11_OVERRIDE;
-  void ChildUpdateAfterEdit(taBase* child, bool& handled) CPP11_OVERRIDE;
-  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  void Close() override;
+  bool Close_Child(taBase* obj) override;
+  bool CloseLater_Child(taBase* obj) override;
+  void ChildUpdateAfterEdit(taBase* child, bool& handled) override;
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-  taBase* CopyChildBefore(taBase* src, taBase* child_pos) CPP11_OVERRIDE;
+  taBase* CopyChildBefore(taBase* src, taBase* child_pos) override;
 
-  String&      Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
+  String&      Print(String& strm, int indent = 0) const override;
 
   String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const CPP11_OVERRIDE;
+                            bool force_inline = false) const override;
   bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false) CPP11_OVERRIDE;
+                           bool force_inline = false) override;
   int  ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
                               void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) CPP11_OVERRIDE;
+                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) override;
 
   taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                        MemberDef* memb_def=NULL, const void* par=NULL,
                                        TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
 #ifndef __MAKETA__
-  void Dump_Save_GetPluginDeps() CPP11_OVERRIDE;
-  int  Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
-  int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
+  void Dump_Save_GetPluginDeps() override;
+  int  Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0) override;
+  int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0) override;
   virtual int   Dump_Save_PathR_impl(std::ostream& strm, taBase* par, int indent); // #IGNORE
-  void Dump_Load_pre() CPP11_OVERRIDE;
-  taBase* Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ) CPP11_OVERRIDE;
-  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) CPP11_OVERRIDE;
+  void Dump_Load_pre() override;
+  taBase* Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ) override;
+  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
 #endif
 
   void Search_impl(const String& srch, taBase_PtrList& items,
@@ -129,17 +129,17 @@ public:
                             bool contains = true, bool case_sensitive = false,
                             bool obj_name = true, bool obj_type = true,
                             bool obj_desc = true, bool obj_val = true,
-                            bool mbr_name = true, bool type_desc = false) CPP11_OVERRIDE;
+                            bool mbr_name = true, bool type_desc = false) override;
   void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
                            voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                            taBase* cp_base,
                            int show_forbidden=TypeItem::NO_HIDDEN,
                            int show_allowed=TypeItem::SHOW_CHECK_MASK, 
-                           bool no_ptrs = true) CPP11_OVERRIDE;
-  int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) CPP11_OVERRIDE;
-  int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) CPP11_OVERRIDE;
-  int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) CPP11_OVERRIDE;
-  int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) CPP11_OVERRIDE;
+                           bool no_ptrs = true) override;
+  int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
+  int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
+  int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
+  int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) override;
 
   taBase*       DefaultEl_() const      { return (taBase*)SafeEl_(el_def); } // #IGNORE
 
@@ -156,8 +156,8 @@ public:
   virtual void  SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
-  bool RemoveIdx(int idx) CPP11_OVERRIDE;
-  bool Transfer(taBase* item) CPP11_OVERRIDE;
+  bool RemoveIdx(int idx) override;
+  bool Transfer(taBase* item) override;
 
   virtual void  EnforceType();
   // #CAT_Modify enforce current type (all elements have to be of this type)
@@ -195,18 +195,18 @@ public:
   // #CAT_taList make sure name of given item on this list is unique -- will change only the name of this item to ensure uniqueness (does not check other items against other items)
 
 #if defined(TA_GUI) && !defined(__MAKETA__)
-  const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const CPP11_OVERRIDE;
+  const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const override;
 #endif
-  int          NumListCols() const CPP11_OVERRIDE {return 3;}
+  int          NumListCols() const override {return 3;}
   // #IGNORE number of columns in a default list view for this list type
-  const        KeyString GetListColKey(int col) const CPP11_OVERRIDE;
+  const        KeyString GetListColKey(int col) const override;
   // #IGNORE get the key for the default list view
-  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const override;
   // #IGNORE header text for the indicated column
-  String       GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
+  String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   String       ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
-                               int itm_idx = -1) const CPP11_OVERRIDE;        // #IGNORE
-  int          SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) CPP11_OVERRIDE;
+                               int itm_idx = -1) const override;        // #IGNORE
+  int          SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) override;
 
   void  CutLinks();
   void  UpdateAfterEdit(); // we skip the taOBase version, and inherit only taBase (DPF: what does that mean?)
@@ -246,10 +246,10 @@ protected:
 
 protected:
   void CanCopy_impl(const taBase* cp_fm, bool quiet,
-                    bool& ok, bool virt) const CPP11_OVERRIDE;
-  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
-  taBase* New_impl(int n_objs, TypeDef* typ, const String& nm) CPP11_OVERRIDE;
+                    bool& ok, bool virt) const override;
+  void CheckChildConfig_impl(bool quiet, bool& rval) override;
+  String ChildGetColText_impl(taBase* child, const KeyString& key, int itm_idx = -1) const override;
+  taBase* New_impl(int n_objs, TypeDef* typ, const String& nm) override;
 private:
   void  Copy_(const taList_impl& cp);
   void  Initialize();

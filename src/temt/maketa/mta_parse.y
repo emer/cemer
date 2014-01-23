@@ -491,7 +491,9 @@ funnm:    MP_REGFUN ftype regfundefn fundefn	{
 
 regfundefn: methname funargs		{
             $1->is_static = true; /* consider these to be static functions */
-            $1->fun_argc = $2; $1->arg_types.size = $2; mta->burp_fundefn = true; }
+            $1->arg_types.size = MIN($2, $1->arg_types.alloc_size);
+            $1->fun_argc = $1->arg_types.size; 
+            mta->burp_fundefn = true; }
         ;
 
 usenamespc:  namespcword namespcnms term { /* using is not parsed */
@@ -704,7 +706,9 @@ methdefn: basicmeth
               taMisc::types.Add(nt);
               mta->Info(5, "added reg fun to types:", nt->name);
 	      nt->methods.AddUniqNameNew($3); $3->type = $2;
-	      mta->meth_stack.Pop();  $3->fun_argc = $4; $3->arg_types.size = $4;
+	      mta->meth_stack.Pop();  
+              $3->arg_types.size = MIN($4, $3->arg_types.alloc_size);
+              $3->fun_argc = $3->arg_types.size;
 	      $3->is_static = true; /* consider these to be static functions */
 	      SETDESC($3,$5); }
 	    else { $$ = NULL; mta->meth_stack.Pop(); } }
@@ -715,7 +719,9 @@ methdefn: basicmeth
               taMisc::types.Add(nt);
               mta->Info(5, "added reg fun to types:", nt->name);
 	      nt->methods.AddUniqNameNew($2); $2->type = &TA_int;
-	      mta->meth_stack.Pop();  $2->fun_argc = $3; $2->arg_types.size = $3;
+	      mta->meth_stack.Pop();
+              $2->arg_types.size = MIN($3, $2->arg_types.alloc_size);
+              $2->fun_argc = $2->arg_types.size;
 	      $2->is_static = true; /* consider these to be static functions */
 	      SETDESC($2,$4); }
 	    else { $$ = 0; mta->meth_stack.Pop(); } }
@@ -743,7 +749,9 @@ nostatmeth:
         ;
 
 mbfundefn: methname funargs 		{
-             $1->fun_argc = $2; $1->arg_types.size = $2; mta->burp_fundefn = false;
+           $1->arg_types.size = MIN($2, $1->arg_types.alloc_size);
+           $1->fun_argc = $1->arg_types.size; 
+           mta->burp_fundefn = false;
 	     /* argd should always be less than argc, but scanner might screw up
   	        (in fact it does in certain cases..) (if so, then just reset!) */
 	     if($1->fun_argd > $1->fun_argc) $1->fun_argd = -1; }
@@ -754,23 +762,24 @@ methname: MP_NAME			{
         ;
 
 fundefn:  term				{ $$ = ""; }
+        | MP_OVERRIDE term              { $$ = ""; }
         | funsubdefn			{ $$ = $1; }
         | funsubdecl term		{ $$ = $1; }
+        | MP_CONST MP_OVERRIDE term	{ $$ = ""; }
         | MP_COMMENT term		{ $$ = $1; }
+        | MP_COMMENT MP_OVERRIDE term	{ $$ = $1; }
+        | MP_COMMENT MP_CONST MP_OVERRIDE term	{ $$ = $1; }
         | MP_COMMENT funsubdefn		{ $$ = $1; }
         | MP_COMMENT funsubdecl term	{ $$ = $1; }
-        | MP_OVERRIDE term	        { $$ = ""; }
-        | MP_OVERRIDE funsubdefn	{ $$ = $2; }
-        | MP_OVERRIDE funsubdecl term	{ $$ = $2; }
-        | MP_OVERRIDE MP_COMMENT term		 { $$ = $2; }
-        | MP_OVERRIDE MP_COMMENT funsubdefn	 { $$ = $2; }
-        | MP_OVERRIDE MP_COMMENT funsubdecl term { $$ = $2; }
         ;
 
 funsubdefn:
-          MP_FUNCTION			{ $$ = ""; }
-        | MP_CONST MP_FUNCTION		{ $$ = ""; }
-        | MP_CONST MP_COMMENT MP_FUNCTION { $$ = $2; }
+          MP_FUNCTION			        { $$ = ""; }
+        | MP_CONST MP_FUNCTION		        { $$ = ""; }
+        | MP_CONST MP_COMMENT MP_FUNCTION       { $$ = $2; }
+        | MP_OVERRIDE MP_FUNCTION			{ $$ = ""; }
+        | MP_CONST MP_OVERRIDE MP_FUNCTION		{ $$ = ""; }
+        | MP_CONST MP_OVERRIDE MP_COMMENT MP_FUNCTION   { $$ = $3; }
         ;
 
 funsubdecl:
@@ -790,6 +799,7 @@ constfun: ')'				{ $$ = 0; }
 args:	  argdefn			{ $$ = 1; }
         | args ',' argdefn		{ $$ = $1 + 1; }
         | args '.' '.' '.'		{ $$ = $1; } /* todo: flag this.. */
+        | '.' '.' '.'                   { $$ = 0; }
         ;
 
 argdefn:  subargdefn			{

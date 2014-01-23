@@ -35,7 +35,7 @@ public:
   float         se_state_dt;    // #MIN_0 #MAX_1 time constant for integrating bodily state values over time -- typically much slower
   bool          sub_pos;        // subtract positive values (otherwise just use negative values)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(DRN5htSpec);
 protected:
@@ -60,16 +60,16 @@ public:
   virtual void  Compute_Se(LeabraLayer* lay, LeabraNetwork* net);
   // compute the se value based on recv projections from PV and bodily state layers
 
-  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
+  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // never learn
-  bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  CPP11_OVERRIDE { return false; }
-  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
-  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
+  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
+  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

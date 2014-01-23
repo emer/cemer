@@ -34,18 +34,18 @@ public:
   ProgExpr		expr;
   // expression to return from function with (can be empty to return from a void function)
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
-  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
+  bool		IsCtrlProgEl() 	override { return true; }
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "return()"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String	GetToolbarName() const override { return "return()"; }
 
   PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
 protected:
-  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

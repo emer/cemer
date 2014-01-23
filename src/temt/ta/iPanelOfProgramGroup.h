@@ -34,15 +34,15 @@ INHERITED(iPanelOfProgramBase)
 public:
   Program_Group*        progGroup() {return (m_link) ?
     (Program_Group*)(link()->data()) : NULL;}
-  String       panel_type() const CPP11_OVERRIDE {return "Program Params";}
+  String       panel_type() const override {return "Program Params";}
 
   void                  FillList();
 
   iPanelOfProgramGroup(taiSigLink* dl_);
 
 public: // ISigLinkClient interface
-//  void*      This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfProgramGroup;}
+//  void*      This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfProgramGroup;}
 
 protected slots:
   void                  items_CustomExpandFilter(iTreeViewItem* item,

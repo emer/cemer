@@ -40,14 +40,14 @@ public:
   virtual void Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net);
   // set current act of deep unit to sending super unit activation
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
 
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }
 
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(LeabraTICtxtLayerSpec);
 private:

@@ -58,7 +58,7 @@ public:
   void   UpdtTimeAvg(const AvgMaxVals& src, float dt);
   // update the time average from a source guy, using given time constant for runnign average integration
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
+  String       GetTypeDecoKey() const override { return "Layer"; }
 
   void	Copy_(const AvgMaxVals& cp);
   TA_BASEFUNS(AvgMaxVals);

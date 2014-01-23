@@ -39,18 +39,18 @@ public:
   };
 
   taiWidgetComposite(TypeDef* typ_, IWidgetHost* host_, taiWidget* parent_, QWidget* gui_parent_, int flags = 0);
-  ~taiWidgetComposite() CPP11_OVERRIDE;
+  ~taiWidgetComposite() override;
 
   taiWidget_List        widget_el;
   bool                  add_labels;   // if true (default yes), add labels to sub elements
   int                   last_spc;       // space after last widget, -1 = none
 
-  QLayout*              GetLayout() {return (QLayout*)lay;} // override
+  QLayout*              GetLayout() override {return (QLayout*)lay;}
   inline LayoutType     layType() const {return lay_type;}
   QWidget*              widgets(int index);
   int                   widgetCount();
 
-  taBase*      ChildBase() const CPP11_OVERRIDE
+  taBase*      ChildBase() const override
    {if (m_child_base) return m_child_base; return inherited::ChildBase();}
    // child base, typically obtained from parent or host, except ex. PolyData
   virtual void          InitLayout(); // default creates a QHBoxLayout in the Rep
@@ -75,8 +75,8 @@ protected:
     {return (iFlowLayout*)lay;} // only if hasFlow
   inline QStackedLayout* layStacked() const
     {return (QStackedLayout*)lay;} // only if hasFlow
-  void         ChildAdd(taiWidget* child) CPP11_OVERRIDE;
-  void         ChildRemove(taiWidget* child) CPP11_OVERRIDE;
+  void         ChildAdd(taiWidget* child) override;
+  void         ChildRemove(taiWidget* child) override;
   virtual void          AddChildWidget_impl(QWidget* child_widget, int spacing,
     int stretch);// default does an add to layout
 

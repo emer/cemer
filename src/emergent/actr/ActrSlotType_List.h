@@ -33,7 +33,7 @@ class E_API ActrSlotType_List : public taList<ActrSlotType> {
 INHERITED(taList<ActrSlotType>)
 public:
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgType"; }
+  String       GetTypeDecoKey() const override { return "ProgType"; }
 
   TA_BASEFUNS_NOCOPY(ActrSlotType_List);
 private:

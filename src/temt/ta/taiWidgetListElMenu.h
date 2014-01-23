@@ -34,7 +34,7 @@ public:
   taList_impl*       ths;
 
   void          GetMenu(iMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
-  void  GetMenu(taiWidgetActions* menu, iMenuAction* actn = NULL) CPP11_OVERRIDE; // variant provided for MenuGroup_impl in winbase
+  void  GetMenu(taiWidgetActions* menu, iMenuAction* actn = NULL) override; // variant provided for MenuGroup_impl in winbase
   virtual void  UpdateMenu(iMenuAction* actn = NULL);
 
   QWidget*      GetRep();

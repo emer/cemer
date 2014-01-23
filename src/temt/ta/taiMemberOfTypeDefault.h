@@ -35,9 +35,9 @@ public:
 
   virtual int           BidForMember(MemberDef* md, TypeDef* td);//
   taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
-  void         GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
-  void         GetMbrValue(taiWidget* dat, void* base, bool& first_diff) CPP11_OVERRIDE;
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) override;
+  void         GetImage(taiWidget* dat, const void* base) override;
+  void         GetMbrValue(taiWidget* dat, void* base, bool& first_diff) override;
 
 private:
   void          Initialize()    { tpdflt = NULL; }

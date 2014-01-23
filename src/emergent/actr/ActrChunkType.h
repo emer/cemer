@@ -78,16 +78,16 @@ public:
   virtual ActrChunkType* CommonChunkType(ActrChunkType* other);
   // #CAT_ActR returns the highest common chunk type between this chunk type and the other -- NULL if they are not related
 
-  taList_impl*	children_() CPP11_OVERRIDE {return &slots;}	
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
+  taList_impl*	children_() override {return &slots;}	
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return slots.Elem(idx, mode); }
-  String       GetDesc() const CPP11_OVERRIDE {return desc;}
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgType"; }
+  String       GetDesc() const override {return desc;}
+  String       GetTypeDecoKey() const override { return "ProgType"; }
 
   TA_SIMPLE_BASEFUNS(ActrChunkType);
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  //  void	CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+  //  void	CheckChildConfig_impl(bool quiet, bool& rval) override;
 private:
   void Initialize();
   void Destroy();

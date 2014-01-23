@@ -86,7 +86,7 @@ public:
   virtual bool          fixTransformAxis();
   // make sure transform doesn't have a zero axis
 
-  bool         isMapped() const CPP11_OVERRIDE; // only true if in gui mode and gui stuff exists
+  bool         isMapped() const override; // only true if in gui mode and gui stuff exists
   T3Node*               node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
   virtual T3Panel* GetFrame() const;
@@ -96,14 +96,14 @@ public:
 
   void                  AddRemoveChildNode(SoNode* node, bool adding);
     // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
-  void         Close() CPP11_OVERRIDE; // usually delegates to parent->CloseChild
+  void         Close() override; // usually delegates to parent->CloseChild
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
-  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         SigDestroying() CPP11_OVERRIDE; // called by data when it is destroying -- usual action is to destroy ourself
-  void         ChildClearing(taDataView* child) CPP11_OVERRIDE; // NOTE: child is always a T3DataView
-  void         ChildRendered(taDataView* child) CPP11_OVERRIDE; //  NOTE: child is always a T3DataView
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
+  void         SigDestroying() override; // called by data when it is destroying -- usual action is to destroy ourself
+  void         ChildClearing(taDataView* child) override; // NOTE: child is always a T3DataView
+  void         ChildRendered(taDataView* child) override; //  NOTE: child is always a T3DataView
 
   virtual void          OnWindowBind(iT3Panel* vw);
   // #IGNORE called after the viewer creates/fills the main window (for dataviews embedded in main viewer only), or when DataView added to existing viewer
@@ -112,19 +112,19 @@ public:
 
   virtual void          ViewProperties(); // #MENU #VIEWMENU show the view properties for this object
 
-  void         CutLinks() CPP11_OVERRIDE;
+  void         CutLinks() override;
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
 public: // ISelectable interface (only not in ISigLinkClient)
-  ISelectableHost* host() const CPP11_OVERRIDE; //
-  MemberDef*   md() const CPP11_OVERRIDE {return m_md;}
-  ISelectable* par() const CPP11_OVERRIDE;
-  taiSigLink* viewLink() const CPP11_OVERRIDE; // data of the link
-  GuiContext   shType() const CPP11_OVERRIDE {return GC_DUAL_DEF_DATA;}
-  taiSigLink* clipParLink(GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE; // not par_link
+  ISelectableHost* host() const override; //
+  MemberDef*   md() const override {return m_md;}
+  ISelectable* par() const override;
+  taiSigLink* viewLink() const override; // data of the link
+  GuiContext   shType() const override {return GC_DUAL_DEF_DATA;}
+  taiSigLink* clipParLink(GuiContext sh_typ = GC_DEFAULT) const override; // not par_link
 protected:
   void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
-                                       GuiContext sh_typ) const CPP11_OVERRIDE;
+                                       GuiContext sh_typ) const override;
 
 protected:
   MemberDef*            m_md; // memberdef of this item in its parent
@@ -132,22 +132,22 @@ protected:
   void                  setNode(T3Node* node); // make changes via this
 
   virtual void          AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
-  void         ChildRemoving(taDataView* child) CPP11_OVERRIDE; // #IGNORE called from list; we also forward to taViewer; we also remove visually
+  void         ChildRemoving(taDataView* child) override; // #IGNORE called from list; we also forward to taViewer; we also remove visually
   virtual void          Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 
   virtual void          OnWindowBind_impl(iT3Panel* vw) {} // override for something this class
-  void         Clear_impl() CPP11_OVERRIDE;
+  void         Clear_impl() override;
   virtual void          ReInit_impl(); // default just calls clear() on the so, if it exists
-  void         Render_pre() CPP11_OVERRIDE; //
-  void         Render_impl() CPP11_OVERRIDE;
+  void         Render_pre() override; //
+  void         Render_impl() override;
 
-  void         SigRecvStructUpdateEnd_impl() CPP11_OVERRIDE; // our own customized version, similar to generic base
-  void         SigRecvRebuildView_impl() CPP11_OVERRIDE {SigRecvStructUpdateEnd_impl();} // same as StructEnd
+  void         SigRecvStructUpdateEnd_impl() override; // our own customized version, similar to generic base
+  void         SigRecvRebuildView_impl() override {SigRecvStructUpdateEnd_impl();} // same as StructEnd
 
 protected:
   T3DataView*           last_child_node; // #IGNORE last child node created, so we can pass to createnode
-  void         SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE; // called by data for an UAE
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         SigRecvUpdateAfterEdit_impl() override; // called by data for an UAE
+  void         UpdateAfterEdit_impl() override;
 
 private:
   T3NodePtr             m_node_so; // Inventor node DO NOT MOVE FROM PRIVATE!!! DON'T EVEN THINK ABOUT IT!!! YOU ARE STILL THINKING ABOUT IT... STOP!!!!!!!
@@ -169,8 +169,8 @@ typedef taPtrList<T3DataView> inherited;
 public:
 
 protected:
-  void*        El_Ref_(void* it) CPP11_OVERRIDE { taBase::Ref((taBase*)it); return it; } // when pushed
-  void*        El_unRef_(void* it) CPP11_OVERRIDE { taBase::UnRef((taBase*)it); return NULL; }
+  void*        El_Ref_(void* it) override { taBase::Ref((taBase*)it); return it; } // when pushed
+  void*        El_unRef_(void* it) override { taBase::UnRef((taBase*)it); return NULL; }
    //TODO: changed from unRef 11/28/05 -- this now has delete semantics, will require objects
    // that are owned elsewhere to have ++ref count before adding here
 };

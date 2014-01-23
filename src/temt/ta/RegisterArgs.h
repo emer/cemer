@@ -31,13 +31,13 @@ class TA_API RegisterArgs: public ProgEl {
   // register command-line arguments for any MemberFmArg, ProgVarFmArg DataColsFmArgs program elements contained in the prog_code of the program that this item appears in.  calls taMisc::UpdateArgs(), so any any other taMisc::AddArgName MiscCall's placed before this will also be processed
 INHERITED(ProgEl)
 public:
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "reg args"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  String	GetToolbarName() const override { return "reg args"; }
 
   PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
 protected:
-  void	GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void	GenCssBody_impl(Program* prog) override;
 
   virtual void		AddArgsFmCode(Program* prog, ProgEl_List& progs);
   // main function: iterates recursively through progs, adding any that add args to gen_code

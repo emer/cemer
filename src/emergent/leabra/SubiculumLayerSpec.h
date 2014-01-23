@@ -45,12 +45,12 @@ public:
     return lrate;
   }
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(SubiculumNoveltySpec);
 protected:
   SPEC_DEFAULTS;
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -78,9 +78,9 @@ public:
   virtual void 	Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net);
   // set the learning rate for conspec according to final novelty computed value -- called in PostSettle
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(SubiculumLayerSpec);
 protected:

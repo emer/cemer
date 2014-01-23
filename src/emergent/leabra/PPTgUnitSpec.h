@@ -32,8 +32,8 @@ public:
   float         d_net_gain;     // extra multiplicative gain factor to apply to the net input delta -- brings this delta back into the typical range so that more standard activation functions can be used
   bool          clamp_act;      // clamp the activation directly instead of driving net input -- still applies d_net_gain -- provides a purely linear y-dot reference signal
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(PPTgUnitSpec);
 protected:

@@ -32,15 +32,15 @@ public:
   virtual void  Clamp_Da(LeabraLayer* lay, LeabraNetwork* net);
   // clamp the current Da value on the layer activations
 
-  void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // never learn
-  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  CPP11_OVERRIDE { return false; }
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

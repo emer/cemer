@@ -50,7 +50,7 @@ signals:
 protected:
   ISelectableHost*      host;
 
-  void         customEvent(QEvent* ev) CPP11_OVERRIDE; // dispatch
+  void         customEvent(QEvent* ev) override; // dispatch
   void                  Emit_NotifySignal(ISelectableHost::NotifyOp op);
 
   ISelectableHost_QObj(ISelectableHost* host_) {host = host_;}

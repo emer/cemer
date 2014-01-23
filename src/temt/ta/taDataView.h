@@ -141,13 +141,13 @@ public:
     int& allowed, int& forbidden); // #IGNORE note: this includes children of owned lists--md=NULL
 
 protected: // the following just call inherited then insert the DV_ version
-  void         QueryEditActionsS_impl(int& allowed, int& forbidden) CPP11_OVERRIDE;
+  void         QueryEditActionsS_impl(int& allowed, int& forbidden) override;
     // called once per src item, by controller
   void         QueryEditActionsD_impl(taiMimeSource* ms,
-    int& allowed, int& forbidden) CPP11_OVERRIDE;
+    int& allowed, int& forbidden) override;
   void         ChildQueryEditActions_impl(const MemberDef* md,
     const taBase* child, const taiMimeSource* ms,
-    int& allowed, int& forbidden) CPP11_OVERRIDE;
+    int& allowed, int& forbidden) override;
 
 public:
   int   GetIndex() const {return m_index;}
@@ -158,17 +158,17 @@ public:
   TA_BASEFUNS(taDataView)
 
 public: // ISigLinkCLient
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetDataTypeDef() const override {
     return (m_data) ? m_data->GetTypeDef() : &TA_taBase; } // TypeDef of the data
-  bool         ignoreSigEmit() const CPP11_OVERRIDE {return (m_vis_cnt <= 0);}
-  bool         isDataView() const CPP11_OVERRIDE {return true;}
-  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         IgnoredSigEmit(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE; // called by SigLink when destroying; it will remove
+  bool         ignoreSigEmit() const override {return (m_vis_cnt <= 0);}
+  bool         isDataView() const override {return true;}
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
+  void         IgnoredSigEmit(taSigLink* dl, int sls, void* op1, void* op2) override;
+  void         SigLinkDestroying(taSigLink* dl) override; // called by SigLink when destroying; it will remove
 
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
   virtual void          SigLinkRecv_impl(int sls, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
   virtual void          SigRecvUpdateAfterEdit_impl() {} // called by data for an UAE, i.e., after editing etc.

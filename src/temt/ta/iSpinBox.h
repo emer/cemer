@@ -42,8 +42,8 @@ signals:
 public slots:
   virtual void	setReadOnly(bool value); //note: hides inherited member
 protected:
-  void 		focusInEvent(QFocusEvent* ev); // override
-  void 		focusOutEvent(QFocusEvent* ev); // override
+  void 		focusInEvent(QFocusEvent* ev) override;
+  void 		focusOutEvent(QFocusEvent* ev) override;
   void 		wheelEvent(QWheelEvent * event);
   void		init();
 private:

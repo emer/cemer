@@ -53,7 +53,7 @@ public:
   BrainView*    getBrainView();
 
   void          AllocUnitViewData(); // make sure we have correct space in uvd storage
-  void BuildAll() CPP11_OVERRIDE; // creates fully populated subviews
+  void BuildAll() override; // creates fully populated subviews
   virtual void  InitDisplay();
   void          UpdateSlices(); // #IGNORE
   float         GetUnitDisplayVal(const Unit* u, void*& base);
@@ -67,8 +67,8 @@ public:
   virtual void  UpdateAutoScale(bool& updated);
   // update autoscale values
 
-  void InitLinks() CPP11_OVERRIDE;
-  void CutLinks() CPP11_OVERRIDE;
+  void InitLinks() override;
+  void CutLinks() override;
   T3_DATAVIEWFUNS(BrainVolumeView, T3DataViewPar)
 
 
@@ -79,14 +79,14 @@ protected:
   // for cons
   void          UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
   // for bias vals
-  void  DoActionChildren_impl(DataViewAction acts) CPP11_OVERRIDE;
+  void  DoActionChildren_impl(DataViewAction acts) override;
   virtual void   Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void   Render_impl_blocks();  // optimized blocks
 
-  void  Render_pre() CPP11_OVERRIDE;          // #IGNORE
-  void  Render_impl() CPP11_OVERRIDE;         // #IGNORE
-  void  Reset_impl() CPP11_OVERRIDE;          // #IGNORE
-  void  SigRecvUpdateView_impl() CPP11_OVERRIDE; // #IGNORE
+  void  Render_pre() override;          // #IGNORE
+  void  Render_impl() override;         // #IGNORE
+  void  Reset_impl() override;          // #IGNORE
+  void  SigRecvUpdateView_impl() override; // #IGNORE
 
 private:
   NOCOPY(BrainVolumeView)

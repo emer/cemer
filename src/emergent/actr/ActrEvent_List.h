@@ -31,7 +31,7 @@ class E_API ActrEvent_List : public taList<ActrEvent> {
 INHERITED(taList<ActrEvent>)
 public:
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  String       GetTypeDecoKey() const override { return "Program"; }
 
   TA_BASEFUNS_NOCOPY(ActrEvent_List);
 private:

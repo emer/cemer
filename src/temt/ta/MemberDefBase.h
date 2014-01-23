@@ -41,15 +41,15 @@ public:
   virtual bool          isReadOnly() const = 0; // absolutely read-only
   virtual bool          isGuiReadOnly() const = 0; // read-only in the gui
 
-  void*        This() CPP11_OVERRIDE {return this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_MemberDefBase;}
+  void*        This() override {return this;}
+  TypeDef*     GetTypeDef() const override {return &TA_MemberDefBase;}
   virtual bool          ValIsDefault(const void* base,
                                      int for_show) const = 0; // = taMisc::IS_EXPERT);
     // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void          Copy(const MemberDefBase& cp);
   void          Copy(const MemberDefBase* cp); // this is a "pseudo-virtual" type guy, that will copy a like source (Member or Property)
-  TypeDef*     GetOwnerType() const CPP11_OVERRIDE;
+  TypeDef*     GetOwnerType() const override;
   MemberDefBase();
   MemberDefBase(const char* nm);
   MemberDefBase(TypeDef* ty, const char* nm, const char* dsc, const char* op,

@@ -155,9 +155,9 @@ public:
   taVector3f    cur_force2;     // #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW force that joint applies to body 2
   taVector3f    cur_torque2;    // #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW torque that joint applies to body 2
 
-  String       GetDesc() const CPP11_OVERRIDE { return desc; }
-  int          GetEnabled() const CPP11_OVERRIDE {  return !HasJointFlag(OFF); }
-  void         SetEnabled(bool value) CPP11_OVERRIDE { SetJointFlagState(OFF, !value); }
+  String       GetDesc() const override { return desc; }
+  int          GetEnabled() const override {  return !HasJointFlag(OFF); }
+  void         SetEnabled(bool value) override { SetJointFlagState(OFF, !value); }
 
   inline void           SetJointFlag(JointFlags flg)   { flags = (JointFlags)(flags | flg); }
   // set joint flag state on
@@ -205,7 +205,7 @@ public:
 
   SIMPLE_COPY_UPDT_PTR_PAR(VEJoint, VEWorld);
   SIMPLE_INITLINKS(VEJoint);
-  void CutLinks() CPP11_OVERRIDE;
+  void CutLinks() override;
   TA_BASEFUNS(VEJoint);
 protected:
   JointType             cur_type;       // current type that was previously set

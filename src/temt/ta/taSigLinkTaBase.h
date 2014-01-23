@@ -32,27 +32,27 @@ INHERITED(taiSigLink)
 public:
   taBase*               data() {return (taBase*)m_data;}
   taBase*               data() const {return (taBase*)m_data;}
-  bool         isBase() const CPP11_OVERRIDE {return true;}
-  int          checkConfigFlags() const CPP11_OVERRIDE; // we call CheckConfig
-  bool         isEnabled() const CPP11_OVERRIDE;
-  taiSigLink* ownLink() const CPP11_OVERRIDE;
+  bool         isBase() const override {return true;}
+  int          checkConfigFlags() const override; // we call CheckConfig
+  bool         isEnabled() const override;
+  taiSigLink* ownLink() const override;
 
 
-  bool         GetIcon(int bmf, int& flags_supported, QIcon& ic) CPP11_OVERRIDE;
+  bool         GetIcon(int bmf, int& flags_supported, QIcon& ic) override;
     // delegates to taBase::GetDataNodeBitmap
-  bool         HasChildItems() CPP11_OVERRIDE;
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE;
-  String       GetPath() const CPP11_OVERRIDE {return data()->GetPath();}
-  String       GetPathNames() const CPP11_OVERRIDE {return data()->GetPathNames();}
-  String       GetPath_Long() const CPP11_OVERRIDE {return data()->GetPath_Long();}
-  String       GetTypeDecoKey() const CPP11_OVERRIDE;
-  String       GetStateDecoKey() const CPP11_OVERRIDE;
-  String       GetName() const CPP11_OVERRIDE;
-  String       GetDisplayName() const CPP11_OVERRIDE;
-  void         Search(iDialogSearch* dlg) CPP11_OVERRIDE;
-  bool         ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const CPP11_OVERRIDE; // asks this type if we should show the md member
-  String       GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE; // #IGNORE
-  const QVariant GetColData(const KeyString& key, int role) const CPP11_OVERRIDE;
+  bool         HasChildItems() override;
+  TypeDef*     GetDataTypeDef() const override;
+  String       GetPath() const override {return data()->GetPath();}
+  String       GetPathNames() const override {return data()->GetPathNames();}
+  String       GetPath_Long() const override {return data()->GetPath_Long();}
+  String       GetTypeDecoKey() const override;
+  String       GetStateDecoKey() const override;
+  String       GetName() const override;
+  String       GetDisplayName() const override;
+  void         Search(iDialogSearch* dlg) override;
+  bool         ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const override; // asks this type if we should show the md member
+  String       GetColText(const KeyString& key, int itm_idx = -1) const override; // #IGNORE
+  const QVariant GetColData(const KeyString& key, int role) const override;
 
   SL_FUNS(taSigLinkTaBase); //
 
@@ -61,14 +61,14 @@ protected:
 
   taSigLinkTaBase(taBase* data_, taSigLink* &link_ref_);
   taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
-    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags) CPP11_OVERRIDE;
-  void         QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) CPP11_OVERRIDE;
-  int          EditAction_impl(taiMimeSource* ms, int ea) CPP11_OVERRIDE;
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags) override;
+  void         QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden) override;
+  int          EditAction_impl(taiMimeSource* ms, int ea) override;
   void         ChildQueryEditActions_impl(const MemberDef* par_md, taiSigLink* child,
-     taiMimeSource* ms,  int& allowed, int& forbidden) CPP11_OVERRIDE;
+     taiMimeSource* ms,  int& allowed, int& forbidden) override;
   int          ChildEditAction_impl(const MemberDef* par_md, taiSigLink* child,
-    taiMimeSource* ms, int ea) CPP11_OVERRIDE;
-  void         FillContextMenu_impl(taiWidgetActions* menu) CPP11_OVERRIDE;
+    taiMimeSource* ms, int ea) override;
+  void         FillContextMenu_impl(taiWidgetActions* menu) override;
 };
 
 #endif // taSigLinkTaBase_h

@@ -29,11 +29,11 @@ taTypeDef_Of(taiViewTypeOfSelectEdit);
 class TA_API taiViewTypeOfSelectEdit: public taiViewTypeOftaOBase {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfSelectEdit, taiViewTypeOftaOBase)
 public:
-  int          BidForView(TypeDef*) CPP11_OVERRIDE;
+  int          BidForView(TypeDef*) override;
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
+  void         CreateDataPanel_impl(taiSigLink* dl_) override;
 };
 
 #endif // taiViewTypeOfSelectEdit_h

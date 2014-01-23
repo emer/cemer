@@ -50,8 +50,8 @@ public:
                                  float trg_norm_angle2 = 0.0f);
   // #BUTTON #CAT_Force set normalized target angle (0 = lo stop, 1 = hi stop) for the joint, which computes the lambdas (target lengths) for the individual muscles -- the co_contract_pct determines what percentage of co-contraction (stiffnes) to apply, where the lambdas are shorter than they should otherwise be by the given amount, such that both will pull from opposite directions to cause the muscle to stay put (at least around .2 is needed, with .5 being better, to prevent big oscillations)
 
-  void Init() CPP11_OVERRIDE;
-  void CurFromODE(bool updt_disp = false) CPP11_OVERRIDE;
+  void Init() override;
+  void CurFromODE(bool updt_disp = false) override;
 
   TA_SIMPLE_BASEFUNS(VEMuscleJoint);
 protected:

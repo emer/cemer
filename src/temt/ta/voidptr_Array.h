@@ -35,7 +35,7 @@ public:
   TA_BASEFUNS_NOCOPY(voidptr_Array);
   TA_ARRAY_FUNS(voidptr_Array, voidptr)
 protected:
-  Variant      El_GetVar_(const void* itm) const CPP11_OVERRIDE
+  Variant      El_GetVar_(const void* itm) const override
     { return (Variant)(*(voidptr*)itm); }
   bool          El_Equal_(const void* a, const void* b) const
     { return (*((voidptr*)a) == *((voidptr*)b)); }

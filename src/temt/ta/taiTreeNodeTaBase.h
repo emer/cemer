@@ -38,10 +38,10 @@ public:
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeTaBase();
 public: // ISigLinkClient interface
-//  void*      This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeTaBase;}
+//  void*      This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeTaBase;}
 protected:
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override;
 private:
   void                  init(taSigLinkTaBase* link_, int dn_flags_); // #IGNORE
 };

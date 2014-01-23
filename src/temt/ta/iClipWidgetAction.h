@@ -38,7 +38,7 @@ public slots:
   void			copyToClipboard(); // copy the mimedata to the clipboard
 
 protected:
-  QWidget* 	createWidget(QWidget* parent) CPP11_OVERRIDE;
+  QWidget* 	createWidget(QWidget* parent) override;
 };
 
 #endif // iClipWidgetAction_h

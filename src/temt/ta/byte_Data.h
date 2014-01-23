@@ -33,30 +33,30 @@ class TA_API byte_Data : public DataColT<byte_Matrix> {
 INHERITED(DataColT<byte_Matrix>)
 friend class DataTable;
 public:
-  bool         isNumeric() const CPP11_OVERRIDE {return true;} //
-  int          maxColWidth() const CPP11_OVERRIDE {return 3;} // assumes 3 digs
-  ValType      valType() const CPP11_OVERRIDE {return VT_BYTE;}
-  TypeDef*     valTypeDef() const CPP11_OVERRIDE {return &TA_byte;}
+  bool         isNumeric() const override {return true;} //
+  int          maxColWidth() const override {return 3;} // assumes 3 digs
+  ValType      valType() const override {return VT_BYTE;}
+  TypeDef*     valTypeDef() const override {return &TA_byte;}
 
   TA_BASEFUNS_NOCOPY(byte_Data);
 
 protected:
-  double       GetValAsDouble_impl(int row, int cell) const CPP11_OVERRIDE
+  double       GetValAsDouble_impl(int row, int cell) const override
   { return (double)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  float        GetValAsFloat_impl(int row, int cell) const CPP11_OVERRIDE
+  float        GetValAsFloat_impl(int row, int cell) const override
   { return (float)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  int          GetValAsInt_impl(int row, int cell) const CPP11_OVERRIDE
+  int          GetValAsInt_impl(int row, int cell) const override
   { return (int)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  byte         GetValAsByte_impl(int row, int cell) const CPP11_OVERRIDE
+  byte         GetValAsByte_impl(int row, int cell) const override
   { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
 
-  bool         SetValAsDouble_impl(double val, int row, int cell) CPP11_OVERRIDE
+  bool         SetValAsDouble_impl(double val, int row, int cell) override
   { ar.Set_Flat((byte)val, IndexOfEl_Flat(row, cell)); return true; }
-  bool         SetValAsFloat_impl(float val, int row, int cell) CPP11_OVERRIDE
+  bool         SetValAsFloat_impl(float val, int row, int cell) override
   { ar.Set_Flat((byte)val, IndexOfEl_Flat(row, cell)); return true; }
-  bool         SetValAsInt_impl(int val, int row, int cell) CPP11_OVERRIDE
+  bool         SetValAsInt_impl(int val, int row, int cell) override
   { ar.Set_Flat((byte)val, IndexOfEl_Flat(row, cell)); return true; }
-  bool         SetValAsByte_impl(byte val, int row, int cell) CPP11_OVERRIDE
+  bool         SetValAsByte_impl(byte val, int row, int cell) override
   { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:

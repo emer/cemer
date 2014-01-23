@@ -33,29 +33,29 @@ class TA_API rgb_Matrix: public taMatrixT<rgb_t> {
   // #INSTANCE a matrix of rgb values
 INHERITED(taMatrixT<rgb_t>)
 public:
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_rgb_t;}
-  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_INT;} // note: not quite right.
+  TypeDef*     GetDataTypeDef() const override {return &TA_rgb_t;}
+  ValType      GetDataValType() const override {return VT_INT;} // note: not quite right.
 
-  bool         StrValIsValid(const String& str, String* err_msg = NULL) const CPP11_OVERRIDE;
+  bool         StrValIsValid(const String& str, String* err_msg = NULL) const override;
     // accepts in form: "r g b" or RRGGBB in hex
-  bool         BinaryFile_Supported() CPP11_OVERRIDE { return true; }
+  bool         BinaryFile_Supported() override { return true; }
 
   TA_MATRIX_FUNS_FAST(rgb_Matrix, rgb_t);
 
 public: //
   //note: for streaming, we use web RGB hex value
-  const String El_GetStr_(const void* it) const CPP11_OVERRIDE { return *((rgb_t*)it); } // #IGNORE implicit, to hex web format
-  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {((rgb_t*)it)->setString(str);}       // #IGNORE
-  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return Variant(((rgb_t*)it)->toInt());} // #IGNORE we use the int rep for variants
-  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
-  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
+  const String El_GetStr_(const void* it) const override { return *((rgb_t*)it); } // #IGNORE implicit, to hex web format
+  void         El_SetFmStr_(void* it, const String& str) override {((rgb_t*)it)->setString(str);}       // #IGNORE
+  const Variant El_GetVar_(const void* it) const override {return Variant(((rgb_t*)it)->toInt());} // #IGNORE we use the int rep for variants
+  void         El_SetFmVar_(void* it, const Variant& var) override {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(*((rgb_t*)a) > *((rgb_t*)b)) rval=1; else if(*((rgb_t*)a) == *((rgb_t*)b)) rval=0; return rval; }
 protected:
   static const rgb_t    blank; // #IGNORE
 #ifndef __MAKETA__
-  void         BinarySave_Item(std::ostream& strm, int idx) CPP11_OVERRIDE
+  void         BinarySave_Item(std::ostream& strm, int idx) override
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); };
-  void         BinaryLoad_Item(std::istream& strm, int idx) CPP11_OVERRIDE
+  void         BinaryLoad_Item(std::istream& strm, int idx) override
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); };
 #endif
 private:

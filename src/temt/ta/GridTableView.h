@@ -84,8 +84,8 @@ public:
   { return (GridColView*)colView(vis_cols.SafeEl(i)); }
   // get visible column based on vis_cols index
 
-  void InitDisplay(bool init_panel = true) CPP11_OVERRIDE;
-  void UpdateDisplay(bool update_panel = true) CPP11_OVERRIDE;
+  void InitDisplay(bool init_panel = true) override;
+  void UpdateDisplay(bool update_panel = true) override;
   // note: we also don't update panel if it is updating
 
   void          ShowAllCols();
@@ -114,11 +114,11 @@ public:
 
   virtual void          InitFromUserData();
 
-  void         UpdateName() CPP11_OVERRIDE;
-  const String caption() const CPP11_OVERRIDE;
-  bool         hasViewProperties() const CPP11_OVERRIDE { return true; }
+  void         UpdateName() override;
+  const String caption() const override;
+  bool         hasViewProperties() const override { return true; }
 
-  void         DataUnitsXForm(taVector3f& pos, taVector3f& size) CPP11_OVERRIDE;
+  void         DataUnitsXForm(taVector3f& pos, taVector3f& size) override;
 
   const iColor          bgColor(bool& ok) const {
     ok = true; return colorscale.background;
@@ -157,17 +157,17 @@ protected:
   virtual void          RenderLine(int view_idx, int data_row); // add indicated line
 
   // view control:
-  void         ClearViewRange() CPP11_OVERRIDE;
-  void         MakeViewRangeValid() CPP11_OVERRIDE;
+  void         ClearViewRange() override;
+  void         MakeViewRangeValid() override;
 
-  void         OnWindowBind_impl(iT3Panel* vw) CPP11_OVERRIDE;
-  void         Clear_impl() CPP11_OVERRIDE;
-  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
-  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
+  void         OnWindowBind_impl(iT3Panel* vw) override;
+  void         Clear_impl() override;
+  void         Render_pre() override; // #IGNORE
+  void         Render_impl() override; // #IGNORE
 
-  void         UpdateFromDataTable_this(bool first) CPP11_OVERRIDE;
+  void         UpdateFromDataTable_this(bool first) override;
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 };
 
 #endif // GridTableView_h

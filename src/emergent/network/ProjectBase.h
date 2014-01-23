@@ -37,12 +37,12 @@ public:
   virtual Network* 	GetDefNetwork();
   // get default network from project
 
-  void		SaveRecoverFile_strm(std::ostream& strm) CPP11_OVERRIDE;
+  void		SaveRecoverFile_strm(std::ostream& strm) override;
 
   virtual void	AutoBuildNets();
   // build networks according to their own individual auto_bulid modes
   
-  void	Dump_Load_post() CPP11_OVERRIDE;
+  void	Dump_Load_post() override;
 
   void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
@@ -51,7 +51,7 @@ public:
   void	Copy_(const ProjectBase& cp);
   TA_BASEFUNS(ProjectBase);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }

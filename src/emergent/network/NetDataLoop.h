@@ -48,23 +48,23 @@ public:
   virtual void	DMem_Initialize(Network* net);
   // configure the dmem communicator stuff: depends on dmem setup of network
 
-  void	GetOrderVal() CPP11_OVERRIDE;
+  void	GetOrderVal() override;
   // get order values from order_var variables
   virtual void	GetGroupList();
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx);
   // for grouped case, get items per group
 
-  String GetDisplayName() const CPP11_OVERRIDE;
-  String GetToolbarName() const CPP11_OVERRIDE { return "data loop"; }
+  String GetDisplayName() const override;
+  String GetToolbarName() const override { return "data loop"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetDataLoop);
 protected:
-  void	GetOrderVar() CPP11_OVERRIDE; // make an order variable in program if not already set
-  void	GetIndexVar() CPP11_OVERRIDE; // make an index variable in program if not already set
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
-  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  void	GetOrderVar() override; // make an order variable in program if not already set
+  void	GetIndexVar() override; // make an index variable in program if not already set
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssPre_impl(Program* prog) override; 
+  void		GenCssPost_impl(Program* prog) override; 
 
 private:
   void	Initialize();

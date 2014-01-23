@@ -114,17 +114,17 @@ public:
 
 public: // required model implementations
 #ifndef __MAKETA__
-  int          columnCount(const QModelIndex& parent = QModelIndex()) const CPP11_OVERRIDE;
-  QVariant     data(const QModelIndex& index, int role = Qt::DisplayRole) const CPP11_OVERRIDE;
-  Qt::ItemFlags flags(const QModelIndex& index) const CPP11_OVERRIDE;
+  int          columnCount(const QModelIndex& parent = QModelIndex()) const override;
+  QVariant     data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags flags(const QModelIndex& index) const override;
   QVariant     headerData(int section, Qt::Orientation orientation,
-                                   int role = Qt::DisplayRole) const CPP11_OVERRIDE;
-  int          rowCount(const QModelIndex& parent = QModelIndex()) const CPP11_OVERRIDE;
+                                   int role = Qt::DisplayRole) const override;
+  int          rowCount(const QModelIndex& parent = QModelIndex()) const override;
   bool         setData(const QModelIndex& index, const QVariant& value,
-                                int role = Qt::EditRole) CPP11_OVERRIDE;
+                                int role = Qt::EditRole) override;
   QModelIndex  index(int row, int column,
-                              const QModelIndex &parent = QModelIndex()) const CPP11_OVERRIDE;
-  QModelIndex  parent(const QModelIndex &child) const CPP11_OVERRIDE;
+                              const QModelIndex &parent = QModelIndex()) const override;
+  QModelIndex  parent(const QModelIndex &child) const override;
 
   int           svn_head_rev;
   // head (current) revision -- obtained when setUrl is called -- gets it from the first entry in directory 

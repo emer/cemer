@@ -29,22 +29,22 @@ class TA_API taiWidgetEnumStaticChooser : public taiWidgetItemChooser {
 public:
   inline TypeItem*      md() const {return (TypeItem*)m_sel;}
 
-  int                   columnCount(int view) const; // override
-  const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 5;} // override
-  const String          viewText(int index) const; // override
+  int                   columnCount(int view) const override;
+  const String          headerText(int index, int view) const override;
+  int                   viewCount() const override {return 5;}
+  const String          viewText(int index) const override;
 
   using inherited::GetImage;
   void                  GetImage(MemberDef* cur_sel, TypeDef* targ_typ)
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*             GetValue() {return md();}
 
-  void         BuildChooser(iDialogItemChooser* ic, int view = 0) CPP11_OVERRIDE; //
+  void         BuildChooser(iDialogItemChooser* ic, int view = 0) override; //
 
   virtual bool          ShowEnum(EnumDef* enm);
   virtual bool          ShowMember(MemberDef* mbr);
   virtual bool          ShowMethod(MethodDef* mth);
-  void         btnHelp_clicked() CPP11_OVERRIDE;
+  void         btnHelp_clicked() override;
 
   taiWidgetEnumStaticChooser(TypeDef* typ_, IWidgetHost* host,
                       taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -53,7 +53,7 @@ protected:
   const String          itemTag() const {return "Enum/static: ";}
   const String          labelNameNonNull() const;
 
-  void         BuildCategories_impl() CPP11_OVERRIDE;
+  void         BuildCategories_impl() override;
   void                  BuildChooser_0(iDialogItemChooser* ic); // all
   void                  BuildChooser_1(iDialogItemChooser* ic); // just enum
   void                  BuildChooser_2(iDialogItemChooser* ic); // just static mbr

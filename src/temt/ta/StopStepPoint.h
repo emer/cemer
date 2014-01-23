@@ -30,18 +30,18 @@ class TA_API StopStepPoint: public ProgEl {
   // this is a point in the program where the Stop button will stop execution, and the Step button will act for single stepping (e.g., place inside of a loop) -- otherwise this only happens at the end of programs
 INHERITED(ProgEl)
 public:
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "stop/step"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String	GetToolbarName() const override { return "stop/step"; }
 
   PROGEL_SIMPLE_COPY(StopStepPoint);
   void InitLinks();
   SIMPLE_CUTLINKS(StopStepPoint);
   TA_BASEFUNS(StopStepPoint);
 protected:
-  void		PreGenMe_impl(int item_id) CPP11_OVERRIDE;
+  void		PreGenMe_impl(int item_id) override;
   // register the target as a subprog of this one
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

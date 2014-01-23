@@ -26,7 +26,7 @@
 class taiEditOfDefaultDataHost : public taiEditorOfClass {
 INHERITED(taiEditorOfClass)
 public:
-  void GetValue() CPP11_OVERRIDE;
+  void GetValue() override;
 
   MemberSpace   mspace;         // special copy of the mspace (added toggles)
 
@@ -35,7 +35,7 @@ public:
         bool modal_ = false, QObject* parent = 0);
   ~taiEditOfDefaultDataHost();
 protected:
-  void         Enum_Members() CPP11_OVERRIDE; // called by Constr_impl to fill memb_el[]
+  void         Enum_Members() override; // called by Constr_impl to fill memb_el[]
 private:
   explicit taiEditOfDefaultDataHost(taiEditOfDefaultDataHost&)      { }; // avoid copy constr bug
 };

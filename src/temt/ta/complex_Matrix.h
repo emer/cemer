@@ -44,7 +44,7 @@ public:
   // #CAT_Complex return a new double matrix that contains the squared magnitudes of the complex numbers in this matrix (real * real + imag * imag)
   virtual  double_Matrix* Mag() const;
   // #CAT_Complex return a new double matrix that contains the magnitudes of the complex numbers in this matrix: sqrt(real * real + imag * imag)
-  taMatrix*     Abs() const CPP11_OVERRIDE { return Mag(); }
+  taMatrix*     Abs() const override { return Mag(); }
   // #CAT_Complex return a new double matrix that contains the absolute values or magnitudes of the complex numbers in this matrix: sqrt(real * real + imag * imag) (also called the modulus)
   virtual  double_Matrix* Angle() const;
   // #CAT_Complex return a new double matrix that contains the angles of the complex numbers in this matrix: atan2(imag, real) -- see Expi function for inverse, which takes angles and produces cos(ang) + i sin(ang)
@@ -74,19 +74,19 @@ public:
   virtual  void         ExpiAll(double angle);
   // #CAT_Complex sets complex numbers in this matrix from angle in input matrix, using exponential of i * angle = cos(angle) + i sin(angle) (Euler's formula) -- initializes all matrix values to the same numbers
 
-  taMatrix* Transpose() const CPP11_OVERRIDE;
+  taMatrix* Transpose() const override;
 
   using taMatrix::operator*;
-  taMatrix* operator*(const taMatrix& t) const CPP11_OVERRIDE;
+  taMatrix* operator*(const taMatrix& t) const override;
 
   using taMatrix::operator/;
-  taMatrix* operator/(const taMatrix& t) const CPP11_OVERRIDE;
+  taMatrix* operator/(const taMatrix& t) const override;
 
   using taMatrix::operator*=;
-  void      operator*=(const taMatrix& t) CPP11_OVERRIDE;
+  void      operator*=(const taMatrix& t) override;
 
   using taMatrix::operator/=;
-  void      operator/=(const taMatrix& t) CPP11_OVERRIDE;
+  void      operator/=(const taMatrix& t) override;
 
   TA_MATRIX_FUNS_DERIVED(complex_Matrix, double);
 private:

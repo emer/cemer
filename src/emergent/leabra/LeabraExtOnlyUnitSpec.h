@@ -30,7 +30,7 @@ class E_API LeabraExtOnlyUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
   
-  void  Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) CPP11_OVERRIDE;
+  void  Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) override;
 
   TA_BASEFUNS(LeabraExtOnlyUnitSpec);
 protected:

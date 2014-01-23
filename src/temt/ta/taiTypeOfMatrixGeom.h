@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfMatrixGeom);
 class TA_API taiTypeOfMatrixGeom : public taiTypeOfClass { // special editor for matrix geoms
   TAI_TYPEBASE_SUBCLASS(taiTypeOfMatrixGeom, taiTypeOfClass);
 public:
-  bool requiresInline() const CPP11_OVERRIDE { return true; }
+  bool requiresInline() const override { return true; }
   int           BidForType(TypeDef* td);
 protected:
   taiWidget*      GetWidgetRepInline_impl(IWidgetHost* host_, taiWidget* par,

@@ -63,17 +63,17 @@ signals:
 #endif
 
 public: // ItaViewerWidget i/f
-  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  QWidget*     widget() override {return this;}
 protected:
-//  void               Constr_impl() CPP11_OVERRIDE; // called virtually, after new
+//  void               Constr_impl() override; // called virtually, after new
   virtual void          GetWinState_impl() {} // when saving view state
   virtual void          SetWinState_impl() {} // when showing, from view state
 
 protected:
   short int             shn_changing; // for marking forwarding, so we don't reflect back
 
-  void                  hideEvent(QHideEvent* e); // override
-  void                  showEvent(QShowEvent* e); // override
+  void                  hideEvent(QHideEvent* e) override;
+  void                  showEvent(QShowEvent* e) override;
   virtual void          Showing(bool showing); // #IGNORE called by the show/hide handlers
   virtual void          SelectionChanged_impl(ISelectableHost* src_host) {}
     // we call this when we receive a valid incoming change, or maybe new focus

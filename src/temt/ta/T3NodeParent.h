@@ -55,16 +55,16 @@ typedef T3Node inherited;
 public:
   static void		initClass();
 
-  SoFont*		captionFont(bool auto_create = false); // override
+  SoFont*		captionFont(bool auto_create = false) override;
   SoSeparator*		shapeSeparator() {return shapeSeparator_;}
   virtual SoSeparator*	childNodes(); // use this to set/get T3Node children
   
-  void			addRemoveChildNode(SoNode* node, bool adding); // override
+  void			addRemoveChildNode(SoNode* node, bool adding) override;
 
   T3NodeParent(T3DataView* dataView_ = NULL);
 
 protected:
-  SoSeparator*		captionSeparator(bool auto_create = false); // override
+  SoSeparator*		captionSeparator(bool auto_create = false) override;
 
   ~T3NodeParent();
 protected:

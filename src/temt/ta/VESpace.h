@@ -49,7 +49,7 @@ public:
   SpaceType     space_type;     // type of space to use
   MinMaxInt     hash_levels;    // #CONDSHOW_ON_space_type:HASH_SPACE minimum and maximum spacing levels in hash space
 
-  String       GetDesc() const CPP11_OVERRIDE { return desc; }
+  String       GetDesc() const override { return desc; }
   virtual VEWorld* GetWorld();  // #CAT_ODE get world object (parent of this guy)
   virtual void* GetWorldID();   // #CAT_ODE get world id value
   virtual void* GetWorldSpaceID(); // #CAT_ODE get world space id value
@@ -81,7 +81,7 @@ public:
 
   SIMPLE_COPY(VESpace);
   SIMPLE_INITLINKS(VESpace);
-  void CutLinks() CPP11_OVERRIDE;
+  void CutLinks() override;
   TA_BASEFUNS(VESpace);
 protected:
   SpaceType     cur_space_type; // current type that was previously set

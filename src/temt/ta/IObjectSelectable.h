@@ -32,17 +32,17 @@ class TA_API IObjectSelectable: public ISelectable { // specialized for taBase o
 INHERITED(ISelectable)
 public: // Interface Properties and Methods
   iClipData* GetClipDataSingle(int src_edit_action, bool for_drag,
-    GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE;
+    GuiContext sh_typ = GC_DEFAULT) const override;
   iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
-    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE;
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const override;
 protected:
   int          EditActionD_impl_(taiMimeSource* ms, int ea,
-                                          GuiContext sh_typ) CPP11_OVERRIDE;
-  int          EditActionS_impl_(int ea, GuiContext sh_typ) CPP11_OVERRIDE;
+                                          GuiContext sh_typ) override;
+  int          EditActionS_impl_(int ea, GuiContext sh_typ) override;
   void         QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed,
-                                                int& forbidden, GuiContext sh_typ) const CPP11_OVERRIDE;
+                                                int& forbidden, GuiContext sh_typ) const override;
   void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
-                                                GuiContext sh_typ) const CPP11_OVERRIDE;
+                                                GuiContext sh_typ) const override;
 };
 
 #endif // IObjectSelectable_h

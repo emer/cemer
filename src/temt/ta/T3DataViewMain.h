@@ -38,12 +38,12 @@ public:
   // extra annotations (lines, arrows, text, etc) to add to the 3d view
   T3DataView_List       annote_children; // #SHOW #READ_ONLY #SHOW_TREE annotation view children -- keep separate from other kids so they don't interfere
 
-  bool         hasChildren() const CPP11_OVERRIDE {return (children.size > 0 || annote_children.size > 0);}
+  bool         hasChildren() const override {return (children.size > 0 || annote_children.size > 0);}
 
-  void         OnWindowBind(iT3Panel* vw) CPP11_OVERRIDE;
-  void         CloseChild(taDataView* child) CPP11_OVERRIDE;
+  void         OnWindowBind(iT3Panel* vw) override;
+  void         CloseChild(taDataView* child) override;
 
-  bool         isTopLevelView() const CPP11_OVERRIDE {return true;}
+  bool         isTopLevelView() const override {return true;}
 
   virtual void          CopyFromViewFrame(T3DataViewPar* cp);
   // copy key view frame parameters from other view object
@@ -111,12 +111,12 @@ public:
   virtual void          AnnoteClearAll();
   // #MENU_BUTTON remove all existing annotations
 
-  void         InitLinks() CPP11_OVERRIDE;
-  void         CutLinks() CPP11_OVERRIDE;
+  void         InitLinks() override;
+  void         CutLinks() override;
   T3_DATAVIEWFUNS(T3DataViewMain, T3DataViewPar) //
 protected:
-  void         DoActionChildren_impl(DataViewAction acts) CPP11_OVERRIDE;
-  void         ReInit_impl() CPP11_OVERRIDE; //note: does a depth-first calls to children, before self
+  void         DoActionChildren_impl(DataViewAction acts) override;
+  void         ReInit_impl() override; //note: does a depth-first calls to children, before self
 
 private:
   void  Copy_(const T3DataViewMain& cp);

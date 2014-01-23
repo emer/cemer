@@ -35,8 +35,8 @@ public:
   taiWidgetVariant(IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
   ~taiWidgetVariant();
 protected:
-  void         GetImageVar_impl(const Variant& val) CPP11_OVERRIDE {GetImage(val);}
-  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE {GetValue(val);}
+  void         GetImageVar_impl(const Variant& val) override {GetImage(val);}
+  void         GetValueVar_impl(Variant& val) const override {GetValue(val);}
 };
 
 

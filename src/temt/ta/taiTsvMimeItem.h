@@ -33,7 +33,7 @@ public: // i/f for tabular data guy
 
 public: // TAI_xxx instance interface -- used for dynamic creation
   taiMimeItem* Extract(taiMimeSource* ms,
-    const String& subkey = _nilString) CPP11_OVERRIDE; //NOTE: we typically only ask for this type if we *don't* get a Matrix or Table, so we don't waste time decoding manually
+    const String& subkey = _nilString) override; //NOTE: we typically only ask for this type if we *don't* get a Matrix or Table, so we don't waste time decoding manually
 private:
   void  Initialize();
   void  Destroy() {}

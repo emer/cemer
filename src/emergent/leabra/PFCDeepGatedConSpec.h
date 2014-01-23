@@ -32,7 +32,7 @@ INHERITED(LeabraConSpec)
 public:
 
   inline void  Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-				 const int thread_no, const float su_act_delta) CPP11_OVERRIDE {
+				 const int thread_no, const float su_act_delta) override {
     const float* wts = cg->OwnCnVar(WT);
     if(net->NetinPerPrjn()) { // always uses send_netin_tmp -- thread_no auto set to 0 in parent call if no threads
       float* send_netin_vec = net->send_netin_tmp.el

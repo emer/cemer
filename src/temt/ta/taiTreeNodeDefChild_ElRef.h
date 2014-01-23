@@ -47,14 +47,14 @@ protected:
   mutable taList_impl*  m_ptr;
 
 public: // ITypedObject interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;} //
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeDefChild_ElRef;}
+  void*        This() override {return (void*)this;} //
+  TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeDefChild_ElRef;}
 
 public: // ISigLinkClient interface
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE
+  TypeDef*     GetDataTypeDef() const override
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taList_impl;}
-  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
+  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) override;
+  void         SigLinkDestroying(taSigLink* dl) override;
 };
 
 #endif // taiTreeNodeDefChild_ElRef_h

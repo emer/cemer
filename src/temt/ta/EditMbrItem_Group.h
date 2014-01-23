@@ -41,13 +41,13 @@ public:
     MemberDef* md, int& idx) const
     {return (EditMbrItem*)SelectEditItem::StatFindItemBase(this, base, md, idx);}
 
-  int          NumListCols() const CPP11_OVERRIDE {return 5;}
+  int          NumListCols() const override {return 5;}
   // base name, base type, memb name, memb type, memb label
-  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const override;
   // header text for the indicated column
-  const KeyString GetListColKey(int col) const CPP11_OVERRIDE;
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "SelectEdit"; }
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  const KeyString GetListColKey(int col) const override;
+  String       GetTypeDecoKey() const override { return "SelectEdit"; }
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   TA_BASEFUNS_NOCOPY(EditMbrItem_Group);
 #ifdef __MAKETA__ // dummy to supress New
   taBase*       New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW

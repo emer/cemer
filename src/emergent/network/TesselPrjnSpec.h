@@ -70,8 +70,8 @@ public:
   String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
   String	last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
 
-  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
+  void	Connect_impl(Projection* prjn) override;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
   // uses weight values as specified in the tesselel's
 
   virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
@@ -94,7 +94,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(TesselPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };

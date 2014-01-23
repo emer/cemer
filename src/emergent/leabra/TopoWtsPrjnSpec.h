@@ -98,9 +98,9 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
   GradType grad_type;	// #CONDSHOW_ON_init_wts type of gradient to make -- applies to both axes
   float gauss_sig;		// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
 
-  void C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
+  void C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
   // calls one of the four InitWeights fns below according to use of unit groups
-  void Connect_impl(Projection* prjn) CPP11_OVERRIDE;
+  void Connect_impl(Projection* prjn) override;
   // enables flexibility whether to use unit group indexing (default) or not
   virtual void InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses flat idx'ing of both send and recv layers (just unit positions)

@@ -30,7 +30,7 @@ public:
   taiWidgetMethodMenu(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);
 
-  QWidget* GetButtonRep() CPP11_OVERRIDE {return MakeButton();}
+  QWidget* GetButtonRep() override {return MakeButton();}
   QWidget*      GetRep()                { return (QWidget*)buttonRep; }
 };
 

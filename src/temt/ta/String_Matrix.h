@@ -33,9 +33,9 @@ class TA_API String_Matrix: public taMatrixT<String> {
   // #INSTANCE a matrix of strings
 INHERITED(taMatrixT<String>)
 public:
-  int          defAlignment() const CPP11_OVERRIDE;
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_taString;}
-  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_STRING;}
+  int          defAlignment() const override;
+  TypeDef*     GetDataTypeDef() const override {return &TA_taString;}
+  ValType      GetDataValType() const override {return VT_STRING;}
 
   String        ToDelimString(const String& delim = " ");
   // generates a string of all the items on the list, using given delimiter between items
@@ -50,21 +50,21 @@ public:
   TA_MATRIX_FUNS_SLOW(String_Matrix, String)
 
 public:
-  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE
+  float        El_GetFloat_(const void* it) const override
     { return ((String*)it)->toFloat(); } // #IGNORE
-  const String El_GetStr_(const void* it) const CPP11_OVERRIDE {return *((String*)it); } // #IGNORE
-  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {*((String*)it) = str;}  // #IGNORE
-  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return Variant(*((String*)it));} // #IGNORE
-  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {*((String*)it) = var.toString(); };  // #IGNORE
-  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
+  const String El_GetStr_(const void* it) const override {return *((String*)it); } // #IGNORE
+  void         El_SetFmStr_(void* it, const String& str) override {*((String*)it) = str;}  // #IGNORE
+  const Variant El_GetVar_(const void* it) const override {return Variant(*((String*)it));} // #IGNORE
+  void         El_SetFmVar_(void* it, const Variant& var) override {*((String*)it) = var.toString(); };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }
 protected:
   static const String   blank; // #IGNORE
 #ifndef __MAKETA__
-  void         Dump_Save_Item(std::ostream& strm, int idx) CPP11_OVERRIDE;
-  int          Dump_Load_Item(std::istream& strm, int idx) CPP11_OVERRIDE;
+  void         Dump_Save_Item(std::ostream& strm, int idx) override;
+  int          Dump_Load_Item(std::istream& strm, int idx) override;
 #endif
-  void         ReclaimOrphans_(int from, int to) CPP11_OVERRIDE; // called when elements can be reclaimed, ex. for strings
+  void         ReclaimOrphans_(int from, int to) override; // called when elements can be reclaimed, ex. for strings
 
 private:
   void          Initialize() {}

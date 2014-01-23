@@ -69,7 +69,12 @@ if (WIN32)
   endmacro(SET_TA_PROPS)
 
 else (WIN32)
-  set(MAKETA_FLAGS -css -cpp=\"${CMAKE_CXX_COMPILER} -x c++-header -E\")
+  set(MAKETA_CPP "${CMAKE_CXX_COMPILER}" -x c++-header -E)
+# todo: can't get it to work with CMAKE_CXX_FLAGS
+#  set(MAKETA_CPP "${CMAKE_CXX_COMPILER}" "${CMAKE_CXX_FLAGS}" -x c++-header -E)
+#  message(STATUS "MAKETA_CPP ${MAKETA_CPP}")
+
+  set(MAKETA_FLAGS -css -cpp=\"${MAKETA_CPP}\")
   
   macro(SET_TA_PROPS outfile)
     SET_SOURCE_FILES_PROPERTIES(${outfile}

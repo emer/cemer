@@ -31,20 +31,20 @@ INHERITED(LeabraConSpec)
 public:
   // don't send regular net inputs or learn!
   void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
-				float su_act_delta_eff) CPP11_OVERRIDE { };
-  float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE { return 0.0f; }
-  void Compute_dWt(RecvCons*, Unit*, Network* net) CPP11_OVERRIDE { };
-  void Compute_dWt_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_dWt_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_dWt_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net, bool do_s) CPP11_OVERRIDE { };
-  void Trial_Init_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void	Compute_Weights(RecvCons*, Unit*, Network* net) CPP11_OVERRIDE { };
-  void	Compute_Weights_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void	Compute_Weights_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) CPP11_OVERRIDE { };
+				float su_act_delta_eff) override { };
+  float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override { return 0.0f; }
+  void Compute_dWt(RecvCons*, Unit*, Network* net) override { };
+  void Compute_dWt_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void Compute_dWt_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void Compute_dWt_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void Compute_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net, bool do_s) override { };
+  void Trial_Init_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void	Compute_Weights(RecvCons*, Unit*, Network* net) override { };
+  void	Compute_Weights_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void	Compute_Weights_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
 
-  bool	DMem_AlwaysLocal() CPP11_OVERRIDE { return true; }
+  bool	DMem_AlwaysLocal() override { return true; }
   // these connections always need to be there on all nodes..
 
   TA_BASEFUNS_NOCOPY(MarkerConSpec);

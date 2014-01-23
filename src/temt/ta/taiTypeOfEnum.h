@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfEnum);
 class TA_API taiTypeOfEnum : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfEnum, taiType);
 public:
-  bool handlesReadOnly() const CPP11_OVERRIDE { return true; } // uses a RO iLineEdit w/ enum name
+  bool handlesReadOnly() const override { return true; } // uses a RO iLineEdit w/ enum name
 
   inline bool   isCond() const {return m_is_cond;} // true if a BIT, and has any CONDxxxx bits
   int           BidForType(TypeDef* td);

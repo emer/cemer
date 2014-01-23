@@ -60,7 +60,7 @@ public:
   virtual bool          RemoveFrom(Layer* from);
   // #MENU #CAT_Structure remove recv cons that receives from given layer
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Connection"; }
+  String       GetTypeDecoKey() const override { return "Connection"; }
 
   NOCOPY(RecvCons_List)
   TA_BASEFUNS(RecvCons_List);

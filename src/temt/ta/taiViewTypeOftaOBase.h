@@ -29,15 +29,15 @@ taTypeDef_Of(taiViewTypeOftaOBase);
 class TA_API taiViewTypeOftaOBase: public taiViewTypeOftaBase { // for taOBase and descendants
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOftaOBase, taiViewTypeOftaBase)
 public:
-  bool         needSet() const CPP11_OVERRIDE {return true;} // always, so we can do dyn panels
-  int          BidForView(TypeDef*) CPP11_OVERRIDE;
-  taiSigLink* GetSigLink(void* data_, TypeDef* el_typ) CPP11_OVERRIDE; // optimized version of taiViewTypeOftaBase
-  void         CheckUpdateDataPanelSet(iPanelSet* pan) CPP11_OVERRIDE;
+  bool         needSet() const override {return true;} // always, so we can do dyn panels
+  int          BidForView(TypeDef*) override;
+  taiSigLink* GetSigLink(void* data_, TypeDef* el_typ) override; // optimized version of taiViewTypeOftaBase
+  void         CheckUpdateDataPanelSet(iPanelSet* pan) override;
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  taiSigLink* CreateSigLink_impl(taBase* data_) CPP11_OVERRIDE;
-  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
+  taiSigLink* CreateSigLink_impl(taBase* data_) override;
+  void         CreateDataPanel_impl(taiSigLink* dl_) override;
 };
 
 #endif // taiViewTypeOftaOBase_h

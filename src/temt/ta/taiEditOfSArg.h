@@ -31,7 +31,7 @@ class TA_API taiEditOfSArg : public taiEditOfArray {
 public:
   int           BidForEdit(TypeDef* td);
 protected:
-  taiEditorOfClass* CreateDataHost(void* base, bool readonly, bool modal) CPP11_OVERRIDE;
+  taiEditorOfClass* CreateDataHost(void* base, bool readonly, bool modal) override;
   // called when we need a new instance
 };
 

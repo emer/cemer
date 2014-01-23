@@ -39,7 +39,7 @@ public:
 protected:
   int		m_cellSize;
   
-  void 		paintEvent(QPaintEvent* event); // override
+  void 		paintEvent(QPaintEvent* event) override;
   
 private:
   void		Init();

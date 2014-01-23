@@ -36,12 +36,12 @@ public:
   MemberDef*	counter;	// #TYPE_ON_network_type #DEFCAT_Counter counter variable on network to operate on
   bool		update_after;	// call UpdateAfterEdit on network after updating counter value -- not necessary except to trigger updating of various displays, etc
   
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterBase);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
 private:

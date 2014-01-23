@@ -39,23 +39,23 @@ public:
   int                   cur_panel_id; // -1 if none
   iPanelBase_PtrList    panels;
 
-  taiSigLink* par_link() const CPP11_OVERRIDE {return (m_tabView) ? m_tabView->par_link() : NULL;}
-  MemberDef*   par_md() const CPP11_OVERRIDE {return (m_tabView) ? m_tabView->par_md() : NULL;}
-  iPanelViewer* tabViewerWin() const CPP11_OVERRIDE {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
+  taiSigLink* par_link() const override {return (m_tabView) ? m_tabView->par_link() : NULL;}
+  MemberDef*   par_md() const override {return (m_tabView) ? m_tabView->par_md() : NULL;}
+  iPanelViewer* tabViewerWin() const override {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
 
   iPanelBase*           curPanel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
-  void         setTabView(iTabView* tv) CPP11_OVERRIDE; // set for kids too
+  void         setTabView(iTabView* tv) override; // set for kids too
 
-  void         Closing(CancelOp& cancel_op) CPP11_OVERRIDE;
-  void         ClosePanel() CPP11_OVERRIDE;
+  void         Closing(CancelOp& cancel_op) override;
+  void         ClosePanel() override;
   iPanelBase*           GetDataPanelOfType(TypeDef* typ, int& start_idx);
     // get the first data panel of the specified type, starting at panel index; NULL if none
-  const iColor GetTabColor(bool selected, bool& ok) const CPP11_OVERRIDE;
-  bool         HasChanged() CPP11_OVERRIDE;
-  void         ResolveChanges(CancelOp& cancel_op) CPP11_OVERRIDE; // do the children first, then our impl
-  void         UpdatePanel() CPP11_OVERRIDE; // iterate over all kiddies
-  void         GetWinState() CPP11_OVERRIDE; // when saving view state
-  void         SetWinState() CPP11_OVERRIDE; // when showing, from view state
+  const iColor GetTabColor(bool selected, bool& ok) const override;
+  bool         HasChanged() override;
+  void         ResolveChanges(CancelOp& cancel_op) override; // do the children first, then our impl
+  void         UpdatePanel() override; // iterate over all kiddies
+  void         GetWinState() override; // when saving view state
+  void         SetWinState() override; // when showing, from view state
 
   iPanelSetBase(taiSigLink* dl_);
   ~iPanelSetBase();
@@ -64,14 +64,14 @@ public slots:
   void                  setCurrentPanelId(int id);
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelSetBase;}
+  void*        This() override {return (void*)this;}
+  void         SigLinkDestroying(taSigLink* dl) override;
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelSetBase;}
 
 protected:
   virtual void          setCurrentPanelId_impl(int id) {}
   void                  removeChild(QObject* obj);
-  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
+  void         OnWindowBind_impl(iPanelViewer* itv) override;
 };
 
 #endif // iPanelSetBase_h

@@ -37,15 +37,15 @@ public:
   virtual void  OrderItems();
   // ensure that the item values are sequentially increasing
 
-  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-  int  El_Compare_(void* a, void* b) const CPP11_OVERRIDE
+  int  El_Compare_(void* a, void* b) const override
   { int rval=-1; if(((DynEnumItem*)a)->value > ((DynEnumItem*)b)->value) rval=1;
     else if(((DynEnumItem*)a)->value == ((DynEnumItem*)b)->value) rval=0; return rval; }
 
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
   TA_BASEFUNS_NOCOPY(DynEnumItem_List);
 private:

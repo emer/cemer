@@ -53,20 +53,20 @@ public:
   virtual bool	ViewDataLegend();
   // #BUTTON #CONFIRM create a new grid view display of the input data with the unit names as alegend
   
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "init nm units"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String	GetToolbarName() const override { return "init nm units"; }
 
   PROGEL_SIMPLE_BASEFUNS(InitNamedUnits);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
   virtual bool	GetInputDataVar();
   virtual bool	GetUnitNamesVar();
   virtual bool	GetNetworkVar();
 
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

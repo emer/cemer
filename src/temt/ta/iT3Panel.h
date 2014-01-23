@@ -80,10 +80,10 @@ public slots:
   virtual void          viewSaved(int view_no); // connect to viewSaved on examiner viewer
 
 public: // IViewerWidget i/f
-  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  QWidget*     widget() override {return this;}
 protected:
-  void         Constr_impl() CPP11_OVERRIDE;
-  void         Refresh_impl() CPP11_OVERRIDE; // note: we just do the lite Render_impl stuff
+  void         Constr_impl() override;
+  void         Refresh_impl() override; // note: we just do the lite Render_impl stuff
 
 protected:
   T3ExaminerViewer*     m_t3viewer;

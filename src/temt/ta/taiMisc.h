@@ -167,8 +167,8 @@ public:
   void          AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
   void          ResolveEditChanges(CancelOp& cancel_op); // resolve all changes on ALL edits panels and dialogs
   void          ResolveViewerChanges(CancelOp& cancel_op); // resolve all changes on ALL top level viewers
-  void Busy_(bool busy) CPP11_OVERRIDE;// impl for taMisc, puts system in a 'busy' state (pointer, no input)
-  void CheckConfigResult_(bool ok) CPP11_OVERRIDE;
+  void Busy_(bool busy) override;// impl for taMisc, puts system in a 'busy' state (pointer, no input)
+  void CheckConfigResult_(bool ok) override;
 
 
   static bool   KeyEventCtrlPressed(QKeyEvent* e);
@@ -292,10 +292,10 @@ protected:
   signed char   mtext_ht[3];  // for s/m/b
   short int     max_button_width;
 
-  void         Init(bool gui) CPP11_OVERRIDE; // NOTE: called from static New
-  int          Exec_impl() CPP11_OVERRIDE;
-  void         OnQuitting_impl(CancelOp& cancel_op) CPP11_OVERRIDE; // pre-quit resolves changes
-  void         Quit_impl(CancelOp cancel_op) CPP11_OVERRIDE;
+  void         Init(bool gui) override; // NOTE: called from static New
+  int          Exec_impl() override;
+  void         OnQuitting_impl(CancelOp& cancel_op) override; // pre-quit resolves changes
+  void         Quit_impl(CancelOp cancel_op) override;
 
   void          HandleScreenGeomChange(); // reinit, and make sure all wins visible
   void          HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget* win); // handle a change for the window

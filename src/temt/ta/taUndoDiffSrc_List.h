@@ -76,7 +76,7 @@ public:
   }
   // #CAT_CircModify add a new item to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
 
-  void Reset() CPP11_OVERRIDE;
+  void Reset() override;
 
   void  Copy_(const taUndoDiffSrc_List& cp);
   TA_BASEFUNS(taUndoDiffSrc_List);

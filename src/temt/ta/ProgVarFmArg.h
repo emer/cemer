@@ -39,18 +39,18 @@ public:
   virtual Program*	GetOtherProg();
   // safe call to get other program: emits error if other_prog is null (used by program)
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "var=arg"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  String	GetToolbarName() const override { return "var=arg"; }
 
   void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   PROGEL_SIMPLE_BASEFUNS(ProgVarFmArg);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void	GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
+  void CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void	GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

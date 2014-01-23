@@ -63,15 +63,15 @@ public:
   { GetConSpec()->Compute_Weights(this,ru,net); }
   // #CAT_Learning update weight values from deltas
 
-  int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) CPP11_OVERRIDE;
-  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) CPP11_OVERRIDE;
+  int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) override;
+  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
 
   virtual int   Dump_Load_Old_Cons(Unit* ru, int recv_gp_idx);
   // #IGNORE load old connection values if a user-data string is present to this effect -- removes the user data after loading!
 
   TA_BASEFUNS_NOCOPY(RecvCons);
 protected:
-  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void  Initialize();
   void  Destroy()       { };

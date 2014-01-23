@@ -26,7 +26,7 @@ INHERITED(QTextBrowser)
   Q_OBJECT
 public:
   
-  void		setSource(const QUrl& url) CPP11_OVERRIDE;
+  void		setSource(const QUrl& url) override;
   
   iTextBrowser(QWidget* parent = 0);
   ~iTextBrowser();

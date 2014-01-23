@@ -41,7 +41,7 @@ public slots:
   // select the previous tab in the list
 
 protected:
-  void keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
+  void keyPressEvent(QKeyEvent* e) override;
 };
 
 #endif // iTabBarBase_h

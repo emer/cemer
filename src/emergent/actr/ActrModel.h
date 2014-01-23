@@ -279,9 +279,9 @@ public:
   virtual void          ResetModel();
   // #EXPERT reset the model entirely -- remove everything from existing model -- use with caution!
 
-  String       GetDesc() const CPP11_OVERRIDE {return desc;}
-  bool         CheckConfig_impl(bool quiet) CPP11_OVERRIDE;
-  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  String       GetDesc() const override {return desc;}
+  bool         CheckConfig_impl(bool quiet) override;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) override;
 
   void  InitLinks();
   void  CutLinks();

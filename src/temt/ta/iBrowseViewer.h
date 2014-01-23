@@ -60,7 +60,7 @@ protected slots:
     ISelectable_PtrList& sel_items, taiWidgetActions* menu);
 
 protected: // IViewerWidget i/f
-  void         Refresh_impl() CPP11_OVERRIDE;
+  void         Refresh_impl() override;
 
 protected:
   int                   mnuBrowseNodeDrop_param;

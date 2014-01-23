@@ -45,7 +45,7 @@ signals:
 
 protected:
   void          emit_customContextMenuRequested2(const QPoint& pos, int tab_idx);
-  void contextMenuEvent(QContextMenuEvent* ev) CPP11_OVERRIDE;
+  void contextMenuEvent(QContextMenuEvent* ev) override;
 };
 
 #endif // iTabWidget_h

@@ -36,16 +36,16 @@ public:
   ISelectableHost*      host; // #IGNORE ss/b set by owner
 
 //note: typically never has a non-null parent, because it is rooted in non-T3DataView
-  T3DataViewRoot* root() CPP11_OVERRIDE {return this;}
-  bool         isRootLevelView() const CPP11_OVERRIDE {return true;}
+  T3DataViewRoot* root() override {return this;}
+  bool         isRootLevelView() const override {return true;}
 
   T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
 
 // ISelectable i/f
-  GuiContext   shType() const CPP11_OVERRIDE {return GC_DUAL_DEF_VIEW;} // the default for mains
+  GuiContext   shType() const override {return GC_DUAL_DEF_VIEW;} // the default for mains
 
 protected:
-  void         Constr_Node_impl() CPP11_OVERRIDE;
+  void         Constr_Node_impl() override;
 
 private:
   NOCOPY(T3DataViewRoot)

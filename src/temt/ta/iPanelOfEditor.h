@@ -36,25 +36,25 @@ friend class taiEditorOfClass;
 public:
   iColor*               bgcol; // temp holding spot
   taiEditorOfClass*     EditorOfClass() {return owner;}
-  String       panel_type() const CPP11_OVERRIDE; // this string is on the subpanel button for this panel
-  void         Closing(CancelOp& cancel_op) CPP11_OVERRIDE;
-  const iColor GetTabColor(bool selected, bool& ok) const CPP11_OVERRIDE; // special color for tab; NULL means use default
-  bool         HasChanged_impl() CPP11_OVERRIDE; // 'true' if user has unsaved changes -- used to prevent browsing away
-  void         UpdatePanel() CPP11_OVERRIDE; // always do it, even when hidden; the edit sorts it out
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  String       panel_type() const override; // this string is on the subpanel button for this panel
+  void         Closing(CancelOp& cancel_op) override;
+  const iColor GetTabColor(bool selected, bool& ok) const override; // special color for tab; NULL means use default
+  bool         HasChanged_impl() override; // 'true' if user has unsaved changes -- used to prevent browsing away
+  void         UpdatePanel() override; // always do it, even when hidden; the edit sorts it out
+  QWidget*     firstTabFocusWidget() override;
 
   iPanelOfEditor(taiEditorOfClass* owner_, taiSigLink* dl_);
   ~iPanelOfEditor();
 
 public: // ISigLinkClient interface
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfEditor;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfEditor;}
 
 protected:
   taiEditorOfClass*      owner;
-  void         UpdatePanel_impl() CPP11_OVERRIDE; // the refresh guy!
-  void         Render_impl() CPP11_OVERRIDE;
-  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
-  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
+  void         UpdatePanel_impl() override; // the refresh guy!
+  void         Render_impl() override;
+  void         ResolveChanges_impl(CancelOp& cancel_op) override;
+  void         showEvent(QShowEvent* ev) override;
 
 };//
 

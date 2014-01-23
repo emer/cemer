@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfInt);
 class TA_API taiTypeOfInt : public taiType { // handles numeric int types, up to 32-bits
   TAI_TYPEBASE_SUBCLASS(taiTypeOfInt, taiType);
 public:
-  bool handlesReadOnly() const CPP11_OVERRIDE { return true; } // uses a RO iSpinBox
+  bool handlesReadOnly() const override { return true; } // uses a RO iSpinBox
 
   int           BidForType(TypeDef* td);
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,

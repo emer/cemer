@@ -36,24 +36,24 @@ public:
   taiEditorOfProgramCtrl* pc;
 
   Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  String       panel_type() const CPP11_OVERRIDE {return "Program Ctrl";}
+  String       panel_type() const override {return "Program Ctrl";}
 
-  bool         HasChanged_impl() CPP11_OVERRIDE; // 'true' if user has unsaved changes
+  bool         HasChanged_impl() override; // 'true' if user has unsaved changes
   void                  FillList();
 
   iPanelOfProgramCtrl(taiSigLink* dl_);
   ~iPanelOfProgramCtrl();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfProgramCtrl;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfProgramCtrl;}
 
 protected:
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
-  void         UpdatePanel_impl() CPP11_OVERRIDE;
-  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
-  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override;
+  void         OnWindowBind_impl(iPanelViewer* itv) override;
+  void         UpdatePanel_impl() override;
+  void         ResolveChanges_impl(CancelOp& cancel_op) override;
+  void         showEvent(QShowEvent* ev) override;
 };
 
 #endif // iPanelOfProgramCtrl_h

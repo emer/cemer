@@ -38,22 +38,22 @@ public:
 
   ProgEl_List	yes_code; 	// #SHOW_TREE items to execute if user says Yes/Ok to prompt in gui mode, or to always execute in nogui mode
 
-  int 		ProgElChildrenCount() const CPP11_OVERRIDE { return yes_code.size; }
+  int 		ProgElChildrenCount() const override { return yes_code.size; }
 
-  ProgVar*	FindVarName(const String& var_nm) const CPP11_OVERRIDE;
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "if gui prmt"; }
+  ProgVar*	FindVarName(const String& var_nm) const override;
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String	GetToolbarName() const override { return "if gui prmt"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfGuiPrompt);
 protected:
-  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
-  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
-  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
-  const String	GenListing_children(int indent_level) CPP11_OVERRIDE;
+  void		UpdateAfterEdit_impl() override;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		PreGenChildren_impl(int& item_id) override;
+  void		GenCssPre_impl(Program* prog) override; 
+  void		GenCssBody_impl(Program* prog) override; 
+  void		GenCssPost_impl(Program* prog) override; 
+  const String	GenListing_children(int indent_level) override;
 
 private:
   void	Initialize();

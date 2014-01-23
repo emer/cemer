@@ -41,8 +41,8 @@ public:
   taProject*    NewFromTemplateByName(const String& proj_nm);
   // #CAT_Project create a new project from a library of existing project templates, looking up by name (NULL if name not found)
 
-  int          Load_strm(std::istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL) CPP11_OVERRIDE;
-  int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) CPP11_OVERRIDE;
+  int          Load_strm(std::istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL) override;
+  int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
 
   void  InitLinks();
   TA_BASEFUNS(Project_Group);

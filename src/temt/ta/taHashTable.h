@@ -39,8 +39,8 @@ public:
   KeyType       key_type;       // type of key to use by default (name/string or pointer)
 
   // allocate in prime-number increments
-  bool Alloc(int sz) CPP11_OVERRIDE;
-  void RemoveAll() CPP11_OVERRIDE;
+  bool Alloc(int sz) override;
+  void RemoveAll() override;
 
   virtual int   FindHashVal(taHashVal hash, const String& str = _nilString) const;
   // find value associated with given hash code (-1 if not found)

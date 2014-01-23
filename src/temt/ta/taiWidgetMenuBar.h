@@ -33,7 +33,7 @@ class TA_API taiWidgetMenuBar : public taiWidgetActions {
 public:
   inline QMenuBar*      rep_bar() {return (QMenuBar*)(QWidget*)m_rep;}
 
-  void         AddSep(bool new_radio_grp = false) CPP11_OVERRIDE {} // no seps or groups allowed in a menubar
+  void         AddSep(bool new_radio_grp = false) override {} // no seps or groups allowed in a menubar
 
   taiWidgetMenuBar(int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiWidget* par, QWidget* gui_parent_, int flags_ = 0); // used by taiEditorOfClass

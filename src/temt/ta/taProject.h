@@ -97,8 +97,8 @@ public:
   // #READ_ONLY #NO_SAVE current view of project log data
 
 
-  bool         isDirty() const CPP11_OVERRIDE {return m_dirty;}
-  void         setDirty(bool value) CPP11_OVERRIDE;  //
+  bool         isDirty() const override {return m_dirty;}
+  void         setDirty(bool value) override;  //
 
   static String         GetProjTemplatePath(ProjLibs library);
   // #CAT_ProjTemplates get path to given project template library
@@ -177,16 +177,16 @@ public:
   virtual bool          AutoSave(bool force = false);
   // #CAT_File called automatically by the wait process -- if enough time has passed or force is true, save current project to an auto save backup file (file name + _autosave)
 
-  bool         SetFileName(const String& val) CPP11_OVERRIDE;
-  int          Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
-  int          Save() CPP11_OVERRIDE;
-  int          SaveAs(const String& fname = "") CPP11_OVERRIDE;
+  bool         SetFileName(const String& val) override;
+  int          Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
+  int          Save() override;
+  int          SaveAs(const String& fname = "") override;
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
   virtual void          PublishDocsOnWeb(const String &repositoryName);
 
-  int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) CPP11_OVERRIDE;
+  int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();
   // #CAT_File set the system event logging to record to the project name + .plog -- called for SaveAs and Load -- uses project file_name value
 
@@ -206,9 +206,9 @@ public:
   virtual void          ViewProjLog_Editor();
   // #MENU #MENU_ON_View #MENU_CONTEXT #CAT_File view the current project log file in an external editor as specified in the preferences
 
-  void         Dump_Load_post() CPP11_OVERRIDE;
+  void         Dump_Load_post() override;
   void                  OpenViewers(); // open any yet unopen viewers
-  void         CloseLater() CPP11_OVERRIDE;
+  void         CloseLater() override;
 
   void  UpdateAfterEdit();
   virtual void          InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
@@ -221,7 +221,7 @@ protected:
   virtual void          InitLinks_post(); // #IGNORE called after all _impls (not called for undo_loading): assert things like default wizards in here
   void  CutLinks(); // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
-  int          GetOwnerEditableState_impl(int mask) const CPP11_OVERRIDE
+  int          GetOwnerEditableState_impl(int mask) const override
     {return 0;} // the readonly stops here!
   void                  DoView();
 

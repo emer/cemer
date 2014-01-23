@@ -45,25 +45,25 @@ public:
   virtual std::ostream& OutputType(std::ostream& fh) const;
   // output type information in C++ syntax
 
-  taList_impl* children_() CPP11_OVERRIDE {return &enums;}
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
+  taList_impl* children_() override {return &enums;}
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return enums.Elem(idx, mode); }
 
-  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
-  taBase*      FindTypeName(const String& nm) const CPP11_OVERRIDE;
-  String       GetDisplayName() const CPP11_OVERRIDE;
+  taBase*      FindTypeName(const String& nm) const override;
+  String       GetDisplayName() const override;
 
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
   TA_SIMPLE_BASEFUNS(DynEnumBase);
 protected:
-  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void         GenCssPre_impl(Program* prog) CPP11_OVERRIDE;
-  void         GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
-  void         GenCssPost_impl(Program* prog) CPP11_OVERRIDE;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void         GenCssPre_impl(Program* prog) override;
+  void         GenCssBody_impl(Program* prog) override;
+  void         GenCssPost_impl(Program* prog) override;
 
 private:
   void  Initialize();

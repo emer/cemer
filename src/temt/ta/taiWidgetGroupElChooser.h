@@ -31,11 +31,11 @@ INHERITED(taiWidgetListElChooser_base)
 public:
   taGroup_impl*         grp;
 
-  const String titleText() CPP11_OVERRIDE;
+  const String titleText() override;
   using inherited::GetImage;
   void                  GetImage(taGroup_impl* base_grp, taBase* it);
 
-  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
+  void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
 
   taiWidgetGroupElChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                     QWidget* gui_parent_, int flags_ = 0,

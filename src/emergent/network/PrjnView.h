@@ -39,10 +39,10 @@ public:
 
   T3_DATAVIEWFUNS(PrjnView, nvhDataView)
 protected:
-  void         DoHighlightColor(bool apply) CPP11_OVERRIDE;
-  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
-  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
-  void         Reset_impl() CPP11_OVERRIDE; // #IGNORE
+  void         DoHighlightColor(bool apply) override;
+  void         Render_pre() override; // #IGNORE
+  void         Render_impl() override; // #IGNORE
+  void         Reset_impl() override; // #IGNORE
 private:
   NOCOPY(PrjnView)
   void                  Initialize();

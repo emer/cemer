@@ -39,8 +39,8 @@ protected:
   void  Initialize();
   void  Destroy();
 
-  void         Render_pre() CPP11_OVERRIDE;
-  void         Render_impl() CPP11_OVERRIDE;
+  void         Render_pre() override;
+  void         Render_impl() override;
 };
 
 #endif // T3AnnotationView_h

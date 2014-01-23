@@ -33,9 +33,9 @@ public:
   TypeItem*             data() {return (TypeItem*)m_data;} //
   TypeItem*             data() const {return (TypeItem*)m_data;} //
 
-  bool         HasChildItems() CPP11_OVERRIDE;
-  String       GetName() const CPP11_OVERRIDE;
-  String       GetDisplayName() const CPP11_OVERRIDE;
+  bool         HasChildItems() override;
+  String       GetName() const override;
+  String       GetDisplayName() const override;
   using inherited::ShowMember;
   virtual bool ShowMember(MemberDef* md); // asks this type if we should show the md member
 
@@ -43,9 +43,9 @@ public:
   SL_FUNS(taSigLinkTypeItem); //
 
 protected:
-  iPanelBase*  CreateDataPanel_impl() CPP11_OVERRIDE;
+  iPanelBase*  CreateDataPanel_impl() override;
   taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
-    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags) CPP11_OVERRIDE;
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags) override;
 };
 
 #endif // taSigLinkTypeItem_h

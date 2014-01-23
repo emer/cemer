@@ -31,7 +31,7 @@ class TA_API taiWidgetDimEdit : public taiWidget { // specify number of dims and
   INHERITED(taiWidget)
 public:
   inline iDimEdit*              rep() const {return (iDimEdit*)(QWidget*)m_rep;}
-  bool                  fillHor() {return true;} // override
+  bool                  fillHor() override {return true;}
   taiWidgetDimEdit(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
     // uses flags:
 
@@ -40,8 +40,8 @@ public:
 
 protected:
   using inherited::GetImage_impl;
-  void         GetImage_impl(const void* base) CPP11_OVERRIDE {GetImage((const MatrixGeom*)base);}
-  void         GetValue_impl(void* base) const CPP11_OVERRIDE {GetValue((MatrixGeom*)base);}
+  void         GetImage_impl(const void* base) override {GetImage((const MatrixGeom*)base);}
+  void         GetValue_impl(void* base) const override {GetValue((MatrixGeom*)base);}
 private:
   void                  Initialize(QWidget* gui_parent_);
 

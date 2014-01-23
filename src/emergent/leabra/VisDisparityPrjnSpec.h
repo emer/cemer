@@ -52,8 +52,8 @@ public:
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular gaussian weighting factors for integrating disparity values into v1b unit activations -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
 
-  void Connect_impl(Projection* prjn) CPP11_OVERRIDE;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
+  void Connect_impl(Projection* prjn) override;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
 
   virtual void InitStencils(Projection* prjn);
   // initialize the stencils for given geometry of layers for this projection -- called at Connect_LeftEye
@@ -73,7 +73,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VisDisparityPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };

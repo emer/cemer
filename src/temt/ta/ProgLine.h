@@ -84,8 +84,8 @@ public:
   void                  SetWarning();           // set warning here and in associated prog_el
   void                  ClearWarning();         // clear warning here and in associated prog_el
 
-  int          GetIndex() const CPP11_OVERRIDE { return line_no; }
-  void         SetIndex(int value) CPP11_OVERRIDE { line_no = value; }
+  int          GetIndex() const override { return line_no; }
+  void         SetIndex(int value) override { line_no = value; }
 
 //    TA_SIMPLE_BASEFUNS(ProgLine);
     void  InitLinks();

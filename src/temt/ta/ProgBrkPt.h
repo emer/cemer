@@ -43,9 +43,9 @@ public:
   void          Disable();
   // #MENU #DYN1 #GHOST_ON_enabled disable existing breakpoint but don't delete the breakpoint
 
-  String       GetDesc() const CPP11_OVERRIDE {return desc;}
-  String       GetStateDecoKey() const CPP11_OVERRIDE;
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  String       GetDesc() const override {return desc;}
+  String       GetStateDecoKey() const override;
+  void         UpdateAfterEdit_impl() override;
 
 
   void          InitLinks();

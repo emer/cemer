@@ -39,14 +39,14 @@ public:
 
   void                  Constr(const char* prompt = "", const char* win_title = "");
   using inherited::GetImage;
-  void         GetImage() CPP11_OVERRIDE;
-  void         GetValue() CPP11_OVERRIDE;
-  void         Constr_Buttons() CPP11_OVERRIDE;
+  void         GetImage() override;
+  void         GetValue() override;
+  void         Constr_Buttons() override;
 
   virtual void          SelectLines(int st_line, int end_line);
   // select a range of lines in the editor
 
-  bool         eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  bool         eventFilter(QObject *obj, QEvent *event) override;
   // event filter to trigger apply button on Ctrl+Return
 
   taiEditorOfString(MemberDef* mbr, void* base, TypeDef* typ_ = NULL,
@@ -63,12 +63,12 @@ protected:
   QWidget*              fancy_edit; // fancy editor if created
 
   void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
-  void         Constr_Strings() CPP11_OVERRIDE;
-  void         Constr_Box() CPP11_OVERRIDE;
-  void         Constr_RegNotifies() CPP11_OVERRIDE;
-  void         DoConstr_Dialog(iDialogEditor*& dlg) CPP11_OVERRIDE;
-  void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) CPP11_OVERRIDE;
-  void         Ok_impl() CPP11_OVERRIDE;
+  void         Constr_Strings() override;
+  void         Constr_Box() override;
+  void         Constr_RegNotifies() override;
+  void         DoConstr_Dialog(iDialogEditor*& dlg) override;
+  void         ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) override;
+  void         Ok_impl() override;
 };
 
 #endif // taiEditorOfString_h

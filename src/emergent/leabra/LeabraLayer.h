@@ -73,9 +73,9 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem 
 #endif
 
-  void CheckSpecs() CPP11_OVERRIDE;
-  void	BuildUnits() CPP11_OVERRIDE;
-  void BuildUnits_Threads(Network* net) CPP11_OVERRIDE
+  void CheckSpecs() override;
+  void	BuildUnits() override;
+  void BuildUnits_Threads(Network* net) override
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
   virtual  void	BuildKwtaBuffs();
   // #IGNORE build kwta buffers etc -- needs to be done at load and build time
@@ -101,7 +101,7 @@ public:
   void	SetLearnRule(LeabraNetwork* net) 	{ if(spec) spec->SetLearnRule(this, net); }
   // #CAT_Learning set current learning rule from the network
 
-  void	Init_Weights(Network* net) CPP11_OVERRIDE
+  void	Init_Weights(Network* net) override
   { if(spec) spec->Init_Weights(this, (LeabraNetwork*)net); }
   // #CAT_Learning initialize weight values and other permanent state
 
@@ -110,9 +110,9 @@ public:
   void	Init_Netins(LeabraNetwork* net)		{ spec->Init_Netins(this, net); }
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
 
-  void  Init_InputData(Network* net) CPP11_OVERRIDE;
+  void  Init_InputData(Network* net) override;
 
-  void	Init_Acts(Network* net) CPP11_OVERRIDE
+  void	Init_Acts(Network* net) override
   { if(spec) spec->Init_Acts(this, (LeabraNetwork*)net); }
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
 
@@ -271,7 +271,7 @@ public:
   //	Trial-level Stats
 
   float Compute_SSE(Network* net, int& n_vals,
-			     bool unit_avg = false, bool sqrt = false) CPP11_OVERRIDE
+			     bool unit_avg = false, bool sqrt = false) override
   { return spec->Compute_SSE(this, (LeabraNetwork*)net, n_vals, unit_avg, sqrt); }
 
   float Compute_NormErr(LeabraNetwork* net)
@@ -311,7 +311,7 @@ public:
   //	Misc structural routines
 
   virtual void	ResetSortBuf();
-  void	TriggerContextUpdate() CPP11_OVERRIDE;
+  void	TriggerContextUpdate() override;
 
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }
@@ -322,7 +322,7 @@ public:
   TA_BASEFUNS(LeabraLayer);
 protected:
   void	UpdateAfterEdit_impl();
-  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void	Initialize();
   void	Destroy()		{ CutLinks(); }

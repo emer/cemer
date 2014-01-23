@@ -28,10 +28,10 @@ class TA_API taiWidgetListElChooser_base : public taiWidgetItemChooser {
 INHERITED(taiWidgetItemChooser)
 public:
   inline taBase*        item() const {return (taBase*)m_sel;}
-  int                   columnCount(int view) const; // override
-  const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 1;} // override
-  const String          viewText(int index) const; // override
+  int                   columnCount(int view) const override;
+  const String          headerText(int index, int view) const override;
+  int                   viewCount() const override {return 1;}
+  const String          viewText(int index) const override;
 
   taBase*               GetValue() {return item();}
 

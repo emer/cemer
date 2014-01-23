@@ -47,8 +47,8 @@ public:
   taiWidgetMethod*        GetButtonMethodRep(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_);
   taiWidgetMethod*        GetMenuMethodRep(void* base, IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
   using inherited::GetImage;
-  void         GetImage(taiWidget*, const void*) CPP11_OVERRIDE { }
-  void         GetValue(taiWidget*, void*)       CPP11_OVERRIDE { }
+  void         GetImage(taiWidget*, const void*) override { }
+  void         GetValue(taiWidget*, void*)       override { }
 
   taiMethod(MethodDef* mb, TypeDef* td) : taiType(td)   { meth = mb; }
   taiMethod()                                           { meth = NULL; }
@@ -82,11 +82,11 @@ protected:
     {                                    \
       Destroy();                         \
     }                                    \
-    TypeDef* GetTypeDef() const CPP11_OVERRIDE \
+    TypeDef* GetTypeDef() const override \
     {                                    \
       return &TA_##x;                    \
     }                                    \
-    x* MethInst(MethodDef* md, TypeDef* td) const CPP11_OVERRIDE \
+    x* MethInst(MethodDef* md, TypeDef* td) const override \
     {                                    \
       return new x(md, td);              \
     }

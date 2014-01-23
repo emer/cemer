@@ -102,12 +102,12 @@ public:
                                Relation::Relations rl = Relation::EQUAL);
   // #IGNORE for parsing -- set slot value and potentially relation
 
-  bool HasName() const CPP11_OVERRIDE { return true; }
-  bool SetName(const String& nm) CPP11_OVERRIDE { name = nm; return true; }
-  String GetName() const  CPP11_OVERRIDE { return name; }
-  String& Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
-  String GetDisplayName() const CPP11_OVERRIDE;
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgType"; }
+  bool HasName() const override { return true; }
+  bool SetName(const String& nm) override { name = nm; return true; }
+  String GetName() const  override { return name; }
+  String& Print(String& strm, int indent = 0) const override;
+  String GetDisplayName() const override;
+  String GetTypeDecoKey() const override { return "ProgType"; }
 
   void  InitLinks();
   void  CutLinks();

@@ -39,7 +39,7 @@ public:
   void  CutLinks();
   TA_BASEFUNS_NOCOPY(ProgExpr);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy();

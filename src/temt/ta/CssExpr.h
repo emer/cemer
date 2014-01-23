@@ -33,18 +33,18 @@ INHERITED(ProgEl)
 public:
   ProgExpr		expr;  // any valid css expression
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "css"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  String	GetToolbarName() const override { return "css"; }
 
   PROGEL_SIMPLE_BASEFUNS(CssExpr);
 protected:
-  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		UpdateAfterEdit_impl() override;
+  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

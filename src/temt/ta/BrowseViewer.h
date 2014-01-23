@@ -49,7 +49,7 @@ public:
 
   TA_DATAVIEWFUNS(BrowseViewer, FrameViewer) //
 protected:
-  void         Render_pre() CPP11_OVERRIDE; //
+  void         Render_pre() override; //
 private:
   void  Copy_(const BrowseViewer& cp);
   void                  Initialize();

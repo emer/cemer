@@ -39,8 +39,8 @@ public:
     const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeDefChild();
 public: // ISigLinkClient interface
-//  void*      This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeDefChild;}
+//  void*      This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeDefChild;}
 protected:
   taiTreeNodeDefChild_ElRef        m_def_child; // for list notifies
   virtual void          DefChild_SigEmit(int sls, void* op1, void* op2);

@@ -38,16 +38,16 @@ public:
   // #CAT_Data #BUTTON add a new column to operate on
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
-  void	UpdateSpecDataTable() CPP11_OVERRIDE;
+  void	UpdateSpecDataTable() override;
 
-  String GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "sel rows"; }
+  String GetDisplayName() const override;
+  String	GetToolbarName() const override { return "sel rows"; }
 
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
+  void UpdateAfterEdit_impl() override;
+  void CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override; 
 
 private:
   void	Initialize();

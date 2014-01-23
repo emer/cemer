@@ -155,17 +155,17 @@ public:
   virtual  bool         IsCtrlProgEl()  { return false; }
   // set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
 
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
-  String       GetStateDecoKey() const CPP11_OVERRIDE;
-  int          GetEnabled() const CPP11_OVERRIDE;
+  String       GetStateDecoKey() const override;
+  int          GetEnabled() const override;
   // note: it is our own, plus disabled if parent is
-  void         SetEnabled(bool value) CPP11_OVERRIDE;
-  String       GetDesc() const CPP11_OVERRIDE {return desc;}
-  const String GetToolTip(const KeyString& key) const CPP11_OVERRIDE;
-  String       GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
+  void         SetEnabled(bool value) override;
+  String       GetDesc() const override {return desc;}
+  const String GetToolTip(const KeyString& key) const override;
+  String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   bool                  IsVerbose() const { return HasProgFlag(VERBOSE); }
   void                  EnableBreakpoint();
   void                  DisableBreakpoint();
@@ -178,13 +178,13 @@ public:
   TA_BASEFUNS(ProgEl);
 
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void         UpdateAfterMove_impl(taBase* old_owner) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+  void         UpdateAfterMove_impl(taBase* old_owner) override;
   virtual void          UpdateAfterCopy(const ProgEl& cp);
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
   void         CheckError_msg(const char* a, const char* b=0, const char* c=0,
                                        const char* d=0, const char* e=0, const char* f=0,
-                                       const char* g=0, const char* h=0) const CPP11_OVERRIDE;
+                                       const char* g=0, const char* h=0) const override;
   virtual bool          CheckEqualsError(String& condition, bool quiet, bool& rval);
   // check for common mistake of using = instead of == for logical equals
   virtual bool          CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval);
@@ -197,8 +197,8 @@ protected:
   virtual void          UpdateProgFlags();
   // #IGNORE update program element flags
 
-  bool         CheckConfig_impl(bool quiet) CPP11_OVERRIDE;
-  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  bool         CheckConfig_impl(bool quiet) override;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) override;
   void         SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                              int sls, void* op1_, void* op2_);
 

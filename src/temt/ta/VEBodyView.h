@@ -44,7 +44,7 @@ public:
   // set dragger position, based on shape
 
   bool			isVisible() const;
-  bool		ignoreSigEmit() const CPP11_OVERRIDE { return !isVisible(); }
+  bool		ignoreSigEmit() const override { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEBodyView);
@@ -53,8 +53,8 @@ protected:
   void	Initialize();
   void	Destroy();
 
-  void		Render_pre() CPP11_OVERRIDE;
-  void		Render_impl() CPP11_OVERRIDE;
+  void		Render_pre() override;
+  void		Render_impl() override;
 };
 
 #endif // VEBodyView_h

@@ -56,13 +56,13 @@ public:
   virtual bool          LoadInitTarget() { return false; }
   // initialize target based on targ_ld_init information
 
-  taList_impl* children_() CPP11_OVERRIDE {return &prog_args;}
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  taList_impl* children_() override {return &prog_args;}
+  String       GetTypeDecoKey() const override { return "Program"; }
 
   PROGEL_SIMPLE_BASEFUNS(ProgramCallBase);
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) override;
   virtual void          GenCssArgSet_impl(Program* prog, const String trg_var_nm);
 private:
   void  Initialize();

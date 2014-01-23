@@ -50,7 +50,7 @@ protected:
   QVBoxLayout*  layOuter;
   QWidget*      mcentralWidget;
   QScrollArea*  scr;
-  void closeEvent(QCloseEvent* ev) CPP11_OVERRIDE;
+  void closeEvent(QCloseEvent* ev) override;
 };
 
 #endif // iDialogEditor_h

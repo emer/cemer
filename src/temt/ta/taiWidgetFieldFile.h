@@ -39,8 +39,8 @@ public:
                      const String& ftyp = "", int fcmprs = -1);
 
 protected slots:
-  void         btnEdit_clicked(bool) CPP11_OVERRIDE;
-  void         lookupKeyPressed() CPP11_OVERRIDE; // remap to file dialog
+  void         btnEdit_clicked(bool) override;
+  void         lookupKeyPressed() override; // remap to file dialog
 
 public:
   FileActionType        file_act;       // file action to take for file dialog

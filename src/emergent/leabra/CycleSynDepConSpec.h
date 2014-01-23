@@ -44,7 +44,7 @@ public:
     if(effwt < 0.0f) effwt = 0.0f;
   }
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   SIMPLE_COPY(CycleSynDepSpec);
   TA_BASEFUNS(CycleSynDepSpec);
@@ -76,7 +76,7 @@ public:
   // #IGNORE 
 
   inline void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) CPP11_OVERRIDE {
+                                         LeabraNetwork* net) override {
     float* wts = cg->OwnCnVar(WT);
     float* effs = cg->OwnCnVar(EFFWT);
     const float su_act = su->act_eq;
@@ -100,17 +100,17 @@ public:
   }
   // #IGNORE 
   inline void 	C_Init_Weights_post(BaseCons* cg, const int idx,
-                                            Unit* ru, Unit* su, Network* net) CPP11_OVERRIDE {
+                                            Unit* ru, Unit* su, Network* net) override {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
     cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net);
   }
   // #IGNORE 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                const int thread_no, const float su_act_delta) CPP11_OVERRIDE
+                                const int thread_no, const float su_act_delta) override
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
   // #IGNORE use effwt instead of wt
 
-  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE {
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override {
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt

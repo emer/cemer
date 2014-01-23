@@ -46,7 +46,7 @@ public:
 
   void		InitVals() { state = NO_SRAVG; s_sum = m_sum = 0.0f; s_nrm = m_nrm = 1.0f; }
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
+  String       GetTypeDecoKey() const override { return "Network"; }
 
   SIMPLE_COPY(CtSRAvgVals);
   TA_BASEFUNS(CtSRAvgVals);

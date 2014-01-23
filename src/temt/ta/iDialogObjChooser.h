@@ -93,8 +93,8 @@ protected:
   void          AddTokens(TypeDef* td); // add all tokens of given type
 
 protected slots:
-  void accept(); // override
-  void reject(); // override
+  void accept() override;
+  void reject() override;
   // callbacks
   void          browser_currentItemChanged(QListWidgetItem* itm, QListWidgetItem* prv);
   void          browser_itemDoubleClicked(QListWidgetItem* itm);

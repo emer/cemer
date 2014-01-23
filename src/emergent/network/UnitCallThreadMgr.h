@@ -50,7 +50,7 @@ public:
   int           uidx_inc;       // how much to increment counter by
   ThreadUnitCall* unit_call;    // #IGNORE method to call on the unit
 
-  void run() CPP11_OVERRIDE;
+  void run() override;
   // runs specified chunks and then nibbles on remainder
 
   UnitCallThreadMgr* mgr() { return (UnitCallThreadMgr*)owner->GetOwner(); }
@@ -79,7 +79,7 @@ public:
 
   Network*      network()       { return (Network*)owner; }
 
-  void InitAll() CPP11_OVERRIDE;      // initialize threads and tasks
+  void InitAll() override;      // initialize threads and tasks
 
   void Run(ThreadUnitCall* unit_call, float comp_load,
                     bool backwards=false, bool layer_sync=false);

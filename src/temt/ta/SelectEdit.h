@@ -60,9 +60,9 @@ public:
 
   virtual bool          autoEdit() const {return auto_edit;}
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "SelectEdit"; }
-  String       GetDesc() const CPP11_OVERRIDE { return desc; } //
-  int          UpdatePointers_NewPar(taBase* old_par, taBase* new_par) CPP11_OVERRIDE;
+  String       GetTypeDecoKey() const override { return "SelectEdit"; }
+  String       GetDesc() const override { return desc; } //
+  int          UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   SIMPLE_LINKS(SelectEdit);
   TA_BASEFUNS(SelectEdit);
 
@@ -179,17 +179,17 @@ public: // public API
   // #CAT_PSearch_Access set current value to stored next value for given member name and, optionally if non-empty, the associated label
 
 public: // IRefListClient i/f
-  void*        This() CPP11_OVERRIDE {return this;}
-  void         SigDestroying_Ref(taBase_RefList* src, taBase* ta) CPP11_OVERRIDE;
+  void*        This() override {return this;}
+  void         SigDestroying_Ref(taBase_RefList* src, taBase* ta) override;
     // note: item will already have been removed from list
   void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int sls, void* op1, void* op2) CPP11_OVERRIDE;
+    int sls, void* op1, void* op2) override;
 
 protected:
   int                   m_changing; // flag so we don't recursively delete bases
   taBase_RefList        base_refs; // all bases notify us via this list
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
   virtual void          SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
   virtual void          BaseAdded(SelectEditItem* sei);

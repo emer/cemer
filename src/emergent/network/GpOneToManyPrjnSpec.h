@@ -40,8 +40,8 @@ public:
   virtual void 	GetNGroups(Projection* prjn, int& r_n_ugp, int& s_n_ugp);
   // get number of connection groups for the projection
 
-  void	PreConnect(Projection* prjn) CPP11_OVERRIDE;
-  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
+  void	PreConnect(Projection* prjn) override;
+  void	Connect_impl(Projection* prjn) override;
 
   TA_SIMPLE_BASEFUNS(GpOneToManyPrjnSpec);
 private:

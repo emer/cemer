@@ -47,9 +47,9 @@ protected:
   
   virtual Qt::DropActions supportedDropActions () const; // def is Copy
   
-  void 			mousePressEvent(QMouseEvent* event); // override
-  void 			mouseReleaseEvent(QMouseEvent* event); // override
-  void 			mouseMoveEvent(QMouseEvent* event); // override
+  void 			mousePressEvent(QMouseEvent* event) override;
+  void 			mouseReleaseEvent(QMouseEvent* event) override;
+  void 			mouseMoveEvent(QMouseEvent* event) override;
 private:
   void			Init();
 #endif

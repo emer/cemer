@@ -35,20 +35,20 @@ public:
 
   taDoc*                doc() const; // just returns cast of base
 
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  QWidget*     firstTabFocusWidget() override;
 
   taiEditorOfDoc(void* base, TypeDef* typ_, bool read_only_ = false,
                   bool modal_ = false, QObject* parent = 0);
   taiEditorOfDoc() {init();} // just for instance
   ~taiEditorOfDoc() {}
 protected:
-  void         Constr_Body() CPP11_OVERRIDE;
-  void         Constr_Box() CPP11_OVERRIDE; // add the docs box
-  void         ClearBody_impl() CPP11_OVERRIDE;
-  void         GetValue_Membs() CPP11_OVERRIDE;
-  void         GetImage_Membs() CPP11_OVERRIDE;
+  void         Constr_Body() override;
+  void         Constr_Box() override; // add the docs box
+  void         ClearBody_impl() override;
+  void         GetValue_Membs() override;
+  void         GetImage_Membs() override;
 
-  bool         eventFilter(QObject* obj, QEvent* event) CPP11_OVERRIDE;
+  bool         eventFilter(QObject* obj, QEvent* event) override;
 
 private:
   void init();

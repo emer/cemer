@@ -55,20 +55,20 @@ public:
   virtual ProgVar* FindVarType(int vart, TypeDef* td = NULL);
   // find first variable of given type (ProgVar::VarType) (if hard enum or object type, td specifies type of object to find if not null)
 
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
+  String GetTypeDecoKey() const override { return "ProgVar"; }
 
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
-  taBase*      ChooseNew(taBase* origin) CPP11_OVERRIDE;
-  bool         HasChooseNew() CPP11_OVERRIDE { return true; }
+  taBase*      ChooseNew(taBase* origin) override;
+  bool         HasChooseNew() override { return true; }
 
   void  setStale();
   TA_BASEFUNS(ProgVar_List);
 
 protected:
-  void El_SetIndex_(void*, int) CPP11_OVERRIDE;
+  void El_SetIndex_(void*, int) override;
 
 private:
   void  Copy_(const ProgVar_List& cp);

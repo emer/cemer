@@ -44,7 +44,7 @@ public:
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) CPP11_OVERRIDE {
+                                                LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float su_act;
@@ -63,12 +63,12 @@ public:
   }
 
   inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) CPP11_OVERRIDE {
+                                             LeabraNetwork* net) override {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
   inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) CPP11_OVERRIDE {
+                                               LeabraNetwork* net) override {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
@@ -89,7 +89,7 @@ public:
   // #IGNORE
 
   inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) CPP11_OVERRIDE {
+                                                    LeabraNetwork* net) override {
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
@@ -102,11 +102,11 @@ public:
   }
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) CPP11_OVERRIDE {
+                                                 LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
   inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                   LeabraNetwork* net) CPP11_OVERRIDE {
+                                                   LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 

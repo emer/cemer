@@ -39,22 +39,22 @@ public:
   virtual void          setText(const String& value);
 
 
-  String       panel_type() const CPP11_OVERRIDE;
+  String       panel_type() const override;
 
   virtual int          EditAction(int ea);
   virtual int          GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
 
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  QWidget*     firstTabFocusWidget() override;
 
   iPanelOfText(taiSigLink* dl_);
   ~iPanelOfText();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfText;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfText;}
 protected:
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
-//  int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override; //
+//  int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL) override;
 
 protected slots:
   void                  textText_copyAvailable (bool yes);

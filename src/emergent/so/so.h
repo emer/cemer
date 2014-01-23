@@ -63,7 +63,7 @@ public:
   AvgInActSource avg_act_source; // source of average input actviation value
 
   inline void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net) CPP11_OVERRIDE
+                                       Network* net) override
   { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
 
   inline void	C_Compute_Weights(float& wt, float& dwt, float& pdw)
@@ -119,8 +119,8 @@ class E_API SoUnitSpec : public UnitSpec {
   // #STEM_BASE ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
 INHERITED(UnitSpec)
 public:
-  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Init_Acts(Unit* u, Network* net) override;
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
   virtual void	Compute_AvgInAct(SoUnit* u, SoNetwork* net);
   // compute average input activations
@@ -142,7 +142,7 @@ INHERITED(SoUnitSpec)
 public:
   float		threshold;
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(ThreshLinSoUnitSpec);
 private:
@@ -219,7 +219,7 @@ public:
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
 
-  void	CheckSpecs() CPP11_OVERRIDE;
+  void	CheckSpecs() override;
 
   void	InitLinks();
   void	CutLinks();
@@ -242,7 +242,7 @@ INHERITED(SoLayerSpec)
 public:
   float		softmax_gain;	// gain of the softmax function
 
-  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) CPP11_OVERRIDE;
+  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
   // set activation to be softmax of unit activations
 
   TA_SIMPLE_BASEFUNS(SoftMaxLayerSpec);
@@ -258,12 +258,12 @@ class E_API SoNetwork : public Network {
 INHERITED(Network)
 public:
 
-  void	 Compute_NetinAct() CPP11_OVERRIDE;
+  void	 Compute_NetinAct() override;
 
   virtual void	 Trial_Run(); // run one trial of So
   
-  void	SetProjectionDefaultTypes(Projection* prjn) CPP11_OVERRIDE;
-  void  BuildNullUnit() CPP11_OVERRIDE;
+  void	SetProjectionDefaultTypes(Projection* prjn) override;
+  void  BuildNullUnit() override;
 
   TA_BASEFUNS_NOCOPY(SoNetwork);
 private:
@@ -351,8 +351,8 @@ class E_API SoWizard : public Wizard {
 INHERITED(Wizard)
 public:
 
-  bool	StdProgs() CPP11_OVERRIDE;
-  bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) CPP11_OVERRIDE;
+  bool	StdProgs() override;
+  bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) override;
 
   TA_BASEFUNS_NOCOPY(SoWizard);
 private:

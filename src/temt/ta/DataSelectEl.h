@@ -43,12 +43,12 @@ public:
 
   virtual void 	UpdateEnabled(); // update the act_enabled flag based on flag and variable
 
-  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetDisplayName() const override;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
 protected:
-  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 
 #endif // DataSelectEl_h

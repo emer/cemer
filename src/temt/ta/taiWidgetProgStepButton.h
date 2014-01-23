@@ -31,8 +31,8 @@ class TA_API taiWidgetProgStepButton : public taiWidgetMethod {
   // one method with a list of buttons for args
   Q_OBJECT
 public:
-  QWidget* GetButtonRep() CPP11_OVERRIDE;
-  bool UpdateButtonRep() CPP11_OVERRIDE;
+  QWidget* GetButtonRep() override;
+  bool UpdateButtonRep() override;
 
   taiWidgetProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);

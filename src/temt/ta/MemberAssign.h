@@ -35,18 +35,18 @@ public:
   ProgExpr		expr; // the expression to compute and assign to the member
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "memb="; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  String	GetToolbarName() const override { return "memb="; }
 
   PROGEL_SIMPLE_BASEFUNS(MemberAssign);
 protected:
-  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		UpdateAfterEdit_impl() override;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

@@ -34,7 +34,7 @@ public:
   int           lrn_start_time;  // #DEF_120 starting time window (in cycles) for learning -- how long after activity crosses act_thr threshold does the learning window start?
   int           lrn_end_time;    // #DEF_150 ending time window (in cycles) for learning -- the learning window closes after this time
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(CerebGranuleSpecs);
 protected:
@@ -68,8 +68,8 @@ public:
                                      int thread_no=-1);
   // compute the granule unit learning activation as a function of time
 
-  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int       thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int       thread_no=-1) override;
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(CerebGranuleUnitSpec);
 private:

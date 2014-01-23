@@ -46,16 +46,16 @@ public:
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on list
 
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgType"; }
+  String GetTypeDecoKey() const override { return "ProgType"; }
 
-  bool         BrowserSelectMe() CPP11_OVERRIDE;
-  bool         BrowserExpandAll() CPP11_OVERRIDE;
-  bool         BrowserCollapseAll() CPP11_OVERRIDE;
+  bool         BrowserSelectMe() override;
+  bool         BrowserExpandAll() override;
+  bool         BrowserCollapseAll() override;
 
   void  setStale();
   TA_BASEFUNS_NOCOPY(ProgType_List);
 protected:
-  void El_SetIndex_(void*, int) CPP11_OVERRIDE;
+  void El_SetIndex_(void*, int) override;
 
 private:
   void  Initialize();

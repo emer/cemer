@@ -32,10 +32,10 @@ public:
   String                desc;      // #EDIT_DIALOG #CAT_taBase description of this object: what does it do, how should it be used, etc
   String                file_name; // #READ_ONLY #NO_SAVE #EXPERT #CAT_taBase The most recent file saved or loaded in association with this object.
 
-  String       GetDesc() const CPP11_OVERRIDE { return desc; }
+  String       GetDesc() const override { return desc; }
 
-  bool         SetFileName(const String& val) CPP11_OVERRIDE; // #IGNORE note: we canonicalize name first
-  String       GetFileName() const CPP11_OVERRIDE { return file_name; } // #IGNORE
+  bool         SetFileName(const String& val) override; // #IGNORE note: we canonicalize name first
+  String       GetFileName() const override { return file_name; } // #IGNORE
   TA_BASEFUNS2(taFBase, taNBase)
 private:
   void                  Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }

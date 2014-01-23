@@ -27,7 +27,7 @@ public:
   iComboBox(QWidget* parent = NULL);
 
 protected:
-  void wheelEvent(QWheelEvent * event) CPP11_OVERRIDE;
+  void wheelEvent(QWheelEvent * event) override;
 };
 
 #endif // iComboBox_h

@@ -50,7 +50,7 @@ public:
   int                   no_edit; // any bits that should be set readonly
 
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
-  bool                  fillHor() {return true;} // override
+  bool                  fillHor() override {return true;}
 
   taiWidgetBitBox(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags_ = 0);
   taiWidgetBitBox(bool is_enum, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
@@ -78,8 +78,8 @@ signals:
 
 protected:
   int           m_val; //#IGNORE
-  void         GetImageVar_impl(const Variant& val)  CPP11_OVERRIDE {GetImage(val.toInt());}
-  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE
+  void         GetImageVar_impl(const Variant& val)  override {GetImage(val.toInt());}
+  void         GetValueVar_impl(Variant& val) const override
     {int i; GetValue(i); val = i;}
 private:
   void          Initialize(QWidget* gui_parent_);

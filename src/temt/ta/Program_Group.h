@@ -62,9 +62,9 @@ public:
 
   void          SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  String       GetTypeDecoKey() const override { return "Program"; }
 
-  Variant      GetGuiArgVal(const String& fun_name, int arg_idx) CPP11_OVERRIDE;
+  Variant      GetGuiArgVal(const String& fun_name, int arg_idx) override;
 
   void  InitLinks();
   void  CutLinks();

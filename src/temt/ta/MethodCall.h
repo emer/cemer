@@ -49,21 +49,21 @@ public:
   String		meth_desc;
   // #READ_ONLY #NO_SAVE #SHOW description of the method, for reference
 
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
-  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
-  taList_impl*	children_() CPP11_OVERRIDE {return &meth_args;}	
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "meth()"; }
-  void 	Help() CPP11_OVERRIDE;
+  taList_impl*	children_() override {return &meth_args;}	
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "Function"; }
+  String	GetToolbarName() const override { return "meth()"; }
+  void 	Help() override;
 
   PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:
-  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		UpdateAfterEdit_impl() override;
+  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void		GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

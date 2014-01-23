@@ -36,8 +36,8 @@ public:
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeList();
 public: // ISigLinkClient interface
-//  void*      This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeList;}
+//  void*      This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeList;}
 private:
   void                  init(taSigLinkList* link_, int dn_flags_); // #IGNORE
 };

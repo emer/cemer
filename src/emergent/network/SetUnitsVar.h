@@ -41,17 +41,17 @@ public:
   ProgVarRef	unit_3;		// #ITEM_FILTER_DynEnumProgVarFilter unit to activate -- order doesn't matter -- can be any unit
   ProgVarRef	unit_4;		// #ITEM_FILTER_DynEnumProgVarFilter unit to activate -- order doesn't matter -- can be any unit
   
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
-  String	GetToolbarName() const CPP11_OVERRIDE { return "set units var"; }
+  String	GetDisplayName() const override;
+  String 	GetTypeDecoKey() const override { return "Function"; }
+  String	GetToolbarName() const override { return "set units var"; }
 
   PROGEL_SIMPLE_BASEFUNS(SetUnitsVar);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   virtual bool	GetInputDataVar();
 
-  void	GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void	GenCssBody_impl(Program* prog) override;
   virtual bool	GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& idnm, DataTable* idat);
 
 private:

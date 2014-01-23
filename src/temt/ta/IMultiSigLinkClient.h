@@ -35,8 +35,8 @@ public:
   ~IMultiSigLinkClient();
 protected:
   taPtrList<taSigLink> dls;
-  bool         AddSigLink(taSigLink* dl) CPP11_OVERRIDE;
-  bool         RemoveSigLink(taSigLink* dl) CPP11_OVERRIDE;
+  bool         AddSigLink(taSigLink* dl) override;
+  bool         RemoveSigLink(taSigLink* dl) override;
 };
 
 #endif // IMultiSigLinkClient_h

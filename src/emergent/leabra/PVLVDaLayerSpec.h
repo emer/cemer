@@ -34,7 +34,7 @@ public:
   float         pv_gain;        // #DEF_1;0.1;0.5 #MIN_0 extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down (e.g., in new version of PBWM)
   bool          add_pv_lv;      // #DEF_false for cases where reward is expected/delivered, add PV and LV dopamine signals (otherwise, only use PV signal)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PVLVDaSpec);
 protected:
@@ -58,15 +58,15 @@ public:
   virtual void  Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
   // compute the da value based on recv projections: every cycle in 1+ phases (delta version)
 
-  void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // never learn
-  bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  CPP11_OVERRIDE { return false; }
-  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
-  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
+  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
+  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

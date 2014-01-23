@@ -31,7 +31,7 @@ class TA_API taiWidgetTokenPtrMenu : public taiWidgetTaBaseMenu {
 public:
 //  bool                over_max;       // over max_menu
 
-  QWidget*     GetRep() CPP11_OVERRIDE { return (ta_actions) ? ta_actions->GetRep() : NULL; }
+  QWidget*     GetRep() override { return (ta_actions) ? ta_actions->GetRep() : NULL; }
 
   virtual void          GetImage(taBase* ths);
     // get image, using the current type and scope

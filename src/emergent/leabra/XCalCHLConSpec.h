@@ -35,7 +35,7 @@ public:
   bool		use_chl;	// use LeabraCHL learning instead of XCAL or CAL learning, even when rest of network is using those other algorithms
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) CPP11_OVERRIDE {
+                                         LeabraNetwork* net) override {
     if(use_chl)
       inherited::Compute_dWt_LeabraCHL(cg, su, net);
     else
@@ -43,7 +43,7 @@ public:
   }
 
   inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                     LeabraNetwork* net) CPP11_OVERRIDE {
+                                                     LeabraNetwork* net) override {
     if(use_chl)
       inherited::Compute_Weights_LeabraCHL(cg, su, net);
     else
@@ -51,7 +51,7 @@ public:
   }
 
   inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) CPP11_OVERRIDE {
+                                               LeabraNetwork* net) override {
     if(use_chl)
       inherited::Compute_dWt_LeabraCHL(cg, su, net);
     else
@@ -59,7 +59,7 @@ public:
   }
 
   inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) CPP11_OVERRIDE {
+                                                    LeabraNetwork* net) override {
     if(use_chl)
       inherited::Compute_Weights_LeabraCHL(cg, su, net);
     else
@@ -67,14 +67,14 @@ public:
   }
 
   inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
-                                                   LeabraLayer* rlay) CPP11_OVERRIDE {
+                                                   LeabraLayer* rlay) override {
     if(use_chl)
       inherited::B_Compute_dWt_LeabraCHL(bias, ru);
     else
       inherited::B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
   }
   inline void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
-                                                  LeabraLayer* rlay) CPP11_OVERRIDE {
+                                                  LeabraLayer* rlay) override {
     if(use_chl)
       inherited::B_Compute_dWt_LeabraCHL(bias, ru);
     else

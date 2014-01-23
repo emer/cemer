@@ -56,7 +56,7 @@ public:
   { effwt = wt * ca_dep.SynDep(cai); }
   // connection-level synaptic depression: ca mediated
   inline void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) CPP11_OVERRIDE {
+                                         LeabraNetwork* net) override {
     Compute_Cai(cg, su, net);
     float* wts = cg->OwnCnVar(WT);
     float* cais = cg->OwnCnVar(CAI);
@@ -84,17 +84,17 @@ public:
   // #IGNORE reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
   inline void C_Init_Weights_post(BaseCons* cg, const int idx,
-                                           Unit* ru, Unit* su, Network* net) CPP11_OVERRIDE {
+                                           Unit* ru, Unit* su, Network* net) override {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
     cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net); cg->Cn(idx,CAI,net) = 0.0f;
   }
 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                const int thread_no, const float su_act_delta) CPP11_OVERRIDE
+                                const int thread_no, const float su_act_delta) override
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
   // use effwt instead of wt
 
-  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE {
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override {
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt
@@ -115,7 +115,7 @@ public:
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) CPP11_OVERRIDE {
+                                                LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float su_avg_m = su->avg_m;
@@ -138,7 +138,7 @@ public:
     }
   }
 
-  bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false) CPP11_OVERRIDE;
+  bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(SRAvgCaiSynDepConSpec);
 protected:

@@ -75,7 +75,7 @@ protected:
   float			font_size_;
   SoSeparator*		labels;
 
-  void			setDefaultCaptionTransform(); // override, sets text justif and transform for 3D
+  void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
   ~T3Axis();
 };
 

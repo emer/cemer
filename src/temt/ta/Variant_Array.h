@@ -35,7 +35,7 @@ public:
   TA_BASEFUNS_NOCOPY(Variant_Array);
   TA_ARRAY_FUNS(Variant_Array, Variant)
 protected:
-  Variant      El_GetVar_(const void* itm) const CPP11_OVERRIDE
+  Variant      El_GetVar_(const void* itm) const override
     { return (*(Variant*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((Variant*)a) > *((Variant*)b)) rval=1; else if(*((Variant*)a) == *((Variant*)b)) rval=0; return rval; }

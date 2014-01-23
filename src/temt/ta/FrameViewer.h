@@ -43,8 +43,8 @@ public:
 //  void        Copy_(const FrameViewer& cp);
   TA_DATAVIEWFUNS(FrameViewer, taViewer) //
 protected:
-  void         GetWinState_impl() CPP11_OVERRIDE; // set gui state; only called if mapped
-  void         SetWinState_impl() CPP11_OVERRIDE; // fetch gui state; only called if mapped
+  void         GetWinState_impl() override; // set gui state; only called if mapped
+  void         SetWinState_impl() override; // fetch gui state; only called if mapped
 
 private:
   NOCOPY(FrameViewer)

@@ -38,7 +38,7 @@ public:
   virtual void          setHighlightColor(const T3Color& color) {}
     // used for highlighting in gui, esp lay/prjn
 
-  void         CutLinks() CPP11_OVERRIDE;
+  void         CutLinks() override;
 
   TA_BASEFUNS(nvDataView)
 

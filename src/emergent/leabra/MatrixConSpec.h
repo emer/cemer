@@ -52,7 +52,7 @@ public:
   // #IGNORE RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
   inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                                     LeabraNetwork* net, const bool do_s) CPP11_OVERRIDE {
+                                     LeabraNetwork* net, const bool do_s) override {
     // do NOT do this under any circumstances!!
   }
 
@@ -70,7 +70,7 @@ public:
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) CPP11_OVERRIDE {
+                                                LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float* dwts = cg->OwnCnVar(DWT);
@@ -95,12 +95,12 @@ public:
   }
 
   inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) CPP11_OVERRIDE {
+                                             LeabraNetwork* net) override {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
   inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) CPP11_OVERRIDE {
+                                               LeabraNetwork* net) override {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
@@ -123,7 +123,7 @@ public:
   // #IGNORE
 
   inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) CPP11_OVERRIDE {
+                                                    LeabraNetwork* net) override {
     if(mtx_learn == TRACE) {
       float* wts = cg->OwnCnVar(WT);
       float* dwts = cg->OwnCnVar(DWT);
@@ -147,11 +147,11 @@ public:
   }
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) CPP11_OVERRIDE {
+                                                 LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
   inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                   LeabraNetwork* net) CPP11_OVERRIDE {
+                                                   LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 

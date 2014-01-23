@@ -49,9 +49,9 @@ protected:
   int		mchar_width; // note: we limit to 128
   bool		ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   
-  void 		focusInEvent(QFocusEvent* ev); // override
-  void 		focusOutEvent(QFocusEvent* ev); // override
-  void 		keyPressEvent(QKeyEvent* e);	// override
+  void 		focusInEvent(QFocusEvent* ev) override;
+  void 		focusOutEvent(QFocusEvent* ev) override;
+  void 		keyPressEvent(QKeyEvent* e) override;
   void 		wheelEvent(QWheelEvent * event);
   bool 		event(QEvent * event);
 private:  

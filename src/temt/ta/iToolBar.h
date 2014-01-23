@@ -42,13 +42,13 @@ public:
   ~iToolBar();
 
 public: // ItaViewerWidget i/f
-  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  QWidget*     widget() override {return this;}
 protected:
-//  void               Constr_impl() CPP11_OVERRIDE;
+//  void               Constr_impl() override;
 
 protected:
-  void                  hideEvent(QHideEvent* e); // override
-  void                  showEvent(QShowEvent* e); // override
+  void                  hideEvent(QHideEvent* e) override;
+  void                  showEvent(QShowEvent* e) override;
   virtual void          Showing(bool showing); // #IGNORE called by the show/hide handlers
 private:
   void                  Init();

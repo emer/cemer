@@ -1368,12 +1368,12 @@ class CSS_API cssIJump : public cssInst {
 public:
   css_progdx    jumpto;			// idx to jump to
 
-  String	PrintStr() const CPP11_OVERRIDE;
-  String&	PrintMachine(String& fh, int = 0) const CPP11_OVERRIDE;
-  cssEl::RunStat 	Do() CPP11_OVERRIDE;
-  void 	SetJump(css_progdx it) 		CPP11_OVERRIDE { jumpto = it; }
-  css_progdx	GetJump()			CPP11_OVERRIDE { return jumpto; }
-  bool		IsJump()			CPP11_OVERRIDE { return true; }
+  String	PrintStr() const override;
+  String&	PrintMachine(String& fh, int = 0) const override;
+  cssEl::RunStat 	Do() override;
+  void 	SetJump(css_progdx it) 		override { jumpto = it; }
+  css_progdx	GetJump()			override { return jumpto; }
+  bool		IsJump()			override { return true; }
 
   void		Copy(const cssIJump& cp);
   cssIJump(const cssProg* prg, css_progdx jmp);

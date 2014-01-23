@@ -87,11 +87,11 @@ public:
     {                                       \
       Destroy();                            \
     }                                       \
-    TypeDef* GetTypeDef() const CPP11_OVERRIDE    \
+    TypeDef* GetTypeDef() const override    \
     {                                       \
       return &TA_##x;                       \
     }                                       \
-    x* TypeInst(TypeDef* td) const CPP11_OVERRIDE \
+    x* TypeInst(TypeDef* td) const override \
     {                                       \
       return new x(td);                     \
     }

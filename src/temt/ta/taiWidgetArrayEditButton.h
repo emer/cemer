@@ -27,7 +27,7 @@ class TA_API taiWidgetArrayEditButton : public taiWidgetEditButton {
 public:
   taiWidgetArrayEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);
-  void         SetLabel() CPP11_OVERRIDE;
+  void         SetLabel() override;
   // display the number of items in the group in the label
 };
 

@@ -33,7 +33,7 @@ INHERITED(UserDataItemBase)
 public:
   taDocRef              doc; // the doc
 
-  void         SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) CPP11_OVERRIDE;
+  void         SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
   TA_BASEFUNS(UserData_DocLink)
 private:
   void Copy_(const UserData_DocLink& cp){doc = cp.doc;}

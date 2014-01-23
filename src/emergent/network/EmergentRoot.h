@@ -31,7 +31,7 @@ class E_API EmergentRoot : public taRootBase {
 INHERITED(taRootBase)
 public:
 
-  void	About() CPP11_OVERRIDE;
+  void	About() override;
 #ifdef TA_GUI
   taBase*	Browse(const char* init_path=NULL);
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given

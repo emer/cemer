@@ -47,17 +47,17 @@ public:
     bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   ~cssiEditDialog();
 
-  void		GetImage_Membs() CPP11_OVERRIDE;
-  void		GetValue() CPP11_OVERRIDE;
-  int		Edit(bool modal_ = false, int min_width=-1, int min_height=-1) CPP11_OVERRIDE;
+  void		GetImage_Membs() override;
+  void		GetValue() override;
+  int		Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 
 protected:
   void	 		GetName(int idx, cssEl* md, String& name, String& desc);
-  void		ClearBody_impl() CPP11_OVERRIDE; // delete the data items
-  void		Constr_Inline() CPP11_OVERRIDE {} // n/a
-  void		Constr_Widget_Labels() CPP11_OVERRIDE; // construct the data and label elements of the dialog
-  void		Constr_Strings() CPP11_OVERRIDE;
+  void		ClearBody_impl() override; // delete the data items
+  void		Constr_Inline() override {} // n/a
+  void		Constr_Widget_Labels() override; // construct the data and label elements of the dialog
+  void		Constr_Strings() override;
 private:
   void	Initialize();
 };
@@ -86,7 +86,7 @@ public:
   using inherited::GetImage;
   void		GetImage(bool force); // force ignored
   void		GetValue();
-  int	Edit(bool modal_ = false, int min_width=-1, int min_height=-1) CPP11_OVERRIDE;
+  int	Edit(bool modal_ = false, int min_width=-1, int min_height=-1) override;
   // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
 
   void		Ok();
@@ -94,9 +94,9 @@ public:
 
   taiArgType*	GetBestArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
 protected:
-  void		Constr_impl() CPP11_OVERRIDE;
-  void		Constr_Strings() CPP11_OVERRIDE;
-  void		Constr_Widget_Labels() CPP11_OVERRIDE; // construct the static elements of the dialog
+  void		Constr_impl() override;
+  void		Constr_Strings() override;
+  void		Constr_Widget_Labels() override; // construct the static elements of the dialog
 };
 
 

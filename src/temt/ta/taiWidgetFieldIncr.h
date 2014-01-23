@@ -43,11 +43,11 @@ protected slots:
   void                  selectionChanged();
 
 protected:
-  void         GetImageVar_impl(const Variant& val) CPP11_OVERRIDE {GetImage(val.toInt());}
-  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE {val = GetValue();}
-  void         this_GetEditActionsEnabled(int& ea) CPP11_OVERRIDE; // for when control is clipboard handler
-  void         this_EditAction(int param) CPP11_OVERRIDE; // for when control is clipboard handler
-  void         this_SetActionsEnabled() CPP11_OVERRIDE; // for when control is clipboard handler
+  void         GetImageVar_impl(const Variant& val) override {GetImage(val.toInt());}
+  void         GetValueVar_impl(Variant& val) const override {val = GetValue();}
+  void         this_GetEditActionsEnabled(int& ea) override; // for when control is clipboard handler
+  void         this_EditAction(int param) override; // for when control is clipboard handler
+  void         this_SetActionsEnabled() override; // for when control is clipboard handler
 };
 
 #endif // taiWidgetFieldIncr_h

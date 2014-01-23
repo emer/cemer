@@ -365,9 +365,9 @@ public:
   // #IGNORE whether to save col to external 'data' format
 
   static const KeyString key_val_type;  // #IGNORE "val_type"
-  String       GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
-  String       GetDisplayName() const CPP11_OVERRIDE; // #IGNORE we strip out the format characters
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
+  String       GetColText(const KeyString& key, int itm_idx = -1) const override;
+  String       GetDisplayName() const override; // #IGNORE we strip out the format characters
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return AR()->Elem(idx, mode); }
 
   DataTable*            dataTable() const; 	// root data table this col belongs to
@@ -378,7 +378,7 @@ public:
     MatrixIndex& mat_idx, MatrixGeom& mat_geom);
   // decode header information for loading from text files
 
-  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE;
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 
   virtual void  Copy_NoData(const DataCol& cp);
   // #CAT_Copy copy the structure of the datatable without getting all the data
@@ -400,24 +400,24 @@ public:
   void          ChangeColMatToScalar();
   // #CAT_ObjectMgmt #MENU #DYN1 #CONFIRM change from a mat col to a scalar col
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  String       GetTypeDecoKey() const override { return "DataTable"; }
 
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
-  int  GetSpecialState() const CPP11_OVERRIDE;
-  int  GetIndex() const CPP11_OVERRIDE {return col_idx;}
-  void SetIndex(int value) CPP11_OVERRIDE {col_idx = (short)value;}
-  String GetDesc() const CPP11_OVERRIDE {return desc;}
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  int  GetSpecialState() const override;
+  int  GetIndex() const override {return col_idx;}
+  void SetIndex(int value) override {col_idx = (short)value;}
+  String GetDesc() const override {return desc;}
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                        MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const CPP11_OVERRIDE;
+                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
   void  InitLinks(); //note: ok to do own AR here, because never called in constructor
   void  CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
   TA_ABSTRACT_BASEFUNS(DataCol);
 
 protected:
-  void  UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void  UpdateAfterEdit_impl() override;
   // in all accessor routines, -ve row is from end (-1=last)
   int           IndexOfEl_Flat(int row, int cell) const;
     // -ve row is from end (-1=last); note: returns -ve value if out of range, so must use with SafeEl_Flat

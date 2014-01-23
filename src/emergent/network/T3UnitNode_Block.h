@@ -39,7 +39,7 @@ public:
 
 protected:
   void	 setAppearance_impl(float act, const T3Color& color,
-    float max_z, float trans, bool act_invalid) CPP11_OVERRIDE;
+    float max_z, float trans, bool act_invalid) override;
   ~T3UnitNode_Block();
 private:
   SoCube*		shape_; //#IGNORE

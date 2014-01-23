@@ -46,13 +46,13 @@ public:
   // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
 
   String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-				       const String& mbr_name, int& new_pos) CPP11_OVERRIDE;
-  void 	Help() CPP11_OVERRIDE;
+				       const String& mbr_name, int& new_pos) override;
+  void 	Help() override;
 
   PROGEL_SIMPLE_BASEFUNS(MemberProgEl);
 protected:
-  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		UpdateAfterEdit_impl() override;
+  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void	Initialize();

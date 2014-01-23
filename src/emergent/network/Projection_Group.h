@@ -42,7 +42,7 @@ public:
   virtual Projection*   ConnectFrom(Layer* lay);
   // #BUTTON #DROP1 #DYN1 #CAT_Structure make a new projection from given layer (can also drag and drop a layer into projections group to call this function)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Projection"; }
+  String       GetTypeDecoKey() const override { return "Projection"; }
 
   void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
   TA_SIMPLE_BASEFUNS(Projection_Group);

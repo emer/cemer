@@ -90,8 +90,8 @@ protected:
   QPointer<iPluginEditor> editor;
 #endif
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void         CheckThisConfig_impl(bool quiet, bool& ok) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+  void         CheckThisConfig_impl(bool quiet, bool& ok) override;
 
   virtual void          AddTemplatedFiles(bool upgrade_only);
   // populate the file list, for files to have their content templatized

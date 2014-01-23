@@ -88,8 +88,8 @@ public:
   DockViewer_List       docks; // #EXPERT currently docked windows -- removed if they undock
 
   bool                  isDialog() const {return m_is_dialog;}
-  bool         isRoot() const CPP11_OVERRIDE {return m_is_root;}
-  bool         isRootLevelView() const CPP11_OVERRIDE {return true;}
+  bool         isRoot() const override {return m_is_root;}
+  bool         isRootLevelView() const override {return true;}
   bool                  isProjBrowser() const;
     // main proj window with tree browser (always t for 3-pane guy)
   bool                  isProjViewer() const {return m_is_proj_viewer;}
@@ -132,10 +132,10 @@ public:
   T3PanelViewer*         GetRightViewer();
   // get the T3PanelViewer (right viewer panel)
 
-  void         FrameSizeToSize(iSize& sz) CPP11_OVERRIDE;
-  bool         GetWinState() CPP11_OVERRIDE;
-  bool         SetWinState() CPP11_OVERRIDE;
-  void         ResolveChanges(CancelOp& cancel_op) CPP11_OVERRIDE;
+  void         FrameSizeToSize(iSize& sz) override;
+  bool         GetWinState() override;
+  bool         SetWinState() override;
+  void         ResolveChanges(CancelOp& cancel_op) override;
 
   void  UpdateAfterEdit();
   void  InitLinks();
@@ -165,20 +165,20 @@ public: // Action methods
 
 protected:
   // from taDataView
-  void         SigEmit_Child(taBase* child, int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         DoActionChildren_impl(DataViewAction act) CPP11_OVERRIDE; // just one act
-  void         CloseWindow_impl() CPP11_OVERRIDE;
+  void         SigEmit_Child(taBase* child, int sls, void* op1, void* op2) override;
+  void         DoActionChildren_impl(DataViewAction act) override; // just one act
+  void         CloseWindow_impl() override;
 
   //from DataView
-  void         Constr_impl(QWidget* gui_parent) CPP11_OVERRIDE;
-  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE;
-  void         WidgetDeleting_impl() CPP11_OVERRIDE;
-  void         Show_impl() CPP11_OVERRIDE; // only called if mapped; de-iconifies
-  void         Hide_impl() CPP11_OVERRIDE; // only called if mapped; iconifies
-//nn  void             ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
+  void         Constr_impl(QWidget* gui_parent) override;
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) override;
+  void         WidgetDeleting_impl() override;
+  void         Show_impl() override; // only called if mapped; de-iconifies
+  void         Hide_impl() override; // only called if mapped; iconifies
+//nn  void             ResolveChanges_impl(CancelOp& cancel_op) override;
 
   // from TopLevelView
-  void         MakeWinName_impl() CPP11_OVERRIDE;
+  void         MakeWinName_impl() override;
 
 
   virtual void          ConstrToolBars_impl();

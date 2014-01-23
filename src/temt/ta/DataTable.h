@@ -314,8 +314,8 @@ public:
   // #CAT_Columns compute the total number of cells (single values) used per row in the entire data table (iterates over columns, adds up cell_size())
   int                   Cells() const { return CellsPerRow() * rows; }
   // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
-  taList_impl* children_() CPP11_OVERRIDE {return &data;}
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
+  taList_impl* children_() override {return &data;}
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return data.Elem(idx, mode); }
 
   virtual DataCol*      NewCol(DataCol::ValType val_type,
@@ -907,23 +907,23 @@ public:
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
   bool                  AutoSaveData();
   // #IGNORE perform auto saving of data to file when project is saved
-  void         Dump_Load_post() CPP11_OVERRIDE;
+  void         Dump_Load_post() override;
 
-  int          Dump_Load_Value(std::istream& strm, taBase* par) CPP11_OVERRIDE;
-  void         Dump_Save_pre() CPP11_OVERRIDE;
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
-  int          GetSpecialState() const CPP11_OVERRIDE;
-  taBase*      ChildDuplicate(const taBase* chld) CPP11_OVERRIDE;
-  taBase*      ChooseNew(taBase* origin) CPP11_OVERRIDE;
-  bool         HasChooseNew() CPP11_OVERRIDE { return true; }
+  int          Dump_Load_Value(std::istream& strm, taBase* par) override;
+  void         Dump_Save_pre() override;
+  String       GetTypeDecoKey() const override { return "DataTable"; }
+  int          GetSpecialState() const override;
+  taBase*      ChildDuplicate(const taBase* chld) override;
+  taBase*      ChooseNew(taBase* origin) override;
+  bool         HasChooseNew() override { return true; }
 
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(DataTable); //
 
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
+  void CheckChildConfig_impl(bool quiet, bool& rval) override;
 
   /////////////////////////////////////////////////////////
   // IMPL
@@ -939,9 +939,9 @@ public:
   /////////////////////////////////////////////////////////
   // DataBlock interface and common routines: see ta_data.h for details
 
-  DBOptions    dbOptions() const CPP11_OVERRIDE
+  DBOptions    dbOptions() const override
   { return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC); }
-  int          ItemCount() const CPP11_OVERRIDE { return rows; }
+  int          ItemCount() const override { return rows; }
 
 protected:
   /////////////////////////////////////////////////////////
@@ -955,38 +955,38 @@ public:
   /////////////////////////////////////////////////////////
   // DataSource interface
 
-  int          SourceChannelCount() const CPP11_OVERRIDE { return ChannelCount(); }
-  const String SourceChannelName(int chan) const CPP11_OVERRIDE { return ChannelName(chan); }
-  void         ResetData() CPP11_OVERRIDE;
+  int          SourceChannelCount() const override { return ChannelCount(); }
+  const String SourceChannelName(int chan) const override { return ChannelName(chan); }
+  void         ResetData() override;
   // #CAT_Rows deletes all the data (rows), but keeps the column structure -- this cannot be undone!
 
 protected:
   /////////////////////////////////////////////////////////
   // DataSource implementation
-  const Variant GetData_impl(int chan) CPP11_OVERRIDE 
+  const Variant GetData_impl(int chan) override 
   { return GetValAsVar(chan, rd_itr);}
-  taMatrix*    GetMatrixData_impl(int chan) CPP11_OVERRIDE;
+  taMatrix*    GetMatrixData_impl(int chan) override;
 
 public:
   /////////////////////////////////////////////////////////
   // DataSink interface
-  int          SinkChannelCount() const CPP11_OVERRIDE {return ChannelCount();}
-  const String SinkChannelName(int chan) const CPP11_OVERRIDE {return ChannelName(chan);}
-  bool         AddSinkChannel(ChannelSpec* cs) CPP11_OVERRIDE;
-  bool         AssertSinkChannel(ChannelSpec* cs) CPP11_OVERRIDE;
+  int          SinkChannelCount() const override {return ChannelCount();}
+  const String SinkChannelName(int chan) const override {return ChannelName(chan);}
+  bool         AddSinkChannel(ChannelSpec* cs) override;
+  bool         AssertSinkChannel(ChannelSpec* cs) override;
 
 protected:
   /////////////////////////////////////////////////////////
   // DataSink implementation
-  bool         AddItem_impl(int n) CPP11_OVERRIDE {return AddRows(n);}
-  void         DeleteSinkChannel_impl(int chan) CPP11_OVERRIDE {RemoveCol(chan);}
-  taMatrix*    GetSinkMatrix_impl(int chan) CPP11_OVERRIDE
+  bool         AddItem_impl(int n) override {return AddRows(n);}
+  void         DeleteSinkChannel_impl(int chan) override {RemoveCol(chan);}
+  taMatrix*    GetSinkMatrix_impl(int chan) override
   { return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
-  bool         SetData_impl(const Variant& data, int chan) CPP11_OVERRIDE
+  bool         SetData_impl(const Variant& data, int chan) override
   { return SetValAsVar(data, chan, wr_itr);}
-  bool         SetMatrixData_impl(const taMatrix* data, int chan) CPP11_OVERRIDE
+  bool         SetMatrixData_impl(const taMatrix* data, int chan) override
   { return SetValAsMatrix(data, chan, wr_itr);}
-  void         WriteClose_impl() CPP11_OVERRIDE;
+  void         WriteClose_impl() override;
 
 protected:
   DataCol*      NewCol_impl(DataCol::ValType val_type, const String& col_nm, int& col_idx);

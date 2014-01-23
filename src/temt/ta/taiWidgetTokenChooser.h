@@ -29,25 +29,25 @@ class TA_API taiWidgetTokenChooser : public taiWidgetItemChooser {
   INHERITED(taiWidgetItemChooser)
 public:
   inline taBase*        token() const {return (taBase*)m_sel;}
-  int          columnCount(int view) const CPP11_OVERRIDE;
-  const String headerText(int index, int view) const CPP11_OVERRIDE;
-  int          viewCount() const CPP11_OVERRIDE {return 1;}
-  const String viewText(int index) const CPP11_OVERRIDE;
-  bool         hasNoItems() CPP11_OVERRIDE;
-  bool         hasOnlyOneItem() CPP11_OVERRIDE;
+  int          columnCount(int view) const override;
+  const String headerText(int index, int view) const override;
+  int          viewCount() const override {return 1;}
+  const String viewText(int index) const override;
+  bool         hasNoItems() override;
+  bool         hasOnlyOneItem() override;
   virtual bool          countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm);
   // recursively count valid (in scope etc) tokens of type until reaching n, at which point a true is returned -- if n is not reached, return false -- used for above two routines
-  void         GetImage(void* cur_sel, TypeDef* targ_typ) CPP11_OVERRIDE;
+  void         GetImage(void* cur_sel, TypeDef* targ_typ) override;
   virtual void          GetImageScoped(taBase* ths, TypeDef* targ_typ, taBase* scope = NULL,
         TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
   virtual taBase*       GetValue() {return token();}
 
-  void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
-  void         btnHelp_clicked() CPP11_OVERRIDE;
+  void         BuildChooser(iDialogItemChooser* ic, int view = 0) override;
+  void         btnHelp_clicked() override;
 
-  void         EditPanel() CPP11_OVERRIDE;
-  void         EditDialog() CPP11_OVERRIDE;
+  void         EditPanel() override;
+  void         EditDialog() override;
 
   taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,
                     taiWidget* par, QWidget* gui_parent_, int flags_ = 0,

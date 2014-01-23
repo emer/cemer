@@ -36,7 +36,7 @@ public:
   float                 choice;  // #READ_ONLY #SHOW actual utility value used when choosing a production -- reflects added noise, if any, on top of util value
   float                 rew;  // #DEF_0 reward value associated with the firing of this production -- if non-zero, will drive a ComputeReward function call with this value
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  String       GetTypeDecoKey() const override { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrProdUtilVals);
 private:
@@ -53,7 +53,7 @@ public:
   float                 act; // #DEF_0 action time associated with this production -- if this is non-zero, then it will be used instead of the default value
   float                 last_fire; // #READ_ONLY #SHOW time when this production last fired
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  String       GetTypeDecoKey() const override { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrProdTimeVals);
 private:
@@ -138,17 +138,17 @@ public:
   virtual bool          SetParam(const String& par_nm, float val);
   // #CAT_ActR set production paramter -- u = util, r = reward
  
-  String GetDesc() const CPP11_OVERRIDE {return desc;}
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
-  int    GetEnabled() const CPP11_OVERRIDE { return !IsOff(); }
-  void   SetEnabled(bool value) CPP11_OVERRIDE { SetProdFlagState(OFF, !value); }
-  int    GetSpecialState() const CPP11_OVERRIDE;
+  String GetDesc() const override {return desc;}
+  String GetTypeDecoKey() const override { return "ProgCtrl"; }
+  int    GetEnabled() const override { return !IsOff(); }
+  void   SetEnabled(bool value) override { SetProdFlagState(OFF, !value); }
+  int    GetSpecialState() const override;
 
   TA_SIMPLE_BASEFUNS(ActrProduction);
 protected:
-  void  UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-  void	 CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void	 CheckChildConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void Initialize();

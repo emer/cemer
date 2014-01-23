@@ -39,7 +39,7 @@ public:
   iHiLightButton(const String& text, QWidget* parent, const char* script_ = 0);
   ~iHiLightButton();
 
-  QSize                 sizeHint() const; // override
+  QSize                 sizeHint() const override;
 
 protected:
   iColor                mhiLight_color;
@@ -47,7 +47,7 @@ protected:
   String                mscript;
 
   void                  init(const char* script_); // #IGNORE
-  void                  released(); // override
+  void                  released(); // override -- should be virtual signal in QPushButton..
 
 };
 

@@ -57,7 +57,7 @@ public:
   void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
 #endif
 
-  void 	keyboardSearch(const QString &search) CPP11_OVERRIDE;
+  void 	keyboardSearch(const QString &search) override;
   
   iTreeWidget(QWidget* parent = 0);
   ~iTreeWidget();
@@ -77,21 +77,21 @@ protected:
   
   void*			highlightColors() const; // insures map exists
   void 	drawRow(QPainter* painter,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const CPP11_OVERRIDE;
-  void 	dragMoveEvent(QDragMoveEvent* ev) CPP11_OVERRIDE;
-  void		dropEvent(QDropEvent* e) CPP11_OVERRIDE;
+    const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+  void 	dragMoveEvent(QDragMoveEvent* ev) override;
+  void		dropEvent(QDropEvent* e) override;
   bool 	dropMimeData(QTreeWidgetItem* parent, int index, 
-    const QMimeData* data, Qt::DropAction action) CPP11_OVERRIDE; // we always delegate to the item, and always return false (we handle item manipulation manually)
-  void 	contextMenuEvent(QContextMenuEvent* e) CPP11_OVERRIDE;
+    const QMimeData* data, Qt::DropAction action) override; // we always delegate to the item, and always return false (we handle item manipulation manually)
+  void 	contextMenuEvent(QContextMenuEvent* e) override;
   void		doItemExpanded(QTreeWidgetItem* item, bool expanded);
-  void         timerEvent(QTimerEvent* e) CPP11_OVERRIDE;
+  void         timerEvent(QTimerEvent* e) override;
   Qt::DropActions	supportedDropActions() const;
   void 			setSelection(const QRect &rect,
 				     QItemSelectionModel::SelectionFlags command);
   // this is workaround for drag scrolling bug in qt5.2
   virtual  void         dragScroll();
 
-  void 	keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;	// override
+  void 	keyPressEvent(QKeyEvent* e) override;
 
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);

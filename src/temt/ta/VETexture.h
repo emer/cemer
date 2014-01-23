@@ -72,9 +72,9 @@ public:
   virtual void          SetTransform(SoTexture2Transform* sotx);
   // #IGNORE configure the transform based on values
 
-  String       GetDesc() const CPP11_OVERRIDE { return desc; }
-  int  GetIndex() const CPP11_OVERRIDE { return idx; }
-  void SetIndex(int i) CPP11_OVERRIDE { idx = i; }
+  String       GetDesc() const override { return desc; }
+  int  GetIndex() const override { return idx; }
+  void SetIndex(int i) override { idx = i; }
 
   void  Initialize();
   void  Destroy()       { };

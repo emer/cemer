@@ -35,10 +35,10 @@ public:
   ~taiEditorOfArray();
 protected:
   int                   array_set; // index of array_set
-  void         GetValue_Membs() CPP11_OVERRIDE;
-  void         GetImage_Membs() CPP11_OVERRIDE;
-  void         ClearBody_impl() CPP11_OVERRIDE;
-  void         Constr_Widget_Labels() CPP11_OVERRIDE;
+  void         GetValue_Membs() override;
+  void         GetImage_Membs() override;
+  void         ClearBody_impl() override;
+  void         Constr_Widget_Labels() override;
   virtual void          Constr_AryWidget_Labels();
 };
 

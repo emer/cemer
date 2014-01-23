@@ -53,9 +53,9 @@ public:
   String                caption() const; // the string used in the editor
   virtual TypeItem*     typeItem() const {return NULL;} // the mbr or mth
 
-  String       GetName() const CPP11_OVERRIDE;
-  String       GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
-  String       GetDesc() const CPP11_OVERRIDE;
+  String       GetName() const override;
+  String       GetColText(const KeyString& key, int itm_idx = -1) const override;
+  String       GetDesc() const override;
   TA_BASEFUNS(SelectEditItem);
 protected:
   void                  UpdateAfterEdit_impl();

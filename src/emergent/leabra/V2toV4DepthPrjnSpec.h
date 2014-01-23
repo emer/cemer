@@ -33,7 +33,7 @@ public:
   int		depth_idx;	// which depth index (0..) to connect to
 
   void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-				  int rgpidx, int sgpidx, int alloc_loop) CPP11_OVERRIDE;
+				  int rgpidx, int sgpidx, int alloc_loop) override;
 
   TA_SIMPLE_BASEFUNS(V2toV4DepthPrjnSpec);
 private:

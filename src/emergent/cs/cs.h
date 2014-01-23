@@ -75,12 +75,12 @@ public:
   // #LIST_CsConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
   inline void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net) CPP11_OVERRIDE
+                                       Network* net) override
   { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; 
     cg->OwnCn(idx,DWT_AGG) = 0.0f; }
 
   inline void 	C_Init_dWt(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                   Network* net) CPP11_OVERRIDE
+                                   Network* net) override
   { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->OwnCn(idx,DWT_AGG) = 0.0f; }
 
   inline void		C_Aggregate_dWt(float& dwt_agg, const float su_act,
@@ -194,16 +194,16 @@ public:
   bool		use_sharp;		// true if gain sched is used to sharpen acts
   Schedule	gain_sched;		// #CONDEDIT_ON_use_sharp:true schedule of gain multipliers
 
-  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
-  void Init_Weights(Unit* u, Network* net) CPP11_OVERRIDE; 	// also init aggregation stuff
+  void	Init_Acts(Unit* u, Network* net) override;
+  void Init_Weights(Unit* u, Network* net) override; 	// also init aggregation stuff
 
   virtual void 	Compute_ClampAct(CsUnit* u, CsNetwork* net);
   // hard-fast-clamp inputs (at start of settling)
   virtual void 	Compute_ClampNet(CsUnit* u, CsNetwork* net);
   // compute net input from clamped inputs (at start of settling)
 
-  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
   virtual void	Compute_Act_impl(CsUnit* u, int cycle, int phase); 
   // actually computes specific activation function 
 
@@ -213,8 +213,8 @@ public:
   // initialize external inputs based on phase information
   
   virtual void	Aggregate_dWt(CsUnit* u, CsNetwork* net, int thread_no=-1);
-  void	Compute_dWt(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override;
 
   virtual void	PostSettle(CsUnit* u, CsNetwork* net);
   // set stuff after settling is over
@@ -368,7 +368,7 @@ class E_API CsLayer : public Layer {
   // #STEM_BASE ##CAT_Cs A constraint-satisfaction layer
 INHERITED(Layer)
 public:
-  void  Init_Acts(Network* net) CPP11_OVERRIDE;
+  void  Init_Acts(Network* net) override;
 
   TA_BASEFUNS_NOCOPY(CsLayer);
 private:
@@ -445,8 +445,8 @@ public:
 //   StatVal	gdnss;
 //   float		netin_hrmny;	// #READ_ONLY temp variable to hold netin-based harmony
 
-  void	Init_Counters() CPP11_OVERRIDE;
-  void	Init_Stats() CPP11_OVERRIDE;
+  void	Init_Counters() override;
+  void	Init_Stats() override;
 
   ///////////////////////////
   // 	cycle
@@ -482,7 +482,7 @@ public:
   // 	trial
   virtual void	Compute_MinusCycles();
   // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
-  void	Compute_TrialStats() CPP11_OVERRIDE;
+  void	Compute_TrialStats() override;
   // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
   virtual void	Trial_Init();
   // #CAT_Trial initialize at start of trial: initializes activations and phase counters
@@ -495,11 +495,11 @@ public:
   // 	epoch
   virtual void	Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)
-  void	Compute_EpochStats() CPP11_OVERRIDE;
+  void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE and AvgCycles
 
-  void	SetProjectionDefaultTypes(Projection* prjn) CPP11_OVERRIDE;
-  void  BuildNullUnit() CPP11_OVERRIDE;
+  void	SetProjectionDefaultTypes(Projection* prjn) override;
+  void  BuildNullUnit() override;
 
   TA_SIMPLE_BASEFUNS(CsNetwork);
 protected:
@@ -555,8 +555,8 @@ class E_API HebbCsConSpec : public CsConSpec {
   // Simple Hebbian wt update (send act * recv act), operates only on final activity states
 INHERITED(CsConSpec)
 public:
-  void 	Aggregate_dWt(CsRecvCons*, CsUnit*, CsNetwork*, float) 	CPP11_OVERRIDE { };
-  void 	B_Aggregate_dWt(RecvCons*, CsUnit*, float)		CPP11_OVERRIDE { }; 
+  void 	Aggregate_dWt(CsRecvCons*, CsUnit*, CsNetwork*, float) 	override { };
+  void 	B_Aggregate_dWt(RecvCons*, CsUnit*, float)		override { }; 
   // disable both of these functions
 
   inline void 		C_Compute_dWt_Hebb(float& dwt, const float ru_act,
@@ -603,8 +603,8 @@ class E_API CsWizard : public Wizard {
 INHERITED(Wizard)
 public:
 
-  bool	StdProgs() CPP11_OVERRIDE;
-  bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) CPP11_OVERRIDE;
+  bool	StdProgs() override;
+  bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) override;
 
   TA_BASEFUNS_NOCOPY(CsWizard);
 private:

@@ -45,7 +45,7 @@ public:
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
 protected:
-  Variant      El_GetVar_(const void* itm) const CPP11_OVERRIDE
+  Variant      El_GetVar_(const void* itm) const override
     { return (Variant)(*(String*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }

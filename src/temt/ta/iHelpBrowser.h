@@ -121,9 +121,9 @@ protected:
   QTreeWidgetItem*      FindItem(const String& typ_name); // find item from type name
   void                  ItemChanged(QTreeWidgetItem* item); // item changed to this, sync
   bool                  SetItem(TypeDef* typ); // set active item by TypeDef, true if set
-  void                  showEvent(QShowEvent* e); // override
+  void                  showEvent(QShowEvent* e) override;
   void                  UpdateTreeItem(); // call after tab changes and url changes
-  bool         eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  bool         eventFilter(QObject *obj, QEvent *event) override;
   // translate emacs keys..
 
   iHelpBrowser();

@@ -50,10 +50,10 @@ public:
   virtual void          setDataTable(DataTable* dt);
   // #MENU #NO_NULL build the view from the given table
 
-  bool         ShowDraggers() const CPP11_OVERRIDE { return manip_ctrl_on; }
+  bool         ShowDraggers() const override { return manip_ctrl_on; }
 
   void                  setDisplay(bool value); // use this to change display_on
-  void         setDirty(bool value) CPP11_OVERRIDE; // set for all changes on us or below
+  void         setDirty(bool value) override; // set for all changes on us or below
   inline int            rows() const {return m_rows;}
   bool                  isVisible() const; // gui_active, mapped and display_on
 
@@ -86,8 +86,8 @@ public:
   virtual void          RowFwdPg();
   virtual void          RowFwdAll();
 
-  void         SigDestroying() CPP11_OVERRIDE;
-  void         BuildAll() CPP11_OVERRIDE;
+  void         SigDestroying() override;
+  void         BuildAll() override;
 
   virtual void          UpdateName();  // update name from data table
 
@@ -100,10 +100,10 @@ public:
 
 // ISigLinkClient i/f
   void         IgnoredSigEmit(taSigLink* dl, int sls,
-    void* op1, void* op2) CPP11_OVERRIDE; //
+    void* op1, void* op2) override; //
 
 // ISelectable i/f
-  GuiContext   shType() const CPP11_OVERRIDE {return GC_DUAL_DEF_VIEW;}
+  GuiContext   shType() const override {return GC_DUAL_DEF_VIEW;}
 
 protected:
 #ifndef __MAKETA__
@@ -112,7 +112,7 @@ protected:
   int                   m_rows; // cached rows, we use to calc deltas etc.
   int                   updating; // to prevent recursion
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 
   virtual void          ClearViewRange();
   // sets view range back to beginning (grid adds cols, graph adds TBA)
@@ -122,11 +122,11 @@ protected:
   virtual int           CheckRowsChanged(int& orig_rows);
   // check if datatable rows is same as last render (updates m_rows and returns any delta, 0 if no change)
 
-  void         Unbind_impl() CPP11_OVERRIDE; // unbinds table
+  void         Unbind_impl() override; // unbinds table
 
-  void         SigRecvUpdateView_impl() CPP11_OVERRIDE;
-  void         SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void         DoActionChildren_impl(DataViewAction acts) CPP11_OVERRIDE;
+  void         SigRecvUpdateView_impl() override;
+  void         SigRecvUpdateAfterEdit_impl() override;
+  void         DoActionChildren_impl(DataViewAction acts) override;
 
   void                  UpdateFromDataTable(bool first_time = false);
   // called if data set to table, or needs to be updated; calls _child then _this
@@ -136,10 +136,10 @@ protected:
   // does me (*after* kids, so you can refer to them)
   virtual void          DataTableUnlinked(); // called if data is NULL or destroys
 
-  void         Render_pre() CPP11_OVERRIDE;
-  void         Render_impl() CPP11_OVERRIDE;
-  void         Render_post() CPP11_OVERRIDE;
-  void         Reset_impl() CPP11_OVERRIDE;
+  void         Render_pre() override;
+  void         Render_impl() override;
+  void         Render_post() override;
+  void         Reset_impl() override;
 };
 
 #endif // DataTableView_h

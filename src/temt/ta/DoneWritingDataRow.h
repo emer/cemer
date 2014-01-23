@@ -30,12 +30,12 @@ class TA_API DoneWritingDataRow: public DataOneProg {
   // add this after you are done writing everything to the current row of the data table, and it will update displays and write to log files, etc (just calls WriteClose() on data table var object)
 INHERITED(DataOneProg)
 public:
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "row done"; }
+  String	GetDisplayName() const override;
+  String	GetToolbarName() const override { return "row done"; }
 
   TA_BASEFUNS_NOCOPY(DoneWritingDataRow);
 protected:
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) override;
 private:
   void	Initialize();
   void	Destroy()	{ }

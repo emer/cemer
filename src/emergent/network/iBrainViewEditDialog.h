@@ -45,7 +45,7 @@ protected:
 
 protected slots:
   void                  itemClicked(const QModelIndex & index);
-  void         btnApply_clicked() CPP11_OVERRIDE;
+  void         btnApply_clicked() override;
   virtual void         btnRandomColors_clicked();
   virtual void         btnColorsFromScale_clicked();
 };

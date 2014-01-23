@@ -64,27 +64,27 @@ public:
   virtual void          setDoc(taDoc* doc); // only called if changes after creation
 
   taDoc*                doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
-  String       panel_type() const CPP11_OVERRIDE {return "Doc";}
+  String       panel_type() const override {return "Doc";}
 
-//  int                EditAction(int ea) CPP11_OVERRIDE;
-//  int                GetEditActions() CPP11_OVERRIDE; // after a change in selection, update the available edit actions (cut, copy, etc.)
+//  int                EditAction(int ea) override;
+//  int                GetEditActions() override; // after a change in selection, update the available edit actions (cut, copy, etc.)
 
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
+  QWidget*     firstTabFocusWidget() override;
 
   iPanelOfDocView(); // NOTE: use the setDoc api to (indirectly) set the SigLink
   ~iPanelOfDocView();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfDocView;}
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
-  bool         ignoreSigEmit() const CPP11_OVERRIDE;
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iPanelOfDocView;}
+  void         SigLinkDestroying(taSigLink* dl) override;
+  bool         ignoreSigEmit() const override;
 protected:
   taDoc*                m_doc; // ref managed through link; we just put ptr here to detect change
   bool                  is_loading;
-  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE;
-  void         UpdatePanel_impl() CPP11_OVERRIDE;
-  bool         eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) override;
+  void         UpdatePanel_impl() override;
+  bool         eventFilter(QObject *obj, QEvent *event) override;
   // translate emacs keys..
 
 #ifndef __MAKETA__

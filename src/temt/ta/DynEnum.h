@@ -51,11 +51,11 @@ public:
   bool  SetNameVal(const String& nm);
   // set current enum value by name -- for bits this clears any existing bits (use css |= to set bits without clearing)
 
-  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
 protected:
-  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void  Initialize();

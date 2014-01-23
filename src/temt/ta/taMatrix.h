@@ -264,18 +264,18 @@ public:
   ///////////////////////////////////////
   // Standard Elem and iterator interface
 
-  bool         IsContainer()   CPP11_OVERRIDE { return true; }
-  taMatrix*    ElView() const  CPP11_OVERRIDE { return (taMatrix*)el_view.ptr(); }
-  IndexMode    ElViewMode() const  CPP11_OVERRIDE { return el_view_mode; }
-  int          ElemCount() const CPP11_OVERRIDE { return size; }
-  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE;
-  bool         IterFirst_impl(taBaseItr*& itr) const CPP11_OVERRIDE;
-  bool         IterNext_impl(taBaseItr*& itr) const CPP11_OVERRIDE;
-  bool         IterLast_impl(taBaseItr*& itr) const CPP11_OVERRIDE;
-  bool         IterPrev_impl(taBaseItr*& itr) const CPP11_OVERRIDE;
-  Variant      IterElem(taBaseItr* itr) const CPP11_OVERRIDE;
-  taBaseItr*   Iter() const CPP11_OVERRIDE;
-  bool         IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const CPP11_OVERRIDE;
+  bool         IsContainer()   override { return true; }
+  taMatrix*    ElView() const  override { return (taMatrix*)el_view.ptr(); }
+  IndexMode    ElViewMode() const  override { return el_view_mode; }
+  int          ElemCount() const override { return size; }
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override;
+  bool         IterFirst_impl(taBaseItr*& itr) const override;
+  bool         IterNext_impl(taBaseItr*& itr) const override;
+  bool         IterLast_impl(taBaseItr*& itr) const override;
+  bool         IterPrev_impl(taBaseItr*& itr) const override;
+  Variant      IterElem(taBaseItr* itr) const override;
+  taBaseItr*   Iter() const override;
+  bool         IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const override;
   virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members
   virtual void          CopyElView(const taMatrix& cp);
@@ -564,22 +564,22 @@ public:
   String&       Print(String& strm, int indent=0) const;
   String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const CPP11_OVERRIDE;
+                            bool force_inline = false) const override;
   bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false) CPP11_OVERRIDE;
+                           bool force_inline = false) override;
   int  ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
               void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) CPP11_OVERRIDE;
+              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) override;
 
-  void         SetDefaultName() CPP11_OVERRIDE { };
+  void         SetDefaultName() override { };
   using inherited::GetOwner;
-  taBase*      GetOwner() const CPP11_OVERRIDE;
-  int          Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) CPP11_OVERRIDE;
-  int          Dump_Load_Value(std::istream& strm, taBase* par=NULL) CPP11_OVERRIDE;
-  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
-  void         InitLinks() CPP11_OVERRIDE;
-  void         CutLinks() CPP11_OVERRIDE;
+  taBase*      GetOwner() const override;
+  int          Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) override;
+  int          Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
+  void         InitLinks() override;
+  void         CutLinks() override;
   TA_ABSTRACT_BASEFUNS(taMatrix);
 
 public:
@@ -718,8 +718,8 @@ public:
   // #CAT_Matrix returns a new matrix that is the transpose of this matrix, where the rows and columns have been switched -- this matrix must be a 2D matrix
 
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void         BatchUpdate(bool begin, bool struc) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+  void         BatchUpdate(bool begin, bool struc) override;
 
   static void           SliceInitialize(taMatrix* par_slice, taMatrix* child_slice);
    // called after slice created -- static for consistency
@@ -797,8 +797,8 @@ protected:
 #endif
 
   void         CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
-                                  bool& allowed, bool& forbidden) const CPP11_OVERRIDE;
-  void         CopyFromCustom_impl(const taBase* cp_fm) CPP11_OVERRIDE;
+                                  bool& allowed, bool& forbidden) const override;
+  void         CopyFromCustom_impl(const taBase* cp_fm) override;
   virtual void          Copy_Matrix_impl(const taMatrix* cp);
    // generic copy using Variant; only called when not same matrix type
 

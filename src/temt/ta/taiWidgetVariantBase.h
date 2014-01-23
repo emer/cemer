@@ -46,7 +46,7 @@ public:
     flgFixedType        = 0x400000, // type is fixed to what it already is -- cannot be chosen
   };
 
-  bool                  fillHor() {return true;} // override
+  bool                  fillHor() override {return true;} 
   taiWidgetVariantBase(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
   ~taiWidgetVariantBase();
 

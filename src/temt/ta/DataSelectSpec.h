@@ -35,9 +35,9 @@ public:
 
   virtual void 	UpdateEnabled(); // update the act_enabled flags based on variables etc
 
-  void GetColumns(DataTable* dt) CPP11_OVERRIDE { inherited::GetColumns(dt); UpdateEnabled(); }
+  void GetColumns(DataTable* dt) override { inherited::GetColumns(dt); UpdateEnabled(); }
 
-  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetDisplayName() const override;
   TA_SIMPLE_BASEFUNS(DataSelectSpec);
 private:
   void	Initialize();

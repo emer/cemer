@@ -237,9 +237,9 @@ protected:
   virtual void  PanView(const SbVec3f& dir, const float dist);
   // implementation function that will move (pan) view camera given distance in given direction
 
-  bool event(QEvent* ev_) CPP11_OVERRIDE;
-  void keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
-  bool eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  bool event(QEvent* ev_) override;
+  void keyPressEvent(QKeyEvent* e) override;
+  bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #endif // T3ExaminerViewer_h

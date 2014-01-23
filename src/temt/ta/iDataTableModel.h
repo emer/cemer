@@ -63,21 +63,21 @@ protected:
 
 public: // required implementations
 #ifndef __MAKETA__
-  int                   columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant              data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags         flags(const QModelIndex& index) const; // override, for editing
+  int                   columnCount(const QModelIndex& parent = QModelIndex()) const override; 
+  QVariant              data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+  Qt::ItemFlags         flags(const QModelIndex& index) const override; // for editing
   QVariant              headerData(int section, Qt::Orientation orientation,
-    int role = Qt::DisplayRole) const; // override
-  int                   rowCount(const QModelIndex& parent = QModelIndex()) const; // override
+                                   int role = Qt::DisplayRole) const override;
+  int                   rowCount(const QModelIndex& parent = QModelIndex()) const override;
   bool                  setData(const QModelIndex& index, const QVariant& value,
-    int role = Qt::EditRole); // override, for editing
+                                int role = Qt::EditRole) override; // for editing
 
 public: // ISigLinkClient i/f
-  void*        This() CPP11_OVERRIDE {return this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iDataTableModel;}
-//  bool               ignoreSigEmit() const CPP11_OVERRIDE;
-  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
-  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
+  void*        This() override {return this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iDataTableModel;}
+//  bool               ignoreSigEmit() const override;
+  void         SigLinkDestroying(taSigLink* dl) override;
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 protected:
   bool                  ValidateIndex(const QModelIndex& index) const;

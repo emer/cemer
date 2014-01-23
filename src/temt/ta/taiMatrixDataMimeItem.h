@@ -33,10 +33,10 @@ public: // i/f for tabular data guy
 
 public: // TAI_xxx instance interface -- used for dynamic creation
   taiMimeItem* Extract(taiMimeSource* ms,
-    const String& subkey = _nilString) CPP11_OVERRIDE;
+    const String& subkey = _nilString) override;
 protected:
-  bool         Constr_impl(const String&) CPP11_OVERRIDE;
-  void         DecodeData_impl() CPP11_OVERRIDE;
+  bool         Constr_impl(const String&) override;
+  void         DecodeData_impl() override;
 private:
   void  Initialize() {}
   void  Destroy() {}

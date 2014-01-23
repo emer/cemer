@@ -51,19 +51,19 @@ public:
      {r=r_; g=g_; b=b_; a=a_;}
   // set from rgb values
 
-  void         SetDefaultName() CPP11_OVERRIDE { };
+  void         SetDefaultName() override { };
 
   String ToString_RGBA() const;
   String        GetDesc() const                 { return desc; }
   TA_BASEFUNS_LITE(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE; // don't use C names
+  void         UpdateAfterEdit_impl() override; // don't use C names
   //note: we handle both directions of copy to/from taColor
   void         CanCopyCustom_impl(bool to, const taBase* cp,
-    bool quiet, bool& allowed, bool& forbidden) const CPP11_OVERRIDE;
-  void         CopyFromCustom_impl(const taBase* cp) CPP11_OVERRIDE;
-  void         CopyToCustom_impl(taBase* to) const CPP11_OVERRIDE;
+    bool quiet, bool& allowed, bool& forbidden) const override;
+  void         CopyFromCustom_impl(const taBase* cp) override;
+  void         CopyToCustom_impl(taBase* to) const override;
 
 private:
   void  Copy_(const RGBA& cp);

@@ -31,7 +31,7 @@ typedef iColorBar inherited;
 public:
   iVColorBar(ColorScale* c, QWidget* parent = NULL);
 protected:
-  void 		paintEvent(QPaintEvent* ev); // override
+  void 		paintEvent(QPaintEvent* ev) override;
 };
 
 

@@ -31,29 +31,30 @@ taTypeDef_Of(taiListNode);
 class TA_API taiListNode: public iTreeViewItem {
 INHERITED(iTreeViewItem)
 public:
-  int                   num; // item number, starting from 0
+  int                 num; // item number, starting from 0
   iPanelOfList*       panel; // logical parent node of the list items
 
-  QString               text(int col) const; // override
-  void         setName(const String& value) CPP11_OVERRIDE; // 2nd col for us
+  QString               text(int col) const;
+  // note: this is a non-virtual inline in orig: return data(column, Qt::DisplayRole).toString(); -- if we want to redefine behavior in base, need to change data
+  void                  setName(const String& value) override; // 2nd col for us
 
-  bool                  operator<(const QTreeWidgetItem& item) const; // override
+  bool                  operator<(const QTreeWidgetItem& item) const override;
 
-  void         DecorateDataNode() CPP11_OVERRIDE;
+  void         DecorateDataNode() override;
   taiListNode(int num_, iPanelOfList* panel_, taiSigLink* link_,
     iTreeView* parent_, taiListNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
   ~taiListNode(); //
 
 public: // ISigLinkClient interface
-//  void*      This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiListNode;}
+//  void*      This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_taiListNode;}
 
 public: // ISelectable interface
-  taiSigLink* par_link() const CPP11_OVERRIDE; // we get from the panel, which gets from the viewer window
-//obs  MemberDef*      par_md() const CPP11_OVERRIDE; // as for par_link
+  taiSigLink* par_link() const override; // we get from the panel, which gets from the viewer window
+//obs  MemberDef*      par_md() const override; // as for par_link
 protected:
-  void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ) CPP11_OVERRIDE;
+  void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ) override;
   // this is the one to extend in inherited classes
 };
 

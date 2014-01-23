@@ -30,9 +30,9 @@ INHERITED(taiEditorOfClass)
 public:
   SelectEdit*   sele;
 
-  void         Constr_Body() CPP11_OVERRIDE;
-  taBase*      GetMembBase_Flat(int idx) CPP11_OVERRIDE; // these are overridden by seledit
-  taBase*      GetMethBase_Flat(int idx) CPP11_OVERRIDE;
+  void         Constr_Body() override;
+  taBase*      GetMembBase_Flat(int idx) override; // these are overridden by seledit
+  taBase*      GetMethBase_Flat(int idx) override;
 
   taiEditorOfSelectEditBase(void* base, TypeDef* td, bool read_only_ = false,
         QObject* parent = 0);
@@ -40,7 +40,7 @@ public:
   ~taiEditorOfSelectEditBase();
 
 protected:
-  void         Constr_Methods_impl() CPP11_OVERRIDE;
+  void         Constr_Methods_impl() override;
 
 protected slots:
   virtual void          DoRemoveSelEdit() = 0;

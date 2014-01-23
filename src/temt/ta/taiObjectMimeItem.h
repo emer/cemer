@@ -47,8 +47,8 @@ protected:
   TypeDef*		m_td;
   String		m_path;
   taBase*		m_obj;
-  bool		Constr_impl(const String&) CPP11_OVERRIDE;
-  void		DecodeData_impl() CPP11_OVERRIDE;
+  bool		Constr_impl(const String&) override;
+  void		DecodeData_impl() override;
 private:
   void	Initialize();
   void	Destroy() {}

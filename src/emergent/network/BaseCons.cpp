@@ -380,7 +380,9 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   if(size == 0) return true;
 
   if(OwnCons()) {
-    memcpy(cons_own, (char*)cp.cons_own, size * con_type->members.size * sizeof(float));
+    for(int i=0; i< con_type->members.size; i++) {
+      memcpy(cons_own[i], (char*)cp.cons_own[i], size * sizeof(float));
+    }
   }
   else {
     memcpy(cons_idx, (char*)cp.cons_idx, size * sizeof(int32_t));

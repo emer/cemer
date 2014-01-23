@@ -30,12 +30,12 @@ class TA_API AddNewDataRow: public DataOneProg {
   // add a new row to data table (just calls AddBlankRow() on data table var object)
 INHERITED(DataOneProg)
 public:
-  String	GetDisplayName() const CPP11_OVERRIDE;
-  String	GetToolbarName() const CPP11_OVERRIDE { return "new row"; }
+  String	GetDisplayName() const override;
+  String	GetToolbarName() const override { return "new row"; }
 
   TA_BASEFUNS_NOCOPY(AddNewDataRow);
 protected:
-  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) override;
 private:
   void	Initialize();
   void	Destroy()	{ }

@@ -147,12 +147,12 @@ public:
   // #CAT_File reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
   String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const CPP11_OVERRIDE;
+                            bool force_inline = false) const override;
   bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false) CPP11_OVERRIDE;
-  int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) CPP11_OVERRIDE;
-  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) CPP11_OVERRIDE;
+                           bool force_inline = false) override;
+  int  Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0) override;
+  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
   void          Copy_(const MatrixGeom& cp);
   explicit      MatrixGeom(int init_size);
 
@@ -168,7 +168,7 @@ public: // functions for internal/trusted use only
   // #IGNORE get index from dimension values, based on geometry -- applies negaitve idx as counting back from end, and safe range checking for each dimension (returns -1 overall if any is out of range)
 
 protected:
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
 
   int           el[TA_MATRIX_DIMS_MAX];
   int           elprod[TA_MATRIX_DIMS_MAX]; // products of el's -- updated by UAE -- must be called!

@@ -54,11 +54,11 @@ public:
     taiTreeNode* last_child_, const String& tree_name, int flags_ = 0);
   ~taiTreeNodeTypeSpace();
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeTypeSpace;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeTypeSpace;}
 protected:
-  void         willHaveChildren_impl(bool& will) const CPP11_OVERRIDE;
-  void         CreateChildren_impl() CPP11_OVERRIDE; // called by the Node when it needs to create its children
+  void         willHaveChildren_impl(bool& will) const override;
+  void         CreateChildren_impl() override; // called by the Node when it needs to create its children
   void                  CreateListItem(taiTreeNode* par_node, taiTreeNode* after_node, void* el);
 private:
   void                  init(taSigLinkTypeItemSpace* link_, int flags_); // #IGNORE

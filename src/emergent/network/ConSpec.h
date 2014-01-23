@@ -73,7 +73,7 @@ public:
     else if(type == LT_MAX)     ApplyMaxLimit(wt);
     else if(type == MIN_MAX)    { ApplyMinLimit(wt); ApplyMaxLimit(wt); } }
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   SIMPLE_COPY(WeightLimits);
   TA_BASEFUNS(WeightLimits);
@@ -178,7 +178,7 @@ public:
   virtual bool          DMem_AlwaysLocal() { return false; }
   // #CAT_DMem overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   void  InitLinks();
   void  CutLinks();
@@ -186,8 +186,8 @@ public:
   TA_BASEFUNS(ConSpec);
 protected:
   SPEC_DEFAULTS;
-  bool         CheckType_impl(TypeDef* td) CPP11_OVERRIDE;
-  bool         CheckObjectType_impl(taBase* obj) CPP11_OVERRIDE; // don't do checking on 1st con group in units
+  bool         CheckType_impl(TypeDef* td) override;
+  bool         CheckObjectType_impl(taBase* obj) override; // don't do checking on 1st con group in units
 private:
   void  Initialize();
   void  Destroy()               { CutLinks(); }

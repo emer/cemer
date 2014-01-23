@@ -85,7 +85,7 @@ class E_API ClLayerSpec : public SoLayerSpec {
   // competitive learning layer spec
 INHERITED(SoLayerSpec)
 public:
-  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) CPP11_OVERRIDE;
+  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
   // set activation to be 1.0 for unit with most input, 0 else
 
   TA_BASEFUNS_NOCOPY(ClLayerSpec);
@@ -104,14 +104,14 @@ public:
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
-  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) override;
   // redefine to call compute_dist
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
   // activation is a gaussian function of the net input
 
   TA_SIMPLE_BASEFUNS(SoftClUnitSpec);
 protected:
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -124,7 +124,7 @@ class E_API SoftClLayerSpec : public SoLayerSpec {
 INHERITED(SoLayerSpec)
 public:
 
-  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) CPP11_OVERRIDE;
+  void	Compute_Act_post(SoLayer* lay, SoNetwork* net) override;
   // set activation to be softmax of unit activations
 
   TA_BASEFUNS_NOCOPY(SoftClLayerSpec);

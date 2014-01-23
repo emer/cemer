@@ -62,7 +62,7 @@ public:
 
   QButtonGroup* bgChoiceButtons; //note: not a widget
 
-  void done(int r) CPP11_OVERRIDE;
+  void done(int r) override;
 
   // Note: QMessageBox::exec() is not virtual, so this is not an override.
   // Make it virtual from this point forward, in case subclasses need
@@ -73,7 +73,7 @@ public:
 
 protected:
   int num_chs; // number of choices, we return last idx for Esc
-  virtual void keyPressEvent(QKeyEvent* ev); // override
+  void keyPressEvent(QKeyEvent* ev) override;
 
 protected slots:
   void copyToClipboard(); // copy text of msg to clipboard

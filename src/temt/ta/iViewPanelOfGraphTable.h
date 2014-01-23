@@ -135,22 +135,22 @@ public:
   iColorScaleBar*           cbar;             // colorbar
   QPushButton*              butSetColor;
 
-  String       panel_type() const CPP11_OVERRIDE; // this string is on the subpanel button for this panel
+  String       panel_type() const override; // this string is on the subpanel button for this panel
   GraphTableView*       glv() {return (GraphTableView*)m_dv;}
 
   iViewPanelOfGraphTable(GraphTableView* glv);
   ~iViewPanelOfGraphTable();
 
 protected:
-  void         InitPanel_impl() CPP11_OVERRIDE; // called on structural changes
-  void         UpdatePanel_impl() CPP11_OVERRIDE; // called on structural changes
-  void         GetValue_impl() CPP11_OVERRIDE;
-  void         CopyFrom_impl() CPP11_OVERRIDE;
+  void         InitPanel_impl() override; // called on structural changes
+  void         UpdatePanel_impl() override; // called on structural changes
+  void         GetValue_impl() override;
+  void         CopyFrom_impl() override;
   virtual bool          BuildPlots();
 
 public: // ISigLinkClient interface
-  void*        This() CPP11_OVERRIDE {return (void*)this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanelOfGraphTable;}
+  void*        This() override {return (void*)this;}
+  TypeDef*     GetTypeDef() const override {return &TA_iViewPanelOfGraphTable;}
 
 protected slots:
   void          butRefresh_pressed();

@@ -39,7 +39,7 @@ public:
   bool		no_y_dot; 	// #DEF_false don't use y-dot temporal derivative at all in computing LVe phasic DA 
   bool		pos_y_dot_only; // #DEF_false use only positive deviations for computing LVe phasic DA -- mutex with no_y_dot
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LVMiscSpec);
 protected:
@@ -78,13 +78,13 @@ public:
                                     bool er_avail);
     // #IGNORE
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) CPP11_OVERRIDE { return false; }
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
 
-  void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
-  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override;
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

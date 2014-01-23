@@ -46,8 +46,8 @@ protected:
   bool		ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   QString	prev_find_str;	   // previous find string
 
-  void keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
-  void contextMenuEvent(QContextMenuEvent* e) CPP11_OVERRIDE;
+  void keyPressEvent(QKeyEvent* e) override;
+  void contextMenuEvent(QContextMenuEvent* e) override;
 
 };
 

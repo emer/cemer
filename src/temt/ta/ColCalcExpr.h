@@ -59,9 +59,9 @@ public:
   TA_BASEFUNS(ColCalcExpr);
 protected:
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-//   void      CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
-//   void              SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+//   void      CheckThisConfig_impl(bool quiet, bool& rval) override;
+//   void              SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
 //   override void              SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
 //                                           int sls, void* op1_, void* op2_);
 

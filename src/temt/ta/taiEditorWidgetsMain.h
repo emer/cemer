@@ -61,15 +61,15 @@ public:
   QVBoxLayout*  body_vlay;      // vertical layout in body -- this is created with body
   iFormLayout*  layBody;
 
-  int          curRow() const CPP11_OVERRIDE {return cur_row;}
-  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE { return first_tab_foc; }
+  int          curRow() const override {return cur_row;}
+  QWidget*     firstTabFocusWidget() override { return first_tab_foc; }
 
   taiEditorWidgetsMain(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   ~taiEditorWidgetsMain();
 
 public: // ITypedObject i/f (common to IDLC and IDH)
-  void*         This() {return this;} // override
-  TypeDef*      GetTypeDef() const {return &TA_taiEditorWidgetsMain;} // override
+  void*         This() override {return this;}
+  TypeDef*      GetTypeDef() const override {return &TA_taiEditorWidgetsMain;}
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //  void                SigLinkDestroying(taSigLink* dl);
@@ -89,13 +89,13 @@ protected:
   void          AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
   void          AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
   void          AddMultiWidget(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
-  void Constr_Box() CPP11_OVERRIDE;
+  void Constr_Box() override;
   virtual void  Constr_Body_impl();
-  void Constr_Final() CPP11_OVERRIDE;
-  void ClearBody_impl() CPP11_OVERRIDE;
+  void Constr_Final() override;
+  void ClearBody_impl() override;
 
 protected:
-  void InitGuiFields(bool virt = true) CPP11_OVERRIDE; // NULL the gui fields -- virt used for ctor
+  void InitGuiFields(bool virt = true) override; // NULL the gui fields -- virt used for ctor
 };
 
 class TA_API taiDialogEditor_List : public taPtrList<taiEditorWidgetsMain> {

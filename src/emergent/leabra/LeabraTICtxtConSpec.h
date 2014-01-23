@@ -31,7 +31,7 @@ class E_API LeabraTICtxtConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   // special!
-  bool  IsTICtxtCon() CPP11_OVERRIDE { return true; }
+  bool  IsTICtxtCon() override { return true; }
 
   inline void Send_CtxtNetin(LeabraSendCons* cg, LeabraNetwork* net,
                              const int thread_no, const float su_act) {
@@ -53,8 +53,8 @@ public:
 
   // don't send regular net inputs..
   inline void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
-                                       float su_act_delta_eff) CPP11_OVERRIDE { };
-  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE
+                                       float su_act_delta_eff) override { };
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override
   { return 0.0f; }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
@@ -64,7 +64,7 @@ public:
   // #IGNORE
 
   inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                      LeabraNetwork* net) CPP11_OVERRIDE {
+                                      LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float* dwts = cg->OwnCnVar(DWT);
@@ -78,20 +78,20 @@ public:
   }
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) CPP11_OVERRIDE
+                                                LeabraNetwork* net) override
   { Compute_dWt_LeabraCHL(cg, su, net); }
 
   inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) CPP11_OVERRIDE
+                                               LeabraNetwork* net) override
   { Compute_dWt_LeabraCHL(cg, su, net); }
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) CPP11_OVERRIDE {
+                                                 LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
     // CHL uses XCAL with aggregate soft weight bounding, b/c no hebbian term
   }
 
-  void  GetPrjnName(Projection& prjn, String& nm) CPP11_OVERRIDE;
+  void  GetPrjnName(Projection& prjn, String& nm) override;
 
   TA_SIMPLE_BASEFUNS(LeabraTICtxtConSpec);
 private:

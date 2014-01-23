@@ -27,16 +27,16 @@ class TA_API taiWidgetProgLibElChooser : public taiWidgetListElChooser {
 // for prog lib items
 INHERITED(taiWidgetListElChooser)
 public:
-  int          columnCount(int view) const CPP11_OVERRIDE;
-  const String headerText(int index, int view) const CPP11_OVERRIDE;
-  const String titleText() CPP11_OVERRIDE;
+  int          columnCount(int view) const override;
+  const String headerText(int index, int view) const override;
+  const String titleText() override;
 
   taiWidgetProgLibElChooser(TypeDef* typ, IWidgetHost* host, taiWidget* par,
                       QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
 protected:
-  void         BuildCategories_impl() CPP11_OVERRIDE;
+  void         BuildCategories_impl() override;
   int          BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
-                                       QTreeWidgetItem* top_item) CPP11_OVERRIDE;
+                                       QTreeWidgetItem* top_item) override;
 };
 
 #endif // taiWidgetProgLibElChooser_h

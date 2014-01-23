@@ -134,8 +134,8 @@ public:
   virtual void	PenStyle(PenStyles style);
   // #CAT_Draw
 
-  void  ImageChanging() CPP11_OVERRIDE;
-  void  ImageChanged() CPP11_OVERRIDE;
+  void  ImageChanging() override;
+  void  ImageChanged() override;
 
   void	Copy_(const taCanvas& cp);
   TA_BASEFUNS(taCanvas);

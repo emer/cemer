@@ -81,7 +81,8 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
     if ((it->desc.empty()) || (it->desc == " "))
       it->desc = rval->desc;    // get the comment if we don't actually have one now..
     replace = true; // always replace
-  } else {
+  }
+  else {
     // ok, we are not a virtual override, but check if we are an overload or lexical hide
     // since we aren't an override, we are a new entity, so will replace
     idx = FindNameIdx(it->name);
@@ -94,7 +95,8 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
       // one -- we will therefore replace it, but of course not set "override"
       if (it->CompareArgs(rval)) {
         it->is_lexhide = true; // note: this is not often done, and could be an error
-      } else {
+      }
+      else {
         it->fun_overld++; // normal overload
       }
 /*NOTE: in v3.2, this would seem to have applied mostly for virtual overrides

@@ -113,8 +113,8 @@ protected:
 
   iDialogItemChooser(const String& caption, QWidget* par_window_);
 protected slots:
-  void                  accept(); // override
-  void                  reject(); // override
+  void                  accept() override;
+  void                  reject() override;
   void                  items_itemDoubleClicked(QTreeWidgetItem* itm, int col);
   void                  cmbView_currentIndexChanged(int index);
   void                  cmbCat_currentIndexChanged(int index);

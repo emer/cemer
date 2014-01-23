@@ -29,8 +29,8 @@ taTypeDef_Of(taiViewTypeOfTypeInfo);
 class TA_API taiViewTypeOfTypeInfo: public taiViewType { // for TypeItem types and their spaces
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfTypeInfo, taiViewType)
 public:
-  int          BidForView(TypeDef*) CPP11_OVERRIDE;
-  taiSigLink* GetSigLink(void* data_, TypeDef* el_typ) CPP11_OVERRIDE;
+  int          BidForView(TypeDef*) override;
+  taiSigLink* GetSigLink(void* data_, TypeDef* el_typ) override;
   void                  Initialize() {}
   void                  Destroy() {}
 };//

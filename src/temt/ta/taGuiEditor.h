@@ -40,30 +40,30 @@ public:
                 bool modal_ = false, QObject* parent = 0);
   virtual ~taGuiEditor();
 
-  void Constr_Body() CPP11_OVERRIDE;
-  void GetImage(bool force) CPP11_OVERRIDE;
-  void Ok_impl() CPP11_OVERRIDE;
+  void Constr_Body() override;
+  void GetImage(bool force) override;
+  void Ok_impl() override;
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //   void               SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
 
 public: // ITypedObject i/f (common to IDLC and IDH)
-  void*        This() CPP11_OVERRIDE {return this;}
-  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taGuiEditor;}
+  void*        This() override {return this;}
+  TypeDef*     GetTypeDef() const override {return &TA_taGuiEditor;}
 
 public: // IWidgetHost i/f
-  const iColor  colorOfCurRow() const CPP11_OVERRIDE { return bgColor(); }
-  TypeItem::ShowMembs  show() const CPP11_OVERRIDE;
-  bool         HasChanged() CPP11_OVERRIDE {return modified;}
-  bool         isConstructed() CPP11_OVERRIDE {int s = state & STATE_MASK;
+  const iColor  colorOfCurRow() const override { return bgColor(); }
+  TypeItem::ShowMembs  show() const override;
+  bool         HasChanged() override {return modified;}
+  bool         isConstructed() override {int s = state & STATE_MASK;
     return ((s >= CONSTRUCTED) && (s < ZOMBIE));}
-  bool         isModal() CPP11_OVERRIDE {return modal;}
-  bool         isReadOnly() CPP11_OVERRIDE {return read_only;} //
-  void*        Root() const CPP11_OVERRIDE {return gui_owner;} // root of the object
-  taBase*      Base() const CPP11_OVERRIDE;
-  TypeDef*     GetRootTypeDef() const CPP11_OVERRIDE {return &TA_taGuiDialog;} // TypeDef on the root, for casting
-  void         GetImage()      CPP11_OVERRIDE { GetImage(true); }
-  void         GetValue() CPP11_OVERRIDE;
+  bool         isModal() override {return modal;}
+  bool         isReadOnly() override {return read_only;} //
+  void*        Root() const override {return gui_owner;} // root of the object
+  taBase*      Base() const override;
+  TypeDef*     GetRootTypeDef() const override {return &TA_taGuiDialog;} // TypeDef on the root, for casting
+  void         GetImage()      override { GetImage(true); }
+  void         GetValue() override;
 public slots:
   void          Changed() {inherited::Changed();}
   void          Apply_Async() {inherited::Apply_Async(); }

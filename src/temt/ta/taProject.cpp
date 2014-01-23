@@ -51,7 +51,7 @@ using namespace std;
 #ifdef TA_GUI
 class SimLogEditDialog: public taiEditorOfClass {
 public:
-  bool ShowMember(MemberDef* md) const CPP11_OVERRIDE {
+  bool ShowMember(MemberDef* md) const override {
     // just show a small subset of the members
     bool rval = (md->ShowMember(show()) && (md->im != NULL));
     if (!rval) return rval;
@@ -60,7 +60,7 @@ public:
          || (md->name == "file_name"))) return false;
     return true;
   }
-  void Constr_Methods_impl() CPP11_OVERRIDE { }       // suppress methods
+  void Constr_Methods_impl() override { }       // suppress methods
 
   SimLogEditDialog(void* base, TypeDef* tp, bool read_only_,
         bool modal_) : taiEditorOfClass(base, tp, read_only_, modal_) { };

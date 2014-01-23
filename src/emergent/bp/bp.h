@@ -81,7 +81,7 @@ public:
   // #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
   inline void C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                      Network* net) CPP11_OVERRIDE
+                                      Network* net) override
   { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
 
   inline float		C_Compute_dEdA(const float wt, const float ru_dEdNet)
@@ -139,7 +139,7 @@ public:
   TA_BASEFUNS(BpConSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -202,11 +202,11 @@ public:
   // #LIST_BpUnit_Error this points to the error fun, set appropriately
 
   // generic unit functions
-  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
-  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_dWt(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_Weights(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Init_Acts(Unit* u, Network* net) override;
+  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_dWt(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Weights(Unit* u, Network* net, int thread_no=-1) override;
 
   // bp special functions
   virtual void 	Compute_Error(BpUnit* u, BpNetwork* net, int thread_no=-1);
@@ -413,7 +413,7 @@ public:
   float		act_lrate_incr;	// #HIDDEN actual lrate increase (times lrate)
 
   inline void 	C_Init_Weights(RecvCons* cg, int idx, Unit* ru, Unit* su,
-                                       Network* net) CPP11_OVERRIDE
+                                       Network* net) override
   { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,LRATE) = lrate; }
 
   inline void	C_UpdateLrate(float& lrate, const float dwt, const float pdw) {
@@ -447,13 +447,13 @@ public:
     dwt = 0.0f;
   }
 
-  inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE;
-  inline void	B_Compute_Weights(RecvCons* bias, BpUnit* ru) CPP11_OVERRIDE;
+  inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net) override;
+  inline void	B_Compute_Weights(RecvCons* bias, BpUnit* ru) override;
 
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -508,25 +508,25 @@ public:
   Unit::ExtType	unit_flags;	 // flags to set on the unit after copying value
   MemberDef*	var_md;		 // #IGNORE memberdef of variable
 
-  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	Init_Acts(Unit* u, Network* net) override;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
   // copy activation from corresponding unit in projection from layer
 
   // nullify all other functions..
-  void Compute_Netin(Unit*, Network* net, int thread_no=-1) 	CPP11_OVERRIDE { };
-  void Init_dWt(Unit*, Network* net) 	CPP11_OVERRIDE { };
-  void Compute_dWt(Unit*, Network* net, int thread_no=-1) 	CPP11_OVERRIDE { };
-  void Compute_Weights(Unit*, Network* net, int thread_no=-1) 	CPP11_OVERRIDE { };
+  void Compute_Netin(Unit*, Network* net, int thread_no=-1) 	override { };
+  void Init_dWt(Unit*, Network* net) 	override { };
+  void Compute_dWt(Unit*, Network* net, int thread_no=-1) 	override { };
+  void Compute_Weights(Unit*, Network* net, int thread_no=-1) 	override { };
 
   // bp special functions
-  void Compute_Error(BpUnit*, BpNetwork* net, int thread_no=-1)  CPP11_OVERRIDE { };
-  void Compute_dEdA(BpUnit*, BpNetwork* net, int thread_no=-1)	  CPP11_OVERRIDE { };
-  void Compute_dEdNet(BpUnit*, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE { }; //
+  void Compute_Error(BpUnit*, BpNetwork* net, int thread_no=-1)  override { };
+  void Compute_dEdA(BpUnit*, BpNetwork* net, int thread_no=-1)	  override { };
+  void Compute_dEdNet(BpUnit*, BpNetwork* net, int thread_no=-1) override { }; //
 
   TA_SIMPLE_BASEFUNS(BpContextSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -539,13 +539,13 @@ class E_API LinearBpUnitSpec : public BpUnitSpec {
   // linear unit in Bp
 INHERITED(BpUnitSpec)
 public:
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
 
   TA_BASEFUNS(LinearBpUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -560,13 +560,13 @@ INHERITED(BpUnitSpec)
 public:
   float		threshold;
 
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(ThreshLinBpUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ };
@@ -581,7 +581,7 @@ INHERITED(BpUnitSpec)
 public:
   RandomSpec	noise;		// what kind of noise to add to activations
 
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(NoisyBpUnitSpec);
 protected:
@@ -598,7 +598,7 @@ class E_API StochasticBpUnitSpec : public BpUnitSpec {
   // Bp with a binary stochastic activation function
 INHERITED(BpUnitSpec)
 public:
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
   TA_BASEFUNS_NOCOPY(StochasticBpUnitSpec);
 protected:
@@ -619,14 +619,14 @@ public:
   float         norm_const;     // #HIDDEN normalization const for Gaussian
   float         denom_const;    // #HIDDEN denominator const for Gaussian
 
-  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) override;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(RBFBpUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()               { };
@@ -643,13 +643,13 @@ public:
   float         std_dev;        // std deviation of Gaussian
   float         std_dev_r;      // #HIDDEN reciprocal of std_dev
 
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(BumpBpUnitSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy()               { };
@@ -662,8 +662,8 @@ class E_API ExpBpUnitSpec : public BpUnitSpec {
   // exponential units in Bp: simple exponent of net input
 INHERITED(BpUnitSpec)
 public:
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
 
   TA_BASEFUNS_NOCOPY(ExpBpUnitSpec);
 protected:
@@ -681,14 +681,14 @@ class E_API SoftMaxBpUnitSpec : public BpUnitSpec {
 INHERITED(BpUnitSpec)
 public:
 
-  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE { };
+  void Compute_Netin(Unit* u, Network* net, int thread_no=-1) override { };
   // do nothing
-  void Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
-  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1) override;
 
   // don't update my weights
-  void Compute_dWt(Unit*, Network* net, int thread_no=-1)	CPP11_OVERRIDE { };
-  void Compute_Weights(Unit*, Network* net, int thread_no=-1)	CPP11_OVERRIDE { };
+  void Compute_dWt(Unit*, Network* net, int thread_no=-1)	override { };
+  void Compute_Weights(Unit*, Network* net, int thread_no=-1)	override { };
 
   TA_BASEFUNS_NOCOPY(SoftMaxBpUnitSpec);
 protected:
@@ -723,24 +723,24 @@ public:
   virtual void	SetCurLrate();
   // #CAT_Learning set current learning rate, based on network epoch counter
 
-  void	Compute_NetinAct() CPP11_OVERRIDE;
+  void	Compute_NetinAct() override;
 
   virtual void	Compute_dEdA_dEdNet();
   // #CAT_Learning compute derivatives of error with respect to activations & net inputs (backpropagate)
   virtual void	Compute_Error();
   // #CAT_Learning compute local error values, for display purposes only (only call when testing, not training)
 
-  void	Compute_dWt() CPP11_OVERRIDE;
-  void	Compute_Weights_impl() CPP11_OVERRIDE;
+  void	Compute_dWt() override;
+  void	Compute_Weights_impl() override;
   
   virtual void		Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
   
-  void	SetProjectionDefaultTypes(Projection* prjn) CPP11_OVERRIDE;
-  void  BuildNullUnit() CPP11_OVERRIDE;
+  void	SetProjectionDefaultTypes(Projection* prjn) override;
+  void  BuildNullUnit() override;
 
   TA_SIMPLE_BASEFUNS(BpNetwork);
 protected:
-  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{}

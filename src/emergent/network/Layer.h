@@ -66,7 +66,7 @@ public:
   int   fm_input;               // how many layers between closest input layer and me (-1 if unknown)
   int   fm_output;              // how many layers between closest output layer and me (-1 if unknown)
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
+  String       GetTypeDecoKey() const override { return "Layer"; }
 
   SIMPLE_COPY(LayerDistances);
   TA_BASEFUNS_LITE(LayerDistances);
@@ -538,15 +538,15 @@ public:
   virtual bool  DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
 #endif
 
-  String GetDesc() const       CPP11_OVERRIDE { return desc; }
-  int    GetEnabled() const    CPP11_OVERRIDE { return !lesioned(); }
-  void   SetEnabled(bool value) CPP11_OVERRIDE { SetLayerFlagState(LESIONED, !value); }
-  String GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
-  int    GetSpecialState() const CPP11_OVERRIDE;
+  String GetDesc() const       override { return desc; }
+  int    GetEnabled() const    override { return !lesioned(); }
+  void   SetEnabled(bool value) override { SetLayerFlagState(LESIONED, !value); }
+  String GetTypeDecoKey() const override { return "Layer"; }
+  int    GetSpecialState() const override;
 
-  bool ChangeMyType(TypeDef* new_type) CPP11_OVERRIDE;
+  bool ChangeMyType(TypeDef* new_type) override;
 
-  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE;
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 
   void  InitLinks();
   void  CutLinks();
@@ -557,8 +557,8 @@ protected:
   UnitSpec*     m_prv_unit_spec; // previous unit spec set for units in layer
   LayerFlags    m_prv_layer_flags; // previous layer flags in layer
 
-  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
-  void         UpdateAfterMove_impl(taBase* old_owner) CPP11_OVERRIDE;
+  void         UpdateAfterEdit_impl() override;
+  void         UpdateAfterMove_impl(taBase* old_owner) override;
   virtual void          ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
   virtual void          ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
@@ -574,9 +574,9 @@ protected:
                                Random* ran, bool na_by_range=false);
   // #IGNORE grouped layer, 4d data -- note this cannot have offsets..
 
-  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) override;
   // #IGNORE this is the guy that *additionally* delegates to the Spec
-  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;// #IGNORE
+  void         CheckChildConfig_impl(bool quiet, bool& rval) override;// #IGNORE
 private:
   void  Initialize();
   void  Destroy()       { CutLinks(); }

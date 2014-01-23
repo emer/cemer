@@ -31,7 +31,7 @@ public:
   iApplicationToolBar(ToolBar* viewer, QWidget* parent = NULL)
   :iToolBar(viewer, parent){}
  protected:
-  void         Constr_post() CPP11_OVERRIDE;
+  void         Constr_post() override;
 };
 
 #endif // iApplicationToolBar_h

@@ -74,12 +74,12 @@ public:
   virtual bool	CopyRFtoNetWtPrjn(int trg_unit_no);
   // #BUTTON #CAT_ActBasedRF copy given target unit number's rf_data to the network's wt_prjn field (weight projection), for easy visualization in the network context
 
-  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS(ActBasedRF);
 protected:
   void	UpdateAfterEdit_impl();
-  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
     
 private:
   void	Initialize();

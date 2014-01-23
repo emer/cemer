@@ -51,7 +51,7 @@ public:
   int           FindMainLine(taBase* prog_el);
   // find the main line associated with a given program element -- the one that should be logged etc
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  String       GetTypeDecoKey() const override { return "Program"; }
   TA_BASEFUNS_NOCOPY(ProgLine_List);
 private:
   void  Initialize();

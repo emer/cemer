@@ -41,7 +41,7 @@ public:
 
   T3Panel_List  panels; // #AKA_frames the panels associated with each tab
 
-  bool         isRootLevelView() const CPP11_OVERRIDE {return true;}
+  bool         isRootLevelView() const override {return true;}
   iT3PanelViewer*         widget(); // #IGNORE
   iTabBarBase*          tabBar(); // #IGNORE
 
@@ -59,15 +59,15 @@ public:
 
 protected:
   // from taDataView
-  void         DoActionChildren_impl(DataViewAction act) CPP11_OVERRIDE; // just one act
+  void         DoActionChildren_impl(DataViewAction act) override; // just one act
 
   // taViewer
-  void         Constr_impl(QWidget* gui_parent) CPP11_OVERRIDE;
-  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // #IGNORE
-//void         ResolveChanges(CancelOp& cancel_op) CPP11_OVERRIDE; // nn: no "dirty" for T3
-  void         Reset_impl() CPP11_OVERRIDE; //  #IGNORE
-  void         GetWinState_impl() CPP11_OVERRIDE; // set gui state; only called if mapped
-  void         SetWinState_impl() CPP11_OVERRIDE; // fetch gui state; only called if mapped
+  void         Constr_impl(QWidget* gui_parent) override;
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) override; // #IGNORE
+//void         ResolveChanges(CancelOp& cancel_op) override; // nn: no "dirty" for T3
+  void         Reset_impl() override; //  #IGNORE
+  void         GetWinState_impl() override; // set gui state; only called if mapped
+  void         SetWinState_impl() override; // fetch gui state; only called if mapped
 
   virtual void          ConstrPanels_impl();
 

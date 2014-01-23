@@ -39,7 +39,7 @@ public:
   float		rate;		// #CONDSHOW_OFF_set_time rate factor = 1/time -- used for multiplicative update equations
   float		time;		// #CONDSHOW_ON_set_time temporal duration for the time constant -- how many msec or sec long (typically to reach a 1/e level with exponential dynamics) = 1/rate
 
-  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DtSpec);
 protected:

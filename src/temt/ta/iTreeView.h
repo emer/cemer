@@ -191,15 +191,15 @@ public slots:
   void                  InsertDefaultEl(bool after=false); // insert default new element type object at or after currently selected item
 
 public: // ISelectableHost i/f
-  bool         hasMultiSelect() const CPP11_OVERRIDE;
-  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  bool         hasMultiSelect() const override;
+  QWidget*     widget() override {return this;}
 protected:
   void         FillContextMenu_pre(ISelectable_PtrList& sel_items,
-                                            taiWidgetActions* menu) CPP11_OVERRIDE;
+                                            taiWidgetActions* menu) override;
   void         FillContextMenu_post(ISelectable_PtrList& sel_items,
-                                             taiWidgetActions* menu) CPP11_OVERRIDE;
+                                             taiWidgetActions* menu) override;
 
-  void         UpdateSelectedItems_impl() CPP11_OVERRIDE;
+  void         UpdateSelectedItems_impl() override;
 
 protected:
   enum ExpandFlags {
@@ -224,12 +224,12 @@ protected:
 
   QFont&                italicFont() const; // so we don't create a new guy each node
 
-  void         focusInEvent(QFocusEvent* ev) CPP11_OVERRIDE; // override
-  void         mousePressEvent(QMouseEvent* ev) CPP11_OVERRIDE; //for exp/coll all
-  void         dragMoveEvent(QDragMoveEvent* ev) CPP11_OVERRIDE;
-  void         dropEvent(QDropEvent* ev) CPP11_OVERRIDE;
-  void         mouseDoubleClickEvent(QMouseEvent* ev) CPP11_OVERRIDE; //for exp/coll all
-  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE; // override, for expand all
+  void         focusInEvent(QFocusEvent* ev) override;
+  void         mousePressEvent(QMouseEvent* ev) override; // for exp/coll all
+  void         dragMoveEvent(QDragMoveEvent* ev) override;
+  void         dropEvent(QDropEvent* ev) override;
+  void         mouseDoubleClickEvent(QMouseEvent* ev) override; //for exp/coll all
+  void         showEvent(QShowEvent* ev) override; // for expand all
 
   virtual void          ExpandAll_impl(int max_levels, int exp_flags = 0);
   // inner code
@@ -239,13 +239,13 @@ protected:
   virtual void          GetSelectedItems(ISelectable_PtrList& lst);
   // list of the selected datanodes
 
-  void         keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
-  bool         focusNextPrevChild(bool next) CPP11_OVERRIDE;
+  void         keyPressEvent(QKeyEvent* e) override;
+  bool         focusNextPrevChild(bool next) override;
 
 #ifndef __MAKETA__
-  QMimeData*   mimeData(const QList<QTreeWidgetItem*> items) const CPP11_OVERRIDE;
+  QMimeData*   mimeData(const QList<QTreeWidgetItem*> items) const override;
     // we replace this and provide the ta custom mime data (not the treewidget data)
-  QStringList  mimeTypes () const CPP11_OVERRIDE; // for dnd to work, we just permit almost anything via "text/plain", then decide on the drop whether to accept
+  QStringList  mimeTypes () const override; // for dnd to work, we just permit almost anything via "text/plain", then decide on the drop whether to accept
 #endif
   virtual void          ItemDestroyingCb(iTreeViewItem* item);
   virtual void          Refresh_impl();

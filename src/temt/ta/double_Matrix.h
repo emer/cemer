@@ -32,10 +32,10 @@ class TA_API double_Matrix: public taMatrixT<double> {
   // #INSTANCE a matrix of doubles
 INHERITED(taMatrixT<double>)
 public:
-  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_double;}
-  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_DOUBLE;}
+  TypeDef*     GetDataTypeDef() const override {return &TA_double;}
+  ValType      GetDataValType() const override {return VT_DOUBLE;}
 
-  bool         StrValIsValid(const String& str, String* err_msg = NULL) const CPP11_OVERRIDE;
+  bool         StrValIsValid(const String& str, String* err_msg = NULL) const override;
     // accepts valid format for double
 
   virtual void          InitVals(double val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
@@ -46,32 +46,32 @@ public:
     for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
   // initialize values from an array of doubles, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
 
-  bool         BinaryFile_Supported() CPP11_OVERRIDE { return true; }
+  bool         BinaryFile_Supported() override { return true; }
 
   TA_MATRIX_FUNS_FAST(double_Matrix, double);
 
 public:
-  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE
+  float        El_GetFloat_(const void* it) const override
     { return (float)*((double*)it); }
     // #IGNORE warning: loss of precision and/or under/overflow possible
-  double       El_GetDouble_(const void* it) const CPP11_OVERRIDE
+  double       El_GetDouble_(const void* it) const override
     { return *((double*)it); } // #IGNORE
-  const String El_GetStr_(const void* it) const CPP11_OVERRIDE
+  const String El_GetStr_(const void* it) const override
     { return (String)*((double*)it); } // #IGNORE
-  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE
+  void         El_SetFmStr_(void* it, const String& str) override
     {*((double*)it) = (double)str;}  // #IGNORE
-  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE
+  const Variant El_GetVar_(const void* it) const override
     {return Variant(*((double*)it));} // #IGNORE
-  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE
+  void         El_SetFmVar_(void* it, const Variant& var) override
     {*((double*)it) = var.toDouble(); };  // #IGNORE
-  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
+  int          El_Compare_(const void* a, const void* b) const override
   { int rval=-1; if(*((double*)a) > *((double*)b)) rval=1; else if(*((double*)a) == *((double*)b)) rval=0; return rval; }
 protected:
   static const double   blank; // #IGNORE
-  void         Dump_Save_Item(std::ostream& strm, int idx) CPP11_OVERRIDE; // stream in full precision
-  void         BinarySave_Item(std::ostream& strm, int idx) CPP11_OVERRIDE
+  void         Dump_Save_Item(std::ostream& strm, int idx) override; // stream in full precision
+  void         BinarySave_Item(std::ostream& strm, int idx) override
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(double)); };
-  void         BinaryLoad_Item(std::istream& strm, int idx) CPP11_OVERRIDE
+  void         BinaryLoad_Item(std::istream& strm, int idx) override
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(double)); };
 private:
   void          Initialize() {}
