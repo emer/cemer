@@ -30,8 +30,8 @@ class DataColT : public DataCol {
   // #VIRT_BASE #NO_INSTANCE template for common elements
 INHERITED(DataCol)
 public:
-  override const taMatrix* AR() const { return &ar; } // the array pointer
-  override taMatrix*    AR()    { return &ar; } // the array pointer
+  const taMatrix* AR() const CPP11_OVERRIDE { return &ar; } // the array pointer
+  taMatrix*    AR()    CPP11_OVERRIDE { return &ar; } // the array pointer
 
   void  CutLinks()
     {ar.CutLinks(); DataCol::CutLinks();}

@@ -34,9 +34,9 @@ public:
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   bool			quiet;	      // do not emit a message when arg is set and member value is assigned (otherwise, informational msg is printed -- useful for startup code output)
   
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  override String	GetToolbarName() const { return "memb=arg"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "memb=arg"; }
 
   void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
@@ -48,9 +48,9 @@ public:
 protected:
   ProgVar* 		prv_obj; // #IGNORE used to track changes in obj type to clear expr
   
-  override void		UpdateAfterEdit_impl();
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssBody_impl(Program* prog);
+  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void 	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

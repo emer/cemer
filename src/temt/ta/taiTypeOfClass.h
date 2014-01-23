@@ -29,13 +29,13 @@ taTypeDef_Of(taiTypeOfClass);
 class TA_API taiTypeOfClass : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfClass, taiType);
 public:
-  override bool allowsInline() const    { return true; }
-  override bool handlesReadOnly() const { return true; } // uses a RO PolyData or RO EditButton
-  override bool CanBrowse() const;
+  bool allowsInline() const    CPP11_OVERRIDE { return true; }
+  bool handlesReadOnly() const CPP11_OVERRIDE { return true; } // uses a RO PolyData or RO EditButton
+  bool CanBrowse() const CPP11_OVERRIDE;
 
   int           BidForType(TypeDef* td);
-  override taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
          // add in req for inline
   void          GetImage_impl(taiWidget* dat, const void* base);
   void          GetValue_impl(taiWidget* dat, void* base);

@@ -31,22 +31,22 @@ public:
   TypeSpace             type_list; // #LINK_GROUP set of types to generate tokens for -- must be set manually after construction and before GetImage etc -- be sure to only do Link here..
 
   inline taBase*        token() const {return (taBase*)m_sel;}
-  override int          columnCount(int view) const;
-  override const String headerText(int index, int view) const;
-  override int          viewCount() const; // n = size of type_list + 1
-  override const String viewText(int index) const;
+  int          columnCount(int view) const CPP11_OVERRIDE;
+  const String headerText(int index, int view) const CPP11_OVERRIDE;
+  int          viewCount() const CPP11_OVERRIDE; // n = size of type_list + 1
+  const String viewText(int index) const CPP11_OVERRIDE;
 
-  override void         GetImage(void* cur_sel, TypeDef* targ_typ);
+  void         GetImage(void* cur_sel, TypeDef* targ_typ) CPP11_OVERRIDE;
   virtual void          GetImageScoped(taBase* ths, TypeDef* targ_typ, taBase* scope = NULL,
         TypeDef* scope_type = NULL);
   // get image, using the new type and scope params supplied
   virtual taBase*       GetValue() {return token();}
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
-//TODO  override void           btnHelp_clicked();
+//TODO  void           btnHelp_clicked() CPP11_OVERRIDE;
 
-  override void         EditPanel();
-  override void         EditDialog();
+  void         EditPanel() CPP11_OVERRIDE;
+  void         EditDialog() CPP11_OVERRIDE;
 
   taiWidgetTokenChooserMultiType(TypeDef* typ_, IWidgetHost* host,
                              taiWidget* par, QWidget* gui_parent_, int flags_ = 0,

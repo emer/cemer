@@ -66,7 +66,7 @@ public:
   virtual bool  ReplaceParents(const TypeSpace& ol, const TypeSpace& nw);
   // replace any parents on the old list with those on the new for all types
 
-  override void  Add_(void* it, bool no_notify = false);
+  void  Add_(void* it, bool no_notify = false) CPP11_OVERRIDE;
 
   String&       PrintAllTokens(String& strm) const;
   // print count for all types that are keeping tokens

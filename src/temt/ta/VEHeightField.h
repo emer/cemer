@@ -44,7 +44,7 @@ public:
   String        data_col;       // column name within table that has the data -- IMPORTANT: must be a 2d float/double matrix column!
   int           row_num;        // row number containing height field data
 
-  override void Init();
+  void Init() CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(VEHeightField);
 private:

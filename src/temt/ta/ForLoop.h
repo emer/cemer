@@ -42,13 +42,13 @@ public:
   virtual String	GetLoopVar(bool& is_local) const;
   // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override String	GetDisplayName() const;
-  override void		SetProgExprFlags();
-  override String	GetToolbarName() const { return "for"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  void		SetProgExprFlags() CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "for"; }
 
   PROGEL_SIMPLE_COPY(ForLoop);
   void InitLinks();
@@ -58,13 +58,13 @@ protected:
   virtual void	MakeIndexVar(const String& var_nm);
   // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
 
-  override void	UpdateAfterEdit_impl();
-  override void	UpdateOnInsert_impl(); // check for being nested, and update def var 
+  virtual void	UpdateAfterEdit_impl();
+  virtual void	UpdateOnInsert_impl(); // check for being nested, and update def var 
   bool		ParentForLoopVarClashes(const String& loop_var); // true if a parent For loop is also using the loop_var
   void		MorphVar(String& cur_loop_var); // typically i,j,k, etc. or var2, var3, etc
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssPost_impl(Program* prog); 
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
 private:
   void	Initialize();
   void	Destroy()	{}

@@ -39,15 +39,15 @@ public:
   bool          ShowMember(MemberDef* md) const;
 
 protected:
-  override void         GetImage_Membs();
-  override void         GetValue_Membs();
-  override void         ClearMultiBody_impl(); // clears multi-body for reshowing
+  void         GetImage_Membs() CPP11_OVERRIDE;
+  void         GetValue_Membs() CPP11_OVERRIDE;
+  void         ClearMultiBody_impl() CPP11_OVERRIDE; // clears multi-body for reshowing
 
-  override void         Constr_Strings();
-  override void         Constr_MultiBody();
+  void         Constr_Strings() CPP11_OVERRIDE;
+  void         Constr_MultiBody() CPP11_OVERRIDE;
   virtual void          Constr_ElWidget();
   virtual void          Constr_ListWidget();      // construct list members themselves
-  override void         Constr_Final(); //TEMP
+  void         Constr_Final() CPP11_OVERRIDE; //TEMP
 };
 
 #endif // taiEditorOfListCompact_h

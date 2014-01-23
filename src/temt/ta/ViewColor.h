@@ -37,7 +37,7 @@ public:
   RGBA          bg_color;               // #CONDEDIT_ON_use_fg:true background color
   String        desc;                   // description of this view color item
 
-  override String       GetDesc() const { return desc; }
+  String       GetDesc() const CPP11_OVERRIDE { return desc; }
 
   void  InitLinks();
   TA_BASEFUNS(ViewColor);

@@ -52,9 +52,9 @@ signals:
 #endif
 
 protected:
-  override void         GetImageVar_impl(const Variant& val)
+  void         GetImageVar_impl(const Variant& val) CPP11_OVERRIDE
     {if (m_is_enum) GetEnumImage(val.toInt()); else GetImage(val.toInt());}
-  override void         GetValueVar_impl(Variant& val) const
+  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE
     {int i; if (m_is_enum) GetEnumValue(i); else GetValue(i); val = i;}
 
 private:

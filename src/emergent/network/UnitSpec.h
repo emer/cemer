@@ -95,7 +95,7 @@ public:
   virtual bool  CheckConfig_Unit(Unit* un, bool quiet=false);
   // #CAT_ObjectMgmt check for for misc configuration settings required by different algorithms
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   void  InitLinks();
   void  CutLinks();
@@ -103,10 +103,10 @@ public:
   TA_BASEFUNS(UnitSpec);
 protected:
   SPEC_DEFAULTS;
-  override void         UpdateAfterEdit_impl();
-  override void         CheckThisConfig_impl(bool quiet, bool& ok);
-  override bool         CheckType_impl(TypeDef* td);
-  override bool         CheckObjectType_impl(taBase* obj);
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& ok) CPP11_OVERRIDE;
+  bool         CheckType_impl(TypeDef* td) CPP11_OVERRIDE;
+  bool         CheckObjectType_impl(taBase* obj) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy()               { };

@@ -34,7 +34,7 @@ public:
   inline T*             operator->() const {return (T*)m_ptr;}
   T*                    operator=(const taSmartRefT<T>& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
   T*                    operator=(T* src) {set(src); return (T*)m_ptr;}
-  override TypeDef*     GetBaseType() const {return T::StatTypeDef(0);}
+  TypeDef*     GetBaseType() const CPP11_OVERRIDE {return T::StatTypeDef(0);}
   TypeDef*              GetDataTypeDef() const
     {return (m_ptr) ? m_ptr->GetTypeDef() : T::StatTypeDef(0);}
   taSmartRefT() {}  //

@@ -34,7 +34,7 @@ public:
   virtual void  Send_LearnFlags(LeabraLayer* lay, LeabraNetwork* net);
   // send the unit LEARN flags to all units that we project to, based on unit activation thresholds -- called in PostSettle
 
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(LearnDriverLayerSpec);
 protected:

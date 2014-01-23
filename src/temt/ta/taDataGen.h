@@ -254,7 +254,7 @@ public:
 			    bool reset_first = true);
   // #CAT_Files #MENU_BUTTON #MENU_ON_Files #NULL_OK_0 #NULL_TEXT_0_NewDataTable read file names from given directory into rows of the data table (must be passed non-null, is NOT reset prior to adding new rows!), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist) -- reset_first resets the data table rows before adding
 
-  override String 	GetTypeDecoKey() const { return "DataTable"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
   TA_BASEFUNS_NOCOPY(taDataGen);

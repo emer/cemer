@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfVariant);
 class TA_API taiTypeOfVariant : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfVariant, taiType);
 public:
-  override bool handlesReadOnly() const { return true; }
+  bool handlesReadOnly() const CPP11_OVERRIDE { return true; }
   int           BidForType(TypeDef* td);
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);

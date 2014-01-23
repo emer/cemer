@@ -102,19 +102,19 @@ public:
   virtual bool  SetQuery(const String& sys, const String& val, bool neg = false);
   // #IGNORE for parsing -- set query value, e.g., "state", "free"
 
-  override String  GetTypeDecoKey() const { return "ProgCtrl"; }
-  override String  GetDisplayName() const;
-  override String& Print(String& strm, int indent = 0) const;
-  override String  GetDesc() const;
-  override int     GetEnabled() const { return !HasCondFlag(OFF); }
-  override void    SetEnabled(bool value) { SetCondFlagState(OFF, !value); }
+  String  GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
+  String  GetDisplayName() const CPP11_OVERRIDE;
+  String& Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
+  String  GetDesc() const CPP11_OVERRIDE;
+  int     GetEnabled() const CPP11_OVERRIDE { return !HasCondFlag(OFF); }
+  void    SetEnabled(bool value) CPP11_OVERRIDE { SetCondFlagState(OFF, !value); }
 
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ActrCondition);
 protected:
-  override void  UpdateAfterEdit_impl();
-  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+  void  UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 
 private:
   SIMPLE_COPY(ActrCondition);

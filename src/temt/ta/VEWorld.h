@@ -127,7 +127,7 @@ public:
   static taBaseRef  last_to_set_ode; // #IGNORE last VE object to set values to ode -- useful for debugging errors
   static VEWorldRef last_ve_stepped; // #IGNORE last VEWorld to run -- useful for debugging errors
 
-  override String       GetDesc() const { return desc; }
+  String       GetDesc() const CPP11_OVERRIDE { return desc; }
   virtual bool  CreateODE();    // #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void  DestroyODE();   // #CAT_ODE destroy world in ode (if created)
   virtual void  SetValsToODE() { Init(); }
@@ -176,7 +176,7 @@ public:
 
   void Copy_(const VEWorld& cp);
   SIMPLE_INITLINKS(VEWorld);
-  override void CutLinks();
+  void CutLinks() CPP11_OVERRIDE;
   TA_BASEFUNS(VEWorld);
 protected:
   SpaceType     cur_space_type; // current type that was previously set

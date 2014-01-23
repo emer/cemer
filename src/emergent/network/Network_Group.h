@@ -33,7 +33,7 @@ INHERITED(taGroup<Network>)
 public:
   static taBrainAtlas_List  brain_atlases;  // #NO_SAVE #NO_VIEW Brain atlases available to select for network voxel mapping
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   void  InitLinks();
   void  CutLinks();

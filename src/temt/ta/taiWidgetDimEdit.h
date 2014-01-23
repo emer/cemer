@@ -40,8 +40,8 @@ public:
 
 protected:
   using inherited::GetImage_impl;
-  override void         GetImage_impl(const void* base) {GetImage((const MatrixGeom*)base);}
-  override void         GetValue_impl(void* base) const {GetValue((MatrixGeom*)base);}
+  void         GetImage_impl(const void* base) CPP11_OVERRIDE {GetImage((const MatrixGeom*)base);}
+  void         GetValue_impl(void* base) const CPP11_OVERRIDE {GetValue((MatrixGeom*)base);}
 private:
   void                  Initialize(QWidget* gui_parent_);
 

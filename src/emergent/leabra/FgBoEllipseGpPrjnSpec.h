@@ -53,7 +53,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(FgBoEllipseGpPrjnEl);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -84,15 +84,15 @@ public:
   virtual void	CreateStencils();
   // create stencil -- always done as first step in connection function
 
-  override void	Connect_impl(Projection* prjn);
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
 
   virtual FgBoEllipseGpPrjnEl* NewGroupSpec();
   // #BUTTON create a new group_specs item for specifying one grouping size
 
   TA_SIMPLE_BASEFUNS(FgBoEllipseGpPrjnSpec);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void	Initialize();
   void	Destroy()	{ };

@@ -37,12 +37,12 @@ public:
 
   SortOrder		order;		// order to sort this in
 
-  override String GetDisplayName() const;
+  String GetDisplayName() const CPP11_OVERRIDE;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSortEl);
 protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 };
 
 #endif // DataSortEl_h

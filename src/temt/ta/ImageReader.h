@@ -67,20 +67,20 @@ protected:
   void                  SetMat(taMatrix* new_mat);
 
 public: // DataBlock i/f
-  override DBOptions    dbOptions() const
+  DBOptions    dbOptions() const CPP11_OVERRIDE
     {return (DBOptions)(DB_SEQUENCABLE | DB_SOURCE);}
 
   virtual bool          ReadNext() {return ReadItem_impl();}
 
 public: // DataSource i/f
-  override int          sourceChannelCount() const; // depends on mode
-  override const String sourceChannelName(int chan) const; // bw || r, g, b
+  int          sourceChannelCount() const; // depends on mode
+  const String sourceChannelName(int chan) const; // bw || r, g, b
 
-  override bool         ReadItem_impl(); // actually does the read
-  override void         ReadOpen_impl(bool& ok);
-  override void         ReadClose_impl();
+  bool         ReadItem_impl() CPP11_OVERRIDE; // actually does the read
+  void         ReadOpen_impl(bool& ok) CPP11_OVERRIDE;
+  void         ReadClose_impl() CPP11_OVERRIDE;
 protected:
-  override taMatrix*    GetDataMatrix_impl(int chan);
+  taMatrix*    GetDataMatrix_impl(int chan);
 
 private:
   void                  Initialize();

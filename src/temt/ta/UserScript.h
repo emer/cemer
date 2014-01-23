@@ -38,15 +38,15 @@ public:
   virtual void	    	ImportFromFileName(const String& fnm); // import script from file
   virtual void	    	ExportToFileName(const String& fnm); // export script to file
   
-  override void		SetProgExprFlags();
-  override String	GetDisplayName() const;
-  override String	GetToolbarName() const { return "script"; }
-  override String 	GetTypeDecoKey() const { return "Comment"; }
+  void		SetProgExprFlags() CPP11_OVERRIDE;
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "script"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Comment"; }
 
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void		GenCssBody_impl(Program* prog);
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

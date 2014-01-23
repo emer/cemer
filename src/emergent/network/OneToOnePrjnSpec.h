@@ -33,7 +33,7 @@ public:
   int	recv_start;		// starting unit index for recv connections
   int 	send_start;		// starting unit index for sending connections
 
-  override void	Connect_impl(Projection* prjn);
+  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(OneToOnePrjnSpec);
 private:

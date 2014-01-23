@@ -48,10 +48,10 @@ public:
   ~iToolBoxDockViewer(); //
 
 public: // ItaViewerWidget i/f
-//  override QWidget*   widget() {return this;}
+//  QWidget*   widget() CPP11_OVERRIDE {return this;}
 protected:
-//  override void               Constr_impl();
-  override void         Constr_post();
+//  void               Constr_impl() CPP11_OVERRIDE;
+  void         Constr_post() CPP11_OVERRIDE;
 
 protected:
   QToolBar*             sectionWidget(int sec);

@@ -37,8 +37,8 @@ protected:
   QList<int> 	saved_sizes;
   bool		in_collapsing;	// in collapse mode
 
-  override QSplitterHandle* createHandle();
-  override void showEvent(QShowEvent* ev);
+  QSplitterHandle* createHandle() CPP11_OVERRIDE;
+  void showEvent(QShowEvent* ev) CPP11_OVERRIDE;
 protected slots:
   void		showDelayed();
 };

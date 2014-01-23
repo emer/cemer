@@ -29,7 +29,7 @@ class TA_API iToolBar_List: public taPtrList<iToolBar> {
  // each mainwin maintains its existent toolbars in this list
 public:
 protected:
-  override String El_GetName_(void* it) const;
+  String El_GetName_(void* it) const CPP11_OVERRIDE;
 };
 
 #endif // iToolBar_List_h

@@ -35,24 +35,24 @@ public:
   taiEditorOfSelectEditBase*     se;
   SelectEdit*           sele() {return (m_link) ? (SelectEdit*)(link()->data()) : NULL;}
 
-  override bool         HasChanged(); // 'true' if user has unsaved changes
+  bool         HasChanged() CPP11_OVERRIDE; // 'true' if user has unsaved changes
 
-  override String       panel_type() const {return "Select Edit";}
+  String       panel_type() const CPP11_OVERRIDE {return "Select Edit";}
 
   iPanelOfSelectEdit(taiSigLink* dl_);
   ~iPanelOfSelectEdit();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfSelectEdit;}
-  override bool         ignoreSigEmit() const;
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfSelectEdit;}
+  bool         ignoreSigEmit() const CPP11_OVERRIDE;
 
 protected:
-  override void         SigEmit_impl(int sls, void* op1, void* op2); //
-  override void         OnWindowBind_impl(iPanelViewer* itv);
-  override void         UpdatePanel_impl();
-  override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void         showEvent(QShowEvent* ev);
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
+  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
+  void         UpdatePanel_impl() CPP11_OVERRIDE;
+  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
+  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
 };
 
 #endif // iPanelOfSelectEdit_h

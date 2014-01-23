@@ -32,14 +32,14 @@ INHERITED(taSigLinkTaOBase)
 public:
   taList_impl*          list() {return (taList_impl*)m_data;}
   taList_impl*          list() const {return (taList_impl*)m_data;}
-  override taiSigLink* listLink() {return this;}
+  taiSigLink* listLink() CPP11_OVERRIDE {return this;}
 
   taSigLinkList(taList_impl* data_);
   SL_FUNS(taSigLinkList) //
 protected:
-  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
+  taiTreeNode* CreateTreeDataNode_impl(MemberDef* md,
     taiTreeNode* nodePar, iTreeView* tvPar, taiTreeNode* after,
-    const String& node_name, int dn_flags);
+    const String& node_name, int dn_flags) CPP11_OVERRIDE;
 };
 
 #endif // taSigLinkList_h

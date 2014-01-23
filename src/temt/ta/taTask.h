@@ -38,8 +38,8 @@ public:
 
   virtual void		run() {} // must be overridden, to dispatch actual proc
   
-  override int		GetIndex() const {return task_id;}
-  override void		SetIndex(int val) {task_id = val;}
+  int		GetIndex() const CPP11_OVERRIDE {return task_id;}
+  void		SetIndex(int val) CPP11_OVERRIDE {task_id = val;}
   TA_BASEFUNS(taTask);
 private:
   void	Copy_(const taTask& cp) {}

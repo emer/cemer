@@ -54,8 +54,8 @@ public:
     ISelectable* drop_item); // clear, then fill based on ms and sel_items (used for Drop operations)
   ~DynMethod_PtrList();
 protected:
-  override void         El_Done_(void* it) {delete (DynMethodDesc*)it;}
-  override void         El_SetIndex_(void* it, int idx) {((DynMethodDesc*)it)->idx = idx; };
+  void         El_Done_(void* it) CPP11_OVERRIDE {delete (DynMethodDesc*)it;}
+  void         El_SetIndex_(void* it, int idx) CPP11_OVERRIDE {((DynMethodDesc*)it)->idx = idx; };
   // sets the element's self-index
 };
 

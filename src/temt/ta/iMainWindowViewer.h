@@ -252,7 +252,7 @@ public:
   // align css console to our window, if applicable
   void			ProjDirToCurrent();
   // set current project directory to current directory
-  override void         raise();
+  virtual void         raise();
 
   static iMainWindowViewer* GetViewerForObj(taBase* obj);
   // useful utility to get main window viewer for any given object
@@ -348,13 +348,13 @@ signals:
 #endif
 
 public: // IViewerWidget i/f
-  override bool         isDirty() const;
-  override QWidget*     widget() {return this;}
-  override void         SaveData();
+  bool         isDirty() const CPP11_OVERRIDE;
+  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  void         SaveData() CPP11_OVERRIDE;
 protected:
-  override void         Constr_impl();
-  override void         ResolveChanges_impl(CancelOp& cancel_op); // only for project browsers
-  override void         Refresh_impl();
+  void         Constr_impl() CPP11_OVERRIDE;
+  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE; // only for project browsers
+  void         Refresh_impl() CPP11_OVERRIDE;
 
 protected slots:
   void                  ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)
@@ -374,15 +374,15 @@ protected:
   int                   m_unique_id;
   bool                  tools_dock_was_visible;  // holds on to the visibility of the programming dock so it can be restored when the either the tree or the panels are restored
 
-  override void         closeEvent(QCloseEvent* ev);
-//nn  override void             customEvent(QEvent* ev);
+  void         closeEvent(QCloseEvent* ev) CPP11_OVERRIDE;
+//nn  void             customEvent(QEvent* ev) CPP11_OVERRIDE;
   bool                  event(QEvent* ev);
-  override void         resizeEvent(QResizeEvent* ev);
-  override void         moveEvent(QMoveEvent* ev);
-  override void         showEvent(QShowEvent* ev);
-  override void         hideEvent(QHideEvent* ev);
-  override bool         eventFilter(QObject *obj, QEvent *event);
-  override void         changeEvent(QEvent* ev);
+  void         resizeEvent(QResizeEvent* ev) CPP11_OVERRIDE;
+  void         moveEvent(QMoveEvent* ev) CPP11_OVERRIDE;
+  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
+  void         hideEvent(QHideEvent* ev) CPP11_OVERRIDE;
+  bool         eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
+  void         changeEvent(QEvent* ev) CPP11_OVERRIDE;
 
   virtual void          emit_EditAction(int param); // #IGNORE param is one of the iClipData editAction values; desc can trap this and implement virtually, if desired
   virtual void          Constr_MainMenu_impl(); // #IGNORE constructs the main menu items, and loads static images

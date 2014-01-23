@@ -35,8 +35,8 @@ INHERITED(taNBase)
 public:
   RndSeed_List_impl     seeds;  // the list of random seeds
 
-  override taList_impl* children_() {return &seeds;}
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  taList_impl* children_() CPP11_OVERRIDE {return &seeds;}
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
   { return seeds.Elem(idx, mode); }
 
   virtual void   MakeSeeds(int n_seeds);
@@ -46,7 +46,7 @@ public:
   virtual void   UseSeed(int idx);
   // #BUTTON use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
 
-  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(RndSeed_List);
 private:

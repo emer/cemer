@@ -30,11 +30,11 @@ class TA_API DataVarProgMatrix : public DataVarProg {
   // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- for matrix columns where you want to access up to 4 cells (var_1 is first cell, var_2 is second cell..), name of column is var name before last '_' -- regular DataVarProg can manage copying Matrix column to matrix object variables, or enums
 INHERITED(DataVarProg)
 public:
-  override String	GetToolbarName() const { return "data mtx=vars"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "data mtx=vars"; }
 
   TA_BASEFUNS_NOCOPY(DataVarProgMatrix);
 protected:
-  override bool GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
+  bool GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no) CPP11_OVERRIDE;
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }

@@ -33,12 +33,12 @@ class TA_API DataGroupEl : public DataOpEl {
 public:
   AggregateSpec	agg;		// how to aggregate this information
 
-  override String GetDisplayName() const;
+  String GetDisplayName() const CPP11_OVERRIDE;
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataGroupEl);
 protected:
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 };
 
 #endif // DataGroupEl_h

@@ -40,10 +40,10 @@ public:
 
 public: // ISigLinkClient i/f
   void*                 This() {return this;}  // #IGNORE
-  override TypeDef*     GetTypeDef() const {return &TA_taBase_RefList;} // #IGNORE
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taBase_RefList;} // #IGNORE
 protected: // we actually protect these
-  override void         SigLinkDestroying(taSigLink* dl); // #IGNORE
-  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE; // #IGNORE
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
      // #IGNORE
 
 protected:

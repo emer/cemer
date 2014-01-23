@@ -59,7 +59,7 @@ public:
 
   T3DataViewRoot*       root();
   virtual void          setSceneTop(SoNode* node); // set top of scene -- usually called during Render_post
-  override int          stretchFactor() const {return 4;} // 4/2 default
+  virtual int           stretchFactor() const {return 4;} // 4/2 default
   inline T3Panel* viewer() const {return (T3Panel*)m_viewer;}
   iT3PanelViewer*        viewerWidget() const;
 
@@ -80,10 +80,10 @@ public slots:
   virtual void          viewSaved(int view_no); // connect to viewSaved on examiner viewer
 
 public: // IViewerWidget i/f
-  override QWidget*     widget() {return this;}
+  QWidget*     widget() CPP11_OVERRIDE {return this;}
 protected:
-  override void         Constr_impl();
-  override void         Refresh_impl(); // note: we just do the lite Render_impl stuff
+  void         Constr_impl() CPP11_OVERRIDE;
+  void         Refresh_impl() CPP11_OVERRIDE; // note: we just do the lite Render_impl stuff
 
 protected:
   T3ExaminerViewer*     m_t3viewer;

@@ -47,7 +47,7 @@ class E_API LeabraUnGpData : public taOBase, public LeabraInhib {
 INHERITED(taOBase)
 public:
 
-  override String 	GetTypeDecoKey() const { return "Unit"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Unit"; }
 
   virtual void		Init_State();
   // initialize state -- called during InitWeights -- mainly for derived classes

@@ -29,7 +29,7 @@ class E_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
 INHERITED(OneToOnePrjnSpec)
 public:
-  override void	Connect_impl(Projection* prjn);
+  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
 private:

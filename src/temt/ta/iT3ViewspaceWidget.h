@@ -73,9 +73,9 @@ public:
   ~iT3ViewspaceWidget();
 
 public: // ISelectableHost i/f
-  override bool         hasMultiSelect() const {return true;} // always
-  override QWidget*     widget() {return this;}
-  override void         UpdateSelectedItems_impl();
+  bool         hasMultiSelect() const CPP11_OVERRIDE {return true;} // always
+  QWidget*     widget() CPP11_OVERRIDE {return this;}
+  void         UpdateSelectedItems_impl() CPP11_OVERRIDE;
 
 protected:
   static void           SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
@@ -89,8 +89,8 @@ protected:
   taDataViewRef         m_top_view; // #IGNORE topmost view obj, for show/hide ctrl
   signed char           m_last_vis; // #IGNORE keeps track of last hide/show state, to avoid spurious calls when several in a row: -1=hide, 0=init, 1=show
 
-  override void         showEvent(QShowEvent* ev);
-  override void         hideEvent(QHideEvent* ev);
+  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
+  void         hideEvent(QHideEvent* ev) CPP11_OVERRIDE;
 
   void                  SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
   void                  resizeEvent(QResizeEvent* ev); // override

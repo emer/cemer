@@ -39,13 +39,13 @@ public:
   virtual bool	ApplyInputData(DataBlock* db, Network* net);
   // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
-  override int	GetChanIdx(DataBlock* db) { return db->GetSourceChannelByName(chan_name); }
+  int	GetChanIdx(DataBlock* db) CPP11_OVERRIDE { return db->GetSourceChannelByName(chan_name); }
 
-  override String	GetDisplayName() const;
+  String	GetDisplayName() const CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(LayerWriterEl);
 protected:
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

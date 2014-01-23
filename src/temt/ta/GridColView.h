@@ -68,8 +68,8 @@ public:
 
   virtual void          InitFromUserData();
 
-  override bool         hasViewProperties() const { return true; }
-  override String       GetDisplayName() const;
+  bool         hasViewProperties() const CPP11_OVERRIDE { return true; }
+  String       GetDisplayName() const CPP11_OVERRIDE;
 
   void                  CopyFromView(GridColView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
@@ -79,8 +79,8 @@ public:
   TA_BASEFUNS(GridColView);
 protected:
   void                  UpdateAfterEdit_impl();
-  override void         UpdateFromDataCol_impl(bool first_time);
-  override void         DataColUnlinked(); // called if data is NULL or destroys
+  void         UpdateFromDataCol_impl(bool first_time) CPP11_OVERRIDE;
+  void         DataColUnlinked() CPP11_OVERRIDE; // called if data is NULL or destroys
 
   T3GridColViewNode*    MakeGridColViewNode(); // non-standard api/semantics -- makes/sets the node; only called by the GridTableView
 

@@ -34,19 +34,19 @@ class TA_API CaseBlock: public CodeBlock {
 public:
   ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override String	GetDisplayName() const;
-  override String	GetToolbarName() const { return "case"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "case"; }
 
   PROGEL_SIMPLE_BASEFUNS(CaseBlock);
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog);
-  override void		GenCssPost_impl(Program* prog); 
+  void		CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
 
 private:
   void	Initialize();

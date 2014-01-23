@@ -37,9 +37,9 @@ public:
   virtual bool  NoCheckBox(IWidgetHost* host_) const; // deterimine if check box should be used
 
 protected:
-  override taiWidget*     GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  override void         GetArbitrateImage(taiWidget* dat, const void* base);
-  override void         GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff);
+  taiWidget*     GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) CPP11_OVERRIDE;
+  void         GetArbitrateImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
+  void         GetArbitrateMbrValue(taiWidget* dat, void* base, bool& first_diff) CPP11_OVERRIDE;
 };
 
 #endif // taiSpecMember_h

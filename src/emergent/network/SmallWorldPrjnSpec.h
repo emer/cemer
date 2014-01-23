@@ -32,7 +32,7 @@ public:
 
   float lambda;
 
-  override void	Connect_impl(Projection* prjn);
+  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(SmallWorldPrjnSpec);
 private:

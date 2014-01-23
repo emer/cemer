@@ -44,7 +44,7 @@ public:
   float		nmda_dt;   // #DEF_40 time constant (in msec) for decay of NMDA receptor conductance
   float		nmda_rate; // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of NMDA receptor conductance
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
   
   TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
 protected:
@@ -70,8 +70,8 @@ public:
 
   XCALSpikeSpec	xcal_spike;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C XCAL (eXtended Contrastive Attractor Learning) spike-based fully continuous-time learning parameters
 
-  inline override void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net)
+  inline void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+                                       Network* net) CPP11_OVERRIDE
   { inherited::C_Init_Weights(cg, idx, ru, su, net); 
     cg->Cn(idx,SRAVG_SS,net) = 0.15f; cg->Cn(idx,SRAVG_S,net) = 0.15f; 
     cg->Cn(idx,SRAVG_M,net) = 0.15f; 
@@ -119,8 +119,8 @@ public:
   }
   // #IGNORE
 
-  inline override void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                            LeabraNetwork* net, const bool do_s) {
+  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
+                            LeabraNetwork* net, const bool do_s) CPP11_OVERRIDE {
     LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
     float* srss = cg->OwnCnVar(SRAVG_SS);
     float* srs = cg->OwnCnVar(SRAVG_S);
@@ -158,8 +158,8 @@ public:
   }
   // #IGNORE
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) CPP11_OVERRIDE {
     const float su_avg_m = su->avg_m;
     const float su_act_mult = xcal.thr_l_mix * su_avg_m;
     float* dwts = cg->OwnCnVar(DWT);
@@ -186,7 +186,7 @@ public:
 				  float lin_norm=0.01f);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph a simulation of the XCAL spike function by running a simulated synapse with poisson firing rates sampled over given range, with given samples per point, and other parameters as given
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
 protected:

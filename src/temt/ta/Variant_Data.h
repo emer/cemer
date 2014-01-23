@@ -33,29 +33,29 @@ class TA_API Variant_Data : public DataColT<Variant_Matrix> {
 INHERITED(DataColT<Variant_Matrix>)
 friend class DataTable;
 public:
-  override ValType      valType() const  {return VT_VARIANT;}
-  override TypeDef*     valTypeDef() const  {return &TA_Variant;}
+  ValType      valType() const  CPP11_OVERRIDE {return VT_VARIANT;}
+  TypeDef*     valTypeDef() const  CPP11_OVERRIDE {return &TA_Variant;}
 
   TA_BASEFUNS_NOCOPY(Variant_Data);
 
 protected:
-  override const Variant GetValAsVar_impl(int row, int cell) const
+  const Variant GetValAsVar_impl(int row, int cell) const CPP11_OVERRIDE
   { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  override bool  SetValAsVar_impl(const Variant& val, int row, int cell)
+  bool  SetValAsVar_impl(const Variant& val, int row, int cell) CPP11_OVERRIDE
   { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
 
-  override double GetValAsDouble_impl(int row, int cell) const
+  double GetValAsDouble_impl(int row, int cell) const CPP11_OVERRIDE
   { return GetValAsVar_impl(row, cell).toDouble(); }
-  override float GetValAsFloat_impl(int row, int cell) const
+  float GetValAsFloat_impl(int row, int cell) const CPP11_OVERRIDE
   { return (float)GetValAsVar_impl(row, cell).toFloat(); }
-  override int   GetValAsInt_impl(int row, int cell) const
+  int   GetValAsInt_impl(int row, int cell) const CPP11_OVERRIDE
   { return (int)GetValAsVar_impl(row, cell).toInt(); }
 
-  override bool  SetValAsDouble_impl(double val, int row, int cell)
+  bool  SetValAsDouble_impl(double val, int row, int cell) CPP11_OVERRIDE
   { return SetValAsVar_impl(val, row, cell); }
-  override bool  SetValAsFloat_impl(float val, int row, int cell)
+  bool  SetValAsFloat_impl(float val, int row, int cell) CPP11_OVERRIDE
   { return SetValAsVar_impl(val, row, cell); }
-  override bool  SetValAsInt_impl(int val, int row, int cell)
+  bool  SetValAsInt_impl(int val, int row, int cell) CPP11_OVERRIDE
   { return SetValAsVar_impl(val, row, cell); }
 
 private:

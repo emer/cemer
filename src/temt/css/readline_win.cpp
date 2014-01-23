@@ -81,7 +81,7 @@ public:
   static BOOL WINAPI Console_HandlerRoutine(
     DWORD dwCtrlType); // handler routines for console events
 
-  override void		setTitle(const QString& value);
+  void		setTitle(const QString& value) CPP11_OVERRIDE;
 
   cssWinConsole(QObject* parent);
   ~cssWinConsole();

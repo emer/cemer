@@ -55,7 +55,7 @@ public:
   virtual float	GetWt(int pos_gp_idx, int vel_gp_idx);
   // #CAT_MotorForce get weighting factor for position & velocity group at given indexes: MUST CALL InitVal first!
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(MotorForceSpec);
 protected:
@@ -83,7 +83,7 @@ public:
   virtual void	ClampForce(LeabraLayer* lay, LeabraNetwork* net, float force, float pos, float vel);
   // #CAT_MotorForce clamp the force value to the layer, as a gaussian weighted average over units near the current position and velocity values
 
-  override void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
   
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 

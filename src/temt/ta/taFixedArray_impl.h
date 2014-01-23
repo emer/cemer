@@ -110,6 +110,6 @@ public: \
   y& operator=(const y& cp) {Copy(cp); return *this;} \
   bool          operator==(const y& src) const {return Equal_(src);} \
 protected: \
-  override const void*  El_GetBlank_() const    { return (const void*)&blank; }
+  const void*  El_GetBlank_() const    CPP11_OVERRIDE { return (const void*)&blank; }
 
 #endif // taFixedArray_impl_h

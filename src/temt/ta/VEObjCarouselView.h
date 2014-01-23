@@ -41,8 +41,8 @@ protected:
   void	Initialize();
   void	Destroy();
 
-  override void		Render_pre();
-  override void		Render_impl();
+  void		Render_pre() CPP11_OVERRIDE;
+  void		Render_impl() CPP11_OVERRIDE;
 };
 
 #endif // VEObjCarouselView_h

@@ -40,13 +40,13 @@ public:
       virtual bool    EnumsFromDataTable(DataTable* dt, const Variant& col);
       // #BUTTON initialize enum values from values in given data table column (can be number or name). Updates to column will automatically be reflected in the enum
 
-      override void   SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
-      override void   SmartRef_SigEmit(taSmartRef* ref, taBase* obj, int sls, void* op1_, void* op2_);
+      void   SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) CPP11_OVERRIDE;
+      void   SmartRef_SigEmit(taSmartRef* ref, taBase* obj, int sls, void* op1_, void* op2_) CPP11_OVERRIDE;
 
    TA_BASEFUNS(DynEnumTypeFromDTColumn);
 
 protected:
-   override void      UpdateAfterEdit_impl();
+   void      UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
 private:
    void Copy_(const DynEnumTypeFromDTColumn& cp);

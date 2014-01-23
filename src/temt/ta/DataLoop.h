@@ -50,20 +50,20 @@ public:
   virtual void	GetOrderVal();
   // get order value from order_var variable
 
-  override String	GetDisplayName() const;
-  override String	GetToolbarName() const { return "data loop"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "data loop"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataLoop);
 protected:
   virtual void	GetOrderVar(); // make an order variable in program if not already set
   virtual void	GetIndexVar(); // make an index variable in program if not already set
-  override void	UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog); 
-  override void		GenCssPost_impl(Program* prog); 
-  override void	SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-				     int sls, void* op1_, void* op2_);
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  void	SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+				     int sls, void* op1_, void* op2_) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

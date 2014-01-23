@@ -209,14 +209,14 @@ public:
   // #IGNORE get an appropriately formatted version of the description string for css code
 
   bool                  isStale() const {return m_stale;}
-  override void         setStale(); // indicates a component has changed
+  void         setStale() CPP11_OVERRIDE; // indicates a component has changed
   void                  SetRunState(RunState value);
   // #IGNORE sets the local AND global run state -- don't use for just local run state updates
   bool                  AlreadyRunning();
   // #IGNORE check if any program anywhere is already running -- if so, don't allow gui run
 
-  override ScriptSource scriptSource() {return ScriptString;}
-  override const String scriptString();
+  ScriptSource scriptSource() CPP11_OVERRIDE {return ScriptString;}
+  const String scriptString() CPP11_OVERRIDE;
 
   virtual const String  ProgramListing();
   // #CAT_Code generate the listing of the program (NOT the underlying CSS code -- just the program)
@@ -419,20 +419,20 @@ public: // XxxGui versions provide feedback to the user
                                    const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Debug generate verbose output as given by input strings for given code line -- this is called by verbose program elements when they run
 
-  override int          GetSpecialState() const;
-  override String       GetTypeDecoKey() const { return "Program"; }
-  override Variant      GetGuiArgVal(const String& fun_name, int arg_idx);
-  override void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
-  override void         CallFun(const String& fun_name);
+  int          GetSpecialState() const CPP11_OVERRIDE;
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  Variant      GetGuiArgVal(const String& fun_name, int arg_idx) CPP11_OVERRIDE;
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
+  void         CallFun(const String& fun_name) CPP11_OVERRIDE;
 
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(Program);
 
 public: // ScriptBase i/f
-  override TypeDef*     GetThisTypeDef() const {return GetTypeDef();}
+  TypeDef*     GetThisTypeDef() const CPP11_OVERRIDE {return GetTypeDef();}
   // #IGNORE
-  override void*        GetThisPtr() { return (void*)this; }
+  void*        GetThisPtr() CPP11_OVERRIDE { return (void*)this; }
   // #IGNORE
 
 protected:
@@ -446,16 +446,16 @@ protected:
   // current indent level -- used in adding code
   int64_t               last_init_timestamp;
 
-  override void         UpdateAfterEdit_impl();
-  override bool         CheckConfig_impl(bool quiet);
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         InitScriptObj_impl(); // no "this" and install
-  override bool         PreCompileScript_impl(); // CheckConfig & add/update the global vars
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  bool         CheckConfig_impl(bool quiet) CPP11_OVERRIDE;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         InitScriptObj_impl() CPP11_OVERRIDE; // no "this" and install
+  bool         PreCompileScript_impl() CPP11_OVERRIDE; // CheckConfig & add/update the global vars
 
   virtual void          Stop_impl();
   virtual int           Run_impl();
   virtual int           Cont_impl();
-  override void         ScriptCompiled(); // #IGNORE
+  void         ScriptCompiled() CPP11_OVERRIDE; // #IGNORE
   virtual void          UpdateProgVars(); // put global vars in script, set values
   void                  ShowRunError(); // factored error msg code
 #ifdef TA_GUI

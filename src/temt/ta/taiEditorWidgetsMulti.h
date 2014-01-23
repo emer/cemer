@@ -35,20 +35,20 @@ public:
         bool modal_ = false, QObject* parent = 0);
   taiEditorWidgetsMulti()                                { };
 
-  override void ClearBody_impl();       // clear body data for reshowing
+  void ClearBody_impl() CPP11_OVERRIDE;       // clear body data for reshowing
   void          AddMultiRowName(int row, const String& name, const String& desc)
     {taiEditorOfClass::AddMultiRowName(multi_body, row, name, desc);} // adds a label item in first column of multi data area
   void          AddMultiColName(int col, const String& name, const String& desc)
     {taiEditorOfClass::AddMultiColName(multi_body, col, name, desc);} // adds descriptive column text to top of a multi data item
   void          AddMultiWidget(int row, int col, QWidget* data)
     {taiEditorOfClass::AddMultiWidget(multi_body, row, col, data);}  // add a data item in the multi-data area -- expands if necessary
-  override void         SetMultiSize(int rows, int cols); //note: can never shrink
+  void         SetMultiSize(int rows, int cols) CPP11_OVERRIDE; //note: can never shrink
 protected:
   int           multi_rows;
   int           multi_cols;
   bool          header_row; // set false if you don't want the header row
-  override void Constr_Box(); // add the multi box
-  override void         Constr_Body();
+  void Constr_Box() CPP11_OVERRIDE; // add the multi box
+  void         Constr_Body() CPP11_OVERRIDE;
   void                  RebuildMultiBody(); // calls clear/constr, disabling updates
   virtual void          Constr_MultiBody(); // added in after Constr_Body -- also used for reshowing multi-body
   virtual void          ClearMultiBody_impl(); // clears multi-body for reshowing

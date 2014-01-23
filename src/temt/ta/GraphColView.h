@@ -56,8 +56,8 @@ public:
   FixedMinMax           fixed_range;    // fixed min/max range values for display (if not fixed, automatically set to min/max of data)
   MinMax                data_range;     // #READ_ONLY actual min and max of data (including fixed range)
 
-  override bool         hasViewProperties() const { return true; }
-  override String       GetDisplayName() const;
+  bool         hasViewProperties() const CPP11_OVERRIDE { return true; }
+  String       GetDisplayName() const CPP11_OVERRIDE;
 
   DATAVIEW_PARENT(GraphTableView)
 

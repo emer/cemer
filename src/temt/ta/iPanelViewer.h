@@ -35,9 +35,9 @@ class TA_API iPanelViewer : public iFrameViewer { // viewer window used for tabb
 INHERITED(iFrameViewer)
 friend class iTabView;
 public:
-  virtual taiSigLink*  sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // siglink of selected item that is controlling the current data panel view, ex. siglink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
+  virtual taiSigLink*   sel_link() const {return (cur_item) ? cur_item->link() : NULL;} // siglink of selected item that is controlling the current data panel view, ex. siglink of the selected tree node in a browser; return NULL if unknown, mult-select is in force, etc. -- controls things like clip handling
   virtual MemberDef*    sel_md() const {return (cur_item) ? cur_item->md() : NULL;}; // as for sel_link
-  override int          stretchFactor() const {return 4;} // 3/2 default
+  virtual int           stretchFactor() const {return 4;} // 3/2 default
   iTabView*             tabView() {return m_curTabView;} // currently active
   iTabBarBase*          tabBar();
 
@@ -48,7 +48,7 @@ public:
 
   virtual void          TabView_Destroying(iTabView* tv); // called when a tabview deletes
   virtual void          TabView_Selected(iTabView* tv); // called when a tabview gets focus
-  override void         UpdateTabNames(); // called by a siglink when a tab name might have changed
+  virtual void          UpdateTabNames(); // called by a siglink when a tab name might have changed
   iPanelViewer(PanelViewer* viewer_, QWidget* parent = NULL); //
   ~iPanelViewer();
 
@@ -58,20 +58,20 @@ public slots:
   void                  Closing(CancelOp& cancel_op); // override
 
 protected: // IViewerWidget i/f
-  override void         Refresh_impl();
+  void         Refresh_impl() CPP11_OVERRIDE;
 
 protected:
   iTabView*             m_curTabView; // tab view (split) that currently has the focus
   ISelectable*          cur_item; // the last item that was curItem -- NOTE: somewhat dangerous to cache, but according to spec, src_host should issue a new notify if this deletes
   ContextFlag           tab_changing; // lets us ignore spurious re-entrant tab changes, ex. bugID:817
 
-  override void         Constr_post(); // called virtually, in DV::Constr_post
-  override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void         SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
-  override void         GetWinState_impl();
-  override void         SetWinState_impl();
+  void         Constr_post() CPP11_OVERRIDE; // called virtually, in DV::Constr_post
+  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
+  void         SelectionChanged_impl(ISelectableHost* src_host) CPP11_OVERRIDE; // called when sel changes
+  void         GetWinState_impl() CPP11_OVERRIDE;
+  void         SetWinState_impl() CPP11_OVERRIDE;
 
-  override void         focusInEvent(QFocusEvent* ev);
+  void         focusInEvent(QFocusEvent* ev) CPP11_OVERRIDE;
 
 private:
   void                  Init();

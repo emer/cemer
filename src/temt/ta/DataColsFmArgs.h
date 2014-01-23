@@ -45,18 +45,18 @@ public:
   virtual DataTable* GetData() const;
   // get actual data table pointer from variable
 
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "DataTable"; }
-  override String	GetToolbarName() const { return "data=args"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "data=args"; }
 
   void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void CheckThisConfig_impl(bool quiet, bool& rval);
-  override void	GenCssBody_impl(Program* prog);
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

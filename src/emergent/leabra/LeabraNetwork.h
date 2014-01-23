@@ -37,7 +37,7 @@ public:
   bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
   int		syn_dep_int;	// [20] #CONDSHOW_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(LeabraNetMisc);
   TA_BASEFUNS(LeabraNetMisc);
@@ -64,7 +64,7 @@ public:
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
   int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(CtTrialTiming);
   TA_BASEFUNS(CtTrialTiming);
@@ -90,7 +90,7 @@ public:
   bool		plus_s_only;	// #CONDSHOW_OFF_manual plus increments short-term only, not short and medium term activations
   bool		force_con;	// #DEF_false force connection-level SRAvg computation -- only use for experimental algorithms that need this -- otherwise needlessly slows computation
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
@@ -125,7 +125,7 @@ public:
   }
   // returns inhibitory modulation to apply as a fraction of computed kwta value
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(CtSineInhibMod);
   TA_BASEFUNS(CtSineInhibMod);
@@ -155,7 +155,7 @@ public:
   }
   // returns inhibitory modulation to apply as a fraction of computed kwta value
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(CtFinalInhibMod);
   TA_BASEFUNS(CtFinalInhibMod);
@@ -196,7 +196,7 @@ public:
   float		lrn_delay_inc;	// #READ_ONLY #HIDDEN 1.0f / lrn_delay_inc -- increment per count to compute normalized lrn_trig
   float		lrn_refract_inc; // #READ_ONLY #HIDDEN 1.0f / lrn_refract_inc -- increment per count to compute normalized lrn_trig
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   TA_SIMPLE_BASEFUNS(CtLrnTrigSpec);
 protected:
@@ -252,7 +252,7 @@ public:
   void		Init_Stats();	// initialize stats vars (all to 0)
   void		Init_Stats_Sums(); // initialize stats sums (all to 0)
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   TA_SIMPLE_BASEFUNS(CtLrnTrigVals);
 private:
@@ -427,11 +427,11 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
-  override void	Init_Acts();
-  override void	Init_Counters();
-  override void	Init_Stats();
-  override void	Init_Sequence();
-  override void Init_Weights();
+  void	Init_Acts() CPP11_OVERRIDE;
+  void	Init_Counters() CPP11_OVERRIDE;
+  void	Init_Stats() CPP11_OVERRIDE;
+  void	Init_Sequence() CPP11_OVERRIDE;
+  void Init_Weights() CPP11_OVERRIDE;
 
   virtual void  Init_Netins();
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
@@ -445,8 +445,8 @@ public:
   // #CAT_ObjectMgmt set the current learning rule into the conspecs on this network (done by network UAE only when rule changed)
 
   virtual void	CheckInhibCons();
-  override void	BuildUnits_Threads();
-  override bool RecvOwnsCons() { return false; }
+  void	BuildUnits_Threads() CPP11_OVERRIDE;
+  bool RecvOwnsCons() CPP11_OVERRIDE { return false; }
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
@@ -512,7 +512,7 @@ public:
   ///////////////////////////////////////////////////////
   //	Cycle Stage 1: netinput
 
-  override void	Send_Netin();
+  void	Send_Netin() CPP11_OVERRIDE;
   // #CAT_Cycle compute netinputs (sender-delta based -- only send when sender activations change) -- new values go in net_delta or g_i_delta (summed up from tmp array for threaded case)
   virtual void Compute_ExtraNetin();
   // #CAT_Cycle Stage 1.2 compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
@@ -534,7 +534,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
 
-  override void	Compute_Act();
+  void	Compute_Act() CPP11_OVERRIDE;
   // #CAT_Cycle compute activations
 
   ///////////////////////////////////////////////////////////////////////
@@ -614,7 +614,7 @@ public:
   virtual void	Compute_dWt_Norm();
   // #CAT_Learning compute normalization of weight changes -- must be done as a second pass after initial weight changes
 
-  override void Compute_Weights_impl();
+  void Compute_Weights_impl() CPP11_OVERRIDE;
 
   virtual void	Compute_StableWeights();
   // #CAT_Learning compute the stable weights for connections that have separate stable weights (see LeabraStableConSpec) -- simulates synaptic consolidation to gene-expression-dependent long term plasticity -- typically done after every epoch or multiple thereof
@@ -634,7 +634,7 @@ public:
   // #CAT_Statistic compute cosine (normalized dot product) phase difference 2 between act_m2 and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual void	Compute_MinusCycles();
   // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
-  override void	Compute_TrialStats();
+  void	Compute_TrialStats() CPP11_OVERRIDE;
   // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
   virtual bool	Compute_TrialStats_Test();
   // #CAT_Statistic determine whether it is time to run trial stats -- typically the minus phase but it depends on network phase_order settings etc
@@ -664,14 +664,14 @@ public:
   // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
   virtual void	Compute_CtLrnTrigAvgs();
   // #CAT_Statistic compute Ct learning trigger stats averages (at an epoch-level timescale)
-  override void	Compute_EpochStats();
+  void	Compute_EpochStats() CPP11_OVERRIDE;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
-  override void	SetProjectionDefaultTypes(Projection* prjn);
+  void	SetProjectionDefaultTypes(Projection* prjn) CPP11_OVERRIDE;
 
   virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
   // #MENU #MENU_SEP_BEFORE #NULL_OK #NULL_TEXT_NewGraphData graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
 
-  override void  BuildNullUnit();
+  void  BuildNullUnit() CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:

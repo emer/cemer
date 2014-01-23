@@ -43,8 +43,8 @@ public:
   ~iViewPanelOfDataTable();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iViewPanelOfDataTable;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanelOfDataTable;}
 
 protected:
 };

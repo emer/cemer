@@ -31,14 +31,14 @@ class TA_API taSigLinkTypeItemSpace: public taSigLinkClass {
 INHERITED(taSigLinkClass)
 public:
   taPtrList_impl*       data() {return (taPtrList_impl*)m_data;}
-  override bool         HasChildItems() {return true;}
+  bool         HasChildItems() CPP11_OVERRIDE {return true;}
 
   taSigLinkTypeItemSpace(TypeItem::TypeInfoKinds tik_, taPtrList_impl* data_,
     taSigLink* &link_ref_);
   SL_FUNS(taSigLinkTypeItemSpace) //
 protected:
-  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
-    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags);
+  taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags) CPP11_OVERRIDE;
 };
 
 #endif // taSigLinkTypeItemSpace_h

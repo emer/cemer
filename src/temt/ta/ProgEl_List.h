@@ -40,20 +40,20 @@ public:
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // find given variable within this progel list -- NULL if not found
 
-  override int          NumListCols() const {return 2;}
-  override const        KeyString GetListColKey(int col) const;
-  override String       GetColHeading(const KeyString& key) const;
+  int          NumListCols() const CPP11_OVERRIDE {return 2;}
+  const        KeyString GetListColKey(int col) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
 
-  override bool         BrowserSelectMe();
-  override bool         BrowserExpandAll();
-  override bool         BrowserCollapseAll();
+  bool         BrowserSelectMe() CPP11_OVERRIDE;
+  bool         BrowserExpandAll() CPP11_OVERRIDE;
+  bool         BrowserCollapseAll() CPP11_OVERRIDE;
 
-  override bool         RemoveIdx(int idx);   // override to delete brk_pt before ProgEl is removed
+  bool         RemoveIdx(int idx) CPP11_OVERRIDE;   // override to delete brk_pt before ProgEl is removed
 
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 protected:
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Copy_(const ProgEl_List& cp);
   void  Initialize();

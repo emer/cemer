@@ -45,17 +45,17 @@ public:
   virtual taBase*       FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on variable
 
-  override bool         BrowserSelectMe();
-  override bool         BrowserExpandAll();
-  override bool         BrowserCollapseAll();
+  bool         BrowserSelectMe() CPP11_OVERRIDE;
+  bool         BrowserExpandAll() CPP11_OVERRIDE;
+  bool         BrowserCollapseAll() CPP11_OVERRIDE;
 
-  override String       GetDesc() const { return desc; }
-  override String       GetTypeDecoKey() const { return "ProgType"; }
-  override void         SetDefaultName() {} // make it local to list, set by list
+  String       GetDesc() const CPP11_OVERRIDE { return desc; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgType"; }
+  void         SetDefaultName() CPP11_OVERRIDE {} // make it local to list, set by list
   TA_SIMPLE_BASEFUNS(ProgType);
 protected:
-  override void         UpdateAfterEdit_impl();
-  override void         CheckThisConfig_impl(bool quiet, bool& rval);
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
   virtual void          GenCssPre_impl(Program* prog) {}; // #IGNORE generate the Css prefix code (if any) for this object
   virtual void          GenCssBody_impl(Program* prog) {}; // #IGNORE generate the Css body code for this object
   virtual void          GenCssPost_impl(Program* prog) {}; // #IGNORE generate the Css postfix code (if any) for this object

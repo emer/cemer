@@ -122,8 +122,8 @@ public:
 
   // todo: need a checkconfig here..
 
-  override taList_impl*	children_() {return &regions;}	
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  taList_impl*	children_() CPP11_OVERRIDE {return &regions;}	
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
   { return regions.Elem(idx, mode); }
 
   void 	Initialize();
@@ -131,7 +131,7 @@ public:
   TA_SIMPLE_BASEFUNS(RetinaProc);
 protected:
   void	UpdateAfterEdit_impl();
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
+  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 
   virtual bool	TransformImageData_impl(float_Matrix& eye_image,
 					float_Matrix& xform_image,

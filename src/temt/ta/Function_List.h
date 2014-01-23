@@ -40,13 +40,13 @@ public:
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // find given variable within this progel list -- NULL if not found
 
-  override int          NumListCols() const {return 2;}
-  override const        KeyString GetListColKey(int col) const;
-  override String       GetColHeading(const KeyString& key) const;
+  int          NumListCols() const CPP11_OVERRIDE {return 2;}
+  const        KeyString GetListColKey(int col) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
 
-  override bool         BrowserSelectMe();
-  override bool         BrowserExpandAll();
-  override bool         BrowserCollapseAll();
+  bool         BrowserSelectMe() CPP11_OVERRIDE;
+  bool         BrowserExpandAll() CPP11_OVERRIDE;
+  bool         BrowserCollapseAll() CPP11_OVERRIDE;
 
   SIMPLE_LINKS(Function_List);
   TA_BASEFUNS(Function_List);

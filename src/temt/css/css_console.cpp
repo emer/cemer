@@ -42,7 +42,7 @@ public:
   ConThread(cssConsole* parent);
 
 protected:
-  override void 	run(); // OS-dependent
+  void 	run() Q_DECL_OVERRIDE; // OS-dependent
 };
 
 

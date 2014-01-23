@@ -503,14 +503,14 @@ protected:
   float_Matrix* cur_v1b_in_r;	// current v1b input, r
   float_Matrix* cur_v1b_in_l;	// current v1b input, l
 
-  override void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
-  override void	UpdateGeom();
+  void	UpdateGeom() CPP11_OVERRIDE;
 
-  override bool NeedsInit();
-  override bool InitFilters();
-  override bool InitOutMatrix();
-  override bool InitDataTable();
+  bool NeedsInit() CPP11_OVERRIDE;
+  bool InitFilters() CPP11_OVERRIDE;
+  bool InitOutMatrix() CPP11_OVERRIDE;
+  bool InitDataTable() CPP11_OVERRIDE;
 
   virtual bool	InitFilters_V1Simple();
   virtual bool	InitFilters_V1Motion();
@@ -522,8 +522,8 @@ protected:
   virtual float V2FFBoWt(taVector2i& suc, int rang_dx, int sang_dx, int rdir, int sdir);
   // compute V2 Feed-forward border-ownership weights for stencils
 
-  override bool	FilterImage_impl(bool motion_only = false);
-  override void IncrTime();
+  bool	FilterImage_impl(bool motion_only = false) CPP11_OVERRIDE;
+  void IncrTime() CPP11_OVERRIDE;
 
   virtual bool	V1SimpleFilter();
   // do simple filters -- main wrapper

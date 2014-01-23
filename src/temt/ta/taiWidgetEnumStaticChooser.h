@@ -39,12 +39,12 @@ public:
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   TypeItem*             GetValue() {return md();}
 
-  override void         BuildChooser(iDialogItemChooser* ic, int view = 0); //
+  void         BuildChooser(iDialogItemChooser* ic, int view = 0) CPP11_OVERRIDE; //
 
   virtual bool          ShowEnum(EnumDef* enm);
   virtual bool          ShowMember(MemberDef* mbr);
   virtual bool          ShowMethod(MethodDef* mth);
-  override void         btnHelp_clicked();
+  void         btnHelp_clicked() CPP11_OVERRIDE;
 
   taiWidgetEnumStaticChooser(TypeDef* typ_, IWidgetHost* host,
                       taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -53,7 +53,7 @@ protected:
   const String          itemTag() const {return "Enum/static: ";}
   const String          labelNameNonNull() const;
 
-  override void         BuildCategories_impl();
+  void         BuildCategories_impl() CPP11_OVERRIDE;
   void                  BuildChooser_0(iDialogItemChooser* ic); // all
   void                  BuildChooser_1(iDialogItemChooser* ic); // just enum
   void                  BuildChooser_2(iDialogItemChooser* ic); // just static mbr

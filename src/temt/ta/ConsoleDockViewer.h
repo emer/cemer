@@ -33,8 +33,8 @@ public:
 
   TA_DATAVIEWFUNS(ConsoleDockViewer, DockViewer)
 protected:
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE note: we just use base window, and put the console into it
-  override void         MakeWinName_impl(); // set win_name, impl in subs
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // #IGNORE note: we just use base window, and put the console into it
+  void         MakeWinName_impl() CPP11_OVERRIDE; // set win_name, impl in subs
 private:
   NOCOPY(ConsoleDockViewer)
   void                  Initialize();

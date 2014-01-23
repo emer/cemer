@@ -61,7 +61,7 @@ public:
                                    float far_radius, float threshold, float epsilon);
   bool                  getShadows() { return shadows; }
 
-  override SoSeparator*	childNodes();
+  SoSeparator*	childNodes() CPP11_OVERRIDE;
 
 protected:
   SoShadowGroup*        shadow_group; // this owns everything..

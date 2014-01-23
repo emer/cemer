@@ -78,8 +78,8 @@ public:
   ~iDialogObjDiffFilter();
 
 protected slots:
-  override void         accept();
-  override void         reject();
+  void         accept() CPP11_OVERRIDE;
+  void         reject() CPP11_OVERRIDE;
 };
 
 #endif // iDialogObjDiffFilter_h

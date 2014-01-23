@@ -39,16 +39,16 @@ public:
   virtual void	AddAllColumns();
   // #BUTTON #CAT_Data add all columns from src_data to the sort_spec list of ops columns 
 
-  override void	UpdateSpecDataTable();
+  void	UpdateSpecDataTable() CPP11_OVERRIDE;
 
-  override String GetDisplayName() const;
-  override String	GetToolbarName() const { return "sort"; }
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "sort"; }
 
   TA_SIMPLE_BASEFUNS(DataSortProg);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		GenCssBody_impl(Program* prog); 
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
 
 private:
   void	Initialize();

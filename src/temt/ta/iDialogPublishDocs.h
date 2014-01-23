@@ -40,8 +40,8 @@ public:
   QStringList getTags() const;
 
 private:
-  override bool event(QEvent *event);
-  override bool eventFilter(QObject *obj, QEvent *event);
+  bool event(QEvent *event) CPP11_OVERRIDE;
+  bool eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
 
   QLineEdit *m_nameEdit;
   QTextEdit *m_descEdit;

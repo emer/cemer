@@ -29,11 +29,11 @@ taTypeDef_Of(taiViewTypeOfWizard);
 class TA_API taiViewTypeOfWizard: public taiViewTypeOftaOBase {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfWizard, taiViewTypeOftaOBase) //
 public:
-  override int          BidForView(TypeDef*);
+  int          BidForView(TypeDef*) CPP11_OVERRIDE;
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override void         CreateDataPanel_impl(taiSigLink* dl_);
+  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
 };
 
 #endif // taiViewTypeOfWizard_h

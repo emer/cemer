@@ -39,12 +39,12 @@ public:
 #endif
 
   Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  override String       panel_type() const {return "css Script";}
+  String       panel_type() const CPP11_OVERRIDE {return "css Script";}
 
-  override bool         HasChanged(); // 'true' if user has unsaved changes
+  bool         HasChanged() CPP11_OVERRIDE; // 'true' if user has unsaved changes
   void                  FillList();
 
-  override QWidget*     firstTabFocusWidget();
+  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
 
   iPanelOfProgramScript(taiSigLink* dl_);
   ~iPanelOfProgramScript();
@@ -56,16 +56,16 @@ public slots:
   void     mouseHover(const QPoint &pos, int lineno, const QString& word);
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfProgramScript;}
-  override bool         ignoreSigEmit() const;
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfProgramScript;}
+  bool         ignoreSigEmit() const CPP11_OVERRIDE;
 
 protected:
-  override void         SigEmit_impl(int sls, void* op1, void* op2); //
-  override void         OnWindowBind_impl(iPanelViewer* itv);
-  override void         UpdatePanel_impl();
-  override void         ResolveChanges_impl(CancelOp& cancel_op);
-  override void         showEvent(QShowEvent* ev);
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
+  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
+  void         UpdatePanel_impl() CPP11_OVERRIDE;
+  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
+  void         showEvent(QShowEvent* ev) CPP11_OVERRIDE;
 };
 
 #endif // iPanelOfProgramScript_h

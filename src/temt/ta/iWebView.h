@@ -35,7 +35,7 @@ signals:
   void          sigCreateWindow(QWebPage::WebWindowType type,
     QWebView*& window);
 protected:
-  override QWebView* createWindow(QWebPage::WebWindowType type);
+  QWebView* createWindow(QWebPage::WebWindowType type) CPP11_OVERRIDE;
 };
 
 #endif // iWebView_h

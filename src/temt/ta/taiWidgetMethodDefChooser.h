@@ -39,7 +39,7 @@ public:
   MethodDef*            GetValue() {return md();}
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
-  override void         btnHelp_clicked();
+  void         btnHelp_clicked() CPP11_OVERRIDE;
 
   taiWidgetMethodDefChooser(TypeDef* typ_, IWidgetHost* host,
                      taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -50,7 +50,7 @@ protected:
   const String          itemTag() const {return "Method: ";}
   const String          labelNameNonNull() const;
 
-  override void         BuildCategories_impl();
+  void         BuildCategories_impl() CPP11_OVERRIDE;
   void                  BuildChooser_0(iDialogItemChooser* ic);
   int                   BuildChooser_1(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively

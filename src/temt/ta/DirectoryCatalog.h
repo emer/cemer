@@ -46,18 +46,18 @@ protected:
   QDir&                 dir();
 
 public: // DataBlock i/f
-  override DBOptions    dbOptions() const
+  DBOptions    dbOptions() const CPP11_OVERRIDE
     {return (DBOptions)(DB_INDEXABLE | DB_SEQUENCABLE | DB_SOURCE);}
-  override int          ItemCount() const;
+  int          ItemCount() const CPP11_OVERRIDE;
 
 public: // DataSource i/f
-  override int          SourceChannelCount() const {return 1;}
-  override const String SourceChannelName(int chan) const;
+  int          SourceChannelCount() const CPP11_OVERRIDE {return 1;}
+  const String SourceChannelName(int chan) const CPP11_OVERRIDE;
 
 protected:
-  override const Variant GetData_impl(int chan);
-  override void         ReadOpen_impl(bool& ok);
-  override void         ReadClose_impl();
+  const Variant GetData_impl(int chan) CPP11_OVERRIDE;
+  void         ReadOpen_impl(bool& ok) CPP11_OVERRIDE;
+  void         ReadClose_impl() CPP11_OVERRIDE;
 
 private:
   QDir*                 m_dir; // autocreated, only access via dir()

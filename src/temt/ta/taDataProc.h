@@ -142,7 +142,7 @@ public:
   static bool  ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together -- if dest == src_a then the results go into the src_a table directly, and no additional table is created -- if the number of rows is unequal, then result has the maximum of the two sources, with blank padding for the shorter of the two.
 
-  override String   GetTypeDecoKey() const { return "DataTable"; }
+  String   GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
   TA_BASEFUNS(taDataProc);
 private:
   NOCOPY(taDataProc)

@@ -63,7 +63,7 @@ public slots:
 
 protected: // IViewerWidget i/f
   int                   last_idx;
-  override void         Refresh_impl();
+  void         Refresh_impl() CPP11_OVERRIDE;
 
   virtual void          FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx);
 
@@ -73,7 +73,7 @@ protected slots:
   void                  tw_tabMoved(int fm, int to);
 
 protected:
-  override void         focusInEvent(QFocusEvent* ev);
+  void         focusInEvent(QFocusEvent* ev) CPP11_OVERRIDE;
 
 private:
   void                  Init();

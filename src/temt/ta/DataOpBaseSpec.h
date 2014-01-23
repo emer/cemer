@@ -49,13 +49,13 @@ public:
   virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns_gui(dt); }
   // #CAT_DataOp #BUTTON add all columns from given data table
 
-  override taList_impl*	children_() {return &ops;}	
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  taList_impl*	children_() CPP11_OVERRIDE {return &ops;}	
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
   { return ops.Elem(idx, mode); }
-  override String 	GetTypeDecoKey() const { return "DataTable"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
 protected:
-  override void	CheckChildConfig_impl(bool quiet, bool& rval);
+  void	CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void	Initialize();
   void 	Destroy()		{ };

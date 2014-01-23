@@ -34,8 +34,8 @@ public:
   void                  SetFieldOwner(const void *fieldOwner);
 
 protected slots:
-  override void         btnEdit_clicked(bool);  // "..." button
-  override void         lookupKeyPressed();     // Same as clicking the "..." button.
+  void         btnEdit_clicked(bool) CPP11_OVERRIDE;  // "..." button
+  void         lookupKeyPressed() CPP11_OVERRIDE;     // Same as clicking the "..." button.
 
 private:
   iDialogRegexpPopulator* m_populator;

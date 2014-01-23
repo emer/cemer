@@ -32,10 +32,10 @@ class TA_API float_Matrix: public taMatrixT<float> {
   // #INSTANCE a matrix of floats
 INHERITED(taMatrixT<float>)
 public:
-  override TypeDef*     GetDataTypeDef() const {return &TA_float;}
-  override ValType      GetDataValType() const {return VT_FLOAT;}
+  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_float;}
+  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_FLOAT;}
 
-  override bool         StrValIsValid(const String& str, String* err_msg = NULL) const;
+  bool         StrValIsValid(const String& str, String* err_msg = NULL) const CPP11_OVERRIDE;
     // accepts valid format for float
 
   virtual void          InitVals(float val=0.0)
@@ -46,24 +46,24 @@ public:
     for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
   // initialize values from an array of floats, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
 
-  override bool         BinaryFile_Supported() { return true; }
+  bool         BinaryFile_Supported() CPP11_OVERRIDE { return true; }
 
   TA_MATRIX_FUNS_FAST(float_Matrix, float);
 public:
-  override float        El_GetFloat_(const void* it) const { return *((float*)it); } // #IGNORE
-  override const String El_GetStr_(const void* it) const { return (String)*((float*)it); } // #IGNORE
-  override void         El_SetFmStr_(void* it, const String& str) {*((float*)it) = (float)str;}  // #IGNORE
-  override const Variant El_GetVar_(const void* it) const {return Variant(*((float*)it));} // #IGNORE
-  override void         El_SetFmVar_(void* it, const Variant& var) {*((float*)it) = var.toFloat(); };  // #IGNORE
-  override int          El_Compare_(const void* a, const void* b) const
+  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE { return *((float*)it); } // #IGNORE
+  const String El_GetStr_(const void* it) const CPP11_OVERRIDE { return (String)*((float*)it); } // #IGNORE
+  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {*((float*)it) = (float)str;}  // #IGNORE
+  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return Variant(*((float*)it));} // #IGNORE
+  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {*((float*)it) = var.toFloat(); };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
   { int rval=-1; if(*((float*)a) > *((float*)b)) rval=1; else if(*((float*)a) == *((float*)b)) rval=0; return rval; }
 protected:
   static const float    blank; // #IGNORE
-  override void         Dump_Save_Item(std::ostream& strm, int idx);
+  void         Dump_Save_Item(std::ostream& strm, int idx) CPP11_OVERRIDE;
   // stream in full precision
-  override void         BinarySave_Item(std::ostream& strm, int idx)
+  void         BinarySave_Item(std::ostream& strm, int idx) CPP11_OVERRIDE
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(float)); };
-  override void         BinaryLoad_Item(std::istream& strm, int idx)
+  void         BinaryLoad_Item(std::istream& strm, int idx) CPP11_OVERRIDE
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(float)); };
 private:
   void          Initialize() {}

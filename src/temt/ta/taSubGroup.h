@@ -43,7 +43,7 @@ class TA_API taSubGroup : public taGroup_List {
   // #INSTANCE ##NO_TOKENS ##NO_UPDATE_AFTER has the sub-groups for a group
   INHERITED(taGroup_List)
 public:
-  override  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
+   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
   // forward LIST events as GROUP events to owner
 
   bool  Transfer(taBase* item);

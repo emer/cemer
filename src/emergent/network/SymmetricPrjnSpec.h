@@ -29,7 +29,7 @@ class E_API SymmetricPrjnSpec : public ProjectionSpec {
   // connects units with receiving connection where sending one already exists
 INHERITED(ProjectionSpec)
 public:
-  override void Connect_impl(Projection* prjn);
+  void Connect_impl(Projection* prjn) CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(SymmetricPrjnSpec);
 private:

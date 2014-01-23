@@ -92,13 +92,13 @@ public:
   virtual void  UpdateProgExpr_NewOwner();
   // update program expression after it has been moved/copied to a new owner -- this will identify any variables that are not present in the new program and copy them from the old owner -- must be called before messing with any of the vars progvarref's pointers (should be a copy/same as prior ones)
 
-  override int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  override int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
-  override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) CPP11_OVERRIDE;
+  int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) CPP11_OVERRIDE;
+  int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) CPP11_OVERRIDE;
 
-  override String GetDisplayName() const;
-  override String GetName() const;
-  override String GetTypeDecoKey() const { return "ProgExpr"; }
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetName() const CPP11_OVERRIDE;
+  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgExpr"; }
 
   static String   ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
                                 taBase*& path_own_obj, TypeDef*& path_own_typ,
@@ -107,8 +107,8 @@ public:
                                 taBase* path_base=NULL, TypeDef* path_base_typ=NULL);
   // generic lookup function for any kind of expression -- very powerful!  takes current text and position where the lookup function was called, and returns the new text filled in with whatever the user looked up, with a new cursor position (new_pos) -- if this is a path expression then path_own_typ is the type of object that owns the member path_md at the end of the path -- if path_md is NULL then path_own_typ is an object in a list or other container where member def is not relevant.  path_base is a base anchor point for paths if that is implied instead of needing to be fully contained within the expression (path_base_typ is type of that guy, esp needed if base is null) -- in this case only path expressions are allowed.
 
-  override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-                                       const String& mbr_name, int& new_pos);
+  String StringFieldLookupFun(const String& cur_txt, int cur_pos,
+                                       const String& mbr_name, int& new_pos) CPP11_OVERRIDE;
 
   // Signature must match that of the item_filter_fun typedef.
   static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
@@ -121,11 +121,11 @@ protected:
   virtual void  ParseExpr_SkipPath(int& pos);
   // skip over a path expression
 
-  override void UpdateAfterEdit_impl();
-  override void CheckThisConfig_impl(bool quiet, bool& rval);
-  override void SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
-  override void SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                             int sls, void* op1_, void* op2_);
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) CPP11_OVERRIDE;
+  void SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+                                             int sls, void* op1_, void* op2_) CPP11_OVERRIDE;
 
 private:
   void  Copy_(const ProgExprBase& cp);

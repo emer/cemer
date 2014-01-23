@@ -37,9 +37,9 @@ public:
   iDialogEditor(taiEditor* owner_, QWidget* parent = 0, int wflags = 0);
   ~iDialogEditor();
 
-  override bool          post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
-  override void          dismiss(bool accept_);
-  override void          accept();
+  bool          post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
+  void          dismiss(bool accept_);
+  void          accept();
 
   void          iconify();   // Iv compatibility routine
   void          deiconify(); // Iv compatibility routine
@@ -50,7 +50,7 @@ protected:
   QVBoxLayout*  layOuter;
   QWidget*      mcentralWidget;
   QScrollArea*  scr;
-  override void closeEvent(QCloseEvent* ev);
+  void closeEvent(QCloseEvent* ev) CPP11_OVERRIDE;
 };
 
 #endif // iDialogEditor_h

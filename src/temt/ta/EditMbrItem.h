@@ -54,9 +54,9 @@ public:
   virtual bool          PSearchNextToCur();
   // #CAT_ParamSearch set current value of item to value stored in next_val field -- call this after updating the next values, before running the evaluation with the current parameters
 
-  override TypeItem*    typeItem() const {return mbr;} // the mbr or mth
+  TypeItem*    typeItem() const CPP11_OVERRIDE {return mbr;} // the mbr or mth
 
-  override String       GetColText(const KeyString& key, int itm_idx = -1) const;
+  String       GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
   TA_BASEFUNS(EditMbrItem);
   void  InitLinks();
 protected:

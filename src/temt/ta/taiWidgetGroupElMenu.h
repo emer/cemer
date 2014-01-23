@@ -38,7 +38,7 @@ public slots:
   virtual void  ChooseGp();     // chooser callback
 
 protected:
-  override void         GetMenu_impl(taList_impl* cur_lst, taiWidgetActions* menu, iMenuAction* actn = NULL);
+  void         GetMenu_impl(taList_impl* cur_lst, taiWidgetActions* menu, iMenuAction* actn = NULL) CPP11_OVERRIDE;
 };
 
 #endif // taiWidgetGroupElMenu_h

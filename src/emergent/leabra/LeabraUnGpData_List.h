@@ -31,7 +31,7 @@ class E_API LeabraUnGpData_List: public taList<LeabraUnGpData> {
 INHERITED(taList<LeabraUnGpData>)
 public:
 
-  override String 	GetTypeDecoKey() const { return "Unit"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Unit"; }
 
   NOCOPY(LeabraUnGpData_List)
   TA_BASEFUNS(LeabraUnGpData_List);

@@ -34,7 +34,7 @@ public:
   int       min_cycle;      // #DEF_10:25 #MIN_0 minimum cycle for gating -- cannot gate before this cycle
   int       max_cycle;      // #DEF_20:40 #MIN_0 maximum cycle for gating -- cannot gate after this cycle
   
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
 protected:
@@ -75,18 +75,18 @@ public:
   virtual void	ResetMntCount(LeabraLayer* lay, int gp_idx);
   // resets gpd->mnt_count to -1 for a single stripe -- called by PFCLayerSpec when maintenance count has been exceeded
 
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
-  override void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
 
   virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt);
@@ -100,7 +100,7 @@ public:
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
 
-  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+  TypeDef* 	UnGpDataType()  CPP11_OVERRIDE { return &TA_PBWMUnGpData; }
 
   TA_SIMPLE_BASEFUNS(SNrThalLayerSpec);
 protected:

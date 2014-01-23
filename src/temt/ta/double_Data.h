@@ -33,27 +33,27 @@ class TA_API double_Data : public DataColT<double_Matrix> {
 INHERITED(DataColT<double_Matrix>)
 friend class DataTable;
 public:
-  override bool         isNumeric() const {return true;}
-  override bool         isFloat() const {return true;}
-  override int          maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
-  override ValType      valType() const {return VT_DOUBLE;}
-  override TypeDef*     valTypeDef() const {return &TA_double;}
+  bool         isNumeric() const CPP11_OVERRIDE {return true;}
+  bool         isFloat() const CPP11_OVERRIDE {return true;}
+  int          maxColWidth() const CPP11_OVERRIDE {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
+  ValType      valType() const CPP11_OVERRIDE {return VT_DOUBLE;}
+  TypeDef*     valTypeDef() const CPP11_OVERRIDE {return &TA_double;}
 
   TA_BASEFUNS_NOCOPY(double_Data);
 
 protected:
-  override double GetValAsDouble_impl(int row, int cell) const
+  double GetValAsDouble_impl(int row, int cell) const CPP11_OVERRIDE
   { return ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  override float GetValAsFloat_impl(int row, int cell) const
+  float GetValAsFloat_impl(int row, int cell) const CPP11_OVERRIDE
   { return (float)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
-  override int  GetValAsInt_impl(int row, int cell) const
+  int  GetValAsInt_impl(int row, int cell) const CPP11_OVERRIDE
   { return (int)ar.SafeEl_Flat(IndexOfEl_Flat(row, cell)); }
 
-  override bool SetValAsDouble_impl(double val, int row, int cell)
+  bool SetValAsDouble_impl(double val, int row, int cell) CPP11_OVERRIDE
   { ar.Set_Flat(val, IndexOfEl_Flat(row, cell)); return true; }
-  override bool SetValAsFloat_impl(float val, int row, int cell)
+  bool SetValAsFloat_impl(float val, int row, int cell) CPP11_OVERRIDE
   { ar.Set_Flat((double)val, IndexOfEl_Flat(row, cell)); return true; }
-  override bool SetValAsInt_impl(int val, int row, int cell)
+  bool SetValAsInt_impl(int val, int row, int cell) CPP11_OVERRIDE
   { ar.Set_Flat((double)val, IndexOfEl_Flat(row, cell)); return true; }
 
 private:

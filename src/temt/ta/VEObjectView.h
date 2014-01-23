@@ -40,10 +40,10 @@ public:
   
   DATAVIEW_PARENT(VEWorldView)
 
-  override void		BuildAll();
+  void		BuildAll() CPP11_OVERRIDE;
   
   bool			isVisible() const;
-  override bool		ignoreSigEmit() const { return !isVisible(); }
+  bool		ignoreSigEmit() const CPP11_OVERRIDE { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEObjectView);
@@ -51,8 +51,8 @@ protected:
   void	Initialize();
   void	Destroy();
 
-  override void		Render_pre();
-  override void		Render_impl();
+  void		Render_pre() CPP11_OVERRIDE;
+  void		Render_impl() CPP11_OVERRIDE;
 };
 
 #endif // VEObjectView_h

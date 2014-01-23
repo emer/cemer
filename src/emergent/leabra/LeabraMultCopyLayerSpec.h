@@ -35,13 +35,13 @@ public:
   virtual void	Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute mult copy activations -- replaces std act fun -- called in Compute_CycleStats -- just overwrites whatever the regular funs compute
 
-  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   // don't do any learning:
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
 
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

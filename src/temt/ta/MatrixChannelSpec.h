@@ -36,10 +36,10 @@ public:
   bool                  uses_cell_names; // set 'true' if there are cell names associated
   String_Matrix         cell_names; //  #COND_EDIT_ON_uses_cell_names:true (optional) the names associated with each cell
 
-  override bool         isMatrix() const {return true;}
-  override const MatrixGeom& cellGeom() const {return cell_geom;}
-  override bool         usesCellNames() const {return uses_cell_names;}
-  override const String_Matrix& cellNames() const {return cell_names;}
+  bool         isMatrix() const CPP11_OVERRIDE {return true;}
+  const MatrixGeom& cellGeom() const CPP11_OVERRIDE {return cell_geom;}
+  bool         usesCellNames() const CPP11_OVERRIDE {return uses_cell_names;}
+  const String_Matrix& cellNames() const CPP11_OVERRIDE {return cell_names;}
 
   virtual void          SetCellGeom(bool uses_names, int dims,
     int d0, int d1=0, int d2=0, int d3=0, int d4=0);

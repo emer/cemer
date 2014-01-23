@@ -35,23 +35,23 @@ public:
   taiEditorWidgets*     se;
   UserDataItem_List*    udil() {return (m_link) ? (UserDataItem_List*)(link()->data()) : NULL;}
 
-  override bool         HasChanged(); // 'true' if user has unsaved changes
+  bool         HasChanged() CPP11_OVERRIDE; // 'true' if user has unsaved changes
 
-  override String       panel_type() const {return "User Data";}
+  String       panel_type() const CPP11_OVERRIDE {return "User Data";}
 
   iPanelOfUserData(taiSigLink* dl_);
   ~iPanelOfUserData();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfUserData;}
-  override bool         ignoreSigEmit() const;
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfUserData;}
+  bool         ignoreSigEmit() const CPP11_OVERRIDE;
 
 protected:
-  override void         SigEmit_impl(int sls, void* op1, void* op2); //
-  override void         OnWindowBind_impl(iPanelViewer* itv);
-  override void         UpdatePanel_impl();
-  override void         ResolveChanges_impl(CancelOp& cancel_op);
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
+  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
+  void         UpdatePanel_impl() CPP11_OVERRIDE;
+  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE;
 };
 
 #endif // iPanelOfUserData_h

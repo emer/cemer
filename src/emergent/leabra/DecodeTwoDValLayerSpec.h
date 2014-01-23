@@ -29,14 +29,14 @@ class E_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
 public:
-  override void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-			      LeabraNetwork* net);
-  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
+  void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+	                 LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   // don't do any learning:
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
 
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);

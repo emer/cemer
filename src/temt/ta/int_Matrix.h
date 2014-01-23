@@ -33,10 +33,10 @@ class TA_API int_Matrix: public taMatrixT<int> {
   // #INSTANCE a matrix of ints
 INHERITED(taMatrixT<int>)
 public:
-  override TypeDef*     GetDataTypeDef() const {return &TA_int;}
-  override ValType      GetDataValType() const {return VT_INT;}
+  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_int;}
+  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_INT;}
 
-  override bool         StrValIsValid(const String& str, String* err_msg = NULL) const;
+  bool         StrValIsValid(const String& str, String* err_msg = NULL) const CPP11_OVERRIDE;
     // accepts in-range for 32bit int
 
   virtual void          InitVals(int val=0)
@@ -51,26 +51,26 @@ public:
     for(int i=0;i<eff_n;i++) FastEl_Flat(i) = vals[i]; }
   // initialize values from an array of ints, with optional number parameter n (if unspecified or -1, then array is assumed to be size of matrix)
 
-  override bool         BinaryFile_Supported() { return true; }
+  bool         BinaryFile_Supported() CPP11_OVERRIDE { return true; }
 
   TA_MATRIX_FUNS_FAST(int_Matrix, int);
 
 public:
-  override float        El_GetFloat_(const void* it) const { return (float)*((int*)it); } // #IGNORE
-  override double       El_GetDouble_(const void* it) const
+  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE { return (float)*((int*)it); } // #IGNORE
+  double       El_GetDouble_(const void* it) const CPP11_OVERRIDE
     { return (double)*((int*)it); } // #IGNORE
-  override const String El_GetStr_(const void* it) const { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
-  override void         El_SetFmStr_(void* it, const String& str) {*((int*)it) = (int)str;}  // #IGNORE
-  override const Variant El_GetVar_(const void* it) const {return Variant(*((int*)it));} // #IGNORE
-  override void         El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
-  override int          El_Compare_(const void* a, const void* b) const
+  const String El_GetStr_(const void* it) const CPP11_OVERRIDE { return *((int*)it); } // #IGNORE note: implicit conversion avoids problems on some compilers
+  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {*((int*)it) = (int)str;}  // #IGNORE
+  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return Variant(*((int*)it));} // #IGNORE
+  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {*((int*)it) = var.toInt(); };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
   { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
 protected:
   static const int      blank; // #IGNORE
 #ifndef __MAKETA__
-  override void         BinarySave_Item(std::ostream& strm, int idx)
+  void         BinarySave_Item(std::ostream& strm, int idx) CPP11_OVERRIDE
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(int)); };
-  override void         BinaryLoad_Item(std::istream& strm, int idx)
+  void         BinaryLoad_Item(std::istream& strm, int idx) CPP11_OVERRIDE
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(int)); };
 #endif
 private:

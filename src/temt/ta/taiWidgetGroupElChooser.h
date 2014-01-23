@@ -31,7 +31,7 @@ INHERITED(taiWidgetListElChooser_base)
 public:
   taGroup_impl*         grp;
 
-  override const String titleText();
+  const String titleText() CPP11_OVERRIDE;
   using inherited::GetImage;
   void                  GetImage(taGroup_impl* base_grp, taBase* it);
 

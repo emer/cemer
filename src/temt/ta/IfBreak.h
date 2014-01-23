@@ -33,18 +33,18 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for breaking loop
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override String	GetToolbarName() const { return "if.break"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "if.break"; }
 
   PROGEL_SIMPLE_BASEFUNS(IfBreak);
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssBody_impl(Program* prog);
+  void		CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

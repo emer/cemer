@@ -53,7 +53,7 @@ public:
 protected:
   taGuiAction_QObj*    m_helper;
 
-//   override void              UpdateAfterEdit_impl();
+//   void              UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy();

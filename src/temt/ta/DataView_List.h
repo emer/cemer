@@ -31,23 +31,23 @@ class TA_API DataView_List: public taList<taDataView> {
   // #NO_TOKENS ##CAT_Display
 INHERITED(taList<taDataView>)
 public:
-  override void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
+  void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
     // we send to an owner DataView SigEmit_Child
 
   virtual void          DoAction(taDataView::DataViewAction act);
    // do a single action on all items; we also do self->Reset on Reset_impl
 
-  override taBase* SetOwner(taBase*); // #IGNORE
+  taBase* SetOwner(taBase*) CPP11_OVERRIDE; // #IGNORE
   TA_DATAVIEWLISTFUNS(DataView_List, taList<taDataView>, taDataView) //
 
 protected:
   taDataView*           data_view; // #IGNORE our owner, when owned by a taDataView, for efficiency
 
-  override void*        El_Own_(void* it);
-  override void         El_disOwn_(void* it);
-  override void         ChildQueryEditActionsL_impl(const MemberDef* md,
+  void*        El_Own_(void* it) CPP11_OVERRIDE;
+  void         El_disOwn_(void* it) CPP11_OVERRIDE;
+  void         ChildQueryEditActionsL_impl(const MemberDef* md,
     const taBase* lst_itm, const taiMimeSource* ms,
-    int& allowed, int& forbidden); // also forwards to dv owner; in ta_qtclipdata.cpp
+    int& allowed, int& forbidden) CPP11_OVERRIDE; // also forwards to dv owner; in ta_qtclipdata.cpp
   virtual void          DV_ChildQueryEditActionsL_impl(const MemberDef* md,
     const taBase* lst_itm, const taiMimeSource* ms,
     int& allowed, int& forbidden); // specialized guys for DV -- can be replaced

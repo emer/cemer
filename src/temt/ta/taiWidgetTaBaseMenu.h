@@ -30,7 +30,7 @@ class TA_API taiWidgetTaBaseMenu: public taiWidget {
   INHERITED(taiWidget)
 public:
   taBase*               cur_obj;
-  override void         SigEmit(taiWidget* chld = NULL); // do autoapply
+  void         SigEmit(taiWidget* chld = NULL) CPP11_OVERRIDE; // do autoapply
   virtual void  GetMenu(taiWidgetActions* actions, iMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
   void          setCur_obj(taBase* value, bool do_chng = true); // set cur_obj and notifies change if different
   taiWidgetTaBaseMenu(taiWidgetActions* actions_, TypeDef* tp, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags_ = 0);

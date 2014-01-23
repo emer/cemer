@@ -33,26 +33,26 @@ class TA_API Variant_Matrix: public taMatrixT<Variant> {
   // #INSTANCE a matrix of variants
 INHERITED(taMatrixT<Variant>)
 public:
-  override TypeDef*     GetDataTypeDef() const {return &TA_Variant;}
-  override ValType      GetDataValType() const {return VT_VARIANT;}
+  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_Variant;}
+  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_VARIANT;}
 
   TA_MATRIX_FUNS_SLOW(Variant_Matrix, Variant);
 
 public:
   //NOTE: setString may not be exactly what is wanted -- that will change variant to String
   // what we may want is to set the current value as its type, from a string
-  override float        El_GetFloat_(const void* it) const { return ((Variant*)it)->toFloat(); } // #IGNORE
-  override const String El_GetStr_(const void* it) const { return ((Variant*)it)->toString(); } // #IGNORE
-  override void         El_SetFmStr_(void* it, const String& str) {((Variant*)it)->setString(str);}  // #IGNORE
-  override const Variant El_GetVar_(const void* it) const {return *((Variant*)it);} // #IGNORE
-  override void         El_SetFmVar_(void* it, const Variant& var) {*((Variant*)it) = var; };  // #IGNORE
-  override int          El_Compare_(const void* a, const void* b) const
+  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE { return ((Variant*)it)->toFloat(); } // #IGNORE
+  const String El_GetStr_(const void* it) const CPP11_OVERRIDE { return ((Variant*)it)->toString(); } // #IGNORE
+  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {((Variant*)it)->setString(str);}  // #IGNORE
+  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return *((Variant*)it);} // #IGNORE
+  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {*((Variant*)it) = var; };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
   { int rval=-1; if(*((Variant*)a) > *((Variant*)b)) rval=1; else if(*((Variant*)a) == *((Variant*)b)) rval=0; return rval; }
 protected:
   static const Variant  blank; // #IGNORE
-  override void         Dump_Save_Item(std::ostream& strm, int idx);
-  override int          Dump_Load_Item(std::istream& strm, int idx); // ret is last char read, s/b ;
-  override void         ReclaimOrphans_(int from, int to); // called when elements can be reclaimed, ex. for strings
+  void         Dump_Save_Item(std::ostream& strm, int idx) CPP11_OVERRIDE;
+  int          Dump_Load_Item(std::istream& strm, int idx) CPP11_OVERRIDE; // ret is last char read, s/b ;
+  void         ReclaimOrphans_(int from, int to) CPP11_OVERRIDE; // called when elements can be reclaimed, ex. for strings
 
 private:
   void          Initialize() {}

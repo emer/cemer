@@ -53,8 +53,8 @@ public:
 
   virtual void  ParseTags(); // parse list of tags into tags_array
 
-  override String GetDesc() const { return desc; }
-  override String GetTypeName() const { return lib_name; }
+  String GetDesc() const CPP11_OVERRIDE { return desc; }
+  String GetTypeName() const CPP11_OVERRIDE { return lib_name; }
   // This shows up in chooser instead of ProgLibEl!
 
   TA_SIMPLE_BASEFUNS(ProgLibEl);

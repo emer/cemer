@@ -39,7 +39,7 @@ public:
   };
 
   taiWidgetComposite(TypeDef* typ_, IWidgetHost* host_, taiWidget* parent_, QWidget* gui_parent_, int flags = 0);
-  override ~taiWidgetComposite();
+  ~taiWidgetComposite() CPP11_OVERRIDE;
 
   taiWidget_List        widget_el;
   bool                  add_labels;   // if true (default yes), add labels to sub elements
@@ -50,7 +50,7 @@ public:
   QWidget*              widgets(int index);
   int                   widgetCount();
 
-  override taBase*      ChildBase() const
+  taBase*      ChildBase() const CPP11_OVERRIDE
    {if (m_child_base) return m_child_base; return inherited::ChildBase();}
    // child base, typically obtained from parent or host, except ex. PolyData
   virtual void          InitLayout(); // default creates a QHBoxLayout in the Rep
@@ -75,8 +75,8 @@ protected:
     {return (iFlowLayout*)lay;} // only if hasFlow
   inline QStackedLayout* layStacked() const
     {return (QStackedLayout*)lay;} // only if hasFlow
-  override void         ChildAdd(taiWidget* child);
-  override void         ChildRemove(taiWidget* child);
+  void         ChildAdd(taiWidget* child) CPP11_OVERRIDE;
+  void         ChildRemove(taiWidget* child) CPP11_OVERRIDE;
   virtual void          AddChildWidget_impl(QWidget* child_widget, int spacing,
     int stretch);// default does an add to layout
 

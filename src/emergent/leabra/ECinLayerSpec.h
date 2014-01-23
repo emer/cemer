@@ -30,7 +30,7 @@ class E_API ECinLayerSpec : public ThetaPhaseLayerSpec {
 INHERITED(ThetaPhaseLayerSpec)
 public:
   // following is main hook into code:
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
   TA_SIMPLE_BASEFUNS(ECinLayerSpec);
 private:
   void 	Initialize()		{ };

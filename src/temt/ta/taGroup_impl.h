@@ -167,8 +167,8 @@ public:
 
 #endif
 
-  override taBase* ElemLeaf(int leaf_idx) const { return Leaf_(leaf_idx); }
-  override int     ElemCount() const            { return leaves; }
+  taBase* ElemLeaf(int leaf_idx) const CPP11_OVERRIDE { return Leaf_(leaf_idx); }
+  int     ElemCount() const            CPP11_OVERRIDE { return leaves; }
 
   virtual taGroup_impl*  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups
@@ -229,75 +229,74 @@ public:
   void  EnforceSameStru(const taGroup_impl& cp);
   // #CAT_Modify enforce this group to have same structure as cp
 
-  override int   ReplaceType(TypeDef* old_type, TypeDef* new_type);
+  int   ReplaceType(TypeDef* old_type, TypeDef* new_type) CPP11_OVERRIDE;
 
   virtual int    FindLeafEl(taBase* item) const;
   // #CAT_Access find given leaf element -1 = not here.
 
-  override void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
+  void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
 
-  override void* FindMembeR(const String& nm, MemberDef*& ret_md) const;
+  void* FindMembeR(const String& nm, MemberDef*& ret_md) const CPP11_OVERRIDE;
 
   // IO routines
-  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+  String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const;
-  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+                            bool force_inline = false) const CPP11_OVERRIDE;
+  bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false);
-  override int   ReplaceValStr(const String& srch, const String& repl,
+                           bool force_inline = false) CPP11_OVERRIDE;
+  int   ReplaceValStr(const String& srch, const String& repl,
                               const String& mbr_filt,
                               void* par = NULL, TypeDef* par_typ=NULL,
                               MemberDef* md = NULL,
-                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) CPP11_OVERRIDE;
 
-  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+  taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                               MemberDef* memb_def=NULL, const void* par=NULL,
-                              TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+                              TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const CPP11_OVERRIDE;
 
-  override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
+  void Dump_Save_GetPluginDeps() CPP11_OVERRIDE; // note: in ta_dump.cpp
 #ifndef __MAKETA__
-  override int  Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR_impl(std::ostream& strm, taBase* par=NULL, int indent=0);
+  int  Dump_SaveR(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
+  int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
+  int  Dump_Save_PathR_impl(std::ostream& strm, taBase* par=NULL, int indent=0) CPP11_OVERRIDE;
 #endif
 
-  override void Search_impl(const String& srch, taBase_PtrList& items,
+  void Search_impl(const String& srch, taBase_PtrList& items,
                             taBase_PtrList* owners = NULL,
                             bool contains = true, bool case_sensitive = false,
                             bool obj_name = true, bool obj_type = true,
                             bool obj_desc = true, bool obj_val = true,
-                            bool mbr_name = true, bool type_desc = false);
-  override void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
+                            bool mbr_name = true, bool type_desc = false) CPP11_OVERRIDE;
+  void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
                            voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
                            taBase* cp_base,
                            int show_forbidden=TypeItem::NO_HIDDEN,
                            int show_allowed=TypeItem::SHOW_CHECK_MASK, 
-                           bool no_ptrs = true);
-  override int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  override int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
-  override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
-  override int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
-  override int  SelectForEditSearch(const String& memb_contains, SelectEdit*& editor); //
+                           bool no_ptrs = true) CPP11_OVERRIDE;
+  int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) CPP11_OVERRIDE;
+  int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) CPP11_OVERRIDE;
+  int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) CPP11_OVERRIDE;
+  int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) CPP11_OVERRIDE;
+  int  SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) CPP11_OVERRIDE; //
 
-  override bool         ChildCanDuplicate(const taBase* chld,
-                                          bool quiet = true) const;
-  override taBase*      ChildDuplicate(const taBase* chld);
+  bool         ChildCanDuplicate(const taBase* chld, bool quiet = true) const CPP11_OVERRIDE;
+  taBase*      ChildDuplicate(const taBase* chld) CPP11_OVERRIDE;
 
-  override void  Duplicate(const taGroup_impl& cp);
-  override void  DupeUniqNameOld(const taGroup_impl& cp);
-  override void  DupeUniqNameNew(const taGroup_impl& cp);
+  virtual void  Duplicate(const taGroup_impl& cp);
+  virtual void  DupeUniqNameOld(const taGroup_impl& cp);
+  virtual void  DupeUniqNameNew(const taGroup_impl& cp);
 
-  override void  Borrow(const taGroup_impl& cp);
-  override void  BorrowUnique(const taGroup_impl& cp);
-  override void  BorrowUniqNameOld(const taGroup_impl& cp);
-  override void  BorrowUniqNameNew(const taGroup_impl& cp);
+  virtual void  Borrow(const taGroup_impl& cp);
+  virtual void  BorrowUnique(const taGroup_impl& cp);
+  virtual void  BorrowUniqNameOld(const taGroup_impl& cp);
+  virtual void  BorrowUniqNameNew(const taGroup_impl& cp);
 
-  override void  Copy_Common(const taGroup_impl& cp);
-  override void  Copy_Duplicate(const taGroup_impl& cp);
-  override void  Copy_Borrow(const taGroup_impl& cp);
+  virtual void  Copy_Common(const taGroup_impl& cp);
+  virtual void  Copy_Duplicate(const taGroup_impl& cp);
+  virtual void  Copy_Borrow(const taGroup_impl& cp);
 
-  override String& Print(String& strm, int indent=0) const;
+  String& Print(String& strm, int indent=0) const;
 
   void  InitLinks();            // inherit the el_typ from parent group..
   void  CutLinks();
@@ -308,23 +307,23 @@ private:
   void  Copy_(const taGroup_impl& cp);
 protected:
   mutable taGroup_List*  leaf_gp; // #READ_ONLY #NO_SAVE cached 'flat' list of leaf-containing-gps for iter
-  override void         CanCopy_impl(const taBase* cp_fm, bool quiet,
-    bool& ok, bool virt) const;
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         ItemRemoved_(); // update the leaf counts (supercursively)
-  override taBase*      New_impl(int n_objs, TypeDef* typ, const String& name_);
+  void         CanCopy_impl(const taBase* cp_fm, bool quiet,
+    bool& ok, bool virt) const CPP11_OVERRIDE;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         ItemRemoved_() CPP11_OVERRIDE; // update the leaf counts (supercursively)
+  taBase*      New_impl(int n_objs, TypeDef* typ, const String& name_) CPP11_OVERRIDE;
 
   virtual taGroup_impl* LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
 #ifdef TA_GUI
 protected: // clip functions
-  override void ChildQueryEditActions_impl(const MemberDef* md,
+  void ChildQueryEditActions_impl(const MemberDef* md,
     const taBase* child, const taiMimeSource* ms,
-    int& allowed, int& forbidden);
+    int& allowed, int& forbidden) CPP11_OVERRIDE;
   virtual void  ChildQueryEditActionsG_impl(const MemberDef* md,
     taGroup_impl* subgrp, const taiMimeSource* ms,
     int& allowed, int& forbidden);
-  override int  ChildEditAction_impl(const MemberDef* md, taBase* child,
-    taiMimeSource* ms, int ea);
+  int  ChildEditAction_impl(const MemberDef* md, taBase* child,
+    taiMimeSource* ms, int ea) CPP11_OVERRIDE;
     // if child or ms is a group, dispatch to new G version
   virtual int   ChildEditActionGS_impl(const MemberDef* md, taGroup_impl* subgrp, int ea);
   virtual int   ChildEditActionGD_impl_inproc(const MemberDef* md,

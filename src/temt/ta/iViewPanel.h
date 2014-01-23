@@ -62,21 +62,21 @@ public:
   bool                  read_only; // set true if we are
 
   taDataView*           dv() {return m_dv;} // can be statically replaced with subclass
-  override bool         lockInPlace() const {return true;}
+  bool         lockInPlace() const CPP11_OVERRIDE {return true;}
     // true if panel should not be replaced, ex. if dirty, or viewpanel
-  override taiSigLink* par_link() const {return NULL;} // n/a
-  override MemberDef*   par_md() const {return NULL;}
-  override iPanelViewer*  tabViewerWin() const;
-  override bool         isViewPanelFrame() const {return true;}
+  taiSigLink* par_link() const CPP11_OVERRIDE {return NULL;} // n/a
+  MemberDef*   par_md() const CPP11_OVERRIDE {return NULL;}
+  iPanelViewer*  tabViewerWin() const CPP11_OVERRIDE;
+  bool         isViewPanelFrame() const CPP11_OVERRIDE {return true;}
 
 
-  override void         ClearDataPanelSet() {m_dps = NULL;}
+  void         ClearDataPanelSet() CPP11_OVERRIDE {m_dps = NULL;}
   void                  MakeButtons(QBoxLayout* par_lay = NULL, QWidget* par_widg = NULL);
     // make the Apply/Revert btns, par=this if NULL, if no lay, use par_widg
-  override void         InitPanel(); // we do a more elaborate check for m_dv and !updating
-  override void         UpdatePanel(); // ditto
-  override void         ClosePanel();
-  override String       TabText() const; // text for the panel tab -- usually just the text of the sel_node
+  void         InitPanel() CPP11_OVERRIDE; // we do a more elaborate check for m_dv and !updating
+  void         UpdatePanel() CPP11_OVERRIDE; // ditto
+  void         ClosePanel() CPP11_OVERRIDE;
+  String       TabText() const CPP11_OVERRIDE; // text for the panel tab -- usually just the text of the sel_node
 
   iViewPanel(taDataView* dv_);
     // NOTE: dv will be nulled out if it destroys
@@ -88,9 +88,9 @@ public slots:
   void                  CopyFrom();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;} //
-  override void         SigLinkDestroying(taSigLink* dl); //note: dl is on the view, not underlying data
-  override TypeDef*     GetTypeDef() const {return &TA_iViewPanel;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;} //
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE; //note: dl is on the view, not underlying data
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanel;}
 
 public: // IWidgetHost i/f -- some delegate up to mommy
   const iColor          colorOfCurRow() const; // #IGNORE probably not used, we just return our own bg color
@@ -119,13 +119,13 @@ protected:
   bool                  apply_req;
   bool                  warn_clobber; // set if we get a notify and are already modified
 
-  override void         customEvent(QEvent* ev_);
-  override void         keyPressEvent(QKeyEvent* e);
+  void         customEvent(QEvent* ev_) CPP11_OVERRIDE;
+  void         keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
 
   virtual void          CopyFrom_impl() {}
   virtual void          GetValue_impl() {}
   void                  InternalSetModified(bool value); // does all the gui config
-  override void         ResolveChanges_impl(CancelOp& cancel_op); //generic behavior
+  void         ResolveChanges_impl(CancelOp& cancel_op) CPP11_OVERRIDE; //generic behavior
   void                  UpdateButtons();
 };
 

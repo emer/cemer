@@ -43,8 +43,8 @@ public:
   }
   // #IGNORE
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) CPP11_OVERRIDE {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float su_avg_m = su->avg_m;
@@ -67,7 +67,7 @@ public:
     }
   }
 
-  override bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
+  bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(XCalSRAvgConSpec);
 protected:

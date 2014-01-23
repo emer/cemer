@@ -43,7 +43,7 @@ public:
   static const KeyString key_clr2; // #IGNORE
   static const KeyString key_clr3; // #IGNORE
   static const KeyString key_clr4; // #IGNORE
-  override String GetColText(const KeyString& key, int itm_idx) const;  // #IGNORE
+  String GetColText(const KeyString& key, int itm_idx) const CPP11_OVERRIDE;  // #IGNORE
 
   void  InitLinks();
   TA_BASEFUNS(ColorScaleSpec);

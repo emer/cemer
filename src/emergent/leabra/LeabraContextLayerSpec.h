@@ -33,7 +33,7 @@ public:
   float		fm_prv;		// from previous context layer values (maintenance)
   float		to_out;		// outputs from context layer
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   SIMPLE_COPY(CtxtUpdateSpec);
   TA_BASEFUNS(CtxtUpdateSpec);
@@ -54,7 +54,7 @@ public:
   int		n_trials;	// #MIN_1 update every n trials
   int		n_offs;		// #MIN_0 offset of n during count, ex using 2 lays with 0 and N/2 gives half alternating offset
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(CtxtNSpec);
 protected:
@@ -81,14 +81,14 @@ public:
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
   CtxtNSpec	n_spec; // #CONDSHOW_ON_update_criteria:UC_N_TRIAL trials per update and optional offset for multi
   
-  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
   // clamp from act_p values of sending layer
-  override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
 
   // don't do any learning:
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return false; }
 
   void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL

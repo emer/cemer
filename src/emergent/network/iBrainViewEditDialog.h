@@ -45,9 +45,9 @@ protected:
 
 protected slots:
   void                  itemClicked(const QModelIndex & index);
-  override void         btnApply_clicked();
-  override void         btnRandomColors_clicked();
-  override void         btnColorsFromScale_clicked();
+  void         btnApply_clicked() CPP11_OVERRIDE;
+  virtual void         btnRandomColors_clicked();
+  virtual void         btnColorsFromScale_clicked();
 };
 
 #endif // iBrainViewEditDialog_h

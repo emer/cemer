@@ -31,8 +31,8 @@ class TA_API DataAnalCall : public StaticMethodCall {
   // call a taDataAnal (data analysis) function
 INHERITED(StaticMethodCall)
 public:
-  override String	GetToolbarName() const { return "data anal()"; }
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "data anal()"; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
   TA_BASEFUNS_NOCOPY(DataAnalCall);
 private:
   void	Initialize();

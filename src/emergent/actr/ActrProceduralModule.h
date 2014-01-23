@@ -41,7 +41,7 @@ public:
   
   TA_SIMPLE_BASEFUNS(ActrUtilityParams);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
 private:
   void	Initialize();
@@ -71,10 +71,10 @@ public:
   ActrProduction_Group  eligible;     // #HIDDEN #NO_SAVE all the eligible productions for current conflict res stage
   ActrProductionRef     fired;          // #HIDDEN #NO_SAVE final selected production to fire
 
-  override void  InitModule();
-  override void  ProcessEvent(ActrEvent& event);
-  override bool  SetParam(const String& param_nm, Variant par1, Variant par2);
-  override void  Init();
+  void  InitModule() CPP11_OVERRIDE;
+  void  ProcessEvent(ActrEvent& event) CPP11_OVERRIDE;
+  bool  SetParam(const String& param_nm, Variant par1, Variant par2) CPP11_OVERRIDE;
+  void  Init() CPP11_OVERRIDE;
 
   virtual void  InitUtils();
   // #CAT_ActR init production utilities
@@ -91,7 +91,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActrProceduralModule);
 protected:
-  override void	 CheckChildConfig_impl(bool quiet, bool& rval);
+  void	 CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 
 private:
   void Initialize();

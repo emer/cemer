@@ -284,8 +284,8 @@ public: //
                Projection* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
 
-  override int  GetIndex() const { return idx; }
-  override void SetIndex(int i) { idx = i; }
+  int  GetIndex() const CPP11_OVERRIDE { return idx; }
+  void SetIndex(int i) CPP11_OVERRIDE { idx = i; }
   virtual int   GetMyLeafIndex();
   // #CAT_Structure compute leaf index from my individual index in an efficient manner
   void          GetAbsPos(taVector3i& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }
@@ -304,11 +304,11 @@ public: //
   virtual void	MakeVoxelsList();
   // make the voxels* list if it doesn't yet exist -- otherwise not
 
-  override String       GetTypeDecoKey() const { return "Unit"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Unit"; }
 
-  override void         SetDefaultName() {} // leave it blank
+  void         SetDefaultName() CPP11_OVERRIDE {} // leave it blank
 
-  override bool ChangeMyType(TypeDef* new_type);
+  bool ChangeMyType(TypeDef* new_type) CPP11_OVERRIDE;
 
   void  InitLinks();
   void  CutLinks();
@@ -318,9 +318,9 @@ public: //
 protected:
   UnitSpec*     m_unit_spec;    // unit spec that we use: controlled entirely by the layer!
 
-  override void  UpdateAfterEdit_impl();
-  override void  CheckThisConfig_impl(bool quiet, bool& rval);
-  override void  CheckChildConfig_impl(bool quiet, bool& rval);
+  void  UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void  CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy();

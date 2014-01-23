@@ -44,7 +44,7 @@ public:
   GradType	grad_type;	// #CONDEDIT_ON_init_wts type of gradient to make -- applies to both axes
   float		gauss_sig;	// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0 
 
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
 
   virtual void	InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru);
   // for recv unit group case

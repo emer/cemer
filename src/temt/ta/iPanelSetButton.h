@@ -38,8 +38,8 @@ public:
   iPanelSet* m_datapanelset;
   int           m_idx;
 protected:
-  override bool focusNextPrevChild(bool next);
-  override void keyPressEvent(QKeyEvent* e);
+  bool focusNextPrevChild(bool next) CPP11_OVERRIDE;
+  void keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
 };
 
 #endif // iPanelSetButton_h

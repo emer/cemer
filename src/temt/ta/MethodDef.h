@@ -56,9 +56,9 @@ public:
 
   css_fun_stub_ptr stubp;       // css function stub pointer
 
-  override TypeInfoKinds TypeInfoKind() const {return TIK_METHOD;}
-  override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_MethodDef;}
+  TypeInfoKinds TypeInfoKind() const CPP11_OVERRIDE {return TIK_METHOD;}
+  void*        This() CPP11_OVERRIDE {return this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_MethodDef;}
 
   void          Initialize();
   void          Copy(const MethodDef& cp);
@@ -74,8 +74,8 @@ public:
 
   MethodDef*            Clone()         { return new MethodDef(*this); }
   MethodDef*            MakeToken()     { return new MethodDef(); }
-  override TypeDef*     GetOwnerType() const;
-  override const String GetPathName() const;
+  TypeDef*     GetOwnerType() const CPP11_OVERRIDE;
+  const String GetPathName() const CPP11_OVERRIDE;
   bool                  CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one
   bool                  CompareArgs(MethodDef* it) const;       // true if same, false if not

@@ -51,7 +51,7 @@ public:
   ~TokenSpace();
   void operator=(const TokenSpace& cp)  { Borrow(cp); }
 
-  override String& Print(String& strm, int indent=0) const;
+  String& Print(String& strm, int indent=0) const CPP11_OVERRIDE;
 };
 
 #endif // TokenSpace_h

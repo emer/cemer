@@ -31,9 +31,9 @@ class TA_API MathCall : public StaticMethodCall {
   // call a taMath function
 INHERITED(StaticMethodCall)
 public:
-  override String	GetToolbarName() const { return "math()"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "math()"; }
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(MathCall);
 private:

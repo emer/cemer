@@ -54,7 +54,7 @@ public:
     return cao_thr * cao_thr;
   }
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   SIMPLE_COPY(CaiSynDepSpec);
   TA_BASEFUNS(CaiSynDepSpec);
@@ -99,9 +99,9 @@ public:
   inline void C_Compute_CycSynDep(float& effwt, const float wt, const float cai)
   { effwt = wt * ca_dep.SynDep(cai); }
   // #IGNORE connection-level synaptic depression: ca mediated
-  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) {
-    Compute_Cai(cg, su, net);
+  inline void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net)  CPP11_OVERRIDE
+  { Compute_Cai(cg, su, net);
     float* wts = cg->OwnCnVar(WT);
     float* cais = cg->OwnCnVar(CAI);
     float* effs = cg->OwnCnVar(EFFWT);
@@ -127,19 +127,19 @@ public:
   }
   // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
-  inline override void C_Init_Weights_post(BaseCons* cg, const int idx,
-                                           Unit* ru, Unit* su, Network* net) {
+  inline void C_Init_Weights_post(BaseCons* cg, const int idx,
+                                           Unit* ru, Unit* su, Network* net) CPP11_OVERRIDE {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
     cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net); cg->Cn(idx,CAI,net) = 0.0f;
   }
   // #IGNORE 
 
-  inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                const int thread_no, const float su_act_delta)
+  inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+                                const int thread_no, const float su_act_delta) CPP11_OVERRIDE
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
   // #IGNORE use effwt instead of wt
 
-  inline override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net)  CPP11_OVERRIDE {
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt

@@ -50,7 +50,7 @@ protected:
   int			mindex;
   QVariant		muser_data;
 
-  override void 	contextMenuEvent (QContextMenuEvent* e); 
+  void 	contextMenuEvent (QContextMenuEvent* e) CPP11_OVERRIDE; 
 private:
   void		init();
 };

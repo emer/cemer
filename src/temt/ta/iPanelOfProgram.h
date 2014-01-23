@@ -33,18 +33,18 @@ INHERITED(iPanelOfProgramBase)
   Q_OBJECT
 public:
   Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  override String       panel_type() const {return "Edit Program";}
+  String       panel_type() const CPP11_OVERRIDE {return "Edit Program";}
 
   void                  FillList();
 
   iPanelOfProgram(taiSigLink* dl_);
 
 public: // ISigLinkClient interface
-//  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfProgram;}
+//  void*      This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfProgram;}
 
 protected:
-  override void         OnWindowBind_impl(iPanelViewer* itv);
+  void         OnWindowBind_impl(iPanelViewer* itv) CPP11_OVERRIDE;
 
 protected slots:
   void                  items_CustomExpandFilter(iTreeViewItem* item,

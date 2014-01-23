@@ -39,7 +39,7 @@ public:
   float         GetVal(int ctr)  { return start_val + step * (float)(ctr - start_ctr); }
   // get value for given ctr value
 
-  override String       GetDesc() const;
+  String       GetDesc() const CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(SchedItem);
 private:
@@ -63,7 +63,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(Schedule);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy()       { };

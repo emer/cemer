@@ -36,7 +36,7 @@ public:
   virtual void  UpdateMenu() {UpdateMenu(NULL);}
   virtual void  UpdateMenu(const iMenuAction* acn);
 
-  override QWidget* GetRep();
+  QWidget* GetRep() CPP11_OVERRIDE;
   virtual void          GetImage(TypeDef* ths);
   virtual TypeDef*      GetValue();
 

@@ -34,14 +34,14 @@ public:
   SelectEdit*           sele;
   taiEditorOfSelectEditFast* sedh;
 
-  override void         GetImage() const; // callable from edh any time
-  override void         GetValue() const; // callable from edh
+  void         GetImage() const CPP11_OVERRIDE; // callable from edh any time
+  void         GetValue() const CPP11_OVERRIDE; // callable from edh
 
-  override bool         IndexToMembBase(const QModelIndex& index,
-    MemberDef*& mbr, taBase*& base) const;
+  bool         IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const CPP11_OVERRIDE;
 
-  override QWidget* createEditor(QWidget* parent,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  QWidget* createEditor(QWidget* parent,
+    const QStyleOptionViewItem& option, const QModelIndex& index) const CPP11_OVERRIDE;
 
   taiWidgetDelegateSelectEdit(SelectEdit* sele_, taiEditorOfSelectEditFast* sedh_);
 

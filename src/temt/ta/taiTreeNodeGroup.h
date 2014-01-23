@@ -34,11 +34,11 @@ public:
   taGroup_impl*         tadata() const {return ((taSigLinkGroup*)m_link)->data();}
   taSigLinkGroup*     link() const {return (taSigLinkGroup*)m_link;}
 
-  override bool         RebuildChildrenIfNeeded();
+  bool         RebuildChildrenIfNeeded() CPP11_OVERRIDE;
 
   taiTreeNode*      CreateSubGroup(taiTreeNode* after, void* el);
     // for dynamic changes to tree
-  override void         UpdateChildNames(); // #IGNORE
+  void         UpdateChildNames() CPP11_OVERRIDE; // #IGNORE
 
   taiTreeNodeGroup(taSigLinkGroup* link_, MemberDef* md_, taiTreeNode* parent_,
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
@@ -46,13 +46,13 @@ public:
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeGroup();
 public: // ISigLinkClient interface
-//  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_taiTreeNodeGroup;}
+//  void*      This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeGroup;}
 protected:
-  override void         CreateChildren_impl();
-  override void         SigEmit_impl(int sls, void* op1, void* op2); // handle SLS_GROUP_xxx ops
+  void         CreateChildren_impl() CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; // handle SLS_GROUP_xxx ops
   void                  UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
-  override void         willHaveChildren_impl(bool& will) const;
+  void         willHaveChildren_impl(bool& will) const CPP11_OVERRIDE;
 private:
   void                  init(taSigLinkGroup* link_, int dn_flags_); // #IGNORE
 };

@@ -46,7 +46,7 @@ public:
   // set dragger position, based on shape
 
   bool			isVisible() const;
-  override bool		ignoreSigEmit() const { return !isVisible(); }
+  bool		ignoreSigEmit() const CPP11_OVERRIDE { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
   TA_BASEFUNS_NOCOPY(VEJointView);
@@ -54,8 +54,8 @@ protected:
   void	Initialize();
   void	Destroy();
 
-  override void		Render_pre();
-  override void		Render_impl();
+  void		Render_pre() CPP11_OVERRIDE;
+  void		Render_impl() CPP11_OVERRIDE;
 };
 
 #endif // VEJointView_h

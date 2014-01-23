@@ -82,15 +82,15 @@ public:
   ~iViewPanelOfBrain();
 
 public: // ISigLinkClient interface
-  override void*        This();
-  override TypeDef*     GetTypeDef() const;
+  void*        This() CPP11_OVERRIDE;
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE;
 
 protected:
   bool                  req_full_render; // when updating, call Render on netview
   bool                  req_full_build;  // when updating, call Build on netview
-  override void         UpdatePanel_impl();
-  override void         GetValue_impl();
-  override void         CopyFrom_impl();
+  void         UpdatePanel_impl() CPP11_OVERRIDE;
+  void         GetValue_impl() CPP11_OVERRIDE;
+  void         CopyFrom_impl() CPP11_OVERRIDE;
 
 public slots:
   void          viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview

@@ -87,7 +87,7 @@ protected slots:
 
 protected:
   QTimer*               timer; // for idle processing
-  override void         customEvent(QEvent* ev);
+  void         customEvent(QEvent* ev) CPP11_OVERRIDE;
   virtual void          Init(bool gui = false); // NOTE: called from static New
   virtual int           Exec_impl();
   virtual void          OnQuitting_impl(CancelOp& cancel_op); // allow to cancel

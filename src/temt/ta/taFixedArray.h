@@ -62,15 +62,15 @@ public:
   virtual int   Find(const T& item, int i=0) const { return Find_((void*)&item, i); }
   // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
 public:
-  override void*        FastEl_(int i)          { return &(el[i]); }
-  override const void*  FastEl_(int i) const    { return (const void*)&(el[i]); }
+  void*        FastEl_(int i)          CPP11_OVERRIDE { return &(el[i]); }
+  const void*  FastEl_(int i) const    CPP11_OVERRIDE { return (const void*)&(el[i]); }
 protected:
-  override void*        MakeArray_(int n) const { return new T[n]; }
-  override void         SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
-  override bool         El_Equal_(const void* a, const void* b) const
+  void*        MakeArray_(int n) const CPP11_OVERRIDE { return new T[n]; }
+  void         SetArray_(void* nw) CPP11_OVERRIDE {if (el) delete [] el; el = (T*)nw;}
+  bool         El_Equal_(const void* a, const void* b) const CPP11_OVERRIDE
     { return (*((T*)a) == *((T*)b)); }
-  override void         El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); }
-  override uint         El_SizeOf_() const      { return sizeof(T); }
+  void         El_Copy_(void* to, const void* fm) CPP11_OVERRIDE { *((T*)to) = *((T*)fm); }
+  uint         El_SizeOf_() const      CPP11_OVERRIDE { return sizeof(T); }
 };
 
 #endif // taFixedArray_h

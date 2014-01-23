@@ -48,7 +48,7 @@ public:
   float  unit_trans;    // #DEF_0.6 transparency of the units
   float  laygp_width;    // #DEF_1 width of the layer group lines (as a line width, not as a geometry size relative to normalized network size)
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(BrainViewParams);
   TA_BASEFUNS(BrainViewParams);
@@ -123,7 +123,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // display updating & rendering
 
-  override void         BuildAll();
+  void         BuildAll() CPP11_OVERRIDE;
   // creates fully populated subviews (but not So -- that is done in Render)
   virtual void          InitDisplay(bool init_panel = true);
   // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
@@ -227,31 +227,31 @@ public:
   virtual void          CopyFromView(BrainView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
 
-  override void         Dump_Load_post();
+  void         Dump_Load_post() CPP11_OVERRIDE;
 #ifndef __MAKETA__
-  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
-  override GuiContext   shType() const;
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE;
+  GuiContext   shType() const CPP11_OVERRIDE;
 #endif
-  override const iColor bgColor(bool& ok) const; // #IGNORE
-  override void         InitLinks();
-  override void         CutLinks();
-  override void         ChildUpdateAfterEdit(taBase* child, bool& handled);
+  const iColor bgColor(bool& ok) const CPP11_OVERRIDE; // #IGNORE
+  void         InitLinks() CPP11_OVERRIDE;
+  void         CutLinks() CPP11_OVERRIDE;
+  void         ChildUpdateAfterEdit(taBase* child, bool& handled) CPP11_OVERRIDE;
   T3_DATAVIEWFUNS(BrainView, T3DataViewMain) //
 
 // ISelectable i/f
-  override bool         hasViewProperties() const; //TODO: NUKE, OBS
+  bool         hasViewProperties() const CPP11_OVERRIDE; //TODO: NUKE, OBS
 
 protected:
   T3DataView_List       prjns;          // #IGNORE list of prjn objects under us
   iViewPanelOfBrain*       bvp; // created during first Render
-  override void         SigRecvUpdateView_impl();
-  override void         SigRecvUpdateAfterEdit_impl(); //
-  override void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
-  override void         OnWindowBind_impl(iT3Panel* vw);
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl(); // #IGNORE
+  void         SigRecvUpdateView_impl() CPP11_OVERRIDE;
+  void         SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE; //
+  void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) CPP11_OVERRIDE; // called by lays and prjns
+  void         OnWindowBind_impl(iT3Panel* vw) CPP11_OVERRIDE;
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
   void                  Render_net_text();
-  override void         Reset_impl(); // #IGNORE
+  void         Reset_impl() CPP11_OVERRIDE; // #IGNORE
   void                  UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void                  viewWin_NotifySignal(ISelectableHost* src, int op);
 

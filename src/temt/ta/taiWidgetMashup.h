@@ -40,7 +40,7 @@ public:
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
   bool                  fillHor() {return true;} // override
 
-  override void         AddChildMember(MemberDef* md);
+  void         AddChildMember(MemberDef* md) CPP11_OVERRIDE;
   
   virtual void          AddBase(taBase* b);
   // call this if base is avail at time when adding a child member
@@ -57,10 +57,10 @@ public:
 protected:
   void                  Constr(QWidget* gui_parent_);
   void                  AddTypeMembers(); // called to add all typ members
-  override void         ChildRemove(taiWidget* child); // remove from memb_el too
+  void         ChildRemove(taiWidget* child) CPP11_OVERRIDE; // remove from memb_el too
   using inherited::GetImage_impl;
-  override void         GetImage_impl(const void* base);
-  override void         GetValue_impl(void* base) const;
+  void         GetImage_impl(const void* base) CPP11_OVERRIDE;
+  void         GetValue_impl(void* base) const CPP11_OVERRIDE;
   virtual bool          ShowMember(MemberDef* md) const;
   taiWidgetMashup(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags = 0);
 };

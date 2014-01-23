@@ -57,7 +57,7 @@ public:
   void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
 #endif
 
-  override void 	keyboardSearch(const QString &search);
+  void 	keyboardSearch(const QString &search) CPP11_OVERRIDE;
   
   iTreeWidget(QWidget* parent = 0);
   ~iTreeWidget();
@@ -76,22 +76,22 @@ protected:
   int                   scrollTimerId;
   
   void*			highlightColors() const; // insures map exists
-  override void 	drawRow(QPainter* painter,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  override void 	dragMoveEvent(QDragMoveEvent* ev);
-  override void		dropEvent(QDropEvent* e);
-  override bool 	dropMimeData(QTreeWidgetItem* parent, int index, 
-    const QMimeData* data, Qt::DropAction action); // we always delegate to the item, and always return false (we handle item manipulation manually)
-  override void 	contextMenuEvent(QContextMenuEvent* e);
-  override void		doItemExpanded(QTreeWidgetItem* item, bool expanded);
-  override void         timerEvent(QTimerEvent* e);
+  void 	drawRow(QPainter* painter,
+    const QStyleOptionViewItem& option, const QModelIndex& index) const CPP11_OVERRIDE;
+  void 	dragMoveEvent(QDragMoveEvent* ev) CPP11_OVERRIDE;
+  void		dropEvent(QDropEvent* e) CPP11_OVERRIDE;
+  bool 	dropMimeData(QTreeWidgetItem* parent, int index, 
+    const QMimeData* data, Qt::DropAction action) CPP11_OVERRIDE; // we always delegate to the item, and always return false (we handle item manipulation manually)
+  void 	contextMenuEvent(QContextMenuEvent* e) CPP11_OVERRIDE;
+  void		doItemExpanded(QTreeWidgetItem* item, bool expanded);
+  void         timerEvent(QTimerEvent* e) CPP11_OVERRIDE;
   Qt::DropActions	supportedDropActions() const;
   void 			setSelection(const QRect &rect,
 				     QItemSelectionModel::SelectionFlags command);
   // this is workaround for drag scrolling bug in qt5.2
   virtual  void         dragScroll();
 
-  override void 	keyPressEvent(QKeyEvent* e);	// override
+  void 	keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;	// override
 
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);

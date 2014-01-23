@@ -64,14 +64,14 @@ public:
    // prepare dialog for rebuilding Body to show new contents
 
   virtual void          Iconify(bool value);    // for dialogs: iconify/deiconify
-  override void         ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
+  void         ReConstr_Body() CPP11_OVERRIDE; // called when show has changed and body should be reconstructed -- this is a deferred call
   virtual void          Revert_force();
    // forcibly (automatically) revert buffer (prompts)
   virtual void          SetRevert();    // set the revert button on
   virtual void          UnSetRevert();  // set the revert button off
-  override bool         ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
+  bool         ReShow(bool force = false) CPP11_OVERRIDE; // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   virtual void          Raise() {if (isDialog()) DoRaise_Dialog();}     // bring dialog or panel (in new tab) to the front
-  override void         GetImage(bool force) {inherited::GetImage(force);} // scope ugh
+  void         GetImage(bool force) CPP11_OVERRIDE {inherited::GetImage(force);} // scope ugh
 
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*         This() {return this;} // override
@@ -108,18 +108,18 @@ protected:
   bool                  rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   virtual void          ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
-  override void         Constr_Methods(); // creates the box for buttons
+  void         Constr_Methods() CPP11_OVERRIDE; // creates the box for buttons
   virtual void          Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
-  override void         Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
-  //override void       Constr_Final();
+  void         Insert_Methods() CPP11_OVERRIDE; // insert the menu and methods, if made, and not owned elsewise
+  //void       Constr_Final() CPP11_OVERRIDE;
   virtual void          FillLabelContextMenu(QMenu* menu, int& last_id); // last_id enables access menu items
-  override void         Cancel_impl();
-  override void         Ok_impl();
+  void         Cancel_impl() CPP11_OVERRIDE;
+  void         Ok_impl() CPP11_OVERRIDE;
 
 
 protected:
-  override void         InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
-  override void         Refresh_impl(bool reshow);
+  void         InitGuiFields(bool virt = true) CPP11_OVERRIDE; // NULL the gui fields -- virt used for ctor
+  void         Refresh_impl(bool reshow) CPP11_OVERRIDE;
 protected slots:
   virtual void  label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
   virtual void          helpMenu_triggered();

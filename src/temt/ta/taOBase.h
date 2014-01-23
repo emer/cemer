@@ -42,7 +42,7 @@ protected:
 // Methods:
 public:
   taSigLink**          addr_sig_link() {return &m_sig_link;} // #IGNORE
-  override taSigLink*  sig_link() {return m_sig_link;}       // #IGNORE
+  taSigLink*  sig_link() CPP11_OVERRIDE {return m_sig_link;}       // #IGNORE
   taBase*               GetOwner() const        { return owner; }
   using inherited::GetOwner;
   taBase*               SetOwner(taBase* ta)    { owner = ta; return ta; }
@@ -51,15 +51,15 @@ public:
   TA_BASEFUNS(taOBase); //
 
 protected:
-  override void         CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const {
+  void         CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const CPP11_OVERRIDE {
     if (virt)
       inherited::CanCopy_impl(cp_fm, quiet, ok, virt);
   }
 
 #ifdef TA_GUI
 protected: // all related to taList or DEF_CHILD children_
-  override void ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
-    const taiMimeSource* ms, int& allowed, int& forbidden);
+  void ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+    const taiMimeSource* ms, int& allowed, int& forbidden) CPP11_OVERRIDE;
      // gives the src ops allowed on child (ex CUT)
   virtual void  ChildQueryEditActionsL_impl(const MemberDef* md, const taBase* lst_itm,
     const taiMimeSource* ms, int& allowed, int& forbidden);

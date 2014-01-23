@@ -38,7 +38,7 @@ public:
 
   float         ctxt_decay_c;   // #READ_ONLY #HIDDEN 1-ctxt_decay
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
 protected:
@@ -80,12 +80,12 @@ public:
   virtual void  Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net);
   // modulates how active a PFC (superficial) layer can get before being gated; special case, e.g., for output gating layer, can use to only allow activation for trial immediately after gating -- called in CycleStats
 
-  override void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-  override void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);
+  void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
-  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+  TypeDef* 	UnGpDataType()  CPP11_OVERRIDE { return &TA_PBWMUnGpData; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

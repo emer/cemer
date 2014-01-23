@@ -264,13 +264,13 @@ public:
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc
-  override void Step_pre();
-  override void CurFromODE(bool updt_disp = false);
-  override void Init();
+  void Step_pre() CPP11_OVERRIDE;
+  void CurFromODE(bool updt_disp = false) CPP11_OVERRIDE;
+  void Init() CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:
-  //  override CheckConfig_impl(); // todo
+  //  CheckConfig_impl() CPP11_OVERRIDE; // todo
 
   virtual bool Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, taVector3f p2);
   // This function is the C++ equivalent of piece5.m.

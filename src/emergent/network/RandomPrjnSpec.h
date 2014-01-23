@@ -35,11 +35,11 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  override void Connect_impl(Projection* prjn);
+  void Connect_impl(Projection* prjn) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(RandomPrjnSpec);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void	Initialize();
   void 	Destroy()		{ };

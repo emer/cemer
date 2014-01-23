@@ -44,7 +44,7 @@ public:
   ColorScaleRef		scale;
 
   virtual int 		blocks();
-  override void		clear();
+  void		clear() CPP11_OVERRIDE;
 
   virtual void		SetColorScale(ColorScale* c);
   void			SetDimensions(float wd, float ht);

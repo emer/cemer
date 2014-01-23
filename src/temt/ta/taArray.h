@@ -82,8 +82,8 @@ public:
 protected:
   mutable T             tmp; // #IGNORE temporary item
 
-  override void*        MakeArray_(int n) const { return new T[n]; }
-  override void         SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  void*        MakeArray_(int n) const CPP11_OVERRIDE { return new T[n]; }
+  void         SetArray_(void* nw) CPP11_OVERRIDE {if (el) delete [] el; el = (T*)nw;}
   void          El_Copy_(void* to, const void* fm) { *((T*)to) = *((T*)fm); }
   uint          El_SizeOf_() const              { return sizeof(T); }
   const void*   El_GetErr_() const              { return (void*)&err; }

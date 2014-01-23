@@ -35,25 +35,25 @@ public:
   iPanelOfList*       panel; // logical parent node of the list items
 
   QString               text(int col) const; // override
-  override void         setName(const String& value); // 2nd col for us
+  void         setName(const String& value) CPP11_OVERRIDE; // 2nd col for us
 
   bool                  operator<(const QTreeWidgetItem& item) const; // override
 
-  override void         DecorateDataNode();
+  void         DecorateDataNode() CPP11_OVERRIDE;
   taiListNode(int num_, iPanelOfList* panel_, taiSigLink* link_,
     iTreeView* parent_, taiListNode* after, int dn_flags_ = 0);
     //note: list flag automatically or'ed in
   ~taiListNode(); //
 
 public: // ISigLinkClient interface
-//  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_taiListNode;}
+//  void*      This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiListNode;}
 
 public: // ISelectable interface
-  override taiSigLink* par_link() const; // we get from the panel, which gets from the viewer window
-//obs  override MemberDef*      par_md() const; // as for par_link
+  taiSigLink* par_link() const CPP11_OVERRIDE; // we get from the panel, which gets from the viewer window
+//obs  MemberDef*      par_md() const CPP11_OVERRIDE; // as for par_link
 protected:
-  override void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ);
+  void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ) CPP11_OVERRIDE;
   // this is the one to extend in inherited classes
 };
 

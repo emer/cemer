@@ -51,13 +51,13 @@ public:
   virtual void 	ClearColumns();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
-  override String GetName() const;
-  override String GetDisplayName() const;
-  override String GetTypeDecoKey() const { return "ProgArg"; }
+  String GetName() const CPP11_OVERRIDE;
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgArg"; }
   TA_SIMPLE_BASEFUNS(DataOpEl);
 protected:
-  override void	UpdateAfterEdit_impl();	// set col_name from col_lookup
-  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;	// set col_name from col_lookup
+  void	 CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void 	Destroy()		{ };

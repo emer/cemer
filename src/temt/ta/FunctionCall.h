@@ -43,20 +43,20 @@ public:
   virtual void          UpdateArgs();
   // #BUTTON updates the argument list based on the function being called
 
-  override bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool         CvtFmCode(const String& code);
+  bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool         CvtFmCode(const String& code) CPP11_OVERRIDE;
 
-  override taList_impl* children_() {return &fun_args;}
-  override String       GetDisplayName() const;
-  override String       GetTypeDecoKey() const { return "Function"; }
-  override String       GetToolbarName() const { return "fun()"; }
+  taList_impl* children_() CPP11_OVERRIDE {return &fun_args;}
+  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
+  String       GetToolbarName() const CPP11_OVERRIDE { return "fun()"; }
 
   PROGEL_SIMPLE_BASEFUNS(FunctionCall);
 protected:
-  override void         UpdateAfterEdit_impl();
-  override void         CheckThisConfig_impl(bool quiet, bool& rval);
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         GenCssBody_impl(Program* prog);
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy()       {}

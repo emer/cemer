@@ -33,19 +33,19 @@ public:
   TypeItem*             data() {return (TypeItem*)m_data;} //
   TypeItem*             data() const {return (TypeItem*)m_data;} //
 
-  override bool         HasChildItems();
-  override String       GetName() const;
-  override String       GetDisplayName() const;
+  bool         HasChildItems() CPP11_OVERRIDE;
+  String       GetName() const CPP11_OVERRIDE;
+  String       GetDisplayName() const CPP11_OVERRIDE;
   using inherited::ShowMember;
-  override bool         ShowMember(MemberDef* md); // asks this type if we should show the md member
+  virtual bool ShowMember(MemberDef* md); // asks this type if we should show the md member
 
   taSigLinkTypeItem(TypeItem::TypeInfoKinds tik_, TypeItem* data_);  //
   SL_FUNS(taSigLinkTypeItem); //
 
 protected:
-  override iPanelBase*  CreateDataPanel_impl();
-  override taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
-    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags);
+  iPanelBase*  CreateDataPanel_impl() CPP11_OVERRIDE;
+  taiTreeNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeNode* nodePar,
+    iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags) CPP11_OVERRIDE;
 };
 
 #endif // taSigLinkTypeItem_h

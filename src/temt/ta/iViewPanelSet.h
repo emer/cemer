@@ -34,23 +34,23 @@ INHERITED(iPanelSetBase)
 public:
   iTabBarBase*            tbSubPanels;
 
-  override bool         lockInPlace() const {return true;}
+  bool         lockInPlace() const CPP11_OVERRIDE {return true;}
 
   void                  AddSubPanel(iViewPanel* pn);
 
-  override void         UpdatePanel(); // update tab names too
+  void         UpdatePanel() CPP11_OVERRIDE; // update tab names too
   void                  PanelDestroying(iViewPanel* pn); // so we remove tab
 
   iViewPanelSet(taiSigLink* dl_);
   ~iViewPanelSet();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-//  override void               SigLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
-  override TypeDef*     GetTypeDef() const {return &TA_iViewPanelSet;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+//  void               SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE {} // nothing for us; subpanels handle
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanelSet;}
 
 protected:
-  override void         setCurrentPanelId_impl(int id);
+  void         setCurrentPanelId_impl(int id) CPP11_OVERRIDE;
 };
 
 #endif // iViewPanelSet_h

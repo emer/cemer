@@ -28,7 +28,7 @@ public:
   explicit iDialogColorChooser(const QColor &old_clr, QWidget *parent = 0);
 
 protected:
-  override void keyPressEvent(QKeyEvent *e);
+  void keyPressEvent(QKeyEvent *e) CPP11_OVERRIDE;
 };
 
 #endif // iDialogColorChooser_h

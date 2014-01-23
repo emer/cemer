@@ -31,8 +31,8 @@ class TA_API DataGenCall : public StaticMethodCall {
   // call a taDataGen (data generation) function
 INHERITED(StaticMethodCall)
 public:
-  override String	GetToolbarName() const { return "data gen()"; }
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "data gen()"; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(DataGenCall);
 private:

@@ -28,7 +28,7 @@ class TA_API taiWidgetLinkListEditButton : public taiWidgetListEditButton {
 public:
   taiWidgetLinkListEditButton(void* base, TypeDef* tp, IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_ = 0);
-  override void         GetMethMenus(); // exclude certain methods here..
+  void         GetMethMenus() CPP11_OVERRIDE; // exclude certain methods here..
 };
 
 #endif // taiWidgetLinkListEditButton_h

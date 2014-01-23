@@ -33,7 +33,7 @@ INHERITED(taThreadMgr)
 public:
   taUndoMgr*    undo_mgr()      { return (taUndoMgr*)owner; }
 
-  override void Run();
+  void Run();
 
   TA_BASEFUNS_NOCOPY(UndoDiffThreadMgr);
 private:

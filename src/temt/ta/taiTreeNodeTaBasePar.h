@@ -34,7 +34,7 @@ public:
   taList_impl*          list() const {return ((taSigLinkTaOBase*)m_link)->list();}
 
   void                  AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
-  override void         UpdateChildNames(); // #IGNORE update child names of the indicated node
+  void         UpdateChildNames() CPP11_OVERRIDE; // #IGNORE update child names of the indicated node
 
   virtual bool          RebuildChildrenIfNeeded();
   // checks if child count != list count, and rebuilds children if so
@@ -45,16 +45,16 @@ public:
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeTaBasePar();
 public: // ISigLinkClient interface
-//  override void*      This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_taiTreeNodeTaBasePar;}
+//  void*      This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taiTreeNodeTaBasePar;}
 protected:
   taiTreeNode*      last_list_items_node; // #IGNORE last list member node created, so we know where to start group items
-  override void         SigEmit_impl(int sls, void* op1, void* op2);
-  override void         CreateChildren_impl();
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE;
+  void         CreateChildren_impl() CPP11_OVERRIDE;
   taiTreeNode*      CreateListItem(taiTreeNode* par_node,
     taiTreeNode* after, taBase* el);
   void                  UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
-  override void         willHaveChildren_impl(bool& will) const;
+  void         willHaveChildren_impl(bool& will) const CPP11_OVERRIDE;
 private:
   void                  init(taSigLinkTaOBase* link_, int dn_flags_); // #IGNORE
 };

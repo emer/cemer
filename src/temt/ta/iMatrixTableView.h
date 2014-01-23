@@ -33,8 +33,8 @@ INHERITED(iTableView)
 public:
   taMatrix*             mat() const;
 
-  override bool         isFixedRowCount() const;
-  override bool         isFixedColCount() const {return true;}
+  bool         isFixedRowCount() const CPP11_OVERRIDE;
+  bool         isFixedColCount() const CPP11_OVERRIDE {return true;}
 
   void                  GetSel(CellRange& sel);
    // gets current selection, factoring in BOT_ZERO if needed
@@ -42,10 +42,10 @@ public:
   iMatrixTableView(QWidget* parent = NULL);
 
 public: // cliphandler i/f
-  override void         EditAction(int ea);
-  override void         GetEditActionsEnabled(int& ea);
-  override void         ViewAction(int ea);
-  override void         ResetColorsAction(int ea);
+  void         EditAction(int ea) CPP11_OVERRIDE;
+  void         GetEditActionsEnabled(int& ea) CPP11_OVERRIDE;
+  void         ViewAction(int ea) CPP11_OVERRIDE;
+  void         ResetColorsAction(int ea) CPP11_OVERRIDE;
 };
 
 #endif // iMatrixTableView_h

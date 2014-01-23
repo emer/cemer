@@ -35,7 +35,7 @@ public:
           int flags, bool needs_edit_button, const char *tooltip);
 
   iLineEdit*            rep() const;
-  override bool         fillHor() { return true; }
+  bool         fillHor() CPP11_OVERRIDE { return true; }
   void                  setMinCharWidth(int num); // hint for min chars, 0=no min
 
   void                  GetImage(const String& val);
@@ -51,13 +51,13 @@ protected:
   QPointer<iLineEdit>   leText;
   QPointer<QToolButton> btnEdit; // if requested, button to invoke dialog editor
 #endif
-  override void         GetImage_impl(const void* base)      { GetImage(*((String*)base)); }
-  override void         GetValue_impl(void* base) const      { *((String*)base) = GetValue(); }
-  override void         GetImageVar_impl(const Variant& val) { GetImage(val.toString()); }
-  override void         GetValueVar_impl(Variant& val) const { val.updateFromString(GetValue()); }
-  override void         this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
-  override void         this_EditAction(int param); // for when control is clipboard handler
-  override void         this_SetActionsEnabled(); // for when control is clipboard handler
+  void         GetImage_impl(const void* base)      CPP11_OVERRIDE { GetImage(*((String*)base)); }
+  void         GetValue_impl(void* base) const      CPP11_OVERRIDE { *((String*)base) = GetValue(); }
+  void         GetImageVar_impl(const Variant& val) CPP11_OVERRIDE { GetImage(val.toString()); }
+  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE { val.updateFromString(GetValue()); }
+  void         this_GetEditActionsEnabled(int& ea) CPP11_OVERRIDE; // for when control is clipboard handler
+  void         this_EditAction(int param) CPP11_OVERRIDE; // for when control is clipboard handler
+  void         this_SetActionsEnabled() CPP11_OVERRIDE; // for when control is clipboard handler
 };
 
 

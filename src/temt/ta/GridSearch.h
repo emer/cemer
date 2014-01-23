@@ -33,9 +33,9 @@ public:
   int max_jobs; // The maximum number of jobs that may be run concurrently on the cluster.
 
   TA_BASEFUNS_NOCOPY(GridSearch)
-  override void Reset();
-  override bool CreateJobs();
-  override void ProcessResults();
+  void Reset() CPP11_OVERRIDE;
+  bool CreateJobs() CPP11_OVERRIDE;
+  void ProcessResults() CPP11_OVERRIDE;
 protected:
   String_PArray m_names;
   int_PArray m_counts;

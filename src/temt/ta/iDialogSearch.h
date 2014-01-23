@@ -121,11 +121,11 @@ public:
   void                  End(); // end all and display results
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iDialogSearch;}
-  override bool         ignoreSigEmit() const {return true;}
-  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) {}
-  override void         SigLinkDestroying(taSigLink* dl);
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iDialogSearch;}
+  bool         ignoreSigEmit() const CPP11_OVERRIDE {return true;}
+  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) CPP11_OVERRIDE {}
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
 
 
 protected:
@@ -152,7 +152,7 @@ protected:
            const String& href, const String& desc, const String& hits,
            const String& path, int relev);
 
-  override void         closeEvent(QCloseEvent * e);
+  void         closeEvent(QCloseEvent * e) CPP11_OVERRIDE;
 
   iDialogSearch(iMainWindowViewer* par_window_);
   ~iDialogSearch();

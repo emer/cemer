@@ -77,7 +77,7 @@ public:
   }
   // #CAT_CircModify add a new item to the circular buffer, shifting it left if length is at or above max_length to ensure a fixed overall length list (otherwise expanding list up to max_length)
 
-  override void Reset();
+  void Reset() CPP11_OVERRIDE;
 
   void  Copy_(const float_CircBuffer& cp);
   TA_BASEFUNS(float_CircBuffer);

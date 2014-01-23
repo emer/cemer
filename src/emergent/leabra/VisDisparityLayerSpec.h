@@ -53,14 +53,14 @@ public:
   // main function: compute disparity values into ext in units
 
   // these are two entry points for applying ext inputs depending on clamp.hard status
-  override void	Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
-  override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(VisDisparityLayerSpec);
 // protected:
-//   override void UpdateAfterEdit_impl();
+//   void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void	Initialize();
   void 	Destroy()		{ };

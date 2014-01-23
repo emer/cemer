@@ -46,8 +46,8 @@ public:
   inline void   GetXYZ(float& xx, float& yy, float& zz) {
     xx = (float)x; yy = (float)y; zz = (float)z;
   }
-  override void CopyToMatrixGeom(MatrixGeom& geom);
-  override void CopyToMatrixIndex(MatrixIndex& idx);
+  void CopyToMatrixGeom(MatrixGeom& geom) CPP11_OVERRIDE;
+  void CopyToMatrixIndex(MatrixIndex& idx) CPP11_OVERRIDE;
 
   void	ToMatrix(taMatrix& mat) const;
   // set values to a 1d matrix object (can be any type of matrix object)

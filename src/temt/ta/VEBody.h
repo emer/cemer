@@ -168,9 +168,9 @@ public:
 #endif
   void*         fixed_joint_id; // #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of joint used to fix a FIXED body
 
-  override int          GetEnabled() const {  return !HasBodyFlag(OFF); }
-  override void         SetEnabled(bool value) { SetBodyFlagState(OFF, !value); }
-  override String       GetDesc() const { return desc; }
+  int          GetEnabled() const CPP11_OVERRIDE {  return !HasBodyFlag(OFF); }
+  void         SetEnabled(bool value) CPP11_OVERRIDE { SetBodyFlagState(OFF, !value); }
+  String       GetDesc() const CPP11_OVERRIDE { return desc; }
   inline void           SetBodyFlag(BodyFlags flg)   { flags = (BodyFlags)(flags | flg); }
   // set body flag state on
   inline void           ClearBodyFlag(BodyFlags flg) { flags = (BodyFlags)(flags & ~flg); }
@@ -289,7 +289,7 @@ public:
 
   SIMPLE_COPY(VEBody);
   SIMPLE_INITLINKS(VEBody);
-  override void CutLinks();
+  void CutLinks() CPP11_OVERRIDE;
   TA_BASEFUNS(VEBody);
 protected:
   Shape         cur_shape;      // #IGNORE current shape that was previously set -- for detecting updates
@@ -298,7 +298,7 @@ protected:
   taQuaternion  prv_quat;      // #IGNORE previous cur_quat rotation value -- set prior to a Rotate function rotation, for use by UpdateCurFromRel
 
 
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy();

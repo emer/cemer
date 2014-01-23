@@ -31,15 +31,15 @@ INHERITED(taOBase)
 public:
   String                name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object
 
-  override bool HasName() const { return true; }
-  override bool SetName(const String& nm);
-  override String GetName() const  { return name; }
-  override void SetDefaultName();
-  override void MakeNameUnique();
+  bool HasName() const CPP11_OVERRIDE { return true; }
+  bool SetName(const String& nm) CPP11_OVERRIDE;
+  String GetName() const  CPP11_OVERRIDE { return name; }
+  void SetDefaultName() CPP11_OVERRIDE;
+  void MakeNameUnique() CPP11_OVERRIDE;
 
   TA_BASEFUNS(taNBase);
 protected:
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
 private:
   NOCOPY(taNBase); //note: we don't copy name, because it causes too many issues

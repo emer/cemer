@@ -40,7 +40,7 @@ public:
   ~iNumberBar();
 
   void setTextEdit( iTextEdit *edit );
-  override void paintEvent( QPaintEvent *ev );
+  void paintEvent( QPaintEvent *ev ) CPP11_OVERRIDE;
 
   virtual void	setLineFlags(int lineno, int flags);
   // set line flags for given line
@@ -74,9 +74,9 @@ public slots:
   // view source at cur_lineno
 
 protected:
-  override bool event( QEvent *ev );
-//   override void mousePressEvent (QMouseEvent * event);
-  override void contextMenuEvent ( QContextMenuEvent * event );
+  bool event( QEvent *ev ) CPP11_OVERRIDE;
+//   void mousePressEvent (QMouseEvent * event) CPP11_OVERRIDE;
+  void contextMenuEvent ( QContextMenuEvent * event ) CPP11_OVERRIDE;
 
   QVector<int>	line_flags;	// flags for each line of code
   int	cur_lineno;		// current line number -- for gui interactions

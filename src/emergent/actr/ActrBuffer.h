@@ -96,8 +96,8 @@ public:
   virtual void          UpdateState();
   // #CAT_ActR update buffer state -- call this whenver anything changes!
 
-  override String       GetDesc() const {return desc;}
-  override String 	GetTypeDecoKey() const { return "DataTable"; }
+  String       GetDesc() const CPP11_OVERRIDE {return desc;}
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
 
   TA_SIMPLE_BASEFUNS(ActrBuffer);
 private:

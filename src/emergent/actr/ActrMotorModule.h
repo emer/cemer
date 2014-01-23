@@ -39,7 +39,7 @@ public:
   float         inc_mouse_move;  // #DEF_0:0.05 :incremental-mouse-moves in ACT-R -- if non-zero, updates mouse location every inc_mouse_move seconds when it is in motion (typically 50 ms) -- if 0, only updates location at end of move
   float         def_targ_width; // #DEF_1 :default-target-width in ACT-R -- The effective width, in degrees of visual angle, of targets with undefined widths when computing the Fitt's law computation
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrMotorParams);
 private:
@@ -65,7 +65,7 @@ public:
     return rv;}
   // fitts law equation
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrMotorTimeParams);
 private:
@@ -238,12 +238,12 @@ public:
   virtual void  Clear_impl();
   // #IGNORE implement clearing
 
-  override void  InitModule();
-  override void  ProcessEvent(ActrEvent& event);
-  override bool  ProcessQuery(ActrBuffer* buf, const String& query,
-                             bool why_not = false);
-  override bool  SetParam(const String& param_nm, Variant par1, Variant par2);
-  override void  Init();
+  void  InitModule() CPP11_OVERRIDE;
+  void  ProcessEvent(ActrEvent& event) CPP11_OVERRIDE;
+  bool  ProcessQuery(ActrBuffer* buf, const String& query,
+                             bool why_not = false) CPP11_OVERRIDE;
+  bool  SetParam(const String& param_nm, Variant par1, Variant par2) CPP11_OVERRIDE;
+  void  Init() CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(ActrMotorModule);
 private:

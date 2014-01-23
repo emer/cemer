@@ -54,20 +54,20 @@ public:
   void                  UpdateMethodButtons();
   // update the method buttons, by calling on manager
 
-  override QWidget*     firstTabFocusWidget();
+  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
 
   iPanelSet(taiSigLink* dl_);
   ~iPanelSet();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-//  override void               SigLinkDestroying(taSigLink* dl) {} // nothing for us; subpanels handle
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelSet;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+//  void               SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE {} // nothing for us; subpanels handle
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelSet;}
 protected:
-  override void         SigEmit_impl(int sls, void* op1, void* op2); // dyn subpanel detection
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; // dyn subpanel detection
 
 protected:
-  override void         setCurrentPanelId_impl(int id);
+  void         setCurrentPanelId_impl(int id) CPP11_OVERRIDE;
   void                  AddMinibar();
   void                  AddMinibarCtrls();
   void                  AddMinibarCtrl(iPanel* pn);

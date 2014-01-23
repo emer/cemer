@@ -51,25 +51,25 @@ public: //
   taiEditorOfProgramCtrl()                { };
   ~taiEditorOfProgramCtrl();
 
-  override bool ShowMember(MemberDef* md) const; //
+  bool ShowMember(MemberDef* md) const CPP11_OVERRIDE; //
 
 protected: //
   // we maintain several lists to simply mgt and notify handling
   taBase_RefList        refs; // the data members from the Program
   taBase_RefList        refs_struct; // structural guys: arg and var lists themselves, gp
-  override void         Enum_Members();
-  override void         Constr_Widget_Labels();
-  override void         Cancel_impl();
-  override MemberDef*   GetMemberPropsForSelect(int sel_idx, taBase** base,
-    String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play
-  override void         GetValue_Membs_def();
-  override void         GetImage_Membs();
+  void         Enum_Members() CPP11_OVERRIDE;
+  void         Constr_Widget_Labels() CPP11_OVERRIDE;
+  void         Cancel_impl() CPP11_OVERRIDE;
+  MemberDef*   GetMemberPropsForSelect(int sel_idx, taBase** base,
+    String& lbl, String& desc) CPP11_OVERRIDE; // (use sel_item_idx) enables things like ProgCtrl to play
+  void         GetValue_Membs_def() CPP11_OVERRIDE;
+  void         GetImage_Membs() CPP11_OVERRIDE;
 
 public: // IRefListClient i/f
   TYPED_OBJECT(taiEditorOfProgramCtrl);
-  override void         SigDestroying_Ref(taBase_RefList* src, taBase* ta);
-  override void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int sls, void* op1, void* op2);
+  void         SigDestroying_Ref(taBase_RefList* src, taBase* ta) CPP11_OVERRIDE;
+  void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
+    int sls, void* op1, void* op2) CPP11_OVERRIDE;
 };
 
 

@@ -34,9 +34,9 @@ public:
   virtual void          NewDefaults();  // create a set of default colors
   virtual void          SetDefaultColor();// set the default color based on gui
 
-  override int          NumListCols() const;
-  override const KeyString GetListColKey(int col) const;
-  override String       GetColHeading(const KeyString& key) const; // header text for the indicated column
+  int          NumListCols() const CPP11_OVERRIDE;
+  const KeyString GetListColKey(int col) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE; // header text for the indicated column
 
   TA_BASEFUNS_NOCOPY(ColorScaleSpec_Group);
 private:

@@ -49,7 +49,7 @@ public:
   void          InitVals();
   // initialize various state vals
 
-  override String       GetTypeDecoKey() const { return "Layer"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
 
   void	Copy_(const KWTAVals& cp);
   TA_BASEFUNS(KWTAVals);
@@ -69,7 +69,7 @@ public:
   float		g_bar_i;	// adapting g_bar.i value 
   float		g_bar_l;	// adapting g_bar.l value 
 
-  override String       GetTypeDecoKey() const { return "Layer"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
 
   void	Copy_(const AdaptIVals& cp);
   TA_BASEFUNS(AdaptIVals);
@@ -89,7 +89,7 @@ public:
   float		gp_g_i;		// g_i from the layer or unit group, if applicable
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
 
-  override String       GetTypeDecoKey() const { return "Layer"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
 
   void	Init() 	{ Initialize(); }
   void	Copy_(const InhibVals& cp);

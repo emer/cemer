@@ -50,7 +50,7 @@ public:
 
   void	SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
 
-  override String 	GetTypeDecoKey() const { return "ProgArg"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgArg"; }
 
   TA_BASEFUNS_NOCOPY(DataOpList);
 private:

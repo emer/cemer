@@ -104,8 +104,8 @@ public:
   String_PArray lists;          // user-spec'd lists   (#LIST_xxx)
   taSigLink*   sig_link;
 
-  override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_TypeItem; }
+  void*        This() CPP11_OVERRIDE {return this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_TypeItem; }
   virtual TypeInfoKinds TypeInfoKind() const {return TIK_UNKNOWN;}
   virtual TypeDef*      GetOwnerType() const {return NULL;}
   virtual const String  GetPathName() const {return name;}

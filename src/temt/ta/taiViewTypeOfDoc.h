@@ -29,11 +29,11 @@ taTypeDef_Of(taiViewTypeOfDoc);
 class TA_API taiViewTypeOfDoc: public taiViewTypeOftaOBase {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfDoc, taiViewTypeOftaOBase) //
 public:
-  override int          BidForView(TypeDef*);
+  int          BidForView(TypeDef*) CPP11_OVERRIDE;
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override void         CreateDataPanel_impl(taiSigLink* dl_);
+  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
 };
 
 #endif // taiViewTypeOfDoc_h

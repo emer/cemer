@@ -31,7 +31,7 @@ class E_API ActrChunk_List : public taList<ActrChunk> {
 INHERITED(taList<ActrChunk>)
 public:
 
-  override String GetTypeDecoKey() const { return "ProgVar"; }
+  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
 
   TA_BASEFUNS_NOCOPY(ActrChunk_List);
 private:

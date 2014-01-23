@@ -43,8 +43,8 @@ public:
   // helper function for populating bit box with dyn enum values
 
 protected:
-  override void GetImage_impl(taiWidget* dat, const void* base);
-  override void GetMbrValue_impl(taiWidget* dat, void* base);
+  void GetImage_impl(taiWidget* dat, const void* base) CPP11_OVERRIDE;
+  void GetMbrValue_impl(taiWidget* dat, void* base) CPP11_OVERRIDE;
 
   bool          isBit; // true if a bits type enum
 

@@ -56,7 +56,7 @@ public:
   float  unit;          // #DEF_0.02 unit names and values
   int    un_nm_len;     // #DEF_3 unit name length -- used to compute output name font size
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   SIMPLE_COPY(NetViewFontSizes);
   TA_BASEFUNS(NetViewFontSizes);
@@ -88,7 +88,7 @@ public:
   float         laygp_width;    // #DEF_1 width of the layer group lines (as a line width, not as a geometry size relative to normalized network size)
   bool          show_laygp;     // #DEF_true whether to display layer group boxes in first place
 
-  override String       GetTypeDecoKey() const { return "Network"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Network"; }
 
   TA_SIMPLE_BASEFUNS(NetViewParams);
 private:
@@ -201,7 +201,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // display updating & rendering
 
-  override void         BuildAll();
+  void         BuildAll() CPP11_OVERRIDE;
   // creates fully populated subviews (but not So -- that is done in Render)
   virtual void          InitDisplay(bool init_panel = true);
   // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
@@ -280,22 +280,22 @@ public:
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
 
-  override bool         ShowDraggers() const { return lay_mv; }
-  override void         DataUnitsXForm(taVector3f& pos, taVector3f& size);
+  bool         ShowDraggers() const CPP11_OVERRIDE { return lay_mv; }
+  void         DataUnitsXForm(taVector3f& pos, taVector3f& size) CPP11_OVERRIDE;
 
-  override void         Dump_Load_post();
+  void         Dump_Load_post() CPP11_OVERRIDE;
 #ifndef __MAKETA__
-  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
-  override GuiContext   shType() const {return GC_DUAL_DEF_VIEW;}
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE;
+  GuiContext   shType() const CPP11_OVERRIDE {return GC_DUAL_DEF_VIEW;}
 #endif
-  override const iColor bgColor(bool& ok) const; // #IGNORE 
-  override void         InitLinks();
-  override void         CutLinks();
-  override void         ChildUpdateAfterEdit(taBase* child, bool& handled);
+  const iColor bgColor(bool& ok) const CPP11_OVERRIDE; // #IGNORE 
+  void         InitLinks() CPP11_OVERRIDE;
+  void         CutLinks() CPP11_OVERRIDE;
+  void         ChildUpdateAfterEdit(taBase* child, bool& handled) CPP11_OVERRIDE;
   T3_DATAVIEWFUNS(NetView, T3DataViewMain) //
 
 // ISelectable i/f
-  override bool         hasViewProperties() const { return true; } //TODO: NUKE, OBS
+  bool         hasViewProperties() const CPP11_OVERRIDE { return true; } //TODO: NUKE, OBS
 
 protected:
   T3DataView_PtrList    prjns;          // #IGNORE list of prjn objects under us
@@ -303,18 +303,18 @@ protected:
   bool                  no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
   LayerLayout   	prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
 
-  override void         UpdateAfterEdit_impl();
-  override void         ChildAdding(taDataView* child); // #IGNORE also add to aux list
-  override void         ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
-  override void         SigRecvUpdateView_impl();
-  override void         SigRecvUpdateAfterEdit_impl(); //
-  override void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
-  override void         OnWindowBind_impl(iT3Panel* vw);
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl(); // #IGNORE
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         ChildAdding(taDataView* child) CPP11_OVERRIDE; // #IGNORE also add to aux list
+  void         ChildRemoving(taDataView* child) CPP11_OVERRIDE; // #IGNORE also remove from aux list
+  void         SigRecvUpdateView_impl() CPP11_OVERRIDE;
+  void         SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE; //
+  void         SigRecvUpdateAfterEdit_Child_impl(taDataView* chld) CPP11_OVERRIDE; // called by lays and prjns
+  void         OnWindowBind_impl(iT3Panel* vw) CPP11_OVERRIDE;
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
   void                  Render_net_text();
   void                  Render_wt_lines();
-  override void         Reset_impl(); // #IGNORE
+  void         Reset_impl() CPP11_OVERRIDE; // #IGNORE
   void                  UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void                  viewWin_NotifySignal(ISelectableHost* src, int op);
 private:

@@ -33,7 +33,7 @@ INHERITED(taGroup<taDoc>)
 public:
   virtual void          AutoEdit();
 
-  override String       GetTypeDecoKey() const { return "Doc"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Doc"; }
   TA_BASEFUNS(Doc_Group);
 private:
   NOCOPY(Doc_Group)

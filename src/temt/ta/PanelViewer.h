@@ -40,7 +40,7 @@ public:
 
   TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // #IGNORE
 private:
   NOCOPY(PanelViewer)
   void                  Initialize();

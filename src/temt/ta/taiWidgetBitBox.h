@@ -78,8 +78,8 @@ signals:
 
 protected:
   int           m_val; //#IGNORE
-  override void         GetImageVar_impl(const Variant& val)  {GetImage(val.toInt());}
-  override void         GetValueVar_impl(Variant& val) const
+  void         GetImageVar_impl(const Variant& val)  CPP11_OVERRIDE {GetImage(val.toInt());}
+  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE
     {int i; GetValue(i); val = i;}
 private:
   void          Initialize(QWidget* gui_parent_);

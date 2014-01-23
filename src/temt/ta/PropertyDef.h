@@ -44,14 +44,14 @@ public:
   ta_prop_get_fun       prop_get; // stub function to get the property (as Variant)
   ta_prop_set_fun       prop_set; // stub function to set the property (as Variant)
 
-  override bool         isReadOnly() const;
-  override bool         isGuiReadOnly() const;
+  bool         isReadOnly() const CPP11_OVERRIDE;
+  bool         isGuiReadOnly() const CPP11_OVERRIDE;
   void                  setType(TypeDef* typ); // use this, to check for consistency between the various source -- should NOT be null!
-  override TypeInfoKinds TypeInfoKind() const {return TIK_PROPERTY;}
-  override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_PropertyDef;}
-  override bool         ValIsDefault(const void* base,
-                                     int for_show) const; // = taMisc::IS_EXPERT
+  TypeInfoKinds TypeInfoKind() const CPP11_OVERRIDE {return TIK_PROPERTY;}
+  void*        This() CPP11_OVERRIDE {return this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_PropertyDef;}
+  bool         ValIsDefault(const void* base,
+                            int for_show) const CPP11_OVERRIDE; // = taMisc::IS_EXPERT
   // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
 
   void                  Copy(const PropertyDef& cp);
@@ -65,8 +65,8 @@ public:
   PropertyDef*  Clone()         { return new PropertyDef(*this); }
   PropertyDef*  MakeToken()     { return new PropertyDef(); }
 
-  override const Variant GetValVar(const void* base) const;
-  override void SetValVar(const Variant& val, void* base, void* par = NULL);
+  const Variant GetValVar(const void* base) const CPP11_OVERRIDE;
+  void SetValVar(const Variant& val, void* base, void* par = NULL) CPP11_OVERRIDE;
     // note: par is only needed really needed for owned taBase ptrs)
 
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;

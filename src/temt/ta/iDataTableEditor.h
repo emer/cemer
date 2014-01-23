@@ -78,18 +78,18 @@ public slots:
   void                  tvTable_layoutChanged(); // #IGNORE
 
 public: // ITypedObject i/f
-  override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iDataTableEditor;}
+  void*        This() CPP11_OVERRIDE {return this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iDataTableEditor;}
 
 public: // ISelectableHost i/f
-  override bool         hasMultiSelect() const {return false;} // always
-  override QWidget*     widget() {return this;} //
+  bool         hasMultiSelect() const CPP11_OVERRIDE {return false;} // always
+  QWidget*     widget() CPP11_OVERRIDE {return this;} //
 protected:
-  override void         UpdateSelectedItems_impl(); //
+  void         UpdateSelectedItems_impl() CPP11_OVERRIDE; //
 
 public: // ISigLinkClient i/f
-  override void         SigLinkDestroying(taSigLink* dl);
-  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
 
 protected:
   DataTableRef          m_dt;
@@ -97,7 +97,7 @@ protected:
   taMatrixPtr           m_cell; // current cell
   QModelIndex           m_cell_index; // we keep this to refresh cell if data changes
 
-  override bool         eventFilter(QObject* obj, QEvent* event);
+  bool         eventFilter(QObject* obj, QEvent* event) CPP11_OVERRIDE;
 
   void                  setCellMat(taMatrix* cell, const QModelIndex& index,
                                    bool pat_4d = false);

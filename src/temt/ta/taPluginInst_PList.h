@@ -31,7 +31,7 @@ public:
   taPluginInst_PList() {}
   ~taPluginInst_PList() {Reset();}
 protected:
-  override void		El_Done_(void* it) { delete ((taPluginInst*)it);}
+  void		El_Done_(void* it) CPP11_OVERRIDE { delete ((taPluginInst*)it);}
 };
 
 #endif // taPluginInst_PList_h

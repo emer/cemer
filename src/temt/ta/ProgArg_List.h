@@ -39,19 +39,19 @@ public:
   virtual bool  UpdateFromMethod(MethodDef* md);
   // update our list of args based on method def arguments -- returns true if updated
 
-  override String GetTypeDecoKey() const { return "ProgArg"; }
+  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgArg"; }
   virtual const String  GenCssArgs();
 
   virtual void  UpdateProgExpr_NewOwner();
   // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
 
-  override bool         BrowserSelectMe();
-  override bool         BrowserExpandAll();
-  override bool         BrowserCollapseAll();
+  bool         BrowserSelectMe() CPP11_OVERRIDE;
+  bool         BrowserExpandAll() CPP11_OVERRIDE;
+  bool         BrowserCollapseAll() CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(ProgArg_List);
 protected:
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
+  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy() {Reset();}

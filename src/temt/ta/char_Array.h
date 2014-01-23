@@ -34,7 +34,7 @@ public:
   TA_BASEFUNS(char_Array);
   TA_ARRAY_FUNS(char_Array, char)
 protected:
-  override Variant      El_GetVar_(const void* itm) const
+  Variant      El_GetVar_(const void* itm) const CPP11_OVERRIDE
     { return (Variant)(*(char*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((char*)a) > *((char*)b)) rval=1; else if(*((char*)a) == *((char*)b)) rval=0; return rval; }

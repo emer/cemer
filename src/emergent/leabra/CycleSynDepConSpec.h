@@ -44,7 +44,7 @@ public:
     if(effwt < 0.0f) effwt = 0.0f;
   }
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   SIMPLE_COPY(CycleSynDepSpec);
   TA_BASEFUNS(CycleSynDepSpec);
@@ -75,8 +75,8 @@ public:
   { syn_dep.Depress(effwt, wt, ru_act, su_act); }
   // #IGNORE 
 
-  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) {
+  inline void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) CPP11_OVERRIDE {
     float* wts = cg->OwnCnVar(WT);
     float* effs = cg->OwnCnVar(EFFWT);
     const float su_act = su->act_eq;
@@ -99,18 +99,18 @@ public:
     CON_GROUP_LOOP(cg, C_Reset_EffWt(effs[i], wts[i]));
   }
   // #IGNORE 
-  inline override void 	C_Init_Weights_post(BaseCons* cg, const int idx,
-                                            Unit* ru, Unit* su, Network* net) {
+  inline void 	C_Init_Weights_post(BaseCons* cg, const int idx,
+                                            Unit* ru, Unit* su, Network* net) CPP11_OVERRIDE {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
     cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net);
   }
   // #IGNORE 
-  inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                const int thread_no, const float su_act_delta)
+  inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+                                const int thread_no, const float su_act_delta) CPP11_OVERRIDE
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
   // #IGNORE use effwt instead of wt
 
-  inline override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE {
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt

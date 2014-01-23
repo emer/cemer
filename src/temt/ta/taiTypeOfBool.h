@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfBool);
 class TA_API taiTypeOfBool : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfBool, taiType);
 public:
-  override bool handlesReadOnly() const { return true; } // uses a RO iCheckBox
+  bool handlesReadOnly() const CPP11_OVERRIDE { return true; } // uses a RO iCheckBox
 
   int           BidForType(TypeDef* td);
 protected:

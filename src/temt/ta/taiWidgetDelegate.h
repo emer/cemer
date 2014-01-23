@@ -52,16 +52,16 @@ public:
   taiWidgetDelegate(taiEditorOfClass* edh_);
 
 public: // overrides
-  override QWidget*     createEditor(QWidget* parent,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  override void         paint(QPainter* painter, const QStyleOptionViewItem& option,
-    const QModelIndex& index) const;
-  override void         setEditorData(QWidget* editor,
-    const QModelIndex& index) const;
-  override void         setModelData(QWidget* editor, QAbstractItemModel* model,
-    const QModelIndex& index ) const;
-  override QSize        sizeHint(const QStyleOptionViewItem& option,
-    const QModelIndex& index) const;
+  QWidget*     createEditor(QWidget* parent,
+    const QStyleOptionViewItem& option, const QModelIndex& index) const CPP11_OVERRIDE;
+  void         paint(QPainter* painter, const QStyleOptionViewItem& option,
+    const QModelIndex& index) const CPP11_OVERRIDE;
+  void         setEditorData(QWidget* editor,
+    const QModelIndex& index) const CPP11_OVERRIDE;
+  void         setModelData(QWidget* editor, QAbstractItemModel* model,
+    const QModelIndex& index ) const CPP11_OVERRIDE;
+  QSize        sizeHint(const QStyleOptionViewItem& option,
+    const QModelIndex& index) const CPP11_OVERRIDE;
 protected:
   mutable QPointer<taiWidget> dat; // most recently created
   mutable QPointer<QWidget> rep; // most recently created
@@ -69,7 +69,7 @@ protected:
   mutable QSize         sh; // current size hint -- we return greatest
   mutable QPointer<QHBoxLayout> hbl;
 
-  override bool         eventFilter(QObject* object, QEvent* event); // replace
+  bool         eventFilter(QObject* object, QEvent* event) CPP11_OVERRIDE; // replace
   virtual void          EditorCreated(QWidget* parent, QWidget* editor,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
 

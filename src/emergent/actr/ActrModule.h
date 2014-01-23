@@ -91,8 +91,8 @@ public:
   virtual bool  RequestBufferClear(ActrBuffer* buf);
   // #CAT_ActR call this at start of a request event
 
-  override String       GetDesc() const {return desc;}
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetDesc() const CPP11_OVERRIDE {return desc;}
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrModule);
 private:

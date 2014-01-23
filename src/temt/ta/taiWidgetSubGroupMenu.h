@@ -35,7 +35,7 @@ public:
 //  taGroup_impl*      chs_obj;        // object chosen by the chooser
 
   void          GetMenu(iMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
-  override void GetMenu(taiWidgetActions* menu, iMenuAction* actn = NULL);
+  void GetMenu(taiWidgetActions* menu, iMenuAction* actn = NULL) CPP11_OVERRIDE;
   virtual void  UpdateMenu(iMenuAction* actn = NULL);
 
   QWidget*      GetRep();

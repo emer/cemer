@@ -29,7 +29,7 @@ class TA_API taiWidgetListElChooser : public taiWidgetListElChooser_base {
 public:
   taList_impl*               list;
 
-  override const String titleText();
+  const String titleText() CPP11_OVERRIDE;
 
   using inherited::GetImage;
   void                  GetImage(taList_impl* base_lst, taBase* it);

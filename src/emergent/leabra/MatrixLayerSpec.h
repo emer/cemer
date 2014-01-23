@@ -36,7 +36,7 @@ public:
   float		nogo_deep_gain;	// #DEF_0:0.5 #MIN_0 if matrix NoGo recv's a marker con from PFC layer, this will drive excitation with this gain factor from average act_ctxt to NoGo to bias continued maintenance once information has been gated
   float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
 protected:
@@ -59,7 +59,7 @@ public:
   float		nogo_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for nogo neurons
   float		nogo_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for nogo neurons
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(MatrixGoNogoGainSpec);
 protected:
@@ -109,7 +109,7 @@ public:
   // compute NoGo netinput modulations 
 
   // this is hook for modulating netinput according to above inhib factors
-  override void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   virtual void Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
@@ -136,17 +136,17 @@ public:
   virtual  void NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net);
   // name the matrix units according to their functional role -- i = input, m = maint, o = output -- these names are used to support different learning rules for these different types
 
-  override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   { return true; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE
   {return false; }
 
-  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+  TypeDef* 	UnGpDataType()  CPP11_OVERRIDE { return &TA_PBWMUnGpData; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

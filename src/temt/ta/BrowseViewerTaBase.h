@@ -40,8 +40,8 @@ public:
 
   taSmartRef            m_root;
 
-  override void*        root() {return (void*)m_root.ptr();}
-  override taiSigLink* rootLink() {return (m_root) ?
+  void*        root() CPP11_OVERRIDE {return (void*)m_root.ptr();}
+  taiSigLink* rootLink()  CPP11_OVERRIDE {return (m_root) ?
     (taiSigLink*)m_root->GetSigLink() : NULL;}
 
   void  UpdateAfterEdit(); // if root deletes, our window must die
@@ -50,7 +50,7 @@ public:
   TA_DATAVIEWFUNS(BrowseViewerTaBase, BrowseViewer) //
 
 protected:
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // #IGNORE
 
 
 private:

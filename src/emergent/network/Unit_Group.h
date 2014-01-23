@@ -123,23 +123,23 @@ public:
   // #CAT_Activation Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
   // implement save_rmv_units:
-  override bool Dump_QuerySaveChildren();
-  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+  bool Dump_QuerySaveChildren() CPP11_OVERRIDE;
+  taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                        MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const CPP11_OVERRIDE;
 
   // we maintain our index in any owning list
-  override int  GetIndex() const { return idx; }
-  override void SetIndex(int i) { idx = i; }
+  int  GetIndex() const CPP11_OVERRIDE { return idx; }
+  void SetIndex(int i) CPP11_OVERRIDE { idx = i; }
 
-  override String       GetTypeDecoKey() const { return "Unit"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Unit"; }
 
   void  InitLinks();
   void  CutLinks();
   void  Copy_(const Unit_Group& cp);
   TA_BASEFUNS(Unit_Group);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy()               { CutLinks(); }

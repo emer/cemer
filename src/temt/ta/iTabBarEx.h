@@ -34,7 +34,7 @@ public:
 
 protected:
   iTabWidget*           m_tab_widget;
-  override void contextMenuEvent(QContextMenuEvent* ev);
+  void contextMenuEvent(QContextMenuEvent* ev) CPP11_OVERRIDE;
 };
 
 

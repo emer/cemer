@@ -38,8 +38,8 @@ public:
 		      float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
-  override void	 setAppearance_impl(float act, const T3Color& color,
-    float max_z, float trans, bool act_invalid);
+  void	 setAppearance_impl(float act, const T3Color& color,
+    float max_z, float trans, bool act_invalid) CPP11_OVERRIDE;
   ~T3UnitNode_Cylinder();
 private:
   SoCylinder*		shape_; //#IGNORE

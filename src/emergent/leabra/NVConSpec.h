@@ -49,8 +49,8 @@ public:
   }
   // #IGNORE
 
-  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) {
+  inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) CPP11_OVERRIDE {
     float dkfact = cur_lrate * decay;
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -63,13 +63,13 @@ public:
     //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 
-  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) {
+  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                 LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
-  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                   LeabraNetwork* net) {
+  inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                   LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 

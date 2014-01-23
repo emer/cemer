@@ -48,15 +48,15 @@ public:
   ~taBase_FunCallList() {Reset();}
 
 public: // ITypedObject interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_taBase_FunCallList;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taBase_FunCallList;}
 
 public: // ISigLinkClient interface
-  override void         SigLinkDestroying(taSigLink* dl);
-  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {}
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE {}
 
 protected:
-  override void El_Done_(void* it); // unref link
+  void El_Done_(void* it) CPP11_OVERRIDE; // unref link
 
 private:
   void Initialize();

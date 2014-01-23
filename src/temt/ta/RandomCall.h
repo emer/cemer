@@ -31,9 +31,9 @@ class TA_API RandomCall : public StaticMethodCall {
   // call a Random number generation function
 INHERITED(StaticMethodCall)
 public:
-  override String	GetToolbarName() const { return "random()"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "random()"; }
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(RandomCall);
 private:

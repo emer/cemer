@@ -53,7 +53,7 @@ protected:
   virtual void          closeEvent_Handler(QCloseEvent* e,
     CancelOp def_cancel_op = CO_PROCEED);
     // default says "proceed", delegates decision to viewer; call with CO_NOT_CANCELLABLE for unconditional
-  virtual void          Constr_impl() {} // override for virtual construction (called after new)
+  virtual void          Constr_impl() {} // for virtual const CPP11_OVERRIDEruction (called after new)
   virtual void          Constr_post() {} // called virtually, in DV::Constr_post -- entire win struct is now available
   virtual void          OnClosing_impl(CancelOp& cancel_op); // invoked in dtor (uncancellable); you should also invoke in the closeEvent (maybe cancellable)
   virtual void          Refresh_impl() {}

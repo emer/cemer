@@ -56,10 +56,10 @@ public:
   virtual void     LogEvent(ActrModel* mod, DataTable* dt);
   // #CAT_ActR log the event to a log_table configured by ActrModel with relevant columns
 
-  override String& Print(String& strm, int indent = 0) const;
-  override String  GetDisplayName() const;
-  override String  GetTypeDecoKey() const { return "Program"; }
-  override String  GetDesc() const;
+  String& Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
+  String  GetDisplayName() const CPP11_OVERRIDE;
+  String  GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
+  String  GetDesc() const CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(ActrEvent);
 private:

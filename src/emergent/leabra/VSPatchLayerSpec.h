@@ -33,7 +33,7 @@ public:
   virtual void  Compute_PVPlus(LeabraLayer* lay, LeabraNetwork* net);
   // compute the PV-driven plus phase activations
 
-  override void PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

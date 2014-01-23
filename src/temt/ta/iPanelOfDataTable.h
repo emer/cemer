@@ -37,31 +37,31 @@ public:
   iDataTableEditor*     dte;
 
   DataTable*            dt() const {return (m_link) ? (DataTable*)(link()->data()) : NULL;}
-  override String       panel_type() const; // this string is on the subpanel button for this panel
+  virtual String        panel_type() const; // this string is on the subpanel button for this panel
 
-  override int          EditAction(int ea);
-  override int          GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+  virtual int           EditAction(int ea);
+  virtual int           GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   void                  GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
 
-  override QWidget*     firstTabFocusWidget();
+  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
 
   iPanelOfDataTable(taiSigLink* dl_);
   ~iPanelOfDataTable();
 
 protected:
-  override void         GetWinState_impl(); // when saving view state
-  override void         SetWinState_impl(); // when showing, from view state
+  void         GetWinState_impl() CPP11_OVERRIDE; // when saving view state
+  void         SetWinState_impl() CPP11_OVERRIDE; // when showing, from view state
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfDataTable;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfDataTable;}
 protected:
-  override void         SigEmit_impl(int sls, void* op1, void* op2); //
-//  override int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
+//  int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL) CPP11_OVERRIDE;
 
 protected:
-  override void         Render_impl();
-  override void         UpdatePanel_impl();
+  void         Render_impl() CPP11_OVERRIDE;
+  void         UpdatePanel_impl() CPP11_OVERRIDE;
 
 protected slots:
   void                  tv_hasFocus(iTableView* sender); // for both tableviews

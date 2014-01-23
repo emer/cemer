@@ -33,8 +33,8 @@ public:
   ~taiWidgetField();
 
 protected slots:
-  override void         btnEdit_clicked(bool);
-  override void         lookupKeyPressed();
+  void         btnEdit_clicked(bool) CPP11_OVERRIDE;
+  void         lookupKeyPressed() CPP11_OVERRIDE;
   void                  lookupKeyPressed_dialog();
 
 public:

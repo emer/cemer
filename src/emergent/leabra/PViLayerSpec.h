@@ -35,7 +35,7 @@ public:
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
   bool		no_y_dot; // #DEF_false if true do not use y-dot for phasic DA calculation (PVi)
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PVMiscSpec);
 protected:
@@ -69,13 +69,13 @@ public:
     // #IGNORE
 
   // overrides:
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-  override bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) CPP11_OVERRIDE { return false; }
 
-  override void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
-  override bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
-  override bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
+  void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

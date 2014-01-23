@@ -40,12 +40,12 @@ public:
   TA_BASEFUNS_NOCOPY(taiObjectsMimeItem);
   
 public: // TAI_xxx instance interface -- used for dynamic creation
-  override taiMimeItem* Extract(taiMimeSource* ms, 
-    const String& mimetype = _nilString);
+  taiMimeItem* Extract(taiMimeSource* ms, 
+    const String& mimetype = _nilString) CPP11_OVERRIDE;
 
 protected:
   mutable signed char	m_all_base; // 0=unknown; -1 no, 1=yes
-  override bool		Constr_impl(const String&);
+  bool		Constr_impl(const String&) CPP11_OVERRIDE;
 private:
   void	Initialize();
   void	Destroy() {}

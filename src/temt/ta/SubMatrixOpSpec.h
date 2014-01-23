@@ -36,7 +36,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(SubMatrixOpSpec);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
 private:
   void	Initialize();

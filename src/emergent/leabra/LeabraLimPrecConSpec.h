@@ -50,27 +50,27 @@ public:
   }
   // #IGNORE
 
-  inline override void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                  LeabraNetwork* net) {
+  inline void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                                  LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_Weights_LeabraCHL(cg, su, net);
     Compute_LimPrecWts(cg, su, net);
   }
 
-  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                     LeabraNetwork* net) {
+  inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                     LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
     Compute_LimPrecWts(cg, su, net);
   }
 
-  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) {
+  inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_Weights_CtLeabraCAL(cg, su, net);
     Compute_LimPrecWts(cg, su, net);
   }
 
   // NOTE: bias weights typically not subject to limited precision!
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   SIMPLE_COPY(LeabraLimPrecConSpec);
   TA_BASEFUNS(LeabraLimPrecConSpec);

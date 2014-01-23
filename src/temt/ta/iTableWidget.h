@@ -37,7 +37,7 @@ public:
 
 
 protected:
-  override void         keyPressEvent(QKeyEvent* e);
+  void         keyPressEvent(QKeyEvent* e) CPP11_OVERRIDE;
 };
 
 #endif // iTableWidget_h

@@ -44,10 +44,10 @@ public:
   T3UnitNode*           node_so() const {return (T3UnitNode*)inherited::node_so();}
   NetView*              getNetView();
 
-  override void         CutLinks();
+  void         CutLinks() CPP11_OVERRIDE;
   T3_DATAVIEWFUNS(UnitView, T3DataView)
 protected:
-  override void         Render_pre(); //
+  void         Render_pre() CPP11_OVERRIDE; //
   // note: _impl is done by the LayerView
 private:
   void Copy_(const UnitView& cp) {m_nv = NULL;}

@@ -42,8 +42,8 @@ public:
   void*                 root() {return (browser()) ? browser()->root() : NULL;}
   TypeDef*              root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
   MemberDef*            root_md() {return (browser()) ? browser()->root_md : NULL;} //
-  taiSigLink*          rootLink() {return (browser()) ? browser()->rootLink() : NULL;}
-  override int          stretchFactor() const {return 1;} //  1/2 default
+  taiSigLink*           rootLink() {return (browser()) ? browser()->rootLink() : NULL;}
+  virtual int           stretchFactor() const {return 1;} //  1/2 default
 
   void                  Reset();
   virtual void          ApplyRoot(); // #IGNORE actually applies the new root value
@@ -60,7 +60,7 @@ protected slots:
     ISelectable_PtrList& sel_items, taiWidgetActions* menu);
 
 protected: // IViewerWidget i/f
-  override void         Refresh_impl();
+  void         Refresh_impl() CPP11_OVERRIDE;
 
 protected:
   int                   mnuBrowseNodeDrop_param;

@@ -56,7 +56,7 @@ public:
   { return NetScale() * SLayActScale(savg, lay_sz, n_cons); }
   // full scaling factor -- product of above two sub-factors
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(WtScaleSpec);
 protected:
@@ -77,7 +77,7 @@ public:
   float		abs;		// #CONDSHOW_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// #CONDSHOW_ON_init [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(WtScaleSpecInit);
 protected:
@@ -137,7 +137,7 @@ public:
   }
   // get linear weight from sigmoidal contrast-enhanced weight
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(WtSigSpec);
 protected:
@@ -163,7 +163,7 @@ public:
   inline float	EffWt(const float swt, const float lwt)
   { return stable_pct * swt + learn_pct * lwt; }
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(StableMixSpec);
 protected:
@@ -185,7 +185,7 @@ public:
   float		err;		// #READ_ONLY #SHOW [Default: .999] amount of error driven learning, automatically computed to be 1-hebb
   bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt)
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
 protected:
@@ -249,7 +249,7 @@ public:
   }
   // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
@@ -271,7 +271,7 @@ public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(SAvgCorSpec);
 protected:
@@ -301,7 +301,7 @@ public:
   virtual bool	CheckInTolerance(float trg, float val);
   // check if value is inside the tolerance from trg
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(AdaptRelNetinSpec);
 protected:
@@ -375,20 +375,20 @@ public:
   inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
-  inline override void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net)
+  inline void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+                                       Network* net) CPP11_OVERRIDE
   { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->Cn(idx,PDW,net) = 0.0f; }
   // #IGNORE
 
-  inline override void Init_Weights(RecvCons* cg, Unit* ru, Network* net)
+  inline void Init_Weights(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE
   { inherited::Init_Weights(cg, ru, net);
     if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
       wt_scale.rel = wt_scale_init.rel; } }
   // #IGNORE
 
   // note: following is called after loading weights too
-  inline override void   C_Init_Weights_post(BaseCons* cg, const int idx, Unit* ru,
-                                             Unit* su, Network* net)
+  inline void   C_Init_Weights_post(BaseCons* cg, const int idx, Unit* ru,
+                                             Unit* su, Network* net) CPP11_OVERRIDE
   { cg->Cn(idx,SWT,net) = cg->Cn(idx,LWT,net) = cg->Cn(idx,WT,net); }
   // #IGNORE
 
@@ -701,7 +701,7 @@ public:
                            int n_recv_cons=5, bool norm_con_n=true);
   // #BUTTON helper for converting from old wt_scale computation to new one -- enter parameters for the sending layer kwta pct (overall layer activit), number of receiving connections, and whether the norm_con_n flag was on or off (effectively always on in new version) -- it reports what the effective weight scaling was in the old version, what it is in the new version, and what you should set the wt_scale.abs to to get equivalent performance, assuming wt_scale.abs reflects what was set previously
 
-  override bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
+  bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false) CPP11_OVERRIDE;
   // check for for misc configuration settings required by different algorithms
 
   void	InitLinks();

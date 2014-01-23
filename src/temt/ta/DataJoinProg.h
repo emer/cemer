@@ -38,17 +38,17 @@ public:
 
   virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
 
-  override void	UpdateSpecDataTable();
+  void	UpdateSpecDataTable() CPP11_OVERRIDE;
 
-  override String GetDisplayName() const;
-  override String	GetToolbarName() const { return "join"; }
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "join"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataJoinProg);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		GenCssBody_impl(Program* prog); 
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
 
 private:
   void	Initialize();

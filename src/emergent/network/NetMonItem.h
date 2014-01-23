@@ -124,10 +124,10 @@ protected:
 
   void	UpdateAfterEdit_impl();
   int			cell_num; // current cell number, when adding mon vals
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		SmartRef_SigDestroying(taSmartRef* ref, taBase* obj);
-  override void		SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-					     int sls, void* op1_, void* op2_);
+  void		CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) CPP11_OVERRIDE;
+  void		SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+					     int sls, void* op1_, void* op2_) CPP11_OVERRIDE;
 
   ChannelSpec* 		AddScalarChan(const String& valname, ValType vt);
   ChannelSpec* 		AddScalarChan_Agg(const String& valname, ValType vt);

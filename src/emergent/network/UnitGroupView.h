@@ -52,7 +52,7 @@ public:
   void                  SetLayerView(LayerView* l) { m_lv = l; }
 
   void                  AllocUnitViewData(); // make sure we have correct space in uvd storage
-  override void         BuildAll(); // creates fully populated subviews
+  void         BuildAll() CPP11_OVERRIDE; // creates fully populated subviews
   virtual void          InitDisplay();
 
   float                 GetUnitDisplayVal(const taVector2i& co, void*& base);
@@ -74,8 +74,8 @@ public:
   virtual void          SaveHist();
   // save current values to usv_hist history -- saves all the possible variables, not just currently displayed one (expensive but worth it..)
 
-  override void         InitLinks();
-  override void         CutLinks();
+  void         InitLinks() CPP11_OVERRIDE;
+  void         CutLinks() CPP11_OVERRIDE;
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
   LayerView*            m_lv;
@@ -86,15 +86,15 @@ protected:
   // for cons
   void          UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
   // for bias vals
-  override void         DoActionChildren_impl(DataViewAction acts);
+  void         DoActionChildren_impl(DataViewAction acts) CPP11_OVERRIDE;
   virtual void          Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void          Render_impl_blocks(); // optimized blocks
   virtual void          Render_impl_outnm(); // output name
   virtual void          Render_impl_snap_bord(); // snap border
 
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl(); // #IGNORE
-  override void         Reset_impl(); // #IGNORE
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
+  void         Reset_impl() CPP11_OVERRIDE; // #IGNORE
 private:
   NOCOPY(UnitGroupView)
   void                  Initialize();

@@ -45,34 +45,34 @@ public:
   ProgEl_List           fun_code;
   // the function code (list of program elements)
 
-  override int          ProgElChildrenCount() const { return fun_code.size; }
+  int          ProgElChildrenCount() const CPP11_OVERRIDE { return fun_code.size; }
 
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
 
-  override ProgVar*     FindVarName(const String& var_nm) const;
-  override String       GetDisplayName() const;
-  override String       GetTypeDecoKey() const { return "Function"; }
-  override String       GetToolbarName() const { return "fun def"; }
+  ProgVar*     FindVarName(const String& var_nm) const CPP11_OVERRIDE;
+  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
+  String       GetToolbarName() const CPP11_OVERRIDE { return "fun def"; }
 
   // below from taNBase for name:
-  override bool		HasName() const { return true; }
-  override bool         SetName(const String& nm);
-  override String       GetName() const { return name; }
-  override void 	SetDefaultName();
-  override void 	MakeNameUnique();
+  bool		HasName() const CPP11_OVERRIDE { return true; }
+  bool         SetName(const String& nm) CPP11_OVERRIDE;
+  String       GetName() const CPP11_OVERRIDE { return name; }
+  void 	SetDefaultName() CPP11_OVERRIDE;
+  void 	MakeNameUnique() CPP11_OVERRIDE;
 
-  override void         InitLinks();
+  void         InitLinks() CPP11_OVERRIDE;
   void Copy_(const Function& cp);
   TA_BASEFUNS(Function);
 protected:
-  override void         UpdateAfterEdit_impl();
-  override void         UpdateAfterCopy(const ProgEl& cp);
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         CheckThisConfig_impl(bool quiet, bool& rval);
-  override void         PreGenChildren_impl(int& item_id);
-  override void         GenCssBody_impl(Program* prog);
-  override const String GenListing_children(int indent_level);
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         UpdateAfterCopy(const ProgEl& cp) CPP11_OVERRIDE;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
+  void         GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  const String GenListing_children(int indent_level) CPP11_OVERRIDE;
 
 private:
   void  Initialize();

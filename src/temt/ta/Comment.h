@@ -29,18 +29,18 @@ class TA_API Comment: public ProgEl {
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)
 public:
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override String	GetDisplayName() const;
-  override String	GetTypeDecoKey() const { return "Comment"; }
-  override String	GetToolbarName() const { return "comment"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetTypeDecoKey() const CPP11_OVERRIDE { return "Comment"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "comment"; }
 
   PROGEL_SIMPLE_BASEFUNS(Comment);
 protected:
-  override bool		useDesc() const {return false;} 
-  override void		GenCssBody_impl(Program* prog);
+  bool		useDesc() const CPP11_OVERRIDE {return false;} 
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

@@ -73,7 +73,7 @@ public:
   int                   dn_flags; // any of DataNodeFlags
   String                given_name; // name given to the obj during init or setName -- used as default for col0
 
-  override bool         canAcceptDrop(const QMimeData* mime) const;
+  bool         canAcceptDrop(const QMimeData* mime) const CPP11_OVERRIDE;
   void*                 linkData() const;
   virtual void          setName(const String& value); // is the first col, except for lists, which is 2nd -- note: only applicable for updates, not in constructor
   iTreeViewItem*        parent() const; // strongly typed version of base
@@ -81,7 +81,7 @@ public:
 
   virtual const String  GetColText(int col, const String& def = _nilString) const;
 
-  override void         CreateChildren();
+  void         CreateChildren() CPP11_OVERRIDE;
   void                  SigEmit(int sls, void* op1, void* op2)
   { SigEmit_impl(sls, op1, op2); }
   // primarily to support Refresh
@@ -112,41 +112,41 @@ public: // qt3 compatability functions, for convenience
   void                  swapChildren(int n1_idx, int n2_idx);
 
 public: // ITypedObject interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iTreeViewItem;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iTreeViewItem;}
 
 public: // ISigLinkClient interface
-  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2)
+  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) CPP11_OVERRIDE
   { SigEmit(sls, op1, op2); }
   // called when the data item has changed, esp. ex lists and groups -- relays it onward
-  override void         SigLinkDestroying(taSigLink* dl);
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
   // called by SigLink when it is destroying --
 
 public: // ISelectable interface
-  override taiSigLink*  link() const {return ISigLinkClient::link();}
-  override MemberDef*   md() const {return m_md;}
-  override ISelectable* par() const;
-  override ISelectableHost* host() const;
-  override iClipData*   GetClipDataSingle(int src_edit_action, bool for_drag,
-                                          GuiContext sh_typ = GC_DEFAULT) const;
-  override iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
-    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
+  taiSigLink*  link() const CPP11_OVERRIDE {return ISigLinkClient::link();}
+  MemberDef*   md() const CPP11_OVERRIDE {return m_md;}
+  ISelectable* par() const CPP11_OVERRIDE;
+  ISelectableHost* host() const CPP11_OVERRIDE;
+  iClipData*   GetClipDataSingle(int src_edit_action, bool for_drag,
+                                          GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE;
+  iClipData* GetClipDataMulti(const ISelectable_PtrList& sel_items,
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const CPP11_OVERRIDE;
 protected:
-  override void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ);
+  void         FillContextMenu_impl(taiWidgetActions* menu, GuiContext sh_typ) CPP11_OVERRIDE;
   // this is the one to extend in inherited classes
-  override void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
-                                                GuiContext sh_typ) const;
+  void         QueryEditActionsS_impl_(int& allowed, int& forbidden,
+                                                GuiContext sh_typ) const CPP11_OVERRIDE;
   // OR's in allowed; OR's in forbidden
 
 #ifndef __MAKETA__
 protected:
   MemberDef*            m_md; // for members, the MemberDef (otherwise NULL)
 
-  override void         dropped(const QMimeData* mime, const QPoint& pos,
-                                int key_mods, WhereIndicator where);
+  void         dropped(const QMimeData* mime, const QPoint& pos,
+                                int key_mods, WhereIndicator where) CPP11_OVERRIDE;
   virtual void          SigEmit_impl(int sls, void* op1, void* op2);
   // called for each node when the data item has changed, esp. ex lists and groups
-  override void         itemExpanded(bool value);
+  void         itemExpanded(bool value) CPP11_OVERRIDE;
 
   virtual bool          ShowNode_impl(int show, const String& context) const;
 private:

@@ -62,13 +62,13 @@ public:
 
   int           BidForType(TypeDef*)    { return 0; } // don't do any real types!
   virtual void          CallEdit() {}     // invoke an edit dialog (normally called from qobj)
-  override taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
 
-  override void GetImage(taiWidget* dat, const void* base);
+  void GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
   void          GetImage(taiWidget* dat)  { GetImage(dat, cur_base); }
 
-  override void GetValue(taiWidget* dat, void* base);
+  void GetValue(taiWidget* dat, void* base) CPP11_OVERRIDE;
   void          GetValue(taiWidget* dat)  { GetValue(dat, cur_base); }
 
   CSS_TYPE_FUNS(cssiType,taiType);
@@ -84,13 +84,13 @@ protected:
 class CSS_API cssiROType : public cssiType {
   // a css read-only type
 public:
-  override taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
 
-  override void GetImage(taiWidget* dat, const void* base);
+  void GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
   void          GetImage(taiWidget* dat)  { GetImage(dat, cur_base); }
 
-  override void GetValue(taiWidget*, void*) {}
+  void GetValue(taiWidget*, void*) CPP11_OVERRIDE {}
   void          GetValue(taiWidget* dat)  { GetValue(dat, cur_base); }
 
   CSS_TYPE_FUNS(cssiROType,cssiType);
@@ -102,13 +102,13 @@ class CSS_API cssiEnumType : public cssiType {
 public:
   cssEnumType*  enum_type;
 
-  override taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
 
-  override void GetImage(taiWidget* dat, const void* base);
+  void GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
   void          GetImage(taiWidget* dat)  { GetImage(dat, cur_base); }
 
-  override void GetValue(taiWidget* dat, void* base);
+  void GetValue(taiWidget* dat, void* base) CPP11_OVERRIDE;
   void          GetValue(taiWidget* dat)  { GetValue(dat, cur_base); }
 
   CSS_TYPE_FUNS(cssiEnumType,cssiType);
@@ -118,14 +118,14 @@ public:
 class CSS_API cssiClassType : public cssiType {
   // a css class type
 public:
-  override taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
 
-  override void         CallEdit();     // invoke an edit dialog (normally called from qobj)
-  override void GetImage(taiWidget* dat, const void* base);
+  void         CallEdit() CPP11_OVERRIDE;     // invoke an edit dialog (normally called from qobj)
+  void GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE;
   void          GetImage(taiWidget* dat)  { GetImage(dat, cur_base); }
 
-  override void GetValue(taiWidget* dat, void* base);
+  void GetValue(taiWidget* dat, void* base) CPP11_OVERRIDE;
   void          GetValue(taiWidget* dat)  { GetValue(dat, cur_base); }
 
 
@@ -137,15 +137,15 @@ public:
 class CSS_API cssiArrayType : public cssiType {
   // a css array type
 public:
-  override void         CallEdit();     // invoke an edit dialog (normally called from qobj)
+  void         CallEdit() CPP11_OVERRIDE;     // invoke an edit dialog (normally called from qobj)
 
-  override taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
-                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  taiWidget*     GetWidgetRep(IWidgetHost* host_, taiWidget* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL) CPP11_OVERRIDE;
 
-  override void GetImage(taiWidget* dat, const void* base) {}
+  void GetImage(taiWidget* dat, const void* base) CPP11_OVERRIDE {}
   void          GetImage(taiWidget* dat)  { GetImage(dat, cur_base); }
 
-  override void GetValue(taiWidget* dat, void* base) {}
+  void GetValue(taiWidget* dat, void* base) CPP11_OVERRIDE {}
   void          GetValue(taiWidget* dat)  { GetValue(dat, cur_base); }
 
   CSS_TYPE_FUNS(cssiArrayType,taiType);

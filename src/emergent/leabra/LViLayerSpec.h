@@ -29,7 +29,7 @@ class E_API LViLayerSpec : public LVeLayerSpec {
   // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
 INHERITED(LVeLayerSpec)
 public:
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(LViLayerSpec);
 protected:

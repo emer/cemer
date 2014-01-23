@@ -44,36 +44,36 @@ public:
   Variant       SafeElAsVar(int idx) const { return El_GetVar_(SafeEl_(idx)); }
   // #CAT_Access get element with safe range checking as a variant
 
-  override bool         IsContainer()   { return true; }
-  override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
-  override IndexMode    ElViewMode() const  { return el_view_mode; }
-  override int          ElemCount() const { return size; }
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
-  override Variant      IterElem(taBaseItr* itr) const;
-  override taBaseItr*   Iter() const;
+  bool         IsContainer()   CPP11_OVERRIDE { return true; }
+  taMatrix*    ElView() const  CPP11_OVERRIDE { return (taMatrix*)el_view.ptr(); }
+  IndexMode    ElViewMode() const  CPP11_OVERRIDE { return el_view_mode; }
+  int          ElemCount() const CPP11_OVERRIDE { return size; }
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE;
+  Variant      IterElem(taBaseItr* itr) const CPP11_OVERRIDE;
+  taBaseItr*   Iter() const CPP11_OVERRIDE;
   virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members
   virtual taArray_base* NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
   // #CAT_Access make a new view of this array -- always does a full data copy using view
 
-  override String&      Print(String& strm, int indent = 0) const;
+  String&      Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
 
-  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+  String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const;
-  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+                            bool force_inline = false) const CPP11_OVERRIDE;
+  bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false);
-  override int  ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
+                           bool force_inline = false) CPP11_OVERRIDE ;
+  int  ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
                               void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+                              TypeDef::StrContext sc = TypeDef::SC_DEFAULT) CPP11_OVERRIDE;
 
 #ifndef __MAKETA__
   int           Dump_Save_Value(std::ostream& strm, taBase* par=NULL, int indent = 0);
   int           Dump_Load_Value(std::istream& strm, taBase* par=NULL);
 #endif
 
-  override void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
 
   void  CutLinks();
   TA_ABSTRACT_BASEFUNS(taArray_base);
@@ -95,7 +95,7 @@ public: \
   T&            operator[](int i) { return el[i]; } \
   const T&      operator[](int i) const { return el[i]; } \
 protected: \
-  override const void*  El_GetBlank_() const    { return (const void*)&blank; }
+  virtual const void*  El_GetBlank_() const { return (const void*)&blank; }
 
 #define TA_ARRAY_OPS(y) \
   inline bool operator ==(const y& a, const y& b) {return a.Equal_(b);} \

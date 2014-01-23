@@ -64,13 +64,13 @@ public:
   ~iViewPanelOfVEWorld();
 
 public: // ISigLinkClient interface
-  override void*	This() {return (void*)this;} //
-  override TypeDef*	GetTypeDef() const {return &TA_iViewPanelOfVEWorld;}
+  void*	This() CPP11_OVERRIDE {return (void*)this;} //
+  TypeDef*	GetTypeDef() const CPP11_OVERRIDE {return &TA_iViewPanelOfVEWorld;}
 
 protected:
   bool			req_full_redraw;
-  override void		UpdatePanel_impl();
-  override void		GetValue_impl();
+  void		UpdatePanel_impl() CPP11_OVERRIDE;
+  void		GetValue_impl() CPP11_OVERRIDE;
 
 // public slots:
 //   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview

@@ -37,15 +37,15 @@ public:
   QWidget*              minibarCtrls() const {return m_minibar_ctrls;}
     //non-null if any have been added
   inline bool           hasMinibarCtrls() const {return (m_minibar_ctrls);}
-  override taiSigLink* par_link() const; // taken from dps if any, else from tabview
-  override MemberDef*   par_md() const;
-  override iPanelViewer*  tabViewerWin() const;
+  taiSigLink* par_link() const CPP11_OVERRIDE; // taken from dps if any, else from tabview
+  MemberDef*   par_md() const CPP11_OVERRIDE;
+  iPanelViewer*  tabViewerWin() const CPP11_OVERRIDE;
 
   iPanelSet*        data_panel_set() { return m_dps; }
-  override void         ClearDataPanelSet() {m_dps = NULL;}
-  override void         ClosePanel();
-  override void         UpdatePanel(); // we add a test for HasChanged and invoke the inherited
-  override String       TabText() const; // text for the panel tab -- usually just the text of the sel_node
+  void         ClearDataPanelSet() CPP11_OVERRIDE {m_dps = NULL;}
+  void         ClosePanel() CPP11_OVERRIDE;
+  void         UpdatePanel() CPP11_OVERRIDE; // we add a test for HasChanged and invoke the inherited
+  String       TabText() const CPP11_OVERRIDE; // text for the panel tab -- usually just the text of the sel_node
 
   void                  AddMinibarWidget(QWidget* ctrl);
     // adds the ctrl (typically a tool button) to the minibar (area to right of PanelSet selector buttons); note: right-justified, and fills inward; ctrl should be parentless; can force the DPF to be put into a set, if wouldn't have been otherwise
@@ -54,9 +54,9 @@ public:
   ~iPanel();
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override void         SigLinkDestroying(taSigLink* dl); // called by SigLink when it is destroying --
-  override TypeDef*     GetTypeDef() const {return &TA_iPanel;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE; // called by SigLink when it is destroying --
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanel;}
 
 protected:
   iPanelSet*        m_dps; // set if we are in a datapanelset

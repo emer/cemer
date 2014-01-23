@@ -31,7 +31,7 @@ class TA_API PluginMakeTask : public taTask {
   // threading task for compiling plugin
 INHERITED(taTask)
 public:
-  override void run();
+  void run() CPP11_OVERRIDE;
   // runs specified chunk of computation (encode diff)
 
   PluginMakeThreadMgr* mgr() { return (PluginMakeThreadMgr*)owner->GetOwner(); }

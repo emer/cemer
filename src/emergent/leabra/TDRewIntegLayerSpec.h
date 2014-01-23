@@ -32,7 +32,7 @@ public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
   bool		max_r_v;	// represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(TDRewIntegSpec);
 protected:
@@ -51,12 +51,12 @@ INHERITED(ScalarValLayerSpec)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
-  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   // never learn
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  CPP11_OVERRIDE { return false; }
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

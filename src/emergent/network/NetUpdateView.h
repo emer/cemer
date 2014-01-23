@@ -33,17 +33,17 @@ public:
   ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network
   ProgVarRef	update_var;	// #ITEM_FILTER_StdProgVarFilter variable that controls whether we update the display or not
   
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "Function"; }
-  override String	GetToolbarName() const { return "net updt view"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "net updt view"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetUpdateView);
 protected:
-  override void	UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
   virtual void	GetUpdateVar(); // get the update_var variable
 
-  override void		GenCssBody_impl(Program* prog);
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

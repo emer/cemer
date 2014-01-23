@@ -38,28 +38,28 @@ public:
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
 
-  override int 		ProgElChildrenCount() const
+  int 		ProgElChildrenCount() const CPP11_OVERRIDE
   { return true_code.size + false_code.size; }
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override ProgVar*	FindVarName(const String& var_nm) const;
-  override String	GetToolbarName() const { return "if.else"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
+  ProgVar*	FindVarName(const String& var_nm) const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "if.else"; }
   
   PROGEL_SIMPLE_BASEFUNS(IfElse);
 protected:
-  override void		UpdateAfterEdit_impl();
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		PreGenChildren_impl(int& item_id);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog); //replaces If
-  override void		GenCssPost_impl(Program* prog); 
-  override const String	GenListing_children(int indent_level);
+  void		UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void		CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; //replaces If
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  const String	GenListing_children(int indent_level) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

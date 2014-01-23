@@ -128,8 +128,8 @@ public:
   virtual void          EditView(T3DataViewMain* view);
   // #CAT_Display #BUTTON #FROM_GROUP_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel
 
-  override QPixmap      GrabImage(bool& got_image);
-  override bool         SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
+  QPixmap      GrabImage(bool& got_image) CPP11_OVERRIDE;
+  bool         SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG) CPP11_OVERRIDE;
   virtual  void         SetImageSize(int width, int height);
   // #CAT_Display #BUTTON set size of 3d viewer (and thus SaveImageAs image) to given size parameters
   virtual  void         SetColorScheme(ColorScheme color_scheme);
@@ -156,15 +156,15 @@ protected:
   static void           SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
 
 
-  override void         Constr_impl(QWidget* gui_parent = NULL);
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
-  override void         Constr_post();
-  override void         WindowClosing(CancelOp& cancel_op); // #IGNORE
-  override void         Clear_impl(); // #IGNORE
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl();  // #IGNORE
-  override void         Render_post(); // #IGNORE
-  override void         Reset_impl(); //  #IGNORE
+  void         Constr_impl(QWidget* gui_parent = NULL) CPP11_OVERRIDE;
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // #IGNORE
+  void         Constr_post() CPP11_OVERRIDE;
+  void         WindowClosing(CancelOp& cancel_op) CPP11_OVERRIDE; // #IGNORE
+  void         Clear_impl() CPP11_OVERRIDE; // #IGNORE
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE;  // #IGNORE
+  void         Render_post() CPP11_OVERRIDE; // #IGNORE
+  void         Reset_impl() CPP11_OVERRIDE; //  #IGNORE
 private:
   void  SetTextBgColor(const String &new_text_color, const String &new_bg_color);
   void  Copy_(const T3Panel& cp);

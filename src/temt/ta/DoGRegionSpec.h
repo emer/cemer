@@ -63,14 +63,14 @@ public:
 protected:
   void	UpdateAfterEdit_impl();
 
-  override void	UpdateGeom();
+  void	UpdateGeom() CPP11_OVERRIDE;
 
-  override bool NeedsInit();
-  override bool InitFilters();
-  override bool InitOutMatrix();
-  override bool InitDataTable();
+  bool NeedsInit() CPP11_OVERRIDE;
+  bool InitFilters() CPP11_OVERRIDE;
+  bool InitOutMatrix() CPP11_OVERRIDE;
+  bool InitDataTable() CPP11_OVERRIDE;
 
-  override bool	FilterImage_impl(bool motion_only = false);
+  bool	FilterImage_impl(bool motion_only = false) CPP11_OVERRIDE;
 
   virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out);
   // implementation of DoG filtering for a given image and output -- manages threaded calls to _thread version

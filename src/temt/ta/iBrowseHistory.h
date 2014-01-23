@@ -53,11 +53,11 @@ public:
   ~iBrowseHistory();
 
 public: // ITypedObject interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iBrowseHistory;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iBrowseHistory;}
 public: // ISigLinkClient interface
-  override void         SigLinkRecv(taSigLink*, int, void*, void*) {}
-  override void         SigLinkDestroying(taSigLink* dl);
+  void         SigLinkRecv(taSigLink*, int, void*, void*) CPP11_OVERRIDE {}
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
 
 #ifndef __MAKETA__
 public slots:

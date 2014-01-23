@@ -29,12 +29,12 @@ taTypeDef_Of(taiViewTypeOfList);
 class TA_API taiViewTypeOfList: public taiViewTypeOftaOBase { // for taList
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfList, taiViewTypeOftaOBase)
 public:
-  override int          BidForView(TypeDef*);
+  int          BidForView(TypeDef*) CPP11_OVERRIDE;
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override taiSigLink* CreateSigLink_impl(taBase* data_);
-  override void         CreateDataPanel_impl(taiSigLink* dl_);
+  taiSigLink* CreateSigLink_impl(taBase* data_) CPP11_OVERRIDE;
+  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
 };
 
 #endif // taiViewTypeOfList_h

@@ -35,23 +35,23 @@ INHERITED(ProgEl)
 public:
   ProgEl_List           loop_code; // #SHOW_TREE the items to execute in the loop
 
-  override int          ProgElChildrenCount() const { return loop_code.size; }
+  int          ProgElChildrenCount() const CPP11_OVERRIDE { return loop_code.size; }
 
   virtual ProgEl*        AddLoopCode(TypeDef* el_type)   { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
-  override ProgVar*     FindVarName(const String& var_nm) const;
-  override String       GetTypeDecoKey() const { return "ProgCtrl"; }
+  ProgVar*     FindVarName(const String& var_nm) const CPP11_OVERRIDE;
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
 
   SIMPLE_COPY(Loop);
   SIMPLE_LINKS(Loop);
   TA_ABSTRACT_BASEFUNS(Loop);
 
 protected:
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         PreGenChildren_impl(int& item_id);
-  override void         GenCssBody_impl(Program* prog);
-  override const String GenListing_children(int indent_level);
+  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
+  void         GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  const String GenListing_children(int indent_level) CPP11_OVERRIDE;
 
 private:
   void  Initialize() {}

@@ -39,8 +39,8 @@ public:
   TA_DATAVIEWFUNS(ToolBoxDockViewer, DockViewer) //
 
 protected:
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); //note: in _qt.h file
-  override void         MakeWinName_impl();
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; //note: in _qt.h file
+  void         MakeWinName_impl() CPP11_OVERRIDE;
 
 private:
   NOCOPY(ToolBoxDockViewer)

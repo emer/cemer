@@ -50,7 +50,7 @@ public:
   int           uidx_inc;       // how much to increment counter by
   ThreadUnitCall* unit_call;    // #IGNORE method to call on the unit
 
-  override void run();
+  void run() CPP11_OVERRIDE;
   // runs specified chunks and then nibbles on remainder
 
   UnitCallThreadMgr* mgr() { return (UnitCallThreadMgr*)owner->GetOwner(); }
@@ -79,9 +79,9 @@ public:
 
   Network*      network()       { return (Network*)owner; }
 
-  override void InitAll();      // initialize threads and tasks
+  void InitAll() CPP11_OVERRIDE;      // initialize threads and tasks
 
-  override void Run(ThreadUnitCall* unit_call, float comp_load,
+  void Run(ThreadUnitCall* unit_call, float comp_load,
                     bool backwards=false, bool layer_sync=false);
   // #IGNORE run given function on all units, with specified level of computational load (0-1), and flags controlling order of processing and syncing: backwards = go through units in reverse order, and layer_sync = sync processing at each layer (else at network level) -- needed for feedforward network topologies (unfortunately)
 

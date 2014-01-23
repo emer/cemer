@@ -31,7 +31,7 @@ class TA_API TopLevelViewer : public taViewer {
 INHERITED(taViewer)
 public:
     // can be provided to put msg up on closing
-  override bool         deleteOnWinClose() const;
+  bool         deleteOnWinClose() const CPP11_OVERRIDE;
   bool                  openOnLoad() const {return false;}
     // 'true' if the viewer should be opened after loading (note: still must check if topLevel)
     // TODO: define impl somehow
@@ -46,7 +46,7 @@ public:
     // #NO_SCRIPT generate script code to position the window
   virtual void          SetWinName();           // #IGNORE set the window name
 
-  override void         WindowClosing(CancelOp& cancel_op);
+  void         WindowClosing(CancelOp& cancel_op) CPP11_OVERRIDE;
 
   void  InitLinks();
   void  CutLinks();
@@ -54,8 +54,8 @@ public:
 protected:
   String                win_name;
 
-  override void         GetWinState_impl();
-  override void         SetWinState_impl();
+  void         GetWinState_impl() CPP11_OVERRIDE;
+  void         SetWinState_impl() CPP11_OVERRIDE;
   virtual void          MakeWinName_impl() {} // set win_name, impl in subs
 
 private:

@@ -32,7 +32,7 @@ INHERITED(taMatrix)
 public:
   T*            el;             // #HIDDEN #NO_SAVE Pointer to actual array memory
 
-  override void*        data() const {return el;} // #IGNORE
+  void*        data() const CPP11_OVERRIDE {return el;} // #IGNORE
 
   void                  SetFixedData(T* data_, const MatrixGeom& geom_,
     fixed_dealloc_fun fixed_dealloc = NULL)
@@ -114,18 +114,18 @@ public:
   using taMatrix::operator=;
   TA_TMPLT_ABSTRACT_BASEFUNS(taMatrixT, T)
 public:
-  override void*        FastEl_Flat_(int idx)   { return &(el[idx]); }
-  override const void*  FastEl_Flat_(int idx) const { return &(el[idx]); }
+  void*        FastEl_Flat_(int idx)   CPP11_OVERRIDE { return &(el[idx]); }
+  const void*  FastEl_Flat_(int idx) const CPP11_OVERRIDE { return &(el[idx]); }
 protected:
   mutable T             tmp; // #IGNORE temporary item
 
-  override void*        MakeArray_(int n) const {
+  void*        MakeArray_(int n) const CPP11_OVERRIDE {
     if (fastAlloc())
       return malloc(n * sizeof(T));
     else
       return new T[n];
   }
-  override void         SetArray_(void* nw) {
+  void         SetArray_(void* nw)  CPP11_OVERRIDE {
     if (el) {
       if (alloc_size > 0) {
         if(fastAlloc())
@@ -140,23 +140,23 @@ protected:
     el = (T*)nw;
     fixed_dealloc = NULL;
   }
-  override void*        FastRealloc_(int n) {
+  void*        FastRealloc_(int n) CPP11_OVERRIDE {
     T* nwel = (T*)realloc((char*)el, n * sizeof(T));
     if (TestError(!nwel, "FastRealloc_", "could not realloc memory -- matrix is too big! reverting to old size -- could be fatal!"))
       return NULL;
     el = nwel;
     return el;
   }
-  override bool         El_Equal_(const void* a, const void* b) const {
+  bool         El_Equal_(const void* a, const void* b) const CPP11_OVERRIDE {
     return (*((T*)a) == *((T*)b));
   }
-  override void         El_Copy_(void* to, const void* fm) {
+  void         El_Copy_(void* to, const void* fm) CPP11_OVERRIDE {
     *((T*)to) = *((T*)fm);
   }
-  override uint         El_SizeOf_() const {
+  uint         El_SizeOf_() const CPP11_OVERRIDE {
     return sizeof(T);
   }
-  override void*        El_GetTmp_() const
+  void*        El_GetTmp_() const CPP11_OVERRIDE
   { return (void*)&tmp; }
 
 private:
@@ -178,7 +178,7 @@ private:
   using taMatrix::operator=; \
   TA_BASEFUNS(y) \
 protected: \
-  override const void*  El_GetBlank_() const    { return (const void*)&blank; }
+  const void*  El_GetBlank_() const    CPP11_OVERRIDE { return (const void*)&blank; }
 
 #define MAT_COPY_SAME_SLOW(y,T) \
   void  Copy_(const y& cp) { if(ElView() || cp.ElView()) { \
@@ -199,7 +199,7 @@ protected: \
 private: \
   MAT_COPY_SAME_FAST(y,T) \
 protected: \
-  override bool fastAlloc() const {return true;} \
+  virtual bool fastAlloc() const {return true;} \
 public: \
   TA_MATRIX_FUNS(y,T)
 
@@ -207,7 +207,7 @@ public: \
 private: \
   MAT_COPY_SAME_SLOW(y,T) \
 protected: \
-  override bool fastAlloc() const {return false;} \
+  virtual bool fastAlloc() const {return false;} \
 public: \
   TA_MATRIX_FUNS(y,T)
 

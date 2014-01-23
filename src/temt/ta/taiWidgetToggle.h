@@ -34,8 +34,8 @@ public:
   void  GetImage(bool val);
   bool  GetValue() const;
 protected:
-  override void         GetImageVar_impl(const Variant& val) {GetImage(val.toBool());}
-  override void         GetValueVar_impl(Variant& val) const {val = GetValue();}
+  void         GetImageVar_impl(const Variant& val) CPP11_OVERRIDE {GetImage(val.toBool());}
+  void         GetValueVar_impl(Variant& val) const CPP11_OVERRIDE {val = GetValue();}
 };
 
 #endif // taiWidgetToggle_h

@@ -32,7 +32,7 @@ class TA_API Program_List : public taList<Program> {
   INHERITED(taList<Program>)
 public:
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
   TA_BASEFUNS_NOCOPY(Program_List);
 private:
   void  Initialize()            { SetBaseType(&TA_Program); }

@@ -47,13 +47,13 @@ public:
   virtual void          Hide();
   // #BUTTON #VIEWMENU set this column to be invisible
 
-  override void         SigDestroying();
+  void         SigDestroying() CPP11_OVERRIDE;
 
   void  SetDefaultName() {} // leave it blank
   void  Copy_(const DataColView& cp);
   TA_BASEFUNS(DataColView);
 protected:
-  override void         Unbind_impl(); // unbinds col
+  void         Unbind_impl() CPP11_OVERRIDE; // unbinds col
   virtual void          DataColUnlinked() {} // called if data set to NULL or destroys
   void                  UpdateFromDataCol(bool first_time = false);
   // called if data set to column, or we otherwise need to update

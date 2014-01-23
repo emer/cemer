@@ -47,7 +47,7 @@ public:
   ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
   ProgVar		src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
 
-  override int 		ProgElChildrenCount() const { return loop_code.size; }
+  int 		ProgElChildrenCount() const CPP11_OVERRIDE { return loop_code.size; }
 
   virtual DataOpEl* AddSrcColumn(const String& col_name);
   // #CAT_DataOp #BUTTON add a new source column to operate on
@@ -57,31 +57,31 @@ public:
   // #BUTTON #CAT_Data add all columns from src_data to the src_cols list of columns 
   virtual void	AddAllDestColumns();
   // #BUTTON #CAT_Data add all columns from dest_data to the dest_cols list of columns 
-  override void	UpdateSpecDataTable();
+  void	UpdateSpecDataTable() CPP11_OVERRIDE;
 
   virtual ProgEl*	AddLoopCode(TypeDef* el_type)	{ return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
-  override ProgVar*	FindVarName(const String& var_nm) const;
+  ProgVar*	FindVarName(const String& var_nm) const CPP11_OVERRIDE;
 
-  override String GetDisplayName() const;
-  override String	GetToolbarName() const { return "calc loop"; }
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "calc loop"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataCalcLoop);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override void	PreGenChildren_impl(int& item_id);
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void	PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
 
   virtual void	SetColProgVarFmData(ProgVar* pv, DataOpEl* ds);
   virtual void	UpdateColVars();
   // sync col vars from cols
 
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog); 
-  override void		GenCssPost_impl(Program* prog); 
-  override const String	GenListing_children(int indent_level);
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  const String	GenListing_children(int indent_level) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

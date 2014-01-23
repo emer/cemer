@@ -34,18 +34,18 @@ INHERITED(Loop)
 public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override String	GetDisplayName() const;
-  override String	GetToolbarName() const { return "while"; }
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "while"; }
 
   PROGEL_SIMPLE_BASEFUNS(WhileLoop);
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssPost_impl(Program* prog); 
+  void		CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
 
 private:
   void	Initialize() {}

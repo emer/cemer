@@ -32,9 +32,9 @@ class TA_API EditMthItem: public SelectEditItem {
 public:
   MethodDef*            mth; // #READ_ONLY #SHOW the mbr type
 
-  override TypeItem*    typeItem() const {return mth;} // the mbr or mth
+  TypeItem*    typeItem() const CPP11_OVERRIDE {return mth;} // the mbr or mth
 
-//  override String     GetColText(const KeyString& key, int itm_idx = -1) const;
+//  String     GetColText(const KeyString& key, int itm_idx = -1) const CPP11_OVERRIDE;
   TA_BASEFUNS(EditMthItem);
 protected:
   void                  UpdateAfterEdit_impl();

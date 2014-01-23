@@ -48,9 +48,9 @@ public:
   // #CAT_ActR set chunk type to given type name -- sets val_type and val_chunk_type
 
 
-  override String GetDisplayName() const;
-  override String GetDesc() const {return desc;}
-  override String GetTypeDecoKey() const { return "ProgType"; }
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetDesc() const CPP11_OVERRIDE {return desc;}
+  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgType"; }
 
   TA_SIMPLE_BASEFUNS(ActrSlotType);
 private:

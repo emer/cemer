@@ -39,15 +39,15 @@ public:
   virtual void	GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
-  override String GetDisplayName() const;
-  override String	GetToolbarName() const { return "=src row"; }
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "=src row"; }
 
   void 	InitLinks();
   TA_BASEFUNS(DataCalcSetSrcRow);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssBody_impl(Program* prog); 
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
 
 private:
   void	Copy_(const DataCalcSetSrcRow& cp);

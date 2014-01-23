@@ -26,7 +26,7 @@
 class TA_API taiWidgetMethodButton : public taiWidgetMethod {
   // button representation of a method -- uses the QAbstractButton, and sets it as the Rep as well
 public:
-  override QWidget* GetButtonRep();
+  QWidget* GetButtonRep() CPP11_OVERRIDE;
 
   taiWidgetMethodButton(void* bs, MethodDef* md, TypeDef* typ_, IWidgetHost* host, taiWidget* par,
       QWidget* gui_parent_, int flags_ = 0);

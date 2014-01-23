@@ -48,7 +48,7 @@ public:
   void		CreateStdBuffs();
   // allocate N_BUFFS items on this list
 
-  override String 	GetTypeDecoKey() const { return "Layer"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
 
   NOCOPY(KwtaSortBuff_List)
   TA_BASEFUNS(KwtaSortBuff_List);

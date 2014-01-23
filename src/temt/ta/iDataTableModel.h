@@ -73,11 +73,11 @@ public: // required implementations
     int role = Qt::EditRole); // override, for editing
 
 public: // ISigLinkClient i/f
-  override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iDataTableModel;}
-//  override bool               ignoreSigEmit() const;
-  override void         SigLinkDestroying(taSigLink* dl);
-  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  void*        This() CPP11_OVERRIDE {return this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iDataTableModel;}
+//  bool               ignoreSigEmit() const CPP11_OVERRIDE;
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
 
 protected:
   bool                  ValidateIndex(const QModelIndex& index) const;

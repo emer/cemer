@@ -79,7 +79,7 @@ public:
   // #MENU #MENU_ON_Object get information/copyright notice
   virtual void  SaveAll();
   // saves all the projects
-  override void WindowShowHook();
+  void WindowShowHook() CPP11_OVERRIDE;
 
   void          AddRecentFile(const String& value, bool no_save = false); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   void          AddRecentPath(const String& value, bool no_save = false); // #IGNORE add this path to the recent list
@@ -197,7 +197,7 @@ protected:
   static bool           Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
   static bool           Startup_InitTA_InitUserAppDir();  // #IGNORE once found
   static void           Startup_EnumerateEnginesR(TypeDef* typ);
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
   // #IGNORE recursively enumerate from typ
   bool                  AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool                  AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;

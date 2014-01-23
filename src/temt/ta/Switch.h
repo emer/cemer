@@ -37,31 +37,31 @@ public:
 
   ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
 
-  override int 		ProgElChildrenCount() const { return cases.size; }
+  int 		ProgElChildrenCount() const CPP11_OVERRIDE { return cases.size; }
 
   virtual void	    NewCase() 	{ cases.New(1); }
   // #BUTTON make a new case item
   virtual void	    CasesFmEnum();
   // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM)
 
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
-  override bool		IsCtrlProgEl() 	{ return true; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool		CvtFmCode(const String& code) CPP11_OVERRIDE;
+  bool		IsCtrlProgEl() 	CPP11_OVERRIDE { return true; }
 
-  override ProgVar*	FindVarName(const String& var_nm) const;
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override String	GetToolbarName() const { return "switch"; }
+  ProgVar*	FindVarName(const String& var_nm) const CPP11_OVERRIDE;
+  String	GetDisplayName() const CPP11_OVERRIDE;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgCtrl"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "switch"; }
 
   PROGEL_SIMPLE_BASEFUNS(Switch);
 protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		PreGenChildren_impl(int& item_id);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog); 
-  override void		GenCssPost_impl(Program* prog); 
-  override const String	GenListing_children(int indent_level);
+  void		CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		PreGenChildren_impl(int& item_id) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssBody_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
+  const String	GenListing_children(int indent_level) CPP11_OVERRIDE;
 
   virtual void	    CasesFmEnum_hard(); // switch_var is a hard enum
   virtual void	    CasesFmEnum_dyn();	// switch_var is a dynamic enum

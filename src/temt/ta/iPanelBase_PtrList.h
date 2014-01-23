@@ -33,8 +33,8 @@ public:
   iPanelBase_PtrList() {m_tabView = NULL;}
   ~iPanelBase_PtrList() {}
 protected:
-  override void*        El_Own_(void* it); // set ref to our tabview (on Add, not Link)
-  override void         El_disOwn_(void* it_); // remove ref if it is our tabview
+  void*        El_Own_(void* it) CPP11_OVERRIDE; // set ref to our tabview (on Add, not Link)
+  void         El_disOwn_(void* it_) CPP11_OVERRIDE; // remove ref if it is our tabview
 };
 
 #endif // iPanelBase_PtrList_h

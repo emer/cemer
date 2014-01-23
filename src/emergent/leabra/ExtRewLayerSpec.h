@@ -32,7 +32,7 @@ public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(AvgExtRewSpec);
 protected:
@@ -54,7 +54,7 @@ public:
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
   float		scalar_val_max;	// #CONDEDIT_ON_graded maximum value for scalar value output layers when using a graded value -- reward is error normalized by this value, and clipped at min/max
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(OutErrSpec);
 protected:
@@ -75,7 +75,7 @@ public:
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
   float		rew_val;	// #DEF_1 reward value for correct responses (positive rewards)
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(ExtRewSpec);
 protected:
@@ -124,18 +124,18 @@ public:
     // #CAT_ExtRew used in above routines: clamp norew_val values for when no reward information is present
 
   // overrides:
-  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   // don't do any learning:
-  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  CPP11_OVERRIDE { return false; }
+  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(ExtRewLayerSpec);
 protected:

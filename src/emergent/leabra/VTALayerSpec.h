@@ -37,7 +37,7 @@ public:
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(gdPVLVDaSpec);
 protected:
@@ -58,7 +58,7 @@ public:
   float         pos_pv;         // down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
   float         dip;            // down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LVBlockSpec);
 protected:
@@ -89,15 +89,15 @@ public:
                               LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
   // get the recv layers..
 
-  override void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) { };
-  override void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
+  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
   // never learn
-  override bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
-  override bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
-  override bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  CPP11_OVERRIDE { return false; }
+  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
+  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { return false; }
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

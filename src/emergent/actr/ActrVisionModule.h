@@ -35,7 +35,7 @@ public:
   float         onset_span;    // #DEF_0.5 :visual-onset-span in ACT-R -- how long an item recently added to the visicon will be marked as new, and how long a scene change notice will be available
   float         move_tol;      // #DEF_0.5 :visual-movement-tolerance in ACT-R -- how far an object can move and still be considered the same object, in degrees of visual angle
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrVisParams);
 private:
@@ -53,7 +53,7 @@ public:
   float         latency;        // #DEF_0.085 :visual-attention-latency in ACT-R -- how long a visual attention shift will take, in seconds
   float         scene_chg_thresh; // #DEF_0.25 :scene-change-threshold in ACT-R -- the smallest proportion of change in the visicon that results in a signal that the scene has changed -- must be in range 0..1
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrAttnParams);
 private:
@@ -137,12 +137,12 @@ public:
   virtual void   AddToVisIcon(ActrChunk* ck);
   // #CAT_ActR add chunk (must be of type visual_location) to the visicon -- creates a new copy of the input chunk, and sets the t_new to be the current time at adding
 
-  override void  InitModule();
-  override void  ProcessEvent(ActrEvent& event);
-  override bool  ProcessQuery(ActrBuffer* buf, const String& query,
-                             bool why_not = false);
-  override bool  SetParam(const String& param_nm, Variant par1, Variant par2);
-  override void  Init();
+  void  InitModule() CPP11_OVERRIDE;
+  void  ProcessEvent(ActrEvent& event) CPP11_OVERRIDE;
+  bool  ProcessQuery(ActrBuffer* buf, const String& query,
+                             bool why_not = false) CPP11_OVERRIDE;
+  bool  SetParam(const String& param_nm, Variant par1, Variant par2) CPP11_OVERRIDE;
+  void  Init() CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(ActrVisionModule);
 private:

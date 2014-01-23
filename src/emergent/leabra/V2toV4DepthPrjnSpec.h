@@ -32,8 +32,8 @@ INHERITED(TiledGpRFPrjnSpec)
 public:
   int		depth_idx;	// which depth index (0..) to connect to
 
-  override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-				  int rgpidx, int sgpidx, int alloc_loop);
+  void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int sgpidx, int alloc_loop) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(V2toV4DepthPrjnSpec);
 private:

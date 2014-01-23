@@ -51,7 +51,7 @@ public:
   String        field_value;    // when used as a standalone dialog, this is the field return value
 
 public slots:
-  override void accept();
+  void accept() CPP11_OVERRIDE;
 
 protected slots:
   virtual void          btnAdd_clicked();
@@ -106,7 +106,7 @@ protected:
   // Enable/disable the apply/reset buttons.
   virtual void          setApplyEnabled(bool enabled);
 
-  override void         keyPressEvent(QKeyEvent *e);
+  void         keyPressEvent(QKeyEvent *e) CPP11_OVERRIDE;
 
 // Data members
 protected:

@@ -39,7 +39,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(taGuiLayout);
 // protected:
-//   override void              UpdateAfterEdit_impl();
+//   void              UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize()    { };
   void  Destroy()       { };

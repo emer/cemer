@@ -35,7 +35,7 @@ public:
   float         matrix;         // #MIN_0 VS gain on matrix pathway 
   bool          matrix_td;      // compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LHbRMTgGains);
 protected:
@@ -55,10 +55,10 @@ INHERITED(LeabraUnitSpec)
 public:
   LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs
 
-  override void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  override void	PostSettle(LeabraUnit* u, LeabraNetwork* net);
+  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) CPP11_OVERRIDE;
+  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) CPP11_OVERRIDE;
 
-  override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
+  bool  CheckConfig_Unit(Unit* un, bool quiet=false) CPP11_OVERRIDE;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
 
   TA_SIMPLE_BASEFUNS(LHbRMTgUnitSpec);

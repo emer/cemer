@@ -42,7 +42,7 @@ INHERITED(taTask)
 public:
   ThreadImgProcCall* img_proc_call;	// #IGNORE method to call on the object
 
-  override void run();
+  void run() CPP11_OVERRIDE;
   // runs specified chunk of computation
 
   ImgProcCallThreadMgr* mgr() { return (ImgProcCallThreadMgr*)owner->GetOwner(); }
@@ -68,7 +68,7 @@ public:
 
   ImgProcThreadBase*	img_proc() 	{ return (ImgProcThreadBase*)owner; }
 
-  override void		Run(ThreadImgProcCall* img_proc_call, int n_cmp_un);
+  void		Run(ThreadImgProcCall* img_proc_call, int n_cmp_un);
   // #IGNORE run given function, splitting n_cmp_units computational units evenly across the available threads
   
   TA_BASEFUNS_NOCOPY(ImgProcCallThreadMgr);

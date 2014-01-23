@@ -75,12 +75,12 @@ public:
   // #IGNORE get the output of the given camera number (currently 0 or 1)
 
   bool			isVisible() const;
-  override bool		ignoreSigEmit() const { return !isVisible(); }
+  bool		ignoreSigEmit() const CPP11_OVERRIDE { return !isVisible(); }
 
-  override void		BuildAll();
+  void		BuildAll() CPP11_OVERRIDE;
   
   virtual void		UpdateName();
-  override void		OnWindowBind_impl(iT3Panel* vw);
+  void		OnWindowBind_impl(iT3Panel* vw) CPP11_OVERRIDE;
   // #IGNORE
 
   void 	Initialize();
@@ -96,12 +96,12 @@ protected:
 #endif
   bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
 
-  override void		SigRecvUpdateAfterEdit_impl();
-  override void		SigRecvUpdateView_impl();
-  override void 	UpdateAfterEdit_impl();
+  void		SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void		SigRecvUpdateView_impl() CPP11_OVERRIDE;
+  void 	UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
-  override void		Render_pre();
-  override void		Render_impl();
+  void		Render_pre() CPP11_OVERRIDE;
+  void		Render_impl() CPP11_OVERRIDE;
 
 };
 

@@ -31,8 +31,8 @@ class TA_API DataProcCall : public StaticMethodCall {
   // call a taDataProc (data processing/database) function
 INHERITED(StaticMethodCall)
 public:
-  override String	GetToolbarName() const { return "data proc()"; }
-  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  String	GetToolbarName() const CPP11_OVERRIDE { return "data proc()"; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(DataProcCall);
 private:

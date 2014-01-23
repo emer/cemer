@@ -38,7 +38,7 @@ public:
   float	        refract_inhib;	// #CAT_Activation amount of refractory inhibition for  this stripe -- only valid in Matrix Go layers
   float	        nogo_deep;	// #CAT_Activation amount of enhanced netinput gain from PFC deep layers onto NoGo units to bias nogo for continued maintenance
 
-  override void	Init_State();
+  void	Init_State() CPP11_OVERRIDE;
 
   virtual void	CopyPBWMData(const PBWMUnGpData& cp);
   // copy just the pbwm data

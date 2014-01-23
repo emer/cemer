@@ -35,7 +35,7 @@ public:
   taiEditorOfTypeItem(TypeItem* ti_, TypeItem::TypeInfoKinds tik, bool read_only_ = false,
         bool modal_ = false, QObject* parent = 0);
 protected:
-  override void         Constr_Widget_Labels();
+  void         Constr_Widget_Labels() CPP11_OVERRIDE;
 };
 
 #endif // taiEditorOfTypeItem_h

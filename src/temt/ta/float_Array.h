@@ -34,7 +34,7 @@ public:
   TA_BASEFUNS_NOCOPY(float_Array);
   TA_ARRAY_FUNS(float_Array, float)
 protected:
-  override Variant      El_GetVar_(const void* itm) const
+  Variant      El_GetVar_(const void* itm) const CPP11_OVERRIDE
     { return (Variant)(*(float*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((float*)a) > *((float*)b)) rval=1; else if(*((float*)a) == *((float*)b)) rval=0; return rval; }

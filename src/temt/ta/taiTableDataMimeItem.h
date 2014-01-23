@@ -38,19 +38,19 @@ public:
     // 2-d geom of the indicated column; always 1x1 (scalar) for matrix data
   inline int            maxCellRows() const {return m_max_row_geom;}
 
-  override void         WriteTable(DataTable* tab, const CellRange& sel);
+  void         WriteTable(DataTable* tab, const CellRange& sel) CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(taiTableDataMimeItem);
 
 public: // TAI_xxx instance interface -- used for dynamic creation
-  override taiMimeItem* Extract(taiMimeSource* ms,
-    const String& subkey = _nilString);
+  taiMimeItem* Extract(taiMimeSource* ms,
+    const String& subkey = _nilString) CPP11_OVERRIDE;
 protected:
   iSize                 m_tab_geom;
   int                   m_max_row_geom;
   taiTableColDesc_PArray col_descs;
-  override bool         Constr_impl(const String&);
-  override void         DecodeData_impl();
+  bool         Constr_impl(const String&) CPP11_OVERRIDE;
+  void         DecodeData_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy() {}

@@ -31,7 +31,7 @@ class E_API ActrMotorStyle_List : public taList<ActrMotorStyle> {
 INHERITED(taList<ActrMotorStyle>)
 public:
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_BASEFUNS_NOCOPY(ActrMotorStyle_List);
 private:

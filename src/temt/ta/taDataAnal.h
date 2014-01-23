@@ -192,7 +192,7 @@ public:
   static bool	Matrix3DGraph(DataTable* data, const String& x_axis_col, const String& z_axis_col);
   // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph prepare data for a 3D matrix graph, where data is plotted by X and Z axis values -- sorts data by X then Z, then adds a duplicate copy of data sorted by Z then X, which produces a matrix grid in a graph view plot (turn off the Z neg draw flag)
 
-  override String 	GetTypeDecoKey() const { return "DataTable"; }
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
   TA_BASEFUNS_NOCOPY(taDataAnal);

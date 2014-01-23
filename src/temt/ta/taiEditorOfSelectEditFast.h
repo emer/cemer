@@ -33,8 +33,8 @@ INHERITED(taiEditorOfSelectEditBase)
 public:
   iTableWidget*   tw;
 
-  override void         Constr_Box();
-  override void         GetImage_Item(int row); // called from GetImage and ed->GetValue
+  void         Constr_Box() CPP11_OVERRIDE;
+  void         GetImage_Item(int row) CPP11_OVERRIDE; // called from GetImage and ed->GetValue
 
   taiEditorOfSelectEditFast(void* base, TypeDef* td, bool read_only_ = false,
         QObject* parent = 0);
@@ -42,7 +42,7 @@ public:
   ~taiEditorOfSelectEditFast();
 
 protected slots:
-  override void         DoRemoveSelEdit();
+  void         DoRemoveSelEdit() CPP11_OVERRIDE;
   void                  tw_currentCellChanged( int currentRow,
     int currentColumn, int previousRow, int previousColumn);
   void                  tw_customContextMenuRequested(const QPoint& pos);
@@ -50,13 +50,13 @@ protected slots:
 protected:
   taiWidgetDelegateSelectEdit*   sed;
 
-  override void         Constr_Body_impl();
-  override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
+  void         Constr_Body_impl() CPP11_OVERRIDE;
+  void         ClearBody_impl() CPP11_OVERRIDE;       // we also clear all the methods, and then rebuild them
 
-  override void         Constr_Widget_Labels();
-  override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
-  override void         GetImage_Membs_def();
-  override void         GetValue_Membs_def();
+  void         Constr_Widget_Labels() CPP11_OVERRIDE;
+  void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) CPP11_OVERRIDE;
+  void         GetImage_Membs_def() CPP11_OVERRIDE;
+  void         GetValue_Membs_def() CPP11_OVERRIDE;
 
 private:
   void  Initialize();

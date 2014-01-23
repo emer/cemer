@@ -37,7 +37,7 @@ public:
   int           n_finst;       // #DEF_4 :declarative-num-finsts in ACT-R -- number of 'fingers of instantiation' for declarative memory system
   float         finst_span;    // #DEF_3 :declarative-finst-span in ACT-R -- how long a 'fingers of instantiation' persists for declarative memory system
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrActParams);
 private:
@@ -63,7 +63,7 @@ public:
   // get the retrieval time for a given activation level
 
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrRetrievalParams);
 private:
@@ -82,7 +82,7 @@ public:
   float         max_diff;      // #CONDSHOW_ON_on #DEF_-1 :md in ACT-R -- maximum difference between two chunks -- provides the default similarity (distance) between chunks
   float         max_sim;       // #CONDSHOW_ON_on #DEF_0 :ms in ACT-R -- maximum similarity between two chunks, equal to the similarity of a chunk and itself
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrPartialParams);
 private:
@@ -100,7 +100,7 @@ public:
   float         max_str;     // #CONDSHOW_ON_on :mas in ACT-R -- maximum associative strength parameter
   bool          neg_ok;      // #CONDSHOW_ON_on :nsji in ACT-R -- allow negative assoc strength values allowed
 
-  override String       GetTypeDecoKey() const { return "Program"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Program"; }
 
   TA_SIMPLE_BASEFUNS(ActrAssocParams);
 private:
@@ -180,10 +180,10 @@ public:
   // #CAT_ActR add a new chunk to declarative memory active buffer, if merge is true, chunk is merged with any existing ones, and base activation is increased
 
 
-  override void  InitModule();
-  override void  ProcessEvent(ActrEvent& event);
-  override bool  SetParam(const String& param_nm, Variant par1, Variant par2);
-  override void  Init();
+  void  InitModule() CPP11_OVERRIDE;
+  void  ProcessEvent(ActrEvent& event) CPP11_OVERRIDE;
+  bool  SetParam(const String& param_nm, Variant par1, Variant par2) CPP11_OVERRIDE;
+  void  Init() CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(ActrDeclarativeModule);
 private:

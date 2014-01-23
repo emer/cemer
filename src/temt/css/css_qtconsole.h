@@ -35,19 +35,19 @@ class CSS_API QcssConsole : public iConsole {
   ~QcssConsole();
   QcssConsole(QObject* parent = NULL, cssCmdShell* cs = NULL);
 
-  override void clear();
+  void clear() CPP11_OVERRIDE;
 
  protected:
   static int autocompletePath(String cmd_b4, String cmd, QStringList& lst);
   static int autocompleteScoped(String cmd_b4, String cmd, QStringList& lst);
   static int autocompleteKeyword(String cmd_b4, String cmd, QStringList& lst);
 
-  override QString interpretCommand(QString command, int* res);
-  override QStringList autocompleteCommand(QString cmd);
-  override void ctrlCPressed();
+  QString interpretCommand(QString command, int* res) CPP11_OVERRIDE;
+  QStringList autocompleteCommand(QString cmd) CPP11_OVERRIDE;
+  void ctrlCPressed() CPP11_OVERRIDE;
 
-  override void keyPressEvent(QKeyEvent * e);
-  override void resizeEvent(QResizeEvent* e);
+  void keyPressEvent(QKeyEvent * e) CPP11_OVERRIDE;
+  void resizeEvent(QResizeEvent* e) CPP11_OVERRIDE;
 
   cssCmdShell* 	cmd_shell; // the command shell
   static QcssConsole *theInstance;

@@ -55,7 +55,7 @@ public:
   virtual void		setWidth(float wdth);
   virtual float		getWidth() { return width_; }
 
-  //  override void		addRemoveChildNode(SoNode* node, bool adding) {}
+  //  void		addRemoveChildNode(SoNode* node, bool adding) CPP11_OVERRIDE {}
   
   T3GridViewNode(T3DataView* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
   // dataview is a GridTableView object

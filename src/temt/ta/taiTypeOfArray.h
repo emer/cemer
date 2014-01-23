@@ -29,7 +29,7 @@ taTypeDef_Of(taiTypeOfArray);
 class TA_API taiTypeOfArray : public taiTypeOfClass {
   TAI_TYPEBASE_SUBCLASS(taiTypeOfArray, taiTypeOfClass);
 public:
-  override bool allowsInline() const { return false; }
+  bool allowsInline() const CPP11_OVERRIDE { return false; }
   int           BidForType(TypeDef* td);
 protected:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,

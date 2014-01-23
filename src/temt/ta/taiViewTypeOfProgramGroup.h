@@ -29,11 +29,11 @@ taTypeDef_Of(taiViewTypeOfProgramGroup);
 class TA_API taiViewTypeOfProgramGroup: public taiViewTypeOfGroup {
   TAI_TYPEBASE_SUBCLASS(taiViewTypeOfProgramGroup, taiViewTypeOfGroup) //
 public:
-  override int          BidForView(TypeDef*);
+  int          BidForView(TypeDef*) CPP11_OVERRIDE;
   void                  Initialize() {}
   void                  Destroy() {}
 protected:
-  override void         CreateDataPanel_impl(taiSigLink* dl_);
+  void         CreateDataPanel_impl(taiSigLink* dl_) CPP11_OVERRIDE;
 };
 
 #endif // taiViewTypeOfProgramGroup_h

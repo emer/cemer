@@ -78,14 +78,14 @@ public:
 
   TA_SIMPLE_BASEFUNS(TwoDValLeabraLayer);
 protected:
-  override void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
-  override void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const taVector2i& offs, bool na_by_range=false);
-  override void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				      Random* ran, const taVector2i& offs, bool na_by_range=false);
-  override void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
-				    Random* ran, bool na_by_range=false);
+  void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+				  Random* ran, const taVector2i& offs, bool na_by_range=false) CPP11_OVERRIDE;
+  void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+				      Random* ran, const taVector2i& offs, bool na_by_range=false) CPP11_OVERRIDE;
+  void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
+				    Random* ran, bool na_by_range=false) CPP11_OVERRIDE;
 
 private:
   void	Initialize();

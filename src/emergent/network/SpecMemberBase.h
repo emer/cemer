@@ -36,7 +36,7 @@ public:
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   // note: typically do NOT redefine basic Defaults function -- see SPEC_DEFAULTS comment above
 
-  override void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false);
+  void		MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) CPP11_OVERRIDE;
 
   TA_BASEFUNS_NOCOPY(SpecMemberBase);
 protected:

@@ -60,7 +60,7 @@ protected:
   bool			m_running; // set to true when running
   bool			m_stop_req; // set to true to signal that this thread should exit
   
-  override void 	run();
+  void 	run() CPP11_OVERRIDE;
 };
 
 #endif // taManagedThread_h

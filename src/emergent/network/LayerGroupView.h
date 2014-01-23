@@ -36,20 +36,20 @@ public:
   Layer_Group*          layer_group() const {return (Layer_Group*)data();}
   T3LayerGroupNode*     node_so() const {return (T3LayerGroupNode*)inherited::node_so();}
 
-  override void         BuildAll(); // creates fully populated subviews
+  void         BuildAll() CPP11_OVERRIDE; // creates fully populated subviews
   virtual void          UpdateUnitValues(); // *only* updates unit values
   virtual void          InitDisplay();
 
   virtual void          UpdateAutoScale(bool& updated);
   virtual void          SetHighlightSpec(BaseSpec* spec);
 
-  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE; // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerGroupView, nvhDataView)
 protected:
-  override void         DoHighlightColor(bool apply);
-  override void         SigRecvUpdateAfterEdit_impl(); // also invoke for the connected prjns
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl(); // #IGNORE
+  void         DoHighlightColor(bool apply) CPP11_OVERRIDE;
+  void         SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE; // also invoke for the connected prjns
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
 private:
   NOCOPY(LayerGroupView)
   void                  Initialize();

@@ -33,7 +33,7 @@ INHERITED(taGroup<taWizard>)
 public:
   virtual void          AutoEdit();
 
-  override String       GetTypeDecoKey() const { return "Wizard"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Wizard"; }
 
   TA_BASEFUNS(Wizard_Group);
 private:

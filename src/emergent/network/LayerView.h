@@ -41,7 +41,7 @@ public:
   DispMode              disp_mode; // how to display layer information
 
 
-  override void         BuildAll(); // creates fully populated subviews
+  void         BuildAll() CPP11_OVERRIDE; // creates fully populated subviews
   virtual void          InitDisplay();
   virtual void          UpdateUnitValues(); // *only* updates unit values
 
@@ -61,16 +61,16 @@ public:
   virtual void          UpdateAutoScale(bool& updated);
   virtual void          SetHighlightSpec(BaseSpec* spec);
 
-  override bool         hasViewProperties() const { return true; }
+  bool         hasViewProperties() const CPP11_OVERRIDE { return true; }
 
-  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) CPP11_OVERRIDE; // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvhDataView)
 protected:
-  override void         UpdateAfterEdit_impl();
-  override void         DoHighlightColor(bool apply);
-  override void         SigRecvUpdateAfterEdit_impl(); // also invoke for the connected prjns
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl(); // #IGNORE
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         DoHighlightColor(bool apply) CPP11_OVERRIDE;
+  void         SigRecvUpdateAfterEdit_impl() CPP11_OVERRIDE; // also invoke for the connected prjns
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
 private:
   NOCOPY(LayerView)
   void                  Initialize();

@@ -32,31 +32,31 @@ class TA_API voidptr_Matrix: public taMatrixT<voidptr> {
   // #INSTANCE a matrix of void*s (generic pointers)
 INHERITED(taMatrixT<void*>)
 public:
-  override TypeDef*     GetDataTypeDef() const {return &TA_unsigned_char;}
-  override ValType      GetDataValType() const {return VT_VOIDPTR;}
+  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_unsigned_char;}
+  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_VOIDPTR;}
 
-  override bool         StrValIsValid(const String& str, String* err_msg = NULL) const;
-  override bool         BinaryFile_Supported() { return true; }
+  bool         StrValIsValid(const String& str, String* err_msg = NULL) const CPP11_OVERRIDE;
+  bool         BinaryFile_Supported() CPP11_OVERRIDE { return true; }
 
   TA_MATRIX_FUNS_FAST(voidptr_Matrix, void*);
 
 public: //
-  override float        El_GetFloat_(const void* it) const { return (float)(ta_uintptr_t)*((void**)it); } // #IGNORE
-  override const String El_GetStr_(const void* it) const { return String(((ta_uintptr_t)*((void**)it))); } // #IGNORE
+  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE { return (float)(ta_uintptr_t)*((void**)it); } // #IGNORE
+  const String El_GetStr_(const void* it) const CPP11_OVERRIDE { return String(((ta_uintptr_t)*((void**)it))); } // #IGNORE
 #if (TA_POINTER_SIZE == 4)
-  override void         El_SetFmStr_(void* it, const String& str) {*((void**)it) = (void*)str.toInt();}       // #IGNORE
+  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {*((void**)it) = (void*)str.toInt();}       // #IGNORE
 #else
-  override void         El_SetFmStr_(void* it, const String& str) {*((void**)it) = (void*)str.toInt64();}       // #IGNORE
+  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {*((void**)it) = (void*)str.toInt64();}       // #IGNORE
 #endif
-  override const Variant El_GetVar_(const void* it) const {return Variant(*((void**)it));} // #IGNORE
-  override void         El_SetFmVar_(void* it, const Variant& var) {*((void**)it) = var.toPtr(); };  // #IGNORE
-  override int          El_Compare_(const void* a, const void* b) const
+  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return Variant(*((void**)it));} // #IGNORE
+  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {*((void**)it) = var.toPtr(); };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
   { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
 protected:
   static const void*    blank; // #IGNORE
-  override void         BinarySave_Item(std::ostream& strm, int idx)
+  void         BinarySave_Item(std::ostream& strm, int idx) CPP11_OVERRIDE
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(void*)); };
-  override void         BinaryLoad_Item(std::istream& strm, int idx)
+  void         BinaryLoad_Item(std::istream& strm, int idx) CPP11_OVERRIDE
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(void*)); };
 private:
   void          Initialize() {}

@@ -32,28 +32,28 @@ class TA_API byte_Matrix: public taMatrixT<byte> {
   // #INSTANCE a matrix of bytes
 INHERITED(taMatrixT<byte>)
 public:
-  override TypeDef*     GetDataTypeDef() const {return &TA_unsigned_char;}
-  override ValType      GetDataValType() const {return VT_BYTE;}
+  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE {return &TA_unsigned_char;}
+  ValType      GetDataValType() const CPP11_OVERRIDE {return VT_BYTE;}
 
-  override bool         StrValIsValid(const String& str, String* err_msg = NULL) const;
+  bool         StrValIsValid(const String& str, String* err_msg = NULL) const CPP11_OVERRIDE;
     // accepts 0-255 or octal or hex forms
-  override bool         BinaryFile_Supported() { return true; }
+  bool         BinaryFile_Supported() CPP11_OVERRIDE { return true; }
 
   TA_MATRIX_FUNS_FAST(byte_Matrix, byte);
 
 public: //
-  override float        El_GetFloat_(const void* it) const { return (float)*((byte*)it); } // #IGNORE
-  override const String El_GetStr_(const void* it) const { return String(((int)*((byte*)it))); } // #IGNORE
-  override void         El_SetFmStr_(void* it, const String& str) {*((byte*)it) = (byte)str.toInt();}       // #IGNORE
-  override const Variant El_GetVar_(const void* it) const {return Variant(*((byte*)it));} // #IGNORE
-  override void         El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
-  override int          El_Compare_(const void* a, const void* b) const
+  float        El_GetFloat_(const void* it) const CPP11_OVERRIDE { return (float)*((byte*)it); } // #IGNORE
+  const String El_GetStr_(const void* it) const CPP11_OVERRIDE { return String(((int)*((byte*)it))); } // #IGNORE
+  void         El_SetFmStr_(void* it, const String& str) CPP11_OVERRIDE {*((byte*)it) = (byte)str.toInt();}       // #IGNORE
+  const Variant El_GetVar_(const void* it) const CPP11_OVERRIDE {return Variant(*((byte*)it));} // #IGNORE
+  void         El_SetFmVar_(void* it, const Variant& var) CPP11_OVERRIDE {*((byte*)it) = var.toByte(); };  // #IGNORE
+  int          El_Compare_(const void* a, const void* b) const CPP11_OVERRIDE
   { int rval=-1; if(*((byte*)a) > *((byte*)b)) rval=1; else if(*((byte*)a) == *((byte*)b)) rval=0; return rval; }
 protected:
   static const byte     blank; // #IGNORE
-  override void         BinarySave_Item(std::ostream& strm, int idx)
+  void         BinarySave_Item(std::ostream& strm, int idx) CPP11_OVERRIDE
   { strm.write((char*)&(FastEl_Flat(idx)), sizeof(byte)); };
-  override void         BinaryLoad_Item(std::istream& strm, int idx)
+  void         BinaryLoad_Item(std::istream& strm, int idx) CPP11_OVERRIDE
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(byte)); };
 private:
   void          Initialize() {}

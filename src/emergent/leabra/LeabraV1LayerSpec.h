@@ -75,9 +75,9 @@ public:
   virtual void	Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group* fug, LeabraNetwork* net);
   // compute active units in active_buf for given feature unit group
 
-  override void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
 
-  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
   
   TA_SIMPLE_BASEFUNS(LeabraV1LayerSpec);
 protected:

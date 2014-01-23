@@ -34,16 +34,16 @@ public:
   String                desc; // #NO_SAVE_EMPTY optional description (typ. used for schema, not items)
   bool                  val_type_fixed;  // #READ_ONLY is the value type fixed -- can be set programmatically to create simpler user data interfaces -- gui will not show type selector if this is true
 
-  override bool         canDelete() const {return true;}
-  override bool         canRename() const {return true;}
-  override bool         isSimple() const {return true;}
-  override bool         isVisible() const {return true;}
+  bool         canDelete() const CPP11_OVERRIDE {return true;}
+  bool         canRename() const CPP11_OVERRIDE {return true;}
+  bool         isSimple() const CPP11_OVERRIDE {return true;}
+  bool         isVisible() const CPP11_OVERRIDE {return true;}
 
-  override const Variant valueAsVariant() const {return value;}
-  override bool         setValueAsVariant(const Variant& v) {value = v; return true;}
+  const Variant valueAsVariant() const CPP11_OVERRIDE {return value;}
+  bool         setValueAsVariant(const Variant& v) CPP11_OVERRIDE {value = v; return true;}
 
-  override String       GetDesc() const {return desc;}
-  override bool         SetDesc(const String& d) {desc = d; return true;}
+  String       GetDesc() const CPP11_OVERRIDE {return desc;}
+  bool         SetDesc(const String& d) CPP11_OVERRIDE {desc = d; return true;}
   TA_BASEFUNS(UserDataItem);
   UserDataItem(const String& type_name, const String& key, const Variant& value,
                const String& desc = _nilString);

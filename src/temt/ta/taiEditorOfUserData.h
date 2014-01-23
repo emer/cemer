@@ -35,10 +35,10 @@ public:
   UserDataItem_List*    udil;
   QTableWidget*         tw;
 
-  override void         Constr_Box();
-//obs  override taBase* GetMembBase_Flat(int idx); // these are overridden by userdata
-//obs  override taBase* GetMethBase_Flat(int idx);
-  override void         GetImage_Item(int row); // called from GetImage and ed->GetValue
+  void         Constr_Box() CPP11_OVERRIDE;
+//obs  taBase* GetMembBase_Flat(int idx) CPP11_OVERRIDE; // these are overridden by userdata
+//obs  taBase* GetMethBase_Flat(int idx) CPP11_OVERRIDE;
+  void         GetImage_Item(int row) CPP11_OVERRIDE; // called from GetImage and ed->GetValue
 
   taiEditorOfUserData(void* base, TypeDef* td, bool read_only_ = false,
         QObject* parent = 0);
@@ -46,7 +46,7 @@ public:
   ~taiEditorOfUserData();
 
 public: // ISigLinkClient i/f
-  override void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2);
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) CPP11_OVERRIDE;
 
 protected:
   int                   sel_item_row;
@@ -54,15 +54,15 @@ protected:
 
   UserDataItemBase*     GetUserDataItem(int row);
 
-  override void         Constr_impl();
-  override void         Constr_Body_impl();
-  override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
+  void         Constr_impl() CPP11_OVERRIDE;
+  void         Constr_Body_impl() CPP11_OVERRIDE;
+  void         ClearBody_impl() CPP11_OVERRIDE;       // we also clear all the methods, and then rebuild them
 
-  override void         Constr_Widget_Labels();
-  override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
-  override void         GetImage_Membs_def();
-  override void         GetValue_Membs_def();
-  override void         Constr_Methods_impl();
+  void         Constr_Widget_Labels() CPP11_OVERRIDE;
+  void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) CPP11_OVERRIDE;
+  void         GetImage_Membs_def() CPP11_OVERRIDE;
+  void         GetValue_Membs_def() CPP11_OVERRIDE;
+  void         Constr_Methods_impl() CPP11_OVERRIDE;
 
 protected slots:
   virtual void          DoDeleteUserDataItem();

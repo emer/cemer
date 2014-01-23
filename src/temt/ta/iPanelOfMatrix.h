@@ -37,26 +37,26 @@ public:
   iMatrixEditor*        me;
 
   taMatrix*             mat() {return (m_link) ? (taMatrix*)(link()->data()) : NULL;}
-  override String       panel_type() const; // this string is on the subpanel button for this panel
+  String       panel_type() const CPP11_OVERRIDE; // this string is on the subpanel button for this panel
 
-  override QWidget*     firstTabFocusWidget();
+  QWidget*     firstTabFocusWidget() CPP11_OVERRIDE;
 
   iPanelOfMatrix(taiSigLink* dl_);
   ~iPanelOfMatrix();
 
 protected:
-  override void         UpdatePanel_impl();
+  void         UpdatePanel_impl() CPP11_OVERRIDE;
 
 protected slots:
   void                  tv_hasFocus(iTableView* sender);
 
 public: // ISigLinkClient interface
-  override void*        This() {return (void*)this;}
-  override TypeDef*     GetTypeDef() const {return &TA_iPanelOfMatrix;}
+  void*        This() CPP11_OVERRIDE {return (void*)this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_iPanelOfMatrix;}
 protected:
-  override void         Render_impl();
-  override void         SigEmit_impl(int sls, void* op1, void* op2); //
-//  override int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
+  void         Render_impl() CPP11_OVERRIDE;
+  void         SigEmit_impl(int sls, void* op1, void* op2) CPP11_OVERRIDE; //
+//  int                EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL) CPP11_OVERRIDE;
 
 
 };

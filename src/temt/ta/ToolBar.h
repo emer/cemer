@@ -41,13 +41,13 @@ public:
   TA_DATAVIEWFUNS(ToolBar, taViewer)
 
 protected:
-  override void          Constr_impl(QWidget* gui_parent);
+  void          Constr_impl(QWidget* gui_parent) CPP11_OVERRIDE;
 #ifdef TA_GUI
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // in qt file
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // in qt file
 #endif
-  override void         WidgetDeleting_impl();
-  override void         GetWinState_impl();
-  override void         SetWinState_impl();
+  void         WidgetDeleting_impl() CPP11_OVERRIDE;
+  void         GetWinState_impl() CPP11_OVERRIDE;
+  void         SetWinState_impl() CPP11_OVERRIDE;
 private:
   void  Copy_(const ToolBar& cp);
   void  Initialize();

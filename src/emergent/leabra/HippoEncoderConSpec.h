@@ -34,8 +34,8 @@ public:
   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
 #endif
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) {
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) CPP11_OVERRIDE {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     Compute_SAvgCor(cg, su, net);
@@ -56,20 +56,20 @@ public:
     }
   }
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_dWt_LeabraCHL(cg, su, net);
   }
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_dWt_LeabraCHL(cg, su, net);
   }
-  inline override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                     LeabraNetwork* net) {
+  inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                     LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
-  inline override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) {
+  inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                    LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
 

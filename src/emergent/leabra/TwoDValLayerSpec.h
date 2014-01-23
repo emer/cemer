@@ -67,7 +67,7 @@ public:
   virtual void	GetUnitVal(int unit_idx, float& x_cur, float& y_cur);
   // get target values associated with unit at given index: MUST CALL InitVal first!
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   SIMPLE_COPY(TwoDValSpec);
   TA_BASEFUNS(TwoDValSpec);
@@ -103,7 +103,7 @@ public:
   float		x_val;		// X axis value location (center of gaussian bump)
   float		y_val;		// Y axis value location (center of gaussian bump)
 
-  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "LayerSpec"; }
 
   SIMPLE_COPY(TwoDValBias);
   TA_BASEFUNS(TwoDValBias);
@@ -155,26 +155,26 @@ public:
 				    float x_val, float y_val);
     // #IGNORE
 
-  override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-    override void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  void Init_Weights(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+    void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
     virtual void Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
 						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraNetwork* net);
     // #IGNORE
-  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
     virtual void PostSettle_ugp(TwoDValLeabraLayer* lay,
 				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: update variables based on phase
 
-  override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
-			     bool unit_avg = false, bool sqrt = false);
+  float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
+			     bool unit_avg = false, bool sqrt = false) CPP11_OVERRIDE;
     virtual float Compute_SSE_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 				  int& n_vals);
     // #IGNORE
-  override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
+  float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
     virtual float Compute_NormErr_ugp(LeabraLayer* lay,
 				      Layer::AccessMode acc_md, int gpidx,
 				      LeabraInhib* thr, LeabraNetwork* net);

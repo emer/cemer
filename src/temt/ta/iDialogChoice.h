@@ -62,7 +62,7 @@ public:
 
   QButtonGroup* bgChoiceButtons; //note: not a widget
 
-  override void done(int r);
+  void done(int r) CPP11_OVERRIDE;
 
   // Note: QMessageBox::exec() is not virtual, so this is not an override.
   // Make it virtual from this point forward, in case subclasses need

@@ -38,10 +38,10 @@ public:
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   MemberDef*            GetValue() {return md();}
 
-  override void         BuildChooser(iDialogItemChooser* ic, int view = 0); //
+  void         BuildChooser(iDialogItemChooser* ic, int view = 0) CPP11_OVERRIDE; //
 
   virtual bool          ShowMember(MemberDef* mbr);
-  override void         btnHelp_clicked();
+  void         btnHelp_clicked() CPP11_OVERRIDE;
 
   taiWidgetMemberDefChooser(TypeDef* typ_, IWidgetHost* host,
                      taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -50,7 +50,7 @@ protected:
   const String          itemTag() const {return "Member: ";}
   const String          labelNameNonNull() const;
 
-  override void         BuildCategories_impl();
+  void         BuildCategories_impl() CPP11_OVERRIDE;
   void                  BuildChooser_0(iDialogItemChooser* ic);
   void                  BuildChooser_1(iDialogItemChooser* ic);
 };

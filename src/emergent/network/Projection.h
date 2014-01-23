@@ -174,11 +174,11 @@ public:
                const String& var12 = "", const String& var13 = "", const String& var14 = "");
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
-  override String       GetTypeDecoKey() const { return "Projection"; }
-  override int    GetEnabled() const    { return !off; }
-  override void   SetEnabled(bool value) { off = !value; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Projection"; }
+  int    GetEnabled() const    CPP11_OVERRIDE { return !off; }
+  void   SetEnabled(bool value) CPP11_OVERRIDE { off = !value; }
 
-  override bool ChangeMyType(TypeDef* new_type);
+  bool ChangeMyType(TypeDef* new_type) CPP11_OVERRIDE;
 
   void  InitLinks();
   void  CutLinks();
@@ -187,9 +187,9 @@ public:
 protected:
   ConSpec*      m_prv_con_spec; // previous con spec set for cons
 
-  override void UpdateAfterEdit_impl();
-  override void UpdateAfterMove_impl(taBase* old_owner);
-  override void CheckThisConfig_impl(bool quiet, bool& rval);
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void UpdateAfterMove_impl(taBase* old_owner) CPP11_OVERRIDE;
+  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy();

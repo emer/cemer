@@ -116,9 +116,9 @@ public:
   //////////////////////////////
   //    Internal-ish stuff
 
-  override int          GetEnabled() const {  return !HasStaticFlag(OFF); }
-  override void         SetEnabled(bool value) { SetStaticFlagState(OFF, !value); }
-  override String       GetDesc() const { return desc; }
+  int          GetEnabled() const CPP11_OVERRIDE {  return !HasStaticFlag(OFF); }
+  void         SetEnabled(bool value) CPP11_OVERRIDE { SetStaticFlagState(OFF, !value); }
+  String       GetDesc() const CPP11_OVERRIDE { return desc; }
   inline void           SetStaticFlag(StaticFlags flg)   { flags = (StaticFlags)(flags | flg); }
   // set body flag state on
   inline void           ClearStaticFlag(StaticFlags flg) { flags = (StaticFlags)(flags & ~flg); }
@@ -173,14 +173,14 @@ public:
 
   SIMPLE_COPY(VEStatic);
   SIMPLE_INITLINKS(VEStatic);
-  override void CutLinks();
+  void CutLinks() CPP11_OVERRIDE;
   TA_BASEFUNS(VEStatic);
 protected:
   Shape         cur_shape;      // current shape that was previously set
   taVector3f    prv_pos;      // #IGNORE previous cur_pos value -- set prior to a Translate function move, for use by UpdateCurFromRel
   taQuaternion  prv_quat;      // #IGNORE previous cur_quat rotation value -- set prior to a Rotate function rotation, for use by UpdateCurFromRel
 
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy();

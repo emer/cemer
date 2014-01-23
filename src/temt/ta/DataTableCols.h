@@ -38,19 +38,19 @@ class TA_API DataTableCols: public taList<DataCol> {
 INHERITED(taList<DataCol>)
 friend class DataTable;
 public:
-  override void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
+  void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) CPP11_OVERRIDE;
 #ifdef __MAKETA__
   taBase*               New_gui(int n_objs=1, TypeDef* typ=NULL,
     const String& name="(default name)"); // #NO_MENU
 #endif
-  override int          NumListCols() const {return 3;}
+  int          NumListCols() const CPP11_OVERRIDE {return 3;}
   // name, val_type (float, etc.), desc
-  override String       GetColHeading(const KeyString& key) const;
+  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
   // header text for the indicated column
-  override const KeyString GetListColKey(int col) const;
+  const KeyString GetListColKey(int col) const CPP11_OVERRIDE;
 
-  override String       GetTypeDecoKey() const { return "DataTable"; }
-  override taBase*      ChildDuplicate(const taBase* chld);
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "DataTable"; }
+  taBase*      ChildDuplicate(const taBase* chld) CPP11_OVERRIDE;
 
   TA_BASEFUNS(DataTableCols);
 protected: // these guys must only be used by DataTable, but no external guys

@@ -50,7 +50,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(SendCons);
 protected:
-  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+  void  CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy()       { }

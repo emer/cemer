@@ -33,12 +33,12 @@ public:
   bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then keep EC_in -> CA1 on, and don't do recall_decay -- makes it more likely to at least get input parts right
 
   // following are main hook into code:
-  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE;
+  void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) CPP11_OVERRIDE { };
   // no mid minus -- could overwrite!
 
-  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool CheckConfig_Layer(Layer* lay, bool quiet=false) CPP11_OVERRIDE;
   virtual void 	ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca3_on);
   // control the strength of the CA3 -> CA1 projection according to ca3_on arg
   virtual void 	ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool ecin_on);

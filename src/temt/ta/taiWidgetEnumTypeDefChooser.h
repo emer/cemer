@@ -31,7 +31,7 @@ public:
   const String          headerText(int index, int view) const; // override
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0); // override
-  override void         btnHelp_clicked();
+  void         btnHelp_clicked() CPP11_OVERRIDE;
 
   taiWidgetEnumTypeDefChooser(TypeDef* typ_, IWidgetHost* host,
                        taiWidget* par, QWidget* gui_parent_, int flags_ = 0,

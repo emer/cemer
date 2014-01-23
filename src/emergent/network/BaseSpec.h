@@ -57,8 +57,8 @@ public:
   BaseSpec_Group 	children;
   // #NO_INHERIT #IN_GPMENU #DIFF_LAST sub-specs descending from this one and inheriting values
   
-  override taList_impl*	children_() {return &children;}	
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  taList_impl*	children_() CPP11_OVERRIDE {return &children;}	
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
   { return children.Elem(idx, mode); }
 
   bool			SpecInheritsFrom(BaseSpec* spec) const;
@@ -93,9 +93,9 @@ public:
   virtual bool 	    RemoveChild(const char* nm, TypeDef* td = NULL);
   // remove a child based on name or type
 
-  override bool	  UAEProgramDefault() { return true; }
-  override void	  MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false);
-  override String GetDesc() const { return desc; }
+  bool	  UAEProgramDefault() CPP11_OVERRIDE { return true; }
+  void	  MemberUpdateAfterEdit(MemberDef* md, bool edit_dialog = false) CPP11_OVERRIDE;
+  String GetDesc() const CPP11_OVERRIDE { return desc; }
 
   virtual void	  Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
@@ -107,15 +107,15 @@ public:
   virtual void  SetParam(const String& param_path, const String& value);
   // #DYN1 Set parameter at given path to given value, for all the specs within this group, and all the child specs underneath these specs
 
-  override taBase*      ChooseNew(taBase* origin);
-  override bool         HasChooseNew() { return true; }
+  taBase*      ChooseNew(taBase* origin) CPP11_OVERRIDE;
+  bool         HasChooseNew() CPP11_OVERRIDE { return true; }
 
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(BaseSpec);
 protected:
-  override void	UpdateAfterEdit_impl();
-  override void CheckChildConfig_impl(bool quiet, bool& rval);
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
   virtual bool  CheckType_impl(TypeDef* td);
   // #IGNORE actually does the check
   virtual bool	CheckObjectType_impl(taBase* obj);

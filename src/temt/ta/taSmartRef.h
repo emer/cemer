@@ -72,14 +72,14 @@ private:
   taSmartRef(const taSmartRef& src); // not defined
 
 public: // ITypedObject interface
-  override void*        This() {return (void*)this;} //
-  override TypeDef*     GetTypeDef() const {return &TA_taSmartRef;} //note: only one typedef for all
+  void*        This() CPP11_OVERRIDE {return (void*)this;} //
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_taSmartRef;} //note: only one typedef for all
 
 public: // ISigLinkClient interface
-  override TypeDef*     GetDataTypeDef() const
+  TypeDef*     GetDataTypeDef() const CPP11_OVERRIDE
     {return (m_ptr) ? m_ptr->GetTypeDef() : &TA_taBase;} // TypeDef of the data
-  override void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2);
-  override void         SigLinkDestroying(taSigLink* dl);
+  void         SigLinkRecv(taSigLink*, int sls, void* op1, void* op2) CPP11_OVERRIDE;
+  void         SigLinkDestroying(taSigLink* dl) CPP11_OVERRIDE;
 };
 
 #endif // taSmartRef_h

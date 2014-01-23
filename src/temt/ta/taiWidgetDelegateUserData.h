@@ -33,11 +33,11 @@ public:
   UserDataItem_List*    udil;
   taiEditorOfUserData*    uddh;
 
-  override bool         IndexToMembBase(const QModelIndex& index,
-    MemberDef*& mbr, taBase*& base) const;
+  bool         IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const CPP11_OVERRIDE;
 
-  override QWidget* createEditor(QWidget* parent,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  QWidget* createEditor(QWidget* parent,
+    const QStyleOptionViewItem& option, const QModelIndex& index) const CPP11_OVERRIDE;
 
   taiWidgetDelegateUserData(UserDataItem_List* udil_, taiEditorOfUserData* uddh_);
 };

@@ -34,11 +34,11 @@ INHERITED(LeabraConSpec)
 public:
   float		dwt_thresh;  // #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
-  inline override void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru);
-  inline override void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
-                                                   LeabraLayer* rlay);
-  inline override void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
-                                                  LeabraLayer* rlay);
+  inline void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru) CPP11_OVERRIDE;
+  inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
+                                                   LeabraLayer* rlay) CPP11_OVERRIDE;
+  inline void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
+                                                  LeabraLayer* rlay) CPP11_OVERRIDE;
 
   bool	CheckObjectType_impl(taBase* obj);
 

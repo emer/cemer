@@ -33,7 +33,7 @@ public:
   taiWidget*      GetWidgetRep_impl(IWidgetHost* host_, taiWidget* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiWidget* dat, const void* base);
-  override void GetMbrValue(taiWidget* dat, void* base, bool& first_diff);
+  void GetMbrValue(taiWidget* dat, void* base, bool& first_diff) CPP11_OVERRIDE;
 
 private:
   void          Initialize() {}

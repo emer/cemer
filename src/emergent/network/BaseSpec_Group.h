@@ -56,7 +56,7 @@ public:
   virtual BaseSpec*	FindParent();
   // #MENU #USE_RVAL #MENU_ON_Actions Find the parent spec of this one
 
-  override String 	GetTypeDecoKey() const;
+  String 	GetTypeDecoKey() const CPP11_OVERRIDE;
 
   virtual void  SetParam(TypeDef* spec_type, const String& param_path, const String& value);
   // #BUTTON #DYN1 #TYPE_ON_el_base Set parameter at given path to given value, for all the specs inheriting from given type within this group, and all the child specs underneath these specs

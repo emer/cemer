@@ -34,8 +34,8 @@ public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
-  override void	Connect_impl(Projection* prj);
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {}
+  void	Connect_impl(Projection* prj) CPP11_OVERRIDE;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE {}
     // NOTE: if you allow init_wts you must set wts in your script
 
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
@@ -48,8 +48,8 @@ public:
   void	Copy_(const ScriptPrjnSpec& cp);
   TA_BASEFUNS(ScriptPrjnSpec);
 protected:
-  override void UpdateAfterEdit_impl();
-  override void CheckThisConfig_impl(bool quiet, bool& rval);
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 private:
   void	Initialize();
   void 	Destroy();

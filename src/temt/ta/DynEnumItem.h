@@ -33,20 +33,20 @@ public:
   int           value;          // numerical (integer) value of this enum -- automatically set to be sequential or orthogonal bits if using bits mode -- order must be increasing in list order
   String        desc;           // #EDIT_DIALOG description of item
 
-  override String       GetDisplayName() const;
-  override String       GetDesc() const { return desc; }
+  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetDesc() const CPP11_OVERRIDE { return desc; }
 
-  override bool         BrowserSelectMe();
-  override bool         BrowserExpandAll();
-  override bool         BrowserCollapseAll();
+  bool         BrowserSelectMe() CPP11_OVERRIDE;
+  bool         BrowserExpandAll() CPP11_OVERRIDE;
+  bool         BrowserCollapseAll() CPP11_OVERRIDE;
 
   inline void   Initialize()                    { value = 0; }
   inline void   Destroy()                       { };
   inline void   Copy_(const DynEnumItem& cp)    { value = cp.value; desc = cp.desc; }
   TA_BASEFUNS(DynEnumItem);
 protected:
-  override void         UpdateAfterEdit_impl();
-  override void         CheckThisConfig_impl(bool quiet, bool& rval);
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
 };
 
 #endif // DynEnumItem_h

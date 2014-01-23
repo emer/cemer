@@ -123,7 +123,7 @@ protected:
   bool                  SetItem(TypeDef* typ); // set active item by TypeDef, true if set
   void                  showEvent(QShowEvent* e); // override
   void                  UpdateTreeItem(); // call after tab changes and url changes
-  override bool         eventFilter(QObject *obj, QEvent *event);
+  bool         eventFilter(QObject *obj, QEvent *event) CPP11_OVERRIDE;
   // translate emacs keys..
 
   iHelpBrowser();

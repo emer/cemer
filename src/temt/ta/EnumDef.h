@@ -33,9 +33,9 @@ public:
 
   int           enum_no;        // number (value) of the enum
 
-  override void*        This() {return this;}
-  override TypeDef*     GetTypeDef() const {return &TA_EnumDef;}
-  override TypeInfoKinds TypeInfoKind() const {return TIK_ENUM;}
+  void*        This() CPP11_OVERRIDE {return this;}
+  TypeDef*     GetTypeDef() const CPP11_OVERRIDE {return &TA_EnumDef;}
+  TypeInfoKinds TypeInfoKind() const CPP11_OVERRIDE {return TIK_ENUM;}
 
   void          Copy(const EnumDef& cp);
 
@@ -46,7 +46,7 @@ public:
   EnumDef*      Clone()         { return new EnumDef(*this); }
   EnumDef*      MakeToken()     { return new EnumDef(); }
 
-  override TypeDef*  GetOwnerType() const;
+  TypeDef*  GetOwnerType() const CPP11_OVERRIDE;
   bool          CheckList(const String_PArray& lst) const;
   // check if enum has a list in common with given one
 private:

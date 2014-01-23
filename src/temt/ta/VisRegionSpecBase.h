@@ -146,7 +146,7 @@ public:
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisRegionSpecBase);
 protected:
-  override void	UpdateAfterEdit_impl();
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
   // cache of args for current function call
   float_Matrix* cur_img_r;	// cur right eye image arg -- only valid during filter call

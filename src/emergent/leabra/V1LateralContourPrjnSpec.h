@@ -37,12 +37,12 @@ public:
   float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
   float		oth_feat_wt;	// #DEF_0.5 weight multiplier for units that have a different featural encoding (e.g., on-center vs. off-center or another color contrast) -- encoded by y axis of unit group
 
-  override void	Connect_impl(Projection* prjn);
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  void	Connect_impl(Projection* prjn) CPP11_OVERRIDE;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(V1LateralContourPrjnSpec);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void	Initialize();
   void	Destroy()	{ };

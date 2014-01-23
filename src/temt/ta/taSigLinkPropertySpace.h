@@ -32,12 +32,12 @@ INHERITED(taSigLinkTypeItemSpace)
 public:
   PropertySpace*                data() {return (PropertySpace*)m_data;}
   using inherited::GetListChild;
-  override taiSigLink* GetListChild(int itm_idx); // returns NULL when no more
-  override int          NumListCols() const;
-  override const KeyString GetListColKey(int col) const;
-  override String       GetColHeading(const KeyString& key) const;
-  override String       ChildGetColText(taSigLink* child, const KeyString& key,
-    int itm_idx = -1) const;
+  taiSigLink* GetListChild(int itm_idx) CPP11_OVERRIDE; // returns NULL when no more
+  int          NumListCols() const CPP11_OVERRIDE;
+  const KeyString GetListColKey(int col) const CPP11_OVERRIDE;
+  String       GetColHeading(const KeyString& key) const CPP11_OVERRIDE;
+  String       ChildGetColText(taSigLink* child, const KeyString& key,
+    int itm_idx = -1) const CPP11_OVERRIDE;
 
   taSigLinkPropertySpace(PropertySpace* data_);
   SL_FUNS(taSigLinkPropertySpace) //

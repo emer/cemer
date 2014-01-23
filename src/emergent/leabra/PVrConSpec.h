@@ -39,8 +39,8 @@ public:
   }
   // #IGNORE
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) CPP11_OVERRIDE {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float su_act = su->act_p;
@@ -52,13 +52,13 @@ public:
     }
   }
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) {
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 

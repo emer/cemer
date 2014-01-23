@@ -31,7 +31,7 @@ class TA_API taiWidgetMenuButton: public taiWidgetActions {
 public:
   inline QAbstractButton* rep() {return (QAbstractButton*)(QWidget*)m_rep;}
 
-  override void         Delete(); // should delete the menu if we didn't use it
+  void         Delete() CPP11_OVERRIDE; // should delete the menu if we didn't use it
   taiWidgetMenuButton(int  sel_type_, int font_spec_, TypeDef* typ_, IWidgetHost* host,
       taiWidget* par, QWidget* gui_parent_, int flags_ = 0, taiWidgetActions* par_menu_ = NULL);
 private:

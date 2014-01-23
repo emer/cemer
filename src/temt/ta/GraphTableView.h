@@ -123,8 +123,8 @@ public:
 
   bool          scrolling_;     // #IGNORE currently scrolling (in scroll callback)
 
-  override void InitDisplay(bool init_panel = true);
-  override void UpdateDisplay(bool update_panel = true);
+  void InitDisplay(bool init_panel = true) CPP11_OVERRIDE;
+  void UpdateDisplay(bool update_panel = true) CPP11_OVERRIDE;
 
   void          SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON #VIEWMENU #INIT_ARGVAL_ON_colorscale.spec set the color scale spec to determine the palette of colors representing values
@@ -157,13 +157,13 @@ public:
   
   inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}
 
-  override void         DataUnitsXForm(taVector3f& pos, taVector3f& size);
+  void         DataUnitsXForm(taVector3f& pos, taVector3f& size) CPP11_OVERRIDE;
 
-  override const iColor bgColor(bool& ok) const; // #IGNORE
-  override void         UpdateName();
-  override const String caption() const;
+  const iColor bgColor(bool& ok) const CPP11_OVERRIDE; // #IGNORE
+  void         UpdateName() CPP11_OVERRIDE;
+  const String caption() const CPP11_OVERRIDE;
 
-  override bool         hasViewProperties() const { return true; }
+  bool         hasViewProperties() const CPP11_OVERRIDE { return true; }
 
   virtual void          CopyFromView(GraphTableView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
@@ -254,16 +254,16 @@ protected:
 
   void  LoadObsoletePlotData(); // #IGNORE
 
-  override void         OnWindowBind_impl(iT3Panel* vw);
-  override void         Clear_impl();
-  override void         Render_pre(); // #IGNORE
-  override void         Render_impl(); // #IGNORE
-  override void         Render_post(); // #IGNORE
+  void         OnWindowBind_impl(iT3Panel* vw) CPP11_OVERRIDE;
+  void         Clear_impl() CPP11_OVERRIDE;
+  void         Render_pre() CPP11_OVERRIDE; // #IGNORE
+  void         Render_impl() CPP11_OVERRIDE; // #IGNORE
+  void         Render_post() CPP11_OVERRIDE; // #IGNORE
 
-  override void         UpdateFromDataTable_this(bool first);
-  override void         SigRecvUpdateView_impl();
+  void         UpdateFromDataTable_this(bool first) CPP11_OVERRIDE;
+  void         SigRecvUpdateView_impl() CPP11_OVERRIDE;
 
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy() {CutLinks();}

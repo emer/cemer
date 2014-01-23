@@ -58,11 +58,11 @@ public:
   EditMthItem*          mth(int i) const; // convenience accessor for flat access
   int                   mthSize(int i) const {return mths.leaves;} // flat size
 
-  override bool         autoEdit() const {return auto_edit;}
+  virtual bool          autoEdit() const {return auto_edit;}
 
-  override String       GetTypeDecoKey() const { return "SelectEdit"; }
-  override String       GetDesc() const { return desc; } //
-  override int          UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "SelectEdit"; }
+  String       GetDesc() const CPP11_OVERRIDE { return desc; } //
+  int          UpdatePointers_NewPar(taBase* old_par, taBase* new_par) CPP11_OVERRIDE;
   SIMPLE_LINKS(SelectEdit);
   TA_BASEFUNS(SelectEdit);
 
@@ -179,17 +179,17 @@ public: // public API
   // #CAT_PSearch_Access set current value to stored next value for given member name and, optionally if non-empty, the associated label
 
 public: // IRefListClient i/f
-  override void*        This() {return this;}
-  override void         SigDestroying_Ref(taBase_RefList* src, taBase* ta);
+  void*        This() CPP11_OVERRIDE {return this;}
+  void         SigDestroying_Ref(taBase_RefList* src, taBase* ta) CPP11_OVERRIDE;
     // note: item will already have been removed from list
-  override void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
-    int sls, void* op1, void* op2);
+  void         SigEmit_Ref(taBase_RefList* src, taBase* ta,
+    int sls, void* op1, void* op2) CPP11_OVERRIDE;
 
 protected:
   int                   m_changing; // flag so we don't recursively delete bases
   taBase_RefList        base_refs; // all bases notify us via this list
 
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
   virtual void          SigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
     // mostly for detecting asynchronous deletes
   virtual void          BaseAdded(SelectEditItem* sei);

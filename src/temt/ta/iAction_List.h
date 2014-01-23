@@ -36,9 +36,9 @@ public:
   virtual String El_GetName_(void* it) const { return (((iAction*)it)->text()); }
 
 protected:
-  override void*        El_Ref_(void* it)  { ((iAction*)it)->nref++; return it; }     // when pushed
-  override void*        El_unRef_(void* it)  { ((iAction*)it)->nref--; return it; }   // when popped
-  override void         El_Done_(void* it);
+  void*        El_Ref_(void* it)  CPP11_OVERRIDE { ((iAction*)it)->nref++; return it; }     // when pushed
+  void*        El_unRef_(void* it)  CPP11_OVERRIDE { ((iAction*)it)->nref--; return it; }   // when popped
+  void         El_Done_(void* it) CPP11_OVERRIDE;
 };
 
 #endif // iAction_List_h

@@ -184,14 +184,14 @@ public:
   virtual void          CopyChunkData(ActrChunk* fm_ck);
   // #CAT_ActR copy only the data from another chunk -- for use in runtime -- doesn't copy flags or other things -- just the values
 
-  override taList_impl*	children_() {return &slots;}	
-  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  taList_impl*	children_() CPP11_OVERRIDE {return &slots;}	
+  Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const CPP11_OVERRIDE
   { return slots.Elem(idx, mode); }
-  override String& Print(String& strm, int indent = 0) const;
-  override String GetDisplayName() const;
-  override String GetDesc() const;
-  override String GetTypeDecoKey() const { return "ProgVar"; }
-  override int    GetSpecialState() const;
+  String& Print(String& strm, int indent = 0) const CPP11_OVERRIDE;
+  String GetDisplayName() const CPP11_OVERRIDE;
+  String GetDesc() const CPP11_OVERRIDE;
+  String GetTypeDecoKey() const CPP11_OVERRIDE { return "ProgVar"; }
+  int    GetSpecialState() const CPP11_OVERRIDE;
 
   void  InitLinks();
   void  CutLinks();

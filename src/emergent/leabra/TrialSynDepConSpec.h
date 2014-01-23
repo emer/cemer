@@ -34,7 +34,7 @@ public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
 
-  override String       GetTypeDecoKey() const { return "ConSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ConSpec"; }
 
   SIMPLE_COPY(TrialSynDepSpec);
   TA_BASEFUNS(TrialSynDepSpec);
@@ -76,18 +76,18 @@ public:
   }
   // #IGNORE
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                      LeabraNetwork* net) {
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                      LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_dWt_LeabraCHL(cg, su, net);
     Depress_Wt(cg, su, net);
   }
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                         LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
     Depress_Wt(cg, su, net);
   }
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                        LeabraNetwork* net) CPP11_OVERRIDE {
     inherited::Compute_dWt_CtLeabraCAL(cg, su, net);
     Depress_Wt(cg, su, net);
   }
@@ -108,18 +108,18 @@ public:
   }
   // #IGNORE
 
-  inline override void 	C_Init_Weights_post(BaseCons* cg, const int idx,
-                                            Unit* ru, Unit* su, Network* net) {
+  inline void 	C_Init_Weights_post(BaseCons* cg, const int idx,
+                                            Unit* ru, Unit* su, Network* net) CPP11_OVERRIDE {
     inherited::C_Init_Weights_post(cg, idx, ru, su, net);
     cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net);
   }
 
-  inline override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                const int thread_no, const float su_act_delta)
+  inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+                                const int thread_no, const float su_act_delta) CPP11_OVERRIDE
   { Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(EFFWT)); }
   // use effwt instead of wt
 
-  inline override float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
+  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) CPP11_OVERRIDE {
     // this is slow b/c going through the PtrCn
     float rval=0.0f;
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin(cg->PtrCn(i,EFFWT,net), // effwt

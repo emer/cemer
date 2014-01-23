@@ -47,7 +47,7 @@ public:
   float		gain;		// #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraActFunSpec);
 protected:
@@ -110,7 +110,7 @@ public:
     return gg_decay_rise * (taMath_float::exp_fast(-t * oneo_decay) - taMath_float::exp_fast(-t * oneo_rise)); // full alpha
   }
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(SpikeFunSpec);
 protected:
@@ -145,7 +145,7 @@ public:
   float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
   float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
 protected:
@@ -175,7 +175,7 @@ public:
   }
   // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(ActAdaptSpec);
 protected:
@@ -201,7 +201,7 @@ public:
   int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
   float		max_amp;	// #CONDSHOW_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DepressSpec);
 protected:
@@ -222,7 +222,7 @@ public:
   bool		on;		// is synaptic delay active?
   int		delay;		// #CONDSHOW_ON_on #MIN_0 number of cycles to delay for
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(SynDelaySpec);
 protected:
@@ -244,7 +244,7 @@ public:
   float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
   float         xcal_lrn;       // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(OptThreshSpec);
 protected:
@@ -272,7 +272,7 @@ public:
   float		vm_time;	// #READ_ONLY #SHOW 1/vm rate constant = time in cycles for vm to reach 1/e of asymptotic value
   float		net_time;	// #READ_ONLY #SHOW 1/net rate constant = time in cycles for net to reach 1/e of asymptotic value
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraDtSpec);
 protected:
@@ -304,7 +304,7 @@ public:
   float		s_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale avg_s value
   float		ss_time;	// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/ss_dt) for continuously updating the super-short time-scale avg_ss value
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
 protected:
@@ -328,7 +328,7 @@ public:
   float		h;		// hysteresis (Ca)
   float		a;		// accomodation (k)
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   void 	Copy_(const LeabraChannels& cp); // used in units, so optimized copy needed
   TA_BASEFUNS(LeabraChannels);
@@ -368,7 +368,7 @@ public:
       gc += g_dt * ((float)on_off - gc);
   }
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(VChanSpec);
 private:
@@ -393,7 +393,7 @@ public:
   float		inet_scale;	// #DEF_1 #MIN_0 how to scale the inet measure to be like da
   float		lay_avg_thr;	// #DEF_0.01 #MIN_0 threshold for layer average activation to switch to da fm Inet
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(MaxDaSpec);
 protected:
@@ -419,7 +419,7 @@ public:
   ModType	mod;		// #CONDSHOW_ON_on #DEF_PLUS_CONT how to apply DA modulation
   float		gain;		// #CONDSHOW_ON_on #MIN_0 gain multiplier of da values
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DaModSpec);
 protected:
@@ -451,7 +451,7 @@ public:
   float		min_pct;	// #CONDSHOW_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
   float		min_pct_c;	// #READ_ONLY 1-min_pct
 
-  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(NoiseAdaptSpec);
 protected:
@@ -523,8 +523,8 @@ public:
   virtual void	SetLearnRule(LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
 
-  override void Init_Weights(Unit* u, Network* net);
-  override void	Init_Acts(Unit* u, Network* net);
+  void Init_Weights(Unit* u, Network* net) CPP11_OVERRIDE;
+  void	Init_Acts(Unit* u, Network* net) CPP11_OVERRIDE;
   virtual void 	Init_ActAvg(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Activation initialize average activation values, used to control learning
 
@@ -637,7 +637,7 @@ public:
   //	Cycle Step 3: Activation
 
   // main function is basic Compute_Act which calls all the various sub-functions
-  override void	Compute_Act(Unit* u, Network* net, int thread_no=-1);
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
 
     virtual void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 1: compute input conductance values in the gc variables
@@ -737,7 +737,7 @@ public:
   virtual void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
 
-  override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
+  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) CPP11_OVERRIDE;
 
   virtual void	Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute the stable weights for connections that have separate stable weights (see LeabraStableConSpec) -- simulates synaptic consolidation to gene-expression-dependent long term plasticity -- typically done after every epoch or multiple thereof
@@ -745,8 +745,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 
-  override float Compute_SSE(Unit* u, Network* net, bool& has_targ);
-  override bool	 Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg);
+  float Compute_SSE(Unit* u, Network* net, bool& has_targ) CPP11_OVERRIDE;
+  bool	 Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg) CPP11_OVERRIDE;
   virtual float  Compute_NormErr(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0
   virtual float  Compute_M2SSE(LeabraUnit* u, LeabraNetwork* net, bool& has_targ);
@@ -781,7 +781,7 @@ public:
   virtual void TimeExp(int mode, int nreps=100000000);
   // #MENU_BUTTON #MENU_ON_Graph ime how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
-  override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
+  bool  CheckConfig_Unit(Unit* un, bool quiet=false) CPP11_OVERRIDE;
 
   void	InitLinks();
   SIMPLE_COPY(LeabraUnitSpec);

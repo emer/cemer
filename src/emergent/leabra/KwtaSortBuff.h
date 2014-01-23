@@ -64,7 +64,7 @@ public:
   { ngps = MAX(ngps, 1);  kbuff.SetGeom(2, nunits, ngps);  sizes.SetGeom(1, ngps); ResetAll(); }
   // allocate storage to given number of units and groups, and initialize all sizes to 0
 
-  override String       GetTypeDecoKey() const { return "Layer"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Layer"; }
 
   void	InitLinks();
   void	CutLinks();

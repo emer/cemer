@@ -38,9 +38,9 @@ public:
 
   String                root_str; // #READ_ONLY #NO_SHOW a string version, so we can stream the guy
 
-  override void*        root() {return m_root;}
+  void*        root() CPP11_OVERRIDE {return m_root;}
   void                  setRoot(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); // use this to set the root
-  override taiSigLink* rootLink()
+  taiSigLink* rootLink() CPP11_OVERRIDE
     {return (m_root) ? (taiSigLink*)((TypeItem*)m_root)->sig_link : NULL;}
 
   void  UpdateAfterEdit();
@@ -48,7 +48,7 @@ public:
 protected:
   void*                 m_root; // #IGNORE
 
-  override IViewerWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  IViewerWidget* ConstrWidget_impl(QWidget* gui_parent) CPP11_OVERRIDE; // #IGNORE
   void                  StrToRoot();
   void                  RootToStr();
 private:

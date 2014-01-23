@@ -35,7 +35,7 @@ public:
   TA_BASEFUNS_NOCOPY(ValIdx_Array);
   TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 protected:
-  override Variant      El_GetVar_(const void* itm) const
+  Variant      El_GetVar_(const void* itm) const CPP11_OVERRIDE
   { return (Variant)(((ValIdx*)itm)->val); }
   String        El_GetStr_(const void* it) const { return (String)((ValIdx*)it); } // #IGNORE
   void          El_SetFmStr_(void* it, const String& val)

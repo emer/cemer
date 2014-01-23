@@ -35,9 +35,9 @@ public:
   int		ru_idx_st;		// starting receiving unit index within each unit group to start connecting from -- allows for layers to have diff unit group structure
   int		gp_n_cons;		// [-1 = all] number of units to connect within each group -- allows for layers to have diff unit group structure
 
-  override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-				  int rgpidx, int sgpidx, int alloc_loop);
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int sgpidx, int alloc_loop) CPP11_OVERRIDE;
+  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) CPP11_OVERRIDE;
 
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
 private:

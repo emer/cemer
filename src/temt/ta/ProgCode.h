@@ -34,10 +34,10 @@ INHERITED(ProgEl)
 public:
   ProgExpr              code;   // program code statement that will be converted into an appropriate program element if possible
 
-  override void         SetProgExprFlags();
-  override String       GetDisplayName() const;
-  override String       GetToolbarName() const { return "code"; }
-  override String       GetTypeDecoKey() const { return "Comment"; }
+  void         SetProgExprFlags() CPP11_OVERRIDE;
+  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetToolbarName() const CPP11_OVERRIDE { return "code"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Comment"; }
 
   virtual void          ConvertToProgEl();
   // converts the code to an appropriate program element -- called in a delayed gui callback routine
@@ -50,7 +50,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(ProgCode);
 protected:
-  override void UpdateAfterEdit_impl();
+  void UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
 private:
   void  Initialize();

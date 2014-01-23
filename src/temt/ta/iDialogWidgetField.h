@@ -46,8 +46,8 @@ public:
   ~iDialogWidgetField();
 
 public slots:
-  override void accept();
-  override void reject();
+  void accept() CPP11_OVERRIDE;
+  void reject() CPP11_OVERRIDE;
 
 protected:
   taiWidgetField*     field;

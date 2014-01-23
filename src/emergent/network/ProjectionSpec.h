@@ -72,7 +72,7 @@ public:
   virtual void  C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru -- any derived version MUST call the base inherited version so that other init weights variables are also initialized
 
-  override String       GetTypeDecoKey() const { return "ProjectionSpec"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "ProjectionSpec"; }
 
   void  InitLinks();
   SIMPLE_COPY(ProjectionSpec);

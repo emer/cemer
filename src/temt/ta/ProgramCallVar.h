@@ -37,28 +37,28 @@ public:
   Program_GroupRef      prog_group; // sub-group of programs to look in for program to call -- ALL of the programs in this group MUST have the same set of args, and all are considered potential candidates to be called (e.g., they are all Init'd when the calling program is Init'd)
   ProgVarRef            prog_name_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable that contains name of program within prog_group to call -- this is only used at the time the program call is made when the program is running
 
-  override Program*     GetTarget();
-  override Program*     GetTarget_Compile();
-  override void         AddTargetsToListAll(Program_List& all_lst);
-  override bool         CallsProgram(Program* prg);
-  override bool         WillGenCompileScript(Program* prg);
-  override void         GenCompileScript(Program* prg);
-  override void         GenCallInit(Program* prg);
+  Program*     GetTarget() CPP11_OVERRIDE;
+  Program*     GetTarget_Compile() CPP11_OVERRIDE;
+  void         AddTargetsToListAll(Program_List& all_lst) CPP11_OVERRIDE;
+  bool         CallsProgram(Program* prg) CPP11_OVERRIDE;
+  bool         WillGenCompileScript(Program* prg) CPP11_OVERRIDE;
+  void         GenCompileScript(Program* prg) CPP11_OVERRIDE;
+  void         GenCallInit(Program* prg) CPP11_OVERRIDE;
 
   virtual Program_Group* GetProgramGp();
   // get prog_group pointer value in a safe way
 
-  override String       GetDisplayName() const;
-  override String       GetToolbarName() const { return "prog var()"; }
+  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetToolbarName() const CPP11_OVERRIDE { return "prog var()"; }
 
   PROGEL_SIMPLE_BASEFUNS(ProgramCallVar);
 protected:
-  override void         PreGenMe_impl(int item_id); // register the target as a subprog of this one
-  override void         UpdateAfterEdit_impl();
-  override void         CheckThisConfig_impl(bool quiet, bool& rval);
-  override void         GenCssPre_impl(Program* prog);
-  override void         GenCssBody_impl(Program* prog);
-  override void         GenCssPost_impl(Program* prog);
+  void         PreGenMe_impl(int item_id) CPP11_OVERRIDE; // register the target as a subprog of this one
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         GenCssPre_impl(Program* prog) CPP11_OVERRIDE;
+  void         GenCssBody_impl(Program* prog) CPP11_OVERRIDE;
+  void         GenCssPost_impl(Program* prog) CPP11_OVERRIDE;
 private:
   void  Initialize();
   void  Destroy()       {}

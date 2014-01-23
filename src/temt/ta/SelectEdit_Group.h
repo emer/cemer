@@ -33,7 +33,7 @@ INHERITED(taGroup<SelectEdit>)
 public:
   virtual void  AutoEdit();
 
-  override String       GetTypeDecoKey() const { return "SelectEdit"; }
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "SelectEdit"; }
 
   TA_BASEFUNS(SelectEdit_Group);
 private:

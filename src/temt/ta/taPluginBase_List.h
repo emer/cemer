@@ -37,10 +37,10 @@ public:
   
 protected:
 // forbid most clip ops, since we are managed based on existing plugins
-  override void		QueryEditActions_impl(const taiMimeSource* ms,
+  virtual void		QueryEditActions_impl(const taiMimeSource* ms,
     int& allowed, int& forbidden);
-  override void		ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
-    const taiMimeSource* ms, int& allowed, int& forbidden);
+  void		ChildQueryEditActions_impl(const MemberDef* md, const taBase* child,
+    const taiMimeSource* ms, int& allowed, int& forbidden) CPP11_OVERRIDE;
 
 private:
   void	Initialize() {}

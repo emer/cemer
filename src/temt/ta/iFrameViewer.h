@@ -63,9 +63,9 @@ signals:
 #endif
 
 public: // ItaViewerWidget i/f
-  override QWidget*     widget() {return this;}
+  QWidget*     widget() CPP11_OVERRIDE {return this;}
 protected:
-//  override void               Constr_impl(); // called virtually, after new
+//  void               Constr_impl() CPP11_OVERRIDE; // called virtually, after new
   virtual void          GetWinState_impl() {} // when saving view state
   virtual void          SetWinState_impl() {} // when showing, from view state
 

@@ -91,8 +91,8 @@ public:
   // #CAT_Modify remove given item, returns success
 protected:
   T             tmp;
-  override void*        MakeArray_(int n) const { return new T[n]; }
-  override void         SetArray_(void* nw) {if (el) delete [] el; el = (T*)nw;}
+  void*        MakeArray_(int n) const CPP11_OVERRIDE { return new T[n]; }
+  void         SetArray_(void* nw) CPP11_OVERRIDE {if (el) delete [] el; el = (T*)nw;}
 };
 
 #endif // taPlainArray_h

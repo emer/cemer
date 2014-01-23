@@ -36,7 +36,7 @@ public:
 
   using inherited::GetMenu;
   void          GetMenu(iMenuAction* actn) {GetMenu(ta_actions, actn);}
-  override void         GetMenu(taiWidgetActions* menu, iMenuAction* nact = NULL);
+  virtual void  GetMenu(taiWidgetActions* menu, iMenuAction* nact = NULL); // not an override!
 };
 
 #endif // taiWidgetListTypeHierMenu_h

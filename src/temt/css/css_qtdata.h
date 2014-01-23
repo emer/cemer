@@ -78,7 +78,7 @@ public:
 
   void          GenerateScript(); // output script code equivalent if recording
 
-  override void         AddToMenu(taiWidgetActions* menu);
+  void         AddToMenu(taiWidgetActions* menu) CPP11_OVERRIDE;
 
 public slots:
   void          CallFun();      // (override) call the function..

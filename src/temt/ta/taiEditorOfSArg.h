@@ -33,7 +33,7 @@ public:
         bool modal_ = false, QObject* parent = 0);
   taiEditorOfSArg()    { };
 protected:
-  override void         Constr_AryData();
+  virtual void         Constr_AryData();
 };
 
 #endif // taiEditorOfSArg_h

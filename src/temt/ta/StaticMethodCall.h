@@ -41,20 +41,20 @@ public:
   ProgArg_List          meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
-  override bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool         CvtFmCode(const String& code);
+  bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const CPP11_OVERRIDE;
+  bool         CvtFmCode(const String& code) CPP11_OVERRIDE;
 
-  override taList_impl* children_() {return &meth_args;}
-  override String       GetDisplayName() const;
-  override String       GetTypeDecoKey() const { return "Function"; }
-  override String       GetToolbarName() const { return "static()"; }
+  taList_impl* children_() CPP11_OVERRIDE {return &meth_args;}
+  String       GetDisplayName() const CPP11_OVERRIDE;
+  String       GetTypeDecoKey() const CPP11_OVERRIDE { return "Function"; }
+  String       GetToolbarName() const CPP11_OVERRIDE { return "static()"; }
 
   PROGEL_SIMPLE_BASEFUNS(StaticMethodCall);
 protected:
-  override void         UpdateAfterEdit_impl();
-  override void         CheckThisConfig_impl(bool quiet, bool& rval);
-  override void         CheckChildConfig_impl(bool quiet, bool& rval);
-  override void         GenCssBody_impl(Program* prog); // generate the Css body code for this object
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void         CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         CheckChildConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void         GenCssBody_impl(Program* prog) CPP11_OVERRIDE; // generate the Css body code for this object
 
 private:
   void  Initialize();

@@ -35,7 +35,7 @@ public:
   void*         menubase;       // the address of the object
   taiWidgetActions*   ta_actions;
 
-  override QWidget* GetRep();
+  QWidget* GetRep() CPP11_OVERRIDE;
 
 
   virtual void          GetMenu() = 0;

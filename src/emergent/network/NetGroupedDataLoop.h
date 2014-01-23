@@ -50,23 +50,23 @@ public:
   int_Array	group_idx_list;	// #READ_ONLY list of group starting indicies
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies within group
 
-  override String	GetDisplayName() const;
+  String	GetDisplayName() const CPP11_OVERRIDE;
 
   virtual void	GetOrderVals();
   // get order values from order_var variables
   virtual void	GetGroupList();
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
-  override String	GetToolbarName() const { return "gp data lp"; }
+  String	GetToolbarName() const CPP11_OVERRIDE { return "gp data lp"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetGroupedDataLoop);
 protected:
   virtual void	GetOrderVars(); // make order variables in program
   virtual void	GetIndexVars(); // make index variables in program if not already set
-  override void	UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssPost_impl(Program* prog); 
+  void	UpdateAfterEdit_impl() CPP11_OVERRIDE;
+  void	CheckThisConfig_impl(bool quiet, bool& rval) CPP11_OVERRIDE;
+  void		GenCssPre_impl(Program* prog) CPP11_OVERRIDE; 
+  void		GenCssPost_impl(Program* prog) CPP11_OVERRIDE; 
 
 private:
   void	Initialize();

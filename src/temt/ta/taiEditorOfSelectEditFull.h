@@ -34,15 +34,15 @@ public:
   ~taiEditorOfSelectEditFull();
 
 protected slots:
-  override void         DoRemoveSelEdit();
+  void         DoRemoveSelEdit() CPP11_OVERRIDE;
 
 protected:
-  override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
+  void         ClearBody_impl() CPP11_OVERRIDE;       // we also clear all the methods, and then rebuild them
 
-  override void         Constr_Widget_Labels();
-  override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
-  override void         GetImage_Membs_def();
-  override void         GetValue_Membs_def();
+  void         Constr_Widget_Labels() CPP11_OVERRIDE;
+  void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) CPP11_OVERRIDE;
+  void         GetImage_Membs_def() CPP11_OVERRIDE;
+  void         GetValue_Membs_def() CPP11_OVERRIDE;
 
 private:
   void  Initialize();

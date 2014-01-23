@@ -39,9 +39,9 @@ public:
     else dwt += cur_lrate * nerr_lrate * gran_act;  }
   // #IGNORE
 
-  inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) {
-    if(su->act_lrn == 0.0f) return; // if sender is not active, bail
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                                LeabraNetwork* net) CPP11_OVERRIDE
+  { if(su->act_lrn == 0.0f) return; // if sender is not active, bail
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     const float gran_act = su->act_lrn;
@@ -56,14 +56,14 @@ public:
   }
   // #IGNORE 
 
-  inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) {
+  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+                                             LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
   // #IGNORE 
 
-  inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) {
+  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                               LeabraNetwork* net) CPP11_OVERRIDE {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
   // #IGNORE 

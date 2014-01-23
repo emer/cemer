@@ -64,7 +64,7 @@ public:
   bool          alt_y;          // use the alternate (right hand side) y axis instead of default left axis
   GraphPlotView* eff_y_axis;    // #NO_SAVE #READ_ONLY #NO_SET_POINTER #NO_COPY effective y axis for this guy at this point in time
 
-  override void         UpdateOnFlag();
+  void         UpdateOnFlag() CPP11_OVERRIDE;
 
   void          CopyFromView(GraphPlotView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
@@ -74,7 +74,7 @@ public:
   SIMPLE_COPY(GraphPlotView);
   T3_DATAVIEWFUNS(GraphPlotView, GraphAxisBase)
 protected:
-  override void         UpdateAfterEdit_impl();
+  void         UpdateAfterEdit_impl() CPP11_OVERRIDE;
 
 private:
   void                  Initialize();

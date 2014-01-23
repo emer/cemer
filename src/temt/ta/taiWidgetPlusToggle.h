@@ -37,7 +37,7 @@ public:
   taiWidgetPlusToggle(TypeDef* typ_, IWidgetHost* host, taiWidget* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiWidgetPlusToggle();
 
-  override void InitLayout();
+  void InitLayout() CPP11_OVERRIDE;
 
   virtual int   GetValue();
   virtual void  GetImage(bool chk);
@@ -45,8 +45,8 @@ public slots:
   virtual void  Toggle_Callback();
 
 protected:
-  override void SigEmit_impl(taiWidget* chld);
-  override void applyNow();
+  void SigEmit_impl(taiWidget* chld) CPP11_OVERRIDE;
+  void applyNow() CPP11_OVERRIDE;
 };
 
 #endif // taiWidgetPlusToggle_h
