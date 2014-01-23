@@ -1664,6 +1664,7 @@ void iMainWindowViewer::windowActivate(int win) {
   taiMisc::GetWindowList(wl);
   QWidget* wid = wl.PosSafeEl(win);
   if (!wid) return;
+  wid->showMaximized();
   wid->activateWindow();
   wid->raise();
 }
