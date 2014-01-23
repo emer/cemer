@@ -33,7 +33,7 @@ public:
   virtual int exec();
 
 protected:
-  void keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
+  void keyPressEvent(QKeyEvent *) override;
 };
 
 #endif // iDialog_h
