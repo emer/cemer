@@ -1816,13 +1816,15 @@ bool taRootBase::Startup_ProcessArgs() {
     }
   }
 
-
   // just load the thing!?
   String proj_ld = taMisc::FindArgByName("Project");
   if(proj_ld.empty())
     proj_ld = taMisc::FindArgValContains(".proj");
 
   if(!proj_ld.empty()) {
+    if (taiMisc::main_window) {
+      taiMisc::main_window->showMinimized();  // if project is opening on launch minimize root window
+    }
     tabMisc::root->projects.Load(proj_ld);
   }
 
@@ -1948,7 +1950,7 @@ bool taRootBase::Startup_Run() {
     }
   }
 
-  // Now give the root window focus.
+  // Give the root window focus.
   QTimer::singleShot(0, root_adapter, SLOT(FocusRootWinAtStartup()));
 
   // now everyone goes into the event loop
