@@ -46,16 +46,17 @@ class TA_API taRootBase: public taFBase {
   // ##CAT_Project ##EXPAND_DEF_2 base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taFBase)
 public:
-  static TypeDef*       root_type; // set in Startup_Main
+  static TypeDef*       root_type;      // set in Startup_Main
   static taRootBase*    instance();
+  static bool           openProject;    // #NO_SHOW #NO_SAVE set to true if any project gets opened
 
   String                version;        // #READ_ONLY #SHOW current version number
   taBase_List           templates;      // #NO_SAVE #READ_ONLY objects used as templates -- do not use or mess with these!
   Doc_Group             docs;           // #NO_SAVE documents, typically linked to other objects
   Wizard_Group          wizards;        // #NO_SAVE global wizards -- see each project for project-specific wizards
   Project_Group         projects;       // #NO_SAVE The projects
-  taViewer_List       viewers;        // #NO_SAVE viewer display settings for the root object only
-  taViewer_List       viewers_tmp;    // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers
+  taViewer_List         viewers;        // #NO_SAVE viewer display settings for the root object only
+  taViewer_List         viewers_tmp;    // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers
   taPlugin_List         plugins;        // available plugins
   taBase_List           plugin_state;   // #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
   taPluginBase_List     plugin_deps;    // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
@@ -148,6 +149,9 @@ public:
   // #IGNORE process general args
   static bool   Startup_RunStartupScript();
   // #IGNORE process general args
+
+  static void   ProjectOpened();
+  // #IGNORE called when a project is opened so we can minimize the root window if this is the first project to be opened
 
   static void   Cleanup_Main();
   // #IGNORE after init, or running, do final cleanups (called by StartupInit on fail, or Startup_Run)

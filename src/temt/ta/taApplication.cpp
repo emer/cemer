@@ -25,6 +25,7 @@ bool taApplication::event(QEvent *event) {
   if(event->type() == QEvent::FileOpen) {
     String fname = static_cast<QFileOpenEvent*>(event)->file();
     taRootBase::instance()->projects.Load(fname);
+    taRootBase::ProjectOpened();
     return true;
   }
   return QApplication::event(event);

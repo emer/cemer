@@ -84,6 +84,7 @@ TypeDef* taRootBase::root_type;
 int taRootBase::console_type;
 int taRootBase::console_options;
 ContextFlag taRootBase::in_init;
+bool taRootBase::openProject;
 
 // note: not static class to avoid need qpointer in header
 QPointer<taRootBase_QObj> root_adapter;
@@ -109,6 +110,7 @@ void taRootBase::Initialize() {
   plugin_deps.SetBaseType(&TA_taPluginDep);
   console_type = taMisc::console_type;
   console_options = taMisc::console_options;
+  openProject = false;
 #ifdef TA_OS_LINUX
   fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif
@@ -1822,10 +1824,8 @@ bool taRootBase::Startup_ProcessArgs() {
     proj_ld = taMisc::FindArgValContains(".proj");
 
   if(!proj_ld.empty()) {
-    if (taiMisc::main_window) {
-      taiMisc::main_window->showMinimized();  // if project is opening on launch minimize root window
-    }
     tabMisc::root->projects.Load(proj_ld);
+    taRootBase::ProjectOpened();
   }
 
   if(run_startup) {
@@ -1911,9 +1911,18 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], TypeDef* root_typ) 
 
   return true;
 
-startup_failed:
+  startup_failed:
   Cleanup_Main();
   return false;
+}
+
+
+// don't do the minimize until the tight relationship between the menubar and the root window is fixed
+void taRootBase::ProjectOpened() {
+  if (taiMisc::main_window && !openProject) {
+//    taiMisc::main_window->showMinimized();  // if project is opening on launch minimize root window
+    openProject = true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////
