@@ -69,12 +69,12 @@ void TemtServer::InitServer_impl(bool& ok) {
 bool TemtServer::OpenServer() {
   if (open) return true;
   if (taMisc::server_active) {
-    taMisc::Error("A server is already open");
+    taMisc::Error_nogui("A server is already open");
     return false;
   }
   server = new QTcpServer();
   if (!server->listen(QHostAddress::Any, port)) {
-    taMisc::Error("Could not open the server: ",
+    taMisc::Error_nogui("Could not open the server: ",
       server->errorString().toLatin1());
     delete server;
     server = NULL;

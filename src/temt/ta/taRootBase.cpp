@@ -1943,8 +1943,11 @@ bool taRootBase::Startup_Run() {
     server->port = (ushort)taMisc::args.GetValDef("Port", 5360).toUInt();
     if (server->InitServer() && server->OpenServer()) {
       cerr << "TemtServer is now running and waiting for connections\n";
-    } else {
-      cerr << "ERROR: could not Initialize or Open TemtServer\n";
+    }
+    else {
+      cerr << "ERROR: could not Initialize or Open TemtServer -- now exiting\n";
+      Cleanup_Main();
+      return false;
     }
   }
 
