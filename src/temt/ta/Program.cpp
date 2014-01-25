@@ -25,6 +25,7 @@
 
 taTypeDef_Of(LocalVars);
 taTypeDef_Of(ProgCode);
+taTypeDef_Of(DynEnumType);
 
 #include <SigLinkSignal>
 #include <taSigLinkItr>
@@ -187,7 +188,8 @@ void Program::UpdateAfterEdit_impl() {
   // with the runtime, in particular, do NOT invalidate the following state flags:
   //   m_stale, script_compiled
 
-  types.el_typ = &TA_DynEnumBase;
+  // types.el_typ = &TA_DynEnumBase; // NOO!!! el_typ is the default, el_base = base
+  types.el_typ = &TA_DynEnumType;  // want to default to valid type for <Enter> to create valid type
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 
