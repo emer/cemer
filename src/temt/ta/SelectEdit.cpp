@@ -224,10 +224,10 @@ int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
 }
 
 bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
+  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
   if (!base) return false;
-  String eff_desc = desc; // non-const
+  String eff_desc = dscr; // non-const
   String full_lbl;
   base->GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
   bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
@@ -237,7 +237,7 @@ bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
 
 bool SelectEdit::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if (!base) return false;
-  String eff_desc = desc; // non-const
+  String eff_desc; // = desc -- this is our desc -- not relevant
   String full_lbl;
   base->GetSelectText(mbr, _nilString, full_lbl, eff_desc);
 
@@ -262,16 +262,16 @@ bool SelectEdit::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
 }
 
 bool SelectEdit::SelectMemberNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
+  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MemberDef* md = (MemberDef*)base->FindMember(md_nm);
   if (md == NULL) return false;
-  return SelectMember(base, md, xtra_lbl, desc, sub_gp_nm);
+  return SelectMember(base, md, xtra_lbl, dscr, sub_gp_nm);
 }
 
 bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
-            const String& full_lbl, const String& desc, const String& sub_gp_nm)
+            const String& full_lbl, const String& dscr, const String& sub_gp_nm)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -283,8 +283,8 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
     item->mbr = md;
     item->item_nm = md->name;
     item->label = full_lbl;
-    item->desc = desc; // even if empty
-    if(desc.nonempty())
+    item->desc = dscr; // even if empty
+    if(dscr.nonempty())
       item->cust_desc = true;
     else
       item->cust_desc = false;
@@ -309,24 +309,24 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
 }
 
 bool SelectEdit::SelectMethod(taBase* base, MethodDef* md,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
+  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
-  bool rval = SelectMethod_impl(base, md, xtra_lbl, desc, sub_gp_nm);
+  bool rval = SelectMethod_impl(base, md, xtra_lbl, dscr, sub_gp_nm);
   ReShowEdit(true); //forced
   return rval;
 }
 
 bool SelectEdit::SelectMethodNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
+  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
   if (md == NULL) return false;
-  return SelectMethod(base, md, xtra_lbl, desc, sub_gp_nm);
+  return SelectMethod(base, md, xtra_lbl, dscr, sub_gp_nm);
 }
 
 bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
+  const String& xtra_lbl, const String& dscr, const String& sub_gp_nm)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -337,8 +337,8 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
     item->base = base;
     item->mth = mth;
     item->item_nm = mth->name;
-    item->desc = desc;
-    if(desc.nonempty())
+    item->desc = dscr;
+    if(dscr.nonempty())
       item->cust_desc = true;
     else
       item->cust_desc = false;

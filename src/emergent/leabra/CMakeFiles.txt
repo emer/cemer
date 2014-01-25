@@ -147,6 +147,7 @@ set(leabra_HEADS_MAKETA
   PFCConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
+  ClampDaLayerSpec.h
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -300,4 +301,5 @@ set(leabra_SRCS
   PFCConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
+  ClampDaLayerSpec.cpp
 )
