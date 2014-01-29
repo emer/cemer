@@ -30,6 +30,12 @@ if (QT_USE_5)
     ${Qt5Network_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES}
     ${Qt5PrintSupport_LIBRARIES})
 
+  # from http://cebmtpchat.googlecode.com/svn/trunk/CMakeModules/QtSupport.cmake
+  SET(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
+  SET(QT_LIBRARY_DIR "${_qt5Core_install_prefix}/lib")
+  SET(QT_PLUGINS_DIR "${_qt5Core_install_prefix}/plugins")
+  SET(QT_TRANSLATIONS_DIR "${_qt5Core_install_prefix}/translations")
+
   find_package(Coin REQUIRED)
   find_package(Quarter REQUIRED)
   find_package(OpenGL REQUIRED)
