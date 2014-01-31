@@ -60,7 +60,7 @@ echo "Press enter to delete original .deb files,"
 read -p "or Ctrl-C if another repo needs to be updated " JUNK
 
 # Now that all repos have been updated, delete the files.
-for DIST in lucid maverick natty oneiric precise quantal raring; do
+for DIST in lucid maverick natty oneiric precise quantal raring saucy; do
   for ARCH in i386 amd64; do
     for PACKAGE in emergent libquarter; do
       FILE=${PACKAGE}*${ARCH}.deb
