@@ -164,6 +164,10 @@ public:
   float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
+  int           delay;  // delay period for inputs expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
+    
+
+
 
 
   virtual bool  CheckArm(bool quiet = false);
@@ -239,6 +243,8 @@ public:
   virtual bool ComputeStim_EV(); // ERR_VEL version of compute stim
   virtual bool ComputeStim_PID(); // PID version of compute stim
 
+  virtual bool InitDelayedInputsToTable(DataTable* table);
+  // Pad the input table with resting/zero values (except target muscle lengths) for the first (delay - 1) rows, then add one row of current/actual values.  This simulates sensory input delay by only allowing the network to read inputs (delay) rows from the bottom of the input table.
   virtual bool NormLengthsToTable(DataTable* table);
   // Write the normalized muscle lengths into a datatable, in column named "lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
   virtual bool NormTargLengthsToTable(DataTable* table);
@@ -264,13 +270,13 @@ public:
 
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc
-  void Step_pre() override;
-  void CurFromODE(bool updt_disp = false) override;
-  void Init() override;
+  override void Step_pre();
+  override void CurFromODE(bool updt_disp = false);
+  override void Init();
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:
-  //  CheckConfig_impl() override; // todo
+  //  override CheckConfig_impl(); // todo
 
   virtual bool Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, taVector3f p2);
   // This function is the C++ equivalent of piece5.m.
