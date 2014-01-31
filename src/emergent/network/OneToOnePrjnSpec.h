@@ -32,8 +32,11 @@ public:
   int	n_conns;		// number of connections to make (-1 for size of layer)
   int	recv_start;		// starting unit index for recv connections
   int 	send_start;		// starting unit index for sending connections
+  bool  use_gp;                 // if unit groups are present in the recv or sender layer, and the other layer fits within one unit group, then connectivity will be replicated for across groups in that layer
 
   void	Connect_impl(Projection* prjn) override;
+  virtual void	ConnectRecvGp_impl(Projection* prjn); // recv is using groups
+  virtual void	ConnectSendGp_impl(Projection* prjn); // send is using groups
 
   TA_SIMPLE_BASEFUNS(OneToOnePrjnSpec);
 private:
