@@ -240,6 +240,12 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
       act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
                           iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
+      act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
+                          iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_COMPARE) );
+      act = menu->AddItem("Clear Compare Rows", taiWidgetMenu::normal,
+                          iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_COMPARE) );
     }
     menu->AddSep();
   }

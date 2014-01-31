@@ -108,7 +108,9 @@ public:
     OP_ROW                    = 0x040,
     OP_COL                    = 0x080,
     OP_RESIZE_TO_CONTENT      = 0x100,
-    OP_RESIZE_TO_CONTENT_ALL  = 0x200
+    OP_RESIZE_TO_CONTENT_ALL  = 0x200,
+    OP_COMPARE                = 0x400,
+    OP_CLEAR_COMPARE          = 0x800
   };
 
   bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement

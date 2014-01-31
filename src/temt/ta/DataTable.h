@@ -109,6 +109,11 @@ public:
   taFiler*              log_file;
   // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
 
+  int                   base_diff_row;
+  // #HIDDEN #NO_SAVE When comparing cell values this is the row to compare against
+  int_Array             diff_row_list;
+  // #HIDDEN #NO_SAVE When comparing cell values this is the list of rows compared against base_diff_row
+
   /////////////////////////////////////////////
   // Flags
 
@@ -837,6 +842,11 @@ public:
   // #EXPERT #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual void          PermuteRows();
   // #CAT_DataProc #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first
+  virtual void          CompareRows(int st_row, int n_rows);
+  // ##CAT_Rows compare cell values in selected rows (first selected row to all others)
+  virtual void          ClearCompareRows();
+  // ##CAT_Rows reset the base row and the list
+
 
   virtual bool          MatrixColToScalarsCol(DataCol* mtx_col,
                                               const String& scalar_col_name_stub="");

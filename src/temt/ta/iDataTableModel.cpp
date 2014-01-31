@@ -20,6 +20,7 @@
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
+#include <CellRange>
 
 #include <QColor>
 
@@ -47,13 +48,13 @@ void iDataTableModel::SigLinkDestroying(taSigLink* dl) {
 }
 
 void iDataTableModel::SigLinkRecv(taSigLink* dl, int sls,
-  void* op1, void* op2)
+    void* op1, void* op2)
 { // called from DataTable::SigEmit
   if (notifying) return;
   //this is primarily for code-driven changes
   if ((sls <= SLS_ITEM_UPDATED_ND) || // data itself updated
-    (sls == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
-    (sls == SLS_DATA_UPDATE_END)) // for row insert/deletes
+      (sls == SLS_STRUCT_UPDATE_END) ||  // for col insert/deletes
+      (sls == SLS_DATA_UPDATE_END)) // for row insert/deletes
   {
     emit_layoutChanged();
   }
@@ -87,8 +88,8 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
   //Qt::ToolTipRole
   //Qt::StatusTipRole
   //Qt::WhatsThisRole
-//Qt::SizeHintRole -- QSize
-//Qt::FontRole--  QFont: font for the text
+  //Qt::SizeHintRole -- QSize
+  //Qt::FontRole--  QFont: font for the text
   case Qt::TextAlignmentRole: {
     if (col->is_matrix)
       return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
@@ -96,9 +97,9 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
       return QVariant(Qt::AlignRight | Qt::AlignVCenter);
     else
       return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
-    } break;
+  } break;
   case Qt::BackgroundColorRole : //-- QColor
- /* note: only used when !(option.showDecorationSelected && (option.state
+    /* note: only used when !(option.showDecorationSelected && (option.state
     & QStyle::State_Selected)) */
     // note: only make it actual ro color if ro (not for "(matrix)" cells)
     if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
@@ -107,8 +108,23 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
   case Qt::TextColorRole: { // QColor: color of text
     if (col->is_matrix)
       return QColor(Qt::blue);
-    } break;
-//Qt::CheckStateRole
+
+    // highlight cells when comparison is on and cell values unequal
+    int baseRow = m_dt->base_diff_row;
+    if (baseRow == index.row()) {
+      return QColor(Qt::blue);
+    }
+    else if (baseRow >= 0) {
+      if (m_dt->diff_row_list.FindEl(index.row()) != -1) {
+        DataCol* dc = m_dt->data.FastEl(index.column());
+        if (dc->GetVal(baseRow) != dc->GetVal(index.row())) {
+          return QColor(Qt::red);
+        }
+      }
+    }
+  }
+  break;
+  //Qt::CheckStateRole
   default: break;
   }
   return QVariant();
@@ -148,7 +164,7 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       DataCol* col = m_dt->GetColData(index.column(), true); // quiet
       if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
-         col->isGuiReadOnly()) )
+          col->isGuiReadOnly()) )
         rval |= Qt::ItemIsEditable;
     }
   }
@@ -156,7 +172,7 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
 }
 
 QVariant iDataTableModel::headerData(int section, Qt::Orientation orientation,
-  int role) const
+    int role) const
 {
   if (m_dt) {
     if (orientation == Qt::Horizontal) {
@@ -178,7 +194,7 @@ QVariant iDataTableModel::headerData(int section, Qt::Orientation orientation,
 
 void iDataTableModel::refreshViews() {
   emit_layoutChanged();
-/*  emit dataChanged(createIndex(0, 0),
+  /*  emit dataChanged(createIndex(0, 0),
     createIndex(rowCount() - 1, columnCount() - 1));*/
 }
 

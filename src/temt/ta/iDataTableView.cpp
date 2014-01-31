@@ -36,7 +36,7 @@ iDataTableView::iDataTableView(QWidget* parent)
   gui_edit_op = false;
 
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this,
-          SLOT(this_customContextMenuRequested(const QPoint&)) );
+      SLOT(this_customContextMenuRequested(const QPoint&)) );
 
   col_header = new iDataTableColHeaderView(this); // subclass header
   this->setHorizontalHeader(col_header);
@@ -51,9 +51,9 @@ void iDataTableView::currentChanged(const QModelIndex& current, const QModelInde
 }
 
 void iDataTableView::dataChanged(const QModelIndex& topLeft,
-                                 const QModelIndex & bottomRight
+    const QModelIndex & bottomRight
 #if (QT_VERSION >= 0x050000)
-                                 , const QVector<int> &roles
+    , const QVector<int> &roles
 #endif
 )
 {
@@ -139,7 +139,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED))) {
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED | OP_COMPARE | OP_CLEAR_COMPARE))) {
       if (sel.height() < 1)
         goto bail;
       QModelIndex newIndex;
@@ -196,7 +196,13 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
           rval = tab->RemoveRows(0, sel.row_fr);
         newIndex = this->model()->index(0, 0);
       }
-
+      else if (op_code & OP_COMPARE) {
+        tab->CompareRows(sel.row_fr, sel.height());
+        this->selectionModel()->clearSelection();
+      }
+      else if (op_code & OP_CLEAR_COMPARE) {
+        tab->ClearCompareRows();
+      }
       if (rval) {
         this->selectionModel()->select(newIndex, QItemSelectionModel::Select);
         this->setCurrentIndex(newIndex);
@@ -204,35 +210,36 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       }
     }
   }
+
   else if (op_code & OP_COL) {
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE | OP_DUPLICATE))) {
       if (sel.width() < 1) goto bail;
-	      /*note: not supporting col ops here
+      /*note: not supporting col ops here
 	      if (op_code & OP_APPEND) {
 	      } else
 	      if (op_code & OP_INSERT) {
 	      } else */
-	      if (op_code & OP_DELETE) {
-	        if(taMisc::delete_prompts) {
-	          if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
-	        }
-	        tab->StructUpdate(true);
-	        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
-	        for (int col = sel.col_to; col >= sel.col_fr; --col) {
-	          tab->RemoveCol(col);
-	        }
-	        tab->StructUpdate(false);
-	      }
-	      if (op_code & OP_DUPLICATE) {
-	        tab->StructUpdate(true);
-	        if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateCols", tab);
-	        for (int col = sel.col_to; col >= sel.col_fr; --col) {
-	          tab->DuplicateCol(col);
-	        }
-	        tab->StructUpdate(false);
-	      }
-	    }
+      if (op_code & OP_DELETE) {
+        if(taMisc::delete_prompts) {
+          if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
+        }
+        tab->StructUpdate(true);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
+        for (int col = sel.col_to; col >= sel.col_fr; --col) {
+          tab->RemoveCol(col);
+        }
+        tab->StructUpdate(false);
+      }
+      if (op_code & OP_DUPLICATE) {
+        tab->StructUpdate(true);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateCols", tab);
+        for (int col = sel.col_to; col >= sel.col_fr; --col) {
+          tab->DuplicateCol(col);
+        }
+        tab->StructUpdate(false);
+      }
+    }
     else if (op_code & OP_RESIZE_TO_CONTENT) {
       for (int col = sel.col_to; col >= sel.col_fr; --col) {
         this->resizeColumnToContents(col);

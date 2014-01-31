@@ -69,6 +69,7 @@ void DataTable::Initialize() {
   log_file = NULL;
   table_model = NULL;
   row_indexes.SetGeom(1,0);  // always should be set to 1d
+  base_diff_row = -1;  // no base comparison row at start
 }
 
 void DataTable::Destroy() {
@@ -84,6 +85,7 @@ void DataTable::InitLinks() {
   inherited::InitLinks();
   taBase::Own(data, this);
   taBase::Own(row_indexes, this);
+  taBase::Own(diff_row_list, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
@@ -91,6 +93,7 @@ void DataTable::InitLinks() {
 void DataTable::CutLinks() {
   data.CutLinks();
   row_indexes.CutLinks();
+  diff_row_list.CutLinks();
   if(log_file) {
     taRefN::unRefDone(log_file);
     log_file = NULL;
@@ -107,6 +110,7 @@ void DataTable::Copy_(const DataTable& cp) {
   data = cp.data;               // matrix level copy will effectively flatten source
   ComputeRowsTotal();           // update to what we actually got
   ResetRowIndexes();            // so we reset our indexes to match the flattened source
+  ClearCompareRows();
   data_flags = cp.data_flags;
   auto_load = cp.auto_load;
   auto_load_file = cp.auto_load_file;
@@ -131,6 +135,7 @@ void DataTable::Copy_DataOnly(const DataTable& cp) {
   ComputeRowsTotal();           // update to what we actually got
   ResetRowIndexes();            // so we reset our indexes to match the flattened source
   ClearBaseFlag(COPYING);
+  ClearCompareRows();
   StructUpdate(false);
 }
 
@@ -1913,6 +1918,7 @@ void DataTable::Reset() {
   data.Reset();
   rows_total = 0;
   row_indexes.Reset();
+  ClearCompareRows();
 
   keygen.setInt64(0);
   StructUpdate(false);
@@ -1930,6 +1936,7 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
   rows = 0;
   rows_total = 0;
   row_indexes.Reset();
+  ClearCompareRows();
 
   keygen.setInt64(0);
   StructUpdate(false);
@@ -2177,6 +2184,7 @@ bool DataTable::WriteDataLogRow() {
 void DataTable::ShowAllRows() {
   StructUpdate(true);
   ResetRowIndexes();
+  ClearCompareRows();
   StructUpdate(false);
 }
 
@@ -3273,6 +3281,25 @@ bool DataTable::FilterByScript(const String& filter_expr) {
 
 bool DataTable::FilterBySpec(DataSelectSpec* spec) {
   return taDataProc::SelectRows(this, this, spec);
+}
+
+void DataTable::CompareRows(int st_row, int n_rows) {
+  if (n_rows > 1) {
+    DataUpdate(true);
+    ClearCompareRows();
+    base_diff_row = st_row;
+    for (int i = st_row + 1; i < st_row+n_rows; i++) {
+      diff_row_list.Add(i);
+    }
+    DataUpdate(false);
+  }
+}
+
+void DataTable::ClearCompareRows() {
+  DataUpdate(true);
+  base_diff_row = -1;
+  diff_row_list.Reset();
+  DataUpdate(false);
 }
 
 bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
