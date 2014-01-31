@@ -3302,6 +3302,10 @@ void DataTable::ClearCompareRows() {
   DataUpdate(false);
 }
 
+bool DataTable::CompareRowsState() {
+  return (base_diff_row != -1);  // if base_diff_rows == -1 we are not comparing - true means comparing
+}
+
 bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
     DataCol* col2, DataCol* col3, DataCol* col4) {
   DataGroupSpec spec;

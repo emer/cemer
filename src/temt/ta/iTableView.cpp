@@ -201,12 +201,6 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   // generic col guys
   if (ca == CA_COL_HDR) {
     if (!isFixedColCount()) {
-      //note: not include these yet, because fairly complicated semantics, ex
-      // popping up col editor etc. etc.
-      /*      act = menu->AddItem("Append Columns", taiWidgetMenu::normal, iAction::int_act,
-              this, SLOT(RowColOp(int)), (OP_COL | OP_APPEND) );
-              act = menu->AddItem("Insert Columns", taiWidgetMenu::normal, iAction::int_act,
-              this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );*/
       act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal,
                           iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
@@ -240,12 +234,6 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
       act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
                           iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
-      act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_COMPARE) );
-      act = menu->AddItem("Clear Compare Rows", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_COMPARE) );
     }
     menu->AddSep();
   }

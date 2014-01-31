@@ -843,10 +843,11 @@ public:
   virtual void          PermuteRows();
   // #CAT_DataProc #MENU permute the order of rows in the data table -- randomly shuffles the rows -- this is very efficiently implemented by shuffling the row_indexes lookup table, not the actual rows in memory.  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Permute you would need to run Flatten first
   virtual void          CompareRows(int st_row, int n_rows);
-  // ##CAT_Rows compare cell values in selected rows (first selected row to all others)
+  // ##CAT_Rows compare cell values in selected rows (first selected row to all others) does not test matrices
   virtual void          ClearCompareRows();
   // ##CAT_Rows reset the base row and the list
-
+  virtual bool          CompareRowsState();
+  // ##CAT_Rows is compare rows turned on or was the last call to clear compare rows
 
   virtual bool          MatrixColToScalarsCol(DataCol* mtx_col,
                                               const String& scalar_col_name_stub="");

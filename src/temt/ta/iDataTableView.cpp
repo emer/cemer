@@ -270,4 +270,18 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
       if (link) link->FillContextMenu(menu);
     }
   }
+  if (ca == CA_ROW_HDR) {
+    iAction* act = NULL;
+    menu->AddSep();
+    act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_COMPARE));
+    act->setEnabled(sel.height() > 1);  // enable if compare state is on
+
+    act = menu->AddItem("Clear Compare Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_COMPARE));
+    act->setEnabled(tab->CompareRowsState());  // enable if compare state is on
+
+  }
 }
