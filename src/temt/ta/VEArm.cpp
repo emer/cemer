@@ -517,20 +517,20 @@ void VEArm::InitMuscles() {
   rest_lens.SetGeom(1,n_musc);
   musc_gains.SetGeom(1,n_musc);
   SetAllMuscGains(1.0f);
-  float pi  = taMath_float::pi;
+  const float pi  = taMath_float::pi;
 
   if(musc_geo == OLD_GEO) {
     // these are the angles at which muscles attain their maximum length for right arms
-    float alphaM[] = {pi/2, pi/4, pi/300, pi/300, -.7*pi, .3*pi, -.7*pi, .3*pi, pi, pi/300, pi/300};
-    float betaM[] = {.03*pi, .8*pi, pi/300, pi/300, .6*pi, .6*pi, .6*pi, .6*pi, pi/30, pi/300,pi/300}; 
+    float alphaM[] = {pi/2, pi/4, pi/300, pi/300, -.7f*pi, .3f*pi, -.7f*pi, .3f*pi, pi, pi/300, pi/300};
+    float betaM[] = {.03f*pi, .8f*pi, pi/300, pi/300, .6f*pi, .6f*pi, .6f*pi, .6f*pi, pi/30, pi/300,pi/300}; 
     float gammaM[] = {pi/2, 0, -1.3f, 1.3f, -1.4f, .5f, -1.0f, -pi/2, 1.0f, 0, 0};
-    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9*pi, 0};
+    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9f*pi, 0};
 
     // these are the angles at which muscles attain their minimum length for right arms
-    float alpham[] = {pi/2, pi/2, pi/300, pi/300, pi/5, -.7*pi, pi/5, -.7*pi, pi/4/ pi/300, pi/300};
-    float betam[] = {.7*pi, .03*pi, pi/300, pi/300, .7*pi, .6*pi, .3*pi, .3*pi, pi/30, pi/300, pi/300};
+    float alpham[] = {pi/2, pi/2, pi/300, pi/300, pi/5, -.7f*pi, pi/5, -.7f*pi, pi/4/ pi/300, pi/300};
+    float betam[] = {.7f*pi, .03f*pi, pi/300, pi/300, .7f*pi, .6f*pi, .3f*pi, .3f*pi, pi/30, pi/300, pi/300};
     float gammam[] = {pi/2, -pi/2, 1.2f, -1.2f, pi/2, 1.0f, 1.0f, 1.4f, 0.2f, 0, 0};
-    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0.8*pi, 0, 0.8*pi};
+    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0.8f*pi, 0, 0.8f*pi};
 
     if(arm_side == LEFT_ARM) {  // switching arm side reverses alpha and gamma
       for(int i=0; i<n_musc; i++) {
@@ -550,16 +550,16 @@ void VEArm::InitMuscles() {
     }
   } else { // musc_geo == NEW_GEO
     // these are the angles at which muscles attain their maximum length for right arms
-    float alphaM[] = {pi/7, pi-pi/7, -pi/2, pi/300, pi/300, -.7*pi, .3*pi, -.7*pi, .3*pi, pi, pi/300, pi/300};
-    float betaM[] = {pi/20, pi/20, .8*pi, pi/300, pi/300, .6*pi, .6*pi, .6*pi, .6*pi, pi/30, pi/300,pi/300}; 
+    float alphaM[] = {pi/7, pi-pi/7, -pi/2, pi/300, pi/300, -.7f*pi, .3f*pi, -.7f*pi, .3f*pi, pi, pi/300, pi/300};
+    float betaM[] = {pi/20, pi/20, .8f*pi, pi/300, pi/300, .6f*pi, .6f*pi, .6f*pi, .6f*pi, pi/30, pi/300,pi/300}; 
     float gammaM[] = {1.4f, 1.0f, 1.4f, -1.45f, 1.45f, -.5f, .5f, -.5f, -.5f, 1.0f, 0, 0};
-    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9*pi, 0};
+    float deltaM[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.9f*pi, 0};
 
     // these are the angles at which muscles attain their minimum length for right arms
-    float alpham[] = {-pi/2, -pi/2, pi/2, pi/300, pi/300, pi/5, -.7*pi, pi/5, -.7*pi, pi/4, pi/300, pi/300};
-    float betam[] = {.8*pi, .8*pi, pi/20, pi/300, pi/300, .7*pi, .6*pi, .3*pi, .3*pi, pi/30, pi/300, pi/300};
+    float alpham[] = {-pi/2, -pi/2, pi/2, pi/300, pi/300, pi/5, -.7f*pi, pi/5, -.7f*pi, pi/4, pi/300, pi/300};
+    float betam[] = {.8f*pi, .8f*pi, pi/20, pi/300, pi/300, .7f*pi, .6f*pi, .3f*pi, .3f*pi, pi/30, pi/300, pi/300};
     float gammam[] = {pi/2, pi/2, -pi/2, 1.45f, -1.45f, pi/2, -.5f, 0, 1.4f, 0.2f, 0, 0};
-    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.8*pi, 0, 0.8*pi};
+    float deltam[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0.8f*pi, 0, 0.8f*pi};
 
     if(arm_side == LEFT_ARM) {   // switching arm side reverses alpha and gamma
       for(int i=0; i<n_musc; i++) {
@@ -966,7 +966,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
 
   if(up_axis == Z) {
     humerus->RotateEuler(beta,gamma,alpha,false);
-    float HumCM_f[] = {0.0f,0.0f,(-La+(elbow_gap/2.0))/2.0};  // humerus' geometrical center at rest
+    float HumCM_f[] = {0.0f,0.0f,(-La+(elbow_gap/2.0f))/2.0f};  // humerus' geometrical center at rest
     float_Matrix HumCM(2,1,3);
     HumCM.InitFromFloats(HumCM_f);
 
@@ -978,8 +978,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
     float UlnaCM_f[] = {0,0,-(ulna->length/2 + elbow_gap/2)};  // Ulna 'CM' with origin at elbow
     //float Wrist_f[] = {0,0,-(ulna->length + elbow_gap/2 + wrist_gap/2)};  // wrist coords with origin at elbow
     float elbow_rot_f[] = {1 , 0, 0,
-                  0, cos(delta), -sin(delta),
-                  0, sin(delta), cos(delta)};
+                  0, cosf(delta), -sinf(delta),
+                  0, sinf(delta), cosf(delta)};
     float_Matrix UlnaCM(2,1,3);
     UlnaCM.InitFromFloats(UlnaCM_f);
     //float_Matrix Wrist(2,1,3);
@@ -1047,8 +1047,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z) {
  
     float UlnaCM_f[] = {0,-(ulna->length/2 + elbow_gap/2),0};  // Ulna 'CM' with origin at elbow
     float elbow_rot_f[] = {1 , 0, 0,
-                  0, cos(delta),  sin(delta),
-                  0, -sin(delta), cos(delta)};
+                  0, cosf(delta),  sinf(delta),
+                  0, -sinf(delta), cosf(delta)};
     float_Matrix UlnaCM(2,1,3);
     UlnaCM.InitFromFloats(UlnaCM_f);
     float_Matrix elbow_rot(2,3,3);
@@ -1776,19 +1776,19 @@ bool VEArm::InitDelayedInputsToTable(DataTable* table) { // argument is the inpu
 }
 
 bool VEArm::NormLengthsToTable(DataTable* table) {
-  const char col_name[] = "lengths";
+  const char col_name[] = "lengths"; 
   DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   if(table->rows == 0)       // empty table, make sure we have at least 1 row
     table->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_lens.SafeEl(i),-1, // -1 = last row (most recent)
+    dc->SetMatrixVal(norm_lens.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
   }
   return true;
 }
 
 bool VEArm::NormTargLengthsToTable(DataTable* table) {
-  const char col_name[] = "targ_lengths";
+  const char col_name[] = "targ_lengths"; 
   DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   if(table->rows == 0)       // empty table, make sure we have at least 1 row
     table->EnforceRows(1);
@@ -1836,7 +1836,7 @@ bool VEArm::NormHandCoordsToTable(DataTable* table) {
 }
 
 bool VEArm::NormErrDraToTable(DataTable* table) {
-  const char col_name[] = "norm_err_dra";
+  const char col_name[] = "norm_err_dra"; 
   DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   if(table->rows == 0)       // empty table, make sure we have at least 1 row
     table->EnforceRows(1);
@@ -1928,7 +1928,7 @@ bool VEArm::GetNormVals() {
   Lengths(norm_lens, true); // true = normalize
   Speeds(norm_vels, true); // true = normalize
 
-  norm_err = norm_targ_lens - norm_lens; // difference between target & current lengths
+  norm_err = norm_targ_lens - norm_lens;
   if(arm_time > 2.0f * world_step) {
     norm_err_deriv = norm_err - norm_err_prv;
     norm_err_deriv /= world_step;
