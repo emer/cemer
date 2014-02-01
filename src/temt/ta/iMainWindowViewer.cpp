@@ -1899,17 +1899,6 @@ void iMainWindowViewer::showMenu_aboutToShow() {
   (*show_menu)[4]->setChecked(!(value & TypeItem::NO_HIDDEN));
 }
 
-void iMainWindowViewer::fileMenu_aboutToShow() {
-  if (!fileMenu) return;
-
-  if (tabMisc::root) {
-    fileSaveAllAction->setEnabled(!tabMisc::root->projects.IsEmpty());
-  }
-  if (curProject()) {
-    fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());
-  }
-}
-
 void iMainWindowViewer::this_DockSelect(iAction* me) {
   iDockViewer* itb = (iDockViewer*)(me->usr_data.toPtr());
   DockViewer* tb = itb->viewer();
@@ -2070,12 +2059,16 @@ void iMainWindowViewer::UpdateUi() {
   ctrlStopAction->setEnabled(css_running);
   ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
 
-  viewSetSaveViewAction->setEnabled(curProject() != NULL);
-  if (curProject() != NULL)
-    viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
+  if (tabMisc::root) {
+    fileSaveAllAction->setEnabled(!tabMisc::root->projects.IsEmpty());
+  }
 
-  if (curProject() != NULL) {
+  viewSetSaveViewAction->setEnabled(curProject() != NULL);
+
+  if (curProject()) {
+    fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());
     fileSaveAction->setEnabled(!curProject()->save_as_only);
+    viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
   }
 
   emit SetActionsEnabled();
@@ -2099,6 +2092,7 @@ void iMainWindowViewer::UpdateUi() {
 void iMainWindowViewer::changeEvent(QEvent* ev) {
   if(ev->type() == QEvent::ActivationChange) {
     if (isActiveWindow()) {
+      UpdateUi();
       int idx = taiMisc::active_wins.FindEl(this);
       if (idx < 0) {
         taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
