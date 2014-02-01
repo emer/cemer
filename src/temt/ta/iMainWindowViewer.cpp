@@ -65,14 +65,14 @@ int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
-  : inherited(parent, (Qt::Window
-                       | Qt:: WindowSystemMenuHint
-                       | Qt::WindowMinMaxButtonsHint
+: inherited(parent, (Qt::Window
+    | Qt:: WindowSystemMenuHint
+    | Qt::WindowMinMaxButtonsHint
 #if (QT_VERSION >= 0x040500)
-                       | Qt::WindowCloseButtonHint
+    | Qt::WindowCloseButtonHint
 #endif
-                       ))
-  , IViewerWidget(viewer_)
+))
+, IViewerWidget(viewer_)
 {
   Init();
   m_is_root = viewer_->isRoot(); // need to do before Constr
@@ -84,14 +84,14 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 
 iMainWindowViewer::~iMainWindowViewer() {
   // this is a fix from http://bugreports.qt.nokia.com/browse/QTBUG-5279
-//   if (qt_mouseover == this)
-//     qt_mouseover = 0;
+  //   if (qt_mouseover == this)
+  //     qt_mouseover = 0;
   // this doesn't work here -- too late in game
   //   if(isVisible())
-//     hide();                  // prevents crash later on mac..
+  //     hide();                  // prevents crash later on mac..
   taiMisc::active_wins.RemoveEl(this);
-//TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
-// has already deleted the menu items
+  //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
+  // has already deleted the menu items
   if (menu) menu->deleteLater();
   menu = NULL;
 }
@@ -115,12 +115,12 @@ void iMainWindowViewer::Init() {
   // multi-monitor situations, so you can size across screens
   // note that we do constrain windows on restore to be on screen, even if
   // their metrics indicated very big -- VERY IMPORTANT FOR MAC
-//  iSize ss = taiM->scrn_s;
-//  setMaximumSize(ss.width(), ss.height());
+  //  iSize ss = taiM->scrn_s;
+  //  setMaximumSize(ss.width(), ss.height());
 
-//for some GD reason, we can't get the icon to show by doing this:
-//setWindowIcon(QApplication::windowIcon()); // supposed to be automatic, but doesn't seem to be...
-// so we curse and swear, and do this:
+  //for some GD reason, we can't get the icon to show by doing this:
+  //setWindowIcon(QApplication::windowIcon()); // supposed to be automatic, but doesn't seem to be...
+  // so we curse and swear, and do this:
   QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
   QPixmap app_ico(app_ico_nm);
   setWindowIcon(app_ico);
@@ -165,7 +165,7 @@ void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_are
   addDockWidget(in_area, dv);
   // create a menu entry to show/hide it, regardless if visible now
   iAction* act = dockMenu->AddItem(dv->viewer()->GetName(), taiWidgetMenu::toggle,
-    iAction::men_act, this, SLOT(this_DockSelect(iAction*)), (void*)dv);
+      iAction::men_act, this, SLOT(this_DockSelect(iAction*)), (void*)dv);
   if (dv->isVisible() != act->isChecked())
     act->setChecked(dv->isVisible()); // note: triggers action
   //TODO: maybe need to hook up signals for undocking
@@ -178,16 +178,16 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   } else
     body->insertWidget(at_index, fv);
   fv->m_window = this;
-//TODO: this stretch thing isn't working -- replace with sizing
+  //TODO: this stretch thing isn't working -- replace with sizing
   body->setStretchFactor(at_index, fv->stretchFactor());
 
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
-    fv, SLOT(SelectableHostNotifySlot_External(ISelectableHost*, int)) );
+      fv, SLOT(SelectableHostNotifySlot_External(ISelectableHost*, int)) );
   connect(fv, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
-    this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
+      this, SLOT(SelectableHostNotifySlot(ISelectableHost*, int)) );
 
   iAction* act = frameMenu->AddItem(fv->viewer()->GetName(), taiWidgetMenu::toggle,
-    iAction::men_act, this, SLOT(this_FrameSelect(iAction*)), (void*)fv);
+      iAction::men_act, this, SLOT(this_FrameSelect(iAction*)), (void*)fv);
 
   //TODO: the show decision should probably be elsewhere
   if (fv->viewer()->isVisible())
@@ -233,14 +233,14 @@ void iMainWindowViewer::AddToolBar(iToolBar* itb) {
   addToolBar(itb); //TODO: should specify area
   // create a menu entry to show/hide it, regardless if visible now
   toolBarMenu->AddItem(itb->objectName(), taiWidgetMenu::toggle,
-    iAction::men_act, this, SLOT(this_ToolBarSelect(iAction*)), (void*)itb);
+      iAction::men_act, this, SLOT(this_ToolBarSelect(iAction*)), (void*)itb);
   // if initially invisible, hide it
   ToolBar* tb = itb->viewer();
   if (!tb) return; // shouldn't happen
   if (!tb->visible) {
     tb->Hide();
   }
-//nn  toolbars.append(tb);
+  //nn  toolbars.append(tb);
 }
 
 void iMainWindowViewer::ch_destroyed() {
@@ -249,9 +249,9 @@ void iMainWindowViewer::ch_destroyed() {
 }
 
 void iMainWindowViewer::closeEvent(QCloseEvent* e) {
-   // always closing if force-quitting or we no longer have our mummy
+  // always closing if force-quitting or we no longer have our mummy
   CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) || (!m_viewer)) ?
-     CO_NOT_CANCELLABLE : CO_PROCEED;
+      CO_NOT_CANCELLABLE : CO_PROCEED;
   closeEvent_Handler(e, cancel_op);
   // now, if we are the last proj window, close us!
   if (m_close_proj_now) {
@@ -269,7 +269,7 @@ void iMainWindowViewer::raise() {
 
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
   QMainWindow::moveEvent(e);
-//  taProject* prj = curProject();
+  //  taProject* prj = curProject();
   AlignCssConsole();
 }
 
@@ -334,10 +334,7 @@ void iMainWindowViewer::Constr_impl() {
   Constr_Menu_impl();
   // we always put the fileclose or quit action at bottom of menu
   fileMenu->insertSeparator();
-
-  if (!isRoot()) {
-    fileMenu->AddAction(fileCloseWindowAction);
-  }
+  fileMenu->AddAction(fileCloseWindowAction);
 
   //note: on Mac, this Quit will get moved to app menu (needed on all toplevel wins)
 #ifndef TA_OS_MAC
@@ -450,11 +447,8 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->AddAction(fileCloseAction);
   fileMenu->AddAction(fileOptionsAction);
 
-  // Make connections.
-  if (!isRoot()) {
-    fileCloseWindowAction = AddAction(new iAction("C&lose Window", QKeySequence(cmd_str + "W"), "fileCloseWindowAction"));
-    connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()));
-  }
+  fileCloseWindowAction = AddAction(new iAction("C&lose Window", QKeySequence(cmd_str + "W"), "fileCloseWindowAction"));
+  connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()));
 
   connect(fileNewAction, SIGNAL(Action()), this, SLOT(fileNew()));
   connect(fileOpenAction, SIGNAL(Action()), this, SLOT(fileOpen()));
@@ -467,12 +461,12 @@ void iMainWindowViewer::Constr_FileMenu()
   // TBD: is this the same as checking if (!isRoot()) ??
   // Logic for isProjShower() is unclear.
   if (isProjShower()) {
-//    if (!curProject()->save_as_only) {
+    //    if (!curProject()->save_as_only) {
     connect(fileSaveAction, SIGNAL(Action()), this, SLOT(fileSave()));
-//    }
-//    else {
-//      fileSaveAction->setEnabled(false);
-//    }
+    //    }
+    //    else {
+    //      fileSaveAction->setEnabled(false);
+    //    }
     connect(fileSaveAsAction, SIGNAL(Action()), this, SLOT(fileSaveAs()));
     connect(fileSaveNotesAction, SIGNAL(Action()), this, SLOT(fileSaveNotes()));
     connect(fileSaveAsTemplateAction, SIGNAL(Action()), this, SLOT(fileSaveAsTemplate()));
@@ -512,7 +506,7 @@ void iMainWindowViewer::Constr_FileMenu()
 #endif
   {
     fileQuitAction = AddAction(new iAction("&Quit", QKeySequence(cmd_str + "Q"),
-      "fileQuitAction"));
+        "fileQuitAction"));
     connect(fileQuitAction, SIGNAL(Action()), this, SLOT(fileQuit()));
   }
 }
@@ -603,12 +597,12 @@ void iMainWindowViewer::Constr_ViewMenu()
 
   // Forward and back buttons -- note: on Win the icons don't show up if Action has text
   historyBackAction = AddAction(new iAction("Back",
-    QKeySequence(Qt::ControlModifier + Qt::Key_Left), "historyBackAction"));
+      QKeySequence(Qt::ControlModifier + Qt::Key_Left), "historyBackAction"));
   historyBackAction->setToolTip("Move back in object browsing history\nCtrl + Left");
   historyBackAction->setStatusTip(historyBackAction->toolTip());
 
   historyForwardAction = AddAction(new iAction("Forward",
-    QKeySequence(Qt::ControlModifier + Qt::Key_Right), "historyForwardAction"));
+      QKeySequence(Qt::ControlModifier + Qt::Key_Right), "historyForwardAction"));
   historyForwardAction->setToolTip("Move forward in object browsing history\nCtrl + Right");
   historyForwardAction->setStatusTip(historyForwardAction->toolTip());
 
@@ -642,9 +636,9 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect(brow_hist, SIGNAL(forward_enabled(bool)), historyForwardAction, SLOT(setEnabled(bool)));
 
   connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
-    brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)));
+      brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)));
   connect(brow_hist, SIGNAL(select_item(taiSigLink*)),
-    this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
+      this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
 
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
 
@@ -719,14 +713,14 @@ void iMainWindowViewer::Constr_ToolsMenu()
 
   toolsSvnBrowseActionEmergent = AddAction(new iAction(0, "&SVN Browser Emergent", QKeySequence(), "toolsSvnBrowseActionEmergent"));
   toolsSvnBrowseActionSvn1 = AddAction
-    (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo1_url.name, 
-                 QKeySequence(), "toolsSvnBrowseActionSvn1"));
+      (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo1_url.name,
+          QKeySequence(), "toolsSvnBrowseActionSvn1"));
   toolsSvnBrowseActionSvn2 = AddAction
-    (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo2_url.name, 
-                 QKeySequence(), "toolsSvnBrowseActionSvn2"));
+      (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo2_url.name,
+          QKeySequence(), "toolsSvnBrowseActionSvn2"));
   toolsSvnBrowseActionSvn3 = AddAction
-    (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name, 
-                 QKeySequence(), "toolsSvnBrowseActionSvn3"));
+      (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name,
+          QKeySequence(), "toolsSvnBrowseActionSvn3"));
 
   // Build menu items.
   if (toolsMenu) {
@@ -744,17 +738,17 @@ void iMainWindowViewer::Constr_ToolsMenu()
 
   // Make connetions.
   connect(toolsHelpBrowseAction, SIGNAL(triggered()),
-    this, SLOT(toolsHelpBrowser()));
+      this, SLOT(toolsHelpBrowser()));
   connect(toolsSvnBrowseActionEmergent, SIGNAL(triggered()),
-    this, SLOT(toolsSvnBrowserEmergent()));
+      this, SLOT(toolsSvnBrowserEmergent()));
   connect(toolsSvnBrowseActionSvn1, SIGNAL(triggered()),
-    this, SLOT(toolsSvnBrowserSvn1()));
+      this, SLOT(toolsSvnBrowserSvn1()));
   connect(toolsSvnBrowseActionSvn2, SIGNAL(triggered()),
-    this, SLOT(toolsSvnBrowserSvn2()));
+      this, SLOT(toolsSvnBrowserSvn2()));
   connect(toolsSvnBrowseActionSvn3, SIGNAL(triggered()),
-    this, SLOT(toolsSvnBrowserSvn3()));
+      this, SLOT(toolsSvnBrowserSvn3()));
   connect(toolsTypeInfoBrowseAction, SIGNAL(triggered()),
-    this, SLOT(toolsTypeInfoBrowser()));
+      this, SLOT(toolsTypeInfoBrowser()));
 }
 
 void iMainWindowViewer::Constr_HelpMenu()
@@ -832,7 +826,7 @@ void iMainWindowViewer::Find(taiSigLink* root, const String& find_str) {
 }
 
 void iMainWindowViewer::Replace(taiSigLink* root, ISelectable_PtrList& sel_items,
-                                const String& srch, const String& repl) {
+    const String& srch, const String& repl) {
 
   taGuiDialog Dlg1;
   String curow;
@@ -853,7 +847,7 @@ void iMainWindowViewer::Replace(taiSigLink* root, ISelectable_PtrList& sel_items
   curow = "instr";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   Dlg1.AddLabel("Instructions", "main", curow,
-"label=Enter strings to search and replace for in currently selected items\nmember filter restricts replace to specific member field names\n(search does not support regular expressions);");
+      "label=Enter strings to search and replace for in currently selected items\nmember filter restricts replace to specific member field names\n(search does not support regular expressions);");
   Dlg1.AddSpace(20, "mainv");
   curow = "srchrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
@@ -869,7 +863,7 @@ void iMainWindowViewer::Replace(taiSigLink* root, ISelectable_PtrList& sel_items
   curow = "mbfltrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   String mttip =
-"tooltip=The member name must contain the specified string (e.g. 'name' or 'lrate')\nin order for the Replace operation to apply. If the member filter is left blank, \nthen the Replace operation applies to all members.;";
+      "tooltip=The member name must contain the specified string (e.g. 'name' or 'lrate')\nin order for the Replace operation to apply. If the member filter is left blank, \nthen the Replace operation applies to all members.;";
   Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;"+mttip);
   Dlg1.AddStringField(&mb_flt, "mbflt", "main", curow, mttip);
   Dlg1.AddSpace(20, "mainv");
@@ -930,6 +924,14 @@ void iMainWindowViewer::editFindNext() {
 }
 
 void iMainWindowViewer::fileCloseWindow() {
+  if (isRoot() && this->widget()->isActiveWindow()) {
+    int chs = taMisc::Choice("Quit Emergent?", "&Cancel", "&Quit");
+    if (chs == 1) {
+      this->widget()->close();
+    }
+    return;
+  }
+
   foreach (QWidget *widget, QApplication::topLevelWidgets()) {
     if (widget->isActiveWindow()) {
       widget->close();
@@ -942,7 +944,7 @@ void iMainWindowViewer::fileCloseWindow() {
 //  unless they are applicable (ex Save only if it is a viewer)
 void iMainWindowViewer::fileNew() {
   if (!tabMisc::root) return;
-//   tabMisc::root->projects.CallFun("New_gui"); // let user choose type
+  //   tabMisc::root->projects.CallFun("New_gui"); // let user choose type
   tabMisc::root->projects.CallFun("NewFromTemplate"); // let user choose type
   //should automatically open
 }
@@ -950,10 +952,10 @@ void iMainWindowViewer::fileNew() {
 void iMainWindowViewer::fileOpen() {
   if (!tabMisc::root) return;
   TypeDef* td = &TA_taProject;
-// get filename ourself, so we can check if it is already open!
+  // get filename ourself, so we can check if it is already open!
   taFiler* flr = tabMisc::root->projects.GetFiler(td);
   taRefN::Ref(flr);
-//TODO: context path  flr->setFileName(fname);
+  //TODO: context path  flr->setFileName(fname);
   if (flr->GetFileName(taFiler::foOpen)) {
     String fname = flr->FileName();
     fileOpenFile(fname);
@@ -971,10 +973,10 @@ void iMainWindowViewer::fileOpenRecent_aboutToShow() {
 
     //iAction* item =
     fileOpenRecentMenu->AddItemWithNumericAccel(
-      filename,
-      iAction::var_act,
-      this, SLOT(fileOpenFile(const Variant&)),
-      filename);
+        filename,
+        iAction::var_act,
+        this, SLOT(fileOpenFile(const Variant&)),
+        filename);
   }
 }
 
@@ -989,7 +991,7 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
     proj = tabMisc::root->projects.FastEl(i);
     if (proj->file_name == fname) {
       int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
-                               "Ok", "Cancel");
+          "Ok", "Cancel");
       switch (chs) {
       case 0: break; // break out of switch -- we'll also break out of the loop
       case 1: return;
@@ -1078,10 +1080,10 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
   String label = repositoryName + "...";
 
   fileOpenFromWebMenu->AddItemWithNumericAccel(
-    label,
-    iAction::var_act,
-    this, SLOT(fileOpenFromWeb(const Variant &)),
-    repositoryName);
+      label,
+      iAction::var_act,
+      this, SLOT(fileOpenFromWeb(const Variant &)),
+      repositoryName);
 }
 
 void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
@@ -1100,10 +1102,10 @@ void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
   String label = repositoryName + "...";
 
   filePublishDocsOnWebMenu->AddItemWithNumericAccel(
-    label,
-    iAction::var_act,
-    this, SLOT(filePublishDocsOnWeb(const Variant &)),
-    repositoryName);
+      label,
+      iAction::var_act,
+      this, SLOT(filePublishDocsOnWeb(const Variant &)),
+      repositoryName);
 }
 
 void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)
@@ -1214,7 +1216,7 @@ bool iMainWindowViewer::FocusLeftBrowser() {
 }
 
 bool iMainWindowViewer::FocusMiddlePanel() {
-//  iTreeView* mtv = GetMainTreeView();
+  //  iTreeView* mtv = GetMainTreeView();
   MainWindowViewer* db = viewer();
   if(!db) return false;
   PanelViewer* pv = db->GetMiddlePanel();
@@ -1441,7 +1443,7 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiSigLink* link) {
 }
 
 bool iMainWindowViewer::AssertPanel(taiSigLink* link,
-  bool new_tab, bool new_tab_lock)
+    bool new_tab, bool new_tab_lock)
 {
   if (!new_tab) new_tab_lock = false;
   iPanelViewer* itv = GetTabViewer(); // should exist
@@ -1655,10 +1657,10 @@ void iMainWindowViewer::windowMenu_aboutToShow() {
 
       //iAction* item =
       windowMenu->AddItemWithNumericAccel(
-        title,
-        iAction::int_act,
-        this, SLOT(windowActivate(int)),
-        i);
+          title,
+          iAction::int_act,
+          this, SLOT(windowActivate(int)),
+          i);
     }
   }
 }
@@ -1695,7 +1697,7 @@ void iMainWindowViewer::FileBugReport() {
 }
 
 void iMainWindowViewer::mnuEditAction(iAction* mel) {
-   // called from context; cast obj to an iClipData::EditAction
+  // called from context; cast obj to an iClipData::EditAction
   emit_EditAction(mel->usr_data.toInt());
 }
 
@@ -1737,10 +1739,10 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
     int chs;
     if (forced)
       chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing this window?",
-        "&Save", "&Don't Save");
+          "&Save", "&Don't Save");
     else
       chs= taMisc::Choice("The project: " + taMisc::GetFileFmPath(proj->file_name) + " has unsaved changes -- do you want to save before closing this window?",
-        "&Save", "&Don't Save", "&Cancel");
+          "&Save", "&Don't Save", "&Cancel");
 
     switch (chs) {
     case 0:
@@ -1770,7 +1772,7 @@ bool iMainWindowViewer::isDirty() const {
 
 void iMainWindowViewer::SaveData() {
   taProject* proj = curProject(); // only if projviwer
-   // only impl for projects, because they are only thing we know how to save
+  // only impl for projects, because they are only thing we know how to save
   if (proj)
     proj->Save();
 }
@@ -1783,14 +1785,14 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
     last_sel_server = src_host;
     QObject* handler_obj = src_host->clipHandlerObj();
     SetClipboardHandler(handler_obj, ISelectableHost::edit_enabled_slot,
-      ISelectableHost::edit_action_slot);
+        ISelectableHost::edit_action_slot);
     SelectableHostNotifying_impl(src_host, op); // break out for clarity
-    } break;
+  } break;
   case ISelectableHost::OP_SELECTION_CHANGED: {
     // if no handler, then this guy becomes handler implicitly, otherwise ignore
     if (last_sel_server && (last_sel_server != src_host)) break;
     SelectableHostNotifying_impl(src_host, op); // break out for clarity
-    } break;
+  } break;
   case ISelectableHost::OP_DESTROYING: {
     if (last_sel_server == src_host) {
       if (last_clip_handler == src_host->clipHandlerObj()) {
@@ -1799,16 +1801,16 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
       last_sel_server = src_host;
       UpdateUi();
     }
-    } break;
+  } break;
   default: break; // shouldn't happen
   }
 }
 
 void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
-  const char* edit_enabled_slot,
-  const char* edit_action_slot,
-  const char* actions_enabled_slot,
-  const char* update_ui_signal)
+    const char* edit_enabled_slot,
+    const char* edit_action_slot,
+    const char* actions_enabled_slot,
+    const char* update_ui_signal)
 {
   if (last_clip_handler == handler_obj) return; // nothing to do
   // always disconnect first
@@ -1828,7 +1830,7 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
       connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
     if (update_ui_signal)
       connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
-/*//TEMP
+    /*//TEMP
     taMisc::Warning("SetClipHandler to: type, name", handler_obj->metaObject()->className(),
       handler_obj->objectName());
 } else {
@@ -1841,8 +1843,8 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
 
 void iMainWindowViewer::setFrameGeometry(const iRect& r) {
   //NOTE: this may only work before calling show() on X
-    this->resize(r.size());   // set size
-    this->move(r.topLeft());  // set position
+  this->resize(r.size());   // set size
+  this->move(r.topLeft());  // set position
 }
 
 void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int height) {
@@ -1875,10 +1877,10 @@ void iMainWindowViewer::ShowChange(iAction* sender) {
   else {
     int mask;
     switch (sender->usr_data.toInt()) {
-      case 2: mask = TypeItem::NO_NORMAL; break;
-      case 3: mask = TypeItem::NO_EXPERT; break;
-      case 4: mask = TypeItem::NO_HIDDEN; break;
-      default: mask = 0; break; // should never happen
+    case 2: mask = TypeItem::NO_NORMAL; break;
+    case 3: mask = TypeItem::NO_EXPERT; break;
+    case 4: mask = TypeItem::NO_HIDDEN; break;
+    default: mask = 0; break; // should never happen
     }
     new_show = sender->isChecked() ? show & ~mask : show | mask;
   }
@@ -1899,6 +1901,7 @@ void iMainWindowViewer::showMenu_aboutToShow() {
 
 void iMainWindowViewer::fileMenu_aboutToShow() {
   if (!fileMenu) return;
+
   if (tabMisc::root) {
     fileSaveAllAction->setEnabled(!tabMisc::root->projects.IsEmpty());
   }
@@ -1947,13 +1950,13 @@ void iMainWindowViewer::toolsTypeInfoBrowser() {
 }
 
 void iMainWindowViewer::toolsHelpBrowser() {
- // iHelpBrowser* tdd =
+  // iHelpBrowser* tdd =
   iHelpBrowser::instance();
 }
 
 void iMainWindowViewer::toolsSvnBrowserEmergent() {
   iSubversionBrowser::OpenBrowser("http://grey.colorado.edu/svn/emergent/emergent/trunk",
-                                  "~/emergent");
+      "~/emergent");
 }
 
 void iMainWindowViewer::toolsSvnBrowserSvn1() {
@@ -2098,12 +2101,12 @@ void iMainWindowViewer::changeEvent(QEvent* ev) {
     if (isActiveWindow()) {
       int idx = taiMisc::active_wins.FindEl(this);
       if (idx < 0) {
-	taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
+        taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
       } else {
-	if (idx < (taiMisc::active_wins.size - 1)) {
-	  // move us to the end
-	  taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
-	}
+        if (idx < (taiMisc::active_wins.size - 1)) {
+          // move us to the end
+          taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
+        }
       }
     }
   }
