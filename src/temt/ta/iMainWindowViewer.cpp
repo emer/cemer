@@ -931,8 +931,10 @@ void iMainWindowViewer::editFindNext() {
 
 void iMainWindowViewer::fileCloseWindow() {
   foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-    if (widget->isActiveWindow())
+    if (widget->isActiveWindow()) {
       widget->close();
+      break;
+    }
   }
 }
 
