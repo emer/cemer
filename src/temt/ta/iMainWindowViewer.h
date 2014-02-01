@@ -288,6 +288,7 @@ public slots:
   virtual void  filePrint();
   virtual void  fileCloseWindow();// (non-root only)
   virtual void  fileQuit(); // (root) or all on Mac (needed for App menu)
+  virtual void  fileMenu_aboutToShow();
   virtual void  editUndo();
   virtual void  editRedo();
   virtual void  editFind();

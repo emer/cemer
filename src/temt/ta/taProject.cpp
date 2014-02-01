@@ -690,6 +690,9 @@ void taProject::setDirty(bool value) {
   if (!value) m_no_save = false;
 }
 
+String taProject::GetDir() {
+  return taMisc::GetDirFmPath(GetFileName());
+}
 
 void taProject::SvnBrowser() {
   String path = taMisc::GetDirFmPath(GetFileName());

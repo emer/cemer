@@ -57,6 +57,7 @@
 #include <QDesktopServices>
 #include <QKeyEvent>
 #include <QSignalMapper>
+#include <QApplication>
 
 
 
@@ -360,6 +361,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   menu = new taiWidgetMenuBar(this, taiMisc::fonBig, menuBar());
 
   fileMenu = menu->AddSubMenu("F&ile");
+  connect(fileMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileMenu_aboutToShow()));
   editMenu = menu->AddSubMenu("&Edit");
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
@@ -486,8 +488,6 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb()));
 
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
-    // disable the CloseWindow to help emphasize that Closing will close proj
-    //no, not needed    fileCloseWindowAction->setEnabled(false);
   }
   else {
     fileSaveAction->setEnabled(false);
@@ -930,7 +930,10 @@ void iMainWindowViewer::editFindNext() {
 }
 
 void iMainWindowViewer::fileCloseWindow() {
-  close();
+  foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+    if (widget->isActiveWindow())
+      widget->close();
+  }
 }
 
 // note: all the fileXxx for projects are safe -- they don't get enabled
@@ -1756,8 +1759,10 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 
 bool iMainWindowViewer::isDirty() const {
   taProject* proj = curProject(); // only if projviwer
-  if (proj) return proj->isDirty();
-  else return false;
+  if (proj)
+    return proj->isDirty();
+  else
+    return false;
 }
 
 
@@ -1888,6 +1893,16 @@ void iMainWindowViewer::showMenu_aboutToShow() {
   (*show_menu)[2]->setChecked(!(value & TypeItem::NO_NORMAL));
   (*show_menu)[3]->setChecked(!(value & TypeItem::NO_EXPERT));
   (*show_menu)[4]->setChecked(!(value & TypeItem::NO_HIDDEN));
+}
+
+void iMainWindowViewer::fileMenu_aboutToShow() {
+  if (!fileMenu) return;
+  if (tabMisc::root) {
+    fileSaveAllAction->setEnabled(!tabMisc::root->projects.IsEmpty());
+  }
+  if (curProject()) {
+    fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());
+  }
 }
 
 void iMainWindowViewer::this_DockSelect(iAction* me) {
@@ -2055,10 +2070,7 @@ void iMainWindowViewer::UpdateUi() {
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
 
   if (curProject() != NULL) {
-    if (curProject()->save_as_only)
-      fileSaveAction->setEnabled(false);
-    else
-      fileSaveAction->setEnabled(true);
+    fileSaveAction->setEnabled(!curProject()->save_as_only);
   }
 
   emit SetActionsEnabled();
