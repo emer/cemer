@@ -16,14 +16,8 @@
 #include "LVeLayerSpec.h"
 #include <LeabraNetwork>
 #include <MarkerConSpec>
-#include <PVrLayerSpec>
-#include <PViLayerSpec>
-#include <LViLayerSpec>
-#include <PVConSpec>
-#include <ExtRewLayerSpec>
 
 #include <taMisc>
-
 
 void LVMiscSpec::Initialize() {
   gd_pvlv = false;
@@ -83,37 +77,30 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   us->UpdateAfterEdit();
 
-  // check for conspecs with correct params
-  LeabraLayer* pvi_lay = NULL;
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
-      continue;
-    }
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-      LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
-      if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = flay;
-      continue;
-    }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-                       "requires recv connections to be of type PVConSpec")) {
-      return false;
-    }
-  }
+  if(lay->CheckError(lay->units.leaves == 0, quiet, rval,
+                     "requires at least one unit in the layer"))
+    return false;
 
-//   if(lay->CheckError(!pvi_lay, quiet, rval,
-//              "requires MarkerConSpec connection from PViLayerSpec layer to get DA values!")) {
-//     return false;
-//   }
+  // note: increased flexibility here: we don't check for things we don't actually depend
+  // on -- allows more modular re-use of elements
 
   return true;
 }
 
+void LVeLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights(lay, net);
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  if(lv.gd_pvlv) {  // set as though we just had a primrary reward
+    UNIT_GP_ITR
+      (lay,
+       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+       u->misc_1 = -1;
+     );
+  }
+}
+
 void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
   float pve_val = net->norew_val;
   if(net->ext_rew_avail) {
@@ -125,6 +112,9 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
       (lay,
        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
        u->ext = pve_val;
+       if(lv.gd_pvlv) {
+         u->dav = net->pvlv_dav; // update our dav so we can use da modulated learning!
+       }
        ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
        Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
      );
@@ -138,7 +128,8 @@ float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
   LeabraUnit* lveu = (LeabraUnit*)lve_lay->UnitAccess(lve_acc_md, 0, lve_gpidx);
   float lv_da = 0.0f;
   if(lv.gd_pvlv) {
-    lv_da = lveu->act_eq - lveu->misc_1; // straight y-dot
+    if(lveu->misc_1 >= 0.0f)               // if -1, then trial after er..
+      lv_da = lveu->act_eq - lveu->misc_1; // straight y-dot
 
     int nunits = lve_lay->UnitAccess_NUnits(lve_acc_md);
     for(int i=0;i<nunits;i++) {
@@ -217,7 +208,12 @@ void LVeLayerSpec::Update_LVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md
                                       int gpidx, bool er_avail) {
   LeabraUnit* lveu = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   if(er_avail && lv.er_reset_prior) {
-    lveu->misc_1 = 0.0f;
+    if(lv.gd_pvlv) {
+      lveu->misc_1 = -1.0f;     // signal that it is an er trial
+    }
+    else {
+      lveu->misc_1 = 0.0f;
+    }
   }
   else {
     if(lv.gd_pvlv) {
@@ -239,14 +235,6 @@ void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   // take the 1st guy as the overall general guy
   LeabraUnit* lvesu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_lve = lvesu->act_eq;
-  // this is primarily used for noise modulation
-}
-
-void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_CycleStats(lay, net);
-  // take the 1st guy as the overall general guy
-  LeabraUnit* lvisu = (LeabraUnit*)lay->units.Leaf(0);
-  net->pvlv_lvi = lvisu->act_eq;
   // this is primarily used for noise modulation
 }
 

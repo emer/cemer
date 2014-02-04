@@ -16,9 +16,6 @@
 #include "PViLayerSpec.h"
 #include <LeabraNetwork>
 #include <MarkerConSpec>
-#include <PVrLayerSpec>
-#include <PVConSpec>
-#include <ExtRewLayerSpec>
 
 #include <taMisc>
 
@@ -86,33 +83,12 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   us->UpdateAfterEdit();
 
-  // check for conspecs with correct params
-  LeabraLayer* ext_rew_lay = NULL;
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
-      continue;
-    }
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-      LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
-      if(fls->InheritsFrom(TA_ExtRewLayerSpec)) ext_rew_lay = flay;
-      continue;
-    }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-                  "requires recv connections to be of type PVConSpec")) {
-      return false;
-    }
-  }
-
-  LeabraLayer* pvr_lay = FindLayerFmSpecNet(net, &TA_PVrLayerSpec);
-  if(lay->CheckError(!pvr_lay, quiet, rval,
-                "PVLV requires a PVrLayerSpec layer to detect when primary rewards are avail -- run wizard or create manually!")) {
+  if(lay->CheckError(lay->units.leaves == 0, quiet, rval,
+                     "requires at least one unit in the layer"))
     return false;
-  }
+
+  // note: increased flexibility here: we don't check for things we don't actually depend
+  // on -- allows more modular re-use of elements
 
   return true;
 }

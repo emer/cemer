@@ -15,7 +15,6 @@
 
 #include "NVLayerSpec.h"
 #include <LeabraNetwork>
-#include <PVConSpec>
 
 #include <taMisc>
 
@@ -86,20 +85,8 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   us->UpdateAfterEdit();
 
-  // check for conspecs with correct params
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
-      continue;
-    }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-                       "requires recv connections to be of type PVConSpec")) {
-      return false;
-    }
-  }
+  // note: increased flexibility here: we don't check for things we don't actually depend
+  // on -- allows more modular re-use of elements
 
   return true;
 }

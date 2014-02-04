@@ -36,6 +36,7 @@ public:
     TR,                    // current ongoing trace that drives learning -- adds ntr and decays after learning on current values
   };
 
+  bool          immed_trace;    // trace is updated immediately on the same trial, instead of being delayed for one time step (i.e., updated after the current weight change is computed) -- this is appropriate for output gating connections where PV reward is available on the same trial as gating occurs
   float         mnt_decay;      // rate of decay of the synaptic trace for units that have ongoing continued maintenance (signalled by the LEARN flag on ru)
   float         no_mnt_decay;    // rate of decay of the synaptic trace for units that do NOT have ongoing continued maintenance (signalled by the LEARN flag on ru)
 
@@ -60,6 +61,13 @@ public:
     ntr = 0.0f;                     // clear new -- any new trace needs to be computed
   }
   // #IGNORE
+  inline void C_Compute_dWt_Matrix_ImTr(float& dwt, const float mtx_da, const float decay,
+                                      float& tr, float& ntr) {
+    tr += ntr - decay * tr;         // immediate update of trace to include new vals
+    dwt += cur_lrate * mtx_da * tr; // then learn based on cur trace (from this trial)
+    ntr = 0.0f;                     // clear new -- any new trace needs to be computed
+  }
+  // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                        LeabraNetwork* net) override {
@@ -70,10 +78,19 @@ public:
     float* trs = cg->OwnCnVar(TR);
 
     const int sz = cg->size;
-    for(int i=0; i<sz; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-      const float decay = ru->HasUnitFlag(Unit::LEARN) ? mnt_decay : no_mnt_decay;
-      C_Compute_dWt_Matrix_Tr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
+    if(immed_trace) {
+      for(int i=0; i<sz; i++) {
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        const float decay = ru->HasUnitFlag(Unit::LEARN) ? mnt_decay : no_mnt_decay;
+        C_Compute_dWt_Matrix_ImTr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
+      }
+    }
+    else {
+      for(int i=0; i<sz; i++) {
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        const float decay = ru->HasUnitFlag(Unit::LEARN) ? mnt_decay : no_mnt_decay;
+        C_Compute_dWt_Matrix_Tr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
+      }
     }
   }
 

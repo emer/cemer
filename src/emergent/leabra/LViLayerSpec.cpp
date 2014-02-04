@@ -14,4 +14,13 @@
 //   GNU General Public License for more details.
 
 #include "LViLayerSpec.h"
+#include <LeabraNetwork>
+
+void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
+  // take the 1st guy as the overall general guy
+  LeabraUnit* lvisu = (LeabraUnit*)lay->units.Leaf(0);
+  net->pvlv_lvi = lvisu->act_eq;
+  // this is primarily used for noise modulation
+}
 
