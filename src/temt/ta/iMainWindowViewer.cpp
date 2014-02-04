@@ -358,7 +358,6 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   menu = new taiWidgetMenuBar(this, taiMisc::fonBig, menuBar());
 
   fileMenu = menu->AddSubMenu("F&ile");
-  connect(fileMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileMenu_aboutToShow()));
   editMenu = menu->AddSubMenu("&Edit");
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
