@@ -29,11 +29,10 @@ class E_API PVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
 public:
+  bool          gd_pvlv;        // use goal-driven PVLV formulation, which does not compute y-dot for PV dopamine
   float         min_pvi;        // #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)
-  bool          pvi_scale_min;  // if both the PVe and PVi values are below min_pvi, then scale the result by (PVi/min_pvi) -- as PVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) to subtract away in computing the net PV dopamine signal (PV DA = pvd_t - prior_gain * pvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
-  bool		no_y_dot; // #DEF_false if true do not use y-dot for phasic DA calculation (PVi)
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 

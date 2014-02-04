@@ -32,7 +32,7 @@ INHERITED(LeabraConSpec)
 public:
   enum SendActVal {
     ACT_P,                      // plus phase activation state
-    ACT_M2,                     // mid-minus activation state (for PBWM)
+    ACT_MID,                    // mid-minus activation state (not typically used)
   };
 
   SendActVal    send_act;       // what to use for the sending activation value
@@ -50,8 +50,8 @@ public:
     float su_act;
     if(send_act == ACT_P)
       su_act = su->act_p;
-    else                        // ACT_M2
-      su_act = su->act_m2;
+    else                        // ACT_MID
+      su_act = su->act_mid;
 
     float* dwts = cg->OwnCnVar(DWT);
 

@@ -23,11 +23,10 @@
 #include <taMisc>
 
 void PVMiscSpec::Initialize() {
+  gd_pvlv = false;
   min_pvi = 0.4f;
-  pvi_scale_min = false;
   prior_gain = 1.0f;
   er_reset_prior = true;
-  no_y_dot = false;
 }
 
 void PViLayerSpec::Initialize() {
@@ -146,17 +145,12 @@ float PViLayerSpec::Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
   float pv_da = 0.0f;
   if(net->phase_no > 0) {
     pvd = pve_val - MAX(u->act_m, pv.min_pvi);
-    if(pv.pvi_scale_min && (pvd < 0.0f) && (u->act_m < pv.min_pvi)) {
-      pvd *= (u->act_m / pv.min_pvi); // scale by how negative relative to min
-    }
-    //pv_da = pvd - u->misc_1; // delta relative to prior
-    if(pv.no_y_dot) {
-      pv_da = pvd; // try no Y-dot --- what you see is what you get!
+    if(pv.gd_pvlv) {
+      pv_da = pvd; // no Y-dot --- what you see is what you get!
     }
     else {
       pv_da = pvd - u->misc_1; // delta relative to prior -- the original PVLV case
     }
-    // TODO: eventually want to go a CS-onset triggered ramping PVi (and LVi)
   }
 
   int nunits = lay->UnitAccess_NUnits(acc_md);

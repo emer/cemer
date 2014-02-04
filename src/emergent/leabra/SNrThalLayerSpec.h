@@ -30,7 +30,7 @@ class E_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
 INHERITED(SpecMemberBase)
 public:
-  float	    go_thr;			// #DEF_0.5 threshold on activity to fire go -- only stripes that get this active will fire
+  float	    go_thr;	    // #DEF_0.5 threshold on activity to fire go -- only stripes that get this active will fire
   int       min_cycle;      // #DEF_10:25 #MIN_0 minimum cycle for gating -- cannot gate before this cycle
   int       max_cycle;      // #DEF_20:40 #MIN_0 maximum cycle for gating -- cannot gate after this cycle
   
@@ -48,7 +48,7 @@ private:
 eTypeDef_Of(SNrThalLayerSpec);
 
 class E_API SNrThalLayerSpec : public LeabraLayerSpec {
-  // Represents the substantia nigra, pars reticulata (SNr) and Thalamus (MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix -- all nogo enters into matrix activations, not snrthal -- gating val reflected in act_mid, gating status in unit group data per stripe
+  // Represents the substantia nigra, pars reticulata (SNr) or globus pallidus internal segment (GPi) and Thalamus (e.g., MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix go projections -- all nogo enters into matrix activations, not snrthal -- within gating time window, registers whether given stripe gets over threshold, with gating val in act_mid and acts, and gating info recorded in unit group data per stripe -- act_m2 preserves the last value during gating window for non-gating stripes
 INHERITED(LeabraLayerSpec)
 public:
   enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, IN_MNT, OUTPUT, etc. gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical

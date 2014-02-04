@@ -30,7 +30,6 @@ void MatrixGoNogoGainSpec::Initialize() {
 }
 
 void MatrixMiscSpec::Initialize() {
-  pv_da_only = true;
   da_gain = 0.1f;
   nogo_inhib = 0.5f;
   refract_inhib = 0.0f;
@@ -52,6 +51,7 @@ void MatrixLayerSpec::Defaults_init() {
   matrix.da_gain = 0.1f;
   matrix.nogo_deep_gain = 0.5f;
 
+  // todo: update these to FF_FB defaults!
   //  SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   inhib.kwta_pt = .6f;
@@ -93,8 +93,7 @@ void MatrixLayerSpec::HelpConfig() {
  Each Matrix layer is either all Go or NoGo, with stripe-wise alignment between two\n\
  \nMatrixLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure.\n\
- - Units must have a MatrixUnitSpec and must recv from PVLVDaLayerSpec layer\
- (calld VTA typically) to get da modulation for learning signal\n\
+ - Units must have a MatrixUnitSpec and must recv some kind of dopamine signal in dav\n\
  - Must recv from SNrThalLayerSpec to get final Go signal\n\
  - Go layer recv marker cons from NoGo, gets inhibition in proportion to avg NoGo act\n\
  - Other Recv conns are MatrixConSpec for learning based on the da-signal.\n\
@@ -130,19 +129,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   us->SetUnique("maxda", true);
   us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
-  // must have these not initialized every trial!
-  if(lay->CheckError(us->hyst.init, quiet, rval,
-                "requires UnitSpec hyst.init = false, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("hyst", true);
-    us->hyst.init = false;
-  }
-  if(lay->CheckError(us->acc.init, quiet, rval,
-                "requires UnitSpec acc.init = false, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("acc", true);
-    us->acc.init = false;
-  }
   us->UpdateAfterEdit();
 
   LeabraBiasSpec* bs = (LeabraBiasSpec*)us->bias_spec.SPtr();
@@ -173,20 +159,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 		       "Receiving connections must be of type MatrixConSpec!")) {
       return false;
     }
-    if(cs->mtx_learn == MatrixConSpec::TRACE) {
-      if(lay->CheckError(!matrix.pv_da_only, quiet, rval,
-                  "TRACE learning requires pv_da_only, I just set it for you in spec:",
-                    name)) {
-        matrix.pv_da_only = true;
-      }
-    }
-    else {
-      if(lay->CheckError(matrix.pv_da_only, quiet, rval,
-                  "LV_DA learning requires pv_da_only = false, I just set it for you in spec:",
-                    name)) {
-        matrix.pv_da_only = false;
-      }
-    }
     if(lay->CheckError(cs->wt_limits.sym != false, quiet, rval,
                   "requires recv connections to have wt_limits.sym=false, I just set it for you in spec:",
                   cs->name,"(make sure this is appropriate for all layers that use this spec!)")) {
@@ -194,14 +166,20 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       cs->wt_limits.sym = false;
     }
   }
-  if(lay->CheckError(da_lay == NULL, quiet, rval,
-                "Could not find DA layer (PVLVDaLayerSpec) -- must receive MarkerConSpec projection from one!")) {
-    return false;
-  }
+
   int myidx = lay->own_net->layers.FindLeafEl(lay);
-  int daidx = lay->own_net->layers.FindLeafEl(da_lay);
-  lay->CheckError(daidx > myidx, quiet, rval,
-                  "DA layer (PVLVDaLayerspec) layer must be *before* this layer in list of layers -- it is now after, won't work!");
+
+  // be more flexible about where we get the dav from
+  // if(lay->CheckError(da_lay == NULL, quiet, rval,
+  //               "Could not find DA layer (PVLVDaLayerSpec) -- must receive MarkerConSpec projection from one!")) {
+  //   return false;
+  // }
+  if(da_lay) {
+    // this is required so we can modulate the dav value by go vs. nogo
+    int daidx = lay->own_net->layers.FindLeafEl(da_lay);
+    lay->CheckError(daidx > myidx, quiet, rval,
+                    "DA layer (PVLVDaLayerspec) layer must be *before* this layer in list of layers -- it is now after, won't work!");
+  }
 
   if(lay->CheckError(snr_lay == NULL, quiet, rval,
                 "Could not find SNrThal layer -- must receive MarkerConSpec projection from one!")) {
@@ -213,13 +191,12 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                   "SNrThallayer (SNrThalLayerSpec) layer must be *before* this layer in list of layers -- it is now after, won't work!");
 
   if(go_nogo == GO) {
-    if(lay->CheckError(nogo_lay == NULL, quiet, rval,
-                "Could not find NoGo Matrix layer for Go Matrix -- must receive MarkerConSpec projection from one!")) {
-      return false;
-    }
-    if(lay->CheckError(nogo_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
-		       "NoGo Matrix layer does not have same number of stripes as we do!")) {
-      return false;
+    if(nogo_lay) {
+      // nogo_lay also optional
+      if(lay->CheckError(nogo_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
+                         "NoGo Matrix layer does not have same number of stripes as we do!")) {
+        return false;
+      }
     }
   }
 
@@ -229,10 +206,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 LeabraLayer* MatrixLayerSpec::SNrThalLayer(LeabraLayer* lay) {
   int snr_prjn_idx = 0; // actual arg value doesn't matter
   return FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
-}
-LeabraLayer* MatrixLayerSpec::PVLVDaLayer(LeabraLayer* lay) {
-  int pvlvda_prjn_idx = 0; // actual arg value doesn't matter
-  return FindLayerFmSpec(lay, pvlvda_prjn_idx, &TA_PVLVDaLayerSpec);
 }
 
 LeabraLayer* MatrixLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
@@ -289,10 +262,15 @@ float MatrixLayerSpec::Compute_NoGoInhibGo_ugp(LeabraLayer* lay,
 
   int nogo_prjn_idx = 0; // actual arg value doesn't matter
   LeabraLayer* nogo_lay = FindLayerFmSpec(lay, nogo_prjn_idx, &TA_MatrixLayerSpec);
-  PBWMUnGpData* nogo_gpd = (PBWMUnGpData*)nogo_lay->ungp_data.FastEl(gpidx);
-  float nogo_i = matrix.nogo_inhib * nogo_gpd->acts.avg;
-  if(nogo_i > 1.0f) nogo_i = 1.0f;
-  return nogo_i;
+  if(nogo_lay) {                // optional
+    PBWMUnGpData* nogo_gpd = (PBWMUnGpData*)nogo_lay->ungp_data.FastEl(gpidx);
+    float nogo_i = matrix.nogo_inhib * nogo_gpd->acts.avg;
+    if(nogo_i > 1.0f) nogo_i = 1.0f;
+    return nogo_i;
+  }
+  else {
+    return 0.0f;
+  }
 }
 
 float MatrixLayerSpec::Compute_RefractInhib_ugp(LeabraLayer* lay,
@@ -301,7 +279,8 @@ float MatrixLayerSpec::Compute_RefractInhib_ugp(LeabraLayer* lay,
   if(matrix.refract_inhib == 0.0f) return 0.0f;
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   if(gpd->mnt_count == 1) {	// only true if gated last trial
-  	// NOTE! mnt_count test above depends critically on when updating occurs relative to this call!!
+    // NOTE: mnt_count is updated at start of trial in SNrThalLayerSpec, and we grab
+    // it every cycle, so this value should be current at all points
     return matrix.refract_inhib;
   }
   return 0.0f;
@@ -386,6 +365,18 @@ void MatrixLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_NetinStats(lay, net);
 }
 
+void MatrixLayerSpec::Compute_PreGatingAct_ugp(LeabraLayer* lay,
+                                               Layer::AccessMode acc_md, int gpidx,
+                                               LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    u->act_mid = 0.0f;
+    u->act_m2 = 0.0f;
+  }
+}
+
 void MatrixLayerSpec::Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
                                                   Layer::AccessMode acc_md, int gpidx,
                                                   LeabraNetwork* net) {
@@ -395,8 +386,18 @@ void MatrixLayerSpec::Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
     if(u->lesioned()) continue;
     u->act_mid = 0.0f;
     u->act_lrn = u->act = u->act_nd = u->act_eq = 0.0f;
-    u->ClearUnitFlag(Unit::LEARN);           // signal of non gating
     u->da = 0.0f;
+  }
+}
+
+void MatrixLayerSpec::Compute_NoGatingRecAct_ugp(LeabraLayer* lay,
+                                                 Layer::AccessMode acc_md, int gpidx,
+                                                 LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    u->act_m2 = u->act_eq;
   }
 }
 
@@ -408,14 +409,14 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_mid = u->act_eq;
-    u->SetUnitFlag(Unit::LEARN);           // signal of gating
+    u->act_m2 = u->act_eq;       // also grab this
 
     // now save the sending unit activations at time of gating
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(cs->InheritsFrom(&TA_MatrixConSpec)) {
-        ((MatrixConSpec*)cs)->Compute_SuLearnAct(recv_gp, u, net);
+        ((MatrixConSpec*)cs)->Compute_NTr(recv_gp, u, net);
       }
     }
   }
@@ -424,18 +425,27 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
 void MatrixLayerSpec::Compute_ShowGatingAct_ugp(LeabraLayer* lay,
                                               Layer::AccessMode acc_md, int gpidx,
                                               LeabraNetwork* net) {
+  PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_lrn = u->act = u->act_nd = u->act_eq = u->act_mid;
     u->da = 0.0f;
+    // NOTE: mnt_count is updated at start of trial in SNrThalLayerSpec, and we grab
+    // it every cycle, so this value should be current at all points
+    if(gpd->mnt_count > 0) {
+      u->SetUnitFlag(Unit::LEARN); // signals that we are maintaining this trial from prior gating -- affects rate of decay of trace in MatrixConSpec
+    }
+    else {
+      u->ClearUnitFlag(Unit::LEARN); // signals that we are NOT maintaining..
+    }
   }
 }
 
 void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
-                                       Layer::AccessMode acc_md, int gpidx,
-                                       LeabraNetwork* net) {
+                                             Layer::AccessMode acc_md, int gpidx,
+                                             LeabraNetwork* net) {
   int snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
   LeabraLayer* snr_lay = SNrThalStartIdx(lay, snr_st_idx, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
   SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)snr_lay->GetLayerSpec();
@@ -443,7 +453,10 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
   PBWMUnGpData* snr_gpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(snr_st_idx + gpidx);
   PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   gpd->CopyPBWMData(*snr_gpd);	// always grab from snr
-  if(snr_gpd->go_fired_trial) {
+  if(net->ct_cycle < snr_ls->snrthal.min_cycle) {
+    Compute_PreGatingAct_ugp(lay, acc_md, gpidx, net); // zero out guys before window
+  }
+  else if(snr_gpd->go_fired_trial) {
     if(snr_gpd->go_fired_now) {
       Compute_GoGatingAct_ugp(lay, acc_md, gpidx, net); // capture gating time values
     }
@@ -455,6 +468,9 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
     if(net->ct_cycle > snr_ls->snrthal.max_cycle) {
       Compute_NoGatingZeroAct_ugp(lay, acc_md, gpidx, net); // zero our act values
     }
+    else if(net->ct_cycle >= snr_ls->snrthal.min_cycle) {
+      Compute_NoGatingRecAct_ugp(lay, acc_md, gpidx, net); // record to act_m2
+    }
   }
 }
 
@@ -464,17 +480,6 @@ void MatrixLayerSpec::Compute_GatingActs(LeabraLayer* lay, LeabraNetwork* net) {
     Compute_GatingActs_ugp(lay, acc_md, gpidx, net);
   }
 }
-
-void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
-  Compute_GatingActs(lay, net);
-  inherited::Compute_CycleStats(lay, net);
-}
-
-void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // nop -- don't do the default thing -- already done by call to MidMinusAct
-}
-
-// this is called at end of plus phase, to establish a da value for driving learning
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   // float lay_ton_da = lay->GetUserDataAsFloat("tonic_da");
@@ -488,10 +493,6 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
-        if(matrix.pv_da_only && !er_avail) {
-          u->dav = 0.0f;
-          continue;
-        }
         u->dav *= -matrix.da_gain; // inverting the da at this point -- uses same learning rule as GO otherwise
         if(go_nogo_gain.on) {
           if(u->dav >= 0.0f)
@@ -505,10 +506,6 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
-        if(matrix.pv_da_only && !er_avail) {
-          u->dav = 0.0f;
-          continue;
-        }
         u->dav *= matrix.da_gain;
         if(go_nogo_gain.on) {
           if(u->dav >= 0.0f)
@@ -521,15 +518,12 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
-  Compute_GatingActs(lay, net); // at end of every phase
-
-  if(net->phase_no == 1) {
-    // end of plus -- compute da value used for learning
-    Compute_LearnDaVal(lay, net);
-  }
+void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
+  Compute_GatingActs(lay, net);
+  Compute_LearnDaVal(lay, net);
+  inherited::Compute_CycleStats(lay, net);
 }
 
-
-// note: MatrixUnitSpec has Compute_Weights which only calls on pv trials
+void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
+  // nop -- don't do the default thing -- already done by call to MidMinusAct
+}

@@ -28,9 +28,10 @@ eTypeDef_Of(MatrixCon);
 class E_API MatrixCon : public LeabraCon {
   // connection for recv cons into matrix units -- stores the sender activation prior to any gating update signals, used for learning
 public:
-  float		sact_lrn;	// #NO_SAVE sending activation value used for learning -- prior to any gating-based update in activation states
+  float		ntr;	// #NO_SAVE new trace -- drives updates to trace value -- su * ru at time of gating
+  float         tr;     // #NO_SAVE current ongoing trace that drives learning -- adds ntr and decays after learning on current values
 
-  MatrixCon() { sact_lrn = 0.0f; }
+  MatrixCon() { ntr = tr = 0.0f; }
 };
 
 #endif // MatrixCon_h

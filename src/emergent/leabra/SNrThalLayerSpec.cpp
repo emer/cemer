@@ -65,7 +65,9 @@ void SNrThalLayerSpec::HelpConfig() {
  - No learning, wt init variance, in afferent cons\n\
  \nSNrThalLayerSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure.\n\
- - Matrix_Go projects using regular leabra cons (non-MarkerCons) to create basic standard netinput.";
+ - Matrix_Go projects using regular leabra cons (non-MarkerCons) to create basic standard netinput\n\
+ - Checks its connections from Matrix_Go layers to check total number of stripe\n\
+ - Otherwise does not have any dependencies on other layers.";
   taMisc::Confirm(help);
 }
 
@@ -93,7 +95,6 @@ void SNrThalLayerSpec::GatingTypesNStripes(LeabraLayer* lay,
     if(mls->gating_type == OUTPUT) n_out += fmlay->gp_geom.n;
     if(mls->gating_type == MNT_OUT) n_mnt_out += fmlay->gp_geom.n;
     if(mls->gating_type == OUT_MNT) n_out_mnt += fmlay->gp_geom.n;
-    
   }
 }
 
@@ -143,13 +144,15 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   int n_in, n_mnt, n_mnt_out, n_out, n_out_mnt;
   GatingTypesNStripes(lay, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
-  int snr_stripes = n_in + n_mnt + n_mnt_out + n_out + n_out_mnt;
+  if(gating_types != NO_GATE_TYPE) { // only check if recv from matrix
+    int snr_stripes = n_in + n_mnt + n_mnt_out + n_out + n_out_mnt;
   
-  if(lay->CheckError(snr_stripes != lay->gp_geom.n, quiet, rval,
-		     "SNrThalLayer does not have an appropriate number of unit groups given the inputs receiving from the Matrix. Should be:", String(snr_stripes), "is:", 
-		     String(lay->gp_geom.n), "updated n stripes but this may not be sufficient")) {
-    lay->unit_groups = true;
-    lay->gp_geom.n = snr_stripes;
+    if(lay->CheckError(snr_stripes != lay->gp_geom.n, quiet, rval,
+                       "SNrThalLayer does not have an appropriate number of unit groups given the inputs receiving from the Matrix. Should be:", String(snr_stripes), "is:", 
+                       String(lay->gp_geom.n), "updated n stripes but this may not be sufficient")) {
+      lay->unit_groups = true;
+      lay->gp_geom.n = snr_stripes;
+    }
   }
 
   return true;
@@ -193,8 +196,15 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md); // this should be just 1 -- here for generality but some of the logic doesn't really go through for n >= 2 at this point..
 
   // gating window
-  if(net->ct_cycle < snrthal.min_cycle)
+  if(net->ct_cycle < snrthal.min_cycle) {
+    for(int mg=0; mg<lay->gp_geom.n; mg++) {
+      PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
+      if(u->lesioned()) continue;
+      u->act_m2 = u->act_mid = 0.0f;         // nuke pre-gating values
+    }
     return;
+  }
 
   int n_fired_trial = 0;
   int n_fired_now = 0;
@@ -214,11 +224,11 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
       continue;
     }
 
-    if(gpd->go_fired_trial) {
+    if(gpd->go_fired_trial) {   // already fired on previous cycle (see else for firing)
       n_fired_trial++;
       gpd->go_fired_now = false;
-      // TODO: NOTE! although below 'else' assigns to true, the above assign to false is not getting reflected in to the ungp_data[0] ControlPanel
       u->act_lrn = u->act = u->act_eq = u->act_nd = u->act_mid;
+      u->act_m2 = u->act_mid;
     }
     else {
       if(u->act_eq >= snrthal.go_thr) {
@@ -230,6 +240,9 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
         gpd->prv_mnt_count = gpd->mnt_count; 
         gpd->mnt_count = 0;	// reset
         u->act_mid = u->act_eq;
+      }
+      else {
+        u->act_m2 = u->act_eq;  // keep the trace around
       }
     }
   }

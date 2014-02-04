@@ -546,7 +546,7 @@ public:
   //	Cycle Optional Misc
 
   virtual void	Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm -- stores act_m2
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM and Hippocampus algorithms -- stores act_mid
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleFinal

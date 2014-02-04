@@ -29,15 +29,10 @@ class E_API LVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
 public:
-  float         min_lvi;        // #DEF_0.1;0.4 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
-  bool          lvi_scale_min;  // if both the LVe and LVi values are below min_lvi, then scale the result by (LVi/min_lvi) -- as LVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)
-  bool          lrn_pv_only;    // #DEF_true only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise
-  float		nopv_val;	// #CONDSHOW_ON_lrn_pv_only:false value to apply for learning on non-pv trials -- simulates a baseline effort cost for non-reward trials.  only works when lrn_pv_only is false.  see nopv_lrate for lrate multiplier for these trials, to independently manipulate how rapidly learning takes place
-  float		nopv_lrate;	// #CONDSHOW_ON_lrn_pv_only:false learning rate for learning on non-pv trials -- see nopv_val for value that is clamped.  this can be used to simulate a baseline effort cost for non-reward trials.  only works when lrn_pv_only is false.
+  bool          gd_pvlv;        // use goal-driven PVLV formulation, which ignores LVi and always computes y-dot directly on LVe values
+  float         min_lvi;        // #CONDSHOW_OFF_gd_pvlv #DEF_0.1;0.4 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
-  bool		no_y_dot; 	// #DEF_false don't use y-dot temporal derivative at all in computing LVe phasic DA 
-  bool		pos_y_dot_only; // #DEF_false use only positive deviations for computing LVe phasic DA -- mutex with no_y_dot
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
@@ -60,9 +55,6 @@ public:
 
   virtual void  Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights
-    virtual void  Compute_LVCurLrate(LeabraLayer* lay, LeabraNetwork* net, LeabraUnit* u,
-				     float lrate_mult);
-    // set the cur_lrate for con specs coming into LV layer, using lrate_mult multiplier -- used for the nopv_lrate param
 
   virtual float Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, LeabraNetwork* net);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)

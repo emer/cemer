@@ -17,10 +17,10 @@
 
 void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
+  mnt_decay = 0.2f;              // todo: update
+  no_mnt_decay = 1.0f;
 
   Defaults_init();
-  dwt_remain = 0.5f;
-  mtx_learn = TRACE;
 }
 
 void MatrixConSpec::Defaults_init() {
@@ -33,7 +33,7 @@ void MatrixConSpec::Defaults_init() {
 
   // SetUnique("wt_sig", true);
   wt_sig.gain = 6.0f;
-  wt_sig.off = 1.25f;
+  wt_sig.off = 1.25f;           // todo: is this still correct?
 }
 
 void MatrixConSpec::UpdateAfterEdit_impl() {

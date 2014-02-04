@@ -28,130 +28,71 @@
 eTypeDef_Of(MatrixConSpec);
 
 class E_API MatrixConSpec : public LeabraConSpec {
-  // Learning of matrix input connections based on dopamine modulation of activation -- for both Matrix_Go and NoGo connections
+  // Learning of matrix input connections based on dopamine value and sender * receiver activation product (using act_mid acts at time of gating), only for units with LEARN flag set (credit assignment gating flag) -- for both Matrix_Go and NoGo connections
 INHERITED(LeabraConSpec)
 public:
-  enum MtxLearnMode {           // how does the matrix learn?
-    TRACE,                      // learn from trace of gating activation modulated by PV dopamine
-    LV_DA,                      // use PVLV LV dopamine, which anticipates positive outcomes
-  };
   enum MtxConVars {
-    SACT_LRN = SWT+1,           // sending activation for learning
+    NTR = SWT+1,           // new trace -- drives updates to trace value -- su * ru at time of gating
+    TR,                    // current ongoing trace that drives learning -- adds ntr and decays after learning on current values
   };
 
-  MtxLearnMode  mtx_learn;       // how do the matrix units learn?  can either use a trace mechanism or pure PVLV dopamine
-  float         dwt_remain;      // how much of the dwt value remains after the weights are updated (i.e., every time there is a PV trial)
+  float         mnt_decay;      // rate of decay of the synaptic trace for units that have ongoing continued maintenance (signalled by the LEARN flag on ru)
+  float         no_mnt_decay;    // rate of decay of the synaptic trace for units that do NOT have ongoing continued maintenance (signalled by the LEARN flag on ru)
 
-  inline void Compute_SuLearnAct(LeabraRecvCons* cg, LeabraUnit* ru, LeabraNetwork* net) {
+  inline void Compute_NTr(LeabraRecvCons* cg, LeabraUnit* ru, LeabraNetwork* net) {
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i,net);
-      cg->PtrCn(i, SACT_LRN, net) = su->act_eq;
+      cg->PtrCn(i, NTR, net) = su->act_eq * ru->act_eq;
     }
   }
   // #IGNORE RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
   inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                                     LeabraNetwork* net, const bool do_s) override {
+                            LeabraNetwork* net, const bool do_s) override {
     // do NOT do this under any circumstances!!
   }
 
-  // everything can use one dwt with post-soft-bound because no hebbian term
-  inline void C_Compute_dWt_Matrix_Trace(float& dwt, 
-                                         const float mtx_act, const float su_act) {
-    dwt = cur_lrate * mtx_act * su_act;  // note: =, not += -- always learn last gating action
-  }
-  // #IGNORE
-
-  inline void C_Compute_dWt_Matrix_LvDa(float& dwt, const float mtx_da,
-                                        const float mtx_act, const float su_act) {
-    dwt += cur_lrate * mtx_da * mtx_act * su_act;
+  inline void C_Compute_dWt_Matrix_Tr(float& dwt, const float mtx_da, const float decay,
+                                      float& tr, float& ntr) {
+    dwt += cur_lrate * mtx_da * tr; // first learn based on cur trace (from prior trial)
+    tr += ntr - decay * tr;         // then update trace to include new vals
+    ntr = 0.0f;                     // clear new -- any new trace needs to be computed
   }
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) override {
+                                       LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float* dwts = cg->OwnCnVar(DWT);
-    float* sacts = cg->OwnCnVar(SACT_LRN);
+    float* ntrs = cg->OwnCnVar(NTR);
+    float* trs = cg->OwnCnVar(TR);
 
-    if(mtx_learn == TRACE) {
-      const int sz = cg->size;
-      for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // signal for gating for this stripe
-        C_Compute_dWt_Matrix_Trace(dwts[i], ru->act_mid, sacts[i]);
-      }
-    }
-    else {                      // LV_DA
-      const int sz = cg->size;
-      for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // signal for gating for this stripe
-        C_Compute_dWt_Matrix_LvDa(dwts[i], ru->dav, ru->act_mid, sacts[i]);
-      }
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      const float decay = ru->HasUnitFlag(Unit::LEARN) ? mnt_decay : no_mnt_decay;
+      C_Compute_dWt_Matrix_Tr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
     }
   }
 
   inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) override {
+                                    LeabraNetwork* net) override {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
   inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override {
+                                      LeabraNetwork* net) override {
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void C_Compute_Weights_Matrix_Trace(float& wt, float& dwt, float& pdw,
-                                             float& lwt, const float swt,
-                                             const float ru_dav) {
-    if(dwt != 0.0f) {
-      // PV dav modulates the prior su product dwts -- skipping the LV middleman..
-      float tmp = ru_dav * dwt;
-      float lin_wt = LinFmSigWt(lwt);
-      // always do soft bounding
-      if(tmp > 0.0f)	tmp *= (1.0f - lin_wt);
-      else		tmp *= lin_wt;
-      lwt = SigFmLinWt(lin_wt + tmp);
-      C_Compute_EffWt(wt, swt, lwt);
-      pdw = tmp;
-      dwt *= dwt_remain;    // gradually dissappears
-    }
-  }
-  // #IGNORE
-
-  inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) override {
-    if(mtx_learn == TRACE) {
-      float* wts = cg->OwnCnVar(WT);
-      float* dwts = cg->OwnCnVar(DWT);
-      float* pdws = cg->OwnCnVar(PDW);
-      float* lwts = cg->OwnCnVar(LWT);
-      float* swts = cg->OwnCnVar(SWT);
-
-      const int sz = cg->size;
-      for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(ru->dav != 0.0f) {
-          C_Compute_Weights_Matrix_Trace(wts[i], dwts[i], pdws[i], 
-                                         lwts[i], swts[i], ru->dav);
-        }
-        //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
-      }
-    }
-    else {
-      inherited::Compute_Weights_CtLeabraXCAL(cg, su, net); // use std
-    }
-  }
-
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) override {
+                                        LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
   inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                   LeabraNetwork* net) override {
+                                          LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 

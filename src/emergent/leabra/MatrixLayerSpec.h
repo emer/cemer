@@ -30,8 +30,7 @@ class E_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(SpecMemberBase)
 public:
-  bool          pv_da_only;     // only apply PV-time dopamine to the layers -- this should be true for TRACE learning, and false for LV_DA learning
-  float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
+  float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter
   float		nogo_inhib;	// #DEF_0:0.5 #MIN_0 how strongly does the nogo stripe inhibit the go stripe -- net inputs are rescaled downward by (1 - (nogo_inhib*avg_nogo_act)) -- reshapes the competition so other stripes will win
   float		nogo_deep_gain;	// #DEF_0:0.5 #MIN_0 if matrix NoGo recv's a marker con from PFC layer, this will drive excitation with this gain factor from average act_ctxt to NoGo to bias continued maintenance once information has been gated
   float		refract_inhib;	// #DEF_0;0.5 #MIN_0 #MAX_1 amount of refractory inhibition to apply to Go units for stripes that are in maintenance mode for one trial -- net inputs are rescaled downward by (1 - refract_inhib) -- reshapes the competition so other stripes will win
@@ -73,7 +72,7 @@ private:
 eTypeDef_Of(MatrixLayerSpec);
 
 class E_API MatrixLayerSpec : public LeabraLayerSpec {
-  // basal ganglia matrix layer -- one for Go pathway and another for NoGo pathway -- Go recv marker con from NoGo, both recv from SNrThal to get final go signal -- for maint gating acts are act_p values at end of plus phase, output gating happens in first half of minus phase -- acts are set to 0 for stripes that did not fire Go
+  // basal ganglia matrix layer -- regular dynamics -- just records gating states based on SNrThal projection -- diff layers for Go vs NoGo -- Go can recv marker con from NoGo -- gating happens in minus phase per SNrThal -- acts are set to 0 for stripes that did not fire Go (pre gating values avail in act_m2) -- learns via dav value from a dopamine layer
 INHERITED(LeabraLayerSpec)
 public:
   enum GoNoGo {
@@ -88,8 +87,6 @@ public:
 
   virtual LeabraLayer* 	SNrThalLayer(LeabraLayer* lay);
   // find the SNrThal layer that this matrix layer interacts with
-  virtual LeabraLayer* 	PVLVDaLayer(LeabraLayer* lay);
-  // find the PVLVDaLayerSpec layer that this matrix layer interacts with
   virtual LeabraLayer*  SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
 		int& n_in, int& n_mnt, int& n_mnt_out, int& n_out, int& n_out_mnt);
   // get the starting index for this set of matrix stripes within the snrthal gating layer -- returns the snrthal layer and starting index
@@ -111,10 +108,18 @@ public:
   // this is hook for modulating netinput according to above inhib factors
   void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override;
 
+  virtual void Compute_PreGatingAct_ugp(LeabraLayer* lay,
+                                           Layer::AccessMode acc_md, int gpidx,
+                                           LeabraNetwork* net);
+  // before gating window, reset act_mid and act_m2 to zero
   virtual void Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
                                            LeabraNetwork* net);
   // set the activation state to zero and clear LEARN flag to zero for subsequent learning -- for specific unit group (stripe) -- for stripes that did not gate at all this time around (enforces strong credit assignment)
+  virtual void Compute_NoGatingRecAct_ugp(LeabraLayer* lay,
+                                          Layer::AccessMode acc_md, int gpidx,
+                                          LeabraNetwork* net);
+  // record activity of guys that haven't gated into act_m2 -- for display purposes
   virtual void Compute_GoGatingAct_ugp(LeabraLayer* lay,
                                        Layer::AccessMode acc_md, int gpidx,
                                        LeabraNetwork* net);
@@ -131,7 +136,7 @@ public:
   // save activations into act_mid at point of gating
 
   virtual void 	Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net);
-  // compute u->dav learning dopamine value based on raw dav and gating state, etc -- this dav is then directly used in conspec learning rule
+  // modulate u->dav learning dopamine value by da_gain and - for NoGo, also go_nogo_gain modulations -- called every cycle
 
   virtual  void NameMatrixUnits(LeabraLayer* lay, LeabraNetwork* net);
   // name the matrix units according to their functional role -- i = input, m = maint, o = output -- these names are used to support different learning rules for these different types
@@ -139,7 +144,6 @@ public:
   void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
   void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
   void  Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
 
   bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return true; }

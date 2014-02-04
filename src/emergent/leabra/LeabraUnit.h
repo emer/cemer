@@ -254,7 +254,7 @@ public:
 
   void	Compute_MidMinus(LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MidMinus(this, net); }
-  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and ff weighting -- stores act_m2
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and hippocampus -- stores act_mid
 
   void	Compute_CycSynDep(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_CycSynDep(this, net, thread_no); }
