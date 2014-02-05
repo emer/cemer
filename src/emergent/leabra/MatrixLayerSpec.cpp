@@ -465,8 +465,11 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
     }
   }
   else {
-    if(net->ct_cycle > snr_ls->snrthal.max_cycle) {
+    if(net->ct_cycle == snr_ls->snrthal.max_cycle) {
       Compute_NoGatingZeroAct_ugp(lay, acc_md, gpidx, net); // zero our act values
+    }
+    else if(net->ct_cycle > snr_ls->snrthal.max_cycle) {
+      Compute_ShowGatingAct_ugp(lay, acc_md, gpidx, net); // show what happened
     }
     else if(net->ct_cycle >= snr_ls->snrthal.min_cycle) {
       Compute_NoGatingRecAct_ugp(lay, acc_md, gpidx, net); // record to act_m2
