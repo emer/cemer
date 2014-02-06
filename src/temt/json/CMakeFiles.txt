@@ -1,0 +1,53 @@
+########### json files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the temt/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+# although some attempt is made to keep track of gui-related files, a huge amount
+# of additional work would be required to fully split this out, and we need Qt
+# anyway, so there really isn't any point to it anymore
+
+# all headers -- include maketa generated ones here
+set(json_HEADS
+internalJSONNode.h
+JSON_Base64.h
+JSONAllocator.h
+JSONChildren.h
+JSONDefs.h
+JSONDebug.h
+JSONGlobals.h
+JSONMemory.h
+JSONMemoryPool.h
+JSONNode.h
+JSONOptions.h
+JSONPreparse.h
+JSONSharedString.h
+JSONSingleton.h
+JSONStats.h
+JSONStream.h
+JSONValidator.h
+JSONWorker.h
+libjson.h
+NumberToString.h
+)
+
+# all source files to compile: NOTE: do NOT include .moc or _TA.cpp files -- auto generated
+set(json_SRCS
+internalJSONNode.cpp
+JSONAllocator.cpp
+JSONIterators.cpp
+JSONNode_Mutex.cpp
+JSONValidator.cpp
+JSONChildren.cpp
+JSONMemory.cpp
+JSONPreparse.cpp
+JSONWorker.cpp
+JSONDebug.cpp
+JSONNode.cpp
+JSONStream.cpp
+JSONWriter.cpp
+libjson.cpp
+ )
+
+set(json_FILES ${json_HEADS} ${json_SRCS})
