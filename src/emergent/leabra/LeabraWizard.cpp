@@ -554,10 +554,10 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   FMSpec(LeabraConSpec, learn_cons, cons, "LearnCons");
 
   FMChild(TDRewPredConSpec, rewpred_cons, learn_cons, "TDRewPredCons");
-  FMChild(LeabraConSpec, bg_bias, learn_cons, "BgBias");
-  FMChild(LeabraConSpec, fixed_bias, bg_bias, "FixedBias");
+  FMChild(LeabraBiasSpec, bg_bias, learn_cons, "BgBias");
+  FMChild(LeabraBiasSpec, fixed_bias, bg_bias, "FixedBias");
 
-  FMSpec(LeabraConSpec, marker_cons, cons, "MarkerCons");
+  FMSpec(MarkerConSpec, marker_cons, cons, "MarkerCons");
 
   FMSpec(ExtRewLayerSpec, ersp, layers, "ExtRewLayer");
   FMSpec(TDRewPredLayerSpec, tdrpsp, layers, "Layer");
@@ -719,7 +719,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
       return false;
   }
 
-  String pvlvprefix = "PVLV_";
+  String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
   if(!pvlvspgp) return false;
 
@@ -728,12 +728,12 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMSpec(LeabraUnitSpec, da_units, pvlvspgp, "DaUnits");
 
   FMSpec(PVConSpec, pvi_cons, pvlvspgp, "PViCons");
-  FMChild(PVConSpec, pvr_cons, pvi_cons, "PVrCons");
+  FMChild(PVrConSpec, pvr_cons, pvi_cons, "PVrCons");
   FMChild(PVConSpec, lve_cons, pvi_cons, "LVeCons");
   FMChild(PVConSpec, lvi_cons, lve_cons, "LViCons");
   FMChild(NVConSpec, nv_cons, pvi_cons, "NVCons");
   FMSpec(LeabraBiasSpec, bg_bias, pvlvspgp, "BgBias");
-  FMSpec(LeabraBiasSpec, marker_cons, pvlvspgp, "PvlvMarker");
+  FMSpec(MarkerConSpec, marker_cons, pvlvspgp, "PvlvMarker");
 
   FMSpec(ScalarValLayerSpec, laysp, pvlvspgp, "PvlvLayer");
   FMChild(LeabraLayerSpec, rewtargsp, laysp, "RewTargLayer");
@@ -969,7 +969,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 
   if(!PVLV_Specs(net)) return false;
 
-  String pvlvprefix = "PVLV_";
+  String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
   if(output_lays.size > 0)
@@ -1081,7 +1081,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   if(lve_new) {
     for(i=0;i<input_lays.size;i++) {
       Layer* il = (Layer*)input_lays[i];
-      net->FindMakePrjn(pvr, il, fullprjn, PvlvSp("PVrCons", PVConSpec));
+      net->FindMakePrjn(pvr, il, fullprjn, PvlvSp("PVrCons", PVrConSpec));
       net->FindMakePrjn(pvi, il, fullprjn, PvlvSp("PViCons", PVConSpec));
       net->FindMakePrjn(lve, il, fullprjn, PvlvSp("LVeCons", PVConSpec));
       // net->FindMakePrjn(lvi, il, fullprjn, lvi_cons);
@@ -1165,7 +1165,7 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
   LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
   LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
 
-  String pvlvprefix = "PVLV_";
+  String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
   FullPrjnSpec* fullprjn = PvlvSp("PvlvFullPrjn", FullPrjnSpec);
@@ -1188,7 +1188,7 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
   }
   else {
     if(pvr)
-      net->FindMakePrjn(pvr, sending_layer, fullprjn, PvlvSp("PVrCons", PVConSpec));
+      net->FindMakePrjn(pvr, sending_layer, fullprjn, PvlvSp("PVrCons", PVrConSpec));
     if(pvi)
       net->FindMakePrjn(pvi, sending_layer, fullprjn, PvlvSp("PViCons", PVConSpec));
     if(lve)
@@ -1216,7 +1216,7 @@ bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
   String pvenm = "PVe";
   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
 
-  String pvlvprefix = "PVLV_";
+  String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
   MarkerConSpec* marker_cons = PvlvSp("PvlvMarker", MarkerConSpec);
@@ -1263,7 +1263,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
       return false;
   }
 
-  String pvlvprefix = "PVLV_";
+  String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
   if(!pvlvspgp) return false;
   BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
@@ -1275,15 +1275,15 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   FMSpec(LeabraUnitSpec, pfc_units, pbwmspgp, "PFCUnits");
   FMChild(LeabraUnitSpec, pfcd_units, pfc_units, "PFCDeepUnits");
-  FMSpec(LeabraUnitSpec, matrix_units, pbwmspgp, "MatrixUnits");
-  FMChild(LeabraUnitSpec, matrix_nogo_units, matrix_units, "MatrixNoGo");
+  FMSpec(MatrixUnitSpec, matrix_units, pbwmspgp, "MatrixUnits");
+  FMChild(MatrixUnitSpec, matrix_nogo_units, matrix_units, "MatrixNoGo");
   FMSpec(LeabraUnitSpec, snrthal_units, pbwmspgp, "SNrThalUnits");
 
   ////////////	ConSpecs
 
   FMSpec(PFCConSpec, topfc_cons, pbwmspgp, "ToPFC");
-  FMChild(LeabraConSpec, pfc_bias, topfc_cons, "PFCBias");
-  FMChild(LeabraConSpec, fixed_bias, topfc_cons, "FixedBias");
+  FMChild(LeabraBiasSpec, pfc_bias, topfc_cons, "PFCBias");
+  FMChild(LeabraBiasSpec, fixed_bias, topfc_cons, "FixedBias");
 
   FMChild(LeabraTICtxtConSpec, pfc_ctxt_cons, topfc_cons, "PfcTICtxt");
 
@@ -1302,7 +1302,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   FMSpec(LeabraConSpec, fmpfc_out, pbwmspgp, "FmPFC_out");
 
-  FMSpec(LeabraConSpec, marker_cons, pbwmspgp, "PbwmMarker");
+  FMSpec(MarkerConSpec, marker_cons, pbwmspgp, "PbwmMarker");
   FMSpec(LeabraConSpec, matrix_to_snrthal, pbwmspgp, "MatrixToSNrThal");
   // matrix nogo to snrthal just a marker con
 
@@ -1731,21 +1731,21 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
 //     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
 //   }
 
-  set_n_stripes(net, prefix + "PFC", "PFC_in",  in_stripes, n_pfc_units, true);
-  set_n_stripes(net, prefix + "PFC", "PFC_mnt", mnt_stripes, n_pfc_units, true);
-  set_n_stripes(net, prefix + "PFC", "PFC_out", out_stripes, n_pfc_units, true);
+  set_n_stripes(net, prefix + "_PFC", "PFC_in",  in_stripes, n_pfc_units, true);
+  set_n_stripes(net, prefix + "_PFC", "PFC_mnt", mnt_stripes, n_pfc_units, true);
+  set_n_stripes(net, prefix + "_PFC", "PFC_out", out_stripes, n_pfc_units, true);
 
-  set_n_stripes(net, prefix + "Go", "Matrix_Go_in",   in_stripes, n_matrix_units, true);
-  set_n_stripes(net, prefix + "NoGo", "Matrix_NoGo_in", in_stripes, n_matrix_units, true);
-  set_n_stripes(net, prefix + "Go", "Matrix_Go_mnt",  mnt_stripes, n_matrix_units, true);
-  set_n_stripes(net, prefix + "NoGo", "Matrix_NoGo_mnt",mnt_stripes, n_matrix_units, true);
-  set_n_stripes(net, prefix + "Go", "Matrix_Go_out",  out_stripes, n_matrix_units, true);
-  set_n_stripes(net, prefix + "NoGo", "Matrix_NoGo_out",out_stripes, n_matrix_units, true);
+  set_n_stripes(net, prefix + "_Go", "Matrix_Go_in",   in_stripes, n_matrix_units, true);
+  set_n_stripes(net, prefix + "_NoGo", "Matrix_NoGo_in", in_stripes, n_matrix_units, true);
+  set_n_stripes(net, prefix + "_Go", "Matrix_Go_mnt",  mnt_stripes, n_matrix_units, true);
+  set_n_stripes(net, prefix + "_NoGo", "Matrix_NoGo_mnt",mnt_stripes, n_matrix_units, true);
+  set_n_stripes(net, prefix + "_Go", "Matrix_Go_out",  out_stripes, n_matrix_units, true);
+  set_n_stripes(net, prefix + "_NoGo", "Matrix_NoGo_out",out_stripes, n_matrix_units, true);
 
   int snr_stripes = in_stripes + mnt_stripes;
   if(!one_snr) {
     if(out_stripes > 0) {
-      set_n_stripes(net, prefix + "Go", "SNrThal_out", out_stripes, 1, true);
+      set_n_stripes(net, prefix + "_Go", "SNrThal_out", out_stripes, 1, true);
     }
   }
   else {
@@ -1753,10 +1753,10 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
   }
   if(snr_stripes > in_stripes && snr_stripes > mnt_stripes &&
      (!one_snr || snr_stripes > out_stripes)) {
-    set_n_stripes(net, prefix + "Go", "SNrThal", snr_stripes, 1, true, snr_stripes, 1);
+    set_n_stripes(net, prefix + "_Go", "SNrThal", snr_stripes, 1, true, snr_stripes, 1);
   }
   else {
-    set_n_stripes(net, prefix + "Go", "SNrThal", snr_stripes, 1, true);
+    set_n_stripes(net, prefix + "_Go", "SNrThal", snr_stripes, 1, true);
   }
 
   net->Build();
@@ -1821,11 +1821,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   bool new_pbwm_laygp = false;
   Layer_Group* pbwm_laygp_go = net->FindMakeLayerGroup
-    (prefix + "Go", NULL,     new_pbwm_laygp);
+    (prefix + "_Go", NULL,     new_pbwm_laygp);
   Layer_Group* pbwm_laygp_nogo = net->FindMakeLayerGroup
-    (prefix + "NoGo", NULL, new_pbwm_laygp);
+    (prefix + "_NoGo", NULL, new_pbwm_laygp);
   Layer_Group* pbwm_laygp_pfc = net->FindMakeLayerGroup
-    (prefix + "PFC", NULL, new_pbwm_laygp);
+    (prefix + "_PFC", NULL, new_pbwm_laygp);
 
   // new gets full update, otherwise more just params
   bool matrix_new =   false; 
@@ -1924,7 +1924,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   //////////////////////////////////////////////////////////////////////////////////
   // get specs
 
-  String pvlvprefix = "PVLV_";
+  String pvlvprefix = "PVLV";
   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
   if(!pvlvspgp) return false;
 
@@ -1951,6 +1951,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraUnitSpec* pfcd_units = PbwmSp("PFCDeepUnits",LeabraUnitSpec);
   LeabraUnitSpec* matrix_units = PbwmSp("MatrixUnits",LeabraUnitSpec);
   LeabraUnitSpec* matrix_nogo_units = PbwmSp("MatrixNoGo",LeabraUnitSpec);
+  LeabraTICtxtLayerSpec* pfc_deep_sp = PbwmSp("PFC_deep", LeabraTICtxtLayerSpec);
 
   // set bias specs for unit specs
   pfc_units->bias_spec.SetSpec(PbwmSp("PFCBias",LeabraBiasSpec));
@@ -1965,13 +1966,13 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   if(in_stripes > 0) {
     matrix_go_in->SetLayerSpec(PbwmSp("Matrix_Go_in",MatrixLayerSpec));
     matrix_go_in->SetUnitSpec(matrix_units);
-    matrix_nogo_in->SetLayerSpec(PbwmSp("Matrix_Nogo_in",MatrixLayerSpec)); 
+    matrix_nogo_in->SetLayerSpec(PbwmSp("Matrix_NoGo_in",MatrixLayerSpec)); 
     matrix_nogo_in->SetUnitSpec(matrix_nogo_units);
 
     pfc_in->SetLayerSpec(PbwmSp("PFC_in",PFCLayerSpec));
     pfc_in->SetUnitSpec(pfc_units);
     if(pfc_in_d) {
-      pfc_in_d->SetLayerSpec(PbwmSp("PFC_deep",PFCLayerSpec));
+      pfc_in_d->SetLayerSpec(pfc_deep_sp);
       pfc_in_d->SetUnitSpec(pfcd_units);
     }
   }
@@ -1984,20 +1985,20 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     pfc_mnt->SetLayerSpec(PbwmSp("PFC_mnt",PFCLayerSpec));
     pfc_mnt->SetUnitSpec(pfc_units);
     if(pfc_mnt_d) {
-      pfc_mnt_d->SetLayerSpec(PbwmSp("PFC_deep",PFCLayerSpec));
+      pfc_mnt_d->SetLayerSpec(pfc_deep_sp);
       pfc_mnt_d->SetUnitSpec(pfcd_units);
     }
   }
   if(out_stripes > 0) {
     matrix_go_out->SetLayerSpec(PbwmSp("Matrix_Go_out",MatrixLayerSpec));
     matrix_go_out->SetUnitSpec(matrix_units);
-    matrix_nogo_out->SetLayerSpec(PbwmSp("Matrix_Nogo_out",MatrixLayerSpec)); 
+    matrix_nogo_out->SetLayerSpec(PbwmSp("Matrix_NoGo_out",MatrixLayerSpec)); 
     matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
 
     pfc_out->SetLayerSpec(PbwmSp("PFC_out",PFCLayerSpec));
     pfc_out->SetUnitSpec(pfc_units);
     if(pfc_out_d) {
-      pfc_out_d->SetLayerSpec(PbwmSp("PFC_deep",PFCLayerSpec));
+      pfc_out_d->SetLayerSpec(pfc_deep_sp);
       pfc_out_d->SetUnitSpec(pfcd_units);
     }
     if(snrthal_out) {
@@ -2500,7 +2501,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
 
   // Need to update act_denoms based on stripe counts
 
-  PFCLayerSpec* pfc_in_sp = PbwmSp("PFC_int",PFCLayerSpec);
+  PFCLayerSpec* pfc_in_sp = PbwmSp("PFC_in",PFCLayerSpec);
   PFCLayerSpec* pfc_mnt_sp = PbwmSp("PFC_mnt",PFCLayerSpec);
   PFCLayerSpec* pfc_out_sp = PbwmSp("PFC_out",PFCLayerSpec);
 
@@ -2596,18 +2597,14 @@ bool LeabraWizard::PBWM_Remove(LeabraNetwork* net, const String& prefix) {
   net->StructUpdate(true);
 
   net->RemoveUnits();
-  net->layers.gp.RemoveName("PBWM");
-  net->layers.gp.RemoveName(prefix + "PFC");
-  net->layers.gp.RemoveName(prefix + "BG");
-  net->layers.gp.RemoveName(prefix + "Go");
-  net->layers.gp.RemoveName(prefix + "NoGo");
-  net->layers.gp.RemoveName(prefix + "PFC");
+  net->layers.gp.RemoveName(prefix + "_PFC");
+  net->layers.gp.RemoveName(prefix + "_BG");
+  net->layers.gp.RemoveName(prefix + "_Go");
+  net->layers.gp.RemoveName(prefix + "_NoGo");
+  net->layers.gp.RemoveName(prefix + "_PFC");
   //  net->layers.gp.RemoveName("PVLV");
 
-  net->specs.gp.RemoveName(prefix + "Prjns"); // TODO: make sure right names
-  net->specs.gp.RemoveName(prefix + "Layers");
-  net->specs.gp.RemoveName(prefix + "Cons");
-  net->specs.gp.RemoveName(prefix + "Units");
+  net->specs.gp.RemoveName(prefix);
 
   net->CheckSpecs();            // could have nuked dependent specs!
 
