@@ -17,7 +17,6 @@
 #include <LeabraNetwork>
 #include <PBWMUnGpData>
 #include <PFCDeepGatedConSpec>
-#include <LViLayerSpec>
 
 #include <taMisc>
 
@@ -65,9 +64,10 @@ void PFCLayerSpec::Defaults_init() {
 
 void PFCLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if((pfc_type == SNrThalLayerSpec::INPUT || pfc_type == SNrThalLayerSpec::OUTPUT) &&
-     gate.max_maint < 0) {
-    taMisc::Warning("for pfc types of input or output, you don't want max_maint to be -1 -- setting it to 1 for you -- please update if something longer is desired");
+  if(TestWarning
+     ((pfc_type == SNrThalLayerSpec::INPUT || pfc_type == SNrThalLayerSpec::OUTPUT) &&
+      gate.max_maint < 0, "UAE", "for pfc types of input or output, you don't want max_maint to be -1 -- setting it to 1 for you -- please update if something longer is desired")) {
+    SetUnique("gate", true);
     gate.max_maint = 1;
   }
   gate.UpdateAfterEdit_NoGui();

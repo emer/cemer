@@ -20,8 +20,8 @@ void PVConSpec::Initialize() {
   lrate = .01f;
   cur_lrate = .01f;
 
-  SetUnique("lrate_sched", true); // not to have any lrate schedule!!
-  SetUnique("lrs_value", true); // not to have any lrate schedule!!
+  // SetUnique("lrate_sched", true); // not to have any lrate schedule!!
+  // SetUnique("lrs_value", true); // not to have any lrate schedule!!
   lrs_value = NO_LRS;
 
   send_act = ACT_P;
@@ -30,19 +30,19 @@ void PVConSpec::Initialize() {
 }
 
 void PVConSpec::Defaults_init() {
-  SetUnique("lmix", true);
+  // SetUnique("lmix", true);
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
   lmix.err_sb = false;
 
-  SetUnique("rnd", true);
+  // SetUnique("rnd", true);
   rnd.mean = 0.1f;
   rnd.var = 0.0f;
 
-  SetUnique("wt_limits", true);
+  // SetUnique("wt_limits", true);
   wt_limits.sym = false;
 
-  SetUnique("wt_sig", true);
+  // SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
   wt_sig.dwt_norm = false;      // bad news for pvlv
 }

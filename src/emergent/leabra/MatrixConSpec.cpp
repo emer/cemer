@@ -19,7 +19,7 @@ void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
 
   immed_trace = false;
-  mnt_decay = 0.2f;              // todo: update
+  mnt_decay = 1.0f;
   no_mnt_decay = 1.0f;
 
   Defaults_init();

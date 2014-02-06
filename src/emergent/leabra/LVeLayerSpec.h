@@ -29,7 +29,7 @@ class E_API LVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
 public:
-  bool          gd_pvlv;        // use goal-driven PVLV formulation, which ignores LVi and always computes y-dot directly on LVe values, and has 0 dopamine for trial after external reward -- this is when the new temporal derivative is being reestablished
+  bool          gd_pvlv;        // #DEF_true this is the new default: use goal-driven PVLV formulation, which ignores LVi and always computes y-dot directly on LVe values, and has 0 dopamine for trial after external reward -- this is when the new temporal derivative is being reestablished
   float         min_lvi;        // #CONDSHOW_OFF_gd_pvlv #DEF_0.1;0.4 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
@@ -88,6 +88,23 @@ protected:
   SPEC_DEFAULTS;
 private:
   void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init()         { };
+};
+
+eTypeDef_Of(LViLayerSpec);
+
+class E_API LViLayerSpec : public LVeLayerSpec {
+  // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
+INHERITED(LVeLayerSpec)
+public:
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+
+  TA_BASEFUNS_NOCOPY(LViLayerSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize()            { };
   void  Destroy()               { };
   void  Defaults_init()         { };
 };

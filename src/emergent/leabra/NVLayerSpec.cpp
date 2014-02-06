@@ -26,14 +26,14 @@ void NVSpec::Initialize() {
 }
 
 void NVLayerSpec::Initialize() {
-  SetUnique("decay", true);
+  // SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = 1.0f;          // this is the completely novel value
 
-  SetUnique("ct_inhib_mod", true);
+  // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;

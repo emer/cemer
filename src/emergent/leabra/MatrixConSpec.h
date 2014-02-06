@@ -37,8 +37,8 @@ public:
   };
 
   bool          immed_trace;    // trace is updated immediately on the same trial, instead of being delayed for one time step (i.e., updated after the current weight change is computed) -- this is appropriate for output gating connections where PV reward is available on the same trial as gating occurs
-  float         mnt_decay;      // rate of decay of the synaptic trace for units that have ongoing continued maintenance (signalled by the LEARN flag on ru)
-  float         no_mnt_decay;    // rate of decay of the synaptic trace for units that do NOT have ongoing continued maintenance (signalled by the LEARN flag on ru)
+  float         mnt_decay;      // #DEF_1 rate of decay of the synaptic trace for units that have ongoing continued maintenance (signalled by the LEARN flag on ru) -- no evidence yet of benefit to extending the trace
+  float         no_mnt_decay;    // #DEF_1 rate of decay of the synaptic trace for units that do NOT have ongoing continued maintenance (signalled by the LEARN flag on ru) -- no evidence yet of benefit to extending the trace
 
   inline void Compute_NTr(LeabraRecvCons* cg, LeabraUnit* ru, LeabraNetwork* net) {
     const int sz = cg->size;

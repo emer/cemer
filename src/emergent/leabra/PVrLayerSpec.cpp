@@ -29,14 +29,14 @@ void PVDetectSpec::Initialize() {
 }
 
 void PVrLayerSpec::Initialize() {
-  SetUnique("decay", true);
+  // SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = .5f;           // default is no-information case; extrew = .5
 
-  SetUnique("ct_inhib_mod", true);
+  // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;

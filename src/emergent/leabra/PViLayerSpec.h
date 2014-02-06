@@ -29,7 +29,7 @@ class E_API PVMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PV layer spec
 INHERITED(SpecMemberBase)
 public:
-  bool          gd_pvlv;        // use goal-driven PVLV formulation, which does not compute y-dot for PV dopamine
+  bool          gd_pvlv;        // #DEF_true this is the new default: use goal-driven PVLV formulation, which does not compute y-dot for PV dopamine, only for LV dopamine
   float         min_pvi;        // #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) to subtract away in computing the net PV dopamine signal (PV DA = pvd_t - prior_gain * pvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)

@@ -18,7 +18,7 @@
 #include <MarkerConSpec>
 #include <PVrLayerSpec>
 #include <PViLayerSpec>
-#include <LViLayerSpec>
+#include <LVeLayerSpec>
 #include <NVLayerSpec>
 #include <ExtRewLayerSpec>
 #include <OneToOnePrjnSpec>
@@ -138,10 +138,11 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                 "did not find LVe layer to get Da from!")) {
     rval = false;
   }
-  if(lay->CheckError(!lvi_lay, quiet, rval,
-                "did not find LVi layer to get Da from!")) {
-    rval = false;
-  }
+  // optional!
+  // if(lay->CheckError(!lvi_lay, quiet, rval,
+  //               "did not find LVi layer to get Da from!")) {
+  //   rval = false;
+  // }
   if(lay->CheckError(!pvi_lay, quiet, rval,
                 "did not find PVi layer to get Da from!")) {
     rval = false;

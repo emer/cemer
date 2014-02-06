@@ -20,21 +20,28 @@
 #include <taMisc>
 
 void LVMiscSpec::Initialize() {
-  gd_pvlv = false;
+  gd_pvlv = true;
   min_lvi = 0.1f;
   prior_gain = 1.0f;
   er_reset_prior = true;
+
+  if(taMisc::is_loading) {
+    taVersion v636(6, 3, 6);
+    if(taMisc::loading_version < v636) { // default prior to 636 is off
+      gd_pvlv = false;
+    }
+  }
 }
 
 void LVeLayerSpec::Initialize() {
-  SetUnique("decay", true);
+  // SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = 0.5f;
 
-  SetUnique("ct_inhib_mod", true);
+  // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
@@ -271,4 +278,14 @@ bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
   return true;
 }
 
+/////////////
+//     LViLayerSpec -- obsolete
+
+void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_CycleStats(lay, net);
+  // take the 1st guy as the overall general guy
+  LeabraUnit* lvisu = (LeabraUnit*)lay->units.Leaf(0);
+  net->pvlv_lvi = lvisu->act_eq;
+  // this is primarily used for noise modulation
+}
 

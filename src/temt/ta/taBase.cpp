@@ -1166,6 +1166,22 @@ String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
   return rval;
 }
 
+taBase* taBase::ElemPath(const String& path, TypeDef* expect_type, bool err_msg) const {
+  MemberDef* md;
+  taBase* rval = FindFromPath(path, md);
+  TestError(err_msg && !rval, "ElemPath",
+            "path not found under this object:", path,
+            "the program may crash after this point -- if so, please report as a bug to developers using Report Bug button on toolbar");
+  if(rval && expect_type && !rval->InheritsFrom(expect_type)) {
+    TestError(err_msg, "ElemPath",
+              "path returned an object of a different type than expected. path:", path,
+              "expected type:", expect_type->name, "actual type:", rval->GetTypeDef()->name,
+              "the program may crash after this point -- if so, please report as a bug to developers using Report Bug button on toolbar");
+    rval = NULL;
+  }
+  return rval;
+}
+
 taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
   if(((int)path.length() <= start) || (path == ".")) {
     ret_md = NULL;

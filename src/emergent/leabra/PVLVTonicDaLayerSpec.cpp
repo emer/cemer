@@ -16,11 +16,6 @@
 #include "PVLVTonicDaLayerSpec.h"
 #include <LeabraNetwork>
 #include <LeabraTdUnit>
-#include <PVrLayerSpec>
-#include <PViLayerSpec>
-#include <LViLayerSpec>
-#include <NVLayerSpec>
-#include <PVConSpec>
 #include <ExtRewLayerSpec>
 
 #include <taMisc>

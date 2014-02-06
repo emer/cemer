@@ -699,6 +699,12 @@ public:
 
   virtual bool          IsContainer()   { return false; }
   // #CAT_Access is this item a container object or not?
+  virtual taBase*       ElemPath(const String& path, TypeDef* expect_type = NULL,
+                                 bool err_msg = true) const;
+  // #CAT_Access returns taBase item at given path under this object -- path can skip over steps -- a search is conducted to find items -- this provides the same kind of flexibility that css provides in accessing elements of the structural hierarchy -- also allows for type checking of result -- it is just a wrapper around FindFromPath with optional error checking
+  taBase*               operator[](const String& path) const
+  { return ElemPath(path, NULL, true); }
+  // #IGNORE returns taBase item at given path under this object -- path can skip over steps -- a search is conducted to find items -- this provides the same kind of flexibility that css provides in accessing elements of the structural hierarchy -- it is just a call to ElemPath with err_msg set to true, so you can use directly, in chained expressions etc, for cases where you know the items should exist -- use ElemPath in code where it may not exist
   virtual Variant       Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return _nilVariant; }
   // #CAT_Access get element(s) from container -- return can be a single item or a Matrix of multiple items, depending on the index -- see IndexMode for all the possible indexing modes and associated return values (some of which are not applicable to some containers, as documented for that container)
@@ -706,11 +712,11 @@ public:
     // #CAT_Access #EXPERT decode index mode from variant index, and number of dimensions in the container object
     virtual bool        IndexModeValidate(const Variant& idx, IndexMode md, int cont_dims) const;
     // #CAT_Access #EXPERT validate that the index is of an appopriate configuration for given index mode -- issues appropriate error messages if not good
-    virtual taMatrix*     ElView() const  { return NULL; }
+    virtual taMatrix*   ElView() const  { return NULL; }
     // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
-    virtual IndexMode     ElViewMode() const  { return IDX_UNK; }
+    virtual IndexMode   ElViewMode() const  { return IDX_UNK; }
     // #CAT_Access #EXPERT View mode for view of list -- specifies what kind of view data there is, for display and other kinds of functions -- only valid cases are IDX_COORDS or IDX_MASK, or IDX_UNK if no view specified
-    virtual int           ElemCount() const  { return 0; }
+    virtual int         ElemCount() const  { return 0; }
     // #CAT_Access #EXPERT number of elements in the container -- used for iteration control
   virtual int           IterCount() const;
   // #CAT_Access how many items will be iterated over if we iterate through this container -- this is fast for no view and IDX_COORDS views and slow (requiring summing over mask) for IDX_MASK views
@@ -817,8 +823,6 @@ public:
   // #IGNORE number of tokens of taBase objects of given type in same scope as ref_obj
   virtual taBase*       GetUndoBarrier();
   // #IGNORE get the nearest owner of this object that is marked as an UNDO_BARRIER -- any changes under that object should not affect anything outside its own scope, and thus undo changes can be saved strictly within that scope
-
-protected: // Impl
 
   //////////////////////////////////////////////////////////////////////
   //    Saving and Loading to/from files

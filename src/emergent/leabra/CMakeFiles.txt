@@ -105,7 +105,6 @@ set(leabra_HEADS_MAKETA
   PVrConSpec.h
   PVrLayerSpec.h
   LVeLayerSpec.h
-  LViLayerSpec.h
   NVConSpec.h
   NVLayerSpec.h
   PVLVDaLayerSpec.h
@@ -259,7 +258,6 @@ set(leabra_SRCS
   PVrConSpec.cpp
   PVrLayerSpec.cpp
   LVeLayerSpec.cpp
-  LViLayerSpec.cpp
   NVConSpec.cpp
   NVLayerSpec.cpp
   PVLVDaLayerSpec.cpp
