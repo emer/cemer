@@ -746,6 +746,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PvlvFullPrjn");
   FMSpec(OneToOnePrjnSpec, onetoone, pvlvspgp, "PvlvOneToOne");
+  FMSpec(OneToOnePrjnSpec, vtaonetoone, pvlvspgp, "VTAOneToOnePrjn");
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
@@ -828,6 +829,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   da_units->maxda.val = MaxDaSpec::NO_MAX_DA;
   da_units->SetUnique("act", true);
   da_units->act.avg_dt = 0.0f;
+
+  vtaonetoone->send_start = 1;  // key feature
 
   //////////////////
   // Update Everyone
@@ -1072,11 +1075,13 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   net->FindMakePrjn(lve, pvr, onetoone, marker_cons);
   // net->FindMakePrjn(lvi, pvr, onetoone, marker_cons);
 
-  net->FindMakePrjn(vta, pvi, onetoone, marker_cons);
-  net->FindMakePrjn(vta, lve, onetoone, marker_cons);
-  // net->FindMakePrjn(vta, lvi, onetoone, marker_cons);
-  net->FindMakePrjn(vta, pvr, onetoone, marker_cons);
-  net->FindMakePrjn(vta, nv,  onetoone, marker_cons);
+  OneToOnePrjnSpec* vtaonetoone = PvlvSp("VTAOneToOnePrjn", OneToOnePrjnSpec);
+
+  net->FindMakePrjn(vta, pvi, vtaonetoone, marker_cons);
+  net->FindMakePrjn(vta, lve, vtaonetoone, marker_cons);
+  // net->FindMakePrjn(vta, lvi, vtaonetoone, marker_cons);
+  net->FindMakePrjn(vta, pvr, vtaonetoone, marker_cons);
+  net->FindMakePrjn(vta, nv,  vtaonetoone, marker_cons);
 
   if(lve_new) {
     for(i=0;i<input_lays.size;i++) {
@@ -1374,6 +1379,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
 
+  pfc_units->act_avg.l_up_dt = 0.1f;
+
   // lr sched:
   topfc_cons->lrs_value = LeabraConSpec::NO_LRS;
   //learn_cons->lrate_sched.SetSize(2);
@@ -1393,6 +1400,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   topfc_cons->SetUnique("lmix", true);
   topfc_cons->lmix.hebb = .001f;
 
+  pfc_ctxt_cons->SetUnique("wt_scale", true);
+  pfc_ctxt_cons->wt_scale.rel = 1.5f;
+
   if(topo_prjns) {
     pfctopfc_cons->SetUnique("rnd", true);
     pfctopfc_cons->rnd.mean = 0.0f;
@@ -1403,7 +1413,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   }
 
   pfctopfc_cons->SetUnique("wt_scale", true);
-  pfctopfc_cons->wt_scale.rel = 0.2f;
+  pfctopfc_cons->wt_scale.rel = 0.5f;
 
   if(topo_prjns) {
     topfcfmin_cons->SetUnique("rnd", true);
@@ -1433,7 +1443,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   matrix_cons->wt_sig.off = 1.0f;
 
   matrix_cons->SetUnique("ignore_unlearnable", true);
-  matrix_cons->ignore_unlearnable = false; // todo: check this
+  matrix_cons->ignore_unlearnable = false; 
 
   matrix_cons->lrate_sched.SetSize(2);
   matrix_cons->lrate_sched.default_val = 0.0f; // this is the value that happens prior to stats being collected
@@ -1441,6 +1451,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   matrix_cons->lrate_sched[0]->start_val = 0.0f;
   matrix_cons->lrate_sched[1]->start_ctr = 10; // enough time for reps pretrain
   matrix_cons->lrate_sched[1]->start_val = 1.0f;
+  matrix_cons->lrs_value = LeabraConSpec::NO_LRS;
 
   matrix_cons_topo->SetUnique("rnd", true);
   matrix_cons_topo->rnd.mean = 0.0f;
@@ -1544,13 +1555,13 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   // pfc_mnt_out_sp->SetUnique("pfc_type",true);
   // pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
-  //pfc_mnt_out_sp->SetUnique("gate",true);
-  //pfc_mnt_out_sp->gate.pregate_gain = 1.0f;
+  // pfc_mnt_out_sp->SetUnique("gate",true);
+  // pfc_mnt_out_sp->gate.pregate_gain = 1.0f;
 
   // pfc_out_mnt_sp->SetUnique("pfc_type",true);
   // pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
-  //pfc_out_mnt_sp->SetUnique("gate",true);
-  //pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
+  // pfc_out_mnt_sp->SetUnique("gate",true);
+  // pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
 
   // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
 
@@ -1559,6 +1570,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   snrthalsp_out->SetUnique("kwta", true);
   snrthalsp_out->kwta.k = 2;
+  snrthalsp_out->SetUnique("snrthal", true);
+  snrthalsp_out->snrthal.go_thr = 0.1f;
+  snrthalsp_out->snrthal.min_cycle = 15;
+  snrthalsp_out->snrthal.max_cycle = 40;
 
   fullprjn->self_con = true;
 
@@ -2161,11 +2176,13 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(mnt_stripes > 0) {
       if(topo_prjns) {
         net->FindMakePrjn(pfc_out, pfc_mnt, intrapfctopo, topfc_cons);
+        net->FindMakePrjn(pfc_out, pfc_mnt_d, intrapfctopo, topfc_cons);
         // net->FindMakePrjn(matrix_nogo_out, pfc_mnt, topomatrixpfc_other,
         //                   matrix_cons_nogo);
       }
       else {
         net->FindMakePrjn(pfc_out, pfc_mnt, fullprjn, topfc_cons);
+        net->FindMakePrjn(pfc_out, pfc_mnt_d, fullprjn, topfc_cons);
         // net->FindMakePrjn(matrix_nogo_out, pfc_mnt, fullprjn,
         //                   matrix_cons_nogo);
       }

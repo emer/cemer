@@ -58,14 +58,15 @@ void WtScaleSpecInit::Initialize() {
 void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
-  dwt_norm = true;
-  
-  if(taMisc::is_loading) {
-    taVersion v533(5, 3, 3);
-    if(taMisc::loading_version < v533) { // default prior to 533 is off
-      dwt_norm = false;
-    }
-  }
+  dwt_norm = false;
+
+  // todo: need to turn this back on if we decide dwt_norm needs to happen again
+  // if(taMisc::is_loading) {
+  //   taVersion v533(5, 3, 3);
+  //   if(taMisc::loading_version < v533) { // default prior to 533 is off
+  //     dwt_norm = false;
+  //   }
+  // }
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {

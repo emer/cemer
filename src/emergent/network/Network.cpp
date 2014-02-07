@@ -2336,7 +2336,8 @@ BaseSpec_Group* Network::FindMakeSpecGp(const String& nm, bool& nw_itm) {
   nw_itm = false;
   if(gp == NULL) {
     gp = (BaseSpec_Group*)specs.gp.New(1);
-    gp->name = nm;
+    gp->SetName(nm);
+    gp->SigEmitUpdated();
     nw_itm = true;
   }
   return gp;

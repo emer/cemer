@@ -31,9 +31,9 @@ void MatrixGoNogoGainSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
-  nogo_inhib = 0.5f;
-  refract_inhib = 0.0f;
+  nogo_inhib = 0.4f;
   nogo_deep_gain = 0.5f;
+  refract_inhib = 0.0f;
 }
 
 /////////////////////////////////////////////////////
@@ -47,20 +47,24 @@ void MatrixLayerSpec::Initialize() {
 
 void MatrixLayerSpec::Defaults_init() {
   // todo: sync with above
-  matrix.nogo_inhib = 0.5f;
+  matrix.nogo_inhib = 0.4f;
   matrix.da_gain = 0.1f;
   matrix.nogo_deep_gain = 0.5f;
 
-  // todo: update these to FF_FB defaults!
   //  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.type = LeabraInhibSpec::FF_FB_INHIB;
+  inhib.gi = 2.0f;
+  inhib.ff = 1.0f;
+  inhib.fb = 0.0f;
+  inhib.self_fb = 0.4f;
+  inhib.ff0 = 0.05f;
   inhib.kwta_pt = .6f;
 
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
 
-  SetUnique("ct_inhib_mod", true);
+  // SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
@@ -72,7 +76,7 @@ void MatrixLayerSpec::Defaults_init() {
   //  SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_PCT;
   gp_kwta.pct = 0.15f;
-  unit_gp_inhib.on = true;
+  unit_gp_inhib.on = false;     // no!
   unit_gp_inhib.gp_g = 1.0f;
   lay_gp_inhib.on = false;      // off now by default!
   lay_gp_inhib.gp_g = 1.0f;

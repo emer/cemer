@@ -42,7 +42,11 @@ void PFCLayerSpec::Initialize() {
 
 void PFCLayerSpec::Defaults_init() {
   //  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.type = LeabraInhibSpec::FF_FB_INHIB;
+  inhib.gi = 2.1f;
+  inhib.ff = 1.0f;
+  inhib.fb = 0.5f;
+  inhib.self_fb = 0.02f;
   inhib.kwta_pt = .5f;
 
   // SetUnique("inhib_group", true);

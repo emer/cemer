@@ -26,16 +26,18 @@ void MatrixConSpec::Initialize() {
 }
 
 void MatrixConSpec::Defaults_init() {
-  SetUnique("wt_limits", true);
+  // SetUnique("wt_limits", true);
   wt_limits.sym = false;
 
-  SetUnique("lmix", true);
+  // SetUnique("lmix", true);
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
 
   // SetUnique("wt_sig", true);
   wt_sig.gain = 6.0f;
-  wt_sig.off = 1.25f;           // todo: is this still correct?
+  wt_sig.off = 1.0f;
+  
+  ignore_unlearnable = false;
 }
 
 void MatrixConSpec::UpdateAfterEdit_impl() {

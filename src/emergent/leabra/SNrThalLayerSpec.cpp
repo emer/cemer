@@ -41,7 +41,11 @@ void SNrThalLayerSpec::Defaults_init() {
   inhib_group = ENTIRE_LAYER;
 
   // SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.type = LeabraInhibSpec::FF_FB_INHIB;
+  inhib.gi = 2.1f;
+  inhib.ff = 1.0f;
+  inhib.fb = 0.5f;
+  inhib.self_fb = 0.0f;
   inhib.kwta_pt = .7f;
 
   // SetUnique("kwta", true);
@@ -54,7 +58,7 @@ void SNrThalLayerSpec::Defaults_init() {
   ct_inhib_mod.trough_i = 0.0f;
 
   // SetUnique("tie_brk", false);
-  tie_brk.on = true;
+  tie_brk.on = false;
   tie_brk.thr_gain = 0.2f;
   tie_brk.loser_gain = 1.0f;
 }

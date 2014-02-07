@@ -20,5 +20,8 @@ void PFCConSpec::Initialize() {
 }
 
 void PFCConSpec::Defaults_init() {
+  lrate = 0.005f;               // slower learning rate for pfc..
 }
+
+
 
