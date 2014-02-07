@@ -11,13 +11,13 @@
  *  JSON_LIBRARY must be declared if libjson is compiled as a static or dynamic 
  *  library.  This exposes a C-style interface, but none of the inner workings of libjson
  */
-#define JSON_LIBRARY
+//#define JSON_LIBRARY
 
 
 /*
  *  JSON_STRICT removes all of libjson's extensions.  Meaning no comments, no special numbers
  */
-//#define JSON_STRICT
+#define JSON_STRICT
 
 
 /*
@@ -79,7 +79,7 @@
  *  means that libjson supports the full array of unicode characters, but also takes
  *  much more memory and processing power.
  */
-//#define JSON_UNICODE
+#define JSON_UNICODE
 
 
 /*
@@ -223,7 +223,7 @@
  *  parsing json that has comments in it as it simply ignores them, but with this option
  *  it keeps the comments and allows you to insert further comments
  */
-#define JSON_COMMENTS
+//#define JSON_COMMENTS
 
 
 /*

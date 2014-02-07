@@ -270,7 +270,7 @@ json_string JSONWorker::RemoveWhiteSpaceAndComments(const json_string & value_t,
     inline json_uchar SurrogatePair(const json_uchar hi, const json_uchar lo) json_nothrow {
 	   JSON_ASSERT(sizeof(unsigned int) == 4, JSON_TEXT("size of unsigned int is not 32-bit"));
 	   JSON_ASSERT(sizeof(json_uchar) == 4, JSON_TEXT("size of json_char is not 32-bit"));
-	   return (((hi << 10) & 0x1FFC00) + 0x10000) | lo & 0x3FF;
+	   return (((hi << 10) & 0x1FFC00) + 0x10000) | (lo & 0x3FF);
     }
 
     void JSONWorker::UTF(const json_char * & pos, json_string & result, const json_char * const end) json_nothrow {
