@@ -115,12 +115,17 @@ void LayerView::DoHighlightColor(bool apply) {
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
     mat->transparency.setValue(0.0f);
-  } else {
+  }
+  else {
     Layer* lay = layer();
-    if(lay && lay->lesioned())
+    if((lay && lay->lesioned()) || !lay)
       mat->diffuseColor.setValue(0.5f, 0.5f, 0.5f); // grey
-    else
+    else if(lay->layer_type == Layer::INPUT)
+      mat->diffuseColor.setValue(0.2f, 0.8f, 0.2f); // green
+    else if(lay->layer_type == Layer::HIDDEN)
       mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // aqua
+    else 
+      mat->diffuseColor.setValue(0.8f, 0.2f, 0.2f); // red for output / target
     mat->transparency.setValue(nv->view_params.lay_trans);
   }
 }

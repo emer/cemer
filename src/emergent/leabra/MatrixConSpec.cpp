@@ -36,6 +36,7 @@ void MatrixConSpec::Defaults_init() {
   // SetUnique("wt_sig", true);
   wt_sig.gain = 6.0f;
   wt_sig.off = 1.0f;
+  wt_sig.dwt_norm = false;
   
   ignore_unlearnable = false;
 }

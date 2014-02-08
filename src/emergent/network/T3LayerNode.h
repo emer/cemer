@@ -45,7 +45,9 @@ public:
 
   static void		initClass();
 
-  void 			setGeom(int px, int py, float max_x, float max_y, float max_z, float disp_scale);
+  void 			setGeom(int px, int py, float max_x, float max_y, float max_z,
+                                float disp_scale);
+  
 
   T3LayerNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
 	      bool mode_2d = false);

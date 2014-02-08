@@ -1278,8 +1278,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   ////////////	UnitSpecs
 
-  FMSpec(LeabraUnitSpec, pfc_units, pbwmspgp, "PFCUnits");
-  FMChild(LeabraUnitSpec, pfcd_units, pfc_units, "PFCDeepUnits");
+  FMSpec(PFCUnitSpec, pfc_units, pbwmspgp, "PFCUnits");
+  FMChild(LayerActUnitSpec, pfcd_units, pfc_units, "PFCDeepUnits");
   FMSpec(MatrixUnitSpec, matrix_units, pbwmspgp, "MatrixUnits");
   FMChild(MatrixUnitSpec, matrix_nogo_units, matrix_units, "MatrixNoGo");
   FMSpec(LeabraUnitSpec, snrthal_units, pbwmspgp, "SNrThalUnits");
@@ -1747,7 +1747,9 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
 //   }
 
   set_n_stripes(net, prefix + "_PFC", "PFC_in",  in_stripes, n_pfc_units, true);
+  set_n_stripes(net, prefix + "_PFC", "PFCd_in",  in_stripes, n_pfc_units, true);
   set_n_stripes(net, prefix + "_PFC", "PFC_mnt", mnt_stripes, n_pfc_units, true);
+  set_n_stripes(net, prefix + "_PFC", "PFCd_mnt", mnt_stripes, n_pfc_units, true);
   set_n_stripes(net, prefix + "_PFC", "PFC_out", out_stripes, n_pfc_units, true);
 
   set_n_stripes(net, prefix + "_Go", "Matrix_Go_in",   in_stripes, n_matrix_units, true);
@@ -1828,7 +1830,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   LeabraLayer* pvr = (LeabraLayer*)pvlv_laygp->FindName(pvrnm);
   LeabraLayer* pvi = (LeabraLayer*)pvlv_laygp->FindName(pvinm);
   LeabraLayer* lve = (LeabraLayer*)pvlv_laygp->FindName(lvenm);
-  LeabraLayer* lvi = (LeabraLayer*)pvlv_laygp->FindName(lvinm);
+  // LeabraLayer* lvi = (LeabraLayer*)pvlv_laygp->FindName(lvinm);
   LeabraLayer* nv =  (LeabraLayer*)pvlv_laygp->FindName(nvnm);
   LeabraLayer* vta = (LeabraLayer*)pvlv_laygp->FindName(vtanm);
   if(!vta)
@@ -1913,15 +1915,19 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   for(i=0;i<net->layers.leaves;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
     if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
-       && lay != lve && lay != lvi && lay != nv && lay != vta
+       && lay != lve && lay != nv && lay != vta
        && lay != snrthal && lay != snrthal_out 
        && lay != matrix_go_in && lay != matrix_go_mnt && lay != matrix_go_out
        && lay != matrix_nogo_in && lay != matrix_nogo_mnt && lay != matrix_nogo_out
        && lay != pfc_mnt && lay != pfc_out && lay != pfc_in
-       && lay != pfc_mnt_d && lay != pfc_in_d && pfc_out_d) {
+       && lay != pfc_mnt_d && lay != pfc_in_d && lay != pfc_out_d) {
       other_lays.Link(lay);
       lay->GetAbsPos(lpos);
-      if(lpos.z == 0) lay->pos.z+=2; // nobody allowed in 0!
+      if(lpos.z == 0) {
+        if(!(lay->name.contains("Matrix") || lay->name.contains("PFC") ||
+             lay->name.contains("SNr")))
+          lay->pos.z+=2; // only for non-pbwm: nobody allowed in 0!
+      }
       int xm = lpos.x + lay->scaled_disp_geom.x + 1;
       if(lpos.z == 1) mx_z1 = MAX(mx_z1, xm);
       if(lpos.z == 2) mx_z2 = MAX(mx_z2, xm);
@@ -1962,8 +1968,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
 
-  LeabraUnitSpec* pfc_units = PbwmSp("PFCUnits",LeabraUnitSpec);
-  LeabraUnitSpec* pfcd_units = PbwmSp("PFCDeepUnits",LeabraUnitSpec);
+  LeabraUnitSpec* pfc_units = PbwmSp("PFCUnits",PFCUnitSpec);
+  LeabraUnitSpec* pfcd_units = PbwmSp("PFCDeepUnits",LayerActUnitSpec);
   LeabraUnitSpec* matrix_units = PbwmSp("MatrixUnits",LeabraUnitSpec);
   LeabraUnitSpec* matrix_nogo_units = PbwmSp("MatrixNoGo",LeabraUnitSpec);
   LeabraTICtxtLayerSpec* pfc_deep_sp = PbwmSp("PFC_deep", LeabraTICtxtLayerSpec);
@@ -2103,7 +2109,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
                         matrix_cons_nogo);
     }
     net->FindMakePrjn(pfc_in, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_in, pfc_in, gponetoone, pfc_ctxt_cons);
+    net->FindMakePrjn(pfc_in, pfc_in, onetoone, pfc_ctxt_cons);
 
     if(pfc_in_d) {
       net->FindMakePrjn(pfc_in_d, pfc_in, onetoone, marker_cons);
@@ -2123,7 +2129,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
                         marker_cons);
     }
     net->FindMakePrjn(pfc_mnt, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_mnt, pfc_mnt, gponetoone, pfc_ctxt_cons);
+    net->FindMakePrjn(pfc_mnt, pfc_mnt, onetoone, pfc_ctxt_cons);
 
     if(pfc_mnt_d) {
       net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
