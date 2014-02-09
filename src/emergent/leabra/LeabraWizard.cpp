@@ -1304,6 +1304,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   FMChild(MatrixConSpec, matrix_cons_topo_strong, matrix_cons_topo, "MatrixConsTopoStrong");
   FMChild(MatrixConSpec, matrix_cons_nogo, matrix_cons, "MatrixConsNoGo");
   FMChild(MatrixConSpec, matrix_cons_nogofmgo, matrix_cons_nogo, "MatrixConsNoGoFmGo");
+  FMChild(MatrixConSpec, matrix_cons_out, matrix_cons, "MatrixConsOut");
 
   FMSpec(LeabraConSpec, fmpfc_out, pbwmspgp, "FmPFC_out");
 
@@ -1480,6 +1481,13 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   matrix_cons_topo_strong->SetUnique("wt_scale", true);
   matrix_cons_topo_strong->wt_scale.rel = 2.0f;
+
+  matrix_cons_out->SetUnique("immed_trace", true);
+  matrix_cons_out->immed_trace = true;
+  matrix_cons_out->SetUnique("mnt_decay", true);
+  matrix_cons_out->mnt_decay = 1.0f;
+  matrix_cons_out->SetUnique("no_mnt_decay", true);
+  matrix_cons_out->no_mnt_decay = 1.0f;
 
   fmpfc_out->SetUnique("wt_scale", true);
   // fmpfc_out->SetUnique("wt_sig", true);
@@ -2094,6 +2102,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
   TopoWtsPrjnSpec* intrapfctopo = PbwmSp("TopoIntraPFC", TopoWtsPrjnSpec);
   PFCConSpec* topfc_cons = PbwmSp("ToPFC", PFCConSpec);
   MatrixConSpec* matrix_cons = PbwmSp("MatrixCons", MatrixConSpec);
+  MatrixConSpec* matrix_cons_out = PbwmSp("MatrixConsOut", MatrixConSpec);
   MatrixConSpec* matrix_cons_nogo = PbwmSp("MatrixConsNoGo", MatrixConSpec);
 
   if(in_stripes > 0) {
@@ -2204,14 +2213,28 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
     }
     if(mnt_stripes > 0) {
-      net->FindMakePrjn(pvi, pfc_mnt, fullprjn, PvlvSp("PViCons",PVConSpec));
-      net->FindMakePrjn(lve, pfc_mnt_d, fullprjn, PvlvSp("LVeCons",PVConSpec));
+      net->FindMakePrjn(pvi, pfc_mnt_d, fullprjn, PvlvSp("PViCons",PVConSpec));
+      if(lve) {
+        net->FindMakePrjn(lve, pfc_mnt_d, fullprjn, PvlvSp("LVeCons",PVConSpec));
+      }
+      // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
+    }
+  }
+  if(pvr) {
+    // if(in_stripes > 0) {
+    //   net->FindMakePrjn(pvi, pfc_in, fullprjn, PvlvSp("PViCons",PVConSpec));
+    //   // net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
+    //   // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
+    // }
+    if(mnt_stripes > 0) {
+      net->FindMakePrjn(pvr, pfc_mnt_d, fullprjn, PvlvSp("PVrCons",PVrConSpec));
       // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
     }
   }
 
   TopoWtsPrjnSpec* topofminput = PbwmSp("TopoFmInput", TopoWtsPrjnSpec);
   MatrixConSpec* matrix_cons_topo = PbwmSp("MatrixConsTopo", MatrixConSpec);
+  LeabraConSpec* fmpfc_out = PbwmSp("FmPFC_out", LeabraConSpec);
 
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
@@ -2239,12 +2262,12 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       }
       if(out_stripes > 0) {
         if(topo_prjns) {
-          net->FindMakePrjn(matrix_go_out, il, topofminput, matrix_cons_topo);
-          net->FindMakePrjn(matrix_nogo_out, il, topofminput, matrix_cons_nogo);
+          net->FindMakePrjn(matrix_go_out, il, topofminput, matrix_cons_out); // not right but..
+          net->FindMakePrjn(matrix_nogo_out, il, topofminput, matrix_cons_out);
         }
         else {
-          net->FindMakePrjn(matrix_go_out, il, fullprjn, matrix_cons);
-          net->FindMakePrjn(matrix_nogo_out, il, fullprjn, matrix_cons_nogo);
+          net->FindMakePrjn(matrix_go_out, il, fullprjn, matrix_cons_out);
+          net->FindMakePrjn(matrix_nogo_out, il, fullprjn, matrix_cons_out); // out trumps nogo
         }
       }
     }
@@ -2260,7 +2283,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
           net->FindMakePrjn(pfc_in, il, fullprjn, topfcfmin_cons);
         }
         if(il->layer_type == Layer::TARGET || il->layer_type == Layer::OUTPUT) {
-          net->FindMakePrjn(il, pfc_in, fullprjn, topfc_cons);
+          net->FindMakePrjn(il, pfc_in, fullprjn, fmpfc_out);
         }
       }
       else if(mnt_stripes > 0) { // only maint if no input
@@ -2271,14 +2294,13 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
           net->FindMakePrjn(pfc_mnt, il, fullprjn, topfcfmin_cons);
         }
         if(il->layer_type == Layer::TARGET || il->layer_type == Layer::OUTPUT) {
-          net->FindMakePrjn(il, pfc_mnt, fullprjn, topfc_cons);
+          net->FindMakePrjn(il, pfc_mnt, fullprjn, fmpfc_out);
         }
       }
     }
   }
 
   PFCConSpec* topfcfmout_cons = PbwmSp("ToPFCFmOutput", PFCConSpec);
-  LeabraConSpec* fmpfc_out = PbwmSp("FmPFC_out", LeabraConSpec);
   for(i=0;i<output_lays.size;i++) {
     Layer* ol = (Layer*)output_lays[i];
 

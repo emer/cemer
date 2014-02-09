@@ -472,6 +472,16 @@ Variant ProgVar::GetVar() {
   return _nilVariant;// compiler food
 }
 
+bool ProgVar::SetValStr(const String& val, void* par, MemberDef* memb_def,
+                        TypeDef::StrContext sc, bool force_inline) {
+  // taMisc::DebugInfo("setting progvar to string:", val);
+  if(val.contains("{")) {
+    return inherited::SetValStr(val, par, memb_def, sc, force_inline);
+  }
+  SetVar((Variant)val);
+  return true;
+}
+
 void ProgVar::Cleanup() {
   if (!((var_type == T_Int) || (var_type == T_HardEnum)))
     int_val = 0;
