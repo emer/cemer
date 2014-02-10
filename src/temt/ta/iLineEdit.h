@@ -27,6 +27,8 @@ public:
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
+  bool          in_lookup_fun;  // true if we just called the lookup function
+
   inline int	charWidth() {return mchar_width;} 
   void		setCharWidth(int num); // sets width to accommodate num chars of
   inline int	minCharWidth() {return mmin_char_width;} 
@@ -42,8 +44,9 @@ signals:
 #endif
 
 public slots:
-  void		setReadOnly(bool value);
-  void		editInEditor(); // edit contents in modal dialog
+  virtual void	setReadOnly(bool value);
+  virtual void	editInEditor(); // edit contents in modal dialog
+  virtual void  doLookup();     // what we do when the lookup key is pressed
 
 protected:
   int		mmin_char_width; // note: we limit to 128

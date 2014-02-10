@@ -63,8 +63,7 @@ void taiTreeNodeProgEl::lookupKeyPressed(iLineEdit* le, int column) {
     int cur_pos = le->cursorPosition();
     int new_pos = -1;
     String rval = pe->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
-    // TODO: oops -- the editor is destroyed at this point!
-    return;
+  //                                         lookupfun_md->name, new_pos);
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
     le->window()->setFocus();
@@ -78,5 +77,4 @@ void taiTreeNodeProgEl::lookupKeyPressed(iLineEdit* le, int column) {
         le->setCursorPosition(cur_pos); // go back to orig pos
     }
   }
-  //                                         lookupfun_md->name, new_pos);
 }

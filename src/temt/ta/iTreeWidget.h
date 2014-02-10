@@ -125,6 +125,7 @@ public:
   void         setModelData(QWidget* editor, QAbstractItemModel* model,
                             const QModelIndex& index) const override;
 
+  bool          eventFilter(QObject *object, QEvent *event);
 };
 
 #endif // iTreeWidget_h

@@ -281,7 +281,9 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
 
   if(xcal.l_mix == XCalLearnSpec::X_COS_DIFF) {
     LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-    const float rlay_cos_diff_avg = 1.0f - rlay->cos_diff_avg;
+    float rlay_cos_diff_avg = 1.0f - rlay->cos_diff_avg;
+    if(rlay->layer_type != Layer::HIDDEN)
+      rlay_cos_diff_avg = 0.0f; // any kind of clamped layer should not use this!
     const float efflmix = xcal.thr_l_mix * rlay_cos_diff_avg;
     const float effmmix = 1.0f - efflmix;
     const float su_act_mult = efflmix * su_avg_m;

@@ -1491,10 +1491,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   matrix_cons_out->SetUnique("no_mnt_decay", true);
   matrix_cons_out->no_mnt_decay = 1.0f;
 
-  fmpfc_out->SetUnique("wt_scale", true);
-  // fmpfc_out->SetUnique("wt_sig", true);
-  // fmpfc_out->wt_sig.dwt_norm = false; // not sure if this is necc but whatever..
-
   matrix_to_snrthal->SetUnique("rnd", true);
   matrix_to_snrthal->rnd.mean = 0.7f;
   matrix_to_snrthal->rnd.var = 0.0f;
@@ -1512,6 +1508,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   fixed_bias->lrate = 0.0f;
   fixed_bias->SetUnique("learn", true);
   fixed_bias->learn = false;
+
+  // fmpfc_out->SetUnique("wt_scale", true);
+  fmpfc_out->stable_mix.stable_pct = 0.8f;
 
   matrix_go_mnt_sp->go_nogo = MatrixLayerSpec::GO;
   matrix_go_mnt_sp->gating_type = SNrThalLayerSpec::MNT;

@@ -27,6 +27,7 @@
 #include <QPalette>
 #include <QContextMenuEvent>
 #include <iLineEdit>
+#include <QTextEdit>
 
 #include <iostream>
 using namespace std;
@@ -551,3 +552,16 @@ void iTreeWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemMode
   if(own_tree_widg)
     own_tree_widg->itemWasEdited(index);
 }
+
+bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
+  QWidget *editor = qobject_cast<QWidget*>(object);
+  if (!editor)
+    return false;
+  iLineEdit* le = dynamic_cast<iLineEdit*>(editor);
+  if(le && event->type() == QEvent::FocusOut) {
+    if(le->in_lookup_fun)
+      return false;
+  }
+  return inherited::eventFilter(object, event);
+}
+
