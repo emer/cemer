@@ -57,6 +57,11 @@ taTypeDef_Of(Variant_Data);
 #include <css_machine.h>
 #include <css_ta.h>
 
+#include <libjson>
+#include <JSONNode>
+//#include <JSONDefs>
+#include "../json/JSONDefs.h"
+
 using namespace std;
 
 void DataTable::Initialize() {
@@ -2448,7 +2453,7 @@ int DataTable::LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws) {
   string line;
   int n_skip = fws->n_skip_lines;
   StructUpdate(true);
-  while (getline(strm, line)) {
+  while (std::getline(strm, line)) {
     if (n_skip > 0) {
       --n_skip;
       continue;
@@ -2558,8 +2563,124 @@ void DataTable::LoadAnyData(const String& fname, bool headers_req,
   taRefN::unRefDone(flr);
 }
 
-void
-DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line)
+void DataTable::LoadDataJSON(const String& fname) {
+  bool reset_first = true;
+  json_string contents;
+
+  taFiler* flr = GetLoadFiler(fname, ".json", false, "Data");
+  if(flr->istrm) {
+    if(reset_first)
+      flr->istrm->seekg(0, std::ios::end);
+    contents.resize(flr->istrm->tellg());
+    flr->istrm->seekg(0, std::ios::beg);
+    flr->istrm->read(&contents[0], contents.size());
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+
+  taMisc::DebugInfo(contents.c_str());
+  if (libjson::is_valid(contents)) {
+    JSONNode n = libjson::parse(contents);
+    ParseJSON(n);
+  }
+  else {
+    taMisc::Info("bad json");
+  }
+}
+
+void DataTable::ParseJSON(const JSONNode& n) {
+  JSONNode::const_iterator i = n.begin();
+  while (i != n.end()){
+    // recursively call ourselves to dig deeper into the tree
+    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
+      ParseJSON(*i);
+    }
+
+    // get the node name and value as a string
+    std::string node_name = i->name();
+
+    if (node_name == "keepRows") {
+      if (i->as_bool() == false)
+        RemoveAllRows();
+    }
+    else if (node_name == "columns") { // better would be to find column by name
+      taMisc::DebugInfo("columns");
+      int count = i->size();  // row count
+      taMisc::DebugInfo("count", (String)count);
+      if (count > this->rows) {
+        AddRows(count - this->rows);
+      }
+      JSONNode::const_iterator columns = i->begin();
+      while (columns != i->end()) {
+        taMisc::DebugInfo("next column");
+        const JSONNode aCol = *columns;
+        ParseJSONColumn(aCol);
+        columns++;
+      }
+    }
+    ++i;
+  }
+}
+
+void DataTable::ParseJSONColumn(const JSONNode& aCol) {
+  JSONNode theValues;
+  String columnName;
+  DataCol::ValType columnType = VT_STRING;
+  DataCol* dc;
+
+  JSONNode::const_iterator columnData = aCol.begin();
+  while (columnData != aCol.end()) {
+    std::string node_name = columnData->name();
+    if (node_name == "name") {
+      taMisc::DebugInfo("column name");
+      columnName = columnData->as_string().c_str();
+     }
+    else if (node_name == "type") {
+      taMisc::DebugInfo("column type", columnData->as_string().c_str());
+//      columnType = StrToValType(columnData->as_string().c_str());
+      columnType = StrToValType((String)columnData->as_string().c_str());
+    }
+    else if (node_name == "values") {
+      taMisc::DebugInfo("column values");
+      theValues = columnData->as_array();
+    }
+    columnData++;
+  }
+  // we have all we need - make/find column & write to the data table
+  bool makeNew = true;
+  dc = this->data.FindName(columnName);
+  if (!dc) {
+    dc = this->NewCol(columnType, columnName);
+  }
+
+  JSONNode::const_iterator values = theValues.begin();
+  int row = 0;
+  while (values != theValues.end()) {
+    taMisc::DebugInfo(values->as_string().c_str());
+    dc->SetVal(values->as_string().c_str(), row);
+    row++;
+    values++;
+  }
+}
+
+DataCol::ValType DataTable::StrToValType(String valTypeStr) {
+  if (valTypeStr == "string")
+    return VT_STRING;
+  else if (valTypeStr == "int")
+    return VT_INT;
+  else if (valTypeStr == "float")
+    return VT_FLOAT;
+  else if (valTypeStr == "double")
+    return VT_DOUBLE;
+  else if (valTypeStr == "byte")
+    return VT_BYTE;
+  else {
+    taMisc::Info("DataTable::StrToValType -- json column type string not found -- using variant type");
+    return VT_VARIANT;  // best we can do - should also print out info message
+  }
+}
+
+void DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line)
 {
   if (!stream.good())
   {
@@ -3162,11 +3283,11 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
 }
 
 void DataTable::Filter(Variant& col1, Relation::Relations operator_1,
-                       const String& value_1, Relation::CombOp comb_op,
-                       Variant col2, Relation::Relations operator_2,
-                       const String& value_2,
-                       Variant col3, Relation::Relations operator_3,
-                       const String& value_3) {
+    const String& value_1, Relation::CombOp comb_op,
+    Variant col2, Relation::Relations operator_2,
+    const String& value_2,
+    Variant col3, Relation::Relations operator_3,
+    const String& value_3) {
   DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
   select_spec->comb_op = comb_op;
   if(col1.isStringType() || col1.toInt() >= 0) {
@@ -3207,13 +3328,13 @@ void DataTable::Filter(Variant& col1, Relation::Relations operator_1,
 }
 
 void DataTable::FilterCol(DataCol* col1, Relation::Relations operator_1,
-                          const String& value_1, Relation::CombOp comb_op,
-                          DataCol* col2, Relation::Relations operator_2,
-                          const String& value_2,
-                          DataCol* col3, Relation::Relations operator_3,
-                          const String& value_3) {
+    const String& value_1, Relation::CombOp comb_op,
+    DataCol* col2, Relation::Relations operator_2,
+    const String& value_2,
+    DataCol* col3, Relation::Relations operator_3,
+    const String& value_3) {
   if(TestError(!col1, "Filter",
-               "column 1 is NULL-- must have at least one column"))
+      "column 1 is NULL-- must have at least one column"))
     return;
   DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
   if(col1) {
@@ -3431,16 +3552,16 @@ bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name
 }
 
 bool DataTable::SplitStringToCols(const Variant& string_col,
-                                  const String& delim,
-                                  const String& col_name_stub) {
+    const String& delim,
+    const String& col_name_stub) {
   return SplitStringToColsCol(GetColData(string_col), delim, col_name_stub);
 }
 
 bool DataTable::SplitStringToColsCol(DataCol* da, 
-                                  const String& delim,
-                                  const String& col_name_stub) {
+    const String& delim,
+    const String& col_name_stub) {
   if(TestError(!da || !da->isString(), "SplitStringToCols",
-               "column is NULL or is not a String type")) {
+      "column is NULL or is not a String type")) {
     return false;
   }
   if(rows <= 0) return false;
@@ -3454,11 +3575,11 @@ bool DataTable::SplitStringToColsCol(DataCol* da,
   String fc = da->GetValAsString(0);
   ar.FmDelimString(fc, delim);
   if(TestError(ar.size <= 1, "SplitStringToCols",
-               "first row string value:", fc,
-               "does not contain multiple substrings delimted by:", delim)) {
+      "first row string value:", fc,
+      "does not contain multiple substrings delimted by:", delim)) {
     return false;
   }
-  
+
   int cls = ar.size;
   StructUpdate(true);
   // make the cols first
@@ -3629,7 +3750,7 @@ taBase* DataTable::ChooseNew(taBase* origin) {
     chstr += root_group.FastGp(i)->name + delimiter;
   }
   // add program to string of choices
-//  Program* pgrm = GET_OWNER(origin, Program);
+  //  Program* pgrm = GET_OWNER(origin, Program);
   if (pgrm) {
     String str = "Program " + pgrm->name;
     chstr += str;

@@ -1,0 +1,19 @@
+{
+	"table": "LeabraTableExample",
+  "keepColumns": true,
+  "keepRows": false, 
+  "append": false, 
+  "columns":
+	[
+		{
+			"name":"Name",
+			"type": "string",
+			"values": ["row1", "row2"]
+		},
+		{
+			"name":"anIntColumn",
+			"type": "int",
+			"values": [43, 101]
+		}
+	]
+}

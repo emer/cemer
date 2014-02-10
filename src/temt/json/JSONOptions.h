@@ -17,7 +17,7 @@
 /*
  *  JSON_STRICT removes all of libjson's extensions.  Meaning no comments, no special numbers
  */
-#define JSON_STRICT
+//#define JSON_STRICT
 
 
 /*
@@ -28,7 +28,7 @@
  *  it simply tells you about them, which is nice for debugging, but not preferable
  *  for release candidates
  */
-//#define JSON_DEBUG
+#define JSON_DEBUG
 
 
 /*
@@ -51,7 +51,7 @@
  *  option hides the callback registering function.  This will usually display
  *  messages in the console
  */
-//#define JSON_STDERROR
+#define JSON_STDERROR
 
 
 /*
@@ -79,7 +79,7 @@
  *  means that libjson supports the full array of unicode characters, but also takes
  *  much more memory and processing power.
  */
-#define JSON_UNICODE
+//#define JSON_UNICODE
 
 
 /*
