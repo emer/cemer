@@ -38,6 +38,9 @@ public:
     iTreeView* parent_, taiTreeNode* after,
     const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeDefChild();
+
+  void          itemEdited(int column) override;
+
 public: // ISigLinkClient interface
 //  void*      This() override {return (void*)this;}
   TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeDefChild;}

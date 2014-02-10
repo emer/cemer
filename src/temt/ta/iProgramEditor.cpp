@@ -160,7 +160,13 @@ void iProgramEditor::Init() {
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
   items->setHeaderText(0, "Program Item");
-  items->setColumnWidth(0, 220);
+  items->setEditTriggers(QAbstractItemView::DoubleClicked |
+                         QAbstractItemView::SelectedClicked |
+                         QAbstractItemView::EditKeyPressed
+                         // QAbstractItemView::AnyKeyPressed |
+                         // QAbstractItemView::CurrentChanged
+                         );
+  // items->setColumnWidth(0, 220);
   // items->setHeaderText(1, "Item Description");
   items->setColKey(0, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   // items->setColFormat(0, iTreeView::CF_ELIDE_TO_FIRST_LINE);
@@ -197,9 +203,12 @@ void iProgramEditor::Init() {
   historyForwardAction->setParent(this); // for shortcut functionality, and to delete
   connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
 
-  connect(brow_hist, SIGNAL(forward_enabled(bool)), historyForwardAction, SLOT(setEnabled(bool)) );
-  items->Connect_SelectableHostNotifySignal(brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
-  connect(brow_hist, SIGNAL(select_item(taiSigLink*)), this, SLOT(slot_AssertBrowserItem(taiSigLink*)) );
+  connect(brow_hist, SIGNAL(forward_enabled(bool)), historyForwardAction,
+          SLOT(setEnabled(bool)) );
+  items->Connect_SelectableHostNotifySignal
+    (brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
+  connect(brow_hist, SIGNAL
+          (select_item(taiSigLink*)), this, SLOT(slot_AssertBrowserItem(taiSigLink*)) );
 
   // no history, just manually disable
   historyBackAction->setEnabled(false);
@@ -209,7 +218,6 @@ void iProgramEditor::Init() {
   tb->addAction(historyBackAction);
   tb->addAction(historyForwardAction);
 
-  //TEMP
   if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction))) {
     but->setArrowType(Qt::LeftArrow);
   }
@@ -217,137 +225,6 @@ void iProgramEditor::Init() {
     but->setArrowType(Qt::RightArrow);
   }
 }
-
-//void iProgramEditor::Init() {
-//  // layout constants
-//  ln_sz = taiM->max_control_height(taiM->ctrl_size);
-//  ln_vmargin = 1;
-//  m_editLines = taMisc::program_editor_lines;
-//
-//  m_changing = 0;
-//  read_only = false;
-//  m_modified = false;
-//  warn_clobber = false;
-//  apply_req = false;
-////  bg_color.set(TAI_Program->GetEditColor()); // always the same
-//  base = NULL;
-//  row = 0;
-//  m_show = (TypeItem::ShowMembs)(taMisc::show_gui & TypeItem::SHOW_CHECK_MASK);
-//  sel_item_mbr = NULL;
-//  sel_item_base = NULL;
-//
-//  brow_hist = new iBrowseHistory(this);
-//
-//  layOuter = new QVBoxLayout(this);
-//  layOuter->setMargin(2);
-//  layOuter->setSpacing(taiM->vsep_c);
-//
-//  scrBody = new QScrollArea(this);
-//  scrBody->setWidgetResizable(true);
-//  scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//  body = new iStripeWidget;
-//  scrBody->setWidget(body);
-//  body->installEventFilter(this);
-//
-//  line_ht = ln_sz + (2 * ln_vmargin);
-//  body->setStripeHeight(line_ht);
-//  int body_ht = line_ht * editLines();
-//  scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
-//  layOuter->addWidget(scrBody);
-//
-//  meth_but_mgr = new iMethodButtonMgr(this);
-//
-//  defEditBgColor();
-//
-//  layButtons = new QHBoxLayout();
-//  layButtons->setMargin(0);
-//  layButtons->setSpacing(0);
-//  tb = new QToolBar(this);
-//  int icon_sz = taiM_->label_height(taiMisc::sizSmall) -4;
-//  tb->setIconSize(QSize(icon_sz, icon_sz));
-//  layButtons->addWidget(tb);
-//  layButtons->addSpacing(4);
-//
-//  btnHelp = new iHiLightButton("&Help", this);
-//  layButtons->addWidget(btnHelp);
-//  connect(btnHelp, SIGNAL(clicked()), this, SLOT(Help()) );
-//
-//  layButtons->addStretch();
-//  btnApply = new iHiLightButton("&Apply", this);
-//  layButtons->addWidget(btnApply);
-//  layButtons->addSpacing(4);
-//
-//  btnRevert = new iHiLightButton("&Revert", this);
-//  layButtons->addWidget(btnRevert);
-//  layButtons->addSpacing(4);
-//  layOuter->addLayout(layButtons);
-//
-//  items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
-//  layOuter->addWidget(items, 1); // it gets the room
-//
-//  search = new iTreeSearch(items, this);
-//  layOuter->addWidget(search);
-//
-//
-//  items->setColumnCount(2);
-//  items->setSortingEnabled(false);// only 1 order possible
-//  items->setSelectionMode(QAbstractItemView::ExtendedSelection);
-//  items->setHeaderText(0, "Program Item");
-//  items->setColumnWidth(0, 220);
-//  items->setHeaderText(1, "Item Description");
-//  items->setColKey(0, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
-//  items->setColFormat(0, iTreeView::CF_ELIDE_TO_FIRST_LINE);
-//  items->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
-//  items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
-//  // adjunct data, tooltips, etc.
-//  items->AddColDataKey(0, taBase::key_disp_name, Qt::ToolTipRole);
-//  items->AddColDataKey(1, taBase::key_desc, Qt::ToolTipRole);
-//
-//  //enable dnd support
-//  items->setDragEnabled(true);
-//  items->setAcceptDrops(true);
-//  items->setDropIndicatorShown(true);
-//  items->setHighlightRows(true);
-//
-//  connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
-//
-//  connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
-//  connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
-//  items->Connect_SelectableHostNotifySignal(this,
-//    SLOT(items_Notify(ISelectableHost*, int)) );
-//
-//  // browse history
-//  historyBackAction = new iAction("Back", QKeySequence(), "historyBackAction" );
-//  historyBackAction->setParent(this); // for shortcut functionality, and to delete
-//  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
-//  connect(brow_hist, SIGNAL(back_enabled(bool)),
-//    historyBackAction, SLOT(setEnabled(bool)) );
-//  historyForwardAction = new iAction("Forward", QKeySequence(), "historyForwardAction" );
-//  historyForwardAction->setParent(this); // for shortcut functionality, and to delete
-//  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
-//  connect(brow_hist, SIGNAL(forward_enabled(bool)),
-//    historyForwardAction, SLOT(setEnabled(bool)) );
-//  items->Connect_SelectableHostNotifySignal(brow_hist,
-//    SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
-//  connect(brow_hist, SIGNAL(select_item(taiSigLink*)),
-//    this, SLOT(slot_AssertBrowserItem(taiSigLink*)) );
-//  // no history, just manually disable
-//  historyBackAction->setEnabled(false);
-//  historyForwardAction->setEnabled(false);
-//  // toolbar
-//  tb->addAction(historyBackAction);
-//  tb->addAction(historyForwardAction);
-//
-//  //TEMP
-//  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction))) {
-//    but->setArrowType(Qt::LeftArrow);
-//  }
-//  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction))) {
-//    but->setArrowType(Qt::RightArrow);
-//  }
-//
-//  InternalSetModified(false);
-//}
 
 bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {

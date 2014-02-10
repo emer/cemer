@@ -126,9 +126,15 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
     // make sure our operations are finished
     taiMiscCore::ProcessEvents();
-    // tab into ProgCode but not other ProgEls, and into all other items
-    if(itm->InheritsFrom(&TA_ProgCode) || !itm->InheritsFrom(&TA_ProgEl))
-      QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
+    // edit ProgCode but not other ProgEls, and tab into all other items
+    if(itm->InheritsFrom(&TA_ProgCode)) {
+      QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
+                                                     Qt::ControlModifier));
+    }
+    else if(!itm->InheritsFrom(&TA_ProgEl)) {
+      QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab,
+                                                     Qt::NoModifier));
+    }
   }
   return (bool)iti;
 }

@@ -26,6 +26,7 @@
 #include <QScrollBar>
 #include <QPalette>
 #include <QContextMenuEvent>
+#include <iLineEdit>
 
 #include <iostream>
 using namespace std;
@@ -72,6 +73,9 @@ void  iTreeWidget::init() {
   // we never use this class for Qt-internal dnd semantics
   setAutoScroll(true);
   setDragDropMode(DragDrop);
+
+  setItemDelegate(new iTreeWidgetDefaultDelegate(this));
+
   connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)),
     this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)),
@@ -347,6 +351,8 @@ bool iTreeWidget::selectItem(QTreeWidgetItem* itm, int column) {
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
 
+  QTreeWidgetItem* cur_item = currentItem();
+
   if(ctrl_pressed) {
     QPersistentModelIndex newCurrent = currentIndex();
     switch (e->key()) {
@@ -354,8 +360,14 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     case Qt::Key_Space:
       clearSelection();
       // select this guy
-      selectionModel()->setCurrentIndex(currentIndex(), QItemSelectionModel::ClearAndSelect);
-      ext_select_on = true;
+      selectionModel()->setCurrentIndex(currentIndex(),
+                                        QItemSelectionModel::ClearAndSelect);
+      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        editItem(cur_item);     // todo: get column
+      }
+      else {
+        ext_select_on = true;
+      }
       e->accept();
       return;			// don't continue
     case Qt::Key_G:
@@ -499,3 +511,43 @@ void iTreeWidget::dragScroll() {
   }
 }
 
+void iTreeWidget::itemWasEdited(const QModelIndex& index) const {
+  emit itemEdited(index);
+}
+
+void iTreeWidget::lookupKeyPressed(iLineEdit* le) const {
+}
+
+
+////////////////////////////////////////////////
+//      iTreeWidgetDefaultDelegate
+
+
+iTreeWidgetDefaultDelegate::iTreeWidgetDefaultDelegate(iTreeWidget* own_tw) :
+  inherited(own_tw)
+{
+  own_tree_widg = own_tw;
+}
+
+QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
+                                                  const QStyleOptionViewItem &option,
+                                                  const QModelIndex &index) const {
+  QWidget* widg = inherited::createEditor(parent, option, index);
+  QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
+  if(le) {
+    iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
+    if(own_tree_widg) {
+      QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
+                       own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
+    }
+    return il;
+  }
+  return widg;
+}
+
+void iTreeWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
+                                              const QModelIndex& index) const {
+  inherited::setModelData(editor, model, index);
+  if(own_tree_widg)
+    own_tree_widg->itemWasEdited(index);
+}

@@ -67,7 +67,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
   QObject::connect(rep(), SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
 
-  QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
+  QObject::connect(rep(), SIGNAL(lookupKeyPressed(iLineEdit*)),
                    this, SLOT(lookupKeyPressed()) );
 }
 

@@ -152,6 +152,11 @@ public:
   // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start -- scope_el provides scope information for relevant variables etc where this new prog el would be created -- use FindVarNameInScope etc on that obj
   virtual  bool         CvtFmCode(const String& code);
   // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
+  virtual  bool         CodeFromText(const String& code);
+  // new code has been entered for this element, typically from user entering text into the text editor -- attempt to update us based on this code, or switch to another type as needed
+  virtual  String       CodeGetDesc(const String& code);
+  // get description (comment) from the code string -- returns code without the comment
+
   virtual  bool         IsCtrlProgEl()  { return false; }
   // set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
 
@@ -166,11 +171,11 @@ public:
   String       GetDesc() const override {return desc;}
   const String GetToolTip(const KeyString& key) const override;
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
-  bool                  IsVerbose() const { return HasProgFlag(VERBOSE); }
-  void                  EnableBreakpoint();
-  void                  DisableBreakpoint();
-  void                  SetBreakpoint();
-  void                  ClearBreakpoint();
+  bool         IsVerbose() const { return HasProgFlag(VERBOSE); }
+  void         EnableBreakpoint();
+  void         DisableBreakpoint();
+  void         SetBreakpoint();
+  void         ClearBreakpoint();
 
   virtual String        GetToolbarName() const;
   // name of the program element as represented in the programming toolbar

@@ -1400,6 +1400,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   topfc_cons->SetUnique("lmix", true);
   topfc_cons->lmix.hebb = .001f;
+  topfc_cons->stable_mix.stable_pct = 0.8f;
 
   pfc_ctxt_cons->SetUnique("wt_scale", true);
   pfc_ctxt_cons->wt_scale.rel = 1.5f;
@@ -1442,6 +1443,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   matrix_cons->SetUnique("wt_sig", true);
   matrix_cons->wt_sig.gain = 6.0f;
   matrix_cons->wt_sig.off = 1.0f;
+  matrix_cons->stable_mix.stable_pct = 0.0f; // better without
 
   matrix_cons->SetUnique("ignore_unlearnable", true);
   matrix_cons->ignore_unlearnable = false; 

@@ -37,7 +37,8 @@ public:
 #ifndef __MAKETA__
 signals:
   void		focusChanged(bool got_focus);
-  void		lookupKeyPressed();	// use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
+  void		lookupKeyPressed(iLineEdit* le);
+  // use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
 #endif
 
 public slots:

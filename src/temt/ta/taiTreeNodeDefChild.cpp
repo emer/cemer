@@ -16,6 +16,8 @@
 #include "taiTreeNodeDefChild.h"
 
 #include <SigLinkSignal>
+#include <ProgEl>
+
 
 taiTreeNodeDefChild::taiTreeNodeDefChild(taSigLinkTaOBase* link_, MemberDef* md_,
   taiTreeNode* parent_, taiTreeNode* last_child_,
@@ -36,6 +38,11 @@ taiTreeNodeDefChild::taiTreeNodeDefChild(taSigLinkTaOBase* link_, MemberDef* md_
 
 void taiTreeNodeDefChild::init(taSigLinkTaOBase*, int) {
   m_def_child.Init(this, list());
+  // todo: could modulate by some kind of settings
+  ProgEl* pel = dynamic_cast<ProgEl*>(tadata());
+  if(pel) {
+    setFlags(flags() | Qt::ItemIsEditable);
+  }
 }
 
 taiTreeNodeDefChild::~taiTreeNodeDefChild()
@@ -48,3 +55,9 @@ void taiTreeNodeDefChild::DefChild_SigEmit(int sls, void* op1, void* op2) {
   SigEmit(sls, op1, op2);
 }
 
+void taiTreeNodeDefChild::itemEdited(int column) {
+  ProgEl* pel = dynamic_cast<ProgEl*>(tadata());
+  if(!pel) return;
+  String new_val = text(column);
+  pel->CodeFromText(new_val);
+}

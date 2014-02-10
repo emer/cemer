@@ -118,16 +118,26 @@ bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_pat
   bool changed = false;
 
   if(!cmstr.contains(type_nm + ".h")) {
-    String cmrest = cmstr.after(".h\n)");
-    cmstr = cmstr.before(".h\n)");
-    cmstr << ".h\n  " << type_nm << ".h\n)" << cmrest;
-    changed = true;
+    if(cmstr.contains(".h\n)")) {
+      String cmrest = cmstr.after(".h\n)");
+      cmstr = cmstr.before(".h\n)");
+      cmstr << ".h\n  " << type_nm << ".h\n)" << cmrest;
+      changed = true;
+    }
+    else {
+      taMisc::Warning("key sequence of: .h\\n) not found in CMakeFiles.txt -- needed for updating file -- please fix file and add your new .h file manually");
+    }
   }
   if(!cmstr.contains(type_nm + ".cpp")) {
-    String cmrest = cmstr.after(".cpp\n)");
-    cmstr = cmstr.before(".cpp\n)");
-    cmstr << ".cpp\n  " << type_nm << ".cpp\n)" << cmrest;
-    changed = true;
+    if(cmstr.contains(".cpp\n)")) {
+      String cmrest = cmstr.after(".cpp\n)");
+      cmstr = cmstr.before(".cpp\n)");
+      cmstr << ".cpp\n  " << type_nm << ".cpp\n)" << cmrest;
+      changed = true;
+    }
+    else {
+      taMisc::Warning("key sequence of: .cpp\\n) not found in CMakeFiles.txt -- needed for updating file -- please fix file and add your new .cpp file manually");
+    }
   }
 
   if(changed) {

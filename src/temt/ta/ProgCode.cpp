@@ -94,6 +94,14 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   return rval;
 }
 
+bool ProgCode::CodeFromText(const String& code_str) {
+  code.expr = CodeGetDesc(code_str);
+  if(code.expr.nonempty()) {
+    tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
+  }
+  return false;
+}
+
 void ProgCode::ConvertToProgEl() {
   if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
@@ -134,6 +142,7 @@ void ProgCode::UpdateAfterEdit_impl() {
   if(!own) return;
   String code_str = trim(code.expr);
   if(code_str.empty()) return;
+  code.expr = CodeGetDesc(code_str);
   tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
 }  
 

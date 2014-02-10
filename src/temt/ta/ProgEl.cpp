@@ -695,6 +695,29 @@ bool ProgEl::CvtFmCode(const String& code) {
   return true;
 }
 
+bool ProgEl::CodeFromText(const String& code) {
+  String cd = CodeGetDesc(code);
+  if(CanCvtFmCode(cd, NULL)) {
+    return CvtFmCode(cd);
+  }
+  orig_prog_code = cd;
+  return RevertToCode();
+}
+
+String ProgEl::CodeGetDesc(const String& code) {
+  if(code.contains("//")) {
+    desc = trim(code.after("//"));
+    return trim(code.before("//"));
+  }
+  if(code.contains("/*")) {
+    desc = trim(code.after("/*"));
+    if(desc.contains("*/"))
+      desc = trim(desc.before("*/",-1));
+    return trim(code.before("/*"));
+  }
+  return code;
+}
+
 bool ProgEl::RevertToCode() {
   UpdateProgFlags();		// make sure
   if(!HasProgFlag(CAN_REVERT_TO_CODE)) {

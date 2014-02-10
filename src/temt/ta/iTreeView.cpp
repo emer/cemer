@@ -778,6 +778,22 @@ void iTreeView::setShow(TypeItem::ShowMembs value) {
   Show_impl();
 }
 
+void iTreeView::itemWasEdited(const QModelIndex& index) const {
+  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
+  if(item) {
+    item->itemEdited(index.column());
+  }
+  inherited::itemEdited(index);
+}
+
+void iTreeView::lookupKeyPressed(iLineEdit* le) const {
+  iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(currentItem());
+  if(item) {
+    item->lookupKeyPressed(le, 0); // todo: no col
+  }
+  inherited::lookupKeyPressed(le);
+}
+
 void iTreeView::setTvFlags(int value) {
   if (tv_flags == value) return;
   tv_flags = value;

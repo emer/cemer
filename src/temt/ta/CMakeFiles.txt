@@ -698,6 +698,7 @@ set(ta_HEADS_MAKETA_NOMOC
   taiTreeNodeDefChild_ElRef.h
   taiTreeNodeTypeItem.h
   taiTreeNodeTypeSpace.h
+  taiTreeNodeProgEl.h
 
   taiListNode.h
 
@@ -743,7 +744,6 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgElChoiceDlg.h
   ProgBrkPt.h
   ProgBrkPt_List.h  
-  
 )
 
 # need both maketa and moc -- relatively rare
@@ -808,7 +808,7 @@ set(ta_HEADS_MAKETA_MOC
   iViewPanelOfVEWorld.h
 
   iSubversionBrowser.h
- )
+)
 
 set(ta_HEADS_NOMAKETA_MOC
   iAutoSaver.h
@@ -1791,6 +1791,7 @@ set(ta_SRCS_MAKETA
   taiTreeNodeDefChild_ElRef.cpp
   taiTreeNodeTypeItem.cpp
   taiTreeNodeTypeSpace.cpp
+  taiTreeNodeProgEl.cpp
 
   taiListNode.cpp
 

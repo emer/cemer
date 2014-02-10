@@ -34,9 +34,10 @@
 
 
 // declare all other types mentioned but not required to include:
-class iMainWindowViewer;
-class String_PArray;
-class iTreeViewItem;
+class iMainWindowViewer; //
+class String_PArray; //
+class iTreeViewItem; //
+class iLineEdit; //
 
 #ifndef __MAKETA__
 typedef QMap<QString, QVariant> QMap_qstr_qvar; // the QMap type that QVariant supports
@@ -189,15 +190,18 @@ public slots:
 
   void                  InsertEl(bool after=false); // insert new element at or after currently selected item
   void                  InsertDefaultEl(bool after=false); // insert default new element type object at or after currently selected item
+  void                  itemWasEdited(const QModelIndex& index) const override;
+  // calls ItemEdited on item directly
+  void                  lookupKeyPressed(iLineEdit* le) const override;
 
 public: // ISelectableHost i/f
   bool         hasMultiSelect() const override;
   QWidget*     widget() override {return this;}
 protected:
   void         FillContextMenu_pre(ISelectable_PtrList& sel_items,
-                                            taiWidgetActions* menu) override;
+                                   taiWidgetActions* menu) override;
   void         FillContextMenu_post(ISelectable_PtrList& sel_items,
-                                             taiWidgetActions* menu) override;
+                                    taiWidgetActions* menu) override;
 
   void         UpdateSelectedItems_impl() override;
 

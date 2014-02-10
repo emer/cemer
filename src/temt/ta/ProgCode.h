@@ -41,6 +41,7 @@ public:
 
   virtual void          ConvertToProgEl();
   // converts the code to an appropriate program element -- called in a delayed gui callback routine
+  bool                  CodeFromText(const String& code) override;
 
   static void           CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
                                          const String& code, ProgEl* scope_el);

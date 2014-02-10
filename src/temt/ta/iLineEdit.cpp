@@ -213,7 +213,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       return;
     case Qt::Key_L:
       e->accept();
-      emit lookupKeyPressed();
+      emit lookupKeyPressed(this);
       return;
     }
   }
