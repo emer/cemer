@@ -665,8 +665,14 @@ bool ProgEl::BrowserCollapseAll() {
 }
 
 String ProgEl::GetColText(const KeyString& key, int itm_idx) const {
-  String rval = inherited::GetColText(key, itm_idx);
-  return rval.elidedTo(taMisc::program_editor_width);
+  if (key == key_disp_name) {
+    String rval = GetDisplayName();
+    if(desc.nonempty())
+      rval +=  " // " + desc;
+    return rval;
+  }
+  return inherited::GetColText(key, itm_idx);
+  // return rval.elidedTo(taMisc::program_editor_width);
 }
 
 const String ProgEl::GetToolTip(const KeyString& key) const {

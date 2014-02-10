@@ -273,7 +273,8 @@ const String iTreeViewItem::GetColText(int col, const String& def) const
         rval = link->GetColText(key).elidedToFirstLine();
       else
         rval = link->GetColText(key).elidedTo(max_chars);
-    } else if (col == 0) { // use default name for col 0
+    }
+    else if (col == 0) { // use default name for col 0
       rval = link->GetDisplayName();
     }
   }

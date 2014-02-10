@@ -32,6 +32,7 @@
 #include <taMisc>
 #include <taiMisc>
 
+#include <Qt>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -42,7 +43,7 @@
 #include <QKeyEvent>
 #include <QSplitter>
 #include <QSizePolicy>
-#include <Qt>
+#include <QHeaderView>
 
 
 iProgramEditor::iProgramEditor(QWidget* parent)
@@ -155,19 +156,25 @@ void iProgramEditor::Init() {
   propsCodeSplitter->setStretchFactor(0, 0);
   propsCodeSplitter->setStretchFactor(1, 1);
 
-  items->setColumnCount(2);
+  items->setColumnCount(1);
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
   items->setHeaderText(0, "Program Item");
   items->setColumnWidth(0, 220);
-  items->setHeaderText(1, "Item Description");
+  // items->setHeaderText(1, "Item Description");
   items->setColKey(0, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
-  items->setColFormat(0, iTreeView::CF_ELIDE_TO_FIRST_LINE);
-  items->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
-  items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
+  // items->setColFormat(0, iTreeView::CF_ELIDE_TO_FIRST_LINE);
+#if (QT_VERSION >= 0x050000)
+  items->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#else
+  items->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#endif
+
+  // items->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
+  // items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
   // adjunct data, tooltips, etc.
   items->AddColDataKey(0, taBase::key_disp_name, Qt::ToolTipRole);
-  items->AddColDataKey(1, taBase::key_desc, Qt::ToolTipRole);
+  //  items->AddColDataKey(1, taBase::key_desc, Qt::ToolTipRole);
 
   //enable dnd support
   items->setDragEnabled(true);

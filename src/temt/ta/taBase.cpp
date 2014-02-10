@@ -2719,8 +2719,8 @@ const String taBase::GetToolTip(const KeyString& key) const {
   return GetColText(key);
 }
 
-String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
-       if (key == key_name) return GetName();
+String taBase::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == key_name) return GetName();
   else if (key == key_type) return GetTypeName();
   else if (key == key_type_desc) return GetTypeDef()->desc;
 // note: some classes override desc with dynamic desc's
