@@ -23,6 +23,7 @@
 #include <taSigLinkTaBase>
 
 // declare all other types mentioned but not required to include:
+class iLineEdit; //
 
 taTypeDef_Of(taiTreeNodeTaBase);
 
