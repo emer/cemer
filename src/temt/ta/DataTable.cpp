@@ -2078,6 +2078,63 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
   strm << endl;
 }
 
+void DataTable::ExportDataJSON(const String& fname) {
+  // note: don't get file name when exporting
+  taFiler* flr = GetSaveFiler(fname, ".json", false);
+  if (flr->ostrm) {
+    ExportDataJSON_impl(*flr->ostrm );
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void DataTable::ExportDataJSON_impl(ostream& strm)
+{
+  JSONNode root(JSON_NODE);
+  JSONNode columns(JSON_ARRAY);
+  columns.set_name("columns");
+  for (int i=0; i<data.size; i++) {
+    JSONNode aColumn(JSON_NODE);
+    DataCol* dc = data.FastEl(i);
+    aColumn.push_back(JSONNode("name", json_string(dc->name.chars())));
+    String val = ValTypeToStr(dc->valType());
+    aColumn.push_back(JSONNode("type", val.chars()));
+    JSONNode values(JSON_ARRAY);
+    values.set_name("values");
+    for (int j=0; j<rows; j++) {
+      switch (dc->valType()) {
+      case VT_STRING:
+        values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
+        break;
+      case VT_DOUBLE:
+        values.push_back(JSONNode("", dc->GetValAsDouble(j)));
+        break;
+      case VT_FLOAT:
+        values.push_back(JSONNode("", dc->GetValAsFloat(j)));
+        break;
+      case VT_INT:
+        values.push_back(JSONNode("", dc->GetValAsInt(j)));
+        break;
+      case VT_BYTE:
+        values.push_back(JSONNode("", dc->GetValAsByte(j)));
+        break;
+//      case VT_VARIANT:
+//        values.push_back(JSONNode("", dc->GetValAsVar(j)));
+//        break;
+      default:
+        values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
+        taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
+      }
+    }
+    aColumn.push_back(values);
+    columns.push_back(aColumn);
+  }
+  root.push_back(columns);
+  std::string theString = root.write_formatted();
+  strm << theString;
+  strm << endl;
+}
+
 void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str, bool row_mark) {
   for(int row=0;row <rows; row++) {
     SaveDataRow_strm(strm, row, delim, quote_str, row_mark);
@@ -2603,16 +2660,10 @@ void DataTable::ParseJSON(const JSONNode& n) {
       if (i->as_bool() == false)
         RemoveAllRows();
     }
-    else if (node_name == "columns") { // better would be to find column by name
-      taMisc::DebugInfo("columns");
-      int count = i->size();  // row count
-      taMisc::DebugInfo("count", (String)count);
-      if (count > this->rows) {
-        AddRows(count - this->rows);
-      }
+    else if (node_name == "columns") {
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
-        taMisc::DebugInfo("next column");
+        //        taMisc::DebugInfo("next column");
         const JSONNode aCol = *columns;
         ParseJSONColumn(aCol);
         columns++;
@@ -2632,16 +2683,15 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
   while (columnData != aCol.end()) {
     std::string node_name = columnData->name();
     if (node_name == "name") {
-      taMisc::DebugInfo("column name");
+      //      taMisc::DebugInfo("column name");
       columnName = columnData->as_string().c_str();
-     }
+    }
     else if (node_name == "type") {
-      taMisc::DebugInfo("column type", columnData->as_string().c_str());
-//      columnType = StrToValType(columnData->as_string().c_str());
+      //      taMisc::DebugInfo("column type", columnData->as_string().c_str());
       columnType = StrToValType((String)columnData->as_string().c_str());
     }
     else if (node_name == "values") {
-      taMisc::DebugInfo("column values");
+      //      taMisc::DebugInfo("column values");
       theValues = columnData->as_array();
     }
     columnData++;
@@ -2653,10 +2703,15 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
     dc = this->NewCol(columnType, columnName);
   }
 
+  int rowCount = theValues.size();  // row count
+  if (rowCount > this->rows) {
+    AddRows(rowCount - this->rows);
+  }
+
   JSONNode::const_iterator values = theValues.begin();
   int row = 0;
   while (values != theValues.end()) {
-    taMisc::DebugInfo(values->as_string().c_str());
+    //    taMisc::DebugInfo(values->as_string().c_str());
     dc->SetVal(values->as_string().c_str(), row);
     row++;
     values++;
@@ -2664,7 +2719,7 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
 }
 
 DataCol::ValType DataTable::StrToValType(String valTypeStr) {
-  if (valTypeStr == "string")
+  if (valTypeStr == "String")
     return VT_STRING;
   else if (valTypeStr == "int")
     return VT_INT;
