@@ -32,21 +32,21 @@ class TA_API ProgCode: public ProgEl {
   // generic program code where you can enter an expression in text and it will auto-convert to a known program element
 INHERITED(ProgEl)
 public:
-  ProgExpr              code;   // program code statement that will be converted into an appropriate program element if possible
+  ProgExpr     code;   // #BROWSER_EDIT_LOOKUP program code statement that will be converted into an appropriate program element if possible
 
   void         SetProgExprFlags() override;
   String       GetDisplayName() const override;
   String       GetToolbarName() const override { return "code"; }
   String       GetTypeDecoKey() const override { return "Comment"; }
 
-  virtual void          ConvertToProgEl();
+  virtual void ConvertToProgEl();
   // converts the code to an appropriate program element -- called in a delayed gui callback routine
-  bool                  CodeFromText(const String& code) override;
+  bool          BrowserEditSet(const String& code, int move_after=0) override;
 
-  static void           CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
+  static void  CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
                                          const String& code, ProgEl* scope_el);
   // #IGNORE
-  static ProgEl*        CvtCodeToProgEl(const String& code, ProgEl* scope_el);
+  static ProgEl* CvtCodeToProgEl(const String& code, ProgEl* scope_el);
   // convert code string to a program element -- NULL if cannot be converted
 
   PROGEL_SIMPLE_BASEFUNS(ProgCode);

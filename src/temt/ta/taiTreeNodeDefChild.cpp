@@ -55,9 +55,3 @@ void taiTreeNodeDefChild::DefChild_SigEmit(int sls, void* op1, void* op2) {
   SigEmit(sls, op1, op2);
 }
 
-void taiTreeNodeDefChild::itemEdited(int column) {
-  ProgEl* pel = dynamic_cast<ProgEl*>(tadata());
-  if(!pel) return;
-  String new_val = text(column);
-  pel->CodeFromText(new_val);
-}

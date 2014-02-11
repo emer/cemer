@@ -33,7 +33,7 @@ class TA_API IfElse: public ProgEl {
   // #AKA_If ##HAS_CONDTREE a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)
 public:
-  ProgExpr	    cond; 	// condition expression to test for true or false
+  ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
   bool		    show_false_code; // display the false_code, which is run when the cond condition is false -- forced to be true if there is any existing content in false_code
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false

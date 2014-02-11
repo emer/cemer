@@ -37,13 +37,17 @@ public:
   taiTreeNodeTaBase(taSigLinkTaBase* link_, MemberDef* md_, iTreeView* parent_,
     taiTreeNode* after, const String& tree_name, int dn_flags_ = 0);
   ~taiTreeNodeTaBase();
+
+  void          itemEdited(int column, int move_after = 0) override;
+  void          lookupKeyPressed(iLineEdit* le, int column) override;
+
 public: // ISigLinkClient interface
 //  void*      This() override {return (void*)this;}
   TypeDef*     GetTypeDef() const override {return &TA_taiTreeNodeTaBase;}
 protected:
   void         SigEmit_impl(int sls, void* op1, void* op2) override;
 private:
-  void                  init(taSigLinkTaBase* link_, int dn_flags_); // #IGNORE
+  void         init(taSigLinkTaBase* link_, int dn_flags_); // #IGNORE
 };
 
 #endif // taiTreeNodeTaBase_h

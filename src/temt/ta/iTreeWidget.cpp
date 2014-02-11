@@ -67,6 +67,7 @@ iTreeWidget::~iTreeWidget()
 }
 
 void  iTreeWidget::init() {
+  move_after_edit = 0;
   ext_select_on = false;
   m_sibling_sel = true;
   m_highlightRows = false;
@@ -75,7 +76,8 @@ void  iTreeWidget::init() {
   setAutoScroll(true);
   setDragDropMode(DragDrop);
 
-  setItemDelegate(new iTreeWidgetDefaultDelegate(this));
+  iTreeWidgetDefaultDelegate* del = new iTreeWidgetDefaultDelegate(this);
+  setItemDelegate(del);
 
   connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)),
     this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
@@ -349,6 +351,22 @@ bool iTreeWidget::selectItem(QTreeWidgetItem* itm, int column) {
   return true;
 }
 
+QTreeWidgetItem* iTreeWidget::getPrevItem(QTreeWidgetItem* itm, int n_up) const {
+  QModelIndex mi = indexFromItem(itm);
+  QModelIndex pi = mi.sibling(mi.row()-n_up, mi.column());
+  if(!pi.isValid())
+    return NULL;
+  return itemFromIndex(pi);
+}
+
+QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const {
+  QModelIndex mi = indexFromItem(itm);
+  QModelIndex pi = mi.sibling(mi.row()+n_dn, mi.column());
+  if(!pi.isValid())
+    return NULL;
+  return itemFromIndex(pi);
+}
+
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
 
@@ -402,7 +420,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       }
       break;
     case Qt::Key_F:
-      newCurrent = moveCursor(MoveRight, e->modifiers());
+      // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+      //   editItem(cur_item);     // todo: get column
+      // }
+      // else {
+        newCurrent = moveCursor(MoveRight, e->modifiers());
+      // }
       e->accept();
       break;
     case Qt::Key_B:
@@ -440,6 +463,18 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
+  // else {
+  //   switch (e->key()) {
+  //   case Qt::Key_Right:
+  //     if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+  //       editItem(cur_item);     // todo: get column
+  //       e->accept();
+  //       return;
+  //     }
+  //     break;
+  //   }
+  // }
+
   // esc interferes with dialog cancel and other such things
 //   if(event->key() == Qt::Key_Escape) {
 //     clearExtSelection();
@@ -513,7 +548,7 @@ void iTreeWidget::dragScroll() {
 }
 
 void iTreeWidget::itemWasEdited(const QModelIndex& index) const {
-  emit itemEdited(index);
+  emit itemEdited(index, move_after_edit);
 }
 
 void iTreeWidget::lookupKeyPressed(iLineEdit* le) const {
@@ -558,10 +593,49 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
   if (!editor)
     return false;
   iLineEdit* le = dynamic_cast<iLineEdit*>(editor);
-  if(le && event->type() == QEvent::FocusOut) {
-    if(le->in_lookup_fun)
-      return false;
+  if(!le) {
+    return inherited::eventFilter(object, event);
   }
-  return inherited::eventFilter(object, event);
+  if (event->type() == QEvent::KeyPress) {
+    switch (static_cast<QKeyEvent *>(event)->key()) {
+    case Qt::Key_Tab:
+      if(own_tree_widg) own_tree_widg->move_after_edit = 1;
+      emit commitData(editor);
+      emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+      return true;
+    case Qt::Key_Backtab:
+      if(own_tree_widg) own_tree_widg->move_after_edit = -1;
+      emit commitData(editor);
+      emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
+      return true;
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+      if(!le->hasAcceptableInput())
+        return false;
+      if(own_tree_widg) own_tree_widg->move_after_edit = 1;
+      emit commitData(editor);
+      emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
+      return false;             // don't filter the return
+    case Qt::Key_Escape:
+      // don't commit data
+      emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
+      break;
+    default:
+      return false;
+    }
+    if (editor->parentWidget())
+      editor->parentWidget()->setFocus();
+    return true;
+  }
+  else if (event->type() == QEvent::FocusOut) {
+    return false;               // never close for focus out
+  }
+  else if (event->type() == QEvent::ShortcutOverride) {
+    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape) {
+      event->accept();
+      return true;
+    }
+  }
+  return false;
 }
 

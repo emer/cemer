@@ -87,6 +87,7 @@ void FunctionCall::UpdateArgs() {
 
 bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('(')) return false;
+  if(code.startsWith("funcall ")) return true; // definitely
   String lhs = code.before('(');
   String funm = lhs;
   if(lhs.contains('='))
@@ -101,7 +102,10 @@ bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool FunctionCall::CvtFmCode(const String& code) {
-  String lhs = code.before('(');
+  String cd = code;
+  if(cd.startsWith("FunCall "))
+    cd = cd.after("FunCall ");
+  String lhs = cd.before('(');
   String funm = lhs;
   if(lhs.contains('='))
     funm = trim(lhs.after('='));
@@ -112,7 +116,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
   fun = fn;
   UpdateAfterEdit_impl();                          // update based on fun
   // now tackle the args
-  String args = trim(code.after('('));
+  String args = trim(cd.after('('));
   if(args.endsWith(')')) args = trim(args.before(')',-1));
   if(args.endsWith(';')) args = trim(args.before(';',-1));
   for(int i=0; i<fun_args.size; i++) {

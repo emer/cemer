@@ -34,7 +34,7 @@ class TA_API ForeachLoop: public Loop {
 INHERITED(Loop)
 public:
   ProgVarRef	    	el_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable that will represent each element in the list of items
-  ProgExprBase	    	in; 	// expression for container list of items to iterate over -- typically a [ ] selection over items in a List, Group, or Matrix
+  ProgExprBase	    	in; 	// #BROWSER_EDIT_LOOKUP expression for container list of items to iterate over -- typically a [ ] selection over items in a List, Group, or Matrix
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

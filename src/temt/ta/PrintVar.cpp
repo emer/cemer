@@ -95,10 +95,12 @@ String PrintVar::GetDisplayName() const {
 }
 
 bool PrintVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(!(code.startsWith("print ") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
+  if(!(code.startsWith("print ") || code.startsWith("print: ") ||
+       code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
+  else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   if(exprstr.contains('"')) {
@@ -118,6 +120,9 @@ bool PrintVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 bool PrintVar::CvtFmCode(const String& code) {
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
+  else if(code.startsWith("Print ")) exprstr = trim(code.after("Print "));
+  else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
+  else if(code.startsWith("Print: ")) exprstr = trim(code.after("Print: "));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   String msg;

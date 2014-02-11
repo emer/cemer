@@ -35,7 +35,7 @@ public:
   ProgVarRef		result_var;
   // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the expression (the variable)
   ProgExpr		expr;
-  // expression to assign to variable
+  // #BROWSER_EDIT_LOOKUP expression to assign to variable
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

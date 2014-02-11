@@ -32,7 +32,7 @@ class TA_API ForLoop: public Loop {
   // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
 INHERITED(Loop)
 public:
-  ProgExprBase	    	init; // initialization expression (e.g., 'i=0' -- can also declare a new variable, but you won't be able to access it in other program code)
+  ProgExprBase	    	init; // #BROWSER_EDIT_LOOKUP initialization expression (e.g., 'i=0' -- can also declare a new variable, but you won't be able to access it in other program code)
   ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
   ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
 

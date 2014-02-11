@@ -32,7 +32,7 @@ class TA_API WhileLoop: public Loop {
   // Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
 INHERITED(Loop)
 public:
-  ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
+  ProgExpr		test; // #BROWSER_EDIT_LOOKUP a test expression for whether to continue looping (e.g., 'i < max')
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

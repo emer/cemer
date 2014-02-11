@@ -63,8 +63,8 @@ public:
   virtual void		CreateChildren(); // creates the children, called automatically on expand if lazy_children; normally override _impl
   void 			UpdateLazyChildren(); // only call when you think child status may have changed, to add or remove the placeholder +
 
-  virtual void          itemEdited(int column) { };
-  // automatically called when an item is edited -- can get new text that was entered with text() function 
+  virtual void          itemEdited(int column, int move_after = 0) { };
+  // automatically called when an item is edited -- can get new text that was entered with text() function -- move_after is direction to move down (+1) or up (-1) or nowhere 0
   virtual void          lookupKeyPressed(iLineEdit* le, int column) { };
   // called by editor for lookup key
 

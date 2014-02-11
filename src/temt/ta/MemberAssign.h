@@ -32,7 +32,7 @@ class TA_API MemberAssign: public MemberProgEl {
   // set a member (attribute) on an object to a value given by an expression
 INHERITED(MemberProgEl)
 public:
-  ProgExpr		expr; // the expression to compute and assign to the member
+  ProgExpr		expr; // #BROWSER_EDIT_LOOKUP the expression to compute and assign to the member
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;

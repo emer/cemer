@@ -698,7 +698,6 @@ set(ta_HEADS_MAKETA_NOMOC
   taiTreeNodeDefChild_ElRef.h
   taiTreeNodeTypeItem.h
   taiTreeNodeTypeSpace.h
-  taiTreeNodeProgEl.h
 
   taiListNode.h
 
@@ -1791,7 +1790,6 @@ set(ta_SRCS_MAKETA
   taiTreeNodeDefChild_ElRef.cpp
   taiTreeNodeTypeItem.cpp
   taiTreeNodeTypeSpace.cpp
-  taiTreeNodeProgEl.cpp
 
   taiListNode.cpp
 

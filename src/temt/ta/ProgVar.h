@@ -162,6 +162,11 @@ public:
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
+  bool         BrowserEditEnable() override { return true; }
+  bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
+
+  virtual  String       CodeGetDesc(const String& code);
+  // get description (comment) from the code string -- returns code without the comment
 
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override; // don't save the unused vals
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;

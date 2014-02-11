@@ -31,7 +31,7 @@ class TA_API CssExpr: public ProgEl {
   // contains a direct css expression -- can be useful for more complex matrix code -- will be generated from ProgCode for any code that ends with semicolon.  unlike UserScript the variables here are tracked as normal
 INHERITED(ProgEl)
 public:
-  ProgExpr		expr;  // any valid css expression
+  ProgExpr		expr;  // #BROWSER_EDIT_LOOKUP any valid css expression -- must end in a semicolon
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

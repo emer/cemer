@@ -104,6 +104,7 @@ bool ProgEl::DynEnumProgVarFilter(void* base_, void* var_) {
 }
 
 void ProgEl::Initialize() {
+  edit_move_after = 0;
   flags = PEF_NONE;
   setUseStale(true);
 }
@@ -672,7 +673,6 @@ String ProgEl::GetColText(const KeyString& key, int itm_idx) const {
     return rval;
   }
   return inherited::GetColText(key, itm_idx);
-  // return rval.elidedTo(taMisc::program_editor_width);
 }
 
 const String ProgEl::GetToolTip(const KeyString& key) const {
@@ -690,18 +690,29 @@ bool ProgEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   return false;
 }
 
+bool ProgEl::CvtFmSavedCode() {
+  bool rval = CvtFmCode(orig_prog_code);
+  SigEmitUpdated();
+  return rval;
+}
+
 bool ProgEl::CvtFmCode(const String& code) {
   // nothing to initialize
   return true;
 }
 
-bool ProgEl::CodeFromText(const String& code) {
+bool ProgEl::BrowserEditSet(const String& code, int move_after) {
+  edit_move_after = 0;
   String cd = CodeGetDesc(code);
-  if(CanCvtFmCode(cd, NULL)) {
+  String chk_cd = cd;
+  chk_cd.downcase();
+  if(CanCvtFmCode(chk_cd, NULL)) {
     return CvtFmCode(cd);
   }
   orig_prog_code = cd;
-  return RevertToCode();
+  edit_move_after = move_after;
+  tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
+  return true;
 }
 
 String ProgEl::CodeGetDesc(const String& code) {
@@ -733,12 +744,8 @@ bool ProgEl::RevertToCode() {
   ProgCode* cvt = new ProgCode;
   cvt->desc = desc;
   cvt->code.expr = orig_prog_code;
-  tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
   int myidx = own->FindEl(this);
-  own->Insert(cvt, myidx); // insert at my position
   SetBaseFlag(BF_MISC4); // indicates that we're done..
-  this->CloseLater();      // kill me later..
-  tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
-  tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+  own->ReplaceLater(cvt, myidx, "");
   return true;
 }

@@ -29,9 +29,6 @@
 #include <taGroup_impl>
 #include <taArray_impl>
 
-// note: these are here for now, could be moved to a subclass if we want/need to
-#include <ProgEl>
-#include <taiTreeNodeProgEl>
 
 taSigLinkTaBase::taSigLinkTaBase(taBase* data_, taSigLink* &link_ref_)
   : inherited((void*)data_, link_ref_)
@@ -72,19 +69,10 @@ taiTreeNode* taSigLinkTaBase::CreateTreeDataNode_impl(MemberDef* md, taiTreeNode
   iTreeView* tvPar, taiTreeNode* after, const String& node_name, int dn_flags)
 {
   taiTreeNode* rval = NULL;
-  taBase* tab = data();
-  if(tab && tab->InheritsFrom(&TA_ProgEl)) { // todo: could make a whole different signlink, but is it really worth it??
-    if (nodePar)
-      rval = new taiTreeNodeProgEl(this, md, nodePar, after, node_name, dn_flags);
-    else
-      rval = new taiTreeNodeProgEl(this, md, tvPar, after, node_name, dn_flags);
-  }
-  else {
-    if (nodePar)
-      rval = new taiTreeNodeTaBase(this, md, nodePar, after, node_name, dn_flags);
-    else
-      rval = new taiTreeNodeTaBase(this, md, tvPar, after, node_name, dn_flags);
-  }
+  if (nodePar)
+    rval = new taiTreeNodeTaBase(this, md, nodePar, after, node_name, dn_flags);
+  else
+    rval = new taiTreeNodeTaBase(this, md, tvPar, after, node_name, dn_flags);
   return rval;
 }
 

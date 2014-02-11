@@ -35,7 +35,7 @@ public:
   ProgVarRef		var;
   // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to increment
   ProgExpr		expr;
-  // expression for how much to add to variable (use a negative sign to decrement)
+  // #BROWSER_EDIT_LOOKUP expression for how much to add to variable (use a negative sign to decrement)
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

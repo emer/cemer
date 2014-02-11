@@ -213,6 +213,7 @@ bool ProgramCall::LoadInitTarget_impl(const String& nm) {
 
 bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('(')) return false;
+  if(code.startsWith("call ")) return true; // definitely
   String lhs = code.before('(');
   String funm = lhs;
   if(lhs.contains('=')) return false; // no rval for progcall
@@ -226,7 +227,10 @@ bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool ProgramCall::CvtFmCode(const String& code) {
-  String lhs = code.before('(');
+  String cd = code;
+  if(cd.startsWith("Call "))
+    cd = cd.after("Call ");
+  String lhs = cd.before('(');
   String funm = lhs;
   taProject* proj = GET_OWNER(this, taProject);
   if(!proj) return false;
@@ -235,7 +239,7 @@ bool ProgramCall::CvtFmCode(const String& code) {
   target = prg;
   UpdateAfterEdit_impl();                          // update based on targ
   // now tackle the args
-  String args = trim(code.after('('));
+  String args = trim(cd.after('('));
   if(args.endsWith(')')) args = trim(args.before(')',-1));
   if(args.endsWith(';')) args = trim(args.before(';',-1));
   for(int i=0; i<prog_args.size; i++) {

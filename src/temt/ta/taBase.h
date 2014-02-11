@@ -1145,6 +1145,13 @@ public:
   // #CAT_Display collapse all sub-leaves under this item in the browser
   virtual void          BrowseMe();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #EDIT_READ_ONLY #CAT_Display show this object in its own browser
+  virtual bool          BrowserEditEnable() { return false; }
+  // #IGNORE is this item editable in the tree browser interface?
+  virtual String        BrowserEditString() { return GetDisplayName(); }
+  // #IGNORE the string representation to use for editing this item in the browser
+  virtual bool          BrowserEditSet(const String& new_val_str, int move_after = 0)
+  { return false; }
+  // #IGNORE browser edit calls this with new value string to update value of item when editing is applied -- return true if edit is successful -- move_after is direction to move after editing  (+1 - down 1, -1 up 1) -- only needed if the edit causes something to interfere with the normal flow of the editor (e.g., a new object is created), where the object then needs to recapitulate that movement
   virtual bool          GuiFindFromMe(const String& find_str="");
   // #CAT_Display activate the gui find dialog starting from this object, with given find string
   // #CAT_Display reshows any open edit dialogs for this object

@@ -17,11 +17,15 @@
 #include <Program>
 taTypeDef_Of(ProgCode);
 
+#include <taMisc>
+#include <tabMisc>
 
 void ProgEl_List::Initialize() {
   SetBaseType(&TA_ProgEl);
   el_typ = &TA_ProgCode;
   setUseStale(true);
+  el_to_repl = NULL;
+  el_to_repl_idx = 0;
 }
 
 void ProgEl_List::Destroy() {
@@ -111,4 +115,25 @@ bool ProgEl_List::RemoveIdx(int idx) {
     prog->brk_pts.DeleteBrkPt(pel);
   }
   return inherited::RemoveIdx(idx);
+}
+
+void ProgEl_List::ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl) {
+  el_to_repl = el;
+  el_to_repl_idx = idx;
+  el_to_repl_fun = fun_on_repl;
+  tabMisc::DelayedFunCall_gui(this, "DoReplaceLater");
+}
+
+void ProgEl_List::DoReplaceLater() {
+  if(!el_to_repl) {
+    taMisc::Warning("DoReplaceLater: nothing to replace!  Programmer error");
+    return;
+  }
+  ReplaceIdx(el_to_repl_idx, el_to_repl);
+  tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserExpandAll");
+  tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserSelectMe");
+  if(el_to_repl_fun.nonempty()) {
+    tabMisc::DelayedFunCall_gui(el_to_repl, el_to_repl_fun); 
+  }
+  el_to_repl = NULL;
 }

@@ -95,6 +95,11 @@ public:
     PRETTY                      // dump files should be more readable by humans
   };
 
+  enum NoviceExpert {
+    NOVICE,                      // novice mode -- default, for starting out
+    EXPERT,                      // expert mode -- select this to enable expert behavior 
+  };
+
   enum LoadVerbosity {
     QUIET,                      // don't say anything except errors
     VERSION_SKEW,               // display mismatches in names of objects in loading file that are likely due to changes in newer versions of the software
@@ -252,7 +257,7 @@ public:
   static int            css_gui_event_interval; // #SAVE #CAT_GUI #DEF_200 #EXPERT how many milliseconds between processing of gui events in css -- lower number = more responsive interface, but worse performance, while things are running
   static bool           delete_prompts;  //  #SAVE #CAT_GUI #EXPERT should a prompt be provided to confirm when deleting an item?  with the undo system available, this is not neccessary
   static int            tree_indent;    // #SAVE #CAT_GUI #EXPERT number of pixels to indent in the tree browser gui interface
-  static int            program_editor_width;   // #SAVE #CAT_GUI #EXPERT width in characters of the main listing field of the program editor -- if this is too large, then you can't see the description comments
+  static NoviceExpert   program_editor_mode;  // #SAVE #CAT_GUI #EXPERT mode for program editor behavior -- EXPERT mode hides the top mini-editor by default (just double-click on the splitter to get it back) and other advanced settings and behavior
   static int            program_editor_lines;   // #SAVE #CAT_GUI #EXPERT #MIN_4 #MAX_20 default number of lines in the mini editor within the program editor, where program elements and other objects are edited.
 
   static HelpDetail     help_detail;    // #SAVE #CAT_GUI #EXPERT level of detail to display in the help system

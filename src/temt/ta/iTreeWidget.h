@@ -31,6 +31,8 @@ class TA_API iTreeWidget: public QTreeWidget {
 INHERITED(QTreeWidget)
   Q_OBJECT
 public:
+  int           move_after_edit; // direction to move after edit
+
   bool		hasHighlightColor(int idx) const;
   void		setHighlightColor(int idx, const QColor& base);
     // synthesizes the darker highlight color
@@ -48,6 +50,10 @@ public:
   // get the model index of this item -- promoting this function to public
   bool          selectItem(QTreeWidgetItem* itm, int column = 0);
   // select given item
+  QTreeWidgetItem* getPrevItem(QTreeWidgetItem* itm, int n_up = 1) const;
+  // get the previous item in the tree before given itm, if avail
+  QTreeWidgetItem* getNextItem(QTreeWidgetItem* itm, int n_dn = 1) const;
+  // get the next item in the tree after given itm, if avail
 
   void 		resizeColumnsToContents(); // convenience: resizes all but last col
   virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
@@ -64,8 +70,8 @@ public:
   
 signals:
   void 		contextMenuRequested(QTreeWidgetItem* item, const QPoint& pos, int col);
-  void          itemEdited(const QModelIndex& index) const;
-  // signal when given item was edited -- emitted by itemWasEdited slot
+  void          itemEdited(const QModelIndex& index, int move_after = 0) const;
+  // signal when given item was edited -- emitted by itemWasEdited slot -- move_after is direction to move down (+1) or up (-1) or nowhere 0
 
 public slots:
   virtual void  itemWasEdited(const QModelIndex& index) const;

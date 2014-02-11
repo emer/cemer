@@ -752,6 +752,26 @@ cssEl* ProgVar::NewCssEl() {
   return &cssMisc::Void;
 }
 
+String ProgVar::CodeGetDesc(const String& code) {
+  if(code.contains("//")) {
+    desc = trim(code.after("//"));
+    return trim(code.before("//"));
+  }
+  if(code.contains("/*")) {
+    desc = trim(code.after("/*"));
+    if(desc.contains("*/"))
+      desc = trim(desc.before("*/",-1));
+    return trim(code.before("/*"));
+  }
+  return code;
+}
+
+bool ProgVar::BrowserEditSet(const String& code, int move_after) {
+  String cd = CodeGetDesc(code);
+  return true;
+}
+
+
 bool ProgVar::BrowserSelectMe() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return false;

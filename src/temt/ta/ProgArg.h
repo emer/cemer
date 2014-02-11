@@ -38,7 +38,7 @@ public:
   String                name; // #SHOW #READ_ONLY the name of the argument (automatically set from the target function)
   bool                  required; // #SHOW #READ_ONLY if a value is required (i.e., it is not a default argument)
   String                def_val; // #SHOW #READ_ONLY for default arguments, what will get passed by default -- this is for reference only (leave expr blank for default)
-  ProgExpr              expr; // the expression to compute and pass as the argument -- enter <no_arg> to specify a null or empty argument for program calls -- does not set this arg value
+  ProgExpr              expr; // #BROWSER_EDIT_LOOKUP the expression to compute and pass as the argument -- enter <no_arg> to specify a null or empty argument for program calls -- does not set this arg value
 
   virtual void          SetVarAsExpr(ProgVar* prog_var);
   // #DROP1 set given variable as the expression value for this arg
@@ -56,6 +56,8 @@ public:
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
+  bool         BrowserEditEnable() override { return true; }
+  bool         BrowserEditSet(const String& new_val, int move_after = 0) override;
 
   void  InitLinks();
   void  CutLinks();

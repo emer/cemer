@@ -40,7 +40,6 @@ void iLineEdit::init() {
   mmin_char_width = 0;
   mchar_width = 0;
   ext_select_on = false;
-  in_lookup_fun = false;
   // this seems unnecessary, and conflicts with ctrl-U select-all!
 //   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
 //   sc->setContext(Qt::WidgetShortcut);
@@ -72,7 +71,6 @@ void iLineEdit::focusInEvent(QFocusEvent* ev) {
     deselect();
     setCursorPosition(0);
   }
-  //  in_lookup_fun = false;
   // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
   // emit focusChanged(true);
@@ -253,7 +251,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
 }
 
 void iLineEdit::doLookup() {
-  in_lookup_fun = true;
   emit lookupKeyPressed(this);
 }
 

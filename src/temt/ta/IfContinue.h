@@ -31,7 +31,7 @@ class TA_API IfContinue: public ProgEl {
   // if condition is true, continue looping (skip any following code and loop back to top of loop) (can leave condition empty to just insert an unconditional continue)
 INHERITED(ProgEl)
 public:
-  ProgExpr		cond; 		// conditionalizing expression for continuing loop
+  ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for continuing loop
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

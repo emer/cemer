@@ -162,8 +162,8 @@ void iProgramEditor::Init() {
   items->setHeaderText(0, "Program Item");
   items->setEditTriggers(QAbstractItemView::DoubleClicked |
                          QAbstractItemView::SelectedClicked |
-                         QAbstractItemView::EditKeyPressed
-                         // QAbstractItemView::AnyKeyPressed |
+                         QAbstractItemView::EditKeyPressed |
+                         QAbstractItemView::AnyKeyPressed
                          // QAbstractItemView::CurrentChanged
                          );
   // items->setColumnWidth(0, 220);

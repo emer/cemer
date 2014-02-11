@@ -30,7 +30,7 @@ class TA_API UserScript: public ProgEl {
   // a user-defined css script (can access all program variables, etc)
 INHERITED(ProgEl)
 public:
-  ProgExpr		script;	// the css (C++ syntax) code to be executed
+  ProgExpr		script;	// #BROWSER_EDIT_LOOKUP the css (C++ syntax) code to be executed
 
  virtual void	    	ImportFromFile(std::istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
  virtual void	    	ExportToFile(std::ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file

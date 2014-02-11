@@ -15,6 +15,8 @@
 
 #include "iPanelOfProgram.h"
 #include <Program>
+#include <ProgCode>
+
 #include <iProgramEditor>
 #include <iTreeView>
 #include <iTreeViewItem>
@@ -22,8 +24,6 @@
 #include <ProgramToolBar>
 #include <taSigLinkItr>
 #include <iPanelSet>
-
-taTypeDef_Of(ProgCode);
 
 #include <taMisc>
 
@@ -127,14 +127,35 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
     // make sure our operations are finished
     taiMiscCore::ProcessEvents();
     // edit ProgCode but not other ProgEls, and tab into all other items
-    if(itm->InheritsFrom(&TA_ProgCode)) {
-      QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
-                                                     Qt::ControlModifier));
+    if(itm->InheritsFrom(&TA_ProgEl)) {
+      ProgEl* pel = (ProgEl*)itm;
+      if(pel->edit_move_after > 0) {
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+                                                       Qt::NoModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
+                                                       Qt::ControlModifier));
+        pel->edit_move_after = 0;
+      }
+      else if(pel->edit_move_after < 0) {
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
+                                                       Qt::NoModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
+                                                       Qt::ControlModifier));
+        pel->edit_move_after = 0;
+      }
+      else {
+        if(pel->InheritsFrom(&TA_ProgCode)) {
+          // auto edit prog code
+          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
+                                                         Qt::ControlModifier));
+        }
+      }
     }
-    else if(!itm->InheritsFrom(&TA_ProgEl)) {
-      QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab,
-                                                     Qt::NoModifier));
-    }
+    // else {
+    //   // auto edit in editor non prog-els -- though this might be dangerous
+    //   QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab,
+    //                                                  Qt::NoModifier));
+    // }
   }
   return (bool)iti;
 }

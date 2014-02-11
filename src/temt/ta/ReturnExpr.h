@@ -32,7 +32,7 @@ class TA_API ReturnExpr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr		expr;
-  // expression to return from function with (can be empty to return from a void function)
+  // #BROWSER_EDIT_LOOKUP expression to return from function with (can be empty to return from a void function)
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

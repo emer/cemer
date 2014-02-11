@@ -133,6 +133,10 @@ String ProgArg::GetDisplayName() const {
 //  return expr.expr;
 }
 
+bool ProgArg::BrowserEditSet(const String& code, int move_after) {
+  return true;
+}
+
 bool ProgArg::BrowserSelectMe() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return false;

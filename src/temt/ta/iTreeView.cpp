@@ -781,7 +781,7 @@ void iTreeView::setShow(TypeItem::ShowMembs value) {
 void iTreeView::itemWasEdited(const QModelIndex& index) const {
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
   if(item) {
-    item->itemEdited(index.column());
+    item->itemEdited(index.column(), move_after_edit);
   }
   inherited::itemEdited(index);
 }

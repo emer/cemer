@@ -31,7 +31,7 @@ class TA_API IfReturn: public ProgEl {
   // if condition is true, return (from void function or stop further execution of code or init segments of Program) (can leave condition empty to just insert an unconditional return)
 INHERITED(ProgEl)
 public:
-  ProgExpr		cond; 		// conditionalizing expression for returning
+  ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for returning
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

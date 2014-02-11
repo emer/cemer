@@ -59,6 +59,8 @@ class TA_API ProgEl: public taOBase {
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:
+  int          edit_move_after; // #IGNORE where to move after browser edit effects
+
   // Signature of following functions must match that of the item_filter_fun typedef.
   static bool           StdProgVarFilter(void* base, void* var);
   // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
@@ -149,13 +151,15 @@ public:
   // special temporary function to set flags for any ProgExpr objects -- needed for new css parsing and loading of old projects which saved these flags causes errors, so this fixes that.. todo: remove me after a few releases (introduced in 4.0.10)
 
   virtual  bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start -- scope_el provides scope information for relevant variables etc where this new prog el would be created -- use FindVarNameInScope etc on that obj
+  // #IGNORE can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start -- scope_el provides scope information for relevant variables etc where this new prog el would be created -- use FindVarNameInScope etc on that obj
   virtual  bool         CvtFmCode(const String& code);
-  // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
-  virtual  bool         CodeFromText(const String& code);
-  // new code has been entered for this element, typically from user entering text into the text editor -- attempt to update us based on this code, or switch to another type as needed
+  // #IGNORE go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
+  virtual  bool         CvtFmSavedCode();
+  // call CvtFmCode on orig_prog_code string -- for a callback
+  bool                  BrowserEditEnable() override { return true; }
+  bool                  BrowserEditSet(const String& code, int move_after = 0) override;
   virtual  String       CodeGetDesc(const String& code);
-  // get description (comment) from the code string -- returns code without the comment
+  // #IGNORE get description (comment) from the code string -- returns code without the comment
 
   virtual  bool         IsCtrlProgEl()  { return false; }
   // set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
@@ -185,7 +189,7 @@ public:
 protected:
   void         UpdateAfterEdit_impl() override;
   void         UpdateAfterMove_impl(taBase* old_owner) override;
-  virtual void          UpdateAfterCopy(const ProgEl& cp);
+  virtual void UpdateAfterCopy(const ProgEl& cp);
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
   void         CheckError_msg(const char* a, const char* b=0, const char* c=0,
                                        const char* d=0, const char* e=0, const char* f=0,

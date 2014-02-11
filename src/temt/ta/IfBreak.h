@@ -31,7 +31,7 @@ class TA_API IfBreak: public ProgEl {
   // if condition is true, break out of current loop (can leave condition empty to just insert an unconditional break
 INHERITED(ProgEl)
 public:
-  ProgExpr		cond; 		// conditionalizing expression for breaking loop
+  ProgExpr		cond; 		// #BROWSER_EDIT_LOOKUP conditionalizing expression for breaking loop
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;

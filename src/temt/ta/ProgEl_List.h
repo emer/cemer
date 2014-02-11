@@ -50,9 +50,19 @@ public:
 
   bool         RemoveIdx(int idx) override;   // override to delete brk_pt before ProgEl is removed
 
+  void          ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl = "");
+  // #IGNORE replace an el into given location, and optionally do a delayed function call on new replacement guy
+
+  void          DoReplaceLater();
+  // actually do the later replacement that was setup earlier
+
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 protected:
+  ProgEl*       el_to_repl;  // element to replace with another
+  int           el_to_repl_idx; // index of where to replace
+  String        el_to_repl_fun; // function name to call
+
   void         UpdateAfterEdit_impl() override;
 private:
   void  Copy_(const ProgEl_List& cp);

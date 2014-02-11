@@ -54,7 +54,9 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
   }
   else {
-    CvtCodeCheckType(candidates, &TA_ProgEl, code_str, scope_el);
+    String check_code = code_str;
+    check_code.downcase();        // check only on lowercase
+    CvtCodeCheckType(candidates, &TA_ProgEl, check_code, scope_el);
     if(candidates.size == 0)
       return NULL;
   }
@@ -94,7 +96,8 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   return rval;
 }
 
-bool ProgCode::CodeFromText(const String& code_str) {
+bool ProgCode::BrowserEditSet(const String& code_str, int move_after) {
+  edit_move_after = move_after;
   code.expr = CodeGetDesc(code_str);
   if(code.expr.nonempty()) {
     tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
@@ -114,23 +117,14 @@ void ProgCode::ConvertToProgEl() {
   if(proj) {
     proj->undo_mgr.SaveUndo(own, "ProgCodeCvt", own, false, own); 
   }
+  cvt->edit_move_after = edit_move_after; // these are the ones who need it
+  edit_move_after = 0;
   cvt->desc = desc;         // transfer description
   cvt->orig_prog_code = code_str;
   cvt->SetProgFlag(CAN_REVERT_TO_CODE);
-  tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
   int myidx = own->FindEl(this);
-  own->Insert(cvt, myidx); // insert at my position
-  bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
-  if(ok) {
-    SetBaseFlag(BF_MISC4); // indicates that we're done..
-    this->CloseLater();      // kill me later..
-    tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
-    tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
-  }
-  else {
-    own->RemoveIdx(myidx); // remove it!
-    tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
-  }
+  own->ReplaceLater(cvt, myidx, "CvtFmSavedCode");
+  SetBaseFlag(BF_MISC4); // indicates that we're done..
 }
 
 void ProgCode::UpdateAfterEdit_impl() {
