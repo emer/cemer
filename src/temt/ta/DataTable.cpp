@@ -2118,9 +2118,9 @@ void DataTable::ExportDataJSON_impl(ostream& strm)
       case VT_BYTE:
         values.push_back(JSONNode("", dc->GetValAsByte(j)));
         break;
-//      case VT_VARIANT:
-//        values.push_back(JSONNode("", dc->GetValAsVar(j)));
-//        break;
+      case VT_VARIANT:
+        values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
+        break;
       default:
         values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
         taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
@@ -2711,8 +2711,29 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
   JSONNode::const_iterator values = theValues.begin();
   int row = 0;
   while (values != theValues.end()) {
-    //    taMisc::DebugInfo(values->as_string().c_str());
-    dc->SetVal(values->as_string().c_str(), row);
+    switch (columnType) {
+     case VT_STRING:
+       dc->SetValAsString(values->as_string().c_str(), row);
+       break;
+     case VT_DOUBLE:
+       dc->SetValAsDouble(values->as_float(), row);
+       break;
+     case VT_FLOAT:
+       dc->SetValAsFloat(values->as_float(), row);
+       break;
+     case VT_INT:
+       dc->SetValAsInt(values->as_int(), row);
+       break;
+     case VT_BYTE:
+       dc->SetValAsInt(values->as_int(), row);
+       break;
+     case VT_VARIANT:
+       dc->SetValAsVar(values->as_string().c_str(), row);
+       break;
+     default:
+       dc->SetValAsString(values->as_string().c_str(), row);
+       taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+     }
     row++;
     values++;
   }
@@ -2729,6 +2750,8 @@ DataCol::ValType DataTable::StrToValType(String valTypeStr) {
     return VT_DOUBLE;
   else if (valTypeStr == "byte")
     return VT_BYTE;
+  else if (valTypeStr == "var")
+    return VT_VARIANT;
   else {
     taMisc::Info("DataTable::StrToValType -- json column type string not found -- using variant type");
     return VT_VARIANT;  // best we can do - should also print out info message
