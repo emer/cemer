@@ -17,6 +17,7 @@
 #include <taProject>
 #include <MethodDef>
 #include <taiWidgetActions>
+#include <Program>
 
 #include <taMisc>
 #include <taiMisc>

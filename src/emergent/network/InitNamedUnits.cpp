@@ -20,6 +20,7 @@
 #include <T3Panel>
 #include <DynEnumType>
 #include <DataTable>
+#include <Program>
 
 #include <tabMisc>
 #include <taMisc>

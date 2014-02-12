@@ -21,7 +21,7 @@
 
 // member includes:
 #include <ProgLib>
-#include <Program>
+#include <ProgramRef>
 
 // declare all other types mentioned but not required to include:
 class taBase; // 
@@ -33,6 +33,13 @@ class TA_API Program_Group : public taGroup<Program> {
   // ##EXT_progp ##FILETYPE_ProgramGroup #CAT_Program ##EXPAND_DEF_2 a collection of programs sharing common global variables and a control panel interface
 INHERITED(taGroup<Program>)
 public:
+  enum ProgLibs {               // program library locations: must be sync'd with Program
+    USER_LIB,                   // user's personal library
+    SYSTEM_LIB,                 // local system library
+    WEB_LIB,                    // web-based library
+    SEARCH_LIBS,                // search through the libraries (for loading)
+  };
+
   String                tags;
   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String                desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
@@ -46,7 +53,7 @@ public:
   taBase* NewFromLibByName(const String& prog_nm);
   // #CAT_Program create a new program from a library of existing program types, looking up by name (NULL if name not found)
 
-  void          SaveToProgLib(Program::ProgLibs library = Program::USER_LIB);
+  void          SaveToProgLib(ProgLibs library = USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_Program save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void  LoadFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #ARG_VAL_FM_FUN #CAT_Program (re)load the program from the program library element of given type

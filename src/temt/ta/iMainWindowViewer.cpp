@@ -46,6 +46,7 @@
 #include <iTextBrowser>
 #include <iWidget_List>
 #include <iRect>
+#include <Program>
 
 #include <taMisc>
 #include <taiMisc>

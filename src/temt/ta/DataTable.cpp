@@ -15,6 +15,7 @@
 
 #include "DataTable.h"
 #include <iDataTableModel>
+#include <Program>
 #include <taFiler>
 #include <ChannelSpec>
 #include <CellRange>

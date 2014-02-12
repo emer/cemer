@@ -17,6 +17,7 @@
 #include <ProjectBase>
 #include <Network>
 #include <DataTable>
+#include <Program>
 #include <StdNetWizDlg>
 #include <RetinaProc>
 #include <LayerWriter>

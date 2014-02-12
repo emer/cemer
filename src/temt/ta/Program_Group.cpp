@@ -13,6 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#include <Program>
 #include "Program_Group.h"
 #include <taMisc>
 
@@ -45,8 +46,8 @@ void Program_Group::Copy_(const Program_Group& cp) {
   desc = cp.desc;
 }
 
-void Program_Group::SaveToProgLib(Program::ProgLibs library) {
-  String path = Program::GetProgLibPath(library);
+void Program_Group::SaveToProgLib(ProgLibs library) {
+  String path = Program::GetProgLibPath((Program::ProgLibs)library);
   String fname = path + "/" + name + ".progp";
   QFileInfo qfi(fname);
   if(qfi.isFile()) {

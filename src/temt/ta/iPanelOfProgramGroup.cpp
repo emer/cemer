@@ -17,7 +17,7 @@
 #include <Program_Group>
 #include <iTreeViewItem>
 #include <iProgramEditor>
-
+#include <Program>
 
 
 void iPanelOfProgramGroup::items_CustomExpandFilter(iTreeViewItem* item,

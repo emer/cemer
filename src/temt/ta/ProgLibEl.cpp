@@ -18,7 +18,7 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
-
+#include <Program>
 
 #include <QFileInfo>
 #include <QDateTime>

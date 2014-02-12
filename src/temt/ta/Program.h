@@ -92,7 +92,7 @@ public:
     SR_ERROR,                   // some form of runtime error occurred -- stop_msg has text
   };
 
-  enum ProgLibs {
+  enum ProgLibs {               // program library locations: must be sync'd with Program_Group
     USER_LIB,                   // user's personal library
     SYSTEM_LIB,                 // local system library
     WEB_LIB,                    // web-based library

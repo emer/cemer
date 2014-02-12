@@ -32,6 +32,7 @@
 #include <iNetworkAccessManager>
 #include <taGenDoc>
 #include <taCodeUtils>
+#include <Program>
 
 taTypeDef_Of(PluginWizard);
 

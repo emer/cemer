@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ProgramCallVar.h"
+#include <Program>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ProgramCallVar);
