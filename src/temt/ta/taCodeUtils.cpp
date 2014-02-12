@@ -85,7 +85,8 @@ bool taCodeUtils::CreateNewSrcFiles(const String& type_nm, const String& top_pat
   }
   else {
     String str = crstr;
-    str << "\n#include \"" << type_nm << ".h\"\n\n";
+    str << "\n#include \"" << type_nm << ".h\"\n\n"
+        << "TA_BASEFUNS_CTORS_DEFN(" << type_nm << ");\n\n";
     str.SaveToFile(cppfile);
     taMisc::ExecuteCommand("svn add " + cppfile);
     got_one = true;
