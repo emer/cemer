@@ -58,9 +58,9 @@
 
 #ifdef USE_SSE8
 #include "vectorclass.h"
+#endif
 
 TA_BASEFUNS_CTORS_DEFN(taMath_float);
-#endif
 
 bool taMath_float::isnan(float val) {
 #ifdef TA_OS_WIN

@@ -28,10 +28,10 @@
 #include <QXmlStreamReader>
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
+#endif
 
 TA_BASEFUNS_CTORS_DEFN(taMediaWiki);
 
-#endif
 namespace { // anonymous
   // Find the next element in the XML stream, regardless of nesting level.
   bool findNextElement(QXmlStreamReader &reader, const char *element)
