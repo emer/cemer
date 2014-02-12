@@ -15,6 +15,8 @@
 
 #include "taGuiLayout_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taGuiLayout_List);
+
 void taGuiLayout_List::Initialize() {
   SetBaseType(&TA_taGuiLayout);
 }

@@ -15,6 +15,8 @@
 
 #include "DataGroupEl.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataGroupEl);
+
 
 void DataGroupEl::Initialize() {
 }

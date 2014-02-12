@@ -16,6 +16,8 @@
 #include "Voxel_List.h"
 #include <Voxel>
 
+TA_BASEFUNS_CTORS_DEFN(Voxel_List);
+
 // void  Voxel_List::Initialize() {
 //   SetBaseType(&TA_Voxel);
 // }

@@ -16,6 +16,8 @@
 #include "taPluginDep.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taPluginDep);
+
 
 void taPluginDep::Initialize() {
   dep_check = DC_OK;

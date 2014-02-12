@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(FgBoWedgeGpPrjnSpec);
+
 void FgBoWedgeGpPrjnSpec::Initialize() {
   wrap = true;
   init_wts = true;

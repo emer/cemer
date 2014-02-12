@@ -17,6 +17,8 @@
 #include <int_Matrix>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(MatrixIndex);
+
 using namespace std;
 
 MatrixIndex::MatrixIndex(int init_n_dims) {

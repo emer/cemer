@@ -15,8 +15,11 @@
 
 #include "DoGRegionSpec.h"
 #include <taProject>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(DoGRegionSpec);
 
 
 // for thread function calling:

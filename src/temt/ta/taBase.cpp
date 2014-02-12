@@ -19,6 +19,7 @@
 #include <MemberDef>
 #include <taBase_PtrList>
 #include <taObjDiff_List>
+#include <taProject>
 #include <taDoc>
 #include <SelectEdit>
 #include <MethodDef>
@@ -42,6 +43,7 @@
 #include <int_Matrix>
 #include <byte_Matrix>
 #include <slice_Matrix>
+#include <String_Matrix>
 #include <MainWindowViewer>
 #include <taiEdit>
 #include <ViewColor_List>

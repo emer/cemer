@@ -15,6 +15,8 @@
 
 #include "PluginMakeThreadMgr.h"
 
+TA_BASEFUNS_CTORS_DEFN(PluginMakeThreadMgr);
+
 taTypeDef_Of(PluginMakeTask);
 
 void PluginMakeThreadMgr::Initialize() {

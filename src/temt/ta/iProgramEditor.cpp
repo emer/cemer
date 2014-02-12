@@ -27,6 +27,7 @@
 #include <iSplitter>
 #include <taiWidgetPoly>
 #include <taProject>
+#include <BuiltinTypeDefs>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -155,6 +156,10 @@ void iProgramEditor::Init() {
 
   propsCodeSplitter->setStretchFactor(0, 0);
   propsCodeSplitter->setStretchFactor(1, 1);
+
+  if(taMisc::program_editor_mode == taMisc::EXPERT) {
+    propsCodeSplitter->collapseToggle(0);
+  }
 
   items->setColumnCount(1);
   items->setSortingEnabled(false);// only 1 order possible

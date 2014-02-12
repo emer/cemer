@@ -17,6 +17,8 @@
 #include <Network>
 #include <int_Array>
 
+TA_BASEFUNS_CTORS_DEFN(TiledGpMapConvergePrjnSpec);
+
 
 void TiledGpMapConvergePrjnSpec::Initialize() {
   send_tile_size = 4;

@@ -16,6 +16,10 @@
 #include "GraphPlotView.h"
 #include <T3GraphLine>
 
+TA_BASEFUNS_CTORS_DEFN(GraphPlotView);
+
+TA_BASEFUNS_CTORS_DEFN(GraphPlotView_List);
+
 
 void GraphPlotView::Initialize() {
   axis = Y;

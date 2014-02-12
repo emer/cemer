@@ -18,6 +18,7 @@
 #include <MainWindowViewer>
 #include <ProgVar>
 #include <TemtServer>
+#include <DataTable>
 
 #include <taMisc>
 #include <tabMisc>
@@ -27,6 +28,8 @@
 #include <QTimer>
 
 #include <sstream>
+
+TA_BASEFUNS_CTORS_DEFN(TemtClient);
 
 using namespace std;
 

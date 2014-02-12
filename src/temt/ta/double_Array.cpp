@@ -15,4 +15,6 @@
 
 #include "double_Array.h"
 
+TA_BASEFUNS_CTORS_DEFN(double_Array);
+
 const double double_Array::blank = 0.0;

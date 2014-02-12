@@ -17,6 +17,8 @@
 
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(LearnDriverLayerSpec);
+
 void LearnDriverLayerSpec::Initialize() {
   learn_thr = 0.1f;
 }

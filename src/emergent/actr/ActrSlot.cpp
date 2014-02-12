@@ -21,6 +21,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ActrSlot);
+
 void ActrSlot::Initialize() {
   flags = SF_NONE;
   val_type = LITERAL;

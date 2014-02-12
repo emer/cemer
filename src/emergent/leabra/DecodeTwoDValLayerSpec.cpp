@@ -16,6 +16,8 @@
 #include "DecodeTwoDValLayerSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(DecodeTwoDValLayerSpec);
+
 void DecodeTwoDValLayerSpec::Initialize() {
 }
 

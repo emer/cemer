@@ -15,6 +15,8 @@
 
 #include "taDateTime.h"
 
+TA_BASEFUNS_CTORS_DEFN(taDateTime);
+
 void taDateTime::Initialize() {
   secs_1jan_1970 = 0;
 }

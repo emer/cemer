@@ -16,6 +16,8 @@
 #include "UniformRndPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(UniformRndPrjnSpec);
+
 void UniformRndPrjnSpec::Initialize() {
   p_con = .25;
   sym_self = true;

@@ -15,6 +15,8 @@
 
 #include "PosVector3i.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(PosVector3i);
+
 void PosVector3i::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   SetGtEq(0);

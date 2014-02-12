@@ -16,6 +16,8 @@
 #include "taFBase.h"
 #include <QFileInfo>
 
+TA_BASEFUNS_CTORS_DEFN(taFBase);
+
 bool taFBase::SetFileName(const String& val) {
   QFileInfo fi(val);
   //note: canonical paths only available if file actually exists...

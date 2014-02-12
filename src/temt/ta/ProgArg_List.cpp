@@ -19,6 +19,8 @@
 #include <MethodDef>
 #include <BuiltinTypeDefs>
 
+TA_BASEFUNS_CTORS_DEFN(ProgArg_List);
+
 
 void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);

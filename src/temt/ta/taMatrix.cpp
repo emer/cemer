@@ -34,6 +34,8 @@
 
 #include <cmath>
 
+TA_BASEFUNS_CTORS_DEFN(taMatrix);
+
 using namespace std;
 
 bool taMatrix::GeomIsValid(int dims_, const int geom_[],

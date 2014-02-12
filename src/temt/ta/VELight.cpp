@@ -17,6 +17,8 @@
 
 #include <Inventor/SbLinear.h>
 
+TA_BASEFUNS_CTORS_DEFN(VELight);
+
 void VELight::Initialize() {
   flags = (BodyFlags)(FIXED | NO_COLLIDE | EULER_ROT);
   light_type = DIRECTIONAL_LIGHT;

@@ -15,6 +15,8 @@
 
 #include "byte_Matrix.h"
 
+TA_BASEFUNS_CTORS_DEFN(byte_Matrix);
+
 const unsigned char byte_Matrix::blank = '\0';
 
 bool byte_Matrix::StrValIsValid(const String& str, String* err_msg) const {

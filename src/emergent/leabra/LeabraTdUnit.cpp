@@ -15,6 +15,8 @@
 
 #include "LeabraTdUnit.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraTdUnit);
+
 void LeabraTdUnit::Initialize() {
   p_act_m = -.01f;
   p_act_p = -.01f;

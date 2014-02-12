@@ -15,6 +15,8 @@
 
 #include "taUndoRec_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taUndoRec_List);
+
 void taUndoRec_List::Initialize() {
   SetBaseType(&TA_taUndoRec);
   st_idx = 0;

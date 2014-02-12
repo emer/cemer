@@ -15,6 +15,8 @@
 
 #include "T3SavedView_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(T3SavedView_List);
+
 void T3SavedView_List::Initialize() {
   SetBaseType(&TA_T3SavedView);
 }

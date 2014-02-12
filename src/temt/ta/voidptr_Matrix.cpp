@@ -15,6 +15,8 @@
 
 #include "voidptr_Matrix.h"
 
+TA_BASEFUNS_CTORS_DEFN(voidptr_Matrix);
+
 const void* voidptr_Matrix::blank = 0;
 
 bool voidptr_Matrix::StrValIsValid(const String& str, String* err_msg) const {

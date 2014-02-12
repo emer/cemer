@@ -22,8 +22,11 @@
 #include <taMath_double>
 #include <DataSelectSpec>
 #include <taDataProc>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(NetMonItem);
 
 taTypeDef_Of(UserDataItem);
 
@@ -1016,7 +1019,7 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   return true;
 }
 
-void NetMonItem::GetMonVals(DataBlock* db) {
+void NetMonItem::GetMonVals(DataTable* db) {
   if ((!db) || variable.empty())  return;
   if(computed) {
     if(data_agg) {
@@ -1053,7 +1056,7 @@ void NetMonItem::GetMonVals(DataBlock* db) {
   }
 }
 
-void NetMonItem::GetMonVals_Agg(DataBlock* db) {
+void NetMonItem::GetMonVals_Agg(DataTable* db) {
   if ((!db) || variable.empty() || computed)  return;
 
   if(TestError(agg_specs.size != val_specs.size, "GetMonVals_Agg",
@@ -1083,7 +1086,7 @@ void NetMonItem::GetMonVals_Agg(DataBlock* db) {
   }
 }
 
-void NetMonItem::GetMonVals_DataAgg(DataBlock* db) {
+void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
   if(!db || !data_src || agg_col.col_name.empty())  return;
 
   if(TestError(val_specs.size != 1, "GetMonVals_DataAgg",

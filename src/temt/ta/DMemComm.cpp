@@ -15,6 +15,8 @@
 
 #include "DMemComm.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(DMemComm);
+
 #ifdef DMEM_COMPILE
 
 #include <taMisc>

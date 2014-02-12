@@ -15,6 +15,10 @@
 
 #include "DataCalcCopyCommonCols.h"
 #include <DataCalcLoop>
+#include <Program>
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(DataCalcCopyCommonCols);
 
 
 

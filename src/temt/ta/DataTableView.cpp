@@ -25,6 +25,8 @@
 
 #include <Inventor/nodes/SoFont.h>
 
+TA_BASEFUNS_CTORS_DEFN(DataTableView);
+
 void DataTableView::Initialize() {
   data_base = &TA_DataTable;
   view_rows = 3; //note: set by actual class based on screen

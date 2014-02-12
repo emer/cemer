@@ -16,6 +16,8 @@
 #include "PFCLVPrjnSpec.h"
 #include <LeabraLayer>
 
+TA_BASEFUNS_CTORS_DEFN(PFCLVPrjnSpec);
+
 void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
 

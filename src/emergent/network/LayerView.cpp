@@ -33,6 +33,8 @@
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/nodes/SoTransform.h>
 
+TA_BASEFUNS_CTORS_DEFN(LayerView);
+
 void LayerView::Initialize() {
   data_base = &TA_Layer;
   disp_mode = DISP_UNITS;

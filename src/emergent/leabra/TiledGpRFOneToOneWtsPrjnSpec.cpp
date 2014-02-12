@@ -16,6 +16,8 @@
 #include "TiledGpRFOneToOneWtsPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOneWtsPrjnSpec);
+
 
 void TiledGpRFOneToOneWtsPrjnSpec::Initialize() {
   one_to_one_wt = 0.8f;

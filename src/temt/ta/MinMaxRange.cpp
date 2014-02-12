@@ -15,3 +15,5 @@
 
 #include "MinMaxRange.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(MinMaxRange);
+

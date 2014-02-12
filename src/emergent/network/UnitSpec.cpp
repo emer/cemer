@@ -18,6 +18,9 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(UnitSpec);
+TA_BASEFUNS_CTORS_LITE_DEFN(UnitSpec_SPtr);
+
 void UnitSpec::Initialize() {
   min_obj_type = &TA_Unit;
   act_range.max = 1.0f; act_range.min = 0.0f;

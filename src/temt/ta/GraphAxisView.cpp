@@ -20,6 +20,8 @@
 
 #include <Inventor/nodes/SoComplexity.h>
 
+TA_BASEFUNS_CTORS_DEFN(GraphAxisView);
+
 void GraphAxisView::Initialize() {
   row_num = false;
 }

@@ -15,3 +15,5 @@
 
 #include "LeabraUnit_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraUnit_Group);
+

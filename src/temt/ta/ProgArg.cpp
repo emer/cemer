@@ -17,6 +17,8 @@
 #include <Program>
 #include <BuiltinTypeDefs>
 
+TA_BASEFUNS_CTORS_DEFN(ProgArg);
+
 
 void ProgArg::Initialize() {
   arg_type = NULL;

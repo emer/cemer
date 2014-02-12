@@ -17,6 +17,8 @@
 #include <DynEnumType>
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(DynEnumItem);
+
 void DynEnumItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(Program::IsForbiddenName(name)) {

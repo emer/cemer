@@ -27,6 +27,8 @@ void taAudioProc::Destroy() {
 #include <ApplicationServices/ApplicationServices.h>
 //#include <SpeechSynthesis.h>
 
+TA_BASEFUNS_CTORS_DEFN(taAudioProc);
+
 bool taAudioProc::SpeakText(const String& text) {
   // todo: should use the newer interface: SpeakCFString
   CFStringRef cfstr = CFStringCreateWithCString(NULL, text.chars(), kCFStringEncodingMacRoman);

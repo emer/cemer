@@ -18,6 +18,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(VEMuscleJoint);
+
 
 void VEMuscleJoint::Initialize() {
   joint_type = HINGE;

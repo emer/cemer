@@ -48,6 +48,10 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 
+TA_BASEFUNS_CTORS_DEFN(BrainViewParams);
+
+TA_BASEFUNS_CTORS_DEFN(BrainView);
+
 void BrainViewParams::Initialize() {
   unit_trans = 0.6f;
   net_name = .05f;

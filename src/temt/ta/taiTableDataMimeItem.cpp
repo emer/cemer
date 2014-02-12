@@ -24,6 +24,8 @@
 
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(taiTableDataMimeItem);
+
 using namespace std;
 
 

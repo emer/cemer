@@ -20,6 +20,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PVLVTonicDaLayerSpec);
+
 
 void PVLVTonicDaLayerSpec::Initialize() {
   SetUnique("decay", true);

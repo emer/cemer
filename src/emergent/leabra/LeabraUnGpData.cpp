@@ -15,6 +15,8 @@
 
 #include "LeabraUnGpData.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraUnGpData);
+
 void LeabraUnGpData::Initialize() {
   Inhib_Initialize();
 }

@@ -15,6 +15,10 @@
 
 #include "FastWtConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(FastWtSpec);
+
+TA_BASEFUNS_CTORS_DEFN(FastWtConSpec);
+
 void FastWtSpec::Initialize() {
   lrate = .05f;
   use_lrs = false;

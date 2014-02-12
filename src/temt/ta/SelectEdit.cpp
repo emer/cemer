@@ -23,6 +23,8 @@ taTypeDef_Of(taProject);
 #include <SigLinkSignal>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(SelectEdit);
+
 
 
 void SelectEdit::StatSigEmit_Group(taGroup_impl* grp, int sls,

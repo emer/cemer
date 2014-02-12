@@ -13,5 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#include <DataTable>
 #include "DataTable_Group.h"
+
+TA_BASEFUNS_CTORS_DEFN(DataTable_Group);
 

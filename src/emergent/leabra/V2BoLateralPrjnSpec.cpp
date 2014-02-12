@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(V2BoLateralPrjnSpec);
+
 
 void V2BoLateralPrjnSpec::Initialize() {
   init_wts = true;

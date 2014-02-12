@@ -17,6 +17,8 @@
 #include <taMisc>
 #include <String_Array>
 
+TA_BASEFUNS_CTORS_DEFN(String_Matrix);
+
 using namespace std;
 
 const String String_Matrix::blank;

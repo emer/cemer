@@ -17,6 +17,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(Weights);
+
 void Weights::Initialize() {
   batch = 0;
   epoch = 0;

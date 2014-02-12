@@ -19,6 +19,8 @@
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 
+TA_BASEFUNS_CTORS_DEFN(T3SavedView);
+
 
 void T3SavedView::Initialize() {
   view_saved = false;

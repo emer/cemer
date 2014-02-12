@@ -23,6 +23,8 @@
 #include <taBase>
 #include <ProgElChoiceDlg>
 
+TA_BASEFUNS_CTORS_DEFN(ProgVar_List);
+
 void ProgVar_List::Initialize() {
   SetBaseType(&TA_ProgVar);
   var_context = VC_ProgVars;

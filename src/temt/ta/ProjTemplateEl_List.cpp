@@ -15,6 +15,8 @@
 
 #include "ProjTemplateEl_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ProjTemplateEl_List);
+
 void ProjTemplateEl_List::Initialize() {
 }
 

@@ -15,6 +15,8 @@
 
 #include "VEObject_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(VEObject_Group);
+
 void VEObject_Group::Init() {
   FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->Init();

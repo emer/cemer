@@ -19,6 +19,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(T3Annotation);
+
 void T3Annotation::Initialize() {
   type = LINE;
   arrow = NO_ARROW;

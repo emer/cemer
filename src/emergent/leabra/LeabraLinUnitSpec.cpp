@@ -16,6 +16,8 @@
 #include "LeabraLinUnitSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraLinUnitSpec);
+
 
 void LeabraLinUnitSpec::Initialize() {
   SetUnique("act_fun", true);

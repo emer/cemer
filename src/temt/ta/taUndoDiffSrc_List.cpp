@@ -15,6 +15,8 @@
 
 #include "taUndoDiffSrc_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taUndoDiffSrc_List);
+
 void taUndoDiffSrc_List::Initialize() {
   SetBaseType(&TA_taUndoDiffSrc);
   st_idx = 0;

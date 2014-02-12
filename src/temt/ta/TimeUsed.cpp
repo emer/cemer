@@ -15,6 +15,8 @@
 
 #include "TimeUsed.h"
 
+TA_BASEFUNS_CTORS_DEFN(TimeUsed);
+
 void TimeUsed::Initialize() {
   s_used = 0.0;
   n_used = 0;

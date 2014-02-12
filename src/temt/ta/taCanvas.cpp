@@ -15,6 +15,8 @@
 
 #include "taCanvas.h"
 
+TA_BASEFUNS_CTORS_DEFN(taCanvas);
+
 void taCanvas::Initialize() {
   coord_type = PIXELS;
   cur_path = NULL;

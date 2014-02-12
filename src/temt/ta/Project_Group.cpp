@@ -13,11 +13,13 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#include <taProject>
 #include "Project_Group.h"
-
 
 #include <QFileInfo>
 #include <QDir>
+
+TA_BASEFUNS_CTORS_DEFN(Project_Group);
 
 
 using namespace std;

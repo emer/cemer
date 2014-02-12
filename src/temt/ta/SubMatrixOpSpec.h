@@ -20,7 +20,7 @@
 #include <DataOpBaseSpec>
 
 // member includes:
-#include <DataTable>
+#include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
 

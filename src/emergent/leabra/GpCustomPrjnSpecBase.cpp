@@ -16,6 +16,8 @@
 #include "GpCustomPrjnSpecBase.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(GpCustomPrjnSpecBase);
+
 
 void GpCustomPrjnSpecBase::AllocGp_Recv(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
 			       Layer::AccessMode sacc_md, int n_send) {

@@ -27,7 +27,7 @@
 #include <ActrEvent_List>
 #include <ActrProduction>
 
-#include <DataTable>
+#include <DataTableRef>
 #include <NameVar_Array>
 
 // declare all other types mentioned but not required to include:

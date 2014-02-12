@@ -34,6 +34,8 @@
 #include <tabMisc>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(DataCol);
+
 
 const String DataCol::udkey_width("WIDTH");
 const String DataCol::udkey_narrow("NARROW");

@@ -20,7 +20,16 @@
 #include <Random>
 #include <float_Array>
 #include <taMath_float>
+#include <int_Array>
+#include <String_Array>
+
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(ActrVisionModule);
+
+TA_BASEFUNS_CTORS_DEFN(ActrAttnParams);
+
+TA_BASEFUNS_CTORS_DEFN(ActrVisParams);
 
 void ActrVisParams::Initialize() {
   n_finst = 4;

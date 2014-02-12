@@ -15,6 +15,8 @@
 
 #include "TimeUsedHR.h"
 
+TA_BASEFUNS_CTORS_DEFN(TimeUsedHR);
+
 #if (defined(TA_OS_WIN))
 # include <time.h>
 # include <windows.h>

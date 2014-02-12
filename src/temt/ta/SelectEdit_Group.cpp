@@ -15,6 +15,8 @@
 
 #include "SelectEdit_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(SelectEdit_Group);
+
 void SelectEdit_Group::AutoEdit() {
   FOREACH_ELEM_IN_GROUP(SelectEdit, se, *this) {
     if(se->autoEdit()) {

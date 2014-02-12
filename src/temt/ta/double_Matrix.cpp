@@ -15,6 +15,8 @@
 
 #include "double_Matrix.h"
 
+TA_BASEFUNS_CTORS_DEFN(double_Matrix);
+
 using namespace std;
 
 const double double_Matrix::blank = 0.0;

@@ -16,8 +16,11 @@
 #include "ActrModule.h"
 #include <ActrModel>
 #include <ActrEvent>
+#include <String_Array>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(ActrModule);
 
 void ActrModule::Initialize() {
   own_model = NULL;

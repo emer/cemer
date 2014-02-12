@@ -15,6 +15,8 @@
 
 #include "ViewColor.h"
 
+TA_BASEFUNS_CTORS_DEFN(ViewColor);
+
 void ViewColor::InitLinks() {
   inherited::InitLinks();
   taBase::Own(fg_color, this);

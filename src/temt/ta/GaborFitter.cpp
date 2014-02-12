@@ -18,6 +18,8 @@
 
 #include <math.h>
 
+TA_BASEFUNS_CTORS_DEFN(GaborFitter);
+
 
 
 void GaborFitter::Initialize() {

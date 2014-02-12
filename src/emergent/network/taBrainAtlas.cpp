@@ -30,6 +30,8 @@
 
 #include <QColor>
 
+TA_BASEFUNS_CTORS_DEFN(taBrainAtlas);
+
 
 taBrainAtlas::taBrainAtlas(const BrainAtlasInfo& info) : taNBase()
   , filepath(info.atlas_filename)

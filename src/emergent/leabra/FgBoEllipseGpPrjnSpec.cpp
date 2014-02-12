@@ -17,6 +17,12 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(FgBoEllipseGpPrjnEl_List);
+
+TA_BASEFUNS_CTORS_DEFN(FgBoEllipseGpPrjnSpec);
+
+TA_BASEFUNS_CTORS_DEFN(FgBoEllipseGpPrjnEl);
+
 
 void FgBoEllipseGpPrjnEl::Initialize() {
   con_radius = 14;

@@ -16,6 +16,9 @@
 #include "NetCounterIncr.h"
 #include <ProgVar>
 #include <MemberDef>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(NetCounterIncr);
 
 String NetCounterIncr::GetDisplayName() const {
   String rval = "Net Counter Incr: ";

@@ -16,6 +16,8 @@
 #include "SendCons.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(SendCons);
+
 
 void SendCons::Initialize() {
   ClearBaseFlag(OWN_CONS);      // we don't own by default

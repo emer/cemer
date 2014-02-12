@@ -21,7 +21,7 @@
 
 // member includes:
 #include <taSmartRef>
-#include <DataTable>
+#include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
 
@@ -31,17 +31,17 @@ class TA_API DynEnumTypeFromDTColumn : public DynEnumBase {
   // Enum that is generated from a datatable column and is updated based on notification of updates from the table
 INHERITED(DynEnumBase)
 public:
-      DataTableRef        srcTable;
-      String              srcColumn;
+  DataTableRef        srcTable;
+  String              srcColumn;
 
-      void  InitLinks();
-      void  CutLinks();
+  void  InitLinks();
+  void  CutLinks();
 
-      virtual bool    EnumsFromDataTable(DataTable* dt, const Variant& col);
-      // #BUTTON initialize enum values from values in given data table column (can be number or name). Updates to column will automatically be reflected in the enum
+  virtual bool    EnumsFromDataTable(DataTable* dt, const Variant& col);
+  // #BUTTON initialize enum values from values in given data table column (can be number or name). Updates to column will automatically be reflected in the enum
 
-      void   SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
-      void   SmartRef_SigEmit(taSmartRef* ref, taBase* obj, int sls, void* op1_, void* op2_) override;
+  void   SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
+  void   SmartRef_SigEmit(taSmartRef* ref, taBase* obj, int sls, void* op1_, void* op2_) override;
 
    TA_BASEFUNS(DynEnumTypeFromDTColumn);
 

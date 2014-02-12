@@ -17,6 +17,8 @@
 #include <ColorScaleColor>
 #include <ColorScaleColor_List>
 
+TA_BASEFUNS_CTORS_DEFN(ColorScaleSpec);
+
 
 void ColorScaleSpec::Initialize() {
   clr.SetBaseType(&TA_RGBA);

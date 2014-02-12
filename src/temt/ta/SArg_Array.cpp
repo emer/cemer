@@ -17,6 +17,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(SArg_Array);
+
 using namespace std;
 
 void SArg_Array::Initialize() {

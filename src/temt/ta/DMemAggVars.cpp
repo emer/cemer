@@ -15,6 +15,8 @@
 
 #include "DMemAggVars.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(DMemAggVars);
+
 #ifdef DMEM_COMPILE
 
 #include <MemberDef>

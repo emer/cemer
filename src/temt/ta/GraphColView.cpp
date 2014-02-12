@@ -16,6 +16,8 @@
 #include "GraphColView.h"
 #include <DataCol>
 
+TA_BASEFUNS_CTORS_DEFN(GraphColView);
+
 
 
 void GraphColView::Initialize(){

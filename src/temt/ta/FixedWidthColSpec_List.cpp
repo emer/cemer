@@ -15,6 +15,8 @@
 
 #include "FixedWidthColSpec_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(FixedWidthColSpec_List);
+
 void FixedWidthColSpec_List::Initialize() {
   SetBaseType(&TA_FixedWidthColSpec);
 }

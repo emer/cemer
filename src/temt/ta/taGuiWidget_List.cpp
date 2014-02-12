@@ -15,6 +15,8 @@
 
 #include "taGuiWidget_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taGuiWidget_List);
+
 void taGuiWidget_List::Initialize() {
   SetBaseType(&TA_taGuiWidget);
 }

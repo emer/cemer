@@ -16,6 +16,8 @@
 #include "UserDataItem_List.h"
 #include <UserDataItem>
 
+TA_BASEFUNS_CTORS_DEFN(UserDataItem_List);
+
 bool UserDataItem_List::hasVisibleItems() const {
   // iterate all items and return true on first isVisible found
   FOREACH_ELEM_IN_GROUP(UserDataItemBase, udi, *this) {

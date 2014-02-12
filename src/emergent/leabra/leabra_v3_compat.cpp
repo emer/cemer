@@ -16,6 +16,30 @@
 
 #include "leabra_v3_compat.h"
 
+TA_BASEFUNS_CTORS_DEFN(V3LeabraProject);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraCycle);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraSettle);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraTrial);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraMaxDa);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraSE_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraGoodStat);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraSharpStat);
+
+TA_BASEFUNS_CTORS_DEFN(WrongOnStat);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraPrjnRelNetinStat);
+
+TA_BASEFUNS_CTORS_DEFN(ExtRew_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(PhaseOrderEventSpec);
+
 
 //////////////////////////
 // 	Max Da Stat	//

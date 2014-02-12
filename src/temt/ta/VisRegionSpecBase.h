@@ -20,7 +20,7 @@
 #include <ImgProcThreadBase>
 
 // member includes:
-#include <DataTable>
+#include <DataTableRef>
 #include <taVector2i>
 #include <float_Matrix>
 

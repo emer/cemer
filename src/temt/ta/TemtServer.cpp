@@ -22,6 +22,8 @@
 #include <QTcpSocket>
 #include <QDataStream>
 
+TA_BASEFUNS_CTORS_DEFN(TemtServer);
+
 
 void TemtServer::Initialize() {
   port = 5360;

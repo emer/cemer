@@ -16,6 +16,9 @@
 #include "DataVarProg.h"
 #include <DataCol>
 #include <DataTable>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DataVarProg);
 
 void DataVarProg::Initialize() {
   row_spec = CUR_ROW;

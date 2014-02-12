@@ -16,6 +16,10 @@
 
 #include "so_v3_compat.h"
 
+TA_BASEFUNS_CTORS_DEFN(SoTrial);
+
+TA_BASEFUNS_CTORS_DEFN(V3SoProject);
+
 //////////////////////////////////
 // 	V3SoProject		//
 //////////////////////////////////

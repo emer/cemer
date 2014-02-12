@@ -34,6 +34,8 @@
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
 
+TA_BASEFUNS_CTORS_DEFN(T3Panel);
+
 
 void T3Panel::Initialize() {
 //  link_type = &TA_T3SigLink;

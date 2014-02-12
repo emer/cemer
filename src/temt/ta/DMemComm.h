@@ -80,9 +80,8 @@ class TA_API DMemComm : public taBase {
 public:
 
   //  void	Dummy(const DMemComm&) { };
-  TA_BASEFUNS_LITE(DMemComm);
+  TA_BASEFUNS_LITE_NOCOPY(DMemComm);
 private:
-  NOCOPY(DMemComm)
   void 	Initialize() { };
   void 	Destroy() { };
 };

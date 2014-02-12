@@ -15,6 +15,8 @@
 
 #include "MatrixChannelSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(MatrixChannelSpec);
+
 
 void MatrixChannelSpec::Initialize() {
   cell_geom.SetDims(1);

@@ -19,6 +19,8 @@
 
 #include <SigLinkSignal>
 
+TA_BASEFUNS_CTORS_DEFN(DynEnumItem_List);
+
 void DynEnumItem_List::Initialize() {
   SetBaseType(&TA_DynEnumItem);
 }

@@ -15,6 +15,8 @@
 
 #include "ToolBoxDockViewer.h"
 
+TA_BASEFUNS_CTORS_DEFN(ToolBoxDockViewer);
+
 ToolBoxDockViewer* ToolBoxDockViewer::New() {
   ToolBoxDockViewer* tb = new ToolBoxDockViewer;
   tb->SetName("Tools");

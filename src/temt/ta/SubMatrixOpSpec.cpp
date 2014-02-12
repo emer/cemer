@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "SubMatrixOpSpec.h"
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(SubMatrixOpSpec);
 
 taTypeDef_Of(SubMatrixOpEl);
 

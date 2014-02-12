@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(SaliencyPrjnSpec);
+
 void SaliencyPrjnSpec::Initialize() {
   //  init_wts = true;
   convergence = 1;

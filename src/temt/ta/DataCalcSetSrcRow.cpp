@@ -15,6 +15,10 @@
 
 #include "DataCalcSetSrcRow.h"
 #include <DataCalcLoop>
+#include <DataTable>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DataCalcSetSrcRow);
 
 
 

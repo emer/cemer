@@ -19,6 +19,8 @@
 #include <taMisc>
 #include <QPalette>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(ColorScaleColor);
+
 
 // set the color to a new color based on the values given
 void ColorScaleColor::SetColor(float r, float g, float b, float a, RGBA* background){

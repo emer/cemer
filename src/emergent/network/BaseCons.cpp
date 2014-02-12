@@ -18,11 +18,17 @@
 #include <NetMonitor>
 #include <SimpleMathSpec>
 #include <float_Array>
+#include <int_Array>
 #include <taFiler>
+#include <MemberDef>
+#include <taProject>
+#include <DataTable>
 
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+
+TA_BASEFUNS_CTORS_DEFN(BaseCons);
 
 using namespace std;
 

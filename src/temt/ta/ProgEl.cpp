@@ -33,6 +33,8 @@
 
 #include <css_machine.h>
 
+TA_BASEFUNS_CTORS_DEFN(ProgEl);
+
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   if (!base_)
     return true;
@@ -605,13 +607,13 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
     if (result == 1) {
       if(choice == 0) {
         rval = ((ProgEl*)this)->MakeLocalVar(var_nm);
-        if(taMisc::gui_active)
-          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+        // if(taMisc::gui_active)
+        //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }
       else if(choice == 1) {
         rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
-        if(taMisc::gui_active)
-          tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+        // if(taMisc::gui_active)
+        //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }
       if(rval) {
         rval->var_type = var_type;

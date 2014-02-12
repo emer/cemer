@@ -16,6 +16,8 @@
 #include "taAxisAngle.h"
 #include <taQuaternion>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(taAxisAngle);
+
 taAxisAngle& taAxisAngle::operator=(const taQuaternion& cp) {
   cp.ToAxisAngle(*this);
   return *this;

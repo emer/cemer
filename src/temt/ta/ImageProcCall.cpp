@@ -15,6 +15,8 @@
 
 #include "ImageProcCall.h"
 
+TA_BASEFUNS_CTORS_DEFN(ImageProcCall);
+
 taTypeDef_Of(taImageProc);
 
 

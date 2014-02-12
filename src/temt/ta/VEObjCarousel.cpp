@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "VEObjCarousel.h"
+#include <DataTable>
 
 #include <taMisc>
 
@@ -22,6 +23,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+
+TA_BASEFUNS_CTORS_DEFN(VEObjCarousel);
 
 void VEObjCarousel::Initialize() {
   cur_obj_no = -1;

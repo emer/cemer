@@ -16,12 +16,14 @@
 #ifndef DataTable_h
 #define DataTable_h 1
 
+// this is useful for seeing who is including this and why..
+// #warning "datatable included"
+
 // parent includes:
 #include <DataBlock_Idx>
 
 // smartptr, ref includes
-#include <taSmartRefT>
-#include <taSmartPtrT>
+#include <DataTableRef>
 
 // member includes:
 #include <DataTableCols>
@@ -1022,7 +1024,5 @@ private:
   void  Initialize();
   void  Destroy();
 };
-
-TA_SMART_PTRS(DataTable);
 
 #endif // DataTable_h

@@ -20,6 +20,12 @@
 #include <ode/ode.h>
 #include <ode/error.h>
 
+TA_BASEFUNS_CTORS_DEFN(VEShadowParams);
+
+TA_BASEFUNS_CTORS_DEFN(VEWorld);
+
+TA_BASEFUNS_CTORS_DEFN(ODEWorldParams);
+
 VEWorldRef VEWorld::last_ve_stepped;
 taBaseRef  VEWorld::last_to_set_ode;
 

@@ -17,6 +17,8 @@
 #include <taColor>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(RGBA);
+
 
 RGBA::RGBA(float rd, float gr, float bl, float al) {
   Initialize();

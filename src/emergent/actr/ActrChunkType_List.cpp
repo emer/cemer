@@ -16,6 +16,8 @@
 #include "ActrChunkType_List.h"
 #include <ActrChunkType>
 
+TA_BASEFUNS_CTORS_DEFN(ActrChunkType_List);
+
 void ActrChunkType_List::Initialize() {
   SetBaseType(&TA_ActrChunkType);
 }

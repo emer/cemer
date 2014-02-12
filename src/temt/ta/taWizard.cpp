@@ -15,6 +15,8 @@
 
 #include "taWizard.h"
 
+TA_BASEFUNS_CTORS_DEFN(taWizard);
+
 void taWizard::Initialize() {
   auto_open = true;
   SetUserData("NO_CLIP", true);

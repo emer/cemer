@@ -15,6 +15,8 @@
 
 #include "ViewBackground_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ViewBackground_List);
+
 bool ViewBackground_List::FindMakeViewBackground(const String& nm, const String& dsc, Qt::BrushStyle style) {
   ViewBackground* bg = FindName(nm);
   bool rval = true;

@@ -16,6 +16,9 @@
 #include "NetDataLoop.h"
 #include <DataTable>
 #include <Network>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(NetDataLoop);
 
 void NetDataLoop::Initialize() {
   order = SEQUENTIAL;

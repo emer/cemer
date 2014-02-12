@@ -15,6 +15,8 @@
 
 #include "DataSelectEl.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataSelectEl);
+
 
 void DataSelectEl::Initialize() {
   on = true;

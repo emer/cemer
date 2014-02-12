@@ -20,6 +20,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PFCGateSpec);
+
+TA_BASEFUNS_CTORS_DEFN(PFCLayerSpec);
+
 void PFCGateSpec::Initialize() {
   gate_ctxt_mod = 1.0f;
   ctxt_decay = 0.0f;

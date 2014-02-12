@@ -15,6 +15,8 @@
 
 #include "DataGenCall.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataGenCall);
+
 taTypeDef_Of(taDataGen);
 
 void DataGenCall::Initialize() {

@@ -17,6 +17,8 @@
 #include <Program>
 #include <Function>
 
+TA_BASEFUNS_CTORS_DEFN(Function_List);
+
 
 void Function_List::Initialize() {
   SetBaseType(&TA_Function);

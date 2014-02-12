@@ -15,6 +15,8 @@
 
 #include "LeabraSendCons.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraSendCons);
+
 void LeabraSendCons::Initialize() {
   SetBaseFlag(OWN_CONS);        // send DOES own!
   SetConType(&TA_LeabraCon);

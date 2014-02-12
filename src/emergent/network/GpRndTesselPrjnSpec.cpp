@@ -16,6 +16,12 @@
 #include "GpRndTesselPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(GpRndTesselPrjnSpec);
+
+TA_BASEFUNS_CTORS_DEFN(GpTessEl);
+
+TA_BASEFUNS_CTORS_LITE_DEFN(GpTessEl_List);
+
 void GpTessEl::Initialize() {
   p_con = 1.0f;
 }

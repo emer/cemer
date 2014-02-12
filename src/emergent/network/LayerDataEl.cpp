@@ -15,6 +15,10 @@
 
 #include "LayerDataEl.h"
 #include <LayerWriter>
+#include <DataTable>
+
+
+TA_BASEFUNS_CTORS_DEFN(LayerDataEl);
 
 void LayerDataEl::Initialize() {
   net_target = LAYER;
@@ -87,7 +91,7 @@ void LayerDataEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void LayerDataEl::SetDataNetwork(DataBlock* db, Network* net) {
+void LayerDataEl::SetDataNetwork(DataTable* db, Network* net) {
   data = db;
   if(db && db->InheritsFrom(&TA_DataTable))
     taBase::SetPointer((taBase**)&data_cols, &((DataTable*)db)->data);

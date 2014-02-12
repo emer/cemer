@@ -15,6 +15,8 @@
 
 #include "DataSortSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataSortSpec);
+
 taTypeDef_Of(DataSortEl);
 
 void DataSortSpec::Initialize() {

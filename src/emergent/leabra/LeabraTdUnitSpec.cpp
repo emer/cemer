@@ -16,6 +16,8 @@
 #include "LeabraTdUnitSpec.h"
 #include <LeabraTdUnit>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraTdUnitSpec);
+
 void LeabraTdUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraTdUnit;
   lambda = 0.0f;

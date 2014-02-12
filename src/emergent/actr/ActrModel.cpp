@@ -22,12 +22,17 @@
 #include <ActrVisionModule>
 #include <ActrMotorModule>
 #include <taFiler>
+#include <DataTable>
 
 #include "actr_parse.h"
 
 #include <taMisc>
 
 #include <ctype.h>
+
+TA_BASEFUNS_CTORS_DEFN(ActrGlobalParams);
+
+TA_BASEFUNS_CTORS_DEFN(ActrModel);
 
 void ActrGlobalParams::Initialize() {
   enable_sub_symbolic = false;

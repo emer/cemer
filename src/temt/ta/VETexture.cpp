@@ -19,6 +19,8 @@
 #ifdef TA_USE_INVENTOR
 #include <SoImageEx.h>
 #include <Inventor/nodes/SoTexture2.h>
+
+TA_BASEFUNS_CTORS_DEFN(VETexture);
 #endif
 
 void VETexture::Initialize() {

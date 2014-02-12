@@ -2169,6 +2169,8 @@ int taRootBase::DMem_SubEventLoop() {
 #include <memory.h>
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(taRootBase);
+
 // for saving a recovery file if program crashes, is killed, etc.
 void taRootBase::SaveRecoverFileHandler(int err) {
   static bool has_crashed = false;

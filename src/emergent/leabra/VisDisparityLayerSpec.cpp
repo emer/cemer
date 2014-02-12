@@ -17,6 +17,10 @@
 #include <LeabraNetwork>
 #include <VisDisparityPrjnSpec>
 
+TA_BASEFUNS_CTORS_DEFN(VisDispLaySpec);
+
+TA_BASEFUNS_CTORS_DEFN(VisDisparityLayerSpec);
+
 
 void VisDispLaySpec::Initialize() {
   max_l = true;

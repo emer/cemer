@@ -43,8 +43,10 @@ public:
   // converts the code to an appropriate program element -- called in a delayed gui callback routine
   bool          BrowserEditSet(const String& code, int move_after=0) override;
 
-  static void  CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
-                                         const String& code, ProgEl* scope_el);
+  static bool   CvtCodeToVar(String& code, ProgEl* scope_el);
+  // attempt to convert the code to a new variable declaration -- prompts for var location -- if true, then it was interpreted as a var decl, and var decl is removed from code -- e.g., if input is "int i = 20" then remaining code will be "i = 20" -- if nothing but a decl (e.g., "int i"), then code is empty, and nothing left to do
+  static void   CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
+                                 const String& code, ProgEl* scope_el);
   // #IGNORE
   static ProgEl* CvtCodeToProgEl(const String& code, ProgEl* scope_el);
   // convert code string to a program element -- NULL if cannot be converted

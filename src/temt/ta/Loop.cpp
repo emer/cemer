@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(Loop);
+
 
 void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);

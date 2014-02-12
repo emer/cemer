@@ -19,8 +19,26 @@
 #include <LeabraTICtxtConSpec>
 #include <taProject>
 #include <taMath_double>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
+TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraActFunSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraActFunExSpec);
+TA_BASEFUNS_CTORS_DEFN(SpikeFunSpec);
+TA_BASEFUNS_CTORS_DEFN(SpikeMiscSpec);
+TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
+TA_BASEFUNS_CTORS_DEFN(DepressSpec);
+TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
+TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
+TA_BASEFUNS_CTORS_DEFN(VChanSpec);
+TA_BASEFUNS_CTORS_DEFN(MaxDaSpec);
+TA_BASEFUNS_CTORS_DEFN(DaModSpec);
+TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
 
 
 void LeabraActFunSpec::Initialize() {

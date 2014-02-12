@@ -19,6 +19,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PVMiscSpec);
+
+TA_BASEFUNS_CTORS_DEFN(PViLayerSpec);
+
 void PVMiscSpec::Initialize() {
   gd_pvlv = true;
   min_pvi = 0.4f;

@@ -15,6 +15,8 @@
 
 #include "NetMonItem_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(NetMonItem_List);
+
 String NetMonItem_List::GetColHeading(const KeyString& key) const {
   static String col_obj("Object Name");
   static String col_typ("Object Type");

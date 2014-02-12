@@ -15,3 +15,5 @@
 
 #include "VETexture_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(VETexture_List);
+

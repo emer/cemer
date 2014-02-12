@@ -16,6 +16,8 @@
 #include "LeabraExtOnlyUnitSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraExtOnlyUnitSpec);
+
 
 void LeabraExtOnlyUnitSpec::Initialize() {
 

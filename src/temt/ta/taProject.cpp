@@ -44,6 +44,8 @@ taTypeDef_Of(taImageProc);
 #include <css_machine.h>
 #include <css_qtconsole.h>
 
+TA_BASEFUNS_CTORS_DEFN(taProject);
+
 
 using namespace std;
 

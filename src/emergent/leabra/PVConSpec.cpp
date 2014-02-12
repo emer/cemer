@@ -15,6 +15,8 @@
 
 #include "PVConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(PVConSpec);
+
 void PVConSpec::Initialize() {
   SetUnique("lrate", true);
   lrate = .01f;

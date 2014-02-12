@@ -15,6 +15,8 @@
 
 #include "NVConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(NVConSpec);
+
 void NVConSpec::Initialize() {
   decay = 0.0f;
 }

@@ -16,6 +16,8 @@
 #include "V2toV4DepthPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(V2toV4DepthPrjnSpec);
+
 void V2toV4DepthPrjnSpec::Initialize() {
   depth_idx = 0;
 }

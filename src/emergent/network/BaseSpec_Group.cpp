@@ -16,6 +16,8 @@
 #include "BaseSpec_Group.h"
 #include <BaseSpec>
 
+TA_BASEFUNS_CTORS_DEFN(BaseSpec_Group);
+
 bool BaseSpec_Group::nw_itm_def_arg = false;
 
 

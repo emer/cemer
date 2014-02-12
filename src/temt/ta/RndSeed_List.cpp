@@ -19,6 +19,8 @@
 #include <MemberDef>
 #include <tabMisc>
 
+TA_BASEFUNS_CTORS_DEFN(RndSeed_List);
+
 
 void RndSeed_List::MakeSeeds(int n_seeds) {
   seeds.SetSize(n_seeds);

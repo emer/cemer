@@ -40,6 +40,8 @@ taTypeDef_Of(DynEnumType);
 #include <QFileInfo>
 #include <QDir>
 
+TA_BASEFUNS_CTORS_DEFN(Program);
+
 using namespace std;
 
 ProgLib* Program::prog_lib = NULL;

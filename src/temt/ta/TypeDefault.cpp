@@ -18,6 +18,8 @@
 #include <taMisc>
 #include <NameValue>
 
+TA_BASEFUNS_CTORS_DEFN(TypeDefault);
+
 using namespace std;
 
 void TypeDefault::Initialize() {

@@ -23,8 +23,6 @@
 // member includes:
 #include <ActrBuffer>
 #include <ActrChunk>
-#include <ProgVar>
-#include <Program>
 
 // declare all other types mentioned but not required to include:
 class ActrModel; //

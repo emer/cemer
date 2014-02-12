@@ -16,6 +16,10 @@
 #include "CerebGranuleUnitSpec.h"
 #include <LeabraUnit>
 
+TA_BASEFUNS_CTORS_DEFN(CerebGranuleUnitSpec);
+
+TA_BASEFUNS_CTORS_DEFN(CerebGranuleSpecs);
+
 
 void CerebGranuleSpecs::Initialize() {
   act_thr = 0.5f;

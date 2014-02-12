@@ -15,6 +15,8 @@
 
 #include "taGuiAction_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taGuiAction_List);
+
 void taGuiAction_List::Initialize() {
   SetBaseType(&TA_taGuiAction);
 }

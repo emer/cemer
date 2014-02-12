@@ -22,6 +22,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ScalarValBias);
+
+TA_BASEFUNS_CTORS_DEFN(ScalarValSpec);
+
+TA_BASEFUNS_CTORS_DEFN(ScalarValLayerSpec);
+
 
 void ScalarValSpec::Initialize() {
   rep = LOCALIST;

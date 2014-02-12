@@ -16,6 +16,8 @@
 #include "GpOneToManyPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(GpOneToManyPrjnSpec);
+
 
 void GpOneToManyPrjnSpec::Initialize() {
   n_con_groups = SEND_ONLY;

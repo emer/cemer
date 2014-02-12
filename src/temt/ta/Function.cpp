@@ -19,6 +19,8 @@
 #include <taBase_PtrList>
 #include <FunctionCall>
 
+TA_BASEFUNS_CTORS_DEFN(Function);
+
 taTypeDef_Of(LocalVars);
 taTypeDef_Of(ProgCode);
 

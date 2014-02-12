@@ -17,6 +17,8 @@
 #include <LeabraNetwork>
 #include <ECinLayerSpec>
 
+TA_BASEFUNS_CTORS_DEFN(ECoutLayerSpec);
+
 void ECoutLayerSpec::Initialize() {
   Defaults_init();
 }

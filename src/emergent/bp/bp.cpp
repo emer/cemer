@@ -21,6 +21,7 @@
 eTypeDef_Of(BpWizard);
 
 #include <DumpFileCvt>
+#include <DataTable>
 
 #include <taMisc>
 
@@ -31,6 +32,27 @@ eTypeDef_Of(BpWizard);
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 #endif
+
+TA_BASEFUNS_CTORS_DEFN(BpConSpec);
+TA_BASEFUNS_CTORS_DEFN(BpRecvCons);
+TA_BASEFUNS_CTORS_DEFN(BpSendCons);
+TA_BASEFUNS_CTORS_DEFN(BpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(BpUnit);
+TA_BASEFUNS_CTORS_DEFN(HebbBpConSpec);
+TA_BASEFUNS_CTORS_DEFN(LinearBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(StochasticBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(ExpBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(SoftMaxBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(BpLayer);
+TA_BASEFUNS_CTORS_DEFN(BpProject);
+TA_BASEFUNS_CTORS_DEFN(ErrScaleBpConSpec);
+TA_BASEFUNS_CTORS_DEFN(DeltaBarDeltaBpConSpec);
+TA_BASEFUNS_CTORS_DEFN(BpContextSpec);
+TA_BASEFUNS_CTORS_DEFN(ThreshLinBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(NoisyBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(RBFBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(BumpBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(BpNetwork);
 
 static void bp_converter_init() {
   DumpFileCvt* cvt = new DumpFileCvt("Bp", "BpUnit");

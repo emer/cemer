@@ -38,6 +38,8 @@
 #include <QDateTime>
 #include <QtGlobal>
 
+TA_BASEFUNS_CTORS_DEFN(taDataProc);
+
 bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix,
     bool& in_place_req) {
   if(src == dest) {

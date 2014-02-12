@@ -15,6 +15,8 @@
 
 #include "VELightParams.h"
 
+TA_BASEFUNS_CTORS_DEFN(VELightParams);
+
 void VELightParams::Initialize() {
   on = true;
   intensity = 1.0f;

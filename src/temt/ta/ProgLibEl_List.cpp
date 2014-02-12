@@ -15,6 +15,8 @@
 
 #include "ProgLibEl_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ProgLibEl_List);
+
 
 void ProgLibEl_List::Initialize() {
 }

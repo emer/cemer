@@ -17,6 +17,8 @@
 #include <taiMimeSource>
 #include <taiObjectMimeFactory>
 
+TA_BASEFUNS_CTORS_DEFN(taiObjectsMimeItem);
+
 
 
 void taiObjectsMimeItem::Initialize() {

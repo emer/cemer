@@ -16,6 +16,8 @@
 #include "taPluginBase_List.h"
 #include <iClipData>
 
+TA_BASEFUNS_CTORS_DEFN(taPluginBase_List);
+
 
 taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
   for (int i = 0; i < size; ++i) {

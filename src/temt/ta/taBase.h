@@ -95,25 +95,35 @@ class MainWindowViewer; //
 // common defs used by ALL taBase types: Type and Copy guys
 #define TA_BASEFUNS_MAIN_(y) \
 private: \
-  inline void Copy__(const y& cp) { \
+  void Copy__(const y& cp); \
+protected: \
+  void Copy_impl(const y& cp); \
+  void UnSafeCopy(const taBase* cp); \
+  void CastCopyTo(taBase* cp) const; \
+public: \
+  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
+  TypeDef* GetTypeDef() const { return &TA_##y; } \
+  void Copy(const y& cp); \
+  bool Copy(const taBase* cp); \
+  y& operator=(const y& cp);
+
+#define TA_BASEFUNS_MAIN_DEFN_(y) \
+  void y::Copy__(const y& cp) {  \
     SetBaseFlag(COPYING); \
       Copy_(cp); \
     ClearBaseFlag(COPYING);} \
-protected: \
-  void Copy_impl(const y& cp) { \
+  void y::Copy_impl(const y& cp) { \
     StructUpdate(true); \
       inherited::Copy_impl(cp); \
       Copy__(cp); \
     StructUpdate(false);} \
-  void  UnSafeCopy(const taBase* cp) { if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
+  void y::UnSafeCopy(const taBase* cp) { \
+    if(cp->InheritsFrom(&TA_##y)) Copy_impl(*((y*)cp)); \
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);} \
-  void  CastCopyTo(taBase* cp) const { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
-public: \
-  static TypeDef* StatTypeDef(int) { return &TA_##y; } \
-  TypeDef* GetTypeDef() const { return &TA_##y; } \
-  void Copy(const y& cp) { Copy_impl(cp);} \
-  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
-  y& operator=(const y& cp) { Copy(cp); return *this;}
+  void y::CastCopyTo(taBase* cp) const { y& rf = *((y*)cp); rf.Copy_impl(*this); } \
+  void y::Copy(const y& cp) { Copy_impl(cp);} \
+  bool y::Copy(const taBase* cp) {return taBase::Copy(cp);} \
+  y& y::operator=(const y& cp) { Copy(cp); return *this;}
 
 #define TA_TMPLT_BASEFUNS_MAIN_(y,T) \
 private: \
@@ -151,31 +161,55 @@ public: \
 // ctors -- one size fits all (where used) thanks to Initialize__
 
 #define TA_BASEFUNS_CTORS_(y) \
-  explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
-  y (const y& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
+  explicit y (bool reg = true); \
+  y (const y& cp, bool reg = true); 
 
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
   y (const y<T>& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
 
+// definition of constructors and destructors: you must put these into .cpp files!
+#define TA_BASEFUNS_CTORS_DEFN(y) \
+  y::y(bool reg):inherited(false) { Initialize__(reg); } \
+  y::y(const y& cp, bool reg):inherited(cp, false) { Initialize__(reg); Copy__(cp); } \
+  y::~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); } \
+  TA_BASEFUNS_MAIN_DEFN_(y)
+
+#define TA_BASEFUNS_CTORS_LITE_DEFN(y) \
+  y::y(bool reg):inherited(false) { Initialize__(reg); } \
+  y::y(const y& cp, bool reg):inherited(cp, false) { Initialize__(reg); Copy__(cp); } \
+  y::~y() { CheckDestroyed(); Destroying(); Destroy(); } \
+  TA_BASEFUNS_MAIN_DEFN_(y)
+
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
+  private: \
+  void Initialize__(bool reg) {if (reg) Register(); Initialize(); \
+    if (reg) InitSetDefaultName(); } \
+  public: \
+  ~y ();
+
+#define TA_TMPLT_BASEFUNS_TOK_(y,T) \
   private: \
   inline void Initialize__(bool reg) {if (reg) Register(); Initialize(); \
     if (reg) InitSetDefaultName(); } \
   public: \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
 
-#define TA_TMPLT_BASEFUNS_TOK_(y,T) TA_BASEFUNS_TOK_(y)
 
 // common dtor/init when not using tokens (the LITE guys)
 #define TA_BASEFUNS_NTOK_(y) \
   private: \
   inline void Initialize__(bool) {Initialize();}  \
   public: \
+  ~y ()
+
+#define TA_TMPLT_BASEFUNS_NTOK_(y,T) \
+  private: \
+  inline void Initialize__(bool) {Initialize();}  \
+  public: \
   ~y () { CheckDestroyed(); Destroying(); Destroy(); }
 
-#define TA_TMPLT_BASEFUNS_NTOK_(y,T) TA_BASEFUNS_NTOK_(y)
 
 // normal set of funs, for tokens, except ctors; you can use this yourself
 // when you have consts in your class and can't use the generic ctors

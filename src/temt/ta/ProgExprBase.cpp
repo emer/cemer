@@ -16,6 +16,7 @@
 #include "ProgExprBase.h"
 #include <ProgEl>
 #include <Program>
+#include <Program_Group>
 #include <Function>
 #include <taMisc>
 #include <tabMisc>
@@ -32,6 +33,8 @@
 #include <taiWidgetEnumStaticChooser>
 #include <taiWidgetTokenChooser>
 #include <MemberProgEl>
+
+TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 
 
 cssProgSpace* ProgExprBase::parse_prog = NULL;

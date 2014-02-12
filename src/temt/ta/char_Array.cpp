@@ -15,4 +15,6 @@
 
 #include "char_Array.h"
 
+TA_BASEFUNS_CTORS_DEFN(char_Array);
+
 const char char_Array::blank = '\0';

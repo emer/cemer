@@ -15,6 +15,8 @@
 
 #include "DataView_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataView_List);
+
 void DataView_List::SigEmit(int sls, void* op1, void* op2) {
   inherited::SigEmit(sls, op1, op2);
   taDataView* own = GET_MY_OWNER(taDataView);

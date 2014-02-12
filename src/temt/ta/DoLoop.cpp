@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(DoLoop);
+
 
 void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "VEHeightField.h"
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(VEHeightField);
 
 void VEHeightField::Initialize() {
   // todo: do this

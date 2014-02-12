@@ -23,6 +23,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(TDRewIntegSpec);
+
+TA_BASEFUNS_CTORS_DEFN(TDRewIntegLayerSpec);
+
 
 void TDRewIntegSpec::Initialize() {
   discount = .8f;

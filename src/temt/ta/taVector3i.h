@@ -58,7 +58,7 @@ public:
   taVector3i(int xx, int yy, int zz)       { SetXYZ(xx, yy, zz); }
   taVector3i(float xx, float yy, float zz) { SetXYZ(xx, yy, zz); }
   taVector3i(const taVector3f& cp);      // conversion constructor
-  TA_BASEFUNS_LITE(taVector3i)
+  TA_BASEFUNS_LITE(taVector3i);
 
   taVector3i& operator=(const taVector3f& cp);
   inline taVector3i& operator=(int cp)             { x = cp; y = cp; z = cp; return *this;}

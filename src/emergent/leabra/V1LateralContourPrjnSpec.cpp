@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(V1LateralContourPrjnSpec);
+
 void V1LateralContourPrjnSpec::Initialize() {
   radius = 4;
   wrap = true;

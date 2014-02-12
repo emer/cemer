@@ -15,6 +15,8 @@
 
 #include "PFCConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(PFCConSpec);
+
 void PFCConSpec::Initialize() {
   Defaults_init();
 }

@@ -19,6 +19,8 @@
 #include <T3AnnotationView>
 #include <T3Annotation>
 
+TA_BASEFUNS_CTORS_DEFN(T3DataViewMain);
+
 void T3DataViewMain::Initialize() {
 }
 

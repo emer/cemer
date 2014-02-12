@@ -18,6 +18,8 @@
 #include <GridTableView>
 #include <T3GridColViewNode>
 
+TA_BASEFUNS_CTORS_DEFN(GridColView);
+
 
 void GridColView::Initialize(){
   text_width = 8;

@@ -21,6 +21,8 @@
 #include <taMisc>
 #include <tabMisc>
 
+TA_BASEFUNS_CTORS_DEFN(StdNetWizDlg);
+
 
 
 void StdNetWizDlg::Initialize() {

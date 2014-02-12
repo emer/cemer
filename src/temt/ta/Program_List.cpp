@@ -15,3 +15,5 @@
 
 #include "Program_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(Program_List);
+

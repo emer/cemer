@@ -18,6 +18,8 @@
 #include <ProgVar>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PrintVar);
+
 
 void PrintVar::Initialize() {
 }

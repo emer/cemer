@@ -15,6 +15,8 @@
 
 #include "DataSortEl.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataSortEl);
+
 
 void DataSortEl::Initialize() {
   order = ASCENDING;

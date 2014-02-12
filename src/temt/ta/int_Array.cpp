@@ -15,6 +15,8 @@
 
 #include "int_Array.h"
 
+TA_BASEFUNS_CTORS_DEFN(int_Array);
+
 void int_Array::FillSeq(int start, int inc) {
   int i, v;
   for(i=0,v=start; i<size; i++, v += inc)

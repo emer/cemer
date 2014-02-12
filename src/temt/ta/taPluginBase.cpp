@@ -15,6 +15,8 @@
 
 #include "taPluginBase.h"
 
+TA_BASEFUNS_CTORS_DEFN(taPluginBase);
+
 void taPluginBase::Initialize() {
 }
 

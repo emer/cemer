@@ -23,6 +23,8 @@
 #include <limits.h>
 #include <float.h>
 
+TA_BASEFUNS_CTORS_DEFN(taMath);
+
 #ifdef HAVE_LIBGSL
 // gsl error handler -- needed to prevent default from raising abort!
 void ta_gsl_err_handler(const char * reason,

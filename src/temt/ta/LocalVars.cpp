@@ -17,6 +17,8 @@
 #include <Program>
 #include <ProgVar>
 
+TA_BASEFUNS_CTORS_DEFN(LocalVars);
+
 taTypeDef_Of(float_Matrix);
 taTypeDef_Of(double_Matrix);
 taTypeDef_Of(int_Matrix);

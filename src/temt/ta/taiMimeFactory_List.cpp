@@ -16,6 +16,8 @@
 #include "taiMimeFactory_List.h"
 #include <taiMimeFactory>
 
+TA_BASEFUNS_CTORS_DEFN(taiMimeFactory_List);
+
 
 taiMimeFactory_List* taiMimeFactory_List::g_instance; 
 

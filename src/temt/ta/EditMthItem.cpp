@@ -15,6 +15,8 @@
 
 #include "EditMthItem.h"
 
+TA_BASEFUNS_CTORS_DEFN(EditMthItem);
+
 
 void EditMthItem::Initialize() {
   mth = NULL;

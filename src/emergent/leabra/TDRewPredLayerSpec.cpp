@@ -22,6 +22,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(TDRewPredLayerSpec);
+
 
 void TDRewPredLayerSpec::Initialize() {
   SetUnique("decay", true);

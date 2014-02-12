@@ -30,6 +30,8 @@ taTypeDef_Of(taProject);
 #include <css_ta.h>
 #include <css_c_ptr_types.h>
 
+TA_BASEFUNS_CTORS_DEFN(ProgVar);
+
 void ProgVar::Initialize() {
   var_type = T_UnDef;
   int_val = 0;
@@ -470,6 +472,16 @@ Variant ProgVar::GetVar() {
     break;
   }
   return _nilVariant;// compiler food
+}
+
+ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
+  if(td == NULL) return T_UnDef;
+  if(td->IsBool()) return T_Bool;
+  if(td->IsInt()) return T_Int;
+  if(td->IsEnum()) return T_HardEnum;
+  if(td->IsFloat()) return T_Real;
+  if(td->IsString()) return T_String;
+  return T_Object;              // must be..
 }
 
 bool ProgVar::SetValStr(const String& val, void* par, MemberDef* memb_def,

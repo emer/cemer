@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "AddNewDataRow.h"
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(AddNewDataRow);
 
 
 void AddNewDataRow::Initialize() {

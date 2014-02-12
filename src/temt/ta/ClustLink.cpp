@@ -16,6 +16,8 @@
 #include "ClustLink.h"
 #include <ClustNode>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(ClustLink);
+
 
 
 void ClustLink::Initialize() {

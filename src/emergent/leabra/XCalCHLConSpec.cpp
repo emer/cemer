@@ -15,6 +15,8 @@
 
 #include "XCalCHLConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(XCalCHLConSpec);
+
 void XCalCHLConSpec::Initialize() {
   use_chl = true;
 }

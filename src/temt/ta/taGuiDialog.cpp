@@ -36,6 +36,8 @@
 #include <QToolButton>
 #include <QToolBar>
 
+TA_BASEFUNS_CTORS_DEFN(taGuiDialog);
+
 
 void taGuiDialog::Initialize() {
   data_host = NULL;

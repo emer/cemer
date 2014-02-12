@@ -20,12 +20,11 @@
 #include <taOBase>
 
 // member includes:
-#include <DataTable>
+#include <DataTableRef>
 #include <DataTableCols>
 
 // declare all other types mentioned but not required to include:
 class DataCol; // 
-class DataTable; // 
 
 
 taTypeDef_Of(DataOpEl);

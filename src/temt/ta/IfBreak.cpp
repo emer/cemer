@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(IfBreak);
+
 
 void IfBreak::Initialize() {
 }

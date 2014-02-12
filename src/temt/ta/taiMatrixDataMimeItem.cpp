@@ -18,6 +18,8 @@
 #include <taiTabularDataMimeFactory>
 #include <taiMatrixDataMimeItem>
 
+TA_BASEFUNS_CTORS_DEFN(taiMatrixDataMimeItem);
+
 
 taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
     const String& subkey)

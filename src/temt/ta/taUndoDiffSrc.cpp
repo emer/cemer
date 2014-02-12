@@ -19,6 +19,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taUndoDiffSrc);
+
 
 void taUndoDiffSrc::Initialize() {
   last_diff_n = 0;

@@ -15,6 +15,8 @@
 
 #include "CircMatrix.h"
 
+TA_BASEFUNS_CTORS_DEFN(CircMatrix);
+
 void CircMatrix::Initialize() {
   st_idx = 0;
   length = 0;

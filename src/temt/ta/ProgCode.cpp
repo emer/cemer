@@ -19,6 +19,9 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <taProject>
+#include <ProgElChoiceDlg>
+
+TA_BASEFUNS_CTORS_DEFN(ProgCode);
 
 taTypeDef_Of(CssExpr);
 taTypeDef_Of(AssignExpr);
@@ -46,15 +49,65 @@ void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
   }
 }
 
+bool ProgCode::CvtCodeToVar(String& code, ProgEl* scope_el) {
+  Program* prg = GET_OWNER(scope_el, Program);
+  if(!prg) return false;
+
+  if(!code.contains(" ")) return false;
+  String vtype = code.before(" ");
+  TypeDef* td = taMisc::FindTypeName(vtype);
+  if(!td) return false;
+  code = trim(code.after(" "));
+  String var_nm;
+  int pos = 0;
+  char c = code[pos];
+  while(isalnum(c) || c == '_') {
+    var_nm += c;
+    if(code.length() > pos)
+      c = code[++pos];
+    else 
+      break;
+  }
+  code = code.from(pos);
+  ProgElChoiceDlg dlg;
+  taBase::Ref(dlg);
+  int choice = 2;
+  ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
+  int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
+  ProgVar* rval = NULL;
+  if (result == 1) {
+    if(choice == 0) {
+      rval = scope_el->MakeLocalVar(var_nm);
+      // if(taMisc::gui_active)
+      //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    }
+    else if(choice == 1) {
+      rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
+      // if(taMisc::gui_active)
+      //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    }
+    if(rval) {
+      rval->var_type = var_type;
+      // todo: set object type for object, etc..
+      rval->UpdateAfterEdit();
+    }
+  }
+  return true;
+}
+
 ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   ProgEl_List candidates;
+  String code_mod = code_str;
   if(code_str.endsWith(';')) {
     // if we use a ; at the end, it is a guarantee of doing the css expr so
     // we can avoid alternative matches etc.
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
   }
   else {
-    String check_code = code_str;
+    bool had_var = CvtCodeToVar(code_mod, scope_el);
+    if(had_var && code_mod.empty())
+      return NULL;              // that's it
+    String check_code = code_mod;
     check_code.downcase();        // check only on lowercase
     CvtCodeCheckType(candidates, &TA_ProgEl, check_code, scope_el);
     if(candidates.size == 0)
@@ -78,7 +131,7 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
       cvt = candidates[0];
       if(candidates.size > 1) {
 	int chs = taMisc::Choice("Multiple program elements match code string:\n"
-                                 + code_str + "\nPlease choose correct one.",
+                                 + code_mod + "\nPlease choose correct one.",
 	 "Cancel",
 	 candidates[0]->GetToolbarName(),
 	 candidates[1]->GetToolbarName(),

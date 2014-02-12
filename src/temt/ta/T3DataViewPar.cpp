@@ -15,6 +15,8 @@
 
 #include "T3DataViewPar.h"
 
+TA_BASEFUNS_CTORS_DEFN(T3DataViewPar);
+
 void T3DataViewPar::InitLinks() {
   inherited::InitLinks();
   taBase::Own(children, this);

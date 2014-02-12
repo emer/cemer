@@ -20,6 +20,8 @@
 #include <tabMisc>
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(ProgBrkPt_List);
+
 void ProgBrkPt_List::Initialize() {
   SetBaseType(&TA_ProgBrkPt);
   setUseStale(true);

@@ -15,6 +15,8 @@
 
 #include "nvDataView.h"
 
+TA_BASEFUNS_CTORS_DEFN(nvDataView);
+
 eTypeDef_Of(NetView);
 
 NetView* nvDataView::getNetView()

@@ -16,6 +16,8 @@
 #include "ActrBuffer_List.h"
 #include <ActrModule>
 
+TA_BASEFUNS_CTORS_DEFN(ActrBuffer_List);
+
 void ActrBuffer_List::Initialize() {
   SetBaseType(&TA_ActrBuffer);
 }

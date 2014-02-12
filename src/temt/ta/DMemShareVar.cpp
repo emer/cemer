@@ -15,10 +15,13 @@
 
 #include "DMemShareVar.h"
 
+TA_BASEFUNS_CTORS_DEFN(DMemShareVar);
+
 #ifdef DMEM_COMPILE
 
 #include <taMisc>
 #include <DMemShare>
+
 using namespace std;
 
 static String dmem_mpi_decode_err(int ercd) {

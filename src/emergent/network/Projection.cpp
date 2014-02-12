@@ -18,10 +18,13 @@
 #include <taProject>
 #include <NetMonitor>
 #include <taFiler>
+#include <DataTable>
 
 #include <tabMisc>
 #include <taMisc>
 #include <iDialogColorChooser>
+
+TA_BASEFUNS_CTORS_DEFN(Projection);
 
 using namespace std;
 

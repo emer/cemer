@@ -17,6 +17,12 @@
 #include <LeabraNetwork>
 #include <MemberDef>
 
+TA_BASEFUNS_CTORS_DEFN(CtxtUpdateSpec);
+
+TA_BASEFUNS_CTORS_DEFN(CtxtNSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraContextLayerSpec);
+
 void CtxtUpdateSpec::Initialize() {
   fm_hid = 1.0f;
   fm_prv = 0.0f;

@@ -15,6 +15,8 @@
 
 #include "LeabraTICtxtConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtConSpec);
+
 void LeabraTICtxtConSpec::Initialize() {
   SetUnique("wt_scale", true);
   wt_scale.rel = 3.0;           // good default

@@ -18,6 +18,8 @@
 #include <MatrixConSpec>
 #include <MatrixBiasSpec>
 
+TA_BASEFUNS_CTORS_DEFN(MatrixUnitSpec);
+
 
 void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);

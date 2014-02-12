@@ -15,3 +15,5 @@
 
 #include "PVLVLayerSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(PVLVLayerSpec);
+

@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <GraphAxisBase>
+#include <taList>
 
 // member includes:
 

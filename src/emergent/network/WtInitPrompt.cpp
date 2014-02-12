@@ -15,8 +15,11 @@
 
 #include "WtInitPrompt.h"
 #include <ProgVar>
+#include <Program>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(WtInitPrompt);
 
 void WtInitPrompt::Initialize() {
   prompt = "Do you want to Initialize Network Weights? (WARNING: this will erase all previous training!)";

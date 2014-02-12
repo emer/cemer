@@ -16,6 +16,8 @@
 #include "VEHillMuscle.h"
 #include <VEArm>
 
+TA_BASEFUNS_CTORS_DEFN(VEHillMuscle);
+
 void VEHillMuscle::Initialize() {
   IPprox.SetXYZ(0.0f,0.0f,0.0f);
   IPdist.SetXYZ(0.1f,0.1f,0.1f);

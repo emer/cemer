@@ -16,6 +16,8 @@
 #include "MinMax.h"
 #include <float_Matrix>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(MinMax);
+
 void MinMax::SetRange(float_Matrix& mat) {
   if (mat.size == 0) {
     Init(0.0f);

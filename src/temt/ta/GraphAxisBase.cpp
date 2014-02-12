@@ -34,6 +34,8 @@
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoText2.h>
 
+TA_BASEFUNS_CTORS_DEFN(GraphAxisBase);
+
 
 #define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
 #define TICK_OFFSET 0.01f // gap between tick and label

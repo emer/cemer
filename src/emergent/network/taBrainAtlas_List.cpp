@@ -21,6 +21,8 @@
 
 #include <QStringList>
 
+TA_BASEFUNS_CTORS_DEFN(taBrainAtlas_List);
+
 void taBrainAtlas_List::Initialize() {
   name = "brain_atlases";
   not_init = true;

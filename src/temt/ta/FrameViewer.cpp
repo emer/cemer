@@ -16,6 +16,8 @@
 #include "FrameViewer.h"
 #include <iFrameViewer>
 
+TA_BASEFUNS_CTORS_DEFN(FrameViewer);
+
 
 void FrameViewer::Initialize() {
 }

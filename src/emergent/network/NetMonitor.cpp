@@ -14,8 +14,12 @@
 //   GNU General Public License for more details.
 
 #include "NetMonitor.h"
+#include <DataTable>
+#include <Network>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(NetMonitor);
 
 void NetMonitor::Initialize() {
   rmv_orphan_cols = true;

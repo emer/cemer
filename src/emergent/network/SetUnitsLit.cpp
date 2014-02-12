@@ -15,8 +15,11 @@
 
 #include "SetUnitsLit.h"
 #include <DataTable>
+#include <Program>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(SetUnitsLit);
 
 void SetUnitsLit::Initialize() {
   set_nm = true;

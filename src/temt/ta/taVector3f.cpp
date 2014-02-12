@@ -19,6 +19,8 @@
 #include <taVector3i>
 #include <MatrixIndex>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(taVector3f);
+
 taVector3f::taVector3f(const taVector3i& cp) {
   Register(); Initialize();
   x = (float)cp.x; y = (float)cp.y; z = (float)cp.z;

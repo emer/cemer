@@ -15,6 +15,8 @@
 
 #include "VEStatic_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(VEStatic_Group);
+
 void VEStatic_Group::Init() {
   FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->Init();

@@ -16,6 +16,8 @@
 #include "ActrEvent_List.h"
 #include <ActrModule>
 
+TA_BASEFUNS_CTORS_DEFN(ActrEvent_List);
+
 void ActrEvent_List::Initialize() {
   SetBaseType(&TA_ActrEvent);
 }

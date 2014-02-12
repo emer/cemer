@@ -15,6 +15,8 @@
 
 #include "VisRegionSpecBaseList.h"
 
+TA_BASEFUNS_CTORS_DEFN(VisRegionSpecBaseList);
+
 VisRegionSpecBase* VisRegionSpecBaseList::FindRetinalRegion(VisRegionParams::Region reg) {
   for(int i=0;i<size;i++) {
     VisRegionSpecBase* fs = (VisRegionSpecBase*)FastEl(i);

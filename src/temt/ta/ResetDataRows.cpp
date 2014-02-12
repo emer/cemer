@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "ResetDataRows.h"
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(ResetDataRows);
 
 
 void ResetDataRows::Initialize() {

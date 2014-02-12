@@ -19,6 +19,8 @@
 #include <DataTable>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(DataColsFmArgs);
+
 
 void DataColsFmArgs::Initialize() {
   row_spec = CUR_ROW;

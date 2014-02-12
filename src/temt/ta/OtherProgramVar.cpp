@@ -18,6 +18,8 @@
 #include <ProgVar>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(OtherProgramVar);
+
 
 void OtherProgramVar::Initialize() {
   set_other = false;

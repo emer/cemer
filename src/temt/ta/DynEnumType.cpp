@@ -18,6 +18,8 @@
 #include <taProject>
 #include <DataTable>
 
+TA_BASEFUNS_CTORS_DEFN(DynEnumType);
+
 DynEnumItem* DynEnumType::NewEnum() {
   return (DynEnumItem*)enums.New_gui(1); // primarily a gui op
 }

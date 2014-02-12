@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(GaussRFPrjnSpec);
+
 void GaussRFPrjnSpec::Initialize() {
   init_wts = true;
   rf_width = 6;

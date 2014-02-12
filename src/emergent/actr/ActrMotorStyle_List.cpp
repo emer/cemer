@@ -15,6 +15,8 @@
 
 #include "ActrMotorStyle_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ActrMotorStyle_List);
+
 void ActrMotorStyle_List::Initialize() {
   SetBaseType(&TA_ActrMotorStyle);
 }

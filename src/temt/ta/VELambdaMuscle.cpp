@@ -15,6 +15,8 @@
 
 #include "VELambdaMuscle.h"
 
+TA_BASEFUNS_CTORS_DEFN(VELambdaMuscle);
+
 void VELambdaMuscle::Initialize() {
   lambda_norm = 0.5f;
   lambda = 0.10f;

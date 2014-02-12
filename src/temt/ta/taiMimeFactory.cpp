@@ -15,6 +15,8 @@
 
 #include "taiMimeFactory.h"
 
+TA_BASEFUNS_CTORS_DEFN(taiMimeFactory);
+
 const String taiMimeFactory::text_plain("text/plain");
 
 QByteArray taiMimeFactory::StrToByteArray(const String& str) {

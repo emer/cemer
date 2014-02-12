@@ -18,6 +18,7 @@
 #include <TypeDef> 
 #include <MemberDef> 
 #include <MethodDef>
+#include <BuiltinTypeDefs>
 taTypeDef_Of(PropertyDef);
 taTypeDef_Of(EnumDef);
 
@@ -36,6 +37,7 @@ taTypeDef_Of(EnumDef);
 #include <taFiler>
 #include <css_machine.h>
 #include <Program>
+#include <taProject>
 #include <taiMiscCore>
 #include <UserDataItem_List>
 #include <tabMisc>

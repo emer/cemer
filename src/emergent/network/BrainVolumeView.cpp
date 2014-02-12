@@ -58,6 +58,8 @@
 
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(BrainVolumeView);
+
 namespace { // anonymous
   // Set to 0 to turn off debug output.
   // Set to 1 to enable debug output and test brain areas painting.

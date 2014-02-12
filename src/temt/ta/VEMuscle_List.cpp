@@ -15,3 +15,5 @@
 
 #include "VEMuscle_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(VEMuscle_List);
+

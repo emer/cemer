@@ -18,6 +18,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(EditMthItem_Group);
+
 
 void EditMthItem_Group::Initialize() {
   SetBaseType(&TA_EditMthItem);

@@ -16,6 +16,8 @@
 #include "taTime.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taTime);
+
 #if (defined(TA_OS_WIN))
 # include <time.h>
 # include <windows.h>

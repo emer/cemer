@@ -36,6 +36,8 @@
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 
+TA_BASEFUNS_CTORS_DEFN(T3AnnotationView);
+
 
 void T3AnnotationView::Initialize(){
   data_base = &TA_T3Annotation;

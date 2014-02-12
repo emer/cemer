@@ -15,8 +15,11 @@
 
 #include "NetGroupedDataLoop.h"
 #include <DataTable>
+#include <Program>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(NetGroupedDataLoop);
 
 void NetGroupedDataLoop::Initialize() {
   group_order = PERMUTED;

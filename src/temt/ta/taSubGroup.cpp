@@ -18,6 +18,10 @@
 
 #include <SigLinkSignal>
 
+TA_BASEFUNS_CTORS_DEFN(taSubGroup);
+
+TA_BASEFUNS_CTORS_DEFN(taGroup_List);
+
 void taSubGroup::SigEmit(int sls, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event

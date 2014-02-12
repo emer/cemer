@@ -17,6 +17,8 @@
 #include <taiMimeSource>
 #include <QMimeData>
 
+TA_BASEFUNS_CTORS_DEFN(taiMimeItem);
+
 
 int taiMimeItem::data(const QMimeData* md, const QString& mimeType,
   taString& result) 

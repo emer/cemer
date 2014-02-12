@@ -19,6 +19,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(LViLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LVeLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LVMiscSpec);
+
 void LVMiscSpec::Initialize() {
   gd_pvlv = true;
   min_lvi = 0.1f;

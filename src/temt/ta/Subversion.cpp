@@ -18,6 +18,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(Subversion);
+
 String
 Subversion::GetUsername(const String &url, bool prompt)
 {

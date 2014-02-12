@@ -18,6 +18,8 @@
 #include <int_Array>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
+
 void TiledGpRFPrjnSpec::Initialize() {
   send_gp_size = 4;
   send_gp_skip = 2;

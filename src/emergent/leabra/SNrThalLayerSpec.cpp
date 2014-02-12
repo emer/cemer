@@ -21,6 +21,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(SNrThalMiscSpec);
+
+TA_BASEFUNS_CTORS_DEFN(SNrThalLayerSpec);
+
 
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;

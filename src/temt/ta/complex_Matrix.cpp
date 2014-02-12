@@ -18,6 +18,8 @@
 
 #include <cmath>
 
+TA_BASEFUNS_CTORS_DEFN(complex_Matrix);
+
 bool complex_Matrix::CheckComplexGeom(const MatrixGeom& gm, bool err) {
   if(gm.dims() < 2 || gm.dim(0) != 2) {
     if(!err) return false;

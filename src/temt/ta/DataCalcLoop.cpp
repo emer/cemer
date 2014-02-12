@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "DataCalcLoop.h"
+#include <Program>
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(DataCalcLoop);
 
 taTypeDef_Of(DataCalcAddDestRow);
 taTypeDef_Of(DataCalcSetDestRow);

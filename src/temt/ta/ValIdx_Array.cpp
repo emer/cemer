@@ -15,4 +15,6 @@
 
 #include "ValIdx_Array.h"
 
+TA_BASEFUNS_CTORS_DEFN(ValIdx_Array);
+
 const ValIdx ValIdx_Array::blank;

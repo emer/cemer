@@ -17,6 +17,8 @@
 #include <iTypeInfoBrowser>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(TypeInfoBrowser);
+
 TypeInfoBrowser* TypeInfoBrowser::New(void* root, TypeDef* root_typ, MemberDef* root_md) {
   TypeInfoBrowser* rval = new TypeInfoBrowser();
   rval->setRoot(root, root_typ, root_md);

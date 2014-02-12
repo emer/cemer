@@ -25,7 +25,7 @@
 #include <ActrMotorStyle_List>
 #include <taMath_float>
 #include <taVector2i>
-#include <Program>
+#include <ProgramRef>
 
 // declare all other types mentioned but not required to include:
 

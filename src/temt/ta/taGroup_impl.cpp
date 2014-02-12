@@ -22,6 +22,8 @@
 #include <tabMisc>
 #include <taRootBase>
 
+TA_BASEFUNS_CTORS_DEFN(taGroup_impl);
+
 using namespace std;
 
 bool taGroup_impl::def_nw_item;

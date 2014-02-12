@@ -16,6 +16,8 @@
 #include "taThreadMgr.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taThreadMgr);
+
 using namespace std;
 
 

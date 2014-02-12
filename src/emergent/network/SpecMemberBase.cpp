@@ -17,6 +17,8 @@
 #include <BaseSpec>
 #include <MemberDef>
 
+TA_BASEFUNS_CTORS_DEFN(SpecMemberBase);
+
 void SpecMemberBase::Defaults() {
   Defaults_impl();
   DefaultsMembers();

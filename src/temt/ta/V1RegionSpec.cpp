@@ -17,8 +17,27 @@
 #include <taMath_float>
 #include <taProject>
 #include <RetinaProc>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(V1RegionSpec);
+
+TA_BASEFUNS_CTORS_DEFN(VisSpatIntegSpec);
+
+TA_BASEFUNS_CTORS_DEFN(V2BordOwnStencilSpec);
+
+TA_BASEFUNS_CTORS_DEFN(V2BordOwnSpec);
+
+TA_BASEFUNS_CTORS_DEFN(V1ComplexSpec);
+
+TA_BASEFUNS_CTORS_DEFN(V1BinocularSpec);
+
+TA_BASEFUNS_CTORS_DEFN(V1MotionSpec);
+
+TA_BASEFUNS_CTORS_DEFN(V1sNeighInhib);
+
+TA_BASEFUNS_CTORS_DEFN(V1GaborSpec);
 
 void V1GaborSpec::Initialize() {
   gain = 2.0f;

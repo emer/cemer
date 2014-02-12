@@ -15,6 +15,8 @@
 
 #include "PBWMUnGpData.h"
 
+TA_BASEFUNS_CTORS_DEFN(PBWMUnGpData);
+
 void PBWMUnGpData::Initialize() {
   go_fired_now = false;
   go_fired_trial = false;

@@ -16,6 +16,9 @@
 #include "NetCounterInit.h"
 #include <ProgVar>
 #include <MemberDef>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(NetCounterInit);
 
 
 String NetCounterInit::GetDisplayName() const {

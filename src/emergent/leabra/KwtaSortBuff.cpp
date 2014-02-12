@@ -15,6 +15,8 @@
 
 #include "KwtaSortBuff.h"
 
+TA_BASEFUNS_CTORS_DEFN(KwtaSortBuff);
+
 void KwtaSortBuff::Initialize() {
 }
 

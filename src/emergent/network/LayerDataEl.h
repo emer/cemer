@@ -21,10 +21,12 @@
 #include <taOBase>
 
 // member includes:
-#include <DataTable>
 #include <Network>
+#include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
+class DataTableCols; //
+class DataCol; //
 
 // This is a workaround for a problem that can occur depending on the order of
 // includes.  The problem is that the windows header file "Nb30.h" contains
@@ -60,7 +62,7 @@ public:
     GROUP_NAME,			// read/write the network group_name field
   };
 
-  DataBlockRef		data;
+  DataTableRef		data;
   // #READ_ONLY #HIDDEN #NO_SAVE source or sink of the data to apply to layer, or store layer output (as appropriate) -- managed by owner
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
@@ -85,10 +87,10 @@ public:
   PosVector2i		offset;
   // #EXPERT offset in layer or unit group at which to start reading/writing
   
-  virtual void 	SetDataNetwork(DataBlock* db, Network* net);
+  virtual void 	SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
-  virtual int	GetChanIdx(DataBlock* db) { return -1; }
+  virtual int	GetChanIdx(DataTable* db) { return -1; }
   // #CAT_LayerData get channel index from data block: depends on source or sink (override in subclass)
 
   String	GetName() const			{ return chan_name; }

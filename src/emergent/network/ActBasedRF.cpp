@@ -16,6 +16,8 @@
 #include "ActBasedRF.h"
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(ActBasedRF);
+
 
 void ActBasedRF::Initialize() {
   norm_mode = NORM_TRG_UNIT_RF_LAY;

@@ -16,6 +16,9 @@
 #include "DataVarProgMatrix.h"
 #include <DataCol>
 #include <DataTable>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DataVarProgMatrix);
 
 
 

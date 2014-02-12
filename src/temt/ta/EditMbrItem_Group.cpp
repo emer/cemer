@@ -19,6 +19,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(EditMbrItem_Group);
+
 
 void EditMbrItem_Group::SigEmit(int sls, void* op1, void* op2)
 {

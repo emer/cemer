@@ -15,6 +15,8 @@
 
 #include "PVrConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(PVrConSpec);
+
 void PVrConSpec::Initialize() {
   wt_dec_mult = 0.01f;
 }

@@ -15,6 +15,8 @@
 
 #include "RelationFloat.h"
 
+TA_BASEFUNS_CTORS_DEFN(RelationFloat);
+
 void RelationFloat::Initialize() {
   rel = LESSTHANOREQUAL;
   val = 0.0;

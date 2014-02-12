@@ -15,3 +15,5 @@
 
 #include "double_Data.h"
 
+TA_BASEFUNS_CTORS_DEFN(double_Data);
+

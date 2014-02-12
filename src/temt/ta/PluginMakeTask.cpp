@@ -17,6 +17,8 @@
 #include <PluginMakeThreadMgr>
 #include <taPlugins>
 
+TA_BASEFUNS_CTORS_DEFN(PluginMakeTask);
+
 
 void PluginMakeTask::Initialize() {
 }

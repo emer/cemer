@@ -19,6 +19,19 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
+TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
+TA_BASEFUNS_CTORS_DEFN(CtLayerInhibMod);
+TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
+TA_BASEFUNS_CTORS_DEFN(KWTASpec);
+TA_BASEFUNS_CTORS_DEFN(GpInhibSpec);
+TA_BASEFUNS_CTORS_DEFN(KwtaTieBreak);
+TA_BASEFUNS_CTORS_DEFN(AdaptISpec);
+TA_BASEFUNS_CTORS_DEFN(ClampSpec);
+TA_BASEFUNS_CTORS_DEFN(DecaySpec);
+TA_BASEFUNS_CTORS_DEFN(CosDiffLrateSpec);
+TA_BASEFUNS_CTORS_DEFN(LayAbsNetAdaptSpec);
+
 eTypeDef_Of(MarkerConSpec);
 
 void LeabraInhibSpec::Initialize() {

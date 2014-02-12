@@ -15,3 +15,5 @@
 
 #include "ColorScaleColor_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ColorScaleColor_List);
+

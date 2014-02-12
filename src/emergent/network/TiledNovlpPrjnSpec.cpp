@@ -17,6 +17,8 @@
 #include <Network>
 #include <int_Array>
 
+TA_BASEFUNS_CTORS_DEFN(TiledNovlpPrjnSpec);
+
 void TiledNovlpPrjnSpec::Initialize() {
   reciprocal = false;
 }

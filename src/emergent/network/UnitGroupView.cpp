@@ -38,6 +38,8 @@
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 
+TA_BASEFUNS_CTORS_DEFN(UnitGroupView);
+
 void UnitGroupView::Initialize() {
   data_base = &TA_Layer;
   m_lv = NULL;

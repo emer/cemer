@@ -87,10 +87,9 @@ public:
   int          GetIndex() const override { return line_no; }
   void         SetIndex(int value) override { line_no = value; }
 
-//    TA_SIMPLE_BASEFUNS(ProgLine);
-    void  InitLinks();
-    void  CutLinks();
-    TA_BASEFUNS_NOCOPY(ProgLine);
+  void  InitLinks();
+  void  CutLinks();
+  TA_BASEFUNS_NOCOPY(ProgLine);
 
 private:
   void  Initialize();

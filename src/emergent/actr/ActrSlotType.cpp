@@ -18,6 +18,8 @@
 #include <ActrChunkType>
 #include <ActrModel>
 
+TA_BASEFUNS_CTORS_DEFN(ActrSlotType);
+
 void ActrSlotType::Initialize() {
   val_type = LITERAL;
 }

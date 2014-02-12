@@ -16,6 +16,8 @@
 #include "NameVar_Array.h"
 #include <String_Array>
 
+TA_BASEFUNS_CTORS_DEFN(NameVar_Array);
+
 const String NameVar_Array::def_sep(", ");
 const NameVar NameVar_Array::blank;
 

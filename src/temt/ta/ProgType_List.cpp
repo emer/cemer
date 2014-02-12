@@ -18,6 +18,8 @@
 #include <DynEnumType>
 #include <DynEnumTypeFromDTColumn>
 
+TA_BASEFUNS_CTORS_DEFN(ProgType_List);
+
 void ProgType_List::Initialize() {
   SetBaseType(&TA_ProgType);
   el_typ = &TA_DynEnumType;

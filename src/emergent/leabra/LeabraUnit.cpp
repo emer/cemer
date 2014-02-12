@@ -16,6 +16,12 @@
 #include "LeabraUnit.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(VChanBasis);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraUnitChans);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraUnit);
+
 void LeabraUnitChans::Initialize() {
   l = i = h = a = 0.0f;
 }

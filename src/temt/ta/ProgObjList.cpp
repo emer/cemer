@@ -19,6 +19,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ProgObjList);
+
 taTypeDef_Of(DataTable);
 
 

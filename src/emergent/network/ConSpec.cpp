@@ -21,6 +21,10 @@
 #include <Connection>
 #include <UnitSpec>
 
+TA_BASEFUNS_CTORS_DEFN(ConSpec);
+TA_BASEFUNS_CTORS_LITE_DEFN(ConSpec_SPtr);
+TA_BASEFUNS_CTORS_DEFN(WeightLimits);
+
 void ConSpec::Initialize() {
   min_obj_type = &TA_Connection;
   rnd.type = Random::UNIFORM;

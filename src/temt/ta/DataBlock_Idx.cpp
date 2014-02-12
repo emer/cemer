@@ -15,3 +15,5 @@
 
 #include "DataBlock_Idx.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataBlock_Idx);
+

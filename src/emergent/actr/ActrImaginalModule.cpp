@@ -16,6 +16,8 @@
 #include "ActrImaginalModule.h"
 #include <ActrModel>
 
+TA_BASEFUNS_CTORS_DEFN(ActrImaginalModule);
+
 
 void ActrImaginalModule::Initialize() {
   imaginal_delay.type = Random::NONE;

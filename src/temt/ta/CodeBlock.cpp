@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(CodeBlock);
+
 
 void CodeBlock::Initialize() {
 }

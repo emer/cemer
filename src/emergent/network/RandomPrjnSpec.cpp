@@ -17,6 +17,8 @@
 #include <Network>
 #include <int_Matrix>
 
+TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
+
 void RandomPrjnSpec::Initialize() {
   p_con = .25;
   sym_self = false;

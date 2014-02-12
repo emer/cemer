@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataSelectColsProg.h"
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DataSelectColsProg);
 
 
 void DataSelectColsProg::UpdateAfterEdit_impl() {

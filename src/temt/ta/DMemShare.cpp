@@ -15,6 +15,8 @@
 
 #include "DMemShare.h"
 
+TA_BASEFUNS_CTORS_DEFN(DMemShare);
+
 #ifdef DMEM_COMPILE
 #include <mpi.h>
 

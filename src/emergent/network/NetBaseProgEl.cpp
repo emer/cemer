@@ -16,6 +16,8 @@
 #include "NetBaseProgEl.h"
 #include <ProgVar>
 
+TA_BASEFUNS_CTORS_DEFN(NetBaseProgEl);
+
 eTypeDef_Of(Network);
 
 bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {

@@ -16,9 +16,12 @@
 #include "DataOpList.h"
 #include <DataSrcDestProg>
 #include <DataOpBaseSpec>
+#include <DataTable>
 
 #include <taMisc>
 #include <tabMisc>
+
+TA_BASEFUNS_CTORS_DEFN(DataOpList);
 
 
 void DataOpList::SigEmit(int sls, void* op1, void* op2) {

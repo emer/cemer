@@ -17,6 +17,10 @@
 
 #include "zsh.h"
 
+TA_BASEFUNS_CTORS_DEFN(ZshConSpec);
+
+TA_BASEFUNS_CTORS_DEFN(MaxInConSpec);
+
 void ZshConSpec::Initialize() {
   soft_wt_bound = true;
 }

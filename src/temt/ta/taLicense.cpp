@@ -20,6 +20,8 @@
 
 #include <QDate>
 
+TA_BASEFUNS_CTORS_DEFN(taLicense);
+
 
 void taLicense::Initialize() {
   license = taMisc::license_def;

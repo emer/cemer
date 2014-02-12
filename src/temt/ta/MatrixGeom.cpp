@@ -18,6 +18,8 @@
 #include <int_Matrix>
 #include <MatrixIndex>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(MatrixGeom);
+
 using namespace std;
 
 MatrixGeom::MatrixGeom(int init_n_dims) {

@@ -23,6 +23,8 @@
 #include <QFileInfo>
 #include <QDateTime>
 
+TA_BASEFUNS_CTORS_DEFN(ProgLibEl);
+
 
 using namespace std;
 

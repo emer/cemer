@@ -58,6 +58,8 @@
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoEventManager.h>
 
+TA_BASEFUNS_CTORS_DEFN(GridTableView);
+
 
 GridTableView* DataTable::NewGridView(T3Panel* fr) {
   return GridTableView::New(this, fr);

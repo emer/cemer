@@ -17,6 +17,7 @@
 #include <LeabraProject>
 #include <LeabraNetwork>
 #include <StdNetWizDlg>
+#include <DataTable>
 
 #include <FullPrjnSpec>
 #include <OneToOnePrjnSpec>
@@ -73,6 +74,8 @@
 #include <SubiculumLayerSpec>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 
 void LeabraWizard::Initialize() {
 }

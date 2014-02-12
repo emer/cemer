@@ -17,6 +17,8 @@
 
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(ClampDaLayerSpec);
+
 void ClampDaLayerSpec::Initialize() {
   send_da = CYCLE;
 }

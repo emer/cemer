@@ -17,6 +17,14 @@
 
 #include "som.h"
 
+TA_BASEFUNS_CTORS_DEFN(SomUnitSpec);
+
+TA_BASEFUNS_CTORS_DEFN(NeighborEl_List);
+
+TA_BASEFUNS_CTORS_DEFN(NeighborEl);
+
+TA_BASEFUNS_CTORS_DEFN(SomLayerSpec);
+
 void SomUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   // Modified by Danke, Feb. 9, 2003
   if (u->ext_flag & Unit::EXT)

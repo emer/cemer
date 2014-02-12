@@ -15,4 +15,6 @@
 
 #include "voidptr_Array.h"
 
+TA_BASEFUNS_CTORS_DEFN(voidptr_Array);
+
 const voidptr voidptr_Array::blank = NULL;

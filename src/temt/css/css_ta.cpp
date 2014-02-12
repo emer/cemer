@@ -31,8 +31,11 @@
 #include <byte_Matrix>
 #include <float_Matrix>
 #include <double_Matrix>
+#include <String_Matrix>
+#include <DataTableCols>
 #include <taLeafItr>
 #include <taBaseItr>
+
 
 using namespace std;
 

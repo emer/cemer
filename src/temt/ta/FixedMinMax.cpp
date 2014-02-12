@@ -16,6 +16,8 @@
 #include "FixedMinMax.h"
 #include <MinMax>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(FixedMinMax);
+
 void FixedMinMax::Initialize() {
   min = max = 0.0f;
   fix_min = fix_max = false;

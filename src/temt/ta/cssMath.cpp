@@ -23,6 +23,8 @@
 #include <Random>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(cssMath);
+
 
 int cssMath::ndims(const taMatrix* cr) {
   if(!cr) {

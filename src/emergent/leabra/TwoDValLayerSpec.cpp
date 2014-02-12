@@ -21,6 +21,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(TwoDValSpec);
+
+TA_BASEFUNS_CTORS_DEFN(TwoDValBias);
+
+TA_BASEFUNS_CTORS_DEFN(TwoDValLayerSpec);
+
 
 void TwoDValSpec::Initialize() {
   rep = GAUSSIAN;

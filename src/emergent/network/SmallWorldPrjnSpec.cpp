@@ -18,6 +18,8 @@
 #include <DataTable>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(SmallWorldPrjnSpec);
+
 void SmallWorldPrjnSpec::Initialize() {
   lambda = 3.0f;
 }

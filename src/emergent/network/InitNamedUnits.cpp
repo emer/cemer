@@ -19,9 +19,12 @@
 #include <GridTableView>
 #include <T3Panel>
 #include <DynEnumType>
+#include <DataTable>
 
 #include <tabMisc>
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(InitNamedUnits);
 
 
 void InitNamedUnits::Initialize() {

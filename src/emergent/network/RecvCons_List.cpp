@@ -16,6 +16,8 @@
 #include "RecvCons_List.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(RecvCons_List);
+
 void  RecvCons_List::Initialize() {
   SetBaseType(&TA_RecvCons);
 }

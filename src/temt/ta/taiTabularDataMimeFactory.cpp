@@ -26,6 +26,8 @@
 #include <QApplication>
 #include <QClipboard>
 
+TA_BASEFUNS_CTORS_DEFN(taiTabularDataMimeFactory);
+
 
 /* Tabular Data semantics
 

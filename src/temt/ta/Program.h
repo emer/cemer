@@ -16,6 +16,9 @@
 #ifndef Program_h
 #define Program_h 1
 
+// this is useful for seeing who is including this and why..
+// #warning "program included"
+
 // parent includes:
 #include <taNBase>
 #include <AbstractScriptBase>

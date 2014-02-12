@@ -26,6 +26,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ClustNode);
+
 
 void ClustNode::Initialize() {
   pat = NULL;

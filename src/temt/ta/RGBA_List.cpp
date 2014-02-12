@@ -15,3 +15,5 @@
 
 #include "RGBA_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(RGBA_List);
+

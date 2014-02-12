@@ -16,6 +16,8 @@
 #include "VELinearMuscle.h"
 #include <VEArm>
 
+TA_BASEFUNS_CTORS_DEFN(VELinearMuscle);
+
 
 void VELinearMuscle::Initialize() {
   gain = 1;

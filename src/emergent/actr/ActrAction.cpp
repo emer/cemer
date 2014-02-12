@@ -19,8 +19,13 @@
 #include <ActrSlot>
 
 #include <MemberDef>
+#include <Program>
+#include <DataTable>
+#include <ProgVar>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(ActrAction);
 
 void ActrAction::Initialize() {
   flags = AF_NONE;

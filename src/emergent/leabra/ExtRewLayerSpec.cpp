@@ -19,6 +19,14 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ExtRewLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(ExtRewSpec);
+
+TA_BASEFUNS_CTORS_DEFN(OutErrSpec);
+
+TA_BASEFUNS_CTORS_DEFN(AvgExtRewSpec);
+
 
 void AvgExtRewSpec::Initialize() {
   sub_avg = false;

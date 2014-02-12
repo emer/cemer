@@ -18,6 +18,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(SelectEditItem);
+
 
 SelectEditItem* SelectEditItem::StatFindItemBase(const taGroup_impl* grp,
    taBase* base, TypeItem* ti, int& idx)

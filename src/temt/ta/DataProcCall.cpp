@@ -15,6 +15,8 @@
 
 #include "DataProcCall.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataProcCall);
+
 taTypeDef_Of(taDataProc);
 
 

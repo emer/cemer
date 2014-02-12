@@ -15,3 +15,5 @@
 
 #include "DockViewer_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(DockViewer_List);
+

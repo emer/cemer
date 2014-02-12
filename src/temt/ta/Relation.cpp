@@ -15,7 +15,9 @@
 
 #include "Relation.h"
 #include <Program>
+#include <ProgVar>
 
+TA_BASEFUNS_CTORS_DEFN(Relation);
 
 void Relation::Initialize() {
   rel = LESSTHANOREQUAL;

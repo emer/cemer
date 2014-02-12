@@ -21,6 +21,8 @@
 #include <QDir>
 #include <QStringList>
 
+TA_BASEFUNS_CTORS_DEFN(ProjTemplates);
+
 void ProjTemplates::Initialize() {
   not_init = true;
 }

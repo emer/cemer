@@ -23,7 +23,7 @@
 // member includes:
 #include <taSmartRef>
 #include <MatrixGeom>
-#include <DataTable>
+#include <DataTableRef>
 #include <DataOpEl>
 #include <AggregateSpec>
 #include <DataSelectEl>
@@ -97,7 +97,7 @@ public:
 
   void		SetMonVals(taBase* obj, const String& var); 
   // #CAT_Monitor set object and variable, and update appropriately
-  virtual void 	GetMonVals(DataBlock* db);
+  virtual void 	GetMonVals(DataTable* db);
   // #CAT_Monitor get the monitor data and stick it in the current row of the datablock/datatable
   void		ResetMonVals();
   // #CAT_Monitor deletes the cached vars
@@ -136,9 +136,9 @@ protected:
 				      const MatrixGeom* geom = NULL);
   // caller resp for somehow setting geom if NULL; clears cell_num
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
-  void 			GetMonVals_Agg(DataBlock* db);
+  void 			GetMonVals_Agg(DataTable* db);
   // special version for agg case
-  void 			GetMonVals_DataAgg(DataBlock* db);
+  void 			GetMonVals_DataAgg(DataTable* db);
   // special version for data_agg case
 
   // these are for finding the members and building the stat

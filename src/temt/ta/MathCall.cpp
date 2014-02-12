@@ -16,6 +16,8 @@
 #include "MathCall.h"
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(MathCall);
+
 taTypeDef_Of(taMath);
 taTypeDef_Of(taMath_float);
 

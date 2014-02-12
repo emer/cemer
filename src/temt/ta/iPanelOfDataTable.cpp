@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iPanelOfDataTable.h"
+#include <DataTable>
 #include <iDataTableEditor>
 #include <iMatrixEditor>
 #include <iClipData>

@@ -20,6 +20,8 @@
 #include <PFCLayerSpec>
 #include <MatrixLayerSpec>
 
+TA_BASEFUNS_CTORS_DEFN(PVrToMatrixGoPrjnSpec);
+
 
 void PVrToMatrixGoPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;

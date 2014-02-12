@@ -16,6 +16,32 @@
 
 #include "bp_v3_compat.h"
 
+TA_BASEFUNS_CTORS_DEFN(RBpSequence);
+
+TA_BASEFUNS_CTORS_DEFN(RBpSE_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(V3BpProject);
+
+TA_BASEFUNS_CTORS_DEFN(BpTrial);
+
+TA_BASEFUNS_CTORS_DEFN(CE_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(NormDotProd_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(VecCor_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(NormVecLen_Stat);
+
+TA_BASEFUNS_CTORS_DEFN(RBpTrial);
+
+TA_BASEFUNS_CTORS_DEFN(APBpCycle);
+
+TA_BASEFUNS_CTORS_DEFN(APBpSettle);
+
+TA_BASEFUNS_CTORS_DEFN(APBpTrial);
+
+TA_BASEFUNS_CTORS_DEFN(APBpMaxDa_De);
+
 //////////////////////////
 //  	Procs		//
 //////////////////////////

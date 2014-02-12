@@ -26,6 +26,8 @@
 #include <QFileInfo>
 #include <QDir>
 
+TA_BASEFUNS_CTORS_DEFN(PluginWizard);
+
 using namespace std;
 
 

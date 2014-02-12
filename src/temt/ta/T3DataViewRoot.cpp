@@ -17,6 +17,8 @@
 
 #include <T3NodeParent>
 
+TA_BASEFUNS_CTORS_DEFN(T3DataViewRoot);
+
 taTypeDef_Of(T3DataViewMain);
 
 void T3DataViewRoot::Initialize() {

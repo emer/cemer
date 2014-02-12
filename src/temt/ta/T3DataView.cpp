@@ -28,6 +28,9 @@
 
 #include <Quarter/Quarter.h>
 #include <Quarter/QuarterWidget.h>
+
+TA_BASEFUNS_CTORS_DEFN(T3DataView);
+
 using SIM::Coin3D::Quarter::QuarterWidget;
 
 #ifdef TA_PROFILE

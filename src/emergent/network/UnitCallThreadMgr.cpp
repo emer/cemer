@@ -18,6 +18,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(UnitCallThreadMgr);
+
+TA_BASEFUNS_CTORS_DEFN(UnitCallTask);
+
 void UnitCallTask::Initialize() {
   uidx_st = -1;
   uidx_ed = -1;

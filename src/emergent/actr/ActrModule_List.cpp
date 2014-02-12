@@ -15,6 +15,8 @@
 
 #include "ActrModule_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ActrModule_List);
+
 void ActrModule_List::Initialize() {
   SetBaseType(&TA_ActrModule);
 }

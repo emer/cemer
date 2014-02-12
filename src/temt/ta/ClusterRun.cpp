@@ -33,6 +33,8 @@
 #include <QRegExp>
 #include <QDir>
 
+TA_BASEFUNS_CTORS_DEFN(ClusterRun);
+
 String ClusterRun::timestamp_fmt = "yyyy_MM_dd_hh_mm_ss";
 
 ClusterRunRef ClusterRun::wait_proc_updt;

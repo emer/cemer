@@ -15,6 +15,10 @@
 
 #include "LayerWriter.h"
 #include <Network>
+#include <DataTable>
+
+
+TA_BASEFUNS_CTORS_DEFN(LayerWriter);
 
 void LayerWriter::Initialize() {
   layer_data.SetBaseType(&TA_LayerWriterEl);
@@ -44,7 +48,7 @@ String LayerWriter::GetDisplayName() const {
   return rval;
 }
 
-void LayerWriter::SetDataNetwork(DataBlock* db, Network* net) {
+void LayerWriter::SetDataNetwork(DataTable* db, Network* net) {
   data = db;
   network = net;
   layer_data.SetDataNetwork(data, network);

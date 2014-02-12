@@ -23,6 +23,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(TdLayerSpec);
+
 
 void TdLayerSpec::Initialize() {
   SetUnique("kwta", true);

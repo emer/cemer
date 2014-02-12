@@ -113,7 +113,7 @@ public:
   void  InitLinks()		{ SpecPtr_impl::InitLinks(); taBase::Own(spec, this); }
   void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
   
-  TA_TMPLT_BASEFUNS_LITE(SpecPtr,T)
+  TA_TMPLT_BASEFUNS_LITE(SpecPtr,T);
 private:
   void	Copy_(const SpecPtr<T>& cp) { spec.set(cp.SPtr()); } 
   void 	Initialize()		{ }

@@ -21,8 +21,8 @@
 
 // member includes:
 #include <NetMonItem_List>
-#include <Network>
-#include <DataTable>
+#include <NetworkRef>
+#include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
 

@@ -21,6 +21,8 @@
 #include <DataCol>
 #include <taSmartRef>
 
+TA_BASEFUNS_CTORS_DEFN(DynEnumTypeFromDTColumn);
+
 void DynEnumTypeFromDTColumn::Initialize() {
   srcTable = NULL;
 }

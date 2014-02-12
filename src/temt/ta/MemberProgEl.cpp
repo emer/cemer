@@ -19,6 +19,8 @@
 #include <taMisc>
 #include <MemberDef>
 
+TA_BASEFUNS_CTORS_DEFN(MemberProgEl);
+
 
 void MemberProgEl::Initialize() {
   obj_type = &TA_taBase; // placeholder

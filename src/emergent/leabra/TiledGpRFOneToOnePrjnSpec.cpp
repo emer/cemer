@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(TiledGpRFOneToOnePrjnSpec);
+
 void TiledGpRFOneToOnePrjnSpec::Initialize() {
   gauss_sigma = 1.0f;
   su_idx_st = 0;

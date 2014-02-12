@@ -38,6 +38,8 @@ eTypeDef_Of(ProjectBase);
 
 #include <iProgramToolBar>
 
+TA_BASEFUNS_CTORS_DEFN(EmergentRoot);
+
 static void emergent_viewcolor_init() {
   if(!taMisc::view_colors) {
     taRootBase::Startup_InitViewColors();

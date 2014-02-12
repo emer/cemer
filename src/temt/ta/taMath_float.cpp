@@ -29,6 +29,7 @@
 #include <RelationFloat>
 #include <SimpleMathSpec>
 #include <taBaseItr>
+#include <ProgVar>
 
 #include <taMisc>
 
@@ -57,6 +58,8 @@
 
 #ifdef USE_SSE8
 #include "vectorclass.h"
+
+TA_BASEFUNS_CTORS_DEFN(taMath_float);
 #endif
 
 bool taMath_float::isnan(float val) {

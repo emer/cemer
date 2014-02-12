@@ -18,6 +18,8 @@
 #include <taProject>
 #include <DataTable>
 
+TA_BASEFUNS_CTORS_DEFN(DoGFilter);
+
 
 
 void DoGFilter::Initialize() {

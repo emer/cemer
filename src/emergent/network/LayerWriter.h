@@ -31,7 +31,7 @@ class E_API LayerWriter : public taNBase {
   // #STEM_BASE ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
-  DataBlockRef		data;
+  DataTableRef		data;
   // the data object with input data to present to the network
   NetworkRef		network;
   // the network to present the input data to
@@ -41,7 +41,7 @@ public:
   virtual LayerDataEl*	AddLayerData()	{ return (LayerDataEl*)layer_data.New(1); }
   // #BUTTON add a new layer data item
 
-  virtual void 	SetDataNetwork(DataBlock* db, Network* net);
+  virtual void 	SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerWriter set the data table and network pointers -- convenience function for programs 
 
   virtual void	AutoConfig(bool remove_unused = true);

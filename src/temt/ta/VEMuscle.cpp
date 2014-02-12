@@ -16,6 +16,8 @@
 #include "VEMuscle.h"
 #include <VEArm>
 
+TA_BASEFUNS_CTORS_DEFN(VEMuscle);
+
 ///////////////////////////////////////////////////////////////
 //   VEMuscle: skeleton class for muscles
 

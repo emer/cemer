@@ -20,6 +20,8 @@
 
 #include <ode/ode.h>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(taQuaternion);
+
 void taQuaternion::ToMatrix(taMatrix& mat) const {
   mat.SetGeom(1,4); mat.SetFmVar(s,0); mat.SetFmVar(x,1); mat.SetFmVar(y,2);
   mat.SetFmVar(z,3);

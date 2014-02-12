@@ -26,6 +26,8 @@
 #include <QComboBox>
 #include <QBoxLayout>
 
+TA_BASEFUNS_CTORS_DEFN(AnalysisRun);
+
 bool AnalysisRun::Init(AnalysisType type, DataTable* src_table, const String& src_col_name, DataTable* result_table) {
   analysis_type = type;
 

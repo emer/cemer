@@ -16,6 +16,8 @@
 #include "OneToOnePrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(OneToOnePrjnSpec);
+
 void OneToOnePrjnSpec::Initialize() {
   n_conns = -1;
   recv_start = 0;

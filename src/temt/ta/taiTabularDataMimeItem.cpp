@@ -21,6 +21,8 @@
 
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(taiTabularDataMimeItem);
+
 using namespace std;
 
 /* TSV reading engine

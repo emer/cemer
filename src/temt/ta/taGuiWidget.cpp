@@ -34,6 +34,8 @@
 #include <QUrl>
 #include <QDesktopServices>
 
+TA_BASEFUNS_CTORS_DEFN(taGuiWidget);
+
 
 
 void taGuiWidget::Initialize() {

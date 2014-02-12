@@ -15,8 +15,25 @@
 
 #include "cs.h"
 #include <DumpFileCvt>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(CsConSpec);
+TA_BASEFUNS_CTORS_DEFN(CsRecvCons);
+TA_BASEFUNS_CTORS_DEFN(CsSendCons);
+TA_BASEFUNS_CTORS_DEFN(CsUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(LinearCsUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(CsUnit);
+TA_BASEFUNS_CTORS_DEFN(CsLayer);
+TA_BASEFUNS_CTORS_DEFN(HebbCsConSpec);
+TA_BASEFUNS_CTORS_DEFN(CsProject);
+TA_BASEFUNS_CTORS_DEFN(CsWizard);
+TA_BASEFUNS_CTORS_DEFN(SigmoidUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(BoltzUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(IACUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(ThreshLinCsUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(CsNetwork);
 
 
 static void cs_converter_init() {

@@ -14,6 +14,9 @@
 //   GNU General Public License for more details.
 
 #include "LayerWriterEl.h"
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(LayerWriterEl);
 
 
 void LayerWriterEl::Initialize() {
@@ -46,9 +49,13 @@ String LayerWriterEl::GetDisplayName() const {
   return rval;
 }
 
+int LayerWriterEl::GetChanIdx(DataTable* db) override {
+  return db->GetSourceChannelByName(chan_name);
+}
+
 // note: we always do the lookup by name every time -- it just doesn't cost
 // that much and it makes everything so much simpler!
-bool LayerWriterEl::ApplyInputData(DataBlock* db, Network* net) {
+bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
   if(!db || !net) return false;
   int chan_idx = db->GetSourceChannelByName(chan_name);
   if(chan_idx < 0) return false;

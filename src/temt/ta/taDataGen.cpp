@@ -15,6 +15,7 @@
 
 #include "taDataGen.h"
 
+#include <DataTable>
 #include <QDir>
 #include <taProject>
 #include <float_Matrix>
@@ -28,6 +29,8 @@
 #include <taDataProc>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(taDataGen);
 
 
 

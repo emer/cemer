@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(V1EndStopPrjnSpec);
+
 void V1EndStopPrjnSpec::Initialize() {
   n_angles = 4;
   end_stop_dist = 2;

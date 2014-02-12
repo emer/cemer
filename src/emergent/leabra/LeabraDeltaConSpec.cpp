@@ -15,6 +15,8 @@
 
 #include "LeabraDeltaConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraDeltaConSpec);
+
 void LeabraDeltaConSpec::Initialize() {
   SetUnique("lmix", true);
   lmix.hebb = 0.0f;

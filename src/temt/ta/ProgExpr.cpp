@@ -17,6 +17,8 @@
 #include <Function>
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(ProgExpr);
+
 
 bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
   if(!base_) return true;

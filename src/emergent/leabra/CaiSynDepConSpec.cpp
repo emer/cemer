@@ -15,6 +15,10 @@
 
 #include "CaiSynDepConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(CaiSynDepSpec);
+
+TA_BASEFUNS_CTORS_DEFN(CaiSynDepConSpec);
+
 void CaiSynDepSpec::Initialize() {
   ca_inc = .2f;                 // base per-cycle is .01
   ca_dec = .2f;                 // base per-cycle is .01

@@ -15,6 +15,8 @@
 
 #include "LeabraNegBiasSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraNegBiasSpec);
+
 void LeabraNegBiasSpec::Initialize() {
   decay = 0.0f;
   updt_immed = false;

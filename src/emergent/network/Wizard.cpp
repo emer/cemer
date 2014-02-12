@@ -27,6 +27,8 @@
 #include <tabMisc>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(Wizard);
+
 
 void Wizard::Initialize() {
   std_net_dlg = NULL;

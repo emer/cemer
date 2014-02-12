@@ -22,6 +22,7 @@
 #include <taiWidgetBitBox>
 #include <EnumDef>
 #include <taiTypeOfEnum>
+#include <BuiltinTypeDefs>
 
 #include <taMisc>
 #include <tabMisc>

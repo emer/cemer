@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(CssExpr);
+
 
 void CssExpr::Initialize() {
   expr.SetExprFlag(ProgExpr::FULL_STMT); // full statements for parsing

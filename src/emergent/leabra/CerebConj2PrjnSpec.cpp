@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(CerebConj2PrjnSpec);
+
 void CerebConj2PrjnSpec::Initialize() {
   init_wts = true;
   rf_width = 6;

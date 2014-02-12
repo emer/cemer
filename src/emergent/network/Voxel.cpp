@@ -15,6 +15,8 @@
 
 #include "Voxel.h"
 
+TA_BASEFUNS_CTORS_DEFN(Voxel);
+
 void Voxel::Initialize() {
   coord.x = coord.y = coord.z = -1.0;
   size = 0.0;

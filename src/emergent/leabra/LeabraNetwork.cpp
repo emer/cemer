@@ -15,6 +15,16 @@
 
 #include "LeabraNetwork.h"
 #include <taProject>
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
+TA_BASEFUNS_CTORS_DEFN(CtTrialTiming);
+TA_BASEFUNS_CTORS_DEFN(CtSRAvgSpec);
+TA_BASEFUNS_CTORS_DEFN(CtSineInhibMod);
+TA_BASEFUNS_CTORS_DEFN(CtFinalInhibMod);
+TA_BASEFUNS_CTORS_DEFN(CtLrnTrigSpec);
+TA_BASEFUNS_CTORS_DEFN(CtLrnTrigVals);
+TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
 
 //////////////////////////

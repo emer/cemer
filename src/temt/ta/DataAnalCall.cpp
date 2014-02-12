@@ -15,6 +15,8 @@
 
 #include "DataAnalCall.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataAnalCall);
+
 taTypeDef_Of(taDataAnal);
 
 void DataAnalCall::Initialize() {

@@ -21,6 +21,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(BaseSpec);
+
 bool BaseSpec::nw_itm_def_arg = false;
 
 void BaseSpec::Initialize() {

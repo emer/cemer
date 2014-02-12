@@ -15,6 +15,8 @@
 
 #include "FunLookup.h"
 
+TA_BASEFUNS_CTORS_DEFN(FunLookup);
+
 
 void FunLookup::Initialize() {
   res = .001f;

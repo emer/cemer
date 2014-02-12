@@ -21,7 +21,7 @@
 
 // member includes:
 #include <taVector3f>
-#include <DataTable>
+#include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
 

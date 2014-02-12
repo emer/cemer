@@ -15,6 +15,8 @@
 
 #include "DataSrcDestProg.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataSrcDestProg);
+
 taTypeDef_Of(DataTable);
 
 void DataSrcDestProg::Initialize() {

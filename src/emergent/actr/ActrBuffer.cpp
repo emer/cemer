@@ -20,6 +20,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ActrBuffer);
+
 void ActrBuffer::Initialize() {
   act_total = 0.0f;
   flags = STD_FLAGS;

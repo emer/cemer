@@ -19,6 +19,8 @@
 
 #include <css_machine.h>
 
+TA_BASEFUNS_CTORS_DEFN(IfElse);
+
 
 void IfElse::Initialize() {
   show_false_code = true;

@@ -16,6 +16,8 @@
 #include "FixedWidthColSpec.h"
 #include <DataCol>
 
+TA_BASEFUNS_CTORS_DEFN(FixedWidthColSpec);
+
 
 
 void FixedWidthColSpec::Initialize() {

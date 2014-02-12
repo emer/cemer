@@ -20,6 +20,11 @@
 #include <Aggregate>
 #include <taDataProc>
 #include <taDataAnal>
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(XCALSpikeSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraXCALSpikeConSpec);
 
 void XCALSpikeSpec::Initialize() {
   ss_sr = false;

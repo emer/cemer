@@ -18,6 +18,10 @@
 #include <ECinLayerSpec>
 #include <ECoutLayerSpec>
 
+TA_BASEFUNS_CTORS_DEFN(SubiculumNoveltySpec);
+
+TA_BASEFUNS_CTORS_DEFN(SubiculumLayerSpec);
+
 void SubiculumNoveltySpec::Initialize() {
   max_norm_err = 0.2f;
   min_lrate = 0.01f;

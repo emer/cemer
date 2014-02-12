@@ -19,9 +19,14 @@
 #include <ProjectBase>
 #include <taFiler>
 #include <NetMonitor>
+#include <DataTable>
 
 #include <tabMisc>
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(Layer);
+
+TA_BASEFUNS_CTORS_LITE_DEFN(LayerDistances);
 
 using namespace std;
 

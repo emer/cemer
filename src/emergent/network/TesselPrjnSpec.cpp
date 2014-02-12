@@ -16,6 +16,12 @@
 #include "TesselPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(TesselPrjnSpec);
+
+TA_BASEFUNS_CTORS_DEFN(TessEl);
+
+TA_BASEFUNS_CTORS_LITE_DEFN(TessEl_List);
+
 void TessEl::Initialize() {
   wt_val = 1.0f;
 }

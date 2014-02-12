@@ -24,6 +24,7 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 
+TA_BASEFUNS_CTORS_DEFN(PrjnView);
 
 void PrjnView::Initialize() {
   data_base = &TA_Projection;

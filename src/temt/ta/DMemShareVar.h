@@ -85,9 +85,8 @@ INHERITED(taBase)
 public:
 
   void	Dummy(const DMemShareVar&) { };
-  TA_BASEFUNS(DMemShareVar);
+  TA_BASEFUNS_NOCOPY(DMemShareVar);
 private:
-  NOCOPY(DMemShareVar)
   void 	Initialize() { };
   void 	Destroy()	{ };
 };

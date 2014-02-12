@@ -26,6 +26,8 @@
 
 #include <Inventor/nodes/SoTransform.h>
 
+TA_BASEFUNS_CTORS_DEFN(UnitView);
+
 void UnitView::Initialize()
 {
   m_nv = NULL;

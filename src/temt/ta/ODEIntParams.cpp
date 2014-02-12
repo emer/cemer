@@ -17,6 +17,8 @@
 
 #include <ode/ode.h>
 
+TA_BASEFUNS_CTORS_DEFN(ODEIntParams);
+
 void ODEIntParams::Initialize() {
   erp = 0.2f;
   cfm = 1.0e-5f;

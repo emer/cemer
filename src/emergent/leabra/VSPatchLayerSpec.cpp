@@ -21,6 +21,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(VSPatchLayerSpec);
+
 void VSPatchLayerSpec::Initialize() {
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;

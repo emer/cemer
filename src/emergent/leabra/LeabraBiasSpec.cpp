@@ -16,6 +16,8 @@
 #include "LeabraBiasSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraBiasSpec);
+
 void LeabraBiasSpec::Initialize() {
   //   min_obj_type = &TA_RecvCons; // don't bother..
   SetUnique("rnd", true);

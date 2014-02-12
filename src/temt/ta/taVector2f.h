@@ -49,7 +49,7 @@ public:
   taVector2f(int xx)                        { SetXY(xx, xx); }
   taVector2f(int xx, int yy)                { SetXY(xx, yy); }
   taVector2f(const taVector2i& cp);  // conversion constructor
-  TA_BASEFUNS_LITE(taVector2f)
+  TA_BASEFUNS_LITE(taVector2f);
 
   taVector2f& operator=(const taVector2i& cp);
   inline taVector2f& operator=(float cp)            { x = cp; y = cp; return *this;}

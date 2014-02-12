@@ -15,6 +15,8 @@
 
 #include "float_CircBuffer.h"
 
+TA_BASEFUNS_CTORS_DEFN(float_CircBuffer);
+
 void float_CircBuffer::Initialize() {
   st_idx = 0;
   length = 0;

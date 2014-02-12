@@ -34,6 +34,8 @@
 #include <QSplitter>
 #include <QApplication>
 
+TA_BASEFUNS_CTORS_DEFN(MainWindowViewer);
+
 void MainWindowViewer:: FileOptionsAction(){} //
 void MainWindowViewer:: FileCloseAction(){} // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)
 void MainWindowViewer:: EditUndoAction(){} // #ACT

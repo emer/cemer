@@ -17,6 +17,7 @@
 #include <DumpPathTokenList>
 #include <taBase>
 #include <dumpMisc>
+#include <MemberDef>
 
 #include <taMisc>
 #include <tabMisc>

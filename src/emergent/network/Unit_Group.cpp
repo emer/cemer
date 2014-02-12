@@ -19,10 +19,14 @@
 #include <taFiler>
 #include <MemberDef>
 #include <float_Array>
+#include <int_Array>
 #include <taProject>
+#include <DataTable>
 
 #include <tabMisc>
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(Unit_Group);
 
 
 using namespace std;

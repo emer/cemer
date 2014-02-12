@@ -15,3 +15,5 @@
 
 #include "Weights_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(Weights_List);
+

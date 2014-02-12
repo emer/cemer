@@ -15,6 +15,8 @@
 
 #include "PFCDeepGatedConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(PFCDeepGatedConSpec);
+
 void PFCDeepGatedConSpec::Initialize() {
   Defaults_init();
 }

@@ -16,6 +16,8 @@
 #include "ScalarValSelfPrjnSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(ScalarValSelfPrjnSpec);
+
 void ScalarValSelfPrjnSpec::Initialize() {
   init_wts = true;
   width = 3;

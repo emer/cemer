@@ -15,7 +15,9 @@
 
 #include "DataOpEl.h"
 #include <ProgEl>
+#include <DataTable>
 
+TA_BASEFUNS_CTORS_DEFN(DataOpEl);
 
 
 void DataOpEl::Initialize() {

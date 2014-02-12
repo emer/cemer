@@ -33,6 +33,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taDataAnal);
+
 
 bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
   if(dest) {

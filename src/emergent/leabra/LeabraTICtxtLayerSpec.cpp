@@ -19,6 +19,8 @@
 #include <PFCLayerSpec>
 #include <PBWMUnGpData>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtLayerSpec);
+
 void LeabraTICtxtLayerSpec::Initialize() {
   act_val = P_ACT_P;
   pfc_gate_dynamic_updt = false;

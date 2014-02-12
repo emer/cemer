@@ -17,6 +17,14 @@
 #include <VEWorld>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(VEJointMotor);
+
+TA_BASEFUNS_CTORS_DEFN(VEJointStops);
+
+TA_BASEFUNS_CTORS_DEFN(VEJoint);
+
+TA_BASEFUNS_CTORS_DEFN(ODEJointParams);
+
 
 void VEJointStops::Initialize() {
   stops_on = true;

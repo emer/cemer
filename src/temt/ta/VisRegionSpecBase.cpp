@@ -16,8 +16,15 @@
 #include "VisRegionSpecBase.h"
 #include <CircMatrix>
 #include <taMath_float>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(VisRegionSpecBase);
+
+TA_BASEFUNS_CTORS_DEFN(VisRegionSizes);
+
+TA_BASEFUNS_CTORS_DEFN(VisRegionParams);
 
 
 // for thread function calling:

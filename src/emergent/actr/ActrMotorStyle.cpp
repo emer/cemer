@@ -15,6 +15,8 @@
 
 #include "ActrMotorStyle.h"
 
+TA_BASEFUNS_CTORS_DEFN(ActrMotorStyle);
+
 void ActrMotorStyle::Initialize() {
   style_id = -1;
   fprep_time = 0.0f;

@@ -17,6 +17,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraProject);
+
 eTypeDef_Of(LeabraNetwork);
 eTypeDef_Of(LeabraWizard);
 

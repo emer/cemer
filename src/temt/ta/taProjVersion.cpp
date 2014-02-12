@@ -16,6 +16,8 @@
 #include "taProjVersion.h"
 #include <taVersion>
 
+TA_BASEFUNS_CTORS_DEFN(taProjVersion);
+
 
 void taProjVersion::SetFromString(String ver) {
   Clear();

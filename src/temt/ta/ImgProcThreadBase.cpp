@@ -17,6 +17,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ImgProcThreadBase);
+
+TA_BASEFUNS_CTORS_DEFN(ImgProcCallThreadMgr);
+
+TA_BASEFUNS_CTORS_DEFN(ImgProcCallTask);
+
 void ImgProcCallTask::Initialize() {
   img_proc_call = NULL;
 }

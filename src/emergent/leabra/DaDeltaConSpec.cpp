@@ -15,6 +15,8 @@
 
 #include "DaDeltaConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(DaDeltaConSpec);
+
 void DaDeltaConSpec::Initialize() {
   da_mod = NO_DA_MOD;
 }

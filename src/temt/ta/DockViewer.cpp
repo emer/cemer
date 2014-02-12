@@ -16,6 +16,8 @@
 #include "DockViewer.h"
 #include <iDockViewer>
 
+TA_BASEFUNS_CTORS_DEFN(DockViewer);
+
 void DockViewer::Initialize() {
   dock_flags = DV_NONE;
   dock_area = Qt::BottomDockWidgetArea;

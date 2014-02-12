@@ -24,6 +24,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(DRNLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(DRN5htSpec);
+
 void DRN5htSpec::Initialize() {
   se_base = 0.1f;
   se_gain = 1.0f;

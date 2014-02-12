@@ -17,6 +17,12 @@
 #include <taVector2f>
 #include <taImage>
 
+TA_BASEFUNS_CTORS_DEFN(RetinaProc);
+
+TA_BASEFUNS_CTORS_DEFN(V1RetinaProc);
+
+TA_BASEFUNS_CTORS_DEFN(DoGRetinaProc);
+
 
 void RetinaProc::Initialize() {
   edge_mode = taImageProc::WRAP;

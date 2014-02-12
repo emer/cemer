@@ -22,6 +22,14 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(RBpConSpec);
+TA_BASEFUNS_CTORS_DEFN(RBpUnit);
+TA_BASEFUNS_CTORS_DEFN(BpWizard);
+TA_BASEFUNS_CTORS_DEFN(SymRBpConSpec);
+TA_BASEFUNS_CTORS_DEFN(RBpUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(RBpContextSpec);
+TA_BASEFUNS_CTORS_DEFN(NoisyRBpUnitSpec);
+
 // todo: complete new RBP netstru hierarchy required
 // move rbp functions over to Network from corresponding 3.2 processes
 

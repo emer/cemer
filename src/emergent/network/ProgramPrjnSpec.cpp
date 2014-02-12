@@ -16,6 +16,8 @@
 #include "ProgramPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(ProgramPrjnSpec);
+
 void ProgramPrjnSpec::Initialize() {
 }
 

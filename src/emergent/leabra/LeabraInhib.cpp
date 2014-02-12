@@ -15,6 +15,12 @@
 
 #include "LeabraInhib.h"
 
+TA_BASEFUNS_CTORS_DEFN(KWTAVals);
+
+TA_BASEFUNS_CTORS_DEFN(AdaptIVals);
+
+TA_BASEFUNS_CTORS_DEFN(InhibVals);
+
 void KWTAVals::Initialize() {
   k = 12;
   pct = .25f;

@@ -16,6 +16,8 @@
 #include "GpMapConvergePrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(GpMapConvergePrjnSpec);
+
 void GpMapConvergePrjnSpec::Initialize() {
 }
 

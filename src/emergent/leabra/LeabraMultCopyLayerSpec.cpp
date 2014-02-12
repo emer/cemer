@@ -16,6 +16,8 @@
 #include "LeabraMultCopyLayerSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraMultCopyLayerSpec);
+
 
 void LeabraMultCopyLayerSpec::Initialize() {
   one_minus = false;

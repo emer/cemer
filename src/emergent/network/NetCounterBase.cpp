@@ -15,8 +15,11 @@
 
 #include "NetCounterBase.h"
 #include <MemberDef>
+#include <Program>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(NetCounterBase);
 
 eTypeDef_Of(Network);
 

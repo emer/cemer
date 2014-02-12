@@ -19,6 +19,8 @@
 #include <MethodDef>
 #include <tabMisc>
 
+TA_BASEFUNS_CTORS_DEFN(StaticMethodCall);
+
 
 void StaticMethodCall::Initialize() {
   method = NULL;

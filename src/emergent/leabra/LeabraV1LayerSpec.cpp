@@ -16,6 +16,10 @@
 #include "LeabraV1LayerSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(V1FeatInhibSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LeabraV1LayerSpec);
+
 void V1FeatInhibSpec::Initialize() {
   on = true;
   n_angles = 4;

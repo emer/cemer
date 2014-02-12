@@ -16,6 +16,8 @@
 #include "taWikiURL.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taWikiURL);
+
 void taWikiURL::Initialize() {
   sync = false;
 }

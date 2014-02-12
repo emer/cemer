@@ -89,7 +89,7 @@ INHERITED(taBase)
 public:
 
   void	Dummy(const DMemAggVars&) { };
-  TA_BASEFUNS_NOCOPY(DMemAggVars);
+  TA_BASEFUNS_LITE_NOCOPY(DMemAggVars);
 private:
   void 	Initialize() { };
   void 	Destroy()	{ };

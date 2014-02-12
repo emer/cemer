@@ -17,6 +17,8 @@
 #include <Network>
 #include <taFiler>
 
+TA_BASEFUNS_CTORS_DEFN(ScriptPrjnSpec);
+
 
 void ScriptPrjnSpec::Initialize() {
   prjn = NULL;

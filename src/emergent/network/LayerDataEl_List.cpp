@@ -15,7 +15,9 @@
 
 #include "LayerDataEl_List.h"
 
-void LayerDataEl_List::SetDataNetwork(DataBlock* db, Network* net) {
+TA_BASEFUNS_CTORS_DEFN(LayerDataEl_List);
+
+void LayerDataEl_List::SetDataNetwork(DataTable* db, Network* net) {
   for(int i = 0; i < size; ++i) {
     LayerDataEl* it = FastEl(i);
     it->SetDataNetwork(db, net);

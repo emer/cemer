@@ -15,6 +15,8 @@
 
 #include "UndoDiffThreadMgr.h"
 
+TA_BASEFUNS_CTORS_DEFN(UndoDiffThreadMgr);
+
 taTypeDef_Of(UndoDiffTask);
 
 void UndoDiffThreadMgr::Initialize() {

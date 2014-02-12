@@ -25,6 +25,8 @@
 #include <QPainter>
 #include <MainWindowViewer>
 
+TA_BASEFUNS_CTORS_DEFN(taViewer);
+
 
 String_Array taViewer::image_exts;
 

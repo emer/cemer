@@ -19,6 +19,8 @@
 
 #include <DMemShare>
 
+TA_BASEFUNS_CTORS_DEFN(RndSeed);
+
 void RndSeed::Initialize() {
   GetCurrent();
 }

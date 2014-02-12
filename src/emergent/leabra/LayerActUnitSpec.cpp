@@ -15,3 +15,5 @@
 
 #include "LayerActUnitSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LayerActUnitSpec);
+

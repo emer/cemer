@@ -18,6 +18,8 @@
 #include <CA3LayerSpec>
 #include <ECinLayerSpec>
 
+TA_BASEFUNS_CTORS_DEFN(CA1LayerSpec);
+
 void CA1LayerSpec::Initialize() {
   recall_decay = 1.0f;
   use_test_mode = true;

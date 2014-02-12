@@ -15,6 +15,8 @@
 
 #include "XYNGeom.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(XYNGeom);
+
 void XYNGeom::Initialize() {
   x = 1;
   y = 1;

@@ -19,6 +19,8 @@
 #include <QScrollArea>
 #include <css_qtconsole.h>
 
+TA_BASEFUNS_CTORS_DEFN(ConsoleDockViewer);
+
 void ConsoleDockViewer::Initialize() {
   dock_flags = (DockViewerFlags)(DV_MOVABLE | DV_FLOATABLE);
 }

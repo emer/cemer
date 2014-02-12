@@ -17,6 +17,8 @@
 #include <TwoDValLayerSpec>
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(TwoDValLeabraLayer);
+
 void TwoDValLeabraLayer::Initialize() {
 }
 

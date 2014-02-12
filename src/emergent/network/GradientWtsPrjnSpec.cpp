@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(GradientWtsPrjnSpec);
+
 void GradientWtsPrjnSpec::Initialize() {
   wt_range.min = 0.0f;
   wt_range.max = 0.5f;

@@ -17,6 +17,8 @@
 
 #include <QStringList>
 
+TA_BASEFUNS_CTORS_DEFN(String_Array);
+
 const String String_Array::blank = "";
 
 #ifdef TA_USE_QT

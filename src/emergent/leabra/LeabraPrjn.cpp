@@ -16,6 +16,8 @@
 #include "LeabraPrjn.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(LeabraPrjn);
+
 void LeabraPrjn::Initialize() {
   netin_avg = 0.0f;
   netin_rel = 0.0f;

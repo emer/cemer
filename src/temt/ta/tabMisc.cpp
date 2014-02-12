@@ -15,6 +15,7 @@
 
 #include "tabMisc.h"
 
+#include <taProject>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>

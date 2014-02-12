@@ -36,10 +36,10 @@ public:
   Unit::ExtType	ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
   RandomSpec	noise;		// #EXPERT noise optionally added to values when applied
 
-  virtual bool	ApplyInputData(DataBlock* db, Network* net);
+  virtual bool	ApplyInputData(DataTable* db, Network* net);
   // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
-  int	GetChanIdx(DataBlock* db) override { return db->GetSourceChannelByName(chan_name); }
+  int	GetChanIdx(DataTable* db) override;
 
   String	GetDisplayName() const override;
 

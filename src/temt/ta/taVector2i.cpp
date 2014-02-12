@@ -18,6 +18,8 @@
 #include <taVector2f>
 #include <MatrixIndex>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(taVector2i);
+
 taVector2i::taVector2i(const taVector2f& cp) {
   Register(); Initialize(); x = (int)cp.x; y = (int)cp.y;
 }

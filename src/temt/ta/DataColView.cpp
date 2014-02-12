@@ -17,6 +17,8 @@
 #include <DataCol>
 #include <DataTableView>
 
+TA_BASEFUNS_CTORS_DEFN(DataColView);
+
 /*
   The main DataColView operations are:
   * initialize ("bind") a new guy from a DataCol

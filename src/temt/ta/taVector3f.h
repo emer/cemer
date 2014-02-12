@@ -49,7 +49,7 @@ public:
   void	FromMatrix(taMatrix& mat);
   // set values from a matrix object (can be any type of matrix object)
 
-  TA_BASEFUNS_LITE(taVector3f)
+  TA_BASEFUNS_LITE(taVector3f);
   taVector3f(float xx)                        { SetXYZ(xx, xx, xx); }
   taVector3f(float xx, float yy, float zz)    { SetXYZ(xx, yy, zz); }
   taVector3f(int xx)                          { SetXYZ(xx, xx, xx); }

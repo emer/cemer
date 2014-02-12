@@ -15,6 +15,10 @@
 
 #include "Schedule.h"
 
+TA_BASEFUNS_CTORS_DEFN(Schedule);
+
+TA_BASEFUNS_CTORS_DEFN(SchedItem);
+
 void SchedItem::Initialize() {
   start_ctr = 0;
   start_val = 0.0f;

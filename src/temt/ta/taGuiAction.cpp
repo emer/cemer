@@ -22,6 +22,8 @@
 #include <QUrl>
 #include <QDesktopServices>
 
+TA_BASEFUNS_CTORS_DEFN(taGuiAction);
+
 
 void taGuiAction::Initialize() {
   m_helper = new taGuiAction_QObj(this);

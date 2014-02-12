@@ -15,6 +15,10 @@
 
 #include "TrialSynDepConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(TrialSynDepSpec);
+
+TA_BASEFUNS_CTORS_DEFN(TrialSynDepConSpec);
+
 void TrialSynDepSpec::Initialize() {
   rec = 1.0f;
   depl = 1.1f;

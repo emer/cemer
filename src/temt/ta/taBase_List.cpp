@@ -15,3 +15,5 @@
 
 #include "taBase_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taBase_List);
+

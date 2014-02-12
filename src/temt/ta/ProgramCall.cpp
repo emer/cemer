@@ -19,6 +19,8 @@
 #include <Program_List>
 #include <taProject>
 
+TA_BASEFUNS_CTORS_DEFN(ProgramCall);
+
 
 void ProgramCall::Initialize() {
 }

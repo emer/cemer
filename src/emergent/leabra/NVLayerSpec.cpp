@@ -18,6 +18,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(NVSpec);
+
+TA_BASEFUNS_CTORS_DEFN(NVLayerSpec);
+
 void NVSpec::Initialize() {
   da_gain = 0.0f;
   val_thr = 0.1f;

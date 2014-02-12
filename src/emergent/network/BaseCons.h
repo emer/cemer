@@ -34,6 +34,7 @@ class SimpleMathSpec; //
 class SendCons; //
 class Projection; //
 class Layer; //
+class DataTable; //
 
 eTypeDef_Of(BaseCons);
 

@@ -17,6 +17,10 @@
 
 #include <Inventor/SbLinear.h>
 
+TA_BASEFUNS_CTORS_DEFN(VECamera);
+
+TA_BASEFUNS_CTORS_DEFN(VECameraDists);
+
 void VECameraDists::Initialize() {
   near = 0.1f;
   focal = 1.0f;

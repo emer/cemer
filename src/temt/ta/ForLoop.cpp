@@ -21,6 +21,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ForLoop);
+
 void ForLoop::SetProgExprFlags() {
   init.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing
   iter.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);

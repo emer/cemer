@@ -16,6 +16,8 @@
 #include "RandomCall.h"
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(RandomCall);
+
 taTypeDef_Of(Random);
 
 void RandomCall::Initialize() {

@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DoneWritingDataRow.h"
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DoneWritingDataRow);
 
 
 void DoneWritingDataRow::Initialize() {

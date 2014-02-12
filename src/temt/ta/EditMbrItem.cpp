@@ -17,6 +17,8 @@
 #include <BuiltinTypeDefs>
 #include <DynEnum>
 
+TA_BASEFUNS_CTORS_DEFN(EditMbrItem);
+
 void EditMbrItem::Initialize() {
   mbr = NULL;
   is_numeric = false;

@@ -21,6 +21,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ActrEvent);
+
 int ActrEvent::max_pri = 100;
 int ActrEvent::min_pri = 0;
 

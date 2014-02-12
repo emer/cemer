@@ -21,6 +21,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ODEFiniteRotation);
+
+TA_BASEFUNS_CTORS_DEFN(ODEDamping);
+
+TA_BASEFUNS_CTORS_DEFN(VEBody);
+
 void ODEDamping::Initialize() {
   on = false;
   lin = 0.0f;

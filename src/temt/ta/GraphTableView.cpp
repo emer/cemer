@@ -60,6 +60,8 @@
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoEventManager.h>
 
+TA_BASEFUNS_CTORS_DEFN(GraphTableView);
+
 // #define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
 #define TICK_OFFSET 0.01f // gap between tick and label
 

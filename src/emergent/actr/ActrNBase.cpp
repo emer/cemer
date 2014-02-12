@@ -20,6 +20,8 @@
 #include <ActrDeclarativeModule>
 #include <ActrGoalModule>
 
+TA_BASEFUNS_CTORS_DEFN(ActrNBase);
+
 void ActrNBase::Initialize() {
   own_model = NULL;
 }

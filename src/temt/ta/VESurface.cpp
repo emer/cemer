@@ -15,6 +15,8 @@
 
 #include "VESurface.h"
 
+TA_BASEFUNS_CTORS_DEFN(VESurface);
+
 void VESurface::Initialize() {
   friction = 1.0e22f;
   bounce = 0.0f;

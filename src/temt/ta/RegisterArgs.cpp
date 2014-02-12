@@ -23,6 +23,8 @@
 #include <SelectEditsFmArgs>
 #include <MemberDef>
 
+TA_BASEFUNS_CTORS_DEFN(RegisterArgs);
+
 
 void RegisterArgs::Initialize() {
 }

@@ -20,6 +20,8 @@
 #include <taMisc>
 #include <SigLinkSignal>
 
+TA_BASEFUNS_CTORS_DEFN(ProgBrkPt);
+
 void ProgBrkPt::Initialize() {
   enabled = true;
 }

@@ -18,6 +18,13 @@
 #include <ActrModel>
 #include <taMath_double>
 #include <Random>
+#include <int_Array>
+
+TA_BASEFUNS_CTORS_DEFN(ActrDeclarativeModule);
+TA_BASEFUNS_CTORS_DEFN(ActrAssocParams);
+TA_BASEFUNS_CTORS_DEFN(ActrPartialParams);
+TA_BASEFUNS_CTORS_DEFN(ActrRetrievalParams);
+TA_BASEFUNS_CTORS_DEFN(ActrActParams);
 
 void ActrActParams::Initialize() {
   learn = false;

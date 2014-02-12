@@ -16,6 +16,8 @@
 #include "ActrProduction_Group.h"
 #include <ActrModule>
 
+TA_BASEFUNS_CTORS_DEFN(ActrProduction_Group);
+
 void ActrProduction_Group::Initialize() {
   SetBaseType(&TA_ActrProduction);
 }

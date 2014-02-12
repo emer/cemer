@@ -15,6 +15,8 @@
 
 #include "MarkerConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(MarkerConSpec);
+
 void MarkerConSpec::Initialize() {
   Defaults_init();
 }

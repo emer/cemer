@@ -15,6 +15,8 @@
 
 #include "slice_Matrix.h"
 
+TA_BASEFUNS_CTORS_DEFN(slice_Matrix);
+
 int_Matrix* slice_Matrix::Expand(int implicit_end) {
   if(TestError(size < 3, "Expand", "slice matrix does not contain at least 3 elements, as it must"))
     return NULL;

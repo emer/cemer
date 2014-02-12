@@ -16,6 +16,7 @@
 #include "ChannelSpec_List.h"
 #include <DataBlock>
 
+TA_BASEFUNS_CTORS_DEFN(ChannelSpec_List);
 
 const KeyString ChannelSpec_List::GetListColKey(int col) const 
 {

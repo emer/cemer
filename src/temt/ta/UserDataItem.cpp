@@ -15,6 +15,8 @@
 
 #include "UserDataItem.h"
 
+TA_BASEFUNS_CTORS_DEFN(UserDataItem);
+
 UserDataItem::UserDataItem(const String& type_name, const String& key_,
   const Variant& value_,  const String& desc_)
 :inherited(type_name, key_)

@@ -15,6 +15,8 @@
 
 #include "LearnFlagDeltaConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LearnFlagDeltaConSpec);
+
 void LearnFlagDeltaConSpec::Initialize() {
   da_mod = NO_DA_MOD;
 }

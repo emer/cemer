@@ -19,6 +19,8 @@
 #include <tabMisc>
 #include <MethodDef>
 
+TA_BASEFUNS_CTORS_DEFN(MemberMethodCall);
+
 
 void MemberMethodCall::Initialize() {
   method = NULL;

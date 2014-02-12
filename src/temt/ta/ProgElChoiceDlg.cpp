@@ -25,6 +25,8 @@
 #include <QComboBox>
 #include <QBoxLayout>
 
+TA_BASEFUNS_CTORS_DEFN(ProgElChoiceDlg);
+
 
 int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
     ProgVar::VarType& var_type_choice, LocalGlobalOption option) {

@@ -16,6 +16,8 @@
 #include "Variant_Matrix.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(Variant_Matrix);
+
 using namespace std;
 
 const Variant Variant_Matrix::blank;

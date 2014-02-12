@@ -15,6 +15,8 @@
 
 #include "Network_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(Network_Group);
+
 taBrainAtlas_List Network_Group::brain_atlases;
 
 void Network_Group::InitLinks() {

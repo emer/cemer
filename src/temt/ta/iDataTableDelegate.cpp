@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTableDelegate.h"
+#include <DataTable>
 
 iDataTableDelegate::iDataTableDelegate(DataTable* dt_)
 :inherited(NULL)

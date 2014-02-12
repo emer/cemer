@@ -25,6 +25,7 @@
 #include <Relation>
 #include <SimpleMathSpec>
 #include <taBaseItr>
+#include <ProgVar>
 
 #include <taMisc>
 
@@ -50,6 +51,8 @@
 #endif
 
 #include <float.h>
+
+TA_BASEFUNS_CTORS_DEFN(taMath_double);
 
 using namespace std;
 

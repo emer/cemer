@@ -22,8 +22,11 @@
 #include <ProgVar>
 #include <Layer>
 #include <MemberDef>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(ActrCondition);
 
 void ActrCondition::Initialize() {
   flags = CF_NONE;

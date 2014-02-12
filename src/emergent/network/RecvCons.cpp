@@ -20,6 +20,8 @@
 
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(RecvCons);
+
 using namespace std;
 
 

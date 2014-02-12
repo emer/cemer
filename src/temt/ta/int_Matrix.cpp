@@ -15,6 +15,8 @@
 
 #include "int_Matrix.h"
 
+TA_BASEFUNS_CTORS_DEFN(int_Matrix);
+
 const int int_Matrix::blank = 0;
 
 bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {

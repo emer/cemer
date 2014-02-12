@@ -16,8 +16,24 @@
 
 #include "so.h"
 #include <DumpFileCvt>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(SoConSpec);
+TA_BASEFUNS_CTORS_DEFN(SoRecvCons);
+TA_BASEFUNS_CTORS_DEFN(SoSendCons);
+TA_BASEFUNS_CTORS_DEFN(SoUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(SoUnit);
+TA_BASEFUNS_CTORS_DEFN(SoLayer);
+TA_BASEFUNS_CTORS_DEFN(SoNetwork);
+TA_BASEFUNS_CTORS_DEFN(HebbConSpec);
+TA_BASEFUNS_CTORS_DEFN(SoProject);
+TA_BASEFUNS_CTORS_DEFN(SoWizard);
+TA_BASEFUNS_CTORS_DEFN(ThreshLinSoUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(SoftMaxLayerSpec);
+TA_BASEFUNS_CTORS_DEFN(SoLayerSpec);
+TA_BASEFUNS_CTORS_LITE_DEFN(SoLayerSpec_SPtr);
 
 
 static void so_converter_init() {

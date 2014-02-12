@@ -15,6 +15,8 @@
 
 #include "DataOneProg.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataOneProg);
+
 taTypeDef_Of(DataTable);
 
 void DataOneProg::Initialize() {

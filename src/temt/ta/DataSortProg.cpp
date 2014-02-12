@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataSortProg.h"
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DataSortProg);
 
 
 void DataSortProg::UpdateAfterEdit_impl() {

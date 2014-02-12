@@ -17,6 +17,8 @@
 #include <Network>
 #include <int_Array>
 
+TA_BASEFUNS_CTORS_DEFN(FullPrjnSpec);
+
 void FullPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
 

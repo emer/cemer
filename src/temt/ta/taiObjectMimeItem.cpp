@@ -20,6 +20,8 @@
 #include <tabMisc>
 #include <taRootBase>
 
+TA_BASEFUNS_CTORS_DEFN(taiObjectMimeItem);
+
 
 using namespace std;
 

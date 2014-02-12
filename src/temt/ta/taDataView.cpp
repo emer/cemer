@@ -18,6 +18,8 @@
 #include <SigLinkSignal>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taDataView);
+
 void taDataView::Initialize() {
   m_data = NULL;
   data_base = &TA_taBase;

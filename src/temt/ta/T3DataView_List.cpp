@@ -16,6 +16,8 @@
 #include "T3DataView_List.h"
 #include <T3DataView>
 
+TA_BASEFUNS_CTORS_DEFN(T3DataView_List);
+
 T3DataView* T3DataView_List::FindData(taBase* dat, int& idx) {
   for(idx=0; idx<size; idx++) {
     T3DataView* dv = FastEl(idx);

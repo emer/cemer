@@ -16,6 +16,8 @@
 #include "ECinLayerSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(ECinLayerSpec);
+
 void ECinLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->ct_cycle == auto_m_cycles)
     RecordActM2(lay,net);

@@ -16,8 +16,19 @@
 #include "LeabraConSpec.h"
 #include <LeabraNetwork>
 #include <taProject>
+#include <DataTable>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
+TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
+TA_BASEFUNS_CTORS_DEFN(WtScaleSpecInit);
+TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
+TA_BASEFUNS_CTORS_DEFN(StableMixSpec);
+TA_BASEFUNS_CTORS_DEFN(LearnMixSpec);
+TA_BASEFUNS_CTORS_DEFN(SAvgCorSpec);
+TA_BASEFUNS_CTORS_DEFN(AdaptRelNetinSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
 

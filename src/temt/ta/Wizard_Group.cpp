@@ -15,6 +15,8 @@
 
 #include "Wizard_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(Wizard_Group);
+
 void Wizard_Group::AutoEdit() {
   FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
     if (wz->auto_open)

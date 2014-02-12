@@ -14,6 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "DataJoinProg.h"
+#include <Program>
+#include <DataTable>
+
+TA_BASEFUNS_CTORS_DEFN(DataJoinProg);
 
 
 void DataJoinProg::UpdateAfterEdit_impl() {

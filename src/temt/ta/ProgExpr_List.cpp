@@ -16,6 +16,8 @@
 #include <Program>
 #include "ProgExpr_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ProgExpr_List);
+
 
 void ProgExpr_List::Initialize() {
   SetBaseType(&TA_ProgExpr);

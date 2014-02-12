@@ -16,6 +16,8 @@
 #include "CustomPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(CustomPrjnSpec);
+
 void CustomPrjnSpec::Connect(Projection* prjn) {
   // make sure i have the correct indicies for my con_groups..
   prjn->recv_idx = -1;

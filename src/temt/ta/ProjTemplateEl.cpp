@@ -21,6 +21,8 @@
 
 #include <QFileInfo>
 
+TA_BASEFUNS_CTORS_DEFN(ProjTemplateEl);
+
 using namespace std;
 
 

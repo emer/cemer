@@ -15,6 +15,8 @@
 
 #include "ViewColor_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ViewColor_List);
+
 bool ViewColor_List::FindMakeViewColor(const String& nm, const String& dsc,
 				       bool fg, const String& fg_name,
 				       bool bg, const String& bg_name) {

@@ -21,6 +21,7 @@
 #include <DumpPathSubList>
 #include <DumpPathTokenList>
 #include <MemberDef>
+#include <MethodDef>
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>

@@ -15,3 +15,5 @@
 
 #include "TreeDecorationSpec_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(TreeDecorationSpec_List);
+

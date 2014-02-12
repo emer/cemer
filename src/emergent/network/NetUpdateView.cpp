@@ -15,8 +15,11 @@
 
 #include "NetUpdateView.h"
 #include <MemberDef>
+#include <Program>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(NetUpdateView);
 
 void NetUpdateView::Initialize() {
 }

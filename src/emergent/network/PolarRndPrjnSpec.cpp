@@ -16,6 +16,8 @@
 #include "PolarRndPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(PolarRndPrjnSpec);
+
 
 void PolarRndPrjnSpec::Initialize() {
   p_con = .25;

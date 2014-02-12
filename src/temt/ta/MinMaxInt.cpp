@@ -15,3 +15,5 @@
 
 #include "MinMaxInt.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(MinMaxInt);
+

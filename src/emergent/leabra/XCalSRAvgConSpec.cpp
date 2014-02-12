@@ -15,6 +15,8 @@
 
 #include "XCalSRAvgConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(XCalSRAvgConSpec);
+
 void XCalSRAvgConSpec::Initialize() {
 }
 

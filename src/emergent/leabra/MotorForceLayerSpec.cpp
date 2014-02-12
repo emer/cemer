@@ -17,6 +17,10 @@
 #include <LeabraNetwork>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(MotorForceSpec);
+
+TA_BASEFUNS_CTORS_DEFN(MotorForceLayerSpec);
+
 void MotorForceSpec::Initialize() {
   pos_width = .2f;
   vel_width = .2f;

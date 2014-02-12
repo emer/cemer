@@ -22,6 +22,8 @@
 
 #include <css_machine.h>
 
+TA_BASEFUNS_CTORS_DEFN(ProgLine);
+
 void ProgLine::CutLinks() {
   inherited::CutLinks();
 }

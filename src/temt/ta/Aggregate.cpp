@@ -16,6 +16,8 @@
 #include "Aggregate.h"
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(Aggregate);
+
 void Aggregate::Initialize() {
   op = MEAN;
 }

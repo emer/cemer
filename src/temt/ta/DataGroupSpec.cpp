@@ -15,6 +15,8 @@
 
 #include "DataGroupSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataGroupSpec);
+
 taTypeDef_Of(DataGroupEl);
 
 void DataGroupSpec::Initialize() {

@@ -15,6 +15,8 @@
 
 #include "KwtaSortBuff_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(KwtaSortBuff_List);
+
 void KwtaSortBuff_List::ResetAllBuffs() {
   for(int i=0; i < size; i++) {
     FastEl(i)->ResetAll();

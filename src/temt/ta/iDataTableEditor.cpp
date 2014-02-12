@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iDataTableEditor.h"
+#include <DataTable>
 #include <iMatrixTableView>
 #include <iDataTableView>
 #include <iSplitter>

@@ -40,6 +40,8 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 
+TA_BASEFUNS_CTORS_DEFN(VEJointView);
+
 
 bool VEJointView::isVisible() const {
   return (taMisc::use_gui );

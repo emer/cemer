@@ -31,6 +31,8 @@
 #include <Inventor/draggers/SoTranslate2Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 
+TA_BASEFUNS_CTORS_DEFN(LayerGroupView);
+
 void LayerGroupView::Initialize() {
   data_base = &TA_Layer_Group;
   root_laygp = false;           // set by NetView after init, during build

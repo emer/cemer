@@ -15,6 +15,8 @@
 
 #include "taDataAnalParams.h"
 
+TA_BASEFUNS_CTORS_DEFN(taDataAnalParams);
+
 // these params have no defaults
 void taDataAnalParams::Init(DataTable* src_table, const String& src_col_name, DataTable* result_table)
 {

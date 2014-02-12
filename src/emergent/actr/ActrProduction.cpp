@@ -20,6 +20,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ActrProduction);
+
+TA_BASEFUNS_CTORS_DEFN(ActrProdTimeVals);
+
+TA_BASEFUNS_CTORS_DEFN(ActrProdUtilVals);
+
 void ActrProdUtilVals::Initialize() {
   init = 0.0f;
   cur = 0.0f;

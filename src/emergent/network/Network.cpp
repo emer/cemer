@@ -21,6 +21,7 @@
 #include <MemberDef>
 #include <UserDataItem>
 #include <ProjectBase>
+#include <DataTable>
 #include <taFiler>
 #include <SimpleMathSpec>
 #include <NetMonitor>
@@ -33,6 +34,8 @@ eTypeDef_Of(FullPrjnSpec);
 eTypeDef_Of(CustomPrjnSpec);
 
 #include <sstream>
+
+TA_BASEFUNS_CTORS_DEFN(Network);
 
 using namespace std;
 

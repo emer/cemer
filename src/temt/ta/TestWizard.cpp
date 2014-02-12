@@ -16,6 +16,8 @@
 #include "TestWizard.h"
 #include <taiEditorOfWizard>
 
+TA_BASEFUNS_CTORS_DEFN(TestWizard);
+
 
 void TestWizard::LaunchWizard() {
 

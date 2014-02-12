@@ -16,6 +16,8 @@
 #include "taOABase.h"
 #include <taBase_QObj>
 
+TA_BASEFUNS_CTORS_DEFN(taOABase);
+
 void taOABase::CutLinks() {
 #ifdef TA_GUI
   SetAdapter(NULL);

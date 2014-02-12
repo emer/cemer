@@ -15,3 +15,5 @@
 
 #include "DaModUnitSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(DaModUnitSpec);
+

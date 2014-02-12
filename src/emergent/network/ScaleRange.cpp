@@ -16,6 +16,8 @@
 #include "ScaleRange.h"
 #include <ColorScale>
 
+TA_BASEFUNS_CTORS_DEFN(ScaleRange);
+
 void ScaleRange::SetFromScale(ColorScale& cs) {
   auto_scale = cs.auto_scale;
   min = cs.min;

@@ -15,6 +15,8 @@
 
 #include "VEJoint_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(VEJoint_Group);
+
 void VEJoint_Group::Init() {
   FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
     ob->Init();

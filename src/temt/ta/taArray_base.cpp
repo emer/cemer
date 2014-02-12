@@ -19,6 +19,8 @@
 #include <taBaseItr>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(taArray_base);
+
 using namespace std;
 
 void taArray_base::Initialize() {

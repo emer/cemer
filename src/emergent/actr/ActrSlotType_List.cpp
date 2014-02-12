@@ -17,6 +17,8 @@
 #include <ActrSlotType>
 #include <ActrChunkType>
 
+TA_BASEFUNS_CTORS_DEFN(ActrSlotType_List);
+
 void ActrSlotType_List::Initialize() {
   SetBaseType(&TA_ActrSlotType);
 }

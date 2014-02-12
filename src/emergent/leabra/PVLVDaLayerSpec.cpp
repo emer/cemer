@@ -25,6 +25,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PVLVDaSpec);
+
+TA_BASEFUNS_CTORS_DEFN(PVLVDaLayerSpec);
+
 void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;

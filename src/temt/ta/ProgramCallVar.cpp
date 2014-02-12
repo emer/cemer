@@ -16,6 +16,8 @@
 #include "ProgramCallVar.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ProgramCallVar);
+
 
 void ProgramCallVar::Initialize() {
 }

@@ -20,6 +20,8 @@
 
 #include <math.h>
 
+TA_BASEFUNS_CTORS_DEFN(GaborFilter);
+
 
 void GaborFilter::Initialize() {
   x_size = 2;

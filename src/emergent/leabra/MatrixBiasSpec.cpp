@@ -15,6 +15,8 @@
 
 #include "MatrixBiasSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(MatrixBiasSpec);
+
 void MatrixBiasSpec::Initialize() {
   SetUnique("rnd", true);
   SetUnique("wt_limits", true);

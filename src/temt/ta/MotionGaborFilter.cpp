@@ -16,8 +16,11 @@
 #include "MotionGaborFilter.h"
 #include <taProject>
 #include <taMath_float>
+#include <DataTable>
 
 #include <math.h>
+
+TA_BASEFUNS_CTORS_DEFN(MotionGaborFilter);
 
 
 void MotionGaborFilter::Initialize() {

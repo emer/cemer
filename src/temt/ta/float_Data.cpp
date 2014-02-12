@@ -15,3 +15,5 @@
 
 #include "float_Data.h"
 
+TA_BASEFUNS_CTORS_DEFN(float_Data);
+

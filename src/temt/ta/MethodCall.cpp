@@ -19,6 +19,9 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(MethodCall);
 
 
 void MethodCall::Initialize() {

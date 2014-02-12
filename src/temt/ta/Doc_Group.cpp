@@ -15,6 +15,8 @@
 
 #include "Doc_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(Doc_Group);
+
 void Doc_Group::AutoEdit() {
   FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
     if (doc->auto_open)

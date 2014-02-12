@@ -62,6 +62,8 @@ taTypeDef_Of(Variant_Data);
 //#include <JSONDefs>
 #include "../json/JSONDefs.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataTable);
+
 using namespace std;
 
 void DataTable::Initialize() {

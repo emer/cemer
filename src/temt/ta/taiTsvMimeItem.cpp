@@ -20,6 +20,8 @@
 
 #include <QTextStream>
 
+TA_BASEFUNS_CTORS_DEFN(taiTsvMimeItem);
+
 
 taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms,
     const String& subkey)

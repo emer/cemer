@@ -20,6 +20,8 @@ taTypeDef_Of(DataColT);
 
 #include <SigLinkSignal>
 
+TA_BASEFUNS_CTORS_DEFN(DataTableCols);
+
 void DataTableCols::Initialize() {
   SetBaseType(&TA_DataColT);
 }

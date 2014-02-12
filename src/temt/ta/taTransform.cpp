@@ -19,6 +19,8 @@
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoTransform.h>
 
+TA_BASEFUNS_CTORS_LITE_DEFN(taTransform);
+
 void taTransform::CopyTo(SoTransform* txfm) {
   if (!txfm) return;
   txfm->translation.setValue(SbVec3f(translate.x, translate.y, translate.z));

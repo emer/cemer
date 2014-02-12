@@ -15,6 +15,8 @@
 
 #include "SRAvgCaiSynDepConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(SRAvgCaiSynDepConSpec);
+
 void SRAvgCaiSynDepConSpec::Initialize() {
   min_obj_type = &TA_SRAvgCaiSynDepCon;
 }

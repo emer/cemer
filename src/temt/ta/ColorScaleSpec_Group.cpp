@@ -16,6 +16,8 @@
 #include "ColorScaleSpec_Group.h"
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ColorScaleSpec_Group);
+
 
 //////////////////////////////////
 // 	ColorScaleSpec_Group	//

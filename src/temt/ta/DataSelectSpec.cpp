@@ -17,6 +17,8 @@
 #include <DataSelectEl>
 #include <Relation>
 
+TA_BASEFUNS_CTORS_DEFN(DataSelectSpec);
+
 
 
 void DataSelectSpec::Initialize() {

@@ -16,8 +16,13 @@
 #include "ActrMotorModule.h"
 #include <ActrModel>
 #include <ActrSlot>
+#include <Program>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(ActrMotorModule);
+TA_BASEFUNS_CTORS_DEFN(ActrMotorTimeParams);
+TA_BASEFUNS_CTORS_DEFN(ActrMotorParams);
 
 // actr source is largely in support/general-pm.lisp
 // core-modules/motor.lisp derives much from general-pm.

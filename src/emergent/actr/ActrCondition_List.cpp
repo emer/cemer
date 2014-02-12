@@ -15,6 +15,8 @@
 
 #include "ActrCondition_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ActrCondition_List);
+
 void ActrCondition_List::Initialize() {
   SetBaseType(&TA_ActrCondition);
 }

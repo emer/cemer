@@ -15,6 +15,8 @@
 
 #include "AvgMaxVals.h"
 
+TA_BASEFUNS_CTORS_DEFN(AvgMaxVals);
+
 void AvgMaxVals::Initialize() {
   cmpt = true;
   avg = max = 0.0f; max_i = -1;

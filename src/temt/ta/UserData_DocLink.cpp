@@ -15,6 +15,8 @@
 
 #include "UserData_DocLink.h"
 
+TA_BASEFUNS_CTORS_DEFN(UserData_DocLink);
+
 void UserData_DocLink::Initialize() {
   Own(doc, this);
 }

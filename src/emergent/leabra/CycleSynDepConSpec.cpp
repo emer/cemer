@@ -15,6 +15,10 @@
 
 #include "CycleSynDepConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(CycleSynDepSpec);
+
+TA_BASEFUNS_CTORS_DEFN(CycleSynDepConSpec);
+
 void CycleSynDepSpec::Initialize() {
   rec = 0.002f;
   asymp_act = 0.4f;

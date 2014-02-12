@@ -15,6 +15,8 @@
 
 #include "DataJoinSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(DataJoinSpec);
+
 
 void DataJoinSpec::Initialize() {
   type = INNER;

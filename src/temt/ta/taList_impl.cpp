@@ -21,6 +21,7 @@
 #include <byte_Matrix>
 #include <Variant_Matrix>
 #include <taBaseItr>
+#include <taBase_Group>
 #include <tabMisc>
 #include <taRootBase>
 #include <taObjDiffRec>
@@ -35,6 +36,8 @@
 
 #ifdef TA_GUI
 #include  <QPixmap>
+
+TA_BASEFUNS_CTORS_DEFN(taList_impl);
 
 static const char* folder_closed_xpm[]={
     "16 16 9 1",

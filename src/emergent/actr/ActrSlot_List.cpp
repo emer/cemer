@@ -16,6 +16,8 @@
 #include "ActrSlot_List.h"
 #include <ActrSlot>
 
+TA_BASEFUNS_CTORS_DEFN(ActrSlot_List);
+
 void ActrSlot_List::Initialize() {
   SetBaseType(&TA_ActrSlot);
 }

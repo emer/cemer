@@ -16,6 +16,8 @@
 #include "ColCalcExpr.h"
 #include <DataCol>
 
+TA_BASEFUNS_CTORS_DEFN(ColCalcExpr);
+
 taTypeDef_Of(DataTableCols);
 
 void ColCalcExpr::Initialize() {

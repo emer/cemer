@@ -18,6 +18,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ImageReader);
+
 
 void ImageReader::Initialize() {
   color_mode = CM_RGB;

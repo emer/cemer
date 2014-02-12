@@ -15,6 +15,8 @@
 
 #include "VESpace_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(VESpace_Group);
+
 void VESpace_Group::Init() {
   FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->Init();

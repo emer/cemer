@@ -17,15 +17,16 @@
 #define Project_Group_h 1
 
 // parent includes:
-#include <taProject>
 #include <taGroup>
 
 // member includes:
 #include <ProjTemplates>
 
 // declare all other types mentioned but not required to include:
+class taProject; //
 class ProjTemplateEl; // 
 
+taTypeDef_Of(taProject);
 taTypeDef_Of(Project_Group);
 
 class TA_API Project_Group : public taGroup<taProject> {
@@ -45,10 +46,9 @@ public:
   int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
 
   void  InitLinks();
-  TA_BASEFUNS(Project_Group);
+  TA_BASEFUNS_NOCOPY(Project_Group);
 private:
-  NOCOPY(Project_Group)
-  void  Initialize()            {SetBaseType(&TA_taProject);} // upclassed in pdp
+  void  Initialize()            { SetBaseType(&TA_taProject); }
   void  Destroy()               { };
 };
 

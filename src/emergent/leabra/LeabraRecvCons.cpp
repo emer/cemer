@@ -15,6 +15,8 @@
 
 #include "LeabraRecvCons.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraRecvCons);
+
 void LeabraRecvCons::Initialize() {
   ClearBaseFlag(OWN_CONS);      // recv does NOT own!
   SetConType(&TA_LeabraCon);

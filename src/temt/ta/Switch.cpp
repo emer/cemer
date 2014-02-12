@@ -20,6 +20,8 @@
 #include <CaseBlock>
 #include <EnumDef>
 
+TA_BASEFUNS_CTORS_DEFN(Switch);
+
 
 void Switch::Initialize() {
   cases.SetBaseType(&TA_CaseBlock);

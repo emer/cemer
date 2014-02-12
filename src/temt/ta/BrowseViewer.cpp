@@ -16,6 +16,8 @@
 #include "BrowseViewer.h"
 #include <iBrowseViewer>
 
+TA_BASEFUNS_CTORS_DEFN(BrowseViewer);
+
 
 void BrowseViewer::Initialize() {
   root_typ = NULL;

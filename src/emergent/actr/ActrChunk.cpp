@@ -23,6 +23,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ActrActTimeVals);
+
+TA_BASEFUNS_CTORS_DEFN(ActrActVals);
+
+TA_BASEFUNS_CTORS_DEFN(ActrChunk);
+
 void ActrActVals::Initialize() {
   act = base = spread = match = noise = 0.0f;
 }

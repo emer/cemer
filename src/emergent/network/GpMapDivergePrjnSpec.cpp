@@ -16,6 +16,8 @@
 #include "GpMapDivergePrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(GpMapDivergePrjnSpec);
+
 void GpMapDivergePrjnSpec::Initialize() {
 }
 

@@ -17,6 +17,8 @@
 #include <Program>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ForeachLoop);
+
 
 void ForeachLoop::SetProgExprFlags() {
   // in.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing

@@ -17,6 +17,8 @@
 #include <ActrChunk>
 #include <ActrSlotType>
 
+TA_BASEFUNS_CTORS_DEFN(ActrChunkType);
+
 void ActrChunkType::Initialize() {
 }
 

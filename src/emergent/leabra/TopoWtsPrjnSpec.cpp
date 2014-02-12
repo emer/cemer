@@ -19,6 +19,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(IndexByGps);
+
+TA_BASEFUNS_CTORS_DEFN(TopoWtsPrjnSpec);
+
 
 void	IndexByGps::UpdateAfterEdit_impl() {
 	inherited::UpdateAfterEdit_impl();

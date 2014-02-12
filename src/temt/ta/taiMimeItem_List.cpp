@@ -15,3 +15,5 @@
 
 #include "taiMimeItem_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(taiMimeItem_List);
+

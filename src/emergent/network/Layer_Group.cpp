@@ -20,6 +20,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(Layer_Group);
+
 bool Layer_Group::nw_itm_def_arg = false;
 
 void Layer_Group::InitLinks() {

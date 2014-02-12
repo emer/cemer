@@ -22,6 +22,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(PVrLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(PVDetectSpec);
+
 
 
 void PVDetectSpec::Initialize() {

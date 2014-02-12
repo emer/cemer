@@ -19,6 +19,8 @@
 
 #include <SigLinkSignal>
 
+TA_BASEFUNS_CTORS_DEFN(Projection_Group);
+
 Projection* Projection_Group::ConnectFrom(Layer* lay) {
   if(!lay) return NULL;
   Projection* prjn = (Projection*)NewEl(1);

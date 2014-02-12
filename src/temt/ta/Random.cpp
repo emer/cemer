@@ -16,6 +16,8 @@
 #include "Random.h"
 #include <taMath_double>
 
+TA_BASEFUNS_CTORS_DEFN(Random);
+
 double Random::Binom(int n, double p) {
   return taMath_double::binom_dev(n,p);
 }

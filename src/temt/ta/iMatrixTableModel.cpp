@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "iMatrixTableModel.h"
+#include <DataCol>
 #include <taMatrix>
 #include <String_Matrix>
 #include <MatrixIndex>

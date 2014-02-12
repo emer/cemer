@@ -15,9 +15,13 @@
 
 #include "SpecPtr.h"
 #include <Network>
+#ifdef V3_COMPAT
 #include <ProjectBase>
+#endif
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(SpecPtr_impl);
 
 void SpecPtr_impl::Initialize() {
   owner = NULL;

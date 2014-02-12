@@ -16,6 +16,8 @@
 #include "taViewer_List.h"
 #include <taViewer>
 
+TA_BASEFUNS_CTORS_DEFN(taViewer_List);
+
 
 void taViewer_List::GetWinState() {
   for (int i = 0; i < size; ++i) {

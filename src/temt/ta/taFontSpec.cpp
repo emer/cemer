@@ -18,6 +18,8 @@
 
 #include <QFontDialog>
 
+TA_BASEFUNS_CTORS_DEFN(taFontSpec);
+
 void taFontSpec::Initialize() {
 }
 

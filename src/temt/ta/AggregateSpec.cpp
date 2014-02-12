@@ -16,3 +16,5 @@
 #include "AggregateSpec.h"
 #include <Program>
 
+TA_BASEFUNS_CTORS_DEFN(AggregateSpec);
+

@@ -15,6 +15,26 @@
 
 #include "cs_v3_compat.h"
 
+TA_BASEFUNS_CTORS_DEFN(V3CsProject);
+
+TA_BASEFUNS_CTORS_DEFN(CsCycle);
+
+TA_BASEFUNS_CTORS_DEFN(CsSettle);
+
+TA_BASEFUNS_CTORS_DEFN(CsTrial);
+
+TA_BASEFUNS_CTORS_DEFN(CsSample);
+
+TA_BASEFUNS_CTORS_DEFN(CsMaxDa);
+
+TA_BASEFUNS_CTORS_DEFN(CsDistStat);
+
+TA_BASEFUNS_CTORS_DEFN(CsTIGstat);
+
+TA_BASEFUNS_CTORS_DEFN(CsTargStat);
+
+TA_BASEFUNS_CTORS_DEFN(CsGoodStat);
+
 void CsCycle::Initialize() {
   update_mode = SYNCHRONOUS;
   n_updates = 10;

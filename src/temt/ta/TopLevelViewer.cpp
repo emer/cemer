@@ -25,6 +25,8 @@
 #include <QCoreApplication>
 #include <QMainWindow>
 
+TA_BASEFUNS_CTORS_DEFN(TopLevelViewer);
+
 
 void TopLevelViewer::Initialize() {
 }

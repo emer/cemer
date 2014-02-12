@@ -15,3 +15,5 @@
 
 #include "FrameViewer_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(FrameViewer_List);
+

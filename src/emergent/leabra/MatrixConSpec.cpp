@@ -15,6 +15,8 @@
 
 #include "MatrixConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(MatrixConSpec);
+
 void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
 

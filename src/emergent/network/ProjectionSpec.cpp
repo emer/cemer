@@ -16,6 +16,9 @@
 #include "ProjectionSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(ProjectionSpec);
+TA_BASEFUNS_CTORS_LITE_DEFN(ProjectionSpec_SPtr);
+
 
 void ProjectionSpec::Initialize() {
   min_obj_type = &TA_Projection;

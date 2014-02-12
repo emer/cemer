@@ -18,6 +18,8 @@
 
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(taiObjectMimeFactory);
+
 using namespace std;
 
 const String taiObjectMimeFactory::tacss_objectdesc("tacss/objectdesc");

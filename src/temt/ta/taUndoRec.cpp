@@ -15,6 +15,8 @@
 
 #include "taUndoRec.h"
 
+TA_BASEFUNS_CTORS_DEFN(taUndoRec);
+
 void taUndoRec::Initialize() {
 }
 

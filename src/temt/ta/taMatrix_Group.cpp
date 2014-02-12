@@ -15,3 +15,5 @@
 
 #include "taMatrix_Group.h"
 
+TA_BASEFUNS_CTORS_DEFN(taMatrix_Group);
+

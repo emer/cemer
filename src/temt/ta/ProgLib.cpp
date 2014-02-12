@@ -20,6 +20,8 @@
 #include <QDir>
 #include <QStringList>
 
+TA_BASEFUNS_CTORS_DEFN(ProgLib);
+
 
 void ProgLib::Initialize() {
   not_init = true;

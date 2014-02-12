@@ -17,6 +17,8 @@
 #include <MatrixGeom>
 #include <String_Matrix>
 
+TA_BASEFUNS_CTORS_DEFN(ChannelSpec);
+
 
 void ChannelSpec::Initialize() {
   chan_num = -1; // for standalone, means "at end", otherwise, when in list, is set to index number

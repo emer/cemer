@@ -16,6 +16,8 @@
 #include "RndGpOneToOnePrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(RndGpOneToOnePrjnSpec);
+
 
 void RndGpOneToOnePrjnSpec::Initialize() {
   p_con = .25;

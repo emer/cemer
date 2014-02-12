@@ -17,6 +17,8 @@
 
 #include <QBrush>
 
+TA_BASEFUNS_CTORS_DEFN(ViewBackground);
+
 void ViewBackground::InitLinks() {
   inherited::InitLinks();
 }

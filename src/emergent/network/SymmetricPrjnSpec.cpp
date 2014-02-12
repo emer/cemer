@@ -16,6 +16,8 @@
 #include "SymmetricPrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(SymmetricPrjnSpec);
+
 void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
 

@@ -15,6 +15,8 @@
 
 #include "DynEnum.h"
 
+TA_BASEFUNS_CTORS_DEFN(DynEnum);
+
 void DynEnum::Initialize() {
   value = 0;
 }

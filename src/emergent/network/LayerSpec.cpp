@@ -15,6 +15,7 @@
 
 #include "LayerSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LayerSpec);
 
 void LayerSpec::Initialize() {
 }

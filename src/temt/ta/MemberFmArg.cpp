@@ -18,6 +18,7 @@
 #include <ProgVar>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(MemberFmArg);
 
 void MemberFmArg::Initialize() {
   update_after = true;

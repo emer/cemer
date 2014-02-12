@@ -18,6 +18,8 @@
 #include <iColor>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ProgLine_List);
+
 
 void ProgLine_List::Initialize() {
   SetBaseType(&TA_ProgLine);

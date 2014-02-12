@@ -16,6 +16,8 @@
 #include "VEBody_Group.h"
 #include <VEObject>
 
+TA_BASEFUNS_CTORS_DEFN(VEBody_Group);
+
 void VEBody_Group::Init() {
   FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->Init();

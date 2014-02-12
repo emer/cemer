@@ -15,6 +15,8 @@
 
 #include "HippoEncoderConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(HippoEncoderConSpec);
+
 void HippoEncoderConSpec::Initialize() {
   SetUnique("lmix", true);
   lmix.hebb = 0.005f;		// works better with tiny bit of hebb apparently..

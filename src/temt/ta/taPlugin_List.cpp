@@ -24,6 +24,8 @@
 
 #include <QFileInfo>
 
+TA_BASEFUNS_CTORS_DEFN(taPlugin_List);
+
 
 using namespace std;
 

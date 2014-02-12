@@ -25,6 +25,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(T3PanelViewer);
+
 
 iT3PanelViewer* T3PanelViewer::widget() {
   return (iT3PanelViewer*)inherited::widget();

@@ -19,6 +19,8 @@
 
 #include <taiMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ToolBar);
+
 
 void ToolBar::Initialize() {
   lft = 0.0f;

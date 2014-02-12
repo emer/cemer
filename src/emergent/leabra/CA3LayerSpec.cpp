@@ -15,3 +15,5 @@
 
 #include "CA3LayerSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(CA3LayerSpec);
+

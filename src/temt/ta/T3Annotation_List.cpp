@@ -15,3 +15,5 @@
 
 #include "T3Annotation_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(T3Annotation_List);
+

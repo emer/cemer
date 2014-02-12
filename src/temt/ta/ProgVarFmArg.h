@@ -20,11 +20,9 @@
 #include <ProgEl>
 
 // member includes:
-#include <Program>
+#include <ProgramRef>
 
 // declare all other types mentioned but not required to include:
-class Program; // 
-
 
 taTypeDef_Of(ProgVarFmArg);
 

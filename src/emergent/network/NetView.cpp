@@ -54,6 +54,11 @@
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
 
+TA_BASEFUNS_CTORS_DEFN(NetViewParams);
+
+TA_BASEFUNS_CTORS_DEFN(NetViewFontSizes);
+
+TA_BASEFUNS_CTORS_DEFN(NetView);
 
 void NetViewFontSizes::Initialize() {
   net_name = .05f;

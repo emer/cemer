@@ -16,6 +16,8 @@
 #include "ThetaPhaseLayerSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(ThetaPhaseLayerSpec);
+
 void ThetaPhaseLayerSpec::Initialize() {
   auto_m_cycles = 30;
   Defaults_init();

@@ -17,13 +17,14 @@
 #define DataTable_Group_h 1
 
 // parent includes:
-#include <DataTable>
 #include <taGroup>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class DataTable; //
 
+taTypeDef_Of(DataTable);
 
 taTypeDef_Of(DataTable_Group);
 

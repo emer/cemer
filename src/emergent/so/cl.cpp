@@ -17,6 +17,16 @@
 
 #include "cl.h"
 
+TA_BASEFUNS_CTORS_DEFN(ClConSpec);
+
+TA_BASEFUNS_CTORS_DEFN(SoftClConSpec);
+
+TA_BASEFUNS_CTORS_DEFN(ClLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(SoftClLayerSpec);
+
+TA_BASEFUNS_CTORS_DEFN(SoftClUnitSpec);
+
 void ClLayerSpec::Initialize() {
   netin_type = MAX_NETIN_WINS;
 }

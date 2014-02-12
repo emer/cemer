@@ -16,6 +16,8 @@
 #include "VEObject.h"
 #include <VEWorld>
 
+TA_BASEFUNS_CTORS_DEFN(VEObject);
+
 
 void VEObject::Initialize() {
   space_id = NULL;

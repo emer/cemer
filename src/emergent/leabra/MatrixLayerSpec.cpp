@@ -24,6 +24,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(MatrixMiscSpec);
+
+TA_BASEFUNS_CTORS_DEFN(MatrixGoNogoGainSpec);
+
+TA_BASEFUNS_CTORS_DEFN(MatrixLayerSpec);
+
 void MatrixGoNogoGainSpec::Initialize() {
   on = false;
   go_p = go_n = nogo_p = nogo_n = 1.0f;

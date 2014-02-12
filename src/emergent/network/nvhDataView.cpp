@@ -16,6 +16,8 @@
 #include "nvhDataView.h"
 #include <T3Color>
 
+TA_BASEFUNS_CTORS_DEFN(nvhDataView);
+
 void nvhDataView::Copy_(const nvhDataView& cp) {
   m_hcolor = cp.m_hcolor;
 }

@@ -17,6 +17,8 @@
 #include <Network>
 #include <taMath_float>
 
+TA_BASEFUNS_CTORS_DEFN(VisDisparityPrjnSpec);
+
 void VisDisparityPrjnSpec::Initialize() {
   n_disps = 1;
   disp_range_pct = 0.05f;

@@ -17,6 +17,8 @@
 #include <taMisc>
 #include <taList_impl>
 
+TA_BASEFUNS_CTORS_DEFN(taNBase);
+
 void taNBase::SetDefaultName() {
   if(taMisc::not_constr || taMisc::in_init || GetTypeDef() == &TA_taNBase)
     return;

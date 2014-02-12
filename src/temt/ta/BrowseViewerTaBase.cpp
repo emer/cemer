@@ -16,6 +16,8 @@
 #include "BrowseViewerTaBase.h"
 #include <iBrowseViewer>
 
+TA_BASEFUNS_CTORS_DEFN(BrowseViewerTaBase);
+
 BrowseViewerTaBase* BrowseViewerTaBase::New(taBase* root, MemberDef* root_md) {
   if (!root) return NULL; // nice try, buster
   BrowseViewerTaBase* rval = new BrowseViewerTaBase;

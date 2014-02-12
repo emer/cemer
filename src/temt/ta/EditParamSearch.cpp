@@ -17,6 +17,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(EditParamSearch);
+
 void EditParamSearch::Initialize() {
   search = false;
   srch = NO;

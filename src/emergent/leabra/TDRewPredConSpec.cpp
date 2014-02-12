@@ -15,6 +15,8 @@
 
 #include "TDRewPredConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(TDRewPredConSpec);
+
 void TDRewPredConSpec::Initialize() {
   SetUnique("lmix", true);
   lmix.hebb = 0.0f;

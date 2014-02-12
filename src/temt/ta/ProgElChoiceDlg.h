@@ -20,11 +20,10 @@
 #include <taNBase>
 
 // member includes:
-#include <Program>
 #include <ProgVar>
+#include <taGuiDialog>
 
 // declare all other types mentioned but not required to include:
-class taGuiDialog; //
 
 taTypeDef_Of(ProgElChoiceDlg);
 
@@ -40,7 +39,8 @@ public:
       LOCALGLOBAL   // local or global plus ignore
     };
 
-  virtual int  GetLocalGlobalChoice(String& var_nm, int& local_global_choice, ProgVar::VarType& var_type_choice, LocalGlobalOption = LOCALGLOBAL);
+  virtual int  GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
+                    ProgVar::VarType& var_type_choice, LocalGlobalOption = LOCALGLOBAL);
   // #IGNORE
 
   TA_SIMPLE_BASEFUNS(ProgElChoiceDlg);

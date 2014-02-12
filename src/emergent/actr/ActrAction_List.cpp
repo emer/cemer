@@ -16,6 +16,8 @@
 #include "ActrAction_List.h"
 #include <ActrModule>
 
+TA_BASEFUNS_CTORS_DEFN(ActrAction_List);
+
 void ActrAction_List::Initialize() {
   SetBaseType(&TA_ActrAction);
 }

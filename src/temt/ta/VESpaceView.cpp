@@ -20,6 +20,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(VESpaceView);
+
 
 bool VESpaceView::isVisible() const {
   return (taMisc::use_gui );

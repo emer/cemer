@@ -17,6 +17,8 @@
 #include <MatrixGeom>
 #include <String_Matrix>
 
+TA_BASEFUNS_CTORS_DEFN(DataBlock);
+
 
 const Variant DataBlock::GetData(int chan) { 
   if (ReadAvailable() && SourceChannelInRange(chan)) 

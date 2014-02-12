@@ -15,6 +15,8 @@
 
 #include "LeabraLimPrecConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(LeabraLimPrecConSpec);
+
 void LeabraLimPrecConSpec::Initialize() {
   prec_levels = 1024;
 }

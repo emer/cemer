@@ -18,6 +18,8 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(MiscCall);
+
 void MiscCall::Initialize() {
   min_type = &TA_taMisc;
   object_type = &TA_taMisc;

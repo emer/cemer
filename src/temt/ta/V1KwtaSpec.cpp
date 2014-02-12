@@ -19,6 +19,8 @@
 
 // #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(V1KwtaSpec);
+
 void V1KwtaSpec::Initialize() {
   on = -1;                      // detect old loads
   mode = OFF;

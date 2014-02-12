@@ -15,6 +15,8 @@
 
 #include "Modulo.h"
 
+TA_BASEFUNS_CTORS_LITE_DEFN(Modulo);
+
 void Modulo::Initialize() {
   flag = true; m = 1; off = 0;
 }

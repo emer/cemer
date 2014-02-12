@@ -16,8 +16,13 @@
 #include "ActrProceduralModule.h"
 #include <ActrModel>
 #include <taMath_double>
+#include <int_Array>
 
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(ActrProceduralModule);
+
+TA_BASEFUNS_CTORS_DEFN(ActrUtilityParams);
 
 void ActrUtilityParams::Initialize() {
   learn = false;

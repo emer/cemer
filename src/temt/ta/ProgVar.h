@@ -21,7 +21,7 @@
 
 // member includes:
 #include <ProgVarRef>
-#include <Program>
+#include <ProgramRef>
 #include <DynEnum>
 
 // declare all other types mentioned but not required to include:
@@ -112,6 +112,8 @@ public:
   // set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
   virtual Variant GetVar();
   // get value as a variant value -- for hard-code use of the variable value
+  static VarType  GetTypeFromTypeDef(TypeDef* td);
+  // get appropriate variable type to hold given type, from typedef
 
   ProgVar* operator=(const Variant& value);
 

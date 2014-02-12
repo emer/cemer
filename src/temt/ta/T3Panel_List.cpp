@@ -15,3 +15,5 @@
 
 #include "T3Panel_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(T3Panel_List);
+

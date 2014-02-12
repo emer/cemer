@@ -19,6 +19,8 @@
 #include <taiMisc>
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ProjectBase);
+
 
 using namespace std;
 

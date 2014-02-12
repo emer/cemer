@@ -16,6 +16,8 @@
 #include "ActrGoalModule.h"
 #include <ActrModel>
 
+TA_BASEFUNS_CTORS_DEFN(ActrGoalModule);
+
 
 void ActrGoalModule::Initialize() {
 }

@@ -49,6 +49,8 @@
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/elements/SoGLCacheContextElement.h>
 
+TA_BASEFUNS_CTORS_DEFN(VEWorldView);
+
 
 
 bool VEWorldView::isVisible() const {

@@ -16,6 +16,8 @@
 #include "GpOneToOnePrjnSpec.h"
 #include <Network>
 
+TA_BASEFUNS_CTORS_DEFN(GpOneToOnePrjnSpec);
+
 void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from) return;
 

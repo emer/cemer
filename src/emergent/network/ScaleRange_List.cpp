@@ -15,3 +15,5 @@
 
 #include "ScaleRange_List.h"
 
+TA_BASEFUNS_CTORS_DEFN(ScaleRange_List);
+

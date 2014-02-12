@@ -16,6 +16,8 @@
 #include "PanelViewer.h"
 #include <iPanelViewer>
 
+TA_BASEFUNS_CTORS_DEFN(PanelViewer);
+
 
 void PanelViewer::Initialize() {
 }

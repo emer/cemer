@@ -23,7 +23,6 @@
 // member includes:
 #include <ActrChunk>
 #include <Relation>
-#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 class ActrProceduralModule; //

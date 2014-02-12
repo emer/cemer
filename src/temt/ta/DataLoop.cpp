@@ -17,7 +17,10 @@
 
 taTypeDef_Of(DataBlock);
 
+#include <Program>
 #include <taMisc>
+
+TA_BASEFUNS_CTORS_DEFN(DataLoop);
 
 
 void DataLoop::Initialize() {

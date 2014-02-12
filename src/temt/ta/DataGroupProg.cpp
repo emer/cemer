@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataGroupProg.h"
+#include <Program>
+
+TA_BASEFUNS_CTORS_DEFN(DataGroupProg);
 
 
 void DataGroupProg::UpdateAfterEdit_impl() {

@@ -20,6 +20,8 @@ taTypeDef_Of(ProgCode);
 #include <taMisc>
 #include <tabMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ProgEl_List);
+
 void ProgEl_List::Initialize() {
   SetBaseType(&TA_ProgEl);
   el_typ = &TA_ProgCode;

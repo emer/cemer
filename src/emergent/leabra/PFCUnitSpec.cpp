@@ -19,6 +19,8 @@
 #include <PBWMUnGpData>
 #include <PFCDeepGatedConSpec>
 
+TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
+
 void PFCUnitSpec::Initialize() {
   Defaults_init();
 }

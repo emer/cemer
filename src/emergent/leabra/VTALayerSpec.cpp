@@ -24,6 +24,12 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(gdPVLVDaSpec);
+
+TA_BASEFUNS_CTORS_DEFN(LVBlockSpec);
+
+TA_BASEFUNS_CTORS_DEFN(VTALayerSpec);
+
 void gdPVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;

@@ -32,7 +32,7 @@ class E_API LayerDataEl_List: public taList<LayerDataEl> {
 INHERITED(taList<LayerDataEl>)
 public:
 
-  virtual void 	SetDataNetwork(DataBlock* db, Network* net);
+  virtual void 	SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
   virtual LayerDataEl* FindChanName(const String& chn_name);
