@@ -93,28 +93,34 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
       combo_local_global->setCurrentIndex(0);//
   }
 
-   String_Array var_types;
-   var_types.FmDelimString("Int Real String Bool Object* Enum DynEnum UnDef");
+  String_Array var_types;
+  var_types.FmDelimString("Int Real String Bool Object* Enum DynEnum UnDef");
 
-   QComboBox* combo_var_type = new QComboBox;
-   {
-     taGuiLayout *hboxEmer = dlg.FindLayout(row);  // Get the hbox for this row so we can add our combobox to it.
-     if (!hboxEmer) {
-       return false;
-     }
-     QBoxLayout *hbox = hboxEmer->layout;
-     if (!hbox) {
-       return false;
-     }
-     for (int idx = 0; idx < var_types.size; ++idx) {
-       combo_var_type->addItem(var_types[idx]);
-     }
-     hbox->addWidget(combo_var_type);
-     int idx = combo_var_type->findText("UnDef");
-     if (idx >= 0) {
-       combo_var_type->setCurrentIndex(idx);  // default is UnDef
-     }
-   }
+  QComboBox* combo_var_type = new QComboBox;
+  {
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);  // Get the hbox for this row so we can add our combobox to it.
+    if (!hboxEmer) {
+      return false;
+    }
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) {
+      return false;
+    }
+    for (int idx = 0; idx < var_types.size; ++idx) {
+      combo_var_type->addItem(var_types[idx]);
+    }
+    hbox->addWidget(combo_var_type);
+    combo_var_type->setCurrentIndex(var_type_choice);
+    // if(var_type_choice == T_UnDef) {
+    //   int idx = combo_var_type->findText("UnDef");
+    //   if (idx >= 0) {
+    //     combo_var_type->setCurrentIndex(idx);  // default is UnDef
+    //   }
+    // }
+    // else {
+    //   combo_var_type->setCurrentIndex(
+    // }
+  }
   int result = dlg.PostDialog(true); // true is modal
   local_global_choice = combo_local_global->currentIndex();
   var_type_choice = (ProgVar::VarType)combo_var_type->currentIndex();

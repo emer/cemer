@@ -33,7 +33,7 @@ class TA_API ParamSearchAlgo : public taNBase {
   // #VIRT_BASE ##INSTANCE #NO_INSTANCE Parameter Search algorithm base class.
   INHERITED(taNBase)
 public:
-  TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo)
+  TA_ABSTRACT_BASEFUNS_NOCOPY(ParamSearchAlgo) //
   SIMPLE_CUTLINKS(ParamSearchAlgo);
   virtual void InitLinks();
 

@@ -41,7 +41,7 @@ public: // i/f for tabular data guy
   virtual void          WriteMatrix(taMatrix* mat, const CellRange& sel);
   virtual void          WriteTable(DataTable* tab, const CellRange& sel);
 
-  TA_ABSTRACT_BASEFUNS(taiTabularDataMimeItem);
+  TA_ABSTRACT_BASEFUNS(taiTabularDataMimeItem)
 
 protected:
   enum TsvSep { // for reading tsv text streams

@@ -70,7 +70,7 @@ public:
   virtual void          ResetData() {}
   // #CAT_Modify for supported devices, clears all the data (but not the schema)
 
-  TA_ABSTRACT_BASEFUNS(DataBlock);
+  TA_ABSTRACT_BASEFUNS(DataBlock) //
 
 public:
   /////////////////////////////////////////////////////////

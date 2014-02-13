@@ -36,7 +36,7 @@ public:
   
   void	InitLinks();
   void	CutLinks();
-  TA_ABSTRACT_BASEFUNS(taiMultiMimeItem);
+  TA_ABSTRACT_BASEFUNS(taiMultiMimeItem)
   
 protected:
   taiMimeItem_List	items; // the subitems

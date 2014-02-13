@@ -580,7 +580,7 @@ public:
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   void         InitLinks() override;
   void         CutLinks() override;
-  TA_ABSTRACT_BASEFUNS(taMatrix);
+  TA_ABSTRACT_BASEFUNS(taMatrix) //
 
 public:
   ///////////////////////////////////////////////////////////////////

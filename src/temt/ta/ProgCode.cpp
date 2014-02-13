@@ -105,8 +105,11 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   }
   else {
     bool had_var = CvtCodeToVar(code_mod, scope_el);
-    if(had_var && code_mod.empty())
-      return NULL;              // that's it
+    if(had_var) {
+      // todo: need to write back modified to source -- just make this non-static??
+      if(code_mod.empty())
+        return NULL;              // that's it
+    }
     String check_code = code_mod;
     check_code.downcase();        // check only on lowercase
     CvtCodeCheckType(candidates, &TA_ProgEl, check_code, scope_el);

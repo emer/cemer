@@ -76,7 +76,7 @@ public:
   void SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
 
   void  CutLinks();
-  TA_ABSTRACT_BASEFUNS(taArray_base);
+  TA_ABSTRACT_BASEFUNS(taArray_base) //
 
 protected:
   virtual Variant       El_GetVar_(const void* itm) const { return _nilVariant; }

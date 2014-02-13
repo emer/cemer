@@ -45,7 +45,7 @@ public:
 
   SIMPLE_COPY(Loop);
   SIMPLE_LINKS(Loop);
-  TA_ABSTRACT_BASEFUNS(Loop);
+  TA_ABSTRACT_BASEFUNS(Loop) //
 
 protected:
   void         CheckChildConfig_impl(bool quiet, bool& rval) override;

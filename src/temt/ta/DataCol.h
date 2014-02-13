@@ -414,7 +414,7 @@ public:
 
   void  InitLinks(); //note: ok to do own AR here, because never called in constructor
   void  CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
-  TA_ABSTRACT_BASEFUNS(DataCol);
+  TA_ABSTRACT_BASEFUNS(DataCol) //
 
 protected:
   void  UpdateAfterEdit_impl() override;

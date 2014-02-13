@@ -56,7 +56,7 @@ public:
   int          ReadIndex() const override {return rd_itr;}
   int          WriteIndex() const override {return wr_itr;}
 
-  TA_ABSTRACT_BASEFUNS(DataBlock_Idx);
+  TA_ABSTRACT_BASEFUNS(DataBlock_Idx) //
 protected:
   int                   rd_itr;
   // an int iterator for reading: -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item

@@ -40,7 +40,7 @@ public:
   void          SetDefaultName() {} 
   String	GetDesc() const {return desc;}
   void		Copy_(const taPluginBase& cp); //note: we only use this for descs, not actual plugins
-  TA_ABSTRACT_BASEFUNS(taPluginBase);
+  TA_ABSTRACT_BASEFUNS(taPluginBase)
 private:
   void	Initialize();
   void	Destroy() {}
