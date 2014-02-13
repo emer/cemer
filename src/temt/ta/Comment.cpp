@@ -16,6 +16,7 @@
 #include "Comment.h"
 #include <Program>
 #include <taMisc>
+#include <tabMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Comment);
 
@@ -32,8 +33,29 @@ void Comment::GenCssBody_impl(Program* prog) {
 }
 
 String Comment::GetDisplayName() const {
-  return desc;
+  return "// " + desc;
 }
+
+String Comment::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == key_disp_name) {
+    String rval = GetDisplayName();
+    return rval;
+  }
+  return inherited::GetColText(key, itm_idx);
+}
+
+bool Comment::BrowserEditSet(const String& code, int move_after) {
+  edit_move_after = 0;
+  String cd = code; // CodeGetDesc(code);
+  if(CanCvtFmCode(cd, NULL)) {
+    return CvtFmCode(cd);
+  }
+  orig_prog_code = cd;
+  edit_move_after = move_after;
+  tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
+  return true;
+}
+
 
 bool Comment::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("//") || code.startsWith("/*")) return true;

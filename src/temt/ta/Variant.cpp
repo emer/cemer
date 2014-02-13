@@ -2409,8 +2409,10 @@ taBase* Variant::toBase() const {
     return NULL;
   case T_Char:
     return NULL;
-  case T_String:
-    return NULL;
+  case T_String: {
+    MemberDef* md = NULL;
+    return tabMisc::root->FindFromPath(getString(), md);
+  }
   case T_Ptr:
   case T_TypeItem:
     return NULL;
@@ -2442,8 +2444,13 @@ taMatrix* Variant::toMatrix() const {
     return NULL;
   case T_Char:
     return NULL;
-  case T_String:
+  case T_String: {
+    MemberDef* md = NULL;
+    taBase* tb = tabMisc::root->FindFromPath(getString(), md);
+    if(tb && tb->InheritsFrom(TA_taMatrix))
+      return (taMatrix*)tb;
     return NULL;
+  }
   case T_Ptr:
   case T_TypeItem:
     return NULL;

@@ -214,8 +214,9 @@ bool ProgramCall::LoadInitTarget_impl(const String& nm) {
 }
 
 bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String code_dn = code; code_dn.downcase();
   if(!code.contains('(')) return false;
-  if(code.startsWith("call ")) return true; // definitely
+  if(code_dn.startsWith("call ")) return true; // definitely
   String lhs = code.before('(');
   String funm = lhs;
   if(lhs.contains('=')) return false; // no rval for progcall

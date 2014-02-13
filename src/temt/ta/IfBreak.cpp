@@ -54,7 +54,8 @@ String IfBreak::GetDisplayName() const {
     return "if(" + cond.expr + ") break;";
 }
 
-bool IfBreak::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool IfBreak::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(code.startsWith("if") && code.contains("break")) return true;
   return false;
 }

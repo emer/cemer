@@ -54,7 +54,8 @@ String IfReturn::GetDisplayName() const {
     return "if(" + cond.expr + ") return;";
 }
 
-bool IfReturn::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool IfReturn::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(code.startsWith("if") && code.contains("return")) return true;
   return false;
 }

@@ -88,8 +88,9 @@ void FunctionCall::UpdateArgs() {
 }
 
 bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String code_dn = code; code_dn.downcase();
   if(!code.contains('(')) return false;
-  if(code.startsWith("funcall ")) return true; // definitely
+  if(code_dn.startsWith("funcall ")) return true; // definitely
   String lhs = code.before('(');
   String funm = lhs;
   if(lhs.contains('='))

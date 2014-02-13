@@ -29,7 +29,8 @@ TA_BASEFUNS_CTORS_DEFN(ProgElChoiceDlg);
 
 
 int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
-    ProgVar::VarType& var_type_choice, LocalGlobalOption option) {
+  ProgVar::VarType& var_type_choice, LocalGlobalOption option,  
+                                          bool make_new_instr) {
   String row;  // reuse for each widget
   String chs_str;
 
@@ -47,7 +48,12 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
   if (showInstruction) {
     row = "instrRow";
     dlg.AddHBoxLayout(row, vbox);
-    chs_str = "Program Variable   \'" + var_nm + "\'   Not Found;";
+    if(make_new_instr) {
+      chs_str = "Where Should New Variable   \'" + var_nm + "\'   Be Made?;";
+    }
+    else {
+      chs_str = "Program Variable   \'" + var_nm + "\'   Not Found;";
+    }
     String labelStr = "label=" + chs_str;
     dlg.AddLabel("Instructions", widget, row, labelStr);
   }

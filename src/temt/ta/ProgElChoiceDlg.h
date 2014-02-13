@@ -40,7 +40,8 @@ public:
     };
 
   virtual int  GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
-                    ProgVar::VarType& var_type_choice, LocalGlobalOption = LOCALGLOBAL);
+                   ProgVar::VarType& var_type_choice, LocalGlobalOption = LOCALGLOBAL,
+                                    bool make_new_instr = false);
   // #IGNORE
 
   TA_SIMPLE_BASEFUNS(ProgElChoiceDlg);

@@ -54,6 +54,7 @@ class QWidget; //
 class ISelectableHost; //
 class iSplitter;  //
 class QSize;  //
+class QShowEvent; //
 
 
 taTypeDef_Of(iProgramEditor);
@@ -111,6 +112,7 @@ public:
   iTreeViewItem*        AssertBrowserItem(taiSigLink* link);
   virtual void          Refresh(); // manual refresh
   virtual QWidget*      firstTabFocusWidget();
+  virtual bool          miniEditVisible(); // is the mini editor visible, or is splitter collapsed?
 
   iProgramEditor(QWidget* parent = NULL); //
   ~iProgramEditor();
@@ -170,8 +172,9 @@ protected:
   MemberDef*            sel_item_mbr; // used (and only valid!) for context menus
   taBase*               sel_item_base; // used (and only valid!) for context menus
 
-  void         customEvent(QEvent* ev_) override;
-  bool         eventFilter(QObject *obj, QEvent *event) override;
+  void                  showEvent(QShowEvent* ev) override;
+  void                  customEvent(QEvent* ev_) override;
+  bool                  eventFilter(QObject *obj, QEvent *event) override;
   // event filter to trigger apply button on Ctrl+Return
 
   virtual void          Base_Remove(); // removes base and deletes the current set of edit controls

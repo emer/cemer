@@ -18,6 +18,7 @@
 #include <ProgVar_List>
 #include <taSigLinkItr>
 #include <MemberDef>
+#include <EnumDef>
 
 taTypeDef_Of(taMatrix);
 taTypeDef_Of(Function);
@@ -425,12 +426,30 @@ void ProgVar::SetVar(const Variant& value) {
   case T_Bool:
     bool_val = value.toBool();
     break;
-  case T_Object:
-    object_val = value.toBase();
+  case T_Object: {
+    taBase* bs = value.toBase();
+    if(!bs) {
+      if(value.isStringType()) {
+        if(value.toString() == "NULL" || value.toString() == "null" ||
+           value.toString() == "0")
+          object_val = bs;
+      }
+    }
+    else {
+      object_val = bs;
+    }
     UpdateCssObjVal();		// need to update our css object!
     break;
+  }
   case T_HardEnum:
-    int_val = value.toInt();
+    if(value.isStringType() && hard_enum_type) {
+      EnumDef* ed = hard_enum_type->FindEnum(value.toString());
+      if(ed)
+        int_val = ed->enum_no;
+    }
+    else {
+      int_val = value.toInt();
+    }
     break;
   case T_DynEnum:
     if(value.isStringType())
@@ -472,16 +491,6 @@ Variant ProgVar::GetVar() {
     break;
   }
   return _nilVariant;// compiler food
-}
-
-ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
-  if(td == NULL) return T_UnDef;
-  if(td->IsBool()) return T_Bool;
-  if(td->IsInt()) return T_Int;
-  if(td->IsEnum()) return T_HardEnum;
-  if(td->IsFloat()) return T_Real;
-  if(td->IsString()) return T_String;
-  return T_Object;              // must be..
 }
 
 bool ProgVar::SetValStr(const String& val, void* par, MemberDef* memb_def,
@@ -778,11 +787,113 @@ String ProgVar::CodeGetDesc(const String& code) {
   return code;
 }
 
-bool ProgVar::BrowserEditSet(const String& code, int move_after) {
-  String cd = CodeGetDesc(code);
+ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
+  if(td == NULL) return T_UnDef;
+  if(td->IsBool()) return T_Bool;
+  if(td->IsInt()) return T_Int;
+  if(td->IsEnum()) return T_HardEnum;
+  if(td->IsFloat()) return T_Real;
+  if(td->IsString()) return T_String;
+  return T_Object;              // must be..
+}
+
+TypeDef* ProgVar::GetTypeDefFromString(const String& tstr) {
+  String vtype = tstr;
+  if(vtype.endsWith("*")) vtype = vtype.before("*");
+  if(vtype == "String") vtype = "taString";
+  if(vtype == "string") vtype = "taString";
+  if(vtype == "real") vtype = "float";
+  TypeDef* td = NULL;
+  if(vtype.contains("::")) {
+    String tn = vtype.before("::");
+    td = taMisc::types.FindName(tn);
+    if(td) {
+      td = td->FindSubType(vtype.after("::"));
+    }
+  }
+  else {
+    td = taMisc::types.FindName(vtype);
+  }
+  return td;
+}
+
+bool ProgVar::SetTypeFromTypeDef(TypeDef* td) {
+  var_type = GetTypeFromTypeDef(td);
+  if(var_type == ProgVar::T_Object) {
+    object_type = td;
+  }
+  else if(var_type == ProgVar::T_HardEnum) {
+    hard_enum_type = td;
+  }
   return true;
 }
 
+bool ProgVar::SetTypeAndName(const String& ty_nm) {
+  String vtype = ty_nm.before(' ');
+  TypeDef* td = GetTypeDefFromString(vtype);
+  if(td) {
+    SetTypeFromTypeDef(td);
+  }
+  String nm = trim(ty_nm.after(' '));
+  if(nm.nonempty())
+    SetName(nm);
+  return true;
+}
+
+bool ProgVar::BrowserEditSet(const String& code, int move_after) {
+  String cd = CodeGetDesc(code);
+  if(cd.empty()) return false;
+  if(cd.contains("undefined")) return false;
+  if(cd.contains('(') && cd.contains(')')) {
+    // our own output format
+    String vtype = cd.between('(', ')');
+    TypeDef* td = GetTypeDefFromString(vtype);
+    if(td) {
+      SetTypeFromTypeDef(td);
+    }
+    cd = trim(cd.before('('));
+    if(cd.empty()) return true;
+    if(cd.contains('=')) {
+      String nm = trim(cd.before('='));
+      String val = trim(cd.after('='));
+      if(nm.nonempty())
+        SetName(nm);
+      if(val.nonempty())
+        SetVar(val);
+    }
+  }
+  else {
+    // maybe traditional var def format
+    if(cd.contains('=')) {
+      String nm = trim(cd.before('='));
+      String val = trim(cd.after('='));
+      if(nm.nonempty()) {
+        if(nm.contains(' ')) {
+          SetTypeAndName(nm);
+        }
+        else {
+          SetName(nm);
+        }
+      }
+      if(val.nonempty())
+        SetVar(val);
+    }
+    else if(cd.contains(' ')) {
+      SetTypeAndName(cd);
+    }
+    else {
+      TypeDef* td = GetTypeDefFromString(cd); // see if it is a type?
+      if(td) {
+        SetTypeFromTypeDef(td);
+      }
+      else {
+        SetName(cd);
+      }
+    }
+  }
+  SigEmitUpdated();
+  return true;
+}
 
 bool ProgVar::BrowserSelectMe() {
   Program* prog = GET_MY_OWNER(Program);
@@ -801,3 +912,14 @@ bool ProgVar::BrowserCollapseAll() {
   if(!prog) return false;
   return prog->BrowserCollapseAll_ProgItem(this);
 }
+
+String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == key_disp_name) {
+    String rval = GetDisplayName();
+    if(desc.nonempty())
+      rval +=  " // " + desc;
+    return rval;
+  }
+  return inherited::GetColText(key, itm_idx);
+}
+

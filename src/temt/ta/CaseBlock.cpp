@@ -53,18 +53,21 @@ void CaseBlock::GenCssPost_impl(Program* prog) {
 }
 
 String CaseBlock::GetDisplayName() const {
-  if(case_val.expr.empty()) return "default: (" + String(prog_code.size) + " items)";
-  return "case: " + case_val.expr + " (" + String(prog_code.size) + " items)";
+  if(case_val.expr.empty()) return "default:";
+  return "case: " + case_val.expr;
 }
 
-bool CaseBlock::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool CaseBlock::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(code.startsWith("case") || code.startsWith("default")) return true;
   return false;
 }
 
 bool CaseBlock::CvtFmCode(const String& code) {
   String cd;
-  if(code.startsWith("case")) cd = trim(code.after("case"));
+  if(code.startsWith("case:")) cd = trim(code.after("case:"));
+  else if(code.startsWith("case")) cd = trim(code.after("case"));
+  else if(code.startsWith("default:")) cd = trim(code.after("default:"));
   else if(code.startsWith("default")) cd = trim(code.after("default"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');

@@ -42,7 +42,8 @@ String DoLoop::GetDisplayName() const {
   return "do ... while (" + test.expr + ")";
 }
 
-bool DoLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool DoLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(code.startsWith("do")) return true;
   return false;
 }

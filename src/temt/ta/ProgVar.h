@@ -112,8 +112,14 @@ public:
   // set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
   virtual Variant GetVar();
   // get value as a variant value -- for hard-code use of the variable value
+  static TypeDef* GetTypeDefFromString(const String& tstr);
+  // get a typedef from a type string 
   static VarType  GetTypeFromTypeDef(TypeDef* td);
   // get appropriate variable type to hold given type, from typedef
+  virtual bool    SetTypeFromTypeDef(TypeDef* td);
+  // set the var type from a typedef
+  virtual bool    SetTypeAndName(const String& type_name);
+  // set the var type from and name from a combined 'type name' string
 
   ProgVar* operator=(const Variant& value);
 
@@ -125,6 +131,7 @@ public:
   String GetDesc() const override { return desc; }
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgVar"; }
+  String GetColText(const KeyString& key, int itm_idx = -1) const override;
 
   virtual TypeDef*      act_object_type() const; // #IGNORE the actual object type; never NULL (taBase min)
   virtual MemberDef*    GetValMemberDef();

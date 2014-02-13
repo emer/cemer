@@ -63,7 +63,7 @@ void iSplitter::saveSizes() {
 }
 
 void iSplitter::collapseToggle(int index) {
-  if(index <= 0 || index >= count()) return;
+  if(index < 0 || index >= count()) return;
   in_collapsing = true;
   QList<int> cur_sz = sizes();
 

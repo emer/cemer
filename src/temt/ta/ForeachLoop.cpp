@@ -84,7 +84,8 @@ String ForeachLoop::GetDisplayName() const {
   return "foreach(" + elnm + " in " + in.expr + ")";
 }
 
-bool ForeachLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool ForeachLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(code.startsWith("foreach(") || code.startsWith("foreach (")) return true;
   return false;
 }

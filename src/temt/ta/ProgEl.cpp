@@ -588,6 +588,7 @@ ProgVar* ProgEl::MakeLocalVar(const String& var_nm) {
   }
   if(locvars) {
     ProgVar* nwvar = (ProgVar*)locvars->local_vars.New(1, NULL, var_nm);
+    locvars->SigEmitUpdated();
     return nwvar;
   }
   return NULL;
@@ -706,9 +707,7 @@ bool ProgEl::CvtFmCode(const String& code) {
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
-  String chk_cd = cd;
-  chk_cd.downcase();
-  if(CanCvtFmCode(chk_cd, NULL)) {
+  if(CanCvtFmCode(cd, NULL)) {
     return CvtFmCode(cd);
   }
   orig_prog_code = cd;

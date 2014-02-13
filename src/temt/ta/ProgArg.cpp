@@ -136,6 +136,10 @@ String ProgArg::GetDisplayName() const {
 }
 
 bool ProgArg::BrowserEditSet(const String& code, int move_after) {
+  if(!code.contains('=')) return false;
+  expr.expr = trim(code.after('='));
+  expr.UpdateAfterEdit();
+  SigEmitUpdated();
   return true;
 }
 

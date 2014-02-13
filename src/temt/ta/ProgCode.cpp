@@ -25,6 +25,7 @@ TA_BASEFUNS_CTORS_DEFN(ProgCode);
 
 taTypeDef_Of(CssExpr);
 taTypeDef_Of(AssignExpr);
+taTypeDef_Of(Comment);
 
 void ProgCode::Initialize() {
   SetProgExprFlags();
@@ -36,28 +37,28 @@ void ProgCode::SetProgExprFlags() {
 }
 
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
-				const String& code_str, ProgEl* scope_el) {
+				const String& code_str) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
-    if(obj->CanCvtFmCode(code_str, scope_el)) {
+    if(obj->CanCvtFmCode(code_str, this)) {
       candidates.Link(obj);
     }
   }
   for(int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
-    CvtCodeCheckType(candidates, chld, code_str, scope_el);
+    CvtCodeCheckType(candidates, chld, code_str);
   }
 }
 
-bool ProgCode::CvtCodeToVar(String& code, ProgEl* scope_el) {
-  Program* prg = GET_OWNER(scope_el, Program);
+bool ProgCode::CvtCodeToVar(String& code) {
+  Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
 
   if(!code.contains(" ")) return false;
-  String vtype = code.before(" ");
-  TypeDef* td = taMisc::FindTypeName(vtype);
+  String vtype = code.before(' ');
+  TypeDef* td = ProgVar::GetTypeDefFromString(vtype);
   if(!td) return false;
-  code = trim(code.after(" "));
+  code = trim(code.after(' '));
   String var_nm;
   int pos = 0;
   char c = code[pos];
@@ -68,51 +69,61 @@ bool ProgCode::CvtCodeToVar(String& code, ProgEl* scope_el) {
     else 
       break;
   }
-  code = code.from(pos);
+  ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;
   taBase::Ref(dlg);
   int choice = 2;
-  ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
-  int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);
+  int result = 0;
+  if(var_type == ProgVar::T_HardEnum) {
+    result = 1;
+    choice = 1;                 // can only be in globals
+  }
+  else {
+    result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type,
+                             ProgElChoiceDlg::LOCALGLOBAL, true);
+  }
+  // true = "make new.." instructions
   ProgVar* rval = NULL;
   if (result == 1) {
     if(choice == 0) {
-      rval = scope_el->MakeLocalVar(var_nm);
-      // if(taMisc::gui_active)
-      //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+      rval = MakeLocalVar(var_nm);
+      if(taMisc::gui_active)
+        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
     }
     else if(choice == 1) {
       rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
+      prg->vars.SigEmitUpdated();
       // if(taMisc::gui_active)
       //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
     if(rval) {
-      rval->var_type = var_type;
-      // todo: set object type for object, etc..
+      rval->SetTypeFromTypeDef(td);
       rval->UpdateAfterEdit();
     }
   }
   return true;
 }
 
-ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
+ProgEl* ProgCode::CvtCodeToProgEl() {
   ProgEl_List candidates;
-  String code_mod = code_str;
-  if(code_str.endsWith(';')) {
+  String code_mod = code.expr;
+  if(code_mod.endsWith(';')) {
     // if we use a ; at the end, it is a guarantee of doing the css expr so
     // we can avoid alternative matches etc.
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
   }
+  else if(code_mod.startsWith("//") || code_mod.startsWith("/*")) {
+    candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_Comment));
+  }
   else {
-    bool had_var = CvtCodeToVar(code_mod, scope_el);
+    bool had_var = CvtCodeToVar(code_mod);
     if(had_var) {
-      // todo: need to write back modified to source -- just make this non-static??
+      code.expr = code_mod;     // code was truncated..
+      SigEmitUpdated();          // update us
       if(code_mod.empty())
-        return NULL;              // that's it
+        return NULL;              // that's it, we're done!  avail for something else..
     }
-    String check_code = code_mod;
-    check_code.downcase();        // check only on lowercase
-    CvtCodeCheckType(candidates, &TA_ProgEl, check_code, scope_el);
+    CvtCodeCheckType(candidates, &TA_ProgEl, code_mod);
     if(candidates.size == 0)
       return NULL;
   }
@@ -154,7 +165,12 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
 
 bool ProgCode::BrowserEditSet(const String& code_str, int move_after) {
   edit_move_after = move_after;
-  code.expr = CodeGetDesc(code_str);
+  if(code_str.startsWith("//") || code_str.startsWith("/*")) {
+    code.expr = code_str;
+  }
+  else {
+    code.expr = CodeGetDesc(code_str);
+  }
   if(code.expr.nonempty()) {
     tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
   }
@@ -165,9 +181,9 @@ void ProgCode::ConvertToProgEl() {
   if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return;
-  String code_str = trim(code.expr);
-  if(code_str.empty()) return;
-  ProgEl* cvt = CvtCodeToProgEl(code_str, this);
+  code.expr = trim(code.expr);
+  if(code.expr.empty()) return;
+  ProgEl* cvt = CvtCodeToProgEl();
   if(!cvt) return;
   taProject* proj = GET_OWNER(own, taProject);
   if(proj) {
@@ -176,7 +192,7 @@ void ProgCode::ConvertToProgEl() {
   cvt->edit_move_after = edit_move_after; // these are the ones who need it
   edit_move_after = 0;
   cvt->desc = desc;         // transfer description
-  cvt->orig_prog_code = code_str;
+  cvt->orig_prog_code = code.expr;
   cvt->SetProgFlag(CAN_REVERT_TO_CODE);
   int myidx = own->FindEl(this);
   own->ReplaceLater(cvt, myidx, "CvtFmSavedCode");

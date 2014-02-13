@@ -597,7 +597,9 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
     return inherited::eventFilter(object, event);
   }
   if (event->type() == QEvent::KeyPress) {
-    switch (static_cast<QKeyEvent *>(event)->key()) {
+    QKeyEvent* ke = static_cast<QKeyEvent *>(event);
+    bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(ke);
+    switch (ke->key()) {
     case Qt::Key_Tab:
       if(own_tree_widg) own_tree_widg->move_after_edit = 1;
       emit commitData(editor);
@@ -614,8 +616,14 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
         return false;
       if(own_tree_widg) own_tree_widg->move_after_edit = 1;
       emit commitData(editor);
-      emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
-      return false;             // don't filter the return
+      if(ctrl_pressed) {
+        emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+        return true;
+      }
+      else {
+        emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
+        return false;             // don't filter the return
+      }
     case Qt::Key_Escape:
       // don't commit data
       emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);

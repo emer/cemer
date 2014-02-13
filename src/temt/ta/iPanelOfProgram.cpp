@@ -144,7 +144,7 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
         pel->edit_move_after = 0;
       }
       else {
-        if(pel->InheritsFrom(&TA_ProgCode)) {
+        if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
           // auto edit prog code
           QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
                                                          Qt::ControlModifier));

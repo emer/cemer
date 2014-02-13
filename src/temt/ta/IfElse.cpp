@@ -100,7 +100,8 @@ String IfElse::GetDisplayName() const {
   return "if (" + cond.expr + ")";
 }
 
-bool IfElse::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool IfElse::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(code.startsWith("if")) return true;
   return false;
 }

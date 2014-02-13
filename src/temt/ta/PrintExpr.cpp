@@ -64,7 +64,8 @@ String PrintExpr::GetDisplayName() const {
   return rval;
 }
 
-bool PrintExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool PrintExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
   if(!(code.startsWith("print ") || code.startsWith("print: ") ||
        code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;

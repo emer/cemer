@@ -33,6 +33,9 @@ public:
   bool		CvtFmCode(const String& code) override;
   bool		IsCtrlProgEl() 	override { return true; }
 
+  String        GetColText(const KeyString& key, int itm_idx = -1) const override;
+  bool          BrowserEditSet(const String& code, int move_after=0) override;
+
   String	GetDisplayName() const override;
   String	GetTypeDecoKey() const override { return "Comment"; }
   String	GetToolbarName() const override { return "comment"; }

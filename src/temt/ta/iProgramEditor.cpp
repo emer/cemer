@@ -157,10 +157,6 @@ void iProgramEditor::Init() {
   propsCodeSplitter->setStretchFactor(0, 0);
   propsCodeSplitter->setStretchFactor(1, 1);
 
-  if(taMisc::program_editor_mode == taMisc::EXPERT) {
-    propsCodeSplitter->collapseToggle(0);
-  }
-
   items->setColumnCount(1);
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -427,6 +423,20 @@ void iProgramEditor::Controls_Remove() {
   meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
   body->clearLater();
 //nn and dangerous!  taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
+}
+
+bool iProgramEditor::miniEditVisible() {
+  if(!propsCodeSplitter) return false;
+  QList<int> cur_sz = propsCodeSplitter->sizes();
+  if(cur_sz[0] > 0) return true;
+  return false;
+}
+
+void iProgramEditor::showEvent(QShowEvent* e) {
+  inherited::showEvent(e);
+  if(taMisc::program_editor_mode == taMisc::EXPERT) {
+    propsCodeSplitter->collapseToggle(0);
+  }
 }
 
 void iProgramEditor::customEvent(QEvent* ev_) {
