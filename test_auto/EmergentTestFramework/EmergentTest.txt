@@ -1,0 +1,35 @@
+*** Settings ***
+Resource           Emergent.txt
+
+*** Variables ***
+${emergent} =      emergent.bat
+${css-option} =    -s
+
+*** Test Cases ***
+
+No-op CSS
+    [Tags]             strict
+    Start Process      ${emergent}   ${css-option}    no-op.css
+    ${result} =        Wait For Process   timeout=5 secs  
+    Should Be Equal As Integers   ${result.rc}  0
+
+Version
+    [Tags]             strict
+    Start Process      ${emergent}   --version
+    ${result} =        Wait For Process   timeout=5 secs  
+    Should Be Equal As Integers   ${result.rc}  0
+    Should Contain    ${result.stdout}  version: 6.3
+
+Missing CSS
+    [Tags]             strict
+    Start Process      ${emergent}   ${css-option}    missing.css
+    ${result} =        Wait For Process   timeout=5 secs  
+    Should Be Equal As Integers   ${result.rc}  0
+    Should Contain    ${result.stderr}  File Not Found
+
+Bad CSS
+    [Tags]             strict
+    Start Process      ${emergent}   ${css-option}    error.css
+    ${result} =        Wait For Process   timeout=5 secs  
+    Should Be Equal As Integers   ${result.rc}  0
+    Should Contain    ${result.stderr}  syntax error

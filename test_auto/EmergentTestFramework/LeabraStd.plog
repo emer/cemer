@@ -1,0 +1,20 @@
+Fri Feb 14 14:26:58 2014: taMisc::SetLogFile -- Log file opened for writing.
+Fri Feb 14 14:26:59 2014: ***CHECK ERROR: Config Error in: LeabraLayer Input (path: .projects["LeabraStd"].networks["Network_0"].layers["Input"])
+ number of units != target -- is: 0 should be: 25
+Fri Feb 14 14:26:59 2014: ***CHECK ERROR: Network: Network_0 Needs the 'Build' command to be run
+Fri Feb 14 14:26:59 2014: ***CHECK ERROR: Config Error in: LeabraLayer Input (path: .projects["LeabraStd"].networks["Network_0"].layers["Input"])
+ number of units != target -- is: 0 should be: 25
+Fri Feb 14 14:26:59 2014: ***CHECK ERROR: Config Error in: LeabraLayer Hidden (path: .projects["LeabraStd"].networks["Network_0"].layers["Hidden"])
+ number of units != target -- is: 0 should be: 25
+Fri Feb 14 14:26:59 2014: ***CHECK ERROR: Config Error in: LeabraLayer Output (path: .projects["LeabraStd"].networks["Network_0"].layers["Output"])
+ number of units != target -- is: 0 should be: 25
+Fri Feb 14 14:27:04 2014: ***ERROR: Error in: Program LeabraBatch::Run() (path: .projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"])
+ There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run
+Fri Feb 14 14:27:07 2014: Cancelling remaining error messages in this batch
+Fri Feb 14 14:27:08 2014: ***ERROR: Error in: DataTable EpochOutputData::idx_err() (path: .projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"])
+ index out of range
+Fri Feb 14 14:27:08 2014: ***ERROR: Error in: DataTable EpochOutputData::idx_err() (path: .projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"])
+ index out of range
+ line: 000070
+
+Fri Feb 14 14:27:08 2014: Network: Network_0 auto building

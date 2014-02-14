@@ -1,0 +1,907 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140214 14:30:45.075" generator="Robot 2.8.3 (Python 2.7.6 on win32)">
+<suite source="C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\Suite.txt" id="s1" name="Suite">
+<kw type="setup" name="Emergent.Suite Variables">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${emergent}</arg>
+<arg>emergent.exe</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.136" level="INFO">${emergent} = emergent.exe</msg>
+<status status="PASS" endtime="20140214 14:30:45.136" starttime="20140214 14:30:45.136"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${s}</arg>
+<arg>-s</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.137" level="INFO">${s} = -s</msg>
+<status status="PASS" endtime="20140214 14:30:45.137" starttime="20140214 14:30:45.137"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${p}</arg>
+<arg>-p</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.138" level="INFO">${p} = -p</msg>
+<status status="PASS" endtime="20140214 14:30:45.138" starttime="20140214 14:30:45.137"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${baseline-file}</arg>
+<arg>baseline.json</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.138" level="INFO">${baseline-file} = baseline.json</msg>
+<status status="PASS" endtime="20140214 14:30:45.138" starttime="20140214 14:30:45.138"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>${record-file}</arg>
+<arg>record.json</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.139" level="INFO">${record-file} = record.json</msg>
+<status status="PASS" endtime="20140214 14:30:45.139" starttime="20140214 14:30:45.138"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.139" starttime="20140214 14:30:45.135"></status>
+</kw>
+<test id="s1-t1" name="LeabraStd">
+<kw type="kw" name="Emergent.Set Variables">
+<doc></doc>
+<arguments>
+<arg>LeabraStd</arg>
+<arg>60 secs</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${name}</arg>
+<arg>${namearg}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.141" level="INFO">${name} = LeabraStd</msg>
+<status status="PASS" endtime="20140214 14:30:45.141" starttime="20140214 14:30:45.141"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${project-file}</arg>
+<arg>${name}.proj</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.141" level="INFO">${project-file} = LeabraStd.proj</msg>
+<status status="PASS" endtime="20140214 14:30:45.141" starttime="20140214 14:30:45.141"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}.css</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.142" level="INFO">${script-file} = LeabraStd.css</msg>
+<status status="PASS" endtime="20140214 14:30:45.142" starttime="20140214 14:30:45.142"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${timeout}</arg>
+<arg>${time}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.143" level="INFO">${timeout} = 60 secs</msg>
+<status status="PASS" endtime="20140214 14:30:45.143" starttime="20140214 14:30:45.142"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.143" starttime="20140214 14:30:45.140"></status>
+</kw>
+<kw type="kw" name="Emergent.Set Metrics">
+<doc></doc>
+<arguments>
+<arg>min</arg>
+<arg>0.20</arg>
+<arg>0.35</arg>
+<arg>max</arg>
+<arg>0.40</arg>
+<arg>0.80</arg>
+<arg>avg</arg>
+<arg>0.15</arg>
+<arg>0.25</arg>
+</arguments>
+<kw type="kw" name="@{metric-list} = BuiltIn.Create List">
+<doc>Returns a list containing given items.</doc>
+<arguments>
+<arg>@{metrics}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.144" level="INFO">@{metric-list} = [ min | 0.20 | 0.35 | max | 0.40 | 0.80 | avg | 0.15 | 0.25 ]</msg>
+<status status="PASS" endtime="20140214 14:30:45.144" starttime="20140214 14:30:45.144"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>@{metric-list}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.145" level="INFO">@{metric-list} = [ min | 0.20 | 0.35 | max | 0.40 | 0.80 | avg | 0.15 | 0.25 ]</msg>
+<status status="PASS" endtime="20140214 14:30:45.145" starttime="20140214 14:30:45.144"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.145" starttime="20140214 14:30:45.143"></status>
+</kw>
+<kw type="kw" name="Create CSS LeabraStd">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Emergent.Create CSS Custom">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Create File">
+<doc>Creates a file with the given content and encoding.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>\#include "Leabra.css"\n\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.147" html="yes" level="INFO">Created file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.147" starttime="20140214 14:30:45.146"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.148" starttime="20140214 14:30:45.145"></status>
+</kw>
+<kw type="kw" name="Emergent.Add CSS Standard Randomize">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>SetRandom(\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.149" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.150" starttime="20140214 14:30:45.149"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.151" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.151" starttime="20140214 14:30:45.150"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"LeabraAll_Std",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.153" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.153" starttime="20140214 14:30:45.152"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"LeabraTrain",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.155" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.155" starttime="20140214 14:30:45.154"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"rnd_init");\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.156" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.156" starttime="20140214 14:30:45.155"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.156" starttime="20140214 14:30:45.148"></status>
+</kw>
+<kw type="kw" name="Emergent.Add CSS Standard RunProgram">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+<arg>LeabraBatch</arg>
+<arg>Network_0</arg>
+<arg>StdInputData</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>RunProgram(\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.185" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.185" starttime="20140214 14:30:45.157"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.214" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.215" starttime="20140214 14:30:45.186"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"LeabraAll_Std",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.226" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.226" starttime="20140214 14:30:45.215"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${program}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.248" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.248" starttime="20140214 14:30:45.226"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${network}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.270" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.270" starttime="20140214 14:30:45.248"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"InputData",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.291" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.291" starttime="20140214 14:30:45.270"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${data}");\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.314" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.314" starttime="20140214 14:30:45.292"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.314" starttime="20140214 14:30:45.156"></status>
+</kw>
+<kw type="kw" name="Emergent.Add CSS Standard Output">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+<arg>OutputEpochsToTrain</arg>
+<arg>EpochOutputData</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>${method}(\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.335" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.335" starttime="20140214 14:30:45.315"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.356" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.356" starttime="20140214 14:30:45.335"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.377" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.377" starttime="20140214 14:30:45.357"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"OutputData",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.399" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.399" starttime="20140214 14:30:45.378"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${table}");\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.420" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStd.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.420" starttime="20140214 14:30:45.399"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.420" starttime="20140214 14:30:45.314"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.420" starttime="20140214 14:30:45.145"></status>
+</kw>
+<kw type="kw" name="Emergent.Run Model">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${baseline} = Emergent.Get Baseline">
+<doc></doc>
+<arguments>
+<arg>${baseline-file}</arg>
+</arguments>
+<kw type="kw" name="${content} = OperatingSystem.Get File">
+<doc>Returns the contents of a specified file.</doc>
+<arguments>
+<arg>${file}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.422" html="yes" level="INFO">Getting file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140214 14:30:45.422" level="INFO">${content} = { "name": "LeabraStd", "min": 9, "max": 13, "avg": 10.9 },{ "name": "a_not_b", "min": 0.582603, "max": 0.629062, "avg": 0.608421 },{ "name": "LeabraStdEmbedded", "min": 9, "max": 13, "avg": 10.9 },</msg>
+<status status="PASS" endtime="20140214 14:30:45.422" starttime="20140214 14:30:45.422"></status>
+</kw>
+<kw type="kw" name="${baseline} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${content}</arg>
+<arg>{[^\"]*\"name\"[^:]*:[^\"]*\"${name}\"[^}]*}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.423" level="INFO">${baseline} = { "name": "LeabraStd", "min": 9, "max": 13, "avg": 10.9 }</msg>
+<status status="PASS" endtime="20140214 14:30:45.423" starttime="20140214 14:30:45.423"></status>
+</kw>
+<msg timestamp="20140214 14:30:45.424" level="INFO">${baseline} = { "name": "LeabraStd", "min": 9, "max": 13, "avg": 10.9 }</msg>
+<status status="PASS" endtime="20140214 14:30:45.424" starttime="20140214 14:30:45.421"></status>
+</kw>
+<kw type="kw" name="${actuals} = Emergent.Run Emergent">
+<doc></doc>
+<arguments>
+<arg>${project-file}</arg>
+<arg>${script-file}</arg>
+<arg>${timeout}</arg>
+</arguments>
+<kw type="kw" name="Process.Start Process">
+<doc>Starts a new process on background.</doc>
+<arguments>
+<arg>${emergent} -p ${project} -s ${script}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.425" level="INFO">Starting process:
+['emergent.exe -p LeabraStd.proj -s LeabraStd.css']</msg>
+<msg timestamp="20140214 14:30:45.427" level="FAIL">WindowsError: [Error 2] The system cannot find the file specified</msg>
+<status status="FAIL" endtime="20140214 14:30:45.427" starttime="20140214 14:30:45.425"></status>
+</kw>
+<status status="FAIL" endtime="20140214 14:30:45.427" starttime="20140214 14:30:45.424"></status>
+</kw>
+<status status="FAIL" endtime="20140214 14:30:45.427" starttime="20140214 14:30:45.420"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140214 14:30:45.428" critical="yes" starttime="20140214 14:30:45.139">WindowsError: [Error 2] The system cannot find the file specified</status>
+</test>
+<test id="s1-t2" name="LeabraStdEmbedded">
+<kw type="kw" name="Emergent.Set Variables">
+<doc></doc>
+<arguments>
+<arg>LeabraStdEmbedded</arg>
+<arg>60 secs</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${name}</arg>
+<arg>${namearg}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.436" level="INFO">${name} = LeabraStdEmbedded</msg>
+<status status="PASS" endtime="20140214 14:30:45.436" starttime="20140214 14:30:45.435"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${project-file}</arg>
+<arg>${name}.proj</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.437" level="INFO">${project-file} = LeabraStdEmbedded.proj</msg>
+<status status="PASS" endtime="20140214 14:30:45.437" starttime="20140214 14:30:45.436"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}.css</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.438" level="INFO">${script-file} = LeabraStdEmbedded.css</msg>
+<status status="PASS" endtime="20140214 14:30:45.438" starttime="20140214 14:30:45.437"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${timeout}</arg>
+<arg>${time}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.438" level="INFO">${timeout} = 60 secs</msg>
+<status status="PASS" endtime="20140214 14:30:45.438" starttime="20140214 14:30:45.438"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.439" starttime="20140214 14:30:45.435"></status>
+</kw>
+<kw type="kw" name="Emergent.Set Metrics">
+<doc></doc>
+<arguments>
+<arg>min</arg>
+<arg>0.20</arg>
+<arg>0.35</arg>
+<arg>max</arg>
+<arg>0.40</arg>
+<arg>0.80</arg>
+<arg>avg</arg>
+<arg>0.15</arg>
+<arg>0.25</arg>
+</arguments>
+<kw type="kw" name="@{metric-list} = BuiltIn.Create List">
+<doc>Returns a list containing given items.</doc>
+<arguments>
+<arg>@{metrics}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.440" level="INFO">@{metric-list} = [ min | 0.20 | 0.35 | max | 0.40 | 0.80 | avg | 0.15 | 0.25 ]</msg>
+<status status="PASS" endtime="20140214 14:30:45.440" starttime="20140214 14:30:45.440"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>@{metric-list}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.441" level="INFO">@{metric-list} = [ min | 0.20 | 0.35 | max | 0.40 | 0.80 | avg | 0.15 | 0.25 ]</msg>
+<status status="PASS" endtime="20140214 14:30:45.441" starttime="20140214 14:30:45.440"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.441" starttime="20140214 14:30:45.439"></status>
+</kw>
+<kw type="kw" name="Create CSS">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Emergent.Create CSS Standard">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Create File">
+<doc>Creates a file with the given content and encoding.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>Program *program = .projects["${name}"].programs.gp["Tests"]["Test"];\nprogram-&gt;Run();\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.444" html="yes" level="INFO">Created file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStdEmbedded.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\LeabraStdEmbedded.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.444" starttime="20140214 14:30:45.442"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.444" starttime="20140214 14:30:45.442"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.444" starttime="20140214 14:30:45.441"></status>
+</kw>
+<kw type="kw" name="Emergent.Run Model">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${baseline} = Emergent.Get Baseline">
+<doc></doc>
+<arguments>
+<arg>${baseline-file}</arg>
+</arguments>
+<kw type="kw" name="${content} = OperatingSystem.Get File">
+<doc>Returns the contents of a specified file.</doc>
+<arguments>
+<arg>${file}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.446" html="yes" level="INFO">Getting file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140214 14:30:45.446" level="INFO">${content} = { "name": "LeabraStd", "min": 9, "max": 13, "avg": 10.9 },{ "name": "a_not_b", "min": 0.582603, "max": 0.629062, "avg": 0.608421 },{ "name": "LeabraStdEmbedded", "min": 9, "max": 13, "avg": 10.9 },</msg>
+<status status="PASS" endtime="20140214 14:30:45.446" starttime="20140214 14:30:45.446"></status>
+</kw>
+<kw type="kw" name="${baseline} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${content}</arg>
+<arg>{[^\"]*\"name\"[^:]*:[^\"]*\"${name}\"[^}]*}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.447" level="INFO">${baseline} = { "name": "LeabraStdEmbedded", "min": 9, "max": 13, "avg": 10.9 }</msg>
+<status status="PASS" endtime="20140214 14:30:45.447" starttime="20140214 14:30:45.447"></status>
+</kw>
+<msg timestamp="20140214 14:30:45.448" level="INFO">${baseline} = { "name": "LeabraStdEmbedded", "min": 9, "max": 13, "avg": 10.9 }</msg>
+<status status="PASS" endtime="20140214 14:30:45.448" starttime="20140214 14:30:45.445"></status>
+</kw>
+<kw type="kw" name="${actuals} = Emergent.Run Emergent">
+<doc></doc>
+<arguments>
+<arg>${project-file}</arg>
+<arg>${script-file}</arg>
+<arg>${timeout}</arg>
+</arguments>
+<kw type="kw" name="Process.Start Process">
+<doc>Starts a new process on background.</doc>
+<arguments>
+<arg>${emergent} -p ${project} -s ${script}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.449" level="INFO">Starting process:
+['emergent.exe -p LeabraStdEmbedded.proj -s LeabraStdEmbedded.css']</msg>
+<msg timestamp="20140214 14:30:45.450" level="FAIL">WindowsError: [Error 2] The system cannot find the file specified</msg>
+<status status="FAIL" endtime="20140214 14:30:45.450" starttime="20140214 14:30:45.448"></status>
+</kw>
+<status status="FAIL" endtime="20140214 14:30:45.450" starttime="20140214 14:30:45.448"></status>
+</kw>
+<status status="FAIL" endtime="20140214 14:30:45.450" starttime="20140214 14:30:45.444"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140214 14:30:45.451" critical="yes" starttime="20140214 14:30:45.432">WindowsError: [Error 2] The system cannot find the file specified</status>
+</test>
+<test id="s1-t3" name="a_not_b">
+<kw type="kw" name="Emergent.Set Variables">
+<doc></doc>
+<arguments>
+<arg>a_not_b</arg>
+<arg>60 secs</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${name}</arg>
+<arg>${namearg}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.460" level="INFO">${name} = a_not_b</msg>
+<status status="PASS" endtime="20140214 14:30:45.460" starttime="20140214 14:30:45.460"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${project-file}</arg>
+<arg>${name}.proj</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.461" level="INFO">${project-file} = a_not_b.proj</msg>
+<status status="PASS" endtime="20140214 14:30:45.461" starttime="20140214 14:30:45.461"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}.css</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.462" level="INFO">${script-file} = a_not_b.css</msg>
+<status status="PASS" endtime="20140214 14:30:45.462" starttime="20140214 14:30:45.461"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>${timeout}</arg>
+<arg>${time}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.462" level="INFO">${timeout} = 60 secs</msg>
+<status status="PASS" endtime="20140214 14:30:45.462" starttime="20140214 14:30:45.462"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.462" starttime="20140214 14:30:45.459"></status>
+</kw>
+<kw type="kw" name="Emergent.Set Metrics">
+<doc></doc>
+<arguments>
+<arg>min</arg>
+<arg>0.00</arg>
+<arg>0.05</arg>
+<arg>max</arg>
+<arg>0.02</arg>
+<arg>0.05</arg>
+<arg>avg</arg>
+<arg>0.02</arg>
+<arg>0.05</arg>
+</arguments>
+<kw type="kw" name="@{metric-list} = BuiltIn.Create List">
+<doc>Returns a list containing given items.</doc>
+<arguments>
+<arg>@{metrics}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.464" level="INFO">@{metric-list} = [ min | 0.00 | 0.05 | max | 0.02 | 0.05 | avg | 0.02 | 0.05 ]</msg>
+<status status="PASS" endtime="20140214 14:30:45.464" starttime="20140214 14:30:45.464"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Test Variable">
+<doc>Makes a variable available everywhere within the scope of the current test.</doc>
+<arguments>
+<arg>@{metric-list}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.464" level="INFO">@{metric-list} = [ min | 0.00 | 0.05 | max | 0.02 | 0.05 | avg | 0.02 | 0.05 ]</msg>
+<status status="PASS" endtime="20140214 14:30:45.464" starttime="20140214 14:30:45.464"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.465" starttime="20140214 14:30:45.463"></status>
+</kw>
+<kw type="kw" name="Create CSS a_not_b">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Emergent.Create CSS Custom">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Create File">
+<doc>Creates a file with the given content and encoding.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>\#include "Leabra.css"\n\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.467" html="yes" level="INFO">Created file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.468" starttime="20140214 14:30:45.466"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.468" starttime="20140214 14:30:45.465"></status>
+</kw>
+<kw type="kw" name="Emergent.Add CSS Standard Randomize">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>SetRandom(\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.471" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.471" starttime="20140214 14:30:45.469"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.517" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.517" starttime="20140214 14:30:45.472"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"LeabraAll_Std",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.537" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.537" starttime="20140214 14:30:45.517"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"LeabraTrain",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.557" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.557" starttime="20140214 14:30:45.537"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"rnd_init");\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.577" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.577" starttime="20140214 14:30:45.558"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.577" starttime="20140214 14:30:45.468"></status>
+</kw>
+<kw type="kw" name="Emergent.Add CSS Standard RunProgram">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+<arg>LeabraTrain</arg>
+<arg>ABNet</arg>
+<arg>ABInput_Delay3</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>RunProgram(\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.599" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.600" starttime="20140214 14:30:45.578"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.620" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.620" starttime="20140214 14:30:45.600"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"LeabraAll_Std",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.640" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.641" starttime="20140214 14:30:45.620"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${program}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.660" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.661" starttime="20140214 14:30:45.641"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${network}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.681" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.681" starttime="20140214 14:30:45.661"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"InputData",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.702" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.702" starttime="20140214 14:30:45.682"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${data}");\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.722" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.723" starttime="20140214 14:30:45.702"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.723" starttime="20140214 14:30:45.578"></status>
+</kw>
+<kw type="kw" name="Emergent.Add CSS Standard Output">
+<doc></doc>
+<arguments>
+<arg>${script-file}</arg>
+<arg>${name}</arg>
+<arg>OutputANotB</arg>
+<arg>TrialOutputData</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>${method}(\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.745" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.745" starttime="20140214 14:30:45.724"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.765" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.765" starttime="20140214 14:30:45.745"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${project}",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.786" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.786" starttime="20140214 14:30:45.766"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"OutputData",\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.807" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.807" starttime="20140214 14:30:45.786"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Append To File">
+<doc>Appends the given contend to the specified file.</doc>
+<arguments>
+<arg>${script}</arg>
+<arg>"${table}");\n</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.828" html="yes" level="INFO">Appended to file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\a_not_b.css&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140214 14:30:45.828" starttime="20140214 14:30:45.808"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.829" starttime="20140214 14:30:45.723"></status>
+</kw>
+<status status="PASS" endtime="20140214 14:30:45.829" starttime="20140214 14:30:45.465"></status>
+</kw>
+<kw type="kw" name="Emergent.Run Model">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${baseline} = Emergent.Get Baseline">
+<doc></doc>
+<arguments>
+<arg>${baseline-file}</arg>
+</arguments>
+<kw type="kw" name="${content} = OperatingSystem.Get File">
+<doc>Returns the contents of a specified file.</doc>
+<arguments>
+<arg>${file}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.831" html="yes" level="INFO">Getting file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140214 14:30:45.832" level="INFO">${content} = { "name": "LeabraStd", "min": 9, "max": 13, "avg": 10.9 },{ "name": "a_not_b", "min": 0.582603, "max": 0.629062, "avg": 0.608421 },{ "name": "LeabraStdEmbedded", "min": 9, "max": 13, "avg": 10.9 },</msg>
+<status status="PASS" endtime="20140214 14:30:45.832" starttime="20140214 14:30:45.831"></status>
+</kw>
+<kw type="kw" name="${baseline} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${content}</arg>
+<arg>{[^\"]*\"name\"[^:]*:[^\"]*\"${name}\"[^}]*}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.833" level="INFO">${baseline} = { "name": "a_not_b", "min": 0.582603, "max": 0.629062, "avg": 0.608421 }</msg>
+<status status="PASS" endtime="20140214 14:30:45.833" starttime="20140214 14:30:45.832"></status>
+</kw>
+<msg timestamp="20140214 14:30:45.833" level="INFO">${baseline} = { "name": "a_not_b", "min": 0.582603, "max": 0.629062, "avg": 0.608421 }</msg>
+<status status="PASS" endtime="20140214 14:30:45.833" starttime="20140214 14:30:45.830"></status>
+</kw>
+<kw type="kw" name="${actuals} = Emergent.Run Emergent">
+<doc></doc>
+<arguments>
+<arg>${project-file}</arg>
+<arg>${script-file}</arg>
+<arg>${timeout}</arg>
+</arguments>
+<kw type="kw" name="Process.Start Process">
+<doc>Starts a new process on background.</doc>
+<arguments>
+<arg>${emergent} -p ${project} -s ${script}</arg>
+</arguments>
+<msg timestamp="20140214 14:30:45.835" level="INFO">Starting process:
+['emergent.exe -p a_not_b.proj -s a_not_b.css']</msg>
+<msg timestamp="20140214 14:30:45.836" level="FAIL">WindowsError: [Error 2] The system cannot find the file specified</msg>
+<status status="FAIL" endtime="20140214 14:30:45.837" starttime="20140214 14:30:45.835"></status>
+</kw>
+<status status="FAIL" endtime="20140214 14:30:45.837" starttime="20140214 14:30:45.834"></status>
+</kw>
+<status status="FAIL" endtime="20140214 14:30:45.837" starttime="20140214 14:30:45.829"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140214 14:30:45.837" critical="yes" starttime="20140214 14:30:45.456">WindowsError: [Error 2] The system cannot find the file specified</status>
+</test>
+<kw type="teardown" name="Process.Terminate All Processes">
+<doc>Terminates all still running processes started by this library.</doc>
+<arguments>
+<arg>kill=True</arg>
+</arguments>
+<status status="PASS" endtime="20140214 14:30:45.843" starttime="20140214 14:30:45.842"></status>
+</kw>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140214 14:30:45.844" starttime="20140214 14:30:45.075"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="3" pass="0">Critical Tests</stat>
+<stat fail="3" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="3" pass="0" id="s1" name="Suite">Suite</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

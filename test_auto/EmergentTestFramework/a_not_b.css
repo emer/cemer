@@ -1,0 +1,19 @@
+#include "Leabra.css"
+
+SetRandom(
+"a_not_b",
+"LeabraAll_Std",
+"LeabraTrain",
+"rnd_init");
+RunProgram(
+"a_not_b",
+"LeabraAll_Std",
+"LeabraTrain",
+"ABNet",
+"InputData",
+"ABInput_Delay3");
+OutputANotB(
+"a_not_b",
+"a_not_b",
+"OutputData",
+"TrialOutputData");

@@ -1,0 +1,10 @@
+Mon Feb 10 09:59:56 2014: taMisc::SetLogFile -- Log file opened for writing.
+Mon Feb 10 10:00:15 2014: *** LOG: SaveUndo of action: Call Method: Init on: LeabraTrain at path: .programs.gp[0][1] saving at: .
+Mon Feb 10 10:00:15 2014: *** LOG: Undo: New source added!
+Mon Feb 10 10:00:15 2014: *** LOG: last_diff_n:  0  pct:  0
+Mon Feb 10 10:00:16 2014: *** LOG: SaveUndo of action: Call Method: Run_Gui on: LeabraTrain at path: .programs.gp[0][1] saving at: .
+Mon Feb 10 10:00:16 2014: *** LOG: last_diff_n:  2  pct:  0.000131216
+Mon Feb 10 10:12:56 2014: *** DEBUG: Saved auto save file: C:/Users/david_000/Documents/Robot Framework/Prototype/a_not_b_autosave.proj
+Mon Feb 10 11:37:19 2014: *** DEBUG: Saved auto save file: C:/Users/david_000/Documents/Robot Framework/Prototype/a_not_b_autosave.proj
+Mon Feb 10 11:41:13 2014: *** DEBUG: Saved auto save file: C:/Users/david_000/Documents/Robot Framework/Prototype/a_not_b_autosave.proj
+Mon Feb 10 11:42:20 2014: taMisc::SetLogFile -- Setting log file to: C:/Users/david_000/Documents/Robot Framework/Prototype/LeabraStd.plog
