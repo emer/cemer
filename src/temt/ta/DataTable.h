@@ -51,7 +51,6 @@ class DataSortSpec; //
 class DataSelectSpec; //
 
 class JSONNode; //
-
 /*
   DataTable Notifications
 
@@ -226,7 +225,7 @@ public:
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
       int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
-  virtual void          LoadDataJSON(const String& fname);
+  virtual void          ImportDataJSON(const String& fname);
   // #CAT_File #MENU #MENU_ON_Data #FILE_DIALOG_LOAD #EXT_json load JSON format data (ONLY)
   virtual void          ParseJSON(const JSONNode& n);
   // #IGNORE #CAT_FILE Load a json file into a datatable

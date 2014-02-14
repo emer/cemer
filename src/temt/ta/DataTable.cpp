@@ -2091,8 +2091,7 @@ void DataTable::ExportDataJSON(const String& fname) {
   taRefN::unRefDone(flr);
 }
 
-void DataTable::ExportDataJSON_impl(ostream& strm)
-{
+void DataTable::ExportDataJSON_impl(ostream& strm) {
   JSONNode root(JSON_NODE);
   JSONNode columns(JSON_ARRAY);
   columns.set_name("columns");
@@ -2102,31 +2101,158 @@ void DataTable::ExportDataJSON_impl(ostream& strm)
     aColumn.push_back(JSONNode("name", json_string(dc->name.chars())));
     String val = ValTypeToStr(dc->valType());
     aColumn.push_back(JSONNode("type", val.chars()));
+    aColumn.push_back(JSONNode("matrix", dc->is_matrix));
+    if (dc->is_matrix) {
+      JSONNode dimensions(JSON_ARRAY);
+      dimensions.set_name("dimensions");
+      for (int d=0; d<dc->cell_geom.n_dims; d++) {
+        dimensions.push_back(JSONNode("", dc->cell_geom.size(d)));
+      }
+      aColumn.push_back(dimensions);
+    }
     JSONNode values(JSON_ARRAY);
     values.set_name("values");
-    for (int j=0; j<rows; j++) {
-      switch (dc->valType()) {
-      case VT_STRING:
-        values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
-        break;
-      case VT_DOUBLE:
-        values.push_back(JSONNode("", dc->GetValAsDouble(j)));
-        break;
-      case VT_FLOAT:
-        values.push_back(JSONNode("", dc->GetValAsFloat(j)));
-        break;
-      case VT_INT:
-        values.push_back(JSONNode("", dc->GetValAsInt(j)));
-        break;
-      case VT_BYTE:
-        values.push_back(JSONNode("", dc->GetValAsByte(j)));
-        break;
-      case VT_VARIANT:
-        values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
-        break;
-      default:
-        values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
-        taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
+    if (!dc->is_matrix) {  // single array of values - row 1 to row n
+      for (int j=0; j<rows; j++) {
+        switch (dc->valType()) {
+        case VT_STRING:
+          values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
+          break;
+        case VT_DOUBLE:
+          values.push_back(JSONNode("", dc->GetValAsDouble(j)));
+          break;
+        case VT_FLOAT:
+          values.push_back(JSONNode("", dc->GetValAsFloat(j)));
+          break;
+        case VT_INT:
+          values.push_back(JSONNode("", dc->GetValAsInt(j)));
+          break;
+        case VT_BYTE:
+          values.push_back(JSONNode("", dc->GetValAsByte(j)));
+          break;
+        case VT_VARIANT:
+          values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
+          break;
+        default:
+          values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
+          taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
+        }
+      }
+    }
+    else {  // column is matrix type
+      if (dc->cell_geom.dims() == 2) {
+        for (int row=0; row < rows; row++) {
+          JSONNode matrixValues(JSON_ARRAY);
+          for(int k = dc->cell_geom.size(1) - 1; k >= 0; k--) {
+            JSONNode matrixDim_1Values(JSON_ARRAY);
+            for(int j = 0; j < dc->cell_geom.size(0); j++) {
+              switch (dc->valType()) {
+              case VT_STRING:
+                matrixValues.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
+                break;
+              case VT_DOUBLE:
+                matrixValues.push_back(JSONNode("", dc->GetValAsDoubleMDims(row, j, k)));
+                break;
+              case VT_FLOAT:
+                matrixValues.push_back(JSONNode("", dc->GetValAsFloatMDims(row, j, k)));
+                break;
+              case VT_INT:
+                matrixDim_1Values.push_back(JSONNode("", dc->GetValAsIntMDims(row, j, k)));
+                break;
+              case VT_BYTE:
+                matrixValues.push_back(JSONNode("", dc->GetValAsByteMDims(row, j, k)));
+                break;
+              case VT_VARIANT:
+                matrixValues.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
+                break;
+              default:
+                matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
+              }
+            }
+            matrixValues.push_back(matrixDim_1Values);
+          }
+          values.push_back(matrixValues);
+        }
+      }
+      if (dc->cell_geom.dims() == 3) {
+        for (int row=0; row < rows; row++) {
+          JSONNode matrixValues(JSON_ARRAY);
+          for(int l = dc->cell_geom.size(2) - 1; l >= 0; l--) {
+            JSONNode matrixDim_2Values(JSON_ARRAY);
+            for(int k = dc->cell_geom.size(1) - 1; k >= 0; k--) {
+              JSONNode matrixDim_1Values(JSON_ARRAY);
+              for(int j = 0; j < dc->cell_geom.size(0); j++) {
+                switch (dc->valType()) {
+                case VT_STRING:
+                  matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row,j, k, l).chars())));
+                  break;
+                case VT_DOUBLE:
+                  matrixDim_1Values.push_back(JSONNode("", dc->GetValAsDoubleMDims(row,j, k, l)));
+                  break;
+                case VT_FLOAT:
+                  matrixDim_1Values.push_back(JSONNode("", dc->GetValAsFloatMDims(row,j, k, l)));
+                  break;
+                case VT_INT:
+                  matrixDim_1Values.push_back(JSONNode("", dc->GetValAsIntMDims(row,j, k, l)));
+                  break;
+                case VT_BYTE:
+                  matrixDim_1Values.push_back(JSONNode("", dc->GetValAsByteMDims(row,j, k, l)));
+                  break;
+                case VT_VARIANT:
+                  matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row,j, k, l).chars())));
+                  break;
+                default:
+                  matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row,j, k, l).chars())));
+                }
+              }
+              matrixDim_2Values.push_back(matrixDim_1Values);
+            }
+            matrixValues.push_back(matrixDim_2Values);
+          }
+          values.push_back(matrixValues);
+        }
+      }
+      if (dc->cell_geom.dims() == 4) {
+        for (int row=0; row < rows; row++) {
+          JSONNode matrixValues(JSON_ARRAY);
+          for(int m = dc->cell_geom.size(3) - 1; m >= 0; m--) {
+            JSONNode matrixDim_3Values(JSON_ARRAY);
+            for(int l = dc->cell_geom.size(2) - 1; l >= 0; l--) {
+              JSONNode matrixDim_2Values(JSON_ARRAY);
+              for(int k = dc->cell_geom.size(1) - 1; k >= 0; k--) {
+                JSONNode matrixDim_1Values(JSON_ARRAY);
+                for(int j = 0; j < dc->cell_geom.size(0); j++) {
+                  switch (dc->valType()) {
+                  case VT_STRING:
+                    matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k, l, m).chars())));
+                    break;
+                  case VT_DOUBLE:
+                    matrixDim_1Values.push_back(JSONNode("", dc->GetValAsDoubleMDims(row, j, k, l, m)));
+                    break;
+                  case VT_FLOAT:
+                    matrixDim_1Values.push_back(JSONNode("", dc->GetValAsFloatMDims(row, j, k, l, m)));
+                    break;
+                  case VT_INT:
+                    matrixDim_1Values.push_back(JSONNode("", dc->GetValAsIntMDims(row, j, k, l, m)));
+                    break;
+                  case VT_BYTE:
+                    matrixDim_1Values.push_back(JSONNode("", dc->GetValAsByteMDims(row, j, k, l, m)));
+                    break;
+                  case VT_VARIANT:
+                    matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k, l, m).chars())));
+                    break;
+                  default:
+                    matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k, l, m).chars())));
+                  }
+                }
+                matrixDim_2Values.push_back(matrixDim_1Values);
+              }
+              matrixDim_3Values.push_back(matrixDim_2Values);
+            }
+            matrixValues.push_back(matrixDim_3Values);
+          }
+          values.push_back(matrixValues);
+        }
       }
     }
     aColumn.push_back(values);
@@ -2623,7 +2749,7 @@ void DataTable::LoadAnyData(const String& fname, bool headers_req,
   taRefN::unRefDone(flr);
 }
 
-void DataTable::LoadDataJSON(const String& fname) {
+void DataTable::ImportDataJSON(const String& fname) {
   bool reset_first = true;
   json_string contents;
 
@@ -2638,7 +2764,6 @@ void DataTable::LoadDataJSON(const String& fname) {
   flr->Close();
   taRefN::unRefDone(flr);
 
-  taMisc::DebugInfo(contents.c_str());
   if (libjson::is_valid(contents)) {
     JSONNode n = libjson::parse(contents);
     ParseJSON(n);
@@ -2678,9 +2803,11 @@ void DataTable::ParseJSON(const JSONNode& n) {
 
 void DataTable::ParseJSONColumn(const JSONNode& aCol) {
   JSONNode theValues;
+  JSONNode theDimensions;
   String columnName;
   DataCol::ValType columnType = VT_STRING;
   DataCol* dc;
+  bool isMatrix = false;
 
   JSONNode::const_iterator columnData = aCol.begin();
   while (columnData != aCol.end()) {
@@ -2696,6 +2823,12 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
     else if (node_name == "values") {
       //      taMisc::DebugInfo("column values");
       theValues = columnData->as_array();
+    }
+    else if (node_name == "matrix") {
+      isMatrix = columnData->as_bool();
+    }
+    else if (node_name == "dimensions") {
+      theDimensions = columnData->as_array();
     }
     columnData++;
   }
@@ -2715,28 +2848,28 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
   int row = 0;
   while (values != theValues.end()) {
     switch (columnType) {
-     case VT_STRING:
-       dc->SetValAsString(values->as_string().c_str(), row);
-       break;
-     case VT_DOUBLE:
-       dc->SetValAsDouble(values->as_float(), row);
-       break;
-     case VT_FLOAT:
-       dc->SetValAsFloat(values->as_float(), row);
-       break;
-     case VT_INT:
-       dc->SetValAsInt(values->as_int(), row);
-       break;
-     case VT_BYTE:
-       dc->SetValAsInt(values->as_int(), row);
-       break;
-     case VT_VARIANT:
-       dc->SetValAsVar(values->as_string().c_str(), row);
-       break;
-     default:
-       dc->SetValAsString(values->as_string().c_str(), row);
-       taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
-     }
+    case VT_STRING:
+      dc->SetValAsString(values->as_string().c_str(), row);
+      break;
+    case VT_DOUBLE:
+      dc->SetValAsDouble(values->as_float(), row);
+      break;
+    case VT_FLOAT:
+      dc->SetValAsFloat(values->as_float(), row);
+      break;
+    case VT_INT:
+      dc->SetValAsInt(values->as_int(), row);
+      break;
+    case VT_BYTE:
+      dc->SetValAsInt(values->as_int(), row);
+      break;
+    case VT_VARIANT:
+      dc->SetValAsVar(values->as_string().c_str(), row);
+      break;
+    default:
+      dc->SetValAsString(values->as_string().c_str(), row);
+      taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+    }
     row++;
     values++;
   }
