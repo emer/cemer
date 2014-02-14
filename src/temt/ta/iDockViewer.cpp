@@ -81,7 +81,7 @@ void iDockViewer::Showing(bool showing) {
   if (!wvw) return; // normally shouldn't happen for owned docks
   iMainWindowViewer* dv = wvw->viewerWindow();
   if (!dv) return;
-  iAction* me = dv->dockMenu->FindActionByData((void*)this);
+  iAction* me = dv->toolBarMenu->FindActionByData((void*)this);
   if (!me) return;
   if(showing && vw->InheritsFrom(&TA_ToolBoxDockViewer)) {
     if(taMisc::viewer_options & taMisc::VO_NO_TOOLBOX) {

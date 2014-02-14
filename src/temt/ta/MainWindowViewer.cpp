@@ -512,7 +512,7 @@ void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
   ((taViewer*)tb)->Constr_impl(NULL);
 
   // add to the toolbar view menu
-  win->AddToolBar(tb->widget());
+  win->AddApplicationToolBar(tb->widget());
   if (post_constr) {
     ((taViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
   }

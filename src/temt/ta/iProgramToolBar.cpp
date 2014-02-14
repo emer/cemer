@@ -27,6 +27,7 @@
 
 #include <taMisc>
 #include <tabMisc>
+#include <taiMisc>
 #include <taRootBase>
 
 taTypeDef_Of(ForLoop);
@@ -108,8 +109,9 @@ IViewerWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 
 void iProgramToolBar::Constr_post() {
 //  iMainWindowViewer* win = viewerWindow(); //cache
-
 //TODO: add the appropriate global actions
+  int icon_sz = taiM_->label_height(taiMisc::sizMedium);
+  this->setIconSize(QSize(icon_sz, icon_sz));
 }
 
 static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
@@ -124,10 +126,10 @@ static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
       else if(vc->use_bg)
         colr = vc->bg_color.color();
       QPalette pal;
-//       pal.setColor(QPalette::Button, Qt::white);
       pal.setColor(QPalette::ButtonText, colr);
       widg->setPalette(pal);
-//       widg->setAutoFillBackground(true);
+      widg->setFont(taiM->buttonFont(taiMisc::sizSmall));
+
     }
   }
 }

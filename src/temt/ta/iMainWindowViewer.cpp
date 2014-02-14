@@ -165,7 +165,7 @@ void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_are
   if (!dv) return;
   addDockWidget(in_area, dv);
   // create a menu entry to show/hide it, regardless if visible now
-  iAction* act = dockMenu->AddItem(dv->viewer()->GetName(), taiWidgetMenu::toggle,
+  iAction* act = toolBarMenu->AddItem("programming", taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(this_DockSelect(iAction*)), (void*)dv);
   if (dv->isVisible() != act->isChecked())
     act->setChecked(dv->isVisible()); // note: triggers action
@@ -227,11 +227,11 @@ void iMainWindowViewer::EditItem(taiSigLink* link, bool not_in_cur) {
   itv->ShowLink(link, not_in_cur);
 }
 
-void iMainWindowViewer::AddToolBar(iToolBar* itb) {
+void iMainWindowViewer::AddApplicationToolBar(iToolBar* itb) {
   if (!itb->parent())
     itb->setParent(this); // needs parent otherwise will leak
   itb->m_window = this;
-  addToolBar(itb); //TODO: should specify area
+  addToolBar(Qt::TopToolBarArea, itb); // Qt methodTODO: should specify area
   // create a menu entry to show/hide it, regardless if visible now
   toolBarMenu->AddItem(itb->objectName(), taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(this_ToolBarSelect(iAction*)), (void*)itb);
@@ -241,7 +241,6 @@ void iMainWindowViewer::AddToolBar(iToolBar* itb) {
   if (!tb->visible) {
     tb->Hide();
   }
-  //nn  toolbars.append(tb);
 }
 
 void iMainWindowViewer::ch_destroyed() {
@@ -620,7 +619,6 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewMenu->insertSeparator();
   frameMenu = viewMenu->AddSubMenu("Frames");
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
-  dockMenu = viewMenu->AddSubMenu("Dock Windows");
 
   viewMenu->insertSeparator();
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
@@ -2112,7 +2110,7 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
   PanelViewer* pv_panels = (PanelViewer*)viewer()->GetMiddlePanel();
   PanelViewer* pv_T3 = (PanelViewer*)viewer()->GetRightViewer();
 
-  DockViewer* dv = viewer()->FindDockViewerByName("Tools");
+  DockViewer* dv = viewer()->FindDockViewerByName("ProgramToolbar");
   if (dv) {
     if ((pv_browse && pv_browse->isVisible()) || (pv_panels && pv_panels->isVisible()))
       tools_dock_was_visible = dv->isVisible();  // save the state for case when dock is hidden because the browse and panel frames are hidden

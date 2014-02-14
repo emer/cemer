@@ -49,7 +49,8 @@ public:
   ProgVarRef	var_4;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
   String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "data=vars"; }
+//  String  GetToolbarName() const override { return "data=vars"; }
+  String  GetToolbarName() const override { return "read from data table"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:

@@ -179,7 +179,7 @@ public:
   virtual iAction*    AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
   void                  AddPanel(iPanelBase* panel, bool new_tab = true);
     // insures we have a iPanelViewer; adds panel; if requested, adds a new tab, sets panel active in it
-  virtual void          AddToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
+  virtual void          AddApplicationToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
   virtual void          AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
 #ifndef __MAKETA__
   virtual void          AddDockViewer(iDockViewer* dv,
