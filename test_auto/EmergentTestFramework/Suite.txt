@@ -6,7 +6,7 @@ Suite Teardown    Terminate All Processes    kill=True
 *** Test Cases ***
 
 LeabraStd
-    Set Variables             LeabraStd    60 secs
+    Set Variables             LeabraStd    30 secs
     Set Metrics               min  0.20  0.35  max  0.40  0.80  avg  0.15  0.25
     Create CSS LeabraStd
     Run Model
@@ -14,7 +14,7 @@ LeabraStd
     Check Required
 
 LeabraStdEmbedded
-    Set Variables             LeabraStdEmbedded    60 secs
+    Set Variables             LeabraStdEmbedded    15 secs
     Set Metrics               min  0.20  0.35  max  0.40  0.80  avg  0.15  0.25
     Create CSS
     Run Model
@@ -22,7 +22,7 @@ LeabraStdEmbedded
     Check Required
 
 a_not_b
-    Set Variables             a_not_b     60 secs
+    Set Variables             a_not_b     15 secs
     Set Metrics               min  0.00  0.05  max  0.02  0.05  avg  0.02  0.05
     Create CSS a_not_b
     Run Model

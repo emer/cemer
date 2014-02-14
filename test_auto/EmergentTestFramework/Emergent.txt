@@ -36,19 +36,15 @@ Check Required
     \     Run Keyword And Continue On Failure   Check Metric     ${metric}  ${required}   ${actuals}  ${baseline}
 
 Suite Variables
-    Set Suite Variable    ${emergent}         emergent.exe
-    Set Suite Variable    ${s}                -s
-    Set Suite Variable    ${p}                -p
     Set Suite Variable    ${baseline-file}    baseline.json
     Set Suite Variable    ${record-file}      record.json
-
 
 #
 #  Second tier keywords
 
 Run Emergent
     [Arguments]          ${project}   ${script}    ${timeout}
-    Start Process        ${emergent} -p ${project} -s ${script}  
+    Start Process        emergent -nogui -ni -p ${project} -s ${script}   shell=True  # Doesn't seem to work without shell - misses args
     ${result} =          Wait For Process          timeout=${timeout}  
     Should Be Equal As Integers                    ${result.rc}  0
     ${metrics} =         Get Results               ${result.stdout}
