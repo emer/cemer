@@ -1,0 +1,36 @@
+*** Settings ***
+Resource          Emergent.txt
+Suite Setup       Suite Variables
+Suite Teardown    Terminate All Processes    kill=True
+
+*** Test Cases ***
+
+File Test
+    @{files} =                   List Files In Directory  .  *.proj
+    :FOR  ${filename}  IN        @{files}
+    \     ${proj} =              Get Project From File       ${filename}
+    \     Run Keyword And Continue On Failure                Default Leabra Test    ${proj}    
+   
+*** Keywords ***
+
+Get Project From File
+    [Arguments]          ${filename}
+    ${match}             ${project} = 
+    ...                  Should Match Regexp       ${filename}   (.*)\.proj
+    [Return]             ${project}
+
+Default Leabra Test
+    [Arguments]               ${project}
+    Set Variables             ${project}    60 secs
+    Set Metrics               avg  0.15  0.25
+    Create CSS
+    Run Model
+    Check Preferred
+    Check Required
+
+Create CSS 
+    Create CSS Custom                               ${script-file}
+    Add CSS Standard Randomize                      ${script-file}   ${name}
+    Add CSS Standard RunProgram                     ${script-file}   ${name}    LeabraBatch    Network_0    StdInputData
+    Add CSS Standard Output                         ${script-file}   ${name}    OutputEpochsToTrain   EpochOutputData
+

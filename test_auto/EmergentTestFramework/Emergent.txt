@@ -21,9 +21,10 @@ Set Metrics
     Set Test Variable   @{metric-list}
 
 Run Model
-    ${baseline} =                                   Get Baseline     ${baseline-file}
     ${actuals} =                                    Run Emergent     ${project-file}   ${script-file}   ${timeout}
     Append To File                                  ${record-file}   ${actuals},  
+    ${baseline} =                                   Get Baseline     ${baseline-file}
+    Run Keyword If      '${baseline}' == 'FAIL'     Add To Baseline  ${baseline-file}  ${actuals}
     Set Test Variable   ${baseline}
     Set Test Variable   ${actuals}
 
@@ -61,14 +62,20 @@ Check Metric
 
 Get Results
     [Arguments]          ${output}
-    ${result} =          Should Match Regexp       ${output}   {.*}
+    ${result} =          Should Match Regexp       ${output}   {.*}     msg=No results found in output for ${name}: ${output}     values=False
     [Return]             ${result}
 
 Get Baseline             
     [Arguments]          ${file}
     ${content} =         Get File     ${file}
-    ${baseline} =        Should Match Regexp       ${content}   {[^\"]*\"name\"[^:]*:[^\"]*\"${name}\"[^}]*}
+    ${status}            ${baseline} =    Run Keyword And Ignore Error       Should Match Regexp       ${content}   {[^\"]*\"name\"[^:]*:[^\"]*\"${name}\"[^}]*}
+    ${baseline} =        Set Variable If    '${status}' == 'FAIL'   ${status}     ${baseline}
     [Return]             ${baseline}
+
+Add To Baseline
+    [Arguments]          ${filename}  ${actuals}
+    Append To File       ${baseline-file}   ${actuals},  
+    Fail   msg=No baseline for ${name}; adding results from this run
 
 Get Value From JSON
     [Arguments]          ${field}     ${json}

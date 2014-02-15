@@ -1,19 +1,19 @@
 #include "Leabra.css"
 
 SetRandom(
-"a_not_b",
+"LeabraStdCopy",
 "LeabraAll_Std",
 "LeabraTrain",
 "rnd_init");
 RunProgram(
-"a_not_b",
+"LeabraStdCopy",
 "LeabraAll_Std",
 "LeabraBatch",
 "Network_0",
 "InputData",
 "StdInputData");
 OutputEpochsToTrain(
-"a_not_b",
-"a_not_b",
+"LeabraStdCopy",
+"LeabraStdCopy",
 "OutputData",
 "EpochOutputData");
