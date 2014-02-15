@@ -2148,22 +2148,22 @@ void DataTable::ExportDataJSON_impl(ostream& strm) {
             for(int j = 0; j < dc->cell_geom.size(0); j++) {
               switch (dc->valType()) {
               case VT_STRING:
-                matrixValues.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
+                matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
                 break;
               case VT_DOUBLE:
-                matrixValues.push_back(JSONNode("", dc->GetValAsDoubleMDims(row, j, k)));
+                matrixDim_1Values.push_back(JSONNode("", dc->GetValAsDoubleMDims(row, j, k)));
                 break;
               case VT_FLOAT:
-                matrixValues.push_back(JSONNode("", dc->GetValAsFloatMDims(row, j, k)));
+                matrixDim_1Values.push_back(JSONNode("", dc->GetValAsFloatMDims(row, j, k)));
                 break;
               case VT_INT:
                 matrixDim_1Values.push_back(JSONNode("", dc->GetValAsIntMDims(row, j, k)));
                 break;
               case VT_BYTE:
-                matrixValues.push_back(JSONNode("", dc->GetValAsByteMDims(row, j, k)));
+                matrixDim_1Values.push_back(JSONNode("", dc->GetValAsByteMDims(row, j, k)));
                 break;
               case VT_VARIANT:
-                matrixValues.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
+                matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
                 break;
               default:
                 matrixDim_1Values.push_back(JSONNode("", json_string(dc->GetValAsStringMDims(row, j, k).chars())));
@@ -2832,11 +2832,23 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
     }
     columnData++;
   }
-  // we have all we need - make/find column & write to the data table
+  // we have all we need - make/find columns & write to the data table
   bool makeNew = true;
   dc = this->data.FindName(columnName);
   if (!dc) {
-    dc = this->NewCol(columnType, columnName);
+    if (!isMatrix) {
+      dc = this->NewCol(columnType, columnName);
+    }
+    else {
+      int colIdx;
+      MatrixGeom mg;
+      JSONNode::const_iterator dims = theDimensions.begin();
+        while (dims != theDimensions.end()) {
+          mg.AddDim(dims->as_int());
+          dims++;
+        }
+      dc = this->NewColMatrixN(columnType, columnName, mg, colIdx);
+    }
   }
 
   int rowCount = theValues.size();  // row count
@@ -2844,34 +2856,56 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
     AddRows(rowCount - this->rows);
   }
 
-  JSONNode::const_iterator values = theValues.begin();
-  int row = 0;
-  while (values != theValues.end()) {
-    switch (columnType) {
-    case VT_STRING:
-      dc->SetValAsString(values->as_string().c_str(), row);
-      break;
-    case VT_DOUBLE:
-      dc->SetValAsDouble(values->as_float(), row);
-      break;
-    case VT_FLOAT:
-      dc->SetValAsFloat(values->as_float(), row);
-      break;
-    case VT_INT:
-      dc->SetValAsInt(values->as_int(), row);
-      break;
-    case VT_BYTE:
-      dc->SetValAsInt(values->as_int(), row);
-      break;
-    case VT_VARIANT:
-      dc->SetValAsVar(values->as_string().c_str(), row);
-      break;
-    default:
-      dc->SetValAsString(values->as_string().c_str(), row);
-      taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+  if (!isMatrix) {
+    JSONNode::const_iterator values = theValues.begin();
+    int row = 0;
+    while (values != theValues.end()) {
+      switch (columnType) {
+      case VT_STRING:
+        dc->SetValAsString(values->as_string().c_str(), row);
+        break;
+      case VT_DOUBLE:
+        dc->SetValAsDouble(values->as_float(), row);
+        break;
+      case VT_FLOAT:
+        dc->SetValAsFloat(values->as_float(), row);
+        break;
+      case VT_INT:
+        dc->SetValAsInt(values->as_int(), row);
+        break;
+      case VT_BYTE:
+        dc->SetValAsInt(values->as_int(), row);
+        break;
+      case VT_VARIANT:
+        dc->SetValAsVar(values->as_string().c_str(), row);
+        break;
+      default:
+        dc->SetValAsString(values->as_string().c_str(), row);
+        taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+      }
+      row++;
+      values++;
     }
-    row++;
-    values++;
+  }
+
+  if (isMatrix) {
+    const JSONNode matrixArray = theValues;
+    ParseJSONMatrix(matrixArray, 0);
+  }
+}
+
+void DataTable::ParseJSONMatrix(const JSONNode& aMatrix, int dim) {
+  int column = 0;
+  JSONNode::const_iterator valueArray = aMatrix.begin();
+  while (valueArray != aMatrix.end()) {
+    if (valueArray->type() == JSON_ARRAY) {
+      ParseJSONMatrix(valueArray->as_array(), dim + 1);
+    }
+    else {
+      taMisc::DebugInfo((String)valueArray->as_int(), "dim = ", (String)dim, ", column ", (String)column);
+      column++;
+    }
+    valueArray++;
   }
 }
 
