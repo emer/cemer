@@ -28,6 +28,10 @@
 #include <DataGroupEl>
 #include <DataTable_Group>
 #include <int_Array>
+#include <float_Array>
+#include <double_Array>
+#include <String_Array>
+#include <Variant_Array>
 #include <DataSelectSpec>
 #include <DataSelectEl>
 #include <AnalysisRun>
@@ -2139,11 +2143,12 @@ void DataTable::ExportDataJSON_impl(ostream& strm) {
         }
       }
     }
-    else {  // column is matrix type
+
+    if(dc->is_matrix) {
       if (dc->cell_geom.dims() == 2) {
         for (int row=0; row < rows; row++) {
           JSONNode matrixValues(JSON_ARRAY);
-          for(int k = dc->cell_geom.size(1) - 1; k >= 0; k--) {
+          for(int k = 0; k < dc->cell_geom.size(1); k++) {
             JSONNode matrixDim_1Values(JSON_ARRAY);
             for(int j = 0; j < dc->cell_geom.size(0); j++) {
               switch (dc->valType()) {
@@ -2177,9 +2182,9 @@ void DataTable::ExportDataJSON_impl(ostream& strm) {
       if (dc->cell_geom.dims() == 3) {
         for (int row=0; row < rows; row++) {
           JSONNode matrixValues(JSON_ARRAY);
-          for(int l = dc->cell_geom.size(2) - 1; l >= 0; l--) {
+          for(int l = 0; l < dc->cell_geom.size(2); l++) {
             JSONNode matrixDim_2Values(JSON_ARRAY);
-            for(int k = dc->cell_geom.size(1) - 1; k >= 0; k--) {
+            for(int k = 0; k < dc->cell_geom.size(1); k++) {
               JSONNode matrixDim_1Values(JSON_ARRAY);
               for(int j = 0; j < dc->cell_geom.size(0); j++) {
                 switch (dc->valType()) {
@@ -2215,11 +2220,11 @@ void DataTable::ExportDataJSON_impl(ostream& strm) {
       if (dc->cell_geom.dims() == 4) {
         for (int row=0; row < rows; row++) {
           JSONNode matrixValues(JSON_ARRAY);
-          for(int m = dc->cell_geom.size(3) - 1; m >= 0; m--) {
+          for(int m = 0; m < dc->cell_geom.size(3); m++) {
             JSONNode matrixDim_3Values(JSON_ARRAY);
-            for(int l = dc->cell_geom.size(2) - 1; l >= 0; l--) {
+            for(int l = 0; l < dc->cell_geom.size(2); l++) {
               JSONNode matrixDim_2Values(JSON_ARRAY);
-              for(int k = dc->cell_geom.size(1) - 1; k >= 0; k--) {
+              for(int k = 0; k < dc->cell_geom.size(1); k++) {
                 JSONNode matrixDim_1Values(JSON_ARRAY);
                 for(int j = 0; j < dc->cell_geom.size(0); j++) {
                   switch (dc->valType()) {
@@ -2749,6 +2754,25 @@ void DataTable::LoadAnyData(const String& fname, bool headers_req,
   taRefN::unRefDone(flr);
 }
 
+DataCol::ValType DataTable::StrToValType(String valTypeStr) {
+  if (valTypeStr == "String")
+    return VT_STRING;
+  else if (valTypeStr == "int")
+    return VT_INT;
+  else if (valTypeStr == "float")
+    return VT_FLOAT;
+  else if (valTypeStr == "double")
+    return VT_DOUBLE;
+  else if (valTypeStr == "byte")
+    return VT_BYTE;
+  else if (valTypeStr == "var")
+    return VT_VARIANT;
+  else {
+    taMisc::Info("DataTable::StrToValType -- json column type string not found -- using variant type");
+    return VT_VARIANT;  // best we can do - should also print out info message
+  }
+}
+
 void DataTable::ImportDataJSON(const String& fname) {
   bool reset_first = true;
   json_string contents;
@@ -2769,7 +2793,7 @@ void DataTable::ImportDataJSON(const String& fname) {
     ParseJSON(n);
   }
   else {
-    taMisc::Info("bad json");
+    taMisc::Error("ImportDataJSON: ", "The json file has a format error, look for missing/extra bracket, brace or quotation");
   }
 }
 
@@ -2791,7 +2815,6 @@ void DataTable::ParseJSON(const JSONNode& n) {
     else if (node_name == "columns") {
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
-        //        taMisc::DebugInfo("next column");
         const JSONNode aCol = *columns;
         ParseJSONColumn(aCol);
         columns++;
@@ -2808,20 +2831,18 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
   DataCol::ValType columnType = VT_STRING;
   DataCol* dc;
   bool isMatrix = false;
+  MatrixGeom mg;
 
   JSONNode::const_iterator columnData = aCol.begin();
   while (columnData != aCol.end()) {
     std::string node_name = columnData->name();
     if (node_name == "name") {
-      //      taMisc::DebugInfo("column name");
       columnName = columnData->as_string().c_str();
     }
     else if (node_name == "type") {
-      //      taMisc::DebugInfo("column type", columnData->as_string().c_str());
       columnType = StrToValType((String)columnData->as_string().c_str());
     }
     else if (node_name == "values") {
-      //      taMisc::DebugInfo("column values");
       theValues = columnData->as_array();
     }
     else if (node_name == "matrix") {
@@ -2841,12 +2862,11 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
     }
     else {
       int colIdx;
-      MatrixGeom mg;
       JSONNode::const_iterator dims = theDimensions.begin();
-        while (dims != theDimensions.end()) {
-          mg.AddDim(dims->as_int());
-          dims++;
-        }
+      while (dims != theDimensions.end()) {
+        mg.AddDim(dims->as_int());
+        dims++;
+      }
       dc = this->NewColMatrixN(columnType, columnName, mg, colIdx);
     }
   }
@@ -2890,41 +2910,130 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
 
   if (isMatrix) {
     const JSONNode matrixArray = theValues;
-    ParseJSONMatrix(matrixArray, 0);
+    int_Array intValues;
+    float_Array floatValues;
+    double_Array doubleValues;
+    String_Array stringValues;
+    Variant_Array variantValues;
+
+    // create a flat array of values
+    switch (dc->valType()) {
+    case VT_STRING:
+      ParseJSONMatrixStringToFlat(matrixArray, stringValues);
+      break;
+    case VT_DOUBLE:
+      ParseJSONMatrixDoubleToFlat(matrixArray, doubleValues);
+      break;
+    case VT_FLOAT:
+      ParseJSONMatrixFloatToFlat(matrixArray, floatValues);
+      break;
+    case VT_INT:
+      ParseJSONMatrixIntToFlat(matrixArray, intValues);
+      break;
+    case VT_BYTE:
+      ParseJSONMatrixIntToFlat(matrixArray, intValues);
+      break;
+    case VT_VARIANT:
+      ParseJSONMatrixVariantToFlat(matrixArray, variantValues);
+      break;
+    default:
+      ParseJSONMatrixStringToFlat(matrixArray, stringValues);
+      taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+    }
+
+    // store flat array of values into matrix cells
+    for (int i = 0; i < rowCount; i++) {
+      for (int j = 0; j < mg.Product(); j++ ) {
+        switch (dc->valType()) {
+        case VT_STRING:
+          SetValAsStringM(stringValues[i*mg.Product() + j], columnName, i, j);
+          break;
+        case VT_DOUBLE:
+          SetValAsDoubleM(doubleValues[i*mg.Product() + j], columnName, i, j);
+          break;
+        case VT_FLOAT:
+          SetValAsFloatM(floatValues[i*mg.Product() + j], columnName, i, j);
+          break;
+        case VT_INT:
+          SetValAsIntM(intValues[i*mg.Product() + j], columnName, i, j);
+          break;
+        case VT_BYTE:
+          SetValAsIntM(intValues[i*mg.Product() + j], columnName, i, j);
+          break;
+        case VT_VARIANT:
+          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, i, j);
+          break;
+        default:
+          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, i, j);
+          taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+        }
+      }
+    }
   }
 }
 
-void DataTable::ParseJSONMatrix(const JSONNode& aMatrix, int dim) {
-  int column = 0;
+void DataTable::ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values) { // not const we want to fill the array
   JSONNode::const_iterator valueArray = aMatrix.begin();
   while (valueArray != aMatrix.end()) {
     if (valueArray->type() == JSON_ARRAY) {
-      ParseJSONMatrix(valueArray->as_array(), dim + 1);
+      ParseJSONMatrixIntToFlat(valueArray->as_array(), values);
     }
     else {
-      taMisc::DebugInfo((String)valueArray->as_int(), "dim = ", (String)dim, ", column ", (String)column);
-      column++;
+      values.Insert(valueArray->as_int(), -1);
     }
     valueArray++;
   }
 }
 
-DataCol::ValType DataTable::StrToValType(String valTypeStr) {
-  if (valTypeStr == "String")
-    return VT_STRING;
-  else if (valTypeStr == "int")
-    return VT_INT;
-  else if (valTypeStr == "float")
-    return VT_FLOAT;
-  else if (valTypeStr == "double")
-    return VT_DOUBLE;
-  else if (valTypeStr == "byte")
-    return VT_BYTE;
-  else if (valTypeStr == "var")
-    return VT_VARIANT;
-  else {
-    taMisc::Info("DataTable::StrToValType -- json column type string not found -- using variant type");
-    return VT_VARIANT;  // best we can do - should also print out info message
+void DataTable::ParseJSONMatrixDoubleToFlat(const JSONNode& aMatrix, double_Array& values) { // not const we want to fill the array
+  JSONNode::const_iterator valueArray = aMatrix.begin();
+  while (valueArray != aMatrix.end()) {
+    if (valueArray->type() == JSON_ARRAY) {
+      ParseJSONMatrixDoubleToFlat(valueArray->as_array(), values);
+    }
+    else {
+      values.Insert(valueArray->as_float(), -1);
+    }
+    valueArray++;
+  }
+}
+
+void DataTable::ParseJSONMatrixFloatToFlat(const JSONNode& aMatrix, float_Array& values) { // not const we want to fill the array
+  JSONNode::const_iterator valueArray = aMatrix.begin();
+  while (valueArray != aMatrix.end()) {
+    if (valueArray->type() == JSON_ARRAY) {
+      ParseJSONMatrixFloatToFlat(valueArray->as_array(), values);
+    }
+    else {
+      values.Insert(valueArray->as_float(), -1);
+    }
+    valueArray++;
+  }
+}
+
+void DataTable::ParseJSONMatrixStringToFlat(const JSONNode& aMatrix, String_Array& values) { // not const we want to fill the array
+  JSONNode::const_iterator valueArray = aMatrix.begin();
+  while (valueArray != aMatrix.end()) {
+    if (valueArray->type() == JSON_ARRAY) {
+      ParseJSONMatrixStringToFlat(valueArray->as_array(), values);
+    }
+    else {
+      values.Insert(valueArray->as_string().c_str(), -1);
+    }
+    valueArray++;
+  }
+}
+
+void DataTable::ParseJSONMatrixVariantToFlat(const JSONNode& aMatrix, Variant_Array& values) { // not const we want to fill the array
+  JSONNode::const_iterator valueArray = aMatrix.begin();
+  while (valueArray != aMatrix.end()) {
+    if (valueArray->type() == JSON_ARRAY) {
+      ParseJSONMatrixVariantToFlat(valueArray->as_array(), values);
+    }
+    else {
+      values.Insert(valueArray->as_string().c_str(), -1);
+    }
+    valueArray++;
   }
 }
 

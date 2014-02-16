@@ -247,7 +247,7 @@
  *  in a write_formatted.  This is common for tuples, like coordinates.  If must be defined 
  *  as an integer
  */
-//#define JSON_ARRAY_SIZE_ON_ONE_LINE 2
+#define JSON_ARRAY_SIZE_ON_ONE_LINE 25
 
 
 /*

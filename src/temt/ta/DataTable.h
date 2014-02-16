@@ -49,6 +49,10 @@ class GraphTableView; //
 class iDataTableModel; // #IGNORE
 class DataSortSpec; //
 class DataSelectSpec; //
+class String_Array; //
+class Variant_Array; //
+class double_Array; //
+class float_Array; //
 
 class JSONNode; //
 /*
@@ -229,8 +233,17 @@ public:
   // #IGNORE #CAT_FILE Load a json file into a datatable
   virtual void          ParseJSONColumn(const JSONNode& aCol);
    // #IGNORE #CAT_FILE parse column data and store to data table
-  virtual void          ParseJSONMatrix(const JSONNode& aCol, int dim);
-   // #IGNORE #CAT_FILE parse matrix column data and store to data table
+  virtual void          ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values);
+  // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+  virtual void          ParseJSONMatrixFloatToFlat(const JSONNode& aMatrix, float_Array& values);
+  // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+  virtual void          ParseJSONMatrixDoubleToFlat(const JSONNode& aMatrix, double_Array& values);
+  // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+  virtual void          ParseJSONMatrixStringToFlat(const JSONNode& aMatrix, String_Array& values);
+  // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+  virtual void          ParseJSONMatrixVariantToFlat(const JSONNode& aMatrix, Variant_Array& values);
+  // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+
   DataCol::ValType      StrToValType(String valTypeStr);
   // #IGNORE convert a string into a ValType
   virtual void          LoadAnyData_stream(std::istream &stream, bool append, bool has_header_line = true);
