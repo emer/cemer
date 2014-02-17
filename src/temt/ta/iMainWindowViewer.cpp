@@ -165,7 +165,7 @@ void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_are
   if (!dv) return;
   addDockWidget(in_area, dv);
   // create a menu entry to show/hide it, regardless if visible now
-  iAction* act = toolBarMenu->AddItem("programming", taiWidgetMenu::toggle,
+  iAction* act = toolBarMenu->AddItem("Programming", taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(this_DockSelect(iAction*)), (void*)dv);
   if (dv->isVisible() != act->isChecked())
     act->setChecked(dv->isVisible()); // note: triggers action
