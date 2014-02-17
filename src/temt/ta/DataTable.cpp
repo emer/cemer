@@ -2797,6 +2797,16 @@ void DataTable::ImportDataJSON(const String& fname) {
   }
 }
 
+void DataTable::ImportDataJSONString(const String& json_as_string) {
+  if (libjson::is_valid(json_string(json_as_string.chars()))) {
+    JSONNode n = libjson::parse(json_string(json_as_string.chars()));
+    ParseJSON(n);
+  }
+  else {
+    taMisc::Error("ImportDataJSON: ", "The json file has a format error, look for missing/extra bracket, brace or quotation");
+  }
+}
+
 void DataTable::ParseJSON(const JSONNode& n) {
   JSONNode::const_iterator i = n.begin();
   while (i != n.end()){

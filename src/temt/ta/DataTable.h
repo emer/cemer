@@ -284,6 +284,8 @@ public:
   // #CAT_File #MENU #MENU_ON_Data #EXT_csv,tsv,txt,log #FILE_DIALOG_LOAD imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)
   virtual void          ImportDataJSON(const String& fname);
   // #CAT_File #MENU #MENU_ON_Data #FILE_DIALOG_LOAD #EXT_json load JSON format data (ONLY)
+  virtual void          ImportDataJSONString(const String& json_as_string);
+  // #CAT_File import json string into data table - api for import when you aren't using the GUI or already have the file stream open
   virtual void          ShowAllRows();
   // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
   virtual bool          Flatten();
