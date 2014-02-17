@@ -15,6 +15,7 @@
 
 #include "taiEditorWidgets.h"
 #include <taProject>
+#include <SelectEdit>
 #include <iLabel>
 #include <taiWidget>
 #include <iFlowLayout>

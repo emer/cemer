@@ -18,6 +18,7 @@
 #include <LeabraNetwork>
 #include <StdNetWizDlg>
 #include <DataTable>
+#include <SelectEdit>
 
 #include <FullPrjnSpec>
 #include <OneToOnePrjnSpec>

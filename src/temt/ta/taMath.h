@@ -120,7 +120,7 @@ public:
 
   void Initialize() { };
   void Destroy() { };
-  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath);
+  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath) //
 };
 
 #endif // taMath_h

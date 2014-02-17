@@ -19,6 +19,7 @@
 
 #include "rbp.h"
 #include <OneToOnePrjnSpec>
+#include <MemberDef>
 
 #include <taMisc>
 

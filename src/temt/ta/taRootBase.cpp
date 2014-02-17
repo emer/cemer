@@ -33,6 +33,7 @@
 #include <taGenDoc>
 #include <taCodeUtils>
 #include <Program>
+#include <taDoc>
 
 taTypeDef_Of(PluginWizard);
 

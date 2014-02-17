@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taProject.h"
+#include <taDoc>
 #include <taiEditorOfClass>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
@@ -95,7 +96,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(version, this);
   taBase::Own(license, this);
   taBase::Own(wiki_url, this);
-  taBase::Own(templates, this);
+  // taBase::Own(templates, this);
   taBase::Own(docs, this);
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
@@ -141,7 +142,7 @@ void taProject::CutLinks_impl() {
   edits.CutLinks();
   wizards.CutLinks();
   docs.CutLinks();
-  templates.CutLinks();
+  // templates.CutLinks();
 }
 
 void taProject::Copy_(const taProject& cp) {
@@ -154,7 +155,7 @@ void taProject::Copy_(const taProject& cp) {
   edits.Reset();
 
   tags = cp.tags;
-  templates = cp.templates;
+  // templates = cp.templates;
   docs = cp.docs;
   wizards = cp.wizards;
   edits = cp.edits;

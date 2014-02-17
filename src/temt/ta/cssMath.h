@@ -94,9 +94,7 @@ public:
   static complex_Matrix* ffti2(const complex_Matrix* in_mat);
   // #CAT_Complex returns complex matrix from inverse (backward) 2D fast fourier transform (FFT) of the data in in_mat (must be a complex matrix), writing the complex output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N). complex numbers stored in out_mat as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 2 dims in in_mat, the FFT is computed for all frames 2D data
 
-
-
-  TA_ABSTRACT_BASEFUNS_NOCOPY(cssMath);
+  TA_ABSTRACT_BASEFUNS_NOCOPY(cssMath) // 
 private:
   void Initialize() { };
   void Destroy() { };

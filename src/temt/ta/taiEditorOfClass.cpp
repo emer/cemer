@@ -23,6 +23,7 @@
 #include <taiMethod>
 #include <iFlowLayout>
 #include <taProject>
+#include <SelectEdit>
 #include <iDialogEditor>
 #include <iFormLayout>
 #include <taiWidgetToolBar>

@@ -25,6 +25,7 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <taDataProc>
+#include <MemberDef>
 
 #include <QStringList>
 #include <QApplication>

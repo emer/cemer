@@ -17,14 +17,14 @@
 #define Doc_Group_h 1
 
 // parent includes:
-#include <taDoc>
 #include <taGroup>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taDoc; //
 
-
+taTypeDef_Of(taDoc); 
 taTypeDef_Of(Doc_Group);
 
 class TA_API Doc_Group : public taGroup<taDoc> {

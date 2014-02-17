@@ -21,6 +21,7 @@
 #include <MemberDef>
 #include <UserDataItem>
 #include <ProjectBase>
+#include <SelectEdit>
 #include <DataTable>
 #include <taFiler>
 #include <SimpleMathSpec>

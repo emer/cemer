@@ -13,6 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
+#include <taWizard>
 #include "Wizard_Group.h"
 
 TA_BASEFUNS_CTORS_DEFN(Wizard_Group);

@@ -27,6 +27,7 @@
 #include <iSplitter>
 #include <taiWidgetPoly>
 #include <taProject>
+#include <SelectEdit>
 #include <BuiltinTypeDefs>
 
 #include <SigLinkSignal>

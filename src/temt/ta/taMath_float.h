@@ -664,7 +664,7 @@ public:
   /////////////////////////////////////////////////////////////////////////////////
   // fft routines: note fft NOT supported for float type -- complex only avail for double
 
-  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath_float);
+  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath_float) //
 private:
   void Initialize() { };
   void Destroy() { };

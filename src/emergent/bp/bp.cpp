@@ -22,6 +22,7 @@ eTypeDef_Of(BpWizard);
 
 #include <DumpFileCvt>
 #include <DataTable>
+#include <MemberDef>
 
 #include <taMisc>
 

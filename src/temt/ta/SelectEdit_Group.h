@@ -17,14 +17,14 @@
 #define SelectEdit_Group_h 1
 
 // parent includes:
-#include <SelectEdit>
 #include <taGroup>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class SelectEdit; //
 
-
+taTypeDef_Of(SelectEdit);
 taTypeDef_Of(SelectEdit_Group);
 
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {

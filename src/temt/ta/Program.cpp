@@ -16,6 +16,7 @@
 #include "Program.h"
 #include <Program_Group>
 #include <taProject>
+#include <SelectEdit>
 #include <ProgramCallBase>
 #include <taiEditorOfString>
 #include <iDialogChoice>

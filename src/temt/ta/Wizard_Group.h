@@ -17,14 +17,14 @@
 #define Wizard_Group_h 1
 
 // parent includes:
-#include <taWizard>
 #include <taGroup>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class taWizard; //
 
-
+taTypeDef_Of(taWizard);
 taTypeDef_Of(Wizard_Group);
 
 class TA_API Wizard_Group : public taGroup<taWizard> {
