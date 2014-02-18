@@ -200,7 +200,7 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
     ProgVar_List all_vars = program()->vars;
     for (int i = 0; i < all_vars.size; i++) {
       String var_name = all_vars.SafeEl(i)->name;
-      if (var_name != row_var->name) {  // don't try to set the row variable itself - this is just the key to which row to use
+      if (!row_var || var_name != row_var->name) {  // don't try to set the row variable itself - this is just the key to which row to use
         int idx = dt->FindColNameIdx(var_name);
         if (idx >= 0) {
           ProgVar* pvar = all_vars.SafeEl(i);
