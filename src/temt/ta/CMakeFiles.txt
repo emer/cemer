@@ -745,7 +745,7 @@ set(ta_HEADS_MAKETA_NOMOC
   SoScrollBar.h
   ProgElChoiceDlg.h
   ProgBrkPt.h
-  ProgBrkPt_List.h  
+  ProgBrkPt_List.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -1651,7 +1651,7 @@ set(ta_SRCS_MAKETA
   VEMuscle_List.cpp
   VEHillMuscle.cpp
   VELinearMuscle.cpp
-    VELambdaMuscle.cpp
+  VELambdaMuscle.cpp
   VEMuscleJoint.cpp
   VEArm.cpp
 
