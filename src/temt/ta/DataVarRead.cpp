@@ -13,20 +13,40 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "DataVarBase.h"
+#include "DataVarRead.h"
 #include <DataCol>
 #include <DataTable>
 #include <Program>
 
-TA_BASEFUNS_CTORS_DEFN(DataVarBase);
+TA_BASEFUNS_CTORS_DEFN(DataVarRead);
 
-void DataVarBase::Initialize() {
-  row_spec = CUR_ROW;
-  row_var = NULL;             // reset to null
+void DataVarRead::Initialize() {
+  writeToDataTable = false;   // MUST SET
 }
 
-void DataVarBase::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(row_spec == CUR_ROW)
-    row_var = NULL;             // reset to null
+String DataVarRead::GetDisplayName() const {
+  String rval;
+  String row_var_name = "(ERROR: not set!)";
+  if((bool)row_var)
+    row_var_name = row_var->name;
+
+  rval = "From data table: ";
+
+  if(data_var)
+    rval += data_var->name;
+  else
+    rval += "(MISSING: Select a data table)";
+  if(row_spec  == CUR_ROW)
+    rval += " cur_row";
+  else if(row_spec == ROW_NUM)
+    rval += " row_num: " + row_var_name;
+  else
+    rval += " row_val: " + row_var_name;
+
+    rval += " To variable: ";
+
+  if(var)
+    rval += var->name + " ";
+
+  return rval;
 }

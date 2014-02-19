@@ -38,13 +38,12 @@ public:
   };
 
   RowType     row_spec;	  // how the row number within data table is specified
-  ProgVarRef  row_var;	  // #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
-  bool        quiet;      // #CONDSHOW_OFF_row_spec:CUR_ROW do not generate an error if the row_var value is not found (either row num beyond bounds, or row_val not found -- just don't set anything)
+  ProgVarRef  row_var;    // #CONDSHOW_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
+
+  void  UpdateAfterEdit_impl() override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarBase);
 protected:
-  void  UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void	Initialize();

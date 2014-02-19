@@ -88,6 +88,8 @@ taTypeDef_Of(ResetDataRows);
 taTypeDef_Of(AddNewDataRow);
 taTypeDef_Of(DoneWritingDataRow);
 taTypeDef_Of(DataVarProg);
+taTypeDef_Of(DataVarRead);
+taTypeDef_Of(DataVarWrite);
 taTypeDef_Of(DataVarProgMatrix);
 
 taTypeDef_Of(DataSortProg);
@@ -229,6 +231,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_AddNewDataRow);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DoneWritingDataRow);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarProg);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarRead);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarWrite);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataVarProgMatrix);
 
   ////////////////////////////////////////////////////////////////////////////

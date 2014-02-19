@@ -21,9 +21,13 @@
 TA_BASEFUNS_CTORS_DEFN(DataVarProg);
 
 void DataVarProg::Initialize() {
-//  row_spec = CUR_ROW;
   set_data = false;
   all_matches = false;
+ }
+
+void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
 }
 
 String DataVarProg::GetDisplayName() const {
@@ -34,7 +38,7 @@ String DataVarProg::GetDisplayName() const {
   if(set_data)
     rval = "To: ";
   else
-    rval = "Fm: ";
+    rval = "From: ";
   if(data_var)
     rval += data_var->name;
   else
@@ -46,7 +50,7 @@ String DataVarProg::GetDisplayName() const {
   else
     rval += " row_val: " + row_var_name;
   if(set_data)
-    rval += " Fm Vars: ";
+    rval += " From Vars: ";
   else
     rval += " To Vars: ";
   if(var_1) rval += var_1->name + " ";

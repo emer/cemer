@@ -406,6 +406,8 @@ set(ta_HEADS_MAKETA_NOMOC
   DataLoop.h
   DataVarBase.h
   DataVarSimple.h
+  DataVarRead.h
+  DataVarWrite.h
   DataVarProg.h
   DataVarProgMatrix.h
   ResetDataRows.h
@@ -1501,6 +1503,8 @@ set(ta_SRCS_MAKETA
   DataLoop.cpp
   DataVarBase.cpp
   DataVarSimple.cpp
+  DataVarRead.cpp
+  DataVarWrite.cpp
   DataVarProg.cpp
   DataVarProgMatrix.cpp
   ResetDataRows.cpp

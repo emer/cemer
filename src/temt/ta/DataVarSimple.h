@@ -32,8 +32,16 @@ INHERITED(DataVarBase)
 public:
   ProgVarRef	var;		// #VIRT_BASE #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+
   PROGEL_SIMPLE_BASEFUNS(DataVarSimple);
 protected:
+  bool        writeToDataTable; // child classes must set this value, true = write, false = read
+
+  virtual void  GenCssBody_impl(Program* prog) override;
+  virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
+  virtual bool  GenCss_OneVarMat(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
+  virtual bool  GenCss_OneVarMatEnum(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
 
 private:
   void	Initialize();

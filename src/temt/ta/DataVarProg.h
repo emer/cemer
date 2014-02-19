@@ -34,6 +34,7 @@ public:
 
   bool        set_data;	  // if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
   bool        all_matches; // if true will set or read from any variable whose name matches a column name of specified data table
+  bool        quiet;      // #CONDSHOW_OFF_row_spec:CUR_ROW do not generate an error if the row_var value is not found (either row num beyond bounds, or row_val not found -- just don't set anything)
 
   ProgVarRef	var_1;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
   ProgVarRef	var_2;		// #CONDSHOW_OFF_all_matches #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
@@ -42,6 +43,8 @@ public:
 
   String	GetDisplayName() const override;
   String  GetToolbarName() const override { return "data=vars"; }
+
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
