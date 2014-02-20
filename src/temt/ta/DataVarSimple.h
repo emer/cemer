@@ -27,12 +27,13 @@
 taTypeDef_Of(DataVarSimple);
 
 class TA_API DataVarSimple : public DataVarBase {
-  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported, and enum to/from Matrix localist code also supported (see DataVarSimpleMatrix for accessing individual matrix cells)
+  // #VIRT_BASE A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- scalar var/col and matrix var/col supported, and enum to/from Matrix localist code also supported (see DataVarSimpleMatrix for accessing individual matrix cells)
 INHERITED(DataVarBase)
 public:
-  ProgVarRef	var;		// #VIRT_BASE #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	 var;		// #LABEL_variable  #ITEM_FILTER_StdProgVarFilter program variable to write to (when reading from data table) or read from (when writing to data table)
+  String       column_name;  // the data table column to read from or write to
 
-  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
+        void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarSimple);
 protected:

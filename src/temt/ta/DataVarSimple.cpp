@@ -41,37 +41,37 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   String string_cvt = "";
 
   if(dt && (var->var_type == ProgVar::T_HardEnum || var->var_type == ProgVar::T_DynEnum)) {
-    da = dt->FindColName(var->name);
+    da = dt->FindColName(column_name);
     if(da->isMatrix()) {
       return GenCss_OneVarMatEnum(prog, var, idnm, var_no);
     }
   }
 
   if(dt) {
-    da = dt->FindColName(var->name);
+    da = dt->FindColName(column_name);
     if(da && da->isString())
       string_cvt = "(String)";  // cast variant value to a string for setting!
   }
   if(row_spec == CUR_ROW) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + var->name +"\");");
+      prog->AddLine(this, idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + column_name +"\");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetDataByName(\"" + var->name + "\");");
+      prog->AddLine(this, var->name + " = " + idnm + ".GetDataByName(\"" + column_name + "\");");
   }
   else if(row_spec == ROW_NUM) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
+      prog->AddLine(this, idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + column_name +"\", "
                     + row_var->name + ");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
+      prog->AddLine(this, var->name + " = " + idnm + ".GetValColName(\"" + column_name + "\", "
                     + row_var->name + ");");
   }
   else if(row_spec == ROW_VAL) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
+      prog->AddLine(this, idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + column_name + "\", \""
                     + row_var->name + "\", " + row_var->name + ");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
+      prog->AddLine(this, var->name + " = " + idnm + ".GetValColRowName(\"" + column_name +"\", \""
                     + row_var->name + "\", " + row_var->name + ");");
   }
   return true;
@@ -82,7 +82,7 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   DataTable* dt = GetData();
   String string_cvt = "";
   if(dt) {
-    da = dt->FindColName(var->name);
+    da = dt->FindColName(column_name);
     if(da && da->isString())
       string_cvt = "(String)";  // cast variant value to a string for setting!
   }
@@ -91,21 +91,21 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   prog->IncIndent();
   // first, get the mat slice
   if (row_spec == CUR_ROW) {
-    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetMatrixDataByName(\"" + var->name + "\");");
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetMatrixDataByName(\"" + column_name + "\");");
   }
   else if (row_spec == ROW_NUM) {
-    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + column_name + "\", "
                   + row_var->name + ");");
   }
   else if (row_spec == ROW_VAL) {
-    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + column_name +"\", \""
                   + row_var->name + "\", " + row_var->name + ");");
   }
   if(writeToDataTable) {
-    prog->AddLine(this, String("__tmp_mat.CopyFrom(") + var->name + ");");
+    prog->AddLine(this, String("__tmp_mat.CopyFrom(") + column_name + ");");
   }
   else {
-    prog->AddLine(this, var->name + ".CopyFrom(__tmp_mat);");
+    prog->AddLine(this, column_name + ".CopyFrom(__tmp_mat);");
   }
   prog->DecIndent();
   prog->AddLine(this, "}");
@@ -117,7 +117,7 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   DataTable* dt = GetData();
   String string_cvt = "";
   if(dt) {
-    da = dt->FindColName(var->name);
+    da = dt->FindColName(column_name);
     if(da && da->isString())
       string_cvt = "(String)";  // cast variant value to a string for setting!
   }
@@ -126,22 +126,22 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   prog->IncIndent();
   // first, get the mat slice
   if (row_spec == CUR_ROW) {
-    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetMatrixDataByName(\"" + var->name + "\");");
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetMatrixDataByName(\"" + column_name + "\");");
   }
   else if (row_spec == ROW_NUM) {
-    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + column_name + "\", "
                   + row_var->name + ");");
   }
   else if (row_spec == ROW_VAL) {
-    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + column_name +"\", \""
                   + row_var->name + "\", " + row_var->name + ");");
   }
   if(writeToDataTable) {
     prog->AddLine(this, String("__tmp_mat.InitValsFmVar(0);"));
-    prog->AddLine(this, String("__tmp_mat.Set_Flat(1, ") + var->name + ");");
+    prog->AddLine(this, String("__tmp_mat.Set_Flat(1, ") + column_name + ");");
   }
   else {
-    prog->AddLine(this, var->name + " = __tmp_mat.FindVal_Flat(1);");
+    prog->AddLine(this, column_name + " = __tmp_mat.FindVal_Flat(1);");
   }
   prog->DecIndent();
   prog->AddLine(this, "}");

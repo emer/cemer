@@ -30,18 +30,24 @@ String DataVarRead::GetDisplayName() const {
   if((bool)row_var)
     row_var_name = row_var->name;
 
-  rval = "From data table: ";
+  rval = "From table: ";
 
   if(data_var)
-    rval += data_var->name;
+    rval += data_var->name + ",";
   else
-    rval += "(MISSING: Select a data table)";
+    rval += "(SELECT: data table),";
+
+  if (!column_name.empty())
+    rval += " column: " + column_name + ",";
+  else
+    rval += "(ENTER: column name),";
+
   if(row_spec  == CUR_ROW)
-    rval += " cur_row";
+    rval += " cur_row,";
   else if(row_spec == ROW_NUM)
-    rval += " row_num: " + row_var_name;
+    rval += " row_num: " + row_var_name + ",";
   else
-    rval += " row_val: " + row_var_name;
+    rval += " row_val: " + row_var_name + ",";
 
     rval += " To variable: ";
 
