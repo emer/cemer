@@ -1,8 +1,5 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6799
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6822
 LeabraProject .projects["program_examples"] { 
- taBase_Group @.templates = [0] {
- };
-
  Doc_Group @.docs = [0] {
  };
 
@@ -322,19 +319,138 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [3] {
+    ProgEl_List @.prog_code = [2] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [1] {
        ProgVar @["i"] { };
       };
      };
      ForLoop @[1] { 
-      ProgEl_List @.loop_code = [2] {
+      ProgEl_List @.loop_code = [1] {
        PrintVar @[0] { };
-       ProgCode @[1] { };
       };
      };
-     ProgCode @[2] { };
+    };
+   };
+  };
+  Program_Group @.gp["Data"] = [2] { 
+   Program @["DataLoop"] { 
+    ProgObjList @.objs = [1] {
+     DataTable @["DemoData"] { 
+      DataTableCols @.data = [2] {
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["data_loop_order"] { };
+     ProgVar @["data_loop_index"] { };
+     ProgVar @["DemoData"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [2] {
+       ProgVar @["Name"] { };
+       ProgVar @["Value"] { };
+      };
+     };
+     DataLoop @[1] { 
+      ProgEl_List @.loop_code = [3] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [2] {
+	 ProgArg @[0] { };
+	 ProgArg @[1] { };
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [2] {
+	 ProgArg @[0] { };
+	 ProgArg @[1] { };
+	};
+       };
+       PrintVar @[2] { };
+      };
+     };
+    };
+   };
+   Program @["Data_vars"] { 
+    ProgObjList @.objs = [1] {
+     DataTable @["DemoData"] { 
+      DataTableCols @.data = [2] {
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["data_loop_order"] { };
+     ProgVar @["data_loop_index"] { };
+     ProgVar @["DemoData"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [2] {
+       ProgVar @["Name"] { };
+       ProgVar @["Value"] { };
+      };
+     };
+     DataLoop @[1] { 
+      ProgEl_List @.loop_code = [2] {
+       ProgCode @[0] { };
+       PrintVar @[1] { };
+      };
+     };
     };
    };
   };
@@ -602,11 +718,6 @@ LeabraProject .projects["program_examples"] {
   sync=0;
   wiki=;
   url=;
- };
- templates {
-  name="taBase_Group_0";
-  el_typ=taBase;
-  el_def=0;
  };
  docs {
   name="Doc_Group_1";
@@ -2879,13 +2990,13 @@ LeabraProject .projects["program_examples"] {
 	objs_ptr=0;
 	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
-	desc=;
+	desc="typically put the for index into a local variable";
 	init_from=NULL;
        };
       };
      };
      ForLoop @[1] {
-      desc=;
+      desc="can also go backward, or do any kind of test in the middle expression";
       flags=0;
       orig_prog_code="for(i=start_idx; i<max_idx; i+=increment)";
       loop_code {
@@ -2893,7 +3004,7 @@ LeabraProject .projects["program_examples"] {
        el_typ=ProgCode;
        el_def=0;
        PrintVar @[0] {
-	desc=;
+	desc="could do anything here with this index..";
 	flags=CAN_REVERT_TO_CODE;
 	orig_prog_code="print i";
 	message=;
@@ -2906,32 +3017,517 @@ LeabraProject .projects["program_examples"] {
 	my_mask=NULL;
 	debug_level=NULL;
        };
-       ProgCode @[1] {
-	desc=;
-	flags=0;
-	orig_prog_code=;
-	code {
-	 expr=;
-	};
-       };
       };
       init {
        expr="i=start_idx";
       };
       test {
-       expr=" i<max_idx";
+       expr="  i<max_idx";
       };
       iter {
-       expr=" i+=increment";
+       expr="  i+=increment";
       };
      };
-     ProgCode @[2] {
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+  };
+  Program_Group @.gp["Data"] {
+   name="Data";
+   el_typ=Program;
+   el_def=0;
+   tags=;
+   desc=;
+   Program @["DataLoop"] {
+    name="DataLoop";
+    short_nm=;
+    tags=;
+    desc=;
+    flags=0;
+    objs {
+     name="ProgObjList_4";
+     el_typ=taNBase;
+     el_def=0;
+     DataTable @["DemoData"] {
+      name="DemoData";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_57";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.160256415605545;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_58";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.160256415605545;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[10] 20;30;15;55;5;25;45;60;7;44;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [10] 0;1;2;3;4;5;6;7;8;9;
+      };
+     };
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["data_loop_order"] {
+      name="data_loop_order";
+      var_type=T_HardEnum;
+      int_val=0;
+      hard_enum_type=DataLoop::Order;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="these are auto-created by data loop";
+      init_from=NULL;
+     };
+     ProgVar @["data_loop_index"] {
+      name="data_loop_index";
+      var_type=T_Int;
+      int_val=10;
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["DemoData"] {
+      name="DemoData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataLoop"].objs["DemoData"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name="ProgBrkPt_List_4";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_4";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_47";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_48";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
       desc=;
       flags=0;
       orig_prog_code=;
-      code {
-       expr=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["Name"] {
+	name="Name";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["Value"] {
+	name="Value";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
       };
+     };
+     DataLoop @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      loop_code {
+       name="ProgEl_List_51";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc="read the value from the data table into variable";
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="Name = DemoData.GetVal(data_loop_index)";
+	result_var=.projects["program_examples"].programs.gp["Data"]["DataLoop"].prog_code[0].local_vars["Name"]$$;
+	obj=.projects["program_examples"].programs.gp["Data"]["DataLoop"].vars["DemoData"]$$;
+	method=DataTable::GetVal;
+	meth_args {
+	 name="ProgArg_List_0";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_Variant_ref;
+	  type="Variant&";
+	  name="col";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="\"Name\"";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=int;
+	  type="int";
+	  name="row";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="data_loop_index";
+	  };
+	 };
+	};
+       };
+       MethodCall @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="Value = DemoData->GetVal(\"Value\", data_loop_index)";
+	result_var=.projects["program_examples"].programs.gp["Data"]["DataLoop"].prog_code[0].local_vars["Value"]$$;
+	obj=$.projects["program_examples"].programs.gp["Data"]["DataLoop"].vars["DemoData"]$;
+	method=DataTable::GetVal;
+	meth_args {
+	 name="ProgArg_List_0";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=const_Variant_ref;
+	  type="Variant&";
+	  name="col";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="\"Value\"";
+	  };
+	 };
+	 ProgArg @[1] {
+	  arg_type=int;
+	  type="int";
+	  name="row";
+	  required=1;
+	  def_val=;
+	  expr {
+	   expr="data_loop_index";
+	  };
+	 };
+	};
+       };
+       PrintVar @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="Print Name Value";
+	message=;
+	print_var=$.projects["program_examples"].programs.gp["Data"]["DataLoop"].prog_code[0].local_vars["Name"]$;
+	print_var2=$.projects["program_examples"].programs.gp["Data"]["DataLoop"].prog_code[0].local_vars["Value"]$;
+	print_var3=NULL;
+	print_var4=NULL;
+	print_var5=NULL;
+	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+       };
+      };
+      data_var=$.projects["program_examples"].programs.gp["Data"]["DataLoop"].vars["DemoData"]$;
+      index_var=.projects["program_examples"].programs.gp["Data"]["DataLoop"].vars["data_loop_index"]$$;
+      order_var=.projects["program_examples"].programs.gp["Data"]["DataLoop"].vars["data_loop_order"]$$;
+      order=SEQUENTIAL;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["Data_vars"] {
+    name="Data_vars";
+    short_nm="Dt_vrs";
+    tags=;
+    desc=;
+    flags=0;
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+     DataTable @["DemoData"] {
+      name="DemoData";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.160256415605545;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.160256415605545;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[10] 20;30;15;55;5;25;45;60;7;44;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [10] 0;1;2;3;4;5;6;7;8;9;
+      };
+     };
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["data_loop_order"] {
+      name="data_loop_order";
+      var_type=T_HardEnum;
+      int_val=0;
+      hard_enum_type=DataLoop::Order;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="these are auto-created by data loop";
+      init_from=NULL;
+     };
+     ProgVar @["data_loop_index"] {
+      name="data_loop_index";
+      var_type=T_Int;
+      int_val=10;
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["DemoData"] {
+      name="DemoData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["Data_vars"].objs["DemoData"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["Name"] {
+	name="Name";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["Value"] {
+	name="Value";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     DataLoop @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      loop_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       ProgCode @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	code {
+	 expr="From: DemoData row_num: data_loop_index To Vars: Name Value ";
+	};
+       };
+       PrintVar @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="Print Name Value";
+	message=;
+	print_var=.projects["program_examples"].programs.gp["Data"]["Data_vars"].prog_code[0].local_vars["Name"]$$;
+	print_var2=.projects["program_examples"].programs.gp["Data"]["Data_vars"].prog_code[0].local_vars["Value"]$$;
+	print_var3=NULL;
+	print_var4=NULL;
+	print_var5=NULL;
+	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+       };
+      };
+      data_var=.projects["program_examples"].programs.gp["Data"]["Data_vars"].vars["DemoData"]$$;
+      index_var=.projects["program_examples"].programs.gp["Data"]["Data_vars"].vars["data_loop_index"]$$;
+      order_var=.projects["program_examples"].programs.gp["Data"]["Data_vars"].vars["data_loop_order"]$$;
+      order=SEQUENTIAL;
      };
     };
     step_prog=NULL;
@@ -2955,7 +3551,7 @@ LeabraProject .projects["program_examples"] {
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0;
+     value 6 0=0.04753819853067398;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -4154,7 +4750,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.05753862485289574;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

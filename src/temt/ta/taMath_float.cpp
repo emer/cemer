@@ -864,7 +864,21 @@ float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
   idx = 0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
-    return vec->Max().toFloat(); // just use logic in obj
+    bool first = true;
+    float rval = 0.0;
+    TA_FOREACH_INDEX(i, *vec) {
+      if(first) {
+        rval = vec->FastEl_Flat(i);
+        first = false;
+      }
+      else {
+        if(vec->FastEl_Flat(i) > rval) {
+          idx = FOREACH_itr->count;
+          rval = vec->FastEl_Flat(i);
+        }
+      }
+    }
+    return rval;
   }
   float rval = vec->FastEl_Flat(0);
   for(int i=1;i<vec->size;i++) {
@@ -890,7 +904,7 @@ float taMath_float::vec_abs_max(const float_Matrix* vec, int& idx) {
       }
       else {
         if(fabs(vec->FastEl_Flat(i)) > rval) {
-          idx = i;
+          idx = FOREACH_itr->count;
           rval = fabs(vec->FastEl_Flat(i));
         }
       }
@@ -931,7 +945,21 @@ float taMath_float::vec_min(const float_Matrix* vec, int& idx) {
   idx = 0;
   if(vec->size == 0) return 0.0;
   if(vec->ElView()) {		// significantly less efficient
-    return vec->Min().toFloat(); // just use logic in obj
+    bool first = true;
+    float rval = 0.0;
+    TA_FOREACH_INDEX(i, *vec) {
+      if(first) {
+        rval = vec->FastEl_Flat(i);
+        first = false;
+      }
+      else {
+        if(vec->FastEl_Flat(i) < rval) {
+          idx = FOREACH_itr->count;
+          rval = vec->FastEl_Flat(i);
+        }
+      }
+    }
+    return rval;
   }
   float rval = vec->FastEl_Flat(0);
   for(int i=1;i<vec->size;i++) {
@@ -957,7 +985,7 @@ float taMath_float::vec_abs_min(const float_Matrix* vec, int& idx) {
       }
       else {
         if(fabs(vec->FastEl_Flat(i)) < rval) {
-          idx = i;
+          idx = FOREACH_itr->count;
           rval = fabs(vec->FastEl_Flat(i));
         }
       }
