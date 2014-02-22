@@ -29,10 +29,13 @@
 
 #include <sstream>
 
+#include <libjson>
+#include <JSONNode>
+#include "../json/JSONDefs.h"
+
 TA_BASEFUNS_CTORS_DEFN(TemtClient);
 
 using namespace std;
-
 
 TemtClient_QObj* TemtClient::adapter() {
   return (TemtClient_QObj*)taOABase::adapter;
@@ -43,7 +46,7 @@ String TemtClient::ReadQuotedString(const String& str, int& p, bool& err) {
   int max = str.length() - 1;
   STRING_BUF(rval, ((max - p) + 1));
   ++p; // skip opening "
-  
+
   char c;
   while ((p <= max) && !err) {
     c = str[p++];
@@ -88,7 +91,7 @@ String TemtClient::ReadQuotedString(const String& str, int& p, bool& err) {
         }
         // convert from octal
         c = (char)strtol(oct.chars(), NULL, 8);
-        } break;
+      } break;
       } 
     }  
     rval.cat(c);
@@ -106,18 +109,18 @@ String TemtClient::NextToken(const String& str, int& p, bool& err) {
     ++p;
   }
   if (p > max) return _nilString; // end
-  
+
   // look for " and put us in quoted mode if so
   c = str[p];
   if (c == '\"') 
     return ReadQuotedString(str, p, err);
-  
+
   // single = is a token
   if (c == '=') {
     ++p;
     return "=";
   }
-  
+
   // ok, read a raw token, which is chars up to ws or =
   String rval;
   while (p <= max) {
@@ -140,7 +143,7 @@ void TemtClient::Destroy() {
 }
 
 void TemtClient::Copy_(const TemtClient& cp) {
-//NOTE: not designed to be copied
+  //NOTE: not designed to be copied
   CloseClient();
   if (server != cp.server) server = NULL;
 }
@@ -158,8 +161,8 @@ void TemtClient::CloseClient() {
 }
 
 void TemtClient::cmdCloseProject() {
-//TEMP
-SendError("CloseProject not implemented yet");
+  //TEMP
+  SendError("CloseProject not implemented yet");
 }
 
 void TemtClient::cmdEcho() {
@@ -177,13 +180,13 @@ void TemtClient::cmdEcho() {
 }
 
 void TemtClient::cmdOpenProject() {
-//TEMP
-SendError("OpenProject not implemented yet");
-return;
-  
-//TODO: checks: 
-// * cannot be one open (OR: auto close it???)
-// * maybe check if already open, ignore??? say ok??? error???
+  //TEMP
+  SendError("OpenProject not implemented yet");
+  return;
+
+  //TODO: checks:
+  // * cannot be one open (OR: auto close it???)
+  // * maybe check if already open, ignore??? say ok??? error???
 
   String proj_file = pos_params.SafeEl(0); // always arg 1
   taBase* proj_ = NULL;
@@ -205,60 +208,61 @@ return;
 
 void TemtClient::cmdRunProgram(bool sync) {
   String pnm = pos_params.SafeEl(0);
+//  String pnm = name_params.GetVal("program").toString();
   if (pnm.empty()) {
     SendError("RunProgram: program name expected");
     return;
   }
-  
+
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
     SendError("RunProgram " + pnm + ": no project open");
     return;
   }
-  
+
   // get program, make sure exists
   Program* prog = GetAssertProgram(pnm);
   if (!prog) return;
-  
+
   // check if a prog already running
-//  Program::RunState grs = Program::GetGlobalRunState();
-/* TEMP ignore global run state, assume synchronous dispatch  
+  //  Program::RunState grs = Program::GetGlobalRunState();
+  /* TEMP ignore global run state, assume synchronous dispatch
   if (!((grs == Program::DONE) || (grs == Program::NOT_INIT))) {
     SendError("RunProgram " + pnm + ": program already running");
     return;
   }
- */ 
+   */
   // check that not already running! (but ok if it is Stopped)
   Program::RunState rs = prog->run_state;
   if (rs == Program::RUN) {
     SendError("RunProgram " + pnm + ": is already running");
     return;
   }
-  
+
   // check that it is initialized, otherwise call Init
   if (rs == Program::NOT_INIT) {
     //NOTE: Init is synchronous
     prog->Init();
     if (prog->ret_val != Program::RV_OK) {
       SendError("RunProgram " + pnm + "->Init() failed with ret_val: "
-        + String(prog->ret_val));
+          + String(prog->ret_val));
       return;
     }
   }
-  
+
   // run
   if (sync) {
     prog->Run();
-//TEMP: only way it can't be DONE is if a runtime error occurred
+    //TEMP: only way it can't be DONE is if a runtime error occurred
     if (prog->run_state != Program::DONE) {
       SendError("RunProgram " + pnm + "->Run() failed due to a runtime error");
       return;
     }
-// /TEMP
+    // /TEMP
     if (prog->ret_val != Program::RV_OK) {
       SendError("RunProgram " + pnm + "->Run() failed with ret_val: "
-        + String(prog->ret_val));
+          + String(prog->ret_val));
       return;
     }
   } else { // async
@@ -269,24 +273,24 @@ void TemtClient::cmdRunProgram(bool sync) {
 }
 
 void TemtClient::cmdSetData() {
-//TEMP
-SendError("SetData not implemented yet");
+  //TEMP
+  SendError("SetData not implemented yet");
 }
 
 Program* TemtClient::GetAssertProgram(const String& pnm) {
-// does many checks, to make sure the prog exists
+  // does many checks, to make sure the prog exists
   if (pnm.empty()) {
     SendError("program name expected");
     return NULL;
   }
-  
+
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
     SendError("no project open");
     return NULL;
   }
-  
+
   // get program, make sure exists
   Program* prog = proj->programs.FindLeafName(pnm);
   if (!prog) {
@@ -297,19 +301,19 @@ Program* TemtClient::GetAssertProgram(const String& pnm) {
 }
 
 DataTable* TemtClient::GetAssertTable(const String& nm) {
-// does many checks, to make sure the table and prog exists
+  // does many checks, to make sure the table and prog exists
   if (nm.empty()) {
     SendError("table name expected");
     return NULL;
   }
-  
+
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
     SendError("no project open");
     return NULL;
   }
-  
+
   DataTable* tab = NULL;
   // if a local table, then resolve
   String pnm = nm.before(".");
@@ -334,7 +338,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
   rows = 1;
   header = false;
   markers = false;
-  
+
   // cmd decodes
   bool get = false;
   bool get_set = false;
@@ -363,7 +367,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
     cell = 0;
     break;
   }
-  
+
   // cell guys are pos params, so do them, and bail
   // also, they use uniony guys
   if (is_cell) {
@@ -376,23 +380,23 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
       tc->SendError("col '" + String(col) + "' out of bounds");
       return false;
     }
-    
+
     row = tc->pos_params.SafeEl(2).toInt(&ok); 
     if (row < 0) row = tab->rows + row;
     if (!ok || (row < 0) || (row >= tab->rows)) {
       tc->SendError("row '" + String(row) + "' out of bounds");
       return false;
     }
-    
+
     if (mat)
       cell = tc->pos_params.SafeEl(3).toInt(&ok);
-      if (!ok || (cell < 0) || (cell >= tab->data.FastEl(col)->cell_geom.Product())) {
-        tc->SendError("cell '" + String(cell) + "' out of bounds");
-        return false;
-      }
+    if (!ok || (cell < 0) || (cell >= tab->data.FastEl(col)->cell_geom.Product())) {
+      tc->SendError("cell '" + String(cell) + "' out of bounds");
+      return false;
+    }
     return true;
   }
-  
+
   // all the possible params -- not all defined for all cmds
   rows = tc->name_params.GetValDef("rows", rows).toInt();
   row_from = tc->name_params.GetValDef("row_from", 0).toInt();
@@ -401,10 +405,10 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
   col_to = tc->name_params.GetValDef("col_to", -1).toInt();
   header = tc->name_params.GetValDef("header", header).toBool();
   markers = tc->name_params.GetValDef("markers", markers).toBool();
-  
+
   // init vals that need to be correctly set even if validation fails
   if (header) lines = 1; else lines = 0;
-  
+
   // validate and normalize the params
   if (row_from < 0) row_from = tab->rows + row_from;
   if (row_to < 0) row_to = tab->rows + row_to;
@@ -413,13 +417,13 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
       tc->SendError("row_from '" + String(row_from) + "' out of bounds");
       return false;
     }
-    
+
     if ((row_to < 0) || (row_to >= tab->rows)) {
       tc->SendError("row_to '" + String(row_to) + "' out of bounds");
       return false;
     }
   }
-  
+
   if (append) {
     if (rows < 0) {
       tc->SendError("rows '" + String(rows) + "' out of bounds");
@@ -428,7 +432,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
     row_from = tab->rows;
     row_to = (row_from + rows) - 1;
   }
-  
+
   if (remove) {
     // note: only ok for row_from to be out of bounds if empty
     if ((row_from < 0) && (tab->rows > 0)) {
@@ -443,22 +447,22 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
       rows = tab->rows - row_from;
     return true; // skip all the other stuff
   }
-    
+
   // make sure lines is valid now, before possibly bailing on other conditions
   lines += (row_to - row_from) + 1;
-  
+
   if (col_from < 0) col_from = tab->cols() + col_from;
   if ((col_from < 0) || (col_from >= tab->cols())) {
     tc->SendError("col_from '" + String(col_from) + "' out of bounds");
     return false;
   }
-  
+
   if (col_to < 0) col_to = tab->cols() + col_to;
   if ((col_to < 0) || (col_to >= tab->cols())) {
     tc->SendError("col_to '" + String(col_to) + "' out of bounds");
     return false;
   }
-  
+
   return true;
 }
 
@@ -467,17 +471,17 @@ void TemtClient::cmdAppendData() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
   //NOTE: p will have already sent an ERROR if cmd_ok is false
   // any subsequenct failure must send an ERROR
-  
-  
+
+
   // ok, now we must block/waiting until all expected lines received
   // note: some of the expected lines may already be in lines buffer
   setState(CS_DATA_IN);
-  
+
   while ((lines.size < p.lines) && (state != CS_DISCONNECTED)) {
     // note: signals not invoked again inside this event loop
     if (sock->canReadLine())
@@ -485,12 +489,12 @@ void TemtClient::cmdAppendData() {
     else
       sock->waitForReadyRead();
   }
-  
+
   if (state == CS_DISCONNECTED)
     return;
-  
+
   setState(CS_READY);
-  
+
   if (!cmd_ok) { // error of some occurred, so we just accepted lines
     // must remove first n lines
     while ((p.lines > 0) && (lines.size > 0)) {
@@ -499,40 +503,40 @@ void TemtClient::cmdAppendData() {
     }
     return;
   }
-  
+
   // trivial case with no lines
   if (p.lines == 0) goto ok_exit;
-  
+
   {
-  
-  //note: we must have enough lines to have made it here
-  tab->StructUpdate(true);
-  int ln_num = 0; // to do header/init stuff
-  while ((p.lines > 0) && (lines.size > 0)) {
-    String ln;
-    //note: parser needs the eol, so we have to add it back in
-    ln = lines.FastEl(0) + '\n';
-    lines.RemoveIdx(0);
-    p.lines--;
-    // simplest way to be compat with arcane DataTable load api
-    // is to tack the markers on if we aren't expecting them
-    if (!p.markers) {
-      if (p.header && (ln_num == 0))
-        ln = "_H:\t" + ln;
-      else ln = "_D:\t" + ln;
+
+    //note: we must have enough lines to have made it here
+    tab->StructUpdate(true);
+    int ln_num = 0; // to do header/init stuff
+    while ((p.lines > 0) && (lines.size > 0)) {
+      String ln;
+      //note: parser needs the eol, so we have to add it back in
+      ln = lines.FastEl(0) + '\n';
+      lines.RemoveIdx(0);
+      p.lines--;
+      // simplest way to be compat with arcane DataTable load api
+      // is to tack the markers on if we aren't expecting them
+      if (!p.markers) {
+        if (p.header && (ln_num == 0))
+          ln = "_H:\t" + ln;
+        else ln = "_D:\t" + ln;
+      }
+      // note: making a new one each loop simplifies things
+      istringstream istr(ln.chars());
+
+      tab->LoadDataRowEx_strm(istr, DataTable::TAB,
+          true, // quote_str
+          (ln_num == 0) // clear load schema on first guy
+      );
+      ++ln_num;
     }
-    // note: making a new one each loop simplifies things
-    istringstream istr(ln.chars());
-  
-    tab->LoadDataRowEx_strm(istr, DataTable::TAB, 
-      true, // quote_str
-      (ln_num == 0) // clear load schema on first guy
-    );
-    ++ln_num;
+    tab->StructUpdate(false);
   }
-  tab->StructUpdate(false);
-  }
-ok_exit:
+  ok_exit:
   // ok, we did!
   SendOk();
 }
@@ -542,35 +546,35 @@ void TemtClient::cmdGetData() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   if (!p.ValidateParams()) return;
-  
+
   // ok, we can do it!
   SendOk("lines=" + String(p.lines));
-  
+
   ostringstream ostr;
   String ln;
-  
+
   // header row, if any
   if (p.header) {
     tab->SaveHeader_strm(ostr, DataTable::TAB, p.markers);
     ln = ostr.str().c_str();
     Write(ln);
   }
-  
+
   // rows
   for (int row = p.row_from; row <= p.row_to; ++row) {
     ostr.str("");
     ostr.clear();
     tab->SaveDataRow_strm(ostr, row, DataTable::TAB, 
-      true, // quote_str
-      p.markers, // row_mark
-      p.col_from, p.col_to);
+        true, // quote_str
+        p.markers, // row_mark
+        p.col_from, p.col_to);
     ln = ostr.str().c_str();
     Write(ln);
   }
-  
+
 }
 
 void TemtClient::cmdGetDataCell() {
@@ -578,10 +582,10 @@ void TemtClient::cmdGetDataCell() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   if (!p.ValidateParams(TableParams::Cell, false)) return;
-  
+
   cmdGetDataCell_impl(p);
 }
 
@@ -590,10 +594,10 @@ void TemtClient::cmdGetDataMatrixCell() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   if (!p.ValidateParams(TableParams::Cell, true)) return;
-  
+
   cmdGetDataCell_impl(p);
 }
 
@@ -611,10 +615,10 @@ void TemtClient::cmdSetDataCell() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   if (!p.ValidateParams(TableParams::Cell, false)) return;
-  
+
   cmdSetDataCell_impl(p);
 }
 
@@ -623,10 +627,10 @@ void TemtClient::cmdSetDataMatrixCell() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   if (!p.ValidateParams(TableParams::Cell, true)) return;
-  
+
   cmdSetDataCell_impl(p);
 }
 
@@ -646,7 +650,7 @@ void TemtClient::cmdGetVar() {
   Program* prog = GetAssertProgram(pnm);
   if (!prog) return;
   // note: ok if running
-  
+
   // 2nd param must be a var name
   String nm = pos_params.SafeEl(1);;
   // note: check name first, because GetVar raises error
@@ -659,7 +663,7 @@ void TemtClient::cmdGetVar() {
     SendError("Var '" + nm + "' could unexpectedly not be retrieved");
     return;
   }
-  
+
   // get the value, possibly converting
   String val;
   if (var->var_type == ProgVar::T_String) {
@@ -690,11 +694,11 @@ void TemtClient::cmdRemoveData() {
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-  
+
   TableParams p(this, tab);
   bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Remove);
   if (!cmd_ok) return;
-  
+
   // ok if none; noop if start > rows
   if ((p.row_from >= 0) && (p.row_from < tab->rows)) {
     if (!tab->RemoveRows(p.row_from, p.rows)) {
@@ -711,8 +715,8 @@ void TemtClient::cmdSetVar() {
   if (!prog) return;
   // note: ok if running
   // note: would work for 0 params  
-  
-  
+
+
   // verify all params
   String nm;
   for (int i = 0; i < name_params.size; ++i) {
@@ -730,7 +734,7 @@ void TemtClient::cmdSetVar() {
       return;
     }
   }
-  
+
   // set
   for (int i = 0; i < name_params.size; ++i) {
     NameVar& nv = name_params.FastEl(i);
@@ -750,15 +754,23 @@ taProject* TemtClient::GetCurrentProject() {
 
 void TemtClient::ParseCommand(const String& cl) {
   cmd_line = trim(cl); // remove leading/trailing ws, including eol's
+
+  if (cmd_line[0] == '{') {
+    msgFormat = TemtClient::JSON;
+    ParseCommandJSON(cmd_line);
+    return;
+  }
+
+  msgFormat = TemtClient::ASCII;
   cmd = _nilString;
   pos_params.Reset();
   name_params.Reset();
-  
+
   // we use the pos_params as an intermediate guy during processing...
-//TEMP 
-// TODO: need to properly parse, manually, each guy, to make sure, ex. that 
-// strings are pulled intact, that a quoted string with a = in it doesn't get
-// pulled as a name= etc. etc.
+  //TEMP
+  // TODO: need to properly parse, manually, each guy, to make sure, ex. that
+  // strings are pulled intact, that a quoted string with a = in it doesn't get
+  // pulled as a name= etc. etc.
 
   // note: following from Qt help file
   //TODO: following not correct, need to manually deal with "" and remove "" 
@@ -773,15 +785,15 @@ void TemtClient::ParseCommand(const String& cl) {
     pos_params.Add(tok);
     tok = NextToken(str, p, err);;
   }
-  
+
   // TODO: check err
-  
+
   // pull 1st guy as the command
   if (pos_params.size > 0) {
     cmd = pos_params.FastEl(0);
     pos_params.RemoveIdx(0);
   }
-  
+
   // pull guys w/ = as name=value, and they must all be after starting =
   int i = 0;
   int got_name_val = false;
@@ -807,75 +819,110 @@ void TemtClient::ParseCommand(const String& cl) {
       ++i;
     }
   }
-  
+
   if (cmd.length() == 0) {
     // empty lines just echoed
     WriteLine(_nilString);
     return;
   }
-  
-  //TODO: we can (should!) look up and dispatch via name!
-/*  if (cmd == "CloseProject") {
-    cmdCloseProject();
-  } else 
-  if (cmd == "OpenProject") {
-    cmdOpenProject();
-  } else { */
+
+  RunCommand(cmd);
+}
+
+void TemtClient::ParseCommandJSON(const String& cmd_line) {
+  json_string json_cmd_line = json_string(cmd_line.chars());
+  if (!libjson::is_valid(json_cmd_line)) {
+    SendErrorJSON("JSON format error");
+    return;
+  }
+  else
+  {
+    JSONNode n = libjson::parse(json_cmd_line);
+
+    JSONNode::const_iterator i = n.begin();
+    while (i != n.end()) {
+      // get the node name and value as a string
+      std::string node_name = i->name();
+
+      if (node_name == "command") {
+        name_params.SetVal("command", i->as_string().c_str());
+      }
+      else if (node_name == "program") {
+        name_params.SetVal("program", i->as_string().c_str());
+      }
+      ++i;
+    }
+
+    String cmd = name_params.GetVal("command").toString();
+    RunCommand(cmd);
+  }
+}
+
+void TemtClient::RunCommand(const String& cmd) {
   if (cmd == "AppendData") {
     cmdAppendData();
-  } else
-  if (cmd == "Echo") {
+  }
+  else if (cmd == "Echo") {
     cmdEcho();
-  } else
-  if (cmd == "GetData") {
+  }
+  else if (cmd == "GetData") {
     cmdGetData();
-  } else
-  if (cmd == "GetDataCell") {
+  }
+  else if (cmd == "GetDataCell") {
     cmdGetDataCell();
-  } else
-  if (cmd == "GetDataMatrixCell") {
+  }
+  else if (cmd == "GetDataMatrixCell") {
     cmdGetDataMatrixCell();
-  } else
-  if (cmd == "GetVar") {
+  }
+  else if (cmd == "GetVar") {
     cmdGetVar();
-  } else
-  if (cmd == "GetRunState") {
+  }
+  else if (cmd == "GetRunState") {
     cmdGetRunState();
-  } else
-  if (cmd == "RemoveData") {
+  }
+  else if (cmd == "RemoveData") {
     cmdRemoveData();
-  } else
-  if (cmd == "RunProgram") {
+  }
+  else if (cmd == "RunProgram") {
     cmdRunProgram(true);
-  } else
-  if (cmd == "RunProgramAsync") {
+  }
+  else if (cmd == "RunProgramAsync") {
     cmdRunProgram(false);
-  } else
-  if (cmd == "SetDataCell") {
+  }
+  else if (cmd == "SetDataCell") {
     cmdSetDataCell();
-  } else
-  if (cmd == "SetDataMatrixCell") {
+  }
+  else if (cmd == "SetDataMatrixCell") {
     cmdSetDataMatrixCell();
-  } else
-  if (cmd == "SetVar") {
+  }
+  else if (cmd == "SetVar") {
     cmdSetVar();
-  } else {
+  }
+  else
+  {
     //TODO: need subclass hook, and/or change to symbolic, so subclass can do cmdXXX routine
     // unknown command
     String err = "\"" + cmd + "\" is an unknown command";
     SendError(err);
   }
-  
+
+  //TODO: we can (should!) look up and dispatch via name!
+   /*  if (cmd == "CloseProject") {
+     cmdCloseProject();
+   } else
+   if (cmd == "OpenProject") {
+     cmdOpenProject();
+   } else { */
 }
 
 void TemtClient::SetSocket(QTcpSocket* sock_) {
   sock = sock_;
   QObject::connect(sock_, SIGNAL(disconnected()),
-    adapter(), SLOT(sock_disconnected()));
+      adapter(), SLOT(sock_disconnected()));
   QObject::connect(sock_, SIGNAL(readyRead()),
-    adapter(), SLOT(sock_readyRead()));
+      adapter(), SLOT(sock_readyRead()));
   QObject::connect(sock_, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-    adapter(), SLOT(sock_stateChanged(QAbstractSocket::SocketState)));
+      adapter(), SLOT(sock_stateChanged(QAbstractSocket::SocketState)));
 }            
 
 void TemtClient::setState(ClientState cs) {
@@ -889,14 +936,14 @@ void TemtClient::sock_disconnected() {
   sock = NULL; // goodbye...
   cmdCloseProject();
   if (server) server->ClientDisconnected(this);
-//NO MORE CODE: we will be deleted!
+  //NO MORE CODE: we will be deleted!
 }
 
 void TemtClient::sock_readyRead() {
   if (!sock) return; 
   // we only do lines -- will call us again when a line is ready
   if (!sock->canReadLine()) return;
-  
+
   QByteArray ba;
   String line;
   // need to keep fetching lines, since we only get notified once
@@ -935,7 +982,7 @@ void TemtClient::HandleLines() {
       return;
     } break;
     case CS_DISCONNECTED: {
-    //shouldn't happen!!!
+      //shouldn't happen!!!
     } break;
     //default:
     // handle all cases explicitly!
@@ -948,17 +995,37 @@ void TemtClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
 }
 
 void TemtClient::SendError(const String& err_msg) {
+  if (msgFormat == TemtClient::JSON)
+    SendErrorJSON(err_msg);
+  else
+    SendErrorASCII(err_msg);
+}
+
+void TemtClient::SendErrorASCII(const String& err_msg) {
   String ln = "ERROR";
   if (err_msg.length() > 0)
     ln.cat(" ").cat(err_msg);
   WriteLine(ln);
 }
 
-void TemtClient::SendReply(const String& r) {
-  WriteLine(r);
+void TemtClient::SendErrorJSON(const String& err_msg) {
+  JSONNode root(JSON_NODE);
+  root.push_back(JSONNode("status", json_string("ERROR")));
+  root.push_back(JSONNode("message", json_string(err_msg.chars())));
+  root.push_back(JSONNode("result_code", -1));
+
+  String reply = root.write_formatted().c_str();
+  WriteLine(reply);
 }
 
 void TemtClient::SendOk(const String& msg) {
+  if (msgFormat == TemtClient::JSON)
+    SendOkJSON(msg);
+  else
+    SendOkASCII(msg);
+}
+
+void TemtClient::SendOkASCII(const String& msg) {
   String ln = "OK";
   if (msg.nonempty()) {
     ln.cat(" ").cat(msg);
@@ -966,19 +1033,30 @@ void TemtClient::SendOk(const String& msg) {
   WriteLine(ln);
 }
 
-/*void TemtClient::SendOk(int lines) {
-  SendOk(lines, _nilString);
+void TemtClient::SendOkJSON(const String& msg) {
+  JSONNode root(JSON_NODE);
+   root.push_back(JSONNode("status", json_string("OK")));
+   root.push_back(JSONNode("message", json_string(msg.chars())));
+   root.push_back(JSONNode("result_code", 0));
+
+   String reply = root.write_formatted().c_str();
+   WriteLine(reply);
 }
 
-void TemtClient::SendOk(int lines, const String& addtnl) {
-  String ln = "OK";
-  if (lines >= 0) {
-    ln.cat(" lines=").cat(lines);
-    if (addtnl.length() > 0)
-      ln.cat(" ").cat(addtnl);
-  }
-  WriteLine(ln);
-}*/
+void TemtClient::SendReply(const String& r) {
+  if (msgFormat == TemtClient::JSON)
+    SendErrorJSON(r);
+  else
+    SendErrorASCII(r);
+}
+
+void TemtClient::SendReplyASCII(const String& r) {
+  WriteLine(r);
+}
+
+void TemtClient::SendReplyJSON(const String& r) {
+  WriteLine(r);
+}
 
 void TemtClient::Write(const String& txt) {
   if (!isConnected()) return;

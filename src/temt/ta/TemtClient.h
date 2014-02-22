@@ -50,7 +50,13 @@ public:
     CS_DISCONNECTED // client has disconnected
   };
   
+  enum MsgFormat {
+      ASCII, //
+      JSON   //
+    };
+
   ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state 
+  MsgFormat     msgFormat; // #READ_ONLY #NO_SAVE
   
   bool			isConnected() const {return (state != CS_DISCONNECTED);}
   
@@ -62,14 +68,21 @@ public:
   void			CloseClient();
   void			SetSocket(QTcpSocket* sock); // #IGNORE
 
-  void			SendError(const String& err_msg); // send error reply
-  void			SendReply(const String& r); // send reply
-  void			SendOk(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
+  void      SendError(const String& err_msg); // relay to SendError in format of received message
+  void      SendErrorASCII(const String& err_msg); // send error reply in ascii
+  void      SendErrorJSON(const String& err_msg); // send error reply in json format
+  void      SendReply(const String& r); // relay to SendReply in format of received message
+  void      SendReplyASCII(const String& r); // send reply ascii
+  void      SendReplyJSON(const String& r); // send reply json
+  void      SendOk(const String& msg = _nilString); // relay to SendOk in format of received message
+  void      SendOkASCII(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
+  void      SendOkJSON(const String& msg = _nilString); // send ok, w/ optional msg or data - json format
   
   void			WriteLine(const String& ln); // low level write, note: adds eol
   void			Write(const String& txt); // low level write
   
 public: // commands, all are cmdXXX where XXX is exact command name
+  virtual void    RunCommand(const String& cmd);  // dispatch specified command
   virtual void 		cmdAppendData();
   virtual void		cmdCloseProject();
   virtual void		cmdEcho(); // echos, for test
@@ -143,20 +156,22 @@ protected:
   String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue
   
 // every command line is parsed into the following pieces before dispatching the command:
-  String		cmd_line; // the last cmd line
-  String		cmd; // this is the first item, the command
+  String		      cmd_line; // the last cmd line
+  String		      cmd; // this is the first item, the command
   String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done
   NameVar_PArray	name_params; // name params; str quoting/escaping already done
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
   
   taProject*		GetCurrentProject(); // gets, and maybe asserts
   DataTable* 		GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats
-  Program* 		GetAssertProgram(const String& pnm); // gets, and sends errs if not found
+  Program* 		  GetAssertProgram(const String& pnm); // gets, and sends errs if not found
   
-  void			setState(ClientState cs);
+  void			    setState(ClientState cs);
   
-  void			HandleLines(); // line handling loop
-  void			ParseCommand(const String& cl);
+  void			    HandleLines(); // line handling loop
+  void          ParseCommand(const String& cl);
+  void          ParseCommandJSON(const String& cl);
+
 private:
   void	Copy_(const TemtClient& cp);
   void	Initialize();
