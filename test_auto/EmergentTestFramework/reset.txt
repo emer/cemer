@@ -1,0 +1,10 @@
+*** Settings ***
+
+Library                OperatingSystem
+
+
+*** Test Cases ***
+
+Reset
+    Remove Files       test/*
+    Remove Directory   test

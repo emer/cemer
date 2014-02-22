@@ -23,12 +23,12 @@ Default Leabra Test
     [Arguments]               ${project}
     Set Variables             ${project}    60 secs
     Set Metrics               avg  0.15  0.25
-    Create CSS
+    Create CSS Default
     Run Model
     Check Preferred
     Check Required
 
-Create CSS 
+Create CSS Default
     Create CSS Custom                               ${script-file}
     Add CSS Standard Randomize                      ${script-file}   ${name}
     Add CSS Standard RunProgram                     ${script-file}   ${name}    LeabraBatch    Network_0    StdInputData

@@ -1,0 +1,38 @@
+*** Settings ***
+
+Library                       OperatingSystem
+
+*** Variables ***
+
+${test-dir} =                 test
+
+*** Test Cases ***
+
+Copy Standard Files
+    Copy File    ${CURDIR}/emergent.txt.cpy    ${test-dir}/emergent.txt
+    Copy File    ${CURDIR}/leabra.css.cpy      ${test-dir}/leabra.css
+    Copy File    ${CURDIR}/__init__.txt.cpy      ${test-dir}/__init__.txt
+
+Generate Default Tests
+    @{project-files} =                   List Files In Directory  .  *.proj
+    :FOR  ${project-filename}  IN        @{project-files}
+    \     ${project-name} =              Get Project From File       ${project-filename}
+    \     Create Test                    ${project-name}
+   
+*** Keywords ***
+
+Get Project From File
+    [Arguments]          ${filename}
+    ${match}             ${project} = 
+    ...                  Should Match Regexp       ${filename}   (.*)\.proj
+    [Return]             ${project}
+
+Create Test
+    [Arguments]          ${project-name}
+    ${S} =               Set Variable        ${SPACE * 4}
+    ${test-filename} =   Set Variable        ${test-dir}/${project-name}.txt
+    Append To File       ${test-filename}    *** Settings ***\n
+    Append To File       ${test-filename}    Resource ${S} ${test-dir}/emergent.txt\n
+    Append To File       ${test-filename}    *** Test Cases ***\n
+    Append To File       ${test-filename}    Leabra Default Test\n
+    Append To File       ${test-filename}    ${S} Run Default Test ${S} ${project-name} ${S} ${test-dir}\n

@@ -1,19 +1,2 @@
-#include "Leabra.css"
-
-SetRandom(
-"LeabraStdEmbedded",
-"LeabraAll_Std",
-"LeabraTrain",
-"rnd_init");
-RunProgram(
-"LeabraStdEmbedded",
-"LeabraAll_Std",
-"LeabraBatch",
-"Network_0",
-"InputData",
-"StdInputData");
-OutputEpochsToTrain(
-"LeabraStdEmbedded",
-"LeabraStdEmbedded",
-"OutputData",
-"EpochOutputData");
+Program *program = .projects["LeabraStdEmbedded"].programs.gp["Tests"]["Test"];
+program->Run();

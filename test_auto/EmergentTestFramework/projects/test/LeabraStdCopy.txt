@@ -1,0 +1,5 @@
+*** Settings ***
+Resource      test/emergent.txt
+*** Test Cases ***
+Leabra Default Test
+     Run Default Test      LeabraStdCopy      test

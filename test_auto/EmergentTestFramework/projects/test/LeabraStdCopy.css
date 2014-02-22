@@ -1,0 +1,19 @@
+#include "test/leabra.css"
+
+SetRandom(
+"LeabraStdCopy",
+"LeabraAll_Std",
+"LeabraTrain",
+"rnd_init");
+RunProgram(
+"LeabraStdCopy",
+"LeabraAll_Std",
+"LeabraBatch",
+"Network_0",
+"InputData",
+"StdInputData");
+OutputEpochsToTrain(
+"LeabraStdCopy",
+"LeabraStdCopy",
+"OutputData",
+"EpochOutputData");

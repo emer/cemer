@@ -8,12 +8,12 @@ SetRandom(
 RunProgram(
 "a_not_b",
 "LeabraAll_Std",
-"LeabraBatch",
-"Network_0",
+"LeabraTrain",
+"ABNet",
 "InputData",
-"StdInputData");
-OutputEpochsToTrain(
+"ABInput_Delay3");
+OutputANotB(
 "a_not_b",
 "a_not_b",
 "OutputData",
-"EpochOutputData");
+"TrialOutputData");
