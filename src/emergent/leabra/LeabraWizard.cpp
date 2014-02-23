@@ -1273,8 +1273,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   }
 
   String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
-  if(!pvlvspgp) return false;
+  BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
   BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
   if(!pbwmspgp) return false;
 
