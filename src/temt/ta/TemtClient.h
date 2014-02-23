@@ -158,7 +158,7 @@ protected:
 // every command line is parsed into the following pieces before dispatching the command:
   String		      cmd_line; // the last cmd line
   String		      cmd; // this is the first item, the command
-  String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done
+  String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done (used by ascii parser)
   NameVar_PArray	name_params; // name params; str quoting/escaping already done
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
   
@@ -170,6 +170,7 @@ protected:
   
   void			    HandleLines(); // line handling loop
   void          ParseCommand(const String& cl);
+  void          ParseCommandASCII(const String& cl);
   void          ParseCommandJSON(const String& cl);
 
 private:
