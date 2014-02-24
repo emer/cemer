@@ -17,6 +17,8 @@
 #include <ProgEl>
 #include <DataTable>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(DataOpEl);
 
 
@@ -42,6 +44,14 @@ String DataOpEl::GetDisplayName() const {
 
 String DataOpEl::GetName() const {
   return col_name;
+}
+
+bool DataOpEl::SetName(const String& nm) {
+  // Ensure name is a legal C-language identifier.
+  String new_name = taMisc::StringCVar(nm);
+  if (col_name == new_name) return true;
+  col_name = new_name;
+  return true;
 }
 
 void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {

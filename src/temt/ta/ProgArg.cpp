@@ -140,6 +140,10 @@ bool ProgArg::BrowserEditSet(const String& code, int move_after) {
   expr.expr = trim(code.after('='));
   expr.UpdateAfterEdit();
   SigEmitUpdated();
+  ProgEl* pel = GET_MY_OWNER(ProgEl);
+  if(pel) {
+    pel->SigEmitUpdated();
+  }
   return true;
 }
 

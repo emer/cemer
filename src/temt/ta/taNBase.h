@@ -37,6 +37,11 @@ public:
   void SetDefaultName() override;
   void MakeNameUnique() override;
 
+  bool          BrowserEditEnable() override { return true; }
+  String        BrowserEditString() override { return GetDisplayName(); }
+  bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override
+  { return SetName(new_val_str); }
+
   TA_BASEFUNS(taNBase);
 protected:
   void         UpdateAfterEdit_impl() override;
