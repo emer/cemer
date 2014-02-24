@@ -1,3 +1,30 @@
+/**
+ * generate.txt
+ * Copyright (c) 2014 eCortex, Inc.
+ * 
+ * This file is part of the Emergent Test Framework.
+ *
+ * The Emergent Test Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Emergent Test Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Emergent Test Framework.  If not, see http://www.gnu.org/licenses/.
+ *
+ * Emergent Test Framework
+ * Version 0.8
+ * Compatible with Emergent 6.x
+ * 
+ */
+
+
+
 *** Settings ***
 
 Library                       OperatingSystem
@@ -8,17 +35,18 @@ Suite Teardown                Terminate All Processes    kill=True
 *** Variables ***
 
 ${test-dir} =                 test
+${test-ext} =                 .css.txt
 
 *** Test Cases ***
 
 Copy Standard Files
-    Copy File         ${CURDIR}/emergent.txt.cpy    ${test-dir}/emergent.txt
+    Copy File         ${CURDIR}/emergent.txt.cpy              ${test-dir}/emergent.txt
     Import Resource   ${EXECDIR}/${test-dir}/emergent.txt
-    Copy File         ${CURDIR}/leabra.css.cpy      ${test-dir}/leabra.css
-    Copy File         ${CURDIR}/__init__.txt.cpy      ${test-dir}/__init__.txt
+    Copy File         ${CURDIR}/leabra.css.cpy                ${test-dir}/leabra.css
+    Copy File         ${CURDIR}/__init__.txt.cpy              ${test-dir}/__init__.txt
 
 Verify Project Compatibility
-    @{project-files} =                   List Files In Directory  .  *.proj
+    @{project-files} =                   List Files In Directory     .  *.proj
     @{projects} =                        Create List
     Set Suite Variable                   ${projects}
     :FOR  ${project-filename}  IN        @{project-files}
@@ -30,6 +58,11 @@ Generate Default Tests
     :FOR  ${project-name}  IN            @{projects}
     \     Create Test                    ${project-name}
    
+Copy Custom Tests
+    @{custom-test-files} =               List Files In Directory     .  *${test-ext}
+    :FOR  ${test-filename}    IN         @{custom-test-files}
+    \     Copy File   ${test-filename}   ${test-dir}/${test-filename}    
+
 *** Keywords ***
 
 Get Project From File
@@ -40,12 +73,12 @@ Get Project From File
 
 Verify Standard
     [Arguments]                    ${project-name}
-    ${script} =                    Set Variable          ${test-dir}/${project-name}.css
-    Create CSS                     ${script}             ${test-dir}             ${project-name} 
-    ${output} =                    Run Emergent          ${project-name}.proj    ${script}    10 secs
+    ${script} =                    Set Variable               ${test-dir}/${project-name}.css
+    Create Verification CSS        ${script}                  ${test-dir}             ${project-name} 
+    ${output} =                    Run Emergent               ${project-name}.proj    ${script}    10 secs
     Remove File                    ${script}      
-    @{error-signatures} =          Create List           ERROR    incompatible    leabra.css
-    ${status} =                    Should Not Contain Any         ${output}             ${error-signatures}
+    @{error-signatures} =          Create List                ERROR                   incompatible    leabra.css
+    ${status} =                    Should Not Contain Any     ${output}               ${error-signatures}
     Run Keyword If                 '${status}' == 'FAIL'      Log    Project "${project-name}" is missing required elements and will not be included in your tests.\n    WARN
     [Return]                       ${status}
 
@@ -53,20 +86,37 @@ Should Not Contain Any
     [Arguments]          ${output}      ${error-signatures}
     :FOR  ${error-signature}  IN        @{error-signatures}
     \     ${status}    ${message} =     Run Keyword And Ignore Error   Should Not Contain       ${output}    ${error-signature}
-    \     Return From Keyword If        '${status}' == 'FAIL'    ${status}
-    [Return]             PASS
+    \     Return From Keyword If        '${status}' == 'FAIL'          ${status}
+    [Return]                            PASS
 
 Create Test
     [Arguments]          ${project-name}
     ${S} =               Set Variable        ${SPACE * 4}
-    ${test-filename} =   Set Variable        ${test-dir}/${project-name}.txt
+    ${test-filename} =   Set Variable        ${test-dir}/${project-name}${test-ext}
+    Append To File       ${test-filename}    /* CSS Section */\n
+    Append To File       ${test-filename}    \#include "${test-dir}/leabra.css"\n\n
+    Append To File       ${test-filename}    /* For custom tests, replace the next line with your custom CSS code */\n
+    Append To File       ${test-filename}    /* You must ensure that the output matches the metrics in the TXT section. */\n
+    Append To File       ${test-filename}    RunStandard("${project-name}");\n\n
+    Append To File       ${test-filename}    /* TXT Section\n\n
     Append To File       ${test-filename}    *** Settings ***\n
-    Append To File       ${test-filename}    Resource ${S} ${test-dir}/emergent.txt\n
-    Append To File       ${test-filename}    *** Test Cases ***\n
-    Append To File       ${test-filename}    Leabra Default Test\n
-    Append To File       ${test-filename}    ${S} Run Default Test ${S} ${project-name} ${S} ${test-dir}\n
+    Append To File       ${test-filename}    Resource ${S} ${test-dir}/emergent.txt\n\n
+    Append To File       ${test-filename}    *** Test Cases ***\n\n
+    Append To File       ${test-filename}    Leabra Standard Test\n
+    Append To File       ${test-filename}    ${S} Initialize Standard Test ${S} ${project-name} ${S} ${test-dir}\n\n
+    Append To File       ${test-filename}    ${S} \# Increase the timeout if your test normally takes longer to run\n
+    Append To File       ${test-filename}    ${S} Set Timeout ${S} 60 secs\n\n
+    Append To File       ${test-filename}    ${S} \# Metrics are specified as name/preferred range/required range\n
+    Append To File       ${test-filename}    ${S} \# ${S} indicating plus/minus a fraction of the baseline.\n
+    Append To File       ${test-filename}    ${S} \# To modify the ranges, just change the numbers.\n
+    Append To File       ${test-filename}    ${S} \# Do not remove the indentation or spaces between items\n
+    Append To File       ${test-filename}    ${S} Add Metric ${S} avg ${S} 0.15 ${S} 0.25\n
+    Append To File       ${test-filename}    ${S} Add Metric ${S} max ${S} 0.25 ${S} 0.30\n
+    Append To File       ${test-filename}    ${S} Add Metric ${S} min ${S} 0.15 ${S} 0.25\n\n
+    Append To File       ${test-filename}    ${S} Run Standard Test\n\n
+    Append To File       ${test-filename}    \# END of Emergent Test Framework File */\n
 
-Create CSS
-    [Arguments]         ${script}     ${test-dir}       ${project}
-    Create File         ${script}     \#include "${test-dir}/leabra.css"\n\n
-    Append To File      ${script}     VerifyStandard("${project}");\n
+Create Verification CSS
+    [Arguments]          ${script}           ${test-dir}       ${project}
+    Create File          ${script}           \#include "${test-dir}/leabra.css"\n\n
+    Append To File       ${script}           VerifyStandard("${project}");\n

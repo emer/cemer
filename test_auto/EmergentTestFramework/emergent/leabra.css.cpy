@@ -1,4 +1,31 @@
+/**
+ * leabra.css (aka leabra.css.cpy)
+ * Copyright (c) 2014 eCortex, Inc.
+ * 
+ * This file is part of the Emergent Test Framework.
+ *
+ * The Emergent Test Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Emergent Test Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Emergent Test Framework.  If not, see http://www.gnu.org/licenses/.
+ *
+ * Emergent Test Framework
+ * Version 0.8
+ * Compatible with Emergent 6.x
+ * 
+ */
 
+/*
+ *  VerifyStandard - Ensure that all the components required for a standard test exist in a project
+ */
 void VerifyStandard(
         String sProject) {
     Program *program = .projects[sProject].programs.gp["LeabraAll_Std"]["LeabraBatch"];
@@ -7,6 +34,9 @@ void VerifyStandard(
     DataTable *out = .projects[sProject].data.gp["OutputData"]["EpochOutputData"];
 }
 
+/*
+ *  SetRandom - Set the randomizer to a NEW_SEED so that it has a different result each time
+ */
 void SetRandom(
 	String sProject,
 	String sProgramGroup,
@@ -15,6 +45,9 @@ void SetRandom(
     .projects[sProject].programs.gp[sProgramGroup][sProgram].vars[sVariable].SetVar("NEW_SEED");
 }
 
+/*
+ *  RunProgram - Run the specified Program with the given inputs
+ */
 void RunProgram(
 	String sProject,
 	String sProgramGroup,
@@ -30,6 +63,9 @@ void RunProgram(
     program->Run();
 }
 
+/*
+ *  OutputEpochsToTrain - In a standard test, use the Epoch output data to output the min/max/avg epochs
+ */
 void OutputEpochsToTrain(
 	String sTestName,
 	String sProject,
@@ -57,26 +93,27 @@ void OutputEpochsToTrain(
     cout << "{ \"name\": \"" << sTestName << "\", \"min\": " << min << ", \"max\": " << max << ", \"avg\": " << avg << " }" << endl;
 }
 
-void OutputANotB(
-	String sTestName,
-	String sProject,
-	String sOutputDataGroup,
-	String sOutputDataTable) {
-    DataTable *out = .projects[sProject].data.gp[sOutputDataGroup][sOutputDataTable];
-    out->Filter("trial_name", Relation::CONTAINS, "choice");
-    int rows = out->ItemCount();
-    float sum = 0;
-    float max = 0;
-    float min = 99999999999;
-    for (int row = 0; row < rows; row++) {
-        float result = out->GetMatrixFlatVal("Reach_act", row, 0);
-        sum += result;
-        if (result > max)
-            max = result;
-        if (result < min)
-            min = result;
-    } 
-    out->ShowAllRows();
-    float avg = sum / (float) rows;
-    cout << "{ \"name\": \"" << sTestName << "\", \"min\": " << min << ", \"max\": " << max << ", \"avg\": " << avg << " }" << endl;
+/*
+ *  RunStandard - Run a standard test all the way through - this is the "main" for a standard test
+ */
+void RunStandard(
+        String sProject) {
+    SetRandom(
+        sProject,
+        "LeabraAll_Std",
+        "LeabraTrain",
+        "rnd_init");
+    RunProgram(
+        sProject,
+        "LeabraAll_Std",
+        "LeabraBatch",
+        "Network_0",
+        "InputData",
+        "StdInputData");
+    OutputEpochsToTrain(
+        sProject,
+        sProject,
+        "OutputData",
+        "EpochOutputData");
 }
+

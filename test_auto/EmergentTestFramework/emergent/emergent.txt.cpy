@@ -1,35 +1,69 @@
+/**
+ * emergent.txt (aka emergent.txt.cpy)
+ * Copyright (c) 2014 eCortex, Inc.
+ * 
+ * This file is part of the Emergent Test Framework.
+ *
+ * The Emergent Test Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Emergent Test Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Emergent Test Framework.  If not, see http://www.gnu.org/licenses/.
+ *
+ * Emergent Test Framework
+ * Version 0.8
+ * Compatible with Emergent 6.x
+ * 
+ */
+
 *** Settings ***
 
 Library           Process
 Library           OperatingSystem
+Library           Collections
 
 *** Keywords ***
 
 #
-# Top-tier keywords (called from Suite)
+# Top-tier keywords (called from Test)
 
-Run Default Test
+Initialize Standard Test
     [Arguments]               ${project}    ${test-dir}
-    Set Variables             ${project}    60 secs    ${test-dir}
-    Set Metrics               avg  0.15  0.25
-    Create CSS Default        ${test-dir}
+    Set Variables             ${project}    ${test-dir}
+   
+Run Standard Test
     Run Model
     Check Preferred
     Check Required
 
+Set Timeout
+    [Arguments]         ${time}
+    Set Test Variable   ${timeout}         ${time}
+
+Add Metric
+    [Arguments]         @{metric}
+    Append To List      ${metric-list}     @{metric}
+
+#
+# Level two keywords - called from top tier
+
 Set Variables
-    [Arguments]         ${namearg}         ${time}           ${test-dir}
+    [Arguments]         ${namearg}         ${test-dir}
+    Set Test Variable   ${S}               ${SPACE * 4}
     Set Test Variable   ${name}            ${namearg}
     Set Test Variable   ${project-file}    ${name}.proj
-    Set Test Variable   ${script-file}     ${test-dir}/${name}.css
-    Set Test Variable   ${timeout}         ${time}
+    Set Test Variable   ${script-file}     ${test-dir}/${name}.css.txt
     Set Test Variable   ${baseline-file}   ${test-dir}/${name}.baseline.json
     Set Test Variable   ${record-file}     ${test-dir}/${name}.record.json
-
-Set Metrics
-    [Arguments]         @{metrics}
-    @{metric-list} =    Create List        @{metrics}
-    Set Test Variable   @{metric-list}
+    @{metric-list} =    Create List
+    Set Test Variable   ${metric-list}
 
 Run Model
     ${output} =                                     Run Emergent     ${project-file}   ${script-file}   ${timeout}
@@ -119,50 +153,3 @@ Less Or Equal
     ${isLess} =          Evaluate             (${left} <= ${right})
     Should Be True       ${isLess}            ${name} = ${left} is HIGH (${right})
 
-#
-# Creating CSS files
-
-Create CSS Default
-    [Arguments]         ${test-dir}
-    Create CSS Custom                               ${script-file}   ${test-dir}
-    Add CSS Standard Randomize                      ${script-file}   ${name}
-    Add CSS Standard RunProgram                     ${script-file}   ${name}    LeabraBatch    Network_0    StdInputData
-    Add CSS Standard Output                         ${script-file}   ${name}    OutputEpochsToTrain   EpochOutputData
-
-Create CSS Standard
-    [Arguments]         ${script}     ${name}
-    Create File         ${script}     Program *program = .projects["${name}"].programs.gp["Tests"]["Test"];\nprogram->Run();\n
-
-Create CSS Custom
-    [Arguments]         ${script}     ${test-dir}
-    Create File         ${script}     \#include "${test-dir}/leabra.css"\n\n
-
-Add CSS Standard Randomize
-    [Arguments]         ${script}     ${project}
-    Append To File      ${script}     SetRandom(\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "LeabraAll_Std",\n
-    Append To File      ${script}     "LeabraTrain",\n
-    Append To File      ${script}     "rnd_init");\n
-
-Add CSS Standard RunProgram
-    [Arguments]         ${script}     ${project}    ${program}   ${network}  ${data}
-    Append To File      ${script}     RunProgram(\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "LeabraAll_Std",\n
-    Append To File      ${script}     "${program}",\n
-    Append To File      ${script}     "${network}",\n
-    Append To File      ${script}     "InputData",\n
-    Append To File      ${script}     "${data}");\n
-
-Add CSS Standard Output
-    [Arguments]         ${script}     ${project}    ${method}    ${table}
-    Append To File      ${script}     ${method}(\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "OutputData",\n
-    Append To File      ${script}     "${table}");\n
-    
-Add CSS Verify Standard
-    [Arguments]         ${script}     ${project}
-    Append To File      ${script}     VerifyStandard("${project}");\n

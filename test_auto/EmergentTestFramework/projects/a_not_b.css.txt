@@ -1,0 +1,71 @@
+/* CSS Section */
+#include "test/leabra.css"
+
+/* Custom css test code for a_not_b */
+
+void OutputANotB(
+	String sTestName,
+	String sProject,
+	String sOutputDataGroup,
+	String sOutputDataTable) {
+    DataTable *out = .projects[sProject].data.gp[sOutputDataGroup][sOutputDataTable];
+    out->Filter("trial_name", Relation::CONTAINS, "choice");
+    int rows = out->ItemCount();
+    float sum = 0;
+    float max = 0;
+    float min = 99999999999;
+    for (int row = 0; row < rows; row++) {
+        float result = out->GetMatrixFlatVal("Reach_act", row, 0);
+        sum += result;
+        if (result > max)
+            max = result;
+        if (result < min)
+            min = result;
+    } 
+    out->ShowAllRows();
+    float avg = sum / (float) rows;
+    cout << "{ \"name\": \"" << sTestName << "\", \"min\": " << min << ", \"max\": " << max << ", \"avg\": " << avg << " }" << endl;
+}
+
+SetRandom(
+    "a_not_b",
+    "LeabraAll_Std",
+    "LeabraTrain",
+    "rnd_init");
+RunProgram(
+    "a_not_b",
+    "LeabraAll_Std",
+    "LeabraTrain",
+    "ABNet",
+    "InputData",
+    "ABInput_Delay3");
+OutputANotB(
+    "a_not_b",
+    "a_not_b",
+    "OutputData",
+    "TrialOutputData");
+
+/* TXT Section
+
+*** Settings ***
+Resource      test/emergent.txt
+
+*** Test Cases ***
+
+Leabra Standard Test
+     Initialize Standard Test      a_not_b      test
+
+     # Increase the timeout if your test normally takes longer to run
+     Set Timeout      60 secs
+
+     # Metrics are specified as name/preferred range/required range
+     #      indicating plus/minus a fraction of the baseline.
+     # To modify the ranges, just change the numbers.
+     # Do not remove the indentation or spaces between items
+     Add Metric      avg      0.15      0.25
+     Add Metric      max      0.40      0.80
+     Add Metric      min      0.20      0.35
+
+     Run Standard Test
+
+# END of Emergent Test Framework File */

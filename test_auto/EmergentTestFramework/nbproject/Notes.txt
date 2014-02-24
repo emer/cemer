@@ -1,3 +1,10 @@
+
+Need to modify the generation process so that it does not try to verify or create tests for those with custom tests.
+
+I haven't really worked to make the generate process idempotent - I've always been resetting it.
+
+Change the "Preferred" test to just generate warnings
+
 2pm 02/22
 Basic generator and tests are working.
 
