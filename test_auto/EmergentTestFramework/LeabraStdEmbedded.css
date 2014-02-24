@@ -1,2 +1,0 @@
-Program *program = .projects["LeabraStdEmbedded"].programs.gp["Tests"]["Test"];
-program->Run();
