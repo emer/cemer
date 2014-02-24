@@ -56,11 +56,15 @@ public:
   String       GetToolbarName() const override { return "fun def"; }
 
   // below from taNBase for name:
-  bool		HasName() const override { return true; }
+  bool	       HasName() const override { return true; }
   bool         SetName(const String& nm) override;
   String       GetName() const override { return name; }
-  void 	SetDefaultName() override;
-  void 	MakeNameUnique() override;
+  void 	       SetDefaultName() override;
+  void 	       MakeNameUnique() override;
+
+  bool         CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool         CvtFmCode(const String& code) override;
+  bool         BrowserEditSet(const String& code, int move_after = 0) override;
 
   void         InitLinks() override;
   void Copy_(const Function& cp);

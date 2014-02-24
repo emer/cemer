@@ -181,3 +181,39 @@ void Function::UpdateCallerArgs() {
   }
   prog->GuiFindFromMe("\"FunCall " + name + "\"");    // find all refs to me
 }
+
+bool Function::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  return false; // never convert from a ProgCode guy..
+}
+
+bool Function::BrowserEditSet(const String& code, int move_after) {
+  // always convert -- don't check and don't revert to ProgCode
+  edit_move_after = 0;
+  String cd = CodeGetDesc(code);
+  return CvtFmCode(cd);
+}
+
+bool Function::CvtFmCode(const String& code) {
+  if(!code.contains('(')) return false;
+  String fnm = trim(code.before('('));
+  if(fnm.contains(' ')) {       // type funame
+    String retyp = fnm.before(' ');
+    // todo: set return type
+    fnm = fnm.after(' ');
+  }
+  SetName(fnm);
+  String ars = code.after('(');
+  if(ars.contains(')')) ars = ars.before(')',-1);
+  ars = trim(ars);
+  String_Array ar;
+  ar.FmDelimString(ars, ",");
+  args.SetSize(ar.size);
+  for(int i=0; i<ar.size; i++) {
+    String av = trim(ar[i]);
+    ProgVar* pv = args[i];
+    pv->SetTypeAndName(av);
+  }
+  // todo: parse return val
+  return true;
+}
+
