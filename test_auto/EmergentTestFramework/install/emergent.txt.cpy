@@ -1,38 +1,73 @@
+/**
+ * emergent.txt (aka emergent.txt.cpy)
+ * Copyright (c) 2014 eCortex, Inc.
+ * 
+ * This file is part of the Emergent Test Framework.
+ *
+ * The Emergent Test Framework is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Emergent Test Framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Emergent Test Framework.  If not, see http://www.gnu.org/licenses/.
+ *
+ * Emergent Test Framework
+ * Version 0.8
+ * Compatible with Emergent 6.x
+ * 
+ */
+
 *** Settings ***
 
 Library           Process
 Library           OperatingSystem
+Library           Collections
 
 *** Keywords ***
 
 #
-# Top-tier keywords (called from Suite)
+# Top-tier keywords (called from Test)
 
-Run Default Test
+Initialize Standard Test
     [Arguments]               ${project}    ${test-dir}
-    Set Variables             ${project}    60 secs    ${test-dir}
-    Set Metrics               avg  0.15  0.25
-    Create CSS Default        ${test-dir}
+    Set Variables             ${project}    ${test-dir}
+   
+Run Standard Test
     Run Model
     Check Preferred
     Check Required
 
+Set Timeout
+    [Arguments]         ${time}
+    Set Test Variable   ${timeout}         ${time}
+
+Add Metric
+    [Arguments]         @{metric}
+    Append To List      ${metric-list}     @{metric}
+
+#
+# Level two keywords - called from top tier
+
 Set Variables
-    [Arguments]         ${namearg}         ${time}           ${test-dir}
+    [Arguments]         ${namearg}         ${test-dir}
+    Set Test Variable   ${S}               ${SPACE * 4}
     Set Test Variable   ${name}            ${namearg}
     Set Test Variable   ${project-file}    ${name}.proj
-    Set Test Variable   ${script-file}     ${test-dir}/${name}.css
-    Set Test Variable   ${timeout}         ${time}
+    Set Test Variable   ${script-file}     ${test-dir}/${name}.css.txt
     Set Test Variable   ${baseline-file}   ${test-dir}/${name}.baseline.json
     Set Test Variable   ${record-file}     ${test-dir}/${name}.record.json
-
-Set Metrics
-    [Arguments]         @{metrics}
-    @{metric-list} =    Create List        @{metrics}
-    Set Test Variable   @{metric-list}
+    @{metric-list} =    Create List
+    Set Test Variable   ${metric-list}
 
 Run Model
-    ${actuals} =                                    Run Emergent     ${project-file}   ${script-file}   ${timeout}
+    ${output} =                                     Run Emergent     ${project-file}   ${script-file}   ${timeout}
+    ${actuals} =                                    Get Results      ${output}
     Append To File                                  ${record-file}   ${actuals}\n  
     ${baseline} =                                   Get Baseline     ${baseline-file}
     Run Keyword If      '${baseline}' == 'FAIL'     Add To Baseline  ${baseline-file}  ${actuals}
@@ -41,10 +76,14 @@ Run Model
     Set Test Variable   ${actuals}
 
 Check Preferred
+    ${fail-if-outside} =    Set Variable    ${False}
+    Set Test Variable   ${fail-if-outside}
     :FOR  ${metric}  ${preferred}  ${required}  IN  @{metric-list}
     \     Run Keyword And Continue On Failure   Check Metric     ${metric}  ${preferred}  ${actuals}  ${baseline}
 
 Check Required
+    ${fail-if-outside} =    Set Variable    ${True}
+    Set Test Variable   ${fail-if-outside}
     :FOR  ${metric}  ${preferred}  ${required}  IN  @{metric-list}
     \     Run Keyword And Continue On Failure   Check Metric     ${metric}  ${required}   ${actuals}  ${baseline}
 
@@ -57,8 +96,7 @@ Run Emergent
     Start Process        emergent -nogui -ni -p ${project} -s ${script}   shell=True  # Doesn't seem to work without shell - misses args
     ${result} =          Wait For Process          timeout=${timeout}  
     Should Be Equal As Integers                    ${result.rc}  0
-    ${metrics} =         Get Results               ${result.stdout}
-    [Return]             ${metrics}
+    [Return]             ${result.stdout}${result.stderr}
 
 Check Metric
     [Arguments]          ${metric}    ${fraction}  ${actuals}  ${baseline}
@@ -84,8 +122,9 @@ Get Baseline
 
 Add To Baseline
     [Arguments]          ${filename}  ${actuals}
-    Append To File       ${baseline-file}   ${actuals},  
-    Pass Execution       No baseline for ${name}; adding results from this run
+    Append To File       ${baseline-file}   ${actuals}  
+    Log                  No baseline for project "${name}".    WARN
+    Pass Execution       Created baseline from results of this run.
 
 Get Value From JSON
     [Arguments]          ${field}     ${json}
@@ -111,54 +150,14 @@ In Range
 Greater Or Equal
     [Arguments]          ${name}    ${left}    ${right}
     ${isGreater} =       Evaluate              (${left} >= ${right})
-    Should Be True       ${isGreater}          ${name} = ${left} is LOW (${right})
+    Range Message        ${isGreater}          ${name} = ${left} is LOW (${right})
 
 Less Or Equal
     [Arguments]          ${name}    ${left}   ${right}
     ${isLess} =          Evaluate             (${left} <= ${right})
-    Should Be True       ${isLess}            ${name} = ${left} is HIGH (${right})
+    Range Message        ${isLess}            ${name} = ${left} is HIGH (${right})
 
-#
-# Creating CSS files
-
-Create CSS Default
-    [Arguments]         ${test-dir}
-    Create CSS Custom                               ${script-file}   ${test-dir}
-    Add CSS Standard Randomize                      ${script-file}   ${name}
-    Add CSS Standard RunProgram                     ${script-file}   ${name}    LeabraBatch    Network_0    StdInputData
-    Add CSS Standard Output                         ${script-file}   ${name}    OutputEpochsToTrain   EpochOutputData
-
-Create CSS Standard
-    [Arguments]         ${script}     ${name}
-    Create File         ${script}     Program *program = .projects["${name}"].programs.gp["Tests"]["Test"];\nprogram->Run();\n
-
-Create CSS Custom
-    [Arguments]         ${script}     ${test-dir}
-    Create File         ${script}     \#include "${test-dir}/leabra.css"\n\n
-
-Add CSS Standard Randomize
-    [Arguments]         ${script}     ${project}
-    Append To File      ${script}     SetRandom(\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "LeabraAll_Std",\n
-    Append To File      ${script}     "LeabraTrain",\n
-    Append To File      ${script}     "rnd_init");\n
-
-Add CSS Standard RunProgram
-    [Arguments]         ${script}     ${project}    ${program}   ${network}  ${data}
-    Append To File      ${script}     RunProgram(\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "LeabraAll_Std",\n
-    Append To File      ${script}     "${program}",\n
-    Append To File      ${script}     "${network}",\n
-    Append To File      ${script}     "InputData",\n
-    Append To File      ${script}     "${data}");\n
-
-Add CSS Standard Output
-    [Arguments]         ${script}     ${project}    ${method}    ${table}
-    Append To File      ${script}     ${method}(\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "${project}",\n
-    Append To File      ${script}     "OutputData",\n
-    Append To File      ${script}     "${table}");\n
-    
+Range Message
+    [Arguments]          ${condition}         ${message}
+    Run Keyword If       ${fail-if-outside}   Should Be True       ${condition}    ${message}
+    Run Keyword Unless   ${fail-if-outside}   Run Keyword Unless   ${condition}    Log   ${message}   WARN

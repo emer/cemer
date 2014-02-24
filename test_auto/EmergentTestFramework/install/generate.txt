@@ -36,6 +36,7 @@ Suite Teardown                Terminate All Processes    kill=True
 
 ${test-dir} =                 test
 ${test-ext} =                 .css.txt
+${proj-ext} =                 .proj
 
 *** Test Cases ***
 
@@ -45,31 +46,39 @@ Copy Standard Files
     Copy File         ${CURDIR}/leabra.css.cpy                ${test-dir}/leabra.css
     Copy File         ${CURDIR}/__init__.txt.cpy              ${test-dir}/__init__.txt
 
-Verify Project Compatibility
-    @{project-files} =                   List Files In Directory     .  *.proj
+Create Project List
+    @{project-files} =                   List Files In Directory     .  *${proj-ext}
     @{projects} =                        Create List
     Set Suite Variable                   ${projects}
     :FOR  ${project-filename}  IN        @{project-files}
-    \     ${project-name} =              Get Project From File       ${project-filename}
-    \     ${status} =                    Verify Standard             ${project-name}
-    \     Run Keyword If                 '${status}' == 'PASS'       Append To List   ${projects}   ${project-name}
+    \     ${project-name} =              Get Project From File       ${project-filename}    ${proj-ext}    
+    \     Append To List                 ${projects}   ${project-name}
 
-Generate Default Tests
-    :FOR  ${project-name}  IN            @{projects}
-    \     Create Test                    ${project-name}
-   
 Copy Custom Tests
     @{custom-test-files} =               List Files In Directory     .  *${test-ext}
     :FOR  ${test-filename}    IN         @{custom-test-files}
-    \     Copy File   ${test-filename}   ${test-dir}/${test-filename}    
+    \     Copy File   ${test-filename}   ${test-dir}/${test-filename} 
+    \     ${project-name} =              Get Project From File       ${test-filename}    ${test-ext}    
+    \     Remove Values From List        ${projects}                 ${project-name}
+
+Verify Project Compatibility
+    :FOR  ${project-name}  IN            @{projects}
+    \     ${status} =                    Verify Standard             ${project-name}
+    \     Run Keyword If                 '${status}' == 'FAIL'       Remove Values From List   ${projects}     ${project-name}
+
+Generate Standard Tests
+    :FOR  ${project-name}  IN            @{projects}
+    \     Create Test                    ${project-name}
+   
 
 *** Keywords ***
 
 Get Project From File
-    [Arguments]          ${filename}
+    [Arguments]          ${filename}               ${extension}
     ${match}             ${project} = 
-    ...                  Should Match Regexp       ${filename}   (.*)\.proj
+    ...                  Should Match Regexp       ${filename}   (.*)${extension}
     [Return]             ${project}
+
 
 Verify Standard
     [Arguments]                    ${project-name}
