@@ -1,3 +1,12 @@
+
+void VerifyStandard(
+        String sProject) {
+    Program *program = .projects[sProject].programs.gp["LeabraAll_Std"]["LeabraBatch"];
+    Network *network = .projects[sProject].networks["Network_0"];
+    DataTable *data = .projects[sProject].data.gp["InputData"]["StdInputData"];
+    DataTable *out = .projects[sProject].data.gp["OutputData"]["EpochOutputData"];
+}
+
 void SetRandom(
 	String sProject,
 	String sProgramGroup,

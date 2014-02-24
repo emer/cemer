@@ -1,6 +1,9 @@
 *** Settings ***
 
 Library                       OperatingSystem
+Library                       Collections
+Suite Teardown                Terminate All Processes    kill=True
+
 
 *** Variables ***
 
@@ -9,14 +12,22 @@ ${test-dir} =                 test
 *** Test Cases ***
 
 Copy Standard Files
-    Copy File    ${CURDIR}/emergent.txt.cpy    ${test-dir}/emergent.txt
-    Copy File    ${CURDIR}/leabra.css.cpy      ${test-dir}/leabra.css
-    Copy File    ${CURDIR}/__init__.txt.cpy      ${test-dir}/__init__.txt
+    Copy File         ${CURDIR}/emergent.txt.cpy    ${test-dir}/emergent.txt
+    Import Resource   ${EXECDIR}/${test-dir}/emergent.txt
+    Copy File         ${CURDIR}/leabra.css.cpy      ${test-dir}/leabra.css
+    Copy File         ${CURDIR}/__init__.txt.cpy      ${test-dir}/__init__.txt
 
-Generate Default Tests
+Verify Project Compatibility
     @{project-files} =                   List Files In Directory  .  *.proj
+    @{projects} =                        Create List
+    Set Suite Variable                   ${projects}
     :FOR  ${project-filename}  IN        @{project-files}
     \     ${project-name} =              Get Project From File       ${project-filename}
+    \     ${status} =                    Verify Standard             ${project-name}
+    \     Run Keyword If                 '${status}' == 'PASS'       Append To List   ${projects}   ${project-name}
+
+Generate Default Tests
+    :FOR  ${project-name}  IN            @{projects}
     \     Create Test                    ${project-name}
    
 *** Keywords ***
@@ -27,6 +38,24 @@ Get Project From File
     ...                  Should Match Regexp       ${filename}   (.*)\.proj
     [Return]             ${project}
 
+Verify Standard
+    [Arguments]                    ${project-name}
+    ${script} =                    Set Variable          ${test-dir}/${project-name}.css
+    Create CSS                     ${script}             ${test-dir}             ${project-name} 
+    ${output} =                    Run Emergent          ${project-name}.proj    ${script}    10 secs
+    Remove File                    ${script}      
+    @{error-signatures} =          Create List           ERROR    incompatible    leabra.css
+    ${status} =                    Should Not Contain Any         ${output}             ${error-signatures}
+    Run Keyword If                 '${status}' == 'FAIL'      Log    Project "${project-name}" is missing required elements and will not be included in your tests.\n    WARN
+    [Return]                       ${status}
+
+Should Not Contain Any
+    [Arguments]          ${output}      ${error-signatures}
+    :FOR  ${error-signature}  IN        @{error-signatures}
+    \     ${status}    ${message} =     Run Keyword And Ignore Error   Should Not Contain       ${output}    ${error-signature}
+    \     Return From Keyword If        '${status}' == 'FAIL'    ${status}
+    [Return]             PASS
+
 Create Test
     [Arguments]          ${project-name}
     ${S} =               Set Variable        ${SPACE * 4}
@@ -36,3 +65,8 @@ Create Test
     Append To File       ${test-filename}    *** Test Cases ***\n
     Append To File       ${test-filename}    Leabra Default Test\n
     Append To File       ${test-filename}    ${S} Run Default Test ${S} ${project-name} ${S} ${test-dir}\n
+
+Create CSS
+    [Arguments]         ${script}     ${test-dir}       ${project}
+    Create File         ${script}     \#include "${test-dir}/leabra.css"\n\n
+    Append To File      ${script}     VerifyStandard("${project}");\n

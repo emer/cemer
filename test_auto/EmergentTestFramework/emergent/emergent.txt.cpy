@@ -32,7 +32,8 @@ Set Metrics
     Set Test Variable   @{metric-list}
 
 Run Model
-    ${actuals} =                                    Run Emergent     ${project-file}   ${script-file}   ${timeout}
+    ${output} =                                     Run Emergent     ${project-file}   ${script-file}   ${timeout}
+    ${actuals} =                                    Get Results      ${output}
     Append To File                                  ${record-file}   ${actuals}\n  
     ${baseline} =                                   Get Baseline     ${baseline-file}
     Run Keyword If      '${baseline}' == 'FAIL'     Add To Baseline  ${baseline-file}  ${actuals}
@@ -57,8 +58,7 @@ Run Emergent
     Start Process        emergent -nogui -ni -p ${project} -s ${script}   shell=True  # Doesn't seem to work without shell - misses args
     ${result} =          Wait For Process          timeout=${timeout}  
     Should Be Equal As Integers                    ${result.rc}  0
-    ${metrics} =         Get Results               ${result.stdout}
-    [Return]             ${metrics}
+    [Return]             ${result.stdout}${result.stderr}
 
 Check Metric
     [Arguments]          ${metric}    ${fraction}  ${actuals}  ${baseline}
@@ -84,8 +84,9 @@ Get Baseline
 
 Add To Baseline
     [Arguments]          ${filename}  ${actuals}
-    Append To File       ${baseline-file}   ${actuals},  
-    Pass Execution       No baseline for ${name}; adding results from this run
+    Append To File       ${baseline-file}   ${actuals}  
+    Log                  No baseline for project "${name}".    WARN
+    Pass Execution       Created baseline from results of this run.
 
 Get Value From JSON
     [Arguments]          ${field}     ${json}
@@ -162,3 +163,6 @@ Add CSS Standard Output
     Append To File      ${script}     "OutputData",\n
     Append To File      ${script}     "${table}");\n
     
+Add CSS Verify Standard
+    [Arguments]         ${script}     ${project}
+    Append To File      ${script}     VerifyStandard("${project}");\n
