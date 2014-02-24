@@ -16,6 +16,7 @@
 #include "OtherProgramVar.h"
 #include <Program>
 #include <ProgVar>
+#include <taProject>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(OtherProgramVar);
@@ -56,9 +57,9 @@ void OtherProgramVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 String OtherProgramVar::GetDisplayName() const {
   String rval;
   if(set_other)
-    rval = "To: ";
+    rval = "Vars To: ";
   else
-    rval = "Fm: ";
+    rval = "Vars Fm: ";
   if(other_prog)
     rval += other_prog->name;
   else
@@ -119,3 +120,54 @@ void OtherProgramVar::GenCssPost_impl(Program* prog) {
   prog->DecIndent();
   prog->AddLine(this, "} // other program var");
 }
+
+bool OtherProgramVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("vars to:") || dc.startsWith("vars fm:")) return true;
+  return false;
+}
+
+bool OtherProgramVar::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
+  bool set_oth = false;
+  if(dc.startsWith("vars to:")) set_other = true;
+  else                          set_other = false;
+  String dtnm = code.after(": ");
+  if(dtnm.empty()) return true;
+  String rest = dtnm.after("Vars: ");
+  dtnm = dtnm.before(" ");
+  if(!other_prog || other_prog->name != dtnm) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(proj) {
+      Program* np = proj->programs.FindLeafName(dtnm);
+      if(np) {
+        other_prog = np;
+      }
+    }
+  }
+  if(rest.empty()) return true;
+
+  String_Array vrs;
+  vrs.FmDelimString(rest, " ");
+  if(vrs.size > 0) {
+    var_1 = FindVarNameInScope(vrs[0], false); // don't make
+  }
+  if(vrs.size > 1) {
+    var_2 = FindVarNameInScope(vrs[1], false); // don't make
+  }
+  if(vrs.size > 2) {
+    var_3 = FindVarNameInScope(vrs[2], false); // don't make
+  }
+  if(vrs.size > 3) {
+    var_4 = FindVarNameInScope(vrs[3], false); // don't make
+  }
+  SigEmitUpdated();
+  return true;
+}
+

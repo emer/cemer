@@ -46,6 +46,9 @@ public:
   String 	GetTypeDecoKey() const override { return "Program"; }
   String	GetToolbarName() const override { return "oth prg var"; }
 
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
+
   PROGEL_SIMPLE_BASEFUNS(OtherProgramVar);
 protected:
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;

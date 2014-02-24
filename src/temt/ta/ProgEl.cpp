@@ -689,19 +689,22 @@ String ProgEl::GetToolbarName() const {
 }
 
 bool ProgEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.startsWith(GetToolbarName())) return true; // default is just to match toolbar
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
   return false;
+}
+
+bool ProgEl::CvtFmCode(const String& code) {
+  // nothing to initialize
+  return true;
 }
 
 bool ProgEl::CvtFmSavedCode() {
   bool rval = CvtFmCode(orig_prog_code);
   SigEmitUpdated();
   return rval;
-}
-
-bool ProgEl::CvtFmCode(const String& code) {
-  // nothing to initialize
-  return true;
 }
 
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
