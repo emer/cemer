@@ -23,6 +23,7 @@
 #ifndef __MAKETA__
 #include <QPointer>
 #include <QAbstractSocket>
+#include <JSONNode>
 #endif
 
 #include <NameVar_PArray>
@@ -78,7 +79,7 @@ public:
   void      SendOkASCII(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
   void      SendOkJSON(const String& msg = _nilString); // send ok, w/ optional msg or data - json format
   
-  void			WriteLine(const String& ln); // low level write, note: adds eol
+  void      WriteLine(const String& ln); // low level write, note: adds eol
   void			Write(const String& txt); // low level write
   
 public: // commands, all are cmdXXX where XXX is exact command name
@@ -161,6 +162,7 @@ protected:
   String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done (used by ascii parser)
   NameVar_PArray	name_params; // name params; str quoting/escaping already done
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
+  JSONNode        tableData;  // #IGNORE this is the json data table data
   
   taProject*		GetCurrentProject(); // gets, and maybe asserts
   DataTable* 		GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats

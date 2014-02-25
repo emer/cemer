@@ -64,7 +64,6 @@ taTypeDef_Of(Variant_Data);
 
 #include <libjson>
 #include <JSONNode>
-//#include <JSONDefs>
 #include "../json/JSONDefs.h"
 
 TA_BASEFUNS_CTORS_DEFN(DataTable);
@@ -2807,7 +2806,7 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
   }
 }
 
-void DataTable::ParseJSON(const JSONNode& n) {
+void DataTable::ParseJSON(const JSONNode& n, bool append) {
   JSONNode::const_iterator i = n.begin();
   while (i != n.end()){
     // recursively call ourselves to dig deeper into the tree
@@ -2818,15 +2817,11 @@ void DataTable::ParseJSON(const JSONNode& n) {
     // get the node name and value as a string
     std::string node_name = i->name();
 
-    if (node_name == "keepRows") {
-      if (i->as_bool() == false)
-        RemoveAllRows();
-    }
-    else if (node_name == "columns") {
+    if (node_name == "columns") {
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
         const JSONNode aCol = *columns;
-        ParseJSONColumn(aCol);
+        WriteToColumn(aCol, append);
         columns++;
       }
     }
@@ -2834,7 +2829,7 @@ void DataTable::ParseJSON(const JSONNode& n) {
   }
 }
 
-void DataTable::ParseJSONColumn(const JSONNode& aCol) {
+void DataTable::WriteToColumn(const JSONNode& aCol, bool append) { // append or overwrite
   JSONNode theValues;
   JSONNode theDimensions;
   String columnName;
@@ -2881,14 +2876,19 @@ void DataTable::ParseJSONColumn(const JSONNode& aCol) {
     }
   }
 
-  int rowCount = theValues.size();  // row count
-  if (rowCount > this->rows) {
+  int startRow = 0;  // the first row to write to
+  int rowCount = theValues.size();  // row count to write to table
+  if (append) {
+    startRow = this->rows;
+    AddRows(rowCount);
+  }
+  else if (rowCount > this->rows) { // else overwrite - make sure we have enough rows
     AddRows(rowCount - this->rows);
   }
 
+  int row = startRow;
   if (!isMatrix) {
     JSONNode::const_iterator values = theValues.begin();
-    int row = 0;
     while (values != theValues.end()) {
       switch (columnType) {
       case VT_STRING:

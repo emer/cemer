@@ -229,9 +229,9 @@ public:
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
       int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
-  virtual void          ParseJSON(const JSONNode& n);
+  virtual void          ParseJSON(const JSONNode& n, bool append = true);
   // #IGNORE #CAT_FILE Load a json file into a datatable
-  virtual void          ParseJSONColumn(const JSONNode& aCol);
+  virtual void          WriteToColumn(const JSONNode& aCol, bool append = true);
    // #IGNORE #CAT_FILE parse column data and store to data table
   virtual void          ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
@@ -243,6 +243,7 @@ public:
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
   virtual void          ParseJSONMatrixVariantToFlat(const JSONNode& aMatrix, Variant_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
+
 
   DataCol::ValType      StrToValType(String valTypeStr);
   // #IGNORE convert a string into a ValType

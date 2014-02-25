@@ -278,8 +278,17 @@ void TemtClient::cmdRunProgram(bool sync) {
 }
 
 void TemtClient::cmdSetData() {
-  //TEMP
-  SendError("SetData not implemented yet");
+  if (msgFormat == TemtClient::ASCII) {
+    SendError("SetData only implemented for JSON");
+  }
+  if (msgFormat == TemtClient::JSON) {
+    String tnm = name_params.GetVal("table").toString();
+    DataTable* tab = GetAssertTable(tnm);
+    if (!tab) return;
+
+    tab->ParseJSON(tableData, false);  // false for overwrite (see also cmdAppendData)
+    SendOk();
+  }
 }
 
 Program* TemtClient::GetAssertProgram(const String& pnm) {
@@ -482,6 +491,11 @@ void TemtClient::cmdAppendData() {
   if (!tab) return;
   // note: ok if running
 
+  if (msgFormat == TemtClient::JSON) {
+    tab->ParseJSON(tableData, true);  // true for append
+    SendOk();
+  }
+  else {
   TableParams p(this, tab);
   bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
   //NOTE: p will have already sent an ERROR if cmd_ok is false
@@ -518,7 +532,6 @@ void TemtClient::cmdAppendData() {
   if (p.lines == 0) goto ok_exit;
 
   {
-
     //note: we must have enough lines to have made it here
     tab->StructUpdate(true);
     int ln_num = 0; // to do header/init stuff
@@ -549,10 +562,10 @@ void TemtClient::cmdAppendData() {
   ok_exit:
   // ok, we did!
   SendOk();
+  }
 }
 
 void TemtClient::cmdGetData() {
-
   if (msgFormat == TemtClient::ASCII) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
@@ -563,34 +576,42 @@ void TemtClient::cmdGetData() {
   if (!tab) return;
   // note: ok if running
 
-  TableParams p(this, tab);
-  if (!p.ValidateParams()) return;
-
-  // ok, we can do it!
-  SendOk("lines=" + String(p.lines));
-
-  ostringstream ostr;
-  String ln;
-
-  // header row, if any
-  if (p.header) {
-    tab->SaveHeader_strm(ostr, DataTable::TAB, p.markers);
-    ln = ostr.str().c_str();
-    Write(ln);
+  if (msgFormat == TemtClient::JSON) {
+    ostringstream ostr;
+    String data;
+    tab->ExportDataJSON_impl(ostr);
+    data = ostr.str().c_str();
+    Write(data);
   }
+  else {
+    TableParams p(this, tab);
+    if (!p.ValidateParams()) return;
 
-  // rows
-  for (int row = p.row_from; row <= p.row_to; ++row) {
-    ostr.str("");
-    ostr.clear();
-    tab->SaveDataRow_strm(ostr, row, DataTable::TAB, 
-        true, // quote_str
-        p.markers, // row_mark
-        p.col_from, p.col_to);
-    ln = ostr.str().c_str();
-    Write(ln);
+    // ok, we can do it!
+    SendOk("lines=" + String(p.lines));
+
+    ostringstream ostr;
+    String ln;
+
+    // header row, if any
+    if (p.header) {
+      tab->SaveHeader_strm(ostr, DataTable::TAB, p.markers);
+      ln = ostr.str().c_str();
+      Write(ln);
+    }
+
+    // rows
+    for (int row = p.row_from; row <= p.row_to; ++row) {
+      ostr.str("");
+      ostr.clear();
+      tab->SaveDataRow_strm(ostr, row, DataTable::TAB,
+          true, // quote_str
+          p.markers, // row_mark
+          p.col_from, p.col_to);
+      ln = ostr.str().c_str();
+      Write(ln);
+    }
   }
-
 }
 
 void TemtClient::cmdGetDataCell() {
@@ -932,6 +953,9 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "table") {
          name_params.SetVal("table", i->as_string().c_str());  // table name
        }
+      else if (node_name == "data") {
+         tableData = i->as_node(); // json string of data table data
+       }
       ++i;
     }
 
@@ -970,6 +994,9 @@ void TemtClient::RunCommand(const String& cmd) {
   }
   else if (cmd == "RunProgramAsync") {
     cmdRunProgram(false);
+  }
+  else if (cmd == "SetData") {
+    cmdSetData();
   }
   else if (cmd == "SetDataCell") {
     cmdSetDataCell();
