@@ -36,7 +36,7 @@ class TemtServer; //
 class DataTable; //
 class Program; //
 class QTcpSocket; //
-
+class JSONNode; //
 
 taTypeDef_Of(TemtClient);
 

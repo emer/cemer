@@ -799,6 +799,7 @@ ProgVar::VarType ProgVar::GetTypeFromTypeDef(TypeDef* td) {
 
 TypeDef* ProgVar::GetTypeDefFromString(const String& tstr) {
   String vtype = tstr;
+  if(vtype.endsWith("&")) vtype = vtype.before("&");
   if(vtype.endsWith("*")) vtype = vtype.before("*");
   if(vtype == "String") vtype = "taString";
   if(vtype == "string") vtype = "taString";

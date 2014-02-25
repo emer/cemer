@@ -198,7 +198,10 @@ bool Function::CvtFmCode(const String& code) {
   String fnm = trim(code.before('('));
   if(fnm.contains(' ')) {       // type funame
     String retyp = fnm.before(' ');
-    // todo: set return type
+    TypeDef* td = ProgVar::GetTypeDefFromString(retyp);
+    if(td) {
+      return_type = ProgVar::GetTypeFromTypeDef(td);
+    }
     fnm = fnm.after(' ');
   }
   SetName(fnm);
@@ -213,7 +216,13 @@ bool Function::CvtFmCode(const String& code) {
     ProgVar* pv = args[i];
     pv->SetTypeAndName(av);
   }
-  // todo: parse return val
+  if(code.contains("returns: ")) {
+    String retyp = trim(code.after("returns: "));
+    TypeDef* td = ProgVar::GetTypeDefFromString(retyp);
+    if(td) {
+      return_type = ProgVar::GetTypeFromTypeDef(td);
+    }
+  }
   return true;
 }
 
