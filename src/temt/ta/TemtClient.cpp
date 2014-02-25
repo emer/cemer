@@ -286,7 +286,8 @@ void TemtClient::cmdSetData() {
     DataTable* tab = GetAssertTable(tnm);
     if (!tab) return;
 
-    tab->ParseJSON(tableData, false);  // false for overwrite (see also cmdAppendData)
+    int row = name_params.GetVal("row").toInt();
+    tab->ParseJSON(tableData, row);  // -1 for append
     SendOk();
   }
 }
@@ -499,7 +500,7 @@ void TemtClient::cmdAppendData() {
   TableParams p(this, tab);
   bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
   //NOTE: p will have already sent an ERROR if cmd_ok is false
-  // any subsequenct failure must send an ERROR
+  // any subsequent failure must send an ERROR
 
 
   // ok, now we must block/waiting until all expected lines received
@@ -579,7 +580,8 @@ void TemtClient::cmdGetData() {
   if (msgFormat == TemtClient::JSON) {
     ostringstream ostr;
     String data;
-    tab->ExportDataJSON_impl(ostr);
+    String col_name = name_params.GetVal("column").toString();
+    tab->ExportDataJSON_impl(ostr, col_name);
     data = ostr.str().c_str();
     Write(data);
   }
@@ -658,12 +660,16 @@ void TemtClient::cmdGetDataCell_impl(TableParams& p) {
 }
 
 void TemtClient::cmdSetDataCell() {
-  if (msgFormat == TemtClient::ASCII) {
-    String tnm = pos_params.SafeEl(0);
-    name_params.SetVal("table", tnm);
+  if (msgFormat == TemtClient::JSON) {
+    SendError("For JSON use SetData, specify row and send one value");
   }
 
-  String tnm = name_params.GetVal("table").toString();
+//  if (msgFormat == TemtClient::ASCII) {
+    String tnm = pos_params.SafeEl(0);
+//    name_params.SetVal("table", tnm);
+//  }
+//
+//  String tnm = name_params.GetVal("table").toString();
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
@@ -675,12 +681,16 @@ void TemtClient::cmdSetDataCell() {
 }
 
 void TemtClient::cmdSetDataMatrixCell() {
-  if (msgFormat == TemtClient::ASCII) {
-    String tnm = pos_params.SafeEl(0);
-    name_params.SetVal("table", tnm);
+  if (msgFormat == TemtClient::JSON) {
+    SendError("For JSON use SetData, specify row and send one value");
   }
 
-  String tnm = name_params.GetVal("table").toString();
+//  if (msgFormat == TemtClient::ASCII) {
+    String tnm = pos_params.SafeEl(0);
+//    name_params.SetVal("table", tnm);
+//  }
+
+//  String tnm = name_params.GetVal("table").toString();
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
@@ -955,6 +965,15 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
        }
       else if (node_name == "data") {
          tableData = i->as_node(); // json string of data table data
+       }
+      else if (node_name == "column") {
+        name_params.SetVal("column", i->as_string().c_str());  // a single column name - for get only - set controlled through "data"
+       }
+      else if (node_name == "row") {
+        name_params.SetVal("row", i->as_int());  // first row to get/set
+       }
+      else if (node_name == "cell") {
+        name_params.SetVal("cell", i->as_int());  // first cell to get/set
        }
       ++i;
     }

@@ -2084,7 +2084,7 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
   strm << endl;
 }
 
-void DataTable::ExportDataJSON(const String& fname) {
+void DataTable::ExportDataJSON(const String& fname) {  // write the entire table to file
   // note: don't get file name when exporting
   taFiler* flr = GetSaveFiler(fname, ".json", false);
   if (flr->ostrm) {
@@ -2094,13 +2094,26 @@ void DataTable::ExportDataJSON(const String& fname) {
   taRefN::unRefDone(flr);
 }
 
-void DataTable::ExportDataJSON_impl(ostream& strm) {
+void DataTable::ExportDataJSON_impl(ostream& strm, const String& column_name) {
   JSONNode root(JSON_NODE);
   JSONNode columns(JSON_ARRAY);
   columns.set_name("columns");
-  for (int i=0; i<data.size; i++) {
+
+  int_Array columnList;
+  if (column_name.empty()) {  // write all columns
+    for (int i=0; i<data.size; i++) {
+      columnList.Add(i);
+    }
+  }
+  else {
+    int col_idx = this->FindColNameIdx(column_name);
+    if (col_idx != -1) {
+      columnList.Add(col_idx);
+    }
+  }
+  for (int i=0; i<columnList.size; i++) {
     JSONNode aColumn(JSON_NODE);
-    DataCol* dc = data.FastEl(i);
+    DataCol* dc = data.FastEl(columnList[i]);
     aColumn.push_back(JSONNode("name", json_string(dc->name.chars())));
     String val = ValTypeToStr(dc->valType());
     aColumn.push_back(JSONNode("type", val.chars()));
@@ -2806,7 +2819,7 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
   }
 }
 
-void DataTable::ParseJSON(const JSONNode& n, bool append) {
+void DataTable::ParseJSON(const JSONNode& n, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
   JSONNode::const_iterator i = n.begin();
   while (i != n.end()){
     // recursively call ourselves to dig deeper into the tree
@@ -2821,7 +2834,7 @@ void DataTable::ParseJSON(const JSONNode& n, bool append) {
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
         const JSONNode aCol = *columns;
-        WriteToColumn(aCol, append);
+        WriteToColumn(aCol, start_row);
         columns++;
       }
     }
@@ -2829,7 +2842,7 @@ void DataTable::ParseJSON(const JSONNode& n, bool append) {
   }
 }
 
-void DataTable::WriteToColumn(const JSONNode& aCol, bool append) { // append or overwrite
+void DataTable::WriteToColumn(const JSONNode& aCol, int start_row, int start_cell) { // row -1 means append, anything else overwrites starting at row
   JSONNode theValues;
   JSONNode theDimensions;
   String columnName;
@@ -2876,17 +2889,16 @@ void DataTable::WriteToColumn(const JSONNode& aCol, bool append) { // append or 
     }
   }
 
-  int startRow = 0;  // the first row to write to
+  int row = start_row;  // the first row to write to
   int rowCount = theValues.size();  // row count to write to table
-  if (append) {
-    startRow = this->rows;
+  if (row == -1) { // means append!
+    row = this->rows;
     AddRows(rowCount);
   }
-  else if (rowCount > this->rows) { // else overwrite - make sure we have enough rows
-    AddRows(rowCount - this->rows);
+  else if (rowCount > (this->rows - start_row)) { // else overwrite - make sure we have enough rows
+    AddRows(rowCount - (this->rows - start_row));
   }
 
-  int row = startRow;
   if (!isMatrix) {
     JSONNode::const_iterator values = theValues.begin();
     while (values != theValues.end()) {
