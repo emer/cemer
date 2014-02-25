@@ -1,0 +1,142 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil\fcharset0 Courier;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 6.3.9600}\viewkind4\uc1 
+\pard\sl240\slmult1\qc\b\f0\fs28\lang9 Documentation\par
+for the\par
+Emergent Test Framework\par
+Updated February 24, 2014\par
+\fs22\par
+
+\pard\sl240\slmult1\ul\fs24 Installation\ulnone\fs22\par
+\b0\par
+Installation of the Emergent Test Framework requires that you install four packages in order: Python 2.7.x, PIP, Robot Framework, and Emergent Test Framework. The installation instructions at \i robotframework.org\i0  cover the first three and are quite good and complete. However, a shortened version is provided here.\par
+\par
+\i Installing Python 2.7\i0\par
+\par
+The Emergent Test Framework is compatible with Python 2.7.x, but not 3.x or later. If you already have Python installed, you can see what version it is by typing at the command line:\par
+\par
+
+\pard\li720\sl240\slmult1\f1 python --version\f0\par
+
+\pard\sl240\slmult1\par
+If it is not installed, or an incompatible version is installed, go to the website \i python.org\i0 , click on Downloads, then Download Python 2.7.x.  Select the choice for your platform, download the file, and install it as appropriate.\par
+\par
+\i Path\par
+\i0\par
+To continue with the installation, your system path needs to include the location of the Python 2.7.x installation directory and its Scripts subdirectory. If you also have Python 3.x installed, you will need to ensure that the 2.7 version takes priority when you are running tests. While you are at it, you will also need the location of the Emergent executable in your path to be able to use the framework.\b\par
+\par
+\b0\i Installing PIP\par
+\par
+\i0 PIP is the package installer for Python. It is found at \i pip-installer.org\i0  and the installation instructions are simple. Download the file \i get-pip.py\i0  (it is a text file - use Save As in your browser). As of the date of this documentation, it is located here: \par
+\par
+
+\pard\li720\sl240\slmult1 {\fs20{\field{\*\fldinst{HYPERLINK https://raw.github.com/pypa/pip/master/contrib/get-pip.py }}{\fldrslt{https://raw.github.com/pypa/pip/master/contrib/get-pip.py\ul0\cf0}}}}\f0\fs20\par
+
+\pard\sl240\slmult1\fs22\par
+After downloading the file, just run this command:\par
+\par
+
+\pard\li720\sl240\slmult1\f1 python get-pip.py\f0\par
+
+\pard\sl240\slmult1\i\par
+Installing Robot Framework\par
+\i0\par
+At the command line, type:\par
+\i\par
+
+\pard\li720\sl240\slmult1\i0\f1 pip install robotframework\f0\par
+
+\pard\sl240\slmult1\par
+\i Installing the Emergent Test Framework\par
+\par
+\i0 Download the installation files from here:\par
+\par
+
+\pard\li720\sl240\slmult1 {\fs20{\field{\*\fldinst{HYPERLINK https://grey.colorado.edu/svn/emergent/emergent/trunk/test_auto/EmergentTestFramework }}{\fldrslt{https://grey.colorado.edu/svn/emergent/emergent/trunk/test_auto/EmergentTestFramework\ul0\cf0}}}}\f0\fs22\lang1033\par
+
+\pard\sl240\slmult1\i\lang9\par
+\i0 It does not matter where you put them.  The Emergent Test Framework is installed separately for each directory of Emergent projects on which you plan to run tests. Change your default directory to the directory where the project files are located, and type:\par
+\par
+
+\pard\li720\sl240\slmult1\f1 pybot <path-to-installation-files>\par
+
+\pard\sl240\slmult1\f0\par
+This will run a series of "tests" that are actually a combination of installation and verification processes. You may get warnings that some projects do not have required elements to run the standard tests. This does not cause any other problems but means that the project indicated will not be tested.  If you wish to test those projects, you will need to develop a custom test.\par
+
+\pard\sl240\slmult1\qc\b\par
+
+\pard\sl240\slmult1\ul\fs24 Running Tests\ulnone\fs22\par
+
+\pard\sl240\slmult1\b0\par
+\i First Runs\i0\par
+\par
+Running the tests is simple.  After installation, just change to the directory where your projects are located and type:\par
+\par
+
+\pard\li720\sl240\slmult1\f1 pybot test\par
+
+\pard\sl240\slmult1\f0  \par
+The very \b\i first\i0  \b0 time you do this, you will get a warning for each project indicating that there is no baseline.  Repeat the test by typing, once again:\par
+
+\pard\li720\sl240\slmult1\f1\par
+pybot test\par
+
+\pard\sl240\slmult1\f0  \par
+This time the tests will actually compare against the baseline and you will see whether they passed, had warnings, or failed. \par
+\par
+\i Baselines\par
+\i0\par
+The baseline contains the results against which subsequent runs will be compared. For each project under test, there is a file in the subdirectory \i test \i0 called \i <project>.baseline.json\i0 . The Framework automatically creates these files from the results of the very first run. Note that there is a risk that these results will be unusually high or low, which will affect all subsequent test runs. To fix this, you can start fresh, by deleting all the baseline files in the \i test\i0  subdirectory, and then running the test again (you will get the warnings again, of course). Or, you can just edit the particular offending file and provide more appropriate numbers.\par
+\par
+\i Subsequent Tests\i0\par
+\par
+One of the key benefits of this test framework is that you can re-run these tests after you have installed a new version of Emergent, and see whether the tests all pass or at least come close to their previous performance. Just install the new version of Emergent so that it is in the path, change to your project directory, and again type:\par
+\par
+
+\pard\li720\sl240\slmult1\f1 pybot test\par
+
+\pard\sl240\slmult1\f0\par
+\i Single Tests\par
+\i0\par
+You can run tests one at a time.  Just change to the project directory and type (you do not need to use a backslash on Windows):\par
+\par
+
+\pard\li720\sl240\slmult1\f1 pybot test/<project>.css.txt\par
+
+\pard\sl240\slmult1\f0\par
+\i Results\i0\par
+\par
+The actual output of the tests is written to a file called \i <project>.record.json\i0  in the \i test\i0  subdirectory. Unlike the baseline, this is not a true JSON file; rather each line is valid JSON. Each test run simply appends the test output so that you can see the history of runs.  This can be helpful to, for example, determine a better baseline value or appropriate range for one of the metrics used.\par
+\par
+A deeper log of the test run is found in the file \i log.html\i0 , which will be found in your project directory (not in the \i test\i0  subdirectory). Open this file with your favorite web browser and you can look at all the details of what happened during the test.  For most purposes, this is too much information, but it can be useful in diagnosing problems. Note that this file is overwritten for each test run (including single tests).\par
+\par
+
+\pard\sl240\slmult1\ul\b\fs24 Customizing Tests\par
+\par
+\ulnone\b0\i Test Files\ul\b\i0\par
+\par
+\ulnone\b0 The files that control the actual execution of the tests are in the \i test \i0 subdirectory and are called \i <project>.css.txt\i0 .  This is a rather carefully formatted file that enables both Emergent CSS code and Robot Framework code to co-exist. There are English instructions in the file to help you make changes appropriately.\par
+\par
+If you make \ul\b\i ANY\ulnone\b0\i0  changes to a test file, it is highly recommended that you copy the file to the projects directory. This will enable you to re-run the installation procedure (which you may want to do if, for example, you add a new project to the directory) without losing the customizations.\b\fs22\par
+
+\pard\sl240\slmult1\b0\par
+\i Modifying Ranges\par
+\par
+\i0 The most common customization is to change the valid range for the indicated metric. In the test file, you will see that a metric is specified as a name followed by two decimal fractions. These represent the fraction of the baseline, plus or minus, that the result must fall in to pass. There are two such fractions, the first is the "preferred" range whereby you will see a warning if the value is out of range, and the second is the "required" range, whereby the test will fail if it is out of range.\par
+\par
+For example, if you see:\par
+\par
+
+\pard\li720\sl240\slmult1\f1 Add Metric    min   0.15   0.25\par
+
+\pard\sl240\slmult1\f0\par
+this means that the \i min\i0  metric must be within 15% of the baseline value, plus or minus, or you will see a warning, and within 25%, or the test will fail. You can make these fractions smaller to make the test more sensitive or larger to make it less sensitive.\par
+\par
+Note the warnings in the comments.  Unfortunately, Robot Framework files are rather sensitive to format. You must maintain at least two spaces between each of the elements on each line, and lines that are indented must remain indented. It is also crucial to retain the "comment" lines as they are, and also the file must end in a blank line or Emergent will generate errors.\par
+\par
+\i True Custom Tests\i0\par
+\par
+If a project does not have the default Leabra structure, or you would like to have additional or more sophisticated tests, you will have to build a custom test.  At a high level, the way you do this is to modify the test file with custom CSS code that ultimately causes Emergent to output an appropriate snippet of JSON. In a custom test, you are not limited to the min/max/avg metrics but can produce any metrics you like. However, regardless of what the metrics represent, the range-checking will function in the same way.  The metrics in the TXT section of the test file need to match the metrics produced by the custom CSS code. In the test directory there is a file called \i leabra.css\i0  which you can use for examples of CSS code to produce this sort of output. Refer to the CSS documentation for further details.\par
+\f1\par
+}
+ 

@@ -3,3 +3,6 @@ To Do (updated 2/24/14 3pm)
 I haven't really worked to make the generate process idempotent - I've always been resetting it.
 
 Need to build the capability to load weights
+
+Would be nice to be able to have multiple tests per project.  Most of the infrastructure is there for this,
+but wouldn't work right now.
