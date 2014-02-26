@@ -2088,16 +2088,83 @@ void DataTable::ExportDataJSON(const String& fname) {  // write the entire table
   // note: don't get file name when exporting
   taFiler* flr = GetSaveFiler(fname, ".json", false);
   if (flr->ostrm) {
-    ExportDataJSON_impl(*flr->ostrm );
+    GetDataAsJSON(*flr->ostrm );
   }
   flr->Close();
   taRefN::unRefDone(flr);
 }
 
-void DataTable::ExportDataJSON_impl(ostream& strm, const String& column_name) {
+void DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name, int row, int cell) {
   JSONNode root(JSON_NODE);
   JSONNode columns(JSON_ARRAY);
   columns.set_name("columns");
+
+  if (row < 0 || row >= rows) {
+    row = 0;
+  }
+
+  int col_idx = this->FindColNameIdx(column_name);
+  if (col_idx != -1) {
+    DataCol* dc = data.FastEl(col_idx);
+    if (!dc->is_matrix)
+      return;
+
+    JSONNode aColumn(JSON_NODE);
+    aColumn.push_back(JSONNode("name", json_string(dc->name.chars())));
+    String val = ValTypeToStr(dc->valType());
+    aColumn.push_back(JSONNode("type", val.chars()));
+    aColumn.push_back(JSONNode("matrix", dc->is_matrix));
+    JSONNode dimensions(JSON_ARRAY);
+    dimensions.set_name("dimensions");
+    for (int d=0; d<dc->cell_geom.n_dims; d++) {
+      dimensions.push_back(JSONNode("", dc->cell_geom.size(d)));
+    }
+    aColumn.push_back(dimensions);
+    JSONNode values(JSON_ARRAY);
+    switch (dc->valType()) {
+    case VT_STRING:
+      values.push_back(JSONNode("", json_string(dc->GetValAsStringM(row, cell).chars())));
+      break;
+    case VT_DOUBLE:
+      values.push_back(JSONNode("", dc->GetValAsDoubleM(row, cell)));
+      break;
+    case VT_FLOAT:
+      values.push_back(JSONNode("", dc->GetValAsFloatM(row, cell)));
+      break;
+    case VT_INT:
+      values.push_back(JSONNode("", dc->GetValAsIntM(row, cell)));
+      break;
+    case VT_BYTE:
+      values.push_back(JSONNode("", dc->GetValAsByteM(row, cell)));
+      break;
+    case VT_VARIANT:
+      values.push_back(JSONNode("", json_string(dc->GetValAsStringM(row, cell).chars())));
+      break;
+    default:
+      values.push_back(JSONNode("", json_string(dc->GetValAsStringM(row, cell).chars())));
+      taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
+    }
+    aColumn.push_back(values);
+    columns.push_back(aColumn);
+  }
+  root.push_back(columns);
+  std::string theString = root.write_formatted();
+  strm << theString;
+  strm << endl;
+}
+
+void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int start_row, int n_rows) {
+  JSONNode root(JSON_NODE);
+  JSONNode columns(JSON_ARRAY);
+  columns.set_name("columns");
+
+  if (start_row < 0 || start_row >= rows) {
+    start_row = 0;
+  }
+
+  if (n_rows == -1 || (start_row + n_rows) > rows) {
+    n_rows = rows - start_row;
+  }
 
   int_Array columnList;
   if (column_name.empty()) {  // write all columns
@@ -2129,7 +2196,7 @@ void DataTable::ExportDataJSON_impl(ostream& strm, const String& column_name) {
     JSONNode values(JSON_ARRAY);
     values.set_name("values");
     if (!dc->is_matrix) {  // single array of values - row 1 to row n
-      for (int j=0; j<rows; j++) {
+      for (int j=start_row; j < n_rows; j++) {
         switch (dc->valType()) {
         case VT_STRING:
           values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
@@ -2158,7 +2225,7 @@ void DataTable::ExportDataJSON_impl(ostream& strm, const String& column_name) {
 
     if(dc->is_matrix) {
       if (dc->cell_geom.dims() == 2) {
-        for (int row=0; row < rows; row++) {
+        for (int row=start_row; row < n_rows; row++) {
           JSONNode matrixValues(JSON_ARRAY);
           for(int k = 0; k < dc->cell_geom.size(1); k++) {
             JSONNode matrixDim_1Values(JSON_ARRAY);
@@ -2192,7 +2259,7 @@ void DataTable::ExportDataJSON_impl(ostream& strm, const String& column_name) {
         }
       }
       if (dc->cell_geom.dims() == 3) {
-        for (int row=0; row < rows; row++) {
+        for (int row=start_row; row < n_rows; row++) {
           JSONNode matrixValues(JSON_ARRAY);
           for(int l = 0; l < dc->cell_geom.size(2); l++) {
             JSONNode matrixDim_2Values(JSON_ARRAY);
@@ -2230,7 +2297,7 @@ void DataTable::ExportDataJSON_impl(ostream& strm, const String& column_name) {
         }
       }
       if (dc->cell_geom.dims() == 4) {
-        for (int row=0; row < rows; row++) {
+        for (int row=start_row; row < n_rows; row++) {
           JSONNode matrixValues(JSON_ARRAY);
           for(int m = 0; m < dc->cell_geom.size(3); m++) {
             JSONNode matrixDim_3Values(JSON_ARRAY);
@@ -2802,7 +2869,7 @@ void DataTable::ImportDataJSON(const String& fname) {
 
   if (libjson::is_valid(contents)) {
     JSONNode n = libjson::parse(contents);
-    ParseJSON(n);
+    SetDataFromJSON(n);
   }
   else {
     taMisc::Error("ImportDataJSON: ", "The json file has a format error, look for missing/extra bracket, brace or quotation");
@@ -2812,19 +2879,19 @@ void DataTable::ImportDataJSON(const String& fname) {
 void DataTable::ImportDataJSONString(const String& json_as_string) {
   if (libjson::is_valid(json_string(json_as_string.chars()))) {
     JSONNode n = libjson::parse(json_string(json_as_string.chars()));
-    ParseJSON(n);
+    SetDataFromJSON(n);
   }
   else {
     taMisc::Error("ImportDataJSON: ", "The json file has a format error, look for missing/extra bracket, brace or quotation");
   }
 }
 
-void DataTable::ParseJSON(const JSONNode& n, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
+void DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
   JSONNode::const_iterator i = n.begin();
   while (i != n.end()){
     // recursively call ourselves to dig deeper into the tree
     if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
-      ParseJSON(*i);
+      SetDataFromJSON(*i);
     }
 
     // get the node name and value as a string
@@ -2834,7 +2901,7 @@ void DataTable::ParseJSON(const JSONNode& n, int start_row, int start_cell) { //
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
         const JSONNode aCol = *columns;
-        WriteToColumn(aCol, start_row);
+        SetColumnFromJSON(aCol, start_row);
         columns++;
       }
     }
@@ -2842,7 +2909,7 @@ void DataTable::ParseJSON(const JSONNode& n, int start_row, int start_cell) { //
   }
 }
 
-void DataTable::WriteToColumn(const JSONNode& aCol, int start_row, int start_cell) { // row -1 means append, anything else overwrites starting at row
+void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell) { // row -1 means append, anything else overwrites starting at row
   JSONNode theValues;
   JSONNode theDimensions;
   String columnName;

@@ -229,9 +229,9 @@ public:
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
       int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
-  virtual void          ParseJSON(const JSONNode& n, int start_row = -1, int start_cell = 0);
+  virtual void          SetDataFromJSON(const JSONNode& n, int start_row = -1, int start_cell = 0);
   // #IGNORE #CAT_FILE Parse json for write to data table, row = -1 means append, >=0 means overwrite
-  virtual void          WriteToColumn(const JSONNode& aCol, int start_row = -1, int start_cell = 0);
+  virtual void          SetColumnFromJSON(const JSONNode& aCol, int start_row = -1, int start_cell = 0);
    // #IGNORE #CAT_FILE parse column data and write to data table, row = -1 means append, >=0 means overwrite
   virtual void          ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
@@ -277,7 +277,9 @@ public:
   // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
   void                  ExportDataJSON(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Data #EXT_json #FILE_DIALOG_SAVE exports data in json format
-  void                  ExportDataJSON_impl(std::ostream& strm, const String& column_name = "");
+  void                  GetDataAsJSON(std::ostream& strm, const String& column_name = "", int start_row = 0, int n_rows = -1);
+  // #EXPERT #CAT_File #EXT_json does the actual parse and save
+  void                  GetDataMatrixCellAsJSON(std::ostream& strm, const String& column_name, int row, int cell);
   // #EXPERT #CAT_File #EXT_json does the actual parse and save
   virtual void          ImportData(const String& fname="", bool headers = true,
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)

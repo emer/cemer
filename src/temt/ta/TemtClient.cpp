@@ -286,8 +286,8 @@ void TemtClient::cmdSetData() {
     DataTable* tab = GetAssertTable(tnm);
     if (!tab) return;
 
-    int row = name_params.GetVal("row").toInt();
-    tab->ParseJSON(tableData, row);  // -1 for append
+    int row = name_params.GetVal("row_from").toInt();
+    tab->SetDataFromJSON(tableData, row);  // -1 for append
     SendOk();
   }
 }
@@ -493,7 +493,7 @@ void TemtClient::cmdAppendData() {
   // note: ok if running
 
   if (msgFormat == TemtClient::JSON) {
-    tab->ParseJSON(tableData, true);  // true for append
+    tab->SetDataFromJSON(tableData, true);  // true for append
     SendOk();
   }
   else {
@@ -580,8 +580,21 @@ void TemtClient::cmdGetData() {
   if (msgFormat == TemtClient::JSON) {
     ostringstream ostr;
     String data;
-    String col_name = name_params.GetVal("column").toString();
-    tab->ExportDataJSON_impl(ostr, col_name);
+    String col_name = "";
+    int row_from = 0;
+    int rows = -1;
+
+    if (!name_params.GetVal("column").isNull()) {
+      col_name = name_params.GetVal("column").toString();
+    }
+    if (!name_params.GetVal("row_from").isNull()) {
+      rows = name_params.GetVal("row_from").toInt();
+    }
+    if (!name_params.GetVal("rows").isNull()) {
+      rows = name_params.GetVal("rows").toInt();
+    }
+
+    tab->GetDataAsJSON(ostr, col_name, row_from, rows);
     data = ostr.str().c_str();
     Write(data);
   }
@@ -617,12 +630,11 @@ void TemtClient::cmdGetData() {
 }
 
 void TemtClient::cmdGetDataCell() {
-  if (msgFormat == TemtClient::ASCII) {
-    String tnm = pos_params.SafeEl(0);
-    name_params.SetVal("table", tnm);
+  if (msgFormat == TemtClient::JSON) {
+    SendError("For JSON use GetData, specify column and row");
   }
 
-  String tnm = name_params.GetVal("table").toString();
+  String tnm = pos_params.SafeEl(0);
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
@@ -644,10 +656,22 @@ void TemtClient::cmdGetDataMatrixCell() {
   if (!tab) return;
   // note: ok if running
 
-  TableParams p(this, tab);
-  if (!p.ValidateParams(TableParams::Cell, true)) return;
-
-  cmdGetDataCell_impl(p);
+  if (msgFormat == TemtClient::JSON) {
+     ostringstream ostr;
+     String data;
+     String col_name = name_params.GetVal("column").toString();
+     int row_from = name_params.GetVal("row_from").toInt();
+     int cell = name_params.GetVal("cell").toInt();
+     tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
+     data = ostr.str().c_str();
+     Write(data);
+   }
+  else {
+    TableParams p(this, tab);
+    if (!p.ValidateParams(TableParams::Cell, true))
+      return;
+    cmdGetDataCell_impl(p);
+  }
 }
 
 void TemtClient::cmdGetDataCell_impl(TableParams& p) {
@@ -664,12 +688,7 @@ void TemtClient::cmdSetDataCell() {
     SendError("For JSON use SetData, specify row and send one value");
   }
 
-//  if (msgFormat == TemtClient::ASCII) {
-    String tnm = pos_params.SafeEl(0);
-//    name_params.SetVal("table", tnm);
-//  }
-//
-//  String tnm = name_params.GetVal("table").toString();
+  String tnm = pos_params.SafeEl(0);
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
@@ -682,15 +701,10 @@ void TemtClient::cmdSetDataCell() {
 
 void TemtClient::cmdSetDataMatrixCell() {
   if (msgFormat == TemtClient::JSON) {
-    SendError("For JSON use SetData, specify row and send one value");
+    SendError("For JSON use SetData, specify row and cell and send one value");
   }
 
-//  if (msgFormat == TemtClient::ASCII) {
-    String tnm = pos_params.SafeEl(0);
-//    name_params.SetVal("table", tnm);
-//  }
-
-//  String tnm = name_params.GetVal("table").toString();
+  String tnm = pos_params.SafeEl(0);
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
@@ -969,11 +983,15 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "column") {
         name_params.SetVal("column", i->as_string().c_str());  // a single column name - for get only - set controlled through "data"
        }
-      else if (node_name == "row") {
-        name_params.SetVal("row", i->as_int());  // first row to get/set
+      else if (node_name == "row_from") {
+        name_params.SetVal("row_from", i->as_int());  // first row to get/set
+        int row = name_params.GetVal("row_from").toInt();
+       }
+      else if (node_name == "rows") {
+        name_params.SetVal("rows", i->as_int());  // count of rows to operate on (get, remove) - for set count is number of values sent
        }
       else if (node_name == "cell") {
-        name_params.SetVal("cell", i->as_int());  // first cell to get/set
+        name_params.SetVal("cell", i->as_int());  // first cell to get/set - based on flat indexing
        }
       ++i;
     }
