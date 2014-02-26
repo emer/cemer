@@ -130,7 +130,7 @@ static void ptbp_deco_widget(QWidget* widg, taBase* obj) {
       QPalette pal;
       pal.setColor(QPalette::ButtonText, colr);
       widg->setPalette(pal);
-      widg->setFont(taiM->buttonFont(taiMisc::sizSmall));
+      widg->setFont(taiM->buttonFont(taiMisc::sizMedium));
 
     }
   }

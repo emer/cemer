@@ -16,7 +16,7 @@ class TA_API DataVarRead : public DataVarSimple {
 INHERITED(DataVarSimple)
 public:
   String	GetDisplayName() const override;
-  String  GetToolbarName() const override { return "read from data table"; }
+  String  GetToolbarName() const override { return "read from table"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataVarRead);
 protected:

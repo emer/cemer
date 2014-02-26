@@ -16,7 +16,7 @@ class TA_API DataVarWrite : public DataVarSimple {
 INHERITED(DataVarSimple)
 public:
   String	GetDisplayName() const override;
-  String  GetToolbarName() const override { return "write to data table"; }
+  String  GetToolbarName() const override { return "write to table"; }
 
   PROGEL_SIMPLE_BASEFUNS(DataVarWrite);
 protected:
