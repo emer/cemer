@@ -2524,7 +2524,7 @@ yyreduce:
 #line 192 "css_parse.y"
     {
             cssEl* tmp = (yyvsp[(2) - (2)].el).El();
-	    cssMisc::cur_top->SetInclude((const char*)*tmp);
+	    cssMisc::cur_top->SetInclude(tmp->GetStr());
 	    cssEl::Done((yyvsp[(2) - (2)].el).El()); }
     break;
 
@@ -2747,7 +2747,7 @@ yyreduce:
 #line 368 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
-            cssMisc::cur_enum = new cssEnumType((const char*)*nm);
+            cssMisc::cur_enum = new cssEnumType(nm->GetStr());
 	    if(cssMisc::cur_class != NULL) cssMisc::cur_class->types->Push(cssMisc::cur_enum);
 	    /* todo: global keyword?? else cssMisc::TypesSpace.Push(cssMisc::cur_enum); */
 	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum);
@@ -2792,14 +2792,14 @@ yyreduce:
 	    if(cssMisc::cur_class != NULL) en_own = cssMisc::cur_class->types;
 	    /* todo: global keyword??   else en_own = &(cssMisc::Enums); */
 	    else en_own = &(cssMisc::cur_top->enums);
-	    cssElPtr itm_ptr = en_own->FindName((const char*)*nm); 	cssEnum* itm;
+	    cssElPtr itm_ptr = en_own->FindName(nm->GetStr()); 	cssEnum* itm;
 	    if(itm_ptr != 0) { /* redef */
 	      itm = (cssEnum*)itm_ptr.El();
 	      itm->val = cssMisc::cur_enum->enum_cnt;
 	      itm->SetEnumType(cssMisc::cur_enum);
 	    } else {
 	      itm = new cssEnum(cssMisc::cur_enum, cssMisc::cur_enum->enum_cnt,
-				(const char*)*nm);
+				nm->GetStr());
 	      en_own->Push(itm);
 	    }
 	    cssMisc::cur_enum->enum_cnt = itm->val + 1;
@@ -2814,14 +2814,14 @@ yyreduce:
 	    if(cssMisc::cur_class != NULL) en_own = cssMisc::cur_class->types;
 	    /* todo: global keyword??   else en_own = &(cssMisc::Enums); */
 	    else en_own = &(cssMisc::cur_top->enums);
-	    cssElPtr itm_ptr = en_own->FindName((const char*)*nm);	cssEnum* itm;
+	    cssElPtr itm_ptr = en_own->FindName(nm->GetStr());	cssEnum* itm;
 	    if(itm_ptr != 0) { /* redef */
 	      itm = (cssEnum*)itm_ptr.El();
 	      itm->val = (int)*((yyvsp[(3) - (3)].el).El());
 	      itm->SetEnumType(cssMisc::cur_enum);
 	    }
 	    else {
-	      itm = new cssEnum(cssMisc::cur_enum, (int)*((yyvsp[(3) - (3)].el).El()), (const char*)*nm);
+	      itm = new cssEnum(cssMisc::cur_enum, (int)*((yyvsp[(3) - (3)].el).El()), nm->GetStr());
 	      en_own->Push(itm);
 	    }
 	    cssMisc::cur_enum->enum_cnt = itm->val + 1;
@@ -2855,7 +2855,7 @@ yyreduce:
 #line 460 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
-	    cssMisc::cur_class = new cssClassType((const char*)*nm);
+	    cssMisc::cur_class = new cssClassType(nm->GetStr());
 	    cssMisc::cur_class->last_top = cssMisc::cur_top;
 	    /*	todo: keyword for global??    cssMisc::TypesSpace.Push(cssMisc::cur_class); */
 	    cssMisc::cur_top->types.Push(cssMisc::cur_class);
@@ -2890,7 +2890,7 @@ yyreduce:
 #line 489 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
-            cssMisc::cur_class = new cssClassType((const char*)*nm);
+            cssMisc::cur_class = new cssClassType(nm->GetStr());
 	    /*	todo: keyword for global??    cssMisc::TypesSpace.Push(cssMisc::cur_class); */
 	    cssMisc::cur_top->types.Push(cssMisc::cur_class);
             cssEl::Done(nm); }
@@ -2947,7 +2947,7 @@ yyreduce:
 	      return cssProg::YY_Err; }
             cssMisc::parsing_membdefn = true;
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
-	    cssClassMember* mbr = new cssClassMember((yyvsp[(1) - (4)].el).El(), (const char*)*nm);
+	    cssClassMember* mbr = new cssClassMember((yyvsp[(1) - (4)].el).El(), nm->GetStr());
             cssMisc::cur_class->members->Push(mbr);
             cssMisc::cur_class->GetComments(mbr, (yyvsp[(4) - (4)].el));
             cssMisc::parsing_membdefn = false;
@@ -3078,14 +3078,14 @@ yyreduce:
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
-	    cssElPtr fun_ptr = cssMisc::cur_class->methods->FindName((const char*)*nm);
+	    cssElPtr fun_ptr = cssMisc::cur_class->methods->FindName(nm->GetStr());
 	    cssMbrScriptFun* fun;
 	    if(fun_ptr != 0) {
 	      fun = (cssMbrScriptFun*)fun_ptr.El();
 	      (yyval.el) = fun_ptr;
 	    }
 	    else {
-	      fun = new cssMbrScriptFun((const char*)*nm, cssMisc::cur_class);
+	      fun = new cssMbrScriptFun(nm->GetStr(), cssMisc::cur_class);
 	      (yyval.el) = cssMisc::cur_class->methods->Push(fun);
 	    }
 	    if((yyvsp[(1) - (2)].el).El()->tmp_str == "virtual") fun->is_virtual = true;
@@ -3189,7 +3189,7 @@ yyreduce:
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
-	    cssScriptFun* fun = new cssScriptFun((const char*)*nm);
+	    cssScriptFun* fun = new cssScriptFun(nm->GetStr());
 	    fun->SetRetvType((yyvsp[(1) - (2)].el).El()); /* preserve type info for later if nec */
 	    if((yyvsp[(1) - (2)].el).El()->tmp_str == "extern") (yyval.el) = cssMisc::Externs.PushUniqNameOld(fun);
 	    else (yyval.el) = cssMisc::cur_top->AddStatic(fun);
@@ -3210,7 +3210,7 @@ yyreduce:
 	    cssClassType* cls = (cssClassType*)(yyvsp[(2) - (3)].el).El();
 	    cssMisc::cur_class = cls; /* this is now the current class */
 	    cssEl* nm = cssMisc::cur_top->Prog()->Stack()->Pop();  /* get rid of name */
-	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMethodFmName((const char*)*nm);
+	    cssMbrScriptFun* fun = (cssMbrScriptFun*)cls->GetMethodFmName(nm->GetStr());
 	    if(fun == &cssMisc::Void) {
 	      yyerror("member function not declared in class type");
 	      return cssProg::YY_Err; }
@@ -3519,7 +3519,7 @@ yyreduce:
 	    }
 	    cssElPtr aryptr = cssMisc::cur_top->Prog()->literals.FindName(cssSwitchJump_Name);
 	    cssArray* val_ary = (cssArray*)aryptr.El();
-	    val_ary->items->Push(new cssInt((yyval.ival), (const char*)*((yyvsp[(2) - (3)].el).El()))); }
+	    val_ary->items->Push(new cssInt((yyval.ival), ((yyvsp[(2) - (3)].el).El())->GetStr())); }
     break;
 
   case 168:
@@ -4371,7 +4371,7 @@ yyreduce:
   case 301:
 #line 1497 "css_parse.y"
     {
-	    int mbno = (yyvsp[(1) - (3)].el).El()->GetMemberNo((const char*)*((yyvsp[(3) - (3)].el).El()));
+            int mbno = (yyvsp[(1) - (3)].el).El()->GetMemberNo(((yyvsp[(3) - (3)].el).El())->GetStr());
 	    if(mbno < 0) { (yyval.ival) = Code3((yyvsp[(1) - (3)].el), (yyvsp[(3) - (3)].el), cssBI::points_at); }
 	    else { cssElPtr tmpint = cssMisc::cur_top->AddLiteral(mbno);
 		   (yyval.ival) = Code3((yyvsp[(1) - (3)].el), tmpint, cssBI::points_at); } }
@@ -4385,8 +4385,8 @@ yyreduce:
   case 303:
 #line 1506 "css_parse.y"
     {
-	  cssMisc::cur_scope = NULL;
-	    cssEl* scp = (yyvsp[(1) - (2)].el).El()->GetScoped((const char*)*((yyvsp[(2) - (2)].el).El()));
+	    cssMisc::cur_scope = NULL;
+            cssEl* scp = (yyvsp[(1) - (2)].el).El()->GetScoped(((yyvsp[(2) - (2)].el).El())->GetStr());
 	    if(scp != &cssMisc::Void) {  (yyval.ival) = Code1(scp); }
 	    else { (yyval.ival) = Code3((yyvsp[(1) - (2)].el), (yyvsp[(2) - (2)].el), cssBI::scoper); } }
     break;
@@ -4428,7 +4428,7 @@ yyreduce:
   case 307:
 #line 1536 "css_parse.y"
     { (yyval.el_ival).el.Reset();
-            String mbnm = (const char*)*((yyvsp[(3) - (4)].el).El());
+            String mbnm = ((yyvsp[(3) - (4)].el).El())->GetStr();
 	    int mbno = (yyvsp[(1) - (4)].el).El()->GetMethodNo(mbnm);
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!(yyvsp[(1) - (4)].el).El()->MembersDynamic())
@@ -4452,7 +4452,7 @@ yyreduce:
 #line 1555 "css_parse.y"
     {
 	    cssMisc::cur_scope = NULL; (yyval.el_ival).el.Reset();
-            String mbnm = (const char*)*((yyvsp[(2) - (3)].el).El());
+            String mbnm = ((yyvsp[(2) - (3)].el).El())->GetStr();
 	    int mbno = (yyvsp[(1) - (3)].el).El()->GetMethodNo(mbnm);
 	    if(mbno < 0) { /* don't complain for pointers and references */
 	      if(!(yyvsp[(1) - (3)].el).El()->MembersDynamic())

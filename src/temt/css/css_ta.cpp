@@ -1931,7 +1931,7 @@ cssEl* cssIOS::operator<<(cssEl& s) {
       else if(s.GetType() == T_Real)
 	*strm << (Real) s;
       else
-	*strm << (const char*)s;
+	*strm << s.GetStr();
     }
     return this;
   }
