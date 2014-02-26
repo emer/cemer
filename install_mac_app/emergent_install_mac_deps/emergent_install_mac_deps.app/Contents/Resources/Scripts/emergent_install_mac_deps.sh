@@ -4,23 +4,14 @@
 # see http://grey.colorado.edu/emergent
 
 # this should be the only thing you need to update: grab the latest versions
-QT_DMG=qt-mac-opensource-5.2.0-clang-offline.dmg
-COIN_DMG=Coin-4.0.0a.dmg
-QUARTER_DMG=quarter_mac64_qt52.dmg
-CMAKE_DMG=cmake-2.8.10.2-Darwin64-universal.dmg
-SVN_DMG=Subversion-1.7.8_10.8.x.dmg
+QT_DMG=qt52_mac64.dmg
+COIN_QUARTER_DMG=coin_quarter_mac64_qt52.dmg
+CMAKE_DMG=cmake-2.8.12.2-Darwin64-universal.dmg
+SVN_DMG=Subversion-1.8.8_10.9.x.pkg
 MISC_DMG=emergent_misc_deps_mac64.dmg
  
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 FTP_CMD="/usr/bin/ftp -ai"
-
-# this is needed b/c installer doesn't work properly if it is not
-QT_DIR=/usr/local/Qt5.2.0
- 
-if [[ ! -d $QT_DIR ]]
-then
-  sudo mkdir $QT_DIR
-fi
 
 DOWNLOAD_DIR=$HOME/Desktop
  
@@ -40,8 +31,7 @@ function downloadFTP {
 }
 
 downloadFTP ${MISC_DMG}
-downloadFTP ${QUARTER_DMG}
-downloadFTP ${COIN_DMG}
+downloadFTP ${COIN_QUARTER_DMG}
 downloadFTP ${CMAKE_DMG}
 downloadFTP ${SVN_DMG}
 downloadFTP ${QT_DMG}
@@ -72,6 +62,17 @@ function openPKGinDMG {
   open "${DMG_PKG}"
 }
 
+function openAPPinDMG {
+  # Argument should be the name of the DMG.
+  # finds the package file, opens it
+
+  DMG_MNT="`mountDMG $1`"
+  echo "mounted: $DMG_MNT"
+  DMG_PKG="`ls -1rtd \"$DMG_MNT\"/*app | tail -1`"
+  echo "package: $DMG_PKG"
+  open "${DMG_PKG}"
+}
+
 function openNamedPKGinDMG {
   # Argument 1 should be the name of the DMG.
   # Argument 2 is name of the package
@@ -88,10 +89,8 @@ function openNamedPKGinDMG {
 # QUARTER depends on COIN, QT
 # everything else is independent
 # all are opened so last is first user will see
-openPKGinDMG ${QUARTER_DMG}
+openPKGinDMG ${COIN_QUARTER_DMG}
 openPKGinDMG ${QT_DMG}
 openPKGinDMG ${CMAKE_DMG}
 openPKGinDMG ${SVN_DMG}
-openNamedPKGinDMG ${COIN_DMG} "Coin.pkg"
-openNamedPKGinDMG ${COIN_DMG} "CoinTools.pkg"
 openPKGinDMG ${MISC_DMG}

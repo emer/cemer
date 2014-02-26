@@ -182,8 +182,8 @@ int taiMiscCore::Exec() {
     rval = Exec_impl();
   }
   catch(...) {
+    taMisc::Error("caught ... general exception in taiMiscCore::Exec() -- this is a programmer error -- please report bug and specify what you were doing just prior to this message -- thanks!");
     taMisc::in_event_loop = false;
-    taMisc::Error_nogui("Otherwise uncaught exception caught in taiMiscCore::Exec() general exception trap");
     raise(SIGABRT);
   }
   taMisc::in_event_loop = false;
