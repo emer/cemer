@@ -1404,6 +1404,11 @@ void LeabraNetwork::Compute_StableWeights() {
 ///////////////////////////////////////////////////////////////////////
 //      Stats
 
+void LeabraNetwork::Set_ExtRew(bool avail, float ext_rew_val) {
+  ext_rew_avail = avail;
+  ext_rew = ext_rew_val;
+}
+
 void LeabraNetwork::Compute_ExtRew() {
   // assumes any ext rew computation has happened before this point, and set the
   // network ext_rew and ext_rew_avail flags appropriately

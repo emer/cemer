@@ -181,14 +181,12 @@ void VTALayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   bool pv_over_thr = (pospv >= da.pv_thr);
   bool vsp_over_thr = (vspvi >= da.vsp_thr);
 
+  net->ext_rew_avail = true;    // always record pv values
+  net->ext_rew = pospv;
   if(pv_over_thr || vsp_over_thr) {
     net->pv_detected = true;
-    if(pv_over_thr) {
-      net->ext_rew_avail = true;
-    }
   }
   else {
-    net->ext_rew_avail = false;
     net->pv_detected = false;
   }
 

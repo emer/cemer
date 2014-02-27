@@ -615,6 +615,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->p_act_p = 0.0f;
   lu->davg = 0.0f;
   lu->dav = 0.0f;
+  lu->sev = 0.0f;
   lu->noise = 0.0f;
 
   lu->i_thr = 0.0f;
@@ -734,6 +735,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
   DecayState(u, net, ls->decay.event);
   u->dav = 0.0f;
+  u->sev = 0.0f;
   u->ClearUnitFlag(Unit::LEARN);
 }
 

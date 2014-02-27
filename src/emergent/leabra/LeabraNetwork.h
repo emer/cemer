@@ -622,6 +622,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 
+  virtual void	Set_ExtRew(bool avail, float ext_rew_val);
+  // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values
   virtual void	Compute_ExtRew();
   // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
   virtual void	Compute_NormErr();

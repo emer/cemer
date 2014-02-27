@@ -37,6 +37,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
+  se_gain = 0.1f;
   nogo_inhib = 0.4f;
   nogo_deep_gain = 0.5f;
   refract_inhib = 0.0f;
@@ -55,6 +56,7 @@ void MatrixLayerSpec::Defaults_init() {
   // todo: sync with above
   matrix.nogo_inhib = 0.4f;
   matrix.da_gain = 0.1f;
+  // todo: se_gain
   matrix.nogo_deep_gain = 0.5f;
 
   //  SetUnique("inhib", true);
@@ -496,8 +498,6 @@ void MatrixLayerSpec::Compute_GatingActs(LeabraLayer* lay, LeabraNetwork* net) {
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   // float lay_ton_da = lay->GetUserDataAsFloat("tonic_da");
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
@@ -506,7 +506,9 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
+        u->sev *= -matrix.se_gain;
         u->dav *= -matrix.da_gain; // inverting the da at this point -- uses same learning rule as GO otherwise
+        u->dav -= u->sev;          // linear combination for now..
         if(go_nogo_gain.on) {
           if(u->dav >= 0.0f)
             u->dav *= go_nogo_gain.nogo_p;
@@ -519,7 +521,9 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
 	if(u->lesioned()) continue;
+        u->sev *= matrix.se_gain;
         u->dav *= matrix.da_gain;
+        u->dav -= u->sev;       // linear combination for now..
         if(go_nogo_gain.on) {
           if(u->dav >= 0.0f)
             u->dav *= go_nogo_gain.go_p;

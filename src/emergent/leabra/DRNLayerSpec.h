@@ -60,8 +60,7 @@ public:
   virtual void  Compute_Se(LeabraLayer* lay, LeabraNetwork* net);
   // compute the se value based on recv projections from PV and bodily state layers
 
-  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
-  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
   void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
   void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override { };
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
