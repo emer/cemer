@@ -4,51 +4,122 @@ Library          Telnet
 Library          HttpLibrary.HTTP
 Library          Process
 Library          OperatingSystem
-#Suite Setup      Start Process    emergent -nogui -ni -server -p ../test-projects/LeabraStd.proj    shell=True
-#Suite Teardown   Close All Connections
-#Suite Teardown    Terminate All Processes    kill=True
-Suite Setup       Open Connection    127.0.0.1   port=5360
-Suite Teardown    Close Connection
+
+Suite Setup      Initialize Emergent
+Suite Teardown   Shutdown Emergent
 
 *** Variables ***
 
-# Create some JSON data structures that look like the Emergent JSON commands but have values blank.
-
 *** Test Cases ***
 
-Connection Test
-    ${result} =        Read
-    Log                ${result}    WARN
-    Should Contain     ${result}    Emergent Server v6.
+Connection
+    Sleep                   1 sec
+    ${result} =             Read
+    Print                   ${result}
+    Should Contain          ${result}    Emergent Server v6.
 
-RunState Test
-    WriteBare          GetRunState\n
-    Sleep              500ms
-    ${result} =        Read
-    Log                ${result}    WARN
-    Should Contain     ${result}    OK
-    RunState Should Match           ${result}    4
+Native Test
+    ${result} =             Run Command Wait      GetRunState
+    Should Contain          ${result}             OK
+    Message Should Match    ${result}             4
 
-Test Some JSON
-    ${json} =          Set Variable      { "name": "test", "array": [ 1, 2, 3 ]}
-    Show The Value     ${json}           /name
-    Json Value Should Equal   ${json}    /name     test  # Fails because of quotes
-    Show The Value     ${json}           /array/1
-    ${string-value} =  Get JSON String   ${json}  /name
-    Log                ${string-value}   WARN
-    Should Be Valid Json    [1, 2, 3]
+General RunState
+    ${result} =                Run Command Wait      {"command": "GetRunState"}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /status            OK
+    Json String Should Match   ${result}             /message           4
+
+Program RunState
+    ${result} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /status            OK
+    Json String Should Match   ${result}             /message           4
+    
+Run Program
+    [Tags]                     slow
+    ${result} =                Run Command           {"command": "RunProgram", "program": "LeabraBatch"}   20 sec
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /status            OK
+    ${result} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
+    Json String Should Match   ${result}             /status            OK
+    Json String Should Match   ${result}             /message           0
+    
+Read Full Data Table
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData"}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /columns/0/name    Name
+    Json String Should Match   ${result}             /columns/1/name    Input
+    Json String Should Match   ${result}             /columns/2/name    Output
+    Json String Should Match   ${result}             /columns/0/type    String
+    Json String Should Match   ${result}             /columns/1/type    float
+    Json String Should Match   ${result}             /columns/2/type    float
+    Json Value Should Equal    ${result}             /columns/0/matrix  false
+    Json Value Should Equal    ${result}             /columns/1/matrix  true
+    Json Value Should Equal    ${result}             /columns/2/matrix  true
+    Json String Should Match    ${result}             /columns/0/values/0  checks
+    Json String Should Match    ${result}             /columns/0/values/1  mitvert
+    Json String Should Match    ${result}             /columns/0/values/2  midhoriz
+    Json String Should Match    ${result}             /columns/0/values/3  rdiag
+    Json String Should Match    ${result}             /columns/0/values/4  ldiag
+    Json String Should Match    ${result}             /columns/0/values/5  random
+    Json Value Should Equal    ${result}             /columns/1/values/0/0/0  1
+    Json Value Should Equal    ${result}             /columns/1/values/0/1/2  0
+    Json Value Should Equal    ${result}             /columns/1/values/0/2/2  1
+    Json Value Should Equal    ${result}             /columns/1/values/2/2/2  1
+    Json Value Should Equal    ${result}             /columns/1/values/2/1/0  0
+
+Read Data Table Column
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "column": "Name"}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /columns/0/name    Name
+    Json String Should Match    ${result}             /columns/0/values/0  checks
+    Json String Should Match    ${result}             /columns/0/values/1  mitvert
+    Json String Should Match    ${result}             /columns/0/values/2  midhoriz
+    Json String Should Match    ${result}             /columns/0/values/3  rdiag
+    Json String Should Match    ${result}             /columns/0/values/4  ldiag
+    Json String Should Match    ${result}             /columns/0/values/5  random
+    Json Value Should Not Exist   ${result}           /columns/1
+    Json Value Should Not Exist   ${result}           /columns/2
+
+Read Data Table Row
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}              /columns/0/name      Name
+    Json String Should Match   ${result}             /columns/1/name    Input
+    Json String Should Match   ${result}             /columns/2/name    Output
+    Json String Should Match   ${result}             /columns/0/type    String
+    Json String Should Match   ${result}             /columns/1/type    float
+    Json String Should Match   ${result}             /columns/2/type    float
+    Json Value Should Equal    ${result}             /columns/0/matrix  false
+    Json Value Should Equal    ${result}             /columns/1/matrix  true
+    Json Value Should Equal    ${result}             /columns/2/matrix  true
+    Json String Should Match    ${result}             /columns/0/values/0  rdiag
+    Json String Should Match    ${result}             /columns/0/values/1  ldiag
+    Json Value Should Not Exist   ${result}           /columns/0/values/2
+    Json Value Should Not Exist   ${result}           /columns/1/values/2
+    Json Value Should Not Exist   ${result}           /columns/2/values/2
 
 *** Keywords ***
-RunState Should Match
-    [Arguments]        ${result}    ${value}
-    ${match}           ${runstate} =
-    ...                Should Match Regexp    ${result}    OK (\\d)
-    Should Be Equal As Integers      ${value}   ${runstate}
 
-Show The Value
-    [Arguments]        ${json}           ${pointer}
-    ${result} =        Get Json Value    ${json}   ${pointer}
-    Log                ${result}         WARN
+Message Should Match
+    [Arguments]        ${result}    ${expected}
+    ${match}           ${message} =
+    ...                Should Match Regexp    ${result}    OK (.*)
+    Should Be Equal    ${expected}   ${message}
+
+Json Value Should Match
+    [Arguments]        ${json}    ${pointer}    ${expected}
+    ${value} =         Get Json Value    ${json}    ${pointer}
+    Should Match       ${value}    ${expected}
+
+Json Value Should Not Exist
+    [Arguments]        ${json}    ${pointer}
+    Run Keyword And Expect Error  JsonPointerException*  Get Json Value  ${json}  ${pointer}
+
+Json String Should Match
+    [Arguments]        ${json}    ${pointer}    ${expected}
+    ${value} =         Get Json String    ${json}    ${pointer}
+    Should Match       ${value}    ${expected}
 
 Get Json String
     [Arguments]        ${json}                   ${pointer}
@@ -57,6 +128,10 @@ Get Json String
     ...                Should Match Regexp       ${value}       "(.*)"
     [return]           ${result}
 
+Print
+    [Arguments]        ${text}
+    Log                ${text}    WARN
+
 # Get Json Value                string, pointer, ...
 # Json Value Should Equal       string, pointer, expected
 # Json Value Should Not Equal   string, pointer, expected
@@ -64,3 +139,30 @@ Get Json String
 # Parse Json                    string
 # Set Json Value                string, pointer, value
 # Should Be Valid Json          string
+
+Initialize Emergent
+    ${pid} =             Start Process      ~/emergent/build/bin/emergent -nogui -server -p ../test-projects/LeabraStd.proj    shell=True
+    Set Suite Variable   ${pid}
+    Sleep                2 sec
+    Open Connection      127.0.0.1    port=5360
+
+Shutdown Emergent
+    Close All Connections
+    Sleep                2 sec
+    ${result} =          Terminate Process    ${pid}       kill=true
+
+Run Command Wait
+    [Arguments]        ${command}
+    ${result} =        Run Command    ${command}   500ms
+    [Return]           ${result}
+
+Run Command
+    [Arguments]        ${command}    ${wait}
+    Print              [Sending] ${command}    # temporary
+    Write Bare         ${command}\n
+    Sleep              ${wait}
+    ${result} =        Read
+    Print              [Received] ${result}    # this is temporary just so I can see what's happening
+    [Return]           ${result}
+
+
