@@ -52,7 +52,7 @@ public:
   };
   
   enum MsgFormat {
-      ASCII, //
+      NATIVE, //
       JSON   //
     };
 
@@ -70,13 +70,13 @@ public:
   void			SetSocket(QTcpSocket* sock); // #IGNORE
 
   void      SendError(const String& err_msg); // relay to SendError in format of received message
-  void      SendErrorASCII(const String& err_msg); // send error reply in ascii
+  void      SendErrorNATIVE(const String& err_msg); // send error reply in ascii
   void      SendErrorJSON(const String& err_msg); // send error reply in json format
   void      SendReply(const String& r); // relay to SendReply in format of received message
-  void      SendReplyASCII(const String& r); // send reply ascii
+  void      SendReplyNATIVE(const String& r); // send reply ascii
   void      SendReplyJSON(const String& r); // send reply json
   void      SendOk(const String& msg = _nilString); // relay to SendOk in format of received message
-  void      SendOkASCII(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
+  void      SendOkNATIVE(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
   void      SendOkJSON(const String& msg = _nilString); // send ok, w/ optional msg or data - json format
   
   void      WriteLine(const String& ln); // low level write, note: adds eol
@@ -172,7 +172,7 @@ protected:
   
   void			    HandleLines(); // line handling loop
   void          ParseCommand(const String& cl);
-  void          ParseCommandASCII(const String& cl);
+  void          ParseCommandNATIVE(const String& cl);
   void          ParseCommandJSON(const String& cl);
 
 private:

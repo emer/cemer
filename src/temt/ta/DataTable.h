@@ -229,9 +229,9 @@ public:
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
       int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
-  virtual void          SetDataFromJSON(const JSONNode& n, int start_row = -1, int start_cell = 0);
+  virtual void          SetDataFromJSON(const JSONNode& n, int start_row = 0, int start_cell = 0);
   // #IGNORE #CAT_FILE Parse json for write to data table, row = -1 means append, >=0 means overwrite
-  virtual void          SetColumnFromJSON(const JSONNode& aCol, int start_row = -1, int start_cell = 0);
+  virtual void          SetColumnFromJSON(const JSONNode& aCol, int start_row = 0, int start_cell = 0);
    // #IGNORE #CAT_FILE parse column data and write to data table, row = -1 means append, >=0 means overwrite
   virtual void          ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array

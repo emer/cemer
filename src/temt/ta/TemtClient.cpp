@@ -207,12 +207,12 @@ void TemtClient::cmdOpenProject() {
 
 void TemtClient::cmdRunProgram(bool sync) {
   // store position param to name/value params - backwards compatibility
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
     name_params.SetVal("program", pnm);
   }
 
-  // now we are ascii/json agnostic
+  // now we are native/json agnostic
   String pnm = name_params.GetVal("program").toString();
   if (pnm.empty()) {
     SendError("RunProgram: program name expected");
@@ -278,7 +278,7 @@ void TemtClient::cmdRunProgram(bool sync) {
 }
 
 void TemtClient::cmdSetData() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     SendError("SetData only implemented for JSON");
   }
   if (msgFormat == TemtClient::JSON) {
@@ -482,7 +482,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
 }
 
 void TemtClient::cmdAppendData() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -493,7 +493,7 @@ void TemtClient::cmdAppendData() {
   // note: ok if running
 
   if (msgFormat == TemtClient::JSON) {
-    tab->SetDataFromJSON(tableData, true);  // true for append
+    tab->SetDataFromJSON(tableData, -1);  // true for append
     SendOk();
   }
   else {
@@ -567,7 +567,7 @@ void TemtClient::cmdAppendData() {
 }
 
 void TemtClient::cmdGetData() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -646,7 +646,7 @@ void TemtClient::cmdGetDataCell() {
 }
 
 void TemtClient::cmdGetDataMatrixCell() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -683,9 +683,15 @@ void TemtClient::cmdGetDataCell_impl(TableParams& p) {
   return SendOk(res);
 }
 
-void TemtClient::cmdSetDataCell() {
+void TemtClient::cmdSetDataCell() {  // for json just like cmdSetData with fixed row count of 1
   if (msgFormat == TemtClient::JSON) {
-    SendError("For JSON use SetData, specify row and send one value");
+    String tnm = name_params.GetVal("table").toString();
+    DataTable* tab = GetAssertTable(tnm);
+    if (!tab) return;
+
+    int row = name_params.GetVal("row_from").toInt();
+    tab->SetDataFromJSON(tableData, row, 1);  // 1 is total number of rows to set
+    SendOk();
   }
 
   String tnm = pos_params.SafeEl(0);
@@ -727,7 +733,7 @@ void TemtClient::cmdSetDataCell_impl(TableParams& p) {
 }
 
 void TemtClient::cmdGetVar() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
     name_params.SetVal("program", pnm);
   }
@@ -738,7 +744,7 @@ void TemtClient::cmdGetVar() {
   if (!prog) return;
   // note: ok if running
 
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     // 2nd param must be a var name
     String str = pos_params.SafeEl(1);;
     name_params.SetVal("variable", str);
@@ -761,10 +767,18 @@ void TemtClient::cmdGetVar() {
   String val;
   if (var->var_type == ProgVar::T_String) {
     val = String::StringToCppLiteral(var->string_val);
-  } else {
+  }
+  else {
     val = var->GetVar().toString();
   }
-  SendOk(val);
+
+  // send message
+//  if (msgFormat == TemtClient::JSON) {
+//    SendOk();
+//  }
+//  else {
+    SendOk(val);
+//  }
 }
 
 void TemtClient::cmdGetRunState() {
@@ -777,7 +791,7 @@ void TemtClient::cmdGetRunState() {
   }
   else {
     // program version
-    if (msgFormat == TemtClient::ASCII) {
+    if (msgFormat == TemtClient::NATIVE) {
       String pnm = pos_params.SafeEl(0);
       name_params.SetVal("program", pnm);
     }
@@ -790,7 +804,7 @@ void TemtClient::cmdGetRunState() {
 }
 
 void TemtClient::cmdRemoveData() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -815,7 +829,7 @@ void TemtClient::cmdRemoveData() {
 }
 
 void TemtClient::cmdSetVar() {
-  if (msgFormat == TemtClient::ASCII) {
+  if (msgFormat == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
     name_params.SetVal("program", pnm);
   }
@@ -863,7 +877,7 @@ taProject* TemtClient::GetCurrentProject() {
 }
 
 void TemtClient::ParseCommand(const String& cl) {
-  name_params.Reset(); // used by ascii and json parsers to store params
+  name_params.Reset(); // used by native and json parsers to store params
   cmd_line = trim(cl); // remove leading/trailing ws, including eol's
 
   if (cmd_line[0] == '{') {
@@ -872,8 +886,8 @@ void TemtClient::ParseCommand(const String& cl) {
     return;
   }
   else {
-    msgFormat = TemtClient::ASCII;
-    ParseCommandASCII(cmd_line);
+    msgFormat = TemtClient::NATIVE;
+    ParseCommandNATIVE(cmd_line);
   }
 }
 
@@ -881,9 +895,9 @@ void TemtClient::ParseCommand(const String& cl) {
 // as name params during the parse but the positional information
 // isn't available until the cmd is called and
 // I didn't want to put that logic into this method
-void TemtClient::ParseCommandASCII(const String& cmd_string) {
+void TemtClient::ParseCommandNATIVE(const String& cmd_string) {
   cmd = _nilString;
-  pos_params.Reset(); // used by ascii parser only
+  pos_params.Reset(); // used by native parser only
 
   // we use the pos_params as an intermediate guy during processing...
   //TEMP
@@ -978,7 +992,7 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
          name_params.SetVal("table", i->as_string().c_str());  // table name
        }
       else if (node_name == "data") {
-         tableData = i->as_node(); // json string of data table data
+         tableData = i->as_node();  // json string of data table data
        }
       else if (node_name == "column") {
         name_params.SetVal("column", i->as_string().c_str());  // a single column name - for get only - set controlled through "data"
@@ -1144,10 +1158,10 @@ void TemtClient::SendError(const String& err_msg) {
   if (msgFormat == TemtClient::JSON)
     SendErrorJSON(err_msg);
   else
-    SendErrorASCII(err_msg);
+    SendErrorNATIVE(err_msg);
 }
 
-void TemtClient::SendErrorASCII(const String& err_msg) {
+void TemtClient::SendErrorNATIVE(const String& err_msg) {
   String ln = "ERROR";
   if (err_msg.length() > 0)
     ln.cat(" ").cat(err_msg);
@@ -1158,7 +1172,7 @@ void TemtClient::SendErrorJSON(const String& err_msg) {
   JSONNode root(JSON_NODE);
   root.push_back(JSONNode("status", json_string("ERROR")));
   root.push_back(JSONNode("message", json_string(err_msg.chars())));
-  root.push_back(JSONNode("result_code", -1));
+  root.push_back(JSONNode("error", -1));
 
   String reply = root.write_formatted().c_str();
   WriteLine(reply);
@@ -1168,10 +1182,10 @@ void TemtClient::SendOk(const String& msg) {
   if (msgFormat == TemtClient::JSON)
     SendOkJSON(msg);
   else
-    SendOkASCII(msg);
+    SendOkNATIVE(msg);
 }
 
-void TemtClient::SendOkASCII(const String& msg) {
+void TemtClient::SendOkNATIVE(const String& msg) {
   String ln = "OK";
   if (msg.nonempty()) {
     ln.cat(" ").cat(msg);
@@ -1183,7 +1197,6 @@ void TemtClient::SendOkJSON(const String& msg) {
   JSONNode root(JSON_NODE);
   root.push_back(JSONNode("status", json_string("OK")));
   root.push_back(JSONNode("message", json_string(msg.chars())));
-  root.push_back(JSONNode("result_code", 0));
 
   String reply = root.write_formatted().c_str();
   WriteLine(reply);
@@ -1193,10 +1206,10 @@ void TemtClient::SendReply(const String& r) {
   if (msgFormat == TemtClient::JSON)
     SendErrorJSON(r);
   else
-    SendErrorASCII(r);
+    SendErrorNATIVE(r);
 }
 
-void TemtClient::SendReplyASCII(const String& r) {
+void TemtClient::SendReplyNATIVE(const String& r) {
   WriteLine(r);
 }
 

@@ -2897,6 +2897,9 @@ void DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
     // get the node name and value as a string
     std::string node_name = i->name();
 
+    if (node_name == "data") {
+      taMisc::DebugInfo("data");
+    }
     if (node_name == "columns") {
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
@@ -2956,14 +2959,22 @@ void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell)
     }
   }
 
-  int row = start_row;  // the first row to write to
+  int row;
   int rowCount = theValues.size();  // row count to write to table
-  if (row == -1) { // means append!
+
+  if (start_row == -1 || start_row > rows) { // means append!
     row = this->rows;
     AddRows(rowCount);
   }
-  else if (rowCount > (this->rows - start_row)) { // else overwrite - make sure we have enough rows
-    AddRows(rowCount - (this->rows - start_row));
+  else if (start_row < 0) {  // consider error for now - later implement from tail
+    row = 0;
+  }
+  else {
+    row = start_row;  // the first row to write to
+  }
+
+  if (rowCount > (this->rows - row)) { // else overwrite - but make sure we have enough rows
+    AddRows(rowCount - (this->rows - row));
   }
 
   if (!isMatrix) {
