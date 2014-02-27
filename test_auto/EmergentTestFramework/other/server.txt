@@ -1,0 +1,66 @@
+*** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+#Suite Setup      Start Process    emergent -nogui -ni -server -p ../test-projects/LeabraStd.proj    shell=True
+#Suite Teardown   Close All Connections
+#Suite Teardown    Terminate All Processes    kill=True
+Suite Setup       Open Connection    127.0.0.1   port=5360
+Suite Teardown    Close Connection
+
+*** Variables ***
+
+# Create some JSON data structures that look like the Emergent JSON commands but have values blank.
+
+*** Test Cases ***
+
+Connection Test
+    ${result} =        Read
+    Log                ${result}    WARN
+    Should Contain     ${result}    Emergent Server v6.
+
+RunState Test
+    WriteBare          GetRunState\n
+    Sleep              500ms
+    ${result} =        Read
+    Log                ${result}    WARN
+    Should Contain     ${result}    OK
+    RunState Should Match           ${result}    4
+
+Test Some JSON
+    ${json} =          Set Variable      { "name": "test", "array": [ 1, 2, 3 ]}
+    Show The Value     ${json}           /name
+    Json Value Should Equal   ${json}    /name     test  # Fails because of quotes
+    Show The Value     ${json}           /array/1
+    ${string-value} =  Get JSON String   ${json}  /name
+    Log                ${string-value}   WARN
+    Should Be Valid Json    [1, 2, 3]
+
+*** Keywords ***
+RunState Should Match
+    [Arguments]        ${result}    ${value}
+    ${match}           ${runstate} =
+    ...                Should Match Regexp    ${result}    OK (\\d)
+    Should Be Equal As Integers      ${value}   ${runstate}
+
+Show The Value
+    [Arguments]        ${json}           ${pointer}
+    ${result} =        Get Json Value    ${json}   ${pointer}
+    Log                ${result}         WARN
+
+Get Json String
+    [Arguments]        ${json}                   ${pointer}
+    ${value} =         Get Json Value            ${json}        ${pointer}
+    ${match}           ${result} =
+    ...                Should Match Regexp       ${value}       "(.*)"
+    [return]           ${result}
+
+# Get Json Value                string, pointer, ...
+# Json Value Should Equal       string, pointer, expected
+# Json Value Should Not Equal   string, pointer, expected
+# Log Json                      string, (args)
+# Parse Json                    string
+# Set Json Value                string, pointer, value
+# Should Be Valid Json          string

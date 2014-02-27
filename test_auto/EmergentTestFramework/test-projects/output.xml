@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140224 15:09:08.895" generator="Robot 2.8.3 (Python 2.7.6 on win32)">
+<robot generated="20140226 11:10:32.444" generator="Robot 2.8.4 (Python 2.7.6 on win32)">
 <suite source="C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\other\reset.txt" id="s1" name="Reset">
 <test id="s1-t1" name="Reset">
 <kw type="kw" name="OperatingSystem.Remove Files">
@@ -7,42 +7,42 @@
 <arguments>
 <arg>test/*</arg>
 </arguments>
-<msg timestamp="20140224 15:09:08.941" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.baseline.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.942" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.css.txt&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.942" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.record.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.943" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\emergent.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\emergent.txt&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.943" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\leabra.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\leabra.css&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.944" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.baseline.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.944" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.css.txt&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.944" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.record.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.945" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.baseline.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.945" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.css.txt&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.945" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.record.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.946" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.baseline.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.946" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.css.txt&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.947" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.record.json&lt;/a&gt;'</msg>
-<msg timestamp="20140224 15:09:08.947" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\__init__.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\__init__.txt&lt;/a&gt;'</msg>
-<status status="PASS" endtime="20140224 15:09:08.947" starttime="20140224 15:09:08.940"></status>
+<msg timestamp="20140226 11:10:32.494" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.494" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.css.txt&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.494" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\a_not_b.record.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.495" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\emergent.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\emergent.txt&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.495" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\leabra.css"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\leabra.css&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.496" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.496" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.css.txt&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.496" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStd.record.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.497" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.497" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.css.txt&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.498" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdCopy.record.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.498" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.baseline.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.baseline.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.499" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.css.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.css.txt&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.499" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.record.json"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\LeabraStdEmbedded.record.json&lt;/a&gt;'</msg>
+<msg timestamp="20140226 11:10:32.499" html="yes" level="INFO">Removed file '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\__init__.txt"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test\__init__.txt&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140226 11:10:32.499" starttime="20140226 11:10:32.493"></status>
 </kw>
 <kw type="kw" name="OperatingSystem.Remove Directory">
 <doc>Removes the directory pointed to by the given `path`.</doc>
 <arguments>
 <arg>test</arg>
 </arguments>
-<msg timestamp="20140224 15:09:08.948" html="yes" level="INFO">Listing contents of directory '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test&lt;/a&gt;'.</msg>
-<msg timestamp="20140224 15:09:08.948" html="yes" level="INFO">Directory '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test&lt;/a&gt;' is empty.</msg>
-<msg timestamp="20140224 15:09:08.949" html="yes" level="INFO">Removed directory '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test&lt;/a&gt;'</msg>
-<status status="PASS" endtime="20140224 15:09:08.949" starttime="20140224 15:09:08.948"></status>
+<msg timestamp="20140226 11:10:32.500" html="yes" level="INFO">Listing contents of directory '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test&lt;/a&gt;'.</msg>
+<msg timestamp="20140226 11:10:32.500" html="yes" level="INFO">Directory '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test&lt;/a&gt;' is empty.</msg>
+<msg timestamp="20140226 11:10:32.501" html="yes" level="INFO">Removed directory '&lt;a href="file://C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test"&gt;C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\test-projects\test&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20140226 11:10:32.501" starttime="20140226 11:10:32.500"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140224 15:09:08.949" critical="yes" starttime="20140224 15:09:08.940"></status>
+<status status="PASS" endtime="20140226 11:10:32.501" critical="yes" starttime="20140226 11:10:32.492"></status>
 </test>
 <doc></doc>
 <metadata>
 </metadata>
-<status status="PASS" endtime="20140224 15:09:08.950" starttime="20140224 15:09:08.896"></status>
+<status status="PASS" endtime="20140226 11:10:32.502" starttime="20140226 11:10:32.444"></status>
 </suite>
 <statistics>
 <total>

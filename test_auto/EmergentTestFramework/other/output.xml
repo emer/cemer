@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140226 17:19:14.875" generator="Robot 2.8.4 (Python 2.7.6 on win32)">
+<suite source="C:\Users\david_000\Documents\NetBeansProjects\EmergentTestFramework\other\server.txt" id="s1" name="Server">
+<kw type="setup" name="Telnet.Open Connection">
+<doc>Opens a new Telnet connection to the given host and port.</doc>
+<arguments>
+<arg>127.0.0.1</arg>
+<arg>port=5360</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.021" level="INFO">Opening connection to 127.0.0.1:5360 with prompt: None</msg>
+<status status="PASS" endtime="20140226 17:19:15.034" starttime="20140226 17:19:15.021"></status>
+</kw>
+<test id="s1-t1" name="Connection Test">
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140226 17:19:15.036" level="INFO">Emergent Server v6.3.2</msg>
+<msg timestamp="20140226 17:19:15.036" level="INFO">${result} = Emergent Server v6.3.2
+</msg>
+<status status="PASS" endtime="20140226 17:19:15.036" starttime="20140226 17:19:15.036"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.037" level="WARN">Emergent Server v6.3.2
+</msg>
+<status status="PASS" endtime="20140226 17:19:15.038" starttime="20140226 17:19:15.037"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Contain">
+<doc>Fails if `item1` does not contain `item2` one or more times.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>Emergent Server v6.</arg>
+</arguments>
+<status status="PASS" endtime="20140226 17:19:15.039" starttime="20140226 17:19:15.039"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140226 17:19:15.039" critical="yes" starttime="20140226 17:19:15.034"></status>
+</test>
+<test id="s1-t2" name="RunState Test">
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>GetRunState\n</arg>
+</arguments>
+<status status="PASS" endtime="20140226 17:19:15.041" starttime="20140226 17:19:15.041"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>500ms</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.542" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140226 17:19:15.542" starttime="20140226 17:19:15.041"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140226 17:19:15.543" level="INFO">OK 4</msg>
+<msg timestamp="20140226 17:19:15.543" level="INFO">${result} = OK 4
+</msg>
+<status status="PASS" endtime="20140226 17:19:15.543" starttime="20140226 17:19:15.542"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.543" level="WARN">OK 4
+</msg>
+<status status="PASS" endtime="20140226 17:19:15.544" starttime="20140226 17:19:15.543"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Contain">
+<doc>Fails if `item1` does not contain `item2` one or more times.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>OK</arg>
+</arguments>
+<status status="PASS" endtime="20140226 17:19:15.544" starttime="20140226 17:19:15.544"></status>
+</kw>
+<kw type="kw" name="RunState Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>4</arg>
+</arguments>
+<kw type="kw" name="${match}, ${runstate} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>OK (\\d)</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.546" level="INFO">${match} = OK 4</msg>
+<msg timestamp="20140226 17:19:15.546" level="INFO">${runstate} = 4</msg>
+<status status="PASS" endtime="20140226 17:19:15.546" starttime="20140226 17:19:15.545"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Be Equal As Integers">
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${runstate}</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.547" level="INFO">Argument types are:
+&lt;type 'unicode'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20140226 17:19:15.547" starttime="20140226 17:19:15.546"></status>
+</kw>
+<status status="PASS" endtime="20140226 17:19:15.547" starttime="20140226 17:19:15.545"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140226 17:19:15.547" critical="yes" starttime="20140226 17:19:15.040"></status>
+</test>
+<test id="s1-t3" name="Test Some JSON">
+<kw type="kw" name="${json} = BuiltIn.Set Variable">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>{ "name": "test", "array": [ 1, 2, 3 ]}</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.549" level="INFO">${json} = { "name": "test", "array": [ 1, 2, 3 ]}</msg>
+<status status="PASS" endtime="20140226 17:19:15.549" starttime="20140226 17:19:15.549"></status>
+</kw>
+<kw type="kw" name="Show The Value">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>/name</arg>
+</arguments>
+<kw type="kw" name="${result} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.550" level="INFO">${result} = "test"</msg>
+<status status="PASS" endtime="20140226 17:19:15.550" starttime="20140226 17:19:15.550"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.551" level="WARN">"test"</msg>
+<status status="PASS" endtime="20140226 17:19:15.551" starttime="20140226 17:19:15.550"></status>
+</kw>
+<status status="PASS" endtime="20140226 17:19:15.551" starttime="20140226 17:19:15.549"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>/name</arg>
+<arg>test</arg>
+</arguments>
+<msg timestamp="20140226 17:19:15.552" level="FAIL">JSON value ""test"" does not equal "test", but should have.</msg>
+<status status="FAIL" endtime="20140226 17:19:15.552" starttime="20140226 17:19:15.551"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140226 17:19:15.553" critical="yes" starttime="20140226 17:19:15.548">JSON value ""test"" does not equal "test", but should have.</status>
+</test>
+<kw type="teardown" name="Telnet.Close Connection">
+<doc>Closes the current Telnet connection.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140226 17:19:15.554" starttime="20140226 17:19:15.554"></status>
+</kw>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140226 17:19:15.554" starttime="20140226 17:19:14.875"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="2">Critical Tests</stat>
+<stat fail="1" pass="2">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="2" id="s1" name="Server">Server</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20140226 17:19:15.037" level="WARN">Emergent Server v6.3.2
+</msg>
+<msg timestamp="20140226 17:19:15.543" level="WARN">OK 4
+</msg>
+<msg timestamp="20140226 17:19:15.551" level="WARN">"test"</msg>
+</errors>
+</robot>

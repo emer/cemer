@@ -5,7 +5,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="Robot Framework 2.8.3 (Python 2.7.6 on win32)" name="Generator">
+<meta content="Robot Framework 2.8.4 (Python 2.7.6 on win32)" name="Generator">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAJEBoACtnfgA5cYYAERsiAEx2lAAbKkQAcazBACZCVwAcM1cAK0ucAAMDBQAnQncASG+FABkoVQAyWmgA6f8SgvH/Ij99+GLyIinyJfn/Yi//KSLzUy9iZogpIld3/4JVVTkid7vyUjNVNVJEAGOZ6Z7pXwAABpmZkRiLAAAGiJZpmGAAAEEt3SXdxAAATC7o/u3EAAC8MRZpjasAAAY1VVVTYAAABKqqqqpAAAAADKqq4AAAAAAAv4sAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAADgAwAA4AcAAOAHAADgBwAAwAcAAOAHAADgDwAA8A8AAPg/AAD+fwAA">
 <style media="all" type="text/css">
 /* Generic and misc styles */
@@ -216,6 +216,7 @@ th.stats-col-graph:hover {
 /* Generic table styles */
 table {
     margin: 0 1px;
+    background: white;
 }
 tr {
     background: white;
@@ -244,13 +245,61 @@ th {
     vertical-align: top;
     padding: 0.2em 0.4em;
 }
-#selector th, #selector td {
+.selector th, .selector td {
     padding-top: 0.5em;
-    padding-bottom: 1em;
+    padding-bottom: 0.5em;
     white-space: normal;
+}
+.first-selector th, .first-selector td{
+    padding-bottom: 0.2em;
+}
+.middle-selector th, .middle-selector td {
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+}
+.last-selector th, .last-selector td{
+    padding-top: 0.2em;
 }
 #print-selector {
     display: none;
+}
+/* Search */
+#search-suite, #search-test, #search-include, #search-exclude {
+    width: 25em;
+}
+#search a:hover {
+    text-decoration: none;
+}
+#search-help div {
+    margin: 0.5em 0.5em 0.7em 0;
+    padding: 0.7em;
+    background: #ECECF7;
+    border: 1px solid #BCBCD7;
+    border-radius: 3px;
+}
+#search-help h3, #search-help p {
+    margin: 0 0 0.7em 0;
+}
+.search-help-examples {
+    table-layout: auto;
+    width: 100%;
+}
+.search-help-examples, .search-help-examples tr,
+.search-help-examples th, .search-help-examples td {
+    background: transparent;
+    margin: 0;
+}
+.search-help-examples th, .search-help-examples td {
+    padding: 0.2em 0.7em 0.2em 0;
+}
+.help-item {
+    width: 10%;
+}
+.help-explanation {
+    width: 65%;
+}
+.help-examples {
+    width: 25%;
 }
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail-tabs {
@@ -369,7 +418,7 @@ a:link, a:visited {
 .details, .statistics {
     width: 100%;
 }
-#generated-ago, #top-right-header, #normal-selector,
+#generated-ago, #top-right-header, #normal-selector, #search-buttons,
 .folding-button, .expand, .hidden, .details-col-toggle {
     display: none;
 }
@@ -567,6 +616,17 @@ window.model = (function () {
                 tests = tests.concat(suites[i].searchTests(predicate));
             return tests.concat(util.filter(this.tests(), predicate));
         };
+        suite.searchTestsInSuite = function (pattern, matcher) {
+            if (!matcher)
+                matcher = util.Matcher(pattern);
+            if (matcher.matchesAny([suite.fullName, suite.name]))
+                return suite.allTests();
+            var tests = [];
+            var suites = this.suites();
+            for (var i in suites)
+                tests = tests.concat(suites[i].searchTestsInSuite(pattern, matcher));
+            return tests;
+        }
         suite.searchTestsByTag = function (tag) {
             return suite.searchTests(function (test) {
                 if (tag.combined)
@@ -594,23 +654,27 @@ window.model = (function () {
         return util.contains(testTags, util.normalize(tagname));
     }
     function containsTagPattern(testTags, pattern) {
+        var patterns;
         if (pattern.indexOf('NOT') != -1) {
-            var tagnames = pattern.split('NOT');
-            var required = tagnames[0];
-            var notAllowed = tagnames.slice(1);
-            return containsTagPattern(testTags, required) &&
-                util.all(util.map(notAllowed, function (name) {
-                    return !containsTagPattern(testTags, name);
+            patterns = pattern.split('NOT');
+            return containsTagPattern(testTags, patterns[0]) &&
+                util.all(util.map(patterns.slice(1), function (p) {
+                    return !containsTagPattern(testTags, p);
                 }));
         }
-        if (pattern.indexOf('AND') != -1) {
-            var tagnames = pattern.split('AND');
-            return util.all(util.map(tagnames, function (name) {
-                return containsTagPattern(testTags, name);
+        if (pattern.indexOf('OR') != -1) {
+            patterns = pattern.split('OR');
+            return util.any(util.map(patterns, function (p) {
+                return containsTagPattern(testTags, p);
             }));
         }
-        testTags = util.map(testTags, util.normalize);
-        return util.any(util.map(testTags, util.Matcher(pattern).matches));
+        if (pattern.indexOf('AND') != -1) {
+            patterns = pattern.split('AND');
+            return util.all(util.map(patterns, function (p) {
+                return containsTagPattern(testTags, p);
+            }));
+        }
+        return util.Matcher(pattern).matchesAny(testTags);
     }
     function findSuiteByName(suite, name) {
         if (suite.fullName == name)
@@ -653,6 +717,12 @@ window.model = (function () {
         test.isCritical = data.isCritical;
         test.tags = data.tags;
         test.message = data.message;
+        test.matchesTagPattern = function (pattern) {
+            return containsTagPattern(test.tags, pattern);
+        };
+        test.matchesNamePattern = function (pattern) {
+            return util.Matcher(pattern).matchesAny([test.name, test.fullName]);
+        };
         return test;
     }
     function Keyword(data) {
@@ -842,6 +912,9 @@ window.util = function () {
     function unescape(string) {
         return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
     }
+    function escape(string) {
+        return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
     function normalize(string) {
         return string.toLowerCase().replace(/ /g, '').replace(/_/g, '');
     }
@@ -852,9 +925,18 @@ window.util = function () {
         pattern = regexpEscape(normalize(pattern));
         var rePattern = '^' + pattern.replace(/\\\?/g, ".").replace(/\\\*/g, ".*") + '$';
         var regexp = new RegExp(rePattern);
-        return {
-            matches: function (string) { return regexp.test(string); }
+        function matches(string) {
+            return regexp.test(normalize(string));
         }
+        return {
+            matches: matches,
+            matchesAny: function (strings) {
+                for (var i = 0, len = strings.length; i < len; i++)
+                    if (matches(strings[i]))
+                        return true;
+                return false;
+            }
+        };
     }
     function formatParentName(item) {
         var parentName = item.fullName.slice(0, item.fullName.length - item.name.length);
@@ -907,8 +989,8 @@ window.util = function () {
     function createGeneratedAgoString(generatedMillis) {
         generatedMillis = timestamp(generatedMillis);
         function timeString(time, shortUnit) {
-            var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
-                        'm': 'minute', 's': 'second'}[shortUnit];
+            var unit = {y: 'year', d: 'day', h: 'hour', m: 'minute',
+                        s: 'second'}[shortUnit];
             var end = time == 1 ? ' ' : 's ';
             return time + ' ' + unit + end;
         }
@@ -919,29 +1001,43 @@ window.util = function () {
         var generated = Math.round(generatedMillis / 1000);
         var current = Math.round(new Date().getTime() / 1000);
         var elapsed = current - generated;
+        var prefix = '';
         if (elapsed < 0) {
-            elapsed = Math.abs(elapsed);
             prefix = '- ';
-        } else {
-            prefix = '';
+            elapsed = Math.abs(elapsed);
         }
         var secs  = elapsed % 60;
         var mins  = Math.floor(elapsed / 60) % 60;
         var hours = Math.floor(elapsed / (60*60)) % 24;
         var days  = Math.floor(elapsed / (60*60*24)) % 365;
         var years = Math.floor(elapsed / (60*60*24*365));
-        if (years > 0) {
+        if (years) {
             days = compensateLeapYears(days, years);
             return prefix + timeString(years, 'y') + timeString(days, 'd');
-        } else if (days > 0) {
+        } else if (days) {
             return prefix + timeString(days, 'd') + timeString(hours, 'h');
-        } else if (hours > 0) {
+        } else if (hours) {
             return prefix + timeString(hours, 'h') + timeString(mins, 'm');
-        } else if (mins > 0) {
+        } else if (mins) {
             return prefix + timeString(mins, 'm') + timeString(secs, 's');
         } else {
             return prefix + timeString(secs, 's');
         }
+    }
+    function parseQueryString(query) {
+        var result = {};
+        if (!query)
+            return result;
+        var params = query.split('&');
+        var parts;
+        function decode(item) {
+            return decodeURIComponent(item.replace('+', ' '));
+        }
+        for (var i = 0, len = params.length; i < len; i++) {
+            parts = params[i].split('=');
+            result[decode(parts.shift())] = decode(parts.join('='));
+        }
+        return result;
     }
     return {
         map: map,
@@ -950,6 +1046,7 @@ window.util = function () {
         any: any,
         contains: contains,
         last: last,
+        escape: escape,
         unescape: unescape,
         normalize: normalize,
         Matcher: Matcher,
@@ -959,7 +1056,8 @@ window.util = function () {
         dateTimeFromDate: dateTimeFromDate,
         formatElapsed: formatElapsed,
         timestamp: timestamp,
-        createGeneratedAgoString: createGeneratedAgoString
+        createGeneratedAgoString: createGeneratedAgoString,
+        parseQueryString: parseQueryString
     };
 }();
 </script>
@@ -1418,7 +1516,7 @@ storage = function () {
 window.output = {};
 </script>
 <script type="text/javascript">
-window.output["suite"] = [1,2,3,0,[],[1,0,54],[],[[1,0,1,0,[],[1,44,9],[]]],[],[1,1,1,1]];
+window.output["suite"] = [1,2,3,0,[],[1,0,58],[],[[1,0,1,0,[],[1,48,9],[]]],[],[1,1,1,1]];
 </script>
 <script type="text/javascript">
 window.output["strings"] = [];
@@ -1430,13 +1528,13 @@ window.output["strings"] = window.output["strings"].concat(["*","*Reset","*C:\\U
 window.output["stats"] = [[{"elapsed":"00:00:00","fail":0,"label":"Critical Tests","pass":1},{"elapsed":"00:00:00","fail":0,"label":"All Tests","pass":1}],[],[{"elapsed":"00:00:00","fail":0,"id":"s1","label":"Reset","name":"Reset","pass":1}]];
 </script>
 <script type="text/javascript">
-window.output["generatedTimestamp"] = "20140224 15:09:08 GMT -06:00";
+window.output["generatedTimestamp"] = "20140226 11:10:32 GMT -06:00";
 </script>
 <script type="text/javascript">
-window.output["generatedMillis"] = -896;
+window.output["generatedMillis"] = -444;
 </script>
 <script type="text/javascript">
-window.output["baseMillis"] = 1393279748896;
+window.output["baseMillis"] = 1393438232444;
 </script>
 <script type="text/javascript">
 window.settings = {"background":{"fail":"#FF3333","nonCriticalFail":"#99FF66","pass":"#99FF66"},"logURL":"log.html","title":""};
@@ -1526,45 +1624,34 @@ function addCustomSortersForDetails() {
 function showDetailsByHash() {
     if (window.location.hash == window.prevLocationHash)
         return;
-    var hash = window.location.hash.substring(1).replace('%', '%25');
-    var hashParts = decodeURI(hash).split('_');
-    var key = hashParts.shift();
-    var arg = hashParts.join('_');
-    var action = {'totals': showTotalSelector,
-                  'tags':   showTagSelector,
-                  'suites': showSuiteSelector,
-                  'total':  totalDetailSelected,
-                  'tag':    tagDetailSelected,
-                  'suite':  suiteDetailSelected}[key];
+    var parts = window.location.hash.substring(1).split('?');
+    var name = parts.shift();
+    var query = parts.join('?');
+    if (name == 'search') {
+        var params = util.parseQueryString(query);
+        searchExecuted(params.suite || '', params.test || '',
+                       params.include || '', params.exclude || '');
+        return
+    }
+    query = decodeURIComponent(query);
+    var action = {'totals': totalDetailSelected,
+                  'tags':   tagDetailSelected,
+                  'suites': suiteDetailSelected}[name];
     if (action)
-        action(arg);
-}
-
-function showTotalSelector() {
-    renderTotalSelector();
-    scrollToSelector('totals');
-}
-
-function showTagSelector() {
-    renderTagSelector();
-    scrollToSelector('tags');
-}
-
-function showSuiteSelector() {
-    renderSuiteSelector();
-    scrollToSelector('suites');
+        action(query);
 }
 
 function totalDetailSelected(name) {
-    if (!name) return;
     renderTotalSelector(name);
-    renderTotalDetails(name);
-    updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
-    scrollToSelector('total_'+name);
+    if (name) {
+        renderTotalDetails(name);
+        updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
+    }
+    scrollToSelector('totals', name);
 }
 
 function renderTotalSelector(name) {
-    var args = {linkTarget: (name) ? 'total_'+name : 'totals',
+    var args = {linkTarget: (name) ? 'totals?'+name : 'totals',
                 totalTabStatus: 'detail-tab-selected'};
     renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
@@ -1585,18 +1672,28 @@ function updatePrintSelector(name, info) {
 }
 
 function tagDetailSelected(name) {
-    if (!name) return;
     renderTagSelector(name);
-    var tag = util.filter(window.testdata.statistics().tag, function (tag) {
-        return tag.label == name;
-    })[0];
-    renderTagDetails(tag);
-    updatePrintSelector(name, tag.info);
-    scrollToSelector('tag_'+name);
+    if (name) {
+        var tag = findTag(name);
+        if (tag) {
+            renderTagDetails(tag);
+            updatePrintSelector(name, tag.info);
+        }
+    }
+    scrollToSelector('tags', name);
+}
+
+function findTag(name) {
+    var tags = window.testdata.statistics().tag;
+    for (var i = 0, len = tags.length; i < len; i++) {
+        if (tags[i].label == name)
+            return tags[i];
+    }
+    return null;
 }
 
 function renderTagSelector(name) {
-    var args = {linkTarget: (name) ? 'tag_'+name : 'tags',
+    var args = {linkTarget: (name) ? 'tags?'+name : 'tags',
                 tagTabStatus: 'detail-tab-selected'};
     var stats = {tags: window.testdata.statistics().tag, selected: name};
     renderSelector(args, 'tagDetailsSelectorTemplate', stats);
@@ -1604,21 +1701,20 @@ function renderTagSelector(name) {
 
 function renderTagDetails(tag) {
     var tests = getTestsHavingTag(tag);
-    if (tag)
-        tag.totalTime = calculateTotalTime(tests);
+    tag.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
 
 function suiteDetailSelected(id) {
-    if (!id) return;
     renderSuiteSelector(id);
-    renderSuiteDetails(id);
-    scrollToSelector('suite_'+id);
+    if (id)
+        renderSuiteDetails(id);
+    scrollToSelector('suites', id);
 }
 
 function renderSuiteSelector(id) {
-    var args = {linkTarget: (id) ? 'suite_'+id : 'suites',
+    var args = {linkTarget: (id) ? 'suites?'+id : 'suites',
                 suiteTabStatus: 'detail-tab-selected'};
     var stats = {suites: window.testdata.statistics().suite,
                  selected: id};
@@ -1635,9 +1731,60 @@ function renderSuiteDetails(id) {
     });
 }
 
-function scrollToSelector(anchor) {
+function searchExecuted(suite, test, include, exclude) {
+    renderSearchSelector(suite, test, include, exclude);
+    if (suite || test || include || exclude) {
+        renderSearchDetails(suite, test, include, exclude);
+        scrollToSelector('search' +
+                         '?suite=' + encodeURIComponent(suite) +
+                         '&test=' + encodeURIComponent(test) +
+                         '&include=' + encodeURIComponent(include) +
+                         '&exclude=' + encodeURIComponent(exclude));
+    } else {
+        scrollToSelector('search');
+    }
+}
+
+function renderSearchSelector(suite, test, include, exclude) {
+    var args = {linkTarget: (suite || test || include || exclude) ?
+                            ('search?suite=' + suite + '&test=' + test + '&include=' + include + '&exclude=' + exclude) :
+                            'search',
+                searchTabStatus: 'detail-tab-selected'};
+    var search = {suite: suite, test: test, include: include, exclude: exclude};
+    renderSelector(args, 'searchSelectorTemplate', search);
+}
+
+function renderSearchDetails(suite, test, include, exclude) {
+    var tests = searchTests(util.escape(suite), util.escape(test),
+                            util.escape(include), util.escape(exclude));
+    var passed = calculatePassed(tests);
+    var stats = {total: tests.length,
+                 pass: passed,
+                 fail: tests.length - passed,
+                 totalTime: calculateTotalTime(tests)};
+    $.tmpl('tagOrTotalDetailsTemplate', stats).appendTo('#details-header');
+    drawTestDetailsTable(tests, true);
+}
+
+function searchTests(suitePattern, testPattern, includePattern, excludePattern) {
+    var tests;
+    if (suitePattern)
+        tests = window.testdata.suite().searchTestsInSuite(suitePattern);
+    else
+        tests = window.testdata.suite().allTests();
+    return util.filter(tests, function (test) {
+        if (testPattern && !test.matchesNamePattern(testPattern))
+            return false;
+        if (includePattern && !test.matchesTagPattern(includePattern))
+            return false;
+        return !(excludePattern && test.matchesTagPattern(excludePattern));
+    });
+}
+
+function scrollToSelector(base, query) {
     $('#test-details-container').css('min-height', $(window).height());
-    window.prevLocationHash = "#"+anchor;
+    var anchor = query ? base + '?' + encodeURIComponent(query) : base;
+    window.prevLocationHash = '#' + anchor;
     window.location.hash = anchor;
 }
 
@@ -1650,6 +1797,8 @@ function renderSelector(args, template, stats) {
 }
 
 function drawTestDetailsTable(tests, sortByStatus) {
+    if (!tests.length)
+        return;
     renderTestDetailsHeader();
     window.elementsToRender = tests;
     var target = $('#test-details').find('tbody');
@@ -1671,8 +1820,6 @@ function sortByStatus(t1, t2) {
 }
 
 function getTestsHavingTag(tag) {
-    if (!tag)
-        return [];
     return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
 }
 
@@ -1687,6 +1834,13 @@ function calculateTotalTime(tests) {
     for (var i = 0, len = tests.length; i < len; i++)
         total += tests[i].times.elapsedMillis;
     return util.formatElapsed(total);
+}
+
+function calculatePassed(tests) {
+    var passed = util.filter(tests, function (test) {
+        return test.status == 'PASS';
+    });
+    return passed.length;
 }
 
 function renderTestDetails(sortByStatus, target) {
@@ -1752,13 +1906,13 @@ function hideHiddenDetailsColumns(elem) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
              class="fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else totalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#totals?critical" onclick="totalDetailSelected('critical')"
              class="pass">All critical tests passed</a></td>
       {{else}}
-      <td><a href="#total_all" onclick="totalDetailSelected('all')"
+      <td><a href="#totals?all" onclick="totalDetailSelected('all')"
              class="pass">All tests passed</a></td>
       {{/if}}
     </tr>
@@ -1803,7 +1957,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
     <td class="stats-col-name">
       <div class="stat-name">
-        <a href="#total_${type}">{{html label}}</a>
+        <a href="#totals?${type}">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -1814,7 +1968,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
     <td class="stats-col-name" title="${doc}">
       <div class="stat-name">
-        <a href="#tag_${label}">{{html label}}</a>
+        <a href="#tags?${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag-links">
@@ -1832,7 +1986,7 @@ function hideHiddenDetailsColumns(elem) {
   <tr onclick="suiteDetailSelected('${id}')" class="row-${$item.index}">
     <td class="stats-col-name" title="${label}">
       <div class="stat-name">
-        <a href="#suite_${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
+        <a href="#suites?${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
     {{tmpl($data) 'statColumnsTemplate'}}
@@ -1851,12 +2005,15 @@ function hideHiddenDetailsColumns(elem) {
     <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
     </li>
+    <li class="${searchTabStatus} detail-tab">
+      <a href="#search" onclick="renderSearchSelector()">Search</a>
+    </li>
   </ul>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr id="selector">
+    <tr class="selector">
       <th>Type:</th>
       <td id="normal-selector">
         <input id="radio-critical" type="radio" name="totals-radio"
@@ -1875,7 +2032,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr id="selector">
+    <tr class="selector">
       <th>Name:</th>
       <td id="normal-selector">
         <select id="tag-detail-selector"
@@ -1896,7 +2053,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details-header">
-    <tr id="selector">
+    <tr class="selector">
       <th>Name:</th>
       <td id="normal-selector">
         <select id="suite-detail-selector"
@@ -1913,6 +2070,151 @@ function hideHiddenDetailsColumns(elem) {
       <td id="print-selector"></td>
     </tr>
   </table>
+</script>
+
+<script  type="text/x-jquery-tmpl" id="searchSelectorTemplate">
+  <form action="javascript:void(0)">
+    <table class="details" id="details-header">
+      <tr class="selector first-selector">
+        <th><label for="search-suite">Suite:</label></th>
+        <td><input id="search-suite" type="text" value="${suite}"></td>
+      </tr>
+      <tr class="selector middle-selector">
+        <th><label for="search-test">Test:</label></th>
+        <td><input id="search-test" type="text" value="${test}"></td>
+      </tr>
+      <tr class="selector middle-selector">
+        <th><label for="search-include">Include:</label></th>
+        <td><input id="search-include" type="text" value="${include}"></td>
+      </tr>
+      <tr class="selector middle-selector">
+        <th><label for="search-exclude">Exclude:</label></th>
+        <td><input id="search-exclude" type="text" value="${exclude}"></td>
+      </tr>
+      <tr class="selector last-selector" id="search-buttons">
+        <th></th>
+        <td>
+          <input type="submit" value="Search"
+                 onclick="searchExecuted($('#search-suite').val(),
+                                         $('#search-test').val(),
+                                         $('#search-include').val(),
+                                         $('#search-exclude').val())">
+          <input type="button" value="Clear"
+                 onclick="$('#search-suite').val('');
+                          $('#search-test').val('');
+                          $('#search-include').val('');
+                          $('#search-exclude').val('')">
+          <a href="javascript:void(0)" onclick="$('#search-help').toggle()"
+             title="Toggle search help.">Help</a>
+        </td>
+      </tr>
+      <tr id="search-help" style="display: none">
+        <th></th>
+        <td>
+          <div>
+            <h3>Search fields</h3>
+            <p>
+              Test cases can be searched based on test suite and test case
+              names as well as based on tags. If multiple search criteria are
+              used, only tests matching all of them are included.
+              Search fields have same semantics as <em>&#8209;&#8209;suite</em>,
+              <em>&#8209;&#8209;test</em>, <em>&#8209;&#8209;include</em> and
+              <em>&#8209;&#8209;exclude</em> command line options, respectively.
+            </p>
+            <table class="search-help-examples">
+              <col class="help-item">
+              <col class="help-explanation">
+              <col class="help-examples>
+              <tr>
+                <th>Field</th>
+                <th>Explanation</th>
+                <th>Examples</th>
+              </tr>
+              <tr>
+                <td>Suite</td>
+                <td>
+                  Tests in matching suites are included. The pattern can match
+                  either suite's name or its full name that contains also
+                  parent suite names.
+                </td>
+                <td>My Suite<br>Root.Parent.Sui*</td>
+              </tr>
+              <tr>
+                <td>Test</td>
+                <td>
+                  Matching tests are included. The pattern can match either
+                  test's name or its full name that contains also parent
+                  suite names.
+                </td>
+                <td>Test*<br>Root.Pa*.T???</td>
+              </tr>
+              <tr>
+                <td>Include</td>
+                <td>
+                  Tests that contain matching tags are included.
+                </td>
+                <td>smoke<br>bug-*</td>
+              </tr>
+              <tr>
+                <td>Exclude</td>
+                <td>
+                  Tests that contain matching tags are not included.
+                </td>
+                <td>slow<br>feature-4?</td>
+              </tr>
+            </table>
+            <h3>Patterns</h3>
+            <p>
+              All searches support <em>*</em> and <em>?</em> wildcards and are
+              case, space and underscore insensitive. Tag related searches also
+              support <em>AND</em>, <em>OR</em> and <em>NOT</em> (case-sensitive)
+              combining operators. If operators are used together, their
+              precedence, from highest to lowest, is <em>AND</em>, <em>OR</em>,
+              <em>NOT</em>. See <em>Simple patterns</em> and
+              <em>Tag patterns</em> sections in
+              <a href="https://code.google.com/p/robotframework/wiki/UserGuide">Robot
+              Framework User Guide</a> version 2.8.4 or newer for more details.
+            </p>
+            <table class="search-help-examples">
+              <col class="help-item">
+              <col class="help-explanation">
+              <col class="help-examples>
+              <tr>
+                <th>Pattern</th>
+                <th>Explanation</th>
+                <th>Examples</th>
+              </tr>
+              <tr>
+                <td>*</td>
+                <td>Matches anything, even an empty string.</td>
+                <td>f*<br>sprint-*</td>
+              </tr>
+              <tr>
+                <td>?</td>
+                <td>Matches any single character.</td>
+                <td>f??<br>sprint-1?</td>
+              </tr>
+              <tr>
+                <td>AND</td>
+                <td>Matches if all patterns match.</td>
+                <td>foo AND bar<br>x AND y* AND z??</td>
+              </tr>
+              <tr>
+                <td>OR</td>
+                <td>Matches if any pattern matches.</td>
+                <td>foo OR bar<br>x OR y* OR z1 AND z2</td>
+              </tr>
+              <tr>
+                <td>NOT</td>
+                <td>Matches if pattern before matches and pattern after does not.</td>
+                <td>foo NOT bar<br>* NOT id-* AND smoke</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </form>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
