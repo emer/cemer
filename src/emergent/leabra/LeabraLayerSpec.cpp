@@ -1228,7 +1228,8 @@ void LeabraLayerSpec::Compute_AvgMaxActs_ugp(LeabraLayer* lay,
   for(int i=sti; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    thr->acts.UpdtVals(u->act_eq, i);
+    //    thr->acts.UpdtVals(u->act_eq, i);
+    thr->acts.UpdtVals(u->act, i);
   }
   thr->acts.CalcAvg(nunits-sti);
 
@@ -1240,7 +1241,7 @@ void LeabraLayerSpec::Compute_AvgMaxActs_ugp(LeabraLayer* lay,
       return; // no can do
 
     for(int j=0; j < k_eff; j++) {
-      thr->acts_top_k.UpdtVals(act_buff->Un(j, gpidx)->act_eq, j);
+      thr->acts_top_k.UpdtVals(act_buff->Un(j, gpidx)->act, j); // was act_eq
     }
     thr->acts_top_k.CalcAvg(k_eff);
   }
