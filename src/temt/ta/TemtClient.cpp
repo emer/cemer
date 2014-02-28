@@ -497,72 +497,72 @@ void TemtClient::cmdAppendData() {
     SendOk();
   }
   else {
-  TableParams p(this, tab);
-  bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
-  //NOTE: p will have already sent an ERROR if cmd_ok is false
-  // any subsequent failure must send an ERROR
+    TableParams p(this, tab);
+    bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
+    //NOTE: p will have already sent an ERROR if cmd_ok is false
+    // any subsequent failure must send an ERROR
 
 
-  // ok, now we must block/waiting until all expected lines received
-  // note: some of the expected lines may already be in lines buffer
-  setState(CS_DATA_IN);
+    // ok, now we must block/waiting until all expected lines received
+    // note: some of the expected lines may already be in lines buffer
+    setState(CS_DATA_IN);
 
-  while ((lines.size < p.lines) && (state != CS_DISCONNECTED)) {
-    // note: signals not invoked again inside this event loop
-    if (sock->canReadLine())
-      sock_readyRead();
-    else
-      sock->waitForReadyRead();
-  }
-
-  if (state == CS_DISCONNECTED)
-    return;
-
-  setState(CS_READY);
-
-  if (!cmd_ok) { // error of some occurred, so we just accepted lines
-    // must remove first n lines
-    while ((p.lines > 0) && (lines.size > 0)) {
-      lines.RemoveIdx(0);
-      p.lines--;
+    while ((lines.size < p.lines) && (state != CS_DISCONNECTED)) {
+      // note: signals not invoked again inside this event loop
+      if (sock->canReadLine())
+        sock_readyRead();
+      else
+        sock->waitForReadyRead();
     }
-    return;
-  }
 
-  // trivial case with no lines
-  if (p.lines == 0) goto ok_exit;
+    if (state == CS_DISCONNECTED)
+      return;
 
-  {
-    //note: we must have enough lines to have made it here
-    tab->StructUpdate(true);
-    int ln_num = 0; // to do header/init stuff
-    while ((p.lines > 0) && (lines.size > 0)) {
-      String ln;
-      //note: parser needs the eol, so we have to add it back in
-      ln = lines.FastEl(0) + '\n';
-      lines.RemoveIdx(0);
-      p.lines--;
-      // simplest way to be compat with arcane DataTable load api
-      // is to tack the markers on if we aren't expecting them
-      if (!p.markers) {
-        if (p.header && (ln_num == 0))
-          ln = "_H:\t" + ln;
-        else ln = "_D:\t" + ln;
+    setState(CS_READY);
+
+    if (!cmd_ok) { // error of some occurred, so we just accepted lines
+      // must remove first n lines
+      while ((p.lines > 0) && (lines.size > 0)) {
+        lines.RemoveIdx(0);
+        p.lines--;
       }
-      // note: making a new one each loop simplifies things
-      istringstream istr(ln.chars());
-
-      tab->LoadDataRowEx_strm(istr, DataTable::TAB,
-          true, // quote_str
-          (ln_num == 0) // clear load schema on first guy
-      );
-      ++ln_num;
+      return;
     }
-    tab->StructUpdate(false);
-  }
-  ok_exit:
-  // ok, we did!
-  SendOk();
+
+    // trivial case with no lines
+    if (p.lines == 0) goto ok_exit;
+
+    {
+      //note: we must have enough lines to have made it here
+      tab->StructUpdate(true);
+      int ln_num = 0; // to do header/init stuff
+      while ((p.lines > 0) && (lines.size > 0)) {
+        String ln;
+        //note: parser needs the eol, so we have to add it back in
+        ln = lines.FastEl(0) + '\n';
+        lines.RemoveIdx(0);
+        p.lines--;
+        // simplest way to be compat with arcane DataTable load api
+        // is to tack the markers on if we aren't expecting them
+        if (!p.markers) {
+          if (p.header && (ln_num == 0))
+            ln = "_H:\t" + ln;
+          else ln = "_D:\t" + ln;
+        }
+        // note: making a new one each loop simplifies things
+        istringstream istr(ln.chars());
+
+        tab->LoadDataRowEx_strm(istr, DataTable::TAB,
+            true, // quote_str
+            (ln_num == 0) // clear load schema on first guy
+        );
+        ++ln_num;
+      }
+      tab->StructUpdate(false);
+    }
+    ok_exit:
+    // ok, we did!
+    SendOk();
   }
 }
 
@@ -588,7 +588,7 @@ void TemtClient::cmdGetData() {
       col_name = name_params.GetVal("column").toString();
     }
     if (!name_params.GetVal("row_from").isNull()) {
-      rows = name_params.GetVal("row_from").toInt();
+      row_from = name_params.GetVal("row_from").toInt();
     }
     if (!name_params.GetVal("rows").isNull()) {
       rows = name_params.GetVal("rows").toInt();
@@ -657,15 +657,15 @@ void TemtClient::cmdGetDataMatrixCell() {
   // note: ok if running
 
   if (msgFormat == TemtClient::JSON) {
-     ostringstream ostr;
-     String data;
-     String col_name = name_params.GetVal("column").toString();
-     int row_from = name_params.GetVal("row_from").toInt();
-     int cell = name_params.GetVal("cell").toInt();
-     tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
-     data = ostr.str().c_str();
-     Write(data);
-   }
+    ostringstream ostr;
+    String data;
+    String col_name = name_params.GetVal("column").toString();
+    int row_from = name_params.GetVal("row_from").toInt();
+    int cell = name_params.GetVal("cell").toInt();
+    tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
+    data = ostr.str().c_str();
+    Write(data);
+  }
   else {
     TableParams p(this, tab);
     if (!p.ValidateParams(TableParams::Cell, true))
@@ -773,12 +773,7 @@ void TemtClient::cmdGetVar() {
   }
 
   // send message
-//  if (msgFormat == TemtClient::JSON) {
-//    SendOk();
-//  }
-//  else {
-    SendOk(val);
-//  }
+  SendOk(val);
 }
 
 void TemtClient::cmdGetRunState() {
@@ -831,43 +826,76 @@ void TemtClient::cmdRemoveData() {
 void TemtClient::cmdSetVar() {
   if (msgFormat == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
-    name_params.SetVal("program", pnm);
+
+    Program* prog = GetAssertProgram(pnm);
+    if (!prog) return;
+    // note: ok if running
+    // note: would work for 0 params
+
+
+    // verify all params
+    String nm;
+    for (int i = 0; i < name_params.size; ++i) {
+      nm = name_params.FastEl(i).name;
+      // note: check name first, because GetVar raises error
+      if (!prog->HasVar(nm)) {
+        SendError("Var '" + nm + "' not found");
+        return;
+      }
+      // check if type ok to set -- assume it will be found since name is ok
+      ProgVar* var = prog->FindVarName(nm);
+      if (!var) continue; // shouldn't happen, but should get caught next stage
+      if (var->var_type == ProgVar::T_Object) {
+        SendError("Var '" + nm + "' is an Object--setting is not supported");
+        return;
+      }
+    }
+
+    // set
+    for (int i = 0; i < name_params.size; ++i) {
+      NameVar& nv = name_params.FastEl(i);
+      if (!prog->SetVar(nv.name, nv.value)) {
+        SendError("An error occurred while seeting Var or Arg '" + nm + "'");
+        return;
+      }
+    }
+    SendOk("vars set");
   }
 
-  String pnm = name_params.GetVal("program").toString();
-  Program* prog = GetAssertProgram(pnm);
-  if (!prog) return;
-  // note: ok if running
-  // note: would work for 0 params  
+  if (msgFormat == TemtClient::JSON) {
+    String pnm = name_params.GetVal("program").toString();
+    Program* prog = GetAssertProgram(pnm);
+    if (!prog)
+      return;
 
-
-  // verify all params
-  String nm;
-  for (int i = 0; i < name_params.size; ++i) {
-    nm = name_params.FastEl(i).name;
-    // note: check name first, because GetVar raises error
-    if (!prog->HasVar(nm)) {
-      SendError("Var '" + nm + "' not found");
+    String var_name = name_params.GetVal("var_name").toString();
+    if (var_name.empty()) {
+      SendError("var_name missing");
       return;
     }
+    if (!prog->HasVar(var_name)) {
+      SendError("Var '" + var_name + "' not found");
+      return;
+    }
+
     // check if type ok to set -- assume it will be found since name is ok
-    ProgVar* var = prog->FindVarName(nm);
-    if (!var) continue; // shouldn't happen, but should get caught next stage
+    ProgVar* var = prog->FindVarName(var_name);
     if (var->var_type == ProgVar::T_Object) {
-      SendError("Var '" + nm + "' is an Object--setting is not supported");
+      SendError("Var '" + var_name + "' is an Object--setting is not supported");
       return;
     }
-  }
 
-  // set
-  for (int i = 0; i < name_params.size; ++i) {
-    NameVar& nv = name_params.FastEl(i);
-    if (!prog->SetVar(nv.name, nv.value)) {
-      SendError("An error occurred while seeting Var or Arg '" + nm + "'");
+    // set
+    String var_value = name_params.GetVal("var_value").toString();
+    if (var_value.empty()) {
+      SendError("var_value missing");
+      return;
+    }
+    if (!prog->SetVar(var_name, var_value)) {
+      SendError("An error occurred while seeting Var or Arg '" + var_name + "'");
       return;
     }
   }
-  SendOk("vars set");
 }
 
 taProject* TemtClient::GetCurrentProject() {
@@ -985,28 +1013,31 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "program") {
         name_params.SetVal("program", i->as_string().c_str()); // program name
       }
-      else if (node_name == "variable") {
-         name_params.SetVal("variable", i->as_string().c_str()); // variable name
-       }
+      else if (node_name == "var_name") {
+        name_params.SetVal("var_name", i->as_string().c_str()); // variable name
+      }
+      else if (node_name == "var_value") {
+        name_params.SetVal("var_value", i->as_string().c_str()); // variable name
+      }
       else if (node_name == "table") {
-         name_params.SetVal("table", i->as_string().c_str());  // table name
-       }
+        name_params.SetVal("table", i->as_string().c_str());  // table name
+      }
       else if (node_name == "data") {
-         tableData = i->as_node();  // json string of data table data
-       }
+        tableData = i->as_node();  // json string of data table data
+      }
       else if (node_name == "column") {
         name_params.SetVal("column", i->as_string().c_str());  // a single column name - for get only - set controlled through "data"
-       }
+      }
       else if (node_name == "row_from") {
         name_params.SetVal("row_from", i->as_int());  // first row to get/set
         int row = name_params.GetVal("row_from").toInt();
-       }
+      }
       else if (node_name == "rows") {
         name_params.SetVal("rows", i->as_int());  // count of rows to operate on (get, remove) - for set count is number of values sent
-       }
+      }
       else if (node_name == "cell") {
         name_params.SetVal("cell", i->as_int());  // first cell to get/set - based on flat indexing
-       }
+      }
       ++i;
     }
 

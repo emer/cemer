@@ -2154,6 +2154,8 @@ void DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name
 }
 
 void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int start_row, int n_rows) {
+  int stop_row;
+
   JSONNode root(JSON_NODE);
   JSONNode columns(JSON_ARRAY);
   columns.set_name("columns");
@@ -2163,7 +2165,10 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
   }
 
   if (n_rows == -1 || (start_row + n_rows) > rows) {
-    n_rows = rows - start_row;
+    stop_row = rows;
+  }
+  else {
+    stop_row = start_row + n_rows;
   }
 
   int_Array columnList;
@@ -2196,7 +2201,7 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
     JSONNode values(JSON_ARRAY);
     values.set_name("values");
     if (!dc->is_matrix) {  // single array of values - row 1 to row n
-      for (int j=start_row; j < n_rows; j++) {
+      for (int j=start_row; j < stop_row; j++) {
         switch (dc->valType()) {
         case VT_STRING:
           values.push_back(JSONNode("", json_string(dc->GetValAsString(j).chars())));
@@ -2225,7 +2230,7 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
 
     if(dc->is_matrix) {
       if (dc->cell_geom.dims() == 2) {
-        for (int row=start_row; row < n_rows; row++) {
+        for (int row=start_row; row < stop_row; row++) {
           JSONNode matrixValues(JSON_ARRAY);
           for(int k = 0; k < dc->cell_geom.size(1); k++) {
             JSONNode matrixDim_1Values(JSON_ARRAY);
@@ -2259,7 +2264,7 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
         }
       }
       if (dc->cell_geom.dims() == 3) {
-        for (int row=start_row; row < n_rows; row++) {
+        for (int row=start_row; row < stop_row; row++) {
           JSONNode matrixValues(JSON_ARRAY);
           for(int l = 0; l < dc->cell_geom.size(2); l++) {
             JSONNode matrixDim_2Values(JSON_ARRAY);
@@ -2297,7 +2302,7 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
         }
       }
       if (dc->cell_geom.dims() == 4) {
-        for (int row=start_row; row < n_rows; row++) {
+        for (int row=start_row; row < stop_row; row++) {
           JSONNode matrixValues(JSON_ARRAY);
           for(int m = 0; m < dc->cell_geom.size(3); m++) {
             JSONNode matrixDim_3Values(JSON_ARRAY);
@@ -2897,9 +2902,9 @@ void DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
     // get the node name and value as a string
     std::string node_name = i->name();
 
-    if (node_name == "data") {
-      taMisc::DebugInfo("data");
-    }
+//    if (node_name == "data") {
+//      taMisc::DebugInfo("data");
+//    }
     if (node_name == "columns") {
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
