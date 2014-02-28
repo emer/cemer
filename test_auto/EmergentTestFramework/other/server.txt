@@ -95,9 +95,53 @@ Read Data Table Row
     Json Value Should Equal    ${result}             /columns/2/matrix  true
     Json String Should Match    ${result}             /columns/0/values/0  rdiag
     Json String Should Match    ${result}             /columns/0/values/1  ldiag
+    Json Value Should Equal    ${result}             /columns/1/values/0/2/2  1
+    Json Value Should Equal    ${result}             /columns/1/values/0/1/0  0
     Json Value Should Not Exist   ${result}           /columns/0/values/2
     Json Value Should Not Exist   ${result}           /columns/1/values/2
     Json Value Should Not Exist   ${result}           /columns/2/values/2
+
+Read Data Table Cell
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /columns/0/name       Name
+    Json String Should Match   ${result}             /columns/0/type       String
+    Json Value Should Equal    ${result}             /columns/0/matrix     false
+    Json String Should Match   ${result}             /columns/0/values/0   rdiag
+
+Read Data Table Matrix Cell
+    ${result} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /columns/0/name      Input
+    Json String Should Match   ${result}             /columns/0/type      float
+    Json Value Should Equal    ${result}             /columns/0/matrix    true
+    Json Value Should Equal    ${result}             /columns/0/values/0/0/0  1
+    
+
+Read Data Table Cell Column Error
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
+    Should Be Valid Json       ${result}
+    Json Value Should Not Exist   ${result}          /columns/0/name
+    Json String Should Match   ${result}             /message              ERROR
+
+Append Data Table
+    ${result} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /status               OK
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Should Be Valid Json       ${result}
+    Json Value Should Equal    ${result}             /columns/0/values/0   7
+    Json Value Should Equal    ${result}             /columns/0/values/1   9
+
+Remove Data                    
+    ${result} =                Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /status     OK
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Should Be Valid Json       ${result}
+    Json Value Should Not Exist  ${result}           /columns/0/values/0
+
+
 
 *** Keywords ***
 
@@ -141,9 +185,9 @@ Print
 # Should Be Valid Json          string
 
 Initialize Emergent
-    ${pid} =             Start Process      ~/emergent/build/bin/emergent -nogui -server -p ../test-projects/LeabraStd.proj    shell=True
+    ${pid} =             Start Process      emergent -nogui -server -p ../test-projects/LeabraStd.proj    shell=True
     Set Suite Variable   ${pid}
-    Sleep                2 sec
+    Sleep                4 sec   # Could do a loop and use Is Process Running but not a big deal
     Open Connection      127.0.0.1    port=5360
 
 Shutdown Emergent

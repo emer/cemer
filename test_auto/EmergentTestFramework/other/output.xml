@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140227 23:37:49.383" generator="Robot 2.8.4 (Python 2.7.3 on linux2)">
+<robot generated="20140228 14:48:45.990" generator="Robot 2.8.4 (Python 2.7.3 on linux2)">
 <suite source="/home/djilk/emergent/test_auto/EmergentTestFramework/other/server.txt" id="s1" name="Server">
 <kw type="setup" name="Initialize Emergent">
 <doc></doc>
@@ -8,29 +8,29 @@
 <kw type="kw" name="${pid} = Process.Start Process">
 <doc>Starts a new process on background.</doc>
 <arguments>
-<arg>~/emergent/build/bin/emergent -nogui -server -p ../test-projects/LeabraStd.proj</arg>
+<arg>emergent -nogui -server -p ../test-projects/LeabraStd.proj</arg>
 <arg>shell=True</arg>
 </arguments>
-<msg timestamp="20140227 23:37:49.545" level="INFO">Starting process:
-~/emergent/build/bin/emergent -nogui -server -p ../test-projects/LeabraStd.proj</msg>
-<msg timestamp="20140227 23:37:49.549" level="INFO">${pid} = 1</msg>
-<status status="PASS" endtime="20140227 23:37:49.549" starttime="20140227 23:37:49.544"></status>
+<msg timestamp="20140228 14:48:46.107" level="INFO">Starting process:
+emergent -nogui -server -p ../test-projects/LeabraStd.proj</msg>
+<msg timestamp="20140228 14:48:46.112" level="INFO">${pid} = 1</msg>
+<status status="PASS" endtime="20140228 14:48:46.111" starttime="20140228 14:48:46.107"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Set Suite Variable">
 <doc>Makes a variable available everywhere within the scope of the current suite.</doc>
 <arguments>
 <arg>${pid}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:49.551" level="INFO">${pid} = 1</msg>
-<status status="PASS" endtime="20140227 23:37:49.551" starttime="20140227 23:37:49.550"></status>
+<msg timestamp="20140228 14:48:46.113" level="INFO">${pid} = 1</msg>
+<status status="PASS" endtime="20140228 14:48:46.113" starttime="20140228 14:48:46.112"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
-<arg>2 sec</arg>
+<arg>4 sec</arg>
 </arguments>
-<msg timestamp="20140227 23:37:51.553" level="INFO">Slept 2 seconds</msg>
-<status status="PASS" endtime="20140227 23:37:51.553" starttime="20140227 23:37:49.551"></status>
+<msg timestamp="20140228 14:48:50.115" level="INFO">Slept 4 seconds</msg>
+<status status="PASS" endtime="20140228 14:48:50.115" starttime="20140228 14:48:46.113"></status>
 </kw>
 <kw type="kw" name="Telnet.Open Connection">
 <doc>Opens a new Telnet connection to the given host and port.</doc>
@@ -38,10 +38,10 @@
 <arg>127.0.0.1</arg>
 <arg>port=5360</arg>
 </arguments>
-<msg timestamp="20140227 23:37:51.554" level="INFO">Opening connection to 127.0.0.1:5360 with prompt: None</msg>
-<status status="PASS" endtime="20140227 23:37:51.563" starttime="20140227 23:37:51.554"></status>
+<msg timestamp="20140228 14:48:50.117" level="INFO">Opening connection to 127.0.0.1:5360 with prompt: None</msg>
+<status status="PASS" endtime="20140228 14:48:50.125" starttime="20140228 14:48:50.115"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:51.563" starttime="20140227 23:37:49.543"></status>
+<status status="PASS" endtime="20140228 14:48:50.125" starttime="20140228 14:48:46.106"></status>
 </kw>
 <test id="s1-t1" name="Connection">
 <kw type="kw" name="BuiltIn.Sleep">
@@ -49,17 +49,17 @@
 <arguments>
 <arg>1 sec</arg>
 </arguments>
-<msg timestamp="20140227 23:37:52.567" level="INFO">Slept 1 second</msg>
-<status status="PASS" endtime="20140227 23:37:52.567" starttime="20140227 23:37:51.566"></status>
+<msg timestamp="20140228 14:48:51.136" level="INFO">Slept 1 second</msg>
+<status status="PASS" endtime="20140228 14:48:51.136" starttime="20140228 14:48:50.135"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:52.569" level="INFO">Emergent Server v6.3.6</msg>
-<msg timestamp="20140227 23:37:52.569" level="INFO">${result} = Emergent Server v6.3.6
+<msg timestamp="20140228 14:48:51.138" level="INFO">Emergent Server v6.3.6</msg>
+<msg timestamp="20140228 14:48:51.138" level="INFO">${result} = Emergent Server v6.3.6
 </msg>
-<status status="PASS" endtime="20140227 23:37:52.569" starttime="20140227 23:37:52.568"></status>
+<status status="PASS" endtime="20140228 14:48:51.138" starttime="20140228 14:48:51.137"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -72,11 +72,11 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:52.571" level="WARN">Emergent Server v6.3.6
+<msg timestamp="20140228 14:48:51.139" level="WARN">Emergent Server v6.3.6
 </msg>
-<status status="PASS" endtime="20140227 23:37:52.572" starttime="20140227 23:37:52.571"></status>
+<status status="PASS" endtime="20140228 14:48:51.140" starttime="20140228 14:48:51.139"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:52.572" starttime="20140227 23:37:52.569"></status>
+<status status="PASS" endtime="20140228 14:48:51.140" starttime="20140228 14:48:51.138"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Contain">
 <doc>Fails if `item1` does not contain `item2` one or more times.</doc>
@@ -84,12 +84,12 @@
 <arg>${result}</arg>
 <arg>Emergent Server v6.</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:52.573" starttime="20140227 23:37:52.573"></status>
+<status status="PASS" endtime="20140228 14:48:51.141" starttime="20140228 14:48:51.140"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140227 23:37:52.573" critical="yes" starttime="20140227 23:37:51.563"></status>
+<status status="PASS" endtime="20140228 14:48:51.141" critical="yes" starttime="20140228 14:48:50.126"></status>
 </test>
 <test id="s1-t2" name="Native Test">
 <kw type="kw" name="${result} = Run Command Wait">
@@ -114,34 +114,34 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:52.580" level="WARN">[Sending] GetRunState</msg>
-<status status="PASS" endtime="20140227 23:37:52.581" starttime="20140227 23:37:52.578"></status>
+<msg timestamp="20140228 14:48:51.145" level="WARN">[Sending] GetRunState</msg>
+<status status="PASS" endtime="20140228 14:48:51.145" starttime="20140228 14:48:51.145"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:52.581" starttime="20140227 23:37:52.577"></status>
+<status status="PASS" endtime="20140228 14:48:51.145" starttime="20140228 14:48:51.144"></status>
 </kw>
 <kw type="kw" name="Telnet.Write Bare">
 <doc>Writes the given text, and nothing else, into the connection.</doc>
 <arguments>
 <arg>${command}\n</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:52.582" starttime="20140227 23:37:52.581"></status>
+<status status="PASS" endtime="20140228 14:48:51.146" starttime="20140228 14:48:51.145"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>${wait}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.083" level="INFO">Slept 500 milliseconds</msg>
-<status status="PASS" endtime="20140227 23:37:53.084" starttime="20140227 23:37:52.582"></status>
+<msg timestamp="20140228 14:48:51.647" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:51.648" starttime="20140228 14:48:51.146"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:53.085" level="INFO">OK 4</msg>
-<msg timestamp="20140227 23:37:53.085" level="INFO">${result} = OK 4
+<msg timestamp="20140228 14:48:51.649" level="INFO">OK 4</msg>
+<msg timestamp="20140228 14:48:51.649" level="INFO">${result} = OK 4
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.085" starttime="20140227 23:37:53.084"></status>
+<status status="PASS" endtime="20140228 14:48:51.649" starttime="20140228 14:48:51.648"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -154,19 +154,19 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.087" level="WARN">[Received] OK 4
+<msg timestamp="20140228 14:48:51.651" level="WARN">[Received] OK 4
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.087" starttime="20140227 23:37:53.086"></status>
+<status status="PASS" endtime="20140228 14:48:51.651" starttime="20140228 14:48:51.650"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.088" starttime="20140227 23:37:53.085"></status>
+<status status="PASS" endtime="20140228 14:48:51.651" starttime="20140228 14:48:51.649"></status>
 </kw>
-<msg timestamp="20140227 23:37:53.088" level="INFO">${result} = OK 4
+<msg timestamp="20140228 14:48:51.652" level="INFO">${result} = OK 4
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.088" starttime="20140227 23:37:52.576"></status>
+<status status="PASS" endtime="20140228 14:48:51.652" starttime="20140228 14:48:51.143"></status>
 </kw>
-<msg timestamp="20140227 23:37:53.089" level="INFO">${result} = OK 4
+<msg timestamp="20140228 14:48:51.652" level="INFO">${result} = OK 4
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.088" starttime="20140227 23:37:52.575"></status>
+<status status="PASS" endtime="20140228 14:48:51.652" starttime="20140228 14:48:51.143"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Contain">
 <doc>Fails if `item1` does not contain `item2` one or more times.</doc>
@@ -174,7 +174,7 @@
 <arg>${result}</arg>
 <arg>OK</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:53.089" starttime="20140227 23:37:53.089"></status>
+<status status="PASS" endtime="20140228 14:48:51.653" starttime="20140228 14:48:51.653"></status>
 </kw>
 <kw type="kw" name="Message Should Match">
 <doc></doc>
@@ -188,9 +188,9 @@
 <arg>${result}</arg>
 <arg>OK (.*)</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.092" level="INFO">${match} = OK 4</msg>
-<msg timestamp="20140227 23:37:53.092" level="INFO">${message} = 4</msg>
-<status status="PASS" endtime="20140227 23:37:53.092" starttime="20140227 23:37:53.091"></status>
+<msg timestamp="20140228 14:48:51.656" level="INFO">${match} = OK 4</msg>
+<msg timestamp="20140228 14:48:51.656" level="INFO">${message} = 4</msg>
+<status status="PASS" endtime="20140228 14:48:51.656" starttime="20140228 14:48:51.655"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Be Equal">
 <doc>Fails if the given objects are unequal.</doc>
@@ -198,17 +198,17 @@
 <arg>${expected}</arg>
 <arg>${message}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.093" level="INFO">Argument types are:
+<msg timestamp="20140228 14:48:51.658" level="INFO">Argument types are:
 &lt;type 'unicode'&gt;
 &lt;type 'unicode'&gt;</msg>
-<status status="PASS" endtime="20140227 23:37:53.093" starttime="20140227 23:37:53.092"></status>
+<status status="PASS" endtime="20140228 14:48:51.658" starttime="20140228 14:48:51.657"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.093" starttime="20140227 23:37:53.090"></status>
+<status status="PASS" endtime="20140228 14:48:51.658" starttime="20140228 14:48:51.654"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140227 23:37:53.093" critical="yes" starttime="20140227 23:37:52.574"></status>
+<status status="PASS" endtime="20140228 14:48:51.658" critical="yes" starttime="20140228 14:48:51.142"></status>
 </test>
 <test id="s1-t3" name="General RunState">
 <kw type="kw" name="${result} = Run Command Wait">
@@ -233,40 +233,40 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.099" level="WARN">[Sending] {"command": "GetRunState"}</msg>
-<status status="PASS" endtime="20140227 23:37:53.100" starttime="20140227 23:37:53.099"></status>
+<msg timestamp="20140228 14:48:51.666" level="WARN">[Sending] {"command": "GetRunState"}</msg>
+<status status="PASS" endtime="20140228 14:48:51.666" starttime="20140228 14:48:51.666"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.100" starttime="20140227 23:37:53.097"></status>
+<status status="PASS" endtime="20140228 14:48:51.667" starttime="20140228 14:48:51.662"></status>
 </kw>
 <kw type="kw" name="Telnet.Write Bare">
 <doc>Writes the given text, and nothing else, into the connection.</doc>
 <arguments>
 <arg>${command}\n</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:53.101" starttime="20140227 23:37:53.101"></status>
+<status status="PASS" endtime="20140228 14:48:51.668" starttime="20140228 14:48:51.667"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>${wait}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.603" level="INFO">Slept 500 milliseconds</msg>
-<status status="PASS" endtime="20140227 23:37:53.603" starttime="20140227 23:37:53.101"></status>
+<msg timestamp="20140228 14:48:52.170" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:52.170" starttime="20140228 14:48:51.668"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:53.604" level="INFO">{
+<msg timestamp="20140228 14:48:52.171" level="INFO">{
 	"status" : "OK",
 	"message" : "4"
 }</msg>
-<msg timestamp="20140227 23:37:53.604" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:52.172" level="INFO">${result} = {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.604" starttime="20140227 23:37:53.603"></status>
+<status status="PASS" endtime="20140228 14:48:52.171" starttime="20140228 14:48:52.171"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -279,35 +279,35 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.606" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:52.173" level="WARN">[Received] {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.607" starttime="20140227 23:37:53.605"></status>
+<status status="PASS" endtime="20140228 14:48:52.174" starttime="20140228 14:48:52.173"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.607" starttime="20140227 23:37:53.604"></status>
+<status status="PASS" endtime="20140228 14:48:52.174" starttime="20140228 14:48:52.172"></status>
 </kw>
-<msg timestamp="20140227 23:37:53.608" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:52.175" level="INFO">${result} = {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.608" starttime="20140227 23:37:53.096"></status>
+<status status="PASS" endtime="20140228 14:48:52.175" starttime="20140228 14:48:51.661"></status>
 </kw>
-<msg timestamp="20140227 23:37:53.609" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:52.176" level="INFO">${result} = {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:53.608" starttime="20140227 23:37:53.095"></status>
+<status status="PASS" endtime="20140228 14:48:52.175" starttime="20140228 14:48:51.660"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
 <doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
 <arguments>
 <arg>${result}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:53.610" starttime="20140227 23:37:53.609"></status>
+<status status="PASS" endtime="20140228 14:48:52.177" starttime="20140228 14:48:52.176"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -328,8 +328,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.613" level="INFO">${value} = "OK"</msg>
-<status status="PASS" endtime="20140227 23:37:53.613" starttime="20140227 23:37:53.612"></status>
+<msg timestamp="20140228 14:48:52.180" level="INFO">${value} = "OK"</msg>
+<status status="PASS" endtime="20140228 14:48:52.180" starttime="20140228 14:48:52.179"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -337,12 +337,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.614" level="INFO">${match} = "OK"</msg>
-<msg timestamp="20140227 23:37:53.615" level="INFO">${result} = OK</msg>
-<status status="PASS" endtime="20140227 23:37:53.614" starttime="20140227 23:37:53.614"></status>
+<msg timestamp="20140228 14:48:52.181" level="INFO">${match} = "OK"</msg>
+<msg timestamp="20140228 14:48:52.182" level="INFO">${result} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:52.181" starttime="20140228 14:48:52.181"></status>
 </kw>
-<msg timestamp="20140227 23:37:53.615" level="INFO">${value} = OK</msg>
-<status status="PASS" endtime="20140227 23:37:53.615" starttime="20140227 23:37:53.611"></status>
+<msg timestamp="20140228 14:48:52.182" level="INFO">${value} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:52.182" starttime="20140228 14:48:52.178"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -350,9 +350,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:53.616" starttime="20140227 23:37:53.615"></status>
+<status status="PASS" endtime="20140228 14:48:52.183" starttime="20140228 14:48:52.182"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.616" starttime="20140227 23:37:53.610"></status>
+<status status="PASS" endtime="20140228 14:48:52.184" starttime="20140228 14:48:52.177"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -373,8 +373,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.620" level="INFO">${value} = "4"</msg>
-<status status="PASS" endtime="20140227 23:37:53.620" starttime="20140227 23:37:53.620"></status>
+<msg timestamp="20140228 14:48:52.187" level="INFO">${value} = "4"</msg>
+<status status="PASS" endtime="20140228 14:48:52.187" starttime="20140228 14:48:52.186"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -382,12 +382,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.621" level="INFO">${match} = "4"</msg>
-<msg timestamp="20140227 23:37:53.621" level="INFO">${result} = 4</msg>
-<status status="PASS" endtime="20140227 23:37:53.621" starttime="20140227 23:37:53.621"></status>
+<msg timestamp="20140228 14:48:52.188" level="INFO">${match} = "4"</msg>
+<msg timestamp="20140228 14:48:52.188" level="INFO">${result} = 4</msg>
+<status status="PASS" endtime="20140228 14:48:52.188" starttime="20140228 14:48:52.187"></status>
 </kw>
-<msg timestamp="20140227 23:37:53.622" level="INFO">${value} = 4</msg>
-<status status="PASS" endtime="20140227 23:37:53.622" starttime="20140227 23:37:53.618"></status>
+<msg timestamp="20140228 14:48:52.188" level="INFO">${value} = 4</msg>
+<status status="PASS" endtime="20140228 14:48:52.188" starttime="20140228 14:48:52.185"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -395,14 +395,14 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:53.623" starttime="20140227 23:37:53.622"></status>
+<status status="PASS" endtime="20140228 14:48:52.189" starttime="20140228 14:48:52.189"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.623" starttime="20140227 23:37:53.617"></status>
+<status status="PASS" endtime="20140228 14:48:52.190" starttime="20140228 14:48:52.184"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140227 23:37:53.623" critical="yes" starttime="20140227 23:37:53.094"></status>
+<status status="PASS" endtime="20140228 14:48:52.190" critical="yes" starttime="20140228 14:48:51.659"></status>
 </test>
 <test id="s1-t4" name="Program RunState">
 <kw type="kw" name="${result} = Run Command Wait">
@@ -427,40 +427,40 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:53.629" level="WARN">[Sending] {"command": "GetRunState", "program": "LeabraBatch"}</msg>
-<status status="PASS" endtime="20140227 23:37:53.629" starttime="20140227 23:37:53.628"></status>
+<msg timestamp="20140228 14:48:52.195" level="WARN">[Sending] {"command": "GetRunState", "program": "LeabraBatch"}</msg>
+<status status="PASS" endtime="20140228 14:48:52.197" starttime="20140228 14:48:52.195"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:53.629" starttime="20140227 23:37:53.627"></status>
+<status status="PASS" endtime="20140228 14:48:52.197" starttime="20140228 14:48:52.194"></status>
 </kw>
 <kw type="kw" name="Telnet.Write Bare">
 <doc>Writes the given text, and nothing else, into the connection.</doc>
 <arguments>
 <arg>${command}\n</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:53.630" starttime="20140227 23:37:53.630"></status>
+<status status="PASS" endtime="20140228 14:48:52.198" starttime="20140228 14:48:52.197"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>${wait}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.132" level="INFO">Slept 500 milliseconds</msg>
-<status status="PASS" endtime="20140227 23:37:54.132" starttime="20140227 23:37:53.631"></status>
+<msg timestamp="20140228 14:48:52.700" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:52.700" starttime="20140228 14:48:52.199"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:54.133" level="INFO">{
+<msg timestamp="20140228 14:48:52.701" level="INFO">{
 	"status" : "OK",
 	"message" : "4"
 }</msg>
-<msg timestamp="20140227 23:37:54.134" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:52.702" level="INFO">${result} = {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:54.133" starttime="20140227 23:37:54.133"></status>
+<status status="PASS" endtime="20140228 14:48:52.701" starttime="20140228 14:48:52.701"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -473,35 +473,35 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.135" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:52.704" level="WARN">[Received] {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:54.136" starttime="20140227 23:37:54.135"></status>
+<status status="PASS" endtime="20140228 14:48:52.705" starttime="20140228 14:48:52.703"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.136" starttime="20140227 23:37:54.134"></status>
+<status status="PASS" endtime="20140228 14:48:52.705" starttime="20140228 14:48:52.702"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.136" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:52.705" level="INFO">${result} = {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:54.136" starttime="20140227 23:37:53.626"></status>
+<status status="PASS" endtime="20140228 14:48:52.705" starttime="20140228 14:48:52.193"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.137" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:52.706" level="INFO">${result} = {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:54.137" starttime="20140227 23:37:53.625"></status>
+<status status="PASS" endtime="20140228 14:48:52.706" starttime="20140228 14:48:52.192"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
 <doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
 <arguments>
 <arg>${result}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.138" starttime="20140227 23:37:54.137"></status>
+<status status="PASS" endtime="20140228 14:48:52.707" starttime="20140228 14:48:52.706"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -522,8 +522,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.141" level="INFO">${value} = "OK"</msg>
-<status status="PASS" endtime="20140227 23:37:54.141" starttime="20140227 23:37:54.140"></status>
+<msg timestamp="20140228 14:48:52.710" level="INFO">${value} = "OK"</msg>
+<status status="PASS" endtime="20140228 14:48:52.710" starttime="20140228 14:48:52.709"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -531,12 +531,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.142" level="INFO">${match} = "OK"</msg>
-<msg timestamp="20140227 23:37:54.142" level="INFO">${result} = OK</msg>
-<status status="PASS" endtime="20140227 23:37:54.141" starttime="20140227 23:37:54.141"></status>
+<msg timestamp="20140228 14:48:52.711" level="INFO">${match} = "OK"</msg>
+<msg timestamp="20140228 14:48:52.711" level="INFO">${result} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:52.711" starttime="20140228 14:48:52.710"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.142" level="INFO">${value} = OK</msg>
-<status status="PASS" endtime="20140227 23:37:54.142" starttime="20140227 23:37:54.139"></status>
+<msg timestamp="20140228 14:48:52.712" level="INFO">${value} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:52.712" starttime="20140228 14:48:52.708"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -544,9 +544,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.143" starttime="20140227 23:37:54.143"></status>
+<status status="PASS" endtime="20140228 14:48:52.713" starttime="20140228 14:48:52.712"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.145" starttime="20140227 23:37:54.138"></status>
+<status status="PASS" endtime="20140228 14:48:52.713" starttime="20140228 14:48:52.707"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -567,8 +567,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.149" level="INFO">${value} = "4"</msg>
-<status status="PASS" endtime="20140227 23:37:54.148" starttime="20140227 23:37:54.147"></status>
+<msg timestamp="20140228 14:48:52.717" level="INFO">${value} = "4"</msg>
+<status status="PASS" endtime="20140228 14:48:52.717" starttime="20140228 14:48:52.716"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -576,12 +576,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.151" level="INFO">${match} = "4"</msg>
-<msg timestamp="20140227 23:37:54.151" level="INFO">${result} = 4</msg>
-<status status="PASS" endtime="20140227 23:37:54.150" starttime="20140227 23:37:54.150"></status>
+<msg timestamp="20140228 14:48:52.718" level="INFO">${match} = "4"</msg>
+<msg timestamp="20140228 14:48:52.718" level="INFO">${result} = 4</msg>
+<status status="PASS" endtime="20140228 14:48:52.718" starttime="20140228 14:48:52.718"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.151" level="INFO">${value} = 4</msg>
-<status status="PASS" endtime="20140227 23:37:54.151" starttime="20140227 23:37:54.146"></status>
+<msg timestamp="20140228 14:48:52.719" level="INFO">${value} = 4</msg>
+<status status="PASS" endtime="20140228 14:48:52.718" starttime="20140228 14:48:52.714"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -589,14 +589,14 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.152" starttime="20140227 23:37:54.151"></status>
+<status status="PASS" endtime="20140228 14:48:52.719" starttime="20140228 14:48:52.719"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.152" starttime="20140227 23:37:54.145"></status>
+<status status="PASS" endtime="20140228 14:48:52.719" starttime="20140228 14:48:52.713"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140227 23:37:54.153" critical="yes" starttime="20140227 23:37:53.624"></status>
+<status status="PASS" endtime="20140228 14:48:52.720" critical="yes" starttime="20140228 14:48:52.191"></status>
 </test>
 <test id="s1-t5" name="Read Full Data Table">
 <kw type="kw" name="${result} = Run Command Wait">
@@ -621,31 +621,31 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.158" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData"}</msg>
-<status status="PASS" endtime="20140227 23:37:54.158" starttime="20140227 23:37:54.157"></status>
+<msg timestamp="20140228 14:48:52.724" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData"}</msg>
+<status status="PASS" endtime="20140228 14:48:52.725" starttime="20140228 14:48:52.724"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.159" starttime="20140227 23:37:54.156"></status>
+<status status="PASS" endtime="20140228 14:48:52.725" starttime="20140228 14:48:52.722"></status>
 </kw>
 <kw type="kw" name="Telnet.Write Bare">
 <doc>Writes the given text, and nothing else, into the connection.</doc>
 <arguments>
 <arg>${command}\n</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.160" starttime="20140227 23:37:54.159"></status>
+<status status="PASS" endtime="20140228 14:48:52.727" starttime="20140228 14:48:52.725"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>${wait}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.662" level="INFO">Slept 500 milliseconds</msg>
-<status status="PASS" endtime="20140227 23:37:54.662" starttime="20140227 23:37:54.161"></status>
+<msg timestamp="20140228 14:48:53.228" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:53.228" starttime="20140228 14:48:52.727"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:54.669" level="INFO">{
+<msg timestamp="20140228 14:48:53.235" level="INFO">{
 	"columns" : [
 		{
 			"name" : "Name",
@@ -755,7 +755,7 @@
 		}
 	]
 }</msg>
-<msg timestamp="20140227 23:37:54.669" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:53.236" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -766,7 +766,7 @@
 		{
 			"name" : "Input",
 			"type" ...</msg>
-<status status="PASS" endtime="20140227 23:37:54.669" starttime="20140227 23:37:54.663"></status>
+<status status="PASS" endtime="20140228 14:48:53.235" starttime="20140228 14:48:53.229"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -779,7 +779,7 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.673" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:53.237" level="WARN">[Received] {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -890,11 +890,11 @@
 	]
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:54.684" starttime="20140227 23:37:54.671"></status>
+<status status="PASS" endtime="20140228 14:48:53.243" starttime="20140228 14:48:53.237"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.684" starttime="20140227 23:37:54.669"></status>
+<status status="PASS" endtime="20140228 14:48:53.243" starttime="20140228 14:48:53.236"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.684" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:53.244" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -905,9 +905,9 @@
 		{
 			"name" : "Input",
 			"type" ...</msg>
-<status status="PASS" endtime="20140227 23:37:54.684" starttime="20140227 23:37:54.155"></status>
+<status status="PASS" endtime="20140228 14:48:53.244" starttime="20140228 14:48:52.722"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.685" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:53.244" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -918,14 +918,14 @@
 		{
 			"name" : "Input",
 			"type" ...</msg>
-<status status="PASS" endtime="20140227 23:37:54.685" starttime="20140227 23:37:54.155"></status>
+<status status="PASS" endtime="20140228 14:48:53.244" starttime="20140228 14:48:52.721"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
 <doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
 <arguments>
 <arg>${result}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.688" starttime="20140227 23:37:54.687"></status>
+<status status="PASS" endtime="20140228 14:48:53.246" starttime="20140228 14:48:53.245"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -946,8 +946,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.691" level="INFO">${value} = "Name"</msg>
-<status status="PASS" endtime="20140227 23:37:54.691" starttime="20140227 23:37:54.690"></status>
+<msg timestamp="20140228 14:48:53.249" level="INFO">${value} = "Name"</msg>
+<status status="PASS" endtime="20140228 14:48:53.249" starttime="20140228 14:48:53.248"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -955,12 +955,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.692" level="INFO">${match} = "Name"</msg>
-<msg timestamp="20140227 23:37:54.692" level="INFO">${result} = Name</msg>
-<status status="PASS" endtime="20140227 23:37:54.692" starttime="20140227 23:37:54.692"></status>
+<msg timestamp="20140228 14:48:53.250" level="INFO">${match} = "Name"</msg>
+<msg timestamp="20140228 14:48:53.250" level="INFO">${result} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:53.250" starttime="20140228 14:48:53.250"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.693" level="INFO">${value} = Name</msg>
-<status status="PASS" endtime="20140227 23:37:54.693" starttime="20140227 23:37:54.689"></status>
+<msg timestamp="20140228 14:48:53.251" level="INFO">${value} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:53.251" starttime="20140228 14:48:53.247"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -968,9 +968,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.694" starttime="20140227 23:37:54.693"></status>
+<status status="PASS" endtime="20140228 14:48:53.252" starttime="20140228 14:48:53.251"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.694" starttime="20140227 23:37:54.688"></status>
+<status status="PASS" endtime="20140228 14:48:53.252" starttime="20140228 14:48:53.246"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -991,8 +991,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.697" level="INFO">${value} = "Input"</msg>
-<status status="PASS" endtime="20140227 23:37:54.697" starttime="20140227 23:37:54.696"></status>
+<msg timestamp="20140228 14:48:53.255" level="INFO">${value} = "Input"</msg>
+<status status="PASS" endtime="20140228 14:48:53.255" starttime="20140228 14:48:53.254"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1000,12 +1000,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.698" level="INFO">${match} = "Input"</msg>
-<msg timestamp="20140227 23:37:54.698" level="INFO">${result} = Input</msg>
-<status status="PASS" endtime="20140227 23:37:54.698" starttime="20140227 23:37:54.697"></status>
+<msg timestamp="20140228 14:48:53.256" level="INFO">${match} = "Input"</msg>
+<msg timestamp="20140228 14:48:53.256" level="INFO">${result} = Input</msg>
+<status status="PASS" endtime="20140228 14:48:53.256" starttime="20140228 14:48:53.256"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.698" level="INFO">${value} = Input</msg>
-<status status="PASS" endtime="20140227 23:37:54.698" starttime="20140227 23:37:54.695"></status>
+<msg timestamp="20140228 14:48:53.257" level="INFO">${value} = Input</msg>
+<status status="PASS" endtime="20140228 14:48:53.257" starttime="20140228 14:48:53.253"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1013,9 +1013,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.699" starttime="20140227 23:37:54.699"></status>
+<status status="PASS" endtime="20140228 14:48:53.258" starttime="20140228 14:48:53.257"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.700" starttime="20140227 23:37:54.694"></status>
+<status status="PASS" endtime="20140228 14:48:53.258" starttime="20140228 14:48:53.252"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1036,8 +1036,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.707" level="INFO">${value} = "Output"</msg>
-<status status="PASS" endtime="20140227 23:37:54.707" starttime="20140227 23:37:54.706"></status>
+<msg timestamp="20140228 14:48:53.263" level="INFO">${value} = "Output"</msg>
+<status status="PASS" endtime="20140228 14:48:53.262" starttime="20140228 14:48:53.261"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1045,12 +1045,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.708" level="INFO">${match} = "Output"</msg>
-<msg timestamp="20140227 23:37:54.708" level="INFO">${result} = Output</msg>
-<status status="PASS" endtime="20140227 23:37:54.708" starttime="20140227 23:37:54.707"></status>
+<msg timestamp="20140228 14:48:53.263" level="INFO">${match} = "Output"</msg>
+<msg timestamp="20140228 14:48:53.264" level="INFO">${result} = Output</msg>
+<status status="PASS" endtime="20140228 14:48:53.263" starttime="20140228 14:48:53.263"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.708" level="INFO">${value} = Output</msg>
-<status status="PASS" endtime="20140227 23:37:54.708" starttime="20140227 23:37:54.704"></status>
+<msg timestamp="20140228 14:48:53.264" level="INFO">${value} = Output</msg>
+<status status="PASS" endtime="20140228 14:48:53.264" starttime="20140228 14:48:53.259"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1058,9 +1058,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.709" starttime="20140227 23:37:54.709"></status>
+<status status="PASS" endtime="20140228 14:48:53.265" starttime="20140228 14:48:53.264"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.709" starttime="20140227 23:37:54.700"></status>
+<status status="PASS" endtime="20140228 14:48:53.265" starttime="20140228 14:48:53.258"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1081,8 +1081,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.713" level="INFO">${value} = "String"</msg>
-<status status="PASS" endtime="20140227 23:37:54.713" starttime="20140227 23:37:54.712"></status>
+<msg timestamp="20140228 14:48:53.269" level="INFO">${value} = "String"</msg>
+<status status="PASS" endtime="20140228 14:48:53.268" starttime="20140228 14:48:53.267"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1090,12 +1090,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.714" level="INFO">${match} = "String"</msg>
-<msg timestamp="20140227 23:37:54.714" level="INFO">${result} = String</msg>
-<status status="PASS" endtime="20140227 23:37:54.713" starttime="20140227 23:37:54.713"></status>
+<msg timestamp="20140228 14:48:53.269" level="INFO">${match} = "String"</msg>
+<msg timestamp="20140228 14:48:53.270" level="INFO">${result} = String</msg>
+<status status="PASS" endtime="20140228 14:48:53.269" starttime="20140228 14:48:53.269"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.714" level="INFO">${value} = String</msg>
-<status status="PASS" endtime="20140227 23:37:54.714" starttime="20140227 23:37:54.711"></status>
+<msg timestamp="20140228 14:48:53.270" level="INFO">${value} = String</msg>
+<status status="PASS" endtime="20140228 14:48:53.270" starttime="20140228 14:48:53.266"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1103,9 +1103,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.715" starttime="20140227 23:37:54.714"></status>
+<status status="PASS" endtime="20140228 14:48:53.271" starttime="20140228 14:48:53.270"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.715" starttime="20140227 23:37:54.710"></status>
+<status status="PASS" endtime="20140228 14:48:53.271" starttime="20140228 14:48:53.265"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1126,8 +1126,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.719" level="INFO">${value} = "float"</msg>
-<status status="PASS" endtime="20140227 23:37:54.718" starttime="20140227 23:37:54.717"></status>
+<msg timestamp="20140228 14:48:53.275" level="INFO">${value} = "float"</msg>
+<status status="PASS" endtime="20140228 14:48:53.275" starttime="20140228 14:48:53.274"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1135,12 +1135,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.719" level="INFO">${match} = "float"</msg>
-<msg timestamp="20140227 23:37:54.720" level="INFO">${result} = float</msg>
-<status status="PASS" endtime="20140227 23:37:54.719" starttime="20140227 23:37:54.719"></status>
+<msg timestamp="20140228 14:48:53.276" level="INFO">${match} = "float"</msg>
+<msg timestamp="20140228 14:48:53.276" level="INFO">${result} = float</msg>
+<status status="PASS" endtime="20140228 14:48:53.276" starttime="20140228 14:48:53.275"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.720" level="INFO">${value} = float</msg>
-<status status="PASS" endtime="20140227 23:37:54.720" starttime="20140227 23:37:54.716"></status>
+<msg timestamp="20140228 14:48:53.277" level="INFO">${value} = float</msg>
+<status status="PASS" endtime="20140228 14:48:53.277" starttime="20140228 14:48:53.272"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1148,9 +1148,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.721" starttime="20140227 23:37:54.721"></status>
+<status status="PASS" endtime="20140228 14:48:53.278" starttime="20140228 14:48:53.278"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.722" starttime="20140227 23:37:54.715"></status>
+<status status="PASS" endtime="20140228 14:48:53.278" starttime="20140228 14:48:53.271"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1171,8 +1171,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.726" level="INFO">${value} = "float"</msg>
-<status status="PASS" endtime="20140227 23:37:54.726" starttime="20140227 23:37:54.725"></status>
+<msg timestamp="20140228 14:48:53.282" level="INFO">${value} = "float"</msg>
+<status status="PASS" endtime="20140228 14:48:53.282" starttime="20140228 14:48:53.281"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1180,12 +1180,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.729" level="INFO">${match} = "float"</msg>
-<msg timestamp="20140227 23:37:54.729" level="INFO">${result} = float</msg>
-<status status="PASS" endtime="20140227 23:37:54.728" starttime="20140227 23:37:54.726"></status>
+<msg timestamp="20140228 14:48:53.283" level="INFO">${match} = "float"</msg>
+<msg timestamp="20140228 14:48:53.283" level="INFO">${result} = float</msg>
+<status status="PASS" endtime="20140228 14:48:53.282" starttime="20140228 14:48:53.282"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.729" level="INFO">${value} = float</msg>
-<status status="PASS" endtime="20140227 23:37:54.729" starttime="20140227 23:37:54.723"></status>
+<msg timestamp="20140228 14:48:53.283" level="INFO">${value} = float</msg>
+<status status="PASS" endtime="20140228 14:48:53.283" starttime="20140228 14:48:53.280"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1193,9 +1193,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.730" starttime="20140227 23:37:54.729"></status>
+<status status="PASS" endtime="20140228 14:48:53.284" starttime="20140228 14:48:53.283"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.730" starttime="20140227 23:37:54.722"></status>
+<status status="PASS" endtime="20140228 14:48:53.284" starttime="20140228 14:48:53.279"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1204,7 +1204,7 @@
 <arg>/columns/0/matrix</arg>
 <arg>false</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.731" starttime="20140227 23:37:54.730"></status>
+<status status="PASS" endtime="20140228 14:48:53.285" starttime="20140228 14:48:53.284"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1213,7 +1213,7 @@
 <arg>/columns/1/matrix</arg>
 <arg>true</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.733" starttime="20140227 23:37:54.732"></status>
+<status status="PASS" endtime="20140228 14:48:53.287" starttime="20140228 14:48:53.286"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1222,7 +1222,7 @@
 <arg>/columns/2/matrix</arg>
 <arg>true</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.734" starttime="20140227 23:37:54.733"></status>
+<status status="PASS" endtime="20140228 14:48:53.288" starttime="20140228 14:48:53.287"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1243,8 +1243,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.737" level="INFO">${value} = "checks"</msg>
-<status status="PASS" endtime="20140227 23:37:54.737" starttime="20140227 23:37:54.736"></status>
+<msg timestamp="20140228 14:48:53.291" level="INFO">${value} = "checks"</msg>
+<status status="PASS" endtime="20140228 14:48:53.291" starttime="20140228 14:48:53.290"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1252,12 +1252,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.738" level="INFO">${match} = "checks"</msg>
-<msg timestamp="20140227 23:37:54.738" level="INFO">${result} = checks</msg>
-<status status="PASS" endtime="20140227 23:37:54.738" starttime="20140227 23:37:54.737"></status>
+<msg timestamp="20140228 14:48:53.292" level="INFO">${match} = "checks"</msg>
+<msg timestamp="20140228 14:48:53.292" level="INFO">${result} = checks</msg>
+<status status="PASS" endtime="20140228 14:48:53.292" starttime="20140228 14:48:53.291"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.739" level="INFO">${value} = checks</msg>
-<status status="PASS" endtime="20140227 23:37:54.739" starttime="20140227 23:37:54.735"></status>
+<msg timestamp="20140228 14:48:53.294" level="INFO">${value} = checks</msg>
+<status status="PASS" endtime="20140228 14:48:53.292" starttime="20140228 14:48:53.289"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1265,9 +1265,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.740" starttime="20140227 23:37:54.739"></status>
+<status status="PASS" endtime="20140228 14:48:53.294" starttime="20140228 14:48:53.294"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.740" starttime="20140227 23:37:54.734"></status>
+<status status="PASS" endtime="20140228 14:48:53.295" starttime="20140228 14:48:53.288"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1288,8 +1288,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.743" level="INFO">${value} = "mitvert"</msg>
-<status status="PASS" endtime="20140227 23:37:54.743" starttime="20140227 23:37:54.742"></status>
+<msg timestamp="20140228 14:48:53.299" level="INFO">${value} = "mitvert"</msg>
+<status status="PASS" endtime="20140228 14:48:53.299" starttime="20140228 14:48:53.298"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1297,12 +1297,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.745" level="INFO">${match} = "mitvert"</msg>
-<msg timestamp="20140227 23:37:54.745" level="INFO">${result} = mitvert</msg>
-<status status="PASS" endtime="20140227 23:37:54.745" starttime="20140227 23:37:54.744"></status>
+<msg timestamp="20140228 14:48:53.301" level="INFO">${match} = "mitvert"</msg>
+<msg timestamp="20140228 14:48:53.301" level="INFO">${result} = mitvert</msg>
+<status status="PASS" endtime="20140228 14:48:53.301" starttime="20140228 14:48:53.299"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.745" level="INFO">${value} = mitvert</msg>
-<status status="PASS" endtime="20140227 23:37:54.745" starttime="20140227 23:37:54.741"></status>
+<msg timestamp="20140228 14:48:53.302" level="INFO">${value} = mitvert</msg>
+<status status="PASS" endtime="20140228 14:48:53.302" starttime="20140228 14:48:53.296"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1310,9 +1310,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.746" starttime="20140227 23:37:54.746"></status>
+<status status="PASS" endtime="20140228 14:48:53.303" starttime="20140228 14:48:53.302"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.747" starttime="20140227 23:37:54.740"></status>
+<status status="PASS" endtime="20140228 14:48:53.303" starttime="20140228 14:48:53.295"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1333,8 +1333,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.750" level="INFO">${value} = "midhoriz"</msg>
-<status status="PASS" endtime="20140227 23:37:54.750" starttime="20140227 23:37:54.749"></status>
+<msg timestamp="20140228 14:48:53.306" level="INFO">${value} = "midhoriz"</msg>
+<status status="PASS" endtime="20140228 14:48:53.306" starttime="20140228 14:48:53.305"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1342,12 +1342,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.751" level="INFO">${match} = "midhoriz"</msg>
-<msg timestamp="20140227 23:37:54.751" level="INFO">${result} = midhoriz</msg>
-<status status="PASS" endtime="20140227 23:37:54.751" starttime="20140227 23:37:54.750"></status>
+<msg timestamp="20140228 14:48:53.307" level="INFO">${match} = "midhoriz"</msg>
+<msg timestamp="20140228 14:48:53.307" level="INFO">${result} = midhoriz</msg>
+<status status="PASS" endtime="20140228 14:48:53.307" starttime="20140228 14:48:53.307"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.751" level="INFO">${value} = midhoriz</msg>
-<status status="PASS" endtime="20140227 23:37:54.751" starttime="20140227 23:37:54.748"></status>
+<msg timestamp="20140228 14:48:53.308" level="INFO">${value} = midhoriz</msg>
+<status status="PASS" endtime="20140228 14:48:53.308" starttime="20140228 14:48:53.304"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1355,9 +1355,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.752" starttime="20140227 23:37:54.752"></status>
+<status status="PASS" endtime="20140228 14:48:53.309" starttime="20140228 14:48:53.308"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.753" starttime="20140227 23:37:54.747"></status>
+<status status="PASS" endtime="20140228 14:48:53.309" starttime="20140228 14:48:53.303"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1378,8 +1378,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.756" level="INFO">${value} = "rdiag"</msg>
-<status status="PASS" endtime="20140227 23:37:54.756" starttime="20140227 23:37:54.755"></status>
+<msg timestamp="20140228 14:48:53.312" level="INFO">${value} = "rdiag"</msg>
+<status status="PASS" endtime="20140228 14:48:53.312" starttime="20140228 14:48:53.311"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1387,12 +1387,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.757" level="INFO">${match} = "rdiag"</msg>
-<msg timestamp="20140227 23:37:54.757" level="INFO">${result} = rdiag</msg>
-<status status="PASS" endtime="20140227 23:37:54.757" starttime="20140227 23:37:54.757"></status>
+<msg timestamp="20140228 14:48:53.313" level="INFO">${match} = "rdiag"</msg>
+<msg timestamp="20140228 14:48:53.314" level="INFO">${result} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.313" starttime="20140228 14:48:53.313"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.758" level="INFO">${value} = rdiag</msg>
-<status status="PASS" endtime="20140227 23:37:54.758" starttime="20140227 23:37:54.754"></status>
+<msg timestamp="20140228 14:48:53.314" level="INFO">${value} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.314" starttime="20140228 14:48:53.310"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1400,9 +1400,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.758" starttime="20140227 23:37:54.758"></status>
+<status status="PASS" endtime="20140228 14:48:53.315" starttime="20140228 14:48:53.314"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.759" starttime="20140227 23:37:54.753"></status>
+<status status="PASS" endtime="20140228 14:48:53.315" starttime="20140228 14:48:53.309"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1423,8 +1423,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.762" level="INFO">${value} = "ldiag"</msg>
-<status status="PASS" endtime="20140227 23:37:54.762" starttime="20140227 23:37:54.761"></status>
+<msg timestamp="20140228 14:48:53.320" level="INFO">${value} = "ldiag"</msg>
+<status status="PASS" endtime="20140228 14:48:53.320" starttime="20140228 14:48:53.319"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1432,12 +1432,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.763" level="INFO">${match} = "ldiag"</msg>
-<msg timestamp="20140227 23:37:54.763" level="INFO">${result} = ldiag</msg>
-<status status="PASS" endtime="20140227 23:37:54.763" starttime="20140227 23:37:54.762"></status>
+<msg timestamp="20140228 14:48:53.321" level="INFO">${match} = "ldiag"</msg>
+<msg timestamp="20140228 14:48:53.321" level="INFO">${result} = ldiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.321" starttime="20140228 14:48:53.320"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.763" level="INFO">${value} = ldiag</msg>
-<status status="PASS" endtime="20140227 23:37:54.763" starttime="20140227 23:37:54.760"></status>
+<msg timestamp="20140228 14:48:53.321" level="INFO">${value} = ldiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.321" starttime="20140228 14:48:53.317"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1445,9 +1445,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.765" starttime="20140227 23:37:54.764"></status>
+<status status="PASS" endtime="20140228 14:48:53.322" starttime="20140228 14:48:53.321"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.765" starttime="20140227 23:37:54.759"></status>
+<status status="PASS" endtime="20140228 14:48:53.322" starttime="20140228 14:48:53.315"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1468,8 +1468,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.769" level="INFO">${value} = "random"</msg>
-<status status="PASS" endtime="20140227 23:37:54.768" starttime="20140227 23:37:54.767"></status>
+<msg timestamp="20140228 14:48:53.326" level="INFO">${value} = "random"</msg>
+<status status="PASS" endtime="20140228 14:48:53.325" starttime="20140228 14:48:53.325"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1477,12 +1477,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.769" level="INFO">${match} = "random"</msg>
-<msg timestamp="20140227 23:37:54.769" level="INFO">${result} = random</msg>
-<status status="PASS" endtime="20140227 23:37:54.769" starttime="20140227 23:37:54.769"></status>
+<msg timestamp="20140228 14:48:53.327" level="INFO">${match} = "random"</msg>
+<msg timestamp="20140228 14:48:53.327" level="INFO">${result} = random</msg>
+<status status="PASS" endtime="20140228 14:48:53.326" starttime="20140228 14:48:53.326"></status>
 </kw>
-<msg timestamp="20140227 23:37:54.770" level="INFO">${value} = random</msg>
-<status status="PASS" endtime="20140227 23:37:54.770" starttime="20140227 23:37:54.766"></status>
+<msg timestamp="20140228 14:48:53.327" level="INFO">${value} = random</msg>
+<status status="PASS" endtime="20140228 14:48:53.327" starttime="20140228 14:48:53.323"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1490,9 +1490,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.771" starttime="20140227 23:37:54.770"></status>
+<status status="PASS" endtime="20140228 14:48:53.328" starttime="20140228 14:48:53.327"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.771" starttime="20140227 23:37:54.766"></status>
+<status status="PASS" endtime="20140228 14:48:53.328" starttime="20140228 14:48:53.323"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1501,7 +1501,7 @@
 <arg>/columns/1/values/0/0/0</arg>
 <arg>1</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.773" starttime="20140227 23:37:54.772"></status>
+<status status="PASS" endtime="20140228 14:48:53.329" starttime="20140228 14:48:53.329"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1510,7 +1510,7 @@
 <arg>/columns/1/values/0/1/2</arg>
 <arg>0</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.774" starttime="20140227 23:37:54.773"></status>
+<status status="PASS" endtime="20140228 14:48:53.331" starttime="20140228 14:48:53.330"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1519,7 +1519,7 @@
 <arg>/columns/1/values/0/2/2</arg>
 <arg>1</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.775" starttime="20140227 23:37:54.774"></status>
+<status status="PASS" endtime="20140228 14:48:53.332" starttime="20140228 14:48:53.331"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1528,7 +1528,7 @@
 <arg>/columns/1/values/2/2/2</arg>
 <arg>1</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.777" starttime="20140227 23:37:54.776"></status>
+<status status="PASS" endtime="20140228 14:48:53.334" starttime="20140228 14:48:53.332"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -1537,12 +1537,12 @@
 <arg>/columns/1/values/2/1/0</arg>
 <arg>0</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.778" starttime="20140227 23:37:54.777"></status>
+<status status="PASS" endtime="20140228 14:48:53.335" starttime="20140228 14:48:53.335"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140227 23:37:54.778" critical="yes" starttime="20140227 23:37:54.153"></status>
+<status status="PASS" endtime="20140228 14:48:53.336" critical="yes" starttime="20140228 14:48:52.720"></status>
 </test>
 <test id="s1-t6" name="Read Data Table Column">
 <kw type="kw" name="${result} = Run Command Wait">
@@ -1567,31 +1567,31 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:54.783" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "column": "Name"}</msg>
-<status status="PASS" endtime="20140227 23:37:54.784" starttime="20140227 23:37:54.783"></status>
+<msg timestamp="20140228 14:48:53.343" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "column": "Name"}</msg>
+<status status="PASS" endtime="20140228 14:48:53.344" starttime="20140228 14:48:53.343"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:54.784" starttime="20140227 23:37:54.782"></status>
+<status status="PASS" endtime="20140228 14:48:53.344" starttime="20140228 14:48:53.342"></status>
 </kw>
 <kw type="kw" name="Telnet.Write Bare">
 <doc>Writes the given text, and nothing else, into the connection.</doc>
 <arguments>
 <arg>${command}\n</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:54.785" starttime="20140227 23:37:54.785"></status>
+<status status="PASS" endtime="20140228 14:48:53.345" starttime="20140228 14:48:53.344"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>${wait}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.288" level="INFO">Slept 500 milliseconds</msg>
-<status status="PASS" endtime="20140227 23:37:55.288" starttime="20140227 23:37:54.787"></status>
+<msg timestamp="20140228 14:48:53.847" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:53.847" starttime="20140228 14:48:53.346"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:55.289" level="INFO">{
+<msg timestamp="20140228 14:48:53.848" level="INFO">{
 	"columns" : [
 		{
 			"name" : "Name",
@@ -1601,7 +1601,7 @@
 		}
 	]
 }</msg>
-<msg timestamp="20140227 23:37:55.289" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:53.848" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -1612,7 +1612,7 @@
 	]
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:55.289" starttime="20140227 23:37:55.289"></status>
+<status status="PASS" endtime="20140228 14:48:53.848" starttime="20140228 14:48:53.847"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -1625,7 +1625,7 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.290" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:53.850" level="WARN">[Received] {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -1636,11 +1636,11 @@
 	]
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:55.291" starttime="20140227 23:37:55.290"></status>
+<status status="PASS" endtime="20140228 14:48:53.851" starttime="20140228 14:48:53.850"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.291" starttime="20140227 23:37:55.289"></status>
+<status status="PASS" endtime="20140228 14:48:53.851" starttime="20140228 14:48:53.849"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.291" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:53.851" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -1651,9 +1651,9 @@
 	]
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:55.291" starttime="20140227 23:37:54.781"></status>
+<status status="PASS" endtime="20140228 14:48:53.851" starttime="20140228 14:48:53.339"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.292" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:53.852" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -1664,14 +1664,14 @@
 	]
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:55.291" starttime="20140227 23:37:54.780"></status>
+<status status="PASS" endtime="20140228 14:48:53.852" starttime="20140228 14:48:53.339"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
 <doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
 <arguments>
 <arg>${result}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.292" starttime="20140227 23:37:55.292"></status>
+<status status="PASS" endtime="20140228 14:48:53.853" starttime="20140228 14:48:53.852"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1692,8 +1692,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.294" level="INFO">${value} = "Name"</msg>
-<status status="PASS" endtime="20140227 23:37:55.294" starttime="20140227 23:37:55.294"></status>
+<msg timestamp="20140228 14:48:53.857" level="INFO">${value} = "Name"</msg>
+<status status="PASS" endtime="20140228 14:48:53.857" starttime="20140228 14:48:53.856"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1701,12 +1701,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.295" level="INFO">${match} = "Name"</msg>
-<msg timestamp="20140227 23:37:55.295" level="INFO">${result} = Name</msg>
-<status status="PASS" endtime="20140227 23:37:55.295" starttime="20140227 23:37:55.294"></status>
+<msg timestamp="20140228 14:48:53.858" level="INFO">${match} = "Name"</msg>
+<msg timestamp="20140228 14:48:53.858" level="INFO">${result} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:53.858" starttime="20140228 14:48:53.857"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.295" level="INFO">${value} = Name</msg>
-<status status="PASS" endtime="20140227 23:37:55.295" starttime="20140227 23:37:55.293"></status>
+<msg timestamp="20140228 14:48:53.859" level="INFO">${value} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:53.859" starttime="20140228 14:48:53.854"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1714,9 +1714,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.296" starttime="20140227 23:37:55.295"></status>
+<status status="PASS" endtime="20140228 14:48:53.860" starttime="20140228 14:48:53.859"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.296" starttime="20140227 23:37:55.292"></status>
+<status status="PASS" endtime="20140228 14:48:53.860" starttime="20140228 14:48:53.854"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1737,8 +1737,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.298" level="INFO">${value} = "checks"</msg>
-<status status="PASS" endtime="20140227 23:37:55.298" starttime="20140227 23:37:55.297"></status>
+<msg timestamp="20140228 14:48:53.864" level="INFO">${value} = "checks"</msg>
+<status status="PASS" endtime="20140228 14:48:53.864" starttime="20140228 14:48:53.863"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1746,12 +1746,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.299" level="INFO">${match} = "checks"</msg>
-<msg timestamp="20140227 23:37:55.299" level="INFO">${result} = checks</msg>
-<status status="PASS" endtime="20140227 23:37:55.299" starttime="20140227 23:37:55.298"></status>
+<msg timestamp="20140228 14:48:53.865" level="INFO">${match} = "checks"</msg>
+<msg timestamp="20140228 14:48:53.865" level="INFO">${result} = checks</msg>
+<status status="PASS" endtime="20140228 14:48:53.865" starttime="20140228 14:48:53.864"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.299" level="INFO">${value} = checks</msg>
-<status status="PASS" endtime="20140227 23:37:55.299" starttime="20140227 23:37:55.297"></status>
+<msg timestamp="20140228 14:48:53.865" level="INFO">${value} = checks</msg>
+<status status="PASS" endtime="20140228 14:48:53.865" starttime="20140228 14:48:53.862"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1759,9 +1759,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.299" starttime="20140227 23:37:55.299"></status>
+<status status="PASS" endtime="20140228 14:48:53.866" starttime="20140228 14:48:53.866"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.300" starttime="20140227 23:37:55.296"></status>
+<status status="PASS" endtime="20140228 14:48:53.866" starttime="20140228 14:48:53.860"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1782,8 +1782,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.302" level="INFO">${value} = "mitvert"</msg>
-<status status="PASS" endtime="20140227 23:37:55.302" starttime="20140227 23:37:55.301"></status>
+<msg timestamp="20140228 14:48:53.869" level="INFO">${value} = "mitvert"</msg>
+<status status="PASS" endtime="20140228 14:48:53.869" starttime="20140228 14:48:53.869"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1791,12 +1791,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.302" level="INFO">${match} = "mitvert"</msg>
-<msg timestamp="20140227 23:37:55.302" level="INFO">${result} = mitvert</msg>
-<status status="PASS" endtime="20140227 23:37:55.302" starttime="20140227 23:37:55.302"></status>
+<msg timestamp="20140228 14:48:53.870" level="INFO">${match} = "mitvert"</msg>
+<msg timestamp="20140228 14:48:53.870" level="INFO">${result} = mitvert</msg>
+<status status="PASS" endtime="20140228 14:48:53.870" starttime="20140228 14:48:53.870"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.303" level="INFO">${value} = mitvert</msg>
-<status status="PASS" endtime="20140227 23:37:55.303" starttime="20140227 23:37:55.300"></status>
+<msg timestamp="20140228 14:48:53.871" level="INFO">${value} = mitvert</msg>
+<status status="PASS" endtime="20140228 14:48:53.871" starttime="20140228 14:48:53.868"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1804,9 +1804,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.303" starttime="20140227 23:37:55.303"></status>
+<status status="PASS" endtime="20140228 14:48:53.872" starttime="20140228 14:48:53.871"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.303" starttime="20140227 23:37:55.300"></status>
+<status status="PASS" endtime="20140228 14:48:53.872" starttime="20140228 14:48:53.867"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1827,8 +1827,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.305" level="INFO">${value} = "midhoriz"</msg>
-<status status="PASS" endtime="20140227 23:37:55.305" starttime="20140227 23:37:55.305"></status>
+<msg timestamp="20140228 14:48:53.877" level="INFO">${value} = "midhoriz"</msg>
+<status status="PASS" endtime="20140228 14:48:53.877" starttime="20140228 14:48:53.876"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1836,12 +1836,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.306" level="INFO">${match} = "midhoriz"</msg>
-<msg timestamp="20140227 23:37:55.306" level="INFO">${result} = midhoriz</msg>
-<status status="PASS" endtime="20140227 23:37:55.306" starttime="20140227 23:37:55.306"></status>
+<msg timestamp="20140228 14:48:53.878" level="INFO">${match} = "midhoriz"</msg>
+<msg timestamp="20140228 14:48:53.878" level="INFO">${result} = midhoriz</msg>
+<status status="PASS" endtime="20140228 14:48:53.878" starttime="20140228 14:48:53.878"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.306" level="INFO">${value} = midhoriz</msg>
-<status status="PASS" endtime="20140227 23:37:55.306" starttime="20140227 23:37:55.304"></status>
+<msg timestamp="20140228 14:48:53.879" level="INFO">${value} = midhoriz</msg>
+<status status="PASS" endtime="20140228 14:48:53.879" starttime="20140228 14:48:53.875"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1849,9 +1849,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.308" starttime="20140227 23:37:55.306"></status>
+<status status="PASS" endtime="20140228 14:48:53.880" starttime="20140228 14:48:53.879"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.308" starttime="20140227 23:37:55.304"></status>
+<status status="PASS" endtime="20140228 14:48:53.880" starttime="20140228 14:48:53.874"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1872,8 +1872,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.310" level="INFO">${value} = "rdiag"</msg>
-<status status="PASS" endtime="20140227 23:37:55.310" starttime="20140227 23:37:55.309"></status>
+<msg timestamp="20140228 14:48:53.883" level="INFO">${value} = "rdiag"</msg>
+<status status="PASS" endtime="20140228 14:48:53.883" starttime="20140228 14:48:53.882"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1881,12 +1881,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.311" level="INFO">${match} = "rdiag"</msg>
-<msg timestamp="20140227 23:37:55.311" level="INFO">${result} = rdiag</msg>
-<status status="PASS" endtime="20140227 23:37:55.311" starttime="20140227 23:37:55.310"></status>
+<msg timestamp="20140228 14:48:53.884" level="INFO">${match} = "rdiag"</msg>
+<msg timestamp="20140228 14:48:53.884" level="INFO">${result} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.884" starttime="20140228 14:48:53.883"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.311" level="INFO">${value} = rdiag</msg>
-<status status="PASS" endtime="20140227 23:37:55.311" starttime="20140227 23:37:55.309"></status>
+<msg timestamp="20140228 14:48:53.884" level="INFO">${value} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.884" starttime="20140228 14:48:53.881"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1894,9 +1894,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.312" starttime="20140227 23:37:55.311"></status>
+<status status="PASS" endtime="20140228 14:48:53.885" starttime="20140228 14:48:53.885"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.312" starttime="20140227 23:37:55.308"></status>
+<status status="PASS" endtime="20140228 14:48:53.885" starttime="20140228 14:48:53.880"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1917,8 +1917,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.314" level="INFO">${value} = "ldiag"</msg>
-<status status="PASS" endtime="20140227 23:37:55.314" starttime="20140227 23:37:55.313"></status>
+<msg timestamp="20140228 14:48:53.888" level="INFO">${value} = "ldiag"</msg>
+<status status="PASS" endtime="20140228 14:48:53.888" starttime="20140228 14:48:53.888"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1926,12 +1926,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.314" level="INFO">${match} = "ldiag"</msg>
-<msg timestamp="20140227 23:37:55.314" level="INFO">${result} = ldiag</msg>
-<status status="PASS" endtime="20140227 23:37:55.314" starttime="20140227 23:37:55.314"></status>
+<msg timestamp="20140228 14:48:53.889" level="INFO">${match} = "ldiag"</msg>
+<msg timestamp="20140228 14:48:53.889" level="INFO">${result} = ldiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.889" starttime="20140228 14:48:53.889"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.315" level="INFO">${value} = ldiag</msg>
-<status status="PASS" endtime="20140227 23:37:55.315" starttime="20140227 23:37:55.312"></status>
+<msg timestamp="20140228 14:48:53.890" level="INFO">${value} = ldiag</msg>
+<status status="PASS" endtime="20140228 14:48:53.890" starttime="20140228 14:48:53.886"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1939,9 +1939,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.315" starttime="20140227 23:37:55.315"></status>
+<status status="PASS" endtime="20140228 14:48:53.891" starttime="20140228 14:48:53.890"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.315" starttime="20140227 23:37:55.312"></status>
+<status status="PASS" endtime="20140228 14:48:53.891" starttime="20140228 14:48:53.886"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -1962,8 +1962,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.317" level="INFO">${value} = "random"</msg>
-<status status="PASS" endtime="20140227 23:37:55.317" starttime="20140227 23:37:55.317"></status>
+<msg timestamp="20140228 14:48:53.895" level="INFO">${value} = "random"</msg>
+<status status="PASS" endtime="20140228 14:48:53.895" starttime="20140228 14:48:53.894"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -1971,12 +1971,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.318" level="INFO">${match} = "random"</msg>
-<msg timestamp="20140227 23:37:55.318" level="INFO">${result} = random</msg>
-<status status="PASS" endtime="20140227 23:37:55.318" starttime="20140227 23:37:55.318"></status>
+<msg timestamp="20140228 14:48:53.897" level="INFO">${match} = "random"</msg>
+<msg timestamp="20140228 14:48:53.897" level="INFO">${result} = random</msg>
+<status status="PASS" endtime="20140228 14:48:53.896" starttime="20140228 14:48:53.895"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.318" level="INFO">${value} = random</msg>
-<status status="PASS" endtime="20140227 23:37:55.318" starttime="20140227 23:37:55.316"></status>
+<msg timestamp="20140228 14:48:53.898" level="INFO">${value} = random</msg>
+<status status="PASS" endtime="20140228 14:48:53.897" starttime="20140228 14:48:53.892"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -1984,9 +1984,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.319" starttime="20140227 23:37:55.319"></status>
+<status status="PASS" endtime="20140228 14:48:53.898" starttime="20140228 14:48:53.898"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.319" starttime="20140227 23:37:55.315"></status>
+<status status="PASS" endtime="20140228 14:48:53.899" starttime="20140228 14:48:53.891"></status>
 </kw>
 <kw type="kw" name="Json Value Should Not Exist">
 <doc></doc>
@@ -2008,12 +2008,12 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.322" level="FAIL">JsonPointerException: index '1' is out of bounds</msg>
-<status status="FAIL" endtime="20140227 23:37:55.322" starttime="20140227 23:37:55.320"></status>
+<msg timestamp="20140228 14:48:53.903" level="FAIL">JsonPointerException: index '1' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:53.903" starttime="20140228 14:48:53.902"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.322" starttime="20140227 23:37:55.320"></status>
+<status status="PASS" endtime="20140228 14:48:53.904" starttime="20140228 14:48:53.900"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.322" starttime="20140227 23:37:55.319"></status>
+<status status="PASS" endtime="20140228 14:48:53.904" starttime="20140228 14:48:53.899"></status>
 </kw>
 <kw type="kw" name="Json Value Should Not Exist">
 <doc></doc>
@@ -2035,17 +2035,17 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.329" level="FAIL">JsonPointerException: index '2' is out of bounds</msg>
-<status status="FAIL" endtime="20140227 23:37:55.329" starttime="20140227 23:37:55.329"></status>
+<msg timestamp="20140228 14:48:53.907" level="FAIL">JsonPointerException: index '2' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:53.907" starttime="20140228 14:48:53.906"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.329" starttime="20140227 23:37:55.328"></status>
+<status status="PASS" endtime="20140228 14:48:53.907" starttime="20140228 14:48:53.906"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.329" starttime="20140227 23:37:55.327"></status>
+<status status="PASS" endtime="20140228 14:48:53.908" starttime="20140228 14:48:53.905"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140227 23:37:55.330" critical="yes" starttime="20140227 23:37:54.779"></status>
+<status status="PASS" endtime="20140228 14:48:53.908" critical="yes" starttime="20140228 14:48:53.338"></status>
 </test>
 <test id="s1-t7" name="Read Data Table Row">
 <kw type="kw" name="${result} = Run Command Wait">
@@ -2070,37 +2070,37 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.333" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}</msg>
-<status status="PASS" endtime="20140227 23:37:55.333" starttime="20140227 23:37:55.333"></status>
+<msg timestamp="20140228 14:48:53.912" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}</msg>
+<status status="PASS" endtime="20140228 14:48:53.914" starttime="20140228 14:48:53.912"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.334" starttime="20140227 23:37:55.332"></status>
+<status status="PASS" endtime="20140228 14:48:53.914" starttime="20140228 14:48:53.911"></status>
 </kw>
 <kw type="kw" name="Telnet.Write Bare">
 <doc>Writes the given text, and nothing else, into the connection.</doc>
 <arguments>
 <arg>${command}\n</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.334" starttime="20140227 23:37:55.334"></status>
+<status status="PASS" endtime="20140228 14:48:53.915" starttime="20140228 14:48:53.914"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>${wait}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.835" level="INFO">Slept 500 milliseconds</msg>
-<status status="PASS" endtime="20140227 23:37:55.836" starttime="20140227 23:37:55.334"></status>
+<msg timestamp="20140228 14:48:54.416" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:54.416" starttime="20140228 14:48:53.915"></status>
 </kw>
 <kw type="kw" name="${result} = Telnet.Read">
 <doc>Reads everything that is currently available in the output.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140227 23:37:55.839" level="INFO">{
+<msg timestamp="20140228 14:48:54.421" level="INFO">{
 	"columns" : [
 		{
 			"name" : "Name",
 			"type" : "String",
 			"matrix" : false,
-			"values" : ["checks", "mitvert"]
+			"values" : ["rdiag", "ldiag"]
 		},
 		{
 			"name" : "Input",
@@ -2109,18 +2109,18 @@
 			"dimensions" : [5, 5],
 			"values" : [
 				[
-					[1, 0, 0, 0, 1],
-					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 0, 0, 0],
-					[1, 0, 0, 0, 1]
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
 				],
 				[
+					[1, 0, 0, 0, 0],
+					[0, 1, 0, 0, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0]
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 0, 1]
 				]
 			]
 		},
@@ -2131,37 +2131,37 @@
 			"dimensions" : [5, 5],
 			"values" : [
 				[
-					[1, 0, 0, 0, 1],
-					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 0, 0, 0],
-					[1, 0, 0, 0, 1]
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
 				],
 				[
+					[1, 0, 0, 0, 0],
+					[0, 1, 0, 0, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0]
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 0, 1]
 				]
 			]
 		}
 	]
 }</msg>
-<msg timestamp="20140227 23:37:55.840" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:54.421" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
 			"type" : "String",
 			"matrix" : false,
-			"values" : ["checks", "mitvert"]
+			"values" : ["rdiag", "ldiag"]
 		},
 		{
 			"name" : "Input",
 			"type" : "float",
 			"matrix" : true,
-			"dimen...</msg>
-<status status="PASS" endtime="20140227 23:37:55.839" starttime="20140227 23:37:55.836"></status>
+			"dimensio...</msg>
+<status status="PASS" endtime="20140228 14:48:54.421" starttime="20140228 14:48:54.417"></status>
 </kw>
 <kw type="kw" name="Print">
 <doc></doc>
@@ -2174,13 +2174,13 @@
 <arg>${text}</arg>
 <arg>WARN</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.841" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:54.423" level="WARN">[Received] {
 	"columns" : [
 		{
 			"name" : "Name",
 			"type" : "String",
 			"matrix" : false,
-			"values" : ["checks", "mitvert"]
+			"values" : ["rdiag", "ldiag"]
 		},
 		{
 			"name" : "Input",
@@ -2189,18 +2189,18 @@
 			"dimensions" : [5, 5],
 			"values" : [
 				[
-					[1, 0, 0, 0, 1],
-					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 0, 0, 0],
-					[1, 0, 0, 0, 1]
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
 				],
 				[
+					[1, 0, 0, 0, 0],
+					[0, 1, 0, 0, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0]
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 0, 1]
 				]
 			]
 		},
@@ -2211,64 +2211,64 @@
 			"dimensions" : [5, 5],
 			"values" : [
 				[
-					[1, 0, 0, 0, 1],
-					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 0, 0, 0],
-					[1, 0, 0, 0, 1]
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
 				],
 				[
+					[1, 0, 0, 0, 0],
+					[0, 1, 0, 0, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0]
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 0, 1]
 				]
 			]
 		}
 	]
 }
 </msg>
-<status status="PASS" endtime="20140227 23:37:55.847" starttime="20140227 23:37:55.841"></status>
+<status status="PASS" endtime="20140228 14:48:54.426" starttime="20140228 14:48:54.422"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.847" starttime="20140227 23:37:55.840"></status>
+<status status="PASS" endtime="20140228 14:48:54.427" starttime="20140228 14:48:54.421"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.847" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:54.428" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
 			"type" : "String",
 			"matrix" : false,
-			"values" : ["checks", "mitvert"]
+			"values" : ["rdiag", "ldiag"]
 		},
 		{
 			"name" : "Input",
 			"type" : "float",
 			"matrix" : true,
-			"dimen...</msg>
-<status status="PASS" endtime="20140227 23:37:55.847" starttime="20140227 23:37:55.331"></status>
+			"dimensio...</msg>
+<status status="PASS" endtime="20140228 14:48:54.427" starttime="20140228 14:48:53.910"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.848" level="INFO">${result} = {
+<msg timestamp="20140228 14:48:54.428" level="INFO">${result} = {
 	"columns" : [
 		{
 			"name" : "Name",
 			"type" : "String",
 			"matrix" : false,
-			"values" : ["checks", "mitvert"]
+			"values" : ["rdiag", "ldiag"]
 		},
 		{
 			"name" : "Input",
 			"type" : "float",
 			"matrix" : true,
-			"dimen...</msg>
-<status status="PASS" endtime="20140227 23:37:55.848" starttime="20140227 23:37:55.331"></status>
+			"dimensio...</msg>
+<status status="PASS" endtime="20140228 14:48:54.428" starttime="20140228 14:48:53.909"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
 <doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
 <arguments>
 <arg>${result}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.849" starttime="20140227 23:37:55.848"></status>
+<status status="PASS" endtime="20140228 14:48:54.429" starttime="20140228 14:48:54.429"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2289,8 +2289,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.851" level="INFO">${value} = "Name"</msg>
-<status status="PASS" endtime="20140227 23:37:55.851" starttime="20140227 23:37:55.850"></status>
+<msg timestamp="20140228 14:48:54.433" level="INFO">${value} = "Name"</msg>
+<status status="PASS" endtime="20140228 14:48:54.433" starttime="20140228 14:48:54.432"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2298,12 +2298,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.852" level="INFO">${match} = "Name"</msg>
-<msg timestamp="20140227 23:37:55.852" level="INFO">${result} = Name</msg>
-<status status="PASS" endtime="20140227 23:37:55.852" starttime="20140227 23:37:55.851"></status>
+<msg timestamp="20140228 14:48:54.434" level="INFO">${match} = "Name"</msg>
+<msg timestamp="20140228 14:48:54.434" level="INFO">${result} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:54.434" starttime="20140228 14:48:54.433"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.852" level="INFO">${value} = Name</msg>
-<status status="PASS" endtime="20140227 23:37:55.852" starttime="20140227 23:37:55.849"></status>
+<msg timestamp="20140228 14:48:54.435" level="INFO">${value} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:54.435" starttime="20140228 14:48:54.431"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2311,9 +2311,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.853" starttime="20140227 23:37:55.852"></status>
+<status status="PASS" endtime="20140228 14:48:54.436" starttime="20140228 14:48:54.435"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.853" starttime="20140227 23:37:55.849"></status>
+<status status="PASS" endtime="20140228 14:48:54.436" starttime="20140228 14:48:54.430"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2334,8 +2334,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.855" level="INFO">${value} = "Input"</msg>
-<status status="PASS" endtime="20140227 23:37:55.855" starttime="20140227 23:37:55.854"></status>
+<msg timestamp="20140228 14:48:54.440" level="INFO">${value} = "Input"</msg>
+<status status="PASS" endtime="20140228 14:48:54.439" starttime="20140228 14:48:54.439"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2343,12 +2343,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.856" level="INFO">${match} = "Input"</msg>
-<msg timestamp="20140227 23:37:55.856" level="INFO">${result} = Input</msg>
-<status status="PASS" endtime="20140227 23:37:55.856" starttime="20140227 23:37:55.855"></status>
+<msg timestamp="20140228 14:48:54.441" level="INFO">${match} = "Input"</msg>
+<msg timestamp="20140228 14:48:54.441" level="INFO">${result} = Input</msg>
+<status status="PASS" endtime="20140228 14:48:54.440" starttime="20140228 14:48:54.440"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.856" level="INFO">${value} = Input</msg>
-<status status="PASS" endtime="20140227 23:37:55.856" starttime="20140227 23:37:55.854"></status>
+<msg timestamp="20140228 14:48:54.441" level="INFO">${value} = Input</msg>
+<status status="PASS" endtime="20140228 14:48:54.441" starttime="20140228 14:48:54.437"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2356,9 +2356,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.857" starttime="20140227 23:37:55.856"></status>
+<status status="PASS" endtime="20140228 14:48:54.442" starttime="20140228 14:48:54.441"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.857" starttime="20140227 23:37:55.853"></status>
+<status status="PASS" endtime="20140228 14:48:54.442" starttime="20140228 14:48:54.436"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2379,8 +2379,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.859" level="INFO">${value} = "Output"</msg>
-<status status="PASS" endtime="20140227 23:37:55.859" starttime="20140227 23:37:55.858"></status>
+<msg timestamp="20140228 14:48:54.446" level="INFO">${value} = "Output"</msg>
+<status status="PASS" endtime="20140228 14:48:54.446" starttime="20140228 14:48:54.445"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2388,12 +2388,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.859" level="INFO">${match} = "Output"</msg>
-<msg timestamp="20140227 23:37:55.860" level="INFO">${result} = Output</msg>
-<status status="PASS" endtime="20140227 23:37:55.859" starttime="20140227 23:37:55.859"></status>
+<msg timestamp="20140228 14:48:54.447" level="INFO">${match} = "Output"</msg>
+<msg timestamp="20140228 14:48:54.447" level="INFO">${result} = Output</msg>
+<status status="PASS" endtime="20140228 14:48:54.447" starttime="20140228 14:48:54.446"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.860" level="INFO">${value} = Output</msg>
-<status status="PASS" endtime="20140227 23:37:55.860" starttime="20140227 23:37:55.858"></status>
+<msg timestamp="20140228 14:48:54.447" level="INFO">${value} = Output</msg>
+<status status="PASS" endtime="20140228 14:48:54.447" starttime="20140228 14:48:54.444"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2401,9 +2401,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.860" starttime="20140227 23:37:55.860"></status>
+<status status="PASS" endtime="20140228 14:48:54.448" starttime="20140228 14:48:54.448"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.861" starttime="20140227 23:37:55.857"></status>
+<status status="PASS" endtime="20140228 14:48:54.449" starttime="20140228 14:48:54.443"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2424,8 +2424,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.862" level="INFO">${value} = "String"</msg>
-<status status="PASS" endtime="20140227 23:37:55.862" starttime="20140227 23:37:55.862"></status>
+<msg timestamp="20140228 14:48:54.452" level="INFO">${value} = "String"</msg>
+<status status="PASS" endtime="20140228 14:48:54.452" starttime="20140228 14:48:54.451"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2433,12 +2433,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.863" level="INFO">${match} = "String"</msg>
-<msg timestamp="20140227 23:37:55.863" level="INFO">${result} = String</msg>
-<status status="PASS" endtime="20140227 23:37:55.863" starttime="20140227 23:37:55.863"></status>
+<msg timestamp="20140228 14:48:54.453" level="INFO">${match} = "String"</msg>
+<msg timestamp="20140228 14:48:54.454" level="INFO">${result} = String</msg>
+<status status="PASS" endtime="20140228 14:48:54.453" starttime="20140228 14:48:54.453"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.863" level="INFO">${value} = String</msg>
-<status status="PASS" endtime="20140227 23:37:55.863" starttime="20140227 23:37:55.861"></status>
+<msg timestamp="20140228 14:48:54.454" level="INFO">${value} = String</msg>
+<status status="PASS" endtime="20140228 14:48:54.454" starttime="20140228 14:48:54.450"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2446,9 +2446,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.864" starttime="20140227 23:37:55.864"></status>
+<status status="PASS" endtime="20140228 14:48:54.455" starttime="20140228 14:48:54.454"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.864" starttime="20140227 23:37:55.861"></status>
+<status status="PASS" endtime="20140228 14:48:54.455" starttime="20140228 14:48:54.449"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2469,8 +2469,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.866" level="INFO">${value} = "float"</msg>
-<status status="PASS" endtime="20140227 23:37:55.866" starttime="20140227 23:37:55.865"></status>
+<msg timestamp="20140228 14:48:54.459" level="INFO">${value} = "float"</msg>
+<status status="PASS" endtime="20140228 14:48:54.459" starttime="20140228 14:48:54.458"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2478,12 +2478,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.867" level="INFO">${match} = "float"</msg>
-<msg timestamp="20140227 23:37:55.867" level="INFO">${result} = float</msg>
-<status status="PASS" endtime="20140227 23:37:55.867" starttime="20140227 23:37:55.866"></status>
+<msg timestamp="20140228 14:48:54.460" level="INFO">${match} = "float"</msg>
+<msg timestamp="20140228 14:48:54.460" level="INFO">${result} = float</msg>
+<status status="PASS" endtime="20140228 14:48:54.460" starttime="20140228 14:48:54.459"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.867" level="INFO">${value} = float</msg>
-<status status="PASS" endtime="20140227 23:37:55.867" starttime="20140227 23:37:55.865"></status>
+<msg timestamp="20140228 14:48:54.461" level="INFO">${value} = float</msg>
+<status status="PASS" endtime="20140228 14:48:54.460" starttime="20140228 14:48:54.457"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2491,9 +2491,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.868" starttime="20140227 23:37:55.867"></status>
+<status status="PASS" endtime="20140228 14:48:54.461" starttime="20140228 14:48:54.461"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.868" starttime="20140227 23:37:55.864"></status>
+<status status="PASS" endtime="20140228 14:48:54.462" starttime="20140228 14:48:54.456"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2514,8 +2514,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.871" level="INFO">${value} = "float"</msg>
-<status status="PASS" endtime="20140227 23:37:55.870" starttime="20140227 23:37:55.870"></status>
+<msg timestamp="20140228 14:48:54.465" level="INFO">${value} = "float"</msg>
+<status status="PASS" endtime="20140228 14:48:54.465" starttime="20140228 14:48:54.464"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2523,12 +2523,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.871" level="INFO">${match} = "float"</msg>
-<msg timestamp="20140227 23:37:55.871" level="INFO">${result} = float</msg>
-<status status="PASS" endtime="20140227 23:37:55.871" starttime="20140227 23:37:55.871"></status>
+<msg timestamp="20140228 14:48:54.466" level="INFO">${match} = "float"</msg>
+<msg timestamp="20140228 14:48:54.466" level="INFO">${result} = float</msg>
+<status status="PASS" endtime="20140228 14:48:54.466" starttime="20140228 14:48:54.466"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.872" level="INFO">${value} = float</msg>
-<status status="PASS" endtime="20140227 23:37:55.871" starttime="20140227 23:37:55.869"></status>
+<msg timestamp="20140228 14:48:54.467" level="INFO">${value} = float</msg>
+<status status="PASS" endtime="20140228 14:48:54.467" starttime="20140228 14:48:54.463"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2536,9 +2536,9 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.872" starttime="20140227 23:37:55.872"></status>
+<status status="PASS" endtime="20140228 14:48:54.468" starttime="20140228 14:48:54.467"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:55.872" starttime="20140227 23:37:55.868"></status>
+<status status="PASS" endtime="20140228 14:48:54.468" starttime="20140228 14:48:54.462"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -2547,7 +2547,7 @@
 <arg>/columns/0/matrix</arg>
 <arg>false</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.873" starttime="20140227 23:37:55.872"></status>
+<status status="PASS" endtime="20140228 14:48:54.469" starttime="20140228 14:48:54.469"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -2556,7 +2556,7 @@
 <arg>/columns/1/matrix</arg>
 <arg>true</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.874" starttime="20140227 23:37:55.873"></status>
+<status status="PASS" endtime="20140228 14:48:54.471" starttime="20140228 14:48:54.470"></status>
 </kw>
 <kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
 <doc>Fails if the value of the target node of the JSON document</doc>
@@ -2565,7 +2565,7 @@
 <arg>/columns/2/matrix</arg>
 <arg>true</arg>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.874" starttime="20140227 23:37:55.874"></status>
+<status status="PASS" endtime="20140228 14:48:54.472" starttime="20140228 14:48:54.471"></status>
 </kw>
 <kw type="kw" name="Json String Should Match">
 <doc></doc>
@@ -2586,8 +2586,8 @@
 <arg>${json}</arg>
 <arg>${pointer}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.877" level="INFO">${value} = "checks"</msg>
-<status status="PASS" endtime="20140227 23:37:55.877" starttime="20140227 23:37:55.876"></status>
+<msg timestamp="20140228 14:48:54.475" level="INFO">${value} = "rdiag"</msg>
+<status status="PASS" endtime="20140228 14:48:54.475" starttime="20140228 14:48:54.474"></status>
 </kw>
 <kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
 <doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
@@ -2595,12 +2595,12 @@
 <arg>${value}</arg>
 <arg>"(.*)"</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.877" level="INFO">${match} = "checks"</msg>
-<msg timestamp="20140227 23:37:55.877" level="INFO">${result} = checks</msg>
-<status status="PASS" endtime="20140227 23:37:55.877" starttime="20140227 23:37:55.877"></status>
+<msg timestamp="20140228 14:48:54.476" level="INFO">${match} = "rdiag"</msg>
+<msg timestamp="20140228 14:48:54.476" level="INFO">${result} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:54.476" starttime="20140228 14:48:54.476"></status>
 </kw>
-<msg timestamp="20140227 23:37:55.878" level="INFO">${value} = checks</msg>
-<status status="PASS" endtime="20140227 23:37:55.877" starttime="20140227 23:37:55.875"></status>
+<msg timestamp="20140228 14:48:54.477" level="INFO">${value} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:54.477" starttime="20140228 14:48:54.473"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Should Match">
 <doc>Fails unless the given `string` matches the given `pattern`.</doc>
@@ -2608,15 +2608,1655 @@
 <arg>${value}</arg>
 <arg>${expected}</arg>
 </arguments>
-<msg timestamp="20140227 23:37:55.879" level="FAIL">'checks' does not match 'rdiag'</msg>
-<status status="FAIL" endtime="20140227 23:37:55.879" starttime="20140227 23:37:55.878"></status>
+<status status="PASS" endtime="20140228 14:48:54.478" starttime="20140228 14:48:54.477"></status>
 </kw>
-<status status="FAIL" endtime="20140227 23:37:55.879" starttime="20140227 23:37:55.875"></status>
+<status status="PASS" endtime="20140228 14:48:54.478" starttime="20140228 14:48:54.472"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/1</arg>
+<arg>ldiag</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:54.482" level="INFO">${value} = "ldiag"</msg>
+<status status="PASS" endtime="20140228 14:48:54.481" starttime="20140228 14:48:54.481"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:54.483" level="INFO">${match} = "ldiag"</msg>
+<msg timestamp="20140228 14:48:54.483" level="INFO">${result} = ldiag</msg>
+<status status="PASS" endtime="20140228 14:48:54.482" starttime="20140228 14:48:54.482"></status>
+</kw>
+<msg timestamp="20140228 14:48:54.483" level="INFO">${value} = ldiag</msg>
+<status status="PASS" endtime="20140228 14:48:54.483" starttime="20140228 14:48:54.479"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:54.484" starttime="20140228 14:48:54.484"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.484" starttime="20140228 14:48:54.478"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/1/values/0/2/2</arg>
+<arg>1</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:54.485" starttime="20140228 14:48:54.485"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/1/values/0/1/0</arg>
+<arg>0</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:54.487" starttime="20140228 14:48:54.486"></status>
+</kw>
+<kw type="kw" name="Json Value Should Not Exist">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/2</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Run Keyword And Expect Error">
+<doc>Runs the keyword and checks that the expected error occurred.</doc>
+<arguments>
+<arg>JsonPointerException*</arg>
+<arg>Get Json Value</arg>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:54.490" level="FAIL">JsonPointerException: index '2' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:54.490" starttime="20140228 14:48:54.489"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.491" starttime="20140228 14:48:54.488"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.491" starttime="20140228 14:48:54.487"></status>
+</kw>
+<kw type="kw" name="Json Value Should Not Exist">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/1/values/2</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Run Keyword And Expect Error">
+<doc>Runs the keyword and checks that the expected error occurred.</doc>
+<arguments>
+<arg>JsonPointerException*</arg>
+<arg>Get Json Value</arg>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:54.494" level="FAIL">JsonPointerException: index '2' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:54.494" starttime="20140228 14:48:54.493"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.494" starttime="20140228 14:48:54.492"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.495" starttime="20140228 14:48:54.491"></status>
+</kw>
+<kw type="kw" name="Json Value Should Not Exist">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/2/values/2</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Run Keyword And Expect Error">
+<doc>Runs the keyword and checks that the expected error occurred.</doc>
+<arguments>
+<arg>JsonPointerException*</arg>
+<arg>Get Json Value</arg>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:54.497" level="FAIL">JsonPointerException: index '2' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:54.498" starttime="20140228 14:48:54.497"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.498" starttime="20140228 14:48:54.496"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.498" starttime="20140228 14:48:54.495"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="FAIL" endtime="20140227 23:37:55.880" critical="yes" starttime="20140227 23:37:55.330">'checks' does not match 'rdiag'</status>
+<status status="PASS" endtime="20140228 14:48:54.499" critical="yes" starttime="20140228 14:48:53.908"></status>
+</test>
+<test id="s1-t8" name="Read Data Table Cell">
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:54.504" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}</msg>
+<status status="PASS" endtime="20140228 14:48:54.504" starttime="20140228 14:48:54.503"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:54.504" starttime="20140228 14:48:54.502"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:54.505" starttime="20140228 14:48:54.504"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.006" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:55.007" starttime="20140228 14:48:54.505"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:55.008" level="INFO">{
+	"columns" : [
+		{
+			"name" : "Name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["rdiag"]
+		}
+	]
+}</msg>
+<msg timestamp="20140228 14:48:55.009" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "Name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["rdiag"]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.008" starttime="20140228 14:48:55.007"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.010" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "Name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["rdiag"]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.013" starttime="20140228 14:48:55.010"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.013" starttime="20140228 14:48:55.009"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.014" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "Name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["rdiag"]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.014" starttime="20140228 14:48:54.501"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.015" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "Name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["rdiag"]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.014" starttime="20140228 14:48:54.500"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.015" starttime="20140228 14:48:55.015"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/name</arg>
+<arg>Name</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.019" level="INFO">${value} = "Name"</msg>
+<status status="PASS" endtime="20140228 14:48:55.018" starttime="20140228 14:48:55.018"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.020" level="INFO">${match} = "Name"</msg>
+<msg timestamp="20140228 14:48:55.020" level="INFO">${result} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:55.019" starttime="20140228 14:48:55.019"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.020" level="INFO">${value} = Name</msg>
+<status status="PASS" endtime="20140228 14:48:55.020" starttime="20140228 14:48:55.017"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.022" starttime="20140228 14:48:55.020"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.022" starttime="20140228 14:48:55.016"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/type</arg>
+<arg>String</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.025" level="INFO">${value} = "String"</msg>
+<status status="PASS" endtime="20140228 14:48:55.025" starttime="20140228 14:48:55.024"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.026" level="INFO">${match} = "String"</msg>
+<msg timestamp="20140228 14:48:55.026" level="INFO">${result} = String</msg>
+<status status="PASS" endtime="20140228 14:48:55.025" starttime="20140228 14:48:55.025"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.026" level="INFO">${value} = String</msg>
+<status status="PASS" endtime="20140228 14:48:55.026" starttime="20140228 14:48:55.023"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.027" starttime="20140228 14:48:55.026"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.027" starttime="20140228 14:48:55.022"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/matrix</arg>
+<arg>false</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.028" starttime="20140228 14:48:55.028"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/0</arg>
+<arg>rdiag</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.031" level="INFO">${value} = "rdiag"</msg>
+<status status="PASS" endtime="20140228 14:48:55.031" starttime="20140228 14:48:55.030"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.032" level="INFO">${match} = "rdiag"</msg>
+<msg timestamp="20140228 14:48:55.032" level="INFO">${result} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:55.032" starttime="20140228 14:48:55.032"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.033" level="INFO">${value} = rdiag</msg>
+<status status="PASS" endtime="20140228 14:48:55.033" starttime="20140228 14:48:55.029"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.033" starttime="20140228 14:48:55.033"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.034" starttime="20140228 14:48:55.028"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140228 14:48:55.034" critical="yes" starttime="20140228 14:48:54.499"></status>
+</test>
+<test id="s1-t9" name="Read Data Table Matrix Cell">
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.038" level="WARN">[Sending] {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}</msg>
+<status status="PASS" endtime="20140228 14:48:55.039" starttime="20140228 14:48:55.038"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.039" starttime="20140228 14:48:55.037"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.040" starttime="20140228 14:48:55.039"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.541" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:55.541" starttime="20140228 14:48:55.040"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:55.542" level="INFO">{
+	"columns" : [
+		{
+			"name" : "Input",
+			"type" : "float",
+			"matrix" : true,
+			"dimensions" : [5, 5],
+			"" : [1]
+		}
+	]
+}</msg>
+<msg timestamp="20140228 14:48:55.543" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "Input",
+			"type" : "float",
+			"matrix" : true,
+			"dimensions" : [5, 5],
+			"" : [1]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.543" starttime="20140228 14:48:55.541"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.544" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "Input",
+			"type" : "float",
+			"matrix" : true,
+			"dimensions" : [5, 5],
+			"" : [1]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.547" starttime="20140228 14:48:55.544"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.548" starttime="20140228 14:48:55.543"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.548" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "Input",
+			"type" : "float",
+			"matrix" : true,
+			"dimensions" : [5, 5],
+			"" : [1]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.548" starttime="20140228 14:48:55.036"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.549" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "Input",
+			"type" : "float",
+			"matrix" : true,
+			"dimensions" : [5, 5],
+			"" : [1]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:55.548" starttime="20140228 14:48:55.035"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.549" starttime="20140228 14:48:55.549"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/name</arg>
+<arg>Input</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.553" level="INFO">${value} = "Input"</msg>
+<status status="PASS" endtime="20140228 14:48:55.553" starttime="20140228 14:48:55.552"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.554" level="INFO">${match} = "Input"</msg>
+<msg timestamp="20140228 14:48:55.554" level="INFO">${result} = Input</msg>
+<status status="PASS" endtime="20140228 14:48:55.554" starttime="20140228 14:48:55.553"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.554" level="INFO">${value} = Input</msg>
+<status status="PASS" endtime="20140228 14:48:55.554" starttime="20140228 14:48:55.551"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.555" starttime="20140228 14:48:55.555"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.555" starttime="20140228 14:48:55.550"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/type</arg>
+<arg>float</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.560" level="INFO">${value} = "float"</msg>
+<status status="PASS" endtime="20140228 14:48:55.560" starttime="20140228 14:48:55.559"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.561" level="INFO">${match} = "float"</msg>
+<msg timestamp="20140228 14:48:55.561" level="INFO">${result} = float</msg>
+<status status="PASS" endtime="20140228 14:48:55.561" starttime="20140228 14:48:55.561"></status>
+</kw>
+<msg timestamp="20140228 14:48:55.562" level="INFO">${value} = float</msg>
+<status status="PASS" endtime="20140228 14:48:55.562" starttime="20140228 14:48:55.558"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.563" starttime="20140228 14:48:55.562"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.563" starttime="20140228 14:48:55.557"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/matrix</arg>
+<arg>true</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.564" starttime="20140228 14:48:55.563"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/0/0/0</arg>
+<arg>1</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.565" level="FAIL">JsonPointerException: member 'values' not found in {u'': [1], u'dimensions': [5, 5], u'type': u'float', u'name': u'Input', u'matrix': True}</msg>
+<status status="FAIL" endtime="20140228 14:48:55.565" starttime="20140228 14:48:55.564"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140228 14:48:55.566" critical="yes" starttime="20140228 14:48:55.034">JsonPointerException: member 'values' not found in {u'': [1], u'dimensions': [5, 5], u'type': u'float', u'name': u'Input', u'matrix': True}</status>
+</test>
+<test id="s1-t10" name="Read Data Table Cell Column Error">
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:55.574" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}</msg>
+<status status="PASS" endtime="20140228 14:48:55.574" starttime="20140228 14:48:55.571"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:55.574" starttime="20140228 14:48:55.569"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:55.576" starttime="20140228 14:48:55.575"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.077" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:56.078" starttime="20140228 14:48:55.576"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:56.079" level="INFO">{
+	"columns" : []
+}</msg>
+<msg timestamp="20140228 14:48:56.079" level="INFO">${result} = {
+	"columns" : []
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.079" starttime="20140228 14:48:56.078"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.081" level="WARN">[Received] {
+	"columns" : []
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.082" starttime="20140228 14:48:56.080"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.082" starttime="20140228 14:48:56.079"></status>
+</kw>
+<msg timestamp="20140228 14:48:56.083" level="INFO">${result} = {
+	"columns" : []
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.082" starttime="20140228 14:48:55.569"></status>
+</kw>
+<msg timestamp="20140228 14:48:56.083" level="INFO">${result} = {
+	"columns" : []
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.083" starttime="20140228 14:48:55.568"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:56.084" starttime="20140228 14:48:56.084"></status>
+</kw>
+<kw type="kw" name="Json Value Should Not Exist">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/name</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Run Keyword And Expect Error">
+<doc>Runs the keyword and checks that the expected error occurred.</doc>
+<arguments>
+<arg>JsonPointerException*</arg>
+<arg>Get Json Value</arg>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.087" level="FAIL">JsonPointerException: index '0' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:56.087" starttime="20140228 14:48:56.086"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.087" starttime="20140228 14:48:56.085"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.087" starttime="20140228 14:48:56.084"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/message</arg>
+<arg>ERROR</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.091" level="FAIL">JsonPointerException: member 'message' not found in {u'columns': []}</msg>
+<status status="FAIL" endtime="20140228 14:48:56.091" starttime="20140228 14:48:56.090"></status>
+</kw>
+<status status="FAIL" endtime="20140228 14:48:56.091" starttime="20140228 14:48:56.089"></status>
+</kw>
+<status status="FAIL" endtime="20140228 14:48:56.092" starttime="20140228 14:48:56.088"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140228 14:48:56.094" critical="yes" starttime="20140228 14:48:55.567">JsonPointerException: member 'message' not found in {u'columns': []}</status>
+</test>
+<test id="s1-t11" name="Append Data Table">
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.101" level="WARN">[Sending] {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }</msg>
+<status status="PASS" endtime="20140228 14:48:56.101" starttime="20140228 14:48:56.100"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.101" starttime="20140228 14:48:56.099"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:56.104" starttime="20140228 14:48:56.101"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.606" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:56.606" starttime="20140228 14:48:56.104"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:56.607" level="INFO">{
+	"status" : "OK",
+	"message" : ""
+}</msg>
+<msg timestamp="20140228 14:48:56.607" level="INFO">${result} = {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.607" starttime="20140228 14:48:56.606"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.609" level="WARN">[Received] {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.610" starttime="20140228 14:48:56.609"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.610" starttime="20140228 14:48:56.608"></status>
+</kw>
+<msg timestamp="20140228 14:48:56.610" level="INFO">${result} = {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.610" starttime="20140228 14:48:56.097"></status>
+</kw>
+<msg timestamp="20140228 14:48:56.611" level="INFO">${result} = {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:56.611" starttime="20140228 14:48:56.095"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:56.612" starttime="20140228 14:48:56.611"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/status</arg>
+<arg>OK</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.615" level="INFO">${value} = "OK"</msg>
+<status status="PASS" endtime="20140228 14:48:56.615" starttime="20140228 14:48:56.614"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.616" level="INFO">${match} = "OK"</msg>
+<msg timestamp="20140228 14:48:56.617" level="INFO">${result} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:56.616" starttime="20140228 14:48:56.615"></status>
+</kw>
+<msg timestamp="20140228 14:48:56.617" level="INFO">${value} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:56.617" starttime="20140228 14:48:56.613"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:56.618" starttime="20140228 14:48:56.618"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.618" starttime="20140228 14:48:56.612"></status>
+</kw>
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "GetData", "table": "TrialOutputData"}</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:56.622" level="WARN">[Sending] {"command": "GetData", "table": "TrialOutputData"}</msg>
+<status status="PASS" endtime="20140228 14:48:56.622" starttime="20140228 14:48:56.622"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:56.623" starttime="20140228 14:48:56.621"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:56.624" starttime="20140228 14:48:56.623"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.125" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:57.126" starttime="20140228 14:48:56.624"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:57.129" level="INFO">{
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [7, 0]
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 9]
+		},
+		{
+			"name" : "trial",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "trial_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["", ""]
+		},
+		{
+			"name" : "group_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["", ""]
+		},
+		{
+			"name" : "phase_no",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "minus_cycles",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "sse",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "ext_rew",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		}
+	]
+}</msg>
+<msg timestamp="20140228 14:48:57.130" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [7, 0]
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 9]
+		},
+	...</msg>
+<status status="PASS" endtime="20140228 14:48:57.130" starttime="20140228 14:48:57.126"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.132" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [7, 0]
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 9]
+		},
+		{
+			"name" : "trial",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "trial_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["", ""]
+		},
+		{
+			"name" : "group_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["", ""]
+		},
+		{
+			"name" : "phase_no",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "minus_cycles",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "sse",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "ext_rew",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:57.134" starttime="20140228 14:48:57.131"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:57.134" starttime="20140228 14:48:57.130"></status>
+</kw>
+<msg timestamp="20140228 14:48:57.135" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [7, 0]
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 9]
+		},
+	...</msg>
+<status status="PASS" endtime="20140228 14:48:57.134" starttime="20140228 14:48:56.620"></status>
+</kw>
+<msg timestamp="20140228 14:48:57.135" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [7, 0]
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 9]
+		},
+	...</msg>
+<status status="PASS" endtime="20140228 14:48:57.135" starttime="20140228 14:48:56.619"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:57.136" starttime="20140228 14:48:57.135"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/0</arg>
+<arg>7</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:57.138" starttime="20140228 14:48:57.137"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Json Value Should Equal">
+<doc>Fails if the value of the target node of the JSON document</doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/1</arg>
+<arg>9</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.139" level="FAIL">JSON value "0" does not equal "9", but should have.</msg>
+<status status="FAIL" endtime="20140228 14:48:57.139" starttime="20140228 14:48:57.138"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140228 14:48:57.140" critical="yes" starttime="20140228 14:48:56.094">JSON value "0" does not equal "9", but should have.</status>
+</test>
+<test id="s1-t12" name="Remove Data">
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "RemoveData", "table": "TrialOutputData"}</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.144" level="WARN">[Sending] {"command": "RemoveData", "table": "TrialOutputData"}</msg>
+<status status="PASS" endtime="20140228 14:48:57.144" starttime="20140228 14:48:57.144"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:57.145" starttime="20140228 14:48:57.143"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:57.146" starttime="20140228 14:48:57.145"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.647" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:57.647" starttime="20140228 14:48:57.146"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:57.648" level="INFO">{
+	"status" : "OK",
+	"message" : ""
+}</msg>
+<msg timestamp="20140228 14:48:57.648" level="INFO">${result} = {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:57.648" starttime="20140228 14:48:57.648"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.650" level="WARN">[Received] {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:57.650" starttime="20140228 14:48:57.649"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:57.650" starttime="20140228 14:48:57.649"></status>
+</kw>
+<msg timestamp="20140228 14:48:57.650" level="INFO">${result} = {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:57.650" starttime="20140228 14:48:57.142"></status>
+</kw>
+<msg timestamp="20140228 14:48:57.651" level="INFO">${result} = {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:57.650" starttime="20140228 14:48:57.141"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:57.651" starttime="20140228 14:48:57.651"></status>
+</kw>
+<kw type="kw" name="Json String Should Match">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/status</arg>
+<arg>OK</arg>
+</arguments>
+<kw type="kw" name="${value} = Get Json String">
+<doc></doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="${value} = HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.653" level="INFO">${value} = "OK"</msg>
+<status status="PASS" endtime="20140228 14:48:57.653" starttime="20140228 14:48:57.653"></status>
+</kw>
+<kw type="kw" name="${match}, ${result} = BuiltIn.Should Match Regexp">
+<doc>Fails if `string` does not match `pattern` as a regular expression.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>"(.*)"</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.654" level="INFO">${match} = "OK"</msg>
+<msg timestamp="20140228 14:48:57.654" level="INFO">${result} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:57.654" starttime="20140228 14:48:57.653"></status>
+</kw>
+<msg timestamp="20140228 14:48:57.654" level="INFO">${value} = OK</msg>
+<status status="PASS" endtime="20140228 14:48:57.654" starttime="20140228 14:48:57.652"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Match">
+<doc>Fails unless the given `string` matches the given `pattern`.</doc>
+<arguments>
+<arg>${value}</arg>
+<arg>${expected}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:57.655" starttime="20140228 14:48:57.654"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:57.655" starttime="20140228 14:48:57.651"></status>
+</kw>
+<kw type="kw" name="${result} = Run Command Wait">
+<doc></doc>
+<arguments>
+<arg>{"command": "GetData", "table": "TrialOutputData"}</arg>
+</arguments>
+<kw type="kw" name="${result} = Run Command">
+<doc></doc>
+<arguments>
+<arg>${command}</arg>
+<arg>500ms</arg>
+</arguments>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Sending] ${command}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:57.658" level="WARN">[Sending] {"command": "GetData", "table": "TrialOutputData"}</msg>
+<status status="PASS" endtime="20140228 14:48:57.659" starttime="20140228 14:48:57.658"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:57.659" starttime="20140228 14:48:57.657"></status>
+</kw>
+<kw type="kw" name="Telnet.Write Bare">
+<doc>Writes the given text, and nothing else, into the connection.</doc>
+<arguments>
+<arg>${command}\n</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:57.660" starttime="20140228 14:48:57.659"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${wait}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:58.161" level="INFO">Slept 500 milliseconds</msg>
+<status status="PASS" endtime="20140228 14:48:58.161" starttime="20140228 14:48:57.660"></status>
+</kw>
+<kw type="kw" name="${result} = Telnet.Read">
+<doc>Reads everything that is currently available in the output.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140228 14:48:58.164" level="INFO">{
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "trial",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "trial_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "group_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "phase_no",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "minus_cycles",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "sse",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "ext_rew",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		}
+	]
+}</msg>
+<msg timestamp="20140228 14:48:58.164" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"n...</msg>
+<status status="PASS" endtime="20140228 14:48:58.164" starttime="20140228 14:48:58.162"></status>
+</kw>
+<kw type="kw" name="Print">
+<doc></doc>
+<arguments>
+<arg>[Received] ${result}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${text}</arg>
+<arg>WARN</arg>
+</arguments>
+<msg timestamp="20140228 14:48:58.165" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "trial",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "trial_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "group_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "phase_no",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "minus_cycles",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "sse",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "ext_rew",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		}
+	]
+}
+</msg>
+<status status="PASS" endtime="20140228 14:48:58.167" starttime="20140228 14:48:58.165"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:58.167" starttime="20140228 14:48:58.164"></status>
+</kw>
+<msg timestamp="20140228 14:48:58.167" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"n...</msg>
+<status status="PASS" endtime="20140228 14:48:58.167" starttime="20140228 14:48:57.656"></status>
+</kw>
+<msg timestamp="20140228 14:48:58.168" level="INFO">${result} = {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"n...</msg>
+<status status="PASS" endtime="20140228 14:48:58.168" starttime="20140228 14:48:57.655"></status>
+</kw>
+<kw type="kw" name="HttpLibrary.HTTP.Should Be Valid Json">
+<doc>Attempts to parse `json_string` as JSON. Fails, if `json_string` is invalid JSON.</doc>
+<arguments>
+<arg>${result}</arg>
+</arguments>
+<status status="PASS" endtime="20140228 14:48:58.169" starttime="20140228 14:48:58.168"></status>
+</kw>
+<kw type="kw" name="Json Value Should Not Exist">
+<doc></doc>
+<arguments>
+<arg>${result}</arg>
+<arg>/columns/0/values/0</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Run Keyword And Expect Error">
+<doc>Runs the keyword and checks that the expected error occurred.</doc>
+<arguments>
+<arg>JsonPointerException*</arg>
+<arg>Get Json Value</arg>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<kw type="kw" name="HttpLibrary.HTTP.Get Json Value">
+<doc>Get the target node of the JSON document `json_string` specified by `json_pointer`.</doc>
+<arguments>
+<arg>${json}</arg>
+<arg>${pointer}</arg>
+</arguments>
+<msg timestamp="20140228 14:48:58.171" level="FAIL">JsonPointerException: index '0' is out of bounds</msg>
+<status status="FAIL" endtime="20140228 14:48:58.171" starttime="20140228 14:48:58.170"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:58.171" starttime="20140228 14:48:58.169"></status>
+</kw>
+<status status="PASS" endtime="20140228 14:48:58.171" starttime="20140228 14:48:58.169"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140228 14:48:58.172" critical="yes" starttime="20140228 14:48:57.140"></status>
 </test>
 <kw type="teardown" name="Shutdown Emergent">
 <doc></doc>
@@ -2626,15 +4266,15 @@
 <doc>Closes all open connections and empties the connection cache.</doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140227 23:37:55.882" starttime="20140227 23:37:55.882"></status>
+<status status="PASS" endtime="20140228 14:48:58.176" starttime="20140228 14:48:58.175"></status>
 </kw>
 <kw type="kw" name="BuiltIn.Sleep">
 <doc>Pauses the test executed for the given time.</doc>
 <arguments>
 <arg>2 sec</arg>
 </arguments>
-<msg timestamp="20140227 23:37:57.883" level="INFO">Slept 2 seconds</msg>
-<status status="PASS" endtime="20140227 23:37:57.883" starttime="20140227 23:37:55.882"></status>
+<msg timestamp="20140228 14:49:00.177" level="INFO">Slept 2 seconds</msg>
+<status status="PASS" endtime="20140228 14:49:00.177" starttime="20140228 14:48:58.176"></status>
 </kw>
 <kw type="kw" name="${result} = Process.Terminate Process">
 <doc>Stops the process gracefully or forcefully.</doc>
@@ -2642,49 +4282,49 @@
 <arg>${pid}</arg>
 <arg>kill=true</arg>
 </arguments>
-<msg timestamp="20140227 23:37:57.885" level="INFO">Forcefully killing process.</msg>
-<msg timestamp="20140227 23:37:57.985" level="INFO">Process completed.</msg>
-<msg timestamp="20140227 23:37:57.986" level="INFO">${result} = &lt;result object with rc -9&gt;</msg>
-<status status="PASS" endtime="20140227 23:37:57.986" starttime="20140227 23:37:57.884"></status>
+<msg timestamp="20140228 14:49:00.178" level="INFO">Forcefully killing process.</msg>
+<msg timestamp="20140228 14:49:00.279" level="INFO">Process completed.</msg>
+<msg timestamp="20140228 14:49:00.279" level="INFO">${result} = &lt;result object with rc -9&gt;</msg>
+<status status="PASS" endtime="20140228 14:49:00.279" starttime="20140228 14:49:00.177"></status>
 </kw>
-<status status="PASS" endtime="20140227 23:37:57.986" starttime="20140227 23:37:55.881"></status>
+<status status="PASS" endtime="20140228 14:49:00.279" starttime="20140228 14:48:58.174"></status>
 </kw>
 <doc></doc>
 <metadata>
 </metadata>
-<status status="FAIL" endtime="20140227 23:37:57.986" starttime="20140227 23:37:49.383"></status>
+<status status="FAIL" endtime="20140228 14:49:00.280" starttime="20140228 14:48:45.991"></status>
 </suite>
 <statistics>
 <total>
-<stat fail="1" pass="6">Critical Tests</stat>
-<stat fail="1" pass="6">All Tests</stat>
+<stat fail="3" pass="9">Critical Tests</stat>
+<stat fail="3" pass="9">All Tests</stat>
 </total>
 <tag>
 </tag>
 <suite>
-<stat fail="1" pass="6" id="s1" name="Server">Server</stat>
+<stat fail="3" pass="9" id="s1" name="Server">Server</stat>
 </suite>
 </statistics>
 <errors>
-<msg timestamp="20140227 23:37:52.571" level="WARN">Emergent Server v6.3.6
+<msg timestamp="20140228 14:48:51.139" level="WARN">Emergent Server v6.3.6
 </msg>
-<msg timestamp="20140227 23:37:52.580" level="WARN">[Sending] GetRunState</msg>
-<msg timestamp="20140227 23:37:53.087" level="WARN">[Received] OK 4
+<msg timestamp="20140228 14:48:51.145" level="WARN">[Sending] GetRunState</msg>
+<msg timestamp="20140228 14:48:51.651" level="WARN">[Received] OK 4
 </msg>
-<msg timestamp="20140227 23:37:53.099" level="WARN">[Sending] {"command": "GetRunState"}</msg>
-<msg timestamp="20140227 23:37:53.606" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:51.666" level="WARN">[Sending] {"command": "GetRunState"}</msg>
+<msg timestamp="20140228 14:48:52.173" level="WARN">[Received] {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<msg timestamp="20140227 23:37:53.629" level="WARN">[Sending] {"command": "GetRunState", "program": "LeabraBatch"}</msg>
-<msg timestamp="20140227 23:37:54.135" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:52.195" level="WARN">[Sending] {"command": "GetRunState", "program": "LeabraBatch"}</msg>
+<msg timestamp="20140228 14:48:52.704" level="WARN">[Received] {
 	"status" : "OK",
 	"message" : "4"
 }
 </msg>
-<msg timestamp="20140227 23:37:54.158" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData"}</msg>
-<msg timestamp="20140227 23:37:54.673" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:52.724" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData"}</msg>
+<msg timestamp="20140228 14:48:53.237" level="WARN">[Received] {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -2795,8 +4435,8 @@
 	]
 }
 </msg>
-<msg timestamp="20140227 23:37:54.783" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "column": "Name"}</msg>
-<msg timestamp="20140227 23:37:55.290" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:53.343" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "column": "Name"}</msg>
+<msg timestamp="20140228 14:48:53.850" level="WARN">[Received] {
 	"columns" : [
 		{
 			"name" : "Name",
@@ -2807,14 +4447,14 @@
 	]
 }
 </msg>
-<msg timestamp="20140227 23:37:55.333" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}</msg>
-<msg timestamp="20140227 23:37:55.841" level="WARN">[Received] {
+<msg timestamp="20140228 14:48:53.912" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}</msg>
+<msg timestamp="20140228 14:48:54.423" level="WARN">[Received] {
 	"columns" : [
 		{
 			"name" : "Name",
 			"type" : "String",
 			"matrix" : false,
-			"values" : ["checks", "mitvert"]
+			"values" : ["rdiag", "ldiag"]
 		},
 		{
 			"name" : "Input",
@@ -2823,18 +4463,18 @@
 			"dimensions" : [5, 5],
 			"values" : [
 				[
-					[1, 0, 0, 0, 1],
-					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 0, 0, 0],
-					[1, 0, 0, 0, 1]
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
 				],
 				[
+					[1, 0, 0, 0, 0],
+					[0, 1, 0, 0, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0]
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 0, 1]
 				]
 			]
 		},
@@ -2845,20 +4485,182 @@
 			"dimensions" : [5, 5],
 			"values" : [
 				[
-					[1, 0, 0, 0, 1],
-					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 0, 0, 0],
-					[1, 0, 0, 0, 1]
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
 				],
 				[
+					[1, 0, 0, 0, 0],
+					[0, 1, 0, 0, 0],
 					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0],
-					[0, 0, 1, 0, 0]
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 0, 1]
 				]
 			]
+		}
+	]
+}
+</msg>
+<msg timestamp="20140228 14:48:54.504" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}</msg>
+<msg timestamp="20140228 14:48:55.010" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "Name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["rdiag"]
+		}
+	]
+}
+</msg>
+<msg timestamp="20140228 14:48:55.038" level="WARN">[Sending] {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}</msg>
+<msg timestamp="20140228 14:48:55.544" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "Input",
+			"type" : "float",
+			"matrix" : true,
+			"dimensions" : [5, 5],
+			"" : [1]
+		}
+	]
+}
+</msg>
+<msg timestamp="20140228 14:48:55.574" level="WARN">[Sending] {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}</msg>
+<msg timestamp="20140228 14:48:56.081" level="WARN">[Received] {
+	"columns" : []
+}
+</msg>
+<msg timestamp="20140228 14:48:56.101" level="WARN">[Sending] {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }</msg>
+<msg timestamp="20140228 14:48:56.609" level="WARN">[Received] {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<msg timestamp="20140228 14:48:56.622" level="WARN">[Sending] {"command": "GetData", "table": "TrialOutputData"}</msg>
+<msg timestamp="20140228 14:48:57.132" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [7, 0]
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 9]
+		},
+		{
+			"name" : "trial",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "trial_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["", ""]
+		},
+		{
+			"name" : "group_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : ["", ""]
+		},
+		{
+			"name" : "phase_no",
+			"type" : "int",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "minus_cycles",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "sse",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		},
+		{
+			"name" : "ext_rew",
+			"type" : "float",
+			"matrix" : false,
+			"values" : [0, 0]
+		}
+	]
+}
+</msg>
+<msg timestamp="20140228 14:48:57.144" level="WARN">[Sending] {"command": "RemoveData", "table": "TrialOutputData"}</msg>
+<msg timestamp="20140228 14:48:57.650" level="WARN">[Received] {
+	"status" : "OK",
+	"message" : ""
+}
+</msg>
+<msg timestamp="20140228 14:48:57.658" level="WARN">[Sending] {"command": "GetData", "table": "TrialOutputData"}</msg>
+<msg timestamp="20140228 14:48:58.165" level="WARN">[Received] {
+	"columns" : [
+		{
+			"name" : "batch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "epoch",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "trial",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "trial_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "group_name",
+			"type" : "String",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "phase_no",
+			"type" : "int",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "minus_cycles",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "sse",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
+		},
+		{
+			"name" : "ext_rew",
+			"type" : "float",
+			"matrix" : false,
+			"values" : []
 		}
 	]
 }
