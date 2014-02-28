@@ -60,8 +60,10 @@ public:
     UNSPECIFIED_ERROR,
     INVALID_FORMAT,
     UNKNOWN_COMMAND,
-    MISSING_PARAM, //
-    RUNTIME_ERROR  //
+    MISSING_PARAM,
+    NOT_FOUND,
+    NO_OPEN_PROJECT,
+    RUNTIME_ERROR
      };
 
   ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state 

@@ -302,7 +302,7 @@ Program* TemtClient::GetAssertProgram(const String& pnm) {
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
-    SendError("no project open");
+    SendError("no project open", TemtClient::RUNTIME_ERROR);
     return NULL;
   }
 
@@ -325,7 +325,7 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
-    SendError("no project open");
+    SendError("no project open", TemtClient::RUNTIME_ERROR);
     return NULL;
   }
 
@@ -596,7 +596,10 @@ void TemtClient::cmdGetData() {
 
     tab->GetDataAsJSON(ostr, col_name, row_from, rows);
     data = ostr.str().c_str();
-    Write(data);
+
+    // doing the message wrap here because it isn't working in SendOkJSON - why????!!!!
+    String str = "{\"status\":\"OK\", \"data\": " + data + "}";
+    Write(str);
   }
   else {
     TableParams p(this, tab);
