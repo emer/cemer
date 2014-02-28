@@ -56,6 +56,14 @@ public:
       JSON   //
     };
 
+  enum ServerError {
+    UNSPECIFIED_ERROR,
+    INVALID_FORMAT,
+    UNKNOWN_COMMAND,
+    MISSING_PARAM, //
+    RUNTIME_ERROR  //
+     };
+
   ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state 
   MsgFormat     msgFormat; // #READ_ONLY #NO_SAVE
   
@@ -69,9 +77,9 @@ public:
   void			CloseClient();
   void			SetSocket(QTcpSocket* sock); // #IGNORE
 
-  void      SendError(const String& err_msg); // relay to SendError in format of received message
-  void      SendErrorNATIVE(const String& err_msg); // send error reply in ascii
-  void      SendErrorJSON(const String& err_msg); // send error reply in json format
+  void      SendError(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED_ERROR); // relay to SendError in format of received message
+  void      SendErrorNATIVE(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED_ERROR); // send error reply in ascii
+  void      SendErrorJSON(const String& err_msg, TemtClient::ServerError err = UNSPECIFIED_ERROR); // send error reply in json format
   void      SendReply(const String& r); // relay to SendReply in format of received message
   void      SendReplyNATIVE(const String& r); // send reply ascii
   void      SendReplyJSON(const String& r); // send reply json

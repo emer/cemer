@@ -2902,10 +2902,11 @@ void DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
     // get the node name and value as a string
     std::string node_name = i->name();
 
-//    if (node_name == "data") {
-//      taMisc::DebugInfo("data");
-//    }
     if (node_name == "columns") {
+      // calc the start_row so that when working backwards it doesn't change each time we loop
+      if (start_row < 0) {
+        start_row = rows + start_row + 1;
+      }
       JSONNode::const_iterator columns = i->begin();
       while (columns != i->end()) {
         const JSONNode aCol = *columns;
@@ -3047,29 +3048,29 @@ void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell)
     }
 
     // store flat array of values into matrix cells
-    for (int i = 0; i < rowCount; i++) {
+    for (int i = 0, r = row; i < rowCount; i++, r++) {
       for (int j = 0; j < mg.Product(); j++ ) {
         switch (dc->valType()) {
         case VT_STRING:
-          SetValAsStringM(stringValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsStringM(stringValues[i*mg.Product() + j], columnName, r, j);
           break;
         case VT_DOUBLE:
-          SetValAsDoubleM(doubleValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsDoubleM(doubleValues[i*mg.Product() + j], columnName, r, j);
           break;
         case VT_FLOAT:
-          SetValAsFloatM(floatValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsFloatM(floatValues[i*mg.Product() + j], columnName, r, j);
           break;
         case VT_INT:
-          SetValAsIntM(intValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, j);
           break;
         case VT_BYTE:
-          SetValAsIntM(intValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, j);
           break;
         case VT_VARIANT:
-          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, r, j);
           break;
         default:
-          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, i, j);
+          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, r, j);
           taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
         }
       }

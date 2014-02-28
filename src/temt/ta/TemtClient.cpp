@@ -739,6 +739,10 @@ void TemtClient::cmdGetVar() {
   }
 
   String pnm = name_params.GetVal("program").toString();
+  if (pnm.empty()) {
+    SendError("Missing parameter - 'Program'", TemtClient::MISSING_PARAM);
+    return;
+  }
 
   Program* prog = GetAssertProgram(pnm);
   if (!prog) return;
@@ -831,7 +835,6 @@ void TemtClient::cmdSetVar() {
     if (!prog) return;
     // note: ok if running
     // note: would work for 0 params
-
 
     // verify all params
     String nm;
@@ -1186,25 +1189,25 @@ void TemtClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
   //nothing yet
 }
 
-void TemtClient::SendError(const String& err_msg) {
+void TemtClient::SendError(const String& err_msg, TemtClient::ServerError err) {
   if (msgFormat == TemtClient::JSON)
-    SendErrorJSON(err_msg);
+    SendErrorJSON(err_msg, err);
   else
     SendErrorNATIVE(err_msg);
 }
 
-void TemtClient::SendErrorNATIVE(const String& err_msg) {
+void TemtClient::SendErrorNATIVE(const String& err_msg, TemtClient::ServerError err) {
   String ln = "ERROR";
   if (err_msg.length() > 0)
     ln.cat(" ").cat(err_msg);
   WriteLine(ln);
 }
 
-void TemtClient::SendErrorJSON(const String& err_msg) {
+void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError err) {
   JSONNode root(JSON_NODE);
   root.push_back(JSONNode("status", json_string("ERROR")));
   root.push_back(JSONNode("message", json_string(err_msg.chars())));
-  root.push_back(JSONNode("error", -1));
+  root.push_back(JSONNode("error", err));
 
   String reply = root.write_formatted().c_str();
   WriteLine(reply);
