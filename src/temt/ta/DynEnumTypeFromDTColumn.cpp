@@ -24,22 +24,22 @@
 TA_BASEFUNS_CTORS_DEFN(DynEnumTypeFromDTColumn);
 
 void DynEnumTypeFromDTColumn::Initialize() {
-  srcTable = NULL;
+  src_table = NULL;
 }
 
 void DynEnumTypeFromDTColumn::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(srcTable,this);
+  taBase::Own(src_table,this);
 }
 
 void DynEnumTypeFromDTColumn::CutLinks() {
-  srcTable.CutLinks();
+  src_table.CutLinks();
   inherited::CutLinks();
 }
 
 void DynEnumTypeFromDTColumn::Copy_(const DynEnumTypeFromDTColumn& cp) {
-  srcTable = cp.srcTable;
-  srcColumn = cp.srcColumn;
+  src_table = cp.src_table;
+  src_column = cp.src_column;
 }
 
 bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& col) {
@@ -56,8 +56,8 @@ bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& c
     enums.StructUpdate(false);
     return false;
   }
-  srcTable = dt;
-  srcColumn = da->name;
+  src_table = dt;
+  src_column = da->name;
 
   enums.StructUpdate(true);
   enums.Reset();
@@ -71,7 +71,7 @@ bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& c
 
 void DynEnumTypeFromDTColumn::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
   inherited::SmartRef_SigDestroying(ref, obj);
-  srcTable = NULL;
+  src_table = NULL;
   enums.Reset();
 }
 
@@ -79,10 +79,10 @@ void DynEnumTypeFromDTColumn::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
     int sls, void* op1_, void* op2_)
 {
   // DataTable change - update the enums
-  if(TestError(obj != srcTable, "SmartRef_SigEmit", "data table doesn't match the member value - should not happen - report bug"))
+  if(TestError(obj != src_table, "SmartRef_SigEmit", "data table doesn't match the member value - should not happen - report bug"))
     return;
   DataTable* dt = (DataTable*)obj;
-  DataCol* dc = dt->FindColName(srcColumn);
+  DataCol* dc = dt->FindColName(src_column);
 
   if(TestError(!dc, "DynEnumTypeFromDTColumn::SmartRef_SigEmit", "column not found, did you change the column name? enum items will be deleted")) {
     enums.StructUpdate(true);
@@ -105,8 +105,8 @@ void DynEnumTypeFromDTColumn::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
 void DynEnumTypeFromDTColumn::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // any illegal combination of table and column leads to removal of all enums
-  if (srcTable && srcColumn != "") {
-    EnumsFromDataTable(srcTable, srcColumn);
+  if (src_table && src_column != "") {
+    EnumsFromDataTable(src_table, src_column);
   }
   else {
     enums.StructUpdate(true);
