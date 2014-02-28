@@ -747,10 +747,10 @@ void TemtClient::cmdGetVar() {
   if (msgFormat == TemtClient::NATIVE) {
     // 2nd param must be a var name
     String str = pos_params.SafeEl(1);;
-    name_params.SetVal("variable", str);
+    name_params.SetVal("var_name", str);
   }
 
-  String nm = name_params.GetVal("variable").toString();
+  String nm = name_params.GetVal("var_name").toString();
 
   // note: check name first, because GetVar raises error
   if (!prog->HasVar(nm)) {
@@ -895,6 +895,7 @@ void TemtClient::cmdSetVar() {
       SendError("An error occurred while seeting Var or Arg '" + var_name + "'");
       return;
     }
+    SendOk("var set");
   }
 }
 
