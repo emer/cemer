@@ -54,6 +54,7 @@ public:
   float         fbx;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0;0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope -- not apparently needed for robust inhibition, but might be useful for some effects
   float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB&&!fbx:0 #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
   float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 
+  bool          up_immed;       // #CONDSHOW_ON_type:FF_FB_INHIB inhibition rises immediately, and dt only applies to decay -- this is important for spiking units
   float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases.
   float		min_i;		// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
 

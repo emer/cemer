@@ -44,6 +44,7 @@ void LeabraInhibSpec::Initialize() {
   fbx = 0.0f;
   infl = 0.3f;
   dt = 0.7f;
+  up_immed = false;
   min_i = 0.0f;
   Defaults_init();
 }
@@ -1045,7 +1046,17 @@ void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
   thr->kwta.ffi = nw_ffi;
   thr->kwta.fbi_x = fbi_x;
   // dt only on fbi part
-  thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
+  if(ispec.up_immed) {
+    if(nw_fbi > thr->kwta.fbi) {
+      thr->kwta.fbi = nw_fbi;
+    }
+    else {
+      thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
+    }
+  }
+  else {
+    thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
+  }
 
   thr->i_val.kwta = ispec.gi * (thr->kwta.ffi + thr->kwta.fbi); // combine
   thr->kwta.k_ithr = 0.0f;
