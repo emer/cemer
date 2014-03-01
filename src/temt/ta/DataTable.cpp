@@ -2160,11 +2160,16 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
   JSONNode columns(JSON_ARRAY);
   columns.set_name("columns");
 
-  if (start_row < 0 || start_row >= rows) {
+  if (start_row < 0) {
+    start_row = rows + start_row;  // so for -1 you get the last row
+  }
+
+  if (start_row < 0 || start_row >= rows) {  // start_row could still be negative if we were passed -20 when there were only 10 rows
     start_row = 0;
   }
 
-  if (n_rows == -1 || (start_row + n_rows) > rows) {
+  // do something reasonable
+  if (n_rows < 0 || (start_row + n_rows) > rows) {
     stop_row = rows;
   }
   else {

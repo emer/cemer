@@ -215,14 +215,14 @@ void TemtClient::cmdRunProgram(bool sync) {
   // now we are native/json agnostic
   String pnm = name_params.GetVal("program").toString();
   if (pnm.empty()) {
-    SendError("RunProgram: program name expected");
+    SendError("RunProgram: program name expected", TemtClient::NOT_FOUND);
     return;
   }
 
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
-    SendError("RunProgram " + pnm + ": no project open");
+    SendError("RunProgram " + pnm + ": no project open", TemtClient::NOT_FOUND);
     return;
   }
 
@@ -241,7 +241,7 @@ void TemtClient::cmdRunProgram(bool sync) {
   // check that not already running! (but ok if it is Stopped)
   Program::RunState rs = prog->run_state;
   if (rs == Program::RUN) {
-    SendError("RunProgram " + pnm + ": is already running");
+    SendError("RunProgram " + pnm + ": is already running", TemtClient::RUNTIME);
     return;
   }
 
@@ -251,7 +251,7 @@ void TemtClient::cmdRunProgram(bool sync) {
     prog->Init();
     if (prog->ret_val != Program::RV_OK) {
       SendError("RunProgram " + pnm + "->Init() failed with ret_val: "
-          + String(prog->ret_val));
+          + String(prog->ret_val), TemtClient::RUNTIME);
       return;
     }
   }
@@ -261,13 +261,13 @@ void TemtClient::cmdRunProgram(bool sync) {
     prog->Run();
     //TEMP: only way it can't be DONE is if a runtime error occurred
     if (prog->run_state != Program::DONE) {
-      SendError("RunProgram " + pnm + "->Run() failed due to a runtime error");
+      SendError("RunProgram " + pnm + "->Run() failed due to a runtime error", TemtClient::RUNTIME);
       return;
     }
     // /TEMP
     if (prog->ret_val != Program::RV_OK) {
       SendError("RunProgram " + pnm + "->Run() failed with ret_val: "
-          + String(prog->ret_val));
+          + String(prog->ret_val), TemtClient::RUNTIME);
       return;
     }
   } else { // async
@@ -279,7 +279,7 @@ void TemtClient::cmdRunProgram(bool sync) {
 
 void TemtClient::cmdSetData() {
   if (msgFormat == TemtClient::NATIVE) {
-    SendError("SetData only implemented for JSON");
+    SendError("SetData only implemented for JSON", TemtClient::NOT_IMPLEMENTED);
   }
   if (msgFormat == TemtClient::JSON) {
     String tnm = name_params.GetVal("table").toString();
@@ -295,21 +295,21 @@ void TemtClient::cmdSetData() {
 Program* TemtClient::GetAssertProgram(const String& pnm) {
   // does many checks, to make sure the prog exists
   if (pnm.empty()) {
-    SendError("program name expected");
+    SendError("program name expected", TemtClient::NOT_FOUND);
     return NULL;
   }
 
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
-    SendError("no project open", TemtClient::RUNTIME_ERROR);
+    SendError("no project open", TemtClient::NOT_FOUND);
     return NULL;
   }
 
   // get program, make sure exists
   Program* prog = proj->programs.FindLeafName(pnm);
   if (!prog) {
-    SendError("Program '" + pnm + "' not found");
+    SendError("Program '" + pnm + "' not found", TemtClient::NOT_FOUND);
     return NULL;
   }
   return prog;
@@ -318,14 +318,14 @@ Program* TemtClient::GetAssertProgram(const String& pnm) {
 DataTable* TemtClient::GetAssertTable(const String& nm) {
   // does many checks, to make sure the table and prog exists
   if (nm.empty()) {
-    SendError("table name expected");
+    SendError("table name expected", TemtClient::MISSING_PARAM);
     return NULL;
   }
 
   // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
-    SendError("no project open", TemtClient::RUNTIME_ERROR);
+    SendError("no project open", TemtClient::NO_OPEN_PROJECT);
     return NULL;
   }
 
@@ -342,7 +342,7 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
     tab = dynamic_cast<DataTable*>(prog->objs.FindName(tnm));
   }
   if (!tab) {
-    SendError("Table '" + nm + "' not found");
+    SendError("Table '" + nm + "' not found", TemtClient::NOT_FOUND);
     return NULL;
   }
   return tab;
@@ -578,10 +578,14 @@ void TemtClient::cmdGetData() {
   // note: ok if running
 
   if (msgFormat == TemtClient::JSON) {
+    bool row_from_set = false;
+    bool row_to_set = false;
+
     ostringstream ostr;
     String data;
     String col_name = "";
     int row_from = 0;
+    int row_to = 0;
     int rows = -1;
 
     if (!name_params.GetVal("column").isNull()) {
@@ -589,10 +593,28 @@ void TemtClient::cmdGetData() {
     }
     if (!name_params.GetVal("row_from").isNull()) {
       row_from = name_params.GetVal("row_from").toInt();
+      row_from_set = true;
     }
-    if (!name_params.GetVal("rows").isNull()) {
+    if (!name_params.GetVal("row_to").isNull()) {
+      row_to = name_params.GetVal("row_to").toInt();
+      row_to_set = true;
+    }
+
+    // if row_from and row_to are both set calc the rows
+    if (row_from_set && row_to_set) {
+      rows = row_to - row_from + 1;
+    }
+    else if (row_to_set) {  // not allowed
+      SendError("Missing parameter - 'row_from' : 'row_to' not allowed without 'row_from'.", TemtClient::MISSING_PARAM);
+      return;
+    }
+    else if (!name_params.GetVal("rows").isNull()) {
       rows = name_params.GetVal("rows").toInt();
     }
+    else {
+      rows = -1;  // all rows
+    }
+
 
     tab->GetDataAsJSON(ostr, col_name, row_from, rows);
     data = ostr.str().c_str();
@@ -823,7 +845,7 @@ void TemtClient::cmdRemoveData() {
   // ok if none; noop if start > rows
   if ((p.row_from >= 0) && (p.row_from < tab->rows)) {
     if (!tab->RemoveRows(p.row_from, p.rows)) {
-      SendError("RemoveRows command on table '" + tnm + "' did not succeed");
+      SendError("RemoveRows command on table '" + tnm + "' did not succeed", TemtClient::RUNTIME);
       return;
     }
   }
@@ -845,14 +867,14 @@ void TemtClient::cmdSetVar() {
       nm = name_params.FastEl(i).name;
       // note: check name first, because GetVar raises error
       if (!prog->HasVar(nm)) {
-        SendError("Var '" + nm + "' not found");
+        SendError("Var '" + nm + "' not found", TemtClient::NOT_FOUND);
         return;
       }
       // check if type ok to set -- assume it will be found since name is ok
       ProgVar* var = prog->FindVarName(nm);
       if (!var) continue; // shouldn't happen, but should get caught next stage
       if (var->var_type == ProgVar::T_Object) {
-        SendError("Var '" + nm + "' is an Object--setting is not supported");
+        SendError("Var '" + nm + "' is an Object--setting is not supported", TemtClient::NOT_IMPLEMENTED);
         return;
       }
     }
@@ -861,7 +883,7 @@ void TemtClient::cmdSetVar() {
     for (int i = 0; i < name_params.size; ++i) {
       NameVar& nv = name_params.FastEl(i);
       if (!prog->SetVar(nv.name, nv.value)) {
-        SendError("An error occurred while seeting Var or Arg '" + nm + "'");
+        SendError("An error occurred while seeting Var or Arg '" + nm + "'", TemtClient::RUNTIME);
         return;
       }
     }
@@ -1002,7 +1024,7 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
   json_string json_cmd_line = json_string(cmd_string.chars());
 
   if (!libjson::is_valid(json_cmd_line)) {
-    SendErrorJSON("JSON format error");
+    SendErrorJSON("JSON format error", TemtClient::INVALID_FORMAT);
     return;
   }
   else
@@ -1037,7 +1059,9 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       }
       else if (node_name == "row_from") {
         name_params.SetVal("row_from", i->as_int());  // first row to get/set
-        int row = name_params.GetVal("row_from").toInt();
+      }
+      else if (node_name == "row_to") {
+        name_params.SetVal("row_to", i->as_int());  // last row to get/set
       }
       else if (node_name == "rows") {
         name_params.SetVal("rows", i->as_int());  // count of rows to operate on (get, remove) - for set count is number of values sent
