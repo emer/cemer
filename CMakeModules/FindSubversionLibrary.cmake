@@ -175,15 +175,15 @@ ELSE (NOT WIN32)
 
     MACRO(FIND_SUB_INC targetvar libname pathadd)
       IF (SUBVERSION_INSTALL_PATH)
-          FIND_PATH(${targetvar} ${libname}
+          FIND_PATH(${targetvar} ${libname} 
               PATHS
-              ${SUBVERSION_INSTALL_PATH}/include${pathadd}
-              "$ENV{ProgramFiles}/Subversion/include"${pathadd}
+              "${SUBVERSION_INSTALL_PATH}/include${pathadd}"
+              "$ENV{ProgramFiles}/Subversion/include${pathadd}"
           )
       ELSE(SUBVERSION_INSTALL_PATH)
-          FIND_LIBRARY(${targetvar} ${libname}
+          FIND_LIBRARY(${targetvar} ${libname} 
               PATHS
-              "$ENV{ProgramFiles}/Subversion/include"${pathadd}
+              "$ENV{ProgramFiles}/Subversion/include${pathadd}"
           )
       ENDIF(SUBVERSION_INSTALL_PATH)
     ENDMACRO(FIND_SUB_INC)
@@ -199,12 +199,12 @@ ELSE (NOT WIN32)
           FIND_LIBRARY(${targetvar} ${search_lib_name}
               PATHS
               ${SUBVERSION_INSTALL_PATH}/lib
-              "$ENV{ProgramFiles}/Subversion/lib
+              "$ENV{ProgramFiles}/Subversion/lib"
           )
       ELSE(SUBVERSION_INSTALL_PATH)
           FIND_LIBRARY(${targetvar} ${search_lib_name}
               PATHS
-              "$ENV{ProgramFiles}/Subversion/lib
+              "$ENV{ProgramFiles}/Subversion/lib"
           )
       ENDIF(SUBVERSION_INSTALL_PATH)
     ENDMACRO(FIND_SUB_LIB)
