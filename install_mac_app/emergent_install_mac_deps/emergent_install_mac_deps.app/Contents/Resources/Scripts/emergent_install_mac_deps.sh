@@ -7,7 +7,7 @@
 QT_DMG=qt52_mac64.dmg
 COIN_QUARTER_DMG=coin_quarter_mac64_qt52.dmg
 CMAKE_DMG=cmake-2.8.12.2-Darwin64-universal.dmg
-SVN_DMG=Subversion-1.8.8_10.9.x.pkg
+SVN_DMG=Subversion-1.8.8_10.9.x.dmg
 MISC_DMG=emergent_misc_deps_mac64.dmg
  
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
@@ -27,8 +27,16 @@ function downloadFTP {
   if [ ! -e "$1" ]; then
       echo "downloading file: $1"
       ${FTP_CMD} "${FTP_REPO}/$1"
+  else
+      echo "file $1 is already downloaded"
   fi
 }
+
+echo " "
+echo "================================================="
+echo "        Step 1: Downloading The Packages"
+echo "================================================="
+echo " "
 
 downloadFTP ${MISC_DMG}
 downloadFTP ${COIN_QUARTER_DMG}
@@ -85,12 +93,65 @@ function openNamedPKGinDMG {
   open "${DMG_PKG}"
 }
 
-# these are listed in REVERSE order of size and dependency, independent to dependent
+function installPKGinDMG {
+  # Argument $1 is name of the DMG
+  # finds the package file, installs it
+  echo " "
+  echo "================================================="
+  echo " => installing package $1"
+  echo "================================================="
+  echo " "
+  DMG_MNT="`mountDMG $1`"
+  echo "mounted: $DMG_MNT"
+  DMG_PKG="`ls -1rtd \"$DMG_MNT\"/*pkg | tail -1`"
+  echo "package: $DMG_PKG"
+  echo "IMPORTANT: You may now need to (re)enter your password for sudo here:"
+  sudo /usr/sbin/installer -target / -pkg "${DMG_PKG}"
+}
+
+function removeCMakeLinks {
+  # This is a major annoying bug in the cmake installer
+  # http://public.kitware.com/Bug/view.php?id=10056
+  sudo /bin/rm /usr/bin/ccmake /usr/bin/cmake /usr/bin/cmake-gui /usr/bin/cmakexbuild /usr/bin/cpack /usr/bin/ctest
+}
+
+function installCMAKEinDMG {
+  # Argument $1 is name of the DMG
+  # finds the package file, installs it
+  echo " "
+  echo "================================================="
+  echo " => installing package $1"
+  echo "================================================="
+  echo " "
+  DMG_MNT="`mountDMG $1`"
+  echo "mounted: $DMG_MNT"
+  DMG_PKG="`ls -1rtd \"$DMG_MNT\"/*pkg | tail -1`"
+  echo "package: $DMG_PKG"
+  echo "IMPORTANT: You may now need to (re)enter your password for sudo here:"
+  removeCMakeLinks
+  echo "===> NOTE: installer will popup a dialog, usually behind the terminal (it will be jumping up and down in your dock), about installing the command-line links -- please click the install button"
+  echo "**THE INSTALL PROCESS WILL STALL UNTIL YOU DO THE AVOVE!!**"
+  sudo /usr/sbin/installer -target / -pkg "${DMG_PKG}"
+}
+
+echo " "
+echo "================================================="
+echo "        Step 2: Installing The Packages"
+echo "================================================="
+echo " "
+
+# these are listed in order of size and dependency, independent to dependent
 # QUARTER depends on COIN, QT
 # everything else is independent
-# all are opened so last is first user will see
-openPKGinDMG ${COIN_QUARTER_DMG}
-openPKGinDMG ${QT_DMG}
-openPKGinDMG ${CMAKE_DMG}
-openPKGinDMG ${SVN_DMG}
-openPKGinDMG ${MISC_DMG}
+
+installPKGinDMG ${MISC_DMG}
+installPKGinDMG ${SVN_DMG}
+installCMAKEinDMG ${CMAKE_DMG}
+installPKGinDMG ${QT_DMG}
+installPKGinDMG ${COIN_QUARTER_DMG}
+
+echo " "
+echo "================================================="
+echo "        INSTALLATION WAS SUCCESSFUL!!"
+echo "================================================="
+echo " "
