@@ -13,7 +13,7 @@ MISC_DMG=emergent_misc_deps_mac64.dmg
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 FTP_CMD="/usr/bin/ftp -ai"
 
-DOWNLOAD_DIR=$HOME/Desktop
+DOWNLOAD_DIR=$HOME/Downloads
  
 if [[ ! -d $DOWNLOAD_DIR ]]
 then
@@ -25,7 +25,7 @@ cd $DOWNLOAD_DIR
 function downloadFTP {
   # ARG is file to download - goes to download dir, checks for existence already
   if [ ! -e "$1" ]; then
-      echo "downloading file: $1"
+      echo "downloading file: $1 to $DOWNLOAD_DIR"
       ${FTP_CMD} "${FTP_REPO}/$1"
   else
       echo "file $1 is already downloaded"
@@ -107,6 +107,7 @@ function installPKGinDMG {
   echo "package: $DMG_PKG"
   echo "IMPORTANT: You may now need to (re)enter your password for sudo here:"
   sudo /usr/sbin/installer -target / -pkg "${DMG_PKG}"
+  unmountDMG $DMG_MNT
 }
 
 function removeCMakeLinks {
@@ -132,6 +133,7 @@ function installCMAKEinDMG {
   echo "===> NOTE: installer will popup a dialog, usually behind the terminal (it will be jumping up and down in your dock), about installing the command-line links -- please click the install button"
   echo "**THE INSTALL PROCESS WILL STALL UNTIL YOU DO THE AVOVE!!**"
   sudo /usr/sbin/installer -target / -pkg "${DMG_PKG}"
+  unmountDMG $DMG_MNT
 }
 
 echo " "
