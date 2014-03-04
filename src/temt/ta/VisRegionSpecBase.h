@@ -86,6 +86,23 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
+taTypeDef_Of(VisAdaptation);
+
+class TA_API VisAdaptation : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image how responsiveness adapts over time
+INHERITED(taOBase)
+public:
+  bool		on;		// apply adaptation?
+  float         up_dt;          // #CONDSHOW_ON_on #MIN_0 rate for how fast adaptation increases in magnitude -- adapt += up_dt * act
+  float		dn_dt;          // #CONDSHOW_ON_on #MIN_0 rate for how fast adaptation decreases in magnitude -- adapt += -down_dt * adapt
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisAdaptation);
+// protected:
+//   void	UpdateAfterEdit_impl();
+};
+
 taTypeDef_Of(VisRegionSpecBase);
 
 class TA_API VisRegionSpecBase : public ImgProcThreadBase {
@@ -133,6 +150,7 @@ public:
   DataSave	image_save;	// how to save the input image(s) for each filtering step
   VisRegionParams region;	// basic parameters for the region
   VisRegionSizes  input_size;	// size of the visual input image, including any borders etc
+  VisAdaptation input_adapt;    // how to adapt the input ("retinal") responses over time
   int		motion_frames;	// #MIN_0 how many frames of image information are to be retained for extracting motion signals -- 0 = no motion, 3 = typical for motion
 
   virtual bool 	Init();
@@ -159,6 +177,7 @@ protected:
   float_Matrix* cur_out_r;	// cur output buffer -- only valid during filter call
   float_Matrix* cur_in_l;	// cur input buffer -- only valid during filter call
   float_Matrix* cur_out_l;	// cur output buffer -- only valid during filter call
+  float_Matrix* cur_adapt;      // cur adaptation values -- only valid during filter call
   CircMatrix*	cur_circ;	// current circular buffer index
   bool		rgb_img;	// is current image rgb?
   bool		wrap;		// whether edge_mode == WRAP
@@ -168,6 +187,10 @@ protected:
   float_Matrix cur_img_rc;	// RED vs. CYAN version of color image, if input is rgb
   float_Matrix cur_img_gm;	// GREEN vs. MAGENTA version of color image, if input is rgb
   float_Matrix cur_img_by;	// BLUE vs. YELLOW version of color image, if input is rgb
+
+  float_Matrix cur_img_r_adapt; // accumulation of activation over time to drive adaptation
+  float_Matrix cur_img_l_adapt; // accumulation of activation over time to drive adaptation
+
 
   virtual void UpdateGeom();
   // update all geometry info -- called by UAE
@@ -185,6 +208,12 @@ protected:
   // implementation of filtering -- assumes cur_img_x args are set and everything is checked -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
   virtual void IncrTime();
   // increment time one step -- move the CircMatrix indexes
+
+  virtual void 	InputAdapt_thread(int img_idx, int thread_no);
+  // adapt input image
+
+  virtual void  ResetAdapt();
+  // reset any current adaptation present in the system -- use this for a discontinuity in the input (simulated time passing) -- operates at all levels of adaptation, where applicable
 
   virtual bool ColorRGBtoCMYK(float_Matrix& img);
   // convert RGB color image to Cyan vs. Red, Magenta vs Green, Yellow vs. Blue, and Grey separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's)

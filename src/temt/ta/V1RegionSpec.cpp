@@ -1029,12 +1029,27 @@ bool V1RegionSpec::InitOutMatrix() {
     v1s_out_l.SetGeom(1,1);     // free memory
   v1s_out_r_raw.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x,
                         v1s_img_geom.y);
+  if(v1s_adapt.on) {
+    v1s_out_r_adapt.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x,
+                            v1s_img_geom.y);
+  }
+  else {
+    v1s_out_r_adapt.SetGeom(1,1);
+  }
   v1s_nimax.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x,
                     v1s_img_geom.y);
   v1s_nimax.InitVals(0.0f);
-  if(region.ocularity == VisRegionParams::BINOCULAR)
+  if(region.ocularity == VisRegionParams::BINOCULAR) {
     v1s_out_l_raw.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x,
                           v1s_img_geom.y);
+    if(v1s_adapt.on) {
+      v1s_out_l_adapt.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x,
+                              v1s_img_geom.y);
+    }
+    else {
+      v1s_out_l_adapt.SetGeom(1,1);
+    }
+  }
 
   v1pi_out_r.SetGeom(4, v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
   if(region.ocularity == VisRegionParams::BINOCULAR)
@@ -1345,9 +1360,11 @@ bool V1RegionSpec::FilterImage_impl(bool motion_only) {
 }
 
 bool V1RegionSpec::V1SimpleFilter() {
-  bool rval = V1SimpleFilter_Static(cur_img_r, &v1s_out_r_raw, &v1s_out_r);
+  bool rval = V1SimpleFilter_Static(cur_img_r, &v1s_out_r_raw, &v1s_out_r,
+                                    &v1s_out_r_adapt);
   if(rval && region.ocularity == VisRegionParams::BINOCULAR) {
-    rval &= V1SimpleFilter_Static(cur_img_l, &v1s_out_l_raw, &v1s_out_l);
+    rval &= V1SimpleFilter_Static(cur_img_l, &v1s_out_l_raw, &v1s_out_l,
+                                  &v1s_out_l_adapt);
   }
 
   rval &= V1SimpleFilter_PolInvar(&v1s_out_r, &v1pi_out_r);
@@ -1368,7 +1385,7 @@ bool V1RegionSpec::V1SimpleFilter() {
 }
 
 bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_raw,
-                                         float_Matrix* out) {
+                                         float_Matrix* out, float_Matrix* adapt) {
   cur_img = image;
   rgb_img = (cur_img->dims() == 3);
 
@@ -1383,6 +1400,7 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
   else {
     cur_out = out;
   }
+  cur_adapt = adapt;
 
   int n_run = v1s_img_geom.Product();
 
@@ -1390,7 +1408,8 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
   threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Static_thread);
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
+                            &V1RegionSpec::V1SimpleFilter_Static_thread);
   threads.Run(&ip_call, n_run);
 
   if(v1s_renorm != NO_RENORM) {            // always renorm prior to any kwta
@@ -1399,7 +1418,8 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
 
   if(v1s_kwta.On()) {
     if(v1s_neigh_inhib.on) { // pre-compute neigh inhib
-      ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread);
+      ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)
+                                   &V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread);
       threads.Run(&ip_call_ni, n_run);       // computes v1s_nimax
       v1s_kwta.Compute_Inhib_Extra(*out_raw, *out, v1s_gci, v1s_nimax);
     }
@@ -1450,10 +1470,30 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
       }
       cnv_sum *= v1s_specs.gain;
       if(cnv_sum >= 0.0f) {
+        if(v1s_adapt.on) {
+          float cs_orig = cnv_sum;
+          float& adpt = cur_adapt->FastEl4d(ang, fcy, sc.x, sc.y);
+          cnv_sum -= adpt;
+          if(cnv_sum < 0.0f) cnv_sum = 0.0f;
+          adpt += v1s_adapt.up_dt * cs_orig - v1s_adapt.dn_dt * adpt;
+          
+          float& adpto = cur_adapt->FastEl4d(ang, fcy+1, sc.x, sc.y);
+          adpto -= v1s_adapt.dn_dt * adpto;
+        }
         cur_out->FastEl4d(ang, fcy, sc.x, sc.y) = cnv_sum; // on-polarity
         cur_out->FastEl4d(ang, fcy+1, sc.x, sc.y) = 0.0f;
       }
       else {
+        if(v1s_adapt.on) {
+          float cs_orig = -cnv_sum;
+          float& adpt = cur_adapt->FastEl4d(ang, fcy+1, sc.x, sc.y);
+          cnv_sum += adpt;
+          if(cnv_sum > 0.0f) cnv_sum = 0.0f;
+          adpt += v1s_adapt.up_dt * cs_orig - v1s_adapt.dn_dt * adpt;
+          
+          float& adpto = cur_adapt->FastEl4d(ang, fcy, sc.x, sc.y);
+          adpto -= v1s_adapt.dn_dt * adpto;
+        }
         cur_out->FastEl4d(ang, fcy, sc.x, sc.y) = 0.0f;
         cur_out->FastEl4d(ang, fcy+1, sc.x, sc.y) = -cnv_sum; // off-polarity
       }
@@ -1498,7 +1538,8 @@ bool V1RegionSpec::V1SimpleFilter_PolInvar(float_Matrix* v1s_out_in, float_Matri
   threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_PolInvar_thread);
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
+                            &V1RegionSpec::V1SimpleFilter_PolInvar_thread);
   threads.Run(&ip_call, n_run);
 
   return true;
@@ -1542,10 +1583,12 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, fl
 
   if(!cur_mot_only) {
     // if motion only, then really just load the history for later processing!
-    ThreadImgProcCall ip_call_still((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
+    ThreadImgProcCall ip_call_still((ThreadImgProcMethod)(V1RegionMethod)
+                                    &V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
     threads.Run(&ip_call_still, n_run);
 
-    ThreadImgProcCall ip_call_mot((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_thread);
+    ThreadImgProcCall ip_call_mot((ThreadImgProcMethod)(V1RegionMethod)
+                                  &V1RegionSpec::V1SimpleFilter_Motion_thread);
     threads.Run(&ip_call_mot, n_run);
 
     if(v1m_renorm != NO_RENORM) {
@@ -1675,20 +1718,23 @@ bool V1RegionSpec::V1BinocularFilter() {
   if(v1b_specs.mot_in && motion_frames > 1) {
     cur_v1b_in_r = &v1m_maxout_r;
     cur_v1b_in_l = &v1m_maxout_l;
-    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_MinLr_thread);
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
+                              &V1RegionSpec::V1BinocularFilter_MinLr_thread);
     threads.Run(&ip_call, n_run_s);
   }
   else {
     cur_v1b_in_r = &v1pi_out_r;
     cur_v1b_in_l = &v1pi_out_l;
-    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_MinLr_thread);
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
+                              &V1RegionSpec::V1BinocularFilter_MinLr_thread);
     threads.Run(&ip_call, n_run_s);
   }
 
   if(v1b_specs.fix_horiz) {
     // first tag horiz line elements in parallel
     v1b_dsp_horiz.InitVals(-1);
-    ThreadImgProcCall ip_call_horiz((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_HorizTag_thread);
+    ThreadImgProcCall ip_call_horiz((ThreadImgProcMethod)(V1RegionMethod)
+                                    &V1RegionSpec::V1BinocularFilter_HorizTag_thread);
     threads.Run(&ip_call_horiz, n_run_s);
 
     V1BinocularFilter_HorizAgg();       // then aggregate and correct disparity
@@ -2007,7 +2053,8 @@ void V1RegionSpec::V1ComplexFilter_SqGp4(float_Matrix* pi_in, float_Matrix* sg_o
   int n_run_sg = v1sg_img_geom.Product();
   cur_in = pi_in;
   cur_out = sg_out;
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_SqGp4_thread);
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
+                            &V1RegionSpec::V1ComplexFilter_SqGp4_thread);
   threads.Run(&ip_call, n_run_sg);
 }
 
@@ -2020,7 +2067,8 @@ void V1RegionSpec::V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_
   else
     cur_out = ls_out;
 
-  ThreadImgProcCall ip_call_ls((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_LenSum_thread);
+  ThreadImgProcCall ip_call_ls((ThreadImgProcMethod)(V1RegionMethod)
+                               &V1RegionSpec::V1ComplexFilter_LenSum_thread);
   threads.Run(&ip_call_ls, n_run);
 
   // always renorm *prior* to any kwta
@@ -2030,7 +2078,8 @@ void V1RegionSpec::V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_
 
   if(v1ls_kwta.On()) {
     if(v1ls_neigh_inhib.on) { // pre-compute neigh inhib
-      ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_LenSum_neighinhib_thread);
+      ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)
+&V1RegionSpec::V1ComplexFilter_LenSum_neighinhib_thread);
       threads.Run(&ip_call_ni, n_run); // computes v1ls_nimax
       v1ls_kwta.Compute_Inhib_Extra(*ls_out_raw, *ls_out, v1ls_gci, v1ls_nimax);
     }
@@ -2046,7 +2095,8 @@ void V1RegionSpec::V1ComplexFilter_EndStop(float_Matrix* pi_in, float_Matrix* ls
   cur_in = pi_in;
   cur_in2 = ls_in;
   cur_out = es_out;
-  ThreadImgProcCall ip_call_es((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_EndStop_thread);
+  ThreadImgProcCall ip_call_es((ThreadImgProcMethod)(V1RegionMethod)
+                               &V1RegionSpec::V1ComplexFilter_EndStop_thread);
   threads.Run(&ip_call_es, n_run);
 }
 
@@ -2056,7 +2106,8 @@ void V1RegionSpec::V1ComplexFilter_V1S_SqGp4(float_Matrix* v1s_in, float_Matrix*
   cur_in = v1s_in;
   cur_out = sg_out;
 
-  ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
+  ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)
+                                      &V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
   threads.Run(&ip_call_v1ssg_pre, n_run_sg);
 }
 
@@ -2185,22 +2236,27 @@ bool V1RegionSpec::V2Filter() {
   threads.nibble_chunk = 1;     // small chunks
 
   if(v2_filters & V2_TL) {
-    ThreadImgProcCall ip_call_v2tl((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_TL_thread);
+    ThreadImgProcCall ip_call_v2tl((ThreadImgProcMethod)(V1RegionMethod)
+                                   &V1RegionSpec::V2Filter_TL_thread);
     threads.Run(&ip_call_v2tl, n_run);
   }
 
   if(v2_filters & V2_BO) {
     if(v2_save & SAVE_DEBUG && taMisc::gui_active)
       v2bos_out.InitVals(0.0f);
-    ThreadImgProcCall ip_call_v2ffbo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_FFBO_thread);
+    ThreadImgProcCall ip_call_v2ffbo((ThreadImgProcMethod)(V1RegionMethod)
+                                     &V1RegionSpec::V2Filter_FFBO_thread);
     threads.Run(&ip_call_v2ffbo, n_run);
-    ThreadImgProcCall ip_call_v2latbo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_LatBO_thread);
-    ThreadImgProcCall ip_call_v2latbointeg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_LatBOinteg_thread);
+    ThreadImgProcCall ip_call_v2latbo((ThreadImgProcMethod)(V1RegionMethod)
+                                      &V1RegionSpec::V2Filter_LatBO_thread);
+    ThreadImgProcCall ip_call_v2latbointeg((ThreadImgProcMethod)(V1RegionMethod)
+                                           &V1RegionSpec::V2Filter_LatBOinteg_thread);
     for(int li=0; li < v2_specs.lat_itrs; li++) {
       threads.Run(&ip_call_v2latbo, n_run);
       threads.Run(&ip_call_v2latbointeg, n_run);
     }
-    ThreadImgProcCall ip_call_v2bofinal((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_BOfinal_thread);
+    ThreadImgProcCall ip_call_v2bofinal((ThreadImgProcMethod)(V1RegionMethod)
+                                        &V1RegionSpec::V2Filter_BOfinal_thread);
     threads.Run(&ip_call_v2bofinal, n_run);
   }
 
@@ -2466,7 +2522,8 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1S) {
     if(si_kwta.On()) cur_out = &si_v1s_out_raw;
     else           cur_out = &si_v1s_out;
-    ThreadImgProcCall ip_call_v1s((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_thread);
+    ThreadImgProcCall ip_call_v1s((ThreadImgProcMethod)(V1RegionMethod)
+                                  &V1RegionSpec::SpatIntegFilter_V1S_thread);
     threads.Run(&ip_call_v1s, n_run_s);
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v1s_out_raw, si_v1s_out, si_gci);
@@ -2475,7 +2532,8 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1PI) {
     if(si_kwta.On()) cur_out = &si_v1pi_out_raw;
     else           cur_out = &si_v1pi_out;
-    ThreadImgProcCall ip_call_v1pi((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1PI_thread);
+    ThreadImgProcCall ip_call_v1pi((ThreadImgProcMethod)(V1RegionMethod)
+                                   &V1RegionSpec::SpatIntegFilter_V1PI_thread);
     threads.Run(&ip_call_v1pi, n_run_s);
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v1pi_out_raw, si_v1pi_out, si_gci);
@@ -2484,7 +2542,8 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1PI_SG) {
     if(si_kwta.On()) cur_out = &si_v1pi_sg_out_raw;
     else           cur_out = &si_v1pi_sg_out;
-    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1PI_SG_thread);
+    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)
+                                   &V1RegionSpec::SpatIntegFilter_V1PI_SG_thread);
     threads.Run(&ip_call_v1sg, n_run_sg);
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v1pi_sg_out_raw, si_v1pi_sg_out, si_gci);
@@ -2496,12 +2555,14 @@ bool V1RegionSpec::SpatIntegFilter() {
     cur_in = &v1s_out_r;
     cur_out = &v1s_sg_out;
 
-    ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
+    ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)
+                                        &V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
     threads.Run(&ip_call_v1ssg_pre, n_run_sg_gp4);
 
     if(si_kwta.On() && !(spat_integ & SI_V1C)) cur_out = &si_v1s_sg_out_raw;
     else           cur_out = &si_v1s_sg_out;
-    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
+    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)
+                                   &V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
     threads.Run(&ip_call_v1sg, n_run_sg);
 
     if(!(spat_integ & SI_V1C)) {
@@ -2513,7 +2574,8 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1C) {
     if(si_kwta.On()) cur_out = &si_v1c_out_raw;
     else           cur_out = &si_v1c_out;
-    ThreadImgProcCall ip_call_v1c((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1C_thread);
+    ThreadImgProcCall ip_call_v1c((ThreadImgProcMethod)(V1RegionMethod)
+                                  &V1RegionSpec::SpatIntegFilter_V1C_thread);
     threads.Run(&ip_call_v1c, n_run_c);
 
     if(spat_integ & SI_V1S_SG) { // both are on -- combine output into same table prior to kwta
@@ -2537,7 +2599,8 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V2BO) {
     if(si_kwta.On()) cur_out = &si_v2bo_out_raw;
     else           cur_out = &si_v2bo_out;
-    ThreadImgProcCall ip_call_v2bo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V2BO_thread);
+    ThreadImgProcCall ip_call_v2bo((ThreadImgProcMethod)(V1RegionMethod)
+                                   &V1RegionSpec::SpatIntegFilter_V2BO_thread);
     threads.Run(&ip_call_v2bo, n_run_c);
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v2bo_out_raw, si_v2bo_out, si_gci);
@@ -2804,7 +2867,8 @@ bool V1RegionSpec::V1OptionalFilter() {
   threads.nibble_chunk = 1;     // small chunks
 
   if(opt_filters & ENERGY) {
-    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1OptionalFilter_Energy_thread);
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
+                              &V1RegionSpec::V1OptionalFilter_Energy_thread);
     threads.Run(&ip_call, n_run);
   }
 

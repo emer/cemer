@@ -313,6 +313,7 @@ public:
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters -- applied prior to kwta
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
+  VisAdaptation v1s_adapt;      // how to adapt the v1 simple cell responses over time
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) -- configured automatically
@@ -408,6 +409,8 @@ public:
   ///////////////////  V1S Output ////////////////////////
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_out_r_adapt; // #READ_ONLY #NO_SAVE adaptation values for v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_out_l_adapt; // #READ_ONLY #NO_SAVE adaptation values for v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_nimax;       // #READ_ONLY #NO_SAVE v1 simple cell neighbor inhibition values -- MAX of neighbor feature input activations
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
@@ -528,7 +531,7 @@ protected:
   virtual bool	V1SimpleFilter();
   // do simple filters -- main wrapper
   virtual bool	V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_raw,
-				      float_Matrix* out);
+				      float_Matrix* out, float_Matrix* adapt);
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it

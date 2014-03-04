@@ -24,6 +24,8 @@ TA_BASEFUNS_CTORS_DEFN(VisRegionSpecBase);
 
 TA_BASEFUNS_CTORS_DEFN(VisRegionSizes);
 
+TA_BASEFUNS_CTORS_DEFN(VisAdaptation);
+
 TA_BASEFUNS_CTORS_DEFN(VisRegionParams);
 
 
@@ -50,6 +52,14 @@ void VisRegionSizes::UpdateAfterEdit_impl() {
   input_size = (retina_size - 2 * border);
 }
 
+void VisAdaptation::Initialize() {
+  on = false;
+  up_dt = 0.3f;
+  dn_dt = 0.1f;
+}
+
+// for thread function calling:
+typedef void (VisRegionSpecBase::*VisRegionBaseMethod)(int, int);
 
 void VisRegionSpecBase::Initialize() {
   save_mode = FIRST_ROW;
@@ -66,6 +76,7 @@ void VisRegionSpecBase::Initialize() {
   cur_out_r = NULL;
   cur_in_l = NULL;
   cur_out_l = NULL;
+  cur_adapt = NULL;
   cur_circ = NULL;
   rgb_img = false;
   wrap = false;
@@ -101,7 +112,20 @@ bool VisRegionSpecBase::InitFilters() {
 }
 
 bool VisRegionSpecBase::InitOutMatrix() {
-  // note: override in derived classes..
+  // note: override in derived classes, but call base just in case..
+  if(input_adapt.on) {
+    cur_img_r_adapt.SetGeom(2, input_size.retina_size.x, input_size.retina_size.y);
+    if(region.ocularity == VisRegionParams::BINOCULAR) {
+      cur_img_l_adapt.SetGeom(2, input_size.retina_size.x, input_size.retina_size.y);
+    }
+    else {
+      cur_img_l_adapt.SetGeom(1,1);
+    }
+  }
+  else {
+    cur_img_r_adapt.SetGeom(1,1);
+    cur_img_l_adapt.SetGeom(1,1);
+  }
   return true;
 }
 
@@ -116,7 +140,7 @@ bool VisRegionSpecBase::FilterImage(float_Matrix* right_eye_image, float_Matrix*
     Init();
   }
 
-  if(TestError(!right_eye_image, "FilterIMage", "right_eye_image is NULL -- must pass image"))
+  if(TestError(!right_eye_image, "FilterImage", "right_eye_image is NULL -- must pass image"))
     return false;
 
   if(TestError((right_eye_image->dim(0) != input_size.retina_size.x) ||
@@ -125,7 +149,7 @@ bool VisRegionSpecBase::FilterImage(float_Matrix* right_eye_image, float_Matrix*
     return false;
 
   if(region.ocularity == VisRegionParams::BINOCULAR) {
-    if(TestError(!left_eye_image, "FilterIMage", "left_eye_image is NULL -- must pass image"))
+    if(TestError(!left_eye_image, "FilterImage", "left_eye_image is NULL -- must pass image"))
       return false;
 
     if(TestError((left_eye_image->dim(0) != input_size.retina_size.x) ||
@@ -165,10 +189,55 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
     data_table->AddBlankRow();
   }
 
+  if(input_adapt.on) {
+    int n_run = input_size.retina_size.Product();
+
+    threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+    threads.min_units = 1;
+    threads.nibble_chunk = 1;     // small chunks
+
+    cur_in = cur_img_r;
+    cur_adapt = &cur_img_r_adapt;
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(VisRegionBaseMethod)
+                              &VisRegionSpecBase::InputAdapt_thread);
+    threads.Run(&ip_call, n_run);
+    if(region.ocularity == VisRegionParams::BINOCULAR) {
+      cur_in = cur_img_l;
+      cur_adapt = &cur_img_l_adapt;
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(VisRegionBaseMethod)
+                                &VisRegionSpecBase::InputAdapt_thread);
+      threads.Run(&ip_call, n_run);
+    }
+  }
+
   if(image_save & SAVE_DATA && !(!taMisc::gui_active && image_save & ONLY_GUI)) {
     ImageToTable(data_table, cur_img_r, cur_img_l);
   }
   return true;
+}
+
+void VisRegionSpecBase::ResetAdapt() {
+  if(input_adapt.on) {
+    for(int i=0; i<cur_img_r_adapt.size; i++) {
+      cur_img_r_adapt.FastEl_Flat(i) = 0.0f;
+    }
+    if(region.ocularity == VisRegionParams::BINOCULAR) {
+      for(int i=0; i<cur_img_l_adapt.size; i++) {
+        cur_img_l_adapt.FastEl_Flat(i) = 0.0f;
+      }
+    }
+  }
+}
+
+void VisRegionSpecBase::InputAdapt_thread(int img_idx, int thread_no) {
+  taVector2i sc;                 // simple coords
+  sc.SetFmIndex(img_idx, input_size.retina_size.x);
+  float& ret_in = cur_in->FastEl2d(sc.x, sc.y);
+  float orig_in = ret_in;
+  float& adpt = cur_adapt->FastEl2d(sc.x, sc.y);
+  ret_in -= adpt;
+  if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
+  adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
 }
 
 bool VisRegionSpecBase::ColorRGBtoCMYK(float_Matrix& img) {
