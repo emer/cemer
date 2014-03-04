@@ -114,9 +114,19 @@ bool VisRegionSpecBase::InitFilters() {
 bool VisRegionSpecBase::InitOutMatrix() {
   // note: override in derived classes, but call base just in case..
   if(input_adapt.on) {
-    cur_img_r_adapt.SetGeom(2, input_size.retina_size.x, input_size.retina_size.y);
+    if(region.color == VisRegionParams::COLOR) {
+      cur_img_r_adapt.SetGeom(3, input_size.retina_size.x, input_size.retina_size.y, 3);
+    }
+    else {
+      cur_img_r_adapt.SetGeom(2, input_size.retina_size.x, input_size.retina_size.y);
+    }
     if(region.ocularity == VisRegionParams::BINOCULAR) {
-      cur_img_l_adapt.SetGeom(2, input_size.retina_size.x, input_size.retina_size.y);
+      if(region.color == VisRegionParams::COLOR) {
+        cur_img_l_adapt.SetGeom(3, input_size.retina_size.x, input_size.retina_size.y, 3);
+      }
+      else {
+        cur_img_l_adapt.SetGeom(2, input_size.retina_size.x, input_size.retina_size.y);
+      }
     }
     else {
       cur_img_l_adapt.SetGeom(1,1);
@@ -196,13 +206,13 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
     threads.min_units = 1;
     threads.nibble_chunk = 1;     // small chunks
 
-    cur_in = cur_img_r;
+    cur_img = cur_img_r;
     cur_adapt = &cur_img_r_adapt;
     ThreadImgProcCall ip_call((ThreadImgProcMethod)(VisRegionBaseMethod)
                               &VisRegionSpecBase::InputAdapt_thread);
     threads.Run(&ip_call, n_run);
     if(region.ocularity == VisRegionParams::BINOCULAR) {
-      cur_in = cur_img_l;
+      cur_img = cur_img_l;
       cur_adapt = &cur_img_l_adapt;
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(VisRegionBaseMethod)
                                 &VisRegionSpecBase::InputAdapt_thread);
@@ -232,12 +242,24 @@ void VisRegionSpecBase::ResetAdapt() {
 void VisRegionSpecBase::InputAdapt_thread(int img_idx, int thread_no) {
   taVector2i sc;                 // simple coords
   sc.SetFmIndex(img_idx, input_size.retina_size.x);
-  float& ret_in = cur_in->FastEl2d(sc.x, sc.y);
-  float orig_in = ret_in;
-  float& adpt = cur_adapt->FastEl2d(sc.x, sc.y);
-  ret_in -= adpt;
-  if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
-  adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
+  if(cur_img->dims() == 3) {
+    for(int c = 0; c<3; c++) {
+      float& ret_in = cur_img->FastEl3d(sc.x, sc.y, c);
+      float orig_in = ret_in;
+      float& adpt = cur_adapt->FastEl3d(sc.x, sc.y, c);
+      ret_in -= adpt;
+      if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
+      adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
+    }
+  }
+  else {
+    float& ret_in = cur_img->FastEl2d(sc.x, sc.y);
+    float orig_in = ret_in;
+    float& adpt = cur_adapt->FastEl2d(sc.x, sc.y);
+    ret_in -= adpt;
+    if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
+    adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
+  }
 }
 
 bool VisRegionSpecBase::ColorRGBtoCMYK(float_Matrix& img) {
