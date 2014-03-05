@@ -1291,6 +1291,18 @@ void V1RegionSpec::IncrTime() {
   }
 }
 
+void V1RegionSpec::ResetAdapt() {
+  inherited::ResetAdapt();
+
+  if(input_adapt.on) {
+    v1s_out_r_adapt.InitVals(0.0f);
+    if(region.ocularity == VisRegionParams::BINOCULAR) {
+      v1s_out_l_adapt.InitVals(0.0f);
+    }
+  }
+}
+
+
 ////////////////////////////////////////////////////////////////////
 //      V1Region        Filtering
 

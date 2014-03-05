@@ -526,7 +526,8 @@ protected:
   // compute V2 Feed-forward border-ownership weights for stencils
 
   bool	FilterImage_impl(bool motion_only = false) override;
-  void IncrTime() override;
+  void  IncrTime() override;
+  void  ResetAdapt() override;
 
   virtual bool	V1SimpleFilter();
   // do simple filters -- main wrapper

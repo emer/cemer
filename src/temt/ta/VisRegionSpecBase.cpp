@@ -228,13 +228,9 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
 
 void VisRegionSpecBase::ResetAdapt() {
   if(input_adapt.on) {
-    for(int i=0; i<cur_img_r_adapt.size; i++) {
-      cur_img_r_adapt.FastEl_Flat(i) = 0.0f;
-    }
+    cur_img_r_adapt.InitVals(0.0f);
     if(region.ocularity == VisRegionParams::BINOCULAR) {
-      for(int i=0; i<cur_img_l_adapt.size; i++) {
-        cur_img_l_adapt.FastEl_Flat(i) = 0.0f;
-      }
+      cur_img_l_adapt.InitVals(0.0f);
     }
   }
 }
