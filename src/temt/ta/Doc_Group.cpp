@@ -15,6 +15,8 @@
 
 #include <taDoc>
 #include "Doc_Group.h"
+#include <taProject>
+#include <tabMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Doc_Group);
 
@@ -25,3 +27,18 @@ void Doc_Group::AutoEdit() {
   }
 }
 
+
+taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
+  // todo: make a chooser for taMisc::wikis!
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return NULL;
+  taDoc* doc = NewEl(1);
+  doc->name = "ProjectDoc";
+  doc->wiki = wiki_name;
+  doc->url = proj->name;
+  doc->auto_open = true;
+  doc->web_doc = true;
+  doc->UpdateAfterEdit();
+  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
+  return doc;
+}

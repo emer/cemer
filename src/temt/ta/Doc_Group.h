@@ -33,6 +33,9 @@ INHERITED(taGroup<taDoc>)
 public:
   virtual void          AutoEdit();
 
+  virtual taDoc*  NewProjWikiDoc(const String& wiki_name);
+  // #BUTTON make a new Doc pointing to a wiki page with the same name as the current project -- quick way to get you started toward documenting your projects!
+
   String       GetTypeDecoKey() const override { return "Doc"; }
   TA_BASEFUNS(Doc_Group);
 private:
