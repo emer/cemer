@@ -30,3 +30,11 @@ void DataVarBase::UpdateAfterEdit_impl() {
   if(row_spec == CUR_ROW)
     row_var = NULL;             // reset to null
 }
+
+DataVarBase::RowType DataVarBase::StringToRowType(const String& row_type) {
+  if (row_type == "ROW_NUM" || row_type == "row_num")
+    return DataVarBase::ROW_NUM;
+  if (row_type == "ROW_VAL"|| row_type == "row_val")
+    return DataVarBase::ROW_VAL;
+  return DataVarBase::CUR_ROW;
+}

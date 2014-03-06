@@ -40,7 +40,8 @@ public:
   RowType     row_spec;	  // how the row number within data table is specified
   ProgVarRef  row_var;    // #CONDSHOW_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
-  void  UpdateAfterEdit_impl() override;
+  void                        UpdateAfterEdit_impl() override;
+  DataVarBase::RowType        StringToRowType(const String& row_type);
 
   PROGEL_SIMPLE_BASEFUNS(DataVarBase);
 protected:

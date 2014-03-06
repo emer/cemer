@@ -17,6 +17,8 @@
 #include <DataCol>
 #include <DataTable>
 #include <Program>
+#include <taProject>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataVarRead);
 
@@ -55,4 +57,55 @@ String DataVarRead::GetDisplayName() const {
     rval += var->name + " ";
 
   return rval;
+}
+
+bool DataVarRead::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("from table:")) return true;
+  return false;
+}
+
+bool DataVarRead::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
+
+  String remainder = code.after(": ");
+  if(remainder.empty()) return true;
+  String dtnm = remainder.before(" ");
+  if(!data_var || data_var->name != dtnm) {
+    data_var = FindVarNameInScope(dtnm, false); // don't make
+  }
+
+  remainder = remainder.after(dtnm.length());
+
+  if(remainder.empty()) return true;
+
+  String_Array strs;
+  strs.FmDelimString(remainder, " ");
+  if(strs.size > 0) {
+    column_name = strs[0]; // would be good to verify
+  }
+  if(strs.size > 1 && row_spec == DataVarBase::CUR_ROW) {
+    var = FindVarNameInScope(strs[1], false); // don't make
+  }
+  if(strs.size > 2) { // not CUR_ROW so there is the row_var to get
+    if (strs[1].contains(':')) {
+      String rwvr(strs[1].after(':'));
+      String rwsp(strs[1].before(':'));
+      row_var = FindVarNameInScope(rwvr, false); // don't make
+      rwsp.downcase();
+      row_spec = StringToRowType(rwsp);
+    }
+    else {
+      row_var = FindVarNameInScope(strs[1], false); // don't make
+    }
+    var = FindVarNameInScope(strs[2], false); // don't make
+  }
+  SigEmitUpdated();
+  return true;
 }
