@@ -2838,7 +2838,7 @@ bool taMath_float::mat_frame_first(float_Matrix* out_mat, const float_Matrix* in
 bool taMath_float::mat_frame_last(float_Matrix* out_mat, const float_Matrix* in_mat) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   int frs = in_mat->FrameSize();
-  int fsi = in_mat->FrameStartIdx(-1);
+  int fsi = in_mat->FrameStartIdx(in_mat->Frames()-1);
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(fsi + i);
   }

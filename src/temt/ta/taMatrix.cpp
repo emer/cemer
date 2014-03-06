@@ -1404,6 +1404,7 @@ bool taMatrix::FrameInRange(int fr, bool err_msg) const {
 int taMatrix::FrameIdx(int fr) const {
   if(IdxFrameView()) {
     int_Matrix* idx_frames = ViewIntMatrix();
+    if(fr < 0) fr += idx_frames->size;
     int fidx = idx_frames->SafeEl_Flat(fr);
     return fidx;
   }
