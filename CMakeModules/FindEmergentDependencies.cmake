@@ -8,7 +8,7 @@
 if (QT_USE_5)
   set(CMAKE_PREFIX_PATH ${QTDIR}/lib/cmake)
   message(STATUS "Using Qt5, QTDIR = ${QTDIR}")
-  message(STATUS "(if QTDIR = <blank> above, then you need to set it in your .bashrc or .cshrc etc -- should be /usr/local/Qt5.x.y for standard install)")
+  message(STATUS "(if QTDIR = <blank> above, then you probably need to set it in your .bashrc or .cshrc etc -- should be /usr/local/Qt5.x.y for standard install)")
 
   find_package(Qt5Core)
   find_package(Qt5Gui)
