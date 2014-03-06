@@ -9,6 +9,20 @@ COIN_QUARTER_DMG=coin_quarter_mac64_qt52.dmg
 CMAKE_DMG=cmake-2.8.12.2-Darwin64-universal.dmg
 SVN_DMG=Subversion-1.8.8_10.9.x.dmg
 MISC_DMG=emergent_misc_deps_mac64.dmg
+
+OS_VERS=`sw_vers | grep ProductVersion | cut -f2 | cut -f1,2 -d.`
+echo "installing on OSX version: $OS_VERS"
+
+if [[ "$OS_VERS" == "10.7" ]]; then
+    echo "SORRY: version 10.7 of Mac OSX is not supported for this version of the software"
+    exit 1
+fi
+
+if [[ "$OS_VERS" == "10.8" ]]; then
+    echo "Note: updating the dependencies for 10.8"
+    COIN_QUARTER_DMG=coin_quarter_mac64_qt52_10_8.dmg
+    SVN_DMG=Subversion-1.7.8_10.8.x.dmg
+fi
  
 FTP_REPO=ftp://grey.colorado.edu/pub/emergent
 FTP_CMD="/usr/bin/ftp -ai"
