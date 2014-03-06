@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef DynEnumTypeFromDTColumn_h
-#define DynEnumTypeFromDTColumn_h 1
+#ifndef DynEnumTableCol_h
+#define DynEnumTableCol_h 1
 
 // parent includes:
 #include <DynEnumBase>
@@ -25,9 +25,9 @@
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(DynEnumTypeFromDTColumn);
+taTypeDef_Of(DynEnumTableCol);
 
-class TA_API DynEnumTypeFromDTColumn : public DynEnumBase {
+class TA_API DynEnumTableCol : public DynEnumBase {
   // Enum that is generated from a datatable column and is updated based on notification of updates from the table
 INHERITED(DynEnumBase)
 public:
@@ -43,17 +43,17 @@ public:
   void   SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
   void   SmartRef_SigEmit(taSmartRef* ref, taBase* obj, int sls, void* op1_, void* op2_) override;
 
-   TA_BASEFUNS(DynEnumTypeFromDTColumn);
+   TA_BASEFUNS(DynEnumTableCol);
 
 protected:
    void      UpdateAfterEdit_impl() override;
 
 private:
-   void Copy_(const DynEnumTypeFromDTColumn& cp);
+   void Copy_(const DynEnumTableCol& cp);
    void Initialize();
    void Destroy() {CutLinks();}
 };
 
-SmartRef_Of(DynEnumTypeFromDTColumn); // DynEnumTypeRef
+SmartRef_Of(DynEnumTableCol); // DynEnumTypeRef
 
-#endif // DynEnumTypeFromDTColumn_h
+#endif // DynEnumTableCol_h

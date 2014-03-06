@@ -28,7 +28,7 @@ class DataTable; //
 taTypeDef_Of(DynEnumType);
 
 class TA_API DynEnumType : public DynEnumBase {
-//   #NO_UPDATE_AFTER  dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTypeFromDTColumn
+//   #NO_UPDATE_AFTER  dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write - for enums based on DataTable column values use DynEnumTableCol
 INHERITED(DynEnumBase)
 public:
   virtual DynEnumItem*  NewEnum();
@@ -38,7 +38,7 @@ public:
   virtual bool          CopyToAllProgs();
   // #BUTTON #CONFIRM copy this type information to all programs that have an enum with this same name in their types section -- provides a convenient way to update when multiple programs use the same dynamic enum types
   virtual bool          EnumsFromDataTable(DataTable* dt, const Variant& col);
-  // #BUTTON initialize enum values from values in given data table column (TIP: DynEnumTypeFromDTColumn is a better choice - updates automatically whenever the column values change or rows are added)
+  // #BUTTON initialize enum values from values in given data table column (TIP: DynEnumTableCol is a better choice - updates automatically whenever the column values change or rows are added)
 
   TA_SIMPLE_BASEFUNS(DynEnumType);
 protected:

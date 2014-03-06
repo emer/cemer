@@ -16,7 +16,7 @@
 #include "ProgType_List.h"
 #include <Program>
 #include <DynEnumType>
-#include <DynEnumTypeFromDTColumn>
+#include <DynEnumTableCol>
 
 TA_BASEFUNS_CTORS_DEFN(ProgType_List);
 
@@ -37,8 +37,8 @@ DynEnumType* ProgType_List::NewDynEnum() {
   return (DynEnumType*)New_gui(1, &TA_DynEnumType); // gui op
 }
 
-DynEnumTypeFromDTColumn* ProgType_List::NewDynEnumFromDTColumn() {
-  return (DynEnumTypeFromDTColumn*)New_gui(1, &TA_DynEnumTypeFromDTColumn); // gui op
+DynEnumTableCol* ProgType_List::NewDynEnumFromDTColumn() {
+  return (DynEnumTableCol*)New_gui(1, &TA_DynEnumTableCol); // gui op
 }
 
 taBase* ProgType_List::FindTypeName(const String& nm)  const {

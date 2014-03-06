@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "DynEnumTypeFromDTColumn.h"
+#include "DynEnumTableCol.h"
 
 #include <taBase>
 #include <taMisc>
@@ -21,28 +21,28 @@
 #include <DataCol>
 #include <taSmartRef>
 
-TA_BASEFUNS_CTORS_DEFN(DynEnumTypeFromDTColumn);
+TA_BASEFUNS_CTORS_DEFN(DynEnumTableCol);
 
-void DynEnumTypeFromDTColumn::Initialize() {
+void DynEnumTableCol::Initialize() {
   src_table = NULL;
 }
 
-void DynEnumTypeFromDTColumn::InitLinks() {
+void DynEnumTableCol::InitLinks() {
   inherited::InitLinks();
   taBase::Own(src_table,this);
 }
 
-void DynEnumTypeFromDTColumn::CutLinks() {
+void DynEnumTableCol::CutLinks() {
   src_table.CutLinks();
   inherited::CutLinks();
 }
 
-void DynEnumTypeFromDTColumn::Copy_(const DynEnumTypeFromDTColumn& cp) {
+void DynEnumTableCol::Copy_(const DynEnumTableCol& cp) {
   src_table = cp.src_table;
   src_column = cp.src_column;
 }
 
-bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& col) {
+bool DynEnumTableCol::EnumsFromDataTable(DataTable* dt, const Variant& col) {
   if(TestError(!dt, "SetTableAndColumn", "data table is null")) {
     enums.StructUpdate(true);
     enums.Reset();
@@ -69,13 +69,13 @@ bool DynEnumTypeFromDTColumn::EnumsFromDataTable(DataTable* dt, const Variant& c
   return true;
 }
 
-void DynEnumTypeFromDTColumn::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
+void DynEnumTableCol::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
   inherited::SmartRef_SigDestroying(ref, obj);
   src_table = NULL;
   enums.Reset();
 }
 
-void DynEnumTypeFromDTColumn::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+void DynEnumTableCol::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
     int sls, void* op1_, void* op2_)
 {
   // DataTable change - update the enums
@@ -84,7 +84,7 @@ void DynEnumTypeFromDTColumn::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
   DataTable* dt = (DataTable*)obj;
   DataCol* dc = dt->FindColName(src_column);
 
-  if(TestError(!dc, "DynEnumTypeFromDTColumn::SmartRef_SigEmit", "column not found, did you change the column name? enum items will be deleted")) {
+  if(TestError(!dc, "DynEnumTableCol::SmartRef_SigEmit", "column not found, did you change the column name? enum items will be deleted")) {
     enums.StructUpdate(true);
     enums.Reset();
     enums.StructUpdate(false);
@@ -102,7 +102,7 @@ void DynEnumTypeFromDTColumn::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
   enums.StructUpdate(false);
 }
 
-void DynEnumTypeFromDTColumn::UpdateAfterEdit_impl() {
+void DynEnumTableCol::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // any illegal combination of table and column leads to removal of all enums
   if (src_table && src_column != "") {
