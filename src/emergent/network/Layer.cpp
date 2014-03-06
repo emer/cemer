@@ -647,6 +647,8 @@ void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
+  if(lesioned()) return;
+
   inherited::CheckChildConfig_impl(quiet, rval);
   // layerspec should take over this function in layers that have them!
   units.CheckConfig(quiet, rval);
