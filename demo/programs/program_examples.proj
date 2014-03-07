@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6838
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6867
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [0] {
  };
@@ -398,7 +398,7 @@ LeabraProject .projects["program_examples"] {
     };
    };
   };
-  Program_Group @.gp["Data"] = [2] { 
+  Program_Group @.gp["Data"] = [3] { 
    Program @["DataLoop"] { 
     ProgObjList @.objs = [1] {
      DataTable @["DemoData"] { 
@@ -514,6 +514,35 @@ LeabraProject .projects["program_examples"] {
       ProgEl_List @.loop_code = [2] {
        ProgCode @[0] { };
        PrintVar @[1] { };
+      };
+     };
+    };
+   };
+   Program @["MatrixCss"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [1] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
       };
      };
     };
@@ -2995,7 +3024,7 @@ LeabraProject .projects["program_examples"] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -3005,7 +3034,7 @@ LeabraProject .projects["program_examples"] {
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -3015,7 +3044,7 @@ LeabraProject .projects["program_examples"] {
       var_type=T_Int;
       int_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -3517,7 +3546,7 @@ LeabraProject .projects["program_examples"] {
      DataLoop @[1] {
       desc=;
       flags=0;
-      orig_prog_code=;
+      orig_prog_code="DataTable Loop (SEQUENTIAL over: DemoData index: data_loop_index)";
       loop_code {
        name="ProgEl_List_51";
        el_typ=ProgCode;
@@ -3830,6 +3859,65 @@ LeabraProject .projects["program_examples"] {
     step_prog=NULL;
     step_n=1;
    };
+   Program @["MatrixCss"] {
+    name="MatrixCss";
+    short_nm="MtrCss";
+    tags=;
+    desc="examples of all the matrix code you can use to manipulate matricies";
+    flags=0;
+    objs {
+     name="ProgObjList_7";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    brk_pts {
+     name="ProgBrkPt_List_7";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_7";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_67";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_68";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
   };
  };
  viewers {
@@ -3848,17 +3936,17 @@ LeabraProject .projects["program_examples"] {
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.04668930545449257;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9989344477653503;
+     value 6 0=0.9984034299850464;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 6 0=0.8777589201927185;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -5047,12 +5135,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.04044704511761665;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 6 0=0.814091682434082;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -5228,6 +5316,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	fbx=0;
 	infl=0.3;
 	dt=0.7;
+	up_immed=0;
 	ff0=0.1;
 	min_i=0;
        };
@@ -5268,6 +5357,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       fbx=0;
       infl=0.3;
       dt=0.7;
+      up_immed=0;
       ff0=0.1;
       min_i=0;
      };

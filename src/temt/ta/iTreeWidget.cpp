@@ -614,16 +614,16 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
     case Qt::Key_Return:
       if(!le->hasAcceptableInput())
         return false;
-      if(own_tree_widg) own_tree_widg->move_after_edit = 1;
+      if(own_tree_widg) own_tree_widg->move_after_edit = 0;
       emit commitData(editor);
-      if(ctrl_pressed) {
-        emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
-        return true;
-      }
-      else {
+      // if(ctrl_pressed) {
+      //   emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+      //   return true;
+      // }
+      // else {
         emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
-        return false;             // don't filter the return
-      }
+        return true;             // filter the return
+      // }
     case Qt::Key_Escape:
       // don't commit data
       emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
