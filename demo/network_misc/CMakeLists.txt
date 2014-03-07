@@ -1,0 +1,9 @@
+########### demo/network_misc install files ###############
+
+FILE(GLOB PROJ_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.proj")
+FILE(GLOB DTBL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.dtbl")
+FILE(GLOB NET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.net")
+
+install(FILES ${PROJ_FILES} ${DTBL_FILES} ${NET_FILES}
+    DESTINATION ${EMERGENT_SHARE_DEST}/demo/network_misc
+)
