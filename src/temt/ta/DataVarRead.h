@@ -7,7 +7,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-
+class NameVar_PArray; //
 
 taTypeDef_Of(DataVarRead);
 
@@ -18,8 +18,9 @@ public:
   String	GetDisplayName() const override;
   String  GetToolbarName() const override { return "read from \n data table"; }
 
-  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool          CvtFmCode(const String& code) override;
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
+  void    ToNameValuePairs(const String& params, NameVar_PArray& nv_array);
 
   PROGEL_SIMPLE_BASEFUNS(DataVarRead);
 protected:
