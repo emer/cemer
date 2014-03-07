@@ -37,7 +37,7 @@ DynEnumType* ProgType_List::NewDynEnum() {
   return (DynEnumType*)New_gui(1, &TA_DynEnumType); // gui op
 }
 
-DynEnumTableCol* ProgType_List::NewDynEnumFromDTColumn() {
+DynEnumTableCol* ProgType_List::NewDynEnumTableCol() {
   return (DynEnumTableCol*)New_gui(1, &TA_DynEnumTableCol); // gui op
 }
 

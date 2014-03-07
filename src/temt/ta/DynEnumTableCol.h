@@ -28,7 +28,7 @@
 taTypeDef_Of(DynEnumTableCol);
 
 class TA_API DynEnumTableCol : public DynEnumBase {
-  // #AKA_DynEnumFromDTColumn Enum that is generated from a datatable column and is updated based on notification of updates from the table
+  // #AKA_DynEnumTypeFromDTColumn Enum that is generated from a datatable column and is updated based on notification of updates from the table
 INHERITED(DynEnumBase)
 public:
   DataTableRef        src_table; // #AKA_srcTable table to get enum data from

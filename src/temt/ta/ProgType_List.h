@@ -40,7 +40,7 @@ public:
 
   virtual DynEnumType* NewDynEnum();
   // #BUTTON #MENU_CONTEXT create a new DynEnumType (shortcut)
-  virtual DynEnumTableCol* NewDynEnumFromDTColumn();
+  virtual DynEnumTableCol* NewDynEnumTableCol();
   // #BUTTON #MENU_CONTEXT create a new DynEnumTableCol (shortcut)
 
   virtual taBase* FindTypeName(const String& nm) const;
