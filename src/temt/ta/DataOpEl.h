@@ -58,8 +58,7 @@ public:
 
   bool          BrowserEditEnable() override { return true; }
   String        BrowserEditString() override { return GetDisplayName(); }
-  bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override
-  { return SetName(new_val_str); }
+  bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   TA_SIMPLE_BASEFUNS(DataOpEl);
 protected:

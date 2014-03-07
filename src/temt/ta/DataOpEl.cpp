@@ -54,6 +54,12 @@ bool DataOpEl::SetName(const String& nm) {
   return true;
 }
 
+bool DataOpEl::BrowserEditSet(const String& new_val_str, int move_after) {
+  bool rval = SetName(new_val_str);
+  SigEmitUpdated();
+  return rval;
+}
+
 void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(col_name.empty(), quiet, rval,"col_name is empty");

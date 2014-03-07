@@ -50,3 +50,8 @@ bool taNBase::SetName(const String& nm) {
   return true;
 }
 
+bool taNBase::BrowserEditSet(const String& new_val_str, int move_after) {
+  bool rval = SetName(new_val_str);
+  SigEmitUpdated();
+  return rval;
+}

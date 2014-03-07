@@ -48,7 +48,9 @@ bool Comment::BrowserEditSet(const String& code, int move_after) {
   edit_move_after = 0;
   String cd = code; // CodeGetDesc(code);
   if(CanCvtFmCode(cd, NULL)) {
-    return CvtFmCode(cd);
+    bool rval = CvtFmCode(cd);
+    SigEmitUpdated();
+    return rval;
   }
   orig_prog_code = cd;
   edit_move_after = move_after;

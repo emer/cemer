@@ -545,12 +545,12 @@ String ProgVar::GetDisplayName() const {
     rval = name + " = " + ((bool_val ? "true" : "false")) + " (bool)";
     break;
   case T_Object:
-    if(!object_type) rval = name + " = NULL object type";
+    if(!object_type) rval = name + " = (NULL object type)";
     else rval = name + " = " + ((object_val ? object_val->GetDisplayName() : "NULL"))
            + " (" + object_type->name + ")";
     break;
   case T_HardEnum:
-    if(!hard_enum_type) rval = name + " = NULL hard enum type";
+    if(!hard_enum_type) rval = name + " = (NULL hard enum type)";
     else {
       bool show_scope = false;
       rval = name + " = "
@@ -562,13 +562,13 @@ String ProgVar::GetDisplayName() const {
     if((bool)dyn_enum_val.enum_type)
       rval = name + " = " + dyn_enum_val.NameVal() + " (" + dyn_enum_val.enum_type->name + ")";
     else
-      rval = name + " = " + dyn_enum_val.NameVal() + " (no dyn enum type!)";
+      rval = name + " = " + dyn_enum_val.NameVal() + " (NULL dyn enum type)";
     break;
   case T_UnDef:
-    rval = name + " undefined type!";
+    rval = name + " = (undefined type)";
     break;
   default:
-    rval = name + " invalid type!";
+    rval = name + " = (invalid type)";
     break;
   }
   if(init_from) {

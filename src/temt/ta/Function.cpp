@@ -190,7 +190,9 @@ bool Function::BrowserEditSet(const String& code, int move_after) {
   // always convert -- don't check and don't revert to ProgCode
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
-  return CvtFmCode(cd);
+  bool rval = CvtFmCode(cd);
+  SigEmitUpdated();
+  return rval;
 }
 
 bool Function::CvtFmCode(const String& code) {
