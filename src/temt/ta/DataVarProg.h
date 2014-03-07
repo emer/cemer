@@ -43,6 +43,8 @@ public:
 
   String	GetDisplayName() const override;
   String  GetToolbarName() const override { return "data=vars"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  bool    CvtFmCode(const String& code) override;
 
   void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 

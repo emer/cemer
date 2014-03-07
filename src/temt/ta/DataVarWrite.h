@@ -17,6 +17,7 @@ INHERITED(DataVarSimple)
 public:
   String	GetDisplayName() const override;
   String  GetToolbarName() const override { return "write to \n data table"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarWrite);
 protected:

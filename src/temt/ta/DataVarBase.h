@@ -23,7 +23,7 @@
 #include <ProgVar>
 
 // declare all other types mentioned but not required to include:
-
+class NameVar_PArray; //
 
 taTypeDef_Of(DataVarBase);
 
@@ -42,6 +42,7 @@ public:
 
   void                        UpdateAfterEdit_impl() override;
   DataVarBase::RowType        StringToRowType(const String& row_type);
+  void                        ToNameValuePairs(const String& params, NameVar_PArray& nv_array);
 
   PROGEL_SIMPLE_BASEFUNS(DataVarBase);
 protected:

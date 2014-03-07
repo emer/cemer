@@ -43,6 +43,7 @@ protected:
   virtual bool  GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMat(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
   virtual bool  GenCss_OneVarMatEnum(Program* prog, ProgVar* mat_var, const String& idnm, int var_no);
+  bool          CvtFmCode(const String& code) override;
 
 private:
   void	Initialize();

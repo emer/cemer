@@ -17,6 +17,7 @@
 #include <DataCol>
 #include <DataTable>
 #include <Program>
+#include <NameVar_PArray>
 
 TA_BASEFUNS_CTORS_DEFN(DataVarSimple);
 
@@ -162,3 +163,42 @@ void DataVarSimple::GenCssBody_impl(Program* prog) {
   prog->AddVerboseLine(this);
     GenCss_OneVar(prog, var, idnm, 0);
 }
+
+bool DataVarSimple::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
+
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+
+  NameVar_PArray nv_pairs;
+  ToNameValuePairs(remainder, nv_pairs);
+
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+
+    if (name.startsWith("tab")) {
+      data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("var")) {
+      var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("row_s")) {
+      row_spec = StringToRowType(value);
+    }
+    else if (name.startsWith("row_v")) {
+      row_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("col")) {
+      column_name = value;
+    }
+  }
+
+  SigEmitUpdated();
+  return true;
+}
+

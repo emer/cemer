@@ -17,6 +17,7 @@
 #include <DataCol>
 #include <DataTable>
 #include <Program>
+#include <NameVar_PArray>
 
 TA_BASEFUNS_CTORS_DEFN(DataVarProg);
 
@@ -31,32 +32,70 @@ void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String DataVarProg::GetDisplayName() const {
-  String rval;
-  String row_var_name = "(ERR: not set!)";
+  String row_var_name;
   if((bool)row_var)
     row_var_name = row_var->name;
+
+  String rval;
   if(set_data)
-    rval = "To: ";
+    rval = "Data To: ";
   else
-    rval = "From: ";
+    rval = "Data From: ";
+
   if(data_var)
-    rval += data_var->name;
+    rval += " table=" + data_var->name + " ";
   else
-    rval += "(ERROR: data_var not set!)";
+    rval += " table=? ";
+
   if(row_spec  == CUR_ROW)
-    rval += " cur_row";
+    rval += " row_spec=cur_row ";
   else if(row_spec == ROW_NUM)
-    rval += " row_num: " + row_var_name;
+    rval += " row_spec=row_num ";
+  else if(row_spec == ROW_VAL)
+    rval += " row_spec=row_val ";
   else
-    rval += " row_val: " + row_var_name;
+    rval += " row_spec=cur_row ";
+
+  // only display row_var if needed
+  if(row_spec == ROW_NUM || row_spec == ROW_VAL) {
+    if (row_var)
+      rval += " row_var=" + row_var_name + " ";
+    else
+      rval += " row_var=? ";
+  }
+
   if(set_data)
-    rval += " From Vars: ";
+    rval += " set=to ";
   else
-    rval += " To Vars: ";
-  if(var_1) rval += var_1->name + " ";
-  if(var_2) rval += var_2->name + " ";
-  if(var_3) rval += var_3->name + " ";
-  if(var_4) rval += var_4->name + " ";
+    rval += " set=from ";
+
+  if(all_matches)
+    rval += " all_matches=true ";
+  else
+    rval += " all_matches=false ";
+
+  if (!all_matches) {
+    if(var_1)
+      rval += " var_1=" + var_1->name + " ";
+    else
+      rval += " var_1=? ";
+
+    if(var_2)
+      rval += " var_2=" + var_2->name + " ";
+    else
+      rval += " var_2=? ";
+
+    if(var_3)
+      rval += " var_3=" + var_3->name + " ";
+    else
+      rval += " var_3=? ";
+
+    if(var_4)
+      rval += " var_4=" + var_4->name + " ";
+    else
+      rval += " var_4=? ";
+  }
+
   return rval;
 }
 
@@ -213,4 +252,70 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
       }
     }
   }
+}
+
+bool DataVarProg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("data from") || dc.startsWith("data to")) return true;
+  return false;
+}
+
+bool DataVarProg::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
+
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+
+  NameVar_PArray nv_pairs;
+  ToNameValuePairs(remainder, nv_pairs);
+
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+
+    if (name.startsWith("tab")) {
+      data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name == "var_1") {
+      var_1 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name =="var_2") {
+      var_2 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name == "var_3") {
+      var_3 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name == "var_4") {
+      var_4 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("row_s")) {
+      row_spec = StringToRowType(value);
+    }
+    else if (name.startsWith("row_v")) {
+      row_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("set")) {
+      if (value == "to" || value == "true")
+        set_data = true;
+      else if (value == "from" || value == "false")
+        set_data = false;
+      else
+        set_data = false;
+    }
+    else if (name.startsWith("all")) {
+      if (value == "true")
+        all_matches = true;
+      else
+        all_matches = false;
+    }
+  }
+  SigEmitUpdated();
+  return true;
 }
