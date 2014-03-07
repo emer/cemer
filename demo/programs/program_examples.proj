@@ -563,7 +563,7 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [53] {
+    ProgEl_List @.prog_code = [57] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [3] {
        ProgVar @["a"] { };
@@ -628,6 +628,10 @@ LeabraProject .projects["program_examples"] {
       };
      };
      PrintExpr @[52] { };
+     Comment @[53] { };
+     Comment @[54] { };
+     Comment @[55] { };
+     PrintExpr @[56] { };
     };
    };
    Program @["DataTable_css"] { 
@@ -1020,12 +1024,12 @@ LeabraProject .projects["program_examples"] {
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20131021T011027Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"Matrix_css\",\"wgTitle\":\"Matrix css\",\"wgCurRevisionId\":9751,\"wgRevisionId\":9751,\"wgArticleId\":2464,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"Matrix_css\",\"wgUserId\":3,\"wgUserEditCount\":2053,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"Matrix_css\",\"wgTitle\":\"Matrix css\",\"wgCurRevisionId\":9751,\"wgRevisionId\":9751,\"wgArticleId\":2464,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"Matrix_css\",\"wgUserId\":3,\"wgUserEditCount\":2054,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\"
 :0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"0e5b7796fdf1030d7dae1cab33b47a92+\\\\\",\"patrolToken\":\"eba9a94d1c95e8e0ec8811e30ebf8963+\\\\\",\"watchToken\":\"dab1e479f141551a9f1d79d77f026738+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:e926df36e7dfdbc913ad847fe0034eac */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"36d8cf733907a8e6608aa3d4e2a7a0e7+\\\\\",\"patrolToken\":\"55171eb4dec4e4894d5b61960eb8106d+\\\\\",\"watchToken\":\"4badfc4e7eb62fe99a08a889c694c937+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:8e259f40f5dc65ee4356e861a75cf920 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
@@ -1135,7 +1139,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=Matrix_css&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/Matrix_css\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=Matrix_css&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=Matrix_css&amp;action=unwatch&amp;token=0ff921194902f576f7b36094ee3012d2%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=Matrix_css&amp;action=unwatch&amp;token=b471ea21c65593fd832067213cad4a02%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=Matrix_css&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -1621,8 +1625,8 @@ emergent&gt; print .StdInputData[\"Input\"][:,:,0,0,0]
 </p>
 <!-- 
 NewPP limit report
-CPU time usage: 0.104 seconds
-Real time usage: 0.110 seconds
+CPU time usage: 0.080 seconds
+Real time usage: 0.084 seconds
 Preprocessor visited node count: 29/1000000
 Preprocessor generated node count: 106/1000000
 Post?expand include size: 48/2097152 bytes
@@ -1631,7 +1635,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2464-0!*!0!!*!*!* and timestamp 20140306084730
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2464-0!*!0!!*!*!* and timestamp 20140307092506
  -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Matrix_css&amp;oldid=9751\">http://grey.colorado.edu/emergent/index.php?title=Matrix_css&amp;oldid=9751</a>\"</div>
@@ -1667,7 +1671,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Mat
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 16 November 2012, at 00:27.</span>
-			<span id=\"f-viewcount\">This page has been accessed 1,630 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 1,632 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -1706,7 +1710,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.386 secs. -->
+<!-- Served in 0.511 secs. -->
 
 
 
@@ -5205,7 +5209,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	orig_prog_code="rval = tmp_v / taMath_float::vec_sum(tmp_v)";
 	result_var=.projects["program_examples"].programs.gp["Data"]["Matrix_css"].functions["softmax"].args["v"]$$;
 	expr {
-	 expr="tmp_v / taMath_double::vec_sum(tmp_v)";
+	 expr="tmp_v / vec_sum(tmp_v)";
 	};
        };
       };
@@ -5724,6 +5728,31 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
+     Comment @[53] {
+      desc="== more math functions ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == more math functions ==";
+     };
+     Comment @[54] {
+      desc="many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
+     };
+     Comment @[55] {
+      desc="either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
+     };
+     PrintExpr @[56] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="Print: \"vec_sum(a):\\n\" << vec_sum(a) << endl";
+      expr {
+       expr="\"vec_sum(a):\\n\" << vec_sum(a) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
     };
     step_prog=NULL;
     step_n=1;
@@ -6116,7 +6145,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.003196590347215533;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
