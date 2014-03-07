@@ -541,17 +541,34 @@ LeabraProject .projects["program_examples"] {
     ProgBrkPt_List @.brk_pts = [0] {
     };
 
-    Function_List @.functions = [0] {
+    Function_List @.functions = [1] {
+     Function @["softmax"] { 
+      ProgVar_List @.args = [2] {
+       ProgVar @["v"] { };
+       ProgVar @["temp"] { };
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [1] {
+	 ProgVar @["tmp_v"] { };
+	};
+       };
+       AssignExpr @[1] { };
+       AssignExpr @[2] { };
+      };
+     };
     };
 
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [49] {
+    ProgEl_List @.prog_code = [53] {
      LocalVars @[0] { 
-      ProgVar_List @.local_vars = [2] {
+      ProgVar_List @.local_vars = [3] {
        ProgVar @["a"] { };
        ProgVar @["b"] { };
+       ProgVar @["smax"] { };
       };
      };
      Comment @[1] { };
@@ -602,6 +619,15 @@ LeabraProject .projects["program_examples"] {
      PrintExpr @[46] { };
      PrintExpr @[47] { };
      PrintExpr @[48] { };
+     Comment @[49] { };
+     CssExpr @[50] { };
+     FunctionCall @[51] { 
+      ProgArg_List @.fun_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     PrintExpr @[52] { };
     };
    };
    Program @["DataTable_css"] { 
@@ -5106,6 +5132,84 @@ mw.loader.state({\"user.groups\":\"ready\"});
      name="Function_List_7";
      el_typ=Function;
      el_def=0;
+     Function @["softmax"] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      name="softmax";
+      return_type=T_Real;
+      object_type=taMath_double;
+      args {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["v"] {
+	name="v";
+	var_type=T_Object;
+	object_type=double_Matrix;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["temp"] {
+	name="temp";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      fun_code {
+       name="ProgEl_List_75";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	local_vars {
+	 name="ProgVar_List_0";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["tmp_v"] {
+	  name="tmp_v";
+	  var_type=T_Object;
+	  object_type=double_Matrix;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       AssignExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="tmp_v = exp(v) / temp";
+	result_var=.projects["program_examples"].programs.gp["Data"]["Matrix_css"].functions["softmax"].fun_code[0].local_vars["tmp_v"]$$;
+	expr {
+	 expr="exp(v) / temp";
+	};
+       };
+       AssignExpr @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="rval = tmp_v / taMath_float::vec_sum(tmp_v)";
+	result_var=.projects["program_examples"].programs.gp["Data"]["Matrix_css"].functions["softmax"].args["v"]$$;
+	expr {
+	 expr="tmp_v / taMath_double::vec_sum(tmp_v)";
+	};
+       };
+      };
+     };
     };
     init_code {
      name="ProgEl_List_67";
@@ -5142,6 +5246,16 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	object_val=NULL;
 	objs_ptr=0;
 	flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["smax"] {
+	name="smax";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -5555,6 +5669,61 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
+     Comment @[49] {
+      desc="== function calling ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == function calling ==";
+     };
+     CssExpr @[50] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = [1.0, 2.0, 3.0];";
+      expr {
+       expr="b = [1.0, 2.0, 3.0];";
+      };
+     };
+     FunctionCall @[51] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="smax = softmax([1.0, 2.0, 3.0], 1.0)";
+      result_var=.projects["program_examples"].programs.gp["Data"]["Matrix_css"].prog_code[0].local_vars["smax"]$$;
+      fun=.projects["program_examples"].programs.gp["Data"]["Matrix_css"].functions["softmax"]$$;
+      fun_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=double_Matrix;
+	type="double_Matrix*";
+	name="v";
+	required=1;
+	def_val=;
+	expr {
+	 expr="b";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=double;
+	type="double";
+	name="temp";
+	required=1;
+	def_val=;
+	expr {
+	 expr="2.0";
+	};
+       };
+      };
+     };
+     PrintExpr @[52] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"softmax of b:\\n\" << b << endl";
+      expr {
+       expr="\"softmax of b = [1,2,3]:\\n\" << b << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
     };
     step_prog=NULL;
     step_n=1;
@@ -5947,12 +6116,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 6 0=-0.003196590347215533;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.06027164682745934;
+     value 6 0=0.0246179960668087;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -7151,7 +7320,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04794885590672493;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
