@@ -18,6 +18,7 @@
 #include <DataTable>
 #include <Program>
 #include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataVarProg);
 
@@ -278,7 +279,7 @@ bool DataVarProg::CvtFmCode(const String& code) {
   if(remainder.empty()) return true;
 
   NameVar_PArray nv_pairs;
-  ToNameValuePairs(remainder, nv_pairs);
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
 
   for (int i=0; i<nv_pairs.size; i++) {
     String name = nv_pairs.FastEl(i).name;

@@ -42,7 +42,7 @@ public:
 
   void                        UpdateAfterEdit_impl() override;
   DataVarBase::RowType        StringToRowType(const String& row_type);
-  void                        ToNameValuePairs(const String& params, NameVar_PArray& nv_array);
+//  void                        ToNameValuePairs(const String& params, NameVar_PArray& nv_array);
 
   PROGEL_SIMPLE_BASEFUNS(DataVarBase);
 protected:

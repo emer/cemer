@@ -1960,6 +1960,46 @@ String taMisc::StrArrayToChar(const String_PArray& sa) {
   return tmp;
 }
 
+void taMisc::ToNameValuePairs(const String& str, NameVar_PArray& nv_array) {
+  int pos;
+  String strCopy(str);
+  strCopy = trimr(strCopy); // remove any tailing white space
+
+  bool parse = true;
+  while (parse) {
+    pos = 0; // start at beginning of string or what is remaining
+    pos = strCopy.index('=', pos);
+    if (pos == -1) {  // no more pairs
+      parse = false;
+      break;
+    }
+    String name = strCopy.before(pos);
+    name = trim(name);
+
+    strCopy = strCopy.after(pos); // lop off what we processed
+    strCopy = triml(strCopy);  // trim leading on remaining
+
+    String value;
+    pos = 0;  // reset before each search
+    pos = strCopy.index(' ', pos); // find white space between name/value pairs (none if last n/v pair)
+    if (pos == -1) {  // no space
+      value = strCopy;  // last n/v pair
+    }
+    else {
+      value = strCopy.before(pos);  // get chars up to next space
+    }
+    value = trim(value);
+    nv_array.Add(NameVar(name, value));
+
+    if (pos != -1) {  // more pairs - lop off what we got
+      strCopy = strCopy.after(pos);
+    }
+    else {
+      parse = false;
+    }
+  }
+}
+
 // add spaces to a label
 void taMisc::SpaceLabel(String& lbl) {
   String tmp = lbl;

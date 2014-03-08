@@ -713,6 +713,8 @@ public:
   // #CAT_Utility convert space-delimeted character string to a string array
   static String StrArrayToChar(const String_PArray& sa);
   // #CAT_Utility convert a string array to a space-delimeted character string
+  static void   ToNameValuePairs(const String& params, NameVar_PArray& nv_array);
+  // #CAT_Utility takes a string and creates name/value pairs where '=' is the character between name and value
 
   static void   SpaceLabel(String& lbl);
   // #CAT_Utility add spaces to a label in place of _'s and upper-lower transitions
