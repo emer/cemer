@@ -47,6 +47,8 @@ String DataJoinProg::GetDisplayName() const {
   return rval;
 }
 
+// todo: needs CvtFmCode!
+
 void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!src_b_data_var, quiet, rval, "src_b_data_var is NULL")) return; // fatal

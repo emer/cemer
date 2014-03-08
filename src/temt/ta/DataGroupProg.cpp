@@ -33,15 +33,24 @@ void DataGroupProg::Initialize() {
 }
 
 String DataGroupProg::GetDisplayName() const {
-  String rval = "Group ";
+  String rval = "Group from: ";
   if(src_data_var) {
-    rval += " from: " + src_data_var->name;
+    rval += src_data_var->name;
   }
+  else {
+    rval += "?";
+  }
+  rval += " to: ";
   if(dest_data_var) {
-    rval += " to: " + dest_data_var->name;
+    rval += dest_data_var->name;
+  }
+  else {
+    rval += "?";
   }
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);

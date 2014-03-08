@@ -93,11 +93,58 @@ void MemberFmArg::GenRegArgs(Program* prog) {
 }
 
 String MemberFmArg::GetDisplayName() const {
-  if (!obj || path.empty())
-    return "(object or path not selected)";
-
   String rval;
-  rval = obj->name + "->" + path + " = ";
-  rval += "Arg: " + arg_name;
+  if(obj)
+    rval = obj->name;
+  else
+    rval = "?";
+  if(path.empty())
+    rval += ".?";
+  else
+    rval += "." + path;
+  rval += " = Arg: " + arg_name;
   return rval;
 }
+
+bool MemberFmArg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(!code.contains("Arg: ")) return false;
+  String lhs = code.before('=');
+  if(!(lhs.contains('.') || lhs.contains("->"))) return false;
+  return true;                  // probably enough?
+}
+
+bool MemberFmArg::CvtFmCode(const String& code) {
+  String lhs = trim(code.before('='));
+  if(lhs.contains('(') || lhs.contains(' ')) return false; // exclude others
+  String objnm;
+  String pathnm;
+  if(lhs.contains('.')) {
+    objnm = lhs.before('.');
+    pathnm = lhs.after('.');
+  }
+  else {
+    objnm = lhs.before("->");
+    pathnm = lhs.after("->");
+  }
+  if(objnm.contains('[')) {
+    if(pathnm.nonempty())
+      pathnm = objnm.from('[') + "." + pathnm;
+    else
+      pathnm = objnm.from('[');
+    objnm = objnm.before('[');
+  }
+  if(objnm == "?") return false;
+  ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
+  if(!pv) return false;
+  obj = pv;
+  path = pathnm;
+  String rhs = trim(code.after('='));
+  if(rhs.endsWith(';'))
+    rhs = rhs.before(';',-1);
+  if(rhs.contains("Arg:"))
+    rhs = trim(rhs.after("Arg:"));
+  arg_name = rhs;
+  UpdateAfterEdit_impl();
+  return true;
+}
+

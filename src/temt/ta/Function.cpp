@@ -196,8 +196,10 @@ bool Function::BrowserEditSet(const String& code, int move_after) {
 }
 
 bool Function::CvtFmCode(const String& code) {
-  if(!code.contains('(')) return false;
-  String fnm = trim(code.before('('));
+  String fnm = trim(code);
+  if(code.contains('(')) {
+    fnm = trim(code.before('('));
+  }
   if(fnm.contains(' ')) {       // type funame
     String retyp = fnm.before(' ');
     TypeDef* td = ProgVar::GetTypeDefFromString(retyp);

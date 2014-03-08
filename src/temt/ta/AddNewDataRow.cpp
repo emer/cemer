@@ -25,9 +25,11 @@ void AddNewDataRow::Initialize() {
 String AddNewDataRow::GetDisplayName() const {
   String rval = "AddNewDataRow to: ";
   if(data_var) rval += data_var->name;
-  else rval += "(ERROR: data_var not set!)";
+  else rval += "?";
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void AddNewDataRow::GenCssBody_impl(Program* prog) {
   if(!data_var) {

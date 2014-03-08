@@ -142,12 +142,14 @@ String DataLoop::GetDisplayName() const {
   String ord_str = GetTypeDef()->GetEnumString("Order", order);
   String data_nm;
   if(data_var) data_nm = data_var->name;
-  else data_nm = "ERROR: data_var not set!";
+  else data_nm = "?";
   String index_nm;
   if(index_var) index_nm = index_var->name;
-  else index_nm = "ERROR: index_var not set!";
+  else index_nm = "?";
   return "DataTable Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
 }
+
+// todo: needs CvtFmCode!
 
 void DataLoop::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                     int sls, void* op1_, void* op2_) {

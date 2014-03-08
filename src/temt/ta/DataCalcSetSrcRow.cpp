@@ -31,7 +31,7 @@ String DataCalcSetSrcRow::GetDisplayName() const {
     rval += src_data_var->name;
   }
   else {
-    rval += "ERR! src_data_var is NULL";
+    rval += "?";
   }
   return rval;
 }

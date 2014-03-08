@@ -31,10 +31,12 @@ String DataCalcAddDestRow::GetDisplayName() const {
     rval += dest_data_var->name;
   }
   else {
-    rval += "ERR! dest_data_var is NULL";
+    rval += "?";
   }
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void DataCalcAddDestRow::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);

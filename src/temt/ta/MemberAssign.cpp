@@ -87,15 +87,17 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
 }
 
 String MemberAssign::GetDisplayName() const {
-  if (!obj || path.empty())
-    return "(object or path not selected)";
-
   String rval;
-  rval = obj->name;
-  if(path.startsWith('['))
+  if(obj)
+    rval = obj->name;
+  else
+    rval = "?";
+  if(path.empty())
+    rval += ".?";
+  else if(path.startsWith('['))
     rval += path;
   else
-    rval += "->" + path;
+    rval += "." + path;
   rval += " = ";
   rval += expr.GetFullExpr();
   return rval;
@@ -128,6 +130,7 @@ bool MemberAssign::CvtFmCode(const String& code) {
       pathnm = objnm.from('[');
     objnm = objnm.before('[');
   }
+  if(objnm == "?") return false;
   ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
   if(!pv) return false;
   obj = pv;

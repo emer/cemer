@@ -25,9 +25,11 @@ void DoneWritingDataRow::Initialize() {
 String DoneWritingDataRow::GetDisplayName() const {
   String rval = "DoneWritingDataRow to: ";
   if(data_var) rval += data_var->name;
-  else rval += "(ERROR: data_var not set!)";
+  else rval += "?";
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void DoneWritingDataRow::GenCssBody_impl(Program* prog) {
   if(!data_var) {

@@ -58,6 +58,8 @@ String DataColsFmArgs::GetDisplayName() const {
   return rval;
 }
 
+// todo: needs CvtFmCode!
+
 DataTable* DataColsFmArgs::GetData() const {
   if(!data_var) return NULL;
   if(data_var->object_type != &TA_DataTable) return NULL;

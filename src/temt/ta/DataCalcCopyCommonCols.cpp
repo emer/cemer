@@ -31,14 +31,16 @@ String DataCalcCopyCommonCols::GetDisplayName() const {
   if(src_data_var)
     rval += src_data_var->name;
   else
-    rval += "ERR! src_data_var is NULL";
+    rval += "?";
   rval += " to: ";
   if(dest_data_var)
     rval += dest_data_var->name;
   else
-    rval += "ERR! dest_data_var is NULL";
+    rval += "?";
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void DataCalcCopyCommonCols::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);

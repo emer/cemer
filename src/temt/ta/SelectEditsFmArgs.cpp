@@ -39,13 +39,18 @@ void SelectEditsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String SelectEditsFmArgs::GetDisplayName() const {
-  String rval = "Select Edits Fm Args";
+  String rval = "Select Edits Fm Args To: ";
   SelectEdit* se = GetSelectEdit();
   if(se) {
-    rval += " To: " + se->name;
+    rval += se->name;
+  }
+  else {
+    rval += "?";
   }
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 SelectEdit* SelectEditsFmArgs::GetSelectEdit() const {
   if(!sel_edit_var) return NULL;

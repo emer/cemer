@@ -34,6 +34,9 @@ public:
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   bool			quiet;	      // do not emit a message when arg is set and member value is assigned (otherwise, informational msg is printed -- useful for startup code output)
   
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
+
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgVar"; }
   String	GetToolbarName() const override { return "memb=arg"; }

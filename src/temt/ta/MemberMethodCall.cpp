@@ -88,18 +88,24 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
 }
 
 String MemberMethodCall::GetDisplayName() const {
-  if (!obj || !method)
-    return "(object or method not selected)";
-
   String rval;
   if(result_var)
     rval += result_var->name + "=";
-  rval += obj->name;
-  if(path.startsWith('['))
+
+  if(obj)
+    rval += obj->name;
+  else
+    rval += "?";
+  if(path.empty())
+    rval += ".?";
+  else if(path.startsWith('['))
     rval += path;
   else
-    rval += "->" + path;
-  rval += "->" + method->name + "(";
+    rval += "." + path;
+  if(method)
+    rval += "." + method->name + "(";
+  else
+    rval += ".?(";
   for(int i=0;i<meth_args.size;i++) {
     ProgArg* pa = meth_args[i];
     if (i > 0)
@@ -155,6 +161,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
       pathnm = objnm.from('[');
     objnm = objnm.before('[');
   }
+  if(objnm == "?") return false;
   ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
   if(!pv) return false;
   obj = pv;
@@ -171,6 +178,7 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
   }
   path = pathnm;
   UpdateAfterEdit_impl();                          // update based on obj and path
+  if(!obj_type) return false;
   MethodDef* md = obj_type->methods.FindName(methnm);
   if(md) {
     method = md;

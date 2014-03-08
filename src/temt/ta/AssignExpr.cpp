@@ -42,11 +42,12 @@ void AssignExpr::GenCssBody_impl(Program* prog) {
 }
 
 String AssignExpr::GetDisplayName() const {
-  if(!result_var)
-    return "(result_var not selected)";
-
   String rval;
-  rval += result_var->name + "=" + expr.GetFullExpr();
+  if(result_var)
+    rval = result_var->name;
+  else
+    rval = "?";
+  rval += " = " + expr.GetFullExpr();
   return rval;
 }
 
@@ -67,6 +68,7 @@ bool AssignExpr::CvtFmCode(const String& code) {
   String rhs = trim(code.after('='));
   if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
 
+  if(lhs == "?") return false;
   result_var = FindVarNameInScope(lhs, true); // option to make
   expr.SetExpr(rhs);
 

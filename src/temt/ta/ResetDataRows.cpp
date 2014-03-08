@@ -25,9 +25,11 @@ void ResetDataRows::Initialize() {
 String ResetDataRows::GetDisplayName() const {
   String rval = "ResetDataRows of: ";
   if(data_var) rval += data_var->name;
-  else rval += "(ERROR: data_var not set!)";
+  else rval += "?";
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void ResetDataRows::GenCssBody_impl(Program* prog) {
   if(!data_var) {

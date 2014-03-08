@@ -145,18 +145,20 @@ void DataCalcLoop::UpdateColVars() {
 
 
 String DataCalcLoop::GetDisplayName() const {
-  String rval = "Calc Loop ";
+  String rval = "Calc Loop from: ";
   if(src_data_var) {
-    rval += " from: " + src_data_var->name;
+    rval += src_data_var->name;
   }
   else {
-    rval += "ERR! src_data_var is NULL";
+    rval += "?";
   }
   if(dest_data_var) {
     rval += " to: " + dest_data_var->name;
   }
   return rval;
 }
+
+// todo: needs CvtFmCode!
 
 void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
