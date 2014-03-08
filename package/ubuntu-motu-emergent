@@ -10,6 +10,9 @@ fi
 TAG="$2"
 if [ -z $TAG ]; then TAG="trunk"; fi
 
+QTVER="$3"
+if [ -z $QTVER ]; then QTVER="qt4"; fi
+
 echo "Building emergent from Subversion rev $REV ($TAG) on "
 cat /etc/issue || echo "Unknown platform"
 
@@ -168,6 +171,9 @@ build: build-stamp
 build-stamp:
 	dh build
 	touch build-stamp
+
+override_dh_auto_configure:
+	dh_auto_configure -- --${QTVER}
 
 # There is no test target, so override to do nothing.
 override_dh_auto_test:

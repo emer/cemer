@@ -52,6 +52,17 @@ if [ -z $TAG ]; then
 fi
 if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 
+QTVER="qt4"
+read -p "Use QT5? [y/N]:" QTVER
+if [ "$QTVER" == "Y" ]; then 
+  QTVER="qt5"
+  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed? " QTDIR; fi
+fi
+if [ "$QTVER" == "y" ]; then 
+  QTVER="qt5"
+  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed? " QTDIR; fi
+fi
+
 # Check if the Quarter library should be rebuilt.  Defaults to Yes, unless
 # it is already installed.  In that case, defer to a command line option
 # (if present) or prompt the user.
@@ -176,9 +187,9 @@ OUTPUT="emergent-build-output.txt"
 
 if [ -x "$XTERM" ]; then
   $XTERM -si -geometry 160x50 -T "emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
-  ./ubuntu-motu-emergent $REV $TAG 2>&1 > $OUTPUT
+  ./ubuntu-motu-emergent $REV $TAG $QTVER 2>&1 > $OUTPUT
 else
-  ./ubuntu-motu-emergent $REV $TAG 2>&1 | tee $OUTPUT
+  ./ubuntu-motu-emergent $REV $TAG $QTVER 2>&1 | tee $OUTPUT
 fi
 
 # .. in a symlinked directory doesn't work as expected, so .deb files end up in ~/ rather than in /tmp/.
