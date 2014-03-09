@@ -162,7 +162,7 @@ void TemtClient::CloseClient() {
 
 void TemtClient::cmdCloseProject() {
   //TEMP
-  SendError("CloseProject not implemented yet");
+  SendError("CloseProject not implemented yet", TemtClient::NOT_IMPLEMENTED);
 }
 
 void TemtClient::cmdEcho() {
@@ -181,7 +181,7 @@ void TemtClient::cmdEcho() {
 
 void TemtClient::cmdOpenProject() {
   //TEMP
-  SendError("OpenProject not implemented yet");
+  SendError("OpenProject not implemented yet", TemtClient::NOT_IMPLEMENTED);
   return;
 
   //TODO: checks:
@@ -578,50 +578,29 @@ void TemtClient::cmdGetData() {
   // note: ok if running
 
   if (msgFormat == TemtClient::JSON) {
-    bool row_from_set = false;
-    bool row_to_set = false;
-
     ostringstream ostr;
     String data;
     String col_name = "";
-    int row_from = 0;
-    int row_to = 0;
-    int rows = -1;
 
     if (!name_params.GetVal("column").isNull()) {
       col_name = name_params.GetVal("column").toString();
     }
-    if (!name_params.GetVal("row_from").isNull()) {
-      row_from = name_params.GetVal("row_from").toInt();
-      row_from_set = true;
-    }
-    if (!name_params.GetVal("row_to").isNull()) {
-      row_to = name_params.GetVal("row_to").toInt();
-      row_to_set = true;
-    }
 
-    // if row_from and row_to are both set calc the rows
-    if (row_from_set && row_to_set) {
-      rows = row_to - row_from + 1;
-    }
-    else if (row_to_set) {  // not allowed
-      SendError("Missing parameter - 'row_from' : 'row_to' not allowed without 'row_from'.", TemtClient::MISSING_PARAM);
+    int row_from, row_to, rows;
+    bool valid = CalcRowParams(row_from, rows, row_to); // get start row and number of rows to get, remove, etc.
+    if (!valid)
       return;
-    }
-    else if (!name_params.GetVal("rows").isNull()) {
-      rows = name_params.GetVal("rows").toInt();
+
+    bool result = tab->GetDataAsJSON(ostr, col_name, row_from, rows);
+    if (result) {
+      data = ostr.str().c_str();
+      // doing the message wrap here because it isn't working in SendOkJSON
+      String str = "{\"status\":\"OK\", \"data\": " + data + "}";
+      Write(str);
     }
     else {
-      rows = -1;  // all rows
+      SendError("GetData: " + tab->error_msg, TemtClient::RUNTIME);
     }
-
-
-    tab->GetDataAsJSON(ostr, col_name, row_from, rows);
-    data = ostr.str().c_str();
-
-    // doing the message wrap here because it isn't working in SendOkJSON - why????!!!!
-    String str = "{\"status\":\"OK\", \"data\": " + data + "}";
-    Write(str);
   }
   else {
     TableParams p(this, tab);
@@ -656,7 +635,7 @@ void TemtClient::cmdGetData() {
 
 void TemtClient::cmdGetDataCell() {
   if (msgFormat == TemtClient::JSON) {
-    SendError("For JSON use GetData, specify column and row");
+    SendError("For JSON use GetData, specify column and row", TemtClient::NOT_IMPLEMENTED);
   }
 
   String tnm = pos_params.SafeEl(0);
@@ -687,9 +666,18 @@ void TemtClient::cmdGetDataMatrixCell() {
     String col_name = name_params.GetVal("column").toString();
     int row_from = name_params.GetVal("row_from").toInt();
     int cell = name_params.GetVal("cell").toInt();
-    tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
-    data = ostr.str().c_str();
-    Write(data);
+    bool result = tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
+    if (result) {
+      data = ostr.str().c_str();
+      // doing the message wrap here because it isn't working in SendOkJSON
+//      String str = "{\"status\":\"OK\", \"data\": " + data + "}";
+      taMisc::DebugInfo(data);
+      String str = "{\"status\":\"OK\"" + data + "}";
+      Write(str);
+    }
+    else {
+      SendError("GetDataMatrixCell: " + tab->error_msg, TemtClient::RUNTIME);
+    }
   }
   else {
     TableParams p(this, tab);
@@ -835,21 +823,37 @@ void TemtClient::cmdRemoveData() {
 
   String tnm = name_params.GetVal("table").toString();
   DataTable* tab = GetAssertTable(tnm);
-  if (!tab) return;
+  if (!tab)
+    return;
   // note: ok if running
 
-  TableParams p(this, tab);
-  bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Remove);
-  if (!cmd_ok) return;
+  if (msgFormat == TemtClient::NATIVE) {
+    TableParams p(this, tab);
+    bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Remove);
+    if (!cmd_ok) return;
 
-  // ok if none; noop if start > rows
-  if ((p.row_from >= 0) && (p.row_from < tab->rows)) {
-    if (!tab->RemoveRows(p.row_from, p.rows)) {
-      SendError("RemoveRows command on table '" + tnm + "' did not succeed", TemtClient::RUNTIME);
-      return;
+    // ok if none; noop if start > rows
+    if ((p.row_from >= 0) && (p.row_from < tab->rows)) {
+      if (!tab->RemoveRows(p.row_from, p.rows)) {
+        SendError("RemoveRows command on table '" + tnm + "' did not succeed", TemtClient::RUNTIME);
+        return;
+      }
+    }
+    SendOk();
+  }
+  else if (msgFormat == TemtClient::JSON) {
+    int row_from, row_to, rows;
+    bool valid = CalcRowParams(row_from, rows, row_to); // get start row and number of rows to get, remove, etc.
+    if (valid) {
+      if (!tab->RemoveRows(row_from, rows)) {
+         SendError("RemoveRows command on table '" + tnm + "' did not succeed", TemtClient::RUNTIME);
+         return;
+       }
+      else {
+        SendOk();
+      }
     }
   }
-  SendOk();
 }
 
 void TemtClient::cmdSetVar() {
@@ -1030,11 +1034,9 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
   else
   {
     JSONNode n = libjson::parse(json_cmd_line);
-
     JSONNode::const_iterator i = n.begin();
     while (i != n.end()) {
-      // get the node name and value as a string
-      std::string node_name = i->name();
+      String node_name(i->name().c_str());
 
       if (node_name == "command") {
         name_params.SetVal("command", i->as_string().c_str());
@@ -1068,6 +1070,11 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       }
       else if (node_name == "cell") {
         name_params.SetVal("cell", i->as_int());  // first cell to get/set - based on flat indexing
+      }
+      else {
+        String err_msg = "Unknown parameter: " + node_name;
+        SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
+        return;  // abort - force client to fix before we get into trouble
       }
       ++i;
     }
@@ -1288,4 +1295,37 @@ void TemtClient::WriteLine(const String& ln) {
   if (!isConnected()) return;
   String lnt = ln + "\n";
   sock->write(QByteArray(lnt.chars(), lnt.length()));
+}
+
+bool TemtClient::CalcRowParams(int& row_from, int& rows, int row_to) {
+  bool row_from_set = false;
+  bool row_to_set = false;
+  row_from = 0;
+  row_to = 0;
+  rows = -1;
+
+  if (!name_params.GetVal("row_from").isNull()) {
+    row_from = name_params.GetVal("row_from").toInt();
+    row_from_set = true;
+  }
+  if (!name_params.GetVal("row_to").isNull()) {
+    row_to = name_params.GetVal("row_to").toInt();
+    row_to_set = true;
+  }
+
+  // if row_from and row_to are both set calc the rows
+  if (row_from_set && row_to_set) {
+    rows = row_to - row_from + 1;
+  }
+  else if (row_to_set) {  // not allowed
+    SendError("Missing parameter - 'row_from' : 'row_to' not allowed without 'row_from'.", TemtClient::MISSING_PARAM);
+    return false;
+  }
+  else if (!name_params.GetVal("rows").isNull()) {
+    rows = name_params.GetVal("rows").toInt();
+  }
+  else {
+    rows = -1;  // all rows
+  }
+  return true;
 }

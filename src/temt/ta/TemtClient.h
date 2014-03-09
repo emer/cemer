@@ -62,6 +62,7 @@ public:
     INVALID_FORMAT,
     UNKNOWN_COMMAND,
     MISSING_PARAM,  // program name, table name, etc not provided by client
+    UNKNOWN_PARAM,
     NOT_FOUND,  // program name, table name, etc provided but not found
     NO_OPEN_PROJECT,
     RUNTIME
@@ -121,6 +122,8 @@ protected:
   static String 	ReadQuotedString(const String& str, int& p, bool& err);
   static String		NextToken(const String& str, int& p, bool& err);
     // skip ws, get the next token; removes quotes and processes quoted/escaped strings
+
+  bool CalcRowParams(int& row_from, int& rows, int row_to);
 #ifndef __MAKETA__
   class TableParams {
   public:
@@ -158,7 +161,6 @@ protected:
     bool	ValidateParams(Cmd cmd = Get, bool mat = false);
     TableParams(TemtClient* tc_, DataTable* tab_)
       {tc = tc_; tab = tab_;}
-      
   };
 
   virtual void 		cmdGetDataCell_impl(TableParams& p);

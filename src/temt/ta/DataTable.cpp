@@ -2094,66 +2094,67 @@ void DataTable::ExportDataJSON(const String& fname) {  // write the entire table
   taRefN::unRefDone(flr);
 }
 
-void DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name, int row, int cell) {
-  JSONNode root(JSON_NODE);
-  JSONNode columns(JSON_ARRAY);
-  columns.set_name("columns");
-
-  if (row < 0 || row >= rows) {
-    row = 0;
+bool DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name, int row, int cell) {
+  if (row < 0) {
+    row = rows + row;  // so for -1 you get the last row
   }
+
+  if (row <0 || row >= rows) {
+    error_msg = "row out of range";
+    return false;
+  }
+
 
   int col_idx = this->FindColNameIdx(column_name);
-  if (col_idx != -1) {
-    DataCol* dc = data.FastEl(col_idx);
-    if (!dc->is_matrix)
-      return;
-
-    JSONNode aColumn(JSON_NODE);
-    aColumn.push_back(JSONNode("name", json_string(dc->name.chars())));
-    String val = ValTypeToStr(dc->valType());
-    aColumn.push_back(JSONNode("type", val.chars()));
-    aColumn.push_back(JSONNode("matrix", dc->is_matrix));
-    JSONNode dimensions(JSON_ARRAY);
-    dimensions.set_name("dimensions");
-    for (int d=0; d<dc->cell_geom.n_dims; d++) {
-      dimensions.push_back(JSONNode("", dc->cell_geom.size(d)));
-    }
-    aColumn.push_back(dimensions);
-    JSONNode values(JSON_ARRAY);
-    switch (dc->valType()) {
-    case VT_STRING:
-      values.push_back(JSONNode("", json_string(dc->GetValAsStringM(row, cell).chars())));
-      break;
-    case VT_DOUBLE:
-      values.push_back(JSONNode("", dc->GetValAsDoubleM(row, cell)));
-      break;
-    case VT_FLOAT:
-      values.push_back(JSONNode("", dc->GetValAsFloatM(row, cell)));
-      break;
-    case VT_INT:
-      values.push_back(JSONNode("", dc->GetValAsIntM(row, cell)));
-      break;
-    case VT_BYTE:
-      values.push_back(JSONNode("", dc->GetValAsByteM(row, cell)));
-      break;
-    case VT_VARIANT:
-      values.push_back(JSONNode("", json_string(dc->GetValAsStringM(row, cell).chars())));
-      break;
-    default:
-      values.push_back(JSONNode("", json_string(dc->GetValAsStringM(row, cell).chars())));
-      taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
-    }
-    aColumn.push_back(values);
-    columns.push_back(aColumn);
+  if (col_idx == -1) {
+    error_msg = "column not found";
+    return false;
   }
-  root.push_back(columns);
+
+  DataCol* dc = data.FastEl(col_idx);
+  if (!dc->is_matrix) {
+    error_msg = "asking for a cell of non-matrix column ";
+    return false;
+  }
+
+  if (cell <0 || cell >= dc->cell_size()) {
+    error_msg = "cell out of range error";
+    return false;
+  }
+
+  JSONNode root(JSON_NODE);
+  switch (dc->valType()) {
+  case VT_STRING:
+    root.push_back(JSONNode("value", json_string(dc->GetValAsStringM(row, cell).chars())));
+    break;
+  case VT_DOUBLE:
+    root.push_back(JSONNode("value", dc->GetValAsDoubleM(row, cell)));
+    break;
+  case VT_FLOAT:
+    root.push_back(JSONNode("value", dc->GetValAsFloatM(row, cell)));
+    break;
+  case VT_INT:
+    root.push_back(JSONNode("value", dc->GetValAsIntM(row, cell)));
+    break;
+  case VT_BYTE:
+    root.push_back(JSONNode("value", dc->GetValAsByteM(row, cell)));
+    break;
+  case VT_VARIANT:
+    root.push_back(JSONNode("value", json_string(dc->GetValAsStringM(row, cell).chars())));
+    break;
+  default:
+    root.push_back(JSONNode("value", json_string(dc->GetValAsStringM(row, cell).chars())));
+    taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
+  }
   std::string theString = root.write_formatted();
+  taMisc::DebugInfo(theString.c_str());
   strm << theString;
   strm << endl;
+
+  return true;
 }
 
-void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int start_row, int n_rows) {
+bool DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int start_row, int n_rows) {
   int stop_row;
 
   JSONNode root(JSON_NODE);
@@ -2165,7 +2166,8 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
   }
 
   if (start_row < 0 || start_row >= rows) {  // start_row could still be negative if we were passed -20 when there were only 10 rows
-    start_row = 0;
+    error_msg = "row out of range";
+    return false;
   }
 
   // do something reasonable
@@ -2177,17 +2179,22 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
   }
 
   int_Array columnList;
-  if (column_name.empty()) {  // write all columns
+  if (column_name.empty()) {  // single column not specified - gen a list of all columns
     for (int i=0; i<data.size; i++) {
       columnList.Add(i);
     }
   }
   else {
     int col_idx = this->FindColNameIdx(column_name);
-    if (col_idx != -1) {
+    if (col_idx == -1) {
+      error_msg = "column not found";
+      return false;
+    }
+    else {
       columnList.Add(col_idx);
     }
   }
+
   for (int i=0; i<columnList.size; i++) {
     JSONNode aColumn(JSON_NODE);
     DataCol* dc = data.FastEl(columnList[i]);
@@ -2356,6 +2363,8 @@ void DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
   std::string theString = root.write_formatted();
   strm << theString;
   strm << endl;
+
+  return true;
 }
 
 void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str, bool row_mark) {
