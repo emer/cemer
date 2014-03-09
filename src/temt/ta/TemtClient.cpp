@@ -669,9 +669,11 @@ void TemtClient::cmdGetDataMatrixCell() {
     bool result = tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
     if (result) {
       data = ostr.str().c_str();
+      // munge string before concatenating
+      data.remove ("{", 0);
+      data.remove("}", -1);
+      data.prepend(',');
       // doing the message wrap here because it isn't working in SendOkJSON
-//      String str = "{\"status\":\"OK\", \"data\": " + data + "}";
-      taMisc::DebugInfo(data);
       String str = "{\"status\":\"OK\"" + data + "}";
       Write(str);
     }
