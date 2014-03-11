@@ -138,9 +138,11 @@ public:
 
   TA_API friend int     split(const taString& x, taString res[], int maxn, const taString& sep);
   // #IGNORE split string into array res at separators; return number of elements
-  TA_API friend taString  common_prefix(const taString& x, const taString& y, int startpos = 0);
+  TA_API friend taString  common_prefix(const taString& x, const taString& y,
+                                        int startpos);
   // #IGNORE
-  TA_API friend taString  common_suffix(const taString& x, const taString& y,int startpos = -1);
+  TA_API friend taString  common_suffix(const taString& x, const taString& y,
+                                        int startpos);
   // #IGNORE
   TA_API friend taString  replicate(char c, int n);
   // #IGNORE
@@ -202,8 +204,8 @@ public:
   TA_API friend std::ostream&   operator<<(std::ostream& s, const taString& x);
   TA_API friend std::istream&   operator>>(std::istream& s, taString& x);
   TA_API friend int        readline(std::istream& s, taString& x,
-                                 char terminator = '\n',
-                                 int discard_terminator = 1);
+                                    char terminator,
+                                    bool discard_terminator);
   TA_API friend int     readline_auto(std::istream& strm, taString& x);
   bool                  Load_str(std::istream& istrm); // load contents from a stream
   bool                  Save_str(std::ostream& ostrm); // save contents to a stream

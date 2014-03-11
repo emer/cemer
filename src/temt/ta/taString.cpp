@@ -1438,7 +1438,7 @@ TA_API std::ostream& operator<<(std::ostream& s, const taString& x) {
   return s;
 }
 
-TA_API int readline(istream& s, taString& x, char terminator, int discard) {
+TA_API int readline(istream& s, taString& x, char terminator, bool discard) {
 //   if (!s.ipfx(0))
 //     return 0;
   int ch;
