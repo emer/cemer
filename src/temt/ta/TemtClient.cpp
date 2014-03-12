@@ -586,7 +586,8 @@ void TemtClient::cmdGetData() {
       col_name = name_params.GetVal("column").toString();
     }
 
-    int row_from, row_to, rows;
+    int row_from, rows;
+    int row_to = 0;
     bool valid = CalcRowParams(row_from, rows, row_to); // get start row and number of rows to get, remove, etc.
     if (!valid)
       return;
@@ -595,7 +596,7 @@ void TemtClient::cmdGetData() {
     if (result) {
       data = ostr.str().c_str();
       // doing the message wrap here because it isn't working in SendOkJSON
-      String str = "{\"status\":\"OK\", \"data\": " + data + "}";
+      String str = "{\"status\":\"OK\", \"result\": " + data + "}";
       Write(str);
     }
     else {
@@ -723,6 +724,7 @@ void TemtClient::cmdSetDataCell() {  // for json just like cmdSetData with fixed
 void TemtClient::cmdSetDataMatrixCell() {
   if (msgFormat == TemtClient::JSON) {
     SendError("For JSON use SetData, specify row and cell and send one value");
+    return;
   }
 
   String tnm = pos_params.SafeEl(0);
@@ -773,12 +775,12 @@ void TemtClient::cmdGetVar() {
 
   // note: check name first, because GetVar raises error
   if (!prog->HasVar(nm)) {
-    SendError("Var '" + nm + "' not found");
+    SendError("Var '" + nm + "' not found", TemtClient::NOT_FOUND);
     return;
   }
   ProgVar* var = prog->FindVarName(nm);
   if (!var) { // shouldn't happen
-    SendError("Var '" + nm + "' could unexpectedly not be retrieved");
+    SendError("Var '" + nm + "' could unexpectedly not be retrieved", TemtClient::NOT_FOUND);
     return;
   }
 
@@ -929,7 +931,7 @@ void TemtClient::cmdSetVar() {
       SendError("An error occurred while seeting Var or Arg '" + var_name + "'");
       return;
     }
-    SendOk("var set");
+    SendOk();
   }
 }
 
@@ -1267,7 +1269,9 @@ void TemtClient::SendOkNATIVE(const String& msg) {
 void TemtClient::SendOkJSON(const String& msg) {
   JSONNode root(JSON_NODE);
   root.push_back(JSONNode("status", json_string("OK")));
-  root.push_back(JSONNode("message", json_string(msg.chars())));
+  if (!msg.empty()) {
+    root.push_back(JSONNode("result", json_string(msg.chars())));
+  }
 
   String reply = root.write_formatted().c_str();
   WriteLine(reply);
