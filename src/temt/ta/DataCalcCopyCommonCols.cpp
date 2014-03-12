@@ -17,9 +17,10 @@
 #include <DataCalcLoop>
 #include <Program>
 #include <DataTable>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataCalcCopyCommonCols);
-
 
 
 void DataCalcCopyCommonCols::Initialize() {
@@ -28,15 +29,18 @@ void DataCalcCopyCommonCols::Initialize() {
 
 String DataCalcCopyCommonCols::GetDisplayName() const {
   String rval = "Copy Common Cols from: ";
+    
   if(src_data_var)
-    rval += src_data_var->name;
+    rval += " src table=" + src_data_var->name;
   else
-    rval += "?";
+    rval += " src table =?";
+    
   rval += " to: ";
+    
   if(dest_data_var)
-    rval += dest_data_var->name;
+    rval +=  " dest table=" + dest_data_var->name;
   else
-    rval += "?";
+    rval += " dest table =?";
   return rval;
 }
 
@@ -99,3 +103,38 @@ void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " +
                   dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);");
 }
+
+bool DataCalcCopyCommonCols::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+    String dc = code;  dc.downcase();
+    String tbn = GetToolbarName(); tbn.downcase();
+    String tn = GetTypeDef()->name; tn.downcase();
+    if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+    if(dc.startsWith("copy col")) return true;
+    return false;
+}
+
+bool DataCalcCopyCommonCols::CvtFmCode(const String& code) {
+    String dc = code;  dc.downcase();
+    String remainder = code.after(":");
+    if(remainder.empty()) return true;
+    
+    NameVar_PArray nv_pairs;
+    taMisc::ToNameValuePairs(remainder, nv_pairs);
+    
+    for (int i=0; i<nv_pairs.size; i++) {
+        String name = nv_pairs.FastEl(i).name;
+        name.downcase();
+        String value = nv_pairs.FastEl(i).value.toString();
+        
+        if (name.startsWith("src tab") || name.startsWith("src_tab")) {
+            src_data_var = FindVarNameInScope(value, false); // don't make
+        }
+        else if (name.startsWith("dest tab") || name.startsWith("dest_tab")) {
+            dest_data_var = FindVarNameInScope(value, false); // don't make
+        }
+    }
+    
+    SigEmitUpdated();
+    return true;
+}
+

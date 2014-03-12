@@ -41,16 +41,18 @@ public:
   virtual void	GetDataPtrsFmLoop();
   // get my data table ptrs from parent calc loop obj
 
-  String GetDisplayName() const override;
-  String	GetToolbarName() const override { return "cpy cols"; }
+  String    GetDisplayName() const override;
+  String    GetToolbarName() const override { return "copy cols"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
 
   void 	InitLinks();
   SIMPLE_COPY_EX(DataCalcCopyCommonCols,CopyInner_);
   TA_BASEFUNS(DataCalcCopyCommonCols);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override; 
+  void      UpdateAfterEdit_impl() override;
+  void      CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void      GenCssBody_impl(Program* prog) override;
 
 private:
   void	Copy_(const DataCalcCopyCommonCols& cp);

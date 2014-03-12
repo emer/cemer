@@ -51,16 +51,12 @@ bool AddNewDataRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
     String tbn = GetToolbarName(); tbn.downcase();
     String tn = GetTypeDef()->name; tn.downcase();
     if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
-    if(dc.startsWith("add new") || dc.startsWith("addnew")) return true;
+    if(dc.startsWith("add new") || dc.startsWith("addnew") || dc.startsWith("new row")) return true;
     return false;
 }
 
 bool AddNewDataRow::CvtFmCode(const String& code) {
-    String dc = code;  dc.downcase();
-    String tbn = GetToolbarName(); tbn.downcase();
-    String tn = GetTypeDef()->name; tn.downcase();
-    if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
-    
+    String dc = code;  dc.downcase();    
     String remainder = code.after(":");
     if(remainder.empty()) return true;
     
