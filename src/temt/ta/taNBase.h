@@ -37,7 +37,7 @@ public:
   void SetDefaultName() override;
   void MakeNameUnique() override;
 
-  bool          BrowserEditEnable() override { return true; }
+  bool          BrowserEditEnable() override;
   String        BrowserEditString() override { return GetDisplayName(); }
   bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
