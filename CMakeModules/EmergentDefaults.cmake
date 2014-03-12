@@ -53,7 +53,8 @@ else (WIN32) # assume gcc!!!
   endif (HAS_RETURN_TYPE_ERROR_FLAG)
 
   set(GCC_UNDEF_INLINE "-Wno-undefined-inline")
-  check_cxx_compiler_flag("${GCC_UNDEF_INLINE}" HAS_UNDEF_INLINE_FLAG)
+#  check_cxx_compiler_flag("${GCC_UNDEF_INLINE}" HAS_UNDEF_INLINE_FLAG)
+  set(HAS_UNDEF_INLINE_FLAG TRUE)
   if (HAS_UNDEF_INLINE_FLAG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_UNDEF_INLINE}")
   endif (HAS_UNDEF_INLINE_FLAG)
