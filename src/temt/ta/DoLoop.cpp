@@ -50,7 +50,7 @@ bool DoLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
 
 bool DoLoop::CvtFmCode(const String& code) {
   String cd = trim(code.after("do"));
-  if(cd.startsWith('(')) {
+  if(cd.contains('(')) {
     cd = cd.after('(');
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);

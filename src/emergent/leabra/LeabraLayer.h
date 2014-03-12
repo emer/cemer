@@ -267,6 +267,10 @@ public:
   { return spec->Compute_dWt_Nothing_Test(this, net); }
   // #CAT_Learning test whether to compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
+  void	SetUnitLearnFlags(LeabraNetwork* net)
+  { spec->SetUnitLearnFlags(this, net); }
+  // #CAT_Learning set the LEARN flags for all units in the layer
+
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 

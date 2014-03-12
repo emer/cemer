@@ -447,10 +447,10 @@ void MatrixLayerSpec::Compute_ShowGatingAct_ugp(LeabraLayer* lay,
     // NOTE: mnt_count is updated at start of trial in SNrThalLayerSpec, and we grab
     // it every cycle, so this value should be current at all points
     if(gpd->mnt_count > 0) {
-      u->SetUnitFlag(Unit::LEARN); // signals that we are maintaining this trial from prior gating -- affects rate of decay of trace in MatrixConSpec
+      u->SetLearnFlag(); // signals that we are maintaining this trial from prior gating -- affects rate of decay of trace in MatrixConSpec
     }
     else {
-      u->ClearUnitFlag(Unit::LEARN); // signals that we are NOT maintaining..
+      u->ClearLearnFlag(); // signals that we are NOT maintaining..
     }
   }
 }

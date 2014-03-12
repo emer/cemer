@@ -81,14 +81,14 @@ public:
     if(immed_trace) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        const float decay = ru->HasUnitFlag(Unit::LEARN) ? mnt_decay : no_mnt_decay;
+        const float decay = ru->HasLearnFlag() ? mnt_decay : no_mnt_decay;
         C_Compute_dWt_Matrix_ImTr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
       }
     }
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        const float decay = ru->HasUnitFlag(Unit::LEARN) ? mnt_decay : no_mnt_decay;
+        const float decay = ru->HasLearnFlag() ? mnt_decay : no_mnt_decay;
         C_Compute_dWt_Matrix_Tr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
       }
     }

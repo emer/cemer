@@ -59,21 +59,21 @@ public:
     if(da_mod == NO_DA_MOD) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // must have this flag to learn
+        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
         C_Compute_dWt_Delta_NoDa(dwts[i], ru->act_p, ru->act_m, su_act);
       }
     }
     else if(da_mod == DA_MOD) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // must have this flag to learn
+        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, ru->dav);
       }
     }
     else {                      // DA_MOD_ABS
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-        if(!ru->HasUnitFlag(Unit::LEARN)) continue; // must have this flag to learn
+        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, fabsf(ru->dav));
       }
     }

@@ -1,875 +1,896 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6236
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6893
 Program_Group .projects[0].programs.gp[0] { 
-  Program_Group .projects[0].programs.gp[0] = [10] {
-    Program @[0] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [3] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [1] {
-	NetCounterInit @[0] { };
-      };
-
-      ProgEl_List @.prog_code = [2] {
-	IfElse @[0] { 
-	  ProgEl_List @.true_code = [1] {
-	    NetCounterInit @[0] { };
-	  };
-
-	  ProgEl_List @.false_code = [1] {
-	    MemberAssign @[0] { };
-	  };
-	};
-	WhileLoop @[1] { 
-	  ProgEl_List @.loop_code = [2] {
-	    ProgramCall @[0] { 
-	      ProgArg_List @.prog_args = [3] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-	      };
-	    };
-	    NetCounterIncr @[1] { };
-	  };
-	};
-      };
-    };
-    Program @[1] { 
-      ProgObjList @.objs = [2] {
-	RndSeed_List @[0] { 
-	  taList @.seeds = [25] {
-	    RndSeed @[0] { };
-	    RndSeed @[1] { };
-	    RndSeed @[2] { };
-	    RndSeed @[3] { };
-	    RndSeed @[4] { };
-	    RndSeed @[5] { };
-	    RndSeed @[6] { };
-	    RndSeed @[7] { };
-	    RndSeed @[8] { };
-	    RndSeed @[9] { };
-	    RndSeed @[10] { };
-	    RndSeed @[11] { };
-	    RndSeed @[12] { };
-	    RndSeed @[13] { };
-	    RndSeed @[14] { };
-	    RndSeed @[15] { };
-	    RndSeed @[16] { };
-	    RndSeed @[17] { };
-	    RndSeed @[18] { };
-	    RndSeed @[19] { };
-	    RndSeed @[20] { };
-	    RndSeed @[21] { };
-	    RndSeed @[22] { };
-	    RndSeed @[23] { };
-	    RndSeed @[24] { };
-	  };
-	};
-	RndSeed @[1] { };
-      };
-
-      ProgType_List @.types = [1] {
-	DynEnumType @[0] { 
-	  DynEnumItem_List @.enums = [3] {
-	    DynEnumItem @[0] { };
-	    DynEnumItem @[1] { };
-	    DynEnumItem @[2] { };
-	  };
-	};
-      };
-
-      ProgVar_List @.args = [3] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-      };
-
-      ProgVar_List @.vars = [12] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-	ProgVar @[3] { };
-	ProgVar @[4] { };
-	ProgVar @[5] { };
-	ProgVar @[6] { };
-	ProgVar @[7] { };
-	ProgVar @[8] { };
-	ProgVar @[9] { };
-	ProgVar @[10] { };
-	ProgVar @[11] { };
-      };
-
-      Function_List @.functions = [1] {
-	Function @[0] { 
-	  ProgVar_List @.args = [0] {
-	  };
-
-	  ProgEl_List @.fun_code = [2] {
-	    LocalVars @[0] { 
-	      ProgVar_List @.local_vars = [0] {
-	      };
-	    };
-	    Switch @[1] { 
-	      ProgEl_List @.cases = [3] {
-		CaseBlock @[0] { 
-		  ProgEl_List @.prog_code = [1] {
-		    MethodCall @[0] { 
-		      ProgArg_List @.meth_args = [0] {
-		      };
-		    };
-		  };
-		};
-		CaseBlock @[1] { 
-		  ProgEl_List @.prog_code = [1] {
-		    MethodCall @[0] { 
-		      ProgArg_List @.meth_args = [0] {
-		      };
-		    };
-		  };
-		};
-		CaseBlock @[2] { 
-		  ProgEl_List @.prog_code = [1] {
-		    MethodCall @[0] { 
-		      ProgArg_List @.meth_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		  };
-		};
-	      };
-	    };
-	  };
-	};
-      };
-
-      ProgEl_List @.init_code = [7] {
-	AssignExpr @[0] { };
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	AssignExpr @[2] { };
-	AssignExpr @[3] { };
-	FunctionCall @[4] { 
-	  ProgArg_List @.fun_args = [0] {
-	  };
-	};
-	WtInitPrompt @[5] { 
-	  ProgEl_List @.yes_code = [3] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	    MethodCall @[1] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	    PrintExpr @[2] { };
-	  };
-	};
-	AssignExpr @[6] { };
-      };
-
-      ProgEl_List @.prog_code = [10] {
-	AssignExpr @[0] { };
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	AssignExpr @[2] { };
-	MemberAssign @[3] { };
-	FunctionCall @[4] { 
-	  ProgArg_List @.fun_args = [0] {
-	  };
-	};
-	IfElse @[5] { 
-	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	    PrintExpr @[1] { };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	AssignExpr @[6] { };
-	WhileLoop @[7] { 
-	  ProgEl_List @.loop_code = [4] {
-	    ProgramCall @[0] { 
-	      ProgArg_List @.prog_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	    NetCounterIncr @[1] { };
-	    IfElse @[2] { 
-	      ProgEl_List @.true_code = [2] {
-		VarIncr @[0] { };
-		IfBreak @[1] { };
-	      };
-
-	      ProgEl_List @.false_code = [1] {
-		AssignExpr @[0] { };
-	      };
-	    };
-	    IfElse @[3] { 
-	      ProgEl_List @.true_code = [1] {
-		IfElse @[0] { 
-		  ProgEl_List @.true_code = [1] {
-		    ProgramCall @[0] { 
-		      ProgArg_List @.prog_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		  };
-
-		  ProgEl_List @.false_code = [0] {
-		  };
-		};
-	      };
-
-	      ProgEl_List @.false_code = [0] {
-	      };
-	    };
-	  };
-	};
-	IfElse @[8] { 
-	  ProgEl_List @.true_code = [1] {
-	    ProgramCall @[0] { 
-	      ProgArg_List @.prog_args = [1] {
-		ProgArg @[0] { };
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	MethodCall @[9] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-    };
-    Program @[2] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [9] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-	ProgVar @[3] { };
-	ProgVar @[4] { };
-	ProgVar @[5] { };
-	ProgVar @[6] { };
-	ProgVar @[7] { };
-	ProgVar @[8] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [2] {
-	NetCounterInit @[0] { };
-	AssignExpr @[1] { };
-      };
-
-      ProgEl_List @.prog_code = [11] {
-	NetCounterInit @[0] { };
-	AssignExpr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	NetDataLoop @[4] { 
-	  ProgEl_List @.loop_code = [2] {
-	    ProgramCall @[0] { 
-	      ProgArg_List @.prog_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	    IfElse @[1] { 
-	      ProgEl_List @.true_code = [1] {
-		StopStepPoint @[0] { };
-	      };
-
-	      ProgEl_List @.false_code = [0] {
-	      };
-	    };
-	  };
-	};
-	IfElse @[5] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	IfElse @[6] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	MethodCall @[7] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	IfElse @[8] { 
-	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	    IfElse @[1] { 
-	      ProgEl_List @.true_code = [2] {
-		MethodCall @[0] { 
-		  ProgArg_List @.meth_args = [0] {
-		  };
-		};
-		MethodCall @[1] { 
-		  ProgArg_List @.meth_args = [0] {
-		  };
-		};
-	      };
-
-	      ProgEl_List @.false_code = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	MethodCall @[9] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	ProgramCall @[10] { 
-	  ProgArg_List @.prog_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-      };
-    };
-    Program @[3] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [4] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-	ProgVar @[3] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [1] {
-	NetCounterInit @[0] { };
-      };
-
-      ProgEl_List @.prog_code = [8] {
-	NetCounterInit @[0] { };
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	WhileLoop @[2] { 
-	  ProgEl_List @.loop_code = [3] {
-	    ProgramCall @[0] { 
-	      ProgArg_List @.prog_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	    NetCounterIncr @[1] { };
-	    MethodCall @[2] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-	};
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	IfElse @[4] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	IfElse @[5] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	ProgramCall @[6] { 
-	  ProgArg_List @.prog_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	NetUpdateView @[7] { };
-      };
-    };
-    Program @[4] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [3] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [1] {
-	NetCounterInit @[0] { };
-      };
-
-      ProgEl_List @.prog_code = [10] {
-	NetCounterInit @[0] { };
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	ProgramCall @[2] { 
-	  ProgArg_List @.prog_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	IfElse @[4] { 
-	  ProgEl_List @.true_code = [1] {
-	    AssignExpr @[0] { };
-	  };
-
-	  ProgEl_List @.false_code = [1] {
-	    AssignExpr @[0] { };
-	  };
-	};
-	WhileLoop @[5] { 
-	  ProgEl_List @.loop_code = [4] {
-	    ProgramCall @[0] { 
-	      ProgArg_List @.prog_args = [1] {
-		ProgArg @[0] { };
-	      };
-	    };
-	    NetCounterIncr @[1] { };
-	    IfContinue @[2] { };
-	    IfBreak @[3] { };
-	  };
-	};
-	MethodCall @[6] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	IfElse @[7] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	IfElse @[8] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-	NetUpdateView @[9] { };
-      };
-    };
-    Program @[5] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [1] {
-	ProgVar @[0] { };
-      };
-
-      ProgVar_List @.vars = [1] {
-	ProgVar @[0] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [2] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	NetUpdateView @[1] { };
-      };
-    };
-    Program @[6] { 
-      ProgObjList @.objs = [1] {
-	LayerWriter @[0] { 
-	  LayerDataEl_List @.layer_data = [3] {
-	    LayerWriterEl @[0] { };
-	    LayerWriterEl @[1] { };
-	    LayerWriterEl @[2] { };
-	  };
-	};
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [1] {
-	ProgVar @[0] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [3] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-      };
-
-      ProgEl_List @.prog_code = [2] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-    };
-    Program @[7] { 
-      ProgObjList @.objs = [1] {
-	NetMonitor @[0] { 
-	  NetMonItem_List @.items = [9] {
-	    NetMonItem @[0] { };
-	    NetMonItem @[1] { };
-	    NetMonItem @[2] { };
-	    NetMonItem @[3] { };
-	    NetMonItem @[4] { };
-	    NetMonItem @[5] { };
-	    NetMonItem @[6] { };
-	    NetMonItem @[7] { };
-	    NetMonItem @[8] { };
-	  };
-	};
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [1] {
-	ProgVar @[0] { };
-      };
-
-      ProgVar_List @.vars = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [3] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-      };
-
-      ProgEl_List @.prog_code = [4] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-      };
-    };
-    Program @[8] { 
-      ProgObjList @.objs = [1] {
-	NetMonitor @[0] { 
-	  NetMonItem_List @.items = [8] {
-	    NetMonItem @[0] { };
-	    NetMonItem @[1] { };
-	    NetMonItem @[2] { };
-	    NetMonItem @[3] { };
-	    NetMonItem @[4] { };
-	    NetMonItem @[5] { };
-	    NetMonItem @[6] { };
-	    NetMonItem @[7] { };
-	  };
-	};
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [1] {
-	ProgVar @[0] { };
-      };
-
-      ProgVar_List @.vars = [3] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [4] {
-	AssignExpr @[0] { };
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-      };
-
-      ProgEl_List @.prog_code = [7] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	AssignExpr @[2] { };
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MethodCall @[4] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MethodCall @[5] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	Comment @[6] { };
-      };
-    };
-    Program @[9] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [1] {
-	ProgVar @[0] { };
-      };
-
-      ProgVar_List @.vars = [6] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-	ProgVar @[2] { };
-	ProgVar @[3] { };
-	ProgVar @[4] { };
-	ProgVar @[5] { };
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [6] {
-	IfReturn @[0] { };
-	MiscCall @[1] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	MiscCall @[2] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	AssignExpr @[3] { };
-	MethodCall @[4] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MethodCall @[5] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-      };
-    };
+ Program @[0] { 
+  ProgObjList @.objs = [0] {
   };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [3] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [1] {
+   NetCounterInit @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+   IfElse @[0] { 
+    ProgEl_List @.true_code = [1] {
+     NetCounterInit @[0] { };
+    };
+
+    ProgEl_List @.false_code = [1] {
+     MemberAssign @[0] { };
+    };
+   };
+   WhileLoop @[1] { 
+    ProgEl_List @.loop_code = [2] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+      };
+     };
+     NetCounterIncr @[1] { };
+    };
+   };
+  };
+ };
+ Program @[1] { 
+  ProgObjList @.objs = [2] {
+   RndSeed_List @[0] { 
+    taList @.seeds = [25] {
+     RndSeed @[0] { };
+     RndSeed @[1] { };
+     RndSeed @[2] { };
+     RndSeed @[3] { };
+     RndSeed @[4] { };
+     RndSeed @[5] { };
+     RndSeed @[6] { };
+     RndSeed @[7] { };
+     RndSeed @[8] { };
+     RndSeed @[9] { };
+     RndSeed @[10] { };
+     RndSeed @[11] { };
+     RndSeed @[12] { };
+     RndSeed @[13] { };
+     RndSeed @[14] { };
+     RndSeed @[15] { };
+     RndSeed @[16] { };
+     RndSeed @[17] { };
+     RndSeed @[18] { };
+     RndSeed @[19] { };
+     RndSeed @[20] { };
+     RndSeed @[21] { };
+     RndSeed @[22] { };
+     RndSeed @[23] { };
+     RndSeed @[24] { };
+    };
+   };
+   RndSeed @[1] { };
+  };
+
+  ProgType_List @.types = [1] {
+   DynEnumType @[0] { 
+    DynEnumItem_List @.enums = [3] {
+     DynEnumItem @[0] { };
+     DynEnumItem @[1] { };
+     DynEnumItem @[2] { };
+    };
+   };
+  };
+
+  ProgVar_List @.args = [3] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+  };
+
+  ProgVar_List @.vars = [12] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+   ProgVar @[3] { };
+   ProgVar @[4] { };
+   ProgVar @[5] { };
+   ProgVar @[6] { };
+   ProgVar @[7] { };
+   ProgVar @[8] { };
+   ProgVar @[9] { };
+   ProgVar @[10] { };
+   ProgVar @[11] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [1] {
+   Function @[0] { 
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgEl_List @.fun_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     Switch @[1] { 
+      ProgEl_List @.cases = [3] {
+       CaseBlock @[0] { 
+	ProgEl_List @.prog_code = [1] {
+	 MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	};
+       };
+       CaseBlock @[1] { 
+	ProgEl_List @.prog_code = [1] {
+	 MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	};
+       };
+       CaseBlock @[2] { 
+	ProgEl_List @.prog_code = [1] {
+	 MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+   };
+  };
+
+  ProgEl_List @.init_code = [7] {
+   AssignExpr @[0] { };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   AssignExpr @[2] { };
+   AssignExpr @[3] { };
+   FunctionCall @[4] { 
+    ProgArg_List @.fun_args = [0] {
+    };
+   };
+   WtInitPrompt @[5] { 
+    ProgEl_List @.yes_code = [3] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintExpr @[2] { };
+    };
+   };
+   AssignExpr @[6] { };
+  };
+
+  ProgEl_List @.prog_code = [10] {
+   AssignExpr @[0] { };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   AssignExpr @[2] { };
+   MemberAssign @[3] { };
+   FunctionCall @[4] { 
+    ProgArg_List @.fun_args = [0] {
+    };
+   };
+   IfElse @[5] { 
+    ProgEl_List @.true_code = [2] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintExpr @[1] { };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   AssignExpr @[6] { };
+   WhileLoop @[7] { 
+    ProgEl_List @.loop_code = [4] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     NetCounterIncr @[1] { };
+     IfElse @[2] { 
+      ProgEl_List @.true_code = [2] {
+       VarIncr @[0] { };
+       IfBreak @[1] { };
+      };
+
+      ProgEl_List @.false_code = [1] {
+       AssignExpr @[0] { };
+      };
+     };
+     IfElse @[3] { 
+      ProgEl_List @.true_code = [1] {
+       IfElse @[0] { 
+	ProgEl_List @.true_code = [1] {
+	 ProgramCall @[0] { 
+	  ProgArg_List @.prog_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	};
+
+	ProgEl_List @.false_code = [0] {
+	};
+       };
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+     };
+    };
+   };
+   IfElse @[8] { 
+    ProgEl_List @.true_code = [1] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   MethodCall @[9] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+  };
+ };
+ Program @[2] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [9] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+   ProgVar @[3] { };
+   ProgVar @[4] { };
+   ProgVar @[5] { };
+   ProgVar @[6] { };
+   ProgVar @[7] { };
+   ProgVar @[8] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [2] {
+   NetCounterInit @[0] { };
+   AssignExpr @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [11] {
+   NetCounterInit @[0] { };
+   AssignExpr @[1] { };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   NetDataLoop @[4] { 
+    ProgEl_List @.loop_code = [2] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     IfElse @[1] { 
+      ProgEl_List @.true_code = [1] {
+       StopStepPoint @[0] { };
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+     };
+    };
+   };
+   IfElse @[5] { 
+    ProgEl_List @.true_code = [1] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   IfElse @[6] { 
+    ProgEl_List @.true_code = [1] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   MethodCall @[7] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   IfElse @[8] { 
+    ProgEl_List @.true_code = [2] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     IfElse @[1] { 
+      ProgEl_List @.true_code = [2] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   MethodCall @[9] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ProgramCall @[10] { 
+    ProgArg_List @.prog_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+ };
+ Program @[3] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [4] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+   ProgVar @[3] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [1] {
+   NetCounterInit @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [8] {
+   NetCounterInit @[0] { };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   WhileLoop @[2] { 
+    ProgEl_List @.loop_code = [3] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     NetCounterIncr @[1] { };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   IfElse @[4] { 
+    ProgEl_List @.true_code = [1] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   IfElse @[5] { 
+    ProgEl_List @.true_code = [1] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   ProgramCall @[6] { 
+    ProgArg_List @.prog_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   NetUpdateView @[7] { };
+  };
+ };
+ Program @[4] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [3] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [1] {
+   NetCounterInit @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [10] {
+   NetCounterInit @[0] { };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ProgramCall @[2] { 
+    ProgArg_List @.prog_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   IfElse @[4] { 
+    ProgEl_List @.true_code = [1] {
+     AssignExpr @[0] { };
+    };
+
+    ProgEl_List @.false_code = [1] {
+     AssignExpr @[0] { };
+    };
+   };
+   WhileLoop @[5] { 
+    ProgEl_List @.loop_code = [4] {
+     ProgramCall @[0] { 
+      ProgArg_List @.prog_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     NetCounterIncr @[1] { };
+     IfContinue @[2] { };
+     IfBreak @[3] { };
+    };
+   };
+   MethodCall @[6] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[7] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   IfElse @[8] { 
+    ProgEl_List @.true_code = [1] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.false_code = [0] {
+    };
+   };
+   NetUpdateView @[9] { };
+  };
+ };
+ Program @[5] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [2] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   NetUpdateView @[1] { };
+  };
+ };
+ Program @[6] { 
+  ProgObjList @.objs = [1] {
+   LayerWriter @[0] { 
+    LayerDataEl_List @.layer_data = [3] {
+     LayerWriterEl @[0] { };
+     LayerWriterEl @[1] { };
+     LayerWriterEl @[2] { };
+    };
+   };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [3] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+  };
+ };
+ Program @[7] { 
+  ProgObjList @.objs = [1] {
+   NetMonitor @[0] { 
+    NetMonItem_List @.items = [9] {
+     NetMonItem @[0] { };
+     NetMonItem @[1] { };
+     NetMonItem @[2] { };
+     NetMonItem @[3] { };
+     NetMonItem @[4] { };
+     NetMonItem @[5] { };
+     NetMonItem @[6] { };
+     NetMonItem @[7] { };
+     NetMonItem @[8] { };
+    };
+   };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [2] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [3] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+
+  ProgEl_List @.prog_code = [4] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+  };
+ };
+ Program @[8] { 
+  ProgObjList @.objs = [1] {
+   NetMonitor @[0] { 
+    NetMonItem_List @.items = [8] {
+     NetMonItem @[0] { };
+     NetMonItem @[1] { };
+     NetMonItem @[2] { };
+     NetMonItem @[3] { };
+     NetMonItem @[4] { };
+     NetMonItem @[5] { };
+     NetMonItem @[6] { };
+     NetMonItem @[7] { };
+    };
+   };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [3] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [4] {
+   AssignExpr @[0] { };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MethodCall @[2] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [1] {
+     ProgArg @[0] { };
+    };
+   };
+  };
+
+  ProgEl_List @.prog_code = [7] {
+   MethodCall @[0] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   MethodCall @[1] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   AssignExpr @[2] { };
+   MethodCall @[3] { 
+    ProgArg_List @.meth_args = [4] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+     ProgArg @[2] { };
+     ProgArg @[3] { };
+    };
+   };
+   MethodCall @[4] { 
+    ProgArg_List @.meth_args = [4] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+     ProgArg @[2] { };
+     ProgArg @[3] { };
+    };
+   };
+   MethodCall @[5] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   Comment @[6] { };
+  };
+ };
+ Program @[9] { 
+  ProgObjList @.objs = [0] {
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [1] {
+   ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [6] {
+   ProgVar @[0] { };
+   ProgVar @[1] { };
+   ProgVar @[2] { };
+   ProgVar @[3] { };
+   ProgVar @[4] { };
+   ProgVar @[5] { };
+  };
+
+  ProgBrkPt_List @.brk_pts = [0] {
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [6] {
+   IfReturn @[0] { };
+   MiscCall @[1] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   MiscCall @[2] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   AssignExpr @[3] { };
+   MethodCall @[4] { 
+    ProgArg_List @.meth_args = [4] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+     ProgArg @[2] { };
+     ProgArg @[3] { };
+    };
+   };
+   MethodCall @[5] { 
+    ProgArg_List @.meth_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+  };
+ };
 };
 Program_Group .projects[0].programs.gp[0] {
  name="LeabraAll_Std";
@@ -890,7 +911,7 @@ Program_Group .projects[0].programs.gp[0] {
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -954,6 +975,11 @@ Program_Group .projects[0].programs.gp[0] {
     desc="maximum number of batch runs to perform";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -1484,6 +1510,11 @@ Program_Group .projects[0].programs.gp[0] {
     desc=;
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -2091,7 +2122,7 @@ Program_Group .projects[0].programs.gp[0] {
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -2219,6 +2250,11 @@ Program_Group .projects[0].programs.gp[0] {
     desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -2424,7 +2460,7 @@ Program_Group .projects[0].programs.gp[0] {
     cond {
      expr="network.epoch % stable_wt_update_interval == 0";
     };
-    show_false_code=1;
+    show_false_code=0;
     true_code {
      name="ProgEl_List_124";
      el_typ=ProgCode;
@@ -2591,7 +2627,7 @@ Program_Group .projects[0].programs.gp[0] {
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -2665,6 +2701,11 @@ Program_Group .projects[0].programs.gp[0] {
     desc="call ComputeAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -2901,7 +2942,7 @@ Program_Group .projects[0].programs.gp[0] {
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -2966,6 +3007,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
     desc="if true, will update network views at end of settling";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -3169,36 +3215,16 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
     };
    };
-   IfElse @[7] {
-    desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
-presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
+   MethodCall @[7] {
+    desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
     flags=0;
     orig_prog_code=;
-    cond {
-     expr="network.Compute_TrialStats_Test()";
-    };
-    show_false_code=0;
-    true_code {
+    result_var=NULL;
+    obj=$.projects[0].programs.gp[0][4].args[0]$;
+    method=LeabraNetwork::Compute_PhaseStats;
+    meth_args {
      name=;
-     el_typ=ProgCode;
-     el_def=0;
-     MethodCall @[0] {
-      desc="compute trial-level statistics";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects[0].programs.gp[0][4].args[0]$;
-      method=LeabraNetwork::Compute_TrialStats;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-    };
-    false_code {
-     name=;
-     el_typ=ProgCode;
+     el_typ=ProgArg;
      el_def=0;
     };
    };
@@ -3258,7 +3284,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -3291,6 +3317,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -3357,7 +3388,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       quiet=0;
       na_by_range=0;
       ext_flags=EXT;
-      noise {type=NONE: mean=0: var=0.5: par=1: name="RandomSpec_7": };
+      noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[1] {
       chan_name="Output";
@@ -3368,7 +3399,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       quiet=0;
       na_by_range=0;
       ext_flags=TARG;
-      noise {type=NONE: mean=0: var=0.5: par=1: name="RandomSpec_8": };
+      noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
@@ -3379,14 +3410,14 @@ presented in the minus phase -- if this is not the case (values are computed on 
       quiet=0;
       na_by_range=0;
       ext_flags=0;
-      noise {type=NONE: mean=0: var=0.5: par=1: name="RandomSpec_9": };
+      noise {name="RandomSpec_9": type=NONE: mean=0: var=0.5: par=1: };
      };
     };
    };
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -3432,6 +3463,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
     init_from=NULL;
    };
   };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
+  };
   functions {
    name=;
    el_typ=Function;
@@ -3453,8 +3489,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=DataBlock_ptr;
-      type="DataBlock*";
+      arg_type=DataTable_ptr;
+      type="DataTable*";
       name="db";
       required=1;
       def_val=;
@@ -3537,8 +3573,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_typ=ProgArg;
      el_def=0;
      ProgArg @[0] {
-      arg_type=DataBlock_ptr;
-      type="DataBlock*";
+      arg_type=DataTable_ptr;
+      type="DataTable*";
       name="db";
       required=1;
       def_val=;
@@ -3608,7 +3644,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3640,7 +3676,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3672,7 +3708,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3704,7 +3740,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3736,7 +3772,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3768,7 +3804,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3800,7 +3836,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3832,7 +3868,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3864,7 +3900,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -3887,7 +3923,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -3932,6 +3968,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -4135,7 +4176,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4167,7 +4208,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4199,7 +4240,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4231,7 +4272,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4263,7 +4304,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4295,7 +4336,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4327,7 +4368,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4359,7 +4400,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       agg_col {
        col_name=;
       };
-      agg {op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: name="": };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       select_rows=0;
       select_spec {
        col_name=;
@@ -4382,7 +4423,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -4438,6 +4479,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;
@@ -4728,7 +4774,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
   };
   types {
    name=;
-   el_typ=ProgType;
+   el_typ=DynEnumType;
    el_def=0;
   };
   args {
@@ -4811,6 +4857,11 @@ and the testing data is updated.  The first epoch monitor should have all the it
     desc="batch + epoch";
     init_from=NULL;
    };
+  };
+  brk_pts {
+   name=;
+   el_typ=ProgBrkPt;
+   el_def=0;
   };
   functions {
    name=;

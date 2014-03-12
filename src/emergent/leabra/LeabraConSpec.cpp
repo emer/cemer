@@ -112,7 +112,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   l_mix = X_COS_DIFF;
-  thr_l_mix = 0.1f;
+  thr_l_mix = 0.05f;
 
   if(taMisc::is_loading) {
     taVersion v634(6, 3, 4);

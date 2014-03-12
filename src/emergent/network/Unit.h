@@ -118,6 +118,13 @@ public: //
   inline bool   lesioned() const { return HasUnitFlag(LESIONED); }
   // check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
 
+  inline void           SetLearnFlag() { SetUnitFlag(LEARN); }
+  // set the LEARN flag for this unit
+  inline bool           HasLearnFlag() const { return HasUnitFlag(LEARN); }
+  // is the LEARN flag set for this unit
+  inline void           ClearLearnFlag() { ClearUnitFlag(LEARN); }
+  // clearn the LEARN flag for this unit
+
   virtual void  Lesion();
   // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on unit -- removes it from all processing operations
   virtual void  UnLesion();

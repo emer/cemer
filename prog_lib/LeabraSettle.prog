@@ -1,106 +1,105 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6893
 Program .projects[0].programs.gp[0][4] { 
-  ProgObjList @.objs = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.args = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-  };
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  ProgVar_List @.vars = [3] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-  };
+ ProgVar_List @.vars = [3] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ ProgBrkPt_List @.brk_pts = [0] {
+ };
 
-  ProgEl_List @.load_code = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.init_code = [1] {
-    NetCounterInit @[0] { };
-  };
+ ProgEl_List @.init_code = [1] {
+  NetCounterInit @[0] { };
+ };
 
-  ProgEl_List @.prog_code = [10] {
-    NetCounterInit @[0] { };
-    MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    ProgramCall @[2] { 
-      ProgArg_List @.prog_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    MethodCall @[3] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    IfElse @[4] { 
-      ProgEl_List @.true_code = [1] {
-	AssignExpr @[0] { };
-      };
-
-      ProgEl_List @.false_code = [1] {
-	AssignExpr @[0] { };
-      };
-    };
-    WhileLoop @[5] { 
-      ProgEl_List @.loop_code = [4] {
-	ProgramCall @[0] { 
-	  ProgArg_List @.prog_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	NetCounterIncr @[1] { };
-	IfContinue @[2] { };
-	IfBreak @[3] { };
-      };
-    };
-    MethodCall @[6] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    If @[7] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-    };
-    If @[8] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-    };
-    NetUpdateView @[9] { };
+ ProgEl_List @.prog_code = [10] {
+  NetCounterInit @[0] { };
+  MethodCall @[1] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
+  ProgramCall @[2] { 
+   ProgArg_List @.prog_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+  MethodCall @[3] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  IfElse @[4] { 
+   ProgEl_List @.true_code = [1] {
+    AssignExpr @[0] { };
+   };
+
+   ProgEl_List @.false_code = [1] {
+    AssignExpr @[0] { };
+   };
+  };
+  WhileLoop @[5] { 
+   ProgEl_List @.loop_code = [4] {
+    ProgramCall @[0] { 
+     ProgArg_List @.prog_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    NetCounterIncr @[1] { };
+    IfContinue @[2] { };
+    IfBreak @[3] { };
+   };
+  };
+  MethodCall @[6] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  MethodCall @[7] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  IfElse @[8] { 
+   ProgEl_List @.true_code = [1] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+
+   ProgEl_List @.false_code = [0] {
+   };
+  };
+  NetUpdateView @[9] { };
+ };
 };
 Program .projects[0].programs.gp[0][4] {
  name="LeabraSettle";
  short_nm="Settle";
  tags="Leabra, Std";
  desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
- flags=;
+ flags=0;
  objs {
   name=;
-  el_typ=taOBase;
+  el_typ=taNBase;
   el_def=0;
  };
  types {
   name=;
-  el_typ=ProgType;
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
@@ -113,7 +112,7 @@ Program .projects[0].programs.gp[0][4] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -122,9 +121,9 @@ Program .projects[0].programs.gp[0][4] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
@@ -139,7 +138,7 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="current cycle of settling (local loop counter)";
    init_from=NULL;
@@ -147,9 +146,9 @@ Program .projects[0].programs.gp[0][4] {
   ProgVar @[1] {
    name="min_cycles";
    var_type=T_Int;
-   int_val=15;
+   int_val=0;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
 sets the minimum number of cycles to settle for, regardless of network state changes, etc";
@@ -160,29 +159,30 @@ sets the minimum number of cycles to settle for, regardless of network state cha
    var_type=T_Bool;
    bool_val=1;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="if true, will update network views at end of settling";
    init_from=NULL;
   };
+ };
+ brk_pts {
+  name=;
+  el_typ=ProgBrkPt;
+  el_def=0;
  };
  functions {
   name=;
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
   name=;
-  el_typ=NetCounterInit;
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=.projects[0].programs.gp[0][4].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$$;
    counter=Network::cycle;
@@ -191,11 +191,12 @@ sets the minimum number of cycles to settle for, regardless of network state cha
  };
  prog_code {
   name=;
-  el_typ=NetCounterInit;
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize local cycle counter and corresponding counter on network";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][4].args[0]$;
    local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
    counter=Network::cycle;
@@ -203,7 +204,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
   };
   MethodCall @[1] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=Network::Init_InputData;
@@ -216,7 +218,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
   ProgramCall @[2] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -247,7 +250,8 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   MethodCall @[3] {
    desc="initializes various counters at start of settling";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Settle_Init;
@@ -259,17 +263,20 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   IfElse @[4] {
    desc="get appropriate min_cycles value depending on which phase we're in";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    cond {
     expr="network.phase_no <= 1";
    };
+   show_false_code=1;
    true_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
     AssignExpr @[0] {
      desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      result_var=.projects[0].programs.gp[0][4].vars[1]$$;
      expr {
       expr="network.min_cycles";
@@ -278,11 +285,12 @@ this program can be extended to do arbitrary things to generate data and apply i
    };
    false_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
     AssignExpr @[0] {
      desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      result_var=$.projects[0].programs.gp[0][4].vars[1]$;
      expr {
       expr="network.min_cycles_phase2";
@@ -292,14 +300,16 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   WhileLoop @[5] {
    desc="the main loop over cycles of updating";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    loop_code {
     name=;
-    el_typ=ProgramCall;
+    el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the cycle program, which computes one cycle of activations";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -320,7 +330,8 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     NetCounterIncr @[1] {
      desc="increment cycle counter (also on network)";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      network_var=$.projects[0].programs.gp[0][4].args[0]$;
      local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
      counter=Network::cycle;
@@ -328,14 +339,16 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     IfContinue @[2] {
      desc="avoid subsequent stopping criteria if below min_cycles";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      cond {
       expr="cycle < min_cycles";
      };
     };
     IfBreak @[3] {
      desc="stopping criterion for settling: based either on maximum change in activation (maxda) or on the maximum activation value in the network getting over threshold (which ever comes first).  Set either parmeter to values that are always false (e.g., trg_max_act_stopcrit = -1) to eliminate associated source of criterion for stopping settling.";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      cond {
       expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
@@ -348,7 +361,8 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
   MethodCall @[6] {
    desc="perform final operations at end of settling (storing final activations, etc)";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][4].args[0]$;
    method=LeabraNetwork::Settle_Final;
@@ -358,44 +372,35 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
    };
   };
-  If @[7] {
-   desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
-presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
-   flags=;
-   cond {
-    expr="network.Compute_TrialStats_Test()";
-   };
-   true_code {
+  MethodCall @[7] {
+   desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
+   method=LeabraNetwork::Compute_PhaseStats;
+   meth_args {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgArg;
     el_def=0;
-    MethodCall @[0] {
-     desc="compute trial-level statistics";
-     flags=;
-     result_var=NULL;
-     obj=$.projects[0].programs.gp[0][4].args[0]$;
-     method=LeabraNetwork::Compute_TrialStats;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
    };
   };
-  If @[8] {
+  IfElse @[8] {
    desc="this stat must be called in plus phase when reward information is avail";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    cond {
     expr="network.phase_no == 1";
    };
+   show_false_code=0;
    true_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
      desc="get external reward information";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][4].args[0]$;
      method=LeabraNetwork::Compute_ExtRew;
@@ -406,10 +411,16 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
    };
+   false_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
   };
   NetUpdateView @[9] {
    desc="update network views, if update_net_view == true";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][4].args[0]$;
    update_var=.projects[0].programs.gp[0][4].vars[2]$$;
   };

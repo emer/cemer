@@ -619,6 +619,9 @@ public:
   virtual bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
 
+  virtual void	SetUnitLearnFlags(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning set the LEARN flags for all units in the layer
+
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 

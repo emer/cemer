@@ -1583,6 +1583,87 @@ void LeabraNetwork::Compute_TrialStats() {
   minus_output_name = output_name; // grab and hold..
 }
 
+void LeabraNetwork::Compute_PhaseStats() {
+  bool no_plus_testing = false;
+  if(no_plus_test && (train_mode == TEST)) {
+    no_plus_testing = true;
+  }
+
+  switch(phase_order) {
+  case MINUS_PLUS:
+    if(no_plus_testing) {
+      Compute_MinusStats();
+      Compute_PlusStats();
+    }
+    else {
+      if(phase_no == 0)
+        Compute_MinusStats();
+      else
+        Compute_PlusStats();
+    }
+    break;
+  case PLUS_MINUS:
+    if(no_plus_testing) {
+      Compute_MinusStats();
+      Compute_PlusStats();
+    }
+    else {
+      if(phase_no == 1)
+        Compute_MinusStats();
+      else
+        Compute_PlusStats();
+    }
+    break;
+  case PLUS_ONLY:
+    Compute_MinusStats();
+    Compute_PlusStats();
+    break;
+  case MINUS_PLUS_NOTHING:
+  case MINUS_PLUS_MINUS:
+    if(no_plus_testing) {
+      if(phase_no == 1) {
+        Compute_MinusStats();
+        Compute_PlusStats();
+      }
+    }
+    else {
+      if(phase_no == 0)
+        Compute_MinusStats();
+      else
+        Compute_PlusStats();
+    }
+    break;
+  case PLUS_NOTHING:
+    if(phase_no == 1) {
+      Compute_PlusStats();
+      Compute_MinusStats();
+    }
+    break;
+  }
+}
+
+void LeabraNetwork::Compute_MinusStats() {
+  Compute_MinusCycles();
+  minus_output_name = output_name; // grab and hold..
+}
+
+void LeabraNetwork::Compute_PlusStats() {
+  if(unlearnable_trial) {
+    sse = 0.0f;                 // ignore errors..
+    norm_err = 0.0f;
+    cos_err = 0.0f;
+    cos_err_prv = 0.0f;
+    cos_err_vs_prv = 0.0f;
+  }
+  else {
+    Compute_SSE(sse_unit_avg, sse_sqrt);
+    if(compute_prerr)
+      Compute_PRerr();
+    Compute_NormErr();
+    Compute_CosErr();
+  }
+}
+
 void LeabraNetwork::Compute_AbsRelNetin() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())

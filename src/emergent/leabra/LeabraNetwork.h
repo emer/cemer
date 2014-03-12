@@ -637,9 +637,16 @@ public:
   virtual void	Compute_MinusCycles();
   // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
   void	Compute_TrialStats() override;
-  // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
+  // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase -- use Compute_TrialStats_Test() to determine when -- HOWEVER: it is much better to call Compute_PhaseStats(), which calls Compute_MinusStats() and Compute_PlustStats() separately at end of each phase (respectively) to get the appropriate stats at each point
   virtual bool	Compute_TrialStats_Test();
   // #CAT_Statistic determine whether it is time to run trial stats -- typically the minus phase but it depends on network phase_order settings etc
+
+  virtual void  Compute_PhaseStats();
+  // #CAT_Statistic compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case
+  virtual void  Compute_MinusStats();
+  // #CAT_Statistic compute the stats that should be computed at the end of the minus phase: MinusCycles and minus_output_name -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase
+  virtual void  Compute_PlusStats();
+  // #CAT_Statistic compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase
 
   virtual void	Compute_AbsRelNetin();
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network
