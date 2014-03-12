@@ -32,6 +32,9 @@ INHERITED(DataOneProg)
 public:
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "new row"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
+
 
   TA_BASEFUNS_NOCOPY(AddNewDataRow);
 protected:

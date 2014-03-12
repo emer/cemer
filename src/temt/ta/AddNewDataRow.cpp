@@ -15,6 +15,8 @@
 
 #include "AddNewDataRow.h"
 #include <Program>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(AddNewDataRow);
 
@@ -23,19 +25,59 @@ void AddNewDataRow::Initialize() {
 }
 
 String AddNewDataRow::GetDisplayName() const {
-  String rval = "AddNewDataRow to: ";
-  if(data_var) rval += data_var->name;
-  else rval += "?";
-  return rval;
+    String rval = "Add New Row: ";
+    
+    if(data_var)
+        rval += " table=" + data_var->name + " ";
+    else
+        rval += " table=? ";
+    
+    return rval;
 }
 
 // todo: needs CvtFmCode!
 
 void AddNewDataRow::GenCssBody_impl(Program* prog) {
-  if(!data_var) {
-    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
-    return;
-  }
-  prog->AddLine(this, data_var->name + ".AddBlankRow();", ProgLine::MAIN_LINE);
-  prog->AddVerboseLine(this);
+    if(!data_var) {
+        prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
+        return;
+    }
+    prog->AddLine(this, data_var->name + ".AddBlankRow();", ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
 }
+
+bool AddNewDataRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+    String dc = code;  dc.downcase();
+    String tbn = GetToolbarName(); tbn.downcase();
+    String tn = GetTypeDef()->name; tn.downcase();
+    if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+    if(dc.startsWith("add new") || dc.startsWith("addnew")) return true;
+    return false;
+}
+
+bool AddNewDataRow::CvtFmCode(const String& code) {
+    String dc = code;  dc.downcase();
+    String tbn = GetToolbarName(); tbn.downcase();
+    String tn = GetTypeDef()->name; tn.downcase();
+    if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
+    
+    String remainder = code.after(":");
+    if(remainder.empty()) return true;
+    
+    NameVar_PArray nv_pairs;
+    taMisc::ToNameValuePairs(remainder, nv_pairs);
+    
+    for (int i=0; i<nv_pairs.size; i++) {
+        String name = nv_pairs.FastEl(i).name;
+        name.downcase();
+        String value = nv_pairs.FastEl(i).value.toString();
+        
+        if (name.startsWith("tab")) {
+            data_var = FindVarNameInScope(value, false); // don't make
+        }
+     }
+    
+    SigEmitUpdated();
+    return true;
+}
+
