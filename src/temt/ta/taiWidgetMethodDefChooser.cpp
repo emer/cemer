@@ -85,11 +85,8 @@ void taiWidgetMethodDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MethodDef* mth = mbs->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
-    String desc_copy(mth->desc);
-    item->setData(1, Qt::ToolTipRole, desc_copy.wrap(tool_tip_wrap_length));
   }
 }
 
@@ -107,14 +104,11 @@ int taiWidgetMethodDefChooser::BuildChooser_1(iDialogItemChooser* ic, TypeDef* t
     if (!ShowMethod(mth)) continue;
     ++rval;
     cat = mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth, mth->desc, 2);
     QVariant proto = static_cast<const char *>(mth->prototype()); // share
     item->setData(0, Qt::ToolTipRole, proto);
     item->setData(1, Qt::DisplayRole, mth->name);
     item->setData(1, Qt::ToolTipRole, proto);
-    item->setData(2, Qt::DisplayRole, mth->desc);
-    String desc_copy(mth->desc);
-    item->setData(2, Qt::ToolTipRole, desc_copy.wrap(tool_tip_wrap_length));
   }
   // do parent type(s) as non-selectable folders
   for (int i = 0; i < top_typ->parents.size; ++i) {
@@ -138,11 +132,8 @@ void taiWidgetMethodDefChooser::BuildChooser_2(iDialogItemChooser* ic) {
     MethodDef* mth = mbs->FastEl(i);
     if(!mth->HasOption("EXPERT")) continue;
     cat = mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
-    String desc_copy(mth->desc);
-    item->setData(1, Qt::ToolTipRole, desc_copy.wrap(tool_tip_wrap_length));
   }
 }
 

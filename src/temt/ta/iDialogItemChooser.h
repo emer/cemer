@@ -83,10 +83,13 @@ public:
   void                  ClearFilter(); // remove filtering
 
   virtual QTreeWidgetItem* AddItem(const QString& itm_txt, QTreeWidgetItem* parent,
-    const void* data_ = NULL); // add one item to dialog, optionally with data
+                                   const void* data_ = NULL, const String& desc = "",
+                                   int desc_idx = 1);
+  // add one item to dialog, optionally with data
   virtual QTreeWidgetItem* AddItem(const QString& itm_cat, const QString& itm_txt,
-    QTreeWidgetItem* parent, const void* data_ = NULL);
-    // add one categorized item to dialog, optionally with data
+                                   QTreeWidgetItem* parent, const void* data_ = NULL,
+                                   const String& desc = "", int desc_idx = 1);
+  // add one categorized item to dialog, optionally with data
 
 protected:
   int                   m_changing;

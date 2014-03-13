@@ -332,6 +332,11 @@ void taiMisc::InitMetrics(bool reinit) {
     mbig_name_font = QApplication::font(w);
   delete w;
 
+  QFontMetrics fmn(mbig_name_font);
+  int avgw = fmn.averageCharWidth();
+  int avgh = fmn.height();
+  scrn_chars.w = scrn_s.w / avgw;
+  scrn_chars.h = scrn_s.h / avgh;
 }
 
 /* Qt Metrics note

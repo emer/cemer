@@ -130,9 +130,9 @@ int taiWidgetTypeDefChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* top
     String par_name;
     if (par) par_name = par->name;
     String cat = top_typ->OptionAfter("CAT_"); // note: could be empty for no category
-    item = ic->AddItem(cat, top_typ->name, top_item, (void*)top_typ);
+    item = ic->AddItem(cat, top_typ->name, top_item, (void*)top_typ, 
+                       top_typ->desc, 2);
     item->setData(1, Qt::DisplayRole, par_name);
-    item->setData(2, Qt::DisplayRole, top_typ->desc);
     ++rval;
     } break;
   }

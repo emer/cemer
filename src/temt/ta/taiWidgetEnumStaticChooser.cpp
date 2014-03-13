@@ -119,8 +119,8 @@ void taiWidgetEnumStaticChooser::BuildChooser_0(iDialogItemChooser* ic) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
         if(!ShowEnum(ed)) continue;
-        QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
-        item->setData(1, Qt::DisplayRole, ed->desc);
+        QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed,
+                                            ed->desc);
       }
     }
   }
@@ -130,8 +130,8 @@ void taiWidgetEnumStaticChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
+                                        mbr->desc);
   }
 
   MethodSpace* mts = &targ_typ->methods;
@@ -139,9 +139,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
+                                        mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
 
@@ -154,8 +154,7 @@ void taiWidgetEnumStaticChooser::BuildChooser_1(iDialogItemChooser* ic) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
         if(!ShowEnum(ed)) continue;
-        QTreeWidgetItem* item = ic->AddItem(cat, ed->name, NULL, (void*)ed);
-        item->setData(1, Qt::DisplayRole, ed->desc);
+        QTreeWidgetItem* item = ic->AddItem(cat, ed->name, NULL, (void*)ed, ed->desc);
       }
     }
   }
@@ -168,8 +167,7 @@ void taiWidgetEnumStaticChooser::BuildChooser_2(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
   }
 }
 
@@ -180,9 +178,8 @@ void taiWidgetEnumStaticChooser::BuildChooser_3(iDialogItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
 
@@ -195,8 +192,8 @@ void taiWidgetEnumStaticChooser::BuildChooser_4(iDialogItemChooser* ic) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
         if(!ed->HasOption("EXPERT")) continue;
-        QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
-        item->setData(1, Qt::DisplayRole, ed->desc);
+        QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed,
+                                            ed->desc);
       }
     }
   }
@@ -206,8 +203,8 @@ void taiWidgetEnumStaticChooser::BuildChooser_4(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if(!mbr->HasOption("EXPERT")) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
+                                        mbr->desc);
   }
 
   MethodSpace* mts = &targ_typ->methods;
@@ -215,9 +212,9 @@ void taiWidgetEnumStaticChooser::BuildChooser_4(iDialogItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if(!mth->HasOption("EXPERT")) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
+                                        mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
 

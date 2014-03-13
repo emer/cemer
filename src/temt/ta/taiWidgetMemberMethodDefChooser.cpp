@@ -107,8 +107,8 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
+                                        mbr->desc);
   }
 
   MethodSpace* mts = &targ_typ->methods;
@@ -116,9 +116,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
+                                        mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
 
@@ -141,9 +141,8 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_2(iDialogItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if (!ShowMethod(mth)) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth, mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
 
@@ -154,8 +153,8 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_3(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if(!mbr->HasOption("EXPERT")) continue;
     cat = "member: " + mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr,
+                                        mbr->desc);
   }
 
   MethodSpace* mts = &targ_typ->methods;
@@ -163,9 +162,9 @@ void taiWidgetMemberMethodDefChooser::BuildChooser_3(iDialogItemChooser* ic) {
     MethodDef* mth = mts->FastEl(i);
     if(!mth->HasOption("EXPERT")) continue;
     cat = "method: " + mth->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth,
+                                        mth->desc);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
-    item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
 

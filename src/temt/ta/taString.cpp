@@ -1521,38 +1521,32 @@ taString taString::wrap(int width) const {
   if (length() <= width)
     return *this;
 
+  taString rval(*this);
+  rval.makeUnique();
   int i = 0;
   int k, counter;
-  while(i < length())
-  {
-    for (counter = 0; counter < width; counter++)
-    {
+  while(i < rval.length()) {
+    for (counter = 0; counter < width; counter++) {
       // check if end of string reached
-      if (i == length())
-      {
-        return *this;
+      if (i == rval.length()) {
+        return rval;
       }
       // if we find a newline reset the counter
-      if (mrep->s[i] == '\n')
-      {
+      if (rval[i] == '\n') {
         counter = 1;
       }
       i++;
     }
     // check for whitespace
-    if (isspace(mrep->s[i]))
-    {
-      mrep->s[i] = '\n';
+    if (isspace(rval[i])) {
+      rval[i] = '\n';
       i++;
     }
-    else
-    {
+    else {
       // check for nearest whitespace back in string
-      for (k = i; k > 0; k--)
-      {
-        if (isspace(mrep->s[k]))
-        {
-          mrep->s[k] = '\n';
+      for (k = i; k > 0; k--) {
+        if (isspace(rval[k])) {
+          rval[k] = '\n';
           // set string index back to character after this one
           i = k + 1;
           break;
@@ -1560,6 +1554,6 @@ taString taString::wrap(int width) const {
       }
     }
   }
-  return *this;
+  return rval;
 }
 

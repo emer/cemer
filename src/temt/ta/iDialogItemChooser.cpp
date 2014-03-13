@@ -25,6 +25,7 @@
 #include <QLineEdit>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QHeaderView>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -115,17 +116,21 @@ void iDialogItemChooser::accept() {
   m_client = NULL;
 }
 
-QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat, const QString& itm_txt,
-  QTreeWidgetItem* parent, const void* data_)
+QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat,
+                                             const QString& itm_txt,
+                                             QTreeWidgetItem* parent, const void* data_,
+                                             const String& desc, int desc_idx)
 {
-  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_);
+  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_, desc);
   if (!itm_cat.isEmpty())
     rval->setData(0, ObjCatRole, itm_cat);
   return rval;
 }
 
-QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem* parent,
-  const void* data_)
+QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_txt,
+                                             QTreeWidgetItem* parent,
+                                             const void* data_,
+                                             const String& desc, int desc_idx)
 {
   QTreeWidgetItem* rval;
   if (parent)
@@ -138,6 +143,11 @@ QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_txt, QTreeWidget
   //note: use the ta version because Qt uses longs on some plats
   if (data_)
     rval->setData(0, ObjDataRole, QVariant((ta_intptr_t)data_));
+  if(!desc.empty()) {
+    rval->setText(desc_idx, desc);
+    int ttwidth = taiM->scrn_chars.w / 2;
+    rval->setData(desc_idx, Qt::ToolTipRole, desc.wrap(ttwidth));
+  }
   return rval;
 }
 

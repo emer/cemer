@@ -81,10 +81,9 @@ int taiWidgetProgLibElChooser::BuildChooser_0(iDialogItemChooser* ic, taList_imp
   for (int i = 0; i < plib->size; ++i) {
     ProgLibEl* pel = plib->FastEl(i);
     QTreeWidgetItem* item = ic->AddItem(pel->tags, pel->GetDisplayName(),
-                                        top_item, pel);
+                                        top_item, pel, pel->desc, 3);
     item->setText(1, pel->lib_name); // GetColText(taBase::key_type));
     item->setText(2, pel->tags);
-    item->setText(3, pel->desc); // GetColText(taBase::key_desc));
     item->setText(4, pel->date);
     if(pel->URL.nonempty())
       item->setText(5, pel->URL);

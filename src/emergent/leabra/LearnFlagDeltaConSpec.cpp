@@ -19,6 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(LearnFlagDeltaConSpec);
 
 void LearnFlagDeltaConSpec::Initialize() {
   da_mod = NO_DA_MOD;
+  send_act = ACT_M;
 }
 
 void LearnFlagDeltaConSpec::Defaults_init() {

@@ -36,7 +36,13 @@ public:
     DA_MOD_ABS,                 // modulate the learning by multiplying by the absolute value of the recv unit dopamine (abs(dav)) -- this does not change the sign, only the magnitude of learning
   };
 
+  enum SendAct {                // what var to use for sending activation
+    ACT_M,                      // minus phase activation
+    ACT_P,                      // plus phase activation
+  };
+
   DaModType     da_mod;         // how does receiving unit dopamine modulate learning (or not)?
+  SendAct       send_act;       // what variable to use on the sending unit for activation to enter into the delta rule learning equation
 
   inline void C_Compute_dWt_Delta_NoDa(float& dwt, const float ru_act_p, 
                                        const float ru_act_m, const float su_act) {
@@ -52,7 +58,11 @@ public:
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) override {
-    const float su_act = su->act_m; // note: using act_m
+    float su_act;
+    if(send_act == ACT_M)
+      su_act = su->act_m;
+    else
+      su_act = su->act_p;
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;

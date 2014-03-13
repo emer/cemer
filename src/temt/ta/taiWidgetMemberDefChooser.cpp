@@ -83,8 +83,7 @@ void taiWidgetMemberDefChooser::BuildChooser_0(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if (!ShowMember(mbr)) continue;
     cat = mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
   }
 }
 
@@ -95,8 +94,7 @@ void taiWidgetMemberDefChooser::BuildChooser_1(iDialogItemChooser* ic) {
     MemberDef* mbr = mbs->FastEl(i);
     if(!mbr->HasOption("EXPERT")) continue;
     cat = mbr->OptionAfter("CAT_");
-    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
-    item->setData(1, Qt::DisplayRole, mbr->desc);
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr, mbr->desc);
   }
 }
 

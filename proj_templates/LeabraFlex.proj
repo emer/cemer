@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6867
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6893
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { };
@@ -714,7 +714,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
 
     ProgType_List @.types = [1] {
-     DynEnumTypeFromDTColumn @["ConfigOptions"] { 
+     DynEnumTableCol @["ConfigOptions"] { 
       DynEnumItem_List @.enums = [1] {
        DynEnumItem @["basic_train"] { };
       };
@@ -985,7 +985,7 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgEl_List @.prog_code = [22] {
+    ProgEl_List @.prog_code = [23] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
@@ -1061,13 +1061,17 @@ LeabraProject .projects["LeabraFlex"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetUpdateView @[19] { };
-     ProgramCall @[20] { 
+     MethodCall @[19] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetUpdateView @[20] { };
+     ProgramCall @[21] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[21] { 
+     MethodCall @[22] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -2783,17 +2787,17 @@ LeabraProject .projects["LeabraFlex"] {
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20131021T011027Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgUserId\":3,\"wgUserEditCount\":2048,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgUserId\":3,\"wgUserEditCount\":2055,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\"
 :0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"12c8da1412200699260d4f7eb7c9046a+\\\\\",\"patrolToken\":\"db62a1c584b776bb36a49196998aa849+\\\\\",\"watchToken\":\"1616fd11568eca17c27eb401adadfd83+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:2e0bfc558009b21b7678aea49ed35e21 */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"dff146e7ca904e664be4208077b66530+\\\\\",\"patrolToken\":\"ad8f2d38d7355744105425c1b12dfbb8+\\\\\",\"watchToken\":\"e3be76069893ea9e84cb760bea027ba4+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:9e9135667ac2c62c9864475ff9044f7e */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\"]);
 }</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=gumaxdd&amp;version=20140109T140417Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20140109T140417Z&amp;*\"></script>
-<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cmediawiki.page.watch.ajax&amp;skin=gumaxdd&amp;version=20140301T011836Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131219T201121Z&amp;*\"></script></head>
+<script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.api.watch%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cmediawiki.page.watch.ajax&amp;skin=gumaxdd&amp;version=20140307T191852Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20131219T201121Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-gumaxdd action-view\">
 <div id=\"gumax-page\">
 	<!--///===== Drop Down menu script =====///-->
@@ -2898,7 +2902,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlexProgs\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=df072ba4e12a610af921cd3edbbf750c%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=f85cbeefe6c0a1ed0e5f5611192b29c0%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2966,7 +2970,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.036 seconds
+CPU time usage: 0.032 seconds
 Real time usage: 0.036 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
@@ -2976,7 +2980,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140305111100
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140312185820
  -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
@@ -3012,7 +3016,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 9,637 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 9,754 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -3051,7 +3055,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.410 secs. -->
+<!-- Served in 0.436 secs. -->
 
 
 
@@ -7412,7 +7416,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name=;
      el_typ=DynEnumType;
      el_def=0;
-     DynEnumTypeFromDTColumn @["ConfigOptions"] {
+     DynEnumTableCol @["ConfigOptions"] {
       name="ConfigOptions";
       desc=;
       enums {
@@ -8696,12 +8700,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
      MethodCall @[9] {
-      desc="compute trial-level statistics -- only in minus phase!";
+      desc="compute minus phase statistics";
       flags=0;
       orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
-      method=LeabraNetwork::Compute_TrialStats;
+      method=LeabraNetwork::Compute_MinusStats;
       meth_args {
        name=;
        el_typ=ProgArg;
@@ -8838,6 +8842,19 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
      MethodCall @[18] {
+      desc="compute plus phase statistics";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
+      method=LeabraNetwork::Compute_PlusStats;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[19] {
       desc="get external reward information";
       flags=0;
       orig_prog_code=;
@@ -8850,14 +8867,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     NetUpdateView @[19] {
+     NetUpdateView @[20] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$;
      };
-     ProgramCall @[20] {
+     ProgramCall @[21] {
       desc="standard end of trial stuff";
       flags=0;
       orig_prog_code=;
@@ -8879,7 +8896,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"]$$;
       targ_ld_init="*TrialEnd*";
      };
-     MethodCall @[21] {
+     MethodCall @[22] {
       desc=;
       flags=0;
       orig_prog_code=;

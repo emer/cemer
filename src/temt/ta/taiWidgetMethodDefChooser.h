@@ -45,8 +45,6 @@ public:
                      taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
                      const String& flt_start_txt = "");
 protected:
-  static const int      tool_tip_wrap_length = 70;
-
   const String          itemTag() const {return "Method: ";}
   const String          labelNameNonNull() const;
 

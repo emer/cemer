@@ -89,9 +89,9 @@ int taiWidgetEnumTypeDefChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef*
     TypeDef* chld = top_typ->sub_types.FastEl(i);
     if (!chld->IsEnum()) continue;
     if (AddType_Enum(chld, top_typ)) {
-      QTreeWidgetItem* item = ic->AddItem(top_typ->name, top_item, (void*)chld);
+      QTreeWidgetItem* item = ic->AddItem(top_typ->name, top_item, (void*)chld,
+                                          chld->desc, 2);
       item->setData(1, Qt::DisplayRole, chld->name);
-      item->setData(2, Qt::DisplayRole, chld->desc);
       ++rval;
     }
   }

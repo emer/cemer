@@ -103,14 +103,12 @@ taiWidgetItemChooser::~taiWidgetItemChooser() {
 
 void taiWidgetItemChooser::BuildChooser(iDialogItemChooser* ic, int view) {
   if(new1_par) {
-    QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par);
+    QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par, targ_typ->name);
     item->setData(0, iDialogItemChooser::NewFunRole, true);
-    item->setData(1, Qt::DisplayRole, targ_typ->name); //note: no desc
   }
   if(new2_par) {
-    QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par);
+    QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par, targ_typ->name);
     item->setData(0, iDialogItemChooser::NewFunRole, true);
-    item->setData(1, Qt::DisplayRole, targ_typ->name); //note: no desc
   }
 }
 
