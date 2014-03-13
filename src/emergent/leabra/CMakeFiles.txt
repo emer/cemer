@@ -112,6 +112,7 @@ set(leabra_HEADS_MAKETA
 
   LearnDriverLayerSpec.h
   LearnFlagDeltaConSpec.h
+  LearnFlagHebbConSpec.h
   PPTgUnitSpec.h
   LHbRMTgUnitSpec.h
   VTALayerSpec.h
@@ -265,6 +266,7 @@ set(leabra_SRCS
 
   LearnDriverLayerSpec.cpp
   LearnFlagDeltaConSpec.cpp
+  LearnFlagHebbConSpec.cpp
   PPTgUnitSpec.cpp
   LHbRMTgUnitSpec.cpp
   VTALayerSpec.cpp
