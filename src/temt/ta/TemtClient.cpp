@@ -286,9 +286,21 @@ void TemtClient::cmdSetData() {
     DataTable* tab = GetAssertTable(tnm);
     if (!tab) return;
 
-    int row = name_params.GetVal("row_from").toInt();
-    tab->SetDataFromJSON(tableData, row);  // -1 for append
-    SendOk();
+    int row = 0;
+    if (!name_params.GetVal("row_from").isNull()) {
+      row = name_params.GetVal("row_from").toInt();
+    }
+    int cell = 0;
+    if (!name_params.GetVal("cell").isNull()) {
+      cell = name_params.GetVal("cell").toInt();
+    }
+    bool result = tab->SetDataFromJSON(tableData, row, cell);  // row -1 for append
+    if (result) {
+      SendOk();
+    }
+    else {
+      SendError("SetData: " + tab->error_msg, TemtClient::RUNTIME);
+    }
   }
 }
 
@@ -486,27 +498,33 @@ void TemtClient::cmdAppendData() {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
-
+  
   String tnm = name_params.GetVal("table").toString();
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
   // note: ok if running
-
+  
   if (msgFormat == TemtClient::JSON) {
-    tab->SetDataFromJSON(tableData, -1);  // true for append
-    SendOk();
+    bool result = tab->SetDataFromJSON(tableData, -1);  // true for append
+    
+    if (result) {
+      SendOk();
+    }
+    else {
+      SendError("AppendData: " + tab->error_msg, TemtClient::RUNTIME);
+    }
   }
   else {
     TableParams p(this, tab);
     bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
     //NOTE: p will have already sent an ERROR if cmd_ok is false
     // any subsequent failure must send an ERROR
-
-
+    
+    
     // ok, now we must block/waiting until all expected lines received
     // note: some of the expected lines may already be in lines buffer
     setState(CS_DATA_IN);
-
+    
     while ((lines.size < p.lines) && (state != CS_DISCONNECTED)) {
       // note: signals not invoked again inside this event loop
       if (sock->canReadLine())

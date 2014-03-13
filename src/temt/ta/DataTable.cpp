@@ -2905,12 +2905,16 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
   }
 }
 
-void DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
+bool DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
+  bool rval = true;
   JSONNode::const_iterator i = n.begin();
   while (i != n.end()){
     // recursively call ourselves to dig deeper into the tree
     if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
-      SetDataFromJSON(*i);
+      rval = SetDataFromJSON(*i);
+      if (rval == false) {
+        return rval;
+      }
     }
 
     // get the node name and value as a string
@@ -2922,20 +2926,21 @@ void DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
         start_row = rows + start_row + 1;
       }
       JSONNode::const_iterator columns = i->begin();
-      while (columns != i->end()) {
+      while (columns != i->end() && rval == true) {
         const JSONNode aCol = *columns;
-        SetColumnFromJSON(aCol, start_row);
+        rval = SetColumnFromJSON(aCol, start_row, start_cell);
         columns++;
       }
     }
     ++i;
   }
+  return rval;
 }
 
-void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell) { // row -1 means append, anything else overwrites starting at row
+bool DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int start_cell) { // row -1 means append, anything else overwrites starting at row
   JSONNode theValues;
   JSONNode theDimensions;
-  String columnName;
+  String columnName("");
   DataCol::ValType columnType = VT_STRING;
   DataCol* dc;
   bool isMatrix = false;
@@ -2961,7 +2966,13 @@ void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell)
     }
     columnData++;
   }
-  // we have all we need - make/find columns & write to the data table
+  
+  if (theValues.empty()) {
+    error_msg = "values empty";
+    return false;
+  }
+  
+  // make/find columns & write to the data table
   bool makeNew = true;
   dc = this->data.FindName(columnName);
   if (!dc) {
@@ -2969,6 +2980,11 @@ void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell)
       dc = this->NewCol(columnType, columnName);
     }
     else {
+      if (theDimensions.empty()) {
+        error_msg = "matrix dimensions empty";
+        return false;
+      }
+
       int colIdx;
       JSONNode::const_iterator dims = theDimensions.begin();
       while (dims != theDimensions.end()) {
@@ -2978,7 +2994,14 @@ void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell)
       dc = this->NewColMatrixN(columnType, columnName, mg, colIdx);
     }
   }
-
+  
+  // we have a column (either new or existing)
+  isMatrix = dc->is_matrix;
+  if (isMatrix) {
+    mg = dc->cell_geom;
+  }
+  columnType = dc->valType();
+  
   int row;
   int rowCount = theValues.size();  // row count to write to table
 
@@ -3029,67 +3052,82 @@ void DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int cell)
   }
 
   if (isMatrix) {
+    int valueCount = 0;  // how many values were passed in
     const JSONNode matrixArray = theValues;
     int_Array intValues;
     float_Array floatValues;
     double_Array doubleValues;
     String_Array stringValues;
     Variant_Array variantValues;
-
+    
     // create a flat array of values
     switch (dc->valType()) {
-    case VT_STRING:
-      ParseJSONMatrixStringToFlat(matrixArray, stringValues);
-      break;
-    case VT_DOUBLE:
-      ParseJSONMatrixDoubleToFlat(matrixArray, doubleValues);
-      break;
-    case VT_FLOAT:
-      ParseJSONMatrixFloatToFlat(matrixArray, floatValues);
-      break;
-    case VT_INT:
-      ParseJSONMatrixIntToFlat(matrixArray, intValues);
-      break;
-    case VT_BYTE:
-      ParseJSONMatrixIntToFlat(matrixArray, intValues);
-      break;
-    case VT_VARIANT:
-      ParseJSONMatrixVariantToFlat(matrixArray, variantValues);
-      break;
-    default:
-      ParseJSONMatrixStringToFlat(matrixArray, stringValues);
-      taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+      case VT_STRING:
+        ParseJSONMatrixStringToFlat(matrixArray, stringValues);
+        valueCount = stringValues.size;
+        break;
+      case VT_DOUBLE:
+        ParseJSONMatrixDoubleToFlat(matrixArray, doubleValues);
+        valueCount = doubleValues.size;
+        break;
+      case VT_FLOAT:
+        ParseJSONMatrixFloatToFlat(matrixArray, floatValues);
+        valueCount = floatValues.size;
+        break;
+      case VT_INT:
+        ParseJSONMatrixIntToFlat(matrixArray, intValues);
+        valueCount = intValues.size;
+        break;
+      case VT_BYTE:
+        ParseJSONMatrixIntToFlat(matrixArray, intValues);
+        valueCount = intValues.size;
+        break;
+      case VT_VARIANT:
+        ParseJSONMatrixVariantToFlat(matrixArray, variantValues);
+        valueCount = variantValues.size;
+        break;
+      default:
+        ParseJSONMatrixStringToFlat(matrixArray, stringValues);
+        valueCount = stringValues.size;
+        taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
+    }
+    
+    
+    if (valueCount + start_cell > mg.Product()) {
+      error_msg = "more values than cells?";
+      return false;
     }
 
     // store flat array of values into matrix cells
     for (int i = 0, r = row; i < rowCount; i++, r++) {
-      for (int j = 0; j < mg.Product(); j++ ) {
+      for (int j = 0, k = start_cell; j < valueCount; j++, k++) {
         switch (dc->valType()) {
         case VT_STRING:
-          SetValAsStringM(stringValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsStringM(stringValues[i*mg.Product() + j], columnName, r, k);
           break;
         case VT_DOUBLE:
-          SetValAsDoubleM(doubleValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsDoubleM(doubleValues[i*mg.Product() + j], columnName, r, k);
           break;
         case VT_FLOAT:
-          SetValAsFloatM(floatValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsFloatM(floatValues[i*mg.Product() + j], columnName, r, k);
           break;
         case VT_INT:
-          SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, k);
           break;
         case VT_BYTE:
-          SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsIntM(intValues[i*mg.Product() + j], columnName, r, k);
           break;
         case VT_VARIANT:
-          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, r, k);
           break;
         default:
-          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, r, j);
+          SetValAsVarM(variantValues[i*mg.Product() + j], columnName, r, k);
           taMisc::Info("DataTable::ParseJSONColumn -- column type undefined - should not happen");
         }
       }
     }
   }
+  return true;
 }
 
 void DataTable::ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values) { // not const we want to fill the array
