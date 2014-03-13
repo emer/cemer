@@ -19,11 +19,13 @@
 #include <taiMisc>
 
 #include <QKeyEvent>
-
+#include <iLineEdit>
 
 iTableWidget::iTableWidget(QWidget* parent)
 :inherited(parent)
 {
+  iTableWidgetDefaultDelegate* del = new iTableWidgetDefaultDelegate(this);
+  setItemDelegate(del);
 }
 
 void iTableWidget::keyPressEvent(QKeyEvent* e) {
@@ -73,5 +75,38 @@ void iTableWidget::keyPressEvent(QKeyEvent* e) {
     }
   }
   inherited::keyPressEvent(e);
+}
+
+////////////////////////////////////////////////
+//      iTableWidgetDefaultDelegate
+
+
+iTableWidgetDefaultDelegate::iTableWidgetDefaultDelegate(iTableWidget* own_tw) :
+  inherited(own_tw)
+{
+  own_tree_widg = own_tw;
+}
+
+QWidget* iTableWidgetDefaultDelegate::createEditor(QWidget *parent,
+                                                  const QStyleOptionViewItem &option,
+                                                  const QModelIndex &index) const {
+  QWidget* widg = inherited::createEditor(parent, option, index);
+  QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
+  if(le) {
+    iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
+    // if(own_tree_widg) {
+    //   QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
+    //                    own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
+    // }
+    return il;
+  }
+  return widg;
+}
+
+void iTableWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
+                                              const QModelIndex& index) const {
+  inherited::setModelData(editor, model, index);
+  // if(own_tree_widg)
+  //   own_tree_widg->itemWasEdited(index);
 }
 

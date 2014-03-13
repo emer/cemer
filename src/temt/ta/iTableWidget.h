@@ -18,9 +18,9 @@
 
 // parent includes:
 #include "ta_def.h"
-#ifndef __MAKETA__
+
 #include <QTableWidget>
-#endif
+#include <QStyledItemDelegate>
 
 // member includes:
 
@@ -38,6 +38,23 @@ public:
 
 protected:
   void         keyPressEvent(QKeyEvent* e) override;
+};
+
+class TA_API iTableWidgetDefaultDelegate: public QStyledItemDelegate {
+  // this delegate is used to provide editing feedback info to the standard tree widget
+INHERITED(QStyledItemDelegate)
+Q_OBJECT
+public:
+  iTableWidget*   own_tree_widg;
+ 
+  iTableWidgetDefaultDelegate(iTableWidget* own_tw);
+
+  QWidget*     createEditor(QWidget *parent,
+                            const QStyleOptionViewItem &option,
+                            const QModelIndex &index) const override;
+
+  void         setModelData(QWidget* editor, QAbstractItemModel* model,
+                            const QModelIndex& index) const override;
 };
 
 #endif // iTableWidget_h

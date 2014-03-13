@@ -18,6 +18,7 @@
 #include <iClipData>
 #include <CellRange>
 #include <iVec2i>
+#include <iLineEdit>
 
 #include <taMisc>
 #include <taiMisc>
@@ -33,6 +34,9 @@ iTableView::iTableView(QWidget* parent)
 {
   ext_select_on = false;
   m_saved_scroll_pos = 0;
+
+  iTableViewDefaultDelegate* del = new iTableViewDefaultDelegate(this);
+  setItemDelegate(del);
 
   setEditTriggers(DoubleClicked | SelectedClicked | EditKeyPressed | AnyKeyPressed);
 
@@ -394,5 +398,39 @@ bool iTableView::SelectRows(int st_row, int end_row) {
   if(!br.isValid()) return false;
   selectionModel()->select(QItemSelection(tl,br), QItemSelectionModel::ClearAndSelect);
   return true;
+}
+
+
+////////////////////////////////////////////////
+//      iTableViewDefaultDelegate
+
+
+iTableViewDefaultDelegate::iTableViewDefaultDelegate(iTableView* own_tw) :
+  inherited(own_tw)
+{
+  own_tree_widg = own_tw;
+}
+
+QWidget* iTableViewDefaultDelegate::createEditor(QWidget *parent,
+                                                  const QStyleOptionViewItem &option,
+                                                  const QModelIndex &index) const {
+  QWidget* widg = inherited::createEditor(parent, option, index);
+  QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
+  if(le) {
+    iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
+    // if(own_tree_widg) {
+    //   QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
+    //                    own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
+    // }
+    return il;
+  }
+  return widg;
+}
+
+void iTableViewDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
+                                              const QModelIndex& index) const {
+  inherited::setModelData(editor, model, index);
+  // if(own_tree_widg)
+  //   own_tree_widg->itemWasEdited(index);
 }
 

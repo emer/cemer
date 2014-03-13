@@ -18,9 +18,9 @@
 
 // parent includes:
 #include "ta_def.h"
-#ifndef __MAKETA__
+
 #include <QTableView>
-#endif
+#include <QStyledItemDelegate>
 
 // member includes:
 #include <QPointer>
@@ -130,6 +130,23 @@ public:
 
  protected slots:
   void                  RowColOp(int op_code); // based on selection
+};
+
+class TA_API iTableViewDefaultDelegate: public QStyledItemDelegate {
+  // this delegate is used to provide editing feedback info to the standard tree widget
+INHERITED(QStyledItemDelegate)
+Q_OBJECT
+public:
+  iTableView*   own_tree_widg;
+ 
+  iTableViewDefaultDelegate(iTableView* own_tw);
+
+  QWidget*     createEditor(QWidget *parent,
+                            const QStyleOptionViewItem &option,
+                            const QModelIndex &index) const override;
+
+  void         setModelData(QWidget* editor, QAbstractItemModel* model,
+                            const QModelIndex& index) const override;
 };
 
 #endif // iTableView_h
