@@ -3093,8 +3093,12 @@ bool DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int start
     }
     
     
+    if (start_cell < 0 || start_cell > mg.Product()) {
+      error_msg = "cell range error";
+      return false;
+    }
     if (valueCount + start_cell > mg.Product()) {
-      error_msg = "more values than cells?";
+      error_msg = "more values than cells";
       return false;
     }
 
