@@ -28,15 +28,13 @@ void DataCalcCopyCommonCols::Initialize() {
 }
 
 String DataCalcCopyCommonCols::GetDisplayName() const {
-  String rval = "Copy Common Cols from: ";
+  String rval = "Copy Common Cols: ";
     
   if(src_data_var)
     rval += " src table=" + src_data_var->name;
   else
     rval += " src table =?";
-    
-  rval += " to: ";
-    
+  
   if(dest_data_var)
     rval +=  " dest table=" + dest_data_var->name;
   else
