@@ -83,6 +83,6 @@ public:
 //   void       UpdateAfterEdit_impl();
 };
 
-SmartRef_Of(VETexture); // VETextureRef
+SMARTREF_OF(VETexture); // VETextureRef
 
 #endif // VETexture_h

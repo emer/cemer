@@ -18,6 +18,7 @@
 #include <Inventor/SbLinear.h>
 
 TA_BASEFUNS_CTORS_DEFN(VECamera);
+SMARTREF_OF_CPP(VECamera); // VECameraRef
 
 TA_BASEFUNS_CTORS_DEFN(VECameraDists);
 

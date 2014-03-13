@@ -20,6 +20,7 @@
 #include <ode/ode.h>
 
 TA_BASEFUNS_CTORS_DEFN(VEStatic);
+SMARTREF_OF_CPP(VEStatic); // VEStaticRef
 
 
 void VEStatic::Initialize() {

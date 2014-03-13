@@ -70,6 +70,6 @@ private:
   void  Destroy() { };
 };
 
-SmartRef_Of(VELight); // VELightRef
+SMARTREF_OF(VELight); // VELightRef
 
 #endif // VELight_h

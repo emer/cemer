@@ -53,6 +53,6 @@ private:
   void Destroy();
 };
 
-SmartRef_Of(VELinearMuscle); // VELinearMuscleRef
+SMARTREF_OF(VELinearMuscle); // VELinearMuscleRef
 
 #endif // VELinearMuscle_h

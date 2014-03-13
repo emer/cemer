@@ -21,6 +21,7 @@
 #include <SigLinkSignal>
 
 TA_BASEFUNS_CTORS_DEFN(ProgBrkPt);
+SMARTREF_OF_CPP(ProgBrkPt);
 
 void ProgBrkPt::Initialize() {
   enabled = true;

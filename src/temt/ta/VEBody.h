@@ -75,7 +75,7 @@ private:
 };
 
 class VEBody; //
-SmartRef_Of(VEBody); // VEBodyRef
+SMARTREF_OF(VEBody); // VEBodyRef
 
 taTypeDef_Of(VEBody);
 

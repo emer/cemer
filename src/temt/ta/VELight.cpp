@@ -18,6 +18,7 @@
 #include <Inventor/SbLinear.h>
 
 TA_BASEFUNS_CTORS_DEFN(VELight);
+SMARTREF_OF_CPP(VELight); // VELightRef
 
 void VELight::Initialize() {
   flags = (BodyFlags)(FIXED | NO_COLLIDE | EULER_ROT);

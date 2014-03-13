@@ -18,7 +18,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taDoc);
-
+SMARTREF_OF_CPP(taDoc);
 
 const String taDoc::init_text(
 "<html>\n"

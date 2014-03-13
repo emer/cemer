@@ -18,6 +18,7 @@
 #include <taImage>
 
 TA_BASEFUNS_CTORS_DEFN(RetinaProc);
+SMARTREF_OF_CPP(RetinaProc); // RetinaProcRef
 
 TA_BASEFUNS_CTORS_DEFN(V1RetinaProc);
 

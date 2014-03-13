@@ -19,6 +19,7 @@
 #include <ode/ode.h>
 
 TA_BASEFUNS_CTORS_DEFN(VESpace);
+SMARTREF_OF_CPP(VESpace); // VESpaceRef
 
 
 

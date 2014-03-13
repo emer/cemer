@@ -383,7 +383,7 @@ public: \
 #define DEL_POINTER(var) (taBase::DelPointer((taBase**)&(var)))
 
 // standard smart refs and ptrs -- you should use this for every class
-#define TA_SMART_PTRS(y) SmartPtr_Of(y); SmartRef_Of(y);
+#define TA_SMART_PTRS(y) SmartPtr_Of(y); SMARTREF_OF(y);
 
 // generic iterator over items in taBase containers
 #define TA_FOREACH(ELEM_VAR_NAME, LIST)                        \

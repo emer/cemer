@@ -15,3 +15,4 @@
 
 #include "taSmartRefT.h"
 
+SMARTREF_OF_CPP(taBase);

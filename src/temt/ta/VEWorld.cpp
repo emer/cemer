@@ -21,6 +21,7 @@
 #include <ode/error.h>
 
 TA_BASEFUNS_CTORS_DEFN(VEShadowParams);
+SMARTREF_OF_CPP(VEWorld); // VEWorldRef
 
 TA_BASEFUNS_CTORS_DEFN(VEWorld);
 

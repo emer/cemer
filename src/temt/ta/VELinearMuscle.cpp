@@ -17,6 +17,7 @@
 #include <VEArm>
 
 TA_BASEFUNS_CTORS_DEFN(VELinearMuscle);
+SMARTREF_OF_CPP(VELinearMuscle); // VELinearMuscleRef
 
 
 void VELinearMuscle::Initialize() {

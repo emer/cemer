@@ -22,6 +22,7 @@
 #include <taSmartRef>
 
 TA_BASEFUNS_CTORS_DEFN(DynEnumTableCol);
+SMARTREF_OF_CPP(DynEnumTableCol); // DynEnumTypeRef
 
 void DynEnumTableCol::Initialize() {
   src_table = NULL;

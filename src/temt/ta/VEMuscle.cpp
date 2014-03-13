@@ -17,6 +17,7 @@
 #include <VEArm>
 
 TA_BASEFUNS_CTORS_DEFN(VEMuscle);
+SMARTREF_OF_CPP(VEMuscle); // VEMuscleRef
 
 ///////////////////////////////////////////////////////////////
 //   VEMuscle: skeleton class for muscles

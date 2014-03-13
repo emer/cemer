@@ -17,6 +17,7 @@
 #include <VEWorld>
 
 TA_BASEFUNS_CTORS_DEFN(VEObject);
+SMARTREF_OF_CPP(VEObject); // VEObjectRef
 
 
 void VEObject::Initialize() {

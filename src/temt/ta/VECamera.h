@@ -95,6 +95,6 @@ private:
   void  Destroy() { };
 };
 
-SmartRef_Of(VECamera); // VECameraRef
+SMARTREF_OF(VECamera); // VECameraRef
 
 #endif // VECamera_h

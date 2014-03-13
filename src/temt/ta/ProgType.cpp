@@ -18,6 +18,7 @@
 #include <css_machine.h>
 
 TA_BASEFUNS_CTORS_DEFN(ProgType);
+SMARTREF_OF_CPP(ProgType); // ProgTypeRef
 
 
 void ProgType::Initialize() {

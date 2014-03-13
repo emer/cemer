@@ -20,6 +20,7 @@
 #include <FunctionCall>
 
 TA_BASEFUNS_CTORS_DEFN(Function);
+SMARTREF_OF_CPP(Function);
 
 taTypeDef_Of(LocalVars);
 taTypeDef_Of(ProgCode);

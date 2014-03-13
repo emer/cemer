@@ -106,6 +106,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(VEObject); // VEObjectRef
+SMARTREF_OF(VEObject); // VEObjectRef
 
 #endif // VEObject_h

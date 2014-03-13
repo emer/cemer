@@ -25,6 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class ProgVar; //
-SmartRef_Of(ProgVar); // ProgVarRef
+SMARTREF_OF(ProgVar); // ProgVarRef
 
 #endif // ProgVarRef_h

@@ -34,6 +34,7 @@
 #include <css_machine.h>
 
 TA_BASEFUNS_CTORS_DEFN(ProgEl);
+SMARTREF_OF_CPP(ProgEl);
 
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   if (!base_)

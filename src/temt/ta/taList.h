@@ -99,7 +99,7 @@ public:
   TA_TMPLT_BASEFUNS(taList,T);
 private:
   TMPLT_NOCOPY(taList,T);
-  void  Initialize()                    { SetBaseType(StatTypeDef(0)); }
+  void  Initialize()                    { }; // NOTE: not calling SetBaseType here -- MUST do this in the class that derives from this -- this means that any use of template directly, instead of derived class of template, must do SetBaseType itself.
   void  Destroy()                       { };
 };
 
@@ -109,7 +109,7 @@ private:
 // #define taList_of(T)
 // class T ## _List : public taList<T> {
 // public:
-//   void Initialize()  { };
+//   void Initialize()  { SetBaseType(&TA_T); }
 //   void Destroy()     { };
 //   TA_BASEFUNS(T ## _List);
 // }

@@ -70,6 +70,6 @@ private:
   void  Destroy()       {}
 };
 
-SmartRef_Of(DynEnumBase); // DynEnumBaseRef
+SMARTREF_OF(DynEnumBase); // DynEnumBaseRef
 
 #endif // DynEnumBase_h

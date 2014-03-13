@@ -20,6 +20,7 @@
 #include <SigLinkSignal>
 
 TA_BASEFUNS_CTORS_DEFN(DynEnumBase);
+SMARTREF_OF_CPP(DynEnumBase); // DynEnumBaseRef
 
 using namespace std;
 

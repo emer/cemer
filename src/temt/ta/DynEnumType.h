@@ -48,6 +48,6 @@ private:
   void  Destroy()       {};
 };
 
-SmartRef_Of(DynEnumType); // DynEnumTypeRef
+SMARTREF_OF(DynEnumType); // DynEnumTypeRef
 
 #endif // DynEnumType_h

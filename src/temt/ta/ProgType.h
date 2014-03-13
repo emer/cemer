@@ -64,6 +64,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(ProgType); // ProgTypeRef
+SMARTREF_OF(ProgType); // ProgTypeRef
 
 #endif // ProgType_h

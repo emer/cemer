@@ -69,6 +69,6 @@ private:
   void  Destroy() { }
 };
 
-TA_SMART_PTRS(taDoc);
+SMARTREF_OF(taDoc);
 
 #endif // taDoc_h

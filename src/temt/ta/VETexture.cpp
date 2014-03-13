@@ -21,6 +21,7 @@
 #include <Inventor/nodes/SoTexture2.h>
 
 TA_BASEFUNS_CTORS_DEFN(VETexture);
+SMARTREF_OF_CPP(VETexture); // VETextureRef
 #endif
 
 void VETexture::Initialize() {

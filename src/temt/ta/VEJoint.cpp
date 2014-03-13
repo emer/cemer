@@ -18,6 +18,7 @@
 #include <taMath_float>
 
 TA_BASEFUNS_CTORS_DEFN(VEJointMotor);
+SMARTREF_OF_CPP(VEJoint); // VEJointRef
 
 TA_BASEFUNS_CTORS_DEFN(VEJointStops);
 

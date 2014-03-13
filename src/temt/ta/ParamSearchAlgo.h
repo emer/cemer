@@ -47,6 +47,6 @@ private:
   void Destroy() { }
 };
 
-SmartRef_Of(ParamSearchAlgo); // ParamSearchAlgoRef
+SMARTREF_OF(ParamSearchAlgo); // ParamSearchAlgoRef
 
 #endif // ParamSearchAlgo_h

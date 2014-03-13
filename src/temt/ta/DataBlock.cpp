@@ -18,6 +18,7 @@
 #include <String_Matrix>
 
 TA_BASEFUNS_CTORS_DEFN(DataBlock);
+SMARTREF_OF_CPP(DataBlock); // DataBlockRef
 
 
 const Variant DataBlock::GetData(int chan) { 

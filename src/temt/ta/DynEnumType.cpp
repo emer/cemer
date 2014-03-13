@@ -19,6 +19,7 @@
 #include <DataTable>
 
 TA_BASEFUNS_CTORS_DEFN(DynEnumType);
+SMARTREF_OF_CPP(DynEnumType); // DynEnumTypeRef
 
 DynEnumItem* DynEnumType::NewEnum() {
   return (DynEnumItem*)enums.New_gui(1); // primarily a gui op

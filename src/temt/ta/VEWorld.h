@@ -41,7 +41,7 @@ class QImage; //
 class taImage; // 
 
 class VEWorld; //
-SmartRef_Of(VEWorld); // VEWorldRef
+SMARTREF_OF(VEWorld); // VEWorldRef
 
 taTypeDef_Of(ODEWorldParams);
 

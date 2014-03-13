@@ -222,6 +222,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(VEJoint); // VEJointRef
+SMARTREF_OF(VEJoint); // VEJointRef
 
 #endif // VEJoint_h

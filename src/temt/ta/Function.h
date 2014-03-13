@@ -83,6 +83,6 @@ private:
   void  Destroy()       {CutLinks();}
 };
 
-SmartRef_Of(Function);
+SMARTREF_OF(Function);
 
 #endif // Function_h

@@ -321,7 +321,7 @@ protected:
   // the group containing given leaf; NOTE: **don't confuse this with the Safe/FastLeafGp funcs*** -- moved here to try to flush out any use, since it is so confusing and nonstandard and likely to be mixed up with the XxxLeafGp funcs
 private:
   TMPLT_NOCOPY(taGroup,T)
-  void Initialize()     { SetBaseType(T::StatTypeDef(1));}
+  void Initialize()     { }; // NOTE: not calling SetBaseType here -- MUST do this in the class that derives from this -- this means that any use of template directly, instead of derived class of template, must do SetBaseType itself.
   void  Destroy () {}
 };
 
@@ -331,7 +331,7 @@ private:
 // #define taGroup_of(T)
 // class T ## _Group : public taGroup<T> {
 // public:
-//   void Initialize()  { };
+//   void Initialize()  { SetBaseType(&TA_T); }
 //   void Destroy()     { };
 //   TA_BASEFUNS(T ## _Group);
 // }

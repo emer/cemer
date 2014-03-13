@@ -69,6 +69,6 @@ private:
   void Destroy();
 };
 
-SmartRef_Of(VEHillMuscle); // VEHillMuscleRef
+SMARTREF_OF(VEHillMuscle); // VEHillMuscleRef
 
 #endif // VEHillMuscle_h

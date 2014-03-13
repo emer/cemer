@@ -89,6 +89,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(ColorScale); // ColorScaleRef
+SMARTREF_OF(ColorScale); // ColorScaleRef
 
 #endif // ColorScale_h

@@ -17,6 +17,7 @@
 #include <VEArm>
 
 TA_BASEFUNS_CTORS_DEFN(VEHillMuscle);
+SMARTREF_OF_CPP(VEHillMuscle); // VEHillMuscleRef
 
 void VEHillMuscle::Initialize() {
   IPprox.SetXYZ(0.0f,0.0f,0.0f);

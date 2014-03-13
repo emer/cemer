@@ -25,6 +25,7 @@
 #include <math.h>
 
 TA_BASEFUNS_CTORS_DEFN(ColorScale);
+SMARTREF_OF_CPP(ColorScale);
 
 const iColor ColorScale::def_color;
 

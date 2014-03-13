@@ -15,3 +15,4 @@
 
 #include "ProgVarRef.h"
 
+SMARTREF_OF_CPP(ProgVar); // ProgVarRef

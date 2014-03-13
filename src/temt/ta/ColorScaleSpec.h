@@ -53,6 +53,6 @@ private:
   void  Destroy()               { };
 };
 
-SmartRef_Of(ColorScaleSpec); // ColorScaleSpecRef
+SMARTREF_OF(ColorScaleSpec); // ColorScaleSpecRef
 
 #endif // ColorScaleSpec_h

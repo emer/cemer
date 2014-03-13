@@ -19,6 +19,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ParamSearchAlgo);
+SMARTREF_OF_CPP(ParamSearchAlgo); // ParamSearchAlgoRef
 
 
 void ParamSearchAlgo::Initialize()

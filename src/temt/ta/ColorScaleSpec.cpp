@@ -18,6 +18,7 @@
 #include <ColorScaleColor_List>
 
 TA_BASEFUNS_CTORS_DEFN(ColorScaleSpec);
+SMARTREF_OF_CPP(ColorScaleSpec); // ColorScaleSpecRef
 
 
 void ColorScaleSpec::Initialize() {

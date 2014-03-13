@@ -230,6 +230,6 @@ private:
   void  Destroy();
 };
 
-SmartRef_Of(ProgEl);
+SMARTREF_OF(ProgEl);
 
 #endif // ProgEl_h

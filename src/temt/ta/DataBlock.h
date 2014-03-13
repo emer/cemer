@@ -269,6 +269,6 @@ private:
   void                  Destroy() {}
 };
 
-SmartRef_Of(DataBlock); // DataBlockRef
+SMARTREF_OF(DataBlock); // DataBlockRef
 
 #endif // DataBlock_h

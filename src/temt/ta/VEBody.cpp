@@ -22,6 +22,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ODEFiniteRotation);
+SMARTREF_OF_CPP(VEBody); // VEBodyRef
 
 TA_BASEFUNS_CTORS_DEFN(ODEDamping);
 

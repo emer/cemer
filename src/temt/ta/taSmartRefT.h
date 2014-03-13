@@ -32,11 +32,10 @@ public:
 
   inline                operator T*() const {return (T*)m_ptr;}
   inline T*             operator->() const {return (T*)m_ptr;}
-  T*                    operator=(const taSmartRefT<T>& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
-  T*                    operator=(T* src) {set(src); return (T*)m_ptr;}
-  TypeDef*     GetBaseType() const override {return T::StatTypeDef(0);}
-  TypeDef*              GetDataTypeDef() const
-    {return (m_ptr) ? m_ptr->GetTypeDef() : T::StatTypeDef(0);}
+  T*                    operator=(const taSmartRefT<T>& src)
+  { set((T*)src.m_ptr); return (T*)m_ptr; }
+  T*                    operator=(T* src)
+  { set(src); return (T*)m_ptr; }
   taSmartRefT() {}  //
 
 #ifndef __MAKETA__
@@ -64,10 +63,25 @@ private:
 };
 
 // macro for creating smart refs of taBase classes
-#define SmartRef_Of(T) taTypeDef_Of(T ## Ref); typedef taSmartRefT<T> T ## Ref; /* sr */
-  
+#define SMARTREF_OF(T) taTypeDef_Of(T ## Ref); \
+  class T ## Ref : public taSmartRefT<T> { \
+  public: \
+    TypeDef*              GetBaseType() const override; \
+    TypeDef*              GetDataTypeDef() const override; \
+    T*                    operator=(const T ## Ref& src) \
+    { set((taBase*)src.m_ptr); return (T*)m_ptr; }    \
+    T*                    operator=(T* src) \
+    { set((taBase*)src); return (T*)m_ptr; }    \
+    T ## Ref() {}; \
+  }
 
-SmartRef_Of(taBase);           // basic ref if you don't know the type
+// this must be put in the .cpp file of anything that defines a smartref!
+#define SMARTREF_OF_CPP(T) \
+  TypeDef* T ## Ref::GetBaseType() const override {return T::StatTypeDef(0);} \
+  TypeDef* T ## Ref::GetDataTypeDef() const \
+  { return (m_ptr) ? m_ptr->GetTypeDef() : T::StatTypeDef(0); }
+
+SMARTREF_OF(taBase);           // basic ref if you don't know the type
 
 
 #endif // taSmartRefT_h

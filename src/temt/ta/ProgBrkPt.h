@@ -59,6 +59,6 @@ private:
   void Destroy()     { };
 };
 
-SmartRef_Of(ProgBrkPt);
+SMARTREF_OF(ProgBrkPt);
 
 #endif // ProgBrkPt_h
