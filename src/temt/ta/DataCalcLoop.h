@@ -64,15 +64,17 @@ public:
 
   ProgVar*	FindVarName(const String& var_nm) const override;
 
-  String GetDisplayName() const override;
-  String	GetToolbarName() const override { return "calc loop"; }
+  String    GetDisplayName() const override;
+  String    GetToolbarName() const override { return "calc loop"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataCalcLoop);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void	PreGenChildren_impl(int& item_id) override;
+  void      UpdateAfterEdit_impl() override;
+  void      CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void      CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void      PreGenChildren_impl(int& item_id) override;
 
   virtual void	SetColProgVarFmData(ProgVar* pv, DataOpEl* ds);
   virtual void	UpdateColVars();

@@ -16,6 +16,8 @@
 #include "DataCalcLoop.h"
 #include <Program>
 #include <DataTable>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataCalcLoop);
 
@@ -145,16 +147,17 @@ void DataCalcLoop::UpdateColVars() {
 
 
 String DataCalcLoop::GetDisplayName() const {
-  String rval = "Calc Loop from: ";
-  if(src_data_var) {
-    rval += src_data_var->name;
-  }
-  else {
-    rval += "?";
-  }
-  if(dest_data_var) {
-    rval += " to: " + dest_data_var->name;
-  }
+  String rval = "Calc loop: ";
+  
+  if(src_data_var)
+    rval += " src table=" + src_data_var->name;
+  else
+    rval += " src table =?";
+    
+  if(dest_data_var)
+    rval +=  " dest table=" + dest_data_var->name;
+  else
+    rval += " dest table =?";
   return rval;
 }
 
@@ -201,7 +204,9 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
   prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
-    prog->AddLine(this, dest_data_var->name + ".ResetData(); // all data ops clear out old existing data");
+    if (dest_data_var != src_data_var) {
+      prog->AddLine(this, dest_data_var->name + ".ResetData(); // all data ops clear out old existing data");
+    }
     prog->AddLine(this, "DataOpList common_dest_cols; // pre-initialize, for CopyCommonCols");
     prog->AddLine(this, "DataOpList common_src_cols;");
     prog->AddLine(this, "DataOpList common_dest_cols_named; // only the cols named in dest_cols");
@@ -292,3 +297,36 @@ DataOpEl* DataCalcLoop::AddDestColumn(const String& col_name) {
   return rval;
 }
 
+bool DataCalcLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("calc loop")) return true;
+  return false;
+}
+
+bool DataCalcLoop::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("src tab") || name.startsWith("src_tab")) {
+      src_data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("dest tab") || name.startsWith("dest_tab")) {
+      dest_data_var = FindVarNameInScope(value, false); // don't make
+    }
+  }
+  
+  SigEmitUpdated();
+  return true;
+}
