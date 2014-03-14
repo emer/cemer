@@ -64,10 +64,30 @@ const String DynEnum::NameVal() const {
 
 bool DynEnum::SetNameVal(const String& nm) {
   if(!enum_type) return false;
-  DynEnumItem* it = enum_type->enums.FindName(nm);
-  if(TestError(!it, "SetNameVal", "value label:", nm, "not found!"))
-    return false;
-  value = it->value;
+  if(enum_type->bits) {
+    String strval = nm;
+    int bits = 0;
+    while(strval.nonempty()) {
+      String curstr = strval;
+      if(strval.contains('|')) {
+        curstr = strval.before('|');
+        strval = strval.after('|');
+      }
+      else
+        strval = _nilString;
+      DynEnumItem* it = enum_type->enums.FindName(curstr);
+      if(!TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!")) {
+        bits |= it->value;
+      }
+    }
+    value = bits;
+  }
+  else {
+    DynEnumItem* it = enum_type->enums.FindName(nm);
+    if(TestError(!it, "SetNameVal", "value label:", nm, "not found!"))
+      return false;
+    value = it->value;
+  }
   return true;
 }
 

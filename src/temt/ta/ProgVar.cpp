@@ -835,6 +835,16 @@ bool ProgVar::SetTypeAndName(const String& ty_nm) {
   if(td) {
     SetTypeFromTypeDef(td);
   }
+  else {
+    Program* prg = GET_MY_OWNER(Program);
+    if(prg) {
+      ProgType* pt = prg->types.FindName(vtype);
+      if(pt) {
+        var_type = T_DynEnum;
+        dyn_enum_val.enum_type = (DynEnumBase*)pt;
+      }
+    }
+  }
   String nm = trim(ty_nm.after(' '));
   if(nm.nonempty())
     SetName(nm);

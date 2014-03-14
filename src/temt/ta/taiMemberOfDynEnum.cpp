@@ -64,11 +64,10 @@ void taiMemberOfDynEnum::UpdateDynEnumCombo(taiWidgetComboBox* cb, DynEnum& de) 
   if(!de.enum_type) return;
   for (int i = 0; i < de.enum_type->enums.size; ++i) {
     const DynEnumItem* dei = de.enum_type->enums.FastEl(i);
-    //note: dynenums store the index of the value, not the value
-    cb->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
+    cb->AddItem(dei->name, QVariant(dei->value)); //TODO: desc in status bar or such would be nice!
   }
   if(de.value < 0) de.value = 0; // un-init -- init!
-  cb->GetImage(de.value);
+  cb->GetEnumImage(de.value);
 }
 
 void taiMemberOfDynEnum::UpdateDynEnumBits(taiWidgetBitBox* cb, DynEnum& de) {
@@ -76,7 +75,6 @@ void taiMemberOfDynEnum::UpdateDynEnumBits(taiWidgetBitBox* cb, DynEnum& de) {
   if(!de.enum_type) return;
   for (int i = 0; i < de.enum_type->enums.size; ++i) {
     const DynEnumItem* dei = de.enum_type->enums.FastEl(i);
-    //note: dynenums store the index of the value, not the value
     cb->AddBoolItem(true, dei->name, dei->value, dei->desc, false);
   }
   cb->lay->addStretch();
@@ -123,7 +121,7 @@ void taiMemberOfDynEnum::GetMbrValue_impl(taiWidget* dat, void* base) {
     else {
       taiWidgetComboBox* combo_rep = dynamic_cast<taiWidgetComboBox*>(rval->widget_el.SafeEl(2));
       if(!combo_rep) return;
-      combo_rep->GetValue(dye->value);
+      combo_rep->GetEnumValue(dye->value);
     }
   }
 }
