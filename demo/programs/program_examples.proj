@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6877
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6910
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -400,7 +400,7 @@ LeabraProject .projects["program_examples"] {
     };
    };
   };
-  Program_Group @.gp["Data"] = [4] { 
+  Program_Group @.gp["Data"] = [5] { 
    Program @["DataLoop"] { 
     ProgObjList @.objs = [1] {
      DataTable @["DemoData"] { 
@@ -712,6 +712,112 @@ LeabraProject .projects["program_examples"] {
      PrintExpr @[15] { };
      PrintExpr @[16] { };
      Comment @[17] { };
+    };
+   };
+   Program @["DataCalcLoop"] { 
+    ProgObjList @.objs = [2] {
+     DataTable @["TableTwo"] { 
+      DataTableCols @.data = [1] {
+       int_Data @["ColumnB"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["NARROW"] { };
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+     DataTable @["TableOne"] { 
+      DataTableCols @.data = [2] {
+       int_Data @["ColumnA"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["NARROW"] { };
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       int_Data @["ColumnC"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["NARROW"] { };
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["TableTwo"] { };
+     ProgVar @["TableOne"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [5] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     Comment @[1] { };
+     DataCalcLoop @[2] { 
+      DataOpList @.src_cols = [2] {
+       DataOpEl @["ColumnA"] { };
+       DataOpEl @["ColumnC"] { };
+      };
+
+      DataOpList @.dest_cols = [0] {
+      };
+
+      ProgEl_List @.loop_code = [2] {
+       AssignExpr @[0] { };
+       DataCalcSetSrcRow @[1] { };
+      };
+
+      ProgVar_List @.src_col_vars = [2] {
+       ProgVar @["s_ColumnA"] { };
+       ProgVar @["s_ColumnC"] { };
+      };
+
+      ProgVar_List @.dest_col_vars = [0] {
+      };
+     };
+     Comment @[3] { };
+     DataCalcLoop @[4] { 
+      DataOpList @.src_cols = [2] {
+       DataOpEl @["ColumnA"] { };
+       DataOpEl @["ColumnC"] { };
+      };
+
+      DataOpList @.dest_cols = [1] {
+       DataOpEl @["ColumnB"] { };
+      };
+
+      ProgEl_List @.loop_code = [3] {
+       DataCalcAddDestRow @[0] { };
+       AssignExpr @[1] { };
+       DataCalcSetDestRow @[2] { };
+      };
+
+      ProgVar_List @.src_col_vars = [2] {
+       ProgVar @["s_ColumnA"] { };
+       ProgVar @["s_ColumnC"] { };
+      };
+
+      ProgVar_List @.dest_col_vars = [1] {
+       ProgVar @["d_ColumnB"] { };
+      };
+     };
     };
    };
   };
@@ -4610,7 +4716,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	 el_def=0;
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.1588050276041031;
+	  value 6 0=0.114772729575634;
 	  val_type_fixed=0;
 	 };
 	};
@@ -4637,7 +4743,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	 el_def=0;
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.1588050276041031;
+	  value 6 0=0.114772729575634;
 	  val_type_fixed=0;
 	 };
 	};
@@ -6132,6 +6238,392 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     step_prog=NULL;
     step_n=1;
    };
+   Program @["DataCalcLoop"] {
+    name="DataCalcLoop";
+    short_nm="DClc";
+    tags=;
+    desc=;
+    flags=0;
+    objs {
+     name="ProgObjList_9";
+     el_typ=taNBase;
+     el_def=0;
+     DataTable @["TableTwo"] {
+      name="TableTwo";
+      desc=;
+      data {
+       name="data";
+       el_typ=int_Data;
+       el_def=0;
+       int_Data @["ColumnB"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_69";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["NARROW"] {
+	  name="NARROW";
+	  value 1 0=1;
+	  val_type_fixed=0;
+	 };
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1136363670229912;
+	  val_type_fixed=0;
+	 };
+	};
+	name="ColumnB";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[0] 	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [0]       };
+     };
+     DataTable @["TableOne"] {
+      name="TableOne";
+      desc=;
+      data {
+       name="data";
+       el_typ=int_Data;
+       el_def=0;
+       int_Data @["ColumnA"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_68";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["NARROW"] {
+	  name="NARROW";
+	  value 1 0=1;
+	  val_type_fixed=0;
+	 };
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1136363670229912;
+	  val_type_fixed=0;
+	 };
+	};
+	name="ColumnA";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[6] 0;1;2;3;4;5;	};
+       };
+       int_Data @["ColumnC"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_70";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["NARROW"] {
+	  name="NARROW";
+	  value 1 0=1;
+	  val_type_fixed=0;
+	 };
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1136363670229912;
+	  val_type_fixed=0;
+	 };
+	};
+	name="ColumnC";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[6] 0;0;0;0;0;0;	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [6] 0;1;2;3;4;5;      };
+     };
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["TableTwo"] {
+      name="TableTwo";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].objs["TableTwo"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["TableOne"] {
+      name="TableOne";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].objs["TableOne"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name="ProgBrkPt_List_9";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_9";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_76";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_77";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     Comment @[1] {
+      desc="Make values in one column twice their value in another";
+      flags=0;
+      orig_prog_code=;
+     };
+     DataCalcLoop @[2] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableOne"]$$;
+      dest_data_var=.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableTwo"]$$;
+      src_cols {
+       name="src_cols";
+       el_typ=DataOpEl;
+       el_def=0;
+       DataOpEl @["ColumnA"] {
+	col_name="ColumnA";
+       };
+       DataOpEl @["ColumnC"] {
+	col_name="ColumnC";
+       };
+      };
+      dest_cols {
+       name="dest_cols";
+       el_typ=DataOpEl;
+       el_def=0;
+      };
+      loop_code {
+       name="ProgEl_List_80";
+       el_typ=ProgCode;
+       el_def=0;
+       AssignExpr @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="s_ColumnC = s_ColumnA";
+	result_var=.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].prog_code[2].src_col_vars["s_ColumnC"]$$;
+	expr {
+	 expr="s_ColumnA * 2";
+	};
+       };
+       DataCalcSetSrcRow @[1] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	src_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableOne"]$;
+	dest_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableTwo"]$;
+       };
+      };
+      use_col_numbers=0;
+      src_col_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["s_ColumnA"] {
+	name="s_ColumnA";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["s_ColumnC"] {
+	name="s_ColumnC";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      dest_col_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     Comment @[3] {
+      desc="Copy column from one table to another";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// dog";
+     };
+     DataCalcLoop @[4] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableOne"]$;
+      dest_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableTwo"]$;
+      src_cols {
+       name="src_cols";
+       el_typ=DataOpEl;
+       el_def=0;
+       DataOpEl @["ColumnA"] {
+	col_name="ColumnA";
+       };
+       DataOpEl @["ColumnC"] {
+	col_name="ColumnC";
+       };
+      };
+      dest_cols {
+       name="dest_cols";
+       el_typ=DataOpEl;
+       el_def=0;
+       DataOpEl @["ColumnB"] {
+	col_name="ColumnB";
+       };
+      };
+      loop_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       DataCalcAddDestRow @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	src_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableOne"]$;
+	dest_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableTwo"]$;
+       };
+       AssignExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="d_ColumnB = s_ColumnA";
+	result_var=.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].prog_code[4].dest_col_vars["d_ColumnB"]$$;
+	expr {
+	 expr="s_ColumnC";
+	};
+       };
+       DataCalcSetDestRow @[2] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	src_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableOne"]$;
+	dest_data_var=$.projects["program_examples"].programs.gp["Data"]["DataCalcLoop"].vars["TableTwo"]$;
+       };
+      };
+      use_col_numbers=0;
+      src_col_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["s_ColumnA"] {
+	name="s_ColumnA";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["s_ColumnC"] {
+	name="s_ColumnC";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      dest_col_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["d_ColumnB"] {
+	name="d_ColumnB";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
   };
  };
  viewers {
@@ -6155,12 +6647,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9984017014503479;
+     value 6 0=0.9979122877120972;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.5373514294624329;
+     value 6 0=0.7996604442596436;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -6170,7 +6662,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAACYwAAA3QAAAFGAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -7349,12 +7841,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.03966597095131874;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.4736842215061188;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
