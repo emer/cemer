@@ -19,6 +19,8 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taDataView);
+SMARTREF_OF_CPP(taDataView);
+
 
 void taDataView::Initialize() {
   m_data = NULL;

@@ -20,6 +20,8 @@
 #include <QFileInfo>
 
 TA_BASEFUNS_CTORS_DEFN(Program_Group);
+SMARTREF_OF_CPP(Program_Group); // Program_GroupRef
+
 
 
 using namespace std;

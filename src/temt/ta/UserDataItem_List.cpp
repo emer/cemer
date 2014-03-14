@@ -17,6 +17,8 @@
 #include <UserDataItem>
 
 TA_BASEFUNS_CTORS_DEFN(UserDataItem_List);
+SMARTREF_OF_CPP(UserDataItem_List) // UserDataItem_ListPtr
+
 
 bool UserDataItem_List::hasVisibleItems() const {
   // iterate all items and return true on first isVisible found

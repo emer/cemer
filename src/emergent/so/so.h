@@ -200,7 +200,7 @@ private:
   void	Destroy()	{ };
 };
 
-SpecPtr_of(SoLayerSpec);
+SPECPTR_OF(SoLayerSpec);
 
 eTypeDef_Of(SoLayer);
 

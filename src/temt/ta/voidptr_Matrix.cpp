@@ -16,6 +16,8 @@
 #include "voidptr_Matrix.h"
 
 TA_BASEFUNS_CTORS_DEFN(voidptr_Matrix);
+SMARTREF_OF_CPP(voidptr_Matrix);
+
 
 const void* voidptr_Matrix::blank = 0;
 

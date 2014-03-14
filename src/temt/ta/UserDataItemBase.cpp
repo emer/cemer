@@ -17,6 +17,8 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(UserDataItemBase);
+SMARTREF_OF_CPP(UserDataItemBase);
+
 
 UserDataItemBase::UserDataItemBase(const String& type_name, const String& key_)
 :inherited()

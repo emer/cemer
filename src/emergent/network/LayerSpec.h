@@ -18,7 +18,6 @@
 
 // parent includes:
 #include <BaseSpec>
-#include <SpecPtr>
 
 // member includes:
 

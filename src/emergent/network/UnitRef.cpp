@@ -14,4 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "UnitRef.h"
+#include <Unit>
+
+SMARTREF_OF_CPP(Unit); // UnitRef
 

@@ -16,4 +16,6 @@
 #include "byte_Data.h"
 
 TA_BASEFUNS_CTORS_DEFN(byte_Data);
+SMARTREF_OF_CPP(byte_Data); //
+
 

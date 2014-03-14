@@ -21,6 +21,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ActrProduction);
+SMARTREF_OF_CPP(ActrProduction); // ActrProductionRef
 
 TA_BASEFUNS_CTORS_DEFN(ActrProdTimeVals);
 

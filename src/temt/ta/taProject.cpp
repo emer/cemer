@@ -30,6 +30,8 @@
 #include <ctime>
 
 taTypeDef_Of(taDataProc);
+SMARTREF_OF_CPP(taProject);
+
 taTypeDef_Of(taDataAnal);
 taTypeDef_Of(taDataGen);
 taTypeDef_Of(taImageProc);

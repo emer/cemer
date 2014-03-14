@@ -16,6 +16,8 @@
 #include "UserDataItem.h"
 
 TA_BASEFUNS_CTORS_DEFN(UserDataItem);
+SMARTREF_OF_CPP(UserDataItem);
+
 
 UserDataItem::UserDataItem(const String& type_name, const String& key_,
   const Variant& value_,  const String& desc_)

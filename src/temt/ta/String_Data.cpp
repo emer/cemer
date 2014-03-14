@@ -16,4 +16,6 @@
 #include "String_Data.h"
 
 TA_BASEFUNS_CTORS_DEFN(String_Data);
+SMARTREF_OF_CPP(String_Data);
+
 

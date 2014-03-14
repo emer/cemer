@@ -24,6 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(ConSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(ConSpec_SPtr);
 TA_BASEFUNS_CTORS_DEFN(WeightLimits);
+SMARTREF_OF_CPP(ConSpec);
 
 void ConSpec::Initialize() {
   min_obj_type = &TA_Connection;

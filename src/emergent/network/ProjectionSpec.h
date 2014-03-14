@@ -85,8 +85,6 @@ private:
   void  Defaults_init()         { };
 };
 
-TA_SMART_PTRS(ProjectionSpec)
-
-SpecPtr_of(ProjectionSpec);
+SPECPTR_OF(ProjectionSpec);
 
 #endif // ProjectionSpec_h

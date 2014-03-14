@@ -14,4 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ProjectionRef.h"
+#include <Projection>
+
+SMARTREF_OF_CPP(Projection); // ProjectionRef
 

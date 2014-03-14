@@ -16,4 +16,6 @@
 #include "Variant_Data.h"
 
 TA_BASEFUNS_CTORS_DEFN(Variant_Data);
+SMARTREF_OF_CPP(Variant_Data); //
+
 

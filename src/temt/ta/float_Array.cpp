@@ -16,5 +16,7 @@
 #include "float_Array.h"
 
 TA_BASEFUNS_CTORS_DEFN(float_Array);
+SMARTREF_OF_CPP(float_Array)
+
 
 const float float_Array::blank = 0.0f;

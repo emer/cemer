@@ -31,6 +31,8 @@
 #include <QColor>
 
 TA_BASEFUNS_CTORS_DEFN(taBrainAtlas);
+SMARTREF_OF_CPP(taBrainAtlas);
+
 
 
 taBrainAtlas::taBrainAtlas(const BrainAtlasInfo& info) : taNBase()

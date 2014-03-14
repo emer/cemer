@@ -155,6 +155,6 @@ private:
   void Destroy()     { CutLinks(); }
 };
 
-SmartRef_Of(ActrProduction); // ActrProductionRef
+SMARTREF_OF(ActrProduction); // ActrProductionRef
 
 #endif // ActrProduction_h

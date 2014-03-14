@@ -18,6 +18,8 @@
 #include <QStringList>
 
 TA_BASEFUNS_CTORS_DEFN(String_Array);
+SMARTREF_OF_CPP(String_Array)
+
 
 const String String_Array::blank = "";
 

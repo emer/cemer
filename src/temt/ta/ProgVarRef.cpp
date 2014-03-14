@@ -14,5 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "ProgVarRef.h"
+#include <ProgVar>
 
 SMARTREF_OF_CPP(ProgVar); // ProgVarRef

@@ -35,7 +35,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataCol);
-
+SMARTREF_OF_CPP(DataCol);
 
 const String DataCol::udkey_width("WIDTH");
 const String DataCol::udkey_narrow("NARROW");

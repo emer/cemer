@@ -17,6 +17,8 @@
 #include <DataCol>
 
 TA_BASEFUNS_CTORS_DEFN(FixedWidthColSpec);
+SMARTREF_OF_CPP(FixedWidthColSpec); //
+
 
 
 

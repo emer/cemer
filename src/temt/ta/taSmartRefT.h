@@ -69,15 +69,18 @@ private:
     TypeDef*              GetBaseType() const override; \
     TypeDef*              GetDataTypeDef() const override; \
     T*                    operator=(const T ## Ref& src) \
-    { set((taBase*)src.m_ptr); return (T*)m_ptr; }    \
+    { set((taBase*)src.m_ptr); return (T*)m_ptr; } \
     T*                    operator=(T* src) \
-    { set((taBase*)src); return (T*)m_ptr; }    \
+    { set((taBase*)src); return (T*)m_ptr; } \
     T ## Ref() {}; \
+    ~T ## Ref() {}; \
+  private: \
+    T ## Ref(const T ## Ref& src); \
   }
 
 // this must be put in the .cpp file of anything that defines a smartref!
 #define SMARTREF_OF_CPP(T) \
-  TypeDef* T ## Ref::GetBaseType() const override {return T::StatTypeDef(0);} \
+  TypeDef* T ## Ref::GetBaseType() const {return T::StatTypeDef(0);} \
   TypeDef* T ## Ref::GetDataTypeDef() const \
   { return (m_ptr) ? m_ptr->GetTypeDef() : T::StatTypeDef(0); }
 

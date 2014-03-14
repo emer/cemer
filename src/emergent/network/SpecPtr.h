@@ -120,8 +120,8 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
-#define SpecPtrEx_of(T, xxx_API) \
-SmartRef_Of(T); \
+#define SPECPTREX_OF(T, xxx_API) \
+SMARTREF_OF(T); \
 class xxx_API T ## _SPtr : public SpecPtr<T> { \
 private: \
   typedef SpecPtr<T> inherited;\
@@ -132,6 +132,6 @@ public: \
   TA_BASEFUNS_LITE(T ## _SPtr); \
 }
 
-#define SpecPtr_of(T) eTypeDef_Of(T ## _SPtr ); SpecPtrEx_of(T,E_API);
+#define SPECPTR_OF(T) eTypeDef_Of(T ## _SPtr ); SPECPTREX_OF(T,E_API);
 
 #endif // SpecPtr_h

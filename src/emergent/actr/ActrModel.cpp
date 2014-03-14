@@ -31,6 +31,7 @@
 #include <ctype.h>
 
 TA_BASEFUNS_CTORS_DEFN(ActrGlobalParams);
+SMARTREF_OF_CPP(ActrModel); // ActrModelRef
 
 TA_BASEFUNS_CTORS_DEFN(ActrModel);
 

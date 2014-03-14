@@ -16,6 +16,8 @@
 #include "taTask.h"
 
 TA_BASEFUNS_CTORS_DEFN(taTask);
+SMARTREF_OF_CPP(taTask);
+
 
 void taTask::Initialize() {
   task_id = -1; 

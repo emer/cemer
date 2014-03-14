@@ -17,6 +17,8 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Variant_Matrix);
+SMARTREF_OF_CPP(Variant_Matrix);
+
 
 using namespace std;
 

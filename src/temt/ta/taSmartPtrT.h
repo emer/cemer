@@ -28,20 +28,20 @@ taTypeDef_Of(taSmartPtrT);
 template<class T>
 class taSmartPtrT: public taSmartPtr {
 public:
-  inline T*     ptr() const {return (T*)m_ptr;} // typed alias for the base version
+  inline T*     ptr() const { return (T*)m_ptr; } // typed alias for the base version
 
-  inline        operator T*() const {return (T*)m_ptr;}
-  inline T*     operator->() const {return (T*)m_ptr;}
-  inline T**    operator&() const {return (T**)(&m_ptr);}
-    //note: operator& is *usually* verbotten but we are binary compat -- it simplifies low-level compat
+  inline        operator T*() const { return (T*)m_ptr; }
+  inline T*     operator->() const { return (T*)m_ptr; }
+  inline T**    operator&() const { return (T**)(&m_ptr); }
+  // note: operator& is *usually* verbotten but we are binary compat -- it simplifies low-level compat
   T*            operator=(const taSmartPtrT<T>& src)
-    {set((T*)src.m_ptr); return (T*)m_ptr;}
-    //NOTE: copy only implies ptr, NOT the owner!
-  T*            operator=(T* src) {set(src); return (T*)m_ptr;}
-  T&            operator*() const {return *(T*)m_ptr;}
+  { set((T*)src.m_ptr); return (T*)m_ptr; }
+  //NOTE: copy only implies ptr, NOT the owner!
+  T*            operator=(T* src) { set(src); return (T*)m_ptr; }
+  T&            operator*() const { return *(T*)m_ptr; }
 
   friend bool   operator==(const taSmartPtrT<T>& a, const taSmartPtrT<T>& b)
-    {return (a.m_ptr == b.m_ptr);}
+  { return (a.m_ptr == b.m_ptr); }
 
   taSmartPtrT(T* val): taSmartPtr(val) {}
   taSmartPtrT() {}
@@ -52,8 +52,8 @@ private:
 
 // macro for creating smart ptrs of taBase classes
 
-#define SmartPtr_Of(T) taTypeDef_Of(T ## Ptr); typedef taSmartPtrT<T> T ## Ptr; /* sp */
+#define SMARTPTR_OF(T) taTypeDef_Of(T ## Ptr); typedef taSmartPtrT<T> T ## Ptr; /* sp */
 
-SmartPtr_Of(taBase);            // basic ptr if you don't know the type
+SMARTPTR_OF(taBase);            // basic ptr if you don't know the type
 
 #endif // taSmartPtrT_h

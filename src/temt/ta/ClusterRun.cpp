@@ -34,6 +34,8 @@
 #include <QDir>
 
 TA_BASEFUNS_CTORS_DEFN(ClusterRun);
+SMARTREF_OF_CPP(ClusterRun); // ClusterRunRef
+
 
 String ClusterRun::timestamp_fmt = "yyyy_MM_dd_hh_mm_ss";
 

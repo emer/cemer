@@ -17,6 +17,8 @@
 #include <DataTable>
 
 TA_BASEFUNS_CTORS_DEFN(FixedWidthSpec);
+SMARTREF_OF_CPP(FixedWidthSpec); //
+
 
 
 void FixedWidthSpec::Load_Init(DataTable* dat_) {

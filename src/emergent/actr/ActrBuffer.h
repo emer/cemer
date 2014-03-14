@@ -105,7 +105,7 @@ private:
   void Destroy()     { CutLinks(); }
 };
 
-SmartRef_Of(ActrBuffer); // ActrBufferRef
+SMARTREF_OF(ActrBuffer); // ActrBufferRef
 
 #ifdef __TA_COMPILE__
 #include <ActrModule>

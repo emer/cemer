@@ -194,6 +194,6 @@ private:
   void  Defaults_init()         { };
 };
 
-SpecPtr_of(ConSpec);
+SPECPTR_OF(ConSpec);
 
 #endif // ConSpec_h

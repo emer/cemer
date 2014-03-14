@@ -16,6 +16,8 @@
 #include "int_Matrix.h"
 
 TA_BASEFUNS_CTORS_DEFN(int_Matrix);
+SMARTREF_OF_CPP(int_Matrix);
+
 
 const int int_Matrix::blank = 0;
 

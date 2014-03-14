@@ -16,6 +16,8 @@
 #include "float_Matrix.h"
 
 TA_BASEFUNS_CTORS_DEFN(float_Matrix);
+SMARTREF_OF_CPP(float_Matrix);
+
 
 using namespace std;
 

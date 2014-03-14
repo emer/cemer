@@ -121,6 +121,6 @@ private:
   void Destroy()     { CutLinks(); }
 };
 
-SmartRef_Of(ActrCondition); // ActrConditionRef
+SMARTREF_OF(ActrCondition); // ActrConditionRef
 
 #endif // ActrCondition_h

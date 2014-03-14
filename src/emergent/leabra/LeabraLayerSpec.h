@@ -689,6 +689,6 @@ private:
   void	Defaults_init();
 };
 
-SpecPtr_of(LeabraLayerSpec);
+SPECPTR_OF(LeabraLayerSpec);
 
 #endif // LeabraLayerSpec_h

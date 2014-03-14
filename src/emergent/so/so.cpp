@@ -34,6 +34,7 @@ TA_BASEFUNS_CTORS_DEFN(ThreshLinSoUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(SoftMaxLayerSpec);
 TA_BASEFUNS_CTORS_DEFN(SoLayerSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(SoLayerSpec_SPtr);
+SMARTREF_OF_CPP(SoLayerSpec);
 
 
 static void so_converter_init() {

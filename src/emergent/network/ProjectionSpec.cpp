@@ -18,6 +18,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(ProjectionSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(ProjectionSpec_SPtr);
+SMARTREF_OF_CPP(ProjectionSpec);
 
 
 void ProjectionSpec::Initialize() {

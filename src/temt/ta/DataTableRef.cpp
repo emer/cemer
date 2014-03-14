@@ -14,4 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DataTableRef.h"
+#include <DataTable>
+
+SMARTREF_OF_CPP(DataTable); // DataTableRef
 

@@ -20,6 +20,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(UnitSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(UnitSpec_SPtr);
+SMARTREF_OF_CPP(UnitSpec);
 
 void UnitSpec::Initialize() {
   min_obj_type = &TA_Unit;

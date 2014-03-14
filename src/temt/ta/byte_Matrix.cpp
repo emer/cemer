@@ -16,6 +16,8 @@
 #include "byte_Matrix.h"
 
 TA_BASEFUNS_CTORS_DEFN(byte_Matrix);
+SMARTREF_OF_CPP(byte_Matrix);
+
 
 const unsigned char byte_Matrix::blank = '\0';
 

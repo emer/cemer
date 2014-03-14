@@ -17,4 +17,6 @@
 #include "DataTable_Group.h"
 
 TA_BASEFUNS_CTORS_DEFN(DataTable_Group);
+SMARTREF_OF_CPP(DataTable_Group);
+
 

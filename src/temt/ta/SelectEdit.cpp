@@ -19,6 +19,8 @@
 #include <Program>
 
 taTypeDef_Of(taProject);
+SMARTREF_OF_CPP(SelectEdit); //
+
 
 #include <SigLinkSignal>
 #include <taMisc>

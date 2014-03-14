@@ -17,6 +17,8 @@
 #include <DataTable>
 
 taTypeDef_Of(DataColT);
+SMARTREF_OF_CPP(DataTableCols);
+
 
 #include <SigLinkSignal>
 

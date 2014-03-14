@@ -16,5 +16,7 @@
 #include "Variant_Array.h"
 
 TA_BASEFUNS_CTORS_DEFN(Variant_Array);
+SMARTREF_OF_CPP(Variant_Array)
+
 
 const Variant Variant_Array::blank;

@@ -16,6 +16,8 @@
 #include "int_Array.h"
 
 TA_BASEFUNS_CTORS_DEFN(int_Array);
+SMARTREF_OF_CPP(int_Array)
+
 
 void int_Array::FillSeq(int start, int inc) {
   int i, v;

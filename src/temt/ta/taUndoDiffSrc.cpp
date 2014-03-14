@@ -20,6 +20,8 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taUndoDiffSrc);
+SMARTREF_OF_CPP(taUndoDiffSrc);
+
 
 
 void taUndoDiffSrc::Initialize() {

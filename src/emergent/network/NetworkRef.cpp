@@ -14,4 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "NetworkRef.h"
+#include <Network>
+
+SMARTREF_OF_CPP(Network); // NetworkRef
 

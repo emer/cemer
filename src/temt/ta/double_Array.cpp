@@ -16,5 +16,7 @@
 #include "double_Array.h"
 
 TA_BASEFUNS_CTORS_DEFN(double_Array);
+SMARTREF_OF_CPP(double_Array)
+
 
 const double double_Array::blank = 0.0;

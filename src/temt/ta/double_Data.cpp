@@ -16,4 +16,6 @@
 #include "double_Data.h"
 
 TA_BASEFUNS_CTORS_DEFN(double_Data);
+SMARTREF_OF_CPP(double_Data); //
+
 

@@ -31,6 +31,7 @@ TA_BASEFUNS_CTORS_DEFN(ClampSpec);
 TA_BASEFUNS_CTORS_DEFN(DecaySpec);
 TA_BASEFUNS_CTORS_DEFN(CosDiffLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LayAbsNetAdaptSpec);
+SMARTREF_OF_CPP(LeabraLayerSpec);
 
 eTypeDef_Of(MarkerConSpec);
 

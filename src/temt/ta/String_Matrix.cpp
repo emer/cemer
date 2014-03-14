@@ -18,6 +18,8 @@
 #include <String_Array>
 
 TA_BASEFUNS_CTORS_DEFN(String_Matrix);
+SMARTREF_OF_CPP(String_Matrix);
+
 
 using namespace std;
 

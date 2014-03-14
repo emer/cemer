@@ -14,4 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "ActrChunkRef.h"
+#include <ActrChunk>
 
+SMARTREF_OF_CPP(ActrChunk); // ActrChunkRef

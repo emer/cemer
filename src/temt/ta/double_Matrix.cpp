@@ -16,6 +16,8 @@
 #include "double_Matrix.h"
 
 TA_BASEFUNS_CTORS_DEFN(double_Matrix);
+SMARTREF_OF_CPP(double_Matrix);
+
 
 using namespace std;
 

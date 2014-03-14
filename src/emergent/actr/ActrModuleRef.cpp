@@ -14,4 +14,6 @@
 //   GNU General Public License for more details.
 
 #include "ActrModuleRef.h"
+#include <ActrModule>
 
+SMARTREF_OF_CPP(ActrModule); // ActrModuleRef

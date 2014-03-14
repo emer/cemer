@@ -16,6 +16,8 @@
 #include "rgb_Matrix.h"
 
 TA_BASEFUNS_CTORS_DEFN(rgb_Matrix);
+SMARTREF_OF_CPP(rgb_Matrix);
+
 
 const rgb_t rgb_Matrix::blank;
 

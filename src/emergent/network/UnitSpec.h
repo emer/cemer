@@ -113,6 +113,6 @@ private:
   void  Defaults_init()         { };
 };
 
-SpecPtr_of(UnitSpec);
+SPECPTR_OF(UnitSpec);
 
 #endif // UnitSpec_h

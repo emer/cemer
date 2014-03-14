@@ -27,6 +27,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ActrCondition);
+SMARTREF_OF_CPP(ActrCondition);
 
 void ActrCondition::Initialize() {
   flags = CF_NONE;

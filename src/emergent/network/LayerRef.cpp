@@ -14,4 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "LayerRef.h"
+#include <Layer>
+
+SMARTREF_OF_CPP(Layer); // LayerRef
 

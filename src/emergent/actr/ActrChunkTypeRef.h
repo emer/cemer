@@ -22,6 +22,6 @@
 // declare all other types mentioned but not required to include:
 
 class ActrChunkType; //
-SmartRef_Of(ActrChunkType); // ActrChunkTypeRef
+SMARTREF_OF(ActrChunkType); // ActrChunkTypeRef
 
 #endif // ActrChunkTypeRef_h

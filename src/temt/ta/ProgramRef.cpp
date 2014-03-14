@@ -14,4 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "ProgramRef.h"
+#include <Program>
 
+SMARTREF_OF_CPP(Program); // ProgramRef
