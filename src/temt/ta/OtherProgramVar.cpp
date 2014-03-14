@@ -164,8 +164,20 @@ bool OtherProgramVar::CvtFmCode(const String& code) {
   else
     set_other = false;
 
-  String remainder = code.after(":");
+  String remainder = trim(code.after(":"));
   if(remainder.empty()) return true;
+
+  if(!remainder.contains('=')) {
+    // shortcut to just get the program
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(proj) {
+      Program* np = proj->programs.FindLeafName(remainder);
+      if(np) {
+        other_prog = np;
+      }
+    }
+    return true;
+  }
 
   NameVar_PArray nv_pairs;
   taMisc::ToNameValuePairs(remainder, nv_pairs);
