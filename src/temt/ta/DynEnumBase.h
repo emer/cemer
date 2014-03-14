@@ -54,6 +54,8 @@ public:
   taBase*      FindTypeName(const String& nm) const override;
   String       GetDisplayName() const override;
 
+  bool         BrowserEditSet(const String& code, int move_after = 0) override;
+
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;

@@ -43,8 +43,42 @@ String DynEnumItem::GetDisplayName() const {
   String rval = name + "=";
   DynEnumType* typ = GET_MY_OWNER(DynEnumType);
   if(typ && typ->bits)
-    return rval + String(value, "%x");
-  return rval + String(value);
+    rval += String("0x") + String(value, "%x");
+  else 
+    rval += String(value);
+  if(desc.nonempty())
+    rval += " // " + desc;
+  return rval;
+}
+
+bool DynEnumItem::BrowserEditSet(const String& code, int move_after) {
+  String cd = CodeGetDesc(code);
+  String nm = cd;
+  String vl;
+  if(cd.contains("=")) {
+    nm = trim(cd.before("="));
+    vl = trim(cd.after("="));
+  }
+  if(nm.nonempty())
+    SetName(nm);
+  if(vl.nonempty())
+    value = (int)vl;
+  SigEmitUpdated();
+  return true;
+}
+
+String DynEnumItem::CodeGetDesc(const String& code) {
+  if(code.contains("//")) {
+    desc = trim(code.after("//"));
+    return trim(code.before("//"));
+  }
+  if(code.contains("/*")) {
+    desc = trim(code.after("/*"));
+    if(desc.contains("*/"))
+      desc = trim(desc.before("*/",-1));
+    return trim(code.before("/*"));
+  }
+  return code;
 }
 
 bool DynEnumItem::BrowserSelectMe() {

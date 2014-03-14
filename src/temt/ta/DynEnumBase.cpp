@@ -48,7 +48,17 @@ taBase* DynEnumBase::FindTypeName(const String& nm) const {
 }
 
 String DynEnumBase::GetDisplayName() const {
-  return name + " (enum: " + String(enums.size) + " items)";
+  String rval = name + " (enum: " + String(enums.size) + " items)";
+  if(desc.nonempty())
+    rval += " // " + desc;
+  return rval;
+}
+
+bool DynEnumBase::BrowserEditSet(const String& code, int move_after) {
+  String cd = CodeGetDesc(code);
+  if(cd.contains("(enum:"))
+    cd = trim(cd.before("(enum:"));
+  return taNBase::BrowserEditSet(cd, move_after);
 }
 
 void DynEnumBase::GenCssPre_impl(Program* prog) {

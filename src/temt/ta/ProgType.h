@@ -49,6 +49,10 @@ public:
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 
+  bool                  BrowserEditSet(const String& code, int move_after = 0) override;
+  virtual  String       CodeGetDesc(const String& code);
+  // #IGNORE get description (comment) from the code string -- returns code without the comment
+
   String       GetDesc() const override { return desc; }
   String       GetTypeDecoKey() const override { return "ProgType"; }
   void         SetDefaultName() override {} // make it local to list, set by list
