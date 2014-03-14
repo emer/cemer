@@ -42,8 +42,6 @@ String DataCalcCopyCommonCols::GetDisplayName() const {
   return rval;
 }
 
-// todo: needs CvtFmCode!
-
 void DataCalcCopyCommonCols::GetDataPtrsFmLoop() {
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl || dcl->isDestroying()) return;

@@ -48,9 +48,14 @@ public:
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   String	GetToolbarName() const override { return "data=args"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
 
   void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
+
+DataColsFmArgs::RowType        StringToRowType(const String& row_type);
+
 
   PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
 protected:

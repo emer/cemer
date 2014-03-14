@@ -17,6 +17,7 @@
 #include <Program>
 #include <ProgVar>
 #include <DataTable>
+#include <NameVar_PArray>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataColsFmArgs);
@@ -41,24 +42,36 @@ void DataColsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String DataColsFmArgs::GetDisplayName() const {
-  String rval = "Data Cols Fm Args";
-  DataTable* dt = GetData();
-  if(dt) {
-    rval += " To: " + dt->name;
-  }
-  String row_var_name = "(ERR: not set!)";
+  String rval = "Data Cols Fm Args: ";
+  
+  if(data_var)
+    rval += " table=" + data_var->name + " ";
+  else
+    rval += " table=? ";
+  
+  String row_var_name;
   if((bool)row_var)
     row_var_name = row_var->name;
+  
   if(row_spec  == CUR_ROW)
-    rval += " cur_row";
+    rval += " row_spec=cur_row ";
   else if(row_spec == ROW_NUM)
-    rval += " row_num: " + row_var_name;
+    rval += " row_spec=row_num ";
+  else if(row_spec == ROW_VAL)
+    rval += " row_spec=row_val ";
   else
-    rval += " row_val: " + row_var_name;
+    rval += " row_spec=cur_row ";
+  
+  // only display row_var if needed
+  if(row_spec == ROW_NUM || row_spec == ROW_VAL) {
+    if (row_var)
+      rval += " row_var=" + row_var_name + " ";
+    else
+      rval += " row_var=? ";
+  }
+  
   return rval;
 }
-
-// todo: needs CvtFmCode!
 
 DataTable* DataColsFmArgs::GetData() const {
   if(!data_var) return NULL;
@@ -113,3 +126,52 @@ void DataColsFmArgs::GenRegArgs(Program* prog) {
     }
   }
 }
+
+bool DataColsFmArgs::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("datacol") || dc.startsWith("data col")) return true;
+  return false;
+}
+
+bool DataColsFmArgs::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("tab")) {
+      data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("row_s")) {
+      row_spec = StringToRowType(value);
+    }
+    else if (name.startsWith("row_v")) {
+      row_var = FindVarNameInScope(value, false); // don't make
+    }
+  }
+  
+  SigEmitUpdated();
+  return true;
+}
+
+// copied from DataVarBase because this is the only other class using this
+// and I didn't want to move the code to a common location
+DataColsFmArgs::RowType DataColsFmArgs::StringToRowType(const String& row_type) {
+  if (row_type == "row_num" || row_type == "ROW_NUM")
+    return DataColsFmArgs::ROW_NUM;
+  else if (row_type == "row_val" || row_type == "ROW_VAL")
+    return DataColsFmArgs::ROW_VAL;
+  else
+    return DataColsFmArgs::CUR_ROW;
+}
+
