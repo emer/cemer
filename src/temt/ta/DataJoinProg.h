@@ -40,15 +40,17 @@ public:
 
   void	UpdateSpecDataTable() override;
 
-  String GetDisplayName() const override;
-  String	GetToolbarName() const override { return "join"; }
+  String    GetDisplayName() const override;
+  String    GetToolbarName() const override { return "join"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  bool      CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(DataJoinProg);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override; 
+  void      UpdateAfterEdit_impl() override;
+  void      CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void      CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void      GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

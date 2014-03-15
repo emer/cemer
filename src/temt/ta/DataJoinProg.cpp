@@ -16,6 +16,8 @@
 #include "DataJoinProg.h"
 #include <Program>
 #include <DataTable>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataJoinProg);
 
@@ -34,20 +36,26 @@ void DataJoinProg::Initialize() {
 }
 
 String DataJoinProg::GetDisplayName() const {
-  String rval = join_spec.GetDisplayName();
-  if(src_data_var) {
-    rval += " a: " + src_data_var->name;
-  }
-  if(src_b_data_var) {
-    rval += " b: " + src_b_data_var->name;
-  }
-  if(dest_data_var) {
-    rval += " to: " + dest_data_var->name;
-  }
+//  String rval = join_spec.GetDisplayName();
+  
+  String rval = "Join tables: ";
+  if(src_data_var)
+    rval += " src_a = " + src_data_var->name;
+  else
+    rval +=  "src_a = ? ";
+  
+  if (src_b_data_var)
+    rval += " src_b = " + src_b_data_var->name;
+  else
+    rval +=  "src_b = ? ";
+  
+  if(dest_data_var)
+    rval += " dest table = " + dest_data_var->name;
+  else
+    rval += " dest table = ? ";
+
   return rval;
 }
-
-// todo: needs CvtFmCode!
 
 void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -97,3 +105,41 @@ void DataJoinProg::GenCssBody_impl(Program* prog) {
   prog->DecIndent();
   prog->AddLine(this, "}");
 }
+
+bool DataJoinProg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("join")) return true;
+  return false;
+}
+
+bool DataJoinProg::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("src a") || name.startsWith("src_a")) {
+      src_data_var = FindVarNameInScope(value, false); // don't make
+    }
+    if (name.startsWith("src b") || name.startsWith("src_b")) {
+      src_b_data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("dest")) {
+      dest_data_var = FindVarNameInScope(value, false); // don't make
+    }
+  }
+  
+  SigEmitUpdated();
+  return true;
+}
+

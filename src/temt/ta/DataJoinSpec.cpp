@@ -39,7 +39,25 @@ void DataJoinSpec::ClearColumns() {
 }
 
 String DataJoinSpec::GetDisplayName() const {
-  return "join: col_a:" + col_a.GetDisplayName() + " to col_b: " + col_b.GetDisplayName();
+//  return "join: col_a:" + col_a.GetDisplayName() + " to col_b: " + col_b.GetDisplayName();
+  
+  String rval = "join spec:";
+  if (!col_a.col_name.empty())
+    rval += " col_a = " + col_a.col_name;
+  else
+    rval += " col_a = ? ";
+  
+  if (!col_b.col_name.empty())
+    rval += " col_b = " + col_b.col_name;
+  else
+    rval += " col_b = ? ";
+  
+  if(type  == INNER)
+    rval += " join type = Inner ";
+  else
+    rval += " join type = Left ";
+
+  return rval;
 }
 
 void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
