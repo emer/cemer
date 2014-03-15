@@ -71,6 +71,6 @@ bool DataVarWrite::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String tbn = GetToolbarName(); tbn.downcase();
   String tn = GetTypeDef()->name; tn.downcase();
   if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
-  if(dc.startsWith("to table:")) return true;
+  if(dc.startsWith("to tab") || dc.startsWith("write to")) return true;
   return false;
 }

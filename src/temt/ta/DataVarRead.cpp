@@ -72,6 +72,6 @@ bool DataVarRead::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String tbn = GetToolbarName(); tbn.downcase();
   String tn = GetTypeDef()->name; tn.downcase();
   if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
-  if(dc.startsWith("from table:")) return true;
+  if(dc.startsWith("from tab") || dc.startsWith("read from")) return true;
   return false;
 }

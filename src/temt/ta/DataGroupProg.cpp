@@ -15,6 +15,8 @@
 
 #include "DataGroupProg.h"
 #include <Program>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataGroupProg);
 
@@ -34,23 +36,19 @@ void DataGroupProg::Initialize() {
 
 String DataGroupProg::GetDisplayName() const {
   String rval = "Group from: ";
-  if(src_data_var) {
-    rval += src_data_var->name;
-  }
-  else {
-    rval += "?";
-  }
-  rval += " to: ";
-  if(dest_data_var) {
-    rval += dest_data_var->name;
-  }
-  else {
-    rval += "?";
-  }
+  
+  if(src_data_var)
+    rval += " src table = " + src_data_var->name;
+  else
+    rval += " src table = ?";
+  
+  if(dest_data_var)
+    rval +=  " dest table = " + dest_data_var->name;
+  else
+    rval += " dest table = ?";
+
   return rval;
 }
-
-// todo: needs CvtFmCode!
 
 void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
@@ -88,3 +86,41 @@ void DataGroupProg::GenCssBody_impl(Program* prog) {
 void DataGroupProg::AddAllColumns() {
   group_spec.AddAllColumns(GetSrcData());
 }
+
+bool DataGroupProg::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("group")) return true;
+  return false;
+}
+
+bool DataGroupProg::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("src tab") || name.startsWith("src_tab")) {
+      src_data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("dest tab") || name.startsWith("dest_tab")) {
+      dest_data_var = FindVarNameInScope(value, false); // don't make
+    }
+//    else if (name.startsWith("group")) {
+//      group_spec = value;
+//    }
+  }
+  
+  SigEmitUpdated();
+  return true;
+}
+

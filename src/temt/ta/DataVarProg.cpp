@@ -270,7 +270,7 @@ bool DataVarProg::CvtFmCode(const String& code) {
   String tn = GetTypeDef()->name; tn.downcase();
   if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
 
-  if(dc.startsWith("data to:"))
+  if(dc.startsWith("data to"))
     set_data = true;
   else
     set_data = false;

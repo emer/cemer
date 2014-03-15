@@ -167,10 +167,6 @@ void DataVarSimple::GenCssBody_impl(Program* prog) {
 
 bool DataVarSimple::CvtFmCode(const String& code) {
   String dc = code;  dc.downcase();
-  String tbn = GetToolbarName(); tbn.downcase();
-  String tn = GetTypeDef()->name; tn.downcase();
-  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true; // nothing we can do
-
   String remainder = code.after(":");
   if(remainder.empty()) return true;
 
