@@ -822,7 +822,6 @@ set(ta_HEADS_NOMAKETA_MOC
   iSynchronousNetRequest.h
 
   iMenuButton.h
-  iHiLightButton.h
   iContextMenuButton.h
   iColorButton.h
   iCheckBox.h
@@ -996,6 +995,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
   iMenuAction.h
   iApplicationToolBar.h
   iProgramToolBar.h
+  iHiLightButton.h
 
   iWidget_List.h
   iTopLevelWindow_List.h
