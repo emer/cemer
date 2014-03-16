@@ -42,8 +42,8 @@ public:
   ProgVarRef	data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the data table to use
   ProgVarRef	index_var;	// #ITEM_FILTER_StdProgVarFilter program variable for the index used in the loop -- goes from 0 to number of rows in data table-1
   ProgVarRef	order_var;	// #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data items (rows) in -- is automatically created if not set
-  Order		order;		// #READ_ONLY #SHOW order to process data items (rows) in -- set from order_var
-  int_Array	item_idx_list;	// #READ_ONLY #NO_SAVE list of item indicies (permuted if permuted, otherwise in sequential order)
+  Order       order;		// #READ_ONLY #SHOW order to process data items (rows) in -- set from order_var
+  int_Array   item_idx_list;	// #READ_ONLY #NO_SAVE list of item indicies (permuted if permuted, otherwise in sequential order)
 
   virtual DataBlock* GetData();
   // get actual data table pointer from variable
@@ -52,17 +52,21 @@ public:
 
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "data loop"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
+  DataLoop::Order StringToOrderType(const String& order_type);
+
 
   PROGEL_SIMPLE_BASEFUNS(DataLoop);
 protected:
   virtual void	GetOrderVar(); // make an order variable in program if not already set
   virtual void	GetIndexVar(); // make an index variable in program if not already set
-  void	UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void    UpdateAfterEdit_impl() override;
+  void    CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssBody_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
-  void	SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+  void    SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
 				     int sls, void* op1_, void* op2_) override;
 
 private:

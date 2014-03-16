@@ -18,6 +18,7 @@
 taTypeDef_Of(DataBlock);
 
 #include <Program>
+#include <NameVar_PArray>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataLoop);
@@ -138,21 +139,76 @@ void DataLoop::GenCssPost_impl(Program* prog) {
 }
 
 String DataLoop::GetDisplayName() const {
-  ((DataLoop*)this)->GetOrderVal();
-  String ord_str = GetTypeDef()->GetEnumString("Order", order);
-  String data_nm;
-  if(data_var) data_nm = data_var->name;
-  else data_nm = "?";
-  String index_nm;
-  if(index_var) index_nm = index_var->name;
-  else index_nm = "?";
-  return "DataTable Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
+  String rval = "Data Loop: ";
+  
+  if(data_var)
+    rval += " table= " + data_var->name + " ";
+  else
+    rval += " table = ? ";
+  
+  if (index_var)
+    rval += " index = " + index_var->name + " ";
+  else
+    rval += " index = ? ";
+  
+  if (order_var)
+    rval += " order_var = " + order_var->name + " ";
+  else
+    rval += " order_var = ? ";
+  
+  return rval;
 }
 
-// todo: needs CvtFmCode!
+bool DataLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("data loop")) return true;
+  return false;
+}
+
+bool DataLoop::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("tab")) {
+      data_var = FindVarNameInScope(value, false); // don't make
+    }
+    if (name.startsWith("index")) {
+      index_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("order var") || name.startsWith("order_var")) {
+      order_var = FindVarNameInScope(value, false); // don't make
+      if (order_var) {
+        order = StringToOrderType(order_var->name);}
+    }
+  }
+  
+  SigEmitUpdated();
+  return true;
+}
+
+DataLoop::Order DataLoop::StringToOrderType(const String& order_type) {
+  if (order_type.startsWith("permute"))
+    return DataLoop::PERMUTED;
+  else if (order_type.startsWith("rand"))
+    return DataLoop::RANDOM;
+  else
+    return DataLoop::SEQUENTIAL;
+}
 
 void DataLoop::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                    int sls, void* op1_, void* op2_) {
+                                int sls, void* op1_, void* op2_) {
   GetOrderVal();
   UpdateAfterEdit();
 }
