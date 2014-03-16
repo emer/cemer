@@ -56,7 +56,7 @@ public:
   // for grouped case, get items per group
 
   String GetDisplayName() const override;
-  String GetToolbarName() const override { return "data loop"; }
+  String GetToolbarName() const override { return "net data\nloop"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetDataLoop);
 protected:
