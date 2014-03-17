@@ -54,6 +54,6 @@ private:
    void Destroy() {CutLinks();}
 };
 
-SMARTREF_OF(DynEnumTableCol); // DynEnumTypeRef
+SMARTREF_OF(TA_API, DynEnumTableCol); // DynEnumTypeRef
 
 #endif // DynEnumTableCol_h

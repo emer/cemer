@@ -45,6 +45,6 @@ private:
   void  Destroy()               { };
 };
 
-TA_SMART_PTRS(DataTable_Group);
+TA_SMART_PTRS(TA_API, DataTable_Group);
 
 #endif // DataTable_Group_h

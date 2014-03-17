@@ -25,6 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class Network; //
-TA_SMART_PTRS(Network); // NetworkRef
+TA_SMART_PTRS(E_API, Network); // NetworkRef
 
 #endif // NetworkRef_h

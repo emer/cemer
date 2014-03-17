@@ -47,6 +47,6 @@ private:
   void Destroy() { }
 };
 
-SMARTREF_OF(ParamSearchAlgo); // ParamSearchAlgoRef
+SMARTREF_OF(TA_API, ParamSearchAlgo); // ParamSearchAlgoRef
 
 #endif // ParamSearchAlgo_h

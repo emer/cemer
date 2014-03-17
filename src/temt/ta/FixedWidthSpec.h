@@ -52,6 +52,6 @@ private:
   void  Destroy() {CutLinks();}
 };
 
-TA_SMART_PTRS(FixedWidthSpec); //
+TA_SMART_PTRS(TA_API, FixedWidthSpec); //
 
 #endif // FixedWidthSpec_h

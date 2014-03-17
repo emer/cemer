@@ -22,6 +22,6 @@
 // declare all other types mentioned but not required to include:
 
 class ActrChunkType; //
-SMARTREF_OF(ActrChunkType); // ActrChunkTypeRef
+SMARTREF_OF(E_API, ActrChunkType); // ActrChunkTypeRef
 
 #endif // ActrChunkTypeRef_h

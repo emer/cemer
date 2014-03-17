@@ -106,6 +106,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(VEObject); // VEObjectRef
+SMARTREF_OF(TA_API, VEObject); // VEObjectRef
 
 #endif // VEObject_h

@@ -230,6 +230,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(ProgEl);
+SMARTREF_OF(TA_API, ProgEl);
 
 #endif // ProgEl_h

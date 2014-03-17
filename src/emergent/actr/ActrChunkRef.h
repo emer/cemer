@@ -25,7 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class ActrChunk; //
-SMARTREF_OF(ActrChunk); // ActrChunkRef
-SMARTPTR_OF(ActrChunk); // ActrChunkPtr
+TA_SMART_PTRS(E_API, ActrChunk); // ActrChunkRef, Ptr
 
 #endif // ActrChunkRef_h

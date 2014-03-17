@@ -66,6 +66,6 @@ private:
   void Destroy()        { };
 };
 
-TA_ARRAY_OPS(NameVar_Array)
+TA_ARRAY_OPS(TA_API, NameVar_Array)
 
 #endif // NameVar_Array_h

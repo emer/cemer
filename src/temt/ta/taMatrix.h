@@ -808,6 +808,6 @@ private:
   void                  Destroy();
 };
 
-TA_SMART_PTRS(taMatrix);
+TA_SMART_PTRS(TA_API, taMatrix);
 
 #endif // taMatrix_h

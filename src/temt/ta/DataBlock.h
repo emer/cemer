@@ -269,6 +269,6 @@ private:
   void                  Destroy() {}
 };
 
-SMARTREF_OF(DataBlock); // DataBlockRef
+SMARTREF_OF(TA_API, DataBlock); // DataBlockRef
 
 #endif // DataBlock_h

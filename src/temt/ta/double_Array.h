@@ -48,6 +48,6 @@ private:
   void Destroy()        { };
 };
 
-TA_ARRAY_OPS(double_Array)
+TA_ARRAY_OPS(TA_API, double_Array)
 
 #endif // double_Array_h

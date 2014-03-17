@@ -132,6 +132,6 @@ private:
   void  Copy_(const Layer_Group& cp);
 };
 
-TA_SMART_PTRS(Layer_Group)
+TA_SMART_PTRS(E_API, Layer_Group)
 
 #endif // Layer_Group_h

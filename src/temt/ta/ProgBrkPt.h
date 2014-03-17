@@ -59,6 +59,6 @@ private:
   void Destroy()     { };
 };
 
-SMARTREF_OF(ProgBrkPt);
+SMARTREF_OF(TA_API, ProgBrkPt);
 
 #endif // ProgBrkPt_h

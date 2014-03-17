@@ -60,6 +60,6 @@ private:
   void          Destroy()  { CutLinks(); }
 };
 
-TA_SMART_PTRS(byte_Matrix);
+TA_SMART_PTRS(TA_API, byte_Matrix);
 
 #endif // byte_Matrix_h

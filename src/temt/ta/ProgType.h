@@ -68,6 +68,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(ProgType); // ProgTypeRef
+SMARTREF_OF(TA_API, ProgType); // ProgTypeRef
 
 #endif // ProgType_h

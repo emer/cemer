@@ -36,7 +36,7 @@ class ActrProceduralModule; //
 class ActrImaginalModule; //
 class ActrVisionModule; //
 class ActrModel; //
-SMARTREF_OF(ActrModel); // ActrModelRef
+SMARTREF_OF(E_API, ActrModel); // ActrModelRef
 
 
 eTypeDef_Of(ActrGlobalParams);

@@ -25,7 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 class Projection; //
-TA_SMART_PTRS(Projection); // ProjectionRef
+TA_SMART_PTRS(TA_API, Projection); // ProjectionRef
 
 #ifdef __MAKETA__
 class ProjectionRef;

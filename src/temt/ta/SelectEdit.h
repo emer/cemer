@@ -209,6 +209,6 @@ private:
   void  Copy_(const SelectEdit& cp); //
 };
 
-TA_SMART_PTRS(SelectEdit); //
+TA_SMART_PTRS(TA_API, SelectEdit); //
 
 #endif // SelectEdit_h

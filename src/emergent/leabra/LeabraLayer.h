@@ -332,6 +332,6 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
-TA_SMART_PTRS(LeabraLayer);
+TA_SMART_PTRS(E_API, LeabraLayer);
 
 #endif // LeabraLayer_h

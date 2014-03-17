@@ -53,6 +53,6 @@ private:
   void Destroy();
 };
 
-SMARTREF_OF(VELinearMuscle); // VELinearMuscleRef
+SMARTREF_OF(TA_API, VELinearMuscle); // VELinearMuscleRef
 
 #endif // VELinearMuscle_h

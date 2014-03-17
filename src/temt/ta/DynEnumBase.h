@@ -72,6 +72,6 @@ private:
   void  Destroy()       {}
 };
 
-SMARTREF_OF(DynEnumBase); // DynEnumBaseRef
+SMARTREF_OF(TA_API, DynEnumBase); // DynEnumBaseRef
 
 #endif // DynEnumBase_h

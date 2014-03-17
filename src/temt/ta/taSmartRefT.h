@@ -63,8 +63,8 @@ private:
 };
 
 // macro for creating smart refs of taBase classes
-#define SMARTREF_OF(T) taTypeDef_Of(T ## Ref); \
-  class T ## Ref : public taSmartRefT<T> { \
+#define SMARTREF_OF(API,T) taTypeDef_Of(T ## Ref);  \
+  class API T ## Ref : public taSmartRefT<T> { \
   public: \
     TypeDef*              GetBaseType() const override; \
     TypeDef*              GetDataTypeDef() const override; \
@@ -84,7 +84,7 @@ private:
   TypeDef* T ## Ref::GetDataTypeDef() const \
   { return (m_ptr) ? m_ptr->GetTypeDef() : T::StatTypeDef(0); }
 
-SMARTREF_OF(taBase);           // basic ref if you don't know the type
+SMARTREF_OF(TA_API, taBase);           // basic ref if you don't know the type
 
 
 #endif // taSmartRefT_h

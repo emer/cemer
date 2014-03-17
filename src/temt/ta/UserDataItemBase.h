@@ -61,6 +61,6 @@ private:
   void Destroy() {}
 };
 
-TA_SMART_PTRS(UserDataItemBase);
+TA_SMART_PTRS(TA_API, UserDataItemBase);
 
 #endif // UserDataItemBase_h

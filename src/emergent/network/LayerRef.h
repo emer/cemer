@@ -25,6 +25,7 @@
 // declare all other types mentioned but not required to include:
 
 class Layer; //
-TA_SMART_PTRS(Layer); // LayerRef
+
+TA_SMART_PTRS(E_API, Layer); // LayerRef
 
 #endif // LayerRef_h

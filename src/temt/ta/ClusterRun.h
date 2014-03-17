@@ -36,7 +36,7 @@ class iPanelSet; //
 class SubversionClient; //
 
 class ClusterRun; //
-TA_SMART_PTRS(ClusterRun); // ClusterRunRef
+TA_SMART_PTRS(TA_API, ClusterRun); // ClusterRunRef
 
 taTypeDef_Of(GridSearch);
 

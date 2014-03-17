@@ -78,6 +78,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
-TA_SMART_PTRS(double_Matrix);
+TA_SMART_PTRS(TA_API, double_Matrix);
 
 #endif // double_Matrix_h

@@ -54,6 +54,6 @@ private:
   void Destroy() {}
 };
 
-TA_SMART_PTRS(UserDataItem);
+TA_SMART_PTRS(TA_API, UserDataItem);
 
 #endif // UserDataItem_h

@@ -25,6 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class Program; //
-TA_SMART_PTRS(Program); // ProgramRef
+TA_SMART_PTRS(TA_API, Program); // ProgramRef
 
 #endif // ProgramRef_h

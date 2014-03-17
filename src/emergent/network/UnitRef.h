@@ -25,6 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class Unit; //
-TA_SMART_PTRS(Unit); // UnitRef
+TA_SMART_PTRS(E_API, Unit); // UnitRef
 
 #endif // UnitRef_h

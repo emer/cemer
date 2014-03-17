@@ -716,6 +716,6 @@ private:
   void	Defaults_init();
 };
 
-TA_SMART_PTRS(LeabraConSpec);
+TA_SMART_PTRS(E_API, LeabraConSpec);
 
 #endif // LeabraConSpec_h

@@ -60,6 +60,6 @@ private:
   void  Destroy() {}
 };
 
-TA_SMART_PTRS(int_Data); //
+TA_SMART_PTRS(TA_API, int_Data); //
 
 #endif // int_Data_h

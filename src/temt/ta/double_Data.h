@@ -61,6 +61,6 @@ private:
   void  Destroy() {}
 };
 
-TA_SMART_PTRS(double_Data); //
+TA_SMART_PTRS(TA_API, double_Data); //
 
 #endif // double_Data_h

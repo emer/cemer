@@ -803,6 +803,6 @@ private:
   void	Defaults_init();
 };
 
-TA_SMART_PTRS(LeabraUnitSpec);
+TA_SMART_PTRS(E_API, LeabraUnitSpec);
 
 #endif // LeabraUnitSpec_h

@@ -24,6 +24,6 @@
 // declare all other types mentioned but not required to include:
 
 class ActrModule; //
-SMARTREF_OF(ActrModule); // ActrModuleRef
+SMARTREF_OF(E_API, ActrModule); // ActrModuleRef
 
 #endif // ActrModuleRef_h

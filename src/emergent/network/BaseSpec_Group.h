@@ -68,6 +68,7 @@ public:
   void 	Destroy()		{ }
   TA_BASEFUNS_NOCOPY(BaseSpec_Group);
 };
-TA_SMART_PTRS(BaseSpec_Group)
+
+TA_SMART_PTRS(E_API, BaseSpec_Group)
 
 #endif // BaseSpec_Group_h

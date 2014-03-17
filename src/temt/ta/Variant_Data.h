@@ -63,6 +63,6 @@ private:
   void  Destroy() {}
 };
 
-TA_SMART_PTRS(Variant_Data); //
+TA_SMART_PTRS(TA_API, Variant_Data); //
 
 #endif // Variant_Data_h

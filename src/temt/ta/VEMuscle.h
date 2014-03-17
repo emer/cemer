@@ -56,6 +56,6 @@ private:
   void Destroy();
 };
 
-SMARTREF_OF(VEMuscle); // VEMuscleRef
+SMARTREF_OF(TA_API, VEMuscle); // VEMuscleRef
 
 #endif // VEMuscle_h

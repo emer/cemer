@@ -150,7 +150,7 @@ protected:
 
 };
 
-SMARTREF_OF(RetinaProc); // RetinaProcRef
+SMARTREF_OF(TA_API, RetinaProc); // RetinaProcRef
 
 taTypeDef_Of(DoGRegionSpec);
 taTypeDef_Of(DoGRetinaProc);

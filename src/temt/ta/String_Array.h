@@ -60,6 +60,6 @@ private:
   void Destroy()        { };
 };
 
-TA_ARRAY_OPS(String_Array)
+TA_ARRAY_OPS(TA_API, String_Array)
 
 #endif // String_Array_h

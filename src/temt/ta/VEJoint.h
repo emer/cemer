@@ -222,6 +222,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(VEJoint); // VEJointRef
+SMARTREF_OF(TA_API, VEJoint); // VEJointRef
 
 #endif // VEJoint_h

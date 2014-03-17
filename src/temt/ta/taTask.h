@@ -47,6 +47,6 @@ private:
   void	Destroy() {}
 };
 
-TA_SMART_PTRS(taTask);
+TA_SMART_PTRS(TA_API, taTask);
 
 #endif // taTask_h

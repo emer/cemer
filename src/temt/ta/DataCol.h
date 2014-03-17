@@ -453,6 +453,6 @@ private:
   void  Destroy()       {CutLinks(); }; //
 };
 
-TA_SMART_PTRS(DataCol); //
+TA_SMART_PTRS(TA_API, DataCol); //
 
 #endif // DataCol_h

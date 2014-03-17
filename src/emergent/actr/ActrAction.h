@@ -123,6 +123,6 @@ private:
   void Destroy()     { CutLinks(); }
 };
 
-SMARTREF_OF(ActrAction); // ActrActionRef
+SMARTREF_OF(E_API, ActrAction); // ActrActionRef
 
 #endif // ActrAction_h

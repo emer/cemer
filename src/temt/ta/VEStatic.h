@@ -38,7 +38,7 @@ class VEWorld; //
 class VESpace; // 
 
 class VEStatic; //
-SMARTREF_OF(VEStatic); // VEStaticRef
+SMARTREF_OF(TA_API, VEStatic); // VEStaticRef
 
 taTypeDef_Of(VEStatic);
 

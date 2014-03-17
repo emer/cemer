@@ -121,6 +121,6 @@ private:
   void Destroy()     { CutLinks(); }
 };
 
-SMARTREF_OF(ActrCondition); // ActrConditionRef
+SMARTREF_OF(E_API, ActrCondition); // ActrConditionRef
 
 #endif // ActrCondition_h

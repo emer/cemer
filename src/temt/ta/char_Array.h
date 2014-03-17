@@ -49,6 +49,6 @@ private:
   void Destroy()        { };
 };
 
-TA_ARRAY_OPS(char_Array)
+TA_ARRAY_OPS(TA_API, char_Array)
 
 #endif // char_Array_h

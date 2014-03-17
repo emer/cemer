@@ -98,6 +98,6 @@ private:
   void  Destroy();
 };
 
-TA_SMART_PTRS(taBrainAtlas);
+TA_SMART_PTRS(E_API, taBrainAtlas);
 
 #endif // taBrainAtlas_h

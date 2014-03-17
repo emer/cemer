@@ -49,6 +49,6 @@ private:
   void Destroy()        { };
 };
 
-TA_ARRAY_OPS(Variant_Array)
+TA_ARRAY_OPS(TA_API, Variant_Array)
 
 #endif // Variant_Array_h

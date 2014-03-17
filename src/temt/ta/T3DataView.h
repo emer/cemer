@@ -155,7 +155,7 @@ private:
   void  Initialize();
   void  Destroy();
 };
-TA_SMART_PTRS(T3DataView);
+TA_SMART_PTRS(TA_API, T3DataView);
 
 #define T3_DATAVIEWFUNS(b,i) \
   TA_DATAVIEWFUNS(b,i);

@@ -97,9 +97,9 @@ public: \
 protected: \
   virtual const void*  El_GetBlank_() const { return (const void*)&blank; }
 
-#define TA_ARRAY_OPS(y) \
+#define TA_ARRAY_OPS(API, y)                                             \
   inline bool operator ==(const y& a, const y& b) {return a.Equal_(b);} \
   inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));} \
-  TA_SMART_PTRS(y)
+  TA_SMART_PTRS(API, y)
 
 #endif // taArray_base_h

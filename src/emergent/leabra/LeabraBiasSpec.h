@@ -51,6 +51,6 @@ private:
   void	Defaults_init();
 };
 
-TA_SMART_PTRS(LeabraBiasSpec)
+TA_SMART_PTRS(E_API, LeabraBiasSpec)
 
 #endif // LeabraBiasSpec_h

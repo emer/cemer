@@ -71,6 +71,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
-TA_SMART_PTRS(String_Matrix);
+TA_SMART_PTRS(TA_API, String_Matrix);
 
 #endif // String_Matrix_h

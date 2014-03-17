@@ -53,6 +53,6 @@ private:
   void  Destroy()               { };
 };
 
-SMARTREF_OF(ColorScaleSpec); // ColorScaleSpecRef
+SMARTREF_OF(TA_API, ColorScaleSpec); // ColorScaleSpecRef
 
 #endif // ColorScaleSpec_h

@@ -63,6 +63,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
-TA_SMART_PTRS(rgb_Matrix);
+TA_SMART_PTRS(TA_API, rgb_Matrix);
 
 #endif // rgb_Matrix_h

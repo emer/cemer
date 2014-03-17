@@ -25,6 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class DataTable; //
-TA_SMART_PTRS(DataTable); // DataTableRef
+TA_SMART_PTRS(TA_API, DataTable); // DataTableRef
 
 #endif // DataTableRef_h

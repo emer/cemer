@@ -155,6 +155,6 @@ private:
   void Destroy()     { CutLinks(); }
 };
 
-SMARTREF_OF(ActrProduction); // ActrProductionRef
+SMARTREF_OF(E_API, ActrProduction); // ActrProductionRef
 
 #endif // ActrProduction_h

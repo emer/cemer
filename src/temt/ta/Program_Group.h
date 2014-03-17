@@ -83,6 +83,6 @@ private:
   void  Destroy()               {Reset(); };
 };
 
-TA_SMART_PTRS(Program_Group); // Program_GroupRef
+TA_SMART_PTRS(TA_API, Program_Group); // Program_GroupRef
 
 #endif // Program_Group_h

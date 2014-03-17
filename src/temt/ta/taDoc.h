@@ -69,6 +69,6 @@ private:
   void  Destroy() { }
 };
 
-SMARTREF_OF(taDoc);
+SMARTREF_OF(TA_API, taDoc);
 
 #endif // taDoc_h

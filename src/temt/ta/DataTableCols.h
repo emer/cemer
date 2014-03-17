@@ -65,6 +65,6 @@ private:
   void  Destroy()               {}
 };
 
-TA_SMART_PTRS(DataTableCols);
+TA_SMART_PTRS(TA_API, DataTableCols);
 
 #endif // DataTableCols_h

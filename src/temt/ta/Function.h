@@ -83,6 +83,6 @@ private:
   void  Destroy()       {CutLinks();}
 };
 
-SMARTREF_OF(Function);
+SMARTREF_OF(TA_API, Function);
 
 #endif // Function_h

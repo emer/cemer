@@ -206,7 +206,7 @@ private:
 };
 
 
-TA_SMART_PTRS(taDataView);
+TA_SMART_PTRS(TA_API, taDataView);
 
 // for explicit lifetime management
 #define TA_DATAVIEWFUNS(b,i) \

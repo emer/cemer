@@ -25,6 +25,6 @@
 // declare all other types mentioned but not required to include:
 
 class ProgVar; //
-SMARTREF_OF(ProgVar); // ProgVarRef
+SMARTREF_OF(TA_API, ProgVar); // ProgVarRef
 
 #endif // ProgVarRef_h

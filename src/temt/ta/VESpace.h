@@ -91,6 +91,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(VESpace); // VESpaceRef
+SMARTREF_OF(TA_API, VESpace); // VESpaceRef
 
 #endif // VESpace_h

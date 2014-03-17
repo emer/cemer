@@ -70,6 +70,6 @@ private:
   void          Destroy() { CutLinks(); }
 };
 
-TA_SMART_PTRS(float_Matrix);
+TA_SMART_PTRS(TA_API, float_Matrix);
 
 #endif // float_Matrix_h

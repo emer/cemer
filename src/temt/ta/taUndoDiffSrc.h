@@ -58,6 +58,6 @@ private:
   void  Destroy()       { CutLinks(); }
 };
 
-TA_SMART_PTRS(taUndoDiffSrc);
+TA_SMART_PTRS(TA_API, taUndoDiffSrc);
 
 #endif // taUndoDiffSrc_h
