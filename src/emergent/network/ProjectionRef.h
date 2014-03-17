@@ -19,6 +19,7 @@
 // parent includes:
 #include <taSmartRefT>
 #include <taSmartPtrT>
+#include "network_def.h"
 
 // member includes:
 
