@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taSmartRefT>
+#include "network_def.h"
 
 // declare all other types mentioned but not required to include:
 
