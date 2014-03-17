@@ -398,7 +398,7 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSaveAction = AddAction(new iAction("&Save Project", QKeySequence(cmd_str + "S"), "fileSaveAction"));
   fileSaveAction->setIcon(QIcon(QPixmap(":/images/filesave.png")));
 
-  fileSaveAsAction = AddAction(new iAction("Save Project &As...", QKeySequence(), "fileSaveAsAction"));
+  fileSaveAsAction = AddAction(new iAction("Save Project &As...", QKeySequence(cmd_str + "Shift+S"), "fileSaveAsAction"));
   // filePrintAction = AddAction(new iAction("&Print...", QKeySequence(), "filePrintAction"));
   // filePrintAction->setIcon(QIcon(QPixmap(":/images/fileprint.png")));
 
