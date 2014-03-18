@@ -76,8 +76,9 @@ taTypeDef_Of(DataTable);
 class TA_API DataTable : public DataBlock_Idx {
   // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER table of data containing columns of a fixed data type and geometry, with data added row-by-row
   INHERITED(DataBlock_Idx)
-    friend class DataTableCols;
+  friend class DataTableCols;
   friend class iDataTableModel;
+  friend class DataCol;
 public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE             = 0, // #NO_BIT
@@ -418,6 +419,12 @@ public:
                                           int d0=0, int d1=0, int d2=0, int d3=0,
                                           int d4=0, int d5=0, int d6=0);
   // #CAT_Columns change type and/or geometry of column with given name -- preserves as much data as possible subject to these changes
+  void          ChangeColType_impl();
+  // #EXPERT delayed callback function for DataCol::ChangeColType -- not user callable
+  void          ChangeColCellGeom_impl();
+  // #EXPERT delayed callback function for DataCol::ChangeColCellGeom -- not user callable
+  void          ChangeColMatToScalar_impl();
+  // #EXPERT delayed callback function for DataCol::ChangeColMatToScalar -- not user callable
 
   virtual void          ChangeColType(const Variant& col, ValType new_val_type);
   // #CAT_Columns change data type of column -- preserves data subject to constraints of type change
@@ -728,17 +735,17 @@ public:
   //    Entire Matrix
 
   taMatrix*             GetValAsMatrix(const Variant& col, int row);
-  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+  // #CAT_Access get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed
   taMatrix*             GetValAsMatrixColName(const String& col_name, int row, bool quiet = false);
-  // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
+  // #CAT_Access get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed
   taMatrix*             GetValAsMatrixColRowName(const String& col_name,
                                                  const String& row_col_name, const Variant& row_value, bool quiet = false);
-  // #EXPERT #CAT_Access get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed
   bool                  SetValAsMatrix(const taMatrix* val, const Variant& col, int row);
-  // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  // #CAT_Modify set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)
   bool                  SetValAsMatrixColName(const taMatrix* val, const String& col_name,
                                               int row, bool quiet = false);
-  // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set -- quiet = fail quietly
+  // #CAT_Modify set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)
   taMatrix*             GetRangeAsMatrix(const Variant& col, int st_row, int n_rows);
   // #EXPERT #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
 
@@ -1035,8 +1042,14 @@ protected:
   void         WriteClose_impl() override;
 
 protected:
+  DataCol*      change_col;
+  int           change_col_type; // used for delayed callback function
+  MatrixGeom    change_col_geom; // used for delayed callback function
+
   DataCol*      NewCol_impl(DataCol::ValType val_type, const String& col_nm, int& col_idx);
   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
+  DataCol*      NewColToken_impl(DataCol::ValType val_type, const String& col_nm);
+  // just creates a new column token, but does not add it to data
   DataCol*      GetColForChannelSpec_impl(ChannelSpec* cs);
   DataCol*      NewColFromChannelSpec_impl(ChannelSpec* cs);
 

@@ -241,19 +241,25 @@ int DataCol::GetSpecialState() const {
 
 void DataCol::ChangeColType(ValType new_type) {
   if (valType() == new_type) return;
+  DataTable* own = dataTable();
+  if(!own) return;
   RemoveHashTable();
-  MatrixGeom cell_geom;
-  if (is_matrix) cell_geom = this->cell_geom; // because we will be nuked
-  dataTable()->ChangeColTypeGeom_impl(this, new_type, cell_geom);
-  //NOTE: no more code here, because we've probably been deleted/replaced
+  own->change_col = this;
+  own->change_col_type = new_type;
+  tabMisc::DelayedFunCall_nogui(own, "ChangeColType_impl");
 }
 
 void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
   if ((!is_matrix && (new_geom.dims() == 0)) ||
-      cell_geom.Equal(new_geom)) return;
+      cell_geom.Equal(new_geom)) {
+    return;
+  }
+  DataTable* own = dataTable();
+  if(!own) return;
   RemoveHashTable();
-  dataTable()->ChangeColTypeGeom_impl(this, valType(), new_geom);
-  //NOTE: no more code here, because we may have been deleted/replaced
+  own->change_col = this;
+  own->change_col_geom = new_geom;
+  tabMisc::DelayedFunCall_nogui(own, "ChangeColCellGeom_impl");
 }
 
 void DataCol::ChangeColCellGeomNs(int dims, int d0, int d1, int d2, int d3,
@@ -265,10 +271,11 @@ void DataCol::ChangeColCellGeomNs(int dims, int d0, int d1, int d2, int d3,
 
 void DataCol::ChangeColMatToScalar() {
   if (!is_matrix) return;
+  DataTable* own = dataTable();
+  if(!own) return;
   RemoveHashTable();
-  MatrixGeom new_geom; //note: 0 dims is key to change to scalar
-  dataTable()->ChangeColTypeGeom_impl(this, valType(), new_geom);
-  //NOTE: no more code here, because we may have been deleted/replaced
+  own->change_col = this;
+  tabMisc::DelayedFunCall_nogui(own, "ChangeColMatToScalar_impl");
 }
 
 DataTable* DataCol::dataTable() const {

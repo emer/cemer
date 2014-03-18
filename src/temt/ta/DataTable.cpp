@@ -81,6 +81,8 @@ void DataTable::Initialize() {
   table_model = NULL;
   row_indexes.SetGeom(1,0);  // always should be set to 1d
   base_diff_row = -1;  // no base comparison row at start
+  change_col = NULL;
+  change_col_type = -1;
 }
 
 void DataTable::Destroy() {
@@ -97,6 +99,7 @@ void DataTable::InitLinks() {
   taBase::Own(data, this);
   taBase::Own(row_indexes, this);
   taBase::Own(diff_row_list, this);
+  taBase::Own(change_col_geom, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
@@ -1090,7 +1093,10 @@ bool DataTable::SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row, b
   int i;
   if (idx_err(row, i, quiet)) {
     return da->SetValAsMatrix(val, i);
-  } else return false;
+  }
+  else {
+    return false;
+  }
 }
 
 ////////////////////////
@@ -1378,6 +1384,37 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
   return rval;
 }
 
+DataCol* DataTable::NewColToken_impl(DataCol::ValType val_type, const String& col_nm) {
+  TypeDef* td;
+  switch (val_type) {
+  case VT_STRING: td = &TA_String_Data; break;
+  case VT_FLOAT:  td = &TA_float_Data; break;
+  case VT_DOUBLE:  td = &TA_double_Data; break;
+  case VT_INT:  td = &TA_int_Data; break;
+  case VT_BYTE:  td = &TA_byte_Data; break;
+  case VT_VARIANT:  td = &TA_Variant_Data; break;
+  default: return NULL; // compiler food
+  }
+  DataCol* rval = (DataCol*) taBase::MakeToken(td);
+  if(!rval) return rval;
+  rval->SetName(col_nm);
+  // additional specialized initialization
+  switch (val_type) {
+  case VT_STRING:
+    break;
+  case VT_FLOAT:
+  case VT_DOUBLE:
+    break;
+  case VT_INT:
+    rval->SetUserData(DataCol::udkey_narrow, true);
+    break;
+  case VT_BYTE:
+    break;
+  default: break; // compiler food
+  }
+  return rval;
+}
+
 float_Data* DataTable::NewColFloat(const String& col_nm) {
   return (float_Data*)NewCol(VT_FLOAT, col_nm);
 }
@@ -1628,30 +1665,19 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
   String col_nm = src->name;
   src->name = _nilString; // for new
   DataCol* new_col = NULL;
-  StructUpdate(true);
-  // note:
-  int tmp_idx;
-  if (g.dims() == 0) {
-    new_col = NewCol(new_type, col_nm);
-    if(!new_col) {
-      StructUpdate(false);
-      return;
-    }
-    tmp_idx = new_col->GetIndex();
+  new_col = NewColToken_impl(new_type, col_nm);
+  if(!new_col) {
+    return;
   }
-  else {
-    new_col = NewColMatrixN(new_type, col_nm, g, tmp_idx);
-    if(!new_col) {
-      StructUpdate(false);
-      return;
-    }
+  if (g.dims() > 0) {
+    new_col->is_matrix = true;
+    new_col->cell_geom = g;
   }
+  new_col->Init(); // asserts geom
+  new_col->EnforceRows(rows_total);
   // copy all data -- the generic copy dude copies user data, and robustly copies data
   new_col->CopyFromCol_Robust(*src);
-  // move to right place, and nuke old guy
-  data.MoveIdx(tmp_idx, old_idx);
-  data.RemoveEl(src);
-  StructUpdate(false);
+  data.ReplaceIdx(old_idx, new_col); // atomic replace is clean..
 }
 
 void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
@@ -1682,6 +1708,38 @@ void DataTable::ChangeAllColsOfType(ValType cur_val_type, ValType new_val_type) 
     ChangeColType(i, new_val_type);
   }
 }
+
+void DataTable::ChangeColType_impl() {
+  if(!change_col || change_col_type < 0) return;
+  DataCol* dc = change_col;
+  ValType new_type = (ValType)change_col_type;
+  change_col = NULL;
+  change_col_type = -1; // reset
+  MatrixGeom cell_geom;
+  if (dc->is_matrix) cell_geom = dc->cell_geom;
+  ChangeColTypeGeom_impl(dc, new_type, cell_geom);
+  // note: dc is now dead..
+}
+
+void DataTable::ChangeColCellGeom_impl() {
+  if(!change_col || change_col_geom.dims() == 0) return;
+  DataCol* dc = change_col;
+  MatrixGeom new_geom = change_col_geom;
+  change_col = NULL;
+  change_col_geom.Reset();
+  ChangeColTypeGeom_impl(dc, dc->valType(), new_geom);
+  // note: dc is now dead..
+}
+
+void DataTable::ChangeColMatToScalar_impl() {
+  if(!change_col) return;
+  DataCol* dc = change_col;
+  change_col = NULL;
+  MatrixGeom new_geom; //note: 0 dims is key to change to scalar
+  ChangeColTypeGeom_impl(dc, dc->valType(), new_geom);
+  // note: dc is now dead..
+}
+
 
 void DataTable::UniqueColNames() {
   for(int i=0;i<data.size; i++) {
