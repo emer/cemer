@@ -87,6 +87,7 @@ void taiEditor::InitGuiFields(bool) {
 }
 
 void taiEditor::StartEndLayout(bool start) {
+  if(!widget()) return;
   if (start) {
     widget()->setUpdatesEnabled(false);
   } else { // end
