@@ -50,13 +50,9 @@ public:
   virtual void 	ClearColumns();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
-  bool HasName() const override { return true; }
-  String GetName() const override;
-  bool SetName(const String& nm) override;
-  String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgArg"; }
 
-  bool          BrowserEditEnable() override { return true; }
+bool          BrowserEditEnable() override { return true; }
   String        BrowserEditString() override { return GetDisplayName(); }
   bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
