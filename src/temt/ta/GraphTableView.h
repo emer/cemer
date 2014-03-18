@@ -121,6 +121,8 @@ public:
   String                last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
   taVector3f            last_sel_pt;    // #READ_ONLY #SHOW #NO_SAVE values of last selected point
 
+  bool                  render_svg; // #IGNORE rendering to svg
+  String                svg_str;    // #IGNORE svg string rendering to
   bool          scrolling_;     // #IGNORE currently scrolling (in scroll callback)
 
   void InitDisplay(bool init_panel = true) override;
@@ -169,6 +171,9 @@ public:
   // #BUTTON special copy function that just copies user view options in a robust manner
   virtual void          DefaultPlotStyles();
   // #BUTTON set the default plot styles for all plots
+
+  virtual void          RenderSVG(const String& svg_fname);
+  // #BUTTON #EXT_svg #FILE_DIALOG_SAVE render an svg version of this graph to given file name
 
   void  InitLinks();
   void  CutLinks();
@@ -225,6 +230,9 @@ protected:
   virtual void          RenderGraph_Bar();
   virtual void          RenderGraph_Matrix_Sep();
   virtual void          RenderGraph_Matrix_Zi();
+
+  virtual void          SVGHeader();
+  virtual void          SVGFooter();
 
   virtual void          ComputeAxisRanges();
   // compute range information based on data column, call UpdateRange_impl

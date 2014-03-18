@@ -111,3 +111,7 @@ String RGBA::ToString_RGBA() const {
     String("; B:") + String(b) +
     String("; A:") + String(a);
 }
+
+String RGBA::ToHexString() const {
+  return color().toString();
+}

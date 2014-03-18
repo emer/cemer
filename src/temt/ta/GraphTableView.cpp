@@ -158,6 +158,7 @@ void GraphTableView::Initialize() {
   mat_layout = taMisc::BOT_ZERO;
   mat_odd_vert = true;
   scrolling_ = false;
+  render_svg = false;
 
   err_spacing = 1;
   err_bar_width = .02f;
@@ -1018,6 +1019,28 @@ void GraphTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
   }
 }
 
+
+void GraphTableView::SVGHeader() {
+  svg_str = "";
+  svg_str << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
+          << "<svg\n"
+          << "  xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n"
+          << "  width=\"" << 800 << "px\"\n"
+          << "  height=\"" << 800 << "px\"\n"
+          << "  viewBox=\"0 0 1000 1000\">\n";
+}
+
+void GraphTableView::SVGFooter() {
+  svg_str << "</svg>\n";
+}
+
+void GraphTableView::RenderSVG(const String& svg_fname) {
+  render_svg = true;
+  RenderGraph();
+  render_svg = false;
+  svg_str.SaveToFile(svg_fname);
+}
+
 ///////////////////////////////////////////////////////////////
 //      Actual Rendering of graph display
 
@@ -1025,6 +1048,10 @@ void GraphTableView::RenderGraph() {
 //   taMisc::Info("render graph");
   UpdateAfterEdit_impl();
   if(n_plots == 0 || !x_axis.on) return;
+
+  if(render_svg) {
+    SVGHeader();
+  }
 
   RenderAxes();
 
@@ -1043,6 +1070,10 @@ void GraphTableView::RenderGraph() {
       RenderGraph_Bar();
     else
       RenderGraph_XY();
+  }
+
+  if(render_svg) {
+    SVGFooter();
   }
 }
 
@@ -1692,6 +1723,12 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   iVec3f th_st;                 // start of thresholded line
   iVec3f th_ed;                 // end of thresholded line
   bool first = true;
+
+  if(render_svg) {
+    svg_str << "<path fill=\"none\" stroke=\"#" << plv.color.ToHexString() << "\" stroke-width=\"" << dev_pix_ratio * line_width << "\"\n";
+    svg_str << "  d=\"";
+  }
+
   for (int row = view_range.min; row <= view_range.max; row++) {
     iColor clr; // only used for color modes
     bool clr_ok = false;
@@ -1770,12 +1807,18 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
           t3gl->moveTo(plt, (T3Color)(clr));
         else
           t3gl->moveTo(plt);
+        if(render_svg) {
+          svg_str << "M " << 1000.0 * plt.x << "," << 1000.0 - (1000.0 * plt.y) << " ";
+        }
       }
       else {
         if(clr_ok)
           t3gl->lineTo(plt, (T3Color)(clr));
         else
           t3gl->lineTo(plt);
+        if(render_svg) {
+          svg_str << "L " << 1000.0 * plt.x << "," << 1000.0 - (1000.0 * plt.y) << " ";
+        }
       }
     }
     else if(plot_style == THRESH_LINE) {
@@ -1838,6 +1881,11 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     last_x = dat.x;
     last_z = dat.z;
   }
+
+  if(render_svg) {
+    svg_str << "\"\n />\n";
+  }
+
   t3gl->finishBatch();
 }
 

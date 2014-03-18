@@ -52,8 +52,8 @@ public:
   // set from rgb values
 
   void         SetDefaultName() override { };
-
-  String ToString_RGBA() const;
+  String        ToHexString() const;
+  String        ToString_RGBA() const;
   String        GetDesc() const                 { return desc; }
   TA_BASEFUNS_LITE(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
