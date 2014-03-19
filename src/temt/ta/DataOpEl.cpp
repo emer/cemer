@@ -36,6 +36,12 @@ void DataOpEl::UpdateAfterEdit_impl() {
   if(!data_table) {
     data_cols.set(NULL);
   }
+  UpdateName();
+}
+
+void DataOpEl::SetColName(const String& nm) {
+  col_name = nm;
+  UpdateName();
 }
 
 String DataOpEl::GetDisplayName() const {

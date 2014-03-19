@@ -50,9 +50,13 @@ public:
   virtual void 	ClearColumns();
   // #CAT_DataOp clear column pointers (don't keep these guys hanging around)
 
+  virtual void  SetColName(const String& nm);
+
   bool          HasName() const override { return true; }
   String        GetName() const override;
   bool          SetName(const String& nm) override;
+  virtual void  UpdateName() { };
+  // #IGNORE define this for any subclasses that do more with name than just col_name, called in SetColName and UAE
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgArg"; }
 

@@ -25,8 +25,7 @@ TA_BASEFUNS_CTORS_DEFN(DataGroupEl);
 void DataGroupEl::Initialize() {
 }
 
-void  DataGroupEl::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+void DataGroupEl::UpdateName() {
   name = col_name + " " + agg.GetAggName();
 }
 

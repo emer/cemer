@@ -46,12 +46,12 @@ public:
 
   String        GetName() const override;
   bool          SetName(const String& nm) override;
+  void          UpdateName() override;
 
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
 protected:
-  void   UpdateAfterEdit_impl();
   void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 

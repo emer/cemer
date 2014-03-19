@@ -17,3 +17,10 @@
 
 TA_BASEFUNS_CTORS_DEFN(DataOpBaseSpec);
 
+void DataOpBaseSpec::Initialize() {
+}
+
+void DataOpBaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  ops.CheckConfig(quiet, rval);
+}

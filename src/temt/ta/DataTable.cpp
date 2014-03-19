@@ -3713,54 +3713,54 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
     DataCol* da = GetColData(col1);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-      sp->col_name = da->name;
       if(ascending1) sp->order = DataSortEl::ASCENDING;
       else sp->order = DataSortEl::DESCENDING;
+      sp->SetColName(da->name);
     }
   }
   if(col2.isStringType() || col1.toInt() >= 0) {
     DataCol* da = GetColData(col2);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-      sp->col_name = da->name;
       if(ascending2) sp->order = DataSortEl::ASCENDING;
       else sp->order = DataSortEl::DESCENDING;
+      sp->SetColName(da->name);
     }
   }
   if(col3.isStringType() || col1.toInt() >= 0) {
     DataCol* da = GetColData(col3);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-      sp->col_name = da->name;
       if(ascending3) sp->order = DataSortEl::ASCENDING;
       else sp->order = DataSortEl::DESCENDING;
+      sp->SetColName(da->name);
     }
   }
   if(col4.isStringType() || col1.toInt() >= 0) {
     DataCol* da = GetColData(col4);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-      sp->col_name = da->name;
       if(ascending4) sp->order = DataSortEl::ASCENDING;
       else sp->order = DataSortEl::DESCENDING;
+      sp->SetColName(da->name);
     }
   }
   if(col5.isStringType() || col1.toInt() >= 0) {
     DataCol* da = GetColData(col5);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-      sp->col_name = da->name;
       if(ascending5) sp->order = DataSortEl::ASCENDING;
       else sp->order = DataSortEl::DESCENDING;
+      sp->SetColName(da->name);
     }
   }
   if(col6.isStringType() || col1.toInt() >= 0) {
     DataCol* da = GetColData(col6);
     if(da) {
       DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-      sp->col_name = da->name;
       if(ascending6) sp->order = DataSortEl::ASCENDING;
       else sp->order = DataSortEl::DESCENDING;
+      sp->SetColName(da->name);
     }
   }
   taDataProc::SortThruIndex(this, &spec);
@@ -3776,39 +3776,39 @@ void DataTable::SortColName(const String& col1, bool ascending1,
   DataSortSpec spec;
   if(col1.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col1;
     if(ascending1) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col1);
   }
   if(col2.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col2;
     if(ascending2) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col2);
   }
   if(col3.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col3;
     if(ascending3) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col3);
   }
   if(col4.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col4;
     if(ascending4) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col4);
   }
   if(col5.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col5;
     if(ascending5) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col5);
   }
   if(col6.nonempty()) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col6;
     if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col6);
   }
   taDataProc::SortThruIndex(this, &spec);
 }
@@ -3823,39 +3823,39 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
   DataSortSpec spec;
   if(col1) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col1->name;
     if(ascending1) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col1->name);
   }
   if(col2) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col2->name;
     if(ascending2) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col2->name);
   }
   if(col3) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col3->name;
     if(ascending3) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col3->name);
   }
   if(col4) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col4->name;
     if(ascending4) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col4->name);
   }
   if(col5) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col5->name;
     if(ascending5) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col5->name);
   }
   if(col6) {
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
-    sp->col_name = col6->name;
     if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
+    sp->SetColName(col6->name);
   }
   taDataProc::SortThruIndex(this, &spec);
 }
@@ -4010,34 +4010,34 @@ bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
   DataGroupSpec spec;
   if(col1) {
     DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
-    sp->col_name = col1->name;
     sp->agg.op = Aggregate::GROUP;
+    sp->SetColName(col1->name);
   }
   if(col2) {
     DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
-    sp->col_name = col2->name;
     sp->agg.op = Aggregate::GROUP;
+    sp->SetColName(col2->name);
   }
   if(col3) {
     DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
-    sp->col_name = col3->name;
     sp->agg.op = Aggregate::GROUP;
+    sp->SetColName(col3->name);
   }
   if(col4) {
     DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
-    sp->col_name = col4->name;
     sp->agg.op = Aggregate::GROUP;
+    sp->SetColName(col4->name);
   }
   for(int i=0;i<data.size;i++) {
     DataCol* da = data.FastEl(i);
     if(da == col1 || da == col2 || da == col3 || da == col4) continue;
     if(!da->isNumeric()) continue;
     DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
-    sp->col_name = da->name;
     sp->agg.op = Aggregate::MEAN;
+    sp->SetColName(da->name);
     sp = (DataGroupEl*)spec.ops.New(1);
-    sp->col_name = da->name;
     sp->agg.op = Aggregate::SEM;
+    sp->SetColName(da->name);
   }
   return taDataProc::Group(dest_data, this, &spec);
 }

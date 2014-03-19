@@ -54,7 +54,7 @@ void DataOpList::ClearColumns() {
 
 DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
   DataOpEl* dop = (DataOpEl*)New(1);
-  dop->col_name = col_name;
+  dop->SetColName(col_name);
   dop->SetDataTable(dt);
   dop->UpdateAfterEdit();
   if(taMisc::gui_active)
@@ -69,7 +69,7 @@ void DataOpList::AddAllColumns(DataTable* dt) {
     DataOpEl* dop = FindName(da->name);
     if(dop) continue;
     dop = (DataOpEl*)New(1);
-    dop->col_name = da->name;
+    dop->SetColName(da->name);
     dop->SigEmitUpdated();
   }
   SetDataTable(dt);
@@ -87,10 +87,3 @@ bool DataOpList::MakeElNamesUnique() {
   return inherited::MakeElNamesUnique();
 }
 
-void DataOpBaseSpec::Initialize() {
-}
-
-void DataOpBaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  ops.CheckConfig(quiet, rval);
-}

@@ -24,8 +24,7 @@ void DataSortEl::Initialize() {
   order = ASCENDING;
 }
 
-void DataSortEl::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+void DataSortEl::UpdateName() {
   name = col_name + " ";
   if(order == ASCENDING)
     name += "up";

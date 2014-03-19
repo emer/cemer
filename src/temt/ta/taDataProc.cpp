@@ -85,8 +85,8 @@ bool taDataProc::GetCommonCols(DataTable* dest, DataTable* src, DataOpList* dest
     }
     DataOpEl* dop = (DataOpEl*)dest_cols->New(1);
     dop->SetDataTable(dest);
-    dop->col_name = dda->name;
     dop->col_idx = d_idx;
+    dop->SetColName(dda->name);
   }
   // note: client should do this when done with info:
   //   src_cols->ClearColumns();
@@ -581,10 +581,10 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     if(ds->col_idx < 0) continue;
     if(ds->agg.op != Aggregate::GROUP) continue;
     DataSortEl* ss = (DataSortEl*)sort_spec.ops.New(1, &TA_DataSortEl);
-    ss->col_name = ds->col_name;
     ss->col_idx = ds->col_idx;
     taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
+    ss->SetColName(ds->col_name);
   }
   if(sort_spec.ops.size == 0) {
     Group_nogp(dest, src, spec); // no group ops: just simple aggs
@@ -699,10 +699,10 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     int_Data* rowno_col = flsrc.NewColInt("__fl_rowno");
     rowno_col->InitValsToRowNo();
     DataSortEl* ss = (DataSortEl*)full_sort_spec.ops.New(1, &TA_DataSortEl);
-    ss->col_name = rowno_col->name;
     ss->col_idx = rowno_col->col_idx;
     //    taBase::SetPointer((taBase**)&ss->col_lookup, ds->col_lookup);
     ss->order = DataSortEl::ASCENDING;
+    ss->SetColName(rowno_col->name);
   }
 
   taDataProc::Sort(&ssrc, use_src, &full_sort_spec);
@@ -1319,20 +1319,20 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   taBase::Own(sort_spec_a, NULL);
   {
     DataSortEl* ss = (DataSortEl*)sort_spec_a.ops.New(1, &TA_DataSortEl);
-    ss->col_name = spec->col_a.col_name;
     ss->col_idx = spec->col_a.col_idx;
     taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_a.col_lookup);
     ss->order = DataSortEl::ASCENDING;
+    ss->SetColName(spec->col_a.col_name);
   }
 
   DataSortSpec sort_spec_b(false);
   taBase::Own(sort_spec_b, NULL);
   {
     DataSortEl* ss = (DataSortEl*)sort_spec_b.ops.New(1, &TA_DataSortEl);
-    ss->col_name = spec->col_b.col_name;
     ss->col_idx = spec->col_b.col_idx;
     taBase::SetPointer((taBase**)&ss->col_lookup, spec->col_b.col_lookup);
     ss->order = DataSortEl::ASCENDING;
+    ss->SetColName(spec->col_b.col_name);
   }
 
   DataTable ssrc_a(false);

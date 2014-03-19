@@ -29,8 +29,7 @@ void DataSelectEl::Initialize() {
   act_enabled = true;
 }
 
-void DataSelectEl::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+void DataSelectEl::UpdateName() {
   name = col_name + " " +
     GetTypeDef()->GetEnumString("Relations", rel)+ " ";
   if(use_var && (bool)var)
