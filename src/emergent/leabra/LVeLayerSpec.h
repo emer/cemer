@@ -33,6 +33,7 @@ public:
   float         min_lvi;        // #CONDSHOW_OFF_gd_pvlv #DEF_0.1;0.4 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
+  bool pos_y_dot_only; // #DEF_false positive-rectify the derivative --- only positive deltas matter!
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 

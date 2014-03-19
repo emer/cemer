@@ -165,6 +165,7 @@ float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
       du->dav = lvd;              // store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
     }
   }
+  if(lv_da < 0.0f && lv.pos_y_dot_only) lv_da = 0.0f; // positive rectify if user-selected
   return lv_da;
 }
 
@@ -213,8 +214,9 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
       lv_da = Compute_LVDa_ugp(lve_lay, lvi_lay, Layer::ACC_LAY, 0,
                                Layer::ACC_LAY, 0, net);
     }
-  }
-  return lv_da;
+   }
+   if(lv_da < 0.0f && lv.pos_y_dot_only) lv_da = 0.0f; // just to make sure!
+   return lv_da;
 }
 
 void LVeLayerSpec::Update_LVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
