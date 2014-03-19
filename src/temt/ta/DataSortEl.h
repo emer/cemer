@@ -35,13 +35,17 @@ public:
     DESCENDING,
   };
 
-  SortOrder		order;		// order to sort this in
+  String        name;           // #HIDDEN #READ_ONLY cached name value
+  SortOrder	order;		// order to sort this in
 
-  String GetDisplayName() const override;
+  String        GetName() const override;
+  bool          SetName(const String& nm) override;
+
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSortEl);
 protected:
+  void   UpdateAfterEdit_impl();
   void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 

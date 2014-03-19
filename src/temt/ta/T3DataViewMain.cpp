@@ -19,6 +19,8 @@
 #include <T3AnnotationView>
 #include <T3Annotation>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(T3DataViewMain);
 
 void T3DataViewMain::Initialize() {
@@ -106,6 +108,10 @@ void T3DataViewMain::ReBuildAll() {
   Reset();
   BuildAll();
   Render();
+}
+
+void T3DataViewMain::SaveImageSVG(const String& svg_fnm) {
+  taMisc::Error("Sorry, SVG output not (yet) supported for this type of object");
 }
 
 T3Annotation* T3DataViewMain::AnnoteLine(bool data_units, float pos_x, float pos_y, float pos_z,

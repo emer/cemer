@@ -63,7 +63,7 @@ bool DynEnumItem::BrowserEditSet(const String& code, int move_after) {
     SetName(nm);
   if(vl.nonempty())
     value = (int)vl;
-  SigEmitUpdated();
+  UpdateAfterEdit();
   return true;
 }
 

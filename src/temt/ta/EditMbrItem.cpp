@@ -92,7 +92,7 @@ String EditMbrItem::CurValAsString() {
     if(nmval.nonempty())
       return nmval;             // special case for program enum -- use string
   }
-  return mbr->type->GetValStr(mbr->GetOff(base), NULL, mbr, TypeDef::SC_STREAMING, true);
+  return mbr->GetValStr(base, TypeDef::SC_STREAMING, true);
 }
 
 bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {

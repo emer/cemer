@@ -31,13 +31,17 @@ class TA_API DataGroupEl : public DataOpEl {
   // one element of a data grouping specification
   INHERITED(DataOpEl)
 public:
+  String        name;           // #HIDDEN #READ_ONLY cached name value
   AggregateSpec	agg;		// how to aggregate this information
 
-  String GetDisplayName() const override;
+  String        GetName() const override;
+  bool          SetName(const String& nm) override;
+
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataGroupEl);
 protected:
+  void   UpdateAfterEdit_impl();
   void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 

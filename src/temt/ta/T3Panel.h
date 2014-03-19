@@ -142,6 +142,8 @@ public:
   // #CAT_Display save image in EPS format
   virtual bool          SaveImageIV(const String& fname = "");
   // #CAT_Display save image in IV (open inventor) format
+  virtual bool          SaveImageSVG(const String& fname = "");
+  // #CAT_Display save image in SVG (scalable vector graphics) format
 
   virtual void          CopyFromViewPanel(T3Panel* cp);
   // #CAT_Display copy key view information from another view panel (saved views, other view info)

@@ -314,6 +314,8 @@ QPixmap T3Panel::GrabImage(bool& got_image) {
 
 bool T3Panel::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   if(!widget()) return false;
+  if(img_fmt == SVG)
+    return SaveImageSVG(fname);
   if(img_fmt == EPS)
     return SaveImageEPS(fname);
   if(img_fmt == IV)
@@ -409,6 +411,30 @@ bool T3Panel::SaveImageIV(const String& fname) {
   wa.apply(root_view.node_so()); // just the data, not the whole camera
   //  wa.apply(viewer->quarter->getSceneGraph());
   out.closeFile();
+
+  taRefN::unRefDone(flr);
+  return true;
+}
+
+bool T3Panel::SaveImageSVG(const String& fname) {
+  T3DataViewMain* tdm = FirstChild();
+  if(!tdm) {
+    taMisc::Error("SVG only applies to first display item in scene -- none found!");
+    return false;
+  }
+
+  String ext = String(".") + image_exts.SafeEl(SVG);
+  taFiler* flr = GetSaveFiler(fname, ext);
+  if(!flr->ostrm) {
+    flr->Close();
+    taRefN::unRefDone(flr);
+    return false;
+  }
+  flr->Close();
+
+  String fn = flr->FileName();
+
+  tdm->SaveImageSVG(fn);
 
   taRefN::unRefDone(flr);
   return true;

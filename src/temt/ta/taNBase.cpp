@@ -59,6 +59,6 @@ bool taNBase::BrowserEditEnable() {
 
 bool taNBase::BrowserEditSet(const String& new_val_str, int move_after) {
   bool rval = SetName(new_val_str);
-  SigEmitUpdated();
+  UpdateAfterEdit();            // need full UAE
   return rval;
 }

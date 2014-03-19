@@ -44,10 +44,11 @@ friend class MainWindowViewer;
 //friend class WindowState;
 public:
   enum ImageFormat {
-    EPS,                        // encapsulated postscript file (only for 3D view objects)
-    JPEG,                       // JPEG -- best lossy compression (small file sizes) and ubiquitous
+    SVG,                        // scalable vector graphic format -- best format for graphs, etc for subsequent editing using virtually any vector graphics program, e.g., InkScape (free open source)
     PNG,                        // Portable Network Graphics -- best lossless compression (larger files, but better than raw) and ubiquitous
+    JPEG,                       // JPEG -- best lossy compression (small file sizes) and ubiquitous
     PPM,                        // Portable Pixmap -- good for converting to other formats -- no compression
+    EPS,                        // encapsulated postscript file (only for 3D view objects) -- SVG is recommended instead of EPS for most cases
     IV,                         // Open Inventor format (only for 3D view objects)
   };
 
@@ -94,7 +95,7 @@ public:
   virtual QPixmap       GrabImage(bool& got_image);
   // #IGNORE grabs the widget image into a pixmap object
   virtual bool          SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
-  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_Image #EXT_png,jpg,eps,ppm,iv save the image of this view to a file -- if fname is empty, it prompts the user for a name
+  // #BUTTON #FILE_DIALOG_SAVE #FILETYPE_Image #EXT_png,svg,jpg,eps,ppm,iv save the image of this view to a file -- if fname is empty, it prompts the user for a name
   virtual bool          PrintImage();
   // #BUTTON print the image of this view to printer
   static bool           InitImageExts(); // initialize the image extensions, if not already done

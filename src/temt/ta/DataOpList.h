@@ -50,6 +50,8 @@ public:
 
   void	SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);
 
+
+  bool          MakeElNamesUnique() override;
   String 	GetTypeDecoKey() const override { return "ProgArg"; }
 
   TA_BASEFUNS_NOCOPY(DataOpList);

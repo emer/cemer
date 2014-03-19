@@ -174,15 +174,15 @@ static cssEl* cssElCFun_asgn_mult_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_asgn_div_stub(int, cssEl* arg[]) {
   cssEl::cssTypes eltp = arg[1]->GetPtrType();
-  if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
-    if((double)*(arg[2]) == 0.0) {
-      cssProg* cp = arg[0]->prog;
-      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
-      return arg[1];
+  if(!(arg[2]->IsTaMatrix())) { // let ta matrix guys do their own thing
+    if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
+      if((double)*(arg[2]) == 0.0) {
+        cssProg* cp = arg[0]->prog;
+        cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+        return arg[1];
+      }
     }
-  }
-  else if(!(arg[2]->IsTaMatrix())) { // let ta matrix guys do their own thing
-    if((int)*(arg[2]) == 0) {
+    else if((int)*(arg[2]) == 0) {
       cssProg* cp = arg[0]->prog;
       cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
       return arg[1];
@@ -661,15 +661,15 @@ static cssEl* cssElCFun_mul_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_div_stub(int, cssEl* arg[]) {
   cssEl::cssTypes eltp = arg[1]->GetPtrType();
-  if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
-    if((double)*(arg[2]) == 0.0) {
-      cssProg* cp = arg[0]->prog;
-      cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
-      return arg[2];
+  if(!arg[2]->IsTaMatrix()) {
+    if(eltp == cssEl::T_Real || eltp == cssEl::T_Float) {
+      if((double)*(arg[2]) == 0.0) {
+        cssProg* cp = arg[0]->prog;
+        cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
+        return arg[2];
+      }
     }
-  }
-  else if(!(arg[2]->IsTaMatrix())) { // let ta matrix guys do their own thing
-    if((int)*(arg[2]) == 0) {
+    else if((int)*(arg[2]) == 0) {
       cssProg* cp = arg[0]->prog;
       cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
       return arg[2];

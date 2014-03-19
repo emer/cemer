@@ -1025,16 +1025,16 @@ void GraphTableView::SVGHeader() {
   svg_str << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
           << "<svg\n"
           << "  xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n"
-          << "  width=\"" << 800 << "px\"\n"
-          << "  height=\"" << 800 << "px\"\n"
-          << "  viewBox=\"0 0 1000 1000\">\n";
+          << "  width=\"" << 400.0f * width << "px\"\n"
+          << "  height=\"" << 400 << "px\"\n"
+          << "  viewBox=\"0 0 " << 1000.0f * width << " 1000\">\n";
 }
 
 void GraphTableView::SVGFooter() {
   svg_str << "</svg>\n";
 }
 
-void GraphTableView::RenderSVG(const String& svg_fname) {
+void GraphTableView::SaveImageSVG(const String& svg_fname) {
   render_svg = true;
   RenderGraph();
   render_svg = false;
@@ -1808,7 +1808,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         else
           t3gl->moveTo(plt);
         if(render_svg) {
-          svg_str << "M " << 1000.0 * plt.x << "," << 1000.0 - (1000.0 * plt.y) << " ";
+          svg_str << "M " << SvgCoords(plt.x, plt.y);
         }
       }
       else {
@@ -1817,7 +1817,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         else
           t3gl->lineTo(plt);
         if(render_svg) {
-          svg_str << "L " << 1000.0 * plt.x << "," << 1000.0 - (1000.0 * plt.y) << " ";
+          svg_str << "L " << SvgCoords(plt.x, plt.y);
         }
       }
     }

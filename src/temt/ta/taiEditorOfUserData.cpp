@@ -205,8 +205,7 @@ void taiEditorOfUserData::GetImage_Item(int row) {
     UserDataItem* item = (UserDataItem*)item_;
     MemberDef* mbr = item->FindMember("value"); // better be found!
     if (!mbr) return; // shouldn't happen
-    void* off = mbr->GetOff(item);
-    String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true);
+    String txt = mbr->GetValStr(item, TypeDef::SC_DISPLAY, true);
     // augment plain non-class vals with bg color
     if(!txt.contains("<font style=\"background-color:")) {
       if(mbr->type->IsEnum() || mbr->type->DerivesFrom(TA_taSmartPtr)

@@ -172,8 +172,7 @@ public:
   virtual void          DefaultPlotStyles();
   // #BUTTON set the default plot styles for all plots
 
-  virtual void          RenderSVG(const String& svg_fname);
-  // #BUTTON #EXT_svg #FILE_DIALOG_SAVE render an svg version of this graph to given file name
+  void          SaveImageSVG(const String& svg_fname) override;
 
   void  InitLinks();
   void  CutLinks();
@@ -260,7 +259,10 @@ protected:
                                         T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
 
-  void  LoadObsoletePlotData(); // #IGNORE
+  inline String         SvgCoords(float x, float y)
+  { return String(1000.0f * x) + "," + String(1000.0f - (1000.0f * y)) + " "; }
+
+  void          LoadObsoletePlotData(); // #IGNORE
 
   void         OnWindowBind_impl(iT3Panel* vw) override;
   void         Clear_impl() override;

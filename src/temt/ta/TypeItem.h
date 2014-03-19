@@ -76,6 +76,13 @@ public:
     TIK_UNKNOWN
   };
 
+  enum StrContext { // context for getting or setting a string value
+    SC_DEFAULT,         // default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
+    SC_STREAMING,       // value is being used for streaming, ex. strings are quoted/escaped
+    SC_VALUE,           // value is being manipulated programmatically, ex. strings are not quoted/escaped
+    SC_DISPLAY,         // value is being used for display purposes, and result includes html (rich text) formatting tags, etc
+  };
+
   // const guys help speed up oft-looked up values by avoiding String churning
   static const String opt_show; // "SHOW"
   static const String opt_no_show; // "NO_SHOW"

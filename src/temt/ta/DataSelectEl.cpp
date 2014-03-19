@@ -14,6 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "DataSelectEl.h"
+#include <MemberDef>
+#include <taMisc>
+
 
 TA_BASEFUNS_CTORS_DEFN(DataSelectEl);
 
@@ -26,14 +29,40 @@ void DataSelectEl::Initialize() {
   act_enabled = true;
 }
 
-String DataSelectEl::GetDisplayName() const {
-  String rval = col_name + " " +
+void DataSelectEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  name = col_name + " " +
     GetTypeDef()->GetEnumString("Relations", rel)+ " ";
   if(use_var && (bool)var)
-    rval += var->name;
+    name += var->name;
   else
-    rval += cmp.toString();
-  return rval;
+    name += cmp.toString();
+}
+
+String DataSelectEl::GetName() const {
+  return name;                  // need to use cached name for loading..
+}
+
+bool DataSelectEl::SetName(const String& nm) {
+  String tnm = trim(nm);
+  name = tnm;
+  if(tnm.contains(" ")) {
+    col_name = taMisc::StringCVar(tnm.before(" "));
+    String opnm = trim(tnm.after(" "));
+    if(opnm.contains(" "))      // todo: do further parsing!
+      opnm = opnm.before(" ");
+    MemberDef* opmd = GetTypeDef()->members.FindName("rel");
+    if(opmd) {
+      opmd->SetValStr(opnm, (void*)this);
+    }
+  }
+  else {
+    // Ensure name is a legal C-language identifier.
+    String new_name = taMisc::StringCVar(nm);
+    if (col_name == new_name) return true;
+    col_name = new_name;
+  }
+  return true;
 }
 
 bool DataSelectEl::Eval(const Variant& val) {

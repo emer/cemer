@@ -114,15 +114,12 @@ public:
   // operators
   void operator=(const cssEl& s) { val = (Int)s; }
 
-  cssEl* operator+(cssEl& t)
-  { cssInt* r = new cssInt(*this,""); r->val += (Int)t; return r; }
-  cssEl* operator-(cssEl& t)
-  { cssInt* r = new cssInt(*this,""); r->val -= (Int)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssEl::operator*(); }
-  cssEl* operator*(cssEl& t)
-  { cssInt* r = new cssInt(*this,""); r->val *= (Int)t; return r; }
-  cssEl* operator/(cssEl& t)
-  { cssInt* r = new cssInt(*this,""); r->val /= (Int)t; return r; }
+
   cssEl* operator%(cssEl& t)
   { cssInt* r = new cssInt(*this,""); r->val %= (Int)t; return r; }
   cssEl* operator<<(cssEl& t)
@@ -259,15 +256,12 @@ public:
   // operators
   void operator=(const cssEl& s) { val = (ta_int64_t)s; }
 
-  cssEl* operator+(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val += (ta_int64_t)t; return r; }
-  cssEl* operator-(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val -= (ta_int64_t)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssEl::operator*(); }
-  cssEl* operator*(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val *= (ta_int64_t)t; return r; }
-  cssEl* operator/(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val /= (ta_int64_t)t; return r; }
+
   cssEl* operator%(cssEl& t)
   { cssInt64* r = new cssInt64(*this,""); r->val %= (ta_int64_t)t; return r; }
   cssEl* operator<<(cssEl& t)
@@ -389,15 +383,11 @@ public:
   // operators
   void operator=(const cssEl& s)	{ val = (Real)s; }
 
-  cssEl* operator+(cssEl& t)
-  { cssReal* r = new cssReal(*this,""); r->val += (Real)t; return r; }
-  cssEl* operator-(cssEl& t)
-  { cssReal* r = new cssReal(*this,""); r->val -= (Real)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssEl::operator*(); }
-  cssEl* operator*(cssEl& t)
-  { cssReal* r = new cssReal(*this,""); r->val *= (Real)t; return r; }
-  cssEl* operator/(cssEl& t)
-  { cssReal* r = new cssReal(*this,""); r->val /= (Real)t; return r; }
 
   // implement the to-the-power of operator as ^
   cssEl* operator^(cssEl& t)
@@ -656,9 +646,9 @@ public:
 
   cssEl* operator+(cssEl& t);
   cssEl* operator-(cssEl& t);
-  cssEl* operator*();
   cssEl* operator*(cssEl& t);
   cssEl* operator/(cssEl& t);
+  cssEl* operator*();
 
   // implement the to-the-power of operator as ^
   cssEl* operator^(cssEl& t);

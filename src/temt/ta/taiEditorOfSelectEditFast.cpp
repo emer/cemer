@@ -209,11 +209,11 @@ void taiEditorOfSelectEditFast::GetImage_Item(int row) {
                     item->base->GetTypeDef()->name);
     return;
   }
-  void* off = item->mbr->GetOff(item->base);
-  String txt = item->mbr->type->GetValStr(off, item->base,
-                                          item->mbr, TypeDef::SC_DISPLAY, true);
+  String txt = item->mbr->GetValStr(item->base, TypeDef::SC_DISPLAY, true);
   if(item->is_single) {
-    txt += "&nbsp;&nbsp;|&nbsp;&nbsp;" + TA_EditParamSearch.GetValStr(&(item->param_search), NULL, NULL, TypeDef::SC_DISPLAY, true);
+    txt += "&nbsp;&nbsp;|&nbsp;&nbsp;" +
+      TA_EditParamSearch.GetValStr(&(item->param_search), NULL, NULL,
+                                   TypeDef::SC_DISPLAY, true);
   }
 
   // true = force inline

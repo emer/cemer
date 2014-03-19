@@ -1508,7 +1508,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       else
         rval += "<font style=\"background-color: white\">&nbsp;&nbsp;";
       if(md->type->IsString())     rval += "\"";
-      rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
+      rval += md->GetValStr(base, sc, force_inline);
       if(md->type->IsString())     rval += "\"";
       rval += "&nbsp;&nbsp;</font>&nbsp;&nbsp;&nbsp;&nbsp;";
     }
@@ -1521,7 +1521,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
                         "in class of type:", name);
       }
       else {
-        rval += md->type->GetValStr(m_base, base, md, sc, force_inline);
+        rval += md->GetValStr(base, sc, force_inline);
       }
       if(md->type->IsString())     rval += "\"";
       rval += ": ";
@@ -1840,8 +1840,7 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
       }
     }
     if((md != NULL) && !mb_val.empty()) { // note: changed par to base here..
-      md->type->SetValStr(mb_val, md->GetOff(base), base /* par */, md, sc, true);
-      // force inline!
+      md->SetValStr(mb_val, base, sc, true); // force inline!
     }
   }
 }

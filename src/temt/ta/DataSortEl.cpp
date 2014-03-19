@@ -15,6 +15,8 @@
 
 #include "DataSortEl.h"
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(DataSortEl);
 
 
@@ -22,13 +24,40 @@ void DataSortEl::Initialize() {
   order = ASCENDING;
 }
 
-String DataSortEl::GetDisplayName() const {
-  String rval = col_name + " ";
+void DataSortEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  name = col_name + " ";
   if(order == ASCENDING)
-    rval += "up";
+    name += "up";
   else
-    rval += "dn";
-  return rval;
+    name += "dn";
+}
+
+String DataSortEl::GetName() const {
+  return name;                  // need to use cached name for loading..
+}
+
+bool DataSortEl::SetName(const String& nm) {
+  String tnm = trim(nm);
+  name = tnm;
+  if(tnm.contains(" ")) {
+    col_name = taMisc::StringCVar(tnm.before(" "));
+    String opnm = trim(tnm.after(" "));
+    opnm.downcase();
+    if(opnm == "up" || opnm == "ascending") {
+      order = ASCENDING;
+    }
+    else {
+      order = DESCENDING;
+    }
+  }
+  else {
+    // Ensure name is a legal C-language identifier.
+    String new_name = taMisc::StringCVar(nm);
+    if (col_name == new_name) return true;
+    col_name = new_name;
+  }
+  return true;
 }
 
 void DataSortEl::CheckThisConfig_impl(bool quiet, bool& rval) {

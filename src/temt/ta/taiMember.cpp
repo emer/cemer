@@ -221,7 +221,7 @@ taiMember::DefaultStatus taiMember::GetDefaultStatus(String memb_val) {
 }
 
 void taiMember::GetOrigVal(taiWidget* dat, const void* base) {
-  dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
+  dat->orig_val = mbr->GetValStr(base);
   // if a default value was specified, compare and set the highlight accordingly
   switch (mbr->GetDefaultStatus(base)) {
   case MemberDef::NOT_DEF: dat->setHighlight(true); break;
@@ -262,7 +262,7 @@ void taiMember::CmpOrigVal(taiWidget* dat, const void* base, bool& first_diff) {
     return;
   if((((taBase*)base)->GetOwner() == NULL) && ((taBase*)base != tabMisc::root))
     return;     // no record for unowned objs (except root)!
-  String new_val = mbr->type->GetValStr(mbr->GetOff(base));
+  String new_val = mbr->GetValStr(base);
   if(dat->orig_val == new_val)
     return;
   if(first_diff)

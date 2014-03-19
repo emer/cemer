@@ -115,14 +115,6 @@ public:
     IF_GUI_INIT = 0x0010,          // gui elements, it, ie, iv, etc bid and constructed
   };
 
-  enum StrContext { // context for getting or setting a string value
-    SC_DEFAULT,         // default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
-    SC_STREAMING,       // value is being used for streaming, ex. strings are quoted/escaped
-    SC_VALUE,           // value is being manipulated programmatically, ex. strings are not quoted/escaped
-    SC_DISPLAY,         // value is being used for display purposes, and result includes html (rich text) formatting tags, etc
-  };
-
-
   TypeType      type;           // type information about this type -- what do we have here?
   InitFlags     init_flag;      // indicates various stages of initialization -- some are recursive so it is important to know if it has been done yet
   TypeSpace*    owner;          // the owner of this one

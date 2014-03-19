@@ -63,6 +63,9 @@ public:
   virtual void          DataUnitsXForm(taVector3f& pos, taVector3f& size) { };
   // transform position and size values into native units of the display (e.g., for a graph, the units of what is being graphed) -- override in implementations
 
+  virtual void          SaveImageSVG(const String& svg_fname);
+  // #BUTTON #EXT_svg #FILE_DIALOG_SAVE render an svg version of this item to given file name
+
   virtual T3Annotation*  AnnoteLine(bool data_units, float pos_x, float pos_y, float pos_z,
                                     float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,
                                     float line_width = 1.0, const String& color = "black");

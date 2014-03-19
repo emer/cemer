@@ -79,6 +79,13 @@ public:
   void          SetValVar(const Variant& val, void* base, void* par = NULL) override;
     // note: par is only needed really needed for owned taBase ptrs)
 
+  String        GetValStr(const void* base, StrContext vc = SC_DEFAULT,
+                          bool force_inline = false) const;
+  // get a string representation of value -- this is very widely used in the code
+  void          SetValStr(const String& val, void* base, StrContext vc = SC_DEFAULT,
+                          bool force_inline = false);
+  // set the value from a string representation -- this is very widely used in the code
+
   DefaultStatus         GetDefaultStatus(const void* base);
   // get status of value of member at given base addr of class object that this member is in compared to DEF_ value(s) defined in directive
 

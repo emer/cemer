@@ -61,15 +61,12 @@ public:
   // operators
   void operator=(const cssEl& t);
 
-  cssEl* operator+(cssEl &t)
-  { cssInt *r = new cssInt(GetIntRef("+")); r->val += (Int)t; return r; }
-  cssEl* operator-(cssEl &t)
-  { cssInt *r = new cssInt(GetIntRef("-")); r->val -= (Int)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssCPtr::operator*(); }
-  cssEl* operator*(cssEl &t)
-  { cssInt *r = new cssInt(GetIntRef("*")); r->val *= (Int)t; return r; }
-  cssEl* operator/(cssEl &t)
-  { cssInt *r = new cssInt(GetIntRef("/")); r->val /= (Int)t; return r; }
+
   cssEl* operator%(cssEl &t)
   { cssInt *r = new cssInt(GetIntRef("%")); r->val %= (Int)t; return r; }
   cssEl* operator<<(cssEl &t)
@@ -198,15 +195,12 @@ public:
   void operator=(const String& cp) { GetShortRef("=") = (short)(int)cp; }
   using cssCPtr::operator=;
 
-  cssEl* operator+(cssEl &t)
-  { cssInt *r = new cssInt(GetShortRef("+")); r->val += (Int)t; return r; }
-  cssEl* operator-(cssEl &t)
-  { cssInt *r = new cssInt(GetShortRef("-")); r->val -= (Int)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssCPtr::operator*(); }
-  cssEl* operator*(cssEl &t)
-  { cssInt *r = new cssInt(GetShortRef("*")); r->val *= (Int)t; return r; }
-  cssEl* operator/(cssEl &t)
-  { cssInt *r = new cssInt(GetShortRef("/")); r->val /= (Int)t; return r; }
+
   cssEl* operator%(cssEl &t)
   { cssInt *r = new cssInt(GetShortRef("%")); r->val %= (Int)t; return r; }
   cssEl* operator<<(cssEl &t)
@@ -281,15 +275,12 @@ public:
   void operator=(const String& cp) { GetLongRef("=") = (long)(int)cp; }
   using cssCPtr::operator=;
 
-  cssEl* operator+(cssEl &t)
-  { cssInt *r = new cssInt(GetLongRef("+")); r->val += (Int)t; return r; }
-  cssEl* operator-(cssEl &t)
-  { cssInt *r = new cssInt(GetLongRef("-")); r->val -= (Int)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssCPtr::operator*(); }
-  cssEl* operator*(cssEl &t)
-  { cssInt *r = new cssInt(GetLongRef("*")); r->val *= (Int)t; return r; }
-  cssEl* operator/(cssEl &t)
-  { cssInt *r = new cssInt(GetLongRef("/")); r->val /= (Int)t; return r; }
+
   cssEl* operator%(cssEl &t)
   { cssInt *r = new cssInt(GetLongRef("%")); r->val %= (Int)t; return r; }
   cssEl* operator<<(cssEl &t)
@@ -360,15 +351,12 @@ public:
   void operator=(const String& cp) { GetLongLongRef("=") = (int64_t)cp; }
   using cssCPtr::operator=;
 
-  cssEl* operator+(cssEl &t)
-  { cssInt *r = new cssInt(GetLongLongRef("+")); r->val += (Int)t; return r; }
-  cssEl* operator-(cssEl &t)
-  { cssInt *r = new cssInt(GetLongLongRef("-")); r->val -= (Int)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssCPtr::operator*(); }
-  cssEl* operator*(cssEl &t)
-  { cssInt *r = new cssInt(GetLongLongRef("*")); r->val *= (Int)t; return r; }
-  cssEl* operator/(cssEl &t)
-  { cssInt *r = new cssInt(GetLongLongRef("/")); r->val /= (Int)t; return r; }
+
   cssEl* operator%(cssEl &t)
   { cssInt *r = new cssInt(GetLongLongRef("%")); r->val %= (Int)t; return r; }
   cssEl* operator<<(cssEl &t)
@@ -569,15 +557,11 @@ public:
   // operators
   void operator=(const cssEl& t);
 
-  cssEl* operator+(cssEl &t)
-  { cssReal *r = new cssReal(GetDoubleRef("+"),""); r->val += (Real)t; return r; }
-  cssEl* operator-(cssEl &t)
-  { cssReal *r = new cssReal(GetDoubleRef("-"),""); r->val -= (Real)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssCPtr::operator*(); }
-  cssEl* operator*(cssEl &t)
-  { cssReal *r = new cssReal(GetDoubleRef("*"),""); r->val *= (Real)t; return r; }
-  cssEl* operator/(cssEl &t)
-  { cssReal *r = new cssReal(GetDoubleRef("/"),""); r->val /= (Real)t; return r; }
 
   // implement the to-the-power of operator as ^
   cssEl* operator^(cssEl &t)
@@ -635,15 +619,11 @@ public:
   // operators
   void operator=(const cssEl& t);
 
-  cssEl* operator+(cssEl &t)
-  { cssReal *r = new cssReal(GetFloatRef("+"),""); r->val += (Real)t; return r; }
-  cssEl* operator-(cssEl &t)
-  { cssReal *r = new cssReal(GetFloatRef("-"),""); r->val -= (Real)t; return r; }
+  cssEl* operator+(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
   cssEl* operator*()		{ return cssCPtr::operator*(); }
-  cssEl* operator*(cssEl &t)
-  { cssReal *r = new cssReal(GetFloatRef("*"),""); r->val *= (Real)t; return r; }
-  cssEl* operator/(cssEl &t)
-  { cssReal *r = new cssReal(GetFloatRef("/"),""); r->val /= (Real)t; return r; }
 
   // implement the to-the-power of operator as ^
   cssEl* operator^(cssEl &t)

@@ -137,7 +137,7 @@ void taiEditorOfString::DoConstr_Dialog(iDialogEditor*& dlg) {
 
 
 void taiEditorOfString::GetImage() {
-  const String val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
+  const String val = mbr->GetValStr(root);
   if(diffs) {
     ((iDiffTextView*)fancy_edit)->setDiffString(val);
   }
@@ -152,7 +152,7 @@ void taiEditorOfString::GetImage() {
 void taiEditorOfString::GetValue() {
   if(!diffs) {
     String val = edit->toPlainText();
-    mbr->type->SetValStr(val, mbr->GetOff(root), root, mbr);
+    mbr->SetValStr(val, root);
   }
 }
 

@@ -1292,7 +1292,7 @@ void NetView::Render_net_text() {
     SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
     SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
     String el = md->name + ": ";
-    String val = md->type->GetValStr(md->GetOff((void*)net()));;
+    String val = md->GetValStr((void*)net());
     if(hist_idx > 0) {
       int cidx = (ctr_hist_idx.length - hist_idx);
       int midx = ctr_hist_idx.CircIdx(cidx);
@@ -1700,7 +1700,7 @@ void NetView::SaveCtrHist() {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
     if(net()->HasUserData(md->name) && !net()->GetUserDataAsBool(md->name)) continue;
-    String val = md->type->GetValStr(md->GetOff((void*)net()));
+    String val = md->GetValStr((void*)net());
     ctr_hist.Set(val, chld_idx, eff_hist_idx);
     chld_idx++;
   }

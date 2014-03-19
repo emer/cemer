@@ -31,6 +31,7 @@ class TA_API DataSelectEl : public DataOpEl {
   // one element of a data selection specification -- for matrix cells with cell size > 1, the cmp value is treated as a cell index and if the value at this index is 1 (true) then result is true for EQUAL and not true for NOTEQUAL
   INHERITED(DataOpEl)
 public:
+  String        name;           // #HIDDEN #READ_ONLY cached name value
   bool		on;		// use this selection criterion?  can be useful to have various selections available but not enabled as needs change.  see also enable_var to dynamically determine use of selection crtiteria based on a variable.
   Relation::Relations	rel;		// #CONDEDIT_ON_on relation of column to expression for selection
   bool		use_var;	// #CONDEDIT_ON_on if true, use a program variable to specify the selection value
@@ -43,11 +44,14 @@ public:
 
   virtual void 	UpdateEnabled(); // update the act_enabled flag based on flag and variable
 
-  String GetDisplayName() const override;
+  String        GetName() const override;
+  bool          SetName(const String& nm) override;
+
   void  Initialize();
   void 	Destroy()		{ };
   TA_SIMPLE_BASEFUNS(DataSelectEl);
 protected:
+  void   UpdateAfterEdit_impl();
   void	 CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 

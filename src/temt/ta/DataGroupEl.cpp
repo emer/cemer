@@ -15,14 +15,43 @@
 
 #include "DataGroupEl.h"
 
+#include <MemberDef>
+#include <taMisc>
+
+
 TA_BASEFUNS_CTORS_DEFN(DataGroupEl);
 
 
 void DataGroupEl::Initialize() {
 }
 
-String DataGroupEl::GetDisplayName() const {
-  return col_name + " " + agg.GetAggName();
+void  DataGroupEl::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  name = col_name + " " + agg.GetAggName();
+}
+
+String DataGroupEl::GetName() const {
+  return name;                  // need to use cached name for loading..
+}
+
+bool DataGroupEl::SetName(const String& nm) {
+  String tnm = trim(nm);
+  name = tnm;
+  if(tnm.contains(" ")) {
+    col_name = taMisc::StringCVar(tnm.before(" "));
+    String opnm = trim(tnm.after(" "));
+    MemberDef* opmd = TA_Aggregate.members.FindName("op");
+    if(opmd) {
+      opmd->SetValStr(opnm, (void*)&agg);
+    }
+  }
+  else {
+    // Ensure name is a legal C-language identifier.
+    String new_name = taMisc::StringCVar(nm);
+    if (col_name == new_name) return true;
+    col_name = new_name;
+  }
+  return true;
 }
 
 void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {

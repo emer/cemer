@@ -505,7 +505,7 @@ void taiEditorOfClass::Update_Methbox_Labels() {
   for(int i=0; i< sz; i++) {
     MemberDef* md = methbox_members[i];
     QLabel* lab = (QLabel*)methbox_labels[i];
-    lab->setText(md->name + ": " + md->type->GetValStr(md->GetOff(root), root, md));
+    lab->setText(md->name + ": " + md->GetValStr(root));
   }
 }
 

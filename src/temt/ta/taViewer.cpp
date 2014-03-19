@@ -33,10 +33,11 @@ String_Array taViewer::image_exts;
 bool taViewer::InitImageExts() {
   if(image_exts.size == IV+1) return false;
   image_exts.Reset();
-  image_exts.Add("eps");
-  image_exts.Add("jpg");
+  image_exts.Add("svg");
   image_exts.Add("png");
+  image_exts.Add("jpg");
   image_exts.Add("ppm");
+  image_exts.Add("eps");
   image_exts.Add("iv");
   return true;
 }
@@ -176,8 +177,8 @@ QPixmap taViewer::GrabImage(bool& got_image) {
 }
 
 bool taViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
-  if(TestError(img_fmt == EPS || img_fmt == IV, "SaveImageAs",
-               "EPS (encapsulated postscript) or IV (Open Inventor) not supported for this type of view"))
+  if(TestError(img_fmt == EPS || img_fmt == IV || img_fmt == SVG, "SaveImageAs",
+               "SVG (scalable vector graphic), EPS (encapsulated postscript) or IV (Open Inventor) not supported for this type of view"))
     return false;
   bool rval = false;
   String ext = image_exts.SafeEl(img_fmt);

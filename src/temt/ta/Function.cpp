@@ -192,7 +192,7 @@ bool Function::BrowserEditSet(const String& code, int move_after) {
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
   bool rval = CvtFmCode(cd);
-  SigEmitUpdated();
+  UpdateAfterEdit();
   return rval;
 }
 

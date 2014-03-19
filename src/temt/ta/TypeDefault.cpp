@@ -170,7 +170,7 @@ void TypeDefault::UpdateFromNameValue() {
     MemberDef* md = default_type->members.FindName(nv->name);
     if(md != NULL) {
       SetActive(md->idx, true);
-      md->type->SetValStr(nv->value, md->GetOff(token), token, md);
+      md->SetValStr(nv->value, token);
     }
   }
   token->UpdateAfterEdit();
@@ -187,7 +187,7 @@ void TypeDefault::UpdateToNameValue() {
       MemberDef* tmd = default_type->members.FastEl(i);
       NameValue* nv = (NameValue*)active_membs.New(1);
       nv->name = tmd->name;
-      nv->value = tmd->type->GetValStr(tmd->GetOff(token), token, tmd);
+      nv->value = tmd->GetValStr(token);
     }
   }
 }

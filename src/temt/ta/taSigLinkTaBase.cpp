@@ -431,14 +431,14 @@ void taSigLinkTaBase::SearchStat(taBase* tab, iDialogSearch* sd, int level) {
           }
         }
         // have to force getting an inline value, since default is often the path
-                probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
-                if (IsHit(targs, kicks, probed, ci))
+        probed = md->GetValStr(tab, (TypeDef::StrContext)0, true); // force_inline
+        if (IsHit(targs, kicks, probed, ci))
           {++n; AddHit(item_type, probed, hits);}
       }
       else if(md->type->IsPointer()) {
         // if a pointer, treat it as a value and go for it!
-                  probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
-                  if (IsHit(targs, kicks, probed, ci))
+        probed = md->GetValStr(tab, (TypeDef::StrContext)0, true); // force_inline
+        if (IsHit(targs, kicks, probed, ci))
           {++n; AddHit(item_type, probed, hits);}
       }
     }

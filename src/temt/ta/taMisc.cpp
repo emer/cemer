@@ -2940,14 +2940,14 @@ bool taMisc::RecordScript(const char* cmd) {
 void taMisc::ScriptRecordAssignment(taBase* tab,MemberDef* md){
   if(record_on)  {
     record_script << tab->GetPathNames() << "." << md->name << " = " <<
-      md->type->GetValStr(md->GetOff(tab)) << ";" << "\n";
+      md->GetValStr(tab) << ";" << "\n";
   }
 }
 // Script Record Inline Assignment
 void taMisc::SRIAssignment(taBase* tab,MemberDef* md){
   if(record_on)  {
     record_script << tab->GetPathNames() << "." << md->name << " = \"" <<
-      md->type->GetValStr(md->GetOff(tab)) << "\";\n";
+      md->GetValStr(tab) << "\";\n";
     record_script << tab->GetPathNames() << "." << "UpdateAfterEdit();" << "\n";
   }
 }
@@ -2957,7 +2957,7 @@ void taMisc::SREAssignment(taBase* tab,MemberDef* md){
   if(record_on)  {
     record_script << tab->GetPathNames() << "." << md->name << " = " <<
       tab->GetTypeDef()->name << "::" <<
-      md->type->GetValStr(md->GetOff(tab)) << ";" << "\n";
+      md->GetValStr(tab) << ";" << "\n";
   }
 }
 #endif

@@ -83,6 +83,9 @@ void DataOpList::AddAllColumns_gui(DataTable* dt) {
   }
 }
 
+bool DataOpList::MakeElNamesUnique() {
+  return inherited::MakeElNamesUnique();
+}
 
 void DataOpBaseSpec::Initialize() {
 }

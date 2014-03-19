@@ -17,6 +17,7 @@
 // basic_types.cc
 
 #include "css_basic_types.h"
+#include "css_ta.h"
 
 #ifdef TA_GUI
 #include "css_qtdialog.h"
@@ -37,6 +38,190 @@ using namespace std;
 //      cssInt          //
 //////////////////////////
 
+cssEl* cssInt::operator+(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r += *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal((Real)t,""); r->val += (Real)val; return r;
+  }
+  case T_Int64: {
+    cssInt64* r = new cssInt64((ta_int64_t)t,""); r->val += (ta_int64_t)val; return r;
+  }
+  default: {
+    cssInt* r = new cssInt(*this,""); r->val += (Int)t; return r;
+  }
+  }
+}
+
+cssEl* cssInt::operator-(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r -= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal(-(Real)t,""); r->val += (Real)val; return r;
+  }
+  case T_Int64: {
+    cssInt64* r = new cssInt64(-(ta_int64_t)t,""); r->val += (ta_int64_t)val; return r;
+  }
+  default: {
+    cssInt* r = new cssInt(*this,""); r->val -= (Int)t; return r;
+  }
+  }
+}
+
+cssEl* cssInt::operator*(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r *= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal((Real)t,""); r->val *= (Real)val; return r;
+  }
+  case T_Int64: {
+    cssInt64* r = new cssInt64((ta_int64_t)t,""); r->val *= (ta_int64_t)val; return r;
+  }
+  default: {
+    cssInt* r = new cssInt(*this,""); r->val *= (Int)t; return r;
+  }
+  }
+}
+
+cssEl* cssInt::operator/(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r /= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal(0.0,""); r->val = (Real)val / (Real)t; return r;
+  }
+  case T_Int64: {
+    cssInt64* r = new cssInt64(0,""); r->val = (ta_int64_t)val / (ta_int64_t)t; return r;
+  }
+  default: {
+    cssInt* r = new cssInt(*this,""); r->val /= (Int)t; return r;
+  }
+  }
+}
+
+//////////////////////////
+// cssInt64             //
+//////////////////////////
+
+cssEl* cssInt64::operator+(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r += *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal((Real)t,""); r->val += (Real)val; return r;
+  }
+  default: {
+    cssInt64* r = new cssInt64(*this,""); r->val += (ta_int64_t)t; return r;
+  }
+  }
+}
+
+cssEl* cssInt64::operator-(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r -= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal(-(Real)t,""); r->val += (Real)val; return r;
+  }
+  default: {
+    cssInt64* r = new cssInt64(*this,""); r->val -= (ta_int64_t)t; return r;
+  }
+  }
+}
+
+cssEl* cssInt64::operator*(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r *= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal((Real)t,""); r->val *= (Real)val; return r;
+  }
+  default: {
+    cssInt64* r = new cssInt64(*this,""); r->val *= (ta_int64_t)t; return r;
+  }
+  }
+}
+
+cssEl* cssInt64::operator/(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r /= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  switch (t.GetPtrType()) {
+  case T_Float:
+  case T_Real: {
+    cssReal* r = new cssReal(0.0,""); r->val = (Real)val / (Real)t; return r;
+  }
+  default: {
+    cssInt64* r = new cssInt64(*this,""); r->val /= (ta_int64_t)t; return r;
+  }
+  }
+}
+
 
 //////////////////////////
 // cssChar              //
@@ -51,6 +236,61 @@ void cssChar::operator=(const cssEl& t) {
   }
 }
 
+//////////////////////////
+// cssReal             //
+//////////////////////////
+
+cssEl* cssReal::operator+(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r += *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  cssReal* r = new cssReal(*this,""); r->val += (Real)t; return r;
+}
+
+cssEl* cssReal::operator-(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r -= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  cssReal* r = new cssReal(*this,""); r->val -= (Real)t; return r;
+}
+
+cssEl* cssReal::operator*(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r *= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  cssReal* r = new cssReal(*this,""); r->val *= (Real)t; return r;
+}
+
+cssEl* cssReal::operator/(cssEl& t) {
+  if(t.IsTaMatrix()) {
+    taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
+    if(mat) {
+      taMatrix* r = (taMatrix*)mat->Clone();
+      r->InitValsFmVar(val);
+      *r /= *mat;
+      return new cssTA_Matrix(r);
+    }
+  }
+  cssReal* r = new cssReal(*this,""); r->val /= (Real)t; return r;
+}
 
 //////////////////////////
 //      cssString       //

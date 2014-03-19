@@ -129,6 +129,17 @@ const String MemberDef::GetPathName() const {
   return rval;
 }
 
+String MemberDef::GetValStr(const void* base, StrContext vc,
+                            bool force_inline) const {
+  if(!base) return _nilString;
+  return type->GetValStr(GetOff(base), (void*)base, (MemberDef*)this, vc, force_inline);
+}
+
+void MemberDef::SetValStr(const String& val, void* base, StrContext vc,
+                          bool force_inline) {
+  return type->SetValStr(val, GetOff(base), base, this, vc, force_inline);
+}
+
 const Variant MemberDef::GetValVar(const void* base) const {
   return type->GetValVar(GetOff(base), this);
 }

@@ -38,9 +38,25 @@ void DataOpEl::UpdateAfterEdit_impl() {
   }
 }
 
+String DataOpEl::GetDisplayName() const {
+  return GetName();
+}
+
+String DataOpEl::GetName() const {
+  return col_name;
+}
+
+bool DataOpEl::SetName(const String& nm) {
+  // Ensure name is a legal C-language identifier.
+  String new_name = taMisc::StringCVar(nm);
+  if (col_name == new_name) return true;
+  col_name = new_name;
+  return true;
+}
+
 bool DataOpEl::BrowserEditSet(const String& new_val_str, int move_after) {
   bool rval = SetName(new_val_str);
-  SigEmitUpdated();
+  UpdateAfterEdit();
   return rval;
 }
 

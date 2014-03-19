@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6910
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6925
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -400,7 +400,42 @@ LeabraProject .projects["program_examples"] {
     };
    };
   };
-  Program_Group @.gp["Data"] = [5] { 
+  Program_Group @.gp["Variables"] = [1] { 
+   Program @["Strings"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [1] {
+     ProgVar @["str"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [4] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     AssignExpr @[1] { };
+     PrintVar @[2] { };
+     PrintExpr @[3] { };
+    };
+   };
+  };
+  Program_Group @.gp["Data"] = [8] { 
    Program @["DataLoop"] { 
     ProgObjList @.objs = [1] {
      DataTable @["DemoData"] { 
@@ -816,6 +851,238 @@ LeabraProject .projects["program_examples"] {
 
       ProgVar_List @.dest_col_vars = [1] {
        ProgVar @["d_ColumnB"] { };
+      };
+     };
+    };
+   };
+   Program @["DataGroup"] { 
+    ProgObjList @.objs = [2] {
+     DataTable @["DemoData"] { 
+      DataTableCols @.data = [3] {
+       String_Data @["Categ"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+     DataTable @["CategGroup"] { 
+      DataTableCols @.data = [4] {
+       String_Data @["Categ_group"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       String_Data @["Categ_first"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value_mean"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value_sem"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["DemoData"] { };
+     ProgVar @["CategGroup"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     DataGroupProg @[1] { 
+      DataOpList @.group_spec.ops = [4] {
+       DataGroupEl @["Categ_GROUP"] { };
+       DataGroupEl @["Categ_FIRST"] { };
+       DataGroupEl @["Value_MEAN"] { };
+       DataGroupEl @["Value_SEM"] { };
+      };
+     };
+    };
+   };
+   Program @["DataSelect"] { 
+    ProgObjList @.objs = [2] {
+     DataTable @["DemoData"] { 
+      DataTableCols @.data = [3] {
+       String_Data @["Categ"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+     DataTable @["SelectedRows"] { 
+      DataTableCols @.data = [3] {
+       String_Data @["Categ"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["DemoData"] { };
+     ProgVar @["SelectedRows"] { };
+     ProgVar @["min_value"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     DataSelectRowsProg @[1] { 
+      DataOpList @.select_spec.ops = [2] {
+       DataSelectEl @["Categ  Fruit"] { };
+       DataSelectEl @["Value  min_value"] { };
+      };
+     };
+    };
+   };
+   Program @["DataSort"] { 
+    ProgObjList @.objs = [2] {
+     DataTable @["DemoData"] { 
+      DataTableCols @.data = [3] {
+       String_Data @["Categ"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+     DataTable @["SortedRows"] { 
+      DataTableCols @.data = [3] {
+       String_Data @["Categ"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Value"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["DemoData"] { };
+     ProgVar @["SortedRows"] { };
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [2] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     DataSortProg @[1] { 
+      DataOpList @.sort_spec.ops = [1] {
+       DataSortEl @["Name up"] { };
       };
      };
     };
@@ -4686,6 +4953,115 @@ mw.loader.state({\"user.groups\":\"ready\"});
     step_n=1;
    };
   };
+  Program_Group @.gp["Variables"] {
+   name="Variables";
+   el_typ=Program;
+   el_def=0;
+   tags=;
+   desc=;
+   Program @["Strings"] {
+    name="Strings";
+    short_nm="String";
+    tags=;
+    desc="examples for all the fancy things you can do with string variable types";
+    flags=0;
+    objs {
+     name="ProgObjList_10";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["str"] {
+      name="str";
+      var_type=T_String;
+      string_val="abcdefg";
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name="ProgBrkPt_List_10";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_10";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_82";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_83";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str1 = \"abcdefg\"";
+      result_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$$;
+      expr {
+       expr="\"abcdefg\"";
+      };
+     };
+     PrintVar @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print str";
+      message=;
+      print_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str[1]: \" str[1]";
+      expr {
+       expr="\"str[1]: \" << str[1]";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+  };
   Program_Group @.gp["Data"] {
    name="Data";
    el_typ=Program;
@@ -4992,7 +5368,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	 el_def=0;
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.160256415605545;
+	  value 6 0=0.1598916053771973;
 	  val_type_fixed=0;
 	 };
 	};
@@ -5006,7 +5382,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	dim_names {
 	 name=;
 	[0] 	};
-	width=0;
+	width=177;
 	ar {
 	 name=;
 	[10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
@@ -5019,7 +5395,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	 el_def=0;
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.160256415605545;
+	  value 6 0=0.1598916053771973;
 	  val_type_fixed=0;
 	 };
 	};
@@ -5033,7 +5409,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	dim_names {
 	 name=;
 	[0] 	};
-	width=0;
+	width=177;
 	ar {
 	 name=;
 	[10] 20;30;15;55;5;25;45;60;7;44;
@@ -6267,7 +6643,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.1136363670229912;
+	  value 6 0=0.1129177957773209;
 	  val_type_fixed=0;
 	 };
 	};
@@ -6281,10 +6657,10 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	dim_names {
 	 name=;
 	[0] 	};
-	width=0;
+	width=125;
 	ar {
 	 name=;
-	[0] 	};
+	[6] 0;2;4;6;8;10;	};
        };
       };
       data_flags=SAVE_ROWS|AUTO_CALC;
@@ -6293,7 +6669,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       keygen 4 0=0;
       row_indexes {
        name=;
-      [0]       };
+      [6] 0;1;2;3;4;5;      };
      };
      DataTable @["TableOne"] {
       name="TableOne";
@@ -6314,7 +6690,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.1136363670229912;
+	  value 6 0=0.1129177957773209;
 	  val_type_fixed=0;
 	 };
 	};
@@ -6328,7 +6704,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	dim_names {
 	 name=;
 	[0] 	};
-	width=0;
+	width=125;
 	ar {
 	 name=;
 	[6] 0;1;2;3;4;5;	};
@@ -6345,7 +6721,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	 UserDataItem @["view_panel_wd"] {
 	  name="view_panel_wd";
-	  value 6 0=0.1136363670229912;
+	  value 6 0=0.1129177957773209;
 	  val_type_fixed=0;
 	 };
 	};
@@ -6359,10 +6735,10 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	dim_names {
 	 name=;
 	[0] 	};
-	width=0;
+	width=125;
 	ar {
 	 name=;
-	[6] 0;0;0;0;0;0;	};
+	[6] 0;2;4;6;8;10;	};
        };
       };
       data_flags=SAVE_ROWS|AUTO_CALC;
@@ -6624,6 +7000,973 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     step_prog=NULL;
     step_n=1;
    };
+   Program @["DataGroup"] {
+    name="DataGroup";
+    short_nm="DtGrp";
+    tags=;
+    desc=;
+    flags=0;
+    objs {
+     name="ProgObjList_11";
+     el_typ=taNBase;
+     el_def=0;
+     DataTable @["DemoData"] {
+      name="DemoData";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Categ"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
+"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
+	};
+       };
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+"Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
+	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] 20;30;15;55;5;25;45;60;7;44;
+22;7;17;3;1;25;22;15;10;5;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [20] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+      };
+     };
+     DataTable @["CategGroup"] {
+      name="CategGroup";
+      desc=;
+      data {
+       name="data";
+       el_typ=DataColT;
+       el_def=0;
+       String_Data @["Categ_group"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_74";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ_group";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[2] "Fruit";"Veggie";	};
+       };
+       String_Data @["Categ_first"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_75";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ_first";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[2] "Fruit";"Veggie";	};
+       };
+       float_Data @["Value_mean"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_76";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value_mean";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[2] 30.6;12.7;	};
+       };
+       float_Data @["Value_sem"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_77";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value_sem";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[2] 6.1881604;2.7448943;	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [2] 0;1;      };
+     };
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["DemoData"] {
+      name="DemoData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataGroup"].objs["DemoData"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["CategGroup"] {
+      name="CategGroup";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataGroup"].objs["CategGroup"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name="ProgBrkPt_List_11";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_11";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_86";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_87";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     DataGroupProg @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=.projects["program_examples"].programs.gp["Data"]["DataGroup"].vars["DemoData"]$$;
+      dest_data_var=.projects["program_examples"].programs.gp["Data"]["DataGroup"].vars["CategGroup"]$$;
+      group_spec {
+       name="group_spec";
+       ops {
+	name="DataOpList_30";
+	el_typ=DataGroupEl;
+	el_def=0;
+	DataGroupEl @["Categ_GROUP"] {
+	 col_name="Categ";
+	 name="Categ_GROUP";
+	 agg {name="AggregateSpec_3": op=GROUP: rel={name="Relation_5": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["Categ_FIRST"] {
+	 col_name="Categ";
+	 name="Categ_FIRST";
+	 agg {name="AggregateSpec_6": op=FIRST: rel={name="Relation_8": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["Value_MEAN"] {
+	 col_name="Value";
+	 name="Value_MEAN";
+	 agg {name="AggregateSpec_5": op=MEAN: rel={name="Relation_7": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["Value_SEM"] {
+	 col_name="Value";
+	 name="Value_SEM";
+	 agg {name="AggregateSpec_5": op=SEM: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+       };
+       append_agg_name=1;
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["DataSelect"] {
+    name="DataSelect";
+    short_nm="DtSlct";
+    tags=;
+    desc=;
+    flags=0;
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+     DataTable @["DemoData"] {
+      name="DemoData";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Categ"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
+"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
+	};
+       };
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+"Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
+	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] 20;30;15;55;5;25;45;60;7;44;
+22;7;17;3;1;25;22;15;10;5;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [20] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+      };
+     };
+     DataTable @["SelectedRows"] {
+      name="SelectedRows";
+      desc=;
+      data {
+       name="data";
+       el_typ=DataColT;
+       el_def=0;
+       String_Data @["Categ"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_81";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[8] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";	};
+       };
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_82";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[8] "Jam";"Huckleberry";"Grapes";"Fruit";"Dragon Fruit";"Cherry";"Banana";"Apple";	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_83";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[8] 44;60;45;25;55;15;30;20;	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [8] 7;6;5;4;3;2;1;0;      };
+     };
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["DemoData"] {
+      name="DemoData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataSelect"].objs["DemoData"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["SelectedRows"] {
+      name="SelectedRows";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataSelect"].objs["SelectedRows"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["min_value"] {
+      name="min_value";
+      var_type=T_Real;
+      real_val=10;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     DataSelectRowsProg @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=.projects["program_examples"].programs.gp["Data"]["DataSelect"].vars["DemoData"]$$;
+      dest_data_var=.projects["program_examples"].programs.gp["Data"]["DataSelect"].vars["SelectedRows"]$$;
+      select_spec {
+       name="select_spec";
+       ops {
+	name="DataOpList_24";
+	el_typ=DataSelectEl;
+	el_def=0;
+	DataSelectEl @["Categ  Fruit"] {
+	 col_name="Categ";
+	 name="Categ  Fruit";
+	 on=1;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 9 0="Fruit";
+	 var=NULL;
+	 enable_var=NULL;
+	};
+	DataSelectEl @["Value  min_value"] {
+	 col_name="Value";
+	 name="Value  min_value";
+	 on=1;
+	 rel=GREATERTHANOREQUAL;
+	 use_var=1;
+	 cmp 6 0=10;
+	 var=.projects["program_examples"].programs.gp["Data"]["DataSelect"].vars["min_value"]$$;
+	 enable_var=NULL;
+	};
+       };
+       comb_op=AND;
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["DataSort"] {
+    name="DataSort";
+    short_nm="DSrt";
+    tags=;
+    desc=;
+    flags=0;
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+     DataTable @["DemoData"] {
+      name="DemoData";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Categ"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
+"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
+	};
+       };
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+"Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
+	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] 20;30;15;55;5;25;45;60;7;44;
+22;7;17;3;1;25;22;15;10;5;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [20] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+      };
+     };
+     DataTable @["SortedRows"] {
+      name="SortedRows";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Categ"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Categ";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
+"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
+	};
+       };
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+"Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
+	};
+       };
+       float_Data @["Value"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1598916053771973;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Value";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=177;
+	ar {
+	 name=;
+	[20] 20;30;15;55;5;25;45;60;7;44;
+22;7;17;3;1;25;22;15;10;5;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [20] 0;1;12;13;19;14;2;3;16;4;
+5;6;17;7;8;9;11;18;15;10;
+      };
+     };
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["DemoData"] {
+      name="DemoData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataSort"].objs["DemoData"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["SortedRows"] {
+      name="SortedRows";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Data"]["DataSort"].objs["SortedRows"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    brk_pts {
+     name=;
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     DataSortProg @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=.projects["program_examples"].programs.gp["Data"]["DataSort"].vars["DemoData"]$$;
+      dest_data_var=.projects["program_examples"].programs.gp["Data"]["DataSort"].vars["SortedRows"]$$;
+      sort_spec {
+       name="sort_spec";
+       ops {
+	name="DataOpList_25";
+	el_typ=DataSortEl;
+	el_def=0;
+	DataSortEl @["Name up"] {
+	 col_name="Name";
+	 name="Name up";
+	 order=ASCENDING;
+	};
+       };
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
   };
  };
  viewers {
@@ -6647,7 +7990,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9979122877120972;
+     value 6 0=0.9978689551353455;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -6662,7 +8005,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAACYwAAA3QAAAFGAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAAA5AAABFcAAAG7AQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -7841,7 +9184,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.03966597095131874;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
