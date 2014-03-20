@@ -52,7 +52,7 @@ else (WIN32) # assume gcc!!!
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_RETURN_TYPE_WARN}") # at least get a warning!
   endif (HAS_RETURN_TYPE_ERROR_FLAG)
 
-  set(GCC_UNDEF_INLINE "-Wno-undefined-inline")
+  set(GCC_UNDEF_INLINE "-Wno-undefined-inline -Wno-unknown-warning-option")
 #  check_cxx_compiler_flag("${GCC_UNDEF_INLINE}" HAS_UNDEF_INLINE_FLAG)
   set(HAS_UNDEF_INLINE_FLAG TRUE)
   if (HAS_UNDEF_INLINE_FLAG)
