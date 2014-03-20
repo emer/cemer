@@ -43,6 +43,7 @@ String DataSelectEl::GetName() const {
 }
 
 bool DataSelectEl::SetName(const String& nm) {
+  if(nm.empty()) return false;
   String tnm = trim(nm);
   name = tnm;
   if(tnm.contains(" ")) {
