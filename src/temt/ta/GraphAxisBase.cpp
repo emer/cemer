@@ -343,19 +343,28 @@ void GraphAxisBase::ComputeTicks() {
   act_n_ticks = i;
 }
 
-void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only, String* rnd_svg) {
   t3ax->clear();
   if(!on) return;
   ComputeTicks();               // do this always..
   SoMaterial* mat = t3ax->material();
   color.color().copyTo(mat->diffuseColor);
+
+  if(rnd_svg && ticks_only) {
+    *rnd_svg << T3DataViewMain::SvgPath(color, 2.0f);
+  }
+
   switch (axis) {
-  case X: RenderAxis_X(t3ax, ticks_only);
+  case X: RenderAxis_X(t3ax, ticks_only, rnd_svg);
     break;
-  case Y: RenderAxis_Y(t3ax, n_ax, ticks_only);
+  case Y: RenderAxis_Y(t3ax, n_ax, ticks_only, rnd_svg);
     break;
-  case Z: RenderAxis_Z(t3ax, ticks_only);
+  case Z: RenderAxis_Z(t3ax, ticks_only, rnd_svg);
     break;
+  }
+
+  if(rnd_svg && ticks_only) {
+    *rnd_svg << T3DataViewMain::SvgPathEnd();
   }
 }
 
@@ -363,13 +372,18 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
   act_n_ticks is the number of sections, so tick marks will be +1 (to include ends)
 
 */
-void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only, String* rnd_svg) {
   iVec3f fm;                    // init to 0
   iVec3f to;
 
   // axis line itself
   to.x = axis_length;
   t3ax->addLine(fm, to);
+
+  if(rnd_svg && ticks_only) {
+    *rnd_svg << "M " << T3DataViewMain::SvgCoords(fm.x, fm.y)
+             << "L " << T3DataViewMain::SvgCoords(to.x, to.y);
+  }
 
   bool use_str_labels = false;
 
@@ -380,6 +394,11 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
       fm.y = -(.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
       String label = "x " + String(units,"%.5g");
       t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+
+      if(rnd_svg) {
+        *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y, color,
+                                            0.05f, T3DataViewMain::LEFT);
+      }
     }
 
     if(!col_name.empty()) {
@@ -396,6 +415,11 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
         }
       }
       t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
+
+      if(rnd_svg) {
+        *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y, color,
+                                            0.05f, T3DataViewMain::CENTER);
+      }
     }
   }
 
@@ -416,6 +440,12 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
     fm.x = DataToPlot(val);
     to.x = DataToPlot(val);
     t3ax->addLine(fm, to);
+
+    if(rnd_svg && ticks_only) {
+      *rnd_svg << "M " << T3DataViewMain::SvgCoords(fm.x, fm.y)
+               << "L " << T3DataViewMain::SvgCoords(to.x, to.y);
+    }
+
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
@@ -432,18 +462,28 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
         t3ax->addLabel(label.chars(),
                      iVec3f(fm.x, fm.y - y_lab_off, fm.z),
                      SoAsciiText::CENTER);
+        if(rnd_svg) {
+          // todo: get font size from graph
+          *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y-y_lab_off, color,
+                                              0.05f, T3DataViewMain::CENTER);
+        }
       }
     }
   }
 }
 
-void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String* rnd_svg) {
   iVec3f fm;
   iVec3f to;
 
   // axis line itself
   to.y = axis_length;
   t3ax->addLine(fm, to);
+
+  if(rnd_svg && ticks_only) {
+    *rnd_svg << "M " << T3DataViewMain::SvgCoords(fm.x, fm.y)
+             << "L " << T3DataViewMain::SvgCoords(to.x, to.y);
+  }
 
   if(!ticks_only) {
     // units legend
@@ -453,10 +493,18 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
       if(n_ax > 0) {
         fm.x = TICK_OFFSET;
         t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+        if(rnd_svg) {
+          *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y, color,
+                                              0.05f, T3DataViewMain::LEFT);
+        }
       }
       else {
         fm.x = -TICK_OFFSET;
         t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+        if(rnd_svg) {
+          *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y, color,
+                                              0.05f, T3DataViewMain::RIGHT);
+        }
       }
     }
 
@@ -468,10 +516,18 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
       if(n_ax > 0) {
         fm.x = GraphTableView::tick_size + TICK_OFFSET + 1.2f * t3ax->fontSize();
         t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+        if(rnd_svg) {
+          *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y, color,
+                                              0.05f, T3DataViewMain::CENTER, true);
+        }
       }
       else {
         fm.x = -GraphTableView::tick_size - TICK_OFFSET - 1.2f * t3ax->fontSize();
         t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+        if(rnd_svg) {
+          *rnd_svg << T3DataViewMain::SvgText(label, fm.x, fm.y, color,
+                                              0.05f, T3DataViewMain::CENTER, true);
+        }
       }
     }
   }
@@ -489,24 +545,39 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
     fm.y = DataToPlot(val);
     to.y = DataToPlot(val);
     t3ax->addLine(fm, to);
+
+    if(rnd_svg && ticks_only) {
+      *rnd_svg << "M " << T3DataViewMain::SvgCoords(fm.x, fm.y)
+               << "L " << T3DataViewMain::SvgCoords(to.x, to.y);
+    }
+
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
         lab_val = 0.0f;         // the 0 can be screwy
       label = String(lab_val);
+      fm.y -= (.4f * t3ax->fontSize()); // center vertically
       if(n_ax > 0) {
         t3ax->addLabel(label.chars(),
-                       iVec3f(to.x + TICK_OFFSET, fm.y - (.5f * t3ax->fontSize()), fm.z));
+                       iVec3f(to.x + TICK_OFFSET, fm.y, fm.z));
+        if(rnd_svg) {
+          *rnd_svg << T3DataViewMain::SvgText(label, to.x + TICK_OFFSET,
+                                              fm.y, color, 0.05f, T3DataViewMain::LEFT);
+        }
       }
       else {
         t3ax->addLabel(label.chars(),
-                       iVec3f(fm.x - TICK_OFFSET, fm.y - (.5f * t3ax->fontSize()), fm.z));
+                       iVec3f(fm.x - TICK_OFFSET, fm.y, fm.z));
+        if(rnd_svg) {
+          *rnd_svg << T3DataViewMain::SvgText(label, fm.x - TICK_OFFSET,
+                                              fm.y, color, 0.05f, T3DataViewMain::RIGHT);
+        }
       }
     }
   }
 }
 
-void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only, String* rnd_svg) {
   iVec3f fm;
   iVec3f to;
 

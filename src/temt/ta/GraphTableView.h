@@ -230,9 +230,6 @@ protected:
   virtual void          RenderGraph_Matrix_Sep();
   virtual void          RenderGraph_Matrix_Zi();
 
-  virtual void          SVGHeader();
-  virtual void          SVGFooter();
-
   virtual void          ComputeAxisRanges();
   // compute range information based on data column, call UpdateRange_impl
 
@@ -241,7 +238,8 @@ protected:
 
   virtual void          RenderAxes();
   virtual void          RenderLegend();
-  virtual void          RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl);
+  virtual void          RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
+                                        taVector2f& cur_tr);
 
   virtual void          RemoveGraph(); // remove all lines
 
@@ -258,9 +256,6 @@ protected:
   virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y,
                                         T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
-
-  inline String         SvgCoords(float x, float y)
-  { return String(1000.0f * x) + "," + String(1000.0f - (1000.0f * y)) + " "; }
 
   void          LoadObsoletePlotData(); // #IGNORE
 

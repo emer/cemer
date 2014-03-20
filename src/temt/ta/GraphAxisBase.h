@@ -107,7 +107,8 @@ public:
   inline float          DistToPlot(float dist) // convert data value to plotting value
   { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Scale() * dist; }
   // convert a distance value in data units to plotting distance (doesn't subtract off min)
-  virtual void          RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
+  virtual void          RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false,
+                                   String* rnd_svg = NULL);
   // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 
   ///////////////////////////////////////////////////
@@ -131,14 +132,15 @@ public:
   SIMPLE_COPY(GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)
 protected:
-  void          RenderAxis_X(T3Axis* t3ax, bool ticks_only=false);
-  void          RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false);
-  void          RenderAxis_Y(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
+  void        RenderAxis_X(T3Axis* t3ax, bool ticks_only=false, String* rnd_svg = NULL);
+  void        RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false, String* rnd_svg = NULL);
+  void        RenderAxis_Y(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false,
+                             String* rnd_svg = NULL);
 
-  void         UpdateAfterEdit_impl() override;
+  void        UpdateAfterEdit_impl() override;
 private:
-  void                  Initialize();
-  void                  Destroy();
+  void        Initialize();
+  void        Destroy();
 };
 
 #endif // GraphAxisBase_h
