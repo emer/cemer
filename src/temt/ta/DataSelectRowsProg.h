@@ -40,14 +40,16 @@ public:
   // #BUTTON #CAT_Data add all columns from src_data to the select_spec list of ops columns 
   void	UpdateSpecDataTable() override;
 
-  String GetDisplayName() const override;
-  String	GetToolbarName() const override { return "sel rows"; }
+  String    GetDisplayName() const override;
+  String    GetToolbarName() const override { return "sel rows"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
 
   TA_SIMPLE_BASEFUNS(DataSelectRowsProg);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override; 
+  void      UpdateAfterEdit_impl() override;
+  void      CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void      GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();

@@ -43,14 +43,16 @@ public:
   taList_impl*	children_() override {return &select_spec; }	
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override
   { return select_spec.Elem(idx, mode); }
-  String GetDisplayName() const override;
-  String	GetToolbarName() const override { return "sel cols"; }
+  String    GetDisplayName() const override;
+  String    GetToolbarName() const override { return "sel cols"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
 
   TA_SIMPLE_BASEFUNS(DataSelectColsProg);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override; 
+  void      UpdateAfterEdit_impl() override;
+  void      CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void      GenCssBody_impl(Program* prog) override;
 
 private:
   void	Initialize();
