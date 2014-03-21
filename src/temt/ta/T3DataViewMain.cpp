@@ -18,7 +18,6 @@
 #include <T3ExaminerViewer>
 #include <T3AnnotationView>
 #include <T3Annotation>
-#include <RGBA>
 
 #include <taMisc>
 
@@ -252,87 +251,3 @@ void T3DataViewMain::AnnoteClearAll() {
   annotations.Reset();
 }
 
-/////////////////////////////////
-//      SVG Rendering help
-
-String T3DataViewMain::SvgHeader(float width, float height,
-                                 float pix_width, float pix_height) {
-  String rval;
-  rval << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-       << "<svg\n"
-       << "  xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n"
-       << "  width=\"" << 400.0f * width << "px\"\n"
-       << "  height=\"" << 400.0f * height << "px\"\n"
-       << "  viewBox=\"0 0 " << 1000.0f * width << " " << 1000.0f * height << "\">\n";
-  return rval;
-}
-
-String T3DataViewMain::SvgFooter() {
-  return "</svg>\n";
-}
-
-String T3DataViewMain::SvgCoords(float x, float y) {
-  return String(1000.0f * x) + "," + String(1000.0f - (1000.0f * y)) + " ";
-}
-
-String T3DataViewMain::SvgCoordsXY(float x, float y) {
-  String rval;
-  rval  << "x=\"" << 1000.0f * x << "\" y=\""
-        << 1000.0f - 1000.0f * y << "\"";
-  return rval;
-}
-
-String T3DataViewMain::SvgPath(const RGBA& color, float line_width) {
-  String rval;
-  rval << "<path fill=\"none\" stroke=\"#" << color.ToHexString()
-       << "\" stroke-width=\"" << line_width << "\"\n"
-       << "  d=\"";
-  return rval;
-}
-
-String T3DataViewMain::SvgPathEnd() {
-  return "\"\n />\n";
-}
-
-String T3DataViewMain::SvgGroup() {
-  return "\n<g>\n";
-}
-
-String T3DataViewMain::SvgGroupEnd() {
-  return "\n</g>\n";
-}
-
-String T3DataViewMain::SvgGroupTranslate(float x, float y) {
-  String rval; 
-  rval << "\n<g transform=\"translate(" << String(1000.0f * x) << ","
-       << String(1000.0f * y) + ")\">\n";
-  return rval;
-}
-
-String T3DataViewMain::SvgText(const String& str, float x, float y, const RGBA& color,
-                               float font_size, TextJust just, 
-                               bool vertical, const String& font) {
-  String rval;
-  String anch;
-  switch (just) {
-  case LEFT:
-    anch = "start";
-    break;
-  case CENTER:
-    anch = "middle";
-    break;
-  case RIGHT:
-    anch = "end";
-    break;
-  }
-  rval << "\n<text " << SvgCoordsXY(x,y)
-       << " font-family=\"" << font
-       << "\" font-size=\"" << 1000.0f * font_size
-       << "\" fill=\"#" << color.ToHexString();
-  if(vertical) {
-    rval << "\" writing-mode=\"tb";
-  }
-  rval << "\" text-anchor=\"" << anch << "\">\n"
-       << str << "\n</text>\n";
-  return rval;
-}

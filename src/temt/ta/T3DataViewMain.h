@@ -23,7 +23,6 @@
 #include <T3Annotation_List>
 
 // declare all other types mentioned but not required to include:
-class RGBA; // 
 
 taTypeDef_Of(T3DataViewMain);
 
@@ -121,34 +120,6 @@ public:
   virtual void          AnnoteClearAll();
   // #MENU_BUTTON remove all existing annotations
   
-
-  ///////////////////////////////
-  // svg rendering helpers:
-
-  static String  SvgHeader(float width = 1.0, float height = 1.0,
-                           float pix_width = 400.0, float pix_height = 400.0);
-  // #IGNORE the full svg header to start an svg image -- pixel width and height are then multiplied by the normalized width, height so you don't need to do that manually
-  static String  SvgFooter();
-  // #IGNORE svg footer
-  static String  SvgCoords(float x, float y);
-  // #IGNORE x,y assuming normalized x,y values multiplied by 1000
-  static String  SvgCoordsXY(float x, float y);
-  // #IGNORE x="x" y="y" assuming normalized x,y values multiplied by 1000
-  static String  SvgPath(const RGBA& color, float line_width = 2.0);
-  // #IGNORE <path> start, leaving d=" hanging..
-  static String  SvgPathEnd();
-  // #IGNORE end the path
-  static String  SvgGroup();
-  // #IGNORE just a basic group <g>
-  static String  SvgGroupEnd();
-  // #IGNORE end a group
-  static String  SvgGroupTranslate(float tr_x, float tr_y);
-  // #IGNORE a group with translation transform 
-  static String  SvgText(const String& str, float x, float y, const RGBA& color,
-                         float font_size = 0.05, TextJust just = LEFT, 
-                         bool vertical = false, const String& font = "Arial");
-  // #IGNORE <text> with given properties -- font size is normalized -- multiplied x1000
-
   void         InitLinks() override;
   void         CutLinks() override;
   T3_DATAVIEWFUNS(T3DataViewMain, T3DataViewPar) //

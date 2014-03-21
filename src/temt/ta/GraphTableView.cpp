@@ -30,6 +30,7 @@
 #include <T3Color>
 #include <SoLineBox3d>
 #include <taVector2i>
+#include <taSvg>
 #if (QT_VERSION >= 0x050000)
 #include <QGuiApplication>
 #endif
@@ -1037,16 +1038,16 @@ void GraphTableView::RenderGraph() {
 
   if(render_svg) {
     svg_str = "";
-    svg_str << SvgHeader(width, 1.0f);
+    svg_str << taSvg::Header(width, 1.0f);
 
     // do the overall box around graph
-    svg_str << SvgPath(x_axis.color, 2.0f)
-            << "M " << SvgCoords(0.0f, 0.0f)
-            << "L " << SvgCoords(0.0f, 1.0f)
-            << "L " << SvgCoords(width, 1.0f)
-            << "L " << SvgCoords(width, 0.0f)
-            << "L " << SvgCoords(0.0f, 0.0f)
-            << SvgPathEnd();
+    svg_str << taSvg::Path(x_axis.color, 2.0f)
+            << "M " << taSvg::Coords(0.0f, 0.0f)
+            << "L " << taSvg::Coords(0.0f, 1.0f)
+            << "L " << taSvg::Coords(width, 1.0f)
+            << "L " << taSvg::Coords(width, 0.0f)
+            << "L " << taSvg::Coords(0.0f, 0.0f)
+            << taSvg::PathEnd();
   }
 
   RenderAxes();
@@ -1069,7 +1070,7 @@ void GraphTableView::RenderGraph() {
   }
 
   if(render_svg) {
-    svg_str << SvgFooter();
+    svg_str << taSvg::Footer();
   }
 }
 
@@ -1106,7 +1107,7 @@ void GraphTableView::RenderAxes() {
   String* rnd_svg = NULL;
   if(render_svg) {
     rnd_svg = &svg_str;
-    *rnd_svg << SvgGroup();
+    *rnd_svg << taSvg::Group();
   }
 
   x_axis.RenderAxis(t3_x_axis, 0, false, rnd_svg);
@@ -1115,14 +1116,14 @@ void GraphTableView::RenderAxes() {
   }
 
   if(rnd_svg) {
-    *rnd_svg << SvgGroupEnd();
-    *rnd_svg << SvgGroupTranslate(0.0f, -ylen); // move on top
+    *rnd_svg << taSvg::GroupEnd();
+    *rnd_svg << taSvg::GroupTranslate(0.0f, -ylen); // move on top
   }
 
   x_axis.RenderAxis(t3_x_axis_top, 1, true, rnd_svg); // ticks only on top
 
   if(rnd_svg) {
-    *rnd_svg << SvgGroupEnd();
+    *rnd_svg << taSvg::GroupEnd();
   }
 
   if(z_axis.on) {
@@ -1187,14 +1188,14 @@ void GraphTableView::RenderAxes() {
     t3_y_axis = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
 
     if(rnd_svg) {
-      *rnd_svg << SvgGroup();
+      *rnd_svg << taSvg::Group();
     }
     mainy->RenderAxis(t3_y_axis, 0, false, rnd_svg);
     yax->addChild(t3_y_axis);
 
     if(rnd_svg) {
       mainy->RenderAxis(t3_y_axis, 0, true, rnd_svg);
-      *rnd_svg << SvgGroupEnd();
+      *rnd_svg << taSvg::GroupEnd();
     }
 
     if(z_axis.on) {
@@ -1215,7 +1216,7 @@ void GraphTableView::RenderAxes() {
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1); // second Y = 1
 
       if(rnd_svg) {
-        *rnd_svg << SvgGroupTranslate(x_axis.axis_length, 0.0f);
+        *rnd_svg << taSvg::GroupTranslate(x_axis.axis_length, 0.0f);
       }
       alty->RenderAxis(t3_y_axis_rt, 1, false, rnd_svg); // indicate second axis!
       tr = new SoTranslation();  yax->addChild(tr);
@@ -1224,7 +1225,7 @@ void GraphTableView::RenderAxes() {
 
       if(rnd_svg) {
         alty->RenderAxis(t3_y_axis_rt, 1, true, rnd_svg);
-        *rnd_svg << SvgGroupEnd();
+        *rnd_svg << taSvg::GroupEnd();
       }
 
       if(z_axis.on) {
@@ -1243,7 +1244,7 @@ void GraphTableView::RenderAxes() {
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
 
       if(rnd_svg) {
-        *rnd_svg << SvgGroupTranslate(x_axis.axis_length, 0.0f);
+        *rnd_svg << taSvg::GroupTranslate(x_axis.axis_length, 0.0f);
       }
       mainy->RenderAxis(t3_y_axis_rt, 0, true, rnd_svg); // ticks
       tr = new SoTranslation();   yax->addChild(tr);
@@ -1251,7 +1252,7 @@ void GraphTableView::RenderAxes() {
       yax->addChild(t3_y_axis_rt);
 
       if(rnd_svg) {
-        *rnd_svg << SvgGroupEnd();
+        *rnd_svg << taSvg::GroupEnd();
       }
 
       if(z_axis.on) {
@@ -1289,15 +1290,15 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   t3gl->finishBatch();
 
   if(render_svg) {
-    svg_str << SvgGroupTranslate(cur_tr.x, -cur_tr.y)
-            << SvgPath(plv.color, dev_pix_ratio * line_width)
-            << "M " << SvgCoords(st.x, st.y)
-            << "L " << SvgCoords(ed.x, ed.y)
-            << SvgPathEnd();
-    svg_str << SvgText(label, ed.x + TICK_OFFSET, ed.y - (.5f * label_font_size),
+    svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
+            << taSvg::Path(plv.color, dev_pix_ratio * line_width)
+            << "M " << taSvg::Coords(st.x, st.y)
+            << "L " << taSvg::Coords(ed.x, ed.y)
+            << taSvg::PathEnd();
+    svg_str << taSvg::Text(label, ed.x + TICK_OFFSET, ed.y - (.5f * label_font_size),
                        plv.color,
-                       0.05f, T3DataViewMain::LEFT)
-            << SvgGroupEnd();
+                       0.05f, taSvg::LEFT)
+            << taSvg::GroupEnd();
   }
 }
 
@@ -1315,7 +1316,7 @@ void GraphTableView::RenderLegend() {
   tr->translation.setValue(0.0f, ylen + 2.5f * axis_font_size, 0.0f);
 
   if(render_svg) {
-    svg_str << SvgGroupTranslate(0.0f, -(ylen + 2.5f * axis_font_size));
+    svg_str << taSvg::GroupTranslate(0.0f, -(ylen + 2.5f * axis_font_size));
   }
 
   float over_amt = .33f * x_axis.axis_length;
@@ -1358,7 +1359,7 @@ void GraphTableView::RenderLegend() {
   }
 
   if(render_svg) {
-    svg_str << SvgGroupEnd();
+    svg_str << taSvg::GroupEnd();
   }
 }
 
@@ -1809,7 +1810,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   bool first = true;
 
   if(render_svg) {
-    svg_str << SvgPath(plv.color, dev_pix_ratio * line_width);
+    svg_str << taSvg::Path(plv.color, dev_pix_ratio * line_width);
   }
 
   for (int row = view_range.min; row <= view_range.max; row++) {
@@ -1897,7 +1898,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         else
           t3gl->moveTo(plt);
         if(render_svg) {
-          svg_str << "M " << SvgCoords(plt.x, plt.y);
+          svg_str << "M " << taSvg::Coords(plt.x, plt.y);
         }
       }
       else {
@@ -1906,7 +1907,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         else
           t3gl->lineTo(plt);
         if(render_svg) {
-          svg_str << "L " << SvgCoords(plt.x, plt.y);
+          svg_str << "L " << taSvg::Coords(plt.x, plt.y);
         }
       }
     }
@@ -1923,8 +1924,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
           t3gl->lineTo(th_ed);
         }
         if(render_svg) {
-          svg_str << "M " << SvgCoords(th_st.x, th_st.y)
-                  << "L " << SvgCoords(th_ed.x, th_ed.y);
+          svg_str << "M " << taSvg::Coords(th_st.x, th_st.y)
+                  << "L " << taSvg::Coords(th_ed.x, th_ed.y);
         }
       }
     }
@@ -1967,13 +1968,13 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         t3gl->errBar(plt, err_plt, err_bar_width);
 
       if(render_svg) {
-        svg_str << "\nM " << SvgCoords(plt.x-err_bar_width, plt.y-err_plt) // low bar
-                << "L " << SvgCoords(plt.x+err_bar_width, plt.y-err_plt)
-                << "M " << SvgCoords(plt.x-err_bar_width, plt.y+err_plt) // high bar
-                << "L " << SvgCoords(plt.x+err_bar_width, plt.y+err_plt)
-                << "M " << SvgCoords(plt.x, plt.y-err_plt) // vert bar
-                << "L " << SvgCoords(plt.x, plt.y+err_plt)
-                << "M " << SvgCoords(plt.x, plt.y) << "\n"; // back home..
+        svg_str << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt) // low bar
+                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt)
+                << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt) // high bar
+                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt)
+                << "M " << taSvg::Coords(plt.x, plt.y-err_plt) // vert bar
+                << "L " << taSvg::Coords(plt.x, plt.y+err_plt)
+                << "M " << taSvg::Coords(plt.x, plt.y) << "\n"; // back home..
       }
     }
 
@@ -1989,7 +1990,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   }
 
   if(render_svg) {
-    svg_str << SvgPathEnd();
+    svg_str << taSvg::PathEnd();
   }
 
   t3gl->finishBatch();

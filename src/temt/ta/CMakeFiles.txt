@@ -657,6 +657,8 @@ set(ta_HEADS_MAKETA_NOMOC
   T3Panel.h
   T3Panel_List.h
 
+  taSvg.h
+
   T3DataView.h
   T3DataView_List.h
   T3DataViewPar.h
@@ -1753,6 +1755,8 @@ set(ta_SRCS_MAKETA
   T3PanelViewer.cpp
   T3Panel.cpp
   T3Panel_List.cpp
+
+  taSvg.cpp
 
   T3DataView.cpp
   T3DataView_List.cpp
