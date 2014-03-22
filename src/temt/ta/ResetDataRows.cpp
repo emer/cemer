@@ -15,6 +15,8 @@
 
 #include "ResetDataRows.h"
 #include <Program>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ResetDataRows);
 
@@ -23,13 +25,15 @@ void ResetDataRows::Initialize() {
 }
 
 String ResetDataRows::GetDisplayName() const {
-  String rval = "ResetDataRows of: ";
-  if(data_var) rval += data_var->name;
-  else rval += "?";
+  String rval = "ResetDataRows: ";
+  
+  if(data_var)
+    rval += " table = " + data_var->name + " ";
+  else
+    rval += " table = ? ";
+
   return rval;
 }
-
-// todo: needs CvtFmCode!
 
 void ResetDataRows::GenCssBody_impl(Program* prog) {
   if(!data_var) {
@@ -38,4 +42,35 @@ void ResetDataRows::GenCssBody_impl(Program* prog) {
   }
   prog->AddLine(this, data_var->name + ".RemoveAllRows();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+}
+
+bool ResetDataRows::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("reset")) return true;
+  return false;
+}
+
+bool ResetDataRows::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("tab")) {
+      data_var = FindVarNameInScope(value, false); // don't make
+    }
+  }
+  
+  SigEmitUpdated();
+  return true;
 }

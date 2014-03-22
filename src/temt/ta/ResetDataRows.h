@@ -30,8 +30,10 @@ class TA_API ResetDataRows: public DataOneProg {
   // clear out all existing rows of data in data table
 INHERITED(DataOneProg)
 public:
-  String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "reset rows"; }
+  String	  GetDisplayName() const override;
+  String	  GetToolbarName() const override { return "reset rows"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
 
   TA_BASEFUNS_NOCOPY(ResetDataRows);
 protected:

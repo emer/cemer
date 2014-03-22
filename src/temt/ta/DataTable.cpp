@@ -2593,6 +2593,12 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
     strm.get();
     depth++;
   }
+  
+  // remove leading spaces
+  while ((c = strm.peek()) == ' ') {
+    strm.get()  ;
+  }
+
   bool bs = false;
   while(((c = strm.get()) != EOF) &&
       !(((c == delim) || (c == '\n') || (c == '\a') || (c == '\r')) && (depth <= 0))) {
@@ -2628,6 +2634,10 @@ int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
     got_quote = true;
     idx++;
     depth++;
+  }
+  // remove leading spaces
+  while (idx < len && (c = istr[idx]) == ' ') {
+    idx++;
   }
   while(idx < len) {
     c = istr[idx++];
@@ -3376,9 +3386,9 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     commafreq = ln1.freq(',');
   }
 
-  if(tabfreq > commafreq && tabfreq > spacefreq)
+  if(tabfreq >= commafreq && tabfreq >= spacefreq)
     delim = TAB;
-  else if (commafreq > tabfreq && commafreq > spacefreq)
+  else if (commafreq >= tabfreq && commafreq >= spacefreq)
     delim = COMMA;
   else {
     // note: in rare case of only one col, the delim should NOT default to SPACE!
