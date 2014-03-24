@@ -139,6 +139,9 @@ public:
                           const String& color = "black");
   // set to object (3D inventor file) annotation -- coordinates are in the normalized coordinates of the view (typically 1x1x1)
 
+  virtual String RenderSvg();
+  // #IGNORE render annotation to SVG string output
+
   virtual void  UpdateDisplay();
   // #BUTTON force update the display to reflect any changes -- should happen automatically but sometimes needs a nudge
 

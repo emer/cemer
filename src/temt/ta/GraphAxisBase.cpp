@@ -352,7 +352,7 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only, String* 
   color.color().copyTo(mat->diffuseColor);
 
   if(rnd_svg && ticks_only) {
-    *rnd_svg << taSvg::Path(color, 2.0f);
+    *rnd_svg << taSvg::Path(color.color(), 2.0f);
   }
 
   switch (axis) {
@@ -397,7 +397,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only, String* rnd_svg)
       t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
 
       if(rnd_svg) {
-        *rnd_svg << taSvg::Text(label, fm.x, fm.y, color,
+        *rnd_svg << taSvg::Text(label, fm.x, fm.y, color.color(),
                                 0.05f, taSvg::LEFT);
       }
     }
@@ -418,7 +418,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only, String* rnd_svg)
       t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
 
       if(rnd_svg) {
-        *rnd_svg << taSvg::Text(label, fm.x, fm.y, color,
+        *rnd_svg << taSvg::Text(label, fm.x, fm.y, color.color(),
                                 0.05f, taSvg::CENTER);
       }
     }
@@ -465,7 +465,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only, String* rnd_svg)
                      SoAsciiText::CENTER);
         if(rnd_svg) {
           // todo: get font size from graph
-          *rnd_svg << taSvg::Text(label, fm.x, fm.y-y_lab_off, color,
+          *rnd_svg << taSvg::Text(label, fm.x, fm.y-y_lab_off, color.color(),
                                   0.05f, taSvg::CENTER);
         }
       }
@@ -495,7 +495,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String
         fm.x = TICK_OFFSET;
         t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
         if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color,
+          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color.color(),
                                   0.05f, taSvg::LEFT);
         }
       }
@@ -503,7 +503,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String
         fm.x = -TICK_OFFSET;
         t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
         if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color,
+          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color.color(),
                                   0.05f, taSvg::RIGHT);
         }
       }
@@ -518,7 +518,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String
         fm.x = GraphTableView::tick_size + TICK_OFFSET + 1.3f * t3ax->fontSize();
         t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
         if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color,
+          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color.color(),
                                   0.05f, taSvg::CENTER, true); // vertical
         }
       }
@@ -526,7 +526,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String
         fm.x = -GraphTableView::tick_size - TICK_OFFSET - 1.3f * t3ax->fontSize();
         t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
         if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color,
+          *rnd_svg << taSvg::Text(label, fm.x, fm.y, color.color(),
                                   0.05f, taSvg::CENTER, true); // vertical
         }
       }
@@ -563,7 +563,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String
                        iVec3f(to.x + TICK_OFFSET, fm.y, fm.z));
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, to.x + TICK_OFFSET,
-                                  fm.y, color, 0.05f, taSvg::LEFT);
+                                  fm.y, color.color(), 0.05f, taSvg::LEFT);
         }
       }
       else {
@@ -571,7 +571,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only, String
                        iVec3f(fm.x - TICK_OFFSET, fm.y, fm.z));
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm.x - TICK_OFFSET,
-                                  fm.y, color, 0.05f, taSvg::RIGHT);
+                                  fm.y, color.color(), 0.05f, taSvg::RIGHT);
         }
       }
     }

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6925
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6932
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1308,10 +1308,16 @@ LeabraProject .projects["test"] {
 	  GraphColView @["epoch_time_usr"] { };
 	 };
 
-	 T3Annotation_List @.annotations = [0] {
+	 T3Annotation_List @.annotations = [3] {
+	  T3Annotation @["line_0"] { };
+	  T3Annotation @["rectangle_1"] { };
+	  T3Annotation @["text_2"] { };
 	 };
 
-	 T3DataView_List @.annote_children = [0] {
+	 T3DataView_List @.annote_children = [3] {
+	  T3AnnotationView @["line_0"] { };
+	  T3AnnotationView @["rectangle_1"] { };
+	  T3AnnotationView @["text_2"] { };
 	 };
 
 	 GraphPlotView_List @.plots = [16] {
@@ -8013,7 +8019,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.0309003721922636;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -8379,11 +8385,83 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   name=;
 	   el_typ=T3Annotation;
 	   el_def=0;
+	   T3Annotation @["line_0"] {
+	    name="line_0";
+	    type=LINE;
+	    arrow=START_ARROW;
+	    pos {x=0.153846: y=0.666667: z=0: };
+	    size {x=0.2: y=0.1: z=0: };
+	    line_width=4;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
+	    xform_size=1;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["rectangle_1"] {
+	    name="rectangle_1";
+	    type=RECTANGLE;
+	    arrow=NO_ARROW;
+	    pos {x=0.5: y=0.8: z=0: };
+	    size {x=0.3: y=0.2: z=0: };
+	    line_width=4;
+	    arrow_size=0.02;
+	    text="Select, Context Menu to Edit";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=1: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
+	    xform_size=0;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
+	   T3Annotation @["text_2"] {
+	    name="text_2";
+	    type=TEXT;
+	    arrow=NO_ARROW;
+	    pos {x=0.3: y=0.5: z=0: };
+	    size {x=1: y=1: z=1: };
+	    line_width=1;
+	    arrow_size=0.02;
+	    text="Test Label";
+	    justification=LEFT;
+	    font_size=0.05;
+	    obj_fname=;
+	    color {r=0: g=0: b=0: a=1: };
+	    fill=0;
+	    fill_color {r=1: g=1: b=1: a=1: };
+	    xform_size=0;
+	    rot {x=0: y=0: z=1: rot=0: };
+	    scale {x=1: y=1: z=1: };
+	   };
 	  };
 	  annote_children {
 	   name=;
 	   el_typ=T3DataView;
 	   el_def=0;
+	   T3AnnotationView @["line_0"] {
+	    name="line_0";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["EpochOutputData"].root_view.children["EpochOutputData_Graph"].annotations["line_0"]$$;
+	    m_transform=NULL;
+	   };
+	   T3AnnotationView @["rectangle_1"] {
+	    name="rectangle_1";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["EpochOutputData"].root_view.children["EpochOutputData_Graph"].annotations["rectangle_1"]$$;
+	    m_transform=NULL;
+	   };
+	   T3AnnotationView @["text_2"] {
+	    name="text_2";
+	    m_data=.projects["test"].viewers["Browser2"].frames["T3Frames"].panels["EpochOutputData"].root_view.children["EpochOutputData_Graph"].annotations["text_2"]$$;
+	    m_transform=NULL;
+	   };
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=13: };
@@ -9124,9 +9202,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	T3SavedView @["Vw_0"] {
 	 name="Vw_0";
 	 view_saved=1;
-	 pos {x=1.465: y=0.4449999: z=1.452551: };
+	 pos {x=1.465: y=0.4449999: z=1.676376: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.962551;
+	 focal_dist=2.186376;
 	};
 	T3SavedView @["Vw_1"] {
 	 name="Vw_1";

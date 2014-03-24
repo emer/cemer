@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "taSvg.h"
-#include <RGBA>
+#include <iColor>
 
 TA_BASEFUNS_CTORS_DEFN(taSvg);
 
@@ -46,9 +46,9 @@ String taSvg::CoordsXY(float x, float y) {
   return rval;
 }
 
-String taSvg::Path(const RGBA& color, float line_width) {
+String taSvg::Path(const iColor& color, float line_width) {
   String rval;
-  rval << "<path fill=\"none\" stroke=\"#" << color.ToHexString()
+  rval << "<path fill=\"none\" stroke=\"#" << color.toString()
        << "\" stroke-width=\"" << line_width << "\"\n"
        << "  d=\"";
   return rval;
@@ -73,7 +73,7 @@ String taSvg::GroupTranslate(float x, float y) {
   return rval;
 }
 
-String taSvg::Text(const String& str, float x, float y, const RGBA& color,
+String taSvg::Text(const String& str, float x, float y, const iColor& color,
                                float font_size, TextJust just, 
                                bool vertical, const String& font) {
   String rval;
@@ -92,7 +92,7 @@ String taSvg::Text(const String& str, float x, float y, const RGBA& color,
   rval << "\n<text " << CoordsXY(x,y)
        << " font-family=\"" << font
        << "\" font-size=\"" << 1000.0f * font_size
-       << "\" fill=\"#" << color.ToHexString();
+       << "\" fill=\"#" << color.toString();
   if(vertical) {
     rval << "\" writing-mode=\"tb";
   }

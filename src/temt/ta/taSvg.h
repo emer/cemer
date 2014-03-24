@@ -22,7 +22,7 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class RGBA; // 
+class iColor; // 
 
 taTypeDef_Of(taSvg);
 
@@ -37,7 +37,7 @@ public:
   };
 
   static String  Header(float width = 1.0, float height = 1.0,
-                           float pix_width = 400.0, float pix_height = 400.0);
+                        float pix_width = 400.0, float pix_height = 400.0);
   // #IGNORE the full svg header to start an svg image -- pixel width and height are then multiplied by the normalized width, height so you don't need to do that manually
   static String  Footer();
   // #IGNORE svg footer
@@ -45,7 +45,7 @@ public:
   // #IGNORE x,y assuming normalized x,y values multiplied by 1000
   static String  CoordsXY(float x, float y);
   // #IGNORE x="x" y="y" assuming normalized x,y values multiplied by 1000
-  static String  Path(const RGBA& color, float line_width = 2.0);
+  static String  Path(const iColor& color, float line_width = 2.0);
   // #IGNORE <path> start, leaving d=" hanging..
   static String  PathEnd();
   // #IGNORE end the path
@@ -55,9 +55,9 @@ public:
   // #IGNORE end a group
   static String  GroupTranslate(float tr_x, float tr_y);
   // #IGNORE a group with translation transform 
-  static String  Text(const String& str, float x, float y, const RGBA& color,
-                         float font_size = 0.05, TextJust just = LEFT, 
-                         bool vertical = false, const String& font = "Arial");
+  static String  Text(const String& str, float x, float y, const iColor& color,
+                      float font_size = 0.05, TextJust just = LEFT, 
+                      bool vertical = false, const String& font = "Arial");
   // #IGNORE <text> with given properties -- font size is normalized -- multiplied x1000
 
   TA_SIMPLE_BASEFUNS(taSvg);

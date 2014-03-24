@@ -42,7 +42,12 @@ public:
   // this is the overall transform (position, scale, rotation) for this view object (typically can be adjusted by view's transform dragbox)
   T3Annotation_List     annotations;
   // extra annotations (lines, arrows, text, etc) to add to the 3d view
-  T3DataView_List       annote_children; // #SHOW #READ_ONLY #SHOW_TREE annotation view children -- keep separate from other kids so they don't interfere
+  T3DataView_List       annote_children;
+  // #SHOW #READ_ONLY #SHOW_TREE annotation view children -- keep separate from other kids so they don't interfere
+  bool                  render_svg;
+  // #IGNORE true if currently rendering an SVG output file
+  String                svg_str;
+  // #IGNORE string of svg code that is rendered to
 
   bool         hasChildren() const override {return (children.size > 0 || annote_children.size > 0);}
 
@@ -71,6 +76,9 @@ public:
 
   virtual void          SaveImageSVG(const String& svg_fname);
   // #BUTTON #EXT_svg #FILE_DIALOG_SAVE render an svg version of this item to given file name
+  
+  virtual void          RenderAnnoteSvg();
+  // #IGNORE render annotations to svg 
 
   virtual T3Annotation*  AnnoteLine(bool data_units, float pos_x, float pos_y, float pos_z,
                                     float size_x = 0.5, float size_y = 0.0, float size_z = 0.0,

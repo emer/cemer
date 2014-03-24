@@ -112,7 +112,26 @@ void T3DataViewMain::ReBuildAll() {
 
 void T3DataViewMain::SaveImageSVG(const String& svg_fnm) {
   taMisc::Error("Sorry, SVG output not (yet) supported for this type of object");
+  // code generally looks like this:
+  // render_svg = true;
+  // svg_str = "";
+  // svg_str << taSvg::Header(width, 1.0f);
+  // RenderGraph();    // whatever is proper render
+  // RenderAnnoteSvg();
+  // svg_str << taSvg::Footer();
+  // render_svg = false;
+  // svg_str.SaveToFile(svg_fname);
+  // RenderGraph();                // fix it..
 }
+
+void T3DataViewMain::RenderAnnoteSvg() {
+  if(!render_svg) return;
+  for(int i=0; i<annotations.size; i++) {
+    T3Annotation* obj = annotations.FastEl(i);
+    svg_str << obj->RenderSvg();
+  }
+}
+
 
 T3Annotation* T3DataViewMain::AnnoteLine(bool data_units, float pos_x, float pos_y, float pos_z,
                                          float size_x, float size_y, float size_z,

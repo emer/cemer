@@ -16,6 +16,7 @@
 #include "T3Annotation.h"
 #include <T3DataViewMain>
 #include <taMath_float>
+#include <taSvg>
 
 #include <taMisc>
 
@@ -247,4 +248,35 @@ void T3Annotation::SetObject(const String& obj_file_path,
   pos.SetXYZ(pos_x, pos_y, pos_z);
   xform_size = false;
   SetColor(clr);
+}
+
+String T3Annotation::RenderSvg() {
+  String rval;
+  // todo: deal with rotation as a group op right at start here
+  switch(type) {
+  case LINE:
+    rval << taSvg::Path(color.color(), line_width)
+         << "M " << taSvg::Coords(pos.x, pos.y)
+         << "L " << taSvg::Coords(pos.x + size.x, pos.y + size.y)
+         << taSvg::PathEnd();
+    break;
+  case RECTANGLE:
+    rval << taSvg::Path(color.color(), line_width)
+         << "M " << taSvg::Coords(pos.x, pos.y)
+         << "L " << taSvg::Coords(pos.x + size.x, pos.y)
+         << "L " << taSvg::Coords(pos.x + size.x, pos.y + size.y)
+         << "L " << taSvg::Coords(pos.x, pos.y + size.y)
+         << "L " << taSvg::Coords(pos.x, pos.y)
+         << taSvg::PathEnd();
+    break;
+  case ELLIPSE:
+    break;
+  case TEXT:
+    rval << taSvg::Text(text, pos.x, pos.y, color.color(),
+                        font_size, (taSvg::TextJust)justification);
+    break;
+  case OBJECT:
+    break;
+  }
+  return rval;
 }

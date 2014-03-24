@@ -1022,7 +1022,11 @@ void GraphTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
 
 void GraphTableView::SaveImageSVG(const String& svg_fname) {
   render_svg = true;
+  svg_str = "";
+  svg_str << taSvg::Header(width, 1.0f);
   RenderGraph();
+  RenderAnnoteSvg();
+  svg_str << taSvg::Footer();
   render_svg = false;
   svg_str.SaveToFile(svg_fname);
   RenderGraph();                // fix it..
@@ -1037,11 +1041,8 @@ void GraphTableView::RenderGraph() {
   if(n_plots == 0 || !x_axis.on) return;
 
   if(render_svg) {
-    svg_str = "";
-    svg_str << taSvg::Header(width, 1.0f);
-
     // do the overall box around graph
-    svg_str << taSvg::Path(x_axis.color, 2.0f)
+    svg_str << taSvg::Path(x_axis.color.color(), 2.0f)
             << "M " << taSvg::Coords(0.0f, 0.0f)
             << "L " << taSvg::Coords(0.0f, 1.0f)
             << "L " << taSvg::Coords(width, 1.0f)
@@ -1067,10 +1068,6 @@ void GraphTableView::RenderGraph() {
       RenderGraph_Bar();
     else
       RenderGraph_XY();
-  }
-
-  if(render_svg) {
-    svg_str << taSvg::Footer();
   }
 }
 
@@ -1291,13 +1288,12 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
 
   if(render_svg) {
     svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
-            << taSvg::Path(plv.color, dev_pix_ratio * line_width)
+            << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width)
             << "M " << taSvg::Coords(st.x, st.y)
             << "L " << taSvg::Coords(ed.x, ed.y)
             << taSvg::PathEnd();
     svg_str << taSvg::Text(label, ed.x + TICK_OFFSET, ed.y - (.5f * label_font_size),
-                       plv.color,
-                       0.05f, taSvg::LEFT)
+                           plv.color.color(), 0.05f, taSvg::LEFT)
             << taSvg::GroupEnd();
   }
 }
@@ -1810,7 +1806,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   bool first = true;
 
   if(render_svg) {
-    svg_str << taSvg::Path(plv.color, dev_pix_ratio * line_width);
+    svg_str << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width);
   }
 
   for (int row = view_range.min; row <= view_range.max; row++) {
