@@ -38,6 +38,7 @@ set(MOC_DEFINES "")
 # put debug on the command line, so that config.h is truly general
 IF(CMAKE_BUILD_TYPE MATCHES "Debug") 
   add_definitions(-DDEBUG) 
+  add_definitions(-DJSON_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug") 
 
 ##############################
