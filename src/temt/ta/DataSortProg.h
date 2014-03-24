@@ -41,13 +41,15 @@ public:
 
   void	UpdateSpecDataTable() override;
 
-  String GetDisplayName() const override;
+  String  GetDisplayName() const override;
   String	GetToolbarName() const override { return "sort"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
 
   TA_SIMPLE_BASEFUNS(DataSortProg);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void CheckChildConfig_impl(bool quiet, bool& rval) override;
+  void    UpdateAfterEdit_impl() override;
+  void    CheckChildConfig_impl(bool quiet, bool& rval) override;
   void		GenCssBody_impl(Program* prog) override; 
 
 private:

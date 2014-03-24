@@ -40,6 +40,8 @@ public:
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgVar"; }
   String	GetToolbarName() const override { return "sele=args"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
 
   void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code

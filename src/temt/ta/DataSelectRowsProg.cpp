@@ -38,12 +38,12 @@ String DataSelectRowsProg::GetDisplayName() const {
   String rval = "SelectRows: ";
   
   if(src_data_var)
-    rval += " src table = " + src_data_var->name;
+    rval += " src table = " + src_data_var->name + " ";
   else
     rval += " src table = ? ";
   
   if(dest_data_var)
-    rval +=  " dest table = " + dest_data_var->name;
+    rval +=  " dest table = " + dest_data_var->name + " ";
   else
     rval += " dest table = ? ";
   return rval;

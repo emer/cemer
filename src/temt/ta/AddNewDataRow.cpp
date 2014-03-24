@@ -28,14 +28,12 @@ String AddNewDataRow::GetDisplayName() const {
     String rval = "Add New Row: ";
     
     if(data_var)
-        rval += " table=" + data_var->name + " ";
+        rval += " table = " + data_var->name + " ";
     else
-        rval += " table=? ";
+        rval += " table = ? ";
     
     return rval;
 }
-
-// todo: needs CvtFmCode!
 
 void AddNewDataRow::GenCssBody_impl(Program* prog) {
     if(!data_var) {
@@ -51,7 +49,8 @@ bool AddNewDataRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
     String tbn = GetToolbarName(); tbn.downcase();
     String tn = GetTypeDef()->name; tn.downcase();
     if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
-    if(dc.startsWith("add new") || dc.startsWith("addnew") || dc.startsWith("new row")) return true;
+    dc.gsub(" ", "");
+    if(dc.startsWith("addnew") || dc.startsWith("newrow")) return true;
     return false;
 }
 

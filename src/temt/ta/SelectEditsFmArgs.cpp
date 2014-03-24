@@ -18,6 +18,7 @@
 #include <ProgVar>
 #include <SelectEdit>
 #include <EditMbrItem>
+#include <NameVar_PArray>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(SelectEditsFmArgs);
@@ -39,18 +40,47 @@ void SelectEditsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String SelectEditsFmArgs::GetDisplayName() const {
-  String rval = "Select Edits Fm Args To: ";
+  String rval = "Select Edits Fm Args: ";
   SelectEdit* se = GetSelectEdit();
   if(se) {
-    rval += se->name;
+    rval += "var = " + se->name + " ";
   }
   else {
-    rval += "?";
+    rval += "var = ? ";
   }
   return rval;
 }
 
-// todo: needs CvtFmCode!
+bool SelectEditsFmArgs::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("selectedit") || dc.startsWith("select edit") || dc.startsWith("sele=")) return true;
+  return false;
+}
+
+bool SelectEditsFmArgs::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("var") || name.startsWith("sel_edit")) {
+      sel_edit_var = FindVarNameInScope(value, false); // don't make
+    }
+  }
+  
+  SigEmitUpdated();
+  return true;
+}
 
 SelectEdit* SelectEditsFmArgs::GetSelectEdit() const {
   if(!sel_edit_var) return NULL;
