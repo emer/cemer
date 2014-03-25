@@ -376,7 +376,7 @@ bool taDataProc::Slice2D(DataTable* dest, DataTable* src, int src_row, String sr
 bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   if(!src) { taMisc::Error("taDataProc::Sort: src is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Sort: spec is NULL"); return false; }
-  if(src == dest) {
+  if(src == dest || !dest) {
     return SortThruIndex(src, spec);
   }
   // just copy and operate on dest
