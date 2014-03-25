@@ -1517,16 +1517,20 @@ void Program::ViewScript_Editor() {
   strm.open(fnm, ios::out);
   SaveScript(strm);
   strm.close();
-
   taMisc::EditFile(fnm);
 }
 
 void Program::ViewScriptUpdate() {
   view_script.truncate(0);
-  if(script_list.size <= 1)
-    view_script = "// Program must be Compiled (e.g., hit Init button) before css Script is available.<P>\n";
-  else
+  if(script_list.size <= 1) {
+    CompileScript();
+  }
+  else {
+    if (isStale()) {
+      Init();
+    }
     script_list.FullListingHTML(view_script);
+  }
 }
 
 void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {
@@ -1571,7 +1575,7 @@ void Program::ViewListing_Editor() {
   strm.open(fnm, ios::out);
   SaveListing(strm);
   strm.close();
-
+  
   taMisc::EditFile(fnm);
 }
 
