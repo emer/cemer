@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -74,8 +75,8 @@ bool PrintExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
-  if(exprstr.freq('"') >= 2) return true; // not a var guy
-  return false;
+  if(exprstr.freq('"') >= 2) return false; // not a var guy
+  return true;
 }
 
 bool PrintExpr::CvtFmCode(const String& code) {
