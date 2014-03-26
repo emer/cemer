@@ -33,9 +33,9 @@ public:
   inline                operator T*() const {return (T*)m_ptr;}
   inline T*             operator->() const {return (T*)m_ptr;}
   T*                    operator=(const taSmartRefT<T>& src)
-  { set((T*)src.m_ptr); return (T*)m_ptr; }
+  { set((taBase*)src.m_ptr); return (T*)m_ptr; }
   T*                    operator=(T* src)
-  { set(src); return (T*)m_ptr; }
+  { set((taBase*)src); return (T*)m_ptr; }
   taSmartRefT() {}  //
 
 #ifndef __MAKETA__

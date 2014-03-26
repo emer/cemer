@@ -16,6 +16,13 @@
 #ifndef MemberDef_h
 #define MemberDef_h 1
 
+// See Typedef.h
+#ifdef SC_DEFAULT
+  //#define SC_DEFAULT // uncomment to see previous macro definition
+  #pragma message("Warning: undefining SC_DEFAULT macro")
+  #undef SC_DEFAULT
+#endif
+
 // parent includes:
 #include <MemberDefBase>
 

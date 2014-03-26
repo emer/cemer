@@ -28,8 +28,8 @@
 class Projection; //
 TA_SMART_PTRS(TA_API, Projection); // ProjectionRef
 
-#ifdef __MAKETA__
-class ProjectionRef;
-#endif
+//#ifdef __MAKETA__
+//class ProjectionRef;
+//#endif
 
 #endif // ProjectionRef_h

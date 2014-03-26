@@ -39,6 +39,7 @@ TA_BASEFUNS_CTORS_DEFN(VChanSpec);
 TA_BASEFUNS_CTORS_DEFN(MaxDaSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
+SMARTREF_OF_CPP(LeabraUnitSpec);
 
 
 void LeabraActFunSpec::Initialize() {

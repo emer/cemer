@@ -16,6 +16,13 @@
 #ifndef TypeItem_h
 #define TypeItem_h 1
 
+// See TypeDef.h:
+#ifdef SC_DEFAULT
+  //#define SC_DEFAULT // uncomment to see previous macro definition
+  #pragma message("Warning: undefining SC_DEFAULT macro")
+  #undef SC_DEFAULT
+#endif
+
 // parent includes:
 #include <taRefN>
 #include <ITypedObject>

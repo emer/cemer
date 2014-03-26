@@ -17,6 +17,7 @@
 #include <LeabraNetwork>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraBiasSpec);
+SMARTREF_OF_CPP(LeabraBiasSpec);
 
 void LeabraBiasSpec::Initialize() {
   //   min_obj_type = &TA_RecvCons; // don't bother..

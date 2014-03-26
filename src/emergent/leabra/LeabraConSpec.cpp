@@ -29,6 +29,7 @@ TA_BASEFUNS_CTORS_DEFN(StableMixSpec);
 TA_BASEFUNS_CTORS_DEFN(LearnMixSpec);
 TA_BASEFUNS_CTORS_DEFN(SAvgCorSpec);
 TA_BASEFUNS_CTORS_DEFN(AdaptRelNetinSpec);
+SMARTREF_OF_CPP(LeabraConSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
 

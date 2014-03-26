@@ -17,7 +17,7 @@
 #include <LeabraNetwork>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraLayer);
-
+SMARTREF_OF_CPP(LeabraLayer);
 
 void LeabraLayer::Initialize() {
   spec.SetBaseType(&TA_LeabraLayerSpec);
