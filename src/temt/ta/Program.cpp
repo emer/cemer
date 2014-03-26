@@ -1526,7 +1526,7 @@ void Program::ViewScriptUpdate() {
     CompileScript();
   }
   else {
-    if (isStale()) {
+    if (isStale() && run_state != RUN && run_state != INIT) {
       Init();
     }
     script_list.FullListingHTML(view_script);
