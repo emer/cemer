@@ -1765,5 +1765,4 @@ bool Program::ViewScriptEl(taBase* pel) {
 bool Program::EditProgramEl(taBase* pel) {
   return this->BrowserSelectMe_ProgItem(dynamic_cast<taOBase*>(pel));
 }
-));
-}
+
