@@ -95,18 +95,18 @@ void Program::InitLinks() {
   taBase::Own(step_prog, this);
   taBase::Own(script_list, this);
   taBase::Own(brk_pts, this);
-
+  
   taBase::Own(load_code, this); // todo: obsolete, remove
-
+  
   if(!taMisc::is_loading) {
     if(prog_code.size == 0) {
       prog_code.New(1, &TA_LocalVars); // make this by default because it is typically needed!
     }
   }
-
+  
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
-
+  
   prog_gp = GET_MY_OWNER(Program_Group);
 }
 
@@ -190,26 +190,26 @@ void Program::UpdateAfterEdit_impl() {
   // such as ret_val -- therefore, DO NOT do things here that are incompatible
   // with the runtime, in particular, do NOT invalidate the following state flags:
   //   m_stale, script_compiled
-
+  
   // types.el_typ = &TA_DynEnumBase; // NOO!!! el_typ is the default, el_base = base
   types.el_typ = &TA_DynEnumType;  // want to default to valid type for <Enter> to create valid type
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
-
+  
   if(HasProgFlag(LOCKED)) SetBaseFlag(BF_GUI_READ_ONLY);
   else                    ClearBaseFlag(BF_GUI_READ_ONLY);
-
+  
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
-
+  
   if(step_n < 1) step_n = 1;
-
+  
   if(!step_prog) {
     if(sub_progs_step.size > 0)
       step_prog = sub_progs_step.Peek(); // set to last guy on list..
   }
-
+  
   if(short_nm.empty()) {
     String use_nm = name;
     // todo: this is hacky and emergent-dependent...
@@ -296,11 +296,11 @@ void Program::Init() {
   }
   taMisc::Busy();
   SetRunState(INIT);
-
+  
   // record new timestamp for this init session -- CallInit will check and not re-run
   QDateTime tm = QDateTime::currentDateTime();
   global_init_timestamp = tm.toTime_t();
-
+  
   SigEmit(SLS_ITEM_UPDATED_ND); // update button state
   // first run the Init code, THEN do the check.  this prevents a catch-22
   // with Init code that is designed to configure things so there won't be
@@ -329,18 +329,18 @@ void Program::Init() {
         objs.StructUpdateEls(false);
     }
   }
-
+  
   // get these here after all the sub-guys have been initialized -- should now be current
   GetSubProgsAll();
   GetSubProgsStep();
-
+  
   taMisc::DoneBusy();
   // now check us..
   CheckConfig(false);
   taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   if (ret_val != RV_OK) ShowRunError();
   script->Restart();            // restart script at beginning if run again
-
+  
   if(!taMisc::check_ok)
     SetRunState(NOT_INIT);
   else
@@ -370,7 +370,7 @@ bool Program::PreCompileScript_impl() {
 
 bool Program::AlreadyRunning() {
   if(run_state == RUN || run_state == INIT || global_run_state == RUN ||
-      global_run_state == INIT) {
+     global_run_state == INIT) {
     taMisc::Info("A Program is already running -- cannot run until it is done");
     return true;
   }
@@ -424,7 +424,7 @@ void Program::Run() {
     Init();                     // auto-reinit after errors!
   }
   if(TestError(run_state != DONE && run_state != STOP, "Run",
-      "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
   ProjDirToCurrent();
@@ -484,7 +484,7 @@ void Program::Step(Program* step_prg) {
     Init();                     // auto-press Init button!
   }
   if(TestError(run_state != DONE && run_state != STOP, "Step",
-      "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
   ProjDirToCurrent();
@@ -496,18 +496,18 @@ void Program::Step(Program* step_prg) {
     cur_step_prog = step_prg;
   else
     cur_step_prog = step_prog;
-
+  
   if(TestError(!cur_step_prog || !cur_step_prog->owner, "Step",
-      "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
+               "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
     return;
   }
-
+  
   if(step_prog != step_prg)     // save this as new default..
     step_prog = step_prg;
-
+  
   cur_step_n = cur_step_prog->step_n; // get from target, not us..
   cur_step_cnt = 0;
-
+  
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
@@ -573,7 +573,7 @@ void Program::UpdateUi() {
 
 void Program::Stop() {
   if(TestError(run_state != RUN, "Stop",
-      "Program is not running")) {
+               "Program is not running")) {
     return;
   }
   SetStopReq(SR_USER_STOP, name);
@@ -628,7 +628,7 @@ void Program::StepCss() {
     Init();                     // auto-press Init button!
   }
   if(TestError(run_state != DONE && run_state != STOP, "StepCss",
-      "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
   SetAllBreakpoints();          // reinstate all active breakpoints
@@ -728,13 +728,13 @@ void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
 }
 
 void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& prognm,
-    const String& topnm, const String& src_ln) {
+                            const String& topnm, const String& src_ln) {
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   String fh;
   fh << "Program: " << name << " Stopped on breakpoint number: " << bpno
-      << " at css source line: " << src_ln_no << " in prog: "
-      << prognm << " pc: " << pc << " css top: " << topnm << "\n"
-      << src_ln;
+  << " at css source line: " << src_ln_no << " in prog: "
+  << prognm << " pc: " << pc << " css top: " << topnm << "\n"
+  << src_ln;
   if(taMisc::gui_active) {
     iDialogChoice::ConfirmDialog(NULL, fh);
     ViewProgEditor(src_ln_no);
@@ -809,7 +809,7 @@ bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet
   if(arg_str.empty()) return false; // no arg, no action
   bool rval = SetVar(var_nm, arg_str);
   if(TestError(!rval, "SetVarFmArg", "variable:",var_nm,
-      "not found in program:", name)) return false;
+               "not found in program:", name)) return false;
   if(!quiet)
     taMisc::Info("Set", var_nm, "in program:", name, "to:", arg_str);
   return true;
@@ -850,7 +850,7 @@ Program* Program::FindProgramName(const String& prog_nm, bool warn_not_found) co
   }
   if(warn_not_found && !rval) {
     taMisc::Warning("program", name, "is looking for a program named:",
-        prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+                    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
   }
   return rval;
 }
@@ -869,7 +869,7 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
   }
   if(warn_not_found && !rval) {
     taMisc::Warning("program", name, "is looking for a program containing:",
-        prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+                    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
   }
   return rval;
 }
@@ -885,7 +885,7 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
 }
 
 bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags,
-    const String& desc) {
+                      const String& desc) {
   String desc_oneline = desc;
   desc_oneline.gsub('\n', ' '); // no multiline in desc comments
   String rmdr = code;
@@ -931,9 +931,9 @@ bool Program::AddVerboseLine(ProgEl* prog_el, bool insert_at_start, const String
 }
 
 void Program::VerboseOut(Program* prg, int code_line,
-    const char* a, const char* b, const char* c,
-    const char* d, const char* e, const char* f,
-    const char* g, const char* h, const char* i) {
+                         const char* a, const char* b, const char* c,
+                         const char* d, const char* e, const char* f,
+                         const char* g, const char* h, const char* i) {
   if(!prg) return;
   String msg;
   taProject* proj = GET_OWNER(prg, taProject);
@@ -1029,7 +1029,7 @@ void Program::SetAllBreakpoints() {
     if(pl->prog_el && pl->prog_el->InheritsFrom(&TA_ProgEl))
       pel = (ProgEl*)pl->prog_el.ptr();
     if(pl->HasPLineFlag(ProgLine::BREAKPOINT) ||
-        (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT_ENABLED))) {
+       (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT_ENABLED))) {
       last_pel_set = pel;                     // don't repeat
       pl->SetPLineFlag(ProgLine::BREAKPOINT); // make sure
       script->SetBreak(i);    // set it
@@ -1114,7 +1114,7 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
 
 void Program::GetSubProgsAll(int depth) {
   if(TestError((depth >= 100), "GetSubProgsAll",
-      "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
+               "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
   sub_progs_updtd = true;
   sub_progs_all.Reset();
@@ -1166,7 +1166,7 @@ const String Program::scriptString() {
   functions.PreGen(item_id);
   init_code.PreGen(item_id);
   prog_code.PreGen(item_id);
-
+  
   // now, build the new script code
   AddLine(this, String("// ") + GetName(), ProgLine::COMMENT);
   AddLine(this, "", ProgLine::COMMENT);
@@ -1183,22 +1183,22 @@ const String Program::scriptString() {
   }
   AddLine(this, "*/", ProgLine::COMMENT);
   AddLine(this, "", ProgLine::COMMENT);
-
+  
   // types
   if(types.size > 0) {
     types.GenCss(this);
   }
-
+  
   // Functions
   functions.GenCss(this);
-
+  
   // __Init() routine, for our own els, and calls to subprog Init()
   AddLine(this, "void __Init() {");
   IncIndent();
   // first, make sure any sub-progs are compiled
   if(sub_prog_calls.size > 0) {
     AddLine(this, "// First compile any subprogs that could be called from this one",
-        ProgLine::COMMENT);
+            ProgLine::COMMENT);
     AddLine(this, "{ Program* target;");
     IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
@@ -1217,12 +1217,12 @@ const String Program::scriptString() {
   vars.GenCssInitFrom(this);
   AddLine(this, "// run our init code", ProgLine::COMMENT);
   init_code.GenCss(this);
-
+  
   if(sub_prog_calls.size > 0) {
     if(init_code.size > 0)
       AddLine(this, "");
     AddLine(this, "// Then call init on any subprogs that could be called from this one",
-        ProgLine::COMMENT);
+            ProgLine::COMMENT);
     AddLine(this, "{ Program* target;");
     IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
@@ -1236,7 +1236,7 @@ const String Program::scriptString() {
   DecIndent();
   AddLine(this, "}");
   AddLine(this, "");
-
+  
   AddLine(this, "void __Prog() {");
   IncIndent();
   AddLine(this, "// init_from vars", ProgLine::COMMENT);
@@ -1252,7 +1252,7 @@ const String Program::scriptString() {
   AddLine(this, "}");
   AddLine(this, "");
   AddLine(this, "");
-
+  
   AddLine(this, "ret_val = Program::RV_OK; // set elsewise on failure");
   AddLine(this, "if (run_state == Program::INIT) {");
   IncIndent();
@@ -1263,14 +1263,14 @@ const String Program::scriptString() {
   AddLine(this, "__Prog();");
   DecIndent();
   AddLine(this, "}");
-
+  
   TestWarning(cur_indent != 0, "scriptString",
-      "programmer error -- current indentation at end of script generation is != 0");
-
+              "programmer error -- current indentation at end of script generation is != 0");
+  
   m_scriptCache.truncate(0);
   script_list.FullListing(m_scriptCache);
   ViewScriptUpdate();
-
+  
   m_stale = false;
   return m_scriptCache;
 }
@@ -1278,12 +1278,12 @@ const String Program::scriptString() {
 const String Program::ProgramListing() {
   m_listingCache = "// ";
   m_listingCache += GetName();
-
+  
   if (types.size > 0) {
     m_listingCache += "\n// types: new types defined for this program\n";
     m_listingCache += types.GenListing(0);
   }
-
+  
   if (args.size > 0) {
     m_listingCache += "\n// args: global script parameters (arguments)\n";
     m_listingCache += args.GenListing(0);
@@ -1292,17 +1292,17 @@ const String Program::ProgramListing() {
     m_listingCache += "\n// vars: global (non-parameter) variables\n";
     m_listingCache += vars.GenListing(0);
   }
-
+  
   if(functions.size > 0) {
     m_listingCache += "\n// functions: functions defined for this program\n";
     m_listingCache += functions.GenListing(0);
   }
-
+  
   if(init_code.size > 0) {
     m_listingCache += "\n// init_code: code to initialize the program\n";
     m_listingCache += init_code.GenListing(0); // ok if empty, returns nothing
   }
-
+  
   if(prog_code.size > 0) {
     m_listingCache += "\n// prog_code: main code to run program\n";
     m_listingCache += prog_code.GenListing(0);
@@ -1313,7 +1313,7 @@ const String Program::ProgramListing() {
 void  Program::UpdateProgVars() {
   // note: this assumes that script has been ClearAll'd
   script->prog_vars.Reset(); // removes/unref-deletes
-
+  
   // add the ones in the object -- note, we use *pointers* to these
   // these are already installed by the InstallThis routine!!
   //   cssEl* el = NULL;
@@ -1324,7 +1324,7 @@ void  Program::UpdateProgVars() {
   //   script->prog_vars.Push(el);
   //   el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
   //   script->prog_vars.Push(el);
-
+  
   // add new in the program
   for (int i = 0; i < args.size; ++i) {
     ProgVar* sv = args.FastEl(i);
@@ -1376,7 +1376,7 @@ void Program::SaveToProgLib(ProgLibs library) {
   QFileInfo qfi(fname);
   if(qfi.isFile()) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
-        "Ok", "Cancel");
+                             "Ok", "Cancel");
     if(chs == 1) return;
   }
   SaveAs(fname);
@@ -1402,7 +1402,7 @@ int Program::GetSpecialState() const {
 void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
-      "cannot load a program group file into a single program!")) return;
+               "cannot load a program group file into a single program!")) return;
   //   Reset();
   prog_type->LoadProgram(this);
 }
@@ -1475,8 +1475,8 @@ String Program::RenderGlobalTrace(bool html) {
       taProject* proj = GET_OWNER(sp->own_program, taProject);
       if(html) {
         rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
-	         << "#progln_" << ln << "\">"
-	         << sp->own_program->name << "</a></td>";
+        << "#progln_" << ln << "\">"
+        << sp->own_program->name << "</a></td>";
       }
       else {
         rval << sp->own_program->name;
@@ -1497,7 +1497,7 @@ String Program::RenderGlobalTrace(bool html) {
 String Program::RenderLocalTrace(bool html) {
   String rval;
   if(script) {
-    script->BackTrace(rval); 
+    script->BackTrace(rval);
   }
   return rval;
 }
@@ -1517,20 +1517,16 @@ void Program::ViewScript_Editor() {
   strm.open(fnm, ios::out);
   SaveScript(strm);
   strm.close();
+  
   taMisc::EditFile(fnm);
 }
 
 void Program::ViewScriptUpdate() {
   view_script.truncate(0);
-  if(script_list.size <= 1) {
-    CompileScript();
-  }
-  else {
-    if (isStale() && run_state != RUN && run_state != INIT) {
-      Init();
-    }
+  if(script_list.size <= 1)
+    view_script = "// Program must be Compiled (e.g., hit Init button) before css Script is available.<P>\n";
+  else
     script_list.FullListingHTML(view_script);
-  }
 }
 
 void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {
@@ -1587,7 +1583,7 @@ void Program::InitForbiddenNames() {
   forbidden_names.Add("run_state");
   forbidden_names.Add("ret_val");
   forbidden_names.Add("this");
-
+  
   TypeDef* type_def = &TA_Program;
   for(int i=0; i<type_def->members.size; i++) {
     MemberDef* md = type_def->members.FastEl(i);
@@ -1625,10 +1621,10 @@ bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
   if(forbidden_names.size == 0)
     InitForbiddenNames();
   if((forbidden_names.FindEl(chk_nm) < 0) &&
-      !(bool)TypeDef::FindGlobalTypeName(chk_nm,false)) return false;
+     !(bool)TypeDef::FindGlobalTypeName(chk_nm,false)) return false;
   if(!warn) return true;
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
-      "is a css reserved name used for something else -- please choose another name");
+                "is a css reserved name used for something else -- please choose another name");
   return true;
 }
 
@@ -1652,13 +1648,13 @@ Program* Program::MakeTemplate() {
   //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
   {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
   //note: put in .init since that will get searched first
-
+  
   MakeTemplate_fmtype(prog, &TA_ProgEl);
   return prog;
 }
 
 bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label,
-    const String& sub_gp_nm) {
+                                    const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
@@ -1737,7 +1733,7 @@ bool Program::ViewCssScript(int src_ln_no) {
   dps->setCurrentPanelId(2);
   if(src_ln_no >= 0) {
     iPanelOfProgramScript* pnl =
-        dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
+    dynamic_cast<iPanelOfProgramScript*>(dps->panels.SafeEl(2));
     if(pnl && pnl->vs) {
       pnl->vs->setHighlightLines(src_ln_no, 1);
     }
@@ -1761,11 +1757,13 @@ bool Program::ViewScriptEl(taBase* pel) {
   int start_ln, end_ln;
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return false;
-
+  
   pnl->vs->setHighlightLines(start_ln, (end_ln - start_ln)+1);
   return true;
 }
 
 bool Program::EditProgramEl(taBase* pel) {
   return this->BrowserSelectMe_ProgItem(dynamic_cast<taOBase*>(pel));
+}
+));
 }
