@@ -123,15 +123,6 @@ Read Data Table Cell Column Error
     Json Value Should Equal    ${result}             /error				      8
     Json String Should Match   ${result}             /message           GetData: column not found
 
-Append Data Table
-    ${result} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status               OK
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Should Be Valid Json       ${result}
-    Json Value Should Equal    ${result}             /result/columns/0/values/0   7
-    Json Value Should Equal    ${result}             /result/columns/0/values/1   9
-
 Remove Data                    
     ${result} =                Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
     Should Be Valid Json       ${result}
@@ -139,6 +130,15 @@ Remove Data
     ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Should Be Valid Json       ${result}
     Json Value Should Not Exist  ${result}           /result/columns/0/values/0
+
+Append Data Table
+    ${result} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Should Be Valid Json       ${result}
+    Json String Should Match   ${result}             /status               OK
+    ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Should Be Valid Json       ${result}
+    Json Value Should Equal    ${result}             /result/columns/0/values/0   7
+    Json Value Should Equal    ${result}             /result/columns/1/values/1   9
 
 
 
