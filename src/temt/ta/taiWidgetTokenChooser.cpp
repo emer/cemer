@@ -141,46 +141,48 @@ void taiWidgetTokenChooser::BuildChooser(iDialogItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0:
-  {
-    if (HasFlag(flgNullOk)) {
-      // note: ' ' makes it sort to the top
-      QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); //note: no desc
-      item->setData(1, Qt::DisplayRole, "NULL");
+    case 0:
+    {
+      if (HasFlag(flgNullOk)) {
+        // note: ' ' makes it sort to the top
+        QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); //note: no desc
+        item->setData(1, Qt::DisplayRole, "NULL");
+      }
+      if (ic->GetSelectedObject()) {  // just in case we weren't called from a program but standalone dataproc call
+        if(!new1_par &&  targ_typ->IsTaBase() && targ_typ->GetInstance() &&  // if new1_par is set we already have a CREATE
+           ((taBase*)targ_typ->GetInstance())->HasChooseNew()) {
+          QTreeWidgetItem* item = ic->AddItem(" CREATE NEW", NULL,
+                                              (void*)(taBase*)targ_typ->GetInstance());
+          item->setData(0, iDialogItemChooser::NewFunRole, true); // flag to dialog to make
+          item->setData(1, Qt::DisplayRole, targ_typ->name);
+        }
+      }
+      BuildChooser_0(ic, targ_typ, NULL);
+      ic->items->sortItems(0, Qt::AscendingOrder);
+      break;
     }
-    if(!new1_par &&  targ_typ->IsTaBase() && targ_typ->GetInstance() &&  // if new1_par is set we already have a CREATE
-        ((taBase*)targ_typ->GetInstance())->HasChooseNew()) {
-      QTreeWidgetItem* item = ic->AddItem(" CREATE NEW", NULL,
-          (void*)(taBase*)targ_typ->GetInstance());
-      item->setData(0, iDialogItemChooser::NewFunRole, true); // flag to dialog to make
-      item->setData(1, Qt::DisplayRole, targ_typ->name);
-    }
-    BuildChooser_0(ic, targ_typ, NULL);
-    ic->items->sortItems(0, Qt::AscendingOrder);
-    break;
-  }
-  default: break; // shouldn't happen
+    default: break; // shouldn't happen
   }
 }
 
 int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
-  QTreeWidgetItem* top_item)
+                                          QTreeWidgetItem* top_item)
 {
   if(!td->IsActualTaBase()) return 0;
   int rval = 0;
-
+  
   //NOTES:
   // if !tokens.keep then tokens.size==0
-
+  
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
-
+    
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
-      top_item, (void*)btmp);
+                                        top_item, (void*)btmp);
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     taBase* own = btmp->GetParent();
     if (own) {

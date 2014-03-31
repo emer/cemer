@@ -102,13 +102,15 @@ taiWidgetItemChooser::~taiWidgetItemChooser() {
 }
 
 void taiWidgetItemChooser::BuildChooser(iDialogItemChooser* ic, int view) {
-  if(new1_par) {
-    QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par, targ_typ->name);
-    item->setData(0, iDialogItemChooser::NewFunRole, true);
-  }
-  if(new2_par) {
-    QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par, targ_typ->name);
-    item->setData(0, iDialogItemChooser::NewFunRole, true);
+  if (ic->GetSelectedObject() != NULL) {  // don't add NewFunRole if there is no selected object (data_gen, data_base, ...)
+    if(new1_par) {
+      QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par, targ_typ->name);
+      item->setData(0, iDialogItemChooser::NewFunRole, true);
+    }
+    if(new2_par) {
+      QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par, targ_typ->name);
+      item->setData(0, iDialogItemChooser::NewFunRole, true);
+    }
   }
 }
 

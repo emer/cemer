@@ -91,6 +91,8 @@ public:
                                    const String& desc = "", int desc_idx = 1);
   // add one categorized item to dialog, optionally with data
 
+  void*                 GetSelectedObject() const {return m_selObj;}
+  
 protected:
   int                   m_changing;
   bool                  m_fully_up;

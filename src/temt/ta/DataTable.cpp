@@ -4325,6 +4325,9 @@ bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
 
 taBase* DataTable::ChooseNew(taBase* origin) {
   // location of new DataTable can be the current program, if one, and any subgroup of project data tables
+  if (origin == NULL)
+    return NULL;
+  
   taProject* prj = GET_OWNER(origin, taProject);  // who initiated the choice/new datatable call?
   Program* pgrm = GET_OWNER(origin, Program);     // who initiated the choice/new datatable call?
   DataTable_Group root_group = prj->data;  // top level
