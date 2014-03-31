@@ -71,10 +71,13 @@ void StaticMethodCall::GenCssBody_impl(Program* prog) {
 }
 
 String StaticMethodCall::GetDisplayName() const {
-  if (!method)
-    return "(method not selected)";
-
   String rval;
+
+  if (!method) {
+    rval += object_type->name + "::? - Select a method";
+    return rval;
+  }
+
   if(result_var)
     rval += result_var->name + "=";
   rval += object_type->name;
