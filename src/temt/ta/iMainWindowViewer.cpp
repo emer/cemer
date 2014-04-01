@@ -365,6 +365,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
   // if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
   toolsMenu = menu->AddSubMenu("&Tools");
+  dataMenu = menu->AddSubMenu("&Data");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
   helpMenu = menu->AddSubMenu("&Help");;
@@ -382,6 +383,7 @@ void iMainWindowViewer::Constr_Menu_impl()
   Constr_ViewMenu();
   Constr_ShowMenu();
   Constr_ControlMenu();
+  Constr_DataMenu();
   Constr_ToolsMenu();
   Constr_HelpMenu();
   Constr_WindowMenu();
@@ -702,6 +704,32 @@ void iMainWindowViewer::Constr_ControlMenu()
   // Make connections.
   connect(ctrlStopAction, SIGNAL(Action()), this, SLOT(ctrlStop()));
   connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
+}
+
+void iMainWindowViewer::Constr_DataMenu() {
+  dataProcessCopyDataAction = AddAction(new iAction(0, "Copy Data", QKeySequence(), "dataProcessCopyDataAction"));
+  dataProcessCopyCommonColDataAction = AddAction(new iAction(0, "Copy Common Columns", QKeySequence(), "dataProcessCopyCommonColDataAction"));
+  dataProcessAppendRowsAction = AddAction(new iAction(0, "Append Rows", QKeySequence(), "dataProcessAppendRowsAction"));
+  dataOrderSortAction = AddAction(new iAction(0, "Sort", QKeySequence(), "dataOrderSortAction"));
+  dataOrderPermuteAction = AddAction(new iAction(0, "Permute", QKeySequence(), "dataOrderPermuteAction"));
+  selectSelectRowsAction = AddAction(new iAction(0, "Select Rows", QKeySequence(), "selectSelectRowsAction"));
+  selectSplitRowsAction = AddAction(new iAction(0, "Split Rows", QKeySequence(), "selectSplitRowsAction"));
+
+  
+  processMenu = dataMenu->AddSubMenu("Process");
+  analysisMenu = dataMenu->AddSubMenu("Analyze");
+  generateMenu = dataMenu->AddSubMenu("Generate");
+  processImageMenu = dataMenu->AddSubMenu("Process Image");
+  
+  processMenu->AddAction(dataProcessCopyDataAction);
+  processMenu->AddAction(dataProcessCopyCommonColDataAction);
+  processMenu->AddAction(dataProcessAppendRowsAction);
+  processMenu->insertSeparator();
+  processMenu->AddAction(dataOrderSortAction);
+  processMenu->AddAction(dataOrderPermuteAction);
+  processMenu->insertSeparator();
+  processMenu->AddAction(selectSelectRowsAction);
+  processMenu->AddAction(selectSplitRowsAction);
 }
 
 void iMainWindowViewer::Constr_ToolsMenu()

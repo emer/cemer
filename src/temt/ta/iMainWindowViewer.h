@@ -93,9 +93,14 @@ public:
   taiWidgetMenu*              frameMenu; // enumeration of all Frame guys
   taiWidgetMenu*              toolBarMenu; // enumeration of all ToolBar guys
   taiWidgetMenu*              dockMenu; // enumeration of all Dock guys
+  taiWidgetMenu*              dataMenu;
   taiWidgetMenu*              toolsMenu;
   taiWidgetMenu*              windowMenu; // on-demand
   taiWidgetMenu*              helpMenu;
+  taiWidgetMenu*              processMenu;
+  taiWidgetMenu*              analysisMenu;
+  taiWidgetMenu*              generateMenu;
+  taiWidgetMenu*              processImageMenu;
   iAction*            historyBackAction;
   iAction*            historyForwardAction;
   iAction*            fileNewAction;
@@ -131,6 +136,14 @@ public:
   iAction*            editUnlinkAction;
   iAction*            editFindAction;
   iAction*            editFindNextAction;
+  
+  iAction*            dataProcessCopyDataAction;
+  iAction*            dataProcessCopyCommonColDataAction;
+  iAction*            dataProcessAppendRowsAction;
+  iAction*            dataOrderSortAction;
+  iAction*            dataOrderPermuteAction;
+  iAction*            selectSelectRowsAction;
+  iAction*            selectSplitRowsAction;
 
   iAction*            viewRefreshAction;
   iAction*            viewSplitVerticalAction;
@@ -397,6 +410,7 @@ private:
   void Constr_ViewMenu();
   void Constr_ShowMenu();
   void Constr_ControlMenu();
+  void Constr_DataMenu();
   void Constr_ToolsMenu();
   void Constr_HelpMenu();
   void Constr_WindowMenu();
