@@ -123,7 +123,7 @@ protected:
   static String		NextToken(const String& str, int& p, bool& err);
     // skip ws, get the next token; removes quotes and processes quoted/escaped strings
 
-  bool CalcRowParams(int& row_from, int& rows, int row_to);
+  bool CalcRowParams(String operation, DataTable* table, int& row_from, int& rows, int row_to);
 #ifndef __MAKETA__
   class TableParams {
   public:

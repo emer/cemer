@@ -2224,7 +2224,7 @@ bool DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
     start_row = rows + start_row;  // so for -1 you get the last row
   }
 
-  if (start_row < 0 || start_row >= rows) {  // start_row could still be negative if we were passed -20 when there were only 10 rows
+  if (start_row < 0 || start_row > rows) {  // start_row could still be negative if we were passed -20 when there were only 10 rows
     error_msg = "row out of range";
     return false;
   }
