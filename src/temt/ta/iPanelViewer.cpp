@@ -21,36 +21,36 @@
 #include <iMainWindowViewer>
 #include <ISelectableHost>
 #include <MainWindowViewer>
-
-
+#include <Program>
+#include <ProgEl>
 #include <QVBoxLayout>
 
 
 
 iPanelViewer::iPanelViewer(PanelViewer* viewer_, QWidget* parent)
-  : inherited(viewer_, parent)
+: inherited(viewer_, parent)
 {
   Init();
 }
 
 iPanelViewer::~iPanelViewer()
 {
-//  delete m_tabViews;
-//  m_tabViews = 0;
-
+  //  delete m_tabViews;
+  //  m_tabViews = 0;
+  
   delete m_curTabView;
   m_curTabView = 0;
 }
 
 void iPanelViewer::Init() {
-//  m_tabViews = new  iTabView_PtrList();
+  //  m_tabViews = new  iTabView_PtrList();
   cur_item = NULL;
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setMargin(0);  lay->setSpacing(0);
   m_curTabView = new iTabView(this, this);
   lay->addWidget(m_curTabView);
-//  m_tabViews->Add(rval);
-//nn  m_curTabView->show();
+  //  m_tabViews->Add(rval);
+  //nn  m_curTabView->show();
 }
 
 void iPanelViewer::AddPanel(iPanelBase* panel) {
@@ -74,10 +74,10 @@ void iPanelViewer::Closing(CancelOp& cancel_op) {
 }
 
 void iPanelViewer::Constr_post() {
-/*  for (int i = 0; i < m_tabViews->size; ++i) {
-    iTabView* itv = m_tabViews->FastEl(i);
-    itv->OnWindowBind(this);
-  }*/
+  /*  for (int i = 0; i < m_tabViews->size; ++i) {
+   iTabView* itv = m_tabViews->FastEl(i);
+   itv->OnWindowBind(this);
+   }*/
   if (m_curTabView) {
     m_curTabView->OnWindowBind(this);
   }
@@ -85,9 +85,9 @@ void iPanelViewer::Constr_post() {
 
 void iPanelViewer::GetWinState_impl() {
   /*for (int i = 0; i < m_tabViews->size; ++i) {
-    iTabView* itv = m_tabViews->FastEl(i);
-    itv->GetWinState();
-  }*/
+   iTabView* itv = m_tabViews->FastEl(i);
+   itv->GetWinState();
+   }*/
   if (m_curTabView) {
     m_curTabView->GetWinState();
   }
@@ -95,19 +95,19 @@ void iPanelViewer::GetWinState_impl() {
 
 void iPanelViewer::SetWinState_impl() {
   /*for (int i = 0; i < m_tabViews->size; ++i) {
-    iTabView* itv = m_tabViews->FastEl(i);
-    itv->SetWinState();
-  }*/
+   iTabView* itv = m_tabViews->FastEl(i);
+   itv->SetWinState();
+   }*/
   if (m_curTabView) {
     m_curTabView->SetWinState();
   }
 }
 
 void iPanelViewer::Refresh_impl() {
- /* for (int i = 0; i < m_tabViews->size; ++i) {
-    iTabView* itv = m_tabViews->FastEl(i);
-    itv->Refresh();
-  }*/
+  /* for (int i = 0; i < m_tabViews->size; ++i) {
+   iTabView* itv = m_tabViews->FastEl(i);
+   itv->Refresh();
+   }*/
   if (m_curTabView) {
     m_curTabView->Refresh();
   }
@@ -115,11 +115,11 @@ void iPanelViewer::Refresh_impl() {
 
 void iPanelViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   /*for (int i = 0; i < m_tabViews->size; ++i) {
-    iTabView* itv = m_tabViews->FastEl(i);
-    if (itv) itv->ResolveChanges(cancel_op);
-    if (cancel_op == CO_CANCEL) break;
-  }
-  }*/
+   iTabView* itv = m_tabViews->FastEl(i);
+   if (itv) itv->ResolveChanges(cancel_op);
+   if (cancel_op == CO_CANCEL) break;
+   }
+   }*/
   if (m_curTabView) {
     m_curTabView->ResolveChanges(cancel_op);
   }
@@ -134,6 +134,13 @@ void iPanelViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   if (!cur_item) goto end; // no selected item, so no change
   if (m_curTabView) {
     taiSigLink* link = cur_item->effLink();
+/*
+    if (link->taData()->GetTypeDef()->DerivesFrom(&TA_ProgEl)) {
+      ProgEl* prgEl = (ProgEl*)link->taData();
+      prgEl->EditProgramEl();
+    }
+    else if (link) {
+ */
     if (link) {
       new_pn = m_curTabView->GetDataPanel(link);
       m_curTabView->ShowPanel(new_pn);
@@ -146,12 +153,12 @@ end:
 void iPanelViewer::TabView_Destroying(iTabView* tv) {
   if (m_curTabView != tv) return;
   m_curTabView = NULL;
- /* int idx = m_tabViews->FindEl(tv);
-  m_tabViews->RemoveIdx(idx);
-  if (m_curTabView != tv) return;
-  // focus next, if any, or prev, if any
-  if (idx >= m_tabViews->size) --idx;
-  TabView_Selected(m_tabViews->PosSafeEl(idx)); // NULL if no more*/
+  /* int idx = m_tabViews->FindEl(tv);
+   m_tabViews->RemoveIdx(idx);
+   if (m_curTabView != tv) return;
+   // focus next, if any, or prev, if any
+   if (idx >= m_tabViews->size) --idx;
+   TabView_Selected(m_tabViews->PosSafeEl(idx)); // NULL if no more*/
 }
 
 void iPanelViewer::TabView_Selected(iTabView* tv) {
