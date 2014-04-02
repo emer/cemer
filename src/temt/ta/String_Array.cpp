@@ -20,7 +20,6 @@
 TA_BASEFUNS_CTORS_DEFN(String_Array);
 SMARTREF_OF_CPP(String_Array)
 
-
 const String String_Array::blank = "";
 
 #ifdef TA_USE_QT
@@ -43,16 +42,24 @@ String String_Array::ToDelimString(const String& delim) {
 
 void String_Array::FmDelimString(const String& str, const String& delim, bool reset_first) {
   if(reset_first) Reset();
-  String remainder = str;
-  while(remainder.nonempty()) {
-    if(remainder.contains(delim)) {
-      Add(remainder.before(delim));
-      remainder = remainder.after(delim);
-    }
-    else {
-      Add(remainder);
-      remainder = _nilString;
+  if (delim == "")
+    for (int i = 0; i < str.length(); i++)
+      Add(str.at(i,1));
+  else {
+    String remainder = str;
+    while(remainder.nonempty()) {
+      if(remainder.contains(delim)) {
+  	Add(remainder.before(delim));
+  	remainder = remainder.after(delim);
+      }
+      else {
+  	Add(remainder);
+  	remainder = _nilString;
+      }
     }
   }
 }
 
+void String_Array::Split(const String& str, const String& delim) {
+  FmDelimString(str, delim);
+}

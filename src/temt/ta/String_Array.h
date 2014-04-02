@@ -42,6 +42,9 @@ public:
   void          FmDelimString(const String& str, const String& delim = " ", bool reset_first = true);
   // add strings to this array by parsing given string using given delimiter separating strings -- reset first = reset this array before adding (else append)
 
+  void          Split(const String& str, const String& delim = "");
+  // Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.
+
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
 protected:
