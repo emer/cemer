@@ -81,7 +81,7 @@ public:
   iBrowseHistory*       brow_hist;
   taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
   QSplitter*            body;           // #IGNORE body of the window
-  QSignalMapper*        signalMapper;   // #IGNORE used to map several actions to one action and pass a value - useful when the sender is the same in all cases
+  QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value - useful when the sender is the same in all cases
 
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
@@ -90,17 +90,19 @@ public:
   taiWidgetMenu*              viewMenu;
   taiWidgetMenu*              show_menu;
   taiWidgetMenu*              ctrlMenu;
-  taiWidgetMenu*              frameMenu; // enumeration of all Frame guys
+  taiWidgetMenu*              frameMenu;   // enumeration of all Frame guys
   taiWidgetMenu*              toolBarMenu; // enumeration of all ToolBar guys
-  taiWidgetMenu*              dockMenu; // enumeration of all Dock guys
+  taiWidgetMenu*              dockMenu;    // enumeration of all Dock guys
   taiWidgetMenu*              dataMenu;
   taiWidgetMenu*              toolsMenu;
-  taiWidgetMenu*              windowMenu; // on-demand
+  taiWidgetMenu*              windowMenu;  // on-demand
   taiWidgetMenu*              helpMenu;
-  taiWidgetMenu*              processMenu;
-  taiWidgetMenu*              analysisMenu;
-  taiWidgetMenu*              generateMenu;
-  taiWidgetMenu*              processImageMenu;
+  taiWidgetMenu*              processMenu;        // data_proc methods
+  taiWidgetMenu*              analysisMenu;       // data_analysis methods
+  taiWidgetMenu*              generateMenu;       // data_gen methods
+  taiWidgetMenu*              processImageMenu;   // image_proc methods
+  taiWidgetMenu*              dataSpecMenu;       // create various specifications needed by data... methods
+  
   iAction*            historyBackAction;
   iAction*            historyForwardAction;
   iAction*            fileNewAction;
@@ -142,9 +144,11 @@ public:
   iAction*            dataProcessAppendRowsAction;
   iAction*            dataOrderSortAction;
   iAction*            dataOrderPermuteAction;
-  iAction*            selectSelectRowsAction;
-  iAction*            selectSplitRowsAction;
+  iAction*            dataSelectSelectRowsAction;
+  iAction*            dataSelectSplitRowsAction;
 
+  iAction*            createDataSortSpecAction;
+  
   iAction*            viewRefreshAction;
   iAction*            viewSplitVerticalAction;
   iAction*            viewSplitHorizontalAction;
@@ -321,7 +325,10 @@ public slots:
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();
-
+  
+  virtual void  DataProcessLauncher();
+  virtual void  CreateDataSpecification();
+  
   virtual void  windowMenu_aboutToShow();
   void          windowActivate(int win); // activate the indicated win
   virtual void  helpHelp();

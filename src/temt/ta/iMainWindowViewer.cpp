@@ -52,6 +52,7 @@
 #include <taiMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <taDataProc>
 
 #include <QFileInfo>
 #include <QUrl>
@@ -59,6 +60,7 @@
 #include <QKeyEvent>
 #include <QSignalMapper>
 #include <QApplication>
+#include <DataSortSpec>
 
 
 
@@ -642,24 +644,24 @@ void iMainWindowViewer::Constr_ViewMenu()
 
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
 
-  signalMapper = new QSignalMapper (this) ;
-  connect (viewBrowseOnlyAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-  connect (viewPanelsOnlyAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-  connect (viewBrowseAndPanelsAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-  connect (viewT3OnlyAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-  connect (viewBrowseAndT3Action, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-  connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
-  connect (viewAllFramesAction, SIGNAL(triggered()), signalMapper, SLOT(map())) ;
+  signalMapperForViews = new QSignalMapper (this) ;
+  connect (viewBrowseOnlyAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+  connect (viewPanelsOnlyAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+  connect (viewBrowseAndPanelsAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+  connect (viewT3OnlyAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+  connect (viewBrowseAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+  connect (viewPanelsAndT3Action, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
+  connect (viewAllFramesAction, SIGNAL(triggered()), signalMapperForViews, SLOT(map())) ;
 
-  signalMapper->setMapping (viewBrowseOnlyAction, 1) ;
-  signalMapper->setMapping (viewPanelsOnlyAction, 2) ;
-  signalMapper->setMapping (viewBrowseAndPanelsAction, 3) ;
-  signalMapper->setMapping (viewT3OnlyAction, 4) ;
-  signalMapper->setMapping (viewBrowseAndT3Action, 5) ;
-  signalMapper->setMapping (viewPanelsAndT3Action, 6) ;
-  signalMapper->setMapping (viewAllFramesAction, 7) ;
+  signalMapperForViews->setMapping (viewBrowseOnlyAction, 1) ;
+  signalMapperForViews->setMapping (viewPanelsOnlyAction, 2) ;
+  signalMapperForViews->setMapping (viewBrowseAndPanelsAction, 3) ;
+  signalMapperForViews->setMapping (viewT3OnlyAction, 4) ;
+  signalMapperForViews->setMapping (viewBrowseAndT3Action, 5) ;
+  signalMapperForViews->setMapping (viewPanelsAndT3Action, 6) ;
+  signalMapperForViews->setMapping (viewAllFramesAction, 7) ;
 
-  connect (signalMapper, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
+  connect (signalMapperForViews, SIGNAL(mapped(int)), this, SLOT(ShowHideFrames(int))) ;
 }
 
 void iMainWindowViewer::Constr_ShowMenu()
@@ -712,14 +714,19 @@ void iMainWindowViewer::Constr_DataMenu() {
   dataProcessAppendRowsAction = AddAction(new iAction(0, "Append Rows", QKeySequence(), "dataProcessAppendRowsAction"));
   dataOrderSortAction = AddAction(new iAction(0, "Sort", QKeySequence(), "dataOrderSortAction"));
   dataOrderPermuteAction = AddAction(new iAction(0, "Permute", QKeySequence(), "dataOrderPermuteAction"));
-  selectSelectRowsAction = AddAction(new iAction(0, "Select Rows", QKeySequence(), "selectSelectRowsAction"));
-  selectSplitRowsAction = AddAction(new iAction(0, "Split Rows", QKeySequence(), "selectSplitRowsAction"));
+  dataSelectSelectRowsAction = AddAction(new iAction(0, "Select Rows", QKeySequence(), "dataSelectSelectRowsAction"));
+  dataSelectSplitRowsAction = AddAction(new iAction(0, "Split Rows", QKeySequence(), "dataSelectSplitRowsAction"));
 
+  createDataSortSpecAction = AddAction(new iAction(0, "New DataSortSpec", QKeySequence(), "createDataSortSpecAction"));
+
+  
   
   processMenu = dataMenu->AddSubMenu("Process");
   analysisMenu = dataMenu->AddSubMenu("Analyze");
   generateMenu = dataMenu->AddSubMenu("Generate");
   processImageMenu = dataMenu->AddSubMenu("Process Image");
+  dataMenu->insertSeparator();
+  dataSpecMenu = dataMenu->AddSubMenu("CreateSpecification");
   
   processMenu->AddAction(dataProcessCopyDataAction);
   processMenu->AddAction(dataProcessCopyCommonColDataAction);
@@ -728,8 +735,14 @@ void iMainWindowViewer::Constr_DataMenu() {
   processMenu->AddAction(dataOrderSortAction);
   processMenu->AddAction(dataOrderPermuteAction);
   processMenu->insertSeparator();
-  processMenu->AddAction(selectSelectRowsAction);
-  processMenu->AddAction(selectSplitRowsAction);
+  processMenu->AddAction(dataSelectSelectRowsAction);
+  processMenu->AddAction(dataSelectSplitRowsAction);
+
+  dataSpecMenu->AddAction(createDataSortSpecAction);
+
+  connect(dataProcessCopyDataAction, SIGNAL(Action()), this, SLOT(DataProcessLauncher()));
+  
+  connect(createDataSortSpecAction, SIGNAL(Action()), this, SLOT(CreateDataSpecification()));
 }
 
 void iMainWindowViewer::Constr_ToolsMenu()
@@ -1199,6 +1212,16 @@ void iMainWindowViewer::ctrlCont() {
   taMisc::Info("Continue: running program:", Program::last_run_prog->name);
   Program::last_run_prog->Run_Gui();
 }
+
+void iMainWindowViewer::DataProcessLauncher() {
+//  taDataProc::Execute();
+}
+
+void iMainWindowViewer::CreateDataSpecification() {
+  taProject* proj = curProject();
+  proj->data_proc.New_gui(1, &TA_DataSortSpec, "");
+}
+
 
 iTreeView* iMainWindowViewer::GetMainTreeView() {
   MainWindowViewer* db = viewer();
@@ -2097,23 +2120,18 @@ void iMainWindowViewer::UpdateUi() {
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
   }
 
+  dataProcessCopyDataAction->setEnabled(curProject());
+  dataProcessCopyCommonColDataAction->setEnabled(curProject());
+  dataProcessAppendRowsAction->setEnabled(curProject());
+  dataOrderSortAction->setEnabled(curProject());
+  dataOrderPermuteAction->setEnabled(curProject());
+  dataSelectSelectRowsAction->setEnabled(curProject());
+  dataSelectSplitRowsAction->setEnabled(curProject());
+  createDataSortSpecAction->setEnabled(curProject());
+
   emit SetActionsEnabled();
 }
 
-// void iMainWindowViewer::windowActivationChange(bool oldActive) {
-//   if (isActiveWindow()) {
-//     int idx = taiMisc::active_wins.FindEl(this);
-//     if (idx < 0) {
-//       taMisc::Error("iMainWindowViewer::windowActivationChange", "Unexpectedly not in taiMisc::viewer_wins");
-//     } else {
-//       if (idx < (taiMisc::active_wins.size - 1)) {
-//         // move us to the end
-//         taiMisc::active_wins.MoveIdx(idx, taiMisc::active_wins.size - 1);
-//       }
-//     }
-//   }
-//   inherited::windowActivationChange(oldActive);
-// }
 
 void iMainWindowViewer::changeEvent(QEvent* ev) {
   if(ev->type() == QEvent::ActivationChange) {
