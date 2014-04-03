@@ -43,6 +43,8 @@ void CssExpr::GenCssBody_impl(Program* prog) {
   String rval = expr.GetFullExpr();
   if(!rval.endsWith(';'))
     rval += ';';
+  if(rval.endsWith("};"))
+    rval = rval.before(rval.length()-1); // cut off last ;
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   // no verbose here!
 }

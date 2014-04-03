@@ -331,6 +331,9 @@ bool ProgExprBase::ParseExpr() {
   parse_ve_pos = parse_ve_off;
   if(expr.empty() || expr == "<no_arg>") return true; // <no_arg> is a special flag..
 
+  if(parse_expr.endsWith("};"))                            // cleanup this for CssExpr
+    parse_expr = parse_expr.before(parse_expr.length()-1); // cut off last ;
+
   if(!parse_prog) {
     parse_prog = new cssProgSpace;
   }

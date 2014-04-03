@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6925
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6957
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -295,7 +295,7 @@ LeabraProject .projects["program_examples"] {
  };
 
  Program_Group @.programs = [0] {
-  Program_Group @.gp["Control"] = [2] { 
+  Program_Group @.gp["Control"] = [3] { 
    Program @["For"] { 
     ProgObjList @.objs = [0] {
     };
@@ -332,6 +332,38 @@ LeabraProject .projects["program_examples"] {
        PrintVar @[0] { };
       };
      };
+    };
+   };
+   Program @["Foreach"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["i"] { };
+      };
+     };
+     CssExpr @[1] { };
+     CssExpr @[2] { };
     };
    };
    Program @["Switch"] { 
@@ -4714,6 +4746,91 @@ mw.loader.state({\"user.groups\":\"ready\"});
       };
       iter {
        expr="  i+=increment";
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["Foreach"] {
+    name="Foreach";
+    short_nm="Foreac";
+    tags=;
+    desc="multiple examples of using the foreach looping construct, which is very powerful";
+    flags=0;
+    objs {
+     name="ProgObjList_14";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    brk_pts {
+     name="ProgBrkPt_List_14";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_14";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_98";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_99";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     CssExpr @[1] {
+      desc="this is another way to do a simple for loop, familar to python programmers -- [start:end:incr] creates an array from start to end (exclusive) with given increment (defaults to 1 if not specified)";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="foreach(i in [0:5:1]) { cout << i << \"\\n\"; };";
+      expr {
+       expr="foreach(i in [0:10:1]) { cout << i << endl; };";
+      };
+     };
+     CssExpr @[2] {
+      desc="it has the advange of being easier to go in the opposite direction just by changing the incr value -- doing that in a for loop requires more changes";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="foreach(i in [0:5:1]) { cout << i << \"\\n\"; };";
+      expr {
+       expr="foreach(i in [0:10:-1]) { cout << i << endl; };";
       };
      };
     };
