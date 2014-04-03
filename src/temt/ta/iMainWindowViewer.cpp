@@ -48,6 +48,7 @@
 #include <iRect>
 #include <Program>
 #include <MethodSpace>
+#include <TypeSpace>
 #include <MethodDef>
 
 #include <taMisc>
@@ -62,7 +63,6 @@
 #include <QKeyEvent>
 #include <QSignalMapper>
 #include <QApplication>
-#include <DataSortSpec>
 
 
 
@@ -711,8 +711,10 @@ void iMainWindowViewer::Constr_ControlMenu()
 }
 
 void iMainWindowViewer::Constr_DataMenu() {
-  signalMapperCategoryCopy = new QSignalMapper (this);
-  signalMapperCategorySelect = new QSignalMapper (this);
+  signalMapperForDataProc = new QSignalMapper (this);
+  signalMapperForDataAnal = new QSignalMapper (this);
+  signalMapperForDataGen = new QSignalMapper (this);
+  signalMapperForImageProc = new QSignalMapper (this);
   
   processMenu = dataMenu->AddSubMenu("Process");
   analysisMenu = dataMenu->AddSubMenu("Analyze");
@@ -726,30 +728,65 @@ void iMainWindowViewer::Constr_DataMenu() {
     MethodDef* mdef = methods->FastEl(i);
     if (mdef == NULL)
       continue;
-    if (mdef->HasOption("CAT_Copy")) {
-      String actionString = "dataProcess" + mdef->name + "Action";
-      dataCopyActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
-    }
-    else if (mdef->HasOption("CAT_Select")) {
-      String actionString = "dataProcess" + mdef->name + "Action";
-      dataSelectActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+    bool show = true;
+    if (mdef->HasOption("MENU_BUTTON")) {
+      TypeSpace* args = &mdef->arg_types;
+      for (int j=0; j<args->size; j++) {
+        TypeDef* arg_type = args->FastEl(j);
+        if (arg_type->DerivesFromName("DataOpBaseSpec") || arg_type->DerivesFromName("DataOpList")) {
+          show = false;
+          break;
+        }
+      }
+      if (show) {
+        if (mdef->HasOption("CAT_Copy")) {
+          String actionString = "dataProcess" + mdef->name + "Action";
+          dataCopyActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        if (mdef->HasOption("CAT_Order")) {
+          String actionString = "dataProcess" + mdef->name + "Action";
+          dataOrderActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        else if (mdef->HasOption("CAT_Select")) {
+          String actionString = "dataProcess" + mdef->name + "Action";
+          dataSelectActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        else if (mdef->HasOption("CAT_Columns")) {
+          String actionString = "dataProcess" + mdef->name + "Action";
+          dataColumnsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+      }
     }
   }
   
   for (int i=0; i<dataCopyActions.size; i++) {
     processMenu->AddAction(dataCopyActions[i]);
-    connect (dataCopyActions[i], SIGNAL(Action()), signalMapperCategoryCopy, SLOT(map())) ;
-    signalMapperCategoryCopy->setMapping(dataCopyActions[i], QString(dataCopyActions[i]->label().chars()));
+    connect (dataCopyActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
+    signalMapperForDataProc->setMapping(dataCopyActions[i], QString(dataCopyActions[i]->label().chars()));
+  }
+  processMenu->AddSep();
+  for (int i=0; i<dataOrderActions.size; i++) {
+    processMenu->AddAction(dataOrderActions[i]);
+    connect (dataOrderActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
+    signalMapperForDataProc->setMapping(dataOrderActions[i], QString(dataOrderActions[i]->label().chars()));
   }
   processMenu->AddSep();
   for (int i=0; i<dataSelectActions.size; i++) {
     processMenu->AddAction(dataSelectActions[i]);
-    connect (dataSelectActions[i], SIGNAL(Action()), signalMapperCategorySelect, SLOT(map())) ;
-    signalMapperCategorySelect->setMapping(dataSelectActions[i], QString(dataSelectActions[i]->label().chars()));
+    connect (dataSelectActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
+    signalMapperForDataProc->setMapping(dataSelectActions[i], QString(dataSelectActions[i]->label().chars()));
+  }
+  processMenu->AddSep();
+  for (int i=0; i<dataColumnsActions.size; i++) {
+    processMenu->AddAction(dataColumnsActions[i]);
+    connect (dataColumnsActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
+    signalMapperForDataProc->setMapping(dataColumnsActions[i], QString(dataColumnsActions[i]->label().chars()));
   }
   
-  connect (signalMapperCategoryCopy, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
-  connect (signalMapperCategorySelect, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
+  connect (signalMapperForDataProc, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
+  connect (signalMapperForDataAnal, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
+  connect (signalMapperForDataGen, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
+  connect (signalMapperForImageProc, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
 }
 
 void iMainWindowViewer::Constr_ToolsMenu()
@@ -1222,16 +1259,13 @@ void iMainWindowViewer::ctrlCont() {
 
 void iMainWindowViewer::DataProcessLauncher(QString method_name) {
   String meth_name(method_name.toStdString().c_str());
-//  taMisc::DebugInfo("call execute on ", String());
-  taBase* inst = curProject()->FindMakeNewDataProc(&TA_taDataProc, "");
-  inst->CallFun(meth_name);
+  if (myProject()) {
+    taBase* inst = myProject()->FindMakeNewDataProc(&TA_taDataProc, "");
+    if (inst) {
+      inst->CallFun(meth_name);
+    }
+  }
 }
-
-void iMainWindowViewer::CreateDataSpecification() {
-  taProject* proj = curProject();
-  proj->data_proc.New_gui(1, &TA_DataSortSpec, "");
-}
-
 
 iTreeView* iMainWindowViewer::GetMainTreeView() {
   MainWindowViewer* db = viewer();
@@ -2131,10 +2165,16 @@ void iMainWindowViewer::UpdateUi() {
   }
 
   for (int i=0; i<dataCopyActions.size; i++) {
-    dataCopyActions[i]->setEnabled(curProject());
+    dataCopyActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataOrderActions.size; i++) {
+    dataOrderActions[i]->setEnabled(myProject());
   }
   for (int i=0; i<dataSelectActions.size; i++) {
-    dataSelectActions[i]->setEnabled(curProject());
+    dataSelectActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataColumnsActions.size; i++) {
+    dataColumnsActions[i]->setEnabled(myProject());
   }
 
   emit SetActionsEnabled();

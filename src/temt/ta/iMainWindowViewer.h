@@ -81,10 +81,13 @@ public:
   iBrowseHistory*       brow_hist;
   taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
   QSplitter*            body;           // #IGNORE body of the window
+  
   QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
-  QSignalMapper*        signalMapperCategoryCopy;   // #IGNORE -  for taDataProc Copy category methods
-  QSignalMapper*        signalMapperCategorySelect;   // #IGNORE -  for taDataProc Select category methods
-
+  QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value
+  QSignalMapper*        signalMapperForDataAnal;   // #IGNORE used to map several actions to one action and pass a value
+  QSignalMapper*        signalMapperForDataGen;   // #IGNORE used to map several actions to one action and pass a value
+  QSignalMapper*        signalMapperForImageProc;   // #IGNORE used to map several actions to one action and pass a value
+  
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
   taiWidgetMenu*              fileExportMenu; // submenu -- empty and disabled in base
@@ -141,16 +144,15 @@ public:
   iAction*            editFindAction;
   iAction*            editFindNextAction;
   
-//  iAction*            dataProcessCopyDataAction;
-//  iAction*            dataProcessCopyCommonColDataAction;
-//  iAction*            dataProcessAppendRowsAction;
-//  iAction*            dataOrderSortAction;
-//  iAction*            dataOrderPermuteAction;
-//  iAction*            dataSelectSelectRowsAction;
-//  iAction*            dataSelectSplitRowsAction;
-  
   iAction_List         dataCopyActions;
+  iAction_List         dataOrderActions;
   iAction_List         dataSelectActions;
+  iAction_List         dataColumnsActions;
+  iAction_List         dataAnalStatsActions;
+  iAction_List         dataAnalDistanceActions;
+  iAction_List         dataAnalHighDimActions;
+  iAction_List         dataAnalCleanActions;
+  iAction_List         dataAnalGraphActions;
   
   iAction*            viewRefreshAction;
   iAction*            viewSplitVerticalAction;
@@ -328,8 +330,6 @@ public slots:
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();
-  
-  virtual void  CreateDataSpecification();
   
   virtual void  windowMenu_aboutToShow();
   void          windowActivate(int win); // activate the indicated win
