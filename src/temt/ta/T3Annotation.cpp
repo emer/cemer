@@ -256,23 +256,23 @@ String T3Annotation::RenderSvg() {
   switch(type) {
   case LINE:
     rval << taSvg::Path(color.color(), line_width)
-         << "M " << taSvg::Coords(pos.x, pos.y)
-         << "L " << taSvg::Coords(pos.x + size.x, pos.y + size.y)
+         << "M " << taSvg::Coords(pos)
+         << "L " << taSvg::Coords(pos.x + size.x, pos.y + size.y, pos.z + size.z)
          << taSvg::PathEnd();
     break;
   case RECTANGLE:
     rval << taSvg::Path(color.color(), line_width)
-         << "M " << taSvg::Coords(pos.x, pos.y)
-         << "L " << taSvg::Coords(pos.x + size.x, pos.y)
-         << "L " << taSvg::Coords(pos.x + size.x, pos.y + size.y)
-         << "L " << taSvg::Coords(pos.x, pos.y + size.y)
-         << "L " << taSvg::Coords(pos.x, pos.y)
+         << "M " << taSvg::Coords(pos)
+         << "L " << taSvg::Coords(pos.x + size.x, pos.y, pos.z)
+         << "L " << taSvg::Coords(pos.x + size.x, pos.y + size.y, pos.z)
+         << "L " << taSvg::Coords(pos.x, pos.y + size.y, pos.z)
+         << "L " << taSvg::Coords(pos.x, pos.y, pos.z)
          << taSvg::PathEnd();
     break;
   case ELLIPSE:
     break;
   case TEXT:
-    rval << taSvg::Text(text, pos.x, pos.y, color.color(),
+    rval << taSvg::Text(text, pos, color.color(),
                         font_size, (taSvg::TextJust)justification);
     break;
   case OBJECT:

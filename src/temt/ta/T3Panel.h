@@ -129,7 +129,7 @@ public:
   // #CAT_Display #BUTTON #FROM_GROUP_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel
 
   QPixmap      GrabImage(bool& got_image) override;
-  bool         SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG) override;
+  bool         SaveImageAs(const String& fname = "", ImageFormat img_fmt = SVG) override;
   virtual  void         SetImageSize(int width, int height);
   // #CAT_Display #BUTTON set size of 3d viewer (and thus SaveImageAs image) to given size parameters
   virtual  void         SetColorScheme(ColorScheme color_scheme);

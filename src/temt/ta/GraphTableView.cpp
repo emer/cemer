@@ -1021,9 +1021,11 @@ void GraphTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
 }
 
 void GraphTableView::SaveImageSVG(const String& svg_fname) {
+  T3ExaminerViewer* vw = GetViewer();
+  if(!vw) return;
   render_svg = true;
   svg_str = "";
-  svg_str << taSvg::Header(width, 1.0f);
+  svg_str << taSvg::Header(vw);
   RenderGraph();
   RenderAnnoteSvg();
   svg_str << taSvg::Footer();
@@ -1043,11 +1045,11 @@ void GraphTableView::RenderGraph() {
   if(render_svg) {
     // do the overall box around graph
     svg_str << taSvg::Path(x_axis.color.color(), 2.0f)
-            << "M " << taSvg::Coords(0.0f, 0.0f)
-            << "L " << taSvg::Coords(0.0f, 1.0f)
-            << "L " << taSvg::Coords(width, 1.0f)
-            << "L " << taSvg::Coords(width, 0.0f)
-            << "L " << taSvg::Coords(0.0f, 0.0f)
+            << "M " << taSvg::Coords(0.0f, 0.0f, 0.0f)
+            << "L " << taSvg::Coords(0.0f, 1.0f, 0.0f)
+            << "L " << taSvg::Coords(width, 1.0f, 0.0f)
+            << "L " << taSvg::Coords(width, 0.0f, 0.0f)
+            << "L " << taSvg::Coords(0.0f, 0.0f, 0.0f)
             << taSvg::PathEnd();
   }
 
@@ -1091,14 +1093,10 @@ void GraphTableView::RenderAxes() {
   t3_x_axis = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
   t3_x_axis_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
 
-  xax->addChild(t3_x_axis);
-
+  SoTranslation* tr;
   float ylen = plots[0]->axis_length;
 
-  SoTranslation* tr;
-  // top
-  tr = new SoTranslation();  xax->addChild(tr);
-  tr->translation.setValue(0.0f, ylen, 0.0f);
+  xax->addChild(t3_x_axis);
   xax->addChild(t3_x_axis_top);
 
   String* rnd_svg = NULL;
@@ -1107,37 +1105,23 @@ void GraphTableView::RenderAxes() {
     *rnd_svg << taSvg::Group();
   }
 
-  x_axis.RenderAxis(t3_x_axis, 0, false, rnd_svg);
+  x_axis.RenderAxis(t3_x_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
   if(rnd_svg) {                 // svg needs separate ticks-only pass
-    x_axis.RenderAxis(t3_x_axis, 0, true, rnd_svg);
+    x_axis.RenderAxis(t3_x_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, true, rnd_svg);
   }
 
-  if(rnd_svg) {
-    *rnd_svg << taSvg::GroupEnd();
-    *rnd_svg << taSvg::GroupTranslate(0.0f, -ylen); // move on top
-  }
-
-  x_axis.RenderAxis(t3_x_axis_top, 1, true, rnd_svg); // ticks only on top
-
-  if(rnd_svg) {
-    *rnd_svg << taSvg::GroupEnd();
-  }
+  x_axis.RenderAxis(t3_x_axis_top, iVec3f(0.0f, ylen, 0.0f), 1, true, rnd_svg); // ticks only on top
 
   if(z_axis.on) {
     t3_x_axis_far = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
     t3_x_axis_far_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
-
-    // far_top
-    tr = new SoTranslation();   xax->addChild(tr);
-    tr->translation.setValue(0.0f, 0.0, -z_axis.axis_length);
     xax->addChild(t3_x_axis_far_top);
-    // far
-    tr = new SoTranslation();  xax->addChild(tr);
-    tr->translation.setValue(0.0f, -ylen, 0.0f);
     xax->addChild(t3_x_axis_far);
 
-    x_axis.RenderAxis(t3_x_axis_far_top, 0, true); // ticks only
-    x_axis.RenderAxis(t3_x_axis_far, 0, true); // ticks only
+    x_axis.RenderAxis(t3_x_axis_far_top, iVec3f(0.0f, ylen, -z_axis.axis_length), 0,
+                      true, rnd_svg); // ticks only
+    x_axis.RenderAxis(t3_x_axis_far, iVec3f(0.0f, 0.0f, -z_axis.axis_length), 0,
+                      true, rnd_svg); // ticks only
 
     /////////////  Z
     SoSeparator* zax = node_so->z_axis();
@@ -1147,24 +1131,18 @@ void GraphTableView::RenderAxes() {
     t3_z_axis_top_rt = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, axis_font_size);
 
     zax->addChild(t3_z_axis);
-    z_axis.RenderAxis(t3_z_axis);
+    z_axis.RenderAxis(t3_z_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
 
-    // rt
-    tr = new SoTranslation();   zax->addChild(tr);
-    tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f);
     zax->addChild(t3_z_axis_rt);
-    // top_rt
-    tr = new SoTranslation();   zax->addChild(tr);
-    tr->translation.setValue(0.0f, ylen, 0.0f);
     zax->addChild(t3_z_axis_top_rt);
-    // top
-    tr = new SoTranslation();   zax->addChild(tr);
-    tr->translation.setValue(-x_axis.axis_length, 0.0f, 0.0f);
     zax->addChild(t3_z_axis_top);
 
-    z_axis.RenderAxis(t3_z_axis_rt, 0, true); // ticks only
-    z_axis.RenderAxis(t3_z_axis_top_rt, 0, true);
-    z_axis.RenderAxis(t3_z_axis_top, 0, true);
+    z_axis.RenderAxis(t3_z_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f), 0,
+                      true, rnd_svg); // ticks only
+    z_axis.RenderAxis(t3_z_axis_top_rt, iVec3f(x_axis.axis_length, ylen, 0.0f), 0,
+                      true, rnd_svg);
+    z_axis.RenderAxis(t3_z_axis_top, iVec3f(0.0f, ylen, 0.0f), 0,
+                      true, rnd_svg);
   }
   else {
     t3_x_axis_far = NULL;
@@ -1177,33 +1155,26 @@ void GraphTableView::RenderAxes() {
 
   if(graph_type == RASTER) {
     t3_y_axis = new T3Axis((T3Axis::Axis)raster_axis.axis, &raster_axis, axis_font_size);
-    raster_axis.RenderAxis(t3_y_axis); // raster axis is Y axis!
+    raster_axis.RenderAxis(t3_y_axis, iVec3f(0.0f, 0.0f, 0.0f), 0,
+                           false, rnd_svg); // raster axis is Y axis!
     yax->addChild(t3_y_axis);
 
   }
   else {
     t3_y_axis = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
 
-    if(rnd_svg) {
-      *rnd_svg << taSvg::Group();
-    }
-    mainy->RenderAxis(t3_y_axis, 0, false, rnd_svg);
+    mainy->RenderAxis(t3_y_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
     yax->addChild(t3_y_axis);
 
     if(rnd_svg) {
-      mainy->RenderAxis(t3_y_axis, 0, true, rnd_svg);
-      *rnd_svg << taSvg::GroupEnd();
+      mainy->RenderAxis(t3_y_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, true, rnd_svg);
     }
 
     if(z_axis.on) {
       t3_y_axis_far = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
-      mainy->RenderAxis(t3_y_axis_far, 0, true); // only ticks
-      // far
-      tr = new SoTranslation();   yax->addChild(tr);
-      tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
       yax->addChild(t3_y_axis_far);
-      tr = new SoTranslation();   yax->addChild(tr); // reset this guy for next..
-      tr->translation.setValue(0.0f, 0.0f, z_axis.axis_length);
+      mainy->RenderAxis(t3_y_axis_far, iVec3f(0.0f, 0.0f, -z_axis.axis_length),
+                        0, true, rnd_svg); // only ticks
     }
     else {
       t3_y_axis_far = NULL;
@@ -1212,25 +1183,21 @@ void GraphTableView::RenderAxes() {
     if(alty) {
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1); // second Y = 1
 
-      if(rnd_svg) {
-        *rnd_svg << taSvg::GroupTranslate(x_axis.axis_length, 0.0f);
-      }
-      alty->RenderAxis(t3_y_axis_rt, 1, false, rnd_svg); // indicate second axis!
-      tr = new SoTranslation();  yax->addChild(tr);
-      tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f); // put on right hand side!
+      alty->RenderAxis(t3_y_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f), 1,
+                       false, rnd_svg); // indicate second axis!
       yax->addChild(t3_y_axis_rt);
 
       if(rnd_svg) {
-        alty->RenderAxis(t3_y_axis_rt, 1, true, rnd_svg);
-        *rnd_svg << taSvg::GroupEnd();
+        alty->RenderAxis(t3_y_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f),
+                         1, true, rnd_svg);
       }
 
       if(z_axis.on) {
         t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1);
-        alty->RenderAxis(t3_y_axis_far_rt, 1, true); // only ticks
-        tr = new SoTranslation();   yax->addChild(tr);
-        tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
         yax->addChild(t3_y_axis_far_rt);
+
+        alty->RenderAxis(t3_y_axis_far_rt, iVec3f(0.0f, 0.0f, -z_axis.axis_length), 1,
+                         true, rnd_svg); // only ticks
       }
       else {
         t3_y_axis_far_rt = NULL;
@@ -1240,29 +1207,25 @@ void GraphTableView::RenderAxes() {
       // rt
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
 
-      if(rnd_svg) {
-        *rnd_svg << taSvg::GroupTranslate(x_axis.axis_length, 0.0f);
-      }
-      mainy->RenderAxis(t3_y_axis_rt, 0, true, rnd_svg); // ticks
-      tr = new SoTranslation();   yax->addChild(tr);
-      tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f);
+      mainy->RenderAxis(t3_y_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f), 0,
+                        true, rnd_svg); // ticks
       yax->addChild(t3_y_axis_rt);
-
-      if(rnd_svg) {
-        *rnd_svg << taSvg::GroupEnd();
-      }
 
       if(z_axis.on) {
         t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
-        mainy->RenderAxis(t3_y_axis_far_rt, 0, true); // only ticks
-        tr = new SoTranslation();   yax->addChild(tr);
-        tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
+        mainy->RenderAxis(t3_y_axis_far_rt, iVec3f(0.0f, 0.0f, -z_axis.axis_length), 0,
+                          true, rnd_svg); // only ticks
         yax->addChild(t3_y_axis_far_rt);
       }
       else {
         t3_y_axis_far_rt = NULL;
       }
     }
+  }
+
+  if(render_svg) {
+    rnd_svg = &svg_str;
+    *rnd_svg << taSvg::GroupEnd();
   }
 }
 
@@ -1289,11 +1252,11 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   if(render_svg) {
     svg_str << taSvg::GroupTranslate(cur_tr.x, -cur_tr.y)
             << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width)
-            << "M " << taSvg::Coords(st.x, st.y)
-            << "L " << taSvg::Coords(ed.x, ed.y)
+            << "M " << taSvg::Coords(st)
+            << "L " << taSvg::Coords(ed)
             << taSvg::PathEnd();
     svg_str << taSvg::Text(label, ed.x + TICK_OFFSET, ed.y - (.5f * label_font_size),
-                           plv.color.color(), 0.05f, taSvg::LEFT)
+                           ed.z, plv.color.color(), 0.05f, taSvg::LEFT)
             << taSvg::GroupEnd();
   }
 }
@@ -1894,7 +1857,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         else
           t3gl->moveTo(plt);
         if(render_svg) {
-          svg_str << "M " << taSvg::Coords(plt.x, plt.y);
+          svg_str << "M " << taSvg::Coords(plt);
         }
       }
       else {
@@ -1903,7 +1866,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         else
           t3gl->lineTo(plt);
         if(render_svg) {
-          svg_str << "L " << taSvg::Coords(plt.x, plt.y);
+          svg_str << "L " << taSvg::Coords(plt);
         }
       }
     }
@@ -1920,8 +1883,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
           t3gl->lineTo(th_ed);
         }
         if(render_svg) {
-          svg_str << "M " << taSvg::Coords(th_st.x, th_st.y)
-                  << "L " << taSvg::Coords(th_ed.x, th_ed.y);
+          svg_str << "M " << taSvg::Coords(th_st)
+                  << "L " << taSvg::Coords(th_ed);
         }
       }
     }
@@ -1964,13 +1927,13 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         t3gl->errBar(plt, err_plt, err_bar_width);
 
       if(render_svg) {
-        svg_str << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt) // low bar
-                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt)
-                << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt) // high bar
-                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt)
-                << "M " << taSvg::Coords(plt.x, plt.y-err_plt) // vert bar
-                << "L " << taSvg::Coords(plt.x, plt.y+err_plt)
-                << "M " << taSvg::Coords(plt.x, plt.y) << "\n"; // back home..
+        svg_str << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z) // low bar
+                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
+                << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z) // high bar
+                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
+                << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z) // vert bar
+                << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
+                << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
       }
     }
 

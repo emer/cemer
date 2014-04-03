@@ -50,11 +50,64 @@ public:
   iVec3f&       operator=(float val) {x = val; y = val; z = val; return *this;}
   iVec3f&       operator=(const iVec3f& val) {x = val.x; y = val.y; z = val.z; return *this;}
 
+  inline iVec3f&  operator += (const iVec3f& td)    { x += td.x; y += td.y; z += td.z; return *this;}
+  inline iVec3f&  operator -= (const iVec3f& td)    { x -= td.x; y -= td.y; z -= td.z; return *this;}
+  inline iVec3f&  operator *= (const iVec3f& td)    { x *= td.x; y *= td.y; z *= td.z; return *this;}
+  inline iVec3f&  operator /= (const iVec3f& td)    { x /= td.x; y /= td.y; z /= td.z; return *this;}
+
+  inline iVec3f&  operator += (float td)  { x += td; y += td; z += td; return *this;}
+  inline iVec3f&  operator -= (float td)  { x -= td; y -= td; z -= td; return *this;}
+  inline iVec3f&  operator *= (float td)  { x *= td; y *= td; z *= td; return *this;}
+  inline iVec3f&  operator /= (float td)  { x /= td; y /= td; z /= td; return *this;}
+
+  inline iVec3f operator + (const iVec3f& td) const {
+    iVec3f rv; rv.x = x + td.x; rv.y = y + td.y; rv.z = z + td.z; return rv;
+  }
+  inline iVec3f operator - (const iVec3f& td) const {
+    iVec3f rv; rv.x = x - td.x; rv.y = y - td.y; rv.z = z - td.z; return rv;
+  }
+  inline iVec3f operator * (const iVec3f& td) const {
+    iVec3f rv; rv.x = x * td.x; rv.y = y * td.y; rv.z = z * td.z; return rv;
+  }
+  inline iVec3f operator / (const iVec3f& td) const {
+    iVec3f rv; rv.x = x / td.x; rv.y = y / td.y; rv.z = z / td.z; return rv;
+  }
+
+  inline iVec3f operator + (float td) const {
+    iVec3f rv; rv.x = x + td; rv.y = y + td; rv.z = z + td; return rv;
+  }
+  inline iVec3f operator - (float td) const {
+    iVec3f rv; rv.x = x - td; rv.y = y - td; rv.z = z - td; return rv;
+  }
+  inline iVec3f operator * (float td) const {
+    iVec3f rv; rv.x = x * td; rv.y = y * td; rv.z = z * td; return rv;
+  }
+  inline iVec3f operator / (float td) const {
+    iVec3f rv; rv.x = x / td; rv.y = y / td; rv.z = z / td; return rv;
+  }
+
+  inline iVec3f operator - () const {
+    iVec3f rv; rv.x = -x; rv.y = -y; rv.z = -z; return rv;
+  }
+
 #ifdef TA_USE_INVENTOR
   iVec3f(const SbVec3f& src);
   iVec3f&       operator=(const SbVec3f& src);
   operator SbVec3f() const;
 #endif
 };
+
+inline iVec3f operator + (float td, const iVec3f& v) {
+  iVec3f rv; rv.x = td + v.x; rv.y = td + v.y; rv.z = td + v.z; return rv;
+}
+inline iVec3f operator - (float td, const iVec3f& v) {
+  iVec3f rv; rv.x = td - v.x; rv.y = td - v.y; rv.z = td - v.z; return rv;
+}
+inline iVec3f operator * (float td, const iVec3f& v) {
+  iVec3f rv; rv.x = td * v.x; rv.y = td * v.y; rv.z = td * v.z; return rv;
+}
+inline iVec3f operator / (float td, const iVec3f& v) {
+  iVec3f rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
+}
 
 #endif // iVec3f_h
