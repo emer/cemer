@@ -81,7 +81,7 @@ public:
   static String  GroupEnd();
   // #CAT_Svg end a group
   static String  GroupTranslate(float tr_x, float tr_y);
-  // #CAT_Svg a group with translation transform 
+  // #CAT_Svg a group with translation transform -- coordinates in raw display coords
   static String  Text(const String& str, const taVector3f& vec, const iColor& color,
                       float font_size = 0.05, TextJust just = LEFT, 
                       bool vertical = false, const String& font = "Arial")

@@ -344,19 +344,13 @@ void GraphAxisBase::ComputeTicks() {
   act_n_ticks = i;
 }
 
-void GraphAxisBase::RenderAxis(T3Axis* t3ax, const iVec3f& offi,
+void GraphAxisBase::RenderAxis(T3Axis* t3ax, const iVec3f& off,
                                int n_ax, bool ticks_only, String* rnd_svg) {
   t3ax->clear();
   if(!on) return;
   ComputeTicks();               // do this always..
   SoMaterial* mat = t3ax->material();
   color.color().copyTo(mat->diffuseColor);
-
-  iVec3f off = offi;
-
-  if(rnd_svg) {
-    off.z = -offi.z;             // ugh, this is backward for some reason..
-  }
 
   if(rnd_svg && ticks_only) {
     *rnd_svg << taSvg::Path(color.color(), 2.0f);
@@ -406,7 +400,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
 
       if(rnd_svg) {
         *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                0.05f, taSvg::LEFT);
+                                t3ax->fontSize(), taSvg::LEFT);
       }
     }
 
@@ -427,7 +421,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
 
       if(rnd_svg) {
         *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                0.05f, taSvg::CENTER);
+                                t3ax->fontSize(), taSvg::CENTER);
       }
     }
   }
@@ -474,7 +468,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
         if(rnd_svg) {
           // todo: get font size from graph
           *rnd_svg << taSvg::Text(label, fm.x, fm.y-y_lab_off, fm.z, color.color(),
-                                  0.05f, taSvg::CENTER);
+                                  t3ax->fontSize(), taSvg::CENTER);
         }
       }
     }
@@ -505,7 +499,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
         t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  0.05f, taSvg::LEFT);
+                                  t3ax->fontSize(), taSvg::LEFT);
         }
       }
       else {
@@ -513,7 +507,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
         t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  0.05f, taSvg::RIGHT);
+                                  t3ax->fontSize(), taSvg::RIGHT);
         }
       }
     }
@@ -528,7 +522,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
         t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  0.05f, taSvg::CENTER, true); // vertical
+                                  t3ax->fontSize(), taSvg::CENTER, true); // vertical
         }
       }
       else {
@@ -536,7 +530,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
         t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  0.05f, taSvg::CENTER, true); // vertical
+                                  t3ax->fontSize(), taSvg::CENTER, true); // vertical
         }
       }
     }
@@ -572,7 +566,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
                        iVec3f(to.x + TICK_OFFSET, fm.y, fm.z));
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, to.x + TICK_OFFSET,
-                                  fm.y, fm.z, color.color(), 0.05f, taSvg::LEFT);
+                                  fm.y, fm.z, color.color(), t3ax->fontSize(), taSvg::LEFT);
         }
       }
       else {
@@ -580,7 +574,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
                        iVec3f(fm.x - TICK_OFFSET, fm.y, fm.z));
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm.x - TICK_OFFSET,
-                                  fm.y, fm.z, color.color(), 0.05f, taSvg::RIGHT);
+                                  fm.y, fm.z, color.color(), t3ax->fontSize(), taSvg::RIGHT);
         }
       }
     }
@@ -596,6 +590,11 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
   to.z = off.z + axis_length;
   t3ax->addLine(fm, to);
 
+  if(rnd_svg && ticks_only) {
+    *rnd_svg << "M " << taSvg::Coords(fm)
+             << "L " << taSvg::Coords(to);
+  }
+
   bool use_str_labels = false;
 
   if(!ticks_only) {
@@ -606,6 +605,11 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
       fm.x = off.x + -(TICK_OFFSET + 2.0f * t3ax->fontSize());
       String label = "x " + String(units,"%.5g");
       t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+
+      if(rnd_svg) {
+        *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                t3ax->fontSize(), taSvg::LEFT);
+      }
     }
     if(!col_name.empty()) {
       SbRotation rot;
@@ -625,6 +629,11 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
         }
       }
       t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+
+      if(rnd_svg) {
+        *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                t3ax->fontSize(), taSvg::CENTER);
+      }
     }
   }
 
@@ -645,6 +654,12 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
     fm.z = off.z + DataToPlot(val);
     to.z = off.z + DataToPlot(val);
     t3ax->addLine(fm, to);
+
+    if(rnd_svg && ticks_only) {
+      *rnd_svg << "M " << taSvg::Coords(fm)
+               << "L " << taSvg::Coords(to);
+    }
+
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
@@ -658,6 +673,11 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
       if(label.nonempty()) {
         t3ax->addLabel(label.chars(),
                        iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
+        if(rnd_svg) {
+          // todo: get font size from graph
+          *rnd_svg << taSvg::Text(label, fm.x - TICK_OFFSET, fm.y-y_lab_off, fm.z,
+                                  color.color(), t3ax->fontSize(), taSvg::CENTER);
+        }
       }
     }
   }

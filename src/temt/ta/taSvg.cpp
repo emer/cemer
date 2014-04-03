@@ -47,12 +47,13 @@ String taSvg::Header(T3ExaminerViewer* vw,
   *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume(vw->getViewportRegion(),
                                                                rvp);
 
-  float width = cur_inst->view_vol->getWidth();
-  float height = cur_inst->view_vol->getHeight();
+  // these turn out not to bue useful:
+  // float width = cur_inst->view_vol->getWidth();
+  // float height = cur_inst->view_vol->getHeight();
+  // taMisc::Info("width: ", String(width), "height: ", String(height));
 
-  taMisc::Info("width: ", String(width), "height: ", String(height));
-
-  width = height = 1.0f;
+  float width = 1.0f;
+  float height = 1.0f;
 
   String rval;
   rval << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
@@ -131,7 +132,12 @@ String taSvg::GroupEnd() {
 
 String taSvg::GroupTranslate(float x, float y) {
   if(!CheckInst()) return _nilString;
-  String rval; 
+
+  float sz = MAX(cur_inst->view_vol->getWidth(), cur_inst->view_vol->getHeight());
+  x /= sz;
+  y /= sz;
+
+  String rval;
   rval << "\n<g transform=\"translate(" << String(1000.0f * x) << ","
        << String(1000.0f * y) + ")\">\n";
   return rval;
@@ -154,6 +160,9 @@ String taSvg::Text(const String& str, float x, float y, float z, const iColor& c
     anch = "end";
     break;
   }
+
+  font_size /= MAX(cur_inst->view_vol->getWidth(), cur_inst->view_vol->getHeight());
+
   rval << "\n<text " << CoordsXY(x,y,z)
        << " font-family=\"" << font
        << "\" font-size=\"" << 1000.0f * font_size

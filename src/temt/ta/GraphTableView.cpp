@@ -1118,9 +1118,9 @@ void GraphTableView::RenderAxes() {
     xax->addChild(t3_x_axis_far_top);
     xax->addChild(t3_x_axis_far);
 
-    x_axis.RenderAxis(t3_x_axis_far_top, iVec3f(0.0f, ylen, -z_axis.axis_length), 0,
+    x_axis.RenderAxis(t3_x_axis_far_top, iVec3f(0.0f, ylen, z_axis.axis_length), 0,
                       true, rnd_svg); // ticks only
-    x_axis.RenderAxis(t3_x_axis_far, iVec3f(0.0f, 0.0f, -z_axis.axis_length), 0,
+    x_axis.RenderAxis(t3_x_axis_far, iVec3f(0.0f, 0.0f, z_axis.axis_length), 0,
                       true, rnd_svg); // ticks only
 
     /////////////  Z
@@ -1131,12 +1131,14 @@ void GraphTableView::RenderAxes() {
     t3_z_axis_top_rt = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, axis_font_size);
 
     zax->addChild(t3_z_axis);
-    z_axis.RenderAxis(t3_z_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
-
     zax->addChild(t3_z_axis_rt);
     zax->addChild(t3_z_axis_top_rt);
     zax->addChild(t3_z_axis_top);
 
+    z_axis.RenderAxis(t3_z_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
+    if(rnd_svg) {                 // svg needs separate ticks-only pass
+      z_axis.RenderAxis(t3_z_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, true, rnd_svg);
+    }
     z_axis.RenderAxis(t3_z_axis_rt, iVec3f(x_axis.axis_length, 0.0f, 0.0f), 0,
                       true, rnd_svg); // ticks only
     z_axis.RenderAxis(t3_z_axis_top_rt, iVec3f(x_axis.axis_length, ylen, 0.0f), 0,
@@ -1173,7 +1175,7 @@ void GraphTableView::RenderAxes() {
     if(z_axis.on) {
       t3_y_axis_far = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
       yax->addChild(t3_y_axis_far);
-      mainy->RenderAxis(t3_y_axis_far, iVec3f(0.0f, 0.0f, -z_axis.axis_length),
+      mainy->RenderAxis(t3_y_axis_far, iVec3f(0.0f, 0.0f, z_axis.axis_length),
                         0, true, rnd_svg); // only ticks
     }
     else {
@@ -1196,7 +1198,8 @@ void GraphTableView::RenderAxes() {
         t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1);
         yax->addChild(t3_y_axis_far_rt);
 
-        alty->RenderAxis(t3_y_axis_far_rt, iVec3f(0.0f, 0.0f, -z_axis.axis_length), 1,
+        alty->RenderAxis(t3_y_axis_far_rt,
+                         iVec3f(x_axis.axis_length, 0.0f, z_axis.axis_length), 1,
                          true, rnd_svg); // only ticks
       }
       else {
@@ -1213,7 +1216,8 @@ void GraphTableView::RenderAxes() {
 
       if(z_axis.on) {
         t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
-        mainy->RenderAxis(t3_y_axis_far_rt, iVec3f(0.0f, 0.0f, -z_axis.axis_length), 0,
+        mainy->RenderAxis(t3_y_axis_far_rt,
+                          iVec3f(x_axis.axis_length, 0.0f, z_axis.axis_length), 0,
                           true, rnd_svg); // only ticks
         yax->addChild(t3_y_axis_far_rt);
       }
