@@ -81,7 +81,9 @@ public:
   iBrowseHistory*       brow_hist;
   taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
   QSplitter*            body;           // #IGNORE body of the window
-  QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value - useful when the sender is the same in all cases
+  QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
+  QSignalMapper*        signalMapperCategoryCopy;   // #IGNORE -  for taDataProc Copy category methods
+  QSignalMapper*        signalMapperCategorySelect;   // #IGNORE -  for taDataProc Select category methods
 
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
@@ -139,15 +141,16 @@ public:
   iAction*            editFindAction;
   iAction*            editFindNextAction;
   
-  iAction*            dataProcessCopyDataAction;
-  iAction*            dataProcessCopyCommonColDataAction;
-  iAction*            dataProcessAppendRowsAction;
-  iAction*            dataOrderSortAction;
-  iAction*            dataOrderPermuteAction;
-  iAction*            dataSelectSelectRowsAction;
-  iAction*            dataSelectSplitRowsAction;
-
-  iAction*            createDataSortSpecAction;
+//  iAction*            dataProcessCopyDataAction;
+//  iAction*            dataProcessCopyCommonColDataAction;
+//  iAction*            dataProcessAppendRowsAction;
+//  iAction*            dataOrderSortAction;
+//  iAction*            dataOrderPermuteAction;
+//  iAction*            dataSelectSelectRowsAction;
+//  iAction*            dataSelectSplitRowsAction;
+  
+  iAction_List         dataCopyActions;
+  iAction_List         dataSelectActions;
   
   iAction*            viewRefreshAction;
   iAction*            viewSplitVerticalAction;
@@ -326,7 +329,6 @@ public slots:
   virtual void  ctrlStop();
   virtual void  ctrlCont();
   
-  virtual void  DataProcessLauncher();
   virtual void  CreateDataSpecification();
   
   virtual void  windowMenu_aboutToShow();
@@ -383,6 +385,8 @@ protected slots:
   virtual void          this_ToolBarSelect(iAction* me); // user has selected or unselected one of the toolbars
   virtual void          this_DockSelect(iAction* me); // user has selected or unselected one of the docks
   virtual void          this_SaveView(iAction* me); // user does/doesn't want current view saved with project
+
+  virtual void          DataProcessLauncher(QString method_name);
 
 protected:
   static int            s_next_unique_id;

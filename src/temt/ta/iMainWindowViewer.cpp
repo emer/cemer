@@ -47,6 +47,8 @@
 #include <iWidget_List>
 #include <iRect>
 #include <Program>
+#include <MethodSpace>
+#include <MethodDef>
 
 #include <taMisc>
 #include <taiMisc>
@@ -709,40 +711,45 @@ void iMainWindowViewer::Constr_ControlMenu()
 }
 
 void iMainWindowViewer::Constr_DataMenu() {
-  dataProcessCopyDataAction = AddAction(new iAction(0, "Copy Data", QKeySequence(), "dataProcessCopyDataAction"));
-  dataProcessCopyCommonColDataAction = AddAction(new iAction(0, "Copy Common Columns", QKeySequence(), "dataProcessCopyCommonColDataAction"));
-  dataProcessAppendRowsAction = AddAction(new iAction(0, "Append Rows", QKeySequence(), "dataProcessAppendRowsAction"));
-  dataOrderSortAction = AddAction(new iAction(0, "Sort", QKeySequence(), "dataOrderSortAction"));
-  dataOrderPermuteAction = AddAction(new iAction(0, "Permute", QKeySequence(), "dataOrderPermuteAction"));
-  dataSelectSelectRowsAction = AddAction(new iAction(0, "Select Rows", QKeySequence(), "dataSelectSelectRowsAction"));
-  dataSelectSplitRowsAction = AddAction(new iAction(0, "Split Rows", QKeySequence(), "dataSelectSplitRowsAction"));
-
-  createDataSortSpecAction = AddAction(new iAction(0, "New DataSortSpec", QKeySequence(), "createDataSortSpecAction"));
-
-  
+  signalMapperCategoryCopy = new QSignalMapper (this);
+  signalMapperCategorySelect = new QSignalMapper (this);
   
   processMenu = dataMenu->AddSubMenu("Process");
   analysisMenu = dataMenu->AddSubMenu("Analyze");
   generateMenu = dataMenu->AddSubMenu("Generate");
   processImageMenu = dataMenu->AddSubMenu("Process Image");
-  dataMenu->insertSeparator();
-  dataSpecMenu = dataMenu->AddSubMenu("CreateSpecification");
   
-  processMenu->AddAction(dataProcessCopyDataAction);
-  processMenu->AddAction(dataProcessCopyCommonColDataAction);
-  processMenu->AddAction(dataProcessAppendRowsAction);
-  processMenu->insertSeparator();
-  processMenu->AddAction(dataOrderSortAction);
-  processMenu->AddAction(dataOrderPermuteAction);
-  processMenu->insertSeparator();
-  processMenu->AddAction(dataSelectSelectRowsAction);
-  processMenu->AddAction(dataSelectSplitRowsAction);
-
-  dataSpecMenu->AddAction(createDataSortSpecAction);
-
-  connect(dataProcessCopyDataAction, SIGNAL(Action()), this, SLOT(DataProcessLauncher()));
+  // Build the action lists
+  TypeDef* type = &TA_taDataProc;
+  MethodSpace* methods = &type->methods;
+  for (int i=0; i<methods->size; i++) {
+    MethodDef* mdef = methods->FastEl(i);
+    if (mdef == NULL)
+      continue;
+    if (mdef->HasOption("CAT_Copy")) {
+      String actionString = "dataProcess" + mdef->name + "Action";
+      dataCopyActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+    }
+    else if (mdef->HasOption("CAT_Select")) {
+      String actionString = "dataProcess" + mdef->name + "Action";
+      dataSelectActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+    }
+  }
   
-  connect(createDataSortSpecAction, SIGNAL(Action()), this, SLOT(CreateDataSpecification()));
+  for (int i=0; i<dataCopyActions.size; i++) {
+    processMenu->AddAction(dataCopyActions[i]);
+    connect (dataCopyActions[i], SIGNAL(Action()), signalMapperCategoryCopy, SLOT(map())) ;
+    signalMapperCategoryCopy->setMapping(dataCopyActions[i], QString(dataCopyActions[i]->label().chars()));
+  }
+  processMenu->AddSep();
+  for (int i=0; i<dataSelectActions.size; i++) {
+    processMenu->AddAction(dataSelectActions[i]);
+    connect (dataSelectActions[i], SIGNAL(Action()), signalMapperCategorySelect, SLOT(map())) ;
+    signalMapperCategorySelect->setMapping(dataSelectActions[i], QString(dataSelectActions[i]->label().chars()));
+  }
+  
+  connect (signalMapperCategoryCopy, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
+  connect (signalMapperCategorySelect, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
 }
 
 void iMainWindowViewer::Constr_ToolsMenu()
@@ -1213,8 +1220,11 @@ void iMainWindowViewer::ctrlCont() {
   Program::last_run_prog->Run_Gui();
 }
 
-void iMainWindowViewer::DataProcessLauncher() {
-//  taDataProc::Execute();
+void iMainWindowViewer::DataProcessLauncher(QString method_name) {
+  String meth_name(method_name.toStdString().c_str());
+//  taMisc::DebugInfo("call execute on ", String());
+  taBase* inst = curProject()->FindMakeNewDataProc(&TA_taDataProc, "");
+  inst->CallFun(meth_name);
 }
 
 void iMainWindowViewer::CreateDataSpecification() {
@@ -2120,14 +2130,12 @@ void iMainWindowViewer::UpdateUi() {
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
   }
 
-  dataProcessCopyDataAction->setEnabled(curProject());
-  dataProcessCopyCommonColDataAction->setEnabled(curProject());
-  dataProcessAppendRowsAction->setEnabled(curProject());
-  dataOrderSortAction->setEnabled(curProject());
-  dataOrderPermuteAction->setEnabled(curProject());
-  dataSelectSelectRowsAction->setEnabled(curProject());
-  dataSelectSplitRowsAction->setEnabled(curProject());
-  createDataSortSpecAction->setEnabled(curProject());
+  for (int i=0; i<dataCopyActions.size; i++) {
+    dataCopyActions[i]->setEnabled(curProject());
+  }
+  for (int i=0; i<dataSelectActions.size; i++) {
+    dataSelectActions[i]->setEnabled(curProject());
+  }
 
   emit SetActionsEnabled();
 }
