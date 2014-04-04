@@ -724,14 +724,15 @@ void iMainWindowViewer::Constr_DataMenu() {
   generateMenu = dataMenu->AddSubMenu("Generate");
   processImageMenu = dataMenu->AddSubMenu("Process Image");
   
-  TypeDef* type;
   MethodSpace* methods;
+  MethodDef* mdef;
+  TypeDef* type;
 
   // Build the action lists for taDataProc methods
   type = &TA_taDataProc;
   methods = &type->methods;
   for (int i=0; i<methods->size; i++) {
-    MethodDef* mdef = methods->FastEl(i);
+    mdef = methods->FastEl(i);
     if (mdef == NULL)
       continue;
     bool show = true;
@@ -746,21 +747,22 @@ void iMainWindowViewer::Constr_DataMenu() {
       }
       
       if (show) {
+        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Copy")) {
           String actionString = "dataProcess" + mdef->name + "Action";
-          dataProcCopyActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataProcCopyActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
         }
         if (mdef->HasOption("CAT_Order")) {
           String actionString = "dataProcess" + mdef->name + "Action";
-          dataProcOrderActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataProcOrderActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         else if (mdef->HasOption("CAT_Select")) {
           String actionString = "dataProcess" + mdef->name + "Action";
-          dataProcSelectActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataProcSelectActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         else if (mdef->HasOption("CAT_Columns")) {
           String actionString = "dataProcess" + mdef->name + "Action";
-          dataProcColumnsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataProcColumnsActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
       }
     }
@@ -769,32 +771,32 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<dataProcCopyActions.size; i++) {
     processMenu->AddAction(dataProcCopyActions[i]);
     connect (dataProcCopyActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcCopyActions[i], QString(dataProcCopyActions[i]->label().chars()));
+    signalMapperForDataProc->setMapping(dataProcCopyActions[i], QString(String(dataProcCopyActions[i]->usr_data).chars()));
   }
   processMenu->AddSep();
   for (int i=0; i<dataProcOrderActions.size; i++) {
     processMenu->AddAction(dataProcOrderActions[i]);
     connect (dataProcOrderActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcOrderActions[i], QString(dataProcOrderActions[i]->label().chars()));
+    signalMapperForDataProc->setMapping(dataProcOrderActions[i], QString(String(dataProcOrderActions[i]->usr_data).chars()));
   }
   processMenu->AddSep();
   for (int i=0; i<dataProcSelectActions.size; i++) {
     processMenu->AddAction(dataProcSelectActions[i]);
     connect (dataProcSelectActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcSelectActions[i], QString(dataProcSelectActions[i]->label().chars()));
+    signalMapperForDataProc->setMapping(dataProcSelectActions[i], QString(String(dataProcSelectActions[i]->usr_data).chars()));
   }
   processMenu->AddSep();
   for (int i=0; i<dataProcColumnsActions.size; i++) {
     processMenu->AddAction(dataProcColumnsActions[i]);
     connect (dataProcColumnsActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcColumnsActions[i], QString(dataProcColumnsActions[i]->label().chars()));
+    signalMapperForDataProc->setMapping(dataProcColumnsActions[i], QString(String(dataProcColumnsActions[i]->usr_data).chars()));
   }
   
   // Build the action lists for taDataAnal methods
   type = &TA_taDataAnal;
   methods = &type->methods;
   for (int i=0; i<methods->size; i++) {
-    MethodDef* mdef = methods->FastEl(i);
+    mdef = methods->FastEl(i);
     if (mdef == NULL)
       continue;
     bool show = true;
@@ -802,25 +804,26 @@ void iMainWindowViewer::Constr_DataMenu() {
       TypeSpace* args = &mdef->arg_types;
       // if there were methods we didn't want to show (perhaps they require a spec) put that logic here
       if (show) {
-         if (mdef->HasOption("CAT_Stats")) {
+        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
+        if (mdef->HasOption("CAT_Stats")) {
           String actionString = "dataAnal" + mdef->name + "Action";
-          dataAnalStatsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataAnalStatsActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
         }
         else if (mdef->HasOption("CAT_Distance")) {
           String actionString = "dataAnal" + mdef->name + "Action";
-          dataAnalDistanceActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataAnalDistanceActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         else if (mdef->HasOption("CAT_HighDim")) {
           String actionString = "dataAnal" + mdef->name + "Action";
-          dataAnalHighDimActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataAnalHighDimActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         else if (mdef->HasOption("CAT_Clean")) {
           String actionString = "dataAnal" + mdef->name + "Action";
-          dataAnalCleanActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataAnalCleanActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         else if (mdef->HasOption("CAT_Graph")) {
           String actionString = "dataAnal" + mdef->name + "Action";
-          dataAnalGraphActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataAnalGraphActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
       }
     }
@@ -829,38 +832,38 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<dataAnalStatsActions.size; i++) {
     analysisMenu->AddAction(dataAnalStatsActions[i]);
     connect (dataAnalStatsActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalStatsActions[i], QString(dataAnalStatsActions[i]->label().chars()));
+    signalMapperForDataAnal->setMapping(dataAnalStatsActions[i], QString(String(dataAnalStatsActions[i]->usr_data).chars()));
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalDistanceActions.size; i++) {
     analysisMenu->AddAction(dataAnalDistanceActions[i]);
     connect (dataAnalDistanceActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalDistanceActions[i], QString(dataAnalDistanceActions[i]->label().chars()));
+    signalMapperForDataAnal->setMapping(dataAnalDistanceActions[i], QString(String(dataAnalDistanceActions[i]->usr_data).chars()));
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalHighDimActions.size; i++) {
     analysisMenu->AddAction(dataAnalHighDimActions[i]);
     connect (dataAnalHighDimActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalHighDimActions[i], QString(dataAnalHighDimActions[i]->label().chars()));
+    signalMapperForDataAnal->setMapping(dataAnalHighDimActions[i], QString(String(dataAnalHighDimActions[i]->usr_data).chars()));
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalCleanActions.size; i++) {
     analysisMenu->AddAction(dataAnalCleanActions[i]);
     connect (dataAnalCleanActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalCleanActions[i], QString(dataAnalCleanActions[i]->label().chars()));
+    signalMapperForDataAnal->setMapping(dataAnalCleanActions[i], QString(String(dataAnalCleanActions[i]->usr_data).chars()));
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalGraphActions.size; i++) {
     analysisMenu->AddAction(dataAnalGraphActions[i]);
     connect (dataAnalGraphActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalGraphActions[i], QString(dataAnalGraphActions[i]->label().chars()));
+    signalMapperForDataAnal->setMapping(dataAnalGraphActions[i], QString(String(dataAnalGraphActions[i]->usr_data).chars()));
   }
   
   // Build the action lists for taDataGen methods
   type = &TA_taDataGen;
   methods = &type->methods;
   for (int i=0; i<methods->size; i++) {
-    MethodDef* mdef = methods->FastEl(i);
+    mdef = methods->FastEl(i);
     if (mdef == NULL)
       continue;
     bool show = true;
@@ -875,29 +878,30 @@ void iMainWindowViewer::Constr_DataMenu() {
       }
       
       if (show) {
+        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Basic")) {
           String actionString = "dataGen" + mdef->name + "Action";
-          dataGenBasicActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataGenBasicActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
         }
         if (mdef->HasOption("CAT_Lists")) {
           String actionString = "dataGen" + mdef->name + "Action";
-          dataGenListsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataGenListsActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         if (mdef->HasOption("CAT_Draw")) {
           String actionString = "dataGen" + mdef->name + "Action";
-          dataGenDrawActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataGenDrawActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         if (mdef->HasOption("CAT_Random")) {
           String actionString = "dataGen" + mdef->name + "Action";
-          dataGenRandomActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataGenRandomActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         if (mdef->HasOption("CAT_FeatPats")) {
           String actionString = "dataGen" + mdef->name + "Action";
-          dataGenFeatPatsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataGenFeatPatsActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         if (mdef->HasOption("CAT_Files")) {
           String actionString = "dataGen" + mdef->name + "Action";
-          dataGenFilesActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          dataGenFilesActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
       }
     }
@@ -906,44 +910,44 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<dataGenBasicActions.size; i++) {
     generateMenu->AddAction(dataGenBasicActions[i]);
     connect (dataGenBasicActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenBasicActions[i], QString(dataGenBasicActions[i]->label().chars()));
+    signalMapperForDataGen->setMapping(dataGenBasicActions[i], QString(String(dataGenBasicActions[i]->usr_data).chars()));
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenListsActions.size; i++) {
     generateMenu->AddAction(dataGenListsActions[i]);
     connect (dataGenListsActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenListsActions[i], QString(dataGenListsActions[i]->label().chars()));
+    signalMapperForDataGen->setMapping(dataGenListsActions[i], QString(String(dataGenListsActions[i]->usr_data).chars()));
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenDrawActions.size; i++) {
     generateMenu->AddAction(dataGenDrawActions[i]);
     connect (dataGenDrawActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenDrawActions[i], QString(dataGenDrawActions[i]->label().chars()));
+    signalMapperForDataGen->setMapping(dataGenDrawActions[i], QString(String(dataGenDrawActions[i]->usr_data).chars()));
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenRandomActions.size; i++) {
     generateMenu->AddAction(dataGenRandomActions[i]);
     connect (dataGenRandomActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenRandomActions[i], QString(dataGenRandomActions[i]->label().chars()));
+    signalMapperForDataGen->setMapping(dataGenRandomActions[i], QString(String(dataGenRandomActions[i]->usr_data).chars()));
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenFeatPatsActions.size; i++) {
     generateMenu->AddAction(dataGenFeatPatsActions[i]);
     connect (dataGenFeatPatsActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenFeatPatsActions[i], QString(dataGenFeatPatsActions[i]->label().chars()));
+    signalMapperForDataGen->setMapping(dataGenFeatPatsActions[i], QString(String(dataGenFeatPatsActions[i]->usr_data).chars()));
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenFilesActions.size; i++) {
     generateMenu->AddAction(dataGenFilesActions[i]);
     connect (dataGenFilesActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenFilesActions[i], QString(dataGenFilesActions[i]->label().chars()));
+    signalMapperForDataGen->setMapping(dataGenFilesActions[i], QString(String(dataGenFilesActions[i]->usr_data).chars()));
   }
 
   // Build the action lists for taImageProc methods
   type = &TA_taImageProc;
   methods = &type->methods;
   for (int i=0; i<methods->size; i++) {
-    MethodDef* mdef = methods->FastEl(i);
+    mdef = methods->FastEl(i);
     if (mdef == NULL)
       continue;
     bool show = true;
@@ -951,21 +955,22 @@ void iMainWindowViewer::Constr_DataMenu() {
       TypeSpace* args = &mdef->arg_types;
       // if there were methods we didn't want to show (perhaps they require a spec) put that logic here
       if (show) {
+        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Transform")) {
           String actionString = "imageProc" + mdef->name + "Action";
-          imageProcTransformActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          imageProcTransformActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
         }
         if (mdef->HasOption("CAT_Filter")) {
           String actionString = "imageProc" + mdef->name + "Action";
-          imageProcFilterActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          imageProcFilterActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         if (mdef->HasOption("CAT_Noise")) {
           String actionString = "imageProc" + mdef->name + "Action";
-          imageProcNoiseActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          imageProcNoiseActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
         if (mdef->HasOption("CAT_ImageProc")) {
           String actionString = "imageProc" + mdef->name + "Action";
-          imageProcImageProcActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+          imageProcImageProcActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));
         }
       }
     }
@@ -974,25 +979,25 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<imageProcTransformActions.size; i++) {
     processImageMenu->AddAction(imageProcTransformActions[i]);
     connect (imageProcTransformActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcTransformActions[i], QString(imageProcTransformActions[i]->label().chars()));
+    signalMapperForImageProc->setMapping(imageProcTransformActions[i], QString(String(imageProcTransformActions[i]->usr_data).chars()));
   }
   processImageMenu->AddSep();
   for (int i=0; i<imageProcFilterActions.size; i++) {
     processImageMenu->AddAction(imageProcFilterActions[i]);
     connect (imageProcFilterActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcFilterActions[i], QString(imageProcFilterActions[i]->label().chars()));
+    signalMapperForImageProc->setMapping(imageProcFilterActions[i], QString(String(imageProcFilterActions[i]->usr_data).chars()));
   }
   processImageMenu->AddSep();
   for (int i=0; i<imageProcNoiseActions.size; i++) {
     processImageMenu->AddAction(imageProcNoiseActions[i]);
     connect (imageProcNoiseActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcNoiseActions[i], QString(imageProcNoiseActions[i]->label().chars()));
+    signalMapperForImageProc->setMapping(imageProcNoiseActions[i], QString(String(imageProcNoiseActions[i]->usr_data).chars()));
   }
   processImageMenu->AddSep();
   for (int i=0; i<imageProcImageProcActions.size; i++) {
     processImageMenu->AddAction(imageProcImageProcActions[i]);
     connect (imageProcImageProcActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcImageProcActions[i], QString(imageProcImageProcActions[i]->label().chars()));
+    signalMapperForImageProc->setMapping(imageProcImageProcActions[i], QString(String(imageProcImageProcActions[i]->usr_data).chars()));
   }
   
   connect (signalMapperForDataProc, SIGNAL(mapped(QString)), this, SLOT(DataProcLauncher(QString))) ;
