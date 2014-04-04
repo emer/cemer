@@ -65,6 +65,7 @@ public:
   T3Color& operator =(const iColor& cp) {cp.getRgb(r, g, b); return *this;}
   T3Color& operator =(float x_) {r = x_; g = x_; b = x_; return *this;}
   operator SbColor() const {return SbColor(rgb);}
+  operator iColor() const { iColor rv; rv.setRgb(r,g,b); return rv; }
 };
 
 

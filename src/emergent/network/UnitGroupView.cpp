@@ -24,6 +24,7 @@
 #include <MemberDef>
 #include <T3Panel>
 #include <T3ExaminerViewer>
+#include <taSvg>
 
 #include <taMisc>
 
@@ -510,7 +511,7 @@ void UnitGroupView::Render_impl_blocks() {
   normal_dat[idx++].setValue(0.0f, 1.0f, 0.0f); // top = 4
   normal.finishEditing();
 
-  float disp_scale = lay->disp_scale;
+  const float disp_scale = lay->disp_scale;
 
   int n_geom = lay->flat_geom.Product();
   int n_per_vtx = 8;
@@ -526,6 +527,10 @@ void UnitGroupView::Render_impl_blocks() {
   if(nv->snap_bord_disp) {
     spacing += max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
     if(spacing > 0.25f) spacing = 0.25f;
+  }
+
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::Group();
   }
 
   bool build_text = false;
@@ -560,11 +565,19 @@ void UnitGroupView::Render_impl_blocks() {
     fnt->size.setValue(ufontsz);
   }
 
+  // SVG render stuff:
+  taVector3i svg_pos;
+  taVector3f svg_posn;
+  T3Color col;
+  if(nv->render_svg) {
+    lay->GetAbsPos(svg_pos);
+    svg_posn = nv->LayerPosToCoin3D(svg_pos);
+  }
+
   SbVec3f* vertex_dat = vertex.startEditing();
 
   String val_str = "0.0";       // initial default
   String unit_name;
-  T3Color col;
   taVector2i pos;
   taVector2i upos;
   int v_idx = 0;
@@ -591,6 +604,44 @@ void UnitGroupView::Render_impl_blocks() {
       vertex_dat[v_idx++].setValue(xp1, zp, yp); // 10_v = 2
       vertex_dat[v_idx++].setValue(xp, zp, yp1); // 01_v = 3
       vertex_dat[v_idx++].setValue(xp1, zp, yp1); // 11_v = 4
+
+      if(nv->render_svg) {
+        float val;
+        float sc_val;
+        // this is from UpdateUnitValues_blocks()
+        nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
+        Unit* unit = lay->UnitAtCoord(pos);
+        if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
+          col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
+        }
+        if(unit && unit->lesioned()) {
+          sc_val = 0.0f;
+        }
+
+        float zp = .5f * sc_val / max_z;
+
+        nv->svg_str
+          << taSvg::Path((iColor)col, 1.0f)
+          // left side wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          // right side wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+          // front wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << taSvg::PathEnd();
+      }
 
       if(nv->unit_text_disp != NetView::UTD_NONE) {
         if(build_text || un_txt->getNumChildren() <= t_idx) {
@@ -750,6 +801,10 @@ void UnitGroupView::Render_impl_blocks() {
   mats.finishEditing();
 
   UpdateUnitValues_blocks(); // hand off to next guy to adjust block heights
+
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::GroupEnd();
+  }
 }
 
 // Update the height of each unit block based on the unit's value as
