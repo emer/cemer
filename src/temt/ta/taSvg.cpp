@@ -56,7 +56,7 @@ String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
   cur_inst->view_vol = new SbViewVolume();
   cur_inst->main_xform = new SbMatrix;
   SbViewportRegion rvp;
-  *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume(rvp);
+  *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume();
   SoTransform* tr = new SoTransform;
   tr->ref();
   mn->main_xform.CopyTo(tr);
