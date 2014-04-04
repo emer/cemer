@@ -143,10 +143,10 @@ public:
   iAction*            editFindAction;
   iAction*            editFindNextAction;
   
-  iAction_List         dataCopyActions;
-  iAction_List         dataOrderActions;
-  iAction_List         dataSelectActions;
-  iAction_List         dataColumnsActions;
+  iAction_List         dataProcCopyActions;
+  iAction_List         dataProcOrderActions;
+  iAction_List         dataProcSelectActions;
+  iAction_List         dataProcColumnsActions;
   iAction_List         dataAnalStatsActions;
   iAction_List         dataAnalDistanceActions;
   iAction_List         dataAnalHighDimActions;
