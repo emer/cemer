@@ -27,6 +27,7 @@
 #include <Inventor/nodes/SoTransform.h>
 
 TA_BASEFUNS_CTORS_DEFN(taSvg);
+SMARTREF_OF_CPP(taSvg);
 
 taSvgPtr taSvg::cur_inst;
 
@@ -55,8 +56,7 @@ String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
   cur_inst->view_vol = new SbViewVolume();
   cur_inst->main_xform = new SbMatrix;
   SbViewportRegion rvp;
-  *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume(vw->getViewportRegion(),
-                                                               rvp);
+  *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume(rvp);
   SoTransform* tr = new SoTransform;
   tr->ref();
   mn->main_xform.CopyTo(tr);
