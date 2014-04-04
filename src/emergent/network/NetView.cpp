@@ -32,6 +32,7 @@
 #include <T3LayerNode>
 #include <T3UnitGroupNode>
 #include <QKeyEvent>
+#include <taSvg>
 
 #include <taMisc>
 
@@ -1499,6 +1500,20 @@ void NetView::Render_wt_lines() {
   color.finishEditing();
   coords.finishEditing();
   mats.finishEditing();
+}
+
+void NetView::SaveImageSVG(const String& svg_fname) {
+  T3ExaminerViewer* vw = GetViewer();
+  if(!vw) return;
+  render_svg = true;
+  svg_str = "";
+  svg_str << taSvg::Header(vw, this);
+  // taSvg::cur_inst->coord_off.y = -1.0f;
+  Render_impl();
+  svg_str << taSvg::Footer();
+  render_svg = false;
+  svg_str.SaveToFile(svg_fname);
+  Render_impl();
 }
 
 void NetView::Reset_impl() {

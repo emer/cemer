@@ -16,12 +16,15 @@
 #include "taSvg.h"
 #include <iColor>
 #include <T3ExaminerViewer>
+#include <T3DataViewMain>
 
 #include <taMisc>
 
-#include <Inventor/nodes/SoCamera.h>
 #include <Inventor/SbViewVolume.h>
 #include <Inventor/SbViewportRegion.h>
+#include <Inventor/SbMatrix.h>
+#include <Inventor/nodes/SoCamera.h>
+#include <Inventor/nodes/SoTransform.h>
 
 TA_BASEFUNS_CTORS_DEFN(taSvg);
 
@@ -29,6 +32,9 @@ taSvgPtr taSvg::cur_inst;
 
 void taSvg::Initialize() {
   view_vol = NULL;
+  main_xform = NULL;
+  coord_mult = 1.0f;
+  coord_off = 0.0f;
 }
 
 void taSvg::Destroy() {
@@ -36,16 +42,34 @@ void taSvg::Destroy() {
     delete view_vol;
     view_vol = NULL;
   }
+  if(main_xform) {
+    delete main_xform;
+    main_xform = NULL;
+  }
 }
 
-String taSvg::Header(T3ExaminerViewer* vw,
+String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
                      float pix_width, float pix_height) {
 
   cur_inst = new taSvg;
   cur_inst->view_vol = new SbViewVolume();
+  cur_inst->main_xform = new SbMatrix;
   SbViewportRegion rvp;
   *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume(vw->getViewportRegion(),
                                                                rvp);
+  SoTransform* tr = new SoTransform;
+  tr->ref();
+  mn->main_xform.CopyTo(tr);
+
+  SbMatrix matrix;
+  matrix.setTransform(tr->translation.getValue(),
+                      tr->rotation.getValue(),
+                      tr->scaleFactor.getValue(),
+                      tr->scaleOrientation.getValue(),
+                      tr->center.getValue());
+  *(cur_inst->main_xform) = matrix * cur_inst->view_vol->getMatrix();
+  
+  tr->unref();
 
   // these turn out not to bue useful:
   // float width = cur_inst->view_vol->getWidth();
@@ -85,20 +109,36 @@ String taSvg::Footer() {
 
 String taSvg::Coords(float x, float y, float z) {
   if(!CheckInst()) return _nilString;
-  SbVec3f src(x+1.0f,y,-z); // needed to center properly for some reason..
-  //  SbVec3f src(x,y,z);
+  taVector3f srcv(x,y,z);
+  srcv *= cur_inst->coord_mult;
+  srcv += cur_inst->coord_off;
+  SbVec3f src(srcv.x,srcv.y,srcv.z);
   SbVec3f dst;
-  cur_inst->view_vol->projectToScreen(src, dst);
+  //  cur_inst->view_vol->projectToScreen(src, dst);
+
+  cur_inst->main_xform->multVecMatrix(src, dst);
+  // coordinates are in range [-1, 1], normalize to [0,1]
+  dst *= 0.5f;
+  dst += SbVec3f(0.5f, 0.5f, 0.5f);
+
   // note: z = depth plane here -- could use for sorting by depth..
   return String(1000.0f * dst[0]) + "," + String(1000.0f - (1000.0f * dst[1])) + " ";
 }
 
 String taSvg::CoordsXY(float x, float y, float z) {
   if(!CheckInst()) return _nilString;
-  SbVec3f src(x+1.0f,y,-z); // needed to center properly for some reason..
-  //  SbVec3f src(x,y,z);
+  taVector3f srcv(x,y,z);
+  srcv *= cur_inst->coord_mult;
+  srcv += cur_inst->coord_off;
+  SbVec3f src(srcv.x,srcv.y,srcv.z);
   SbVec3f dst;
-  cur_inst->view_vol->projectToScreen(src, dst);
+  //  cur_inst->view_vol->projectToScreen(src, dst);
+
+  cur_inst->main_xform->multVecMatrix(src, dst);
+  // coordinates are in range [-1, 1], normalize to [0,1]
+  dst *= 0.5f;
+  dst += SbVec3f(0.5f, 0.5f, 0.5f);
+
   // note: z = depth plane here -- could use for sorting by depth..
   String rval;
   rval  << "x=\"" << 1000.0f * dst[0] << "\" y=\""

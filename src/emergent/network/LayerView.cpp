@@ -25,6 +25,7 @@
 #include <T3Misc>
 #include <taProject>
 #include <T3Panel>
+#include <taSvg>
 
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/SbLinear.h>
@@ -158,10 +159,31 @@ void LayerView::Render_impl() {
   T3LayerNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::Group();
+  }
+
+  taVector3i pos;
+  taVector3f aposn;
+  taVector3i sz; sz.x = lay->scaled_disp_geom.x; sz.y = lay->scaled_disp_geom.y;
+  taVector3f szn;
+
   if(nv->lay_layout == NetView::THREE_D) {
-    ft->translate.SetXYZ((float)lay->pos.x / nv->eff_max_size.x,
-			 (float)lay->pos.z / nv->eff_max_size.z,
-			 (float)-lay->pos.y / nv->eff_max_size.y);
+    taVector3f posn = nv->LayerPosToCoin3D(lay->pos);
+    ft->translate.SetXYZ(posn.x, posn.y, posn.z);
+
+    if(nv->render_svg) {
+      lay->GetAbsPos(pos);
+      aposn = nv->LayerPosToCoin3D(pos);
+      szn = nv->LayerPosToCoin3D(sz);
+      nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f), 6.0f) // thick..
+                  << "M " << taSvg::Coords(aposn)
+                  << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z)
+                  << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z + szn.z)
+                  << "L " << taSvg::Coords(aposn.x, aposn.y, aposn.z + szn.z)
+                  << "L " << taSvg::Coords(aposn)
+                  << taSvg::PathEnd();
+    }
   }
   else {
     ft->translate.SetXYZ((float)lay->pos2d.x / nv->eff_max_size.x,
@@ -199,6 +221,12 @@ void LayerView::Render_impl() {
   if(nv->lay_layout == NetView::THREE_D) {
     SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
     node_so->transformCaption(tran);
+
+    if(nv->render_svg) {
+      nv->svg_str << taSvg::Text(data()->GetName(),
+                                 aposn.x, aposn.y-eff_lay_font_size, aposn.z + lay_wd,
+                                 iColor("black"), .9f * eff_lay_font_size, taSvg::LEFT);
+    }
   }
   else {
     SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
@@ -206,6 +234,10 @@ void LayerView::Render_impl() {
     node_so->transformCaption(rot, tran);
   }
   inherited::Render_impl();
+
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::GroupEnd();
+  }
 }
 
 // callback for layer xy dragger

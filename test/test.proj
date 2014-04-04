@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6947
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6957
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -7874,7 +7874,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.0005327650578692555;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -7998,7 +7998,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  display=1;
 	  lay_layout=THREE_D;
 	  lay_mv=1;
-	  net_text=1;
+	  net_text=0;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.7: y=0.7: z=0.7: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0: y=1: z=-1: }: };
 	  net_text_rot=-90;

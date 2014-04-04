@@ -201,7 +201,7 @@ public:
   ////////////////////////////////////////////////////////////////
   // display updating & rendering
 
-  void         BuildAll() override;
+  void                  BuildAll() override;
   // creates fully populated subviews (but not So -- that is done in Render)
   virtual void          InitDisplay(bool init_panel = true);
   // hard reset of display, esp. Unit values -- also calls BuildAll.  Note this does not call Render -- that is done by UpdateDisplay, so a full reset is InitDisplay followed by UpdateDisplay
@@ -280,8 +280,15 @@ public:
   virtual void          unTrappedKeyPressEvent(QKeyEvent* e);
   // #IGNORE process key presses from examiner viewer -- for arrow-key navigation
 
+  inline taVector3f  LayerPosToCoin3D(const taVector3i& pos)
+  { taVector3f posn = pos; posn /= eff_max_size;
+    float t = posn.z; posn.z = -posn.y; posn.y = t; return posn; }
+  // #IGNORE convert to coin coordinate system
+
   bool         ShowDraggers() const override { return lay_mv; }
   void         DataUnitsXForm(taVector3f& pos, taVector3f& size) override;
+
+  void         SaveImageSVG(const String& svg_fname) override;
 
   void         Dump_Load_post() override;
 #ifndef __MAKETA__
@@ -299,7 +306,7 @@ public:
 
 protected:
   T3DataView_PtrList    prjns;          // #IGNORE list of prjn objects under us
-  iViewPanelOfNetwork*         nvp; // created during first Render
+  iViewPanelOfNetwork*  nvp; // created during first Render
   bool                  no_init_on_rerender; // set by some routines to prevent init on render to avoid losing history data -- only when known to be safe..
   LayerLayout   	prev_lay_layout;  // #IGNORE previous layer layout -- for detecting changes
 
@@ -312,15 +319,15 @@ protected:
   void         OnWindowBind_impl(iT3Panel* vw) override;
   void         Render_pre() override; // #IGNORE
   void         Render_impl() override; // #IGNORE
-  void                  Render_net_text();
-  void                  Render_wt_lines();
+  void         Render_net_text();
+  void         Render_wt_lines();
   void         Reset_impl() override; // #IGNORE
-  void                  UpdateAutoScale(); // #IGNORE prepass updates scale from values
-  void                  viewWin_NotifySignal(ISelectableHost* src, int op);
+  void         UpdateAutoScale(); // #IGNORE prepass updates scale from values
+  void         viewWin_NotifySignal(ISelectableHost* src, int op);
 private:
   SIMPLE_COPY(NetView)
-  void                  Initialize();
-  void                  Destroy();
+  void         Initialize();
+  void         Destroy();
 };
 
 #endif // NetView_h

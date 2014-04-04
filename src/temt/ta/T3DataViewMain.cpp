@@ -24,6 +24,7 @@
 TA_BASEFUNS_CTORS_DEFN(T3DataViewMain);
 
 void T3DataViewMain::Initialize() {
+  render_svg = false;
 }
 
 void T3DataViewMain::InitLinks() {
@@ -113,9 +114,11 @@ void T3DataViewMain::ReBuildAll() {
 void T3DataViewMain::SaveImageSVG(const String& svg_fnm) {
   taMisc::Error("Sorry, SVG output not (yet) supported for this type of object");
   // code generally looks like this:
+  // T3ExaminerViewer* vw = GetViewer();
+  // if(!vw) return;
   // render_svg = true;
   // svg_str = "";
-  // svg_str << taSvg::Header(width, 1.0f);
+  // svg_str << taSvg::Header(vw);
   // RenderGraph();    // whatever is proper render
   // RenderAnnoteSvg();
   // svg_str << taSvg::Footer();

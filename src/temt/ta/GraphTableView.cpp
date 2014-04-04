@@ -159,7 +159,6 @@ void GraphTableView::Initialize() {
   mat_layout = taMisc::BOT_ZERO;
   mat_odd_vert = true;
   scrolling_ = false;
-  render_svg = false;
 
   err_spacing = 1;
   err_bar_width = .02f;
@@ -1025,7 +1024,9 @@ void GraphTableView::SaveImageSVG(const String& svg_fname) {
   if(!vw) return;
   render_svg = true;
   svg_str = "";
-  svg_str << taSvg::Header(vw);
+  svg_str << taSvg::Header(vw, this);
+  taSvg::cur_inst->coord_mult.z = -1.0f;
+  taSvg::cur_inst->coord_off.x = 1.0f;
   RenderGraph();
   RenderAnnoteSvg();
   svg_str << taSvg::Footer();

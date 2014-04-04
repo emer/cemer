@@ -28,7 +28,9 @@
 // declare all other types mentioned but not required to include:
 class iColor; // 
 class SbViewVolume; //
+class SbMatrix; //
 class T3ExaminerViewer; //
+class T3DataViewMain; //
 
 taTypeDef_Of(taSvg);
 
@@ -48,9 +50,12 @@ public:
 
   static taSvgPtr cur_inst;       // current instance of svg for rendering
   SbViewVolume*   view_vol;       // #IGNORE captures camera view projection data
+  SbMatrix*       main_xform;     // #IGNORE the main transform 
+  taVector3f      coord_mult;     // #IGNORE extra global multipliers to apply to coords before projecting -- deals with global diffs in various viewers -- applied before offs
+  taVector3f      coord_off;      // #IGNORE extra global offsets to add to coords before projecting -- deals with global offset diffs in various viewers
 
-  static String  Header(T3ExaminerViewer* viewer, float pix_width = 400.0,
-                        float pix_height = 400.0);
+  static String  Header(T3ExaminerViewer* viewer, T3DataViewMain* main_vw,
+                        float pix_width = 400.0, float pix_height = 400.0);
   // #IGNORE initializes the svg rendering information based on the given camera, along with the full svg header to start an svg image -- pixel width and height are then multiplied by the normalized width, height so you don't need to do that manually
   static bool    CheckInst();
   // #CAT_Svg check if the instance is present and properly initialized

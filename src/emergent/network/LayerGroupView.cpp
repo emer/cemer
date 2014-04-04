@@ -23,6 +23,7 @@
 #include <T3ExaminerViewer>
 #include <T3Misc>
 #include <taProject>
+#include <taSvg>
 
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -180,16 +181,32 @@ void LayerGroupView::Render_impl() {
   float net_margin = 0.05f;
   float gpz_2d = 0.01f;
 
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::Group();
+  }
+
   taTransform* ft = transform(true);
   if(nv->lay_layout == NetView::THREE_D) {
     lgp->GetAbsPos(pos);
-    ft->translate.SetXYZ((float)pos.x / nv->eff_max_size.x,
-			 ((float)pos.z) / nv->eff_max_size.z,
-			 (float)-pos.y / nv->eff_max_size.y);
+    taVector3f posn = nv->LayerPosToCoin3D(pos);
+    ft->translate.SetXYZ(posn.x, posn.y, posn.z);
 
     node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
 		     lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
 		     nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
+
+    if(nv->render_svg) {
+      if(!node_so->hideLines()) {
+        taVector3f szn = nv->LayerPosToCoin3D(lgp->max_disp_size);
+        nv->svg_str << taSvg::Path(iColor(0.8f, 0.5f, 0.8f), nv->view_params.laygp_width)
+                    << "M " << taSvg::Coords(posn)
+                    << "L " << taSvg::Coords(posn.x + szn.x, posn.y, posn.z)
+                    << "L " << taSvg::Coords(posn.x + szn.x, posn.y + szn.y, posn.z)
+                    << "L " << taSvg::Coords(posn.x, posn.y + szn.y, posn.z)
+                    << "L " << taSvg::Coords(posn)
+                    << taSvg::PathEnd();
+      }
+    }
   }
   else {
     lgp->GetAbsPos2d(pos);
@@ -231,6 +248,10 @@ void LayerGroupView::Render_impl() {
   }
 
   inherited::Render_impl();
+
+  if(nv->render_svg) {
+    nv->svg_str << taSvg::GroupEnd();
+  }
 }
 
 // callback for layer xy dragger
