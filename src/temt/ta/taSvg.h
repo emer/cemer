@@ -24,6 +24,7 @@
 // member includes:
 #include <taVector3f>
 #include <iVec3f>
+#include <iColor>
 
 // declare all other types mentioned but not required to include:
 class iColor; // 
@@ -77,7 +78,8 @@ public:
   // #IGNORE output screen x="x" y="y" from given 3D point
   static String  CoordsXY(float x, float y, float z);
   // #CAT_Svg output screen x="x" y="y" from given 3D point
-  static String  Path(const iColor& color, float line_width = 2.0);
+  static String  Path(const iColor& color, float line_width = 2.0, bool fill = false, 
+                      const iColor& fill_color = iColor::black_);
   // #CAT_Svg <path> start, leaving d=" hanging -- to be filled in with Coords calls
   static String  PathEnd();
   // #CAT_Svg end the path

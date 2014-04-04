@@ -176,7 +176,7 @@ void LayerView::Render_impl() {
       lay->GetAbsPos(pos);
       aposn = nv->LayerPosToCoin3D(pos);
       szn = nv->LayerPosToCoin3D(sz);
-      nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f), 6.0f) // thick..
+      nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f, .5f), 6.0f) // thick..
                   << "M " << taSvg::Coords(aposn)
                   << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z)
                   << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z + szn.z)

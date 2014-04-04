@@ -569,6 +569,7 @@ void UnitGroupView::Render_impl_blocks() {
   taVector3i svg_pos;
   taVector3f svg_posn;
   T3Color col;
+  float trans = nv->view_params.unit_trans;
   if(nv->render_svg) {
     lay->GetAbsPos(svg_pos);
     svg_posn = nv->LayerPosToCoin3D(svg_pos);
@@ -604,44 +605,6 @@ void UnitGroupView::Render_impl_blocks() {
       vertex_dat[v_idx++].setValue(xp1, zp, yp); // 10_v = 2
       vertex_dat[v_idx++].setValue(xp, zp, yp1); // 01_v = 3
       vertex_dat[v_idx++].setValue(xp1, zp, yp1); // 11_v = 4
-
-      if(nv->render_svg) {
-        float val;
-        float sc_val;
-        // this is from UpdateUnitValues_blocks()
-        nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
-        Unit* unit = lay->UnitAtCoord(pos);
-        if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
-          col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
-        }
-        if(unit && unit->lesioned()) {
-          sc_val = 0.0f;
-        }
-
-        float zp = .5f * sc_val / max_z;
-
-        nv->svg_str
-          << taSvg::Path((iColor)col, 1.0f)
-          // left side wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          // right side wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
-          // front wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << taSvg::PathEnd();
-      }
 
       if(nv->unit_text_disp != NetView::UTD_NONE) {
         if(build_text || un_txt->getNumChildren() <= t_idx) {
@@ -794,6 +757,61 @@ void UnitGroupView::Render_impl_blocks() {
       // total coords = 7 + 7 + 5 = 19
       // total norms = 4 + 4 + 2 = 10
       // total mats = 3
+
+      if(nv->render_svg) {
+        // this has to be here because of the backward ordering
+        Unit* unit = lay->UnitAtCoord(pos);
+        if(unit)
+          lay->UnitDispPos(unit, upos);
+        float xp = disp_scale * (((float)upos.x + spacing) / nv->eff_max_size.x);
+        float yp = -disp_scale * (((float)upos.y + spacing) / nv->eff_max_size.y);
+        float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->eff_max_size.x);
+        float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->eff_max_size.y);
+
+        float val;
+        float sc_val;
+        // this is from UpdateUnitValues_blocks()
+        nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
+        if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
+          col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
+        }
+        if(unit && unit->lesioned()) {
+          sc_val = 0.0f;
+        }
+        float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+        if(unit && unit->lesioned()) {
+          alpha = 0.0f;
+        }
+
+        iColor icol = (iColor)col;
+        icol.a = iColor::fc2ic(alpha);
+
+        float zp = .5f * sc_val / max_z;
+
+        nv->svg_str
+          << taSvg::Path(icol, 1.0f, true, icol) // fill
+          // left side wall: note: the order matters for self-intersection
+          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+          // right side wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp1)
+          // front wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+          // top wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
+          << taSvg::PathEnd();
+      }
     }
   }
   coords.finishEditing();

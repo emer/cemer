@@ -146,11 +146,36 @@ String taSvg::CoordsXY(float x, float y, float z) {
   return rval;
 }
 
-String taSvg::Path(const iColor& color, float line_width) {
+String taSvg::Path(const iColor& color, float line_width, bool fill,
+                   const iColor& fill_color) {
   if(!CheckInst()) return _nilString;
   String rval;
-  rval << "<path fill=\"none\" stroke=\"#" << color.toString()
-       << "\" stroke-width=\"" << line_width << "\"\n"
+  if(fill) {
+    rval << "<path fill=\"#" << fill_color.toString()
+         << "\" stroke=\"#" << color.toString()
+         << "\" stroke-width=\"" << line_width << "\"";
+    if(fill_color.a != 255 || color.a != 255) {
+      if(fill_color.a == color.a) {
+          rval << " opacity=\"" << fill_color.alphaf() << "\"";
+      }
+      else {
+        if(fill_color.a != 255) {
+          rval << " fill-opacity=\"" << fill_color.alphaf() << "\"";
+        }
+        if(color.a != 255) {
+          rval << " stroke-opacity=\"" << color.alphaf() << "\"";
+        }
+      }
+    }
+  }
+  else {
+    rval << "<path fill=\"none\" stroke=\"#" << color.toString()
+         << "\" stroke-width=\"" << line_width << "\"";
+    if(color.a != 255) {
+      rval << " stroke-opacity=\"" << color.alphaf() << "\"";
+    }
+  }
+  rval << "\n"
        << "  d=\"";
   return rval;
 }
