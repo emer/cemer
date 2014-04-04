@@ -83,7 +83,7 @@ public:
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group      edits;  // special edit dialogs for selected elements
   DataTable_Group       data;   // data, such as patterns for network input
-  taBase_Group          data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
+  taBase_Group          data_proc; // #HIDDEN_TREE objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group         programs; // Gui-based programs to run simulations and other processing
   taViewer_List         viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
   taViewer_List         viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
