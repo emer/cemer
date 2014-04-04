@@ -77,7 +77,7 @@ public:
   MainWinLocs           cur_main_focus; // where is our current major focus located?
   WinSubLocs            cur_sub_focus; // where is our current sub focus within main?
 
-  iAction_List        actions; // our own list of all created actions
+  iAction_List          actions; // our own list of all created actions
   iBrowseHistory*       brow_hist;
   taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
   QSplitter*            body;           // #IGNORE body of the window
@@ -106,7 +106,6 @@ public:
   taiWidgetMenu*              analysisMenu;       // data_analysis methods
   taiWidgetMenu*              generateMenu;       // data_gen methods
   taiWidgetMenu*              processImageMenu;   // image_proc methods
-  taiWidgetMenu*              dataSpecMenu;       // create various specifications needed by data... methods
   
   iAction*            historyBackAction;
   iAction*            historyForwardAction;
@@ -153,6 +152,16 @@ public:
   iAction_List         dataAnalHighDimActions;
   iAction_List         dataAnalCleanActions;
   iAction_List         dataAnalGraphActions;
+  iAction_List         dataGenBasicActions;
+  iAction_List         dataGenListsActions;
+  iAction_List         dataGenDrawActions;
+  iAction_List         dataGenRandomActions;
+  iAction_List         dataGenFeatPatsActions;
+  iAction_List         dataGenFilesActions;
+  iAction_List         imageProcTransformActions;
+  iAction_List         imageProcFilterActions;
+  iAction_List         imageProcNoiseActions;
+  iAction_List         imageProcImageProcActions;
   
   iAction*            viewRefreshAction;
   iAction*            viewSplitVerticalAction;
@@ -386,7 +395,10 @@ protected slots:
   virtual void          this_DockSelect(iAction* me); // user has selected or unselected one of the docks
   virtual void          this_SaveView(iAction* me); // user does/doesn't want current view saved with project
 
-  virtual void          DataProcessLauncher(QString method_name);
+virtual void          DataProcLauncher(QString method_name);
+virtual void          DataAnalLauncher(QString method_name);
+virtual void          DataGenLauncher(QString method_name);
+virtual void          ImageProcLauncher(QString method_name);
 
 protected:
   static int            s_next_unique_id;

@@ -56,6 +56,9 @@
 #include <tabMisc>
 #include <taRootBase>
 #include <taDataProc>
+#include <taDataAnal>
+#include <taDataGen>
+#include <taImageProc>
 
 #include <QFileInfo>
 #include <QUrl>
@@ -721,9 +724,12 @@ void iMainWindowViewer::Constr_DataMenu() {
   generateMenu = dataMenu->AddSubMenu("Generate");
   processImageMenu = dataMenu->AddSubMenu("Process Image");
   
-  // Build the action lists
-  TypeDef* type = &TA_taDataProc;
-  MethodSpace* methods = &type->methods;
+  TypeDef* type;
+  MethodSpace* methods;
+
+  // Build the action lists for taDataProc methods
+  type = &TA_taDataProc;
+  methods = &type->methods;
   for (int i=0; i<methods->size; i++) {
     MethodDef* mdef = methods->FastEl(i);
     if (mdef == NULL)
@@ -738,6 +744,7 @@ void iMainWindowViewer::Constr_DataMenu() {
           break;
         }
       }
+      
       if (show) {
         if (mdef->HasOption("CAT_Copy")) {
           String actionString = "dataProcess" + mdef->name + "Action";
@@ -783,10 +790,162 @@ void iMainWindowViewer::Constr_DataMenu() {
     signalMapperForDataProc->setMapping(dataColumnsActions[i], QString(dataColumnsActions[i]->label().chars()));
   }
   
-  connect (signalMapperForDataProc, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
-  connect (signalMapperForDataAnal, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
-  connect (signalMapperForDataGen, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
-  connect (signalMapperForImageProc, SIGNAL(mapped(QString)), this, SLOT(DataProcessLauncher(QString))) ;
+  // Build the action lists for taDataAnal methods
+  type = &TA_taDataAnal;
+  methods = &type->methods;
+  for (int i=0; i<methods->size; i++) {
+    MethodDef* mdef = methods->FastEl(i);
+    if (mdef == NULL)
+      continue;
+    bool show = true;
+    if (mdef->HasOption("MENU_BUTTON")) {
+      TypeSpace* args = &mdef->arg_types;
+      // if there were methods we didn't want to show (perhaps they require a spec) put that logic here
+      if (show) {
+         if (mdef->HasOption("CAT_Stats")) {
+          String actionString = "dataAnal" + mdef->name + "Action";
+          dataAnalStatsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        else if (mdef->HasOption("CAT_Distance")) {
+          String actionString = "dataAnal" + mdef->name + "Action";
+          dataAnalDistanceActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        else if (mdef->HasOption("CAT_HighDim")) {
+          String actionString = "dataAnal" + mdef->name + "Action";
+          dataAnalHighDimActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        else if (mdef->HasOption("CAT_Clean")) {
+          String actionString = "dataAnal" + mdef->name + "Action";
+          dataAnalCleanActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        else if (mdef->HasOption("CAT_Graph")) {
+          String actionString = "dataAnal" + mdef->name + "Action";
+          dataAnalGraphActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+      }
+    }
+  }
+
+  for (int i=0; i<dataAnalStatsActions.size; i++) {
+    analysisMenu->AddAction(dataAnalStatsActions[i]);
+    connect (dataAnalStatsActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
+    signalMapperForDataAnal->setMapping(dataAnalStatsActions[i], QString(dataAnalStatsActions[i]->label().chars()));
+  }
+  analysisMenu->AddSep();
+  for (int i=0; i<dataAnalDistanceActions.size; i++) {
+    analysisMenu->AddAction(dataAnalDistanceActions[i]);
+    connect (dataAnalDistanceActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
+    signalMapperForDataAnal->setMapping(dataAnalDistanceActions[i], QString(dataAnalDistanceActions[i]->label().chars()));
+  }
+  analysisMenu->AddSep();
+  for (int i=0; i<dataAnalHighDimActions.size; i++) {
+    analysisMenu->AddAction(dataAnalHighDimActions[i]);
+    connect (dataAnalHighDimActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
+    signalMapperForDataAnal->setMapping(dataAnalHighDimActions[i], QString(dataAnalHighDimActions[i]->label().chars()));
+  }
+  analysisMenu->AddSep();
+  for (int i=0; i<dataAnalCleanActions.size; i++) {
+    analysisMenu->AddAction(dataAnalCleanActions[i]);
+    connect (dataAnalCleanActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
+    signalMapperForDataAnal->setMapping(dataAnalCleanActions[i], QString(dataAnalCleanActions[i]->label().chars()));
+  }
+  analysisMenu->AddSep();
+  for (int i=0; i<dataAnalGraphActions.size; i++) {
+    analysisMenu->AddAction(dataAnalGraphActions[i]);
+    connect (dataAnalGraphActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
+    signalMapperForDataAnal->setMapping(dataAnalGraphActions[i], QString(dataAnalGraphActions[i]->label().chars()));
+  }
+  
+  // Build the action lists for taDataAnal methods
+  type = &TA_taDataGen;
+  methods = &type->methods;
+  for (int i=0; i<methods->size; i++) {
+    MethodDef* mdef = methods->FastEl(i);
+    if (mdef == NULL)
+      continue;
+    bool show = true;
+    if (mdef->HasOption("MENU_BUTTON")) {
+      TypeSpace* args = &mdef->arg_types;
+      for (int j=0; j<args->size; j++) {
+        TypeDef* arg_type = args->FastEl(j);
+        if (arg_type->DerivesFromName("SubMatrixOpSpec")) {
+          show = false;
+          break;
+        }
+      }
+      
+      if (show) {
+        if (mdef->HasOption("CAT_Basic")) {
+          String actionString = "dataGen" + mdef->name + "Action";
+          dataGenBasicActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        if (mdef->HasOption("CAT_Lists")) {
+          String actionString = "dataGen" + mdef->name + "Action";
+          dataGenListsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        if (mdef->HasOption("CAT_Draw")) {
+          String actionString = "dataGen" + mdef->name + "Action";
+          dataGenDrawActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        if (mdef->HasOption("CAT_Random")) {
+          String actionString = "dataGen" + mdef->name + "Action";
+          dataGenRandomActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        if (mdef->HasOption("CAT_FeatPats")) {
+          String actionString = "dataGen" + mdef->name + "Action";
+          dataGenFeatPatsActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+        if (mdef->HasOption("CAT_Files")) {
+          String actionString = "dataGen" + mdef->name + "Action";
+          dataGenFilesActions.Add(new iAction(0, mdef->name, QKeySequence(), actionString));
+        }
+      }
+    }
+  }
+  
+  for (int i=0; i<dataGenBasicActions.size; i++) {
+    generateMenu->AddAction(dataGenBasicActions[i]);
+    connect (dataGenBasicActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
+    signalMapperForDataGen->setMapping(dataGenBasicActions[i], QString(dataGenBasicActions[i]->label().chars()));
+  }
+  generateMenu->AddSep();
+  for (int i=0; i<dataGenListsActions.size; i++) {
+    generateMenu->AddAction(dataGenListsActions[i]);
+    connect (dataGenListsActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
+    signalMapperForDataGen->setMapping(dataGenListsActions[i], QString(dataGenListsActions[i]->label().chars()));
+  }
+  generateMenu->AddSep();
+  for (int i=0; i<dataGenDrawActions.size; i++) {
+    generateMenu->AddAction(dataGenDrawActions[i]);
+    connect (dataGenDrawActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
+    signalMapperForDataGen->setMapping(dataGenDrawActions[i], QString(dataGenDrawActions[i]->label().chars()));
+  }
+  generateMenu->AddSep();
+  for (int i=0; i<dataGenRandomActions.size; i++) {
+    generateMenu->AddAction(dataGenRandomActions[i]);
+    connect (dataGenRandomActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
+    signalMapperForDataGen->setMapping(dataGenRandomActions[i], QString(dataGenRandomActions[i]->label().chars()));
+  }
+  generateMenu->AddSep();
+  for (int i=0; i<dataGenFeatPatsActions.size; i++) {
+    generateMenu->AddAction(dataGenFeatPatsActions[i]);
+    connect (dataGenFeatPatsActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
+    signalMapperForDataGen->setMapping(dataGenFeatPatsActions[i], QString(dataGenFeatPatsActions[i]->label().chars()));
+  }
+  generateMenu->AddSep();
+  for (int i=0; i<dataGenFilesActions.size; i++) {
+    generateMenu->AddAction(dataGenFilesActions[i]);
+    connect (dataGenFilesActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
+    signalMapperForDataGen->setMapping(dataGenFilesActions[i], QString(dataGenFilesActions[i]->label().chars()));
+  }
+  generateMenu->AddSep();
+
+  
+  
+  connect (signalMapperForDataProc, SIGNAL(mapped(QString)), this, SLOT(DataProcLauncher(QString))) ;
+  connect (signalMapperForDataAnal, SIGNAL(mapped(QString)), this, SLOT(DataAnalLauncher(QString))) ;
+  connect (signalMapperForDataGen, SIGNAL(mapped(QString)), this, SLOT(DataGenLauncher(QString))) ;
+  connect (signalMapperForImageProc, SIGNAL(mapped(QString)), this, SLOT(ImageProcLauncher(QString))) ;
 }
 
 void iMainWindowViewer::Constr_ToolsMenu()
@@ -1257,10 +1416,40 @@ void iMainWindowViewer::ctrlCont() {
   Program::last_run_prog->Run_Gui();
 }
 
-void iMainWindowViewer::DataProcessLauncher(QString method_name) {
+void iMainWindowViewer::DataProcLauncher(QString method_name) {
   String meth_name(method_name.toStdString().c_str());
   if (myProject()) {
     taBase* inst = myProject()->FindMakeNewDataProc(&TA_taDataProc, "");
+    if (inst) {
+      inst->CallFun(meth_name);
+    }
+  }
+}
+
+void iMainWindowViewer::DataAnalLauncher(QString method_name) {
+  String meth_name(method_name.toStdString().c_str());
+  if (myProject()) {
+    taBase* inst = myProject()->FindMakeNewDataProc(&TA_taDataAnal, "");
+    if (inst) {
+      inst->CallFun(meth_name);
+    }
+  }
+}
+
+void iMainWindowViewer::DataGenLauncher(QString method_name) {
+  String meth_name(method_name.toStdString().c_str());
+  if (myProject()) {
+    taBase* inst = myProject()->FindMakeNewDataProc(&TA_taDataGen, "");
+    if (inst) {
+      inst->CallFun(meth_name);
+    }
+  }
+}
+
+void iMainWindowViewer::ImageProcLauncher(QString method_name) {
+  String meth_name(method_name.toStdString().c_str());
+  if (myProject()) {
+    taBase* inst = myProject()->FindMakeNewDataProc(&TA_taImageProc, "");
     if (inst) {
       inst->CallFun(meth_name);
     }
@@ -2175,6 +2364,39 @@ void iMainWindowViewer::UpdateUi() {
   }
   for (int i=0; i<dataColumnsActions.size; i++) {
     dataColumnsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalStatsActions.size; i++) {
+    dataAnalStatsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalDistanceActions.size; i++) {
+    dataAnalDistanceActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalHighDimActions.size; i++) {
+    dataAnalHighDimActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalCleanActions.size; i++) {
+    dataAnalCleanActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalGraphActions.size; i++) {
+    dataAnalGraphActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenBasicActions.size; i++) {
+    dataGenBasicActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenListsActions.size; i++) {
+    dataGenListsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenDrawActions.size; i++) {
+    dataGenDrawActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenRandomActions.size; i++) {
+    dataGenRandomActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenFeatPatsActions.size; i++) {
+    dataGenFeatPatsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenFilesActions.size; i++) {
+    dataGenFilesActions[i]->setEnabled(myProject());
   }
 
   emit SetActionsEnabled();
