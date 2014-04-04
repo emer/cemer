@@ -946,10 +946,14 @@ namespace { // anon
   void InitExecCmdPath()
   {
     taMisc::exe_cmd = taMisc::GetFileFmPath(taMisc::args_raw.SafeEl(0));
-    if(taMisc::exe_cmd.contains('_'))
-      taMisc::app_suffix = taMisc::exe_cmd.from('_',-1);
-    else
+    if(taMisc::exe_cmd.contains('_')) {
+      taMisc::app_suffix = taMisc::exe_cmd.from('_');
+      // don't use -1 -- some suffixes have _ in them (e.g., version numbers) and
+      // the app name hopefully does not have a suffix..
+    }
+    else {
       taMisc::app_suffix = "";
+    }
 #ifdef TA_OS_WIN
     if(taMisc::app_suffix.endsWith(".exe")) {
       taMisc::app_suffix = taMisc::app_suffix.before(".exe");

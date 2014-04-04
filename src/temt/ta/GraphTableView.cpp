@@ -1026,7 +1026,6 @@ void GraphTableView::SaveImageSVG(const String& svg_fname) {
   svg_str = "";
   svg_str << taSvg::Header(vw, this);
   taSvg::cur_inst->coord_mult.z = -1.0f;
-  taSvg::cur_inst->coord_off.x = 1.0f;
   RenderGraph();
   RenderAnnoteSvg();
   svg_str << taSvg::Footer();
