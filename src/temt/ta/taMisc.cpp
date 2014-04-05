@@ -198,7 +198,7 @@ float   taMisc::doc_text_scale = 1.0f;
 #endif
 
 String  taMisc::t3d_font_name = "Arial";
-String  taMisc::t3d_bg_color = "grey80";
+String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)
 String  taMisc::t3d_text_color = "black";
 
 // parameters that differ between win and unix

@@ -195,18 +195,19 @@ void LayerGroupView::Render_impl() {
 		     lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
 		     nv->eff_max_size.x, nv->eff_max_size.y, nv->eff_max_size.z);
 
-    if(nv->render_svg) {
-      if(!node_so->hideLines()) {
-        taVector3f szn = nv->LayerPosToCoin3D(lgp->max_disp_size);
-        nv->svg_str << taSvg::Path(iColor(0.8f, 0.5f, 0.8f), nv->view_params.laygp_width)
-                    << "M " << taSvg::Coords(posn)
-                    << "L " << taSvg::Coords(posn.x + szn.x, posn.y, posn.z)
-                    << "L " << taSvg::Coords(posn.x + szn.x, posn.y + szn.y, posn.z)
-                    << "L " << taSvg::Coords(posn.x, posn.y + szn.y, posn.z)
-                    << "L " << taSvg::Coords(posn)
-                    << taSvg::PathEnd();
-      }
-    }
+    // don't render the layer group boxes -- not useful..
+    // if(nv->render_svg) {
+    //   if(!node_so->hideLines()) {
+    //     taVector3f szn = nv->LayerPosToCoin3D(lgp->max_disp_size);
+    //     nv->svg_str << taSvg::Path(iColor(0.8f, 0.5f, 0.8f), nv->view_params.laygp_width)
+    //                 << "M " << taSvg::Coords(posn)
+    //                 << "L " << taSvg::Coords(posn.x + szn.x, posn.y, posn.z)
+    //                 << "L " << taSvg::Coords(posn.x + szn.x, posn.y + szn.y, posn.z)
+    //                 << "L " << taSvg::Coords(posn.x, posn.y + szn.y, posn.z)
+    //                 << "L " << taSvg::Coords(posn)
+    //                 << taSvg::PathEnd();
+    //   }
+    // }
   }
   else {
     lgp->GetAbsPos2d(pos);
