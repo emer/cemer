@@ -150,10 +150,16 @@ String taSvg::Path(const iColor& color, float line_width, bool fill,
                    const iColor& fill_color) {
   if(!CheckInst()) return _nilString;
   String rval;
+  rval << "<path";
+  if(line_width >= 0.0f) {
+    rval << " stroke=\"#" << color.toString() << "\""
+         << " stroke-width=\"" << line_width << "\"";
+  }
+  else {
+    rval << " stroke=\"none\"";
+  }
   if(fill) {
-    rval << "<path fill=\"#" << fill_color.toString()
-         << "\" stroke=\"#" << color.toString()
-         << "\" stroke-width=\"" << line_width << "\"";
+    rval << " fill=\"#" << fill_color.toString() << "\"";
     if(fill_color.a != 255 || color.a != 255) {
       if(fill_color.a == color.a) {
           rval << " opacity=\"" << fill_color.alphaf() << "\"";
@@ -169,9 +175,8 @@ String taSvg::Path(const iColor& color, float line_width, bool fill,
     }
   }
   else {
-    rval << "<path fill=\"none\" stroke=\"#" << color.toString()
-         << "\" stroke-width=\"" << line_width << "\"";
-    if(color.a != 255) {
+    rval << " fill=\"none\"";
+    if(line_width >= 0.0f && color.a != 255) {
       rval << " stroke-opacity=\"" << color.alphaf() << "\"";
     }
   }

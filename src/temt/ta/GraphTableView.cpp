@@ -1931,13 +1931,17 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
         t3gl->errBar(plt, err_plt, err_bar_width);
 
       if(render_svg) {
-        svg_str << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z) // low bar
-                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
-                << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z) // high bar
-                << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
-                << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z) // vert bar
-                << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
-                << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
+        svg_str
+          // low bar
+          << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z)
+          << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z)
+          // high bar
+          << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z)
+          // vert bar
+          << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
       }
     }
 
@@ -2020,6 +2024,11 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
   float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
 
+  if(render_svg) {
+    svg_str << taSvg::Path(plv.color.color(), -1.0f,
+                           true, plv.color.color()); // fill, color
+  }
+
   iVec3f dat;                   // data point
   iVec3f plt;                   // plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
@@ -2087,6 +2096,17 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     }
     gr1->addChild(bar);
 
+    if(render_svg) {
+      if((row - view_range.min) % 10 == 1) {
+        svg_str << "\n";
+      }
+      float hwd = 0.5f * bar_wd_plt;
+      svg_str << "M " << taSvg::Coords(pt.x - hwd, pt.y, pt.z)
+              << "L " << taSvg::Coords(pt.x - hwd, pt.y + size.y, pt.z)
+              << "L " << taSvg::Coords(pt.x + hwd, pt.y + size.y, pt.z)
+              << "L " << taSvg::Coords(pt.x + hwd, pt.y, pt.z);
+    }
+
     if(erv.on && da_er && (row % err_spacing == 0)) {
       float err_dat;
       if(da_er->is_matrix && mat_cell >= 0) {
@@ -2104,6 +2124,20 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
         t3gl->errBar(pt, err_plt, err_bar_width, (T3Color)(clr));
       else
         t3gl->errBar(pt, err_plt, err_bar_width);
+
+      if(render_svg) {
+        svg_str
+          // low bar
+          << "\nM " << taSvg::Coords(plt.x-err_bar_width, plt.y-err_plt, plt.z)
+          << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y-err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x-err_bar_width, plt.y+err_plt, plt.z)
+          // high bar
+          << "L " << taSvg::Coords(plt.x+err_bar_width, plt.y+err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x, plt.y-err_plt, plt.z)
+          // vert bar
+          << "L " << taSvg::Coords(plt.x, plt.y+err_plt, plt.z)
+          << "M " << taSvg::Coords(plt.x, plt.y, plt.z) << "\n"; // back home..
+      }
     }
 
     if((label_spacing > 0) && (row % label_spacing == 0)) {
@@ -2112,6 +2146,11 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
                    str.chars());
     }
   }
+
+  if(render_svg) {
+    svg_str << taSvg::PathEnd();
+  }
+
   t3gl->finishBatch();
 }
 

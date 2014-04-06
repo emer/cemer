@@ -786,10 +786,13 @@ void UnitGroupView::Render_impl_blocks() {
         iColor icol = (iColor)col;
         icol.a = iColor::fc2ic(alpha);
 
+        iColor drk = (iColor)((QColor)icol).darker(150);
+        iColor drker = (iColor)((QColor)drk).darker(150);
+
         float zp = .5f * sc_val / max_z;
 
         nv->svg_str
-          << taSvg::Path(icol, 1.0f, true, icol) // fill
+          << taSvg::Path(drker, -1.0f, true, drker) // fill
           // left side wall: note: the order matters for self-intersection
           << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
           << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp1)
@@ -800,16 +803,22 @@ void UnitGroupView::Render_impl_blocks() {
           << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
           << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
           << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp1)
-          // front wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+          << taSvg::PathEnd();
+        nv->svg_str
+          << taSvg::Path(drk, -1.0f, true, drk) // fill
           // top wall:
           << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
           << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
           << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
           << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
+          << taSvg::PathEnd();
+        nv->svg_str
+          << taSvg::Path(icol, -1.0f, true, icol) // fill
+          // front wall:
+          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
           << taSvg::PathEnd();
       }
     }
