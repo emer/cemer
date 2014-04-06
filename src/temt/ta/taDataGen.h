@@ -45,6 +45,11 @@ public:
     ADD,			// add the numbers
   };
 
+  enum FileType {
+    FILES,
+    DIRS,
+    ALL
+  };
   static bool	CheckDims(float_Matrix* mat, int dims);
   // #IGNORE check dimensionality of matrix, issue warning if not correct
 
@@ -247,13 +252,20 @@ public:
   ///////////////////////////////////////////////////////////////////
   // misc data sources
 
-  static bool	GetDirFiles(DataTable* dest, const String& dir_path, 
+  static bool	GetFiles(DataTable* dest, const String& dir_path,
 			    const String& filter = "", bool recursive = false,
 			    const String& fname_col_nm = "FileName",
 			    const String& path_col_nm = "FilePath",
 			    bool reset_first = true);
   // #CAT_Files #MENU_BUTTON #MENU_ON_Files #NULL_OK_0 #NULL_TEXT_0_NewDataTable read file names from given directory into rows of the data table (must be passed non-null, is NOT reset prior to adding new rows!), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist) -- reset_first resets the data table rows before adding
-
+  
+  static bool	GetFilesOrDirs(DataTable* dest, const String& dir_path, taDataGen::FileType type,
+                          const String& filter = "", bool recursive = false,
+                          const String& fname_col_nm = "FileName",
+                          const String& path_col_nm = "FilePath",
+                          bool reset_first = true);
+  // #CAT_Files #MENU_BUTTON #MENU_ON_Files #NULL_OK_0 #NULL_TEXT_0_NewDataTable read file and/or directory names from given directory into rows of the data table (must be passed non-null, is NOT reset prior to adding new rows!), with the file name and full path to file (including directory names) written to given string column names (these are created if they do not exist) -- reset_first resets the data table rows before adding. A third column indicates if the entry is a file or a directory.
+  
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };

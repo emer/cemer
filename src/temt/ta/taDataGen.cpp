@@ -1405,26 +1405,36 @@ bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
 
 static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path,
                                        const String& filter, bool recursive,
-                                       int fname_idx, int path_idx, int depth) {
+                                       int fname_idx, int path_idx, int depth,
+                                       taDataGen::FileType type) {
 
   if(depth > 20) {
     taMisc::Warning("taDataGen::GetDirFiles -- recursive directory search with depth > 20: probably symbolic link loop");
     return false;
   }
-
+  
   bool found_some = false;
   QDir dir(dir_path);
   if(recursive)
     dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::AllDirs);
-  else
-    dir.setFilter(QDir::Files);
+  else {
+    if (type == taDataGen::FILES)
+      dir.setFilter(QDir::Files);
+    else if (type == taDataGen::DIRS)
+      dir.setFilter(QDir::Dirs);
+  }
   QFileInfoList files = dir.entryInfoList();
-  if(files.size() == 0) return false;
+  if(files.size() == 0)
+    return false;
+  DataCol* dc = NULL;
+  if(type == taDataGen::ALL) {
+    dc = dest->FindColName("isFile", 0);
+  }
   for(int i=0;i<files.size();i++) {
     QFileInfo fli = files[i];
     String fl = fli.fileName();
-    if(fli.isFile()) {
-      if(filter.empty() || fl.contains(filter)) {
+    if(type == taDataGen::ALL || (type == taDataGen::FILES && fli.isFile()) || (type == taDataGen::DIRS && fli.isDir())) {
+      if((filter.empty() || fl.contains(filter)) && !fli.isHidden()) {
         dest->AddBlankRow();
         found_some = true;
         if(fname_idx >= 0) {
@@ -1433,12 +1443,15 @@ static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path,
         if(path_idx >= 0) {
           dest->SetValAsString(fli.filePath(), path_idx, -1);
         }
+        if (dc) {
+          dest->SetValAsInt(fli.isFile() == true, dc->col_idx, -1);
+        }
       }
     }
     if(recursive && fli.isDir()) {
       String nwpth = dir_path + "/" + fl;
       bool gs = taDataGen_GetDirFiles_impl(dest, nwpth, filter, recursive, fname_idx,
-                                           path_idx, depth+1);
+                                           path_idx, depth+1, type);
       found_some = found_some || gs;
     }
   }
@@ -1446,23 +1459,54 @@ static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path,
 }
 
 
-bool taDataGen::GetDirFiles(DataTable* dest, const String& dir_path,
+bool taDataGen::GetFiles(DataTable* dest, const String& dir_path,
                             const String& filter, bool recursive,
                             const String& fname_col_nm,
                             const String& path_col_nm, bool reset_first) {
   if(!dest) return false;
   dest->StructUpdate(true);
-
+  
   if(reset_first)
     dest->RemoveAllRows();
-
+  
   int fname_idx = -1;
   if(!fname_col_nm.empty())
     dest->FindMakeColName(fname_col_nm, fname_idx, DataTable::VT_STRING, 0);
-
+  
   int path_idx = -1;
   if(!path_col_nm.empty())
     dest->FindMakeColName(path_col_nm, path_idx, DataTable::VT_STRING, 0);
+  
+  return taDataGen_GetDirFiles_impl(dest, dir_path, filter, recursive, fname_idx, path_idx, 0, taDataGen::FILES);
+}
 
-  return taDataGen_GetDirFiles_impl(dest, dir_path, filter, recursive, fname_idx, path_idx, 0);
+bool taDataGen::GetFilesOrDirs(DataTable* dest, const String& dir_path, taDataGen::FileType type,
+                            const String& filter, bool recursive,
+                            const String& fname_col_nm,
+                            const String& path_col_nm, bool reset_first) {
+  if(!dest) return false;
+  dest->StructUpdate(true);
+  
+  if(reset_first)
+    dest->RemoveAllRows();
+  
+  int fname_idx = -1;
+  if(!fname_col_nm.empty())
+    dest->FindMakeColName(fname_col_nm, fname_idx, DataTable::VT_STRING, 0);
+  
+  int path_idx = -1;
+  if(!path_col_nm.empty())
+    dest->FindMakeColName(path_col_nm, path_idx, DataTable::VT_STRING, 0);
+  
+  if (type == taDataGen::ALL) {
+    int type_idx = -1;
+    dest->FindMakeColName("isFile", type_idx, DataTable::VT_BYTE, 0);
+  }
+  else {  // delete if there from previous call
+    DataCol* dc = dest->FindColName("isFile", 0);
+    if (dc)
+      dest->data.RemoveEl(dc);
+  }
+  
+  return taDataGen_GetDirFiles_impl(dest, dir_path, filter, recursive, fname_idx, path_idx, 0, type);
 }
