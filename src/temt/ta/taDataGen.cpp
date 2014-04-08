@@ -1459,7 +1459,7 @@ static bool taDataGen_GetDirFiles_impl(DataTable* dest, const String& dir_path,
 }
 
 
-bool taDataGen::GetFiles(DataTable* dest, const String& dir_path,
+bool taDataGen::GetDirFiles(DataTable* dest, const String& dir_path,
                             const String& filter, bool recursive,
                             const String& fname_col_nm,
                             const String& path_col_nm, bool reset_first) {

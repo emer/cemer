@@ -252,7 +252,7 @@ public:
   ///////////////////////////////////////////////////////////////////
   // misc data sources
 
-  static bool	GetFiles(DataTable* dest, const String& dir_path,
+  static bool	GetDirFiles(DataTable* dest, const String& dir_path,
 			    const String& filter = "", bool recursive = false,
 			    const String& fname_col_nm = "FileName",
 			    const String& path_col_nm = "FilePath",
