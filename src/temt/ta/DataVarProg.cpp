@@ -241,6 +241,8 @@ void DataVarProg::GenCssBody_impl(Program* prog) {
   }
   else {
     DataTable* dt = GetData();
+    if (!dt)
+      return;
     ProgVar_List all_vars = program()->vars;
     for (int i = 0; i < all_vars.size; i++) {
       String var_name = all_vars.SafeEl(i)->name;
