@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6972
+// ta_Dump File v3.0 -- code v6.3.6.0 rev6978
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -207,7 +207,7 @@ LeabraProject .projects["test"] {
  DataTable_Group @.data = [0] {
   DataTable_Group @.gp["InputData"] = [2] { 
    DataTable @["StdInputData"] { 
-    DataTableCols @.data = [4] {
+    DataTableCols @.data = [5] {
      String_Data @["Name"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -219,6 +219,11 @@ LeabraProject .projects["test"] {
       };
      };
      float_Data @["Output"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["OneD"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
@@ -1455,8 +1460,9 @@ LeabraProject .projects["test"] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 ScaleRange_List @.scale_ranges = [1] {
+	 ScaleRange_List @.scale_ranges = [2] {
 	  ScaleRange @[0] { };
+	  ScaleRange @[1] { };
 	 };
 	};
        };
@@ -1551,10 +1557,11 @@ LeabraProject .projects["test"] {
       T3Panel @["StdInputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GridTableView @["StdInputData_Grid"] { 
-	 T3DataView_List @.children = [4] {
+	 T3DataView_List @.children = [5] {
 	  GridColView @["Name"] { };
 	  GridColView @["Input"] { };
 	  GridColView @["Output"] { };
+	  GridColView @["OneD"] { };
 	  GridColView @["FourD"] { };
 	 };
 
@@ -2935,28 +2942,28 @@ LeabraProject .projects["test"] {
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegPV"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["PosBodyState"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegBodyState"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -2969,7 +2976,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -2984,7 +2991,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegLV_BLA"] { 
@@ -2997,7 +3004,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3011,7 +3018,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["VSPatchIndir_Pos"] { 
@@ -3023,7 +3030,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["VSMatrixDirect_Pos"] { 
@@ -3031,7 +3038,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_BLA"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["VSMatrixIndir_Neg"] { 
@@ -3039,7 +3046,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegLV_BLA"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3049,7 +3056,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_CeM"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
      LeabraLayer @["LHbRMTg"] { 
@@ -3062,7 +3069,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegPV"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
      LeabraLayer @["VTA"] { 
@@ -3073,7 +3080,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_VSPatchIndir_Pos"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
      LeabraLayer @["DRN"] { 
@@ -3082,7 +3089,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosPV"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
     };
@@ -3095,7 +3102,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegBodyState"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegLV_OFC"] { 
@@ -3105,7 +3112,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_ACCActPlans"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3116,7 +3123,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3127,7 +3134,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Ctxt_Fm_V1"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3200] {
       };
      };
      LeabraLayer @["V4"] { 
@@ -3138,7 +3145,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_Object"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [576] {
       };
      };
      LeabraLayer @["Object"] { 
@@ -3146,7 +3153,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [32] {
       };
      };
      LeabraLayer @["Target"] { 
@@ -3154,7 +3161,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [32] {
       };
      };
      LeabraLayer @["Match"] { 
@@ -3162,7 +3169,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_MatchHidden"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [2] {
       };
      };
      LeabraLayer @["MatchHidden"] { 
@@ -3172,7 +3179,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_Match"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [25] {
       };
      };
     };
@@ -3181,14 +3188,14 @@ LeabraProject .projects["test"] {
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [144] {
       };
      };
      LeabraLayer @["RatOrient"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [9] {
       };
      };
     };
@@ -3199,7 +3206,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_dlPFC_Hid"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3] {
       };
      };
     };
@@ -3209,7 +3216,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_ACCActPlans"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3] {
       };
      };
      LeabraLayer @["dlPFC_Hid"] { 
@@ -3224,7 +3231,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Ctxt_Fm_dlPFC_Hid"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [49] {
       };
      };
     };
@@ -5009,6 +5016,38 @@ LeabraProject .projects["test"] {
 0;0;0;0;1;1;0;0;0;0;
 0;0;0;1;0;0;1;0;0;1;
 1;0;0;0;0;0;0;0;0;0;
+      };
+     };
+     float_Data @["OneD"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_81";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="OneD";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 10;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [1] ;      };
+      width=0;
+      ar {
+       name=;
+      [10 6] 0;0;1;0;0;1;0;0;0;0;
+1;0;1;0;0;0;0;0;0;0;
+0;0;1;0;0;1;0;0;0;0;
+0;1;0;0;0;0;1;0;0;0;
+0;0;1;0;0;0;1;0;0;0;
+0;1;0;0;0;0;0;0;1;0;
       };
      };
      float_Data @["FourD"] {
@@ -11618,13 +11657,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  };
 	  display=1;
 	  lay_layout=THREE_D;
-	  lay_mv=1;
+	  lay_mv=0;
 	  net_text=1;
 	  show_iconified=0;
 	  net_text_xform {scale={x=0.5: y=0.5: z=0.5: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=1: y=0: z=-0.5: }: };
 	  net_text_rot=-90;
-	  cur_unit_vals{ act;	  };
-	  unit_src_path=".layers.gp[10][1].units[0]";
+	  cur_unit_vals{ r.wt;	  };
+	  unit_src_path=".layers.gp[7][1].units[80]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -11655,7 +11694,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
-	   show_laygp=1;
+	   show_laygp=0;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
@@ -11682,6 +11721,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   el_def=0;
 	   ScaleRange @[0] {
 	    var_name="act";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[1] {
+	    var_name="r.wt";
 	    auto_scale=0;
 	    min=-1;
 	    max=1;
@@ -12736,6 +12781,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
+	   GridColView @["OneD"] {
+	    name="OneD";
+	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["OneD"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
 	   GridColView @["FourD"] {
 	    name="FourD";
 	    m_data=.projects["test"].data.gp["InputData"]["StdInputData"].data["FourD"]$$;
@@ -12764,7 +12820,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
-	  col_range {min=0: max=3: };
+	  col_range {min=0: max=4: };
 	  width=1;
 	  grid_on=1;
 	  header_on=1;

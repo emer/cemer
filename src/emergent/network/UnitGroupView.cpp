@@ -675,6 +675,8 @@ void UnitGroupView::Render_impl_blocks() {
 
   // triangle strip order is 0 1 2, 2 1 3, 2 3 4
 
+  int svg_below_thr_cnt = 0;    // rll optimization for below thr runs
+
   int32_t* coords_dat = coords.startEditing();
   int32_t* norms_dat = norms.startEditing();
   int32_t* mats_dat = mats.startEditing();
@@ -791,38 +793,63 @@ void UnitGroupView::Render_impl_blocks() {
 
         float zp = .5f * sc_val / max_z;
 
-        nv->svg_str
-          << taSvg::Path(drker, -1.0f, true, drker) // fill
-          // left side wall: note: the order matters for self-intersection
-          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
-          // right side wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp1)
-          << taSvg::PathEnd();
-        nv->svg_str
-          << taSvg::Path(drk, -1.0f, true, drk) // fill
-          // top wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
-          << taSvg::PathEnd();
-        nv->svg_str
-          << taSvg::Path(icol, -1.0f, true, icol) // fill
-          // front wall:
-          << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
-          << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
-          << taSvg::PathEnd();
+        if(sc_val < .01f) { // optimize for near-zero
+          if(svg_below_thr_cnt == 0) { // start a new path
+            nv->svg_str
+              << taSvg::Path(drk, -1.0f, true, drk); // fill
+          }
+          svg_below_thr_cnt++;
+          if(svg_below_thr_cnt % 8 == 0)
+            nv->svg_str << "\n";
+          nv->svg_str          // top surface:
+            << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1);
+        }
+        else {
+          if(svg_below_thr_cnt > 0) {
+            svg_below_thr_cnt = 0;
+            nv->svg_str << taSvg::PathEnd(); // we have a dangling path
+          }
+          nv->svg_str
+            << taSvg::Path(drker, -1.0f, true, drker) // fill
+            // left side wall: note: the order matters for self-intersection
+            << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+            // right side wall:
+            << "M " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp1)
+            << taSvg::PathEnd();
+          nv->svg_str
+            << taSvg::Path(drk, -1.0f, true, drk) // fill
+            // top surface:
+            << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp1)
+            << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp1)
+            << taSvg::PathEnd();
+          nv->svg_str
+            << taSvg::Path(icol, -1.0f, true, icol) // fill
+            // front wall:
+            << "M " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + 0.0f, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + 0.0f, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp1, svg_posn.y + zp, svg_posn.z + yp)
+            << "L " << taSvg::Coords(svg_posn.x + xp, svg_posn.y + zp, svg_posn.z + yp)
+            << taSvg::PathEnd();
+        }
       }
     }
   }
+
+  if(nv->render_svg && svg_below_thr_cnt > 0) {
+    nv->svg_str << taSvg::PathEnd(); // we have a dangling path
+  }
+
   coords.finishEditing();
   norms.finishEditing();
   mats.finishEditing();

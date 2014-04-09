@@ -318,43 +318,7 @@ void SoMatrixGrid::render() {
   int cidx = 0;
   int nidx = 0;
   int midx = 0;
-  if(matrix->dims() == 1) {
-    int xmax = matrix->dim(0);	// assumes odd_y
-    for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-      int mat_idx = pos.x;
-      int c00_0 = mat_idx * n_per_vtx;
-      render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx,
-                       midx);
-
-      if(render_svg) {
-        // this has to be here because of the backward ordering
-        float xp = svg_off.x + svg_sz.x * ((float)pos.x + cl_spc) * cl_x;
-        float yp = svg_off.y + svg_sz.y * (0.0f + cl_spc) * cl_y;
-        float xp1 = svg_off.x + svg_sz.x * ((float)pos.x+1 - cl_spc) * cl_x;
-        float yp1 = svg_off.y + svg_sz.y * (1.0f - cl_spc) * cl_y;
-        yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
-
-        float val, sc_val;
-        if(mat_layout == BOT_ZERO)
-          val = matrix->FastElAsFloat(xmax-1-pos.x);
-        else
-          val = matrix->FastElAsFloat(pos.x);
-        iColor fl;  iColor tx;
-        scale->GetColor(val,sc_val,&fl,&tx);
-        float zp = sc_val * blk_ht;
-        float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
-        fl.a = iColor::fc2ic(alpha);
-
-        *svg_str << taSvg::Path(fl, -1.0f, true, fl)
-                 << "M " << taSvg::Coords(xp, yp, 0.0f)
-                 << "L " << taSvg::Coords(xp, yp1, 0.0f)
-                 << "L " << taSvg::Coords(xp1, yp1, 0.0f)
-                 << "L " << taSvg::Coords(xp1, yp, 0.0f)
-                 << taSvg::PathEnd();
-      }
-    }
-  }
-  else if(matrix->dims() == 2) {
+  if(matrix->dims() <= 2) {
     int nx = geom_x;
     for(pos.y=geom_y-1; pos.y>=0; pos.y--) { // go back to front
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
@@ -372,10 +336,18 @@ void SoMatrixGrid::render() {
           yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
 
           float val, sc_val;
-          if(mat_layout == BOT_ZERO)
-            val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
-          else
-            val = matrix->FastElAsFloat(pos.x, pos.y);
+          if(matrix->dims() == 1) { // 1d is arranged vertically, not horizontally!
+            if(mat_layout == BOT_ZERO)
+              val = matrix->FastElAsFloat(geom_y-1-pos.y);
+            else
+              val = matrix->FastElAsFloat(pos.y);
+          }
+          else {
+            if(mat_layout == BOT_ZERO)
+              val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
+            else
+              val = matrix->FastElAsFloat(pos.x, pos.y);
+          }
           iColor fl;  iColor tx;
           scale->GetColor(val,sc_val,&fl,&tx);
           float zp = sc_val * blk_ht;

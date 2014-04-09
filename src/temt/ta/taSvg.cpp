@@ -29,6 +29,8 @@
 TA_BASEFUNS_CTORS_DEFN(taSvg);
 SMARTREF_OF_CPP(taSvg);
 
+const float taSvg::res = 10000.0f;
+
 taSvgPtr taSvg::cur_inst;
 
 void taSvg::Initialize() {
@@ -85,7 +87,7 @@ String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
        << "  xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n"
        << "  width=\"" << pix_width * width << "px\"\n"
        << "  height=\"" << pix_height * height << "px\"\n"
-       << "  viewBox=\"0 0 " << 1000.0f * width << " " << 1000.0f * height << "\">\n";
+       << "  viewBox=\"0 0 " << Coord(width) << " " << Coord(height) << "\">\n";
   return rval;
 }
 
@@ -122,7 +124,7 @@ String taSvg::Coords(float x, float y, float z) {
   dst += SbVec3f(0.5f, 0.5f, 0.5f);
 
   // note: z = depth plane here -- could use for sorting by depth..
-  return String(1000.0f * dst[0]) + "," + String(1000.0f - (1000.0f * dst[1])) + " ";
+  return Coord(dst[0]) + "," + Coord(1.0f - dst[1]) + " ";
 }
 
 String taSvg::CoordsXY(float x, float y, float z) {
@@ -141,8 +143,8 @@ String taSvg::CoordsXY(float x, float y, float z) {
 
   // note: z = depth plane here -- could use for sorting by depth..
   String rval;
-  rval  << "x=\"" << 1000.0f * dst[0] << "\" y=\""
-        << 1000.0f - 1000.0f * dst[1] << "\"";
+  rval  << "x=\"" << Coord(dst[0]) << "\" y=\""
+        << Coord(1.0f - dst[1]) << "\"";
   return rval;
 }
 
@@ -153,7 +155,7 @@ String taSvg::Path(const iColor& color, float line_width, bool fill,
   rval << "<path";
   if(line_width >= 0.0f) {
     rval << " stroke=\"#" << color.toString() << "\""
-         << " stroke-width=\"" << line_width << "\"";
+         << " stroke-width=\"" << 10.0f * line_width << "\""; // upscale for res
   }
   else {
     rval << " stroke=\"none\"";
@@ -208,8 +210,8 @@ String taSvg::GroupTranslate(float x, float y) {
   y /= sz;
 
   String rval;
-  rval << "\n<g transform=\"translate(" << String(1000.0f * x) << ","
-       << String(1000.0f * y) + ")\">\n";
+  rval << "\n<g transform=\"translate(" << Coord(x) << ","
+       << Coord(y) + ")\">\n";
   return rval;
 }
 
@@ -235,7 +237,7 @@ String taSvg::Text(const String& str, float x, float y, float z, const iColor& c
 
   rval << "\n<text " << CoordsXY(x,y,z)
        << " font-family=\"" << font
-       << "\" font-size=\"" << 1000.0f * font_size
+       << "\" font-size=\"" << Coord(font_size)
        << "\" fill=\"#" << color.toString();
   if(vertical) {
     rval << "\" writing-mode=\"tb";

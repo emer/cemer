@@ -175,7 +175,11 @@ void LayerView::Render_impl() {
     if(nv->render_svg) {
       lay->GetAbsPos(pos);
       aposn = nv->LayerPosToCoin3D(pos);
+      aposn.x -= .003f;          // allow for line thickness
+      aposn.z += .003f;          // allow for line thickness
       szn = nv->LayerPosToCoin3D(sz);
+      szn.x += .006f;
+      szn.z -= .006f;
       nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f, .5f), 6.0f) // thick..
                   << "M " << taSvg::Coords(aposn)
                   << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z)
