@@ -28,6 +28,7 @@
 #include <iT3Panel>
 #include <taMath_float>
 #include <taProject>
+#include <taSvg>
 
 #include <taMisc>
 
@@ -654,6 +655,22 @@ void GridTableView::RemoveLines(){
   node_so->body()->removeAllChildren();
 }
 
+void GridTableView::SaveImageSVG(const String& svg_fname) {
+  T3ExaminerViewer* vw = GetViewer();
+  if(!vw) return;
+  render_svg = true;
+  svg_str = "";
+  svg_str << taSvg::Header(vw, this);
+  taSvg::cur_inst->coord_mult.z = -1.0f;
+  RenderGrid();
+  RenderHeader();
+  RenderLines();
+  RenderAnnoteSvg();
+  svg_str << taSvg::Footer();
+  render_svg = false;
+  svg_str.SaveToFile(svg_fname);
+}
+
 void GridTableView::RenderGrid() {
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
@@ -678,23 +695,40 @@ void GridTableView::RenderGrid() {
 
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
+  float col_pos = 0.0f;
 
   if (row_num_on) {
     col_wd_lst = col_widths[col_idx++];
+    col_pos += col_wd_lst;
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
     tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     vert->addChild(ln);
+
+    if(render_svg) {
+      svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz 
+              << "M " << taSvg::Coords(col_pos, 0.0f, 0.0f)
+              << "L " << taSvg::Coords(col_pos, 1.0f, 0.0f)
+              << taSvg::PathEnd();
+    }
   }
 
   for (int col = col_range.min; col < col_range.max; ++col) {
     GridColView* cvs = (GridColView*)colVis(col);
     if (!cvs) continue;
     col_wd_lst = col_widths[col_idx++];
+    col_pos += col_wd_lst;
     SoTranslation* tr = new SoTranslation();
     vert->addChild(tr);
     tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     vert->addChild(ln);
+
+    if(render_svg) {
+      svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz
+              << "M " << taSvg::Coords(col_pos, 0.0f, 0.0f)
+              << "L " << taSvg::Coords(col_pos, 1.0f, 0.0f)
+              << taSvg::PathEnd();
+    }
   }
   grid->addChild(vert);
   ln->unref(); // deleted if not used
@@ -711,11 +745,21 @@ void GridTableView::RenderGrid() {
   horiz->addChild(tr);
   tr->translation.setValue(.5f * width, 0.0f, 0.0f);
 
+  float row_pos = 0.0f;
+
   if (header_on) {
     SoTranslation* tr = new SoTranslation;
+    row_pos += head_height;
     horiz->addChild(tr);
     tr->translation.setValue(0.0f, -head_height, 0.0f);
     horiz->addChild(ln);
+
+    if(render_svg) {
+      svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz
+              << "M " << taSvg::Coords(0.0f, 1.0f-row_pos, 0.0f)
+              << "L " << taSvg::Coords(width, 1.0f-row_pos, 0.0f)
+              << taSvg::PathEnd();
+    }
   }
 
   for (int data_row = view_range.min; data_row <= view_range.max; ++data_row) {
@@ -723,6 +767,14 @@ void GridTableView::RenderGrid() {
     horiz->addChild(tr);
     tr->translation.setValue(0.0f, -row_height, 0.0f);
     horiz->addChild(ln);
+    row_pos += row_height;
+
+    if(render_svg) {
+      svg_str << taSvg::Path(iColor(), 1.0f) // gr_ln_sz
+              << "M " << taSvg::Coords(0.0f, 1.0f-row_pos, 0.0f)
+              << "L " << taSvg::Coords(width, 1.0f-row_pos, 0.0f)
+              << taSvg::PathEnd();
+    }
   }
   grid->addChild(horiz);
   ln->unref(); // deleted if not used
@@ -756,6 +808,10 @@ void GridTableView::RenderHeader() {
     fnt->size.setValue(font_scale);
   hdr->addChild(fnt);
 
+  if(render_svg) {
+    svg_str << taSvg::Group();
+  }
+
   T3Panel* fr = GetFrame();
   iColor txtcolr = fr->GetTextColor();
 
@@ -767,8 +823,11 @@ void GridTableView::RenderHeader() {
   float base_adj = (head_height * T3Misc::char_base_fract);
   tr->translation.setValue(0.0f, - (head_height - base_adj), -gr_mg_sz); // set back just a hair
 
+  float row_pos = head_height - base_adj;
+
   int col_idx = 0;
   float col_wd_lst = 0.0f; // width of last col
+  float col_pos = 0.0f;
 
   if (row_num_on) {
     col_wd_lst = col_widths[col_idx++];
@@ -789,6 +848,11 @@ void GridTableView::RenderHeader() {
       txsep->addChild(txt);
       txt->string.setValue("#");
     }
+
+    if(render_svg) {
+      svg_str << taSvg::Text(String("#"), col_pos + .5f * col_wd_lst, 1.0f - row_pos,
+                             -gr_mg_sz, iColor(), font_scale, taSvg::CENTER);
+    }
   }
 
   for (int col = col_range.min; col <= col_range.max; ++col) {
@@ -798,6 +862,7 @@ void GridTableView::RenderHeader() {
       tr = new SoTranslation();
       hdr->addChild(tr);
       tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
+      col_pos += col_wd_lst;
     }
     col_wd_lst = col_widths[col_idx++]; // note incr
     T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
@@ -807,20 +872,26 @@ void GridTableView::RenderHeader() {
     ttr->translation.setValue(.5f * col_wd_lst, 0.0f, 0.0f);
     colsep->addChild(ttr);
     hdr->addChild(colnd);
+    int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
+    String cnm = cvs->GetDisplayName().elidedTo(max_chars);
     if(two_d_font) {
       SoText2* txt = new SoText2;
       txt->justification = SoText2::CENTER;
       colsep->addChild(txt);
-      int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
-      txt->string.setValue(cvs->GetDisplayName().elidedTo(max_chars).chars());
+      txt->string.setValue(cnm.chars());
     }
     else {
       SoAsciiText* txt = new SoAsciiText;
       txt->justification = SoAsciiText::CENTER;
       colsep->addChild(txt);
-      int max_chars = (int)(T3Misc::char_ht_to_wd_pts * col_wd_lst / font_scale) + 1;
-      txt->string.setValue(cvs->GetDisplayName().elidedTo(max_chars).chars());
+      txt->string.setValue(cnm.chars());
     }
+
+    if(render_svg) {
+      svg_str << taSvg::Text(cnm, col_pos + .5f * col_wd_lst, 1.0f - row_pos,
+                             -gr_mg_sz, iColor(), font_scale, taSvg::CENTER);
+    }
+
     // light aqua transparent background
     SoTranslation* rectr = new SoTranslation();
     colnd->addChild(rectr);
@@ -835,6 +906,10 @@ void GridTableView::RenderHeader() {
     rect->depth = gr_mg_sz;
     colnd->topSeparator()->addChild(rect);
     cvs->setNode(colnd);
+  }
+
+  if(render_svg) {
+    svg_str << taSvg::GroupEnd();
   }
 }
 
@@ -857,6 +932,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   // 1st tr places origin for the row
   tr->translation.setValue(0.0f, -(row_height * (float)view_idx), 0.0f);
 
+  float row_pos = head_height + (row_height * (float)view_idx);
+
   float text_ht = font_scale;
 
   T3Panel* fr = GetFrame();
@@ -869,6 +946,12 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
   float row_ht = row_height - gr_mg_sz2;
   float mat_rot_rad = mat_rot * taMath_float::rad_per_deg;
+
+  float col_pos = 0.0f;
+
+  if(render_svg) {
+    svg_str << taSvg::Group();
+  }
 
   // render row_num cell, if on
   if (row_num_on) {
@@ -895,6 +978,12 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       txt->string.setValue(el.chars());
     }
     ln->addChild(row_sep);
+
+    if(render_svg) {
+      svg_str << taSvg::Text(el, col_pos + .5f * col_wd_lst, 1.0f - (row_pos + y_offs),
+                             0.0f, iColor(), font_scale, taSvg::CENTER);
+    }
+    col_pos += col_wd_lst;
   }
   for (int col = col_range.min; col <= col_range.max; col++) {
     GridColView* cvs = (GridColView*)colVis(col);
@@ -915,33 +1004,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
     float col_wd = col_wd_lst - gr_mg_sz2;
 
-    // null columns just get single "n/a" regardless of geom etc.
-    if (act_idx < 0) {
-      SoSeparator* nul_sep = new SoSeparator;
-      ln->addChild(nul_sep);
-      tr = new SoTranslation;
-      nul_sep->addChild(tr);
-      if(two_d_font) {
-        SoText2* txt = new SoText2;
-        nul_sep->addChild(txt);
-        txt->justification = SoText2::CENTER;
-        txt->string.setValue("n/a");
-      }
-      else {
-        SoAsciiText* txt = new SoAsciiText;
-        nul_sep->addChild(txt);
-        txt->justification = SoAsciiText::CENTER;
-        txt->string.setValue("n/a");
-      }
-      // center the n/a in the cell
-      float x_offs = .5f * col_wd_lst;
-      float y_offs = (.5f * (row_height - text_ht)) + text_ht - txt_base_adj;
-      tr->translation.setValue(x_offs, -y_offs, 0.0f);
-      continue;
-    }
-
     if(dc->is_matrix) {
-      if(cvs->mat_image) {
+      if(cvs->mat_image && !render_svg) { // svg does not handle images..
         SoSeparator* img = new SoSeparator;
         ln->addChild(img);
         SoTransform* tr = new SoTransform();
@@ -978,12 +1042,22 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         if(cell_mat) {
           taBase::Ref(cell_mat);
           SoMatrixGrid* sogr = new SoMatrixGrid
-            (cell_mat, cvs->mat_odd_vert, &colorscale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout,
-             mat_val_text);
+            (cell_mat, cvs->mat_odd_vert, &colorscale, 
+             (SoMatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
           sogr->spacing = mat_block_spc;
           sogr->block_height = mat_block_height;
           sogr->trans_max = mat_trans;
           sogr->user_data = dc; // needed for point picking
+
+          if(render_svg) {
+            sogr->render_svg = true;
+            sogr->svg_str = &svg_str;
+            sogr->svg_off.x = col_pos + gr_mg_sz;
+            sogr->svg_off.y = row_pos + gr_mg_sz;
+            sogr->svg_sz.x = col_wd;
+            sogr->svg_sz.y = mat_ht;
+          }
+
           sogr->render();
           taBase::UnRef(cell_mat);
           grsep->addChild(sogr);
@@ -1026,9 +1100,26 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         txt->string.setValue(el.chars());
       }
 
+      if(render_svg) {
+        if(just == SoAsciiText::LEFT) {
+          svg_str << taSvg::Text(el, col_pos + x_offs, 1.0f - (row_pos + y_offs),
+                                 0.0f, iColor(), font_scale, taSvg::LEFT);
+        }
+        else {
+          svg_str << taSvg::Text(el, col_pos + x_offs, 1.0f - (row_pos + y_offs),
+                                 0.0f, iColor(), font_scale, taSvg::RIGHT);
+        }
+      }
+
     } //text
+
+    col_pos += col_wd_lst;
   }
   node_so->body()->addChild(ln);
+
+  if(render_svg) {
+    svg_str << taSvg::GroupEnd();
+  }
 }
 
 void GridTableView::RenderLines(){

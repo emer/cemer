@@ -1510,6 +1510,7 @@ void NetView::SaveImageSVG(const String& svg_fname) {
   svg_str << taSvg::Header(vw, this);
   // taSvg::cur_inst->coord_off.y = -1.0f;
   Render_impl();
+  RenderAnnoteSvg();
   svg_str << taSvg::Footer();
   render_svg = false;
   svg_str.SaveToFile(svg_fname);

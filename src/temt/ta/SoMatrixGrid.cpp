@@ -19,6 +19,7 @@
 #include <taVector2i>
 #include <ColorScale>
 #include <String_Matrix>
+#include <taSvg>
 
 #include <taMisc>
 
@@ -62,6 +63,8 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, bool oddy, ColorScale* sc, MatrixLayou
   block_height = .2f;
   trans_max = 0.6f;
   user_data = NULL;
+  render_svg = false;
+  svg_str = NULL;
   //  render(); // don't do this by default; often want to spec further guys
 }
 
@@ -148,6 +151,10 @@ void SoMatrixGrid::render() {
   int tot_vtx =  n_geom * n_per_vtx;
   vertex.setNum(tot_vtx);
   color.setNum(n_geom);
+
+  if(render_svg) {
+    *svg_str << taSvg::Group();
+  }
 
   bool build_text = false;
   float ufontsz = MIN(1.5f * (cl_x / (float)max_txt_len), cl_y);
@@ -311,13 +318,77 @@ void SoMatrixGrid::render() {
   int cidx = 0;
   int nidx = 0;
   int midx = 0;
-  if(matrix->dims() <= 2) {
+  if(matrix->dims() == 1) {
+    int xmax = matrix->dim(0);	// assumes odd_y
+    for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
+      int mat_idx = pos.x;
+      int c00_0 = mat_idx * n_per_vtx;
+      render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx,
+                       midx);
+
+      if(render_svg) {
+        // this has to be here because of the backward ordering
+        float xp = svg_off.x + svg_sz.x * ((float)pos.x + cl_spc) * cl_x;
+        float yp = svg_off.y + svg_sz.y * (0.0f + cl_spc) * cl_y;
+        float xp1 = svg_off.x + svg_sz.x * ((float)pos.x+1 - cl_spc) * cl_x;
+        float yp1 = svg_off.y + svg_sz.y * (1.0f - cl_spc) * cl_y;
+        yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
+
+        float val, sc_val;
+        if(mat_layout == BOT_ZERO)
+          val = matrix->FastElAsFloat(xmax-1-pos.x);
+        else
+          val = matrix->FastElAsFloat(pos.x);
+        iColor fl;  iColor tx;
+        scale->GetColor(val,sc_val,&fl,&tx);
+        float zp = sc_val * blk_ht;
+        float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+        fl.a = iColor::fc2ic(alpha);
+
+        *svg_str << taSvg::Path(fl, -1.0f, true, fl)
+                 << "M " << taSvg::Coords(xp, yp, 0.0f)
+                 << "L " << taSvg::Coords(xp, yp1, 0.0f)
+                 << "L " << taSvg::Coords(xp1, yp1, 0.0f)
+                 << "L " << taSvg::Coords(xp1, yp, 0.0f)
+                 << taSvg::PathEnd();
+      }
+    }
+  }
+  else if(matrix->dims() == 2) {
     int nx = geom_x;
     for(pos.y=geom_y-1; pos.y>=0; pos.y--) { // go back to front
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
 	int mat_idx = (pos.y * nx + pos.x);
 	int c00_0 = mat_idx * n_per_vtx;
-	render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+	render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx,
+                         midx);
+
+        if(render_svg) {
+          // this has to be here because of the backward ordering
+          float xp = svg_off.x + svg_sz.x * ((float)pos.x + cl_spc) * cl_x;
+          float yp = svg_off.y + svg_sz.y * ((float)pos.y + cl_spc) * cl_y;
+          float xp1 = svg_off.x + svg_sz.x * ((float)pos.x+1 - cl_spc) * cl_x;
+          float yp1 = svg_off.y + svg_sz.y * ((float)pos.y+1 - cl_spc) * cl_y;
+          yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
+
+          float val, sc_val;
+          if(mat_layout == BOT_ZERO)
+            val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
+          else
+            val = matrix->FastElAsFloat(pos.x, pos.y);
+          iColor fl;  iColor tx;
+          scale->GetColor(val,sc_val,&fl,&tx);
+          float zp = sc_val * blk_ht;
+          float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+          fl.a = iColor::fc2ic(alpha);
+
+          *svg_str << taSvg::Path(fl, -1.0f, true, fl)
+                   << "M " << taSvg::Coords(xp, yp, 0.0f)
+                   << "L " << taSvg::Coords(xp, yp1, 0.0f)
+                   << "L " << taSvg::Coords(xp1, yp1, 0.0f)
+                   << "L " << taSvg::Coords(xp1, yp, 0.0f)
+                   << taSvg::PathEnd();
+        }
       }
     }
   }
@@ -330,7 +401,39 @@ void SoMatrixGrid::render() {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
 	  int mat_idx = matrix->FastElIndex(pos.x, pos.y, z);
 	  int c00_0 = mat_idx * n_per_vtx;
-	  render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+	  render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat,
+                           cidx, nidx, midx);
+          if(render_svg) {
+            taVector2i apos = pos;
+            if(odd_y)
+              apos.y += z * (ymax+1);
+            else
+              apos.x += z * (xmax+1);
+            // this has to be here because of the backward ordering
+            float xp = svg_off.x + svg_sz.x * ((float)apos.x + cl_spc) * cl_x;
+            float yp = svg_off.y + svg_sz.y * ((float)apos.y + cl_spc) * cl_y;
+            float xp1 = svg_off.x + svg_sz.x * ((float)apos.x+1 - cl_spc) * cl_x;
+            float yp1 = svg_off.y + svg_sz.y * ((float)apos.y+1 - cl_spc) * cl_y;
+            yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
+
+            float val, sc_val;
+            if(mat_layout == BOT_ZERO)
+              val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
+            else
+              val = matrix->FastElAsFloat(pos.x, pos.y, z);
+            iColor fl;  iColor tx;
+            scale->GetColor(val,sc_val,&fl,&tx);
+            float zp = sc_val * blk_ht;
+            float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+            fl.a = iColor::fc2ic(alpha);
+
+            *svg_str << taSvg::Path(fl, -1.0f, true, fl)
+                     << "M " << taSvg::Coords(xp, yp, 0.0f)
+                     << "L " << taSvg::Coords(xp, yp1, 0.0f)
+                     << "L " << taSvg::Coords(xp1, yp1, 0.0f)
+                     << "L " << taSvg::Coords(xp1, yp, 0.0f)
+                     << taSvg::PathEnd();
+          }    
         }
       }
     }
@@ -347,7 +450,38 @@ void SoMatrixGrid::render() {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
 	    int mat_idx = matrix->FastElIndex(pos.x, pos.y, opos.x, opos.y);
 	    int c00_0 = mat_idx * n_per_vtx;
-	    render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat, cidx, nidx, midx);
+	    render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat,
+                             cidx, nidx, midx);
+
+            if(render_svg) {
+              taVector2i apos = pos;
+              apos.x += opos.x * (xmax+1);
+              apos.y += opos.y * (ymax+1);
+              // this has to be here because of the backward ordering
+              float xp = svg_off.x + svg_sz.x * ((float)apos.x + cl_spc) * cl_x;
+              float yp = svg_off.y + svg_sz.y * ((float)apos.y + cl_spc) * cl_y;
+              float xp1 = svg_off.x + svg_sz.x * ((float)apos.x+1 - cl_spc) * cl_x;
+              float yp1 = svg_off.y + svg_sz.y * ((float)apos.y+1 - cl_spc) * cl_y;
+              yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
+
+              float val, sc_val;
+              if(mat_layout == BOT_ZERO)
+                val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
+              else
+                val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+              iColor fl;  iColor tx;
+              scale->GetColor(val,sc_val,&fl,&tx);
+              float zp = sc_val * blk_ht;
+              float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+              fl.a = iColor::fc2ic(alpha);
+
+              *svg_str << taSvg::Path(fl, -1.0f, true, fl)
+                       << "M " << taSvg::Coords(xp, yp, 0.0f)
+                       << "L " << taSvg::Coords(xp, yp1, 0.0f)
+                       << "L " << taSvg::Coords(xp1, yp1, 0.0f)
+                       << "L " << taSvg::Coords(xp1, yp, 0.0f)
+                       << taSvg::PathEnd();
+            }    
           }
         }
       }
@@ -358,6 +492,10 @@ void SoMatrixGrid::render() {
   mats.finishEditing();
 
   renderValues();		// hand off to next guy..
+
+  if(render_svg) {
+    *svg_str << taSvg::GroupEnd();
+  }
 }
 
 void SoMatrixGrid::render_text(bool build_text, int& t_idx, float xp, float xp1,

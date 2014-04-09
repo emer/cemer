@@ -80,7 +80,7 @@ public:
 
   bool          scrolling_;     // #IGNORE currently scrolling (in scroll callback)
 
-  GridColView*          colVis(int i) const
+  GridColView*  colVis(int i) const
   { return (GridColView*)colView(vis_cols.SafeEl(i)); }
   // get visible column based on vis_cols index
 
@@ -102,12 +102,12 @@ public:
   void          VScroll(bool left); // scroll left or right
   virtual void  ViewCol_At(int start);  // start viewing at indicated column value
 
-  virtual void          ColBackAll();
-  virtual void          ColBackPg();
-  virtual void          ColBack1();
-  virtual void          ColFwd1();
-  virtual void          ColFwdPg();
-  virtual void          ColFwdAll();
+  virtual void  ColBackAll();
+  virtual void  ColBackPg();
+  virtual void  ColBack1();
+  virtual void  ColFwd1();
+  virtual void  ColFwdPg();
+  virtual void  ColFwdAll();
 
   iViewPanelOfGridTable* lvp();
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
@@ -120,13 +120,15 @@ public:
 
   void         DataUnitsXForm(taVector3f& pos, taVector3f& size) override;
 
-  const iColor          bgColor(bool& ok) const {
+  const iColor  bgColor(bool& ok) const {
     ok = true; return colorscale.background;
   } // #IGNORE
 
 
-  void                  CopyFromView(GridTableView* cp);
+  void          CopyFromView(GridTableView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
+
+  void          SaveImageSVG(const String& svg_fname) override;
 
   void  InitLinks();
   void  CutLinks();
