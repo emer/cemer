@@ -49,7 +49,7 @@ public:
     RIGHT,                      // right justified text
   };
 
-  static const float  res;      // resolution for generating output ( = 10000.0f)
+  static const float  res;      // resolution for generating output ( = 1000.0f)
 
   static taSvgPtr cur_inst;       // current instance of svg for rendering
   SbViewVolume*   view_vol;       // #IGNORE captures camera view projection data
@@ -65,8 +65,8 @@ public:
   static String  Footer();
   // #CAT_Svg svg footer
   static String  Coord(float val)
-  { return String((int)((res * val) + 0.5f)); }
-  // #CAT_Svg format one single coordinate -- upconverts to res ints for efficiency
+  { return String((res * val), "%.1f"); }
+  // #CAT_Svg format one single coordinate
   static String  Coords(const taVector3f& vec)
   { return Coords(vec.x, vec.y, vec.z); }
   // #IGNORE output screen x,y coords from given 3D point

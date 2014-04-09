@@ -29,7 +29,7 @@
 TA_BASEFUNS_CTORS_DEFN(taSvg);
 SMARTREF_OF_CPP(taSvg);
 
-const float taSvg::res = 10000.0f;
+const float taSvg::res = 1000.0f;
 
 taSvgPtr taSvg::cur_inst;
 
@@ -155,7 +155,7 @@ String taSvg::Path(const iColor& color, float line_width, bool fill,
   rval << "<path";
   if(line_width >= 0.0f) {
     rval << " stroke=\"#" << color.toString() << "\""
-         << " stroke-width=\"" << 10.0f * line_width << "\""; // upscale for res
+         << " stroke-width=\"" << line_width << "\"";
   }
   else {
     rval << " stroke=\"none\"";
