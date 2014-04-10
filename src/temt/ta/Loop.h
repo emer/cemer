@@ -30,15 +30,18 @@ class TypeDef; //
 taTypeDef_Of(Loop);
 
 class TA_API Loop: public ProgEl {
-  // #VIRT_BASE base class for loops
+  // ##DEF_CHILD_loop_code #VIRT_BASE base class for loops
 INHERITED(ProgEl)
 public:
-  ProgEl_List           loop_code; // #SHOW_TREE the items to execute in the loop
+  ProgEl_List           loop_code; // the items to execute in the loop
 
   int          ProgElChildrenCount() const override { return loop_code.size; }
 
-  virtual ProgEl*        AddLoopCode(TypeDef* el_type)   { return (ProgEl*)loop_code.New(1, el_type); }
+  virtual ProgEl*        AddLoopCode(TypeDef* el_type)
+  { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
+
+  taList_impl*	children_() override { return &loop_code; }
 
   ProgVar*     FindVarName(const String& var_nm) const override;
   String       GetTypeDecoKey() const override { return "ProgCtrl"; }
