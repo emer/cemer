@@ -190,6 +190,9 @@ public:
   iAction*            helpHelpAction;
   iAction*            helpAboutAction;
   iAction*            helpFileBugAction;
+  
+  iAction*            windowMinimizeAction;
+  iAction*            windowZoomAction;
 
   // Hack - Qt5.2 & OS X 10.9 window menu not appearing - add dummy action to make it visible until a window is created
   iAction*            dummyWindowAction;
@@ -342,6 +345,8 @@ public slots:
   
   virtual void  windowMenu_aboutToShow();
   void          windowActivate(int win); // activate the indicated win
+  virtual void  WindowMinimize();
+  virtual void  WindowZoom();
   virtual void  helpHelp();
   virtual void  helpAbout();
   virtual void  FileBugReport();

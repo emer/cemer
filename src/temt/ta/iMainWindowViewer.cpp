@@ -692,6 +692,12 @@ void iMainWindowViewer::Constr_WindowMenu()
 {
   dummyWindowAction = AddAction(new iAction("Dummy Action", QKeySequence(), "dummyWindowAction"));
   windowMenu->AddAction(dummyWindowAction);
+
+  windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(cmd_str + "M"), "windowMinimizeAction"));
+  windowZoomAction = AddAction(new iAction("&Zoom", QKeySequence(), "windowZoomAction"));
+
+  connect(windowMinimizeAction, SIGNAL(Action()), this, SLOT(WindowMinimize()));
+  connect(windowZoomAction, SIGNAL(Action()), this, SLOT(WindowZoom()));
 }
 
 void iMainWindowViewer::Constr_ControlMenu()
@@ -1983,6 +1989,10 @@ void iMainWindowViewer::windowMenu_aboutToShow() {
   // Clear and rebuild submenu.
   windowMenu->Reset();
 
+  windowMenu->AddAction(windowMinimizeAction);
+  windowMenu->AddAction(windowZoomAction);
+  windowMenu->AddSep();
+
   // Populate with current windows.
   iWidget_List wl;
   taiMisc::GetWindowList(wl);
@@ -2016,6 +2026,25 @@ void iMainWindowViewer::windowActivate(int win) {
   }
   wid->activateWindow();
   wid->raise();
+}
+
+void iMainWindowViewer::WindowMinimize() {
+  foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+    if (widget->isActiveWindow()) {
+      widget->showMinimized();
+      break;
+    }
+  }
+}
+
+
+void iMainWindowViewer::WindowZoom()  {
+  foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+    if (widget->isActiveWindow()) {
+      widget->showMaximized();
+      break;
+    }
+  }
 }
 
 void iMainWindowViewer::filePrint() {
