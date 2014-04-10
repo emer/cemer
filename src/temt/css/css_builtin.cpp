@@ -844,9 +844,14 @@ static cssEl* cssElCFun_doloop_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   taBase* list = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
+  if(!list) {
+    cssMisc::Error(cp, "foreach cond: did not get a list object to iterate over");
+    return cssBI::false_int;	// no more to go
+  }
   cssEl* itre = arg[2];
   if(itre->GetType() != cssEl::T_TA) {
     cssMisc::Error(cp, "foreach cond: iterator is not a taBase*");
+    return cssBI::false_int;	// no more to go
   }
   cssTA_Base* itrc = (cssTA_Base*)itre;
   cssEl* var = arg[3];
