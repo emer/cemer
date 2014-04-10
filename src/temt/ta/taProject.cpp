@@ -108,6 +108,8 @@ void taProject::InitLinks_impl() {
   taBase::Own(viewers_tmp, this);
   taBase::Own(undo_mgr, this);
 
+  edits.el_typ = &TA_SelectEdit; // set this as default type
+
   // note: any derived programs should install additional guys..
   // put in NO_CLIP to suppress clip ops, since we don't want any for these guys
   FindMakeNewDataProc(&TA_taDataProc, "data_base")->SetUserData("NO_CLIP", true);
@@ -127,6 +129,7 @@ void taProject::InitLinks_post() {
     FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
     DoView();
   }
+  edits.el_typ = &TA_SelectEdit; // set this as default type
 }
 
 void taProject::CutLinks() {
@@ -171,6 +174,7 @@ void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   if(taMisc::is_loading) {	// make sure we have one of these for old projects
     FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
+    edits.el_typ = &TA_SelectEdit; // set this as default type
   }
   UpdateUi();
 }
