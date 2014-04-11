@@ -13,42 +13,51 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "IfElse.h"
+#include "If.h"
 #include <Program>
+#include <Else>
 #include <taMisc>
 
 #include <css_machine.h>
 
-TA_BASEFUNS_CTORS_DEFN(IfElse);
+TA_BASEFUNS_CTORS_DEFN(If);
 
-
-void IfElse::Initialize() {
-  show_false_code = true;
+void If::Initialize() {
 }
 
-void IfElse::UpdateAfterEdit_impl() {
+void If::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) {
-    if(false_code.size == 0)
-      show_false_code = false;
+    if(false_code.size > 0) {
+      ConvertFromIfElse();
+    }
   }
-  if(false_code.size > 0)
-    show_false_code = true;
 }
 
-void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
+void If::ConvertFromIfElse() {
+  if(!owner) return;
+  if(!owner->InheritsFrom(&TA_ProgEl_List)) return;
+  ProgEl_List* own = (ProgEl_List*)owner;
+  int idx = own->FindEl(this);
+  Else* nelse = new Else;
+  own->Insert(nelse, idx+1);
+  while(false_code.size > 0) {
+    nelse->else_code.Transfer(false_code[0]);
+  }
+}
+
+void If::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
+void If::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   true_code.CheckConfig(quiet, rval);
-  false_code.CheckConfig(quiet, rval);
 }
 
-void IfElse::GenCssPre_impl(Program* prog) {
+void If::GenCssPre_impl(Program* prog) {
   cond.ParseExpr();             // re-parse just to be sure!
   prog->AddLine(this, "if(" + cond.GetFullExpr() + ") {", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this, true, "\"before if\"");
@@ -56,57 +65,42 @@ void IfElse::GenCssPre_impl(Program* prog) {
   prog->AddVerboseLine(this, false, "\"inside if\"");
 }
 
-void IfElse::GenCssBody_impl(Program* prog) {
+void If::GenCssBody_impl(Program* prog) {
   true_code.GenCss(prog);
-  // don't gen 'else' portion unless there are els
-  if (false_code.size > 0) {
-    prog->DecIndent();
-    prog->AddLine(this, "} else {");
-    prog->IncIndent();
-    prog->AddVerboseLine(this, false, "\"inside else\"");
-    false_code.GenCss(prog);
-  }
 }
 
-void IfElse::GenCssPost_impl(Program* prog) {
+void If::GenCssPost_impl(Program* prog) {
   prog->DecIndent();
   prog->AddLine(this, "}");
 }
 
-const String IfElse::GenListing_children(int indent_level) {
+const String If::GenListing_children(int indent_level) {
   String rval = true_code.GenListing(indent_level + 1);
-  if (false_code.size > 0) {
-    rval += cssMisc::Indent(indent_level) + "else\n";
-    rval += false_code.GenListing(indent_level + 1);
-  }
   return rval;
 }
 
-void IfElse::PreGenChildren_impl(int& item_id) {
+void If::PreGenChildren_impl(int& item_id) {
   inherited::PreGenChildren_impl(item_id);
   true_code.PreGen(item_id);
-  false_code.PreGen(item_id);
 }
 
-ProgVar* IfElse::FindVarName(const String& var_nm) const {
+ProgVar* If::FindVarName(const String& var_nm) const {
   ProgVar* pv = inherited::FindVarName(var_nm);
   if (pv) return pv;
-  pv = true_code.FindVarName(var_nm);
-  if(pv) return pv;
-  return false_code.FindVarName(var_nm);
+  return true_code.FindVarName(var_nm);
 }
 
-String IfElse::GetDisplayName() const {
+String If::GetDisplayName() const {
   return "if (" + cond.expr + ")";
 }
 
-bool IfElse::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+bool If::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
   if(code.startsWith("if")) return true;
   return false;
 }
 
-bool IfElse::CvtFmCode(const String& code) {
+bool If::CvtFmCode(const String& code) {
   String cd = trim(code.after("if"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');

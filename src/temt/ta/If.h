@@ -13,54 +13,60 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef CodeBlock_h
-#define CodeBlock_h 1
+#ifndef If_h
+#define If_h 1
 
 // parent includes:
 #include <ProgEl>
 
 // member includes:
+#include <ProgExpr>
 #include <ProgEl_List>
 
 // declare all other types mentioned but not required to include:
 class ProgVar; // 
-class TypeDef; // 
 
 
-taTypeDef_Of(CodeBlock);
+taTypeDef_Of(If);
 
-class TA_API CodeBlock: public ProgEl { 
-  // ##DEF_CHILD_prog_code a block of code (list of program elements), each executed in sequence
+class TA_API If: public ProgEl { 
+  // #AKA_IfElse ##DEF_CHILD_true_code a conditional test element: if(condition) then run true_code -- can be followed by an Else or ElseIf to run if condition is false
 INHERITED(ProgEl)
 public:
-  ProgEl_List	    	prog_code; // list of Program elements: the block of code
+  ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
+  ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
 
-  int 		ProgElChildrenCount() const override { return prog_code.size; }
+  ProgEl_List	    false_code; // #HIDDEN #NO_SAVE #OBSOLETE items to execute if condition false (now moved to a separate Else code)
 
-  virtual ProgEl*	AddProgCode(TypeDef* el_type)
-  { return (ProgEl*)prog_code.New(1, el_type); }
-  // #BUTTON #TYPE_ProgEl add a new program code element
+  int 		ProgElChildrenCount() const override
+  { return true_code.size; }
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
+  bool		IsCtrlProgEl() 	override { return true; }
 
-  taList_impl*	children_() override { return &prog_code; }
-  ProgVar*	FindVarName(const String& var_nm) const override;
+  taList_impl*	children_() override { return &true_code; }	
   String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "block"; }
-
-  PROGEL_SIMPLE_BASEFUNS(CodeBlock);
+  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  ProgVar*	FindVarName(const String& var_nm) const override;
+  String	GetToolbarName() const override { return "if"; }
+  
+  PROGEL_SIMPLE_BASEFUNS(If);
 protected:
+  void		UpdateAfterEdit_impl() override;
+  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		CheckChildConfig_impl(bool quiet, bool& rval) override;
   void		PreGenChildren_impl(int& item_id) override;
   void		GenCssPre_impl(Program* prog) override; 
-  void		GenCssBody_impl(Program* prog) override;
+  void		GenCssBody_impl(Program* prog) override; //replaces If
   void		GenCssPost_impl(Program* prog) override; 
   const String	GenListing_children(int indent_level) override;
 
+  void          ConvertFromIfElse(); // #IGNORE
+
 private:
   void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void	Destroy()	{CutLinks();} //
 };
 
-#endif // CodeBlock_h
+#endif // If_h

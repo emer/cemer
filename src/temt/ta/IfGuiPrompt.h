@@ -29,7 +29,7 @@ class ProgVar; //
 taTypeDef_Of(IfGuiPrompt);
 
 class TA_API IfGuiPrompt: public ProgEl { 
-  // if in gui mode, prompt user prior to performing a given operation -- if user says OK then run the code, otherwise do nothing -- if not in gui mode (e.g., running in batch mode) then always run the code -- allows interactive control over otherwise default operations
+  // ##DEF_CHILD_yes_code if in gui mode, prompt user prior to performing a given operation -- if user says OK then run the code, otherwise do nothing -- if not in gui mode (e.g., running in batch mode) then always run the code -- allows interactive control over otherwise default operations
 INHERITED(ProgEl)
 public:
   String	prompt; 	// prompt to display to user in gui mode
@@ -40,6 +40,7 @@ public:
 
   int 		ProgElChildrenCount() const override { return yes_code.size; }
 
+  taList_impl*	children_() override { return &yes_code; }	
   ProgVar*	FindVarName(const String& var_nm) const override;
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }

@@ -317,10 +317,12 @@ set(ta_HEADS_MAKETA_NOMOC
   ForLoop.h
   ForeachLoop.h
 
+  If.h
+  Else.h
+  ElseIf.h
   IfContinue.h
   IfBreak.h
   IfReturn.h
-  IfElse.h
   IfGuiPrompt.h
   CaseBlock.h
   Switch.h
@@ -1416,10 +1418,12 @@ set(ta_SRCS_MAKETA
   ForLoop.cpp
   ForeachLoop.cpp
 
+  If.cpp
+  Else.cpp
+  ElseIf.cpp
   IfContinue.cpp
   IfBreak.cpp
   IfReturn.cpp
-  IfElse.cpp
   IfGuiPrompt.cpp
   CaseBlock.cpp
   Switch.cpp

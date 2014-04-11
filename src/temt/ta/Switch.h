@@ -30,7 +30,7 @@ class ProgVar; //
 taTypeDef_Of(Switch);
 
 class TA_API Switch: public ProgEl { 
-  // switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
+  // ##DEF_CHILD_cases switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
   ProgVarRef	    switch_var;	// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
@@ -48,6 +48,7 @@ public:
   bool		CvtFmCode(const String& code) override;
   bool		IsCtrlProgEl() 	override { return true; }
 
+  taList_impl*	children_() override { return &cases; }	
   ProgVar*	FindVarName(const String& var_nm) const override;
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }

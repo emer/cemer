@@ -23,7 +23,7 @@
 #include <LayerWriter>
 #include <Loop>
 #include <ProgramCall>
-#include <IfElse>
+#include <If>
 
 #include <tabMisc>
 #include <taMisc>
@@ -339,7 +339,7 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
         Loop* loopel = (Loop*)call_test_from->prog_code.FindType(&TA_Loop);
         if(!TestWarning(!loopel, "TestProgs", "Loop program element not found -- cannot call test program within loop!")) {
           if(call_modulus > 1) {
-            IfElse* ife = (IfElse*)loopel->loop_code.New(1, &TA_IfElse);
+            If* ife = (If*)loopel->loop_code.New(1, &TA_If);
             ife->SetProgFlag(ProgEl::NEW_EL);
             ife->cond.SetExpr("network.epoch % " + String(call_modulus) + " == 0");
             ife->desc = "only call every n epochs -- make sure epochs is appropriate, and its also a good idea to make n a variable";

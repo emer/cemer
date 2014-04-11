@@ -35,7 +35,9 @@ taTypeDef_Of(ForeachLoop);
 taTypeDef_Of(DoLoop);
 taTypeDef_Of(WhileLoop);
 
-taTypeDef_Of(IfElse);
+taTypeDef_Of(If);
+taTypeDef_Of(Else);
+taTypeDef_Of(ElseIf);
 taTypeDef_Of(IfContinue);
 taTypeDef_Of(IfBreak);
 taTypeDef_Of(IfReturn);
@@ -156,7 +158,9 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_WhileLoop);
 
   tb->AddSeparator(sec);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfElse);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_If);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Else);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ElseIf);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfContinue);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfBreak);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_IfReturn);
