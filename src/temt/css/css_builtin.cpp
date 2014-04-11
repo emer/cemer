@@ -844,9 +844,11 @@ static cssEl* cssElCFun_doloop_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   taBase* list = NULL;
+  bool tmp_list = false;        // delete list at end
   if(arg[1]->GetPtrType() == cssEl::T_String) {
     String val = arg[1]->GetStr();
     list = val.to_array();
+    tmp_list = true;
   }
   else {
     list = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
@@ -897,11 +899,13 @@ static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
   }
   if((bool)FOREACH_itr) {
     *var = val;
+    if(tmp_list)
+      delete list;
     return cssBI::true_int;	// more to go
   }
-  else {
-    return cssBI::false_int;	// no more to go
-  }
+  if(tmp_list)
+    delete list;
+  return cssBI::false_int;	// no more to go
 }
 
 static cssEl* cssElCFun_return_stub(int na, cssEl* arg[]) {

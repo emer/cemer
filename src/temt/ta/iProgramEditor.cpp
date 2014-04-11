@@ -158,6 +158,7 @@ void iProgramEditor::Init() {
   propsCodeSplitter->setStretchFactor(0, 0);
   propsCodeSplitter->setStretchFactor(1, 1);
 
+  items->setStyleSheet("QTreeView::branch:has-children:!selected:!hover{background:white;}");
   items->setColumnCount(1);
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
