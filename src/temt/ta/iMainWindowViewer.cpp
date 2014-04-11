@@ -693,7 +693,8 @@ void iMainWindowViewer::Constr_WindowMenu()
   dummyWindowAction = AddAction(new iAction("Dummy Action", QKeySequence(), "dummyWindowAction"));
   windowMenu->AddAction(dummyWindowAction);
 
-  windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(Qt::CTRL + Qt::Key_M), "windowMinimizeAction"));
+//  windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(Qt::CTRL + Qt::Key_M), "windowMinimizeAction"));
+  windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(), "windowMinimizeAction"));
   windowZoomAction = AddAction(new iAction("&Zoom", QKeySequence(), "windowZoomAction"));
 
   connect(windowMinimizeAction, SIGNAL(Action()), this, SLOT(WindowMinimize()));
@@ -1968,6 +1969,12 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
     return inherited::eventFilter(obj, event);
   }
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
+//  
+//#ifdef TA_OS_MAC
+//  if (e->modifiers() & Qt::ControlModifier)
+//    return inherited::eventFilter(obj, event);
+//#endif
+  
   if(KeyEventFilterWindowNav(obj, e))
     return true;
   if(taiMisc::KeyEventFilterEmacs_Clip(obj, e))
