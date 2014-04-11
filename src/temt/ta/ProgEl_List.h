@@ -50,10 +50,14 @@ public:
 
   bool         RemoveIdx(int idx) override;   // override to delete brk_pt before ProgEl is removed
 
-  void          ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl = "");
+  void         ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl = "");
   // #IGNORE replace an el into given location, and optionally do a delayed function call on new replacement guy
+  void         DoReplaceLater();
+  // actually do the later replacement that was setup earlier
 
-  void          DoReplaceLater();
+  void         MoveElseLater(ProgEl* el, int idx, const String& fun_on_repl = "");
+  // #IGNORE move an else / else-if up to higher level, after given item, and optionally do a delayed function call on new replacement guy
+  void         DoMoveElseLater();
   // actually do the later replacement that was setup earlier
 
   SIMPLE_LINKS(ProgEl_List);

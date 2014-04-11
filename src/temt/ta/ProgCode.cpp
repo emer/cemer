@@ -26,6 +26,9 @@ TA_BASEFUNS_CTORS_DEFN(ProgCode);
 taTypeDef_Of(CssExpr);
 taTypeDef_Of(AssignExpr);
 taTypeDef_Of(Comment);
+taTypeDef_Of(If);
+taTypeDef_Of(ElseIf);
+taTypeDef_Of(Else);
 
 void ProgCode::Initialize() {
   SetProgExprFlags();
@@ -195,6 +198,18 @@ void ProgCode::ConvertToProgEl() {
   cvt->orig_prog_code = code.expr;
   cvt->SetProgFlag(CAN_REVERT_TO_CODE);
   int myidx = own->FindEl(this);
+  // if we just typed an else or elseif, see if we did this within an existing if/elseif, without
+  // just following an if/elseif -- this will auto-move it up to the right level
+  if((cvt->InheritsFrom(&TA_Else) || cvt->InheritsFrom(&TA_ElseIf))
+     && own->owner
+     && (own->owner->InheritsFrom(&TA_If) || own->owner->InheritsFrom(&TA_ElseIf))) {
+    if(!(myidx > 0 && (own->SafeEl(myidx-1)->InheritsFrom(&TA_If) || 
+                       own->SafeEl(myidx-1)->InheritsFrom(&TA_ElseIf)))) {
+      own->MoveElseLater(cvt, myidx, "CvtFmSavedCode");
+      SetBaseFlag(BF_MISC4); // indicates that we're done..
+      return;
+    }
+  }
   own->ReplaceLater(cvt, myidx, "CvtFmSavedCode");
   SetBaseFlag(BF_MISC4); // indicates that we're done..
 }

@@ -139,3 +139,35 @@ void ProgEl_List::DoReplaceLater() {
   }
   el_to_repl = NULL;
 }
+
+void ProgEl_List::MoveElseLater(ProgEl* el, int idx, const String& fun_on_repl) {
+  el_to_repl = el;
+  el_to_repl_idx = idx;
+  el_to_repl_fun = fun_on_repl;
+  tabMisc::DelayedFunCall_gui(this, "DoMoveElseLater");
+}
+
+void ProgEl_List::DoMoveElseLater() {
+  if(!el_to_repl) {
+    taMisc::Warning("DoMoveElseLater: nothing to replace!  Programmer error");
+    return;
+  }
+
+  ProgEl_List* nwown = GET_OWNER(owner, ProgEl_List);
+  if(nwown) {
+    int nwmyidx = nwown->FindEl(owner);
+    if(nwmyidx >= 0) {
+      RemoveIdx(el_to_repl_idx); // nuke ProgCode from us
+      nwown->Insert(el_to_repl, nwmyidx+1);
+      tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(el_to_repl, "BrowserSelectMe");
+      if(el_to_repl_fun.nonempty()) {
+        tabMisc::DelayedFunCall_gui(el_to_repl, el_to_repl_fun); 
+      }
+      el_to_repl = NULL;
+      return;
+    }
+  }
+  el_to_repl = NULL;
+  taMisc::Warning("DoMoveElseLater: could not move the else / elseif statment");
+}
