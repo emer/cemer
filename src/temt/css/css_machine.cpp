@@ -199,6 +199,9 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
   taMisc::LogEvent("css Error: " + cssMisc::last_err_msg);
 
   // this is very bad: causes crashing for anything done on cmd shell!
+  // was introduced in 5386 -- comment suggests that probably more for syntax errs:
+  // * reset cmd_prog for syntax or other errors in css -- prevents being stuck in limbo
+  // with unresponsive cmd shell..
   // if(top->cmd_shell) {		// prevent it from getting stuck in cmd shell hell
   //   top->cmd_shell->cmd_prog->Reset();
   // }
