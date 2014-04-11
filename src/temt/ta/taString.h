@@ -28,6 +28,9 @@
 // parent includes:
 
 // member includes:
+#ifndef NO_TA_BASE
+class String_Array; //
+#endif
 
 // declare all other types mentioned but not required to include:
 
@@ -406,11 +409,11 @@ public:
   ////////////////////////////////////////////////
   // String extraction (access)
 
-  taString                operator () (int pos, int len) const; // synonym for at
+  taString              operator () (int pos, int len) const; // synonym for at
   char                  operator [] (int i) const;
   char&                 operator [] (int i); // writable -- NOTE: every use calls makeUnique
 #ifndef NO_TA_BASE
-  taString                operator [] (const Variant& i) const;
+  taString              operator [] (const Variant& i) const;
   // supports slices and lists of coordinates in addition to just an int index
 #endif
 
@@ -509,6 +512,13 @@ public:
   taString&               quote_unesc();
   // #CAT_Modify quote un-escape, replacing escaped double quotes " and back-slashes with their original forms (just removes a backslash) (NOTE: modifies this string, and also returns the resulting string value)
 
+#ifndef NO_TA_BASE
+  String_Array*         split(const String& delim = " ");
+  // #CAT_Access return a string array with the sub-strings split by given delimeter
+  String_Array*         to_array();
+  // #CAT_Access return a string array, with one character of this string in each element of array -- useful for using foreach iterator
+#endif
+
   void                  truncate(uint new_len);
   // #CAT_Modify shortens the string to new_len (if less than curr)
 
@@ -522,7 +532,7 @@ protected:
   taStrRep*             mrep;   // Strings are pointers to their representations
   void                  init(const char* s, int slen = -1); // for calling in constructors
   void                  newRep(taStrRep* rep_); // for setting rep in a constructor
-  taString&               cat(const char* s, int slen); // for internal use
+  taString&             cat(const char* s, int slen); // for internal use
 
   // some helper functions
   int                   search(int start, int sl, const char* t, int tl = -1) const

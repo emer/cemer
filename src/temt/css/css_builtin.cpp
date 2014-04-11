@@ -843,7 +843,14 @@ static cssEl* cssElCFun_doloop_stub(int, cssEl* arg[]) {
 
 static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  taBase* list = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
+  taBase* list = NULL;
+  if(arg[1]->GetPtrType() == cssEl::T_String) {
+    String val = arg[1]->GetStr();
+    list = val.to_array();
+  }
+  else {
+    list = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
+  }
   if(!list) {
     cssMisc::Error(cp, "foreach cond: did not get a list object to iterate over");
     return cssBI::false_int;	// no more to go

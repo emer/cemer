@@ -40,6 +40,10 @@ software work for purposes of copyright.
 #include <limits.h>
 #include <stdio.h>
 
+#ifndef NO_TA_BASE
+#include <String_Array>
+#endif
+
 using namespace std;
 
 //////////////////////////
@@ -1557,3 +1561,18 @@ taString taString::wrap(int width) const {
   return rval;
 }
 
+#ifndef NO_TA_BASE
+String_Array* taString::split(const String& delim) {
+  String_Array* rval = new String_Array;
+  rval->FmDelimString(this, delim);
+  return rval;
+}
+
+String_Array* taString::to_array() {
+  String_Array* rval = new String_Array;
+  for(int i=0; i<length(); i++) {
+    rval->Add(String(elem(i)));
+  }
+  return rval;
+}
+#endif
