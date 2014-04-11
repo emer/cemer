@@ -44,6 +44,7 @@ void If::ConvertFromIfElse() {
   while(false_code.size > 0) {
     nelse->else_code.Transfer(false_code[0]);
   }
+  nelse->flags = flags;         // get our flags
 }
 
 void If::CheckThisConfig_impl(bool quiet, bool& rval) {
