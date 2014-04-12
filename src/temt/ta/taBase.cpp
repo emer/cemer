@@ -3302,38 +3302,38 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 }
 
 
-bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* editor, const String& extra_label,
+bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel, const String& extra_label,
                            const String& sub_gp_nm) {
   if(TestError(!member,"AddToControlPanel", "member is null")) return false;
-  if(!editor) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return editor->SelectMember(this, member, extra_label, "", sub_gp_nm);
+  return ctrl_panel->SelectMember(this, member, extra_label, "", sub_gp_nm);
 }
 
-bool taBase::AddToControlPanelNm(const String& member, ControlPanel* editor,
+bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
                              const String& extra_label, const String& sub_gp_nm,
                              const String& desc) {
-  if(!editor) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);  StructUpdate(true);
 
     if(TestError(!proj, "AddToControlPanelNm", "cannot find project")) return false;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return editor->SelectMemberNm(this, member, extra_label, desc, sub_gp_nm);
+  return ctrl_panel->SelectMemberNm(this, member, extra_label, desc, sub_gp_nm);
 }
 
-int taBase::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor) {
-  if(!editor) {
+int taBase::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& ctrl_panel) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "AddToControlPanelSearch", "cannot find project")) return -1;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
-    editor->name = "Srch_" + memb_contains;
-    editor->desc = "Search of members containing: " + memb_contains
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel->name = "Srch_" + memb_contains;
+    ctrl_panel->desc = "Search of members containing: " + memb_contains
       + " in object: " + GetDisplayName();
-    editor->SigEmitUpdated(); // so name updates in treee
+    ctrl_panel->SigEmitUpdated(); // so name updates in treee
   }
   TypeDef* td = GetTypeDef();
   int nfound = 0;
@@ -3342,7 +3342,7 @@ int taBase::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& 
     MemberDef* md = td->members[m];
     if(md->name.contains(memb_contains)) {
       nfound++;
-      editor->SelectMember(this, md, GetName());
+      ctrl_panel->SelectMember(this, md, GetName());
     }
   }
   // then look in my sub-guys
@@ -3351,47 +3351,47 @@ int taBase::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& 
     if(md->type->IsNotPtr()) {
       if(md->type->IsActualTaBase()) {
         taBase* obj = (taBase*)md->GetOff(this);
-        nfound += obj->AddToControlPanelSearch(memb_contains, editor);
+        nfound += obj->AddToControlPanelSearch(memb_contains, ctrl_panel);
       }
     }
   }
   return nfound;
 }
 
-int taBase::AddToControlPanelCompare(taBase*cmp_obj, ControlPanel*& editor, bool no_ptrs) {
+int taBase::AddToControlPanelCompare(taBase*cmp_obj, ControlPanel*& ctrl_panel, bool no_ptrs) {
   if(TestError(!cmp_obj, "AddToControlPanelCompare", "cmp_obj is null")) return -1;
   if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "AddToControlPanelCompare",
                "objects must have the exact same type to be able to be compared")) return -1;
-  if(!editor) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "AddToControlPanelCompare", "cannot find project")) return -1;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  int rval = editor->CompareObjs(this, cmp_obj, no_ptrs);
-  tabMisc::DelayedFunCall_gui(editor, "BrowserSelectMe");
+  int rval = ctrl_panel->CompareObjs(this, cmp_obj, no_ptrs);
+  tabMisc::DelayedFunCall_gui(ctrl_panel, "BrowserSelectMe");
   return rval;
 }
 
-bool taBase::SelectFunForEdit(MethodDef* function, ControlPanel* editor,
+bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel,
                               const String& extra_label, const String& sub_gp_nm) {
   if(TestError(!function, "AddControlFunForEdit", "function is null")) return false;
-  if(!editor) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "AddControlFunForEdit", "cannot find project")) return false;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return editor->SelectMethod(this, function, extra_label, "", sub_gp_nm);
+  return ctrl_panel->SelectMethod(this, function, extra_label, "", sub_gp_nm);
 }
 
-bool taBase::SelectFunForEditNm(const String& function, ControlPanel* editor,
+bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_panel,
                                 const String& extra_label, const String& sub_gp_nm,
                                 const String& desc) {
-  if(!editor) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "AddControlFunForEditNm", "cannot find project")) return false;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
-  return editor->SelectMethodNm(this, function, extra_label, desc, sub_gp_nm);
+  return ctrl_panel->SelectMethodNm(this, function, extra_label, desc, sub_gp_nm);
 }
 
 void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,

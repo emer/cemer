@@ -1886,11 +1886,11 @@ void Network::UpdateMonitors() {
   }
 }
 
-void Network::NetControlPanel(ControlPanel* editor, const String& extra_label, const String& sub_gp_nm) {
-  if(!editor) {
+void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "NetControlPanel", "cannot find project")) return;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   TypeDef* td = GetTypeDef();
   for(int i=td->members.size-1; i>=0; i--) {
@@ -1898,7 +1898,7 @@ void Network::NetControlPanel(ControlPanel* editor, const String& extra_label, c
     if(!md->HasOption("VIEW")) continue;
     // filter by current guys..
     if(HasUserData(md->name) && !GetUserDataAsBool(md->name)) continue;
-    editor->SelectMember(this, md, extra_label, "", sub_gp_nm);
+    ctrl_panel->SelectMember(this, md, extra_label, "", sub_gp_nm);
   }
 }
 

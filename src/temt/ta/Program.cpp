@@ -1653,23 +1653,23 @@ Program* Program::MakeTemplate() {
   return prog;
 }
 
-bool Program::SelectCtrlFunsForEdit(ControlPanel* editor, const String& extra_label,
+bool Program::AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel, const String& extra_label,
                                     const String& sub_gp_nm) {
-  if(!editor) {
+  if(!ctrl_panel) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(TestError(!proj, "SelectControlFunForEdit", "cannot find project")) return false;
-    editor = (ControlPanel*)proj->ctrl_panels.New(1);
+    if(TestError(!proj, "AddCtrlFunsToControlPanel", "cannot find project")) return false;
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   TypeDef* td = GetTypeDef();
   bool rval = true;
   MethodDef* md = td->methods.FindName("Init"); // "" = desc field
-  if(md) rval = editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval = ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Run_Gui");
-  if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval |= ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Step_Gui");
-  if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval |= ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   md = td->methods.FindName("Stop");
-  if(md) rval |= editor->SelectMethod(this, md, extra_label, "", sub_gp_nm);
+  if(md) rval |= ctrl_panel->SelectMethod(this, md, extra_label, "", sub_gp_nm);
   return rval;
 }
 
