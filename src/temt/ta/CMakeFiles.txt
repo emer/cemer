@@ -347,7 +347,7 @@ set(ta_HEADS_MAKETA_NOMOC
   OtherProgramVar.h
   ProgVarFmArg.h
   DataColsFmArgs.h
-  SelectEditsFmArgs.h
+  ControlPanelsFmArgs.h
   RegisterArgs.h
 
   Relation.h
@@ -447,15 +447,15 @@ set(ta_HEADS_MAKETA_NOMOC
   taPlugin.h
   taPlugin_List.h
 
-  SelectEditItem.h
+  ControlPanelItem.h
   EditParamSearch.h
   EditMbrItem.h
   EditMthItem.h
   EditMbrItem_Group.h
   EditMthItem_Group.h
-  SelectEditConfig.h
-  SelectEdit.h
-  SelectEdit_Group.h
+  ControlPanelConfig.h
+  ControlPanel.h
+  ControlPanel_Group.h
 
   ParamSearchAlgo.h
   ParamSearchAlgo_List.h
@@ -643,7 +643,7 @@ set(ta_HEADS_MAKETA_NOMOC
   taiViewTypeOfTypeInfo.h
   taiViewTypeOfDoc.h
   taiViewTypeOfWizard.h
-  taiViewTypeOfSelectEdit.h
+  taiViewTypeOfControlPanel.h
   taiViewTypeOfProgram.h
   taiViewTypeOfProgramGroup.h
 
@@ -796,7 +796,7 @@ set(ta_HEADS_MAKETA_MOC
   iPanelOfProgramScript.h
   iProgramEditor.h
 
-  iPanelOfSelectEdit.h
+  iPanelOfControlPanel.h
 
   iPanelOfDocView.h
   iPanelOfDocEdit.h
@@ -889,12 +889,12 @@ set(ta_HEADS_NOMAKETA_MOC
   taiEditorOfDoc.h
   taiEditorOfWizard.h
   taiEditorOfUserData.h
-  taiEditorOfSelectEditBase.h
-  taiEditorOfSelectEditFull.h
-  taiEditorOfSelectEditFast.h
+  taiEditorOfControlPanelBase.h
+  taiEditorOfControlPanelFull.h
+  taiEditorOfControlPanelFast.h
 
   taiWidgetDelegate.h
-  taiWidgetDelegateSelectEdit.h
+  taiWidgetDelegateControlPanel.h
   taiWidgetDelegateUserData.h
 
   taiWidgetActions.h
@@ -1448,7 +1448,7 @@ set(ta_SRCS_MAKETA
   OtherProgramVar.cpp
   ProgVarFmArg.cpp
   DataColsFmArgs.cpp
-  SelectEditsFmArgs.cpp
+  ControlPanelsFmArgs.cpp
   RegisterArgs.cpp
 
   Relation.cpp
@@ -1548,15 +1548,15 @@ set(ta_SRCS_MAKETA
   taPlugin.cpp
   taPlugin_List.cpp
 
-  SelectEditItem.cpp
+  ControlPanelItem.cpp
   EditParamSearch.cpp
   EditMbrItem.cpp
   EditMthItem.cpp
   EditMbrItem_Group.cpp
   EditMthItem_Group.cpp
-  SelectEditConfig.cpp
-  SelectEdit.cpp
-  SelectEdit_Group.cpp
+  ControlPanelConfig.cpp
+  ControlPanel.cpp
+  ControlPanel_Group.cpp
 
   ParamSearchAlgo.cpp
   ParamSearchAlgo_List.cpp
@@ -1744,7 +1744,7 @@ set(ta_SRCS_MAKETA
   taiViewTypeOfTypeInfo.cpp
   taiViewTypeOfDoc.cpp
   taiViewTypeOfWizard.cpp
-  taiViewTypeOfSelectEdit.cpp
+  taiViewTypeOfControlPanel.cpp
   taiViewTypeOfProgram.cpp
   taiViewTypeOfProgramGroup.cpp
 
@@ -1890,7 +1890,7 @@ set(ta_SRCS_MAKETA
   iPanelOfProgramScript.cpp
   iProgramEditor.cpp
 
-  iPanelOfSelectEdit.cpp
+  iPanelOfControlPanel.cpp
 
   iPanelOfDocView.cpp
   iPanelOfDocEdit.cpp
@@ -1988,12 +1988,12 @@ set(ta_SRCS_NOMAKETA
   taiEditorOfDoc.cpp
   taiEditorOfWizard.cpp
   taiEditorOfUserData.cpp
-  taiEditorOfSelectEditBase.cpp
-  taiEditorOfSelectEditFull.cpp
-  taiEditorOfSelectEditFast.cpp
+  taiEditorOfControlPanelBase.cpp
+  taiEditorOfControlPanelFull.cpp
+  taiEditorOfControlPanelFast.cpp
 
   taiWidgetDelegate.cpp
-  taiWidgetDelegateSelectEdit.cpp
+  taiWidgetDelegateControlPanel.cpp
   taiWidgetDelegateUserData.cpp
 
   taiWidgetActions.cpp

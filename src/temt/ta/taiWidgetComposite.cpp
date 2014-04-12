@@ -103,7 +103,7 @@ void taiWidgetComposite::AddChildMember(MemberDef* md) {
   // get caption
   if(add_labels) {
     lbl = taiEditorWidgetsMain::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
-    lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
+    lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for ControlPanel
 
     // check for a compatible taiEditorWidgetsMain, and if so, connect context menu
     if (host) {

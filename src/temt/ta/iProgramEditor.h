@@ -189,7 +189,7 @@ protected:
 protected slots:
   void                  label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
   void                  items_Notify(ISelectableHost* src, int op); // note: NULL if none
-  void                  DoSelectForEdit(QAction* act);
+  void                  DoAddToControlPanel(QAction* act);
 
 private:
   void                  Init();

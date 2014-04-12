@@ -175,7 +175,7 @@ protected:
   // event filter to trigger apply button on Ctrl+Return
 
 protected slots:
-  virtual void          DoSelectForEdit(QAction* act); // act.data will be index of the SelectEdit; sel_data_index will hold the index of the data item
+  virtual void          DoAddToControlPanel(QAction* act); // act.data will be index of the ControlPanel; sel_data_index will hold the index of the data item
   virtual void          bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 

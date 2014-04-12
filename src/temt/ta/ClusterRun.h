@@ -17,7 +17,7 @@
 #define ClusterRun_h 1
 
 // parent includes:
-#include <SelectEdit>
+#include <ControlPanel>
 #include <taSmartRefT>
 #include <taSmartPtrT>
 
@@ -42,9 +42,9 @@ taTypeDef_Of(GridSearch);
 
 taTypeDef_Of(ClusterRun);
 
-class TA_API ClusterRun : public SelectEdit {
+class TA_API ClusterRun : public ControlPanel {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
-  INHERITED(SelectEdit)
+  INHERITED(ControlPanel)
 public:
   static String timestamp_fmt;  // #NO_SAVE #HIDDEN time stamp format string -- yyyy_MM_dd_hh_mm_ss
 
@@ -227,7 +227,7 @@ public:
   virtual iPanelSet* FindMyPanelSet();
   // #IGNORE find my panel set, which contains all the more specific view panels (diff data tables)
   virtual bool       ViewPanelNumber(int panel_no);
-  // #CAT_Display select the edit/middle panel view of this object to be the given number (0 = SelectEdit, 1 = jobs_running, 2 = jobs_done, 3 = jobs_archive, 4 = file_list, 5 = cluster_info, 6 = Properties)
+  // #CAT_Display select the edit/middle panel view of this object to be the given number (0 = ControlPanel, 1 = jobs_running, 2 = jobs_done, 3 = jobs_archive, 4 = file_list, 5 = cluster_info, 6 = Properties)
 
   virtual void      AutoUpdateMe(bool clear_sels = true);
   // set this cluster run to auto-update to the next revision after one that was just committed -- if clear_sels then clear all selections in tables (action is done -- generally should be true)

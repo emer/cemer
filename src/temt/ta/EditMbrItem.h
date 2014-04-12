@@ -17,7 +17,7 @@
 #define EditMbrItem_h 1
 
 // parent includes:
-#include <SelectEditItem>
+#include <ControlPanelItem>
 
 // member includes:
 #include <EditParamSearch>
@@ -27,9 +27,9 @@
 
 taTypeDef_Of(EditMbrItem);
 
-class TA_API EditMbrItem: public SelectEditItem {
+class TA_API EditMbrItem: public ControlPanelItem {
   // a member select edit item -- allows editing of just one member from a class
-  INHERITED(SelectEditItem)
+  INHERITED(ControlPanelItem)
 public:
   MemberDef*            mbr; // #READ_ONLY #SHOW the mbr type
   bool                  is_numeric;   // #READ_ONLY is this a single numeric type (float, double, int)

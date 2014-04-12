@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "EditMbrItem_Group.h"
-#include <SelectEdit>
+#include <ControlPanel>
 #include <DataTable>
 
 #include <taMisc>
@@ -25,12 +25,12 @@ TA_BASEFUNS_CTORS_DEFN(EditMbrItem_Group);
 void EditMbrItem_Group::SigEmit(int sls, void* op1, void* op2)
 {
   inherited::SigEmit(sls, op1, op2);
-  SelectEdit::StatSigEmit_Group(this, sls, op1, op2);
+  ControlPanel::StatSigEmit_Group(this, sls, op1, op2);
 }
 
 taBase* EditMbrItem_Group::GetBase_Flat(int idx) const {
   taBase* rval = NULL;
-  SelectEditItem::StatGetBase_Flat(this, idx, rval);
+  ControlPanelItem::StatGetBase_Flat(this, idx, rval);
   return rval;
 }
 

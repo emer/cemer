@@ -15,7 +15,7 @@
 
 #include "taiEditorWidgets.h"
 #include <taProject>
-#include <SelectEdit>
+#include <ControlPanel>
 #include <iLabel>
 #include <taiWidget>
 #include <iFlowLayout>
@@ -44,15 +44,15 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
 //    return;
   // get list of select edits
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
-  if (!proj || proj->edits.leaves == 0) return;
+  if (!proj || proj->ctrl_panels.leaves == 0) return;
 
   // if any edits, populate menu for adding, for all seledits not already on
-  QMenu* sub = menu->addMenu("Add to SelectEdit");
+  QMenu* sub = menu->addMenu("Add to ControlPanel");
   connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
   sub->setFont(menu->font());
   QAction* act = NULL; // we need to track last one
-  for (int i = 0; i < proj->edits.leaves; ++i) {
-    SelectEdit* se = proj->edits.Leaf(i);
+  for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
+    ControlPanel* se = proj->ctrl_panels.Leaf(i);
     act = sub->addAction(se->GetName()/*, slot_obj, slot*/); //
     act->setData(i); // sets data, which is what is used in signal, to i
     // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
@@ -63,11 +63,11 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
     sub->setEnabled(false); // show item for usability, but disable
 
   // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = menu->addMenu("Remove from SelectEdit");
+  sub = menu->addMenu("Remove from ControlPanel");
   connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
   sub->setFont(menu->font());
-  for (int i = 0; i < proj->edits.leaves; ++i) {
-    SelectEdit* se = proj->edits.Leaf(i);
+  for (int i = 0; i < proj->ctrl_panels.leaves; ++i) {
+    ControlPanel* se = proj->ctrl_panels.Leaf(i);
     act = sub->addAction(se->GetName()/*, slot_obj, slot*/);
     act->setData(i); // sets data, which is what is used in signal, to i
     // determine if already on that seledit, and disable if it isn't
@@ -131,7 +131,7 @@ void taiEditorWidgets::Constr_Methods() {
   Constr_Methods_impl();
 }
 
-void taiEditorWidgets::Constr_Methods_impl() { //note: conditional constructions used by SelectEditHost to rebuild methods
+void taiEditorWidgets::Constr_Methods_impl() { //note: conditional constructions used by ControlPanelHost to rebuild methods
   QFrame* tmp = frmMethButtons;
   if (!frmMethButtons) {
     show_meth_buttons = false; // set true if any created
@@ -149,7 +149,7 @@ void taiEditorWidgets::Constr_Methods_impl() { //note: conditional constructions
   }
   if (!frmMethButtons) {
     frmMethButtons = tmp;
-    //TODO: if this is a SelectEdit, and this is a rebuild for first time,
+    //TODO: if this is a ControlPanel, and this is a rebuild for first time,
     // we will need to do the Insert_Methods call
   }
 }

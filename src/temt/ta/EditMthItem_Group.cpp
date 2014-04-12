@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "EditMthItem_Group.h"
-#include <SelectEdit>
+#include <ControlPanel>
 
 #include <taMisc>
 
@@ -41,13 +41,13 @@ void EditMthItem_Group::InitLinks() {
 void EditMthItem_Group::SigEmit(int sls, void* op1, void* op2)
 {
   inherited::SigEmit(sls, op1, op2);
-  SelectEdit::StatSigEmit_Group(this, sls, op1, op2);
+  ControlPanel::StatSigEmit_Group(this, sls, op1, op2);
 }
 
 
 taBase* EditMthItem_Group::GetBase_Flat(int idx) const {
   taBase* rval = NULL;
-  SelectEditItem::StatGetBase_Flat(this, idx, rval);
+  ControlPanelItem::StatGetBase_Flat(this, idx, rval);
   return rval;
 }
 

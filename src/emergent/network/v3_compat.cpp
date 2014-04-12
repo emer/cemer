@@ -1210,8 +1210,8 @@ bool V3ProjectBase::ConvertToV4_ProcScripts(ProjectBase* nwproj) {
 }
 
 bool V3ProjectBase::ConvertToV4_Edits(ProjectBase* nwproj) {
-  FOREACH_ELEM_IN_GROUP(SelectEdit, se, edits) {
-    SelectEdit* ned = (SelectEdit*)nwproj->edits.New(1, &TA_SelectEdit);
+  FOREACH_ELEM_IN_GROUP(ControlPanel, se, edits) {
+    ControlPanel* ned = (ControlPanel*)nwproj->edits.New(1, &TA_ControlPanel);
     ned->CopyFrom(se);
   }
   nwproj->edits.UpdatePointers_NewPar(this, nwproj); // update select edit pointers!

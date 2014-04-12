@@ -100,7 +100,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(wiki_url, this);
   taBase::Own(docs, this);
   taBase::Own(wizards, this);
-  taBase::Own(edits, this);
+  taBase::Own(ctrl_panels, this);
   taBase::Own(data, this);
   taBase::Own(data_proc, this);
   taBase::Own(programs, this);
@@ -108,7 +108,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(viewers_tmp, this);
   taBase::Own(undo_mgr, this);
 
-  edits.el_typ = &TA_SelectEdit; // set this as default type
+  ctrl_panels.el_typ = &TA_ControlPanel; // set this as default type
 
   // note: any derived programs should install additional guys..
   // put in NO_CLIP to suppress clip ops, since we don't want any for these guys
@@ -126,10 +126,10 @@ void taProject::InitLinks_impl() {
 void taProject::InitLinks_post() {
   if (!taMisc::is_loading) {
     // ensure we have a cluster run guy
-    FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
+    FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
     DoView();
   }
-  edits.el_typ = &TA_SelectEdit; // set this as default type
+  ctrl_panels.el_typ = &TA_ControlPanel; // set this as default type
 }
 
 void taProject::CutLinks() {
@@ -143,7 +143,7 @@ void taProject::CutLinks_impl() {
   programs.CutLinks();
   data_proc.CutLinks();
   data.CutLinks();
-  edits.CutLinks();
+  ctrl_panels.CutLinks();
   wizards.CutLinks();
   docs.CutLinks();
 }
@@ -155,12 +155,12 @@ void taProject::Copy_(const taProject& cp) {
   viewers.Reset();
   data.Reset();
 
-  edits.Reset();
+  ctrl_panels.Reset();
 
   tags = cp.tags;
   docs = cp.docs;
   wizards = cp.wizards;
-  edits = cp.edits;
+  ctrl_panels = cp.ctrl_panels;
   data = cp.data;
   data_proc = cp.data_proc;
   viewers = cp.viewers;         // todo: open windows here etc
@@ -173,8 +173,8 @@ void taProject::Copy_(const taProject& cp) {
 void taProject::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   if(taMisc::is_loading) {	// make sure we have one of these for old projects
-    FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
-    edits.el_typ = &TA_SelectEdit; // set this as default type
+    FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
+    ctrl_panels.el_typ = &TA_ControlPanel; // set this as default type
   }
   UpdateUi();
 }
@@ -188,10 +188,10 @@ taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
   return rval;
 }
 
-SelectEdit* taProject::FindMakeSelectEdit(const String& nm, TypeDef* type) {
-  SelectEdit* rval = edits.FindName(nm);
+ControlPanel* taProject::FindMakeControlPanel(const String& nm, TypeDef* type) {
+  ControlPanel* rval = ctrl_panels.FindName(nm);
   if(rval) return rval;
-  rval = (SelectEdit*)edits.NewEl(1, type);
+  rval = (ControlPanel*)ctrl_panels.NewEl(1, type);
   rval->SetName(nm);
   rval->SigEmitUpdated();
   return rval;
@@ -221,7 +221,7 @@ String taProject::GetClusterRunPath() {
     return taMisc::GetDirFmPath(proj_dir); // up one from this path
   }
   // otherwise we are on workstation -- get cr svn repo
-  ClusterRun* cr = (ClusterRun*)FindMakeSelectEdit("ClusterRun", &TA_ClusterRun);
+  ClusterRun* cr = (ClusterRun*)FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
   if(cr) {
     return cr->GetSvnPath();
   }
@@ -274,7 +274,7 @@ void taProject::DoView() {
   }
   docs.AutoEdit();
   wizards.AutoEdit();
-  edits.AutoEdit();
+  ctrl_panels.AutoEdit();
   // this is very hacky... select the 2nd tab, which will
   // be the first auto guy if there were any
   taiMiscCore::ProcessEvents();

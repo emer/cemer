@@ -193,9 +193,9 @@ void taGroup_impl::Copy_Borrow(const taGroup_impl& cp) {
   gp.Copy_Borrow(cp.gp);
 }
 
-int taGroup_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
-  int nfound = inherited::SelectForEditSearch(memb_contains, editor);
-  nfound += gp.SelectForEditSearch(memb_contains, editor);
+int taGroup_impl::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor) {
+  int nfound = inherited::AddToControlPanelSearch(memb_contains, editor);
+  nfound += gp.AddToControlPanelSearch(memb_contains, editor);
   return nfound;
 }
 

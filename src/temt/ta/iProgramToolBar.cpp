@@ -72,7 +72,7 @@ taTypeDef_Of(Comment);
 taTypeDef_Of(ProgVarFmArg);
 taTypeDef_Of(MemberFmArg);
 taTypeDef_Of(DataColsFmArgs);
-taTypeDef_Of(SelectEditsFmArgs);
+taTypeDef_Of(ControlPanelsFmArgs);
 taTypeDef_Of(RegisterArgs);
 
 taTypeDef_Of(StaticMethodCall);
@@ -209,7 +209,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_MemberFmArg);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataColsFmArgs);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_SelectEditsFmArgs);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ControlPanelsFmArgs);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_RegisterArgs);
 
   ////////////////////////////////////////////////////////////////////////////

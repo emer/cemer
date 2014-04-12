@@ -27,7 +27,7 @@
 #include <iSplitter>
 #include <taiWidgetPoly>
 #include <taProject>
-#include <SelectEdit>
+#include <ControlPanel>
 #include <BuiltinTypeDefs>
 
 #include <SigLinkSignal>
@@ -665,7 +665,7 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
     sel_item_base = sel_item_dat->Base();
     taiEditorWidgetsMain::DoFillLabelContextMenu_SelEdit(menu, last_id,
       sel_item_base, sel_item_mbr, body,
-    this, SLOT(DoSelectForEdit(QAction*)));
+    this, SLOT(DoAddToControlPanel(QAction*)));
   }
 
   if (menu->actions().count() > 0)
@@ -673,14 +673,14 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   delete menu;
 }
 
-void iProgramEditor::DoSelectForEdit(QAction* act) {
+void iProgramEditor::DoAddToControlPanel(QAction* act) {
 //note: this routine is duplicated in the taiEditorOfClass
 
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
 
   int param = act->data().toInt();
-  SelectEdit* se = proj->edits.Leaf(param);
+  ControlPanel* se = proj->ctrl_panels.Leaf(param);
 
   taBase* rbase = sel_item_base;
   MemberDef* md = sel_item_mbr;

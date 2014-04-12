@@ -33,7 +33,7 @@ class MemberDef; //
 class taBase_PtrList; // 
 class taObjDiff_List; // 
 class taDoc; // 
-class SelectEdit; // 
+class ControlPanel; // 
 class MethodDef; // 
 class UserDataItem_List; // 
 class UserDataItemBase; // 

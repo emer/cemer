@@ -21,7 +21,7 @@
 #include <MemberDef>
 #include <UserDataItem>
 #include <ProjectBase>
-#include <SelectEdit>
+#include <ControlPanel>
 #include <DataTable>
 #include <taFiler>
 #include <SimpleMathSpec>
@@ -1886,11 +1886,11 @@ void Network::UpdateMonitors() {
   }
 }
 
-void Network::NetControlPanel(SelectEdit* editor, const String& extra_label, const String& sub_gp_nm) {
+void Network::NetControlPanel(ControlPanel* editor, const String& extra_label, const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "NetControlPanel", "cannot find project")) return;
-    editor = (SelectEdit*)proj->edits.New(1);
+    editor = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   TypeDef* td = GetTypeDef();
   for(int i=td->members.size-1; i>=0; i--) {

@@ -33,7 +33,7 @@
 #include <taBase_Group>
 #include <Doc_Group>
 #include <Wizard_Group>
-#include <SelectEdit_Group>
+#include <ControlPanel_Group>
 #include <DataTable_Group>
 #include <Program_Group>
 #include <taViewer_List>
@@ -44,7 +44,7 @@
 class MainWindowViewer; // 
 class DataTable; // 
 class TypeDef; // 
-class SelectEdit; // 
+class ControlPanel; // 
 class taDoc; // 
 
 
@@ -73,7 +73,7 @@ public:
     SEARCH_LIBS,                // search through the libraries (for loading)
   };
 
-  String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
+String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
   String                tags;      // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion         version;
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
@@ -81,7 +81,7 @@ public:
   taWikiURL             wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
-  SelectEdit_Group      edits;  // special edit dialogs for selected elements
+  ControlPanel_Group    ctrl_panels;  // #AKA_edits special edit dialogs for selected elements
   DataTable_Group       data;   // data, such as patterns for network input
   taBase_Group          data_proc; // #HIDDEN_TREE objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group         programs; // Gui-based programs to run simulations and other processing
@@ -144,8 +144,8 @@ public:
   // #CAT_Data create a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual taBase*       FindMakeNewDataProc(TypeDef* typ, const String& nm);
   // #CAT_Data find existing data processing object of given type, or else make one and give it nm
-  virtual SelectEdit*   FindMakeSelectEdit(const String& seledit_name,
-					   TypeDef* type = &TA_SelectEdit);
+  virtual ControlPanel*   FindMakeControlPanel(const String& seledit_name,
+					   TypeDef* type = &TA_ControlPanel);
   // #CAT_Edit get select edit object of given name, or make one if not found
   virtual taDoc*        FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
                                     const String& web_url = "");

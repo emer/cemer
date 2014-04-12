@@ -58,7 +58,7 @@ void taiArgTypeOfMethodPtr::GetImage_impl(taiWidget* dat, const void*) {
     MethodDef* mbd = mbs->FastEl(i);
     if (mbd->im == NULL) continue;
     if ((mbd->name == "Close") || (mbd->name == "DuplicateMe") || (mbd->name == "ChangeMyType")
-       || (mbd->name == "SelectForEdit") || (mbd->name == "SelectFunForEdit")
+       || (mbd->name == "AddToControlPanel") || (mbd->name == "AddControlFunForEdit")
        || (mbd->name == "Help"))
       continue;
     rval->ta_actions->AddItem(mbd->GetLabel(), mbd);

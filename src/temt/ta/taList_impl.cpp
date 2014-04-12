@@ -1376,13 +1376,13 @@ int taList_impl::SetDefaultElType(TypeDef* it) {
   return idx;
 }
 
-int taList_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {
-  int nfound = taOBase::SelectForEditSearch(memb_contains, editor);
+int taList_impl::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor) {
+  int nfound = taOBase::AddToControlPanelSearch(memb_contains, editor);
   for(int i=0;i<size;i++) {
     taBase* itm = (taBase*)el[i];
     if(!itm) continue;
     if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
-      nfound += itm->SelectForEditSearch(memb_contains, editor);
+      nfound += itm->AddToControlPanelSearch(memb_contains, editor);
     }
   }
   return nfound;

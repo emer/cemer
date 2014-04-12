@@ -23,7 +23,7 @@
 #include <taiMethod>
 #include <iFlowLayout>
 #include <taProject>
-#include <SelectEdit>
+#include <ControlPanel>
 #include <iDialogEditor>
 #include <iFormLayout>
 #include <taiWidgetToolBar>
@@ -386,13 +386,13 @@ void taiEditorOfClass::DoRaise_Panel() {
   //TODO
 }
 
-void taiEditorOfClass::DoSelectForEdit(QAction* act){
+void taiEditorOfClass::DoAddToControlPanel(QAction* act){
 //note: this routine is duplicated in the ProgEditor
   taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
 
   int param = act->data().toInt();
-  SelectEdit* se = proj->edits.Leaf(param);
+  ControlPanel* se = proj->ctrl_panels.Leaf(param);
 
   if (!sel_item_base) return; // shouldn't happen!
   taBase* rbase = sel_item_base;
@@ -477,7 +477,7 @@ void taiEditorOfClass::FillLabelContextMenu(QMenu* menu, int& last_id) {
 void taiEditorOfClass::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 {
   DoFillLabelContextMenu_SelEdit(menu, last_id, sel_item_base, sel_item_mbr, body,
-  this, SLOT(DoSelectForEdit(QAction*)));
+  this, SLOT(DoAddToControlPanel(QAction*)));
 }
 
 void taiEditorOfClass::GetButtonImage(bool force) {
@@ -696,7 +696,7 @@ void taiEditorOfClass::SetCurMenu_Name(String men_nm) {
     // the following line, emergent doesn't work correctly on the Mac
     // or on Ubuntu with the Unity desktop, which both have a global
     // menubar.  Specifically, there is no way to access the normal
-    // menubar (File, Edit, View) because this one (Object, SelectEdit)
+    // menubar (File, Edit, View) because this one (Object, ControlPanel)
     // is taking its place.
 #if (QT_VERSION >= 0x040600)
     qmb->setNativeMenuBar(false);

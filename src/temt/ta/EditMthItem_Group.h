@@ -43,7 +43,7 @@ public:
   MthGroupType          group_type; // #GHOST_ON_is_root how to organize and display the methods in this group
 
   void                  SetGroupType(MthGroupType group_type);
-   // #MENU #MENU_CONTEXT set how the methods will be displayed in the SelectEdit dialog
+   // #MENU #MENU_CONTEXT set how the methods will be displayed in the ControlPanel dialog
 
   taBase*               GetBase_Flat(int idx) const;
     // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
@@ -53,7 +53,7 @@ public:
   String       GetColHeading(const KeyString& key) const override;
   // header text for the indicated column
   const KeyString GetListColKey(int col) const override;
-  String       GetTypeDecoKey() const override { return "SelectEdit"; }
+  String       GetTypeDecoKey() const override { return "ControlPanel"; }
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   void  InitLinks();
   TA_BASEFUNS(EditMthItem_Group);

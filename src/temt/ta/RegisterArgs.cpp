@@ -20,7 +20,7 @@
 #include <ProgVarFmArg>
 #include <MemberFmArg>
 #include <DataColsFmArgs>
-#include <SelectEditsFmArgs>
+#include <ControlPanelsFmArgs>
 #include <MemberDef>
 
 TA_BASEFUNS_CTORS_DEFN(RegisterArgs);
@@ -57,8 +57,8 @@ void RegisterArgs::AddArgsFmCode(Program* prog, ProgEl_List& progs) {
       DataColsFmArgs* dca = (DataColsFmArgs*)pel;
       dca->GenRegArgs(prog);
     }
-    else if(pel->InheritsFrom(&TA_SelectEditsFmArgs)) {
-      SelectEditsFmArgs* sea = (SelectEditsFmArgs*)pel;
+    else if(pel->InheritsFrom(&TA_ControlPanelsFmArgs)) {
+      ControlPanelsFmArgs* sea = (ControlPanelsFmArgs*)pel;
       sea->GenRegArgs(prog);
     }
     else {                      // look for sub-lists

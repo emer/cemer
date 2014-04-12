@@ -17,7 +17,7 @@
 #define EditMthItem_h 1
 
 // parent includes:
-#include <SelectEditItem>
+#include <ControlPanelItem>
 
 // member includes:
 #include <MethodDef>
@@ -26,9 +26,9 @@
 
 taTypeDef_Of(EditMthItem);
 
-class TA_API EditMthItem: public SelectEditItem {
+class TA_API EditMthItem: public ControlPanelItem {
   // a method select edit item -- allows access via menu or button to just one method from a class
-  INHERITED(SelectEditItem)
+  INHERITED(ControlPanelItem)
 public:
   MethodDef*            mth; // #READ_ONLY #SHOW the mbr type
 

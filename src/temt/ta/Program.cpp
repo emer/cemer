@@ -16,7 +16,7 @@
 #include "Program.h"
 #include <Program_Group>
 #include <taProject>
-#include <SelectEdit>
+#include <ControlPanel>
 #include <ProgramCallBase>
 #include <taiEditorOfString>
 #include <iDialogChoice>
@@ -1653,12 +1653,12 @@ Program* Program::MakeTemplate() {
   return prog;
 }
 
-bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label,
+bool Program::SelectCtrlFunsForEdit(ControlPanel* editor, const String& extra_label,
                                     const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
-    if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
-    editor = (SelectEdit*)proj->edits.New(1);
+    if(TestError(!proj, "SelectControlFunForEdit", "cannot find project")) return false;
+    editor = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   TypeDef* td = GetTypeDef();
   bool rval = true;

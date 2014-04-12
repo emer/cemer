@@ -1504,7 +1504,7 @@ bool taRootBase::Startup_InitViewColors() {
                                          true, "forest green", true, "pale green");
   taMisc::view_colors->FindMakeViewColor("Wizard", "Wizard and associated objects",
                                          true, "azure4", true, "azure1");
-  taMisc::view_colors->FindMakeViewColor("SelectEdit", "SelectEdit -- editor for selected variables across different objects",
+  taMisc::view_colors->FindMakeViewColor("ControlPanel", "ControlPanel -- editor for selected variables across different objects",
                                          true, "azure4", true, "azure1");
   taMisc::view_colors->FindMakeViewColor("Doc", "Documentation object",
                                          true, "azure4", true, "azure1");

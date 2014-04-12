@@ -39,14 +39,14 @@ public:
     // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
   EditMbrItem*          FindItemBase(taBase* base,
     MemberDef* md, int& idx) const
-    {return (EditMbrItem*)SelectEditItem::StatFindItemBase(this, base, md, idx);}
+    {return (EditMbrItem*)ControlPanelItem::StatFindItemBase(this, base, md, idx);}
 
   int          NumListCols() const override {return 5;}
   // base name, base type, memb name, memb type, memb label
   String       GetColHeading(const KeyString& key) const override;
   // header text for the indicated column
   const KeyString GetListColKey(int col) const override;
-  String       GetTypeDecoKey() const override { return "SelectEdit"; }
+  String       GetTypeDecoKey() const override { return "ControlPanel"; }
   void         SigEmit(int sls, void* op1 = NULL, void* op2 = NULL) override;
   TA_BASEFUNS_NOCOPY(EditMbrItem_Group);
 #ifdef __MAKETA__ // dummy to supress New

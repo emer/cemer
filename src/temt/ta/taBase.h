@@ -37,7 +37,7 @@ class MemberDef; //
 class taBase_PtrList; // 
 class taObjDiff_List; // 
 class taDoc; // 
-class SelectEdit; // 
+class ControlPanel; // 
 class MethodDef; // 
 class UserDataItem_List; // 
 class UserDataItemBase; // 
@@ -1385,28 +1385,28 @@ public:
   //            Select For Edit
 public:
   virtual bool          DiffCompare(taBase* cmp_obj);
-  // #MENU #MENU_ON_SelectEdit #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
+  // #MENU #MENU_ON_ControlPanel #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
   virtual bool          DoDiffEdits(taObjDiff_List& diffs);
   // #CAT_ObjectMgmt actually perform edit actions (copy, add, delete) selected on given list of diffs
 
   virtual String        DiffCompareString(taBase* cmp_obj, taDoc*& doc);
   // #NULL_OK_1  #NULL_TEXT_1_NewDoc  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object using a diff operation on their save file representations -- more robust to large differences than the select-for-edit version (if doc is NULL, a new one is created in .docs).  returns diff string as well.
 
-  virtual bool          SelectForEdit(MemberDef* member, SelectEdit* editor,
+  virtual bool          AddToControlPanel(MemberDef* member, ControlPanel* editor,
       const String& extra_label = "", const String& sub_gp_nm = "");
-  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
-  virtual bool          SelectForEditNm(const String& memb_nm, SelectEdit* editor,
+  // #MENU #MENU_ON_ControlPanel #MENU_SEP_BEFORE #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
+  virtual bool          AddToControlPanelNm(const String& memb_nm, ControlPanel* editor,
                 const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
                 const String& desc = _nilString);
   // #CAT_Display select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if member was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist).  desc is a custom description -- will show up as tooltip for user (default is info from member)
-  virtual int           SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
+  virtual int           AddToControlPanelSearch(const String& memb_contains, ControlPanel*& editor);
   // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
-  virtual int           SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
+  virtual int           AddToControlPanelCompare(taBase* cmp_obj, ControlPanel*& editor, bool no_ptrs = true);
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display #TYPE_ON_0_this #NO_SCOPE compare this object with selected comparison object, adding any differences to given select editor (if NULL, a new one is created in .edits).  returns number of differences.  no_ptrs = ignore differences in pointer fields
-  virtual bool          SelectFunForEdit(MethodDef* function, SelectEdit* editor,
+  virtual bool          SelectFunForEdit(MethodDef* function, ControlPanel* editor,
          const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected.  extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)
-  virtual bool          SelectFunForEditNm(const String& function_nm, SelectEdit* editor,
+  virtual bool          SelectFunForEditNm(const String& function_nm, ControlPanel* editor,
            const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
            const String& desc = _nilString);
   // #CAT_Display select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)  desc is a custom description -- will show up as tooltip for user (default is info from member)
