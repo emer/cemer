@@ -42,16 +42,16 @@ class DataTable; //
 taTypeDef_Of(ControlPanel);
 
 class TA_API ControlPanel: public taNBase, public virtual IRefListClient {
-  // #STEM_BASE ##EXT_edit ##CAT_Display Selectively edit members from different objects
+  // #AKA_SelectEdit #STEM_BASE ##EXT_edit ##CAT_Display A user-customizable panel of parameters and functions from anywhere in the project, that are most important for controlling the simulation
   INHERITED(taNBase)
 public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
-  bool                  auto_edit; // automatically bring up edit dialog upon loading
+  bool                  auto_edit; // automatically activate control panel upon loading
   bool                  running_updt; // update the select edit while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
-  EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the edit
-  EditMthItem_Group     mths; // #TREE_EXPERT the mthods of the edit
+  EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the control panel
+  EditMthItem_Group     mths; // #TREE_EXPERT the mthods of the control panel
 
   EditMbrItem*          mbr(int i) const; // convenience accessor for flat access
   int                   mbrSize(int i) const {return mbrs.leaves;} // flat size
