@@ -121,7 +121,7 @@ QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat,
                                              QTreeWidgetItem* parent, const void* data_,
                                              const String& desc, int desc_idx)
 {
-  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_, desc);
+  QTreeWidgetItem* rval = AddItem(itm_txt, parent, data_, desc, desc_idx);
   if (!itm_cat.isEmpty())
     rval->setData(0, ObjCatRole, itm_cat);
   return rval;

@@ -453,6 +453,8 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
   }
   case IDX_COORD: {
     // always return a matrix so that assignment works!
+    // this means: assigning a value to a matrix element -- if we return a Variant of the
+    // element, then something like mymat[idx] = 22 will fail to assign new value..
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
     int_Matrix* ccmat = new int_Matrix;
     MatrixGeom ng = cmat->geom;
