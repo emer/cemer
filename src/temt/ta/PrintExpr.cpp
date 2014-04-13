@@ -77,7 +77,7 @@ bool PrintExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   if(exprstr.freq('"') == 2) {
     String varstr = exprstr.after('"',-1);
-    if(varstr.nonempty()) return false; // var expr
+    // if(varstr.nonempty()) return false; // var expr
   }
   return true;
 }

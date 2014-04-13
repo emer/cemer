@@ -41,7 +41,7 @@ using namespace std;
 cssEl* cssInt::operator+(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r += *mat;
@@ -65,7 +65,7 @@ cssEl* cssInt::operator+(cssEl& t) {
 cssEl* cssInt::operator-(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r -= *mat;
@@ -89,7 +89,7 @@ cssEl* cssInt::operator-(cssEl& t) {
 cssEl* cssInt::operator*(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r *= *mat;
@@ -113,7 +113,7 @@ cssEl* cssInt::operator*(cssEl& t) {
 cssEl* cssInt::operator/(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r /= *mat;
@@ -141,7 +141,7 @@ cssEl* cssInt::operator/(cssEl& t) {
 cssEl* cssInt64::operator+(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r += *mat;
@@ -162,7 +162,7 @@ cssEl* cssInt64::operator+(cssEl& t) {
 cssEl* cssInt64::operator-(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r -= *mat;
@@ -183,7 +183,7 @@ cssEl* cssInt64::operator-(cssEl& t) {
 cssEl* cssInt64::operator*(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r *= *mat;
@@ -204,7 +204,7 @@ cssEl* cssInt64::operator*(cssEl& t) {
 cssEl* cssInt64::operator/(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r /= *mat;
@@ -243,7 +243,7 @@ void cssChar::operator=(const cssEl& t) {
 cssEl* cssReal::operator+(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r += *mat;
@@ -256,7 +256,7 @@ cssEl* cssReal::operator+(cssEl& t) {
 cssEl* cssReal::operator-(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r -= *mat;
@@ -269,7 +269,7 @@ cssEl* cssReal::operator-(cssEl& t) {
 cssEl* cssReal::operator*(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r *= *mat;
@@ -282,7 +282,7 @@ cssEl* cssReal::operator*(cssEl& t) {
 cssEl* cssReal::operator/(cssEl& t) {
   if(t.IsTaMatrix()) {
     taMatrix* mat = cssTA_Matrix::MatrixPtr(t);
-    if(mat) {
+    if(mat && !mat->IsSingleElemView()) {
       taMatrix* r = (taMatrix*)mat->Clone();
       r->InitValsFmVar(val);
       *r /= *mat;

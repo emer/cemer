@@ -15,6 +15,7 @@ include(${PROJECT_SOURCE_DIR}/src/emergent/network/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_network_SRCS ${mypath}/network "${network_SRCS}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MOC ${mypath}/network "${network_HEADS_MOC}")
 ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA ${mypath}/network "${network_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_network_HEADS ${mypath}/network "${network_HEADS}")
 SET_TA_PROPS(network ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
 MAKETA_WRAP_H(emergent_network_SRCS_MAKETA ${emergent_network_HEADS_MAKETA} OPTIONS network)
@@ -23,6 +24,7 @@ MAKETA_WRAP_H(emergent_network_SRCS_MAKETA ${emergent_network_HEADS_MAKETA} OPTI
 include(${PROJECT_SOURCE_DIR}/src/emergent/bp/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_bp_SRCS ${mypath}/bp "${bp_SRCS}")
 ADD_PATH_TO_FILES(emergent_bp_HEADS_MAKETA ${mypath}/bp "${bp_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_bp_HEADS ${mypath}/bp "${bp_HEADS}")
 SET_TA_PROPS(bp ${PROJECT_SOURCE_DIR}/src/emergent/bp)
 
 MAKETA_WRAP_H(emergent_bp_SRCS_MAKETA ${emergent_bp_HEADS_MAKETA} OPTIONS bp)
@@ -31,6 +33,7 @@ MAKETA_WRAP_H(emergent_bp_SRCS_MAKETA ${emergent_bp_HEADS_MAKETA} OPTIONS bp)
 include(${PROJECT_SOURCE_DIR}/src/emergent/leabra/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_leabra_SRCS ${mypath}/leabra "${leabra_SRCS}")
 ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA ${mypath}/leabra "${leabra_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_leabra_HEADS ${mypath}/leabra "${leabra_HEADS}")
 SET_TA_PROPS(leabra ${PROJECT_SOURCE_DIR}/src/emergent/leabra)
 
 MAKETA_WRAP_H(emergent_leabra_SRCS_MAKETA ${emergent_leabra_HEADS_MAKETA} OPTIONS leabra)
@@ -39,6 +42,7 @@ MAKETA_WRAP_H(emergent_leabra_SRCS_MAKETA ${emergent_leabra_HEADS_MAKETA} OPTION
 include(${PROJECT_SOURCE_DIR}/src/emergent/cs/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_cs_SRCS ${mypath}/cs "${cs_SRCS}")
 ADD_PATH_TO_FILES(emergent_cs_HEADS_MAKETA ${mypath}/cs "${cs_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_cs_HEADS ${mypath}/cs "${cs_HEADS}")
 SET_TA_PROPS(cs ${PROJECT_SOURCE_DIR}/src/emergent/cs)
 
 MAKETA_WRAP_H(emergent_cs_SRCS_MAKETA ${emergent_cs_HEADS_MAKETA} OPTIONS cs)
@@ -47,6 +51,7 @@ MAKETA_WRAP_H(emergent_cs_SRCS_MAKETA ${emergent_cs_HEADS_MAKETA} OPTIONS cs)
 include(${PROJECT_SOURCE_DIR}/src/emergent/so/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_so_SRCS ${mypath}/so "${so_SRCS}")
 ADD_PATH_TO_FILES(emergent_so_HEADS_MAKETA ${mypath}/so "${so_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_so_HEADS ${mypath}/so "${so_HEADS}")
 SET_TA_PROPS(so ${PROJECT_SOURCE_DIR}/src/emergent/so)
 
 MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA} OPTIONS so)
@@ -55,6 +60,7 @@ MAKETA_WRAP_H(emergent_so_SRCS_MAKETA ${emergent_so_HEADS_MAKETA} OPTIONS so)
 include(${PROJECT_SOURCE_DIR}/src/emergent/actr/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_actr_SRCS ${mypath}/actr "${actr_SRCS}")
 ADD_PATH_TO_FILES(emergent_actr_HEADS_MAKETA ${mypath}/actr "${actr_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_actr_HEADS ${mypath}/actr "${actr_HEADS}")
 SET_TA_PROPS(actr ${PROJECT_SOURCE_DIR}/src/emergent/actr)
 
 MAKETA_WRAP_H(emergent_actr_SRCS_MAKETA ${emergent_actr_HEADS_MAKETA} OPTIONS actr)
@@ -65,15 +71,21 @@ else (QT_USE_5)
   QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
 endif (QT_USE_5)
 
-# just list whole set of files here
+# just list whole set of files here -- including headers for IDE's
 set(emergentlib_SRCS
-	${emergent_network_SRCS} ${emergent_network_SRCS_MOC}
-	${emergent_network_SRCS_MAKETA}
-	${emergent_bp_SRCS} ${emergent_bp_SRCS_MAKETA}
-	${emergent_leabra_SRCS} ${emergent_leabra_SRCS_MAKETA}
-	${emergent_cs_SRCS} ${emergent_cs_SRCS_MAKETA}
-	${emergent_so_SRCS} ${emergent_so_SRCS_MAKETA}
-	${emergent_actr_SRCS} ${emergent_actr_SRCS_MAKETA}
+  ${emergent_network_SRCS} ${emergent_network_SRCS_MOC}
+  ${emergent_network_SRCS_MAKETA}
+  ${emergent_bp_SRCS} ${emergent_bp_SRCS_MAKETA}
+  ${emergent_leabra_SRCS} ${emergent_leabra_SRCS_MAKETA}
+  ${emergent_cs_SRCS} ${emergent_cs_SRCS_MAKETA}
+  ${emergent_so_SRCS} ${emergent_so_SRCS_MAKETA}
+  ${emergent_actr_SRCS} ${emergent_actr_SRCS_MAKETA}
+  ${emergent_network_HEADS}
+  ${emergent_bp_HEADS}
+  ${emergent_leabra_HEADS}
+  ${emergent_cs_HEADS}
+  ${emergent_so_HEADS}
+  ${emergent_actr_HEADS}
 )
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})

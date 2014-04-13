@@ -608,9 +608,9 @@ taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) con
         else if(mat->dims() == 2 && mat->dim(0) == cont_dims) {
           mode = IDX_COORDS;
         }
-        else if(mat->dims() == 1) {
-          mode = IDX_FRAMES;
-        }
+        // else if(mat->dims() == 1) { // cannot infer frames -- prevents dim mismatch detection!
+        //   mode = IDX_FRAMES;
+        // }
         if(mode == IDX_UNK) {
           String matstr;
           mat->Print(matstr);

@@ -286,6 +286,8 @@ public:
   // #CAT_Access #EXPERT make a new view of this array -- points to items in original
   virtual Variant       ElemFmCoord(int_Matrix* cmat) const;
   // #CAT_Access return element(s) from coordinate matrix that specifies one coordinate -- if full set of coords are specified, then it returns a single element, otherwise it returns a slice of the matrix corresponding to the subset of coordinates present
+  virtual bool          IsSingleElemView() const;
+  // #CAT_Access is this a view of a matrix with a single element -- if so, treat differently in css etc
 
   ///////////////////////////////////////
   // String

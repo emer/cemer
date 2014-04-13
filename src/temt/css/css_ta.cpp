@@ -978,51 +978,39 @@ cssTA_Matrix::operator Real() const {
   taMatrix* ths = GetMatrixPtr();
   if(!ths) 
     return 0.0;
-  double rval = 0.0;
-  TA_FOREACH(vitm, *ths) {
-    if(FOREACH_itr->count == 0) {
-      rval = vitm.toDouble();
-    }
-    else {
-      cssMisc::Error(prog, "cannot convert matrix to single scalar value");
-      return 0.0;
+  if(ths->IsSingleElemView()) {
+    TA_FOREACH(vitm, *ths) {
+      return vitm.toDouble();
     }
   }
-  return rval;
+  cssMisc::Error(prog, "Matrix has multiple values: cannot convert to single scalar value");
+  return 0.0;
 }
 
 cssTA_Matrix::operator Int() const {
   taMatrix* ths = GetMatrixPtr();
   if(!ths) 
     return 0;
-  int rval = 0;
-  TA_FOREACH(vitm, *ths) {
-    if(FOREACH_itr->count == 0) {
-      rval = vitm.toInt();
-    }
-    else {
-      cssMisc::Error(prog, "cannot convert matrix to single scalar value");
-      return 0;
+  if(ths->IsSingleElemView()) {
+    TA_FOREACH(vitm, *ths) {
+      return vitm.toInt();
     }
   }
-  return rval;
+  cssMisc::Error(prog, "Matrix has multiple values: cannot convert to single scalar value");
+  return 0;
 }
 
 cssTA_Matrix::operator bool() const {
   taMatrix* ths = GetMatrixPtr();
   if(!ths) 
-    return 0;
-  bool rval = 0;
-  TA_FOREACH(vitm, *ths) {
-    if(FOREACH_itr->count == 0) {
-      rval = vitm.toBool();
-    }
-    else {
-      cssMisc::Error(prog, "cannot convert matrix to single scalar value");
-      return 0;
+    return false;
+  if(ths->IsSingleElemView()) {
+    TA_FOREACH(vitm, *ths) {
+      return vitm.toBool();
     }
   }
-  return rval;
+  cssMisc::Error(prog, "Matrix has multiple values: cannot convert to single scalar value");
+  return false;
 }
 
 void* cssTA_Matrix::GetVoidPtrOfType(TypeDef* td) const {

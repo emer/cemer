@@ -145,7 +145,12 @@ void taMatrix::BatchUpdate(bool begin, bool struc) {
 }
 
 String& taMatrix::Print(String& strm, int indent) const {
- 
+  if(IsSingleElemView()) {      // if just a single guy, that's all we print
+    TA_FOREACH(vitm, *this) {
+      strm << vitm.toString();
+      return strm;
+    }
+  }
   const int dm = dims();
   int dim_break = dm / 2;
   if(dm == 2) {
@@ -544,6 +549,18 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     break;
   }
   return _nilVariant;
+}
+
+// use this throughout css to make it act like a scalar
+bool taMatrix::IsSingleElemView() const {
+  if(!ElView()) return false;
+  if(el_view_mode == IDX_COORDS) {
+    return (IterCount() == 1);
+  }
+  else if(el_view_mode == IDX_FRAMES) {
+    return (IterCount() == 1 && FrameSize() == 1);
+  }
+  return false;
 }
 
 taBaseItr* taMatrix::Iter() const {

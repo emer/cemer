@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6957
+// ta_Dump File v3.0 -- code v6.3.8.0 rev6998
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -13,7 +13,7 @@ LeabraProject .projects["program_examples"] {
   };
  };
 
- SelectEdit_Group @.edits = [1] {
+ ControlPanel_Group @.ctrl_panels = [1] {
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -2463,9 +2463,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
    auto_open=1;
   };
  };
- edits {
+ ctrl_panels {
   name="SelectEdit_Group_0";
-  el_typ=ClusterRun;
+  el_typ=ControlPanel;
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
@@ -8112,7 +8112,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 6 0=0.5713073015213013;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -9306,7 +9306,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 6 0=0.5076400637626648;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
