@@ -265,9 +265,10 @@ void cssMisc::SyntaxError(const char* er) {
 
   // note: this may be OK for syntax errors -- leaving this in for now
   // but if we get more crashing, then need to comment it out
-  if(cssMisc::cur_top->cmd_shell) { // prevent it from getting stuck in cmd shell hell
-    cssMisc::cur_top->cmd_shell->cmd_prog->Reset();
-  }
+  // yes, it is just as bad as for runtime errors
+  // if(cssMisc::cur_top->cmd_shell) { // prevent it from getting stuck in cmd shell hell
+  //   cssMisc::cur_top->cmd_shell->cmd_prog->Reset();
+  // }
 
   if(taMisc::ErrorCancelCheck()) // just done
     return;
