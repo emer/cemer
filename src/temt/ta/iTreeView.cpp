@@ -296,6 +296,7 @@ void iTreeView::InsertDefaultEl(bool after) {
     }
   }
   if(!sbo) return;
+  if (sbo->HasOption("NO_DEFAULT_CHILD")) return;  // used by ProgBrkPts - only allow creation through a ProgEl
   if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
   TypeDef* td = sbo->el_typ;    // default type
 

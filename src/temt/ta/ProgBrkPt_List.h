@@ -30,9 +30,13 @@
 taTypeDef_Of(ProgBrkPt_List);
 
 class TA_API ProgBrkPt_List : public taList<ProgBrkPt> {
-  // A list of breakpoints for an individual program to support viewing and enabling
+  // #NO_DEFAULT_CHILD A list of breakpoints for an individual program to support viewing and enabling
 INHERITED(taList<ProgBrkPt> )
 public:
+#ifdef __MAKETA__ // dummy to supress New
+  taBase*         New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
+#endif
+  
   ProgBrkPt*      AddBrkPt(ProgEl* prog_el, String codeline);
   void            DeleteBrkPt(ProgEl* prog_el);
   ProgBrkPt*      FindBrkPt(ProgEl* prog_el) const;
