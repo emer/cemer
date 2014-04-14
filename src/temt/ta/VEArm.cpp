@@ -101,6 +101,9 @@ void VEArm::Initialize() {
   delay = 7; // delay parameter as number of time steps (1 time step = 0.005 seconds)
   vis_delay = 30; // visual delay as number of time steps (default 30 -- must be > pro_delay)
   pro_delay = 7; // proprioceptive delay as number of time steps (default 7 -- must be < vis_delay)
+  eff_delay = 1; // effector delay as number of time steps -- default 1 (no delay) to be compatible with previous versions -- set to 76ish within project to simulate effector delay
+
+  isNewReach = true; // This is a flag used to tell VEArm if it's the start of a new reach (since it doesn't have direct access to network.cycle)
 
   // DO NOT put anythying other than direct literal member inits in here -- no creating objects etc
 }
@@ -500,6 +503,8 @@ void VEArm::InitMuscles() {
   //------------- Initializing the muscle objects ---------------
   // the number of muscles is 1/2 the sum of points in ShoulderIP+ArmIP+FarmIP
   n_musc = (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6);
+
+  delayedStims.SetGeom(2, n_musc, eff_delay-1); // buffer table of muscle stimuli -- used by ApplyStim method when eff_delay > 1
 
   muscles.Reset();
 
@@ -1396,51 +1401,112 @@ bool VEArm::Speeds(float_Matrix& vel, bool normalize) {
   return true;
 }
 
+void VEArm::SetNewReachFlag(bool flag) {
+  isNewReach = flag; // true if network.cycle = 0, else false
+}
+
 bool VEArm::ApplyStim(const float_Matrix& stm, float_Matrix &fs, bool flip_sign) {
-  if(TestWarning(stm.count() != n_musc, "","The stimulus matrix doesn't match the number of muscles \n"))
-    return false;
-  fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
-
-  VEBody* humerus = bodies[HUMERUS];
-  VEBody* ulna = bodies[ULNA];
-
-  int k = 0;
-  if(musc_geo == NEW_GEO) k = 1; // offset to change assignments below
-
-  taVector3f daforce(0.0f, 0.0f, 0.0f);
-  for(int i=0; i<n_musc; i++) {
-    if(flip_sign) {
-      daforce = muscles[i]->Contract(-stim_gain * stm.FastElAsFloat(i));
+  if(eff_delay > 1) {
+    if(isNewReach) { // start of a new reach, need to reset the buffer table
+      delayedStims.Clear(); // sets all values to zero
+      delayedStims.SetGeom(2, n_musc, eff_delay-1); // default geometry -- eff_delay-1 rows, n_musc columns
     }
-    else {
-      daforce = muscles[i]->Contract(stim_gain * stm.FastElAsFloat(i));
-    }
-    fs.Set(daforce.x, 0, i);
-    fs.Set(daforce.y, 1, i);
-    fs.Set(daforce.z, 2, i);
+    
+    delayedStims.AddFrame(); // since it's 2-dimensional, adds one blank row
+    int last_row = delayedStims.Frames() - 1; // this is the row where the current stims are stored (last row)
+    int delay_row = delayedStims.Frames() - eff_delay; // this is the row where the delayed stims are stored (eff_delay rows up)
 
-    if(i < 8+k) {  // muscles from shoulder to humerus
-      humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
-                             should_loc.x, muscles[i]->IPdist.y + should_loc.y,
-                             muscles[i]->IPdist.z + should_loc.z,false,false);
+    delayedStims.CopyFrame(stm, last_row); // copy the current stims into the last row
+    float_Matrix* stmD = delayedStims.GetFrameSlice(delay_row); // get the delayed stims as a matrix with the same geometry as stm
+
+    // now we run the usual ApplyStim code, replacing 'stm' with 'stmD':
+    if(TestWarning(stmD->count() != n_musc, "","The delayed stimulus matrix doesn't match the number of muscles \n"))
+      return false;
+    fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
+
+    VEBody* humerus = bodies[HUMERUS];
+    VEBody* ulna = bodies[ULNA];
+
+    int k = 0;
+    if(musc_geo == NEW_GEO) k = 1; // offset to change assignments below
+
+    taVector3f daforce(0.0f, 0.0f, 0.0f);
+    for(int i=0; i<n_musc; i++) {
+      if(flip_sign) {
+        daforce = muscles[i]->Contract(-stim_gain * stmD->FastElAsFloat(i));
+      }
+      else {
+        daforce = muscles[i]->Contract(stim_gain * stmD->FastElAsFloat(i));
+      }
+      fs.Set(daforce.x, 0, i);
+      fs.Set(daforce.y, 1, i);
+      fs.Set(daforce.z, 2, i);
+
+      if(i < 8+k) {  // muscles from shoulder to humerus
+        humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
+                               should_loc.x, muscles[i]->IPdist.y + should_loc.y,
+                               muscles[i]->IPdist.z + should_loc.z,false,false);
+      }
+      else if(i == 8+k) {  // biceps
+        ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
+                            should_loc.x, muscles[i]->IPdist.y + should_loc.y,
+                            muscles[i]->IPdist.z + should_loc.z,false,false);
+      }
+      else { // triceps and brachialis
+        humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z, muscles[i]->IPprox.x +
+                               should_loc.x, muscles[i]->IPprox.y + should_loc.y,
+                               muscles[i]->IPprox.z + should_loc.z,false,false);
+        ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
+                            should_loc.x, muscles[i]->IPdist.y + should_loc.y,
+                            muscles[i]->IPdist.z + should_loc.z,false,false);
+      }
     }
-    else if(i == 8+k) {  // biceps
-      ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
-                          should_loc.x, muscles[i]->IPdist.y + should_loc.y,
-                          muscles[i]->IPdist.z + should_loc.z,false,false);
-    }
-    else { // triceps and brachialis
-      humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z, muscles[i]->IPprox.x +
-                             should_loc.x, muscles[i]->IPprox.y + should_loc.y,
-                             muscles[i]->IPprox.z + should_loc.z,false,false);
-      ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
-                          should_loc.x, muscles[i]->IPdist.y + should_loc.y,
-                          muscles[i]->IPdist.z + should_loc.z,false,false);
+  }
+  else { // no effector delay, run original code:
+    if(TestWarning(stm.count() != n_musc, "","The stimulus matrix doesn't match the number of muscles \n"))
+      return false;
+    fs.SetGeom(2, 3, n_musc);     // this is fast if it matches already
+
+    VEBody* humerus = bodies[HUMERUS];
+    VEBody* ulna = bodies[ULNA];
+
+    int k = 0;
+    if(musc_geo == NEW_GEO) k = 1; // offset to change assignments below
+
+    taVector3f daforce(0.0f, 0.0f, 0.0f);
+    for(int i=0; i<n_musc; i++) {
+      if(flip_sign) {
+        daforce = muscles[i]->Contract(-stim_gain * stm.FastElAsFloat(i));
+      }
+      else {
+        daforce = muscles[i]->Contract(stim_gain * stm.FastElAsFloat(i));
+      }
+      fs.Set(daforce.x, 0, i);
+      fs.Set(daforce.y, 1, i);
+      fs.Set(daforce.z, 2, i);
+
+      if(i < 8+k) {  // muscles from shoulder to humerus
+        humerus->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
+                               should_loc.x, muscles[i]->IPdist.y + should_loc.y,
+                               muscles[i]->IPdist.z + should_loc.z,false,false);
+      }
+      else if(i == 8+k) {  // biceps
+        ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
+                            should_loc.x, muscles[i]->IPdist.y + should_loc.y,
+                            muscles[i]->IPdist.z + should_loc.z,false,false);
+      }
+      else { // triceps and brachialis
+        humerus->AddForceAtPos(-daforce.x,-daforce.y,-daforce.z, muscles[i]->IPprox.x +
+                               should_loc.x, muscles[i]->IPprox.y + should_loc.y,
+                               muscles[i]->IPprox.z + should_loc.z,false,false);
+        ulna->AddForceAtPos(daforce.x,daforce.y,daforce.z, muscles[i]->IPdist.x +
+                            should_loc.x, muscles[i]->IPdist.y + should_loc.y,
+                            muscles[i]->IPdist.z + should_loc.z,false,false);
+      }
     }
   }
   return true;
 }
-
 
 bool VEArm::SetMuscGains(const float_Matrix& gains) {
   musc_gains.SetGeom(1,n_musc); // should be but justin

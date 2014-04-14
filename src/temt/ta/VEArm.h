@@ -167,7 +167,7 @@ public:
   int           delay;  // delay period for inputs expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
   int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- used by two-delay version of cereb_arm -- MUST BE GREATER THAN pro_delay!
   int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- used by two-delay version of cereb_arm -- MUST BE LESS THAN vis_delay!
-
+  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- used by three-delay version of cereb_arm -- set to 1 for no delay
 
 
 
@@ -224,6 +224,8 @@ public:
   virtual bool Speeds(float_Matrix& vel, bool normalize);
   // Put the muscle contraction speeds of the last time step in the given matrix (if normalize is true, return normalized 0..1) -- sets vel geom to 1,n_musc
 
+  virtual void SetNewReachFlag(bool flag);
+  // Sets the private isNewReach bool variable to true or false, telling the methods of VEArm whether it's the start of a new reach or not -- designed to be used only when network.cycle = 0
   virtual bool ApplyStim(const float_Matrix& stms, float_Matrix &fs,
                          bool flip_sign = true);
   // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns. if flip_sign, then the stimuli signs are flipped -- this is how the math works out for ComputeStim -- perhaps because these are contractions or something
@@ -298,6 +300,9 @@ protected:
 private:
   void  Initialize();
   void  Destroy();
+
+  float_Matrix delayedStims; // This is the buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
+  bool isNewReach; // This is a flag used to tell whether it's the start of a new reach or not (since VEArm doesn't have direct access to network.cycle)
 };
 
 #endif // VEArm_h
