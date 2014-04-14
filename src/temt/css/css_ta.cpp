@@ -1389,6 +1389,11 @@ cssEl* cssTA_Matrix::operator< (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi) < oth->FastElAsVar_Flat(ti));
+        }
+      }
       taMatrix* rval = *ths < *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1417,6 +1422,11 @@ cssEl* cssTA_Matrix::operator> (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi) > oth->FastElAsVar_Flat(ti));
+        }
+      }
       taMatrix* rval = *ths > *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1445,6 +1455,11 @@ cssEl* cssTA_Matrix::operator<= (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi) <= oth->FastElAsVar_Flat(ti));
+        }
+      }
       taMatrix* rval = *ths <= *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1473,6 +1488,11 @@ cssEl* cssTA_Matrix::operator>= (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi) >= oth->FastElAsVar_Flat(ti));
+        }
+      }
       taMatrix* rval = *ths >= *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1501,6 +1521,11 @@ cssEl* cssTA_Matrix::operator== (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi) == oth->FastElAsVar_Flat(ti));
+        }
+      }
       taMatrix* rval = *ths == *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1529,6 +1554,11 @@ cssEl* cssTA_Matrix::operator!= (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi) != oth->FastElAsVar_Flat(ti));
+        }
+      }
       taMatrix* rval = *ths != *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1557,6 +1587,12 @@ cssEl* cssTA_Matrix::operator&& (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi).toBool() &&
+                             oth->FastElAsVar_Flat(ti).toBool());
+        }
+      }
       taMatrix* rval = *ths && *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
@@ -1585,6 +1621,12 @@ cssEl* cssTA_Matrix::operator|| (cssEl& t) {
   if(IsMatrix(t)) {
     taMatrix* oth = MatrixPtr(t);
     if(oth) {
+      if(ths->IsSingleElemView() && oth->IsSingleElemView()) {
+        TA_FOREACH_INDEX_TWO(mi, *ths, ti, *oth) {
+          return new cssBool(ths->FastElAsVar_Flat(mi).toBool() ||
+                             oth->FastElAsVar_Flat(ti).toBool());
+        }
+      }
       taMatrix* rval = *ths || *oth; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }

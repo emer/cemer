@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev6998
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7005
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -630,7 +630,7 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [57] {
+    ProgEl_List @.prog_code = [58] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [3] {
        ProgVar @["a"] { };
@@ -678,27 +678,28 @@ LeabraProject .projects["program_examples"] {
      PrintExpr @[38] { };
      PrintExpr @[39] { };
      PrintExpr @[40] { };
-     Comment @[41] { };
-     PrintExpr @[42] { };
+     PrintExpr @[41] { };
+     Comment @[42] { };
      PrintExpr @[43] { };
      PrintExpr @[44] { };
      PrintExpr @[45] { };
      PrintExpr @[46] { };
      PrintExpr @[47] { };
      PrintExpr @[48] { };
-     Comment @[49] { };
-     CssExpr @[50] { };
-     FunctionCall @[51] { 
+     PrintExpr @[49] { };
+     Comment @[50] { };
+     CssExpr @[51] { };
+     FunctionCall @[52] { 
       ProgArg_List @.fun_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     PrintExpr @[52] { };
-     Comment @[53] { };
+     PrintExpr @[53] { };
      Comment @[54] { };
      Comment @[55] { };
-     PrintExpr @[56] { };
+     Comment @[56] { };
+     PrintExpr @[57] { };
     };
    };
    Program @["DataTable_css"] { 
@@ -6158,6 +6159,16 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       debug_level=NULL;
      };
      PrintExpr @[37] {
+      desc="if a single element indexed, just a normal bool op";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a>3:\\n\" << a>3 << endl";
+      expr {
+       expr="\"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[38] {
       desc="use the bools as a filter on the original matrix, returning only the 1's";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"a[a>3]:\\n\" << a[a>3] << endl";
@@ -6167,7 +6178,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[38] {
+     PrintExpr @[39] {
       desc="get the indexes of the cells that pass the test";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"find(a>3):\\n\" << find(a>3) << endl";
@@ -6177,7 +6188,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[39] {
+     PrintExpr @[40] {
       desc="get the values -- this is a different filter on a matrix, so the output is different from a[a>3] but otherwise behaves the same";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
@@ -6187,7 +6198,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[40] {
+     PrintExpr @[41] {
       desc="use flatten to turn a subset of a matrix into its own proper whole matrix -- always 1D due to arbitrary list-like nature of elements";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
@@ -6197,12 +6208,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[41] {
+     Comment @[42] {
       desc="== handy initializers ==";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// == handy initializers ==";
      };
-     PrintExpr @[42] {
+     PrintExpr @[43] {
       desc="make a new empty matrix of given dimensionality";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
@@ -6212,7 +6223,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[43] {
+     PrintExpr @[44] {
       desc="identity square matrix (1's along the diagonal, 0's elsewhere)";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print << \"eye(3):\\n\" << eye(3) << endl";
@@ -6222,7 +6233,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[44] {
+     PrintExpr @[45] {
       desc="put the elements from given matrix along diagonal of new square matrix";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"diag(a,0):\\n\" << diag(a,0) << endl";
@@ -6232,7 +6243,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[45] {
+     PrintExpr @[46] {
       desc="get them back out!";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
@@ -6242,7 +6253,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[46] {
+     PrintExpr @[47] {
       desc="uniform random 0-1 elements";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"rand([4,3]):\\n\" << rand([4,3]) << endl";
@@ -6252,7 +6263,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[47] {
+     PrintExpr @[48] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
@@ -6262,7 +6273,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[48] {
+     PrintExpr @[49] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print << \"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
@@ -6272,12 +6283,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[49] {
+     Comment @[50] {
       desc="== function calling ==";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// == function calling ==";
      };
-     CssExpr @[50] {
+     CssExpr @[51] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="b = [1.0, 2.0, 3.0];";
@@ -6285,7 +6296,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr="b = [1.0, 2.0, 3.0];";
       };
      };
-     FunctionCall @[51] {
+     FunctionCall @[52] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="smax = softmax([1.0, 2.0, 3.0], 1.0)";
@@ -6317,7 +6328,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        };
       };
      };
-     PrintExpr @[52] {
+     PrintExpr @[53] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"softmax of b:\\n\" << b << endl";
@@ -6327,22 +6338,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[53] {
+     Comment @[54] {
       desc="== more math functions ==";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// == more math functions ==";
      };
-     Comment @[54] {
+     Comment @[55] {
       desc="many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
      };
-     Comment @[55] {
+     Comment @[56] {
       desc="either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
      };
-     PrintExpr @[56] {
+     PrintExpr @[57] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="Print: \"vec_sum(a):\\n\" << vec_sum(a) << endl";
