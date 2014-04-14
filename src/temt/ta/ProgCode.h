@@ -53,7 +53,8 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(ProgCode);
 protected:
-  void UpdateAfterEdit_impl() override;
+  void          UpdateAfterEdit_impl() override;
+  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
 
 private:
   void  Initialize();

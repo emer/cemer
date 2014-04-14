@@ -868,6 +868,7 @@ static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
   Variant val;
   if(!itrc->ptr) {
     if(!list->IsContainer()) {	// we got one single item
+      // todo: problem here: this prevents detecting incorrect foreach exprs
       val = list;		// it is the value
       FOREACH_itr = new taBaseItr; // create a tmp dummy!
       *itrc = FOREACH_itr;		// set pointer

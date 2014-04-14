@@ -39,6 +39,11 @@ void ProgCode::SetProgExprFlags() {
   ClearProgFlag(CAN_REVERT_TO_CODE); // we are code!
 }
 
+void ProgCode::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(true, quiet, rval,  "uncompiled program code (ProgCode) element still present -- fix it or remove it -- code is:", code.expr);
+}
+
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
 				const String& code_str) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
