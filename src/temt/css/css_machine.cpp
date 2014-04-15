@@ -131,7 +131,8 @@ void cssMisc::CodeTop() {
 }
 
 void cssMisc::SetCurTop(cssProgSpace* pspc) {
-  top_stack.PushStack(pspc);
+  // taMisc::Info("pushed: ", pspc->name, "was: ", cur_top->name);
+  top_stack.PushStack(cur_top);
   cur_top = pspc;
 }
 
@@ -141,6 +142,7 @@ cssProgSpace* cssMisc::PopCurTop() {
   if(cur_top == NULL) {
     cssMisc::Error(NULL, "cssMisc::PopCurTop", "reached bottom of top_stack -- should not happen");
   }
+  // taMisc::Info("popped: ", rval->name, "now:", cur_top->name);
   return rval;
 }
 
@@ -153,10 +155,10 @@ String cssMisc::GetSourceLoc(cssProg* prog) {
   if(!top) return _nilString;
 
   if(top->state & (cssProg::State_Run)) {
-    return top->CurFullRunSrc();
+    return top->name + " " + top->CurFullRunSrc();
   }
   else {                        // parsing
-    return top->CurFullTokSrc();
+    return top->name + " " + top->CurFullTokSrc();
   }
 }
 
