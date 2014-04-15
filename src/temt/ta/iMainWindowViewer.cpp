@@ -454,6 +454,9 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->insertSeparator();
   fileMenu->AddAction(fileCloseAction);
   fileMenu->AddAction(fileOptionsAction);
+  
+  fileRecentsClearAction = AddAction(new iAction("Clear Menu", QKeySequence(), "fileRecentsClearAction"));
+  connect(fileRecentsClearAction, SIGNAL(Action()), this, SLOT(fileClearRecentsMenu()));
 
   fileCloseWindowAction = AddAction(new iAction("C&lose Window", QKeySequence(cmd_str + "W"), "fileCloseWindowAction"));
   connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()));
@@ -1277,14 +1280,12 @@ void iMainWindowViewer::fileOpenRecent_aboutToShow() {
   // Populate with recent files.
   for (int i = 0; i < tabMisc::root->recent_files.size; ++i) {
     String filename = tabMisc::root->recent_files[i];
-
-    //iAction* item =
-    fileOpenRecentMenu->AddItemWithNumericAccel(
-        filename,
-        iAction::var_act,
-        this, SLOT(fileOpenFile(const Variant&)),
-        filename);
+    
+    fileOpenRecentMenu->AddItem(filename, iAction::var_act,
+      this, SLOT(fileOpenFile(const Variant&)), filename);
   }
+  fileOpenRecentMenu->AddSep();
+  fileOpenRecentMenu->AddAction(fileRecentsClearAction);
 }
 
 void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
@@ -2052,6 +2053,10 @@ void iMainWindowViewer::WindowZoom()  {
       break;
     }
   }
+}
+
+void iMainWindowViewer::fileClearRecentsMenu() {
+  tabMisc::root->ClearRecentFiles();
 }
 
 void iMainWindowViewer::filePrint() {

@@ -127,6 +127,8 @@ public:
   iAction*            filePrintAction;
   iAction*            fileCloseWindowAction; //note: special, because it is always at bottom of File menu for non-root
   iAction*            fileQuitAction; //note: only on app window, except on all in Mac
+  iAction*            fileRecentsClearAction;
+  
   iAction*            editUndoAction;
   iAction*            editRedoAction;
   iAction*            editCutAction;
@@ -322,6 +324,8 @@ public slots:
   virtual void  filePrint();
   virtual void  fileCloseWindow();// (non-root only)
   virtual void  fileQuit(); // (root) or all on Mac (needed for App menu)
+  virtual void  fileClearRecentsMenu();
+
   virtual void  editUndo();
   virtual void  editRedo();
   virtual void  editFind();

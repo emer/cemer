@@ -229,9 +229,13 @@ void taRootBase::MonControl(bool on) {
 #endif
 #endif
 
+void taRootBase::ClearRecentFiles() {
+  recent_files.Reset();
+ }
+
 void taRootBase::AddRecentFile(const String& value, bool no_save) {
   if (value.empty()) return; // oops...
-// never save for dmem>0
+  // never save for dmem>0
   no_save = no_save || (taMisc::dmem_proc > 0);
   bool save = AddRecentFile_impl(value);
   QFileInfo fi(value);

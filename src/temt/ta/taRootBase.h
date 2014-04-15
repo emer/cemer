@@ -83,6 +83,8 @@ public:
   void WindowShowHook() override;
 
   void          AddRecentFile(const String& value, bool no_save = false); // #IGNORE add this file to the recent list (also adds the path to recent paths)
+  void          ClearRecentFiles();
+  // #IGNORE
   void          AddRecentPath(const String& value, bool no_save = false); // #IGNORE add this path to the recent list
 
   taBase*       FindGlobalObject(TypeDef* base_type = &TA_taBase,
