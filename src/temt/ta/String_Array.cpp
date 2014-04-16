@@ -42,9 +42,11 @@ String String_Array::ToDelimString(const String& delim) {
 
 void String_Array::FmDelimString(const String& str, const String& delim, bool reset_first) {
   if(reset_first) Reset();
-  if (delim == "")
-    for (int i = 0; i < str.length(); i++)
+  if (delim == "") {
+    for (int i = 0; i < str.length(); i++) {
       Add(str.at(i,1));
+    }
+  }
   else {
     String remainder = str;
     while(remainder.nonempty()) {

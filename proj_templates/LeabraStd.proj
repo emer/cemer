@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6893
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7007
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -11,7 +11,7 @@ LeabraProject .projects["LeabraStd"] {
   };
  };
 
- SelectEdit_Group @.edits = [1] {
+ ControlPanel_Group @.ctrl_panels = [1] {
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -322,17 +322,18 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [2] {
-     IfElse @[0] { 
+    ProgEl_List @.prog_code = [3] {
+     If @[0] { 
       ProgEl_List @.true_code = [1] {
        NetCounterInit @[0] { };
       };
-
-      ProgEl_List @.false_code = [1] {
+     };
+     Else @[1] { 
+      ProgEl_List @.else_code = [1] {
        MemberAssign @[0] { };
       };
      };
-     WhileLoop @[1] { 
+     WhileLoop @[2] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [3] {
@@ -499,7 +500,7 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg_List @.fun_args = [0] {
       };
      };
-     IfElse @[5] { 
+     If @[5] { 
       ProgEl_List @.true_code = [2] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -507,13 +508,10 @@ LeabraProject .projects["LeabraStd"] {
        };
        PrintExpr @[1] { };
       };
-
-      ProgEl_List @.false_code = [0] {
-      };
      };
      AssignExpr @[6] { };
      WhileLoop @[7] { 
-      ProgEl_List @.loop_code = [4] {
+      ProgEl_List @.loop_code = [5] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
 	 ProgArg @[0] { };
@@ -521,19 +519,20 @@ LeabraProject .projects["LeabraStd"] {
 	};
        };
        NetCounterIncr @[1] { };
-       IfElse @[2] { 
+       If @[2] { 
 	ProgEl_List @.true_code = [2] {
 	 VarIncr @[0] { };
 	 IfBreak @[1] { };
 	};
-
-	ProgEl_List @.false_code = [1] {
+       };
+       Else @[3] { 
+	ProgEl_List @.else_code = [1] {
 	 AssignExpr @[0] { };
 	};
        };
-       IfElse @[3] { 
+       If @[4] { 
 	ProgEl_List @.true_code = [1] {
-	 IfElse @[0] { 
+	 If @[0] { 
 	  ProgEl_List @.true_code = [1] {
 	   ProgramCall @[0] { 
 	    ProgArg_List @.prog_args = [1] {
@@ -541,27 +540,18 @@ LeabraProject .projects["LeabraStd"] {
 	    };
 	   };
 	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
 	 };
-	};
-
-	ProgEl_List @.false_code = [0] {
 	};
        };
       };
      };
-     IfElse @[8] { 
+     If @[8] { 
       ProgEl_List @.true_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
 	 ProgArg @[0] { };
 	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
      MethodCall @[9] { 
@@ -625,49 +615,40 @@ LeabraProject .projects["LeabraStd"] {
 	 ProgArg @[1] { };
 	};
        };
-       IfElse @[1] { 
+       If @[1] { 
 	ProgEl_List @.true_code = [1] {
 	 StopStepPoint @[0] { };
 	};
-
-	ProgEl_List @.false_code = [0] {
-	};
        };
       };
      };
-     IfElse @[5] { 
+     If @[5] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
       };
-
-      ProgEl_List @.false_code = [0] {
-      };
      };
-     IfElse @[6] { 
+     If @[6] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
      MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     IfElse @[8] { 
+     If @[8] { 
       ProgEl_List @.true_code = [2] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
-       IfElse @[1] { 
+       If @[1] { 
 	ProgEl_List @.true_code = [2] {
 	 MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
@@ -678,13 +659,7 @@ LeabraProject .projects["LeabraStd"] {
 	  };
 	 };
 	};
-
-	ProgEl_List @.false_code = [0] {
-	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
      MethodCall @[9] { 
@@ -752,26 +727,20 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     IfElse @[4] { 
+     If @[4] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
-     IfElse @[5] { 
+     If @[5] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
      ProgramCall @[6] { 
@@ -810,7 +779,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [10] {
+    ProgEl_List @.prog_code = [11] {
      NetCounterInit @[0] { };
      MethodCall @[1] { 
       ProgArg_List @.meth_args = [0] {
@@ -826,16 +795,17 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     IfElse @[4] { 
+     If @[4] { 
       ProgEl_List @.true_code = [1] {
        AssignExpr @[0] { };
       };
-
-      ProgEl_List @.false_code = [1] {
+     };
+     Else @[5] { 
+      ProgEl_List @.else_code = [1] {
        AssignExpr @[0] { };
       };
      };
-     WhileLoop @[5] { 
+     WhileLoop @[6] { 
       ProgEl_List @.loop_code = [4] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -847,26 +817,23 @@ LeabraProject .projects["LeabraStd"] {
        IfBreak @[3] { };
       };
      };
-     MethodCall @[6] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
      MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     IfElse @[8] { 
+     MethodCall @[8] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     If @[9] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
       };
-
-      ProgEl_List @.false_code = [0] {
-      };
      };
-     NetUpdateView @[9] { };
+     NetUpdateView @[10] { };
     };
    };
    Program @["LeabraCycle"] { 
@@ -1475,9 +1442,9 @@ LeabraProject .projects["LeabraStd"] {
    auto_open=1;
   };
  };
- edits {
+ ctrl_panels {
   name="SelectEdit_Group_0";
-  el_typ=ClusterRun;
+  el_typ=ControlPanel;
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
@@ -3738,14 +3705,13 @@ LeabraProject .projects["LeabraStd"] {
      name=;
      el_typ=ProgCode;
      el_def=0;
-     IfElse @[0] {
+     If @[0] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="init_batch";
       };
-      show_false_code=1;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -3760,7 +3726,12 @@ LeabraProject .projects["LeabraStd"] {
 	update_after=0;
        };
       };
-      false_code {
+     };
+     Else @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      else_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
@@ -3777,7 +3748,7 @@ LeabraProject .projects["LeabraStd"] {
        };
       };
      };
-     WhileLoop @[1] {
+     WhileLoop @[2] {
       desc="the main loop over training runs";
       flags=0;
       orig_prog_code=;
@@ -4575,14 +4546,13 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
       };
      };
-     IfElse @[5] {
+     If @[5] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="no_prompts";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -4610,11 +4580,6 @@ LeabraProject .projects["LeabraStd"] {
 	my_mask=NULL;
 	debug_level=NULL;
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      AssignExpr @[6] {
@@ -4675,14 +4640,13 @@ LeabraProject .projects["LeabraStd"] {
 	counter=Network::epoch;
 	update_after=0;
        };
-       IfElse @[2] {
+       If @[2] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="network.cnt_err <= err_stopcrit";
 	};
-	show_false_code=1;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
@@ -4705,7 +4669,12 @@ LeabraProject .projects["LeabraStd"] {
 	  };
 	 };
 	};
-	false_code {
+       };
+       Else @[3] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	else_code {
 	 name=;
 	 el_typ=ProgCode;
 	 el_def=0;
@@ -4720,26 +4689,24 @@ LeabraProject .projects["LeabraStd"] {
 	 };
 	};
        };
-       IfElse @[3] {
+       If @[4] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="save_wts_interval >= 1";
 	};
-	show_false_code=0;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
 	 el_def=0;
-	 IfElse @[0] {
+	 If @[0] {
 	  desc=;
 	  flags=0;
 	  orig_prog_code=;
 	  cond {
 	   expr="epoch % save_wts_interval == 0";
 	  };
-	  show_false_code=0;
 	  true_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -4767,17 +4734,7 @@ LeabraProject .projects["LeabraStd"] {
 	    targ_ld_init="*SaveWeights*";
 	   };
 	  };
-	  false_code {
-	   name=;
-	   el_typ=ProgCode;
-	   el_def=0;
-	  };
 	 };
-	};
-	false_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
 	};
        };
       };
@@ -4785,14 +4742,13 @@ LeabraProject .projects["LeabraStd"] {
        expr="epoch < max_epoch";
       };
      };
-     IfElse @[8] {
+     If @[8] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="save_final_wts";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -4819,11 +4775,6 @@ LeabraProject .projects["LeabraStd"] {
 	target=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"]$;
 	targ_ld_init="*SaveWeights*";
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      MethodCall @[9] {
@@ -5116,14 +5067,13 @@ LeabraProject .projects["LeabraStd"] {
 	target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"]$$;
 	targ_ld_init="*LeabraTrial*";
        };
-       IfElse @[1] {
+       If @[1] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="step_on_err && network.sse > 0.0";
 	};
-	show_false_code=0;
 	true_code {
 	 name="ProgEl_List_100";
 	 el_typ=ProgCode;
@@ -5133,11 +5083,6 @@ LeabraProject .projects["LeabraStd"] {
 	  flags=0;
 	  orig_prog_code=;
 	 };
-	};
-	false_code {
-	 name="ProgEl_List_101";
-	 el_typ=ProgCode;
-	 el_def=0;
 	};
        };
       };
@@ -5155,14 +5100,13 @@ LeabraProject .projects["LeabraStd"] {
       group_order=PERMUTED;
       group_idx_list{       };
      };
-     IfElse @[5] {
+     If @[5] {
       desc="if full batch mode, update only at end of epoch";
       flags=0;
       orig_prog_code=;
       cond {
        expr="network.wt_update == Network::BATCH";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -5181,20 +5125,14 @@ LeabraProject .projects["LeabraStd"] {
 	};
        };
       };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-      };
      };
-     IfElse @[6] {
+     If @[6] {
       desc=;
       flags=NEW_EL;
       orig_prog_code="if(network.epoch % stable_wt_update_interval == 0)";
       cond {
        expr="network.epoch % stable_wt_update_interval == 0";
       };
-      show_false_code=0;
       true_code {
        name="ProgEl_List_124";
        el_typ=ProgCode;
@@ -5213,11 +5151,6 @@ LeabraProject .projects["LeabraStd"] {
 	};
        };
       };
-      false_code {
-       name="ProgEl_List_125";
-       el_typ=ProgCode;
-       el_def=0;
-      };
      };
      MethodCall @[7] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
@@ -5232,14 +5165,13 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
       };
      };
-     IfElse @[8] {
+     If @[8] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="compute_rel_netin";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -5257,14 +5189,13 @@ LeabraProject .projects["LeabraStd"] {
 	 el_def=0;
 	};
        };
-       IfElse @[1] {
+       If @[1] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="adapt_rel_abs_netin";
 	};
-	show_false_code=0;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
@@ -5296,17 +5227,7 @@ LeabraProject .projects["LeabraStd"] {
 	  };
 	 };
 	};
-	false_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	};
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      MethodCall @[9] {
@@ -5566,14 +5487,13 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
       };
      };
-     IfElse @[4] {
+     If @[4] {
       desc=;
       flags=NEW_EL;
       orig_prog_code=;
       cond {
        expr="compute_rel_netin";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -5592,20 +5512,14 @@ LeabraProject .projects["LeabraStd"] {
 	};
        };
       };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-      };
      };
-     IfElse @[5] {
+     If @[5] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
       orig_prog_code=;
       cond {
        expr="network.Compute_Weights_Test(network.trial+1)";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -5623,11 +5537,6 @@ LeabraProject .projects["LeabraStd"] {
 	 el_def=0;
 	};
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      ProgramCall @[6] {
@@ -5838,14 +5747,13 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
       };
      };
-     IfElse @[4] {
+     If @[4] {
       desc="get appropriate min_cycles value depending on which phase we're in";
       flags=0;
       orig_prog_code=;
       cond {
        expr="network.phase_no <= 1";
       };
-      show_false_code=1;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -5860,7 +5768,12 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      false_code {
+     };
+     Else @[5] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      else_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
@@ -5875,7 +5788,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
      };
-     WhileLoop @[5] {
+     WhileLoop @[6] {
       desc="the main loop over cycles of updating";
       flags=0;
       orig_prog_code=;
@@ -5936,7 +5849,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        expr="cycle < network.cycle_max";
       };
      };
-     MethodCall @[6] {
+     MethodCall @[7] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
       orig_prog_code=;
@@ -5949,7 +5862,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
       };
      };
-     MethodCall @[7] {
+     MethodCall @[8] {
       desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
       flags=0;
       orig_prog_code=;
@@ -5962,14 +5875,13 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
       };
      };
-     IfElse @[8] {
+     If @[9] {
       desc="this stat must be called in plus phase when reward information is avail";
       flags=0;
       orig_prog_code=;
       cond {
        expr="network.phase_no == 1";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -5988,13 +5900,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-      };
      };
-     NetUpdateView @[9] {
+     NetUpdateView @[10] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
@@ -6382,6 +6289,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6414,6 +6322,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6446,6 +6355,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6478,6 +6388,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6510,6 +6421,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6542,6 +6454,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6574,6 +6487,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6606,6 +6520,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6638,6 +6553,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6914,6 +6830,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6946,6 +6863,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6978,6 +6896,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7010,6 +6929,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7042,6 +6962,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7074,6 +6995,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7106,6 +7028,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7138,6 +7061,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;

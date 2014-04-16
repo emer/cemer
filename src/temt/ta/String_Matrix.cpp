@@ -88,3 +88,8 @@ void String_Matrix::FmDelimString(const String& str, const String& delim) {
     }
   }
 }
+
+void String_Matrix::Split(const String& str, const String& delim) {
+  FmDelimString(str, delim);
+}
+

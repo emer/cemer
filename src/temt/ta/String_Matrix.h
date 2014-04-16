@@ -39,8 +39,14 @@ public:
 
   String        ToDelimString(const String& delim = " ");
   // generates a string of all the items on the list, using given delimiter between items
+  String        Join(const String& delim = " ")
+  { return ToDelimString(delim); }
+  // generates a string of all the items on the list, using given delimiter between items (same as ToDelimString)
+
   void          FmDelimString(const String& str, const String& delim = " ");
   // fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything
+  void          Split(const String& str, const String& delim = "");
+  // Convenience method that calls FmDelimString for splitting a string into an array. Splits on every character by default.
 
   virtual void		InitFromChars(const char** vals, int n=-1)
   { int eff_n = size; if(n > 0) { eff_n = n; if(size < n) SetGeom(1,n); }
