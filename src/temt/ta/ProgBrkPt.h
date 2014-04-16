@@ -46,6 +46,7 @@ public:
   String       GetDesc() const override {return desc;}
   String       GetStateDecoKey() const override;
   void         UpdateAfterEdit_impl() override;
+  String       GetDisplayName() const override;
 
 
   void          InitLinks();

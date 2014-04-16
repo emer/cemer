@@ -88,3 +88,19 @@ String ProgBrkPt::GetStateDecoKey() const {
   }
 return rval;
 }
+
+String ProgBrkPt::GetDisplayName() const {
+  String display = GetDesc();
+  if (display.contains("//")) {
+    display = trim(display.after("//"));
+  }
+  
+  if (display.contains("/*")) {
+    display = trim(display.after("/*"));
+    if (display.contains("*/")) {
+      display = trim(display.before("*/", -1));
+    }
+  }
+  display = "brk on: " + display;
+  return display;
+}
