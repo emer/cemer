@@ -68,6 +68,7 @@ iTreeWidget::~iTreeWidget()
 
 void  iTreeWidget::init() {
   move_after_edit = 0;
+  edit_start_pos = 0;
   ext_select_on = false;
   m_sibling_sel = true;
   m_highlightRows = false;
@@ -381,12 +382,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       // select this guy
       selectionModel()->setCurrentIndex(currentIndex(),
                                         QItemSelectionModel::ClearAndSelect);
-      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-        editItem(cur_item);     // todo: get column
-      }
-      else {
+      // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        // editItem(cur_item);     // todo: get column
+      // }
+      // else {
         ext_select_on = true;
-      }
+      // }
       e->accept();
       return;			// don't continue
     case Qt::Key_G:
@@ -436,6 +437,20 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     case Qt::Key_Return:
       e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
       return;
+    case Qt::Key_A:
+      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        edit_start_pos = 0;
+        editItem(cur_item);     // todo: get column
+      }
+      e->accept();
+      break;
+    case Qt::Key_E:
+      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        edit_start_pos = -1;
+        editItem(cur_item);     // todo: get column
+      }
+      e->accept();
+      break;
     }
 
     // from qabstractitemview.cpp
@@ -548,6 +563,7 @@ void iTreeWidget::dragScroll() {
 }
 
 void iTreeWidget::itemWasEdited(const QModelIndex& index) const {
+  ((iTreeWidget*)this)->edit_start_pos = 0;
   emit itemEdited(index, move_after_edit);
 }
 
@@ -571,10 +587,11 @@ QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
   QWidget* widg = inherited::createEditor(parent, option, index);
   QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
   if(le) {
-    iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
+    iLineEdit* il = new iLineEdit(parent);
     if(own_tree_widg) {
       QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
                        own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
+      il->init_start_pos = own_tree_widg->edit_start_pos;
     }
     return il;
   }
@@ -584,7 +601,7 @@ QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
 void iTreeWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                               const QModelIndex& index) const {
   inherited::setModelData(editor, model, index);
-  if(own_tree_widg)
+  if(own_tree_widg) 
     own_tree_widg->itemWasEdited(index);
 }
 
@@ -601,12 +618,18 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
     bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(ke);
     switch (ke->key()) {
     case Qt::Key_Tab:
-      if(own_tree_widg) own_tree_widg->move_after_edit = 1;
+      if(own_tree_widg) {
+        own_tree_widg->move_after_edit = 1;
+        // own_tree_widg->edit_start_pos = 0;
+      }
       emit commitData(editor);
       emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
       return true;
     case Qt::Key_Backtab:
-      if(own_tree_widg) own_tree_widg->move_after_edit = -1;
+      if(own_tree_widg) {
+        own_tree_widg->move_after_edit = -1;
+        // own_tree_widg->edit_start_pos = 0;
+      }
       emit commitData(editor);
       emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
       return true;
@@ -614,7 +637,10 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
     case Qt::Key_Return:
       if(!le->hasAcceptableInput())
         return false;
-      if(own_tree_widg) own_tree_widg->move_after_edit = 0;
+      if(own_tree_widg) {
+        own_tree_widg->move_after_edit = 0;
+        own_tree_widg->edit_start_pos = 0;
+      }
       emit commitData(editor);
       // if(ctrl_pressed) {
       //   emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
@@ -626,6 +652,9 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
       // }
     case Qt::Key_Escape:
       // don't commit data
+      if(own_tree_widg) {
+        own_tree_widg->edit_start_pos = 0;
+      }
       emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
       break;
     default:

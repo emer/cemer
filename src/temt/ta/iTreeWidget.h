@@ -32,6 +32,7 @@ INHERITED(QTreeWidget)
   Q_OBJECT
 public:
   int           move_after_edit; // direction to move after edit
+  int           edit_start_pos;  // position to start when editing
 
   bool		hasHighlightColor(int idx) const;
   void		setHighlightColor(int idx, const QColor& base);

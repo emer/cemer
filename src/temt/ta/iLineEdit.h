@@ -24,6 +24,8 @@ class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
 public:
+  int init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start 
+
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 

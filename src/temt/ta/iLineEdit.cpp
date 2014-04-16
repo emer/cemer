@@ -37,6 +37,7 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 }
 
 void iLineEdit::init() {
+  init_start_pos = 0;
   mmin_char_width = 0;
   mchar_width = 0;
   ext_select_on = false;
@@ -69,7 +70,12 @@ void iLineEdit::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
   if(hasSelectedText()) {
     deselect();
-    setCursorPosition(0);
+    if(init_start_pos == -1) {
+      end(false);
+    }
+    else {
+      setCursorPosition(0);
+    }
   }
   // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
