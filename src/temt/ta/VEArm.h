@@ -164,10 +164,10 @@ public:
   float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
-  int           delay;  // delay period for inputs expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
-  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- used by two-delay version of cereb_arm -- MUST BE GREATER THAN pro_delay!
-  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- used by two-delay version of cereb_arm -- MUST BE LESS THAN vis_delay!
-  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- used by three-delay version of cereb_arm -- set to 1 for no delay
+  int           delay;  // general sensory delay period for all inputs expressed as a number of time steps (1 time step = 5 ms) -- used by one-delay version of cereb_arm (v1) -- set to 1 for no delay
+  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be > pro_delay -- set this and pro_delay to 1 for no delay
+  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be < vis_delay -- set this and vis_delay to 1 for no delay
+  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- used by three-delay version of cereb_arm (v3) -- set to 1 for no delay
 
 
 
