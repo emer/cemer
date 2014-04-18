@@ -421,7 +421,7 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     TA_FOREACH(vitm, *this) { // use iterator so it is recursive on existing filtering
       String val = vitm.toString();
       if(val.matches_wildcard(nm)) {
-        imat->Add(FOREACH_itr->el_idx); // add absolute index of item
+        imat->Add(FOREACH_itr.el_idx); // add absolute index of item
       }
     }
     if(imat->size == 1) {
@@ -436,7 +436,7 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     int_Matrix* imat = new int_Matrix(1,0);
     TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       String val = vitm.toString();
-      int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
+      int el_idx = FOREACH_itr.el_idx; // get before occluded by next iterator
       TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
         const String nm = mitm.toString();
         if(val.matches_wildcard(nm)) {
@@ -563,15 +563,9 @@ bool taMatrix::IsSingleElemView() const {
   return false;
 }
 
-taBaseItr* taMatrix::Iter() const {
-  taBaseItr* rval = new taBaseItr;
-  taBase::Ref(rval);
-  return rval;
-}
-
-Variant taMatrix::IterElem(taBaseItr* itr) const {
-  if(!itr) return _nilVariant;
-  return SafeElAsVar_Flat(itr->el_idx);
+Variant taMatrix::IterElem(taBaseItr& itr) const {
+  if(itr.Done()) return _nilVariant;
+  return SafeElAsVar_Flat(itr.el_idx);
 }
 
 bool taMatrix::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
@@ -588,29 +582,32 @@ bool taMatrix::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const
   return true;
 }
 
-bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count = 0;
-  itr->el_idx = 0;              // just to be sure
+bool taMatrix::IterFirst_impl(taBaseItr& itr) const {
+  itr.count = 0;
+  itr.el_idx = 0;              // just to be sure
   if(!ElView()) {
     if(ElemCount() > 0) return true;
+    itr.SetDone();
     return false;
   }
   const int dm = dims();
   if(!IterValidate(ElView(), el_view_mode, dm)) {
+    itr.SetDone();
     return false;
   }
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
     MatrixIndex idx(dm);
     for(int d=0;d<dm;d++) {
       idx.Set(d, cmat->FastEl2d(d, 0));   // outer index is count index
     }
-    itr->el_idx = SafeElIndexN(idx);
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = SafeElIndexN(idx);
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -618,10 +615,12 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = FrameStartIdx(0); // frame is logical -- startidx does decoding!
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = FrameStartIdx(0); // frame is logical -- startidx does decoding!
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -630,20 +629,21 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
       if(cmat->FastEl_Flat(i) != 0) {
-        itr->el_idx = i;
+        itr.el_idx = i;
         return true;
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
-bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count++;
+bool taMatrix::IterNext_impl(taBaseItr& itr) const {
+  itr.count++;
   if(!ElView()) {
-    itr->el_idx++;
-    if(itr->el_idx >= ElemCount()) {
+    itr.el_idx++;
+    if(itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -651,15 +651,17 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
   const int dm = dims();
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->dim(1) <= itr->count) {
+    if(cmat->dim(1) <= itr.count) {
+      itr.SetDone();
       return false;
     }
     MatrixIndex idx(dm);
     for(int d=0;d<dm;d++) {
-      idx.Set(d, cmat->FastEl2d(d, itr->count));  // outer index is count index
+      idx.Set(d, cmat->FastEl2d(d, itr.count));  // outer index is count index
     }
-    itr->el_idx = SafeElIndexN(idx);
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = SafeElIndexN(idx);
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -667,50 +669,55 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     int fsz = FrameSize();
-    int fr = itr->count / fsz;
+    int fr = itr.count / fsz;
     if(fr >= cmat->size) {
+      itr.SetDone();
       return false;
     }
-    int cell = itr->count % fsz;
-    itr->el_idx = FrameStartIdx(fr) + cell; // fr is still logical here
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    int cell = itr.count % fsz;
+    itr.el_idx = FrameStartIdx(fr) + cell; // fr is still logical here
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=itr->el_idx+1; i<ElemCount(); i++) { // search for next
+    for(int i=itr.el_idx+1; i<ElemCount(); i++) { // search for next
       if(cmat->FastEl_Flat(i) != 0) { // true
-        itr->el_idx = i;
+        itr.el_idx = i;
         return true;
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
 // reverse iterator versions
 
-bool taMatrix::IterLast_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count = 0;
-  itr->el_idx = 0;              // just to be sure
+bool taMatrix::IterLast_impl(taBaseItr& itr) const {
+  itr.count = 0;
+  itr.el_idx = 0;              // just to be sure
   const int ec = ElemCount();
   if(!ElView()) {
     if(ec > 0) {
-      itr->el_idx = ec-1;
+      itr.el_idx = ec-1;
       return true;
     }
+    itr.SetDone();
     return false;
   }
   const int dm = dims();
   if(!IterValidate(ElView(), el_view_mode, dm)) {
+    itr.SetDone();
     return false;
   }
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
     MatrixIndex idx(dm);
@@ -718,8 +725,9 @@ bool taMatrix::IterLast_impl(taBaseItr*& itr) const {
     for(int d=0;d<dm;d++) {
       idx.Set(d, cmat->FastEl2d(d, last_coord));   // outer index is count index
     }
-    itr->el_idx = SafeElIndexN(idx);
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = SafeElIndexN(idx);
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -727,11 +735,13 @@ bool taMatrix::IterLast_impl(taBaseItr*& itr) const {
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = FrameStartIdx(cmat->size-1); // frame is logical -- startidx does decoding!
-    itr->el_idx += FrameSize()-1;              // last cell in frame
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = FrameStartIdx(cmat->size-1); // frame is logical -- startidx does decoding!
+    itr.el_idx += FrameSize()-1;              // last cell in frame
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -740,21 +750,22 @@ bool taMatrix::IterLast_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=ec-1; i>=0; i--) {
       if(cmat->FastEl_Flat(i) != 0) {
-        itr->el_idx = i;
+        itr.el_idx = i;
         return true;
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
-bool taMatrix::IterPrev_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count++;
+bool taMatrix::IterPrev_impl(taBaseItr& itr) const {
+  itr.count++;
   const int ec = ElemCount();
   if(!ElView()) {
-    itr->el_idx--;
-    if(itr->el_idx < 0) {
+    itr.el_idx--;
+    if(itr.el_idx < 0) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -762,16 +773,18 @@ bool taMatrix::IterPrev_impl(taBaseItr*& itr) const {
   const int dm = dims();
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->dim(1) <= itr->count) {
+    if(cmat->dim(1) <= itr.count) {
+      itr.SetDone();
       return false;
     }
     MatrixIndex idx(dm);
-    int last_coord = cmat->Frames()-1-itr->count;
+    int last_coord = cmat->Frames()-1-itr.count;
     for(int d=0;d<dm;d++) {
       idx.Set(d, cmat->FastEl2d(d, last_coord));  // outer index is count index
     }
-    itr->el_idx = SafeElIndexN(idx);
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = SafeElIndexN(idx);
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -779,27 +792,30 @@ bool taMatrix::IterPrev_impl(taBaseItr*& itr) const {
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     int fsz = FrameSize();
-    int fr = itr->count / fsz;
+    int fr = itr.count / fsz;
     if(fr >= cmat->size) {
+      itr.SetDone();
       return false;
     }
-    int cell = itr->count % fsz;
-    itr->el_idx = FrameStartIdx(cmat->size - 1 - fr);
-    itr->el_idx += fsz-1-cell;
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    int cell = itr.count % fsz;
+    itr.el_idx = FrameStartIdx(cmat->size - 1 - fr);
+    itr.el_idx += fsz-1-cell;
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=ec - 2 - itr->el_idx; i>=0; i--) { // search for prev
+    for(int i=ec - 2 - itr.el_idx; i>=0; i--) { // search for prev
       if(cmat->FastEl_Flat(i) != 0) { // true
-        itr->el_idx = i;
+        itr.el_idx = i;
         return true;
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
@@ -931,19 +947,19 @@ void taMatrix::Copy_Matrix_impl(const taMatrix* cp) {
       gm.Set(cp->FrameDim(), cp->Frames()); // effective
       SetGeomN(gm);
       TA_FOREACH_INDEX(i, *cp) { // count instead of i should all work out..
-        El_SetFmVar_(FastEl_Flat_(FOREACH_itr->count), cp->FastElAsVar_Flat(i));
+        El_SetFmVar_(FastEl_Flat_(FOREACH_itr.count), cp->FastElAsVar_Flat(i));
       }
     }
     else {
       SetGeom(1, cp->IterCount());
       TA_FOREACH_INDEX(i, *cp) {
-        El_SetFmVar_(FastEl_Flat_(FOREACH_itr->count), cp->FastElAsVar_Flat(i));
+        El_SetFmVar_(FastEl_Flat_(FOREACH_itr.count), cp->FastElAsVar_Flat(i));
       }
     }
   }
   else {
     TA_FOREACH_INDEX_TWO(mi, *this, ci, *cp) {
-      if(!FOREACH_itr_b) ci = cp->IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ci = cp->IterFirstIndex(FOREACH_itr_b); // start over
       El_SetFmVar_(FastEl_Flat_(mi), cp->FastElAsVar_Flat(ci));
     }
   }
@@ -2064,7 +2080,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
         + ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -2074,7 +2090,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
         + ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -2085,7 +2101,7 @@ taMatrix* taMatrix::operator+(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) + t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
@@ -2135,7 +2151,7 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
         - ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -2145,7 +2161,7 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
         - ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -2156,7 +2172,7 @@ taMatrix* taMatrix::operator-(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) - t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
@@ -2237,7 +2253,7 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi)
         * ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -2247,7 +2263,7 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi)
         * ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
@@ -2258,7 +2274,7 @@ taMatrix* taMatrix::operator*(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) * t.FastElAsVar_Flat(ti), ti);
     }
     return rval;
@@ -2308,7 +2324,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       float den = ((float_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0f, "/", "Floating Point Exception: Division by Zero"))
         rval->FastEl_Flat(mi) = ((float_Matrix*)this)->FastEl_Flat(mi) / den;
@@ -2319,7 +2335,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       double den = ((double_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/", "Floating Point Exception: Division by Zero"))
         rval->FastEl_Flat(mi) = ((double_Matrix*)this)->FastEl_Flat(mi) / den;
@@ -2331,7 +2347,7 @@ taMatrix* taMatrix::operator/(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(FastElAsVar_Flat(mi) / t.FastElAsVar_Flat(ti), mi);
     }
     return rval;
@@ -2437,7 +2453,7 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = powf(((float_Matrix*)this)->FastEl_Flat(mi),
                                    ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2447,7 +2463,7 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = pow(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2458,7 +2474,7 @@ taMatrix* taMatrix::operator^(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(pow(FastElAsVar_Flat(mi).toDouble(),
                               t.FastElAsVar_Flat(ti).toDouble()), mi);
     }
@@ -2510,7 +2526,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MAX(((float_Matrix*)this)->FastEl_Flat(mi), 
                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2520,7 +2536,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MAX(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2531,7 +2547,7 @@ taMatrix* taMatrix::Max(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(MAX(FastElAsVar_Flat(mi), t.FastElAsVar_Flat(ti)), mi);
     }
     return rval;
@@ -2627,7 +2643,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     float_Matrix* rval = new float_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MIN(((float_Matrix*)this)->FastEl_Flat(mi), 
                                   ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2637,7 +2653,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     double_Matrix* rval = new double_Matrix(this->geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = MIN(((double_Matrix*)this)->FastEl_Flat(mi),
                                   ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
@@ -2648,7 +2664,7 @@ taMatrix* taMatrix::Min(const taMatrix& t) const {
     rval->SetGeomN(geom);
     rval->CopyElView(*this);
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->SetFmVar_Flat(MIN(FastElAsVar_Flat(mi), t.FastElAsVar_Flat(ti)), mi);
     }
     return rval;
@@ -2780,19 +2796,19 @@ void taMatrix::operator+=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       ((float_Matrix*)this)->FastEl_Flat(mi) += ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       ((double_Matrix*)this)->FastEl_Flat(mi) += ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) + t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2828,19 +2844,19 @@ void taMatrix::operator-=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       ((float_Matrix*)this)->FastEl_Flat(mi) -= ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       ((double_Matrix*)this)->FastEl_Flat(mi) -= ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) - t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2876,19 +2892,19 @@ void taMatrix::operator*=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       ((float_Matrix*)this)->FastEl_Flat(mi) *= ((float_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       ((double_Matrix*)this)->FastEl_Flat(mi) *= ((double_Matrix*)&t)->FastEl_Flat(ti);
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) * t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2924,7 +2940,7 @@ void taMatrix::operator/=(const taMatrix& t) {
     return;
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       float den = ((float_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/=", "Floating Point Exception: Division by Zero"))
         ((float_Matrix*)this)->FastEl_Flat(mi) /= den;
@@ -2932,7 +2948,7 @@ void taMatrix::operator/=(const taMatrix& t) {
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       double den = ((double_Matrix*)&t)->FastEl_Flat(ti);
       if(!TestError(den == 0.0, "/=", "Floating Point Exception: Division by Zero"))
         ((double_Matrix*)this)->FastEl_Flat(mi) /= den;
@@ -2940,7 +2956,7 @@ void taMatrix::operator/=(const taMatrix& t) {
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) / t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -2990,7 +3006,7 @@ void taMatrix::operator%=(const taMatrix& t) {
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       SetFmVar_Flat(FastElAsVar_Flat(mi) % t.FastElAsVar_Flat(ti), mi);
     }
   }
@@ -3025,21 +3041,21 @@ taMatrix* taMatrix::operator<(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               < ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               < ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) < t.FastElAsVar_Flat(ti);
     }
   }
@@ -3078,21 +3094,21 @@ taMatrix* taMatrix::operator>(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               > ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               > ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) > t.FastElAsVar_Flat(ti);
     }
   }
@@ -3131,21 +3147,21 @@ taMatrix* taMatrix::operator<=(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               <= ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               <= ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) <= t.FastElAsVar_Flat(ti);
     }
   }
@@ -3184,21 +3200,21 @@ taMatrix* taMatrix::operator>=(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               >= ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                                >= ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) >= t.FastElAsVar_Flat(ti);
     }
   }
@@ -3237,21 +3253,21 @@ taMatrix* taMatrix::operator==(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               == ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                               == ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) == t.FastElAsVar_Flat(ti);
     }
   }
@@ -3290,21 +3306,21 @@ taMatrix* taMatrix::operator!=(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((float_Matrix*)this)->FastEl_Flat(mi)
                               != ((float_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((double_Matrix*)this)->FastEl_Flat(mi)
                                != ((double_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi) != t.FastElAsVar_Flat(ti);
     }
   }
@@ -3343,21 +3359,21 @@ taMatrix* taMatrix::operator&&(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((byte_Matrix*)this)->FastEl_Flat(mi)
                                && ((byte_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_INT && GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((int_Matrix*)this)->FastEl_Flat(mi)
                                && ((int_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi).toBool()
         && t.FastElAsVar_Flat(ti).toBool();
     }
@@ -3398,21 +3414,21 @@ taMatrix* taMatrix::operator||(const taMatrix& t) const {
   byte_Matrix* rval = new byte_Matrix(this->geom);
   if(GetDataValType() == VT_BYTE || GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((byte_Matrix*)this)->FastEl_Flat(mi)
                                || ((byte_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else if(GetDataValType() == VT_INT || GetDataValType() == t.GetDataValType()) {
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = (((int_Matrix*)this)->FastEl_Flat(mi)
                                || ((int_Matrix*)&t)->FastEl_Flat(ti));
     }
   }
   else {                        // use variants -- no need to optimize
     TA_FOREACH_INDEX_TWO(mi, *this, ti, t) {
-      if(!FOREACH_itr_b) ti = t.IterBeginIndex(FOREACH_itr_b); // start over
+      if(FOREACH_itr_b.Done()) ti = t.IterFirstIndex(FOREACH_itr_b); // start over
       rval->FastEl_Flat(mi) = FastElAsVar_Flat(mi).toBool()
         || t.FastElAsVar_Flat(ti).toBool();
     }

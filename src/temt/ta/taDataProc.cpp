@@ -25,6 +25,7 @@
 #include <float_Data>
 #include <float_Matrix>
 #include <double_Matrix>
+#include <taBaseItr>
 #include <int_Data>
 #include <taMath_float>
 #include <taMath_double>

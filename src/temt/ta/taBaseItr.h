@@ -32,6 +32,13 @@ INHERITED(taBase)
 public:
   int           count;          // count number of iterations through foreach -- always goes 0..end sequentially
   int           el_idx;         // absolute index of current item in container
+  
+  inline bool   Done()          { return el_idx < 0; }
+  // determines when done iterating -- when el_idx is < 0
+  inline bool   More()          { return !Done(); }
+  // if there is more to process 
+  inline void   SetDone()      { el_idx = -1; }
+  // set iterator to be done iterating
 
   TA_BASEFUNS_LITE(taBaseItr);
 private:

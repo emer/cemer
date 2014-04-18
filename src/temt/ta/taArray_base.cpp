@@ -136,15 +136,9 @@ Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
   return _nilVariant;
 }
 
-taBaseItr* taArray_base::Iter() const {
-  taBaseItr* rval = new taBaseItr;
-  taBase::Ref(rval);
-  return rval;
-}
-
-Variant taArray_base::IterElem(taBaseItr* itr) const {
-  if(!itr) return _nilVariant;
-  return SafeElAsVar(itr->el_idx);
+Variant taArray_base::IterElem(taBaseItr& itr) const {
+  if(itr.Done()) return _nilVariant;
+  return SafeElAsVar(itr.el_idx);
 }
 
 String& taArray_base::Print(String& strm, int indent) const {
@@ -153,7 +147,7 @@ String& taArray_base::Print(String& strm, int indent) const {
   String_PArray strs;
   strs.Alloc(size);
   TA_FOREACH(vitm, *this) {
-    strs.Add(El_GetStr_(FastEl_(FOREACH_itr->el_idx)));
+    strs.Add(El_GetStr_(FastEl_(FOREACH_itr.el_idx)));
   }
   taMisc::FancyPrintList(strm, strs, indent+1);
   taMisc::IndentString(strm, indent);

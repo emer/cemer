@@ -51,9 +51,7 @@ public:
 // Iterate over each leaf element in a group.
 #define FOREACH_ELEM_IN_GROUP(GROUP_TYPE, ELEM_VAR_NAME, GROUP)                     \
   if (bool FOREACH_done = false) { } else                                           \
-    for (taLeafItr FOREACH_itr;                                                     \
-         !FOREACH_done;                                                             \
-         FOREACH_done = true)                                                       \
+    for (taLeafItr FOREACH_itr; !FOREACH_done; FOREACH_done = true)                 \
       for (GROUP_TYPE *ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).FirstEl(FOREACH_itr);  \
            ELEM_VAR_NAME;                                                           \
            ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).NextEl(FOREACH_itr))
@@ -61,9 +59,7 @@ public:
 // Iterate over each leaf element in a group in reverse order.
 #define FOREACH_ELEM_IN_GROUP_REV(GROUP_TYPE, ELEM_VAR_NAME, GROUP)                 \
   if (bool FOREACH_done = false) { } else                                           \
-    for (taLeafItr FOREACH_itr;                                                     \
-         !FOREACH_done;                                                             \
-         FOREACH_done = true)                                                       \
+    for (taLeafItr FOREACH_itr; !FOREACH_done; FOREACH_done = true)                 \
       for (GROUP_TYPE *ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).LastEl(FOREACH_itr);   \
            ELEM_VAR_NAME;                                                           \
            ELEM_VAR_NAME = (GROUP_TYPE*) (GROUP).PrevEl(FOREACH_itr))

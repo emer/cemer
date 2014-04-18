@@ -354,7 +354,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       taBase* itm = vitm.toBase();
       if(itm && itm->GetName().matches_wildcard(nm)) {
-        imat->Add(FOREACH_itr->el_idx); // add absolute index of item
+        imat->Add(FOREACH_itr.el_idx); // add absolute index of item
       }
     }
     if(imat->size == 1) {
@@ -372,7 +372,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       taBase* itm = vitm.toBase();
       if(itm) {
-        int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
+        int el_idx = FOREACH_itr.el_idx; // get before occluded by next iterator
         TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
           const String nm = mitm.toString();
           if(itm->GetName().matches_wildcard(nm)) {
@@ -460,7 +460,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     TA_FOREACH(vitm, *this) {   // use iterator so it is recursive on existing filtering
       taBase* itm = vitm.toBase();
       if(itm) {
-        int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
+        int el_idx = FOREACH_itr.el_idx; // get before occluded by next iterator
         TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
           // catch all for any kind of variant
           if(mitm.isTypeDef()) {
@@ -495,15 +495,9 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   return _nilVariant;
 }
 
-taBaseItr* taList_impl::Iter() const {
-  taBaseItr* rval = new taBaseItr;
-  taBase::Ref(rval);
-  return rval;
-}
-
-Variant taList_impl::IterElem(taBaseItr* itr) const {
-  if(!itr) return _nilVariant;
-  return VarEl(itr->el_idx);
+Variant taList_impl::IterElem(taBaseItr& itr) const {
+  if(itr.Done()) return _nilVariant;
+  return VarEl(itr.el_idx);
 }
 
 String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key,

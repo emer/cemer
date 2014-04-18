@@ -828,7 +828,7 @@ cssEl* cssTA_Base::operator[](const Variant& i) const {
 	taBase* dcol = dcolv.toBase();
 	if(dcol) {
 	  Variant rval = dcol->Elem(i);
-	  vmat->SetFmVar_Flat(rval, FOREACH_itr->count);
+	  vmat->SetFmVar_Flat(rval, FOREACH_itr.count);
 	}
       }
       return new cssTA_Matrix(vmat);
@@ -956,7 +956,7 @@ String cssTA_Matrix::GetStr() const {
   if(ths->IterCount() == 1) {
     TA_FOREACH(vitm, *ths) {
       rval = vitm.toString();
-      break;
+       break;
     }
   }
   else {
@@ -1402,9 +1402,8 @@ cssEl* cssTA_Matrix::operator< (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval < ovar);
       }
       else {
@@ -1435,9 +1434,8 @@ cssEl* cssTA_Matrix::operator> (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval > ovar);
       }
       else {
@@ -1468,9 +1466,8 @@ cssEl* cssTA_Matrix::operator<= (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval <= ovar);
       }
       else {
@@ -1501,9 +1498,8 @@ cssEl* cssTA_Matrix::operator>= (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval >= ovar);
       }
       else {
@@ -1534,9 +1530,8 @@ cssEl* cssTA_Matrix::operator== (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval == ovar);
       }
       else {
@@ -1567,9 +1562,8 @@ cssEl* cssTA_Matrix::operator!= (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);	
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval != ovar);
       }
       else {
@@ -1601,9 +1595,8 @@ cssEl* cssTA_Matrix::operator&& (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);	
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval.toBool() && ovar.toBool());
       }
       else {
@@ -1635,9 +1628,8 @@ cssEl* cssTA_Matrix::operator|| (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       if(ths->IterCount() == 1) { // single item access is special
-	taBaseItr* itr = NULL;
-	Variant mval = ths->IterBegin(itr);	
-	delete itr;
+	taBaseItr itr;
+	Variant mval = ths->IterFirst(itr);
 	return new cssBool(mval.toBool() || ovar.toBool());
       }
       else {
@@ -1653,9 +1645,8 @@ cssEl* cssTA_Matrix::operator! () {
   taMatrix* ths = GetMatrixPtr();
   if(!ths) return &cssMisc::Void;
   if(ths->IterCount() == 1) { // single item access is special
-    taBaseItr* itr = NULL;
-    Variant mval = ths->IterBegin(itr);	
-    delete itr;
+    taBaseItr itr;
+    Variant mval = ths->IterFirst(itr);
     return new cssBool(!mval.toBool());
   }
   else {

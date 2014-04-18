@@ -760,7 +760,7 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
   if(!vec_check_same_size(vec, arg_ary)) return false;
   SimpleMathSpec myms = math_spec;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *arg_ary) {
-    if(!FOREACH_itr_b) bi = arg_ary->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = arg_ary->IterFirstIndex(FOREACH_itr_b); // start over
     myms.arg = arg_ary->FastEl_Flat(bi);
     vec->FastEl_Flat(ai) = myms.Evaluate(vec->FastEl_Flat(ai));
   }
@@ -770,7 +770,7 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
 bool taMath_float::vec_students_cum(float_Matrix* t, const float_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
   TA_FOREACH_INDEX_TWO(ai, *t, bi, *df) {
-    if(!FOREACH_itr_b) bi = df->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = df->IterFirstIndex(FOREACH_itr_b); // start over
     t->FastEl_Flat(ai) = students_cum(t->FastEl_Flat(ai), df->FastEl_Flat(bi));
   }
   return true;
@@ -779,7 +779,7 @@ bool taMath_float::vec_students_cum(float_Matrix* t, const float_Matrix* df) {
 bool taMath_float::vec_students_cum_cum(float_Matrix* t, const float_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
   TA_FOREACH_INDEX_TWO(ai, *t, bi, *df) {
-    if(!FOREACH_itr_b) bi = df->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = df->IterFirstIndex(FOREACH_itr_b); // start over
     t->FastEl_Flat(ai) = students_cum_cum(t->FastEl_Flat(ai), df->FastEl_Flat(bi));
   }
   return true;
@@ -843,7 +843,7 @@ int taMath_float::vec_find_first(const float_Matrix* vec, Relation& rel) {
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX(i, *vec) {
     if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
-      return FOREACH_itr->count;
+      return FOREACH_itr.count;
   }
   return -1;
 }
@@ -854,7 +854,7 @@ int taMath_float::vec_find_last(const float_Matrix* vec, Relation& rel) {
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX_REV(i, *vec) {
     if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
-      return (vec->IterCount() - FOREACH_itr->count) - 1;
+      return (vec->IterCount() - FOREACH_itr.count) - 1;
   }
   return -1;
 }
@@ -873,7 +873,7 @@ float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
       }
       else {
         if(vec->FastEl_Flat(i) > rval) {
-          idx = FOREACH_itr->count;
+          idx = FOREACH_itr.count;
           rval = vec->FastEl_Flat(i);
         }
       }
@@ -904,7 +904,7 @@ float taMath_float::vec_abs_max(const float_Matrix* vec, int& idx) {
       }
       else {
         if(fabs(vec->FastEl_Flat(i)) > rval) {
-          idx = FOREACH_itr->count;
+          idx = FOREACH_itr.count;
           rval = fabs(vec->FastEl_Flat(i));
         }
       }
@@ -954,7 +954,7 @@ float taMath_float::vec_min(const float_Matrix* vec, int& idx) {
       }
       else {
         if(vec->FastEl_Flat(i) < rval) {
-          idx = FOREACH_itr->count;
+          idx = FOREACH_itr.count;
           rval = vec->FastEl_Flat(i);
         }
       }
@@ -985,7 +985,7 @@ float taMath_float::vec_abs_min(const float_Matrix* vec, int& idx) {
       }
       else {
         if(fabs(vec->FastEl_Flat(i)) < rval) {
-          idx = FOREACH_itr->count;
+          idx = FOREACH_itr.count;
           rval = fabs(vec->FastEl_Flat(i));
         }
       }
@@ -1072,7 +1072,7 @@ float taMath_float::vec_prod(const float_Matrix* vec) {
   float rval = 0.0;
   if(vec->ElView()) {		// significantly less efficient
     TA_FOREACH_INDEX(i, *vec) {
-      if(FOREACH_itr->count == 0)
+      if(FOREACH_itr.count == 0)
         rval = vec->FastEl_Flat(i);
       else
         rval *= vec->FastEl_Flat(i);
@@ -1201,7 +1201,7 @@ void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, flo
   float_Array tmp;
   tmp.SetSize(oth->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = oth->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = oth->FastEl_Flat(i);
   }
   tmp.Sort();
   float min_v = tmp.FastEl(0);
@@ -1291,7 +1291,7 @@ float taMath_float::vec_median(const float_Matrix* vec) {
   float_Array tmp;
   tmp.SetSize(vec->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = vec->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
   }
   tmp.Sort();
   int idx = tmp.size / 2;
@@ -1304,7 +1304,7 @@ float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
   float_Array tmp;
   tmp.SetSize(vec->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = vec->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
   }
   tmp.Sort();
   int idx = (int)(quant_pos * (float)tmp.size);
@@ -1465,7 +1465,7 @@ float taMath_float::vec_mode(const float_Matrix* vec) {
   float_Array tmp(false);
   tmp.SetSize(vec->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = vec->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
   }
   tmp.Sort();
   int mx_frq = 0;
@@ -1517,7 +1517,7 @@ int taMath_float::vec_prob_choose(float_Matrix* vec) {
   TA_FOREACH_INDEX(i, *vec) {
     psum += vec->FastEl_Flat(i);
     if(rndval < psum) {
-      return FOREACH_itr->count;
+      return FOREACH_itr.count;
     }
   }
   return vec->IterCount()-1;		// just to be safe..
@@ -1601,7 +1601,7 @@ float taMath_float::vec_ss_dist(const float_Matrix* vec, const float_Matrix* oth
   if(!vec_check_same_size(vec, oth)) return -1.0;
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     double d = vec->FastEl_Flat(ai) - oth->FastEl_Flat(bi);
     if(fabs(d) > tolerance)
       rval += d * d;
@@ -1630,7 +1630,7 @@ float taMath_float::vec_hamming_dist(const float_Matrix* vec, const float_Matrix
   float alen = 0.0;
   float blen = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     float d = fabs(vec->FastEl_Flat(ai) - oth->FastEl_Flat(bi));
     if(d <= tolerance)  d = 0.0;
     rval += d;
@@ -1653,7 +1653,7 @@ float taMath_float::vec_covar(const float_Matrix* vec, const float_Matrix* oth) 
   float oth_mean = vec_mean(oth);
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     rval += (vec->FastEl_Flat(ai) - my_mean) * (oth->FastEl_Flat(bi) - oth_mean);
   }
   return rval / (float)vec->IterCount();
@@ -1667,7 +1667,7 @@ float taMath_float::vec_correl(const float_Matrix* vec, const float_Matrix* oth)
   float oth_var = 0.0;
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     float my_val = vec->FastEl_Flat(ai) - my_mean;
     float oth_val = oth->FastEl_Flat(bi) - oth_mean;
     rval += my_val * oth_val;
@@ -1685,7 +1685,7 @@ float taMath_float::vec_inner_prod(const float_Matrix* vec, const float_Matrix* 
   if(!vec_check_same_size(vec, oth)) return -1.0;
   float rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     rval += vec->FastEl_Flat(ai) * oth->FastEl_Flat(bi);
   }
   if(norm) {
@@ -1700,7 +1700,7 @@ float taMath_float::vec_cross_entropy(const float_Matrix* vec, const float_Matri
   if(!vec_check_same_size(vec, oth)) return -1.0f;
   float rval = 0.0f;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     float p = vec->FastEl_Flat(ai);
     float q = oth->FastEl_Flat(bi);
     q = max(q,0.000001f); q = max(q,0.999999f);

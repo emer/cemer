@@ -805,7 +805,7 @@ bool taMath_double::vec_simple_math_arg(double_Matrix* vec, const double_Matrix*
   if(!vec_check_same_size(vec, arg_ary)) return false;
   SimpleMathSpec myms = math_spec;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *arg_ary) {
-    if(!FOREACH_itr_b) bi = arg_ary->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = arg_ary->IterFirstIndex(FOREACH_itr_b); // start over
     myms.arg = arg_ary->FastEl_Flat(bi);
     vec->FastEl_Flat(ai) = myms.Evaluate(vec->FastEl_Flat(ai));
   }
@@ -815,7 +815,7 @@ bool taMath_double::vec_simple_math_arg(double_Matrix* vec, const double_Matrix*
 bool taMath_double::vec_students_cum(double_Matrix* t, const double_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
   TA_FOREACH_INDEX_TWO(ai, *t, bi, *df) {
-    if(!FOREACH_itr_b) bi = df->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = df->IterFirstIndex(FOREACH_itr_b); // start over
     t->FastEl_Flat(ai) = students_cum(t->FastEl_Flat(ai), df->FastEl_Flat(bi));
   }
   return true;
@@ -824,7 +824,7 @@ bool taMath_double::vec_students_cum(double_Matrix* t, const double_Matrix* df) 
 bool taMath_double::vec_students_cum_cum(double_Matrix* t, const double_Matrix* df) {
   if(!vec_check_same_size(t, df)) return false;
   TA_FOREACH_INDEX_TWO(ai, *t, bi, *df) {
-    if(!FOREACH_itr_b) bi = df->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = df->IterFirstIndex(FOREACH_itr_b); // start over
     t->FastEl_Flat(ai) = students_cum_cum(t->FastEl_Flat(ai), df->FastEl_Flat(bi));
   }
   return true;
@@ -888,7 +888,7 @@ int taMath_double::vec_find_first(const double_Matrix* vec, Relation& rel) {
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX(i, *vec) {
     if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
-      return FOREACH_itr->count;
+      return FOREACH_itr.count;
   }
   return -1;
 }
@@ -899,7 +899,7 @@ int taMath_double::vec_find_last(const double_Matrix* vec, Relation& rel) {
   rel.CacheVar(tmp_rel);
   TA_FOREACH_INDEX_REV(i, *vec) {
     if(tmp_rel.Evaluate(vec->FastEl_Flat(i)))
-      return (vec->IterCount() - FOREACH_itr->count) - 1;
+      return (vec->IterCount() - FOREACH_itr.count) - 1;
   }
   return -1;
 }
@@ -918,7 +918,7 @@ double taMath_double::vec_max(const double_Matrix* vec, int& idx) {
       }
       else {
         if(vec->FastEl_Flat(i) > rval) {
-          idx = FOREACH_itr->count;
+          idx = FOREACH_itr.count;
           rval = vec->FastEl_Flat(i);
         }
       }
@@ -949,7 +949,7 @@ double taMath_double::vec_abs_max(const double_Matrix* vec, int& idx) {
       }
       else {
 	if(fabs(vec->FastEl_Flat(i)) > rval) {
-	  idx = FOREACH_itr->count;
+	  idx = FOREACH_itr.count;
 	  rval = fabs(vec->FastEl_Flat(i));
 	}
       }
@@ -999,7 +999,7 @@ double taMath_double::vec_min(const double_Matrix* vec, int& idx) {
       }
       else {
         if(vec->FastEl_Flat(i) < rval) {
-          idx = FOREACH_itr->count;
+          idx = FOREACH_itr.count;
           rval = vec->FastEl_Flat(i);
         }
       }
@@ -1030,7 +1030,7 @@ double taMath_double::vec_abs_min(const double_Matrix* vec, int& idx) {
       }
       else {
 	if(fabs(vec->FastEl_Flat(i)) < rval) {
-	  idx = FOREACH_itr->count;
+	  idx = FOREACH_itr.count;
 	  rval = fabs(vec->FastEl_Flat(i));
 	}
       }
@@ -1102,7 +1102,7 @@ double taMath_double::vec_prod(const double_Matrix* vec) {
   double rval = 0.0;
   if(vec->ElView()) {		// significantly less efficient
     TA_FOREACH_INDEX(i, *vec) {
-      if(FOREACH_itr->count == 0)
+      if(FOREACH_itr.count == 0)
 	rval = vec->FastEl_Flat(i);
       else
 	rval *= vec->FastEl_Flat(i);
@@ -1205,7 +1205,7 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   double_Array tmp;
   tmp.SetSize(oth->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = oth->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = oth->FastEl_Flat(i);
   }
   tmp.Sort();
   double min_v = tmp.FastEl(0);
@@ -1277,7 +1277,7 @@ double taMath_double::vec_median(const double_Matrix* vec) {
   double_Array tmp;
   tmp.SetSize(vec->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = vec->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
   }
   tmp.Sort();
   int idx = tmp.size / 2;
@@ -1290,7 +1290,7 @@ double taMath_double::vec_quantile(const double_Matrix* vec, double quant_pos) {
   double_Array tmp;
   tmp.SetSize(vec->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = vec->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
   }
   tmp.Sort();
   int idx = (int)(quant_pos * (double)tmp.size);
@@ -1451,7 +1451,7 @@ double taMath_double::vec_mode(const double_Matrix* vec) {
   double_Array tmp;
   tmp.SetSize(vec->IterCount());
   TA_FOREACH_INDEX(i, *vec) {
-    tmp[FOREACH_itr->count] = vec->FastEl_Flat(i);
+    tmp[FOREACH_itr.count] = vec->FastEl_Flat(i);
   }
   tmp.Sort();
   int mx_frq = 0;
@@ -1582,7 +1582,7 @@ int taMath_double::vec_prob_choose(double_Matrix* vec) {
   TA_FOREACH_INDEX(i, *vec) {
     psum += vec->FastEl_Flat(i);
     if(rndval < psum) {
-      return FOREACH_itr->count;
+      return FOREACH_itr.count;
     }
   }
   return vec->IterCount()-1;		// just to be safe..
@@ -1729,7 +1729,7 @@ double taMath_double::vec_ss_dist(const double_Matrix* vec, const double_Matrix*
   if(!vec_check_same_size(vec, oth)) return -1.0;
   double rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     double d = vec->FastEl_Flat(ai) - oth->FastEl_Flat(bi);
     if(fabs(d) > tolerance)
       rval += d * d;
@@ -1758,7 +1758,7 @@ double taMath_double::vec_hamming_dist(const double_Matrix* vec, const double_Ma
   double alen = 0.0;
   double blen = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     double d = fabs(vec->FastEl_Flat(ai) - oth->FastEl_Flat(bi));
     if(d <= tolerance)  d = 0.0;
     rval += d;
@@ -1781,7 +1781,7 @@ double taMath_double::vec_covar(const double_Matrix* vec, const double_Matrix* o
   double oth_mean = vec_mean(oth);
   double rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     rval += (vec->FastEl_Flat(ai) - my_mean) * (oth->FastEl_Flat(bi) - oth_mean);
   }
   return rval / (double)vec->IterCount();
@@ -1795,7 +1795,7 @@ double taMath_double::vec_correl(const double_Matrix* vec, const double_Matrix* 
   double oth_var = 0.0;
   double rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     double my_val = vec->FastEl_Flat(ai) - my_mean;
     double oth_val = oth->FastEl_Flat(bi) - oth_mean;
     rval += my_val * oth_val;
@@ -1813,7 +1813,7 @@ double taMath_double::vec_inner_prod(const double_Matrix* vec, const double_Matr
   if(!vec_check_same_size(vec, oth)) return -1.0;
   double rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     rval += vec->FastEl_Flat(ai) * oth->FastEl_Flat(bi);
   }
   if(norm) {
@@ -1828,7 +1828,7 @@ double taMath_double::vec_cross_entropy(const double_Matrix* vec, const double_M
   if(!vec_check_same_size(vec, oth)) return -1.0;
   double rval = 0.0;
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
-    if(!FOREACH_itr_b) bi = oth->IterBeginIndex(FOREACH_itr_b); // start over
+    if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     double p = vec->FastEl_Flat(ai);
     double q = oth->FastEl_Flat(bi);
     q = max(q,0.000001); q = max(q,0.999999);

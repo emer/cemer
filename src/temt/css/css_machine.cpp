@@ -1335,7 +1335,7 @@ cssEl* cssElCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) {
     args[itr_arg] = tmparg;
     rval = (*funp)(act_argc, args);
     cssEl::Ref(rval);
-    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->el_idx); // store rval in matrix
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr.el_idx); // store rval in matrix
     cssEl::unRefDone(tmparg);
     cssEl::unRefDone(rval);
   }
@@ -1365,7 +1365,7 @@ cssEl* cssElCFun::CallFunListArgs(int act_argc, cssEl* args[]) {
     args[itr_arg] = tmparg;
     rval = (*funp)(act_argc, args);
     cssEl::Ref(rval);
-    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->count); // store rval in matrix
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr.count); // store rval in matrix
     cssEl::unRefDone(tmparg);
     cssEl::unRefDone(rval);
   }
@@ -1569,7 +1569,7 @@ cssEl* cssMbrCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) {
     args[itr_arg] = tmparg;
     rval = (*funp)(ths, act_argc, args);
     cssEl::Ref(rval);
-    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->el_idx); // store rval in matrix
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr.el_idx); // store rval in matrix
     cssEl::unRefDone(tmparg);
     cssEl::unRefDone(rval);
   }
@@ -1599,7 +1599,7 @@ cssEl* cssMbrCFun::CallFunListArgs(int act_argc, cssEl* args[]) {
     args[itr_arg] = tmparg;
     rval = (*funp)(ths, act_argc, args);
     cssEl::Ref(rval);
-    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->count); // store rval in matrix
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr.count); // store rval in matrix
     cssEl::unRefDone(tmparg);
     cssEl::unRefDone(rval);
   }

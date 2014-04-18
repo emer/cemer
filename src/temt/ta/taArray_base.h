@@ -49,8 +49,7 @@ public:
   IndexMode    ElViewMode() const  override { return el_view_mode; }
   int          ElemCount() const override { return size; }
   Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const override;
-  Variant      IterElem(taBaseItr* itr) const override;
-  taBaseItr*   Iter() const override;
+  Variant      IterElem(taBaseItr& itr) const override;
   virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members
   virtual taArray_base* NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;

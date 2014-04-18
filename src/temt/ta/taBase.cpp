@@ -842,42 +842,46 @@ bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
   return true;
 }
 
-void taBase::DelIter(taBaseItr*& itr) const {
-  if(!itr) return;
-  taBase::unRefDone(itr);
-  itr = NULL;
+Variant taBase::IterFirst(taBaseItr& itr) const {
+  if(IterFirst_impl(itr)) return IterElem(itr);
+  return _nilVariant;
 }
 
-int taBase::IterNextIndex(taBaseItr*& itr) const {
+Variant taBase::IterNext(taBaseItr& itr) const {
+  if(IterNext_impl(itr)) return IterElem(itr);
+  return _nilVariant;
+}
+
+int taBase::IterNextIndex(taBaseItr& itr) const {
   if(IterNext_impl(itr))
-    return itr->el_idx;
-  DelIter(itr);
+    return itr.el_idx;
   return -1;
 }
 
-int taBase::IterFirstIndex(taBaseItr*& itr) const {
+int taBase::IterFirstIndex(taBaseItr& itr) const {
   if(IterFirst_impl(itr))
-    return itr->el_idx;
-  DelIter(itr);
+    return itr.el_idx;
   return -1;
 }
 
-bool taBase::IterFirst_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count = 0;
-  itr->el_idx = 0;              // just to be sure
+bool taBase::IterFirst_impl(taBaseItr& itr) const {
+  itr.count = 0;
+  itr.el_idx = 0;              // just to be sure
   if(!ElView()) {
     if(ElemCount() > 0) return true;
+    itr.SetDone();
     return false;
   }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(0); // first guy
-    if(itr->el_idx < 0) itr->el_idx += ElemCount();
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = cmat->FastEl_Flat(0); // first guy
+    if(itr.el_idx < 0) itr.el_idx += ElemCount();
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -885,11 +889,13 @@ bool taBase::IterFirst_impl(taBaseItr*& itr) const {
   else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(0); // first guy
-    if(itr->el_idx < 0) itr->el_idx += ElemCount();
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = cmat->FastEl_Flat(0); // first guy
+    if(itr.el_idx < 0) itr.el_idx += ElemCount();
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -898,97 +904,113 @@ bool taBase::IterFirst_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
       if(cmat->FastEl_Flat(i)) {
-        itr->el_idx = i;
+        itr.el_idx = i;
         return true;            // byte_matrix guaranteed to be same size as list
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
-bool taBase::IterNext_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count++;
+bool taBase::IterNext_impl(taBaseItr& itr) const {
+  itr.count++;
   if(!ElView()) {
-    itr->el_idx++;
-    if(itr->el_idx >= ElemCount()) {
+    itr.el_idx++;
+    if(itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr->count) {
+    if(cmat->size <= itr.count) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
-    if(itr->el_idx < 0) itr->el_idx += ElemCount();
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = cmat->FastEl_Flat(itr.count); // next guy
+    if(itr.el_idx < 0) itr.el_idx += ElemCount();
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr->count) {
+    if(cmat->size <= itr.count) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
-    if(itr->el_idx < 0) itr->el_idx += ElemCount();
-    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+    itr.el_idx = cmat->FastEl_Flat(itr.count); // next guy
+    if(itr.el_idx < 0) itr.el_idx += ElemCount();
+    if(itr.el_idx < 0 || itr.el_idx >= ElemCount()) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   else if(ElViewMode() == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=itr->el_idx+1; i<ElemCount(); i++) { // search for next
+    for(int i=itr.el_idx+1; i<ElemCount(); i++) { // search for next
       if(cmat->FastEl_Flat(i)) { // true
-        itr->el_idx = i;     // byte_matrix guaranteed to be same size as list
+        itr.el_idx = i;     // byte_matrix guaranteed to be same size as list
         return true;
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
 //////////////////////////////////////
 //      Reverse iterator functions
 
-int taBase::IterPrevIndex(taBaseItr*& itr) const {
+Variant taBase::IterLast(taBaseItr& itr) const {
+  if(IterLast_impl(itr)) return IterElem(itr);
+  return _nilVariant;
+}
+
+Variant taBase::IterPrev(taBaseItr& itr) const {
+  if(IterPrev_impl(itr)) return IterElem(itr);
+  return _nilVariant;
+}
+
+int taBase::IterPrevIndex(taBaseItr& itr) const {
   if(IterPrev_impl(itr))
-    return itr->el_idx;
-  DelIter(itr);
+    return itr.el_idx;
   return -1;
 }
 
-int taBase::IterLastIndex(taBaseItr*& itr) const {
+int taBase::IterLastIndex(taBaseItr& itr) const {
   if(IterLast_impl(itr))
-    return itr->el_idx;
-  DelIter(itr);
+    return itr.el_idx;
   return -1;
 }
 
-bool taBase::IterLast_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count = 0;
-  itr->el_idx = 0;              // just to be sure
+bool taBase::IterLast_impl(taBaseItr& itr) const {
+  itr.count = 0;
+  itr.el_idx = 0;              // just to be sure
   const int ec = ElemCount();
   if(!ElView()) {
     if(ec > 0) {
-      itr->el_idx = ec-1;
+      itr.el_idx = ec-1;
       return true;
     }
+    itr.SetDone();
     return false;
   }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(cmat->size-1); // last guy
-    if(itr->el_idx < 0) itr->el_idx += ec;
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = cmat->FastEl_Flat(cmat->size-1); // last guy
+    if(itr.el_idx < 0) itr.el_idx += ec;
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -996,11 +1018,13 @@ bool taBase::IterLast_impl(taBaseItr*& itr) const {
   else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(cmat->size-1); // last guy
-    if(itr->el_idx < 0) itr->el_idx += ec;
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = cmat->FastEl_Flat(cmat->size-1); // last guy
+    if(itr.el_idx < 0) itr.el_idx += ec;
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
@@ -1009,54 +1033,60 @@ bool taBase::IterLast_impl(taBaseItr*& itr) const {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=ec-1; i>=0; i--) {
       if(cmat->FastEl_Flat(i)) {
-        itr->el_idx = i;
+        itr.el_idx = i;
         return true;            // byte_matrix guaranteed to be same size as list
       }
     }
   }
+  itr.SetDone();
   return false;
 }
 
-bool taBase::IterPrev_impl(taBaseItr*& itr) const {
-  if(!itr) return false;
-  itr->count++;
+bool taBase::IterPrev_impl(taBaseItr& itr) const {
+  itr.count++;
   const int ec = ElemCount();
   if(!ElView()) {
-    itr->el_idx--;
-    if(itr->el_idx < 0) {
+    itr.el_idx--;
+    if(itr.el_idx < 0) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr->count) {
+    if(cmat->size <= itr.count) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(cmat->size - 1 - itr->count); // prev guy
-    if(itr->el_idx < 0) itr->el_idx += ec;
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = cmat->FastEl_Flat(cmat->size - 1 - itr.count); // prev guy
+    if(itr.el_idx < 0) itr.el_idx += ec;
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr->count) {
+    if(cmat->size <= itr.count) {
+      itr.SetDone();
       return false;
     }
-    itr->el_idx = cmat->FastEl_Flat(cmat->size - 1 - itr->count); // prev guy
-    if(itr->el_idx < 0) itr->el_idx += ec;
-    if(itr->el_idx < 0 || itr->el_idx >= ec) {
+    itr.el_idx = cmat->FastEl_Flat(cmat->size - 1 - itr.count); // prev guy
+    if(itr.el_idx < 0) itr.el_idx += ec;
+    if(itr.el_idx < 0 || itr.el_idx >= ec) {
+      itr.SetDone();
       return false;
     }
     return true;
   }
   else if(ElViewMode() == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=ec - 2 - itr->el_idx; i>=0; i--) { // search for prev
+    for(int i=ec - 2 - itr.el_idx; i>=0; i--) { // search for prev
       if(cmat->FastEl_Flat(i)) { // true
-        itr->el_idx = i;     // byte_matrix guaranteed to be same size as list
+        itr.el_idx = i;     // byte_matrix guaranteed to be same size as list
+        itr.SetDone();
         return true;
       }
     }

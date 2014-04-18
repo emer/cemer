@@ -877,32 +877,35 @@ static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
       if(list->InheritsFrom(&TA_slice_Matrix)) { // must expand each time!
 	list = ((slice_Matrix*)list)->Expand();
       }
-      val = list->IterBegin(FOREACH_itr); // variant assign
-      if(FOREACH_itr) {
-	*itrc = FOREACH_itr;		// set pointer
-      }
+      FOREACH_itr = new taBaseItr; // create a tmp dummy!
+      *itrc = FOREACH_itr;		// set pointer
+      val = list->IterFirst(*FOREACH_itr); // variant assign
     }
   }
   else {
     FOREACH_itr = (taBaseItr*)itrc->GetVoidPtrOfType(&TA_taBaseItr);
     if(!list->IsContainer()) {	// we got one single item
-      FOREACH_itr = NULL;	// we're done!
+      FOREACH_itr = NULL;
+      *itrc = FOREACH_itr;             // free ptr
     }
     else {
       if(list->InheritsFrom(&TA_slice_Matrix)) { // must expand each time!
 	list = ((slice_Matrix*)list)->Expand();
       }
-      val = list->IterNext(FOREACH_itr); // variant assign
-    }
-    if(!FOREACH_itr) {
-      *itrc = FOREACH_itr;		// set pointer NULL -- this free's tmp for non-container too
+      val = list->IterNext(*FOREACH_itr); // variant assign
     }
   }
-  if((bool)FOREACH_itr) {
-    *var = val;
-    if(tmp_list)
-      delete list;
-    return cssBI::true_int;	// more to go
+  if(FOREACH_itr) {
+    if(FOREACH_itr->Done()) {
+      FOREACH_itr = NULL;
+      *itrc = FOREACH_itr;             // free ptr
+    }
+    else {
+      *var = val;
+      if(tmp_list)
+        delete list;
+      return cssBI::true_int;	// more to go
+    }
   }
   if(tmp_list)
     delete list;
