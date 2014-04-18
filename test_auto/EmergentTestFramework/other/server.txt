@@ -12,142 +12,204 @@ Suite Teardown   Shutdown Emergent
 
 *** Test Cases ***
 
+# Initialization and general tests
+
 Connection
     Sleep                   1 sec
-    ${result} =             Read
-    Print                   ${result}
-    Should Contain          ${result}    Emergent Server v6.
+    ${output} =             Read
+    Print                   ${output}
+    Should Contain          ${output}    Emergent Server v6.
 
 Native Test
-    ${result} =             Run Command Wait      GetRunState
-    Should Contain          ${result}             OK
-    Message Should Match    ${result}             4
+    ${output} =             Run Command Wait      GetRunState
+    Should Contain          ${output}             OK
+    Message Should Match    ${output}             4
+
+Garbage JSON
+    ${output} =              Run Command Wait      {NotValidJSON}
+    Status Error Match       ${output}             2         Invalid JSON
+
+Valid JSON No Command
+    ${output} =              Run Command Wait      {"irrelevant": "value"}
+    Status Error Match       ${output}             2         Missing Param
+
+Invalid Command
+    ${output} =              Run Command Wait      {"command": "InvalidCommand"}
+    Status Error Match       ${output}             4         Unknown command
+
+Extra Parameter
+    ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
+    Status Error Match       ${output}             5         Unknown Param
+
+# RunStates and RunProgram
 
 General RunState
-    ${result} =                Run Command Wait      {"command": "GetRunState"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status            OK
-    Json String Should Match   ${result}             /result            4
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             4
 
 Program RunState
-    ${result} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status            OK
-    Json String Should Match   ${result}             /result            4
+    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
+    Status OK Match Result     ${output}             4
     
 Run Program
     [Tags]                     slow
-    ${result} =                Run Command           {"command": "RunProgram", "program": "LeabraBatch"}   20 sec
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status            OK
-    ${result} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
-    Json String Should Match   ${result}             /status            OK
-    Json String Should Match   ${result}             /result            0
+    ${output} =                Run Command           {"command": "RunProgram", "program": "LeabraBatch"}   20 sec
+    Status OK No Result        ${output}
+
+Program RunState After Init
+    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
+    Status OK Match Result     ${output}             0
+
+General RunState After Init
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             0
     
+Run Program Async
+    [Tags]                     slow
+    ${output} =                Run Command Wait      {"command": "RunProgramAsync", "program": "LeabraBatch"}
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetRunState"}
+    Status OK Match Result     ${output}             2
+    ${output} =                Run Command           {"command": "GetRunState", "program": "LeabraBatch"}    20 sec
+    Status OK Match Result     ${output}             0
+    
+Run Nonexistent Program
+    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "DoesNotExist"}
+    Status Error Match         ${output}             6        Program Not Found    
+
+# Data Tables
+
 Read Full Data Table
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /result/columns/0/name    Name
-    Json String Should Match   ${result}             /result/columns/1/name    Input
-    Json String Should Match   ${result}             /result/columns/2/name    Output
-    Json String Should Match   ${result}             /result/columns/0/type    String
-    Json String Should Match   ${result}             /result/columns/1/type    float
-    Json String Should Match   ${result}             /result/columns/2/type    float
-    Json Value Should Equal    ${result}             /result/columns/0/matrix  false
-    Json Value Should Equal    ${result}             /result/columns/1/matrix  true
-    Json Value Should Equal    ${result}             /result/columns/2/matrix  true
-    Json String Should Match    ${result}             /result/columns/0/values/0  checks
-    Json String Should Match    ${result}             /result/columns/0/values/1  mitvert
-    Json String Should Match    ${result}             /result/columns/0/values/2  midhoriz
-    Json String Should Match    ${result}             /result/columns/0/values/3  rdiag
-    Json String Should Match    ${result}             /result/columns/0/values/4  ldiag
-    Json String Should Match    ${result}             /result/columns/0/values/5  random
-    Json Value Should Equal    ${result}             /result/columns/1/values/0/0/0  1
-    Json Value Should Equal    ${result}             /result/columns/1/values/0/1/2  0
-    Json Value Should Equal    ${result}             /result/columns/1/values/0/2/2  1
-    Json Value Should Equal    ${result}             /result/columns/1/values/2/2/2  1
-    Json Value Should Equal    ${result}             /result/columns/1/values/2/1/0  0
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData"}
+    Status OK Has Result       ${output}
+    Json String Should Match   ${output}             /result/columns/0/name    Name
+    Json String Should Match   ${output}             /result/columns/1/name    Input
+    Json String Should Match   ${output}             /result/columns/2/name    Output
+    Json String Should Match   ${output}             /result/columns/0/type    String
+    Json String Should Match   ${output}             /result/columns/1/type    float
+    Json String Should Match   ${output}             /result/columns/2/type    float
+    Json Value Should Equal    ${output}             /result/columns/0/matrix  false
+    Json Value Should Equal    ${output}             /result/columns/1/matrix  true
+    Json Value Should Equal    ${output}             /result/columns/2/matrix  true
+    Json String Should Match   ${output}             /result/columns/0/values/0  checks
+    Json String Should Match   ${output}             /result/columns/0/values/1  mitvert
+    Json String Should Match   ${output}             /result/columns/0/values/2  midhoriz
+    Json String Should Match   ${output}             /result/columns/0/values/3  rdiag
+    Json String Should Match   ${output}             /result/columns/0/values/4  ldiag
+    Json String Should Match   ${output}             /result/columns/0/values/5  random
+    Json Value Should Equal    ${output}             /result/columns/1/values/0/0/0  1
+    Json Value Should Equal    ${output}             /result/columns/1/values/0/1/2  0
+    Json Value Should Equal    ${output}             /result/columns/1/values/0/2/2  1
+    Json Value Should Equal    ${output}             /result/columns/1/values/2/2/2  1
+    Json Value Should Equal    ${output}             /result/columns/1/values/2/1/0  0
 
 Read Data Table Column
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "column": "Name"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /result/columns/0/name    Name
-    Json String Should Match    ${result}             /result/columns/0/values/0  checks
-    Json String Should Match    ${result}             /result/columns/0/values/1  mitvert
-    Json String Should Match    ${result}             /result/columns/0/values/2  midhoriz
-    Json String Should Match    ${result}             /result/columns/0/values/3  rdiag
-    Json String Should Match    ${result}             /result/columns/0/values/4  ldiag
-    Json String Should Match    ${result}             /result/columns/0/values/5  random
-    Json Value Should Not Exist   ${result}           /result/columns/1
-    Json Value Should Not Exist   ${result}           /result/columns/2
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "column": "Name"}
+    Status OK Has Result         ${output}
+    Json String Should Match     ${output}           /result/columns/0/name    Name
+    Json String Should Match     ${output}           /result/columns/0/values/0  checks
+    Json String Should Match     ${output}           /result/columns/0/values/1  mitvert
+    Json String Should Match     ${output}           /result/columns/0/values/2  midhoriz
+    Json String Should Match     ${output}           /result/columns/0/values/3  rdiag
+    Json String Should Match     ${output}           /result/columns/0/values/4  ldiag
+    Json String Should Match     ${output}           /result/columns/0/values/5  random
+    Json Value Should Not Exist  ${output}           /result/columns/1
+    Json Value Should Not Exist  ${output}           /result/columns/2
 
 Read Data Table Row
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}              /result/columns/0/name      Name
-    Json String Should Match   ${result}             /result/columns/1/name    Input
-    Json String Should Match   ${result}             /result/columns/2/name    Output
-    Json String Should Match   ${result}             /result/columns/0/type    String
-    Json String Should Match   ${result}             /result/columns/1/type    float
-    Json String Should Match   ${result}             /result/columns/2/type    float
-    Json Value Should Equal    ${result}             /result/columns/0/matrix  false
-    Json Value Should Equal    ${result}             /result/columns/1/matrix  true
-    Json Value Should Equal    ${result}             /result/columns/2/matrix  true
-    Json String Should Match    ${result}             /result/columns/0/values/0  rdiag
-    Json String Should Match    ${result}             /result/columns/0/values/1  ldiag
-    Json Value Should Equal    ${result}             /result/columns/1/values/0/2/2  1
-    Json Value Should Equal    ${result}             /result/columns/1/values/0/1/0  0
-    Json Value Should Not Exist   ${result}           /result/columns/0/values/2
-    Json Value Should Not Exist   ${result}           /result/columns/1/values/2
-    Json Value Should Not Exist   ${result}           /result/columns/2/values/2
+    ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}
+    Status OK Has Result         ${output}
+    Json String Should Match     ${output}           /result/columns/0/name      Name
+    Json String Should Match     ${output}           /result/columns/1/name    Input
+    Json String Should Match     ${output}           /result/columns/2/name    Output
+    Json String Should Match     ${output}           /result/columns/0/type    String
+    Json String Should Match     ${output}           /result/columns/1/type    float
+    Json String Should Match     ${output}           /result/columns/2/type    float
+    Json Value Should Equal      ${output}           /result/columns/0/matrix  false
+    Json Value Should Equal      ${output}           /result/columns/1/matrix  true
+    Json Value Should Equal      ${output}           /result/columns/2/matrix  true
+    Json String Should Match     ${output}           /result/columns/0/values/0  rdiag
+    Json String Should Match     ${output}           /result/columns/0/values/1  ldiag
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
+    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
 
 Read Data Table Cell
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /result/columns/0/name       Name
-    Json String Should Match   ${result}             /result/columns/0/type       String
-    Json Value Should Equal    ${result}             /result/columns/0/matrix     false
-    Json String Should Match   ${result}             /result/columns/0/values/0   rdiag
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
+    Status OK Has Result       ${output}
+    Json String Should Match   ${output}             /result/columns/0/name       Name
+    Json String Should Match   ${output}             /result/columns/0/type       String
+    Json Value Should Equal    ${output}             /result/columns/0/matrix     false
+    Json String Should Match   ${output}             /result/columns/0/values/0   rdiag
 
 Read Data Table Matrix Cell
-    ${result} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status            OK
-		Json Value Should Equal    ${result}             /value  						1
-    
+    ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
+    Status OK Match Result     ${output}             1
+    # Used to be "value"
+    # Json Value Should Equal    ${output}             /value			1
 
 Read Data Table Cell Column Error
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status            ERROR
-    Json Value Should Equal    ${result}             /error				      8
-    Json String Should Match   ${result}             /message           GetData: column not found
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
+    Status Error Match         ${output}             8                  GetData: column not found
 
 Remove Data                    
-    ${result} =                Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status     OK
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Should Be Valid Json       ${result}
-    Json Value Should Not Exist  ${result}           /result/columns/0/values/0
+    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Should Be Valid Json         ${output}
+    Json Value Should Not Exist  ${output}             /result/columns/0/values/0
 
 Append Data Table
-    ${result} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Should Be Valid Json       ${result}
-    Json String Should Match   ${result}             /status               OK
-    ${result} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Should Be Valid Json       ${result}
-    Json Value Should Equal    ${result}             /result/columns/0/values/0   7
-    Json Value Should Equal    ${result}             /result/columns/1/values/0   9
-
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result       ${output}
+    Json Value Should Equal    ${output}             /result/columns/0/values/0   7
+    Json Value Should Equal    ${output}             /result/columns/1/values/0   9
 
 
 *** Keywords ***
 
+Status OK No Result
+    [Arguments]                   ${output}
+    Status OK                     ${output}
+    Json Value Should Not Exist   ${output}          /result
+
+Status OK Has Result
+    [Arguments]                   ${output}
+    Status OK                     ${output}
+    Get Json Value                ${output}          /result
+
+Status OK Match Result
+    [Arguments]                   ${output}          ${expected}
+    Status OK                     ${output}
+    Json String Should Match      ${output}          /result            ${expected}
+
+Status OK
+    [Arguments]                   ${output}
+    Should Be Valid Json          ${output}
+    Json String Should Match      ${output}          /status            OK
+    Json Value Should Not Exist   ${output}          /message
+    Json Value Should Not Exist   ${output}          /error
+
+Status Error Match
+    [Arguments]                   ${output}    ${error}   ${message}
+    Status Error                  ${output}
+    Json Value Should Equal       ${output}          /error             ${error}
+    Json String Should Match      ${output}          /message           ${message}
+    
+Status Error
+    [Arguments]                   ${output}
+    Should Be Valid Json          ${output}
+    Json String Should Match      ${output}          /status            ERROR
+    Json Value Should Not Exist   ${output}          /result
+
 Message Should Match
-    [Arguments]        ${result}    ${expected}
+    [Arguments]        ${output}    ${expected}
     ${match}           ${message} =
-    ...                Should Match Regexp    ${result}    OK (.*)
+    ...                Should Match Regexp    ${output}    OK (.*)
     Should Be Equal    ${expected}   ${message}
 
 Json Value Should Match
@@ -167,9 +229,9 @@ Json String Should Match
 Get Json String
     [Arguments]        ${json}                   ${pointer}
     ${value} =         Get Json Value            ${json}        ${pointer}
-    ${match}           ${result} =
+    ${match}           ${output} =
     ...                Should Match Regexp       ${value}       "(.*)"
-    [return]           ${result}
+    [return]           ${output}
 
 Print
     [Arguments]        ${text}
@@ -192,20 +254,20 @@ Initialize Emergent
 Shutdown Emergent
     Close All Connections
     Sleep                2 sec
-    ${result} =          Terminate Process    ${pid}       kill=true
+    ${output} =          Terminate Process    ${pid}       kill=true
 
 Run Command Wait
     [Arguments]        ${command}
-    ${result} =        Run Command    ${command}   500ms
-    [Return]           ${result}
+    ${output} =        Run Command    ${command}   500ms
+    [Return]           ${output}
 
 Run Command
     [Arguments]        ${command}    ${wait}
     Print              [Sending] ${command}    # temporary
     Write Bare         ${command}\n
     Sleep              ${wait}
-    ${result} =        Read
-    Print              [Received] ${result}    # this is temporary just so I can see what's happening
-    [Return]           ${result}
+    ${output} =        Read
+    Print              [Received] ${output}    # this is temporary just so I can see what's happening
+    [Return]           ${output}
 
 
