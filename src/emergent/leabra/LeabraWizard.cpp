@@ -2401,7 +2401,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(pfc_out->brain_area.empty()) {
       pfc_out->brain_area = ".*/.*/.*/.*/BA44";
     }
-    if(pfc_out_d && pfc_mnt_d->brain_area.empty()) {
+    if(pfc_out_d && pfc_out_d->brain_area.empty()) {
     	pfc_out_d->brain_area = ".*/.*/.*/.*/BA44";
     }
   }

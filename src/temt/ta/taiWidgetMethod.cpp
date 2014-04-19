@@ -134,8 +134,9 @@ bool taiWidgetMethod::CallFun_impl() {
       cssEl* rval = (*(meth->stubp))(base, 1, (cssEl**)NULL);
       --taMisc::in_gui_call;
       // make sure we still exist before doing UA!
-      if (ths)void
+      if (ths) {
         UpdateAfter();
+      }
       if (use_busy) taMisc::Busy(false);
       if ((show_rval && (rval != &cssMisc::Void)))
         ShowReturnVal(rval, thost, meth_name);

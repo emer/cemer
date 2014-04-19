@@ -317,6 +317,7 @@ iAuthRecord::~iAuthRecord() {
 }
 
 iAuthSaver::iAuthSaver(QObject* parent) : QObject(parent) {
+  m_main_win = NULL;
 }
 
 iAuthSaver::~iAuthSaver() {

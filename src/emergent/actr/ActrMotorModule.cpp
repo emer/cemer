@@ -768,9 +768,9 @@ ActrMotorStyle* ActrMotorModule::PrepPeck(const String& hand, const String& fing
 ActrMotorStyle* ActrMotorModule::PrepPeckRecoil(const String& hand, const String& finger,
                                                 float r, float theta) {
   ActrMotorStyle* st = PrepPeck(hand, finger, r, theta);
-  st->style_id = PECK_RECOIL;
-  st->name = "peck_recoil";
   if(st) {
+    st->style_id = PECK_RECOIL;
+    st->name = "peck_recoil";
     st->finish_time = st->exec_time + timing.burst;  // finish is usual burst + full exec time to get back
   }
   return st;

@@ -102,6 +102,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   // main_tb->addSeparator();
   // a_list_mod  = main_tb->addAction("Show Modified");
   // connect(a_list_mod, SIGNAL(triggered()), this, SLOT(a_list_mod_do()));
+  a_list_mod = NULL;
 
   split = new iSplitter;
   lay_bd->addWidget(split);

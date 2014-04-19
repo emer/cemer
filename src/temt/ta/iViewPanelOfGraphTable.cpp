@@ -45,6 +45,19 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 {
   int font_spec = taiMisc::fonMedium;
 
+  layPlots = NULL;
+  row_height = 10;
+  for(int i=0; i<max_plots; i++) {
+    layYAxis[i] = NULL;
+    oncYAxis[i] = NULL;
+    lblYAxis[i] = NULL;
+    lelYAxis[i] = NULL;
+    pdtYAxis[i] = NULL;
+    chkYAltY[i] = NULL;
+    lelErr[i] = NULL;
+    oncErr[i] = NULL;
+  }
+
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
 
   chkDisplay = new QCheckBox("Disp", widg); chkDisplay->setObjectName("chkDisplay");

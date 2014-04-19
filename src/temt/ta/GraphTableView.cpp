@@ -913,7 +913,7 @@ void GraphTableView::InitFromUserData() {
         plots[i]->InitFromUserData(); 
       }
     }
-    for(int i=0; i<plots.size; i++) {
+    for(int i=0; i<errbars.size; i++) {
       String pltst = "ERR_" + String(i+1);
       if(da->HasUserData(pltst)) {
         errbars[i]->col_name = cvs->name;  errbars[i]->on = true;

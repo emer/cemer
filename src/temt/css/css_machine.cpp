@@ -1634,6 +1634,7 @@ void cssCodeBlock::Copy(const cssCodeBlock& cp) {
   action = cp.action;
   loop_back = cp.loop_back;
   loop_type = cp.loop_type;
+  owner_prog = NULL;
 }
 
 cssCodeBlock::cssCodeBlock() {
@@ -3698,6 +3699,9 @@ void cssProgSpace::Constr() {
 
   cmd_shell = NULL;
   own_program = NULL;
+
+  last_bp_prog = NULL;
+  last_bp_pc = 0;
 
   SetName(name);
   AddProg(new cssProg("Top Level"));
