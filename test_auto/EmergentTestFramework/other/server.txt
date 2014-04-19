@@ -25,23 +25,7 @@ Native Test
     Should Contain          ${output}             OK
     Message Should Match    ${output}             4
 
-Garbage JSON
-    ${output} =              Run Command Wait      {NotValidJSON}
-    Status Error Match       ${output}             2         Invalid JSON
-
-Valid JSON No Command
-    ${output} =              Run Command Wait      {"irrelevant": "value"}
-    Status Error Match       ${output}             2         Missing Param
-
-Invalid Command
-    ${output} =              Run Command Wait      {"command": "InvalidCommand"}
-    Status Error Match       ${output}             4         Unknown command
-
-Extra Parameter
-    ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
-    Status Error Match       ${output}             5         Unknown Param
-
-# RunStates and RunProgram
+# RunState and RunProgram tests
 
 General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
@@ -70,14 +54,39 @@ Run Program Async
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             2
-    ${output} =                Run Command           {"command": "GetRunState", "program": "LeabraBatch"}    20 sec
+    Sleep                      20 sec
+    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
     Status OK Match Result     ${output}             0
-    
-Run Nonexistent Program
-    ${output} =                Run Command Wait      {"command": "RunProgram", "program": "DoesNotExist"}
-    Status Error Match         ${output}             6        Program Not Found    
 
-# Data Tables
+# General and RunProgram error tests
+    
+Not Implemented Error
+    ${output} =              Run Command Wait      {"command": "StopProgram", "program": "LeabraBatch"}
+    Status Error Match       ${output}             1         Not implemented: StopProgram
+
+JSON Format Error
+    ${output} =              Run Command Wait      {NotValidJSON}
+    Status Error Match       ${output}             2         JSON format error
+
+Unknown Command Error
+    ${output} =              Run Command Wait      {"command": "UnknownCommand"}
+    Status Error Match       ${output}             3         "UnknownCommand" is an unknown command
+
+Missing Parameter Error
+    ${output} =              Run Command Wait      {}
+    Status Error Match       ${output}             4         Missing parameter: command
+
+Unknown Parameter Error
+    ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
+    Status Error Match       ${output}             5         Unknown parameter: irrelevant
+
+Program Not Found Error
+    ${output} =                Run Command Wait    {"command": "RunProgram", "program": "DoesNotExist"}
+    Status Error Match         ${output}           6         Program 'DoesNotExist' not found    
+
+# No Open Project Error (7) - needs a special test / connection to Emergent
+
+# Data Table normal operation tests
 
 Read Full Data Table
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData"}
@@ -148,11 +157,7 @@ Read Data Table Matrix Cell
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
     Status OK Match Result     ${output}             1
     # Used to be "value"
-    # Json Value Should Equal    ${output}             /value			1
-
-Read Data Table Cell Column Error
-    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
-    Status Error Match         ${output}             8                  GetData: column not found
+    # Json Value Should Equal    ${output}           /value			1
 
 Remove Data                    
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
@@ -169,6 +174,59 @@ Append Data Table
     Json Value Should Equal    ${output}             /result/columns/0/values/0   7
     Json Value Should Equal    ${output}             /result/columns/1/values/0   9
 
+# Data Table error tests
+
+GetData Table Not Found Error
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable"}
+    Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+GetDataTableCell Table Not Found Error
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Name"}
+    Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+Append Data Table Not Found Error
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+RemoveData Table Not Found Error
+    ${output} =                Run Command Wait      {"command": "RemoveData", "table": "NotATable"}
+    Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+GetDataTable Invalid Row Error
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
+    Status Error Match         ${output}             8                  row out of range
+
+GetDataTableCell Invalid Row Error
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1, "column": "Name"}
+    Status Error Match         ${output}             8                  row out of range
+
+RemoveData Invalid Row Error
+    ${output} =                Run Command Wait      {"command": "RemoveData", "table": "StdInputData", "row_from": 1024, "rows": 1}
+    Status Error Match         ${output}             8                  row out of range
+
+GetData Column Not Found Error
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "column": "NotAColumn"}
+    Status Error Match         ${output}             6                  GetData: column not found
+
+GetDataTableCell Column Not Found Error
+    ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
+    Status Error Match         ${output}             6                  GetData: column not found
+
+Append Data Column Not Found Error
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             6                  AppendData: column not found
+
+Append Data Bad Data Format (data)
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             2                  Invalid data table format
+
+Append Data Bad Data Format (columns)
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             2                  Invalid data table format
+
+Append Data Bad Data Format (name)
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             2                  Invalid data table format
 
 *** Keywords ***
 
