@@ -62,7 +62,7 @@ int64_t Program::global_init_timestamp = 0;
 
 void Program::Initialize() {
   run_state = NOT_INIT;
-  flags = PF_NONE;
+  flags = NO_STOP_STEP;         // most new progs should not be..
   objs.SetBaseType(&TA_taNBase);
   ret_val = 0;
   sub_progs_updtd = false;
