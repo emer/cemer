@@ -591,16 +591,27 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       }
       if(e->key() == Qt::Key_M) {
         ext_select_on = false;
-        ISelectable* si = curItem();
-        if(si && si->link()) {
-          taBase* sb = si->link()->taData();
-          if(sb) {
-            if(proj) {
-              proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
+        if (ISelectable *si = curItem()) {
+          if (ISelectableHost *host = si->host()) {
+            int ea = 0;
+            host->EditActionsEnabled(ea);
+            if (ea & iClipData::EA_DUPE) {
+              host->EditAction(iClipData::EA_DUPE);
             }
-            sb->DuplicateMe();
           }
         }
+        // this commented out code was responsible for bug 1865 - broken at least back to 6.3.2 (6447)
+        // the code above completely replaces it - I'll remove this code soon
+        //        ISelectable* si = curItem();
+        //        if(si && si->link()) {
+        //          taBase* sb = si->link()->taData();
+        //          if(sb) {
+        //            if(proj) {
+        //              proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
+        //            }
+        //            sb->DuplicateMe();
+        //          }
+        //        }
         e->accept();
         return;
       }
