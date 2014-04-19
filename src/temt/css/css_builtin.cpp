@@ -876,6 +876,7 @@ static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
     else {
       if(list->InheritsFrom(&TA_slice_Matrix)) { // must expand each time!
 	list = ((slice_Matrix*)list)->Expand();
+        tmp_list = true;        // is now tmp!
       }
       FOREACH_itr = new taBaseItr; // create a tmp dummy!
       *itrc = FOREACH_itr;		// set pointer
