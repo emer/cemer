@@ -244,6 +244,16 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       clearExtSelection();
       return;
     }
+    else if (e->key() == Qt::Key_F) {
+      e->accept();
+      cursorWordForward(ext_select_on);
+      return;
+    }
+    else if (e->key() == Qt::Key_B) {
+      e->accept();
+      cursorWordBackward(ext_select_on);
+      return;
+    }
   }
 
   // Esc interferes with dialog cancel and other such things

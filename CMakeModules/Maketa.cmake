@@ -79,7 +79,7 @@ else (WIN32)
   macro(SET_TA_PROPS outfile)
     SET_SOURCE_FILES_PROPERTIES(${outfile}
       PROPERTIES COMPILE_FLAGS "-O0 -g0" 
-      GENERATED 1    
+      GENERATED 1
       )
   endmacro(SET_TA_PROPS)
 endif (WIN32)
@@ -97,8 +97,13 @@ macro(CREATE_MAKETA_COMMAND infile outfile)
   add_custom_command(
     OUTPUT ${outfile}
     COMMAND ${MAKETA_CMD} ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
-    DEPENDS ${infile}
+    DEPENDS ${infile} maketa
   )
+  # NOTE: added maketa as a dependency here -- touching most core files, especially
+  # taBase.h, will trigger a rebuild of maketa, which then will ensure that all 
+  # ta files are up-to-date -- only really important for multiple-inheritance files
+  # but this at least ensures that you never have to force maketa or make clean
+  
   # IMPORTANT: setting these props triggers a full rebuild of the source whenever
   # the list of files changes -- so we cannot do this -- now with distributed maketa
   # this is not such a big deal, so we let it go..
