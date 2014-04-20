@@ -218,7 +218,7 @@ Append Data Column Not Found Error
 
 Append Data Bad Data Format (data)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             2                  Invalid data table format
+    Status Error Match         ${output}             5                  Unknown parameter: dater
 
 Append Data Bad Data Format (columns)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
