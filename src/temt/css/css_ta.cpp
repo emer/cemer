@@ -1067,6 +1067,7 @@ cssTA_Matrix::operator int_Matrix*() const {
   if(ths->InheritsFrom(&TA_int_Matrix))
     return (int_Matrix*)ths;
   int_Matrix* rval = new int_Matrix;
+  const_cast<cssTA_Matrix*>(this)->tmp_cvt_matrix = rval;
   rval->Copy(ths);		// use generic variant-based copy
   return rval;
 }
@@ -1078,6 +1079,7 @@ cssTA_Matrix::operator byte_Matrix*() const {
   if(ths->InheritsFrom(&TA_byte_Matrix))
     return (byte_Matrix*)ths;
   byte_Matrix* rval = new byte_Matrix;
+  const_cast<cssTA_Matrix*>(this)->tmp_cvt_matrix = rval;
   rval->Copy(ths);		// use generic variant-based copy
   return rval;
 }
@@ -1089,6 +1091,7 @@ cssTA_Matrix::operator float_Matrix*() const {
   if(ths->InheritsFrom(&TA_float_Matrix))
     return (float_Matrix*)ths;
   float_Matrix* rval = new float_Matrix;
+  const_cast<cssTA_Matrix*>(this)->tmp_cvt_matrix = rval;
   rval->Copy(ths);		// use generic variant-based copy
   return rval;
 }
@@ -1100,6 +1103,7 @@ cssTA_Matrix::operator double_Matrix*() const {
   if(ths->InheritsFrom(&TA_double_Matrix))
     return (double_Matrix*)ths;
   double_Matrix* rval = new double_Matrix;
+  const_cast<cssTA_Matrix*>(this)->tmp_cvt_matrix = rval;
   rval->Copy(ths);		// use generic variant-based copy
   return rval;
 }
@@ -1111,6 +1115,7 @@ cssTA_Matrix::operator String_Matrix*() const {
   if(ths->InheritsFrom(&TA_String_Matrix))
     return (String_Matrix*)ths;
   String_Matrix* rval = new String_Matrix;
+  const_cast<cssTA_Matrix*>(this)->tmp_cvt_matrix = rval;
   rval->Copy(ths);		// use generic variant-based copy
   return rval;
 }
@@ -1122,6 +1127,7 @@ cssTA_Matrix::operator Variant_Matrix*() const {
   if(ths->InheritsFrom(&TA_Variant_Matrix))
     return (Variant_Matrix*)ths;
   Variant_Matrix* rval = new Variant_Matrix;
+  const_cast<cssTA_Matrix*>(this)->tmp_cvt_matrix = rval;
   rval->Copy(ths);		// use generic variant-based copy
   return rval;
 }

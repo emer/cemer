@@ -1909,6 +1909,7 @@ void V1RegionSpec::V1BinocularFilter_AvgSum() {
       dwt += (float)disp * sums[didx];
     }
   }
+  delete sums;
   v1b_avgsum_out = dwt;
 }
 

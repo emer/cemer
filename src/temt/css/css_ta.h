@@ -21,6 +21,7 @@
 
 #include "css_machine.h"
 #include "css_basic_types.h"
+#include <taMatrix>
 
 ///////////////////////////////////////////////////////////////////////
 //		Assignment semantics
@@ -223,6 +224,9 @@ class CSS_API cssTA_Matrix : public cssTA_Base {
   // a matrix ta base object -- handles all the matrix math magically..
 INHERITED(cssTA_Base)
 public:
+  taMatrixPtr   tmp_cvt_matrix;
+  // temporary conversion matrix -- this is set if we need to convert ourselves into a matrix of a different type -- delete when done
+
   cssTATypes    GetTAType() const { return TAT_Matrix; }
 
 

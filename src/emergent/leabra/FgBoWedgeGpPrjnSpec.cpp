@@ -106,7 +106,7 @@ float FgBoWedgeGpPrjnSpec::ConWt_Line(int line, taVector2i& suc, taVector2i& su_
 
   taVector2i su_geo_half = su_geo / 2;
 
-  float dst;
+  float dst = 0.0f;
   switch(line) {
   case 0:
   case 2:
