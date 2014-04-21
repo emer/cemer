@@ -82,9 +82,11 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
     if(pfc_gate_dynamic_updt) {
       LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
       int rgpidx = u->UnitGpIdx();
-      PBWMUnGpData* gpd = (PBWMUnGpData*)fmlay->ungp_data.FastEl(rgpidx);
-      if(gpd->go_fired_trial) {
-        u->act = su->act;
+      if(rgpidx >= 0) {
+        PBWMUnGpData* gpd = (PBWMUnGpData*)fmlay->ungp_data.FastEl(rgpidx);
+        if(gpd->go_fired_trial) {
+          u->act = su->act;
+        }
       }
     }
     u->act_lrn = u->act_eq = u->act_nd = u->act;

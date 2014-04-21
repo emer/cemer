@@ -925,7 +925,7 @@ bool taBase::IterNext_impl(taBaseItr& itr) const {
   }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr.count) {
+    if(!cmat || cmat->size <= itr.count) {
       itr.SetDone();
       return false;
     }
@@ -939,7 +939,7 @@ bool taBase::IterNext_impl(taBaseItr& itr) const {
   }
   else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr.count) {
+    if(!cmat || cmat->size <= itr.count) {
       itr.SetDone();
       return false;
     }
@@ -954,7 +954,7 @@ bool taBase::IterNext_impl(taBaseItr& itr) const {
   else if(ElViewMode() == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=itr.el_idx+1; i<ElemCount(); i++) { // search for next
-      if(cmat->FastEl_Flat(i)) { // true
+      if(!cmat || cmat->FastEl_Flat(i)) { // true
         itr.el_idx = i;     // byte_matrix guaranteed to be same size as list
         return true;
       }
@@ -1055,7 +1055,7 @@ bool taBase::IterPrev_impl(taBaseItr& itr) const {
   }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr.count) {
+    if(!cmat || cmat->size <= itr.count) {
       itr.SetDone();
       return false;
     }
@@ -1069,7 +1069,7 @@ bool taBase::IterPrev_impl(taBaseItr& itr) const {
   }
   else if(ElViewMode() == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr.count) {
+    if(!cmat || cmat->size <= itr.count) {
       itr.SetDone();
       return false;
     }
@@ -1084,7 +1084,7 @@ bool taBase::IterPrev_impl(taBaseItr& itr) const {
   else if(ElViewMode() == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=ec - 2 - itr.el_idx; i>=0; i--) { // search for prev
-      if(cmat->FastEl_Flat(i)) { // true
+      if(!cmat || cmat->FastEl_Flat(i)) { // true
         itr.el_idx = i;     // byte_matrix guaranteed to be same size as list
         itr.SetDone();
         return true;

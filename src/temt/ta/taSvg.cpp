@@ -58,6 +58,10 @@ String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
   cur_inst->view_vol = new SbViewVolume();
   cur_inst->main_xform = new SbMatrix;
   SbViewportRegion rvp;
+  if(!vw || !vw->getViewerCamera()) {
+    taMisc::Error("taSvg::Header -- viewer or viewer camera not valid -- required to render");
+    return _nilString;
+  }
   *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume();
   SoTransform* tr = new SoTransform;
   tr->ref();

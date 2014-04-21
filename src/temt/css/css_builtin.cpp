@@ -588,6 +588,7 @@ static cssEl* cssElCFun_call_stub(int na, cssEl* arg[]) {
     cssMisc::Error(cp, "call: function:", fun_name,
 		   "not found or stub function is NULL on object of type:",
 		   obj->GetTypeDef()->name);
+    free(param);
     return &cssMisc::Void;
   }
 
@@ -596,6 +597,7 @@ static cssEl* cssElCFun_call_stub(int na, cssEl* arg[]) {
       cssMisc::Error(cp, "call: incorrect number of arguments provided to function:", 
 		     fun_name,
 		     "should have:", String(md->fun_argc), "received:", String(na-2));
+      free(param);
       return &cssMisc::Void;
     }
   }

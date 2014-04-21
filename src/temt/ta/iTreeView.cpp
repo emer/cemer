@@ -59,7 +59,6 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
   possibleDropTargetItem = NULL;
-
   focus_next_widget = NULL;
   focus_prev_widget = NULL;
   main_window = NULL;

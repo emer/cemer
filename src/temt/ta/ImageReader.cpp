@@ -91,7 +91,7 @@ bool ImageReader::ReadImage_Jpeg() {
   }
 
   // todo: use QtImage or taImage for this!  not worth the libjpeg dependency!!
-
+  fclose(infile);               // nop for now
   return true;
 }
 

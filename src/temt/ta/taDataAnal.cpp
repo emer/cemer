@@ -837,6 +837,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
       if(nmda) {
         gtv->AnnoteClearAll();
         int n = dmat.dim(0);
+        if(n == 0) return false;
         float oneon = 1.0f / (float)n;
         float txtlen = .20f;
         float fontsz = .9f * oneon;

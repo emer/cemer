@@ -2980,7 +2980,7 @@ bool taMath_float::mat_frame_prod(float_Matrix* out_mat, const float_Matrix* in_
 
 bool taMath_float::mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_mat) {
   if(!mat_frame_sum(out_mat, in_mat)) return false;
-  float nrm = 1.0 / (float)in_mat->Frames();
+  float nrm = 1.0 / (float)(MAX(in_mat->Frames(),1));
   int frs = in_mat->FrameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) *= nrm;
@@ -2990,7 +2990,7 @@ bool taMath_float::mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_
 
 bool taMath_float::mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat, bool use_est) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
-  int frn = in_mat->Frames();
+  int frn = MAX(in_mat->Frames(),1);
   int frs = in_mat->FrameSize();
   float nrm = 1.0 / ((float)frn - (float)use_est);
   for(int i=0;i<frs;i++) {

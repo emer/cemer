@@ -182,6 +182,7 @@ void V1KwtaSpec::Compute_FFFB(float_Matrix& inputs, float_Matrix& outputs,
   int gys = inputs.dim(1);
   int ixs = inputs.dim(2);
   int iys = inputs.dim(3);
+  if(gxs == 0 || gys == 0 || ixs == 0 || iys == 0) return;
   float normval = 1.0f / (gxs * gys);
   float lay_normval = 1.0f / (ixs * iys);
 

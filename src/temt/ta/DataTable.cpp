@@ -366,11 +366,13 @@ void DataTable::Dump_Save_pre() {
 }
 
 taBase* DataTable::ChildDuplicate(const taBase* child) {
-  taBase* newChild;
+  taBase* newChild = NULL;
   taBase* oldChild = const_cast<taBase*>(child);
-  dynamic_cast<DataCol*>(oldChild)->UnSetMatrixViewMode();  // we want to copy all rows hidden and visible
+  DataCol* oldDC = dynamic_cast<DataCol*>(oldChild);
+  if(!oldDC) return NULL;
+  oldDC->UnSetMatrixViewMode();  // we want to copy all rows hidden and visible
   newChild = inherited::ChildDuplicate(child);
-  dynamic_cast<DataCol*>(oldChild)->SetMatrixViewMode();
+  oldDC->SetMatrixViewMode();
   return newChild;
 }
 
@@ -2701,14 +2703,18 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim, bool native, boo
         // if none was supplied, then set it for scalar col (the default)
         if ((mat_idx.dims() == 0) || mat_geom.dims() != 0) {
           da = FindMakeColName(base_nm, col_idx, (ValType)val_typ, mat_geom.dims(),
-              mat_geom[0], mat_geom[1], mat_geom[2],
-              mat_geom[3]);
+                               mat_geom[0], mat_geom[1], mat_geom[2],
+                               mat_geom[3]);
         }
+      }
+      if(!da) {
+        continue;               // something went wrong -- bail..
       }
       if(mat_idx.dims() > 0) {
         cell_idx = da->cell_geom.IndexFmDims(mat_idx[0], mat_idx[1], mat_idx[2], mat_idx[3]);
       } // else is default=-1
-    } else { // Import
+    }
+    else { // Import
       DecodeImportHeaderName(str, base_nm, cell_idx); // strips final _<int> leaves base_nm
       col_idx = FindColNameIdx(base_nm);
       if (col_idx >= 0) da = data.FastEl(col_idx);

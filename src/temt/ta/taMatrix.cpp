@@ -597,7 +597,7 @@ bool taMatrix::IterFirst_impl(taBaseItr& itr) const {
   }
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size == 0) {
+    if(!cmat || cmat->size == 0) {
       itr.SetDone();
       return false;
     }
@@ -614,7 +614,7 @@ bool taMatrix::IterFirst_impl(taBaseItr& itr) const {
   }
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size == 0) {
+    if(!cmat || cmat->size == 0) {
       itr.SetDone();
       return false;
     }
@@ -628,7 +628,7 @@ bool taMatrix::IterFirst_impl(taBaseItr& itr) const {
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
-      if(cmat->FastEl_Flat(i) != 0) {
+      if(!cmat || cmat->FastEl_Flat(i) != 0) {
         itr.el_idx = i;
         return true;
       }
@@ -651,7 +651,7 @@ bool taMatrix::IterNext_impl(taBaseItr& itr) const {
   const int dm = dims();
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->dim(1) <= itr.count) {
+    if(!cmat || cmat->dim(1) <= itr.count) {
       itr.SetDone();
       return false;
     }
@@ -668,9 +668,9 @@ bool taMatrix::IterNext_impl(taBaseItr& itr) const {
   }
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    int fsz = FrameSize();
+    int fsz = MAX(FrameSize(), 1);
     int fr = itr.count / fsz;
-    if(fr >= cmat->size) {
+    if(!cmat || fr >= cmat->size) {
       itr.SetDone();
       return false;
     }
@@ -685,7 +685,7 @@ bool taMatrix::IterNext_impl(taBaseItr& itr) const {
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=itr.el_idx+1; i<ElemCount(); i++) { // search for next
-      if(cmat->FastEl_Flat(i) != 0) { // true
+      if(!cmat || cmat->FastEl_Flat(i) != 0) { // true
         itr.el_idx = i;
         return true;
       }
@@ -716,7 +716,7 @@ bool taMatrix::IterLast_impl(taBaseItr& itr) const {
   }
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size == 0) {
+    if(!cmat || cmat->size == 0) {
       itr.SetDone();
       return false;
     }
@@ -734,7 +734,7 @@ bool taMatrix::IterLast_impl(taBaseItr& itr) const {
   }
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size == 0) {
+    if(!cmat || cmat->size == 0) {
       itr.SetDone();
       return false;
     }
@@ -749,7 +749,7 @@ bool taMatrix::IterLast_impl(taBaseItr& itr) const {
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=ec-1; i>=0; i--) {
-      if(cmat->FastEl_Flat(i) != 0) {
+      if(!cmat || cmat->FastEl_Flat(i) != 0) {
         itr.el_idx = i;
         return true;
       }
@@ -773,7 +773,7 @@ bool taMatrix::IterPrev_impl(taBaseItr& itr) const {
   const int dm = dims();
   if(el_view_mode == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->dim(1) <= itr.count) {
+    if(!cmat || cmat->dim(1) <= itr.count) {
       itr.SetDone();
       return false;
     }
@@ -791,9 +791,9 @@ bool taMatrix::IterPrev_impl(taBaseItr& itr) const {
   }
   else if(el_view_mode == IDX_FRAMES) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    int fsz = FrameSize();
+    int fsz = MAX(FrameSize(), 1);
     int fr = itr.count / fsz;
-    if(fr >= cmat->size) {
+    if(!cmat || fr >= cmat->size) {
       itr.SetDone();
       return false;
     }
@@ -809,7 +809,7 @@ bool taMatrix::IterPrev_impl(taBaseItr& itr) const {
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=ec - 2 - itr.el_idx; i>=0; i--) { // search for prev
-      if(cmat->FastEl_Flat(i) != 0) { // true
+      if(!cmat || cmat->FastEl_Flat(i) != 0) { // true
         itr.el_idx = i;
         return true;
       }
@@ -1461,7 +1461,7 @@ int taMatrix::FrameToRow(int f) const {
 }
 
 int taMatrix::FrameViewFlatIdx(int idx) const {
-  int fsz = FrameSize();
+  int fsz = MAX(FrameSize(), 1);
   int fr = idx / fsz;
   if(fr < 0) fr += Frames();
   if(!FrameInRange(fr)) return -1; // will emit error

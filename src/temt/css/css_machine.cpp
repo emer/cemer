@@ -1653,6 +1653,7 @@ cssCodeBlock::cssCodeBlock(const String& nm, cssProg* ownr_prog) {
 }
 cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp) {
   code = NULL;
+  owner_prog = NULL;
   //  Constr();
   Copy(cp);
   name = cp.name;
@@ -1660,6 +1661,7 @@ cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp) {
 cssCodeBlock::cssCodeBlock(const cssCodeBlock& cp, const String& nm) {
   //  Constr();
   code = NULL;
+  owner_prog = NULL;
   Copy(cp);
   name = nm;
   code->name = name;

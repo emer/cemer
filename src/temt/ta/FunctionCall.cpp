@@ -120,7 +120,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
   if(lhs.contains('('))
     lhs = lhs.before('(');
   String funm = lhs;
-  if(lhs.contains('='))
+  if(funm.contains('='))
     funm = trim(lhs.after('='));
   Program* prog = GET_OWNER(this, Program);
   if(!prog) return false;

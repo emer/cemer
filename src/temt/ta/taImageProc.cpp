@@ -49,7 +49,7 @@ bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data, float& r, flo
     return false; // err
   }
   int nclrs = img_data.dim(2);
-  float clrs[4];
+  float clrs[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // coverity food
   for(int i=0;i<nclrs;i++) {
     float_Matrix* cmp = img_data.GetFrameSlice(i);
     taBase::Ref(cmp);

@@ -575,6 +575,7 @@ bool taDataGen::WritePoint(float_Matrix* mat, int x, int y, float color, bool wr
   if(!CheckDims(mat, 2)) return false;
   taVector2i vv(x,y);
   taVector2i mx(mat->dim(0), mat->dim(1));
+  if(mx.x == 0 || mx.y == 0) return false;
   bool clipped = vv.WrapClip(wrap, mx);
   if(clipped)
     return false;

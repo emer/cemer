@@ -120,7 +120,7 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
   istr.str(string(ba.data(), ba.size()));
 
   String val; // each cell val
-  TsvSep sep; // sep after reading the cell val
+  TsvSep sep = TSV_TAB; // sep after reading the cell val
 
   // for generic source, for single-cell, we autoextend the range
   // to the entire extent of the table

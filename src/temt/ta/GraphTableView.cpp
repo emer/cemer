@@ -1439,6 +1439,8 @@ void GraphTableView::RenderGraph_Bar() {
     }
   }
 
+  if(n_tot == 0) return;
+
   bar_width = (1.0f - bar_space) / ((float)n_tot);
   float bar_off = - .5f * (1.0f - bar_space);
 

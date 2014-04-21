@@ -47,7 +47,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   layPlots = NULL;
   row_height = 10;
-  for(int i=0; i<max_plots; i++) {
+  for(int i=0; i<max_plots; i++) { // coverity food
     layYAxis[i] = NULL;
     oncYAxis[i] = NULL;
     lblYAxis[i] = NULL;
@@ -56,6 +56,8 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
     chkYAltY[i] = NULL;
     lelErr[i] = NULL;
     oncErr[i] = NULL;
+    lblcellYAxis[i] = NULL;
+    cellYAxis[i] = NULL;
   }
 
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);

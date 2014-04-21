@@ -206,6 +206,7 @@ void VEBodyView::Render_impl() {
   if(vw)
     show_drag = vw->interactionModeOn();
   VEWorldView* wv = parent();
+  if(!wv) return;
   if(!wv->drag_objs) show_drag = false;
 
   SoTransform* tx = obv->transform();

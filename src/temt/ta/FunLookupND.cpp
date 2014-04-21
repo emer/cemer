@@ -209,6 +209,7 @@ float FunLookupND::EvalArray(float* x, int* idx_map) {
   float wtSum = 0;
   float ptSum = 0;
   int*   meshPt = new int[n_dims];
+  for(int i=0; i<n_dims; i++) { meshPt[i] = 0; } // coverity food
   int   num_inter_pt_idx =  (int)powf(3.0, (double)n_dims);
 
   for(int inter_pt_idx = 0; inter_pt_idx < num_inter_pt_idx;  inter_pt_idx++) {
