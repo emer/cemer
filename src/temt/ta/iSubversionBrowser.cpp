@@ -727,6 +727,7 @@ void iSubversionBrowser::viewWcFile(const String& fnm) {
 }
 
 void iSubversionBrowser::viewSvnDiffs(const String& fnm) {
+  view_svn_diffs.xml_esc();      // esc for rich text
   TypeDef* td = &TA_iSubversionBrowser;
   MemberDef* md = td->members.FindName("view_svn_diffs");
   taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false, true);
@@ -736,6 +737,7 @@ void iSubversionBrowser::viewSvnDiffs(const String& fnm) {
 }
 
 void iSubversionBrowser::viewWcDiffs(const String& fnm) {
+  view_wc_diffs.xml_esc();      // esc for rich text
   TypeDef* td = &TA_iSubversionBrowser;
   MemberDef* md = td->members.FindName("view_wc_diffs");
   taiEditorOfString* host_ = new taiEditorOfString(md, this, td, true, false, NULL, true, false, true);
