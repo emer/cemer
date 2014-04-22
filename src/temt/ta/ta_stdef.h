@@ -227,10 +227,12 @@ typedef unsigned char   byte;
   typedef unsigned long long    uint64_t;
   //note: prob should inline these, rather than macros, but don't want naggling little
   // type differences to cause compile issues
+#if _MSC_VER < 1800
 # define strtoll _strtoi64
 # define strtoull _strtoui64
 # define isnan(x) _isnan(x)
 # define isinf(x) (!_finite(x))
+#endif //_MSC_VER < 1800
 # endif // intptr_t hacks
 #endif // skip over for maketa
 

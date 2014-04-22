@@ -49,7 +49,7 @@ String LayerWriterEl::GetDisplayName() const {
   return rval;
 }
 
-int LayerWriterEl::GetChanIdx(DataTable* db) override {
+int LayerWriterEl::GetChanIdx(DataTable* db) {
   return db->GetSourceChannelByName(chan_name);
 }
 
