@@ -340,7 +340,7 @@ public:
   virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
   virtual void  Compute_PRerr();
-  // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis
+  // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
 
   virtual Layer* NewLayer();
   // #BUTTON create a new layer in the network, using default layer type

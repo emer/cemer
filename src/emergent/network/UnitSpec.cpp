@@ -248,25 +248,27 @@ float UnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   return sse;
 }
 
-bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg) {
-  true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f;
+bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
+  true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f; true_neg = 0.0f;
   bool has_targ = false;
   if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
     has_targ = true;
-    float uerr = u->targ - u->act;
-    if(fabsf(uerr) < sse_tol) {
-      true_pos = u->targ;
-    }
-    else {
+    // float uerr = u->targ - u->act;
+    // if(fabsf(uerr) < sse_tol) {
+    //   true_pos = u->targ;
+    // }
+    // else {
       if(u->targ > u->act) {
-        true_pos = u->act;
+	true_pos = u->act;
+	true_neg = 1.0 - u->targ;
         false_neg = u->targ - u->act;
       }
       else {
         true_pos = u->targ;
         false_pos = u->act - u->targ;
+	true_neg = 1.0 - u->act;
       }
-    }
+    // }
   }
   return has_targ;
 }

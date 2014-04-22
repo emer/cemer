@@ -223,9 +223,9 @@ public: //
   float Compute_SSE(Network* net, bool& has_targ)
   { return GetUnitSpec()->Compute_SSE(this, net, has_targ); }
   // #CAT_Statistic compute sum-squared-error of activations versus target values (standard measure of performance) -- not threadable due to integration requirements at higher levels
-  bool  Compute_PRerr(Network* net, float& true_pos, float& false_pos, float& false_neg)
-  { return GetUnitSpec()->Compute_PRerr(this, net, true_pos, false_pos, false_neg); }
-  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, and false negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance
+  bool  Compute_PRerr(Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg)
+  { return GetUnitSpec()->Compute_PRerr(this, net, true_pos, false_pos, false_neg, true_neg); }
+  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, and false negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp), recall = tp / (tp + fn), fmeasure = 2 * p * r / (p + r), mcc = ((tp*tn) - (fp*fn)) / sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
 
 
   ////////////////////////////////////////////////////////////////////////////////

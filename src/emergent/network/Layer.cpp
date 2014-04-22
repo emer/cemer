@@ -928,15 +928,16 @@ int Layer::Compute_PRerr(Network* net) {
   int n_vals = 0;
   prerr.InitVals();
   if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0;
-  float true_pos, false_pos, false_neg;
+  float true_pos, false_pos, false_neg, true_neg;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    bool has_targ = u->Compute_PRerr(net, true_pos, false_pos, false_neg);
+    bool has_targ = u->Compute_PRerr(net, true_pos, false_pos, false_neg, true_neg);
     if(has_targ) {
       n_vals++;
       prerr.true_pos += true_pos;
       prerr.false_pos += false_pos;
       prerr.false_neg += false_neg;
+      prerr.true_neg += true_neg;
     }
   }
   prerr.ComputePR();

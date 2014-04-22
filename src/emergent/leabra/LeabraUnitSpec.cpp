@@ -1936,27 +1936,29 @@ float LeabraUnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   return sse;
 }
 
-bool LeabraUnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg) {
+bool LeabraUnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
   // just replaces act_m for act in original
   true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f;
   bool has_targ = false;
   LeabraUnit* lu = (LeabraUnit*)u;
   if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
     has_targ = true;
-    float uerr = lu->targ - lu->act_m;
-    if(fabsf(uerr) < sse_tol) {
-      true_pos = lu->targ;
-    }
-    else {
+    // float uerr = lu->targ - lu->act_m;
+    // if(fabsf(uerr) < sse_tol) {
+    //   true_pos = lu->targ;
+    // }
+    // else {
       if(lu->targ > lu->act_m) {
         true_pos = lu->act_m;
+	true_neg = 1.0 - lu->targ;
         false_neg = lu->targ - lu->act_m;
       }
       else {
         true_pos = lu->targ;
         false_pos = lu->act_m - lu->targ;
+	true_neg = 1.0 - lu->act_m;
       }
-    }
+    // }
   }
   return has_targ;
 }

@@ -82,9 +82,8 @@ public:
 
   virtual float Compute_SSE(Unit* u, Network* net, bool& has_targ);
   // #CAT_Statistic compute sum squared error for this unit -- uses sse_tol so error is 0 if within tolerance -- has_targ indicates if there is actually a target value (else the return value is 0)
-  virtual bool  Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg);
-  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, and false negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance
-
+  virtual bool  Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg);
+  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, false negative and true negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp), recall = tp / (tp + fn), fmeasure = 2 * p * r / (p + r), mcc = ((tp*tn) - (fp*fn)) / sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
