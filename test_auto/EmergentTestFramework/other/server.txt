@@ -10,22 +10,39 @@ Suite Teardown   Shutdown Emergent
 
 *** Variables ***
 
+# use 'pybot -v debug:true server.txt' on the command line to
+#      output the transmissions to/from Emergent using warnings
+${debug} =       false
+
 *** Test Cases ***
 
+# Ideas on things to test
+#  - SetDataTableCell and Matrix Cell
+
+#
 # Initialization and general tests
+#
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
 
 Connection
-    Sleep                   1 sec
-    ${output} =             Read
-    Print                   ${output}
-    Should Contain          ${output}    Emergent Server v6.
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v6.
+
+# TODO: Start another process and check for the "Too many connections already" error.
 
 Native Test
-    ${output} =             Run Command Wait      GetRunState
-    Should Contain          ${output}             OK
-    Message Should Match    ${output}             4
+    ${output} =            Run Command Wait      GetRunState
+    Should Contain         ${output}             OK
+    Message Should Match   ${output}             4
 
+#
 # RunState and RunProgram tests
+#
 
 General RunState
     ${output} =                Run Command Wait      {"command": "GetRunState"}
@@ -35,8 +52,7 @@ Program RunState
     ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
     Status OK Match Result     ${output}             4
     
-Run Program
-    [Tags]                     slow
+RunProgram
     ${output} =                Run Command           {"command": "RunProgram", "program": "LeabraBatch"}   20 sec
     Status OK No Result        ${output}
 
@@ -48,8 +64,7 @@ General RunState After Init
     ${output} =                Run Command Wait      {"command": "GetRunState"}
     Status OK Match Result     ${output}             0
     
-Run Program Async
-    [Tags]                     slow
+RunProgramAsync
     ${output} =                Run Command Wait      {"command": "RunProgramAsync", "program": "LeabraBatch"}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetRunState"}
@@ -58,7 +73,9 @@ Run Program Async
     ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
     Status OK Match Result     ${output}             0
 
+#
 # General and RunProgram error tests
+#
     
 Not Implemented Error
     ${output} =              Run Command Wait      {"command": "StopProgram", "program": "LeabraBatch"}
@@ -84,11 +101,85 @@ Program Not Found Error
     ${output} =                Run Command Wait    {"command": "RunProgram", "program": "DoesNotExist"}
     Status Error Match         ${output}           6         Program 'DoesNotExist' not found    
 
-# No Open Project Error (7) - needs a special test / connection to Emergent
+# TODO: No Open Project Error (7) - needs a specialized connection to Emergent
 
-# Data Table normal operation tests
+#
+# Program SetVar / GetVar normal operation
+#
 
-Read Full Data Table
+SetVar Int
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "max_epoch", "var_value": 501}
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "max_epoch" }
+    Status OK Equal Result     ${output}             501
+
+SetVar String
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "SaveWeights", "var_name": "fname", "var_value": "test string"}
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "SaveWeights", "var_name": "fname" }
+    Status OK Match Result     ${output}             test string
+
+SetVar Real
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit" }
+    Status OK Equal Result     ${output}             3.14
+
+SetVar Boolean Arg
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": true}
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "no_prompts" }
+    Status OK Match Result     ${output}             ${true}
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": false}
+    Status OK No Result        ${output}
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "no_prompts" }
+    Status OK Match Result     ${output}             ${false}
+
+#
+# Program SetVar / GetVar errors
+#
+
+SetVar Invalid Program Error
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "DoesNotExist", "var_name": "err_stopcrit", "var_value": 3.14}
+    Status Error Match         ${output}             6         Program 'DoesNotExist' not found
+
+GetVar Invalid Program Error
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "DoesNotExist", "var_name": "err_stopcrit"}
+    Status Error Match         ${output}             6         Program 'DoesNotExist' not found
+
+SetVar Invalid Variable Error
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "DoesNotExist", "var_value": 3.14}
+    Status Error Match         ${output}             6         Var 'DoesNotExist' not found
+
+GetVar Invalid Variable Error
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "DoesNotExist"}
+    Status Error Match         ${output}             6         Var 'DoesNotExist' not found
+
+SetVar Missing Value Error
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit"}
+    Status Error Match         ${output}             4         var_value missing
+
+GetVar Has Value Error
+    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
+    Status Error Match         ${output}             4         Unknown parameter: var_value
+
+SetVar Int Data Type Error
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "max_epoch", "var_value": "NotANumber"}
+    Status Error Match         ${output}             2         Invalid data type
+
+SetVar Real Data Type Error
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": "NotANumber"}
+    Status Error Match         ${output}             2         Invalid data type
+
+SetVar Boolean Data Type Error
+    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": "NotABoolean"}
+    Status Error Match         ${output}             2         Invalid data type
+
+#
+# Reading data tables - normal operation 
+#
+
+GetData Full Table
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData"}
     Status OK Has Result       ${output}
     Json String Should Match   ${output}             /result/columns/0/name    Name
@@ -112,7 +203,7 @@ Read Full Data Table
     Json Value Should Equal    ${output}             /result/columns/1/values/2/2/2  1
     Json Value Should Equal    ${output}             /result/columns/1/values/2/1/0  0
 
-Read Data Table Column
+GetData Column
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "column": "Name"}
     Status OK Has Result         ${output}
     Json String Should Match     ${output}           /result/columns/0/name    Name
@@ -125,7 +216,7 @@ Read Data Table Column
     Json Value Should Not Exist  ${output}           /result/columns/1
     Json Value Should Not Exist  ${output}           /result/columns/2
 
-Read Data Table Row
+GetData Row
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}
     Status OK Has Result         ${output}
     Json String Should Match     ${output}           /result/columns/0/name      Name
@@ -145,7 +236,7 @@ Read Data Table Row
     Json Value Should Not Exist  ${output}           /result/columns/1/values/2
     Json Value Should Not Exist  ${output}           /result/columns/2/values/2
 
-Read Data Table Cell
+GetData Cell
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
     Status OK Has Result       ${output}
     Json String Should Match   ${output}             /result/columns/0/name       Name
@@ -153,28 +244,74 @@ Read Data Table Cell
     Json Value Should Equal    ${output}             /result/columns/0/matrix     false
     Json String Should Match   ${output}             /result/columns/0/values/0   rdiag
 
-Read Data Table Matrix Cell
+GetDataMatrixCell
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
     Status OK Match Result     ${output}             1
     # Used to be "value"
     # Json Value Should Equal    ${output}           /value			1
 
-Remove Data                    
+# Modifying data tables - normal operation tests
+#   Note, these tests must be done in order, and require that the Program operations above be run
+
+SetData Row Specified
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "row_from": 3, "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
+    Status OK Has Result         ${output}
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
+    Json Value Should Equal      ${output}             /result/columns/2/values/0   3     # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   6
+    Json String Should Match     ${output}             /result/columns/3/values/0   letrial
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
+
+RemoveData First Two Rows
+    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "rows": 2}
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Json Value Should Equal      ${output}             /result/columns/2/values/0  2  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/values/1  3  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/values/2  4  # This is the old/previous value
+
+SetData No Row Specified
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
+    Status OK Has Result         ${output}
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   6
+    Json Value Should Equal      ${output}             /result/columns/2/values/0   2     # This is the old/previous value
+    Json String Should Match     ${output}             /result/columns/3/values/0   letrial
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
+
+RemoveData All Rows                    
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Should Be Valid Json         ${output}
+    Status OK Has Result         ${output}
     Json Value Should Not Exist  ${output}             /result/columns/0/values/0
 
-Append Data Table
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status OK No Result        ${output}
-    ${output} =                Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Status OK Has Result       ${output}
-    Json Value Should Equal    ${output}             /result/columns/0/values/0   7
-    Json Value Should Equal    ${output}             /result/columns/1/values/0   9
+AppendData
+    ${output} =                  Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] }, { "name": "trial_name", "values": ["mytrial"] }, { "name": "sse", "values": [10.2] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   7
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   9
+    Json String Should Match     ${output}             /result/columns/3/values/0   mytrial
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   10.2
+
+SetData Matrix Cell
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 1, "rows": 1, "column": "Output", "cell": 12}
+    # change next 2 lines if "value" is changed to "result"
+    Status OK No Result          ${output}
+    Json Value Should Equal      ${output}           /value			0
 
 # Data Table error tests
+
+# Table not found
 
 GetData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable"}
@@ -184,13 +321,23 @@ GetDataTableCell Table Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Name"}
     Status Error Match         ${output}             6                  Table 'NotATable' not found
 
-Append Data Table Not Found Error
+GetDataMatrixCell Table Not Found Error
+    ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
+    Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+AppendData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+SetData Table Not Found Error
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             6                  Table 'NotATable' not found
 
 RemoveData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "NotATable"}
     Status Error Match         ${output}             6                  Table 'NotATable' not found
+
+# Row error
 
 GetDataTable Invalid Row Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
@@ -204,6 +351,12 @@ RemoveData Invalid Row Error
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "StdInputData", "row_from": 1024, "rows": 1}
     Status Error Match         ${output}             8                  row out of range
 
+SetData Invalid Row Error
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
+    Status Error Match         ${output}             8                  row out of range
+
+# Column not found
+
 GetData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "column": "NotAColumn"}
     Status Error Match         ${output}             6                  GetData: column not found
@@ -212,21 +365,84 @@ GetDataTableCell Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
     Status Error Match         ${output}             6                  GetData: column not found
 
-Append Data Column Not Found Error
+GetDataMatrixCell Column Not Found Error
+    ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn", "cell": 12}
+    Status Error Match         ${output}             6                  GetDataMatrixCell: column not found
+
+AppendData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             6                  AppendData: column not found
 
-Append Data Bad Data Format (data)
+SetData Column Not Found Error
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             6                  SetData: column not found
+
+# Set Data Matrix error
+
+SetData Matrix Cell Error
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 1024, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
+    Status Error Match           ${output}           8                  SetData: cell range error
+
+# Bad data format for Append / SetData
+
+AppendData Bad Data Format (data)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             5                  Unknown parameter: dater
 
-Append Data Bad Data Format (columns)
+AppendData Bad Data Format (columns)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             2                  Invalid data table format
 
-Append Data Bad Data Format (name)
+AppendData Bad Data Format (name)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             2                  Invalid data table format
+
+SetData Bad Data Format (data)
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             5                  Unknown parameter: dater
+
+SetData Bad Data Format (columns)
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             2                  Invalid data table format
+
+SetData Bad Data Format (name)
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             2                  Invalid data table format
+
+# Data type errors for Append / SetData
+
+AppendData Bad Data Type (string v int)
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": ["StringNotInt"] } ] } }
+    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
+
+AppendData Bad Data Type (float v int)
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7.4] } ] } }
+    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
+
+AppendData Bad Data Type (string v float)
+    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "sse", "values": ["StringNotFloat"] } ] } }
+    Status Error Match         ${output}             2                  Invalid data type for column 'sse'
+
+SetData Bad Data Type (string v int)
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": ["StringNotInt"] } ] } }
+    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
+
+SetData Bad Data Type (float v int)
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7.4] } ] } }
+    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
+
+SetData Bad Data Type (string v float)
+    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "sse", "values": ["StringNotFloat"] } ] } }
+    Status Error Match         ${output}             2                  Invalid data type for column 'sse'
+
+# RemoveData Errors
+
+RemoveData Specify Column Error 
+    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "column": "trial"}
+    Status Error Match           ${output}             5                Invalid parameter: column
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   7    # From very last AppendData under normal operation
 
 *** Keywords ***
 
@@ -244,6 +460,11 @@ Status OK Match Result
     [Arguments]                   ${output}          ${expected}
     Status OK                     ${output}
     Json String Should Match      ${output}          /result            ${expected}
+
+Status OK Equal Result
+    [Arguments]                   ${output}          ${expected}
+    Status OK                     ${output}
+    Json Value Should Equal       ${output}          /result            ${expected}    
 
 Status OK
     [Arguments]                   ${output}
@@ -270,10 +491,11 @@ Message Should Match
     ...                Should Match Regexp    ${output}    OK (.*)
     Should Be Equal    ${expected}   ${message}
 
-Json Value Should Match
-    [Arguments]        ${json}    ${pointer}    ${expected}
-    ${value} =         Get Json Value    ${json}    ${pointer}
-    Should Match       ${value}    ${expected}
+# Use 'Json Value Should Equal' for numbers
+#Json Value Should Match
+#    [Arguments]        ${json}    ${pointer}    ${expected}
+#    ${value} =         Get Json Value    ${json}    ${pointer}
+#    Should Match       ${value}    ${expected}
 
 Json Value Should Not Exist
     [Arguments]        ${json}    ${pointer}
@@ -293,15 +515,7 @@ Get Json String
 
 Print
     [Arguments]        ${text}
-    Log                ${text}    WARN
-
-# Get Json Value                string, pointer, ...
-# Json Value Should Equal       string, pointer, expected
-# Json Value Should Not Equal   string, pointer, expected
-# Log Json                      string, (args)
-# Parse Json                    string
-# Set Json Value                string, pointer, value
-# Should Be Valid Json          string
+    Run Keyword If     ${verbose}                Log                ${text}    WARN
 
 Initialize Emergent
     ${pid} =             Start Process      emergent -nogui -server -p ../test-projects/LeabraStd.proj    shell=True
@@ -327,5 +541,14 @@ Run Command
     ${output} =        Read
     Print              [Received] ${output}    # this is temporary just so I can see what's happening
     [Return]           ${output}
+
+# For reference - JSON keywords from HttpLibrary.HTTP
+# Get Json Value                string, pointer, ...
+# Json Value Should Equal       string, pointer, expected
+# Json Value Should Not Equal   string, pointer, expected
+# Log Json                      string, (args)
+# Parse Json                    string
+# Set Json Value                string, pointer, value
+# Should Be Valid Json          string
 
 
