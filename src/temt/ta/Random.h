@@ -68,7 +68,7 @@ public:
   // #CAT_Float uniform random number between zero and one (inclusive of 1 due to rounding!)
   static double UniformMinMax(double min, double max)
   { return min + (max - min) * ZeroOne(); }
-  // #CAT_Float uniform random number between min and max values (inclusive)
+  // #CAT_Float uniform random number between min and max values inclusive (Do not use for generating integers - will not include max!)
   static double UniformMeanRange(double mean, double range)
   { return mean + range * 2.0 * (ZeroOne() - 0.5); }
   // #CAT_Float uniform random number with given range on either size of the mean: [mean - range, mean + range]
