@@ -46,10 +46,54 @@
 #include <QDir>
 #include <QMenu>
 #include <QScrollBar>
+#include <QMimeData>
+#include <QTextDocumentFragment>
+#include <QClipboard>
 
 //#include <QDebug>
 
 #include <iostream>
+
+
+// buried in qtextcontrol_p.h
+class MyQTextEditMimeData : public QMimeData
+{
+public:
+    inline MyQTextEditMimeData(const QTextDocumentFragment &aFragment) : fragment(aFragment) {}
+
+    virtual QStringList formats() const;
+protected:
+    virtual QVariant retrieveData(const QString &mimeType, QVariant::Type type) const;
+private:
+    void setup() const;
+
+    mutable QTextDocumentFragment fragment;
+};
+
+QStringList MyQTextEditMimeData::formats() const
+{
+    if (!fragment.isEmpty())
+        return QStringList() << QString::fromLatin1("text/plain") << QString::fromLatin1("text/html")
+        ;
+    else
+        return QMimeData::formats();
+}
+
+QVariant MyQTextEditMimeData::retrieveData(const QString &mimeType, QVariant::Type type) const
+{
+    if (!fragment.isEmpty())
+        setup();
+    return QMimeData::retrieveData(mimeType, type);
+}
+
+void MyQTextEditMimeData::setup() const
+{
+    MyQTextEditMimeData *that = const_cast<MyQTextEditMimeData *>(this);
+    that->setData(QLatin1String("text/html"), fragment.toHtml("utf-8").toUtf8());
+    that->setText(fragment.toPlainText());
+    fragment = QTextDocumentFragment();
+}
+
 
 using namespace std;
 
@@ -86,6 +130,7 @@ void iConsole::getDisplayGeom() {
 //Clear the console
 void iConsole::clear() {
   QTextEdit::clear();
+  ext_select_on = false;
   getDisplayGeom();
   curPromptPos = 0;
   curOutputLn = 0;
@@ -220,8 +265,11 @@ void iConsole::displayPrompt(bool force) {
   promptDisp = true;
 }
 
-void iConsole::gotoPrompt(QTextCursor& cursor) {
-  cursor.setPosition(curPromptPos, QTextCursor::MoveAnchor);
+void iConsole::gotoPrompt(QTextCursor& cursor, bool select) {
+  if(select)
+    cursor.setPosition(curPromptPos, QTextCursor::KeepAnchor);
+  else 
+    cursor.setPosition(curPromptPos, QTextCursor::MoveAnchor);
 }
 
 void iConsole::gotoEnd(QTextCursor& cursor, bool select) {
@@ -349,6 +397,9 @@ void iConsole::keyPressEvent(QKeyEvent* e)
     return;
   }
 
+  QTextCursor::MoveMode mv_mode = ext_select_on ? QTextCursor::KeepAnchor :
+    QTextCursor::MoveAnchor;
+
   //If Ctrl + C pressed, then undo the current command
   if((e->key() == Qt::Key_C) && ctrl_pressed) {
     ctrlCPressed();
@@ -419,24 +470,34 @@ void iConsole::keyPressEvent(QKeyEvent* e)
         replaceCurrentCommand(cmd);
     }
   }
+  else if((e->key() == Qt::Key_Space) && ctrl_pressed) {
+    e->accept();
+    cursor.clearSelection();
+    ext_select_on = true;
+  }
+  else if((e->key() == Qt::Key_G) && ctrl_pressed) {
+    e->accept();
+    cursor.clearSelection();
+    ext_select_on = false;
+  }
   else if((e->key() == Qt::Key_A) && ctrl_pressed) {
     e->accept();
-    gotoPrompt(cursor);
+    gotoPrompt(cursor, ext_select_on);
     setTextCursor(cursor);
   }
   else if((e->key() == Qt::Key_E) && ctrl_pressed) {
     e->accept();
-    gotoEnd(cursor, false);
+    gotoEnd(cursor, ext_select_on);
     setTextCursor(cursor);
   }
   else if((e->key() == Qt::Key_F) && ctrl_pressed) {
     e->accept();
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::NextCharacter, mv_mode);
     setTextCursor(cursor);
   }
   else if((e->key() == Qt::Key_B) && ctrl_pressed) {
     e->accept();
-    cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::PreviousCharacter, mv_mode);
     setTextCursor(cursor);
   }
   else if((e->key() == Qt::Key_D) && ctrl_pressed) {
@@ -447,15 +508,21 @@ void iConsole::keyPressEvent(QKeyEvent* e)
   else if((e->key() == Qt::Key_K) && ctrl_pressed) {
     e->accept();
     cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    QTextDocumentFragment frag = cursor.selection();
+    MyQTextEditMimeData* md = new MyQTextEditMimeData(frag);
+    QApplication::clipboard()->setMimeData(md);
     cursor.removeSelectedText();
+    ext_select_on = false;
   }
   else if((e->key() == Qt::Key_Y) && ctrl_pressed) {
     e->accept();
-    paste();
+    QTextEdit::paste();         // don't go to end first!
+    ext_select_on = false;
   }
   else if((e->key() == Qt::Key_W) && ctrl_pressed) {
     e->accept();
     cut();
+    ext_select_on = false;
   }
   else if(waiting_for_key) {
     key_response = e->key();
