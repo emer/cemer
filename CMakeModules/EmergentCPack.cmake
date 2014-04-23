@@ -47,7 +47,21 @@ if (WIN32)
   # Has to be lowercase "emergent", not "Emergent" to match what's in
   # CPACK_PACKAGE_EXECUTABLES.
   SET(CPACK_CREATE_DESKTOP_LINKS emergent${EMERGENT_SUFFIX})
-  
+  SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+    WriteRegStr HKCR '.proj' '' 'Emergent.proj'
+    WriteRegStr HKCR 'Emergent.proj' '' 'Emergent Project File'
+    WriteRegStr HKCR 'Emergent.proj\\\\DefaultIcon' '' '$INSTDIR\\\\emergent.ico'
+    WriteRegStr HKCR 'Emergent.proj\\\\shell\\\\open' '' ''
+    WriteRegStr HKCR 'Emergent.proj\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\bin\\\\emergent.exe\\\" \\\"%1\\\"'
+  ")
+  SET( CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+    DeleteRegKey HKCR '.proj'
+    DeleteRegKey HKCR 'Emergent.proj\\\\shell\\\\open\\\\command'
+    DeleteRegKey HKCR 'Emergent.proj\\\\shell\\\\open'
+    DeleteRegKey HKCR 'Emergent.proj\\\\DefaultIcon'
+    DeleteRegKey HKCR 'Emergent.proj'
+  ")
+
 else (WIN32)
   # Replace CMAKE_INSTALL_PREFIX to Currently used one,
   # If it wasn't overridden from command line / cache.
