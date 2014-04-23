@@ -34,6 +34,12 @@ void Function_List::Copy_(const Function_List& cp) {
 }
 
 void Function_List::GenCss(Program* prog) {
+  prog->AddLine(prog, "// function declarations -- so funs can call each other without ordering constraints", ProgLine::COMMENT);
+  for (int i = 0; i < size; ++i) {
+    Function* el = FastEl(i);
+    el->GenCss_Decl(prog);      // declare the functions first
+  }
+  prog->AddLine(prog, "// function definitions", ProgLine::COMMENT);
   for (int i = 0; i < size; ++i) {
     Function* el = FastEl(i);
     el->GenCss(prog);

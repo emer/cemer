@@ -50,6 +50,11 @@ public:
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
 
+  virtual String GetFunDecl();
+  // get the function declaration (c++ code string for function, with return type and args)
+  virtual void  GenCss_Decl(Program* prog);
+  // generate forward declarations for all functions -- allows them to appear in any order
+
   ProgVar*     FindVarName(const String& var_nm) const override;
   String       GetDisplayName() const override;
   String       GetTypeDecoKey() const override { return "Function"; }
@@ -67,7 +72,7 @@ public:
   bool         BrowserEditSet(const String& code, int move_after = 0) override;
 
   void         InitLinks() override;
-  void Copy_(const Function& cp);
+  void         Copy_(const Function& cp);
   TA_BASEFUNS(Function);
 protected:
   void         UpdateAfterEdit_impl() override;

@@ -114,13 +114,23 @@ void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
   fun_code.CheckConfig(quiet, rval);
 }
 
-void Function::GenCssBody_impl(Program* prog) {
+String Function::GetFunDecl() {
   ProgVar rvt(false); rvt.var_type = return_type;  rvt.object_type = object_type;
   String rval = rvt.GenCssType() + " " + name + "(";
   if(args.size > 0) {
     rval += args.GenCss_FuncArgs();
   }
-  rval += ") {";
+  rval += ")";
+  return rval;
+}  
+
+void Function::GenCss_Decl(Program* prog) {
+  String rval = GetFunDecl() + ";";
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+}
+
+void Function::GenCssBody_impl(Program* prog) {
+  String rval = GetFunDecl() + " {";
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->IncIndent();
 
@@ -137,13 +147,13 @@ const String Function::GenListing_children(int indent_level) {
 }
 
 String Function::GetDisplayName() const {
-  ProgVar rvt(false); rvt.var_type = return_type;  rvt.object_type = object_type;
   String rval;
   rval += name + "(";
   if(args.size > 0) {
     rval += args.GenCss_FuncArgs();
   }
   rval += ")";
+  ProgVar rvt(false); rvt.var_type = return_type;  rvt.object_type = object_type;
   rval += " returns: " + rvt.GenCssType();
   return rval;
 }
@@ -151,6 +161,7 @@ String Function::GetDisplayName() const {
 void Function::PreGenChildren_impl(int& item_id) {
   fun_code.PreGen(item_id);
 }
+
 ProgVar* Function::FindVarName(const String& var_nm) const {
   ProgVar* pv = args.FindName(var_nm);
   if(pv) return pv;
