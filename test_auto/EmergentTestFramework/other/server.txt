@@ -77,29 +77,25 @@ RunProgramAsync
 # General and RunProgram error tests
 #
     
-Not Implemented Error
-    ${output} =              Run Command Wait      {"command": "StopProgram", "program": "LeabraBatch"}
-    Status Error Match       ${output}             1         Not implemented: StopProgram
-
 JSON Format Error
     ${output} =              Run Command Wait      {NotValidJSON}
-    Status Error Match       ${output}             2         JSON format error
+    Status Error Match       ${output}             1         JSON format error
 
 Unknown Command Error
     ${output} =              Run Command Wait      {"command": "UnknownCommand"}
-    Status Error Match       ${output}             3         "UnknownCommand" is an unknown command
+    Status Error Match       ${output}             2         "UnknownCommand" is an unknown command
 
 Missing Parameter Error
     ${output} =              Run Command Wait      {}
-    Status Error Match       ${output}             4         Missing parameter: command
+    Status Error Match       ${output}             3         Missing parameter: command
 
 Unknown Parameter Error
     ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
-    Status Error Match       ${output}             5         Unknown parameter: irrelevant
+    Status Error Match       ${output}             4         Unknown parameter: irrelevant
 
 Program Not Found Error
     ${output} =                Run Command Wait    {"command": "RunProgram", "program": "DoesNotExist"}
-    Status Error Match         ${output}           6         Program 'DoesNotExist' not found    
+    Status Error Match         ${output}           5         Program 'DoesNotExist' not found    
 
 # TODO: No Open Project Error (7) - needs a specialized connection to Emergent
 
@@ -141,27 +137,27 @@ SetVar Boolean Arg
 
 SetVar Invalid Program Error
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "DoesNotExist", "var_name": "err_stopcrit", "var_value": 3.14}
-    Status Error Match         ${output}             6         Program 'DoesNotExist' not found
+    Status Error Match         ${output}             5         Program 'DoesNotExist' not found
 
 GetVar Invalid Program Error
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "DoesNotExist", "var_name": "err_stopcrit"}
-    Status Error Match         ${output}             6         Program 'DoesNotExist' not found
+    Status Error Match         ${output}             5         Program 'DoesNotExist' not found
 
 SetVar Invalid Variable Error
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "DoesNotExist", "var_value": 3.14}
-    Status Error Match         ${output}             6         Var 'DoesNotExist' not found
+    Status Error Match         ${output}             5         Var 'DoesNotExist' not found
 
 GetVar Invalid Variable Error
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "DoesNotExist"}
-    Status Error Match         ${output}             6         Var 'DoesNotExist' not found
+    Status Error Match         ${output}             5         Var 'DoesNotExist' not found
 
 SetVar Missing Value Error
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit"}
-    Status Error Match         ${output}             4         var_value missing
+    Status Error Match         ${output}             3         var_value missing
 
 GetVar Has Value Error
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
-    Status Error Match         ${output}             4         Unknown parameter: var_value
+    Status Error Match         ${output}             3         Unknown parameter: var_value
 
 SetVar Int Data Type Error
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "max_epoch", "var_value": "NotANumber"}
