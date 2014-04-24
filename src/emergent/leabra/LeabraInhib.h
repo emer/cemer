@@ -43,7 +43,6 @@ public:
   int		tie_brk;	// was a tie break operation applied to this layer based on ithr_diff value?
   float         ffi;            // for FF_FB_INHIB, the amount of feedforward inhibition
   float         fbi;            // for FF_FB_INHIB, the amount of feedback inhibition (total)
-  float         fbi_x;          // for FF_FB_INHIB, the amount of extra feedback inhibition, above the inflection point
 
   void		Compute_Pct(int n_units);
   void          InitVals();

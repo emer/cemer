@@ -39,7 +39,6 @@ void KWTAVals::InitVals() {
   tie_brk = 0;
   ffi = 0.0f;
   fbi = 0.0f;
-  fbi_x = 0.0f;
 }
 
 void KWTAVals::Copy_(const KWTAVals& cp) {
@@ -55,7 +54,6 @@ void KWTAVals::Copy_(const KWTAVals& cp) {
   tie_brk = cp.tie_brk;
   ffi = cp.ffi;
   fbi = cp.fbi;
-  fbi_x = cp.fbi_x;
 }
 
 void KWTAVals::Compute_Pct(int n_units) {

@@ -51,8 +51,6 @@ public:
   float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput
   float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- computed from average activation
   float		self_fb;	// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- important for producing proportional activation behavior
-  float         fbx;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0;0.1 extra feedback inhibition to add above the inflection point -- 0 means nothing extra, + = greater slope, - = lower slope -- not apparently needed for robust inhibition, but might be useful for some effects
-  float         infl;           // #CONDSHOW_ON_type:FF_FB_INHIB&&!fbx:0 #DEF_0.3 inflection point in feedback inhibition curve (in terms of average activation), at which point the slope changes, by increment of fbx
   float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 
   bool          up_immed;       // #CONDSHOW_ON_type:FF_FB_INHIB inhibition rises immediately, and dt only applies to decay -- this is important for spiking units
   float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases.
@@ -65,9 +63,8 @@ public:
   }
   // feedforward inhibition value as function of netinput
 
-  inline float    FBInhib(const float act, float& fbi_x) {
+  inline float    FBInhib(const float act) {
     float fbi = fb * act;
-    if(fbx != 0.0f && act > infl) fbi += fbx * (act - infl);
     return fbi;
   }
   // feedback inhibition value as function of netinput

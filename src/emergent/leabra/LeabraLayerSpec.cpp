@@ -42,8 +42,6 @@ void LeabraInhibSpec::Initialize() {
   ff0 = 0.1f;
   fb = 0.5f;
   self_fb = 0.0f;
-  fbx = 0.0f;
-  infl = 0.3f;
   dt = 0.7f;
   up_immed = false;
   min_i = 0.0f;
@@ -1041,11 +1039,9 @@ void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
                          LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
 
   float nw_ffi = ispec.FFInhib(thr->netin.avg);
-  float fbi_x;
-  float nw_fbi = ispec.FBInhib(thr->acts.avg, fbi_x);
+  float nw_fbi = ispec.FBInhib(thr->acts.avg);
 
   thr->kwta.ffi = nw_ffi;
-  thr->kwta.fbi_x = fbi_x;
   // dt only on fbi part
   if(ispec.up_immed) {
     if(nw_fbi > thr->kwta.fbi) {
@@ -1108,11 +1104,9 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
     if(unit_gp_inhib.on) {  // linking groups: get max from layer
       if(inhib.type == LeabraInhibSpec::FF_FB_INHIB && unit_gp_inhib.fffb) {
         float nw_ffi = inhib.FFInhib(lay->netin.avg);
-        float fbi_x;
-        float nw_fbi = inhib.FBInhib(lay->acts.avg, fbi_x);
+        float nw_fbi = inhib.FBInhib(lay->acts.avg);
 
         lay->kwta.ffi = nw_ffi;
-        lay->kwta.fbi_x = fbi_x;
         // dt only on fbi part
         lay->kwta.fbi = inhib.dt * nw_fbi + (1.0f - inhib.dt) * lay->kwta.fbi;
 
