@@ -2272,7 +2272,7 @@ bool DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
       aColumn.push_back(dimensions);
     }
     JSONNode values(JSON_ARRAY);
-    values.set_name("values");
+    values.set_name("result");
     if (!dc->is_matrix) {  // single array of values - row 1 to row n
       for (int j=start_row; j < stop_row; j++) {
         switch (dc->valType()) {

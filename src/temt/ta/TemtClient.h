@@ -58,7 +58,6 @@ public:
 
   enum ServerError {
     UNSPECIFIED,
-    NOT_IMPLEMENTED,
     INVALID_FORMAT,
     UNKNOWN_COMMAND,
     MISSING_PARAM,  // program name, table name, etc not provided by client

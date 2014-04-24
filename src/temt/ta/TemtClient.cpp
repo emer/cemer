@@ -162,7 +162,7 @@ void TemtClient::CloseClient() {
 
 void TemtClient::cmdCloseProject() {
   //TEMP
-  SendError("CloseProject not implemented yet", TemtClient::NOT_IMPLEMENTED);
+  SendError("CloseProject not implemented yet");
 }
 
 void TemtClient::cmdEcho() {
@@ -181,7 +181,7 @@ void TemtClient::cmdEcho() {
 
 void TemtClient::cmdOpenProject() {
   //TEMP
-  SendError("OpenProject not implemented yet", TemtClient::NOT_IMPLEMENTED);
+  SendError("OpenProject not implemented yet");
   return;
   
   //TODO: checks:
@@ -279,7 +279,7 @@ void TemtClient::cmdRunProgram(bool sync) {
 
 void TemtClient::cmdSetData() {
   if (msgFormat == TemtClient::NATIVE) {
-    SendError("SetData only implemented for JSON", TemtClient::NOT_IMPLEMENTED);
+    SendError("SetData only implemented for JSON");
   }
   if (msgFormat == TemtClient::JSON) {
     String tnm = name_params.GetVal("table").toString();
@@ -654,7 +654,7 @@ void TemtClient::cmdGetData() {
 
 void TemtClient::cmdGetDataCell() {
   if (msgFormat == TemtClient::JSON) {
-    SendError("For JSON use GetData, specify column and row", TemtClient::NOT_IMPLEMENTED);
+    SendError("For JSON use GetData, specify column and row", TemtClient::UNSPECIFIED);
   }
   
   String tnm = pos_params.SafeEl(0);
@@ -901,7 +901,7 @@ void TemtClient::cmdSetVar() {
       ProgVar* var = prog->FindVarName(nm);
       if (!var) continue; // shouldn't happen, but should get caught next stage
       if (var->var_type == ProgVar::T_Object) {
-        SendError("Var '" + nm + "' is an Object--setting is not supported", TemtClient::NOT_IMPLEMENTED);
+        SendError("Var '" + nm + "' is an Object--setting is not supported");
         return;
       }
     }
@@ -1152,10 +1152,8 @@ void TemtClient::RunCommand(const String& cmd) {
   }
   else
   {
-    //TODO: need subclass hook, and/or change to symbolic, so subclass can do cmdXXX routine
-    // unknown command
-    String err = "\"" + cmd + "\" is an unknown command";
-    SendError(err);
+    String err_msg = "Unknown command: " + cmd;
+    SendErrorJSON(err_msg, TemtClient::UNKNOWN_COMMAND);
   }
   
   //TODO: we can (should!) look up and dispatch via name!
