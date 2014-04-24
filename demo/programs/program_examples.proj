@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7031
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7041
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -1428,7 +1428,7 @@ LeabraProject .projects["program_examples"] {
    };
   };
   Program_Group @.gp["Math"] = [1] { 
-   Program @["RandomIntegers"] { 
+   Program @["RandomInteger"] { 
     ProgObjList @.objs = [1] {
      DataTable @["DemoData"] { 
       DataTableCols @.data = [1] {
@@ -1484,6 +1484,121 @@ LeabraProject .projects["program_examples"] {
       };
      };
      PrintVar @[9] { };
+    };
+   };
+  };
+  Program_Group @.gp["ProgramsAndFunctions"] = [1] { 
+   Program @["CallFunction"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    ProgBrkPt_List @.brk_pts = [0] {
+    };
+
+    Function_List @.functions = [1] {
+     Function @["Square"] { 
+      ProgVar_List @.args = [1] {
+       ProgVar @["value"] { };
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [1] {
+	 ProgVar @["sq_value"] { };
+	};
+       };
+       AssignExpr @[1] { };
+       ReturnExpr @[2] { };
+      };
+     };
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["result"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     PrintVar @[2] { };
+    };
+   };
+   Program_Group @.gp["CallAnotherProgram"] = [2] { 
+    Program @["CallingProgram"] { 
+     ProgObjList @.objs = [0] {
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [0] {
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [3] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      Comment @[1] { };
+      ProgramCall @[2] { 
+       ProgArg_List @.prog_args = [0] {
+       };
+      };
+     };
+    };
+    Program @["Program_B"] { 
+     ProgObjList @.objs = [0] {
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [0] {
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [2] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      PrintExpr @[1] { };
+     };
     };
    };
   };
@@ -9700,8 +9815,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    el_def=0;
    tags=;
    desc=;
-   Program @["RandomIntegers"] {
-    name="RandomIntegers";
+   Program @["RandomInteger"] {
+    name="RandomInteger";
     short_nm="Rndmnt";
     tags=;
     desc=;
@@ -9773,7 +9888,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       name="DemoData";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["program_examples"].programs.gp["Math"]["RandomIntegers"].objs["DemoData"]$$;
+      object_val=.projects["program_examples"].programs.gp["Math"]["RandomInteger"].objs["DemoData"]$$;
       objs_ptr=1;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9839,7 +9954,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       desc=;
       flags=0;
       orig_prog_code=;
-      result_var=.projects["program_examples"].programs.gp["Math"]["RandomIntegers"].vars["row"]$$;
+      result_var=.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$$;
       object_type=Random;
       method=Random::IntZeroN;
       meth_args {
@@ -9863,7 +9978,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="Print row";
       message=;
-      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomIntegers"].vars["row"]$;
+      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -9906,7 +10021,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       desc=;
       flags=0;
       orig_prog_code=;
-      result_var=$.projects["program_examples"].programs.gp["Math"]["RandomIntegers"].vars["row"]$;
+      result_var=$.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$;
       object_type=Random;
       method=Random::IntMinMax;
       meth_args {
@@ -9940,7 +10055,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="Print row";
       message=;
-      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomIntegers"].vars["row"]$;
+      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomInteger"].vars["row"]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -9952,6 +10067,322 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     step_prog=NULL;
     step_n=1;
+   };
+  };
+  Program_Group @.gp["ProgramsAndFunctions"] {
+   name="ProgramsAndFunctions";
+   el_typ=Program;
+   el_def=0;
+   tags=;
+   desc="Call another program to do some work";
+   Program @["CallFunction"] {
+    name="CallFunction";
+    short_nm="ClFnct";
+    tags=;
+    desc="Functions can return a value (programs can't";
+    flags=NO_STOP_STEP;
+    objs {
+     name="ProgObjList_23";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    brk_pts {
+     name="ProgBrkPt_List_23";
+     el_typ=ProgBrkPt;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_23";
+     el_typ=Function;
+     el_def=0;
+     Function @["Square"] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      name="Square";
+      return_type=T_Real;
+      object_type=taOBase;
+      args {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["value"] {
+	name="value";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      fun_code {
+       name="ProgEl_List_156";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	local_vars {
+	 name="ProgVar_List_0";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["sq_value"] {
+	  name="sq_value";
+	  var_type=T_Real;
+	  real_val=0;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       AssignExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="sq_value = value * value";
+	result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunction"].functions["Square"].fun_code[0].local_vars["sq_value"]$$;
+	expr {
+	 expr="value * value";
+	};
+       };
+       ReturnExpr @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="return sq_value";
+	expr {
+	 expr="sq_value";
+	};
+       };
+      };
+     };
+    };
+    init_code {
+     name="ProgEl_List_144";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_145";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["result"] {
+	name="result";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="result = FunCall Square(25.5)";
+      result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunction"].prog_code[0].local_vars["result"]$$;
+      expr {
+       expr="Square(25.5)";
+      };
+     };
+     PrintVar @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print result";
+      message=;
+      print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunction"].prog_code[0].local_vars["result"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program_Group @.gp["CallAnotherProgram"] {
+    name="CallAnotherProgram";
+    el_typ=Program;
+    el_def=0;
+    tags=;
+    desc=;
+    Program @["CallingProgram"] {
+     name="CallingProgram";
+     short_nm="CllPrg";
+     tags=;
+     desc=;
+     flags=NO_STOP_STEP;
+     objs {
+      name="ProgObjList_21";
+      el_typ=taNBase;
+      el_def=0;
+     };
+     types {
+      name="ProgType_List_0";
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     brk_pts {
+      name="ProgBrkPt_List_21";
+      el_typ=ProgBrkPt;
+      el_def=0;
+     };
+     functions {
+      name="Function_List_21";
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name="ProgEl_List_136";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name="ProgEl_List_137";
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      Comment @[1] {
+       desc="Run another program - perhaps one generates data and the second analyzes";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="// Run another program - perhaps one generates data and the second analyzes";
+      };
+      ProgramCall @[2] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       prog_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       target=.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["CallAnotherProgram"]["Program_B"]$$;
+       targ_ld_init="*Program_B*";
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
+    Program @["Program_B"] {
+     name="Program_B";
+     short_nm="CllPrg";
+     tags=;
+     desc=;
+     flags=NO_STOP_STEP;
+     objs {
+      name=;
+      el_typ=taNBase;
+      el_def=0;
+     };
+     types {
+      name=;
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     brk_pts {
+      name=;
+      el_typ=ProgBrkPt;
+      el_def=0;
+     };
+     functions {
+      name=;
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name=;
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      PrintExpr @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="print \"I've been called\"";
+       expr {
+	expr="\"Program_B - I've been called\"";
+       };
+       my_mask=NULL;
+       debug_level=NULL;
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
    };
   };
  };
@@ -9966,22 +10397,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.003653444582596421;
+     value 6 0=0.006267409306019545;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.03140916675329208;
+     value 6 0=0.01252847351133823;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9963465332984924;
+     value 6 0=0.9937325716018677;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7988115549087524;
+     value 6 0=0.7995443940162659;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -9991,7 +10422,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAAB0QAAAqsAAAKXAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABFgAAASkAAAFMAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -11165,17 +11596,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 6 0=0.01252847351133823;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04279749467968941;
+       value 6 0=0.05710306391119957;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.735144317150116;
+       value 6 0=0.714123010635376;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -11348,8 +11779,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ff=1;
 	fb=0.5;
 	self_fb=0;
-	fbx=0;
-	infl=0.3;
 	dt=0.7;
 	up_immed=0;
 	ff0=0.1;
@@ -11389,8 +11818,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ff=1;
       fb=0.5;
       self_fb=0;
-      fbx=0;
-      infl=0.3;
       dt=0.7;
       up_immed=0;
       ff0=0.1;
