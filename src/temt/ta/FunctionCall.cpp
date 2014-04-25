@@ -120,13 +120,22 @@ bool FunctionCall::CvtFmCode(const String& code) {
   if(lhs.contains('('))
     lhs = lhs.before('(');
   String funm = lhs;
-  if(funm.contains('='))
+  String var_name = "";
+  if(funm.contains('=')) {
     funm = trim(lhs.after('='));
+    var_name = lhs.before('=');
+  }
   Program* prog = GET_OWNER(this, Program);
   if(!prog) return false;
   Function* fn = prog->functions.FindName(funm);
   if(!fn) return false;
   fun = fn;
+  if (!var_name.empty()) {
+    var_name = trim(var_name);
+    ProgVar* pv = FindVarNameInScope(var_name, true);
+    if (pv)
+      result_var = pv;
+  }
   UpdateAfterEdit_impl();                          // update based on fun
   // now tackle the args
   String args = trim(cd.after('('));
