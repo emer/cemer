@@ -165,8 +165,8 @@ public:
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
   int           delay;  // general sensory delay period for all inputs expressed as a number of time steps (1 time step = 5 ms) -- used by one-delay version of cereb_arm (v1) -- set to 1 for no delay
-  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be > pro_delay -- set this and pro_delay to 1 for no delay
-  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be < vis_delay -- set this and vis_delay to 1 for no delay
+  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be > pro_delay -- set both to 1 for no delay
+  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be < vis_delay -- set to 1 for no delay
   int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- used by three-delay version of cereb_arm (v3) -- set to 1 for no delay
 
 
@@ -301,8 +301,8 @@ private:
   void  Initialize();
   void  Destroy();
 
-  float_Matrix delayedStims; // This is the buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
-  bool isNewReach; // This is a flag used to tell whether it's the start of a new reach or not (since VEArm doesn't have direct access to network.cycle)
+  float_Matrix delayedStims; // buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
+  bool isNewReach; // flag used to tell whether it's the start of a new reach or not (since VEArm doesn't have direct access to network.cycle)
 };
 
 #endif // VEArm_h

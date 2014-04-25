@@ -98,12 +98,12 @@ void VEArm::Initialize() {
   musc_gains_mag = 0.0f;
   io_err_mag = 0.0f;
 
-  delay = 7; // delay parameter as number of time steps (1 time step = 0.005 seconds)
-  vis_delay = 30; // visual delay as number of time steps (default 30 -- must be > pro_delay)
-  pro_delay = 7; // proprioceptive delay as number of time steps (default 7 -- must be < vis_delay)
-  eff_delay = 1; // effector delay as number of time steps -- default 1 (no delay) to be compatible with previous versions -- set to 76ish within project to simulate effector delay
+  delay = 7;
+  vis_delay = 30;
+  pro_delay = 7;
+  eff_delay = 1;
 
-  isNewReach = true; // This is a flag used to tell VEArm if it's the start of a new reach (since it doesn't have direct access to network.cycle)
+  isNewReach = true;
 
   // DO NOT put anythying other than direct literal member inits in here -- no creating objects etc
 }
@@ -1865,14 +1865,6 @@ bool VEArm::InitDelayedInputsToTable_v2(DataTable* table) {
 
   if(table->rows == 0)
     table->EnforceRows(1);
-
-  if(vis_delay < pro_delay) {
-    int temp = vis_delay;
-    vis_delay = pro_delay;
-    pro_delay = temp;
-  }
-  else if(vis_delay == pro_delay)
-    vis_delay++;
 
   if(table->rows == 1) {
     // start with no data...
