@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7041
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7031
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -1598,6 +1598,74 @@ LeabraProject .projects["program_examples"] {
        };
       };
       PrintExpr @[1] { };
+     };
+    };
+   };
+   Program_Group @.gp["AccessValuesInAnotherProgram"] = [2] { 
+    Program @["ProgramSeekingValue"] { 
+     ProgObjList @.objs = [0] {
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [2] {
+      ProgVar @["user_name"] { };
+      ProgVar @["location"] { };
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [5] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      Comment @[1] { };
+      Comment @[2] { };
+      OtherProgramVar @[3] { };
+      PrintVar @[4] { };
+     };
+    };
+    Program @["ProgramWithValue"] { 
+     ProgObjList @.objs = [0] {
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [2] {
+      ProgVar @["user_name"] { };
+      ProgVar @["location"] { };
+     };
+
+     ProgBrkPt_List @.brk_pts = [0] {
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [1] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
      };
     };
    };
@@ -9183,7 +9251,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      name="DataSelect";
      short_nm="DtSlct";
      tags=;
-     desc=;
+     desc="Select rows from a table and copy them to another table";
      flags=0;
      objs {
       name=;
@@ -9203,7 +9271,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9231,7 +9299,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9259,7 +9327,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9300,12 +9368,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	el_def=0;
 	String_Data @["Categ"] {
 	 UserDataItem_List @*(.user_data_) {
-	  name="UserDataItem_List_81";
+	  name="UserDataItem_List_100";
 	  el_typ=UserDataItem;
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.1588670015335083;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9319,19 +9387,19 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name=;
 	 [0] 	 };
-	 width=177;
+	 width=129;
 	 ar {
 	  name=;
 	 [8] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";	 };
 	};
 	String_Data @["Name"] {
 	 UserDataItem_List @*(.user_data_) {
-	  name="UserDataItem_List_82";
+	  name="UserDataItem_List_101";
 	  el_typ=UserDataItem;
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.1588670015335083;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9345,19 +9413,19 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name=;
 	 [0] 	 };
-	 width=177;
+	 width=129;
 	 ar {
 	  name=;
 	 [8] "Jam";"Huckleberry";"Grapes";"Fruit";"Dragon Fruit";"Cherry";"Banana";"Apple";	 };
 	};
 	float_Data @["Value"] {
 	 UserDataItem_List @*(.user_data_) {
-	  name="UserDataItem_List_83";
+	  name="UserDataItem_List_102";
 	  el_typ=UserDataItem;
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.1588670015335083;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9371,7 +9439,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name=;
 	 [0] 	 };
-	 width=177;
+	 width=129;
 	 ar {
 	  name=;
 	 [8] 44;60;45;25;55;15;30;20;	 };
@@ -9526,7 +9594,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9554,7 +9622,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9582,7 +9650,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9628,7 +9696,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9656,7 +9724,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9684,7 +9752,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1598916053771973;
+	   value 6 0=0.217980295419693;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -10079,7 +10147,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     name="CallFunction";
     short_nm="ClFnct";
     tags=;
-    desc="Functions can return a value (programs can't";
+    desc="Functions can return a value (programs can't)";
     flags=NO_STOP_STEP;
     objs {
      name="ProgObjList_23";
@@ -10384,6 +10452,206 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      step_n=1;
     };
    };
+   Program_Group @.gp["AccessValuesInAnotherProgram"] {
+    name="AccessValuesInAnotherProgram";
+    el_typ=Program;
+    el_def=0;
+    tags=;
+    desc="Demonstrate by running the ProgramSeekingValue program";
+    Program @["ProgramSeekingValue"] {
+     name="ProgramSeekingValue";
+     short_nm="PrgSkn";
+     tags=;
+     desc="Get a value from another program";
+     flags=NO_STOP_STEP;
+     objs {
+      name="ProgObjList_24";
+      el_typ=taNBase;
+      el_def=0;
+     };
+     types {
+      name="ProgType_List_0";
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["user_name"] {
+       name="user_name";
+       var_type=T_String;
+       string_val="mike";
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["location"] {
+       name="location";
+       var_type=T_String;
+       string_val="boulder";
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     brk_pts {
+      name="ProgBrkPt_List_24";
+      el_typ=ProgBrkPt;
+      el_def=0;
+     };
+     functions {
+      name="Function_List_24";
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name="ProgEl_List_149";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name="ProgEl_List_150";
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      Comment @[1] {
+       desc="You can get or set the values of variables in another program";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="// You can get or set the values of variables";
+      };
+      Comment @[2] {
+       desc="To work the variable names in both programs must match!";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="// To work the variable names in both programs must match!";
+      };
+      OtherProgramVar @[3] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       other_prog=.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessValuesInAnotherProgram"]["ProgramWithValue"]$$;
+       set_other=0;
+       var_1=.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessValuesInAnotherProgram"]["ProgramSeekingValue"].vars["user_name"]$$;
+       var_2=.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessValuesInAnotherProgram"]["ProgramSeekingValue"].vars["location"]$$;
+       var_3=NULL;
+       var_4=NULL;
+      };
+      PrintVar @[4] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="print user_name";
+       message=;
+       print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessValuesInAnotherProgram"]["ProgramSeekingValue"].vars["user_name"]$;
+       print_var2=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"].gp["AccessValuesInAnotherProgram"]["ProgramSeekingValue"].vars["location"]$;
+       print_var3=NULL;
+       print_var4=NULL;
+       print_var5=NULL;
+       print_var6=NULL;
+       my_mask=NULL;
+       debug_level=NULL;
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
+    Program @["ProgramWithValue"] {
+     name="ProgramWithValue";
+     short_nm="PrgWtV";
+     tags=;
+     desc="This program has a value we need for another program";
+     flags=NO_STOP_STEP;
+     objs {
+      name="ProgObjList_25";
+      el_typ=taNBase;
+      el_def=0;
+     };
+     types {
+      name="ProgType_List_0";
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["user_name"] {
+       name="user_name";
+       var_type=T_String;
+       string_val="mike";
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["location"] {
+       name="location";
+       var_type=T_String;
+       string_val="boulder";
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     brk_pts {
+      name="ProgBrkPt_List_25";
+      el_typ=ProgBrkPt;
+      el_def=0;
+     };
+     functions {
+      name="Function_List_25";
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name="ProgEl_List_153";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name="ProgEl_List_154";
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
+   };
   };
  };
  viewers {
@@ -10397,22 +10665,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.006267409306019545;
+     value 6 0=0.001043841359205544;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.01252847351133823;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9937325716018677;
+     value 6 0=0.993215024471283;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7995443940162659;
+     value 6 0=0.7988115549087524;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -10422,7 +10690,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABFgAAASkAAAFMAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAACJgAAAywAAAGyAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -11596,17 +11864,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.01252847351133823;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.05710306391119957;
+       value 6 0=0.04331941530108452;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.714123010635376;
+       value 6 0=0.735144317150116;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -11779,6 +12047,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ff=1;
 	fb=0.5;
 	self_fb=0;
+	fbx=0;
+	infl=0.3;
 	dt=0.7;
 	up_immed=0;
 	ff0=0.1;
@@ -11818,6 +12088,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ff=1;
       fb=0.5;
       self_fb=0;
+      fbx=0;
+      infl=0.3;
       dt=0.7;
       up_immed=0;
       ff0=0.1;
