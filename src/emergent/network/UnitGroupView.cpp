@@ -578,6 +578,7 @@ void UnitGroupView::Render_impl_blocks() {
     else {
       lay->GetAbsPos2d(svg_pos);
       svg_posn = nv->LayerPosToCoin3D(svg_pos);
+      svg_posn.y = 0.0f;
     }
   }
 

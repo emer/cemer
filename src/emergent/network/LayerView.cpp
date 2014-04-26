@@ -173,6 +173,7 @@ void LayerView::Render_impl() {
     ft->translate.SetXYZ(posn.x, posn.y, posn.z);
 
     if(nv->render_svg) {
+      lay->GetAbsPos(pos);
       aposn = nv->LayerPosToCoin3D(pos);
       aposn.x -= .003f;          // allow for line thickness
       aposn.z += .003f;          // allow for line thickness
@@ -180,7 +181,6 @@ void LayerView::Render_impl() {
       szn.x += .006f;
       szn.z -= .006f;
 
-      lay->GetAbsPos(pos);
       nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f, .5f), 6.0f) // thick..
                   << "M " << taSvg::Coords(aposn)
                   << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z)
@@ -198,8 +198,9 @@ void LayerView::Render_impl() {
 
     if(nv->render_svg) {
       taVector3i pos2d;
-      pos2d.x = lay->pos2d.x; pos2d.y = lay->pos2d.y;  pos2d.z = 0.0f;
+      lay->GetAbsPos2d(pos2d);
       aposn = nv->LayerPosToCoin3D(pos2d);
+      aposn.y = 0.0f;
       aposn.x -= .003f;          // allow for line thickness
       aposn.z += .003f;          // allow for line thickness
       szn = nv->LayerPosToCoin3D(sz);
@@ -256,6 +257,12 @@ void LayerView::Render_impl() {
     SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
     node_so->transformCaption(rot, tran);
+
+    if(nv->render_svg) {
+      nv->svg_str << taSvg::Text(data()->GetName(),
+                                 aposn.x, aposn.y, aposn.z + lay_wd,
+                                 iColor("black"), .9f * eff_lay_font_size, taSvg::LEFT);
+    }
   }
   inherited::Render_impl();
 
