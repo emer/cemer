@@ -173,13 +173,14 @@ void LayerView::Render_impl() {
     ft->translate.SetXYZ(posn.x, posn.y, posn.z);
 
     if(nv->render_svg) {
-      lay->GetAbsPos(pos);
       aposn = nv->LayerPosToCoin3D(pos);
       aposn.x -= .003f;          // allow for line thickness
       aposn.z += .003f;          // allow for line thickness
       szn = nv->LayerPosToCoin3D(sz);
       szn.x += .006f;
       szn.z -= .006f;
+
+      lay->GetAbsPos(pos);
       nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f, .5f), 6.0f) // thick..
                   << "M " << taSvg::Coords(aposn)
                   << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z)
@@ -194,6 +195,25 @@ void LayerView::Render_impl() {
 			 0.0f,
 			 (float)-lay->pos2d.y / nv->eff_max_size.y);
     // ft->rotate.SetXYZR(1.0f, 0.0f, 0.0f, 1.5707963f);
+
+    if(nv->render_svg) {
+      taVector3i pos2d;
+      pos2d.x = lay->pos2d.x; pos2d.y = lay->pos2d.y;  pos2d.z = 0.0f;
+      aposn = nv->LayerPosToCoin3D(pos2d);
+      aposn.x -= .003f;          // allow for line thickness
+      aposn.z += .003f;          // allow for line thickness
+      szn = nv->LayerPosToCoin3D(sz);
+      szn.x += .006f;
+      szn.z -= .006f;
+
+      nv->svg_str << taSvg::Path(iColor(0.2f, 0.5f, 0.3f, .5f), 6.0f) // thick..
+                  << "M " << taSvg::Coords(aposn)
+                  << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z)
+                  << "L " << taSvg::Coords(aposn.x + szn.x, aposn.y, aposn.z + szn.z)
+                  << "L " << taSvg::Coords(aposn.x, aposn.y, aposn.z + szn.z)
+                  << "L " << taSvg::Coords(aposn)
+                  << taSvg::PathEnd();
+    }
   }
 
   if(lay->Iconified()) {

@@ -821,6 +821,8 @@ ProgVar* Program::FindVarName(const String& var_nm) const {
   if(sv) return sv;
   sv = vars.FindName(var_nm);
   if(sv) return sv;
+  sv = init_code.FindVarName(var_nm);
+  if(sv) return sv;
   return prog_code.FindVarName(var_nm);
 }
 

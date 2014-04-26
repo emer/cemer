@@ -571,8 +571,14 @@ void UnitGroupView::Render_impl_blocks() {
   T3Color col;
   float trans = nv->view_params.unit_trans;
   if(nv->render_svg) {
-    lay->GetAbsPos(svg_pos);
-    svg_posn = nv->LayerPosToCoin3D(svg_pos);
+    if(nv->lay_layout == NetView::THREE_D) {
+      lay->GetAbsPos(svg_pos);
+      svg_posn = nv->LayerPosToCoin3D(svg_pos);
+    }
+    else {
+      lay->GetAbsPos2d(svg_pos);
+      svg_posn = nv->LayerPosToCoin3D(svg_pos);
+    }
   }
 
   SbVec3f* vertex_dat = vertex.startEditing();
