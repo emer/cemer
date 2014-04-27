@@ -802,17 +802,32 @@ void TemtClient::cmdGetVar() {
     return;
   }
   
-  // get the value, possibly converting
-  String val;
-  if (var->var_type == ProgVar::T_String) {
-    val = String::StringToCppLiteral(var->string_val);
+  if (msgFormat == TemtClient::NATIVE) {
+    String val;
+    // get the value, possibly converting
+    if (var->var_type == ProgVar::T_String) {
+      val = String::StringToCppLiteral(var->string_val);
+    }
+    else {
+      val = var->GetVar().toString();
+    }
+    // send message
+    SendOk(val);
   }
-  else {
-    val = var->GetVar().toString();
+  // Send the message from here because the result is not in JSON format yet
+  else if (msgFormat == TemtClient::JSON) {
+    String str;
+    String  val;
+    if (var->var_type == ProgVar::T_String) {
+      val = var->string_val;
+      str = " {\"status\":\"OK\", \"result\": \"" + val + "\"" + " }";
+    }
+    else {
+      val = var->GetVar();
+      str = " {\"status\":\"OK\", \"result\": " + val + "} ";
+    }
+    Write(str);
   }
-  
-  // send message
-  SendOk(val);
 }
 
 void TemtClient::cmdGetRunState() {
