@@ -2986,28 +2986,30 @@ bool DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
   while (i != n.end()){
     // recursively call ourselves to dig deeper into the tree
     if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
+      if (i->name() == "columns")
+        break;
       rval = SetDataFromJSON(*i);
       if (rval == false) {
         return rval;
       }
     }
-
-    // get the node name and value as a string
-    std::string node_name = i->name();
-
-    if (node_name == "columns") {
-      // calc the start_row so that when working backwards it doesn't change each time we loop
-      if (start_row < 0) {
-        start_row = rows + start_row + 1;
-      }
-      JSONNode::const_iterator columns = i->begin();
-      while (columns != i->end() && rval == true) {
-        const JSONNode aCol = *columns;
-        rval = SetColumnFromJSON(aCol, start_row, start_cell);
-        columns++;
-      }
-    }
     ++i;
+  }
+  
+  // get the node name and value as a string
+  std::string node_name = i->name();
+  
+  if (node_name == "columns") {
+    // calc the start_row so that when working backwards it doesn't change each time we loop
+    if (start_row < 0) {
+      start_row = rows + start_row + 1;
+    }
+    JSONNode::const_iterator columns = i->begin();
+    while (columns != i->end() && rval == true) {
+      const JSONNode aCol = *columns;
+      rval = SetColumnFromJSON(aCol, start_row, start_cell);
+      columns++;
+    }
   }
   return rval;
 }
