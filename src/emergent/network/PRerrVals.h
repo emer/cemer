@@ -52,13 +52,13 @@ public:
     precision = recall = specificity = fdr = fallout = fmeasure = mcc = 0.0f;
     float tp = true_pos; float fp = false_pos; float tn = true_neg; float fn = false_neg;
 
-    precision   = tp+fp       > 0 ? tp/(tp+fp):0;
-    recall      = tp+fn       > 0 ? tp/(tp+fn):0;
-    specificity = fp+tn       > 0 ? tn/(fp+tn):0;
-    fdr         = tp+fp       > 0 ? fp/(fp+tp):0;
-    fallout     = fp+tn       > 0 ? fp/(fp+tn):0;
-    fmeasure    = tp+fp+fn    > 0 ? 2*tp/(2*tp+fp+fn):0;
-    mcc         = tp+fp+tn+fn > 0 ? (tp*tn-fp*fn)/taMath_float::sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)):0;
+    precision   = tp > 0 && fp > 0  ? tp/(tp+fp):0;
+    recall      = tp > 0 && fn > 0  ? tp/(tp+fn):0;
+    specificity = fp > 0 && tn > 0  ? tn/(fp+tn):0;
+    fdr         = tp > 0 && fp > 0  ? fp/(fp+tp):0;
+    fallout     = fp > 0 && tn > 0  ? fp/(fp+tn):0;
+    fmeasure    = tp > 0 && fp > 0 && fn > 0 ? 2*tp/(2*tp+fp+fn):0;
+    mcc         = tp > 0 && fp > 0 && tn > 0 && fn > 0 ? (tp*tn-fp*fn)/taMath_float::sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn)):0;
   }
   // compute the precision, recall, and fmeasure values based on current raw stats values
 
