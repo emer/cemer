@@ -916,7 +916,7 @@ void TemtClient::cmdSetVar() {
       ProgVar* var = prog->FindVarName(nm);
       if (!var) continue; // shouldn't happen, but should get caught next stage
       if (var->var_type == ProgVar::T_Object) {
-        SendError("Var '" + nm + "' is an Object--setting is not supported");
+        SendError("Var '" + nm + "' is an Object--setting is not supported", TemtClient::RUNTIME);
         return;
       }
     }
@@ -940,29 +940,29 @@ void TemtClient::cmdSetVar() {
     
     String var_name = name_params.GetVal("var_name").toString();
     if (var_name.empty()) {
-      SendError("var_name missing");
+      SendError("var_name missing", TemtClient::NOT_FOUND);
       return;
     }
     if (!prog->HasVar(var_name)) {
-      SendError("Var '" + var_name + "' not found");
+      SendError("Var '" + var_name + "' not found", TemtClient::NOT_FOUND);
       return;
     }
     
     // check if type ok to set -- assume it will be found since name is ok
     ProgVar* var = prog->FindVarName(var_name);
     if (var->var_type == ProgVar::T_Object) {
-      SendError("Var '" + var_name + "' is an Object--setting is not supported");
+      SendError("Var '" + var_name + "' is an Object--setting is not supported", TemtClient::RUNTIME);
       return;
     }
     
     // set
     String var_value = name_params.GetVal("var_value").toString();
     if (var_value.empty()) {
-      SendError("var_value missing");
+      SendError("var_value missing", TemtClient::NOT_FOUND);
       return;
     }
     if (!prog->SetVar(var_name, var_value)) {
-      SendError("An error occurred while seeting Var or Arg '" + var_name + "'");
+      SendError("An error occurred while seeting Var or Arg '" + var_name + "'", TemtClient::RUNTIME);
       return;
     }
     SendOk();

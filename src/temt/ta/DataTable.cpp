@@ -2982,12 +2982,15 @@ void DataTable::ImportDataJSONString(const String& json_as_string) {
 
 bool DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell) { // // row -1 means append, anything else overwrites starting at row
   bool rval = true;
+  bool has_column_node = false;
   JSONNode::const_iterator i = n.begin();
   while (i != n.end()){
     // recursively call ourselves to dig deeper into the tree
     if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
-      if (i->name() == "columns")
+      if (i->name() == "columns") {
+        has_column_node = true;
         break;
+      }
       rval = SetDataFromJSON(*i);
       if (rval == false) {
         return rval;
@@ -2996,10 +2999,7 @@ bool DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
     ++i;
   }
   
-  // get the node name and value as a string
-  std::string node_name = i->name();
-  
-  if (node_name == "columns") {
+  if (has_column_node) {
     // calc the start_row so that when working backwards it doesn't change each time we loop
     if (start_row < 0) {
       start_row = rows + start_row + 1;
@@ -3010,6 +3010,10 @@ bool DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
       rval = SetColumnFromJSON(aCol, start_row, start_cell);
       columns++;
     }
+  }
+  else {
+    error_msg = "No 'column' member' in data";
+    return false;
   }
   return rval;
 }
