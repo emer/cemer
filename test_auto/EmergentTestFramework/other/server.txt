@@ -83,11 +83,11 @@ JSON Format Error
 
 Unknown Command Error
     ${output} =              Run Command Wait      {"command": "UnknownCommand"}
-    Status Error Match       ${output}             2         "UnknownCommand" is an unknown command
+    Status Error Match       ${output}             2         "Unknown command: UnknownCommand"
 
-Missing Parameter Error
+No Command Error
     ${output} =              Run Command Wait      {}
-    Status Error Match       ${output}             3         Missing parameter: command
+    Status Error Match       ${output}             2         "Unknown command: "
 
 Unknown Parameter Error
     ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
@@ -153,7 +153,7 @@ GetVar Invalid Variable Error
 
 SetVar Missing Value Error
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit"}
-    Status Error Match         ${output}             3         var_value missing
+    Status Error Match         ${output}             5         var_value missing
 
 GetVar Has Value Error
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
@@ -187,28 +187,28 @@ GetData Full Table
     Json Value Should Equal    ${output}             /result/columns/0/matrix  false
     Json Value Should Equal    ${output}             /result/columns/1/matrix  true
     Json Value Should Equal    ${output}             /result/columns/2/matrix  true
-    Json String Should Match   ${output}             /result/columns/0/values/0  checks
-    Json String Should Match   ${output}             /result/columns/0/values/1  mitvert
-    Json String Should Match   ${output}             /result/columns/0/values/2  midhoriz
-    Json String Should Match   ${output}             /result/columns/0/values/3  rdiag
-    Json String Should Match   ${output}             /result/columns/0/values/4  ldiag
-    Json String Should Match   ${output}             /result/columns/0/values/5  random
-    Json Value Should Equal    ${output}             /result/columns/1/values/0/0/0  1
-    Json Value Should Equal    ${output}             /result/columns/1/values/0/1/2  0
-    Json Value Should Equal    ${output}             /result/columns/1/values/0/2/2  1
-    Json Value Should Equal    ${output}             /result/columns/1/values/2/2/2  1
-    Json Value Should Equal    ${output}             /result/columns/1/values/2/1/0  0
+    Json String Should Match   ${output}             /result/columns/0/result/0  checks
+    Json String Should Match   ${output}             /result/columns/0/result/1  mitvert
+    Json String Should Match   ${output}             /result/columns/0/result/2  midhoriz
+    Json String Should Match   ${output}             /result/columns/0/result/3  rdiag
+    Json String Should Match   ${output}             /result/columns/0/result/4  ldiag
+    Json String Should Match   ${output}             /result/columns/0/result/5  random
+    Json Value Should Equal    ${output}             /result/columns/1/result/0/0/0  1
+    Json Value Should Equal    ${output}             /result/columns/1/result/0/1/2  0
+    Json Value Should Equal    ${output}             /result/columns/1/result/0/2/2  1
+    Json Value Should Equal    ${output}             /result/columns/1/result/2/2/2  1
+    Json Value Should Equal    ${output}             /result/columns/1/result/2/1/0  0
 
 GetData Column
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "column": "Name"}
     Status OK Has Result         ${output}
     Json String Should Match     ${output}           /result/columns/0/name    Name
-    Json String Should Match     ${output}           /result/columns/0/values/0  checks
-    Json String Should Match     ${output}           /result/columns/0/values/1  mitvert
-    Json String Should Match     ${output}           /result/columns/0/values/2  midhoriz
-    Json String Should Match     ${output}           /result/columns/0/values/3  rdiag
-    Json String Should Match     ${output}           /result/columns/0/values/4  ldiag
-    Json String Should Match     ${output}           /result/columns/0/values/5  random
+    Json String Should Match     ${output}           /result/columns/0/result/0  checks
+    Json String Should Match     ${output}           /result/columns/0/result/1  mitvert
+    Json String Should Match     ${output}           /result/columns/0/result/2  midhoriz
+    Json String Should Match     ${output}           /result/columns/0/result/3  rdiag
+    Json String Should Match     ${output}           /result/columns/0/result/4  ldiag
+    Json String Should Match     ${output}           /result/columns/0/result/5  random
     Json Value Should Not Exist  ${output}           /result/columns/1
     Json Value Should Not Exist  ${output}           /result/columns/2
 
@@ -224,13 +224,13 @@ GetData Row
     Json Value Should Equal      ${output}           /result/columns/0/matrix  false
     Json Value Should Equal      ${output}           /result/columns/1/matrix  true
     Json Value Should Equal      ${output}           /result/columns/2/matrix  true
-    Json String Should Match     ${output}           /result/columns/0/values/0  rdiag
-    Json String Should Match     ${output}           /result/columns/0/values/1  ldiag
-    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
-    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
-    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
-    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
-    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
+    Json String Should Match     ${output}           /result/columns/0/result/0  rdiag
+    Json String Should Match     ${output}           /result/columns/0/result/1  ldiag
+    Json Value Should Equal      ${output}           /result/columns/1/result/0/2/2  1
+    Json Value Should Equal      ${output}           /result/columns/1/result/0/1/0  0
+    Json Value Should Not Exist  ${output}           /result/columns/0/result/2
+    Json Value Should Not Exist  ${output}           /result/columns/1/result/2
+    Json Value Should Not Exist  ${output}           /result/columns/2/result/2
 
 GetData Cell
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
@@ -238,7 +238,7 @@ GetData Cell
     Json String Should Match   ${output}             /result/columns/0/name       Name
     Json String Should Match   ${output}             /result/columns/0/type       String
     Json Value Should Equal    ${output}             /result/columns/0/matrix     false
-    Json String Should Match   ${output}             /result/columns/0/values/0   rdiag
+    Json String Should Match   ${output}             /result/columns/0/result/0   rdiag
 
 GetDataMatrixCell
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
@@ -254,48 +254,48 @@ SetData Row Specified
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
-    Json Value Should Equal      ${output}             /result/columns/2/values/0   3     # This is the old/previous value
-    Json Value Should Equal      ${output}             /result/columns/1/values/0   6
-    Json String Should Match     ${output}             /result/columns/3/values/0   letrial
-    Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
+    Json Value Should Equal      ${output}             /result/columns/0/result/0   8
+    Json Value Should Equal      ${output}             /result/columns/2/result/0   3     # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/1/result/0   6
+    Json String Should Match     ${output}             /result/columns/3/result/0   letrial
+    Json Value Should Equal      ${output}             /result/columns/7/result/0   4.4
 
 RemoveData First Two Rows
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "rows": 2}
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/2/values/0  2  # This is the old/previous value
-    Json Value Should Equal      ${output}             /result/columns/2/values/1  3  # This is the old/previous value
-    Json Value Should Equal      ${output}             /result/columns/2/values/2  4  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/result/0  2  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/result/1  3  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/result/2  4  # This is the old/previous value
 
 SetData No Row Specified
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
-    Json Value Should Equal      ${output}             /result/columns/1/values/0   6
-    Json Value Should Equal      ${output}             /result/columns/2/values/0   2     # This is the old/previous value
-    Json String Should Match     ${output}             /result/columns/3/values/0   letrial
-    Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
+    Json Value Should Equal      ${output}             /result/columns/0/result/0   8
+    Json Value Should Equal      ${output}             /result/columns/1/result/0   6
+    Json Value Should Equal      ${output}             /result/columns/2/result/0   2     # This is the old/previous value
+    Json String Should Match     ${output}             /result/columns/3/result/0   letrial
+    Json Value Should Equal      ${output}             /result/columns/7/result/0   4.4
 
 RemoveData All Rows                    
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Not Exist  ${output}             /result/columns/0/values/0
+    Json Value Should Not Exist  ${output}             /result/columns/0/result/0
 
 AppendData
     ${output} =                  Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] }, { "name": "trial_name", "values": ["mytrial"] }, { "name": "sse", "values": [10.2] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/values/0   7
-    Json Value Should Equal      ${output}             /result/columns/1/values/0   9
-    Json String Should Match     ${output}             /result/columns/3/values/0   mytrial
-    Json Value Should Equal      ${output}             /result/columns/7/values/0   10.2
+    Json Value Should Equal      ${output}             /result/columns/0/result/0   7
+    Json Value Should Equal      ${output}             /result/columns/1/result/0   9
+    Json String Should Match     ${output}             /result/columns/3/result/0   mytrial
+    Json Value Should Equal      ${output}             /result/columns/7/result/0   10.2
 
 SetData Matrix Cell
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
@@ -311,73 +311,73 @@ SetData Matrix Cell
 
 GetData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable"}
-    Status Error Match         ${output}             6                  Table 'NotATable' not found
+    Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 GetDataTableCell Table Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Name"}
-    Status Error Match         ${output}             6                  Table 'NotATable' not found
+    Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 GetDataMatrixCell Table Not Found Error
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
-    Status Error Match         ${output}             6                  Table 'NotATable' not found
+    Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 AppendData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             6                  Table 'NotATable' not found
+    Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 SetData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "SetData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             6                  Table 'NotATable' not found
+    Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 RemoveData Table Not Found Error
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "NotATable"}
-    Status Error Match         ${output}             6                  Table 'NotATable' not found
+    Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 # Row error
 
 GetDataTable Invalid Row Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
-    Status Error Match         ${output}             8                  row out of range
+    Status Error Match         ${output}             7                  row out of range
 
 GetDataTableCell Invalid Row Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1, "column": "Name"}
-    Status Error Match         ${output}             8                  row out of range
+    Status Error Match         ${output}             7                  row out of range
 
 RemoveData Invalid Row Error
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "StdInputData", "row_from": 1024, "rows": 1}
-    Status Error Match         ${output}             8                  row out of range
+    Status Error Match         ${output}             7                  row out of range
 
 SetData Invalid Row Error
     ${output} =                Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
-    Status Error Match         ${output}             8                  row out of range
+    Status Error Match         ${output}             7                  row out of range
 
 # Column not found
 
 GetData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "column": "NotAColumn"}
-    Status Error Match         ${output}             6                  GetData: column not found
+    Status Error Match         ${output}             7                  GetData: column not found
 
 GetDataTableCell Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn"}
-    Status Error Match         ${output}             6                  GetData: column not found
+    Status Error Match         ${output}             7                  GetData: column not found
 
 GetDataMatrixCell Column Not Found Error
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "NotAColumn", "cell": 12}
-    Status Error Match         ${output}             6                  GetDataMatrixCell: column not found
+    Status Error Match         ${output}             7                  GetDataMatrixCell: column not found
 
 AppendData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             6                  AppendData: column not found
+    Status Error Match         ${output}             7                  AppendData: column not found
 
 SetData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             6                  SetData: column not found
+    Status Error Match         ${output}             7                  SetData: column not found
 
 # Set Data Matrix error
 
 SetData Matrix Cell Error
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 1024, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
-    Status Error Match           ${output}           8                  SetData: cell range error
+    Status Error Match           ${output}           7                  SetData: cell range error
 
 # Bad data format for Append / SetData
 
@@ -395,11 +395,11 @@ AppendData Bad Data Format (name)
 
 SetData Bad Data Format (data)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             5                  Unknown parameter: dater
+    Status Error Match         ${output}             4                  Unknown parameter: dater
 
 SetData Bad Data Format (columns)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             2                  Invalid data table format
+    Status Error Match         ${output}             7                  Invalid data table format
 
 SetData Bad Data Format (name)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
@@ -438,7 +438,7 @@ RemoveData Specify Column Error
     Status Error Match           ${output}             5                Invalid parameter: column
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/values/0   7    # From very last AppendData under normal operation
+    Json Value Should Equal      ${output}             /result/columns/0/result/0   7    # From very last AppendData under normal operation
 
 *** Keywords ***
 
