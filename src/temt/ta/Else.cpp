@@ -50,6 +50,12 @@ bool Else::CheckAfterIf() {
                "else statement does not come after an If or ElseIf -- it must -- instead it comes after a:", prv->GetTypeDef()->name)) {
     return false;
   }
+  ProgEl* post = own->SafeEl(idx+1);
+  if (post) {
+    if(TestError(post->InheritsFrom(&TA_Else), "CheckNotBeforeElse", "else can not precede another Else")) {
+      return false;
+    }
+  }
   return true;
 }
 
