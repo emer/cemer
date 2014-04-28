@@ -2173,6 +2173,10 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
   t3gl->setValueColorMode(false);
   t3gl->setDefaultColor((T3Color)(plv_str.color.color()));
 
+  if(render_svg) {
+    svg_str << taSvg::Group();
+  }
+
   iVec3f dat;                   // data point
   iVec3f plt;                   // plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
@@ -2202,9 +2206,18 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
     if(!str.empty()) {
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
                    str.chars());
+
+      if(render_svg) {
+        svg_str << taSvg::Text(str, plt.x, plt.y - (.5f * label_font_size), plt.z,
+                               plv_str.color.color(), label_font_size, taSvg::LEFT);
+      }
     }
   }
   t3gl->finishBatch();
+
+  if(render_svg) {
+    svg_str << taSvg::GroupEnd();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////

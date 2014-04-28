@@ -72,11 +72,13 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
     return true;
   }
-  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
-    return true;
-  if((bool)m_window) {
-    if(m_window->KeyEventFilterWindowNav(obj, e))
+  else if(!(ctrl_pressed && (e->key() == Qt::Key_A || e->key() == Qt::Key_E))) {
+    if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
       return true;
+    if((bool)m_window) {
+      if(m_window->KeyEventFilterWindowNav(obj, e))
+        return true;
+    }
   }
 
   return inherited::eventFilter(obj, event);
@@ -141,6 +143,14 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       break;
     case Qt::Key_D:
       RowColOp(OP_ROW | OP_DELETE);
+      e->accept();
+      break;
+    case Qt::Key_A:
+      edit(currentIndex());
+      e->accept();
+      break;
+    case Qt::Key_E:
+      edit(currentIndex());
       e->accept();
       break;
     }
