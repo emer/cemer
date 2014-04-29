@@ -186,7 +186,12 @@ protected:
   void          ParseCommand(const String& cl);
   void          ParseCommandNATIVE(const String& cl);
   void          ParseCommandJSON(const String& cl);
-
+  
+  bool          ValidateColumnsMember(const JSONNode& n);
+  bool          ValidateColumnName(DataTable* dt, const JSONNode& n);  // validate name of a particular column
+  bool          ValidateColumnNames(DataTable* dt, const JSONNode& n); // validate all column names
+  bool          ValidateMemberNames(const JSONNode& n);
+  
 private:
   void	Copy_(const TemtClient& cp);
   void	Initialize();

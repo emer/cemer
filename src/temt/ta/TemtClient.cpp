@@ -501,12 +501,21 @@ void TemtClient::cmdAppendData() {
   
   String tnm = name_params.GetVal("table").toString();
   DataTable* tab = GetAssertTable(tnm);
-  if (!tab) return;
-  // note: ok if running
+  if (!tab)
+    return;
   
+  // note: ok if running
   if (msgFormat == TemtClient::JSON) {
-    bool result = tab->SetDataFromJSON(tableData, -1);  // true for append
-    
+    bool result = false;
+    if (!ValidateColumnsMember(tableData)) {  // first check columns existence
+      SendError("Columns member not found in data", TemtClient::RUNTIME);
+      return;
+    }
+    if (!ValidateColumnNames(tab, tableData)) {  // next check column names
+      return;
+    }
+  
+    result = tab->SetDataFromJSON(tableData, -1);  // true for append
     if (result) {
       SendOk();
     }
@@ -1395,5 +1404,116 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
   else {
     rows = -1;  // all rows= 0
   }
+  return true;
+}
+
+bool TemtClient::ValidateColumnsMember(const JSONNode& n) { // // row -1 means append, anything else overwrites starting at row
+  bool rval = true;
+  bool has_column_node = false;
+  JSONNode::const_iterator i = n.begin();
+  while (i != n.end()){
+    // recursively call ourselves to dig deeper into the tree
+    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
+      if (i->name() == "columns") {
+        has_column_node = true;
+        break;
+      }
+      rval = ValidateColumnsMember(*i);
+      if (rval == false) {
+        return rval;
+      }
+    }
+    ++i;
+  }
+  
+  if (!has_column_node)
+    return false;
+  return rval;
+}
+
+bool TemtClient::ValidateColumnNames(DataTable* dt, const JSONNode& n) { // see if there are any columns in the data that are not existing in the data table
+  bool rval = true;
+  JSONNode::const_iterator i = n.begin();
+  while (i != n.end()){
+    // recursively call ourselves to dig deeper into the tree
+    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
+      if (i->name() == "columns") {
+        break;
+      }
+      rval = ValidateColumnNames(dt, *i);
+      if (rval == false) {
+        return rval;
+      }
+    }
+    ++i;
+  }
+  
+  JSONNode::const_iterator columns = i->begin();
+  while (columns != i->end() && rval == true) {
+    const JSONNode aCol = *columns;
+    rval = ValidateColumnName(dt, aCol);
+    columns++;
+  }
+  return rval;
+}
+
+bool TemtClient::ValidateColumnName(DataTable* dt, const JSONNode& aCol) {
+  String columnName("");
+
+  JSONNode::const_iterator columnData = aCol.begin();
+  while (columnData != aCol.end()) {
+    std::string node_name = columnData->name();
+    if (node_name == "name") {
+      columnName = columnData->as_string().c_str();
+      break;
+    }
+    columnData++;
+  }
+  if (dt) { // should have been checked by now
+    if (columnName.nonempty()) {
+      DataCol* dc = dt->data.FindName(columnName);
+      if (dc) {
+        return true;
+      }
+      else {
+        SendError("Column name '" + columnName + "' not found in data table '" + dt->name + "'", TemtClient::RUNTIME);
+        return false;
+      }
+    }
+    else
+      return false;
+  }
+  return true;
+}
+
+bool TemtClient::ValidateMemberNames(const JSONNode& aCol) {
+  //  JSONNode theValues;
+  //  JSONNode theDimensions;
+  //  String columnName("");
+  //  DataCol::ValType columnType = VT_STRING;
+  //  DataCol* dc;
+//  bool isMatrix = false;
+//  MatrixGeom mg;
+//  
+//  JSONNode::const_iterator columnData = aCol.begin();
+//  while (columnData != aCol.end()) {
+//    std::string node_name = columnData->name();
+//    if (node_name == "name") {
+//      columnName = columnData->as_string().c_str();
+//    }
+//    else if (node_name == "type") {
+//      columnType = StrToValType((String)columnData->as_string().c_str());
+//    }
+//    else if (node_name == "values") {
+//      theValues = columnData->as_array();
+//    }
+//    else if (node_name == "matrix") {
+//      isMatrix = columnData->as_bool();
+//    }
+//    else if (node_name == "dimensions") {
+//      theDimensions = columnData->as_array();
+//    }
+//    columnData++;
+//  }
   return true;
 }
