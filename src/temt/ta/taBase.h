@@ -1036,8 +1036,8 @@ protected:      // Impl
 public:
 
   bool   TestError(bool test, const char* fun_name,
-                          const char* a, const char* b=0, const char* c=0,
-                          const char* d=0, const char* e=0, const char* f=0,
+                   const char* a, const char* b=0, const char* c=0,
+                   const char* d=0, const char* e=0, const char* f=0,
                    const char* g=0, const char* h=0) const;
   // #CAT_ObjectMgmt if test, then report error, including object name, type, and path information; returns test -- use e.g. if(TestError((condition), "fun", "msg")) return    false;
   bool   TestWarning(bool test, const char* fun_name,

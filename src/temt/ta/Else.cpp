@@ -52,7 +52,7 @@ bool Else::CheckAfterIf() {
   }
   ProgEl* post = own->SafeEl(idx+1);
   if (post) {
-    if(TestError(post->InheritsFrom(&TA_Else), "CheckNotBeforeElse", "else can not precede another Else")) {
+    if(TestError(post->InheritsFrom(&TA_Else) || post->InheritsFrom(&TA_ElseIf), "CheckNotBeforeElse", "Else can not precede another Else or ElseIf")) {
       return false;
     }
   }
