@@ -34,6 +34,7 @@ class iMatrixTableModel; //
 class ColorScale;  //
 class CellRange; //
 class taMatrix_PList; //
+class taArray_base; //
 
 /* Matrix -- a specialized, richer implementation of Array
 
@@ -627,6 +628,7 @@ public:
   ///////////////////////////////////////////////////////////////////
   // common operators
 
+  virtual taMatrix* operator=(const taArray_base& t);
   virtual taMatrix* operator=(const Variant& t);
 
   virtual taMatrix* operator+(const taMatrix& t) const;

@@ -29,6 +29,7 @@
 #include <taBaseItr>
 #include <taFiler>
 #include <MTRnd>
+#include <taArray_base>
 
 #include <taMisc>
 
@@ -2047,10 +2048,32 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
 /////////////////////////////////////////////////////////
 //              Operators
 
+taMatrix* taMatrix::operator=(const taArray_base& t) {
+  SetGeom(1, t.IterCount());
+  int idx = 0;
+  TA_FOREACH_INDEX(i, t) {
+    SetFmVar_Flat(t.SafeElAsVar(i), idx++);
+  }
+  return this;
+}
+
 taMatrix* taMatrix::operator=(const Variant& t) {
   if(t.isMatrixType()) {
     Copy(t.toMatrix());
     return this;
+  }
+  if(t.isBaseType()) {
+    taBase* tab = t.toBase();
+    if(TestError(!tab, "operator=", "attempt to assign matrix from a null object")) {
+      return this;
+    }
+    if(tab->InheritsFrom(&TA_taArray_base)) {
+      return operator=(*((taArray_base*)tab));
+    }
+    if(TestError(true, "operator=", "cannot assign to matrix from object of type:",
+                 tab->GetTypeDef()->name)) {
+      return this;
+    }
   }
   if(GetDataValType() == VT_FLOAT) {
     float vt = t.toFloat();
