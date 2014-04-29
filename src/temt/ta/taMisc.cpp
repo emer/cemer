@@ -652,49 +652,6 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 }
 
 #ifndef NO_TA_BASE
-//bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
-//                       const char* a, const char* b, const char* c, const char* d,
-//                       const char* e, const char* f, const char* g, const char* h) {
-//  static taBase* prv_obj = NULL;
-//  static String prv_fun;
-//  static String prv_a;
-//  
-//  if(!test) return false;
-//  
-//#ifdef DMEM_COMPILE
-//  //  if(taMisc::dmem_proc > 0) return true;
-//#endif
-//  
-//  if(obj) {
-//    String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
-//    + "() (path: " + obj->GetPathNames() + ")\n";
-//    
-//    if((obj == prv_obj) && (prv_fun == fun_name) && (prv_a == a)) {
-//      // nogui version for repeat!
-//      taMisc::Error_nogui(objinfo, a, b, c, d, e, f, g, h);
-//    }
-//    else {
-//      // default gui version
-//      taMisc::Error(objinfo, a, b, c, d, e, f, g, h);
-//    }
-//  }
-//  else {
-//    String fn = String("Function: ") + fun_name + "()\n";
-//    if((prv_fun == fun_name) && (prv_a == a)) {
-//      // nogui version for repeat!
-//      taMisc::Error_nogui(fn, a, b, c, d, e, f, g, h);
-//    }
-//    else {
-//      // default gui version
-//      taMisc::Error(fn, a, b, c, d, e, f, g, h);
-//    }
-//  }
-//  prv_obj = const_cast<taBase*>(obj);
-//  prv_fun = fun_name;
-//  prv_a = a;
-//  return true;
-//}
-//
 bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
                        const char* a, const char* b, const char* c, const char* d,
                        const char* e, const char* f, const char* g, const char* h) {
