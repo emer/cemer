@@ -280,6 +280,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   ((iLineEdit*)fldLabelSz->GetRep())->setCharWidth(6);
   layCAxis->addSpacing(taiM->hsep_c);
 
+  lblPointSz = taiM->NewLabel("Pt\nSz", widg, font_spec);
+  lblPointSz->setToolTip("Size of point symbol markers, in normalized units.");
+  layCAxis->addWidget(lblPointSz);
+  fldPointSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layCAxis->addWidget(fldPointSz->GetRep());
+  ((iLineEdit*)fldPointSz->GetRep())->setCharWidth(6);
+  layCAxis->addSpacing(taiM->hsep_c);
+
   lblAxisSz = taiM->NewLabel("Axis\nSz", widg, font_spec);
   lblAxisSz->setToolTip("Font size for the axis labels in the graph -- in normalized units.");
   layCAxis->addWidget(lblAxisSz);
@@ -507,6 +515,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
 
   fldErrSpacing->GetImage((String)glv->err_spacing);
   fldLabelSz->GetImage((String)glv->label_font_size);
+  fldPointSz->GetImage((String)glv->point_size);
   fldAxisSz->GetImage((String)glv->axis_font_size);
   fldBarSpace->GetImage((String)glv->bar_space);
   fldBarDepth->GetImage((String)glv->bar_depth);
@@ -584,6 +593,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
 
   glv->err_spacing = (int)fldErrSpacing->GetValue();
   glv->label_font_size = (float)fldLabelSz->GetValue();
+  glv->point_size = (float)fldPointSz->GetValue();
   glv->axis_font_size = (float)fldAxisSz->GetValue();
   glv->bar_space = (float)fldBarSpace->GetValue();
   glv->bar_depth = (float)fldBarDepth->GetValue();

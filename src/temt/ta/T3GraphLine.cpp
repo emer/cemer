@@ -18,6 +18,7 @@
 #include <T3Misc>
 #include <taMath_float>
 #include <T3Color>
+#include <taSvg>
 
 #include <taMisc>
 
@@ -27,12 +28,104 @@
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoMarkerSet.h>
 #include <Inventor/nodes/SoPackedColor.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 
+float T3GraphLine::mark_pts[160] = {
+  // CIRCLE = 0,17
+  1, 0,
+  0.92388, 0.382683,
+  0.707107, 0.707107,
+  0.382683, 0.92388,
+  0, 1,
+  -0.382683, 0.92388,
+  -0.707107, 0.707107,
+  -0.92388, 0.382683,
+  -1, 0,
+  -0.92388, -0.382683,
+  -0.707107, -0.707107,
+  -0.382683, -0.92388,
+  0, -1,
+  0.382683, -0.92388,
+  0.707107, -0.707107,
+  0.92388, -0.382683,
+  1, 0,
+  // SQUARE = 17,5
+  -1,-1,
+  -1,1,
+  1,1,
+  1,-1,
+  -1,-1,
+  // DIAMOND = 22,5
+  -1,0,
+  0,1,
+  1,0,
+  0,-1,
+  -1,0,
+  // TRIANGLE_UP = 27,4
+  -1,-1,
+  0,1,
+  1,-1,
+  -1,-1,
+  // TRIANGLE_DN = 31,4
+  -1,1,
+  0,-1,
+  1,1,
+  -1,1,
+  // TRIANGLE_RT = 35,4
+  -1,1,
+  1,0,
+  -1,-1,
+  -1,1,
+  // TRIANGLE_LT = 39,4
+  1,1,
+  -1,0,
+  1,-1,
+  1,1,
+  // POINT = 43,5
+  -.1,-.1,
+  -.1,.1,
+  .1,.1,
+  .1,-.1,
+  -.1,-.1,
+  // PLUS = 48,5
+  -1,0,
+  1,0,
+  0,0,
+  0,-1,
+  0,1,
+  // CROSS = 53,5
+  -1,1,
+  1,-1,
+  0,0,
+  1,1,
+  -1,-1,
+  // STAR = 58,11  (plus + cross)
+  -1,0,
+  1,0,
+  0,0,
+  0,-1,
+  0,1,
+  0,0,
+  -1,1,
+  1,-1,
+  0,0,
+  1,1,
+  -1,-1
+};
+
+int T3GraphLine::mark_pts_n = 70;
+
+// first one below is a null -- CIRCLE starts at 1
+int T3GraphLine::mark_start[16] = {
+  0, 0, 17, 22, 27, 31, 35, 39, 43, 48, 53, 58
+};
+
+int T3GraphLine::mark_n[16] = {
+  0, 17, 5, 5, 4, 4, 4, 4, 5, 5, 5, 11
+};
 
 SO_NODE_SOURCE(T3GraphLine);
 
@@ -77,11 +170,12 @@ T3GraphLine::T3GraphLine(T3DataView* dataView_, float fnt_sz)
   errbars->vertexProperty.setValue(new SoVertexProperty());
   line_sep->addChild(errbars);
 
-  markerSet_ = NULL;
-  marker_sep = NULL;
-  marker_size_ = MEDIUM;
-  assertMarkerSet();		// just be done with it -- needed for batch updates anyway
-  //  initValueColorMode();
+  markers = new SoLineSet();
+  markers->vertexProperty.setValue(new SoVertexProperty());
+  line_sep->addChild(markers);
+
+  marker_size_ = .04f;
+  initValueColorMode();
   clear();
 }
 
@@ -89,25 +183,13 @@ T3GraphLine::~T3GraphLine()
 {
   lines = NULL;
   errbars = NULL;
-  markerSet_ = NULL;
+  markers = NULL;
   textSep_ = NULL;
   textColor_ = NULL;
   labelFont_->unref();
   labelFont_ = NULL;
   complexity_->unref();
   complexity_ = NULL;
-}
-
-void T3GraphLine::assertMarkerSet() {
-  if (markerSet_) return;
-  SoSeparator* ss = this->shapeSeparator(); //cache
-  marker_sep = new SoSeparator();
-  markerSet_ = new SoMarkerSet(); //
-  markerSet_->vertexProperty.setValue(new SoVertexProperty());
-  markerSet_->numPoints.setValue(0);
-  marker_sep->addChild(markerSet_);
-  ss->addChild(marker_sep);
-  initValueColorMode();
 }
 
 void T3GraphLine::assertText() {
@@ -131,12 +213,10 @@ void T3GraphLine::clear() {
   SoMFVec3f& errbars_point = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
   errbars_point.setNum(0);
 
-  if (markerSet_) {
-    SoMFVec3f& marker_point = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
-    marker_point.setNum(0);
-    markerSet_->markerIndex.setNum(0);
-    markerSet_->numPoints.setValue(0);
-  }
+  markers->numVertices.setNum(0);
+  SoMFVec3f& markers_point = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
+  markers_point.setNum(0);
+
   // easiest for text is just to nuke
   if (textSep_) {
     shapeSeparator()->removeChild(textSep_); // unrefs, and thus nukes
@@ -148,47 +228,42 @@ void T3GraphLine::clear() {
 }
 
 void T3GraphLine::initValueColorMode() {
-  // called when vcm changes, def color changes, or on clear
-  { // lines
-    SoVertexProperty* vp = (SoVertexProperty*)lines->vertexProperty.getValue();
-    SoSFEnum& mb = vp->materialBinding;
-    SoMFUInt32& orderedRGBA = vp->orderedRGBA;
+  // called when vcm changes, def color changes, or on clear lines
+  SoVertexProperty* vp = (SoVertexProperty*)lines->vertexProperty.getValue();
+  SoSFEnum& mb = vp->materialBinding;
+  SoMFUInt32& orderedRGBA = vp->orderedRGBA;
 
-    SoVertexProperty* evp = (SoVertexProperty*)errbars->vertexProperty.getValue();
-    SoSFEnum& emb = evp->materialBinding;
-    SoMFUInt32& eorderedRGBA = evp->orderedRGBA;
+  SoVertexProperty* evp = (SoVertexProperty*)errbars->vertexProperty.getValue();
+  SoSFEnum& emb = evp->materialBinding;
+  SoMFUInt32& eorderedRGBA = evp->orderedRGBA;
 
-    if (valueColorMode()) {
-      mb.setValue(SoVertexProperty::PER_VERTEX);
-      orderedRGBA.setNum(0); // must supply colors explicitly
-      emb.setValue(SoVertexProperty::PER_VERTEX);
-      eorderedRGBA.setNum(0); // must supply colors explicitly
-    } else {
-      mb.setValue(SoVertexProperty::OVERALL);
-      // set one and only color
-      orderedRGBA.setNum(1);
-      orderedRGBA.set1Value(0, defColor_);
+  SoVertexProperty* mvp = (SoVertexProperty*)markers->vertexProperty.getValue();
+  SoSFEnum& mmb = mvp->materialBinding;
+  SoMFUInt32& morderedRGBA = mvp->orderedRGBA;
 
-      emb.setValue(SoVertexProperty::OVERALL);
-      // set one and only color
-      eorderedRGBA.setNum(1);
-      eorderedRGBA.set1Value(0, defColor_);
-    }
+  if (valueColorMode()) {
+    mb.setValue(SoVertexProperty::PER_VERTEX);
+    orderedRGBA.setNum(0); // must supply colors explicitly
+    emb.setValue(SoVertexProperty::PER_VERTEX);
+    eorderedRGBA.setNum(0); // must supply colors explicitly
+    mmb.setValue(SoVertexProperty::PER_VERTEX);
+    morderedRGBA.setNum(0); // must supply colors explicitly
   }
-  if (markerSet_) {
-    SoVertexProperty* vp = (SoVertexProperty*)markerSet_->vertexProperty.getValue();
-    SoSFEnum& mb = vp->materialBinding;
-    SoMFUInt32& orderedRGBA = vp->orderedRGBA;
-    if (valueColorMode()) {
-      mb.setValue(SoVertexProperty::PER_PART); // i.e., per point
-      orderedRGBA.setNum(0); // must supply colors explicitly
-    }
-    else {
-      mb.setValue(SoVertexProperty::OVERALL);
-      // set one and only color
-      orderedRGBA.setNum(1);
-      orderedRGBA.set1Value(0, defColor_);
-    }
+  else {
+    mb.setValue(SoVertexProperty::OVERALL);
+    // set one and only color
+    orderedRGBA.setNum(1);
+    orderedRGBA.set1Value(0, defColor_);
+
+    emb.setValue(SoVertexProperty::OVERALL);
+    // set one and only color
+    eorderedRGBA.setNum(1);
+    eorderedRGBA.set1Value(0, defColor_);
+
+    mmb.setValue(SoVertexProperty::OVERALL);
+    // set one and only color
+    morderedRGBA.setNum(1);
+    morderedRGBA.set1Value(0, defColor_);
   }
 }
 
@@ -203,10 +278,9 @@ void T3GraphLine::startBatch() {
   env.enableNotify(false);
   epoint.enableNotify(false);
 
-  assertMarkerSet();			       // have to assume and pay overhead
-  SoMFInt32& marker = markerSet_->markerIndex; // cache
-  SoMFVec3f& mpoint = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
-  marker.enableNotify(false);
+  SoMFInt32& mnv = markers->numVertices;
+  SoMFVec3f& mpoint = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
+  mnv.enableNotify(false);
   mpoint.enableNotify(false);
 }
 
@@ -221,9 +295,9 @@ void T3GraphLine::finishBatch() {
   env.enableNotify(true);
   epoint.enableNotify(true);
 
-  SoMFInt32& marker = markerSet_->markerIndex; // cache
-  SoMFVec3f& mpoint = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
-  marker.enableNotify(true);
+  SoMFInt32& mnv = markers->numVertices;
+  SoMFVec3f& mpoint = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
+  mnv.enableNotify(true);
   mpoint.enableNotify(true);
 
 //   point.touch();
@@ -306,83 +380,64 @@ void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const T3Color& 
   errBar(pt, err, bwd);
 }
 
-void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
-  assertMarkerSet();
-  SoMFInt32& marker = markerSet_->markerIndex; // cache
-  SoMFVec3f& point = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
-
-  int mk_idx;
-  //note: don't put defaults in these switches, so we can detect missing values
-  // also, the NONE may be compiler food...
-  switch(marker_size_) {
-  case SMALL: {
-    switch (style){
-    case MarkerStyle_NONE: mk_idx = SoMarkerSet::NONE; break; // compiler food
-    case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_5_5;  break;
-    case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_5_5;  break;
-    case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_5_5;  break;
-    case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_5_5;  break;
-    case MINUS: mk_idx = SoMarkerSet::MINUS_5_5;  break;
-    case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_5_5;  break;
-    case BAR: mk_idx = SoMarkerSet::BAR_5_5;  break;
-    case SLASH: mk_idx = SoMarkerSet::SLASH_5_5;  break;
-    case PLUS: mk_idx = SoMarkerSet::PLUS_5_5;  break;
-    case CROSS: mk_idx = SoMarkerSet::CROSS_5_5;  break;
-    case STAR: mk_idx = SoMarkerSet::STAR_5_5;  break;
-    }
-    break;
-  }
-  case MEDIUM: {
-    switch (style){
-    case MarkerStyle_NONE: mk_idx = SoMarkerSet::NONE; break; // compiler food
-    case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_7_7;  break;
-    case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_7_7;  break;
-    case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_7_7;  break;
-    case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_7_7;  break;
-    case MINUS: mk_idx = SoMarkerSet::MINUS_7_7;  break;
-    case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_7_7;  break;
-    case BAR: mk_idx = SoMarkerSet::BAR_7_7;  break;
-    case SLASH: mk_idx = SoMarkerSet::SLASH_7_7;  break;
-    case PLUS: mk_idx = SoMarkerSet::PLUS_7_7;  break;
-    case CROSS: mk_idx = SoMarkerSet::CROSS_7_7;  break;
-    case STAR: mk_idx = SoMarkerSet::STAR_7_7;  break;
-    }
-    break;
-  }
-  case LARGE: {
-    switch (style){
-    case MarkerStyle_NONE: mk_idx = SoMarkerSet::NONE; break; // compiler food
-    case CIRCLE: mk_idx = SoMarkerSet::CIRCLE_LINE_9_9;  break;
-    case SQUARE: mk_idx = SoMarkerSet::SQUARE_LINE_9_9;  break;
-    case DIAMOND: mk_idx = SoMarkerSet::DIAMOND_LINE_9_9;  break;
-    case TRIANGLE: mk_idx = SoMarkerSet::TRIANGLE_LINE_9_9;  break;
-    case MINUS: mk_idx = SoMarkerSet::MINUS_9_9;  break;
-    case BACKSLASH: mk_idx = SoMarkerSet::BACKSLASH_9_9;  break;
-    case BAR: mk_idx = SoMarkerSet::BAR_9_9;  break;
-    case SLASH: mk_idx = SoMarkerSet::SLASH_9_9;  break;
-    case PLUS: mk_idx = SoMarkerSet::PLUS_9_9;  break;
-    case CROSS: mk_idx = SoMarkerSet::CROSS_9_9;  break;
-    case STAR: mk_idx = SoMarkerSet::STAR_9_9;  break;
-    }
-    break;
-  }
-  }
-
-  //note: render count is taken from point count, so add marker first
-  marker.set1Value(marker.getNum(), mk_idx);
-  point.set1Value(point.getNum(), pt.x, pt.y, -pt.z);
-  markerSet_->numPoints.setValue(marker.getNum());
-}
-
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c) {
-  assertMarkerSet();
-  // add the new color -- no way to optimize this, must always have one col per point
+  if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
+  if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
+
   uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-  SoMFUInt32& orderedRGBA = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->orderedRGBA;
-  orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
+
+  uint32_t vals[17];            // worst case
+  for(int i=0;i<17;i++) vals[i] = new_col;
+
+  SoMFUInt32& orderedRGBA = ((SoVertexProperty*)markers->vertexProperty.getValue())->orderedRGBA;
+  int lidx = orderedRGBA.getNum();
+
+  orderedRGBA.setValues(lidx, mark_n[style], vals);
 
   markerAt(pt, style);
 }
+
+void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
+  if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
+  if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
+
+  SoMFInt32& mnv = markers->numVertices; // cache
+  SoMFVec3f& mpoint = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
+
+  int n = mark_n[style];
+  int st = mark_start[style];
+
+  int lidx = mnv.getNum();
+  mnv.set1Value(lidx,n);
+
+  for(int i = 0; i< n; i++) {
+    float mx = mark_pt(st+i,X);
+    float my = mark_pt(st+i,Y);
+    mpoint.set1Value(mpoint.getNum(), pt.x + mx, pt.y + my, -pt.z);
+  }
+}
+
+String T3GraphLine::markerAtSvg(const iVec3f& pt, MarkerStyle style) {
+  if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
+  if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
+
+  String rval;
+  int n = mark_n[style];
+  int st = mark_start[style];
+
+  for(int i = 0; i< n; i++) {
+    float mx = mark_pt(st+i,X);
+    float my = mark_pt(st+i,Y);
+    
+    if(i == 0)
+      rval << "M ";
+    else 
+      rval << "L ";
+    rval << taSvg::Coords(pt.x + mx, pt.y + my, pt.z);
+  }
+  return rval;
+}
+
 
 void T3GraphLine::setDefaultCaptionTransform() {
   //note: this is the one for 3d objects -- 2d replace this
@@ -436,7 +491,7 @@ void T3GraphLine::setLineStyle(LineStyle value, float line_width) {
   lineDrawStyle_->lineWidth.setValue(line_width);
 }
 
-void T3GraphLine::setMarkerSize(MarkerSize sz) {
+void T3GraphLine::setMarkerSize(float sz) {
   marker_size_ = sz;
 }
 

@@ -31,6 +31,8 @@
 #include <SoLineBox3d>
 #include <taVector2i>
 #include <taSvg>
+#include <float_Matrix>
+
 #if (QT_VERSION >= 0x050000)
 #include <QGuiApplication>
 #endif
@@ -145,7 +147,7 @@ void GraphTableView::Initialize() {
   plot_style = LINE;
   line_width = 2.0f;
   dev_pix_ratio = 1.0f;
-  point_size = MEDIUM;
+  point_size = .01f;
   point_spacing = 1;
   bar_space = .2f;
   bar_depth = 0.01f;
@@ -324,6 +326,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
     plots.SetSize(tot_plots);
     DefaultPlotStyles();
   }
+
+  if(point_size <= 0.0f)
+    point_size = 0.01f;
 
   if(taMisc::is_loading) {
     taVersion v635(6, 3, 5);
@@ -538,9 +543,10 @@ void GraphTableView::DefaultPlotStyles() {
   const char* colors[] = {"black", "red", "blue", "green3", "purple", "orange", "brown", "chartreuse"};
   int n_colors = 8;
   const int styles[] = {GraphPlotView::CIRCLE, GraphPlotView::SQUARE,
-                         GraphPlotView::DIAMOND, GraphPlotView::TRIANGLE,
-                         GraphPlotView::PLUS, GraphPlotView::CROSS,
-                         GraphPlotView::STAR, GraphPlotView::MINUS};
+                        GraphPlotView::DIAMOND, GraphPlotView::TRIANGLE_UP,
+                        GraphPlotView::TRIANGLE_DN,
+                        GraphPlotView::PLUS, GraphPlotView::CROSS,
+                        GraphPlotView::STAR};
   int n_styles = 8;
 
   for(int i=0; i<plots.size; i++) {
@@ -946,9 +952,7 @@ void GraphTableView::InitFromUserData() {
       graph_type = (GraphType)pstv;
   }
   if(dt->HasUserData("POINT_SIZE")) {
-    int pstv = GetEnumVal(dt->GetUserDataAsString("POINT_SIZE"), enum_tp_nm);
-    if(pstv >= 0)
-      point_size = (PointSize)pstv;
+    point_size = dt->GetUserDataAsFloat("POINT_SIZE");
   }
   if(dt->HasUserData("COLOR_MODE")) {
     int pstv = GetEnumVal(dt->GetUserDataAsString("COLOR_MODE"), enum_tp_nm);
@@ -1238,7 +1242,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   t3gl->clear();
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
-  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
+  t3gl->setMarkerSize(point_size);
   t3gl->setValueColorMode(false);
   t3gl->setDefaultColor((T3Color)(plv.color.color()));
 
@@ -1719,7 +1723,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
 
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
-  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
+  t3gl->setMarkerSize(point_size);
 
   DataCol* da_er = erv.GetDAPtr();
   erv.matrix_cell = plv.matrix_cell;
@@ -1773,6 +1777,9 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   iVec3f th_st;                 // start of thresholded line
   iVec3f th_ed;                 // end of thresholded line
   bool first = true;
+
+  String  svg_markers;
+  String  svg_labels;
 
   if(render_svg) {
     svg_str << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width);
@@ -1900,6 +1907,9 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
           t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
         else
           t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+        if(render_svg) {
+          svg_markers << t3gl->markerAtSvg(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+        }
       }
     }
 
@@ -1913,6 +1923,9 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
           t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
         else
           t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+        if(render_svg) {
+          svg_markers << t3gl->markerAtSvg(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+        }
       }
     }
 
@@ -1951,6 +1964,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       String str = String(dat.y); // todo: could spec format..
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
                    str.chars());
+      if(render_svg) {
+        svg_labels << taSvg::Text(str, plt.x, plt.y - (.5f * label_font_size), plt.z,
+                                  plv.color.color(), label_font_size, taSvg::LEFT);
+      }
     }
     // post draw updates:
     first = false;
@@ -1960,6 +1977,16 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
 
   if(render_svg) {
     svg_str << taSvg::PathEnd();
+
+    if(svg_markers.nonempty()) {
+      svg_str << taSvg::Path(plv.color.color(), dev_pix_ratio * line_width)
+              << svg_markers
+              << taSvg::PathEnd();
+    }
+
+    if(svg_labels.nonempty()) {
+      svg_str << svg_labels;
+    }
   }
 
   t3gl->finishBatch();
@@ -1986,7 +2013,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
 
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
-  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
+  t3gl->setMarkerSize(point_size);
 
   DataCol* da_er = erv.GetDAPtr();
   erv.matrix_cell = plv.matrix_cell;

@@ -119,6 +119,8 @@ public:
   taiWidgetField*           fldErrSpacing;
   QLabel*                   lblLabelSz;
   taiWidgetField*           fldLabelSz;
+  QLabel*                   lblPointSz;
+  taiWidgetField*           fldPointSz;
   QLabel*                   lblAxisSz;
   taiWidgetField*           fldAxisSz;
 

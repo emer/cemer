@@ -59,12 +59,6 @@ public:
     THRESH_POINT,               // draw a point when value is over threshold
   };
 
-  enum PointSize {
-    SMALL,
-    MEDIUM,
-    LARGE,
-  };
-
   enum ColorMode {
     FIXED_COLOR,                // use the color specified in the plot view (shown in EXPERT mode)
     VALUE_COLOR,                // the data value determines the data drawing color, looked up on the color scale
@@ -82,7 +76,7 @@ public:
   bool                  negative_draw_z; // continue same line when Z value resets in negative axis direction?
   float                 line_width;     // width of line -- 0 means use default
   float                 dev_pix_ratio;  // #NO_SAVE multiplier on display device -- for multiplying line_width 
-  PointSize             point_size;     // size of point symbols
+  float                 point_size;     // size of point marker symbols
   int                   point_spacing;  // #CONDEDIT_OFF_plot_style:LINE #MIN_1 how frequently to display point markers
   float                 bar_space;      // #DEF_0.2 amount of space between bars
   float                 bar_depth;      // #DEF_0.01 how deep to make the 3d bars

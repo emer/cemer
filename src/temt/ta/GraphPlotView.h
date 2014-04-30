@@ -44,17 +44,17 @@ public:
   //NOTE: if PointStyle changed, must change T3GraphLine::MarkerStyle
   // NOTE: 0 is used as a special "NONE" pseudo-value during assignment of styles
   enum PointStyle {
-    CIRCLE = 1,                 // o
-    SQUARE,                     // []
-    DIAMOND,                    // <>
-    TRIANGLE,
-    MINUS,                      // -
-    BACKSLASH,
-    BAR,                        // |
-    SLASH,                      // /
-    PLUS,                       // +
-    CROSS,                      // x
-    STAR,                        // *
+    CIRCLE = 1,			// o
+    SQUARE,			// []
+    DIAMOND,			// <>
+    TRIANGLE_UP,		// #AKA_TRIANGLE ^
+    TRIANGLE_DN,		// #AKA_MINUS v
+    TRIANGLE_RT,                // #AKA_BACKSLASH >
+    TRIANGLE_LT,                // #AKA_BAR <
+    POINT,			// #AKA_SLASH .
+    PLUS,			// +
+    CROSS,			// x
+    STAR,			// *
     PointStyle_NONE = 0,        // #IGNORE pseudo value, only used during assignment of styles
     PointStyle_MIN = CIRCLE,    // #IGNORE also the default
     PointStyle_MAX = STAR,      // #IGNORE

@@ -21,6 +21,7 @@
 
 // member includes:
 #include <iVec3f>
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 class SoFont; // 
@@ -48,36 +49,42 @@ public:
 #endif
   };
 
-  enum MarkerStyle { // MUST correspond to GraphColView::PointStyle
+  enum MarkerStyle { // MUST correspond to GraphPlotView::PointStyle
     CIRCLE = 1,			// o
     SQUARE,			// []
     DIAMOND,			// <>
-    TRIANGLE,			//
-    MINUS,			// -
-    BACKSLASH,		//
-    BAR,			// |
-    SLASH,			// /
+    TRIANGLE_UP,		// #AKA_TRIANGLE ^
+    TRIANGLE_DN,		// #AKA_MINUS v
+    TRIANGLE_RT,                // #AKA_BACKSLASH >
+    TRIANGLE_LT,                // #AKA_BAR <
+    POINT,			// #AKA_SLASH .
     PLUS,			// +
     CROSS,			// x
-    STAR			// *
-#ifndef __MAKETA__
-    ,MarkerStyle_NONE = 0, // pseudo value, not actually used
-    MarkerStyle_MIN = CIRCLE,
-    MarkerStyle_MAX = STAR
-#endif
+    STAR,			// *
+    MarkerStyle_NONE = 0,       // #IGNORE pseudo value, not actually used
+    MarkerStyle_MIN = CIRCLE,   // #IGNORE
+    MarkerStyle_MAX = STAR,     // #IGNORE
   };
 
-  enum MarkerSize {
-    SMALL,
-    MEDIUM,
-    LARGE,
+  enum XY {
+    X = 0,
+    Y = 1,
   };
 
   static void		initClass();
 
+  static float          mark_pts[160]; // [2*n] list of X,Y points used in markers
+  static int            mark_pts_n; // total number of mark_pts
+  static int            mark_start[16]; // [MarkerStyle_MAX] -- for each MakerStyle, starting index into mark_pts
+  static int            mark_n[16]; // [MarkerStyle_MAX] -- for each MakerStyle, number of mark_pts used
+
+  inline float          mark_pt(int idx, int xy)
+  { return marker_size_ * mark_pts[idx * 2 + xy]; }
+  // get the marker point at given index and xy coord (x=0, y=1) -- use XY enum
+
   SoFont*		labelFont() const {return labelFont_;} // #IGNORE setup after creating
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
-  void			setMarkerSize(MarkerSize sz);
+  void			setMarkerSize(float sz);
   bool			valueColorMode(){return valueColorMode_;}
   void			setValueColorMode(bool value);
 
@@ -104,10 +111,15 @@ public:
   // use to start a new line segment in valueColor mode
   void			lineTo(const iVec3f& to, const T3Color& color);
   //  add arc to current line, in valueColor mode
-  void			errBar(const iVec3f& pt, float err, float bar_width, const T3Color& color);
+  void			errBar(const iVec3f& pt, float err, float bar_width,
+                               const T3Color& color);
   // render error bar at given point
-  void			markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& color);
+  void			markerAt(const iVec3f& pt, MarkerStyle style,
+                                 const T3Color& color);
   // render a marker at indicated location in valueColor mode
+
+  String                markerAtSvg(const iVec3f& pt, MarkerStyle style);
+  // string of SVG commands for drawing marker at given point -- just the move, line guys
 
   T3GraphLine(T3DataView* dataView_ = NULL, float fnt_sz = .05f);
 
@@ -115,13 +127,12 @@ protected:
   uint32_t		defColor_; // def is black
   bool			valueColorMode_;
   LineStyle		lineStyle_;
-  MarkerSize		marker_size_;
+  float 		marker_size_;
   SoSeparator*		line_sep;
   SoDrawStyle*		lineDrawStyle_;
   SoLineSet*		lines;		// we use the vertexProperty for points etc.
   SoLineSet*		errbars;
-  SoSeparator*		marker_sep;
-  SoMarkerSet*		markerSet_; 
+  SoLineSet*		markers;
   SoSeparator*		textSep_; // optional text separator
   SoComplexity*		complexity_;
   SoFont*		labelFont_;
@@ -129,8 +140,6 @@ protected:
   SoPackedColor*	textColor_;
   iVec3f		lastText_; // where last text was rendered, for our next translate
 
-  void			assertMarkerSet();
-    // makes sure marketset is created, and initialized base on modes
   void			assertText();
     // makes sure text separator is created;
   void			initValueColorMode(); // called in several places

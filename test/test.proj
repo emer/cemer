@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7046
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7059
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -5551,7 +5551,7 @@ LeabraProject .projects["test"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_77";
+       name="UserDataItem_List_83";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -5573,11 +5573,11 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_78";
+       name="UserDataItem_List_84";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -5599,11 +5599,11 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 13;13;13;13;13;13;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_79";
+       name="UserDataItem_List_85";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -5625,7 +5625,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 0;1;2;3;4;5;      };
      };
      String_Data @["trial_name"] {
       name="trial_name";
@@ -5641,7 +5641,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] "random";"ldiag";"mitvert";"checks";"midhoriz";"rdiag";      };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -5657,11 +5657,11 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] ;;;;;;      };
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_80";
+       name="UserDataItem_List_86";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -5683,7 +5683,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 2;2;2;2;2;2;      };
      };
      float_Data @["minus_cycles"] {
       name="minus_cycles";
@@ -5699,7 +5699,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 50;50;50;50;50;50;      };
      };
      float_Data @["sse"] {
       name="sse";
@@ -5715,7 +5715,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
      float_Data @["ext_rew"] {
       name="ext_rew";
@@ -5731,7 +5731,7 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [6] 0;0;0;0;0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -5740,7 +5740,7 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name=;
-    [0]     };
+    [6] 0;1;2;3;4;5;    };
    };
    DataTable @["TrialSave"] {
     name="TrialSave";
@@ -6043,7 +6043,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -6069,7 +6070,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;      };
      };
      float_Data @["avg_sse"] {
       name="avg_sse";
@@ -6085,7 +6087,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 6.2497764;4.9648948;2.5740447;2.1583898;1.7166042;1.5877174;0.98813456;0.67552048;0.20835365;0.10674412;
+0.075645842;0.048732068;0;0;      };
      };
      float_Data @["cnt_err"] {
       name="cnt_err";
@@ -6101,7 +6104,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 6;6;5;4;4;4;4;4;2;1;
+1;1;0;0;      };
      };
      float_Data @["avg_ext_rew"] {
       name="avg_ext_rew";
@@ -6117,7 +6121,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;      };
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
@@ -6133,7 +6138,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 50;50;50;50;50;50;50;50;50;50;
+50;50;50;50;      };
      };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
@@ -6149,7 +6155,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 0.25;0.11;0.1;0.1;0.1;0.1;0.11;0.11;0.11;0.11;
+0.1;0.11;0.11;0.11;      };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -6165,7 +6172,8 @@ LeabraProject .projects["test"] {
       width=0;
       ar {
        name=;
-      [0]       };
+      [14] 0.20999999;0.1;0.1;0.1;0.1;0.1;0.1;0.1;0.1;0.11;
+0.1;0.11;0.1;0.1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -6174,7 +6182,8 @@ LeabraProject .projects["test"] {
     keygen 4 0=0;
     row_indexes {
      name=;
-    [0]     };
+    [14] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -6890,7 +6899,7 @@ LeabraProject .projects["test"] {
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=0;
+      int_val=14;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6964,7 +6973,7 @@ LeabraProject .projects["test"] {
      ProgVar @["n_under_cnt"] {
       name="n_under_cnt";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7326,7 +7335,7 @@ LeabraProject .projects["test"] {
      };
      ForeachLoop @[3] {
       desc=;
-      flags=0;
+      flags=OFF;
       orig_prog_code="foreach(un in network.Layers.Input)";
       loop_code {
        name="ProgEl_List_131";
@@ -7691,7 +7700,7 @@ LeabraProject .projects["test"] {
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=5;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7733,7 +7742,7 @@ LeabraProject .projects["test"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=5;
+      int_val=6;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8154,7 +8163,7 @@ LeabraProject .projects["test"] {
      ProgVar @["phase_no"] {
       name="phase_no";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8457,7 +8466,7 @@ LeabraProject .projects["test"] {
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=20;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10556,17 +10565,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 6 0=0.001598295173607767;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.05008488893508911;
+     value 6 0=0.03989813104271889;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9984025359153748;
+     value 6 0=0.9984017014503479;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -10865,7 +10874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=13: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -10873,7 +10882,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=6.24978: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -10881,7 +10890,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=6: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_ext_rew"] {
@@ -10897,7 +10906,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=50: fix_max=0: max=50: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["epoch_time_tot"] {
@@ -11001,19 +11010,19 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=13: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
-	  plot_style=LINE;
+	  plot_style=LINE_AND_POINTS;
 	  negative_draw=0;
 	  negative_draw_z=1;
 	  line_width=2;
-	  point_size=MEDIUM;
+	  point_size=0.01;
 	  point_spacing=1;
 	  bar_space=0.2;
 	  bar_depth=0.01;
-	  label_spacing=-1;
+	  label_spacing=2;
 	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
@@ -11029,7 +11038,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=13: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -11046,7 +11055,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -11068,7 +11077,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=6.249776: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -11087,7 +11096,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=6: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -11130,7 +11139,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
@@ -11149,7 +11158,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=PLUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
@@ -11168,7 +11177,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=CROSS;
+	    point_style=PLUS;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
@@ -11187,7 +11196,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=STAR;
+	    point_style=CROSS;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
@@ -11206,7 +11215,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=MINUS;
+	    point_style=STAR;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
@@ -11282,7 +11291,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
@@ -11301,7 +11310,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=PLUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
@@ -11320,7 +11329,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=CROSS;
+	    point_style=PLUS;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
@@ -11339,7 +11348,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=STAR;
+	    point_style=CROSS;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
@@ -11358,7 +11367,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=MINUS;
+	    point_style=STAR;
 	    alt_y=0;
 	   };
 	  };
@@ -11370,7 +11379,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    name="EpochOutputData_Graph_err_1";
 	    m_data=NULL;
 	    m_transform=NULL;
-	    on=1;
+	    on=0;
 	    axis=Y;
 	    col_name="epoch_time_tot";
 	    is_string=0;
@@ -11852,7 +11861,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=67: y=24: z=2.333333: };
-	  max_size2d {x=179: y=30: z=1: };
+	  max_size2d {x=39: y=101: z=1: };
 	  eff_max_size {x=67: y=24: z=2.333333: };
 	  font_sizes {
 	   net_name=0.05;
@@ -12101,7 +12110,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=5: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=BAR;
@@ -12109,7 +12118,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  negative_draw=0;
 	  negative_draw_z=1;
 	  line_width=2;
-	  point_size=MEDIUM;
+	  point_size=0.01;
 	  point_spacing=1;
 	  bar_space=0.2;
 	  bar_depth=0.01;
@@ -12168,7 +12177,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -12230,7 +12239,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["TrialOutputData_Graph_plot_5"] {
@@ -12306,7 +12315,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=MINUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["TrialOutputData_Graph_plot_9"] {
@@ -12382,7 +12391,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["TrialOutputData_Graph_plot_13"] {
@@ -12458,7 +12467,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=MINUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	  };
@@ -14873,7 +14882,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04046858474612236;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -15541,7 +15550,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    sequence_init=DO_NOTHING;
    phase_max=2;
    time_inc=1;
-   cycle_max=50;
+   cycle_max=20;
    mid_minus_cycle=-1;
    min_cycles=0;
    min_cycles_phase2=0;
