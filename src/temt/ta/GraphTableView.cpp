@@ -2053,6 +2053,8 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
   float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
 
+  String svg_labels;
+
   if(render_svg) {
     svg_str << taSvg::Path(plv.color.color(), -1.0f,
                            true, plv.color.color()); // fill, color
@@ -2173,11 +2175,19 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
       String str = String(dat.y); // todo: could spec format..
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
                    str.chars());
+      if(render_svg) {
+        svg_labels << taSvg::Text(str, plt.x, plt.y - (.5f * label_font_size), plt.z,
+                                  plv.color.color(), label_font_size, taSvg::LEFT);
+      }
     }
   }
 
   if(render_svg) {
     svg_str << taSvg::PathEnd();
+
+    if(svg_labels.nonempty()) {
+      svg_str << svg_labels;
+    }
   }
 
   t3gl->finishBatch();
