@@ -24,7 +24,7 @@
 #endif
 
 #include <QStringList>
-#include <QTextEdit>
+#include <QTextBrowser>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QFile>
@@ -33,9 +33,9 @@
  *@author Houssem BDIOUI, modified extensively by Randall O'Reilly
  */
 
-class iConsole : public QTextEdit {
+class iConsole : public QTextBrowser {
 Q_OBJECT
-INHERITED(QTextEdit)
+INHERITED(QTextBrowser)
 public:
   //constructor
   iConsole(QWidget *parent = NULL, const char *name = NULL, bool initiInterceptor = true);
@@ -75,6 +75,7 @@ public slots:
   virtual void reset();
   virtual void exit();          // exit shell
   virtual void onQuit();        // used to notify the console that the application is quitting.
+  virtual void linkClicked(const QUrl & link);
 
 protected:
   // code that new specific implementation should override:

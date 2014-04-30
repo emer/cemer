@@ -673,11 +673,6 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
     + "() (path: " + pth + ")\n";
 
     // path and method are used for the user friendly message
-    // this is an attempt to make links clickable on console -- doesn't work 
-    // because console is plain text -- would need to be rich text -- not worth it..
-    // String path_method = "\n\nPath: <a href=\"ta:" + obj->GetPath() + "\">path</a>\n\nFrom: "
-    //   + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name + "()";
-
     String path_method = "\n\nPath: " + pth + "\n\nFrom: "
       + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name + "()";
     
@@ -1123,7 +1118,10 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
 bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
   if(!taMisc::interactive) pager = false;
   int pageln = 0;
-  String rmdr = str;
+  String rmdr = PathsToLinks(str);
+
+  const int min_dw = taMisc::display_width / 2;
+
 #if defined(DMEM_COMPILE)
   if(taMisc::dmem_nprocs > 1) {
     rmdr = "P" + String(taMisc::dmem_proc) + ": " + rmdr;
@@ -1149,6 +1147,24 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
         if (was_wrap) wrap_point -= 2;
 
         String curpt = longln.before(wrap_point);
+        if(curpt.contains("<a ") && longln.contains("<a href=") &&
+           longln.contains("</a>")) {
+          curpt = longln.through("</a>");
+          wrap_point = curpt.length();
+          int ref_st = curpt.index("<a href");
+          if(ref_st >= min_dw) {
+            wrap_point = ref_st;
+          }
+        }
+        else {
+          while(wrap_point > min_dw) {
+            char c = longln[wrap_point];
+            if(isspace(c))
+              break;
+            wrap_point--;
+          }
+        }
+        curpt = longln.before(wrap_point);
         longln = longln.from(wrap_point);
         if(was_wrap)
           curpt = "->" + curpt;
@@ -2195,18 +2211,6 @@ String taMisc::StringEnforceLen(const String& str, int len) {
   return rval;
 }
 
-String taMisc::RemoveVowels(const String& str) {
-  String rval;
-  int len = str.length();
-  for(int i=0; i<len; i++) {
-    char c = str[i];
-    char lc = tolower(c);
-    if(lc == 'a' || lc == 'e' || lc == 'i' || lc == 'o' || lc == 'u') continue;
-    rval.cat(c);
-  }
-  return rval;
-}
-
 String taMisc::ShortName(const String& name, int max_len, int seg_len, int rm_vowels_thr) {
   int ln = name.length();
   if(ln <= max_len) return name;
@@ -2249,6 +2253,55 @@ String taMisc::ShortName(const String& name, int max_len, int seg_len, int rm_vo
       String seg2 = nm.at(brks[1]+1, ln-brks[1]-1);
       rval.cat(StringMaxLen(seg2, mln));
     }
+  }
+  return rval;
+}
+
+String taMisc::RemoveVowels(const String& str) {
+  String rval;
+  int len = str.length();
+  for(int i=0; i<len; i++) {
+    char c = str[i];
+    char lc = tolower(c);
+    if(lc == 'a' || lc == 'e' || lc == 'i' || lc == 'o' || lc == 'u') continue;
+    rval.cat(c);
+  }
+  return rval;
+}
+
+String taMisc::PathsToLinks(const String& str) {
+  String rval;
+  int len = str.length();
+  int lenm1 = len-1;
+  bool prv_ws = true;           // allow at start
+  int pos = 0;
+  while(pos < len) {
+    char c = str[pos];
+    if(prv_ws && c == '.' && pos < lenm1) {    // now starting path
+      char n = str[pos+1];                     // lookahead for alpha
+      if(!isalpha(n)) {
+        rval.cat(c); pos++;
+        continue;
+      }
+      String path;
+      path.cat(c);
+      pos++;
+      while(pos < len) {
+        c = str[pos];
+        if(isspace(c)) break;
+        path.cat(c);
+        pos++;
+      }
+      String qpath = path;
+      qpath.gsub("\"", "%22");
+      rval << "<a href=\"ta:" << qpath << "\">" << path << "</a>";
+      path.cat(c);
+    }
+    else if(isspace(c)) {
+      prv_ws = true;
+    }
+    rval.cat(c);
+    pos++;
   }
   return rval;
 }

@@ -745,6 +745,8 @@ public:
   // #CAT_Utility return a shortened version of a full name -- looks for lower-upper case transitions, _'s as ways to segment names, then abbreviates segments to given segment len (only enforced if multiple segments) -- rm_vowels_thr is length above which RemoveVowels is called first
   static String RemoveVowels(const String& str);
   // #CAT_Utility remove vowels from given string -- useful for shortening while still producing legible text
+  static String PathsToLinks(const String& str);
+  // #CAT_Utility translate .path strings into href clickable links -- looks for anything with [whitespace].[chars] format to identify links
 
   static String StringCVar(const String& str);
   // #CAT_Utility make return string in a form that would be valid as a variable name in C (i.e., alpha + numeric (not at start) + _

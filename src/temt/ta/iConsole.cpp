@@ -49,6 +49,7 @@
 #include <QMimeData>
 #include <QTextDocumentFragment>
 #include <QClipboard>
+#include <QDesktopServices>
 
 //#include <QDebug>
 
@@ -129,7 +130,7 @@ void iConsole::getDisplayGeom() {
 
 //Clear the console
 void iConsole::clear() {
-  QTextEdit::clear();
+  inherited::clear();
   ext_select_on = false;
   getDisplayGeom();
   curPromptPos = 0;
@@ -139,6 +140,9 @@ void iConsole::clear() {
   waiting_for_key = false;
   key_response = 0;
   setAcceptRichText(false);     // just plain
+  setReadOnly(false);           // this determines if links are clickable
+  setOpenExternalLinks(false);
+  setOpenLinks(false);          // we do it ourselves b/c it doesn't seem to work otherwise
   displayPrompt(true);          // force
 }
 
@@ -162,7 +166,7 @@ void iConsole::onQuit() {
 
 //iConsole constructor (init the QTextEdit & the attributes)
 iConsole::iConsole(QWidget *parent, const char *name, bool initiInterceptor)
-  : QTextEdit(parent)
+  : inherited(parent)
   , cmdColor(Qt::blue)
   , errColor(Qt::red)
   , outColor(Qt::black)
@@ -174,6 +178,8 @@ iConsole::iConsole(QWidget *parent, const char *name, bool initiInterceptor)
 {
   //resets the console
   reset();
+
+  connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(linkClicked(const QUrl&)));
 
 #ifndef TA_OS_WIN
   if(initiInterceptor) {
@@ -368,7 +374,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
 
 void iConsole::resizeEvent(QResizeEvent* e) {
   getDisplayGeom();
-  QTextEdit::resizeEvent(e);
+  inherited::resizeEvent(e);
 }
 
 // Reimplemented key press event
@@ -427,7 +433,7 @@ void iConsole::keyPressEvent(QKeyEvent* e)
   }
   else if(e->key() == Qt::Key_Backspace) { // todo: trap other cases..
     if(cursorInCurrentCommand()) // don't backup into prompt
-      QTextEdit::keyPressEvent( e );
+      inherited::keyPressEvent( e );
     else
       e->accept();
   }
@@ -516,7 +522,7 @@ void iConsole::keyPressEvent(QKeyEvent* e)
   }
   else if((e->key() == Qt::Key_Y) && ctrl_pressed) {
     e->accept();
-    QTextEdit::paste();         // don't go to end first!
+    inherited::paste();         // don't go to end first!
     ext_select_on = false;
   }
   else if((e->key() == Qt::Key_W) && ctrl_pressed) {
@@ -530,7 +536,7 @@ void iConsole::keyPressEvent(QKeyEvent* e)
     e->accept();
   }
   else {
-    QTextEdit::keyPressEvent( e );
+    inherited::keyPressEvent( e );
   }
 
   // make sure we never go past prompt..
@@ -542,6 +548,7 @@ void iConsole::keyPressEvent(QKeyEvent* e)
 }
 
 void iConsole::mousePressEvent(QMouseEvent *e) {
+  setReadOnly(true);            // this is key for allowing links to be clicked
   inherited::mousePressEvent(e);
 }
 
@@ -551,6 +558,7 @@ void iConsole::mouseMoveEvent(QMouseEvent *e) {
 
 void iConsole::mouseReleaseEvent(QMouseEvent *e) {
   inherited::mouseReleaseEvent(e);
+  setReadOnly(false);           // undo the RO for link clicking
 #if defined(TA_OS_MAC) || defined(TA_OS_WIN)
   if(e->button() & Qt::MidButton) {
     paste();
@@ -684,7 +692,7 @@ int iConsole::setStdLogfile(QString fileName) {
 //when clicking outside of the edition zone
 void iConsole::paste() {
   gotoEnd();
-  QTextEdit::paste();
+  inherited::paste();
 }
 
 ///////////////////////////////////////////////////////
@@ -756,6 +764,12 @@ QString iConsole::findIntersection(const QStringList& lst) {
     isect = StringIntersect(isect, lst[i]);
   }
   return isect;
+}
+
+void iConsole::linkClicked(const QUrl & link) {
+  // QString path = link.path(); // will only be part before #, if any
+  // outputLine(path, true);
+  QDesktopServices::openUrl(link);
 }
 
 //default implementation: command always complete
