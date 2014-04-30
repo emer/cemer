@@ -97,7 +97,7 @@ macro(CREATE_MAKETA_COMMAND infile outfile)
   add_custom_command(
     OUTPUT ${outfile}
     COMMAND ${MAKETA_CMD} ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
-    DEPENDS ${infile} maketa
+#    DEPENDS ${infile} maketa
   )
   # NOTE: added maketa as a dependency here -- touching most core files, especially
   # taBase.h, will trigger a rebuild of maketa, which then will ensure that all 

@@ -1,8 +1,5 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6570
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7059
 LeabraProject .projects["LeabraBlank"] { 
- taBase_Group @.templates = [0] {
- };
-
  Doc_Group @.docs = [0] {
  };
 
@@ -14,7 +11,7 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
 
- SelectEdit_Group @.edits = [1] {
+ ControlPanel_Group @.ctrl_panels = [1] {
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -330,11 +327,6 @@ LeabraProject .projects["LeabraBlank"] {
   wiki=;
   url=;
  };
- templates {
-  name="taBase_Group_0";
-  el_typ=taBase;
-  el_def=0;
- };
  docs {
   name="Doc_Group_1";
   el_typ=taDoc;
@@ -359,9 +351,9 @@ LeabraProject .projects["LeabraBlank"] {
    auto_open=1;
   };
  };
- edits {
+ ctrl_panels {
   name="SelectEdit_Group_0";
-  el_typ=ClusterRun;
+  el_typ=ControlPanel;
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
@@ -1969,20 +1961,24 @@ LeabraProject .projects["LeabraBlank"] {
   name="DataTable_Group_0";
   el_typ=DataTable;
   el_def=0;
+  save_tables=1;
   DataTable_Group @.gp["InputData"] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["OutputData"] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["AnalysisData"] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
  };
  data_proc {
@@ -2070,7 +2066,7 @@ LeabraProject .projects["LeabraBlank"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9994666576385498;
+     value 6 0=0.9989344477653503;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -2085,7 +2081,7 @@ LeabraProject .projects["LeabraBlank"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -2267,17 +2263,17 @@ LeabraProject .projects["LeabraBlank"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007640067953616381;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04053333401679993;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7376909852027893;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

@@ -9,7 +9,7 @@
 
 // The following is an example class -- replace with actual object name you want to use
 
-TypeDef_Of(Template); // this declares the TA_Template type access object that
+tTypeDef_Of(Template); // this declares the TA_Template type access object that
 // will be generated automatically by maketa -- provides type info for gui and script
 // interface to automatically interact with your new objects
 
@@ -54,7 +54,7 @@ private:
   Note: if you rename your plugin you MUST fix up this class name accordingly.
 */
 
-TypeDef_Of(TemplatePluginState);
+tTypeDef_Of(TemplatePluginState);
 
 class TEMPLATE_API TemplatePluginState : public taFBase {
   // this class is used to hold and save/restore user options and internal state for the TemplatePlugin 

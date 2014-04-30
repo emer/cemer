@@ -10,6 +10,9 @@
 //  Template
 /////////////////////////////////////////////////////
 
+// this is needed to define functions declared by TA_BASEFUNS in the header:
+TA_BASEFUNS_CTORS_DEFN(Template);
+
 void Template::Initialize() {
 // TODO: delete following and add your own member initializations
   a = 2;

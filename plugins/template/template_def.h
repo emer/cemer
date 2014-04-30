@@ -14,8 +14,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-#include "ta_stdef.h"
+#include <ta_def.h>
 
 // The following ifdef block is the standard way of creating macros for exporting from
 // a Windows dll. You must decorate your classes and static functions with the
@@ -27,14 +26,18 @@
 // links to this plugin. This way any other project whose source files include this file see 
 // TEMPLATE_API functions as being imported from a dll, whereas this dll sees symbols
 // defined with this macro as being exported.
-#if ((defined(_WIN32) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
-# ifdef template_EXPORTS
-#   define TEMPLATE_API __declspec(dllexport)
-# else
-#   define TEMPLATE_API __declspec(dllimport)
-# endif
+#if ((defined(EMERGENT_DLL)) && (defined(TA_OS_WIN) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
+  #ifdef template_EXPORTS
+  #define TEMPLATE_API __declspec(dllexport)
+  #else
+  #define TEMPLATE_API __declspec(dllimport)
+  #endif
+  #define tTypeDef_Of(T) extern TEMPLATE_API TypeDef TA_ ## T
+  #define tTypeInst_Of(T) extern TEMPLATE_API T* TAI_ ## T
 #else 
-# define TEMPLATE_API
+#define TEMPLATE_API
+#define tTypeDef_Of(T) extern TypeDef TA_ ## T
+#define tTypeInst_Of(T) extern T* TAI_ ## T
 #endif
 
 #undef QT_SHARED                             // Already defined in config.h.

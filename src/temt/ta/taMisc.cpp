@@ -667,11 +667,19 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
   
   if(obj) {
     // objinfo is the old style msg now just used for no_gui console output
+    String pth = obj->GetPathNames();
+
     String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
-    + "() (path: " + obj->GetPathNames() + ")\n";
+    + "() (path: " + pth + ")\n";
 
     // path and method are used for the user friendly message
-    String path_method = "\n\nPath: " + obj->GetPathNames() + "\n\nFrom: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name + "()";
+    // this is an attempt to make links clickable on console -- doesn't work 
+    // because console is plain text -- would need to be rich text -- not worth it..
+    // String path_method = "\n\nPath: <a href=\"ta:" + pth + "\">path</a>\n\nFrom: "
+    //   + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name + "()";
+
+    String path_method = "\n\nPath: " + pth + "\n\nFrom: "
+      + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name + "()";
     
     if((obj == prv_obj) && (prv_fun == fun_name) && (prv_a == a)) {
       // nogui version for repeat!

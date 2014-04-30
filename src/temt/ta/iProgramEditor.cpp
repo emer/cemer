@@ -262,9 +262,11 @@ bool iProgramEditor::ShowMember(MemberDef* md) {
 }
 
 void iProgramEditor::Base_Add() {
+  if(!base) return;
   base->AddSigClient(this);
   // get colors for type
   bool ok;
+  if(!base) return;             // could go away somehow again..
   const iColor bgc = base->GetEditColorInherit(ok);
   if (ok) setEditBgColor(bgc);
   else defEditBgColor();
