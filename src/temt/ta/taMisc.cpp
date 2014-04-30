@@ -675,7 +675,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
     // path and method are used for the user friendly message
     // this is an attempt to make links clickable on console -- doesn't work 
     // because console is plain text -- would need to be rich text -- not worth it..
-    // String path_method = "\n\nPath: <a href=\"ta:" + pth + "\">path</a>\n\nFrom: "
+    // String path_method = "\n\nPath: <a href=\"ta:" + obj->GetPath() + "\">path</a>\n\nFrom: "
     //   + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name + "()";
 
     String path_method = "\n\nPath: " + pth + "\n\nFrom: "
