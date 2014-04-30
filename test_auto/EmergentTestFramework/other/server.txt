@@ -83,11 +83,11 @@ JSON Format Error
 
 Unknown Command Error
     ${output} =              Run Command Wait      {"command": "UnknownCommand"}
-    Status Error Match       ${output}             2         "Unknown command: UnknownCommand"
+    Status Error Match       ${output}             2         Unknown command: UnknownCommand
 
 No Command Error
     ${output} =              Run Command Wait      {}
-    Status Error Match       ${output}             2         "Unknown command: "
+    Status Error Match       ${output}             2         Unknown command: \
 
 Unknown Parameter Error
     ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
@@ -125,11 +125,11 @@ SetVar Boolean Arg
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": true}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "no_prompts" }
-    Status OK Match Result     ${output}             ${true}
+    Status OK Equal Result     ${output}             true
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": false}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "no_prompts" }
-    Status OK Match Result     ${output}             ${false}
+    Status OK Equal Result     ${output}             false
 
 #
 # Program SetVar / GetVar errors
@@ -158,18 +158,6 @@ SetVar Missing Value Error
 GetVar Has Value Error
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
     Status Error Match         ${output}             3         Unknown parameter: var_value
-
-SetVar Int Data Type Error
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "max_epoch", "var_value": "NotANumber"}
-    Status Error Match         ${output}             2         Invalid data type
-
-SetVar Real Data Type Error
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": "NotANumber"}
-    Status Error Match         ${output}             2         Invalid data type
-
-SetVar Boolean Data Type Error
-    ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": "NotABoolean"}
-    Status Error Match         ${output}             2         Invalid data type
 
 #
 # Reading data tables - normal operation 
@@ -297,6 +285,17 @@ AppendData
     Json String Should Match     ${output}             /result/columns/3/result/0   mytrial
     Json Value Should Equal      ${output}             /result/columns/7/result/0   10.2
 
+SetData Add Column
+    ${output} =                  Run Command Wait      {"command": "SetData", "create": true, "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [10] }, { "name": "trial_name", "values": ["mytrial2"] }, { "name": "sse", "values": [10.3] }, { "name": "new_col", "values": ["new_col_value"] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+    Status OK Has Result         ${output}
+    Json Value Should Equal      ${output}             /result/columns/0/result/0   8
+    Json Value Should Equal      ${output}             /result/columns/1/result/0   10
+    Json String Should Match     ${output}             /result/columns/3/result/0   mytrial2
+    Json Value Should Equal      ${output}             /result/columns/7/result/0   10.3
+    Json String Should Match     ${output}             /result/columns/9/result/0   new_col_value
+
 SetData Matrix Cell
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
     Status OK No Result          ${output}
@@ -367,11 +366,15 @@ GetDataMatrixCell Column Not Found Error
 
 AppendData Column Not Found Error
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  AppendData: column not found
+    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
 
-SetData Column Not Found Error
+SetData Column Not Found No Create Error
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  SetData: column not found
+    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
+
+SetData Column Not Found Create False Error
+    ${output} =                Run Command Wait      {"command": "SetData", "create": false, "table": "TrialOutputData", "data": { "columns": [ { "name": "NotAColumn", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
+    Status Error Match         ${output}             7                  Column name 'NotAColumn' not found in data table 'TrialOutputData'
 
 # Set Data Matrix error
 
@@ -383,11 +386,11 @@ SetData Matrix Cell Error
 
 AppendData Bad Data Format (data)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             5                  Unknown parameter: dater
+    Status Error Match         ${output}             4                  Unknown parameter: dater
 
 AppendData Bad Data Format (columns)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             2                  Invalid data table format
+    Status Error Match         ${output}             7                  Columns member not found in data
 
 AppendData Bad Data Format (name)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
@@ -399,37 +402,11 @@ SetData Bad Data Format (data)
 
 SetData Bad Data Format (columns)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "corumns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             7                  Invalid data table format
+    Status Error Match         ${output}             7                  Columns member not found in data
 
 SetData Bad Data Format (name)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             2                  Invalid data table format
-
-# Data type errors for Append / SetData
-
-AppendData Bad Data Type (string v int)
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": ["StringNotInt"] } ] } }
-    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
-
-AppendData Bad Data Type (float v int)
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7.4] } ] } }
-    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
-
-AppendData Bad Data Type (string v float)
-    ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "sse", "values": ["StringNotFloat"] } ] } }
-    Status Error Match         ${output}             2                  Invalid data type for column 'sse'
-
-SetData Bad Data Type (string v int)
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": ["StringNotInt"] } ] } }
-    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
-
-SetData Bad Data Type (float v int)
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7.4] } ] } }
-    Status Error Match         ${output}             2                  Invalid data type for column 'batch'
-
-SetData Bad Data Type (string v float)
-    ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "sse", "values": ["StringNotFloat"] } ] } }
-    Status Error Match         ${output}             2                  Invalid data type for column 'sse'
 
 # RemoveData Errors
 
@@ -523,6 +500,7 @@ Shutdown Emergent
     Close All Connections
     Sleep                2 sec
     ${output} =          Terminate Process    ${pid}       kill=true
+    Sleep                5 sec
 
 Run Command Wait
     [Arguments]        ${command}
