@@ -294,6 +294,22 @@ void TemtClient::cmdSetData() {
     if (!name_params.GetVal("cell").isNull()) {
       cell = name_params.GetVal("cell").toInt();
     }
+    bool create = false;  // default - don't create new columns
+    if (!name_params.GetVal("create").isNull()) {
+      create = name_params.GetVal("create").toBool();
+    }
+    
+    if (!ValidateColumnsMember(tableData)) {  // first check columns existence
+      SendError("Columns member not found in data", TemtClient::RUNTIME);
+      return;
+    }
+
+    if (create == false) {  // check that columns exist
+      if (!ValidateColumnNames(tab, tableData)) {
+        return;  // send error done by validator
+      }
+    }
+    
     bool result = tab->SetDataFromJSON(tableData, row, cell);  // row -1 for append
     if (result) {
       SendOk();
@@ -512,7 +528,7 @@ void TemtClient::cmdAppendData() {
       return;
     }
     if (!ValidateColumnNames(tab, tableData)) {  // next check column names
-      return;
+      return;  // send error done by validator
     }
   
     result = tab->SetDataFromJSON(tableData, -1);  // true for append
@@ -1118,6 +1134,9 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "cell") {
         name_params.SetVal("cell", i->as_int());  // first cell to get/set - based on flat indexing
       }
+      else if (node_name == "create") {
+        name_params.SetVal("create", i->as_bool());  // ok to create new columns - default is no
+      }
       else {
         String err_msg = "Unknown parameter: " + node_name;
         SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
@@ -1483,37 +1502,5 @@ bool TemtClient::ValidateColumnName(DataTable* dt, const JSONNode& aCol) {
     else
       return false;
   }
-  return true;
-}
-
-bool TemtClient::ValidateMemberNames(const JSONNode& aCol) {
-  //  JSONNode theValues;
-  //  JSONNode theDimensions;
-  //  String columnName("");
-  //  DataCol::ValType columnType = VT_STRING;
-  //  DataCol* dc;
-//  bool isMatrix = false;
-//  MatrixGeom mg;
-//  
-//  JSONNode::const_iterator columnData = aCol.begin();
-//  while (columnData != aCol.end()) {
-//    std::string node_name = columnData->name();
-//    if (node_name == "name") {
-//      columnName = columnData->as_string().c_str();
-//    }
-//    else if (node_name == "type") {
-//      columnType = StrToValType((String)columnData->as_string().c_str());
-//    }
-//    else if (node_name == "values") {
-//      theValues = columnData->as_array();
-//    }
-//    else if (node_name == "matrix") {
-//      isMatrix = columnData->as_bool();
-//    }
-//    else if (node_name == "dimensions") {
-//      theDimensions = columnData->as_array();
-//    }
-//    columnData++;
-//  }
   return true;
 }
