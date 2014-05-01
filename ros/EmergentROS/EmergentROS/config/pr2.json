@@ -1,0 +1,38 @@
+{
+    "filetype": "emergent-ros",
+    "version": 2,
+    "emergent-ip": "127.0.0.1",
+    "emergent-port": 5360,
+    "ros-uri": "ws://162.243.149.154:9090",
+    "subscribe": [
+        {
+            "topic": "/gazebo/model_states",
+            "message": "com.ecortex.emergent.ros.sampledata.ModelStatesMessage",
+            "table": "ModelStates",
+            "program": "",
+            "period": 1000
+        }
+    ], 
+    "publish": [
+        {
+            "topic": "/gazebo/set_model_state",
+            "message": "com.ecortex.emergent.ros.sampledata.ModelStateMessage",
+            "table": "ModelState",
+            "program": "PreModelState",
+            "period": 100000
+        }
+    ],
+    "service": [
+        {
+            "service": "/gazebo/set_model_state",
+            "requestmessage": "com.ecortex.emergent.ros.sampledata.SetModelStateRequestMessage",
+            "requesttable": "ModelState",
+            "requestprogram": "PreModelState",
+            "responsemessage": "com.ecortex.emergent.ros.sampledata.ServiceResultMessage",
+            "responsetable": "SetModelStateResult",
+            "responseprogram": "",
+            "period": 1000
+        }
+    ]            
+}
+

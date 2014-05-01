@@ -1,0 +1,1 @@
+ssh emergent@162.243.149.154 rostopic pub -1 /emergent/reward emergent_msgs/Reward $1

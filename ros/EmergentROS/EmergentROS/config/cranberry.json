@@ -1,0 +1,34 @@
+{
+    "filetype": "emergent-ros",
+    "version": 2,
+    "emergent-ip": "127.0.0.1",
+    "emergent-port": 5360,
+    "ros-uri": "ws://162.243.149.154:9090",
+    "subscribe": [
+        {
+            "topic": "/smartphone/camera/image/compressed",
+            "message": "com.ecortex.emergent.ros.rowsync.CameraMessage",
+            "table": "Eye",
+            "program": "PresentImage",
+            "period": 500
+        },
+        {
+            "topic": "/emergent/reward",
+            "message": "com.ecortex.emergent.ros.rowsync.RewardMessage",
+            "table": "Reward",
+            "program": "PresentReward",
+            "period": 500
+        }
+    ], 
+    "publish": [
+        {
+            "topic": "/emergent/motion",
+            "message": "com.ecortex.emergent.ros.rowsync.MotionCommandMessage",
+            "table": "Motion",
+            "program": "FetchMotion",
+            "period": 5000
+        }
+    ],
+}
+
+

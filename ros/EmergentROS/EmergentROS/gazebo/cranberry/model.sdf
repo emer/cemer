@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <model name="cranberry">
+    <include>
+       <uri>model://create</uri>
+    </include>
+
+    <include>
+       <uri>model://smartphone</uri>
+       <pose>0 0 0.15 0 0 0</pose>
+    </include>
+
+    <link name="base-link">
+      <collision name="collision-base">
+        <geometry>
+          <cylinder>
+            <radius>0.15</radius>
+            <length>0.07</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name='create_collision' type='revolute'>
+      <parent>create::base</parent>
+      <child>base-link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+      </axis>
+    </joint>
+
+    <joint name='create_phone' type='revolute'>
+      <parent>create::base</parent>
+      <child>smartphone::link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+      </axis>
+    </joint>
+
+  </model>
+</sdf>

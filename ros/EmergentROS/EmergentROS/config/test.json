@@ -1,0 +1,38 @@
+{
+    "filetype": "emergent-ros",
+    "version": 1,
+    "emergent-ip": "127.0.0.1",
+    "emergent-port": 5360,
+    "ros-uri": "ws://162.243.149.154:9090",
+    "subscribe": [
+        {
+            "topic": "/emergent/Pose",
+            "message": "com.ecortex.emergent.ros.sampledata.PoseMessage",
+            "table": "PoseSubscribe",
+            "program": ""
+        }
+    ],
+            
+    "publish": [
+        {
+            "topic": "/emergent/Pose",
+            "message": "com.ecortex.emergent.ros.sampledata.PoseMessage",
+            "table": "PosePublish",
+            "program": "PrePose",
+            "period": 100
+        }
+    ],
+            
+    "service": [
+        {
+            "service": "/rosapi/topic_type",
+            "requestmessage": "com.ecortex.emergent.ros.sampledata.TopicMessage",
+            "requesttable": "Topic",
+            "requestprogram": "PreTopic",
+            "responsemessage": "com.ecortex.emergent.ros.sampledata.TypeMessage",
+            "responsetable": "Type",
+            "responseprogram": "",
+            "period": 100
+        }
+    ]            
+}

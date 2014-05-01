@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <model name="smartphone">
+    <link name="link">
+      <pose>0.005 0.065 0.035 0 0 0</pose>
+      <inertial>
+        <mass>0.2</mass>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.01 0.13 0.07</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.01 0.13 0.07</size>
+          </box>
+        </geometry>
+      </visual>
+      <sensor name="camera" type="camera">
+        <camera>
+          <horizontal_fov>0.864</horizontal_fov>
+          <image>
+            <width>340</width>
+            <height>200</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+        </camera>
+        <plugin name="smartphone_camera_ros" filename="libgazebo_ros_camera.so">
+          <alwaysOn>1</alwaysOn>
+          <updateRate>1.0</updateRate>
+          <cameraName>SmartphoneCamera</cameraName>
+          <imageTopicName>/smartphone/camera/image</imageTopicName>
+          <cameraInfoTopicName>/smartphone/camera/info</cameraInfoTopicName>
+          <frameName>phone</frameName>
+        </plugin>
+        <always_on>1</always_on>
+        <update_rate>1</update_rate>
+        <visualize>true</visualize>
+      </sensor>
+    </link>
+  </model>
+</sdf>
