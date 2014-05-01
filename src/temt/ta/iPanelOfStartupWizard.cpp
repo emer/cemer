@@ -148,6 +148,8 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 iPanelOfStartupWizard::~iPanelOfStartupWizard() {
   delete new_proj_chs_dlg;
   delete new_proj_chs;
+  delete rec_proj_chs_dlg;
+  delete rec_proj_chs;
 }
 
 void iPanelOfStartupWizard::NewProjSelected() {
