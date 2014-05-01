@@ -51,7 +51,7 @@ public:
   virtual bool	LoadImage(const String& fname);
   // #BUTTON #CAT_File #FILE_DIALOG_LOAD #EXT_png,jpg load the image from given file name (leave file name blank to get a chooser)
   virtual bool  LoadImageFromBase64(const QByteArray &data);
-  // #CAT_Image loads an image passed as a QByteArray, the client server code uses this
+  // #CAT_Image #IGNORE loads an image passed as a QByteArray, the client server code uses this
   virtual bool	SaveImage(const String& fname);
   // #BUTTON #CAT_File #FILE_DIALOG_SAVE #EXT_png,jpg save the image to given file name (leave file name blank to get a chooser) -- uses extension to determine format
 
