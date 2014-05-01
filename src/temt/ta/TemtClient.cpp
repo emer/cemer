@@ -19,6 +19,7 @@
 #include <ProgVar>
 #include <TemtServer>
 #include <DataTable>
+#include <taImage.h>
 
 #include <taMisc>
 #include <tabMisc>
@@ -26,6 +27,9 @@
 
 #include <QTcpSocket>
 #include <QTimer>
+#include <QFile>
+#include <QByteArray>
+#include <QString>
 
 #include <sstream>
 
@@ -1137,6 +1141,9 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "create") {
         name_params.SetVal("create", i->as_bool());  // ok to create new columns - default is no
       }
+      else if (node_name == "image_data") {
+        name_params.SetVal("image_data", i->as_string().c_str());  // ok to create new columns - default is no
+      }
       else {
         String err_msg = "Unknown parameter: " + node_name;
         SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
@@ -1192,6 +1199,9 @@ void TemtClient::RunCommand(const String& cmd) {
   }
   else if (cmd == "SetVar") {
     cmdSetVar();
+  }
+  else if (cmd == "SetImage") {
+    cmdSetImage();
   }
   else
   {
@@ -1503,4 +1513,38 @@ bool TemtClient::ValidateColumnName(DataTable* dt, const JSONNode& aCol) {
       return false;
   }
   return true;
+}
+
+void TemtClient::cmdSetImage() {
+  if (msgFormat == TemtClient::NATIVE) {
+    SendError("SetImage only implemented for JSON");
+  }
+  if (msgFormat == TemtClient::JSON) {
+    String pnm = name_params.GetVal("program").toString();
+    Program* prog = GetAssertProgram(pnm);
+    if (!prog)
+      return;
+    
+    String var_name = name_params.GetVal("var_name").toString();
+    if (var_name.empty()) {
+      SendError("var_name missing", TemtClient::NOT_FOUND);
+      return;
+    }
+    if (!prog->HasVar(var_name)) {
+      SendError("Var '" + var_name + "' not found", TemtClient::NOT_FOUND);
+      return;
+    }
+    
+    taImage* img = dynamic_cast<taImage*>(prog->objs.FindName(var_name));
+    QString image_data = name_params.GetVal("image_data").toString();
+    QByteArray ba;
+    ba.append(image_data);
+    bool good_result = img->LoadImageFromBase64(ba);
+    if (good_result) {
+      SendOk();
+    }
+    else {
+      SendError("SetImage: failed to create image", TemtClient::RUNTIME);
+    }
+  }
 }

@@ -18,6 +18,8 @@
 #include <float_Matrix>
 #include <DataTable>
 
+#include <QByteArray>
+
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taImage);
@@ -55,6 +57,17 @@ bool taImage::LoadImage(const String& fname) {
   }
   ImageChanged();
   return true;
+}
+
+bool taImage::LoadImageFromBase64(const QByteArray &data) {
+  bool rval = true;
+  ImageChanging();
+  QByteArray by = QByteArray::fromBase64(data);
+  if (!q_img.loadFromData(by)) {
+    rval = false;
+  }
+  ImageChanged();
+  return rval;
 }
 
 bool taImage::SaveImage(const String& fname) {
@@ -108,9 +121,9 @@ bool taImage::ImageToMatrix_grey(float_Matrix& img_data) {
   }
   int ht = q_img.height();
   int wd = q_img.width();
-
+  
   img_data.SetGeom(2, wd, ht);
-
+  
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
       QRgb pix = q_img.pixel(x, y);
@@ -127,9 +140,9 @@ bool taImage::ImageToMatrix_rgb(float_Matrix& rgb_data) {
   }
   int ht = q_img.height();
   int wd = q_img.width();
-
+  
   rgb_data.SetGeom(3, wd, ht, 3); // r,g,b = 3rd dim
-
+  
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
       QRgb pix = q_img.pixel(x, y);
@@ -150,9 +163,9 @@ bool taImage::ImageToMatrix_rgba(float_Matrix& rgba_data) {
   }
   int ht = q_img.height();
   int wd = q_img.width();
-
+  
   rgba_data.SetGeom(3, wd, ht, 4); // r,g,b,a
-
+  
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
       QRgb pix = q_img.pixel(x, y);
@@ -174,10 +187,10 @@ bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
     return false;
   int wd = img_data.dim(0);
   int ht = img_data.dim(1);
-
+  
   ImageChanging();
   q_img = QImage(wd, ht, QImage::Format_RGB32);
-
+  
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
       int gval = (int)(img_data.FastEl2d(x, y) * 255.0f);
@@ -194,10 +207,10 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
     return false;
   int wd = rgb_data.dim(0);
   int ht = rgb_data.dim(1);
-
+  
   ImageChanging();
   q_img = QImage(wd, ht, QImage::Format_RGB32);
-
+  
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
       int rval = (int)(rgb_data.FastEl3d(x, y, 0) * 255.0f);
@@ -214,24 +227,24 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
 bool taImage::ImageToDataCell(DataTable* dt, const Variant& col, int row) {
   if(TestError(q_img.isNull(), "ImageToDataCell", "Null image")) return false;
   if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
-
+  
   int ht = q_img.height();
   int wd = q_img.width();
-
+  
   DataCol* da = dt->GetColData(col);
   if(!da) return false;
   bool isfloat = da->isFloat();
-
+  
   if(TestError(da->cell_dims() < 2, "ImageToDataCell", "cell dimensions less than 2 -- must have at least 2 dimensions for greyscale, 3 for color")) return false;
-
+  
   wd = MIN(wd, da->GetCellGeom(0));
   ht = MIN(ht, da->GetCellGeom(1));
-
+  
   taMatrixPtr mat; mat = da->GetValAsMatrix(row);
   if(!mat) return false;
-
+  
   bool rval = true;
-
+  
   DataUpdate(true);
   if(mat->dims() == 2) {
     for(int y=0; y<ht; y++) {
@@ -267,35 +280,35 @@ bool taImage::ImageToDataCell(DataTable* dt, const Variant& col, int row) {
       }
     }
   }
-
+  
   DataUpdate(false);
-
+  
   return rval;
 }
 
 bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
   if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
-
+  
   int ht = q_img.height();
   int wd = q_img.width();
-
+  
   DataCol* da = dt->GetColData(col);
   if(!da) return false;
   bool isfloat = da->isFloat();
-
+  
   if(TestError(da->cell_dims() < 2, "ImageFromDataCell", "cell dimensions less than 2 -- must have at least 2 dimensions for greyscale, 3 for color")) return false;
-
+  
   wd = da->GetCellGeom(0);
   ht = da->GetCellGeom(1);
-
+  
   ImageChanging();
   q_img = QImage(wd, ht, QImage::Format_RGB32);
-
+  
   taMatrixPtr mat; mat = da->GetValAsMatrix(row);
   if(!mat) return false;
-
+  
   bool rval = true;
-
+  
   DataUpdate(true);
   if(mat->dims() == 2) {
     for(int y=0; y<ht; y++) {
@@ -333,10 +346,10 @@ bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
       }
     }
   }
-
+  
   ImageChanged();
   DataUpdate(false);
-
+  
   return rval;
 }
 
@@ -351,14 +364,14 @@ bool taImage::ConfigDataColName(DataTable* dt, const String& col_nm, ValType val
   }
   int ht = q_img.height();
   int wd = q_img.width();
-
+  
   if(rgb)
     dt->FindMakeColMatrix(col_nm, val_type, 3, wd, ht, 3);
   else
     dt->FindMakeColMatrix(col_nm, val_type, 2, wd, ht);
-
+  
   dt->SetColUserData("IMAGE", true, col_nm);
-
+  
   return true;
 }
 
