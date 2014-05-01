@@ -41,7 +41,7 @@ class iTreeViewItem; //
 class iPanelViewer; //
 class ISelectableHost; //
 class iPanelBase; //
-class QSplitter; //
+class iSplitter; //
 class QSignalMapper; //
 class iRect; //
 
@@ -80,7 +80,7 @@ public:
   iAction_List          actions; // our own list of all created actions
   iBrowseHistory*       brow_hist;
   taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
-  QSplitter*            body;           // #IGNORE body of the window
+  iSplitter*            body;           // #IGNORE body of the window
   
   QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value

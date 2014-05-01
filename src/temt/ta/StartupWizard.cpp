@@ -13,27 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiViewTypeOfWizard_h
-#define taiViewTypeOfWizard_h 1
+#include "StartupWizard.h"
 
-// parent includes:
-#include <taiViewTypeOftaOBase>
+TA_BASEFUNS_CTORS_DEFN(StartupWizard);
 
-// member includes:
-
-// declare all other types mentioned but not required to include:
-
-
-taTypeDef_Of(taiViewTypeOfWizard);
-
-class TA_API taiViewTypeOfWizard: public taiViewTypeOftaOBase {
-  TAI_TYPEBASE_SUBCLASS(taiViewTypeOfWizard, taiViewTypeOftaOBase) //
-public:
-  int          BidForView(TypeDef*) override;
-  void         Initialize() {}
-  void         Destroy() {}
-protected:
-  void         CreateDataPanel_impl(taiSigLink* dl_) override;
-};
-
-#endif // taiViewTypeOfWizard_h
+void StartupWizard::Initialize() {
+  auto_open = true;
+  name = "StartupWizard";
+}

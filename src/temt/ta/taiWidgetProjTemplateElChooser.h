@@ -36,7 +36,7 @@ public:
 protected:
   void         BuildCategories_impl() override;
   int          BuildChooser_0(iDialogItemChooser* ic, taList_impl* top_lst,
-                                       QTreeWidgetItem* top_item) override;
+                              QTreeWidgetItem* top_item) override;
 };
 
 #endif // taiWidgetProjTemplateElChooser_h

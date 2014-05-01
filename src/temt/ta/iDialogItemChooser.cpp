@@ -32,6 +32,7 @@
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QKeyEvent>
+#include <QFrame>
 
 
 const String iDialogItemChooser::cat_none("(none)");
@@ -65,6 +66,7 @@ void iDialogItemChooser::init(const String& caption_) {
   m_client = NULL;
   m_view = -1; // until set to valid value
   m_cat_filter = 0; // default is all
+  is_dialog = true; // default
   setModal(true);
   setWindowTitle(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
@@ -90,7 +92,9 @@ void iDialogItemChooser::accept() {
   }
   m_selItem = itm;
 
-  inherited::accept();  // Do this BEFORE the new choose dialog!!! jar 10/27/13
+  if(is_dialog) {
+    inherited::accept();  // Do this BEFORE the new choose dialog!!! jar 10/27/13
+  }
 
   if(itm) {
     bool new_fun = itm->data(0, NewFunRole).toBool();
@@ -114,6 +118,10 @@ void iDialogItemChooser::accept() {
     }
   }
   m_client = NULL;
+
+  if(!is_dialog) {
+    inherited::accept();        // this signals accepted() and we want it at the end..
+  }
 }
 
 QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_cat,
@@ -211,6 +219,12 @@ bool iDialogItemChooser::Choose(taiWidgetItemChooser* client_) {
   // NOTE: current semantics is simple: always rebuild each show
   // more complex caching would require flags etc. to track whether the
   // inputs to the item changed -- cpus are so fast now, this may not be worth it
+  Activate(client_);
+  is_dialog = true;             // yep we're a dialog now..
+  return (exec() == iDialog::Accepted);
+}
+
+void iDialogItemChooser::Activate(taiWidgetItemChooser* client_) {
   m_client = client_;
   if(client_->filter_start_txt.nonempty())
     init_filter = String("^") + client_->filter_start_txt;
@@ -218,7 +232,7 @@ bool iDialogItemChooser::Choose(taiWidgetItemChooser* client_) {
     init_filter = "^";
   SetInitView(m_client->sel(), client_->filter_start_txt);
   setSelObj(m_client->sel());
-  return (exec() == iDialog::Accepted);
+  is_dialog = false;            // if we only get this far, then it is not a dialog
 }
 
 void iDialogItemChooser::Clear() {
@@ -255,7 +269,15 @@ void iDialogItemChooser::cmbCat_currentIndexChanged(int index) {
 void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   m_fully_up = false;
   m_client = client_; // revoked at end
-  layOuter = new QVBoxLayout(this);
+
+  QVBoxLayout* blay = new QVBoxLayout(this);
+  blay->setMargin(0);
+  blay->setSpacing(0);
+  body = new QFrame(this);
+  body->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
+  blay->addWidget(body);
+
+  layOuter = new QVBoxLayout(body);
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c);
   QHBoxLayout* layFilter = NULL; // only if needed
@@ -266,9 +288,9 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
     if (!layFilter) {
       layFilter = new QHBoxLayout(); layFilter->setMargin(0); // sp ok
     }
-    lbl = new QLabel("category", this);
+    lbl = new QLabel("category", body);
     layFilter->addWidget(lbl);
-    cmbCat = new QComboBox(this);
+    cmbCat = new QComboBox(body);
     cmbCat->addItem("(all)");
     String s;
     for (int i = 0; i < client_->catCount(); ++i) {
@@ -286,9 +308,9 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
     if (!layFilter) {
       layFilter = new QHBoxLayout(); layFilter->setMargin(0); // sp ok
     }
-    lbl = new QLabel("view", this);
+    lbl = new QLabel("view", body);
     layFilter->addWidget(lbl);
-    cmbView = new QComboBox(this);
+    cmbView = new QComboBox(body);
     for (int i = 0; i < client_->viewCount(); ++i) {
       cmbView->addItem(client_->viewText(i));
     }
@@ -300,18 +322,18 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
 
   QHBoxLayout* lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c);
-  lbl = new QLabel("search", this);
+  lbl = new QLabel("search", body);
   lbl->setToolTip("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^");
   lay->addWidget(lbl);
   lay->addSpacing(taiM->vsep_c);
-  filter = new iLineEdit(this);
+  filter = new iLineEdit(body);
   filter->setToolTip(lbl->toolTip());
   lay->addWidget(filter, 1);
   lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);
 
-  items = new iTreeWidget(this);
-  items->setSortingEnabled(true);
+  items = new iTreeWidget(body);
+  // items->setSortingEnabled(true);
   items->setAllColumnsShowFocus(true);
   items->setSelectionMode(QAbstractItemView::SingleSelection);
   items->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -319,11 +341,11 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
 
   lay = new QHBoxLayout();
   lay->addStretch();
-  btnOk = new QPushButton("&Ok", this);
+  btnOk = new QPushButton("&Ok", body);
   btnOk->setDefault(true);
   lay->addWidget(btnOk);
   lay->addSpacing(taiM->vsep_c);
-  btnCancel = new QPushButton("&Cancel", this);
+  btnCancel = new QPushButton("&Cancel", body);
   lay->addWidget(btnCancel);
   layOuter->addLayout(lay);
 

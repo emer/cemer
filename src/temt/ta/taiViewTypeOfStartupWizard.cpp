@@ -13,27 +13,28 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef taiViewTypeOfWizard_h
-#define taiViewTypeOfWizard_h 1
+#include "taiViewTypeOfStartupWizard.h"
+#include <StartupWizard>
+#include <iPanelOfStartupWizard>
 
-// parent includes:
-#include <taiViewTypeOftaOBase>
+int taiViewTypeOfStartupWizard::BidForView(TypeDef* td) {
+  if(td->InheritsFrom(&TA_StartupWizard))
+    return (inherited::BidForView(td)+2);
+  return 0;
+}
 
-// member includes:
+void taiViewTypeOfStartupWizard::CreateDataPanel_impl(taiSigLink* dl_)
+{
+  // doc view is default
+  iPanelOfStartupWizard* cp = new iPanelOfStartupWizard(dl_);
+  // cp->setUpdateOnShow(false); // no way -- user must refresh
+  // taWizard* wiz = (taWizard*)dl_->data();
+  // cp->setDoc(&(wiz->wiz_doc));
+  DataPanelCreated(cp);
 
-// declare all other types mentioned but not required to include:
+  // then standard properties
+  inherited::CreateDataPanel_impl(dl_);
+}
 
 
-taTypeDef_Of(taiViewTypeOfWizard);
 
-class TA_API taiViewTypeOfWizard: public taiViewTypeOftaOBase {
-  TAI_TYPEBASE_SUBCLASS(taiViewTypeOfWizard, taiViewTypeOftaOBase) //
-public:
-  int          BidForView(TypeDef*) override;
-  void         Initialize() {}
-  void         Destroy() {}
-protected:
-  void         CreateDataPanel_impl(taiSigLink* dl_) override;
-};
-
-#endif // taiViewTypeOfWizard_h

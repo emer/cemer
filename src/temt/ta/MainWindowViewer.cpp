@@ -31,7 +31,7 @@
 #include <tabMisc>
 #include <taRootBase>
 
-#include <QSplitter>
+#include <iSplitter>
 #include <QApplication>
 
 TA_BASEFUNS_CTORS_DEFN(MainWindowViewer);
@@ -280,7 +280,7 @@ bool MainWindowViewer::GetWinState() {
   frames.GetWinState();
   docks.GetWinState();
   // relative sizes of panels
-  QSplitter* spl = widget()->body;
+  iSplitter* spl = widget()->body;
   SetUserData("view_splitter_state",
     String(spl->saveState().toBase64().constData()));
   return true;
@@ -294,7 +294,7 @@ bool MainWindowViewer::SetWinState() {
   String str = GetUserDataAsString("view_splitter_state");
   if (str.nonempty()) {
     QByteArray ba = QByteArray::fromBase64(QByteArray(str.chars()));
-    QSplitter* spl = widget()->body;
+    iSplitter* spl = widget()->body;
     spl->restoreState(ba);
   }
   return true;
@@ -530,7 +530,19 @@ void MainWindowViewer::ResolveChanges(CancelOp& cancel_op) {
 
 void MainWindowViewer::Show_impl() {
   SetWinName();
-  QWidget* wid = widget();
+  iMainWindowViewer* wid = widget();
+  if(isRoot() && wid->body) {
+    iSize sz = taiM->scrn_s;
+    sz.set((int)(.8f * sz.width()), (int)(0.5f * (float)sz.height()));
+    //    resize(sz.w, sz.h);
+
+    QList<int> cur_sz = wid->body->sizes();
+    if(cur_sz.count() == 2) {     // should be
+      cur_sz[0] = (int)(.1f * sz.w); // don't take up so much room with tree..
+      cur_sz[1] = (int)(.9f * sz.w);
+      wid->body->setSizes(cur_sz);
+    }
+  }
   wid->raise();
   qApp->setActiveWindow(wid);
 }

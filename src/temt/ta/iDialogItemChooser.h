@@ -33,6 +33,7 @@ class QComboBox; //
 class iTreeWidget; //
 class QTreeWidgetItem; //
 class QLineEdit; //
+class QFrame; //
 
 
 class TA_API iDialogItemChooser : public iDialog {
@@ -67,6 +68,7 @@ public:
   int                   view() const {return m_view;}
   void                  setView(int value, bool force = false);
 
+  QFrame*               body;
   QVBoxLayout*          layOuter;
   QComboBox*              cmbView;
   QComboBox*              cmbCat; //note: item 0 is "all" (i.e., no filtering)
@@ -77,6 +79,8 @@ public:
 
   virtual bool          Choose(taiWidgetItemChooser* client);
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
+  virtual void          Activate(taiWidgetItemChooser* client);
+  // if using this outside of a dialog, by grabbing body, then this activates it (equivalent to calling Choose)
 
   virtual void          Clear();        // reset data
   void                  SetFilter(const QString& filt); // apply a filter
@@ -100,9 +104,10 @@ protected:
   QTreeWidgetItem*      m_selItem; // cached for showEvent
   int                   m_view;
   int                   m_cat_filter;
-  taiWidgetItemChooser*       m_client; // NOTE: only valid in Constr and between Choose...accept/reject
+  taiWidgetItemChooser* m_client; // NOTE: only valid in Constr and between Choose...accept/reject
   QString               last_filter; // for checking if anything changed
   QTimer*               timFilter; // timer for filter changes
+  bool                  is_dialog; // actually runing as a dialog -- otherwise body is just used in another widget but there is no popup dialog
 
   void                  showEvent(QShowEvent* event); //override
 

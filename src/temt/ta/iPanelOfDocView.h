@@ -64,10 +64,8 @@ public:
   virtual void          setDoc(taDoc* doc); // only called if changes after creation
 
   taDoc*                doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
-  String       panel_type() const override {return "Doc";}
+  String                panel_type() const override {return "Doc";}
 
-//  int                EditAction(int ea) override;
-//  int                GetEditActions() override; // after a change in selection, update the available edit actions (cut, copy, etc.)
 
   QWidget*     firstTabFocusWidget() override;
 
@@ -80,8 +78,9 @@ public: // ISigLinkClient interface
   void         SigLinkDestroying(taSigLink* dl) override;
   bool         ignoreSigEmit() const override;
 protected:
-  taDoc*                m_doc; // ref managed through link; we just put ptr here to detect change
-  bool                  is_loading;
+  taDoc*       m_doc; // ref managed through link; we just put ptr here to detect change
+  bool         is_loading;
+
   void         SigEmit_impl(int sls, void* op1, void* op2) override;
   void         UpdatePanel_impl() override;
   bool         eventFilter(QObject *obj, QEvent *event) override;

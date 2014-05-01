@@ -79,17 +79,17 @@ public:
   bool                  m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
 
 #ifdef TA_GUI
-  taiWidgetActions_List*         ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
-  taiWidgetMenuBar*           menu; // #IGNORE menu bar -- note: partially managed by the window
-  taiWidgetActions*           cur_menu; // #IGNORE for building menu
+  taiWidgetActions_List* ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
+  taiWidgetMenuBar*     menu; // #IGNORE menu bar -- note: partially managed by the window
+  taiWidgetActions*     cur_menu; // #IGNORE for building menu
 #endif
   ToolBar_List          toolbars; // #EXPERT
   FrameViewer_List      frames; // the frames shown in the center splitter area
   DockViewer_List       docks; // #EXPERT currently docked windows -- removed if they undock
 
   bool                  isDialog() const {return m_is_dialog;}
-  bool         isRoot() const override {return m_is_root;}
-  bool         isRootLevelView() const override {return true;}
+  bool                  isRoot() const override {return m_is_root;}
+  bool                  isRootLevelView() const override {return true;}
   bool                  isProjBrowser() const;
     // main proj window with tree browser (always t for 3-pane guy)
   bool                  isProjViewer() const {return m_is_proj_viewer;}

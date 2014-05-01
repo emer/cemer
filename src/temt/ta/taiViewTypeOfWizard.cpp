@@ -18,10 +18,12 @@
 #include <taWizard>
 
 taTypeDef_Of(PluginWizard);
+taTypeDef_Of(StartupWizard);
 
 
 int taiViewTypeOfWizard::BidForView(TypeDef* td) {
-  if(td->InheritsFrom(&TA_taWizard) && !td->InheritsFrom(&TA_PluginWizard))
+  if(td->InheritsFrom(&TA_taWizard) && !td->InheritsFrom(&TA_PluginWizard)
+     && !td->InheritsFrom(&TA_StartupWizard))
     return (inherited::BidForView(td) +1);
   return 0;
 }

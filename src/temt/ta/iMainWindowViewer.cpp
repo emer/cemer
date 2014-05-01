@@ -183,8 +183,10 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   if (at_index < 0) {
     body->addWidget(fv);
     at_index = body->count() - 1;
-  } else
+  }
+  else {
     body->insertWidget(at_index, fv);
+  }
   fv->m_window = this;
   //TODO: this stretch thing isn't working -- replace with sizing
   body->setStretchFactor(at_index, fv->stretchFactor());

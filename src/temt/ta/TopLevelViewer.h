@@ -31,20 +31,20 @@ class TA_API TopLevelViewer : public taViewer {
 INHERITED(taViewer)
 public:
     // can be provided to put msg up on closing
-  bool         deleteOnWinClose() const override;
+  bool                  deleteOnWinClose() const override;
   bool                  openOnLoad() const {return false;}
-    // 'true' if the viewer should be opened after loading (note: still must check if topLevel)
-    // TODO: define impl somehow
+  // 'true' if the viewer should be opened after loading (note: still must check if topLevel)
   virtual bool          isRoot() const {return false;} // only true for main proj window
   virtual bool          isTopLevel() const {return true;} // to differentiate, when it could be either
 
   virtual void          ViewWindow();
-    // #MENU #MENU_CONTEXT #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
-  virtual void          Iconify();              // #MENU iconify the window (saves iconified state)
-  virtual void          DeIconify();            // deiconify the window (saves deiconified state)
-//  virtual void                ScriptWinState()                { winState().ScriptWinState(cout); }
-    // #NO_SCRIPT generate script code to position the window
-  virtual void          SetWinName();           // #IGNORE set the window name
+  // #MENU #MENU_CONTEXT #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
+  virtual void          Iconify();
+  // #MENU iconify the window (saves iconified state)
+  virtual void          DeIconify();
+  // deiconify the window (saves deiconified state)
+  virtual void          SetWinName();
+  // #IGNORE set the window name
 
   void         WindowClosing(CancelOp& cancel_op) override;
 
@@ -52,11 +52,11 @@ public:
   void  CutLinks();
   TA_DATAVIEWFUNS(TopLevelViewer, taViewer) //
 protected:
-  String                win_name;
+  String       win_name;
 
   void         GetWinState_impl() override;
   void         SetWinState_impl() override;
-  virtual void          MakeWinName_impl() {} // set win_name, impl in subs
+  virtual void MakeWinName_impl() {} // set win_name, impl in subs
 
 private:
   void  Copy_(const TopLevelViewer& cp);

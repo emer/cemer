@@ -151,16 +151,14 @@ void TopLevelViewer::ViewWindow() {
   if (!taMisc::gui_active) return;
   if (dvwidget()) {
     DeIconify();
-  } else {
+  }
+  else {
     // if not owned yet, put us in the global guy
     if (!GetOwner() && tabMisc::root)
       tabMisc::root->viewers_tmp.Add(this); // does InitLinks
     Constr(); // NO parent
 //     Constr(QApplication::activeWindow()); // parent to current active
     Render();
-
-//    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
-//      SetWinState(left, top, width, height);
   }
   Show();
 }

@@ -36,6 +36,7 @@
 #include <taDoc>
 
 taTypeDef_Of(PluginWizard);
+taTypeDef_Of(StartupWizard);
 
 #include <taMisc>
 #include <tabMisc>
@@ -407,7 +408,7 @@ void taRootBase::AddTemplates() {
 
 void taRootBase::AddDocs() {
   taDoc* doc = FindMakeDoc("web_home", "", taMisc::web_home);
-  doc->auto_open = true;
+  doc->auto_open = false; // true;
 }
 
 taDoc* taRootBase::FindMakeDoc(const String& nm, const String& wiki_nm, const String& web_url) {
@@ -527,6 +528,7 @@ void taRootBase::MakeWizards() {
 
 void taRootBase::MakeWizards_impl() {
   // plugins
+  wizards.New(1, &TA_StartupWizard, "StartupWizard");
   wizards.New(1, &TA_PluginWizard, "PluginWizard");
 }
 
@@ -1591,8 +1593,8 @@ bool taRootBase::Startup_MakeMainWin() {
     vwr = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
   }
   // try to size fairly large to avoid scrollbars
-  vwr->SetUserData("view_win_wd", 0.7f);
-  float ht = 0.5f; // no console
+  vwr->SetUserData("view_win_wd", 0.8f);
+  float ht = 0.6f; // no console
 //  iSize s(1024, 480); // no console  (note: values obtained empirically)
   if((console_type == taMisc::CT_GUI) && (console_options & taMisc::CO_GUI_DOCK)) {
     ht = 0.8f; // console
@@ -1616,7 +1618,7 @@ bool taRootBase::Startup_MakeMainWin() {
   // needs extra time to process window opening
   taMisc::ProcessEvents();
   tabMisc::root->docs.AutoEdit();
-  //  tabMisc::root->wizards.AutoEdit();
+  tabMisc::root->wizards.AutoEdit();
 
   //TODO: following prob not necessary
   //  if (taMisc::gui_active) taiMisc::OpenWindows();

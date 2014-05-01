@@ -1145,6 +1145,7 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
         // (possibly) two characters for the beginning-of line wrap marker.
         int wrap_point = taMisc::display_width - 2;
         if (was_wrap) wrap_point -= 2;
+        wrap_point = MIN(wrap_point, longln.length());
 
         String curpt = longln.before(wrap_point);
         if(curpt.contains("<a ") && longln.contains("<a href=") &&
@@ -1157,19 +1158,25 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
           }
         }
         else {
-          while(wrap_point > min_dw) {
-            char c = longln[wrap_point];
-            if(isspace(c))
-              break;
+          if(wrap_point < longln.length() && isspace(longln[wrap_point])) {
+            // good to go..
+          }
+          else if(wrap_point > min_dw) {
             wrap_point--;
+            while(wrap_point > min_dw) {
+              char c = longln[wrap_point];
+              if(isspace(c))
+                break;
+              wrap_point--;
+            }
           }
         }
         curpt = longln.before(wrap_point);
         longln = longln.from(wrap_point);
         if(was_wrap)
-          curpt = "->" + curpt;
-        if(longln.nonempty())
-          curpt += "->";
+          curpt = "  " + curpt; // just indent -- no confusing wrap symbols
+        // if(longln.nonempty())
+        //   curpt += "->";
         if(!ConsoleOutputLine(curpt, err, pager, pageln))
           return false;         // user hit quit
         was_wrap = true;

@@ -490,6 +490,7 @@ set(ta_HEADS_MAKETA_NOMOC
 
   PluginWizard.h
   TestWizard.h
+  StartupWizard.h
 
   TemtClient.h
   TemtClient_List.h
@@ -642,6 +643,7 @@ set(ta_HEADS_MAKETA_NOMOC
   taiViewTypeOfDataTable.h
   taiViewTypeOfTypeInfo.h
   taiViewTypeOfDoc.h
+  taiViewTypeOfStartupWizard.h
   taiViewTypeOfWizard.h
   taiViewTypeOfControlPanel.h
   taiViewTypeOfProgram.h
@@ -800,6 +802,7 @@ set(ta_HEADS_MAKETA_MOC
 
   iPanelOfDocView.h
   iPanelOfDocEdit.h
+  iPanelOfStartupWizard.h
 
   iPanelOfMatrix.h
   iPanelOfDataTable.h
@@ -1060,6 +1063,7 @@ set(ta_HEADS_NOMAKETA_NOMOC
   taiWidgetEnumStaticChooser.h
   taiWidgetEnumTypeDefChooser.h
 
+  taiWidgetStringArrayChooser.h
   taiWidgetListElChooser_base.h
   taiWidgetListElChooser.h
   taiWidgetGroupElChooser.h
@@ -1591,6 +1595,7 @@ set(ta_SRCS_MAKETA
 
   PluginWizard.cpp
   TestWizard.cpp
+  StartupWizard.cpp
 
   TemtClient.cpp
   TemtClient_List.cpp
@@ -1743,6 +1748,7 @@ set(ta_SRCS_MAKETA
   taiViewTypeOfDataTable.cpp
   taiViewTypeOfTypeInfo.cpp
   taiViewTypeOfDoc.cpp
+  taiViewTypeOfStartupWizard.cpp
   taiViewTypeOfWizard.cpp
   taiViewTypeOfControlPanel.cpp
   taiViewTypeOfProgram.cpp
@@ -1894,6 +1900,7 @@ set(ta_SRCS_MAKETA
 
   iPanelOfDocView.cpp
   iPanelOfDocEdit.cpp
+  iPanelOfStartupWizard.cpp
 
   iPanelOfMatrix.cpp
   iPanelOfDataTable.cpp
@@ -2146,6 +2153,7 @@ set(ta_SRCS_NOMAKETA
   taiWidgetEnumStaticChooser.cpp
   taiWidgetEnumTypeDefChooser.cpp
 
+  taiWidgetStringArrayChooser.cpp
   taiWidgetListElChooser_base.cpp
   taiWidgetListElChooser.cpp
   taiWidgetGroupElChooser.cpp
