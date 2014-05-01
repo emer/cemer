@@ -54,6 +54,8 @@ void Template::MyCodeMethod() {
 //  TemplatePluginState	
 /////////////////////////////////////////////////////
 
+TA_BASEFUNS_CTORS_DEFN(TemplatePluginState);
+
 TemplatePluginState* TemplatePluginState::instance() {
   if (tabMisc::root == NULL) return NULL;
   TemplatePluginState* rval = (TemplatePluginState*)

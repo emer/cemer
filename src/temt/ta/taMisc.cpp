@@ -2293,19 +2293,25 @@ String taMisc::PathsToLinks(const String& str) {
       String path;
       path.cat(c);
       pos++;
+      prv_ws = false;
       while(pos < len) {
         c = str[pos];
-        if(isspace(c)) break;
+        if(isspace(c)) {
+          break;
+        }
         path.cat(c);
         pos++;
       }
       String qpath = path;
       qpath.gsub("\"", "%22");
       rval << "<a href=\"ta:" << qpath << "\">" << path << "</a>";
-      path.cat(c);
+      if(pos >= len) break;
     }
     else if(isspace(c)) {
       prv_ws = true;
+    }
+    else {
+      prv_ws = false;
     }
     rval.cat(c);
     pos++;
