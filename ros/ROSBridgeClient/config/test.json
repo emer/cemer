@@ -1,0 +1,12 @@
+{
+    "filetype": "ros",
+    "version": 1,
+    "uri": "ws://162.243.238.80:9090",
+    "subscribe": [
+        ["/clock", "Clock"],
+        ["/othertopic", "OtherTopic"]
+    ],
+    "advertise": [
+        ["/publishtopic", "msgs/PublishMsg"]
+    ],
+}
