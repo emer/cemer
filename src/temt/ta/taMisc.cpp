@@ -2563,7 +2563,7 @@ String taMisc::ExpandFilePath(const String& path, taProject* proj) {
 String taMisc::CompressFilePath(const String& path, taProject* proj) {
   String ep = path;
   String hp = GetHomePath();
-  if(ep.startsWith('~')) {
+  if(ep.startsWith(hp)) {
     ep = String("~") + ep.after(hp);
   }
   if(proj) {                    // only avail if project provided

@@ -24,6 +24,7 @@
 #include <QImage>
 #else
 class QImage; //
+class QByteArray; //
 #endif
 
 // declare all other types mentioned but not required to include:

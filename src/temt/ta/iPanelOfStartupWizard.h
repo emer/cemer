@@ -42,6 +42,7 @@ public:
   taiWidgetStringArrayChooser*  rec_proj_chs; // recent project chooser
   iDialogItemChooser*           rec_proj_chs_dlg; // dialog for chooser
   String*                       rec_proj_nm;     // chosen project
+  String_Array                  recent_files;    // compressed version of list
 
   String       panel_type() const override {return "StartupWizard";}
 

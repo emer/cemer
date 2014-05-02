@@ -1281,7 +1281,7 @@ void iMainWindowViewer::fileOpenRecent_aboutToShow() {
 
   // Populate with recent files.
   for (int i = 0; i < tabMisc::root->recent_files.size; ++i) {
-    String filename = tabMisc::root->recent_files[i];
+    String filename = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
     
     fileOpenRecentMenu->AddItem(filename, iAction::var_act,
       this, SLOT(fileOpenFile(const Variant&)), filename);
@@ -1291,7 +1291,7 @@ void iMainWindowViewer::fileOpenRecent_aboutToShow() {
 }
 
 void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
-  String fname = fname_.toString();
+  String fname = taMisc::ExpandFilePath(fname_.toString());
   // check if already open
   taProject* proj = NULL;
   // canonicalize name, for comparison to open projects

@@ -32,6 +32,7 @@
 #include <BuiltinTypeDefs>
 #include <iTreeWidget>
 
+#include <taMisc>
 
 iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 :inherited(dl_) // usual case: we dynamically set the link, via setDoc
@@ -94,11 +95,16 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   hb->addStretch();
   lay_rp->addLayout(hb);
 
+  int nrf = tabMisc::root->recent_files.size;
+  recent_files.SetSize(nrf);
+  for(int i=0; i<nrf; i++) {
+    recent_files[i] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
+  }
+
   rec_proj_nm = NULL;
   rec_proj_chs = new taiWidgetStringArrayChooser(&TA_taString,
                                                  NULL, NULL, NULL, 0); // last is flags
-  rec_proj_chs->GetImage(&(tabMisc::root->recent_files), 
-                           rec_proj_nm);
+  rec_proj_chs->GetImage(&(recent_files), rec_proj_nm);
 
   rec_proj_chs->BuildCategories(); // for subtypes that use categories
   chs_title = rec_proj_chs->titleText();
@@ -167,7 +173,8 @@ void iPanelOfStartupWizard::RecProjSelected() {
       if (!(vwr && vwr->isRoot())) continue;
       iMainWindowViewer* imwv = vwr->widget();
       if(!imwv) continue;
-      imwv->fileOpenFile(*rec_proj_nm);
+      String rfn = taMisc::ExpandFilePath(*rec_proj_nm);
+      imwv->fileOpenFile(rfn);
       break;
     }
   }

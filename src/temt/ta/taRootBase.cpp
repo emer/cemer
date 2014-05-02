@@ -114,6 +114,8 @@ void taRootBase::Initialize() {
   console_type = taMisc::console_type;
   console_options = taMisc::console_options;
   openProject = false;
+  rootview_pos.SetXY(0.0f, 0.0f);
+  rootview_size.SetXY(0.9f, 0.6f);
 #ifdef TA_OS_LINUX
   fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif
@@ -259,7 +261,8 @@ bool taRootBase::AddRecentFile_impl(const String& value) {
   if (idx == 0) return false; // already at top, no need to save either!
   else if (idx > 0) {
     recent_files.MoveIdx(idx, 0);
-  } else {
+  }
+  else {
     // not there; if full, then nuke a guy
     if (recent_files.size >= taMisc::num_recent_files)
       recent_files.SetSize(taMisc::num_recent_files - 1);
@@ -302,6 +305,24 @@ bool taRootBase::AddRecentPath_impl(const String& value) {
 int taRootBase::Save() {
   if (in_init) return false; // no spurious, and also suppresses for dmem
   ++taFiler::no_save_last_fname;
+
+  // save the view state info into us..
+  if(taMisc::gui_active) {
+    for (int i = 0; i < tabMisc::root->viewers.size; ++i) {
+      MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(tabMisc::root->viewers.FastEl(i));
+      if (!(vwr && vwr->isRoot())) continue;
+      vwr->GetWinState();
+      float lft = vwr->GetUserDataDef("view_win_lft", 0.0f).toFloat();
+      float top = vwr->GetUserDataDef("view_win_top", 0.0f).toFloat();
+      float wd = vwr->GetUserDataDef("view_win_wd", 1.0f).toFloat();
+      float ht = vwr->GetUserDataDef("view_win_ht", 1.0f).toFloat();
+      rootview_pos.SetXY(lft, top);
+      rootview_size.SetXY(wd, ht);
+      rootview_splits = vwr->GetUserDataAsString("view_splitter_state");
+      iMainWindowViewer* imwv = vwr->widget();
+    }
+  }
+
   int rval = inherited::Save();
   --taFiler::no_save_last_fname;
   return rval;
@@ -1587,21 +1608,20 @@ bool taRootBase::Startup_MakeMainWin() {
   // create the default application window
   MainWindowViewer* vwr;
   if(tabMisc::root->viewers.size >= 1) {
-    vwr = (MainWindowViewer*)tabMisc::root->viewers[0];
+    vwr = (MainWindowViewer*)tabMisc::root->viewers[0]; // this shouldn't happen..
   }
   else {
     vwr = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
+    vwr->SetUserData("view_win_lft", tabMisc::root->rootview_pos.x);
+    vwr->SetUserData("view_win_top", tabMisc::root->rootview_pos.y);
+    vwr->SetUserData("view_win_wd", tabMisc::root->rootview_size.x);
+    vwr->SetUserData("view_win_ht", tabMisc::root->rootview_size.y);
+    vwr->SetUserData("view_splitter_state", tabMisc::root->rootview_splits);
+    if((console_type == taMisc::CT_GUI) && (console_options & taMisc::CO_GUI_DOCK)) {
+      ConsoleDockViewer* cdv = new ConsoleDockViewer;
+      vwr->docks.Add(cdv);
+    }
   }
-  // try to size fairly large to avoid scrollbars
-  vwr->SetUserData("view_win_wd", 0.8f);
-  float ht = 0.6f; // no console
-//  iSize s(1024, 480); // no console  (note: values obtained empirically)
-  if((console_type == taMisc::CT_GUI) && (console_options & taMisc::CO_GUI_DOCK)) {
-    ht = 0.8f; // console
-    ConsoleDockViewer* cdv = new ConsoleDockViewer;
-    vwr->docks.Add(cdv);
-  }
-  vwr->SetUserData("view_win_ht", ht);
   vwr->ViewWindow();
 
   // TODO: 'bw' stands for base window??

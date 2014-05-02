@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7031
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7086
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [2] {
   taDoc @["Matrix_css"] { };
@@ -10665,7 +10665,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.001043841359205544;
+     value 6 0=0.0005327650578692555;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -10675,7 +10675,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.993215024471283;
+     value 6 0=0.9930740594863892;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -11046,7 +11046,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  negative_draw=0;
 	  negative_draw_z=1;
 	  line_width=2;
-	  point_size=MEDIUM;
+	  point_size=0.01;
 	  point_spacing=1;
 	  bar_space=0.2;
 	  bar_depth=0.01;
@@ -11167,7 +11167,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
@@ -11243,7 +11243,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=MINUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
@@ -11319,7 +11319,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
@@ -11395,7 +11395,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=MINUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	  };
@@ -11869,7 +11869,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04331941530108452;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -12047,8 +12047,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	ff=1;
 	fb=0.5;
 	self_fb=0;
-	fbx=0;
-	infl=0.3;
 	dt=0.7;
 	up_immed=0;
 	ff0=0.1;
@@ -12088,8 +12086,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ff=1;
       fb=0.5;
       self_fb=0;
-      fbx=0;
-      infl=0.3;
       dt=0.7;
       up_immed=0;
       ff0=0.1;

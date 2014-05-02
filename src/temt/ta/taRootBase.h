@@ -32,6 +32,7 @@
 #include <String_Array>
 #include <char_Array>
 #include <taVector2i>
+#include <taVector2f>
 #include <ContextFlag>
 
 // declare all other types mentioned but not required to include:
@@ -66,6 +67,9 @@ public:
   String_Array          recent_files;   // #NO_SHOW recently loaded files
   String_Array          recent_paths;   // #NO_SHOW recently used paths
   String_Array          sidebar_paths;  // #NO_SHOW for the file chooser dialog -- sidebar paths that are saved and reloaded
+  taVector2f            rootview_pos;   // #NO_SHOW position for the root viewer
+  taVector2f            rootview_size;   // #NO_SHOW size for the root viewer
+  String                rootview_splits; // #NO_SHOW splitter config in root viewer
   char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
   taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
 
@@ -80,7 +84,7 @@ public:
   // #MENU #MENU_ON_Object get information/copyright notice
   virtual void  SaveAll();
   // saves all the projects
-  void WindowShowHook() override;
+  void          WindowShowHook() override;
 
   void          AddRecentFile(const String& value, bool no_save = false); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   void          ClearRecentFiles();
@@ -180,7 +184,8 @@ public:
 
   int           SavePluginState(); // save current state for plugins in user data
   int           LoadPluginState(); // load state for plugins from user data
-  int   Save();
+  int           Save() override;
+
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(taRootBase)

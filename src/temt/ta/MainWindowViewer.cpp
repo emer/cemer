@@ -297,6 +297,21 @@ bool MainWindowViewer::SetWinState() {
     iSplitter* spl = widget()->body;
     spl->restoreState(ba);
   }
+  else {
+    if(isRoot()) {
+      iSplitter* spl = widget()->body;
+      iSize sz = taiM->scrn_s;
+      sz.set((int)(.8f * sz.width()), (int)(0.5f * (float)sz.height()));
+      //    resize(sz.w, sz.h);
+      QList<int> cur_sz = spl->sizes();
+      if(cur_sz.count() == 2) {     // should be
+        cur_sz[0] = (int)(.1f * sz.w); // don't take up so much room with tree..
+        cur_sz[1] = (int)(.9f * sz.w);
+        spl->setSizes(cur_sz);
+      }
+    }
+  }
+
   return true;
 }
 
@@ -531,18 +546,6 @@ void MainWindowViewer::ResolveChanges(CancelOp& cancel_op) {
 void MainWindowViewer::Show_impl() {
   SetWinName();
   iMainWindowViewer* wid = widget();
-  if(isRoot() && wid->body) {
-    iSize sz = taiM->scrn_s;
-    sz.set((int)(.8f * sz.width()), (int)(0.5f * (float)sz.height()));
-    //    resize(sz.w, sz.h);
-
-    QList<int> cur_sz = wid->body->sizes();
-    if(cur_sz.count() == 2) {     // should be
-      cur_sz[0] = (int)(.1f * sz.w); // don't take up so much room with tree..
-      cur_sz[1] = (int)(.9f * sz.w);
-      wid->body->setSizes(cur_sz);
-    }
-  }
   wid->raise();
   qApp->setActiveWindow(wid);
 }
