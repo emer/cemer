@@ -19,13 +19,13 @@ TA_BASEFUNS_CTORS_DEFN(taWizard);
 
 void taWizard::Initialize() {
   auto_open = true;
-  SetUserData("NO_CLIP", true);
   SetBaseFlag(NAME_READONLY);
 }
 
 void taWizard::InitLinks() {
   inherited::InitLinks();
   wiz_doc.SetName(name);        // same name as us..
+  SetUserData("NO_CLIP", true);
   RenderWizDoc();
 }
 
