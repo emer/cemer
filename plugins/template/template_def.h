@@ -32,12 +32,12 @@
   #else
   #define TEMPLATE_API __declspec(dllimport)
   #endif
-  #define tTypeDef_Of(T) extern TEMPLATE_API TypeDef TA_ ## T
-  #define tTypeInst_Of(T) extern TEMPLATE_API T* TAI_ ## T
+  #define pTypeDef_Of(T) extern TEMPLATE_API TypeDef TA_ ## T
+  #define pTypeInst_Of(T) extern TEMPLATE_API T* TAI_ ## T
 #else 
 #define TEMPLATE_API
-#define tTypeDef_Of(T) extern TypeDef TA_ ## T
-#define tTypeInst_Of(T) extern T* TAI_ ## T
+#define pTypeDef_Of(T) extern TypeDef TA_ ## T
+#define pTypeInst_Of(T) extern T* TAI_ ## T
 #endif
 
 #undef QT_SHARED                             // Already defined in config.h.
