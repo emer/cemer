@@ -40,4 +40,7 @@ const char* TemplatePlugin::url() {
   return "@EMERGENT_PLUGIN_URL@";
 }
  
+#if (QT_VERSION >= 0x050000)
+#else
 Q_EXPORT_PLUGIN2(template, TemplatePlugin)
+#endif

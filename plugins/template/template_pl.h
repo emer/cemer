@@ -27,6 +27,9 @@ class TEMPLATE_API TemplatePlugin : public QObject,
 { // #NO_CSS #NO_MEMBERS
   Q_OBJECT
 #ifndef __MAKETA__
+#if (QT_VERSION >= 0x050000)
+  Q_PLUGIN_METADATA(IID "@EMERGENT_PLUGIN_UNIQUEID@")
+#endif
   // Tells Qt which interfaces are implemented by this class
   Q_INTERFACES(IPlugin)
 #endif

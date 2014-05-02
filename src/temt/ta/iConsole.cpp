@@ -139,7 +139,7 @@ void iConsole::clear() {
   contPager = false;
   waiting_for_key = false;
   key_response = 0;
-  setAcceptRichText(true);     // just plain
+  setAcceptRichText(false);     // just plain
   setReadOnly(false);           // this determines if links are clickable
   setOpenExternalLinks(false);
   setOpenLinks(false);          // we do it ourselves b/c it doesn't seem to work otherwise

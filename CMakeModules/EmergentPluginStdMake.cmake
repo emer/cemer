@@ -4,7 +4,11 @@
 # If you have more advanced needs, you can instead look at this file
 # and copy the commands in here instead and modify them to suit your needs.
 
-QT4_WRAP_CPP(plugin_SRCS_MOC ${plugin_HEADS_MOC})
+if (QT_USE_5)
+  qt5_wrap_cpp(plugin_SRCS_MOC ${plugin_HEADS_MOC})
+else (QT_USE_5)
+  QT4_WRAP_CPP(plugin_SRCS_MOC ${plugin_HEADS_MOC})
+endif (QT_USE_5)
 
 # this sets up system to scan header files for type information using maketa
 MAKETA_WRAP_H(plugin_SRCS_MAKETA ${plugin_HEADS_MAKETA} OPTIONS plugin)

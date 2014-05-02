@@ -380,6 +380,16 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
       cmake_cmd += "-DEXTRA_SUFFIX=" + extra_suffix + " ";
     }
 
+#if (QT_VERSION >= 0x050000)
+    cmake_cmd += "-DQT_USE_5=ON -DQTDIR=$QTDIR ";
+#else
+    cmake_cmd += "-DQT_USE_4=ON -DQTDIR=$QTDIR ";
+#endif
+
+#if defined(USE_SSE8)
+    cmake_cmd += "-DCMAKE_CXX_FLAGS=-DUSE_SSE8 ";
+#endif
+
     if(system_plugin)
       cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
 #ifdef TA_OS_WIN
