@@ -27,6 +27,7 @@
 #include <taiMisc>
 #include <iRect>
 #include <QIcon>
+#include <iClipData>
 
 
 cssConsoleWindow::cssConsoleWindow(QWidget* parent)
@@ -57,11 +58,30 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   pin_act = new iAction("&pin", QKeySequence(), "pin");
   pin_act->setIcon(*pinned);
   pin_act->setToolTip("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)");
+  tb->addAction(pin_act);
 
+  tb->addSeparator();
+  
   connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
 
-  tb->addAction(pin_act);
-  
+  iAction* editCutAction = new iAction(iClipData::EA_CUT, "Cu&t",
+                                       QKeySequence("Ctrl+X"), "editCutAction");
+  editCutAction->setIcon(QIcon(":/images/editcut.png"));
+  tb->addAction(editCutAction);
+  connect(editCutAction, SIGNAL(Action()), css_con, SLOT(cut()));
+
+  iAction* editCopyAction = new iAction(iClipData::EA_COPY, "&Copy",
+                                        QKeySequence("Ctrl+C"), "editCopyAction");
+  editCopyAction->setIcon(QIcon(":/images/editcopy.png"));
+  tb->addAction(editCopyAction);
+  connect(editCopyAction, SIGNAL(Action()), css_con, SLOT(copy()));
+
+  iAction* editPasteAction = new iAction(iClipData::EA_PASTE, "&Paste",
+                                         QKeySequence("Ctrl+V"), "editPasteAction");
+  editPasteAction->setIcon(QIcon(":/images/editpaste.png"));
+  tb->addAction(editPasteAction);
+  connect(editPasteAction, SIGNAL(Action()), css_con, SLOT(paste()));
+
   setWindowTitle("css Console");
 }
 
