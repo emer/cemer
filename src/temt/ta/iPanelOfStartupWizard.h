@@ -46,6 +46,8 @@ public:
 
   String       panel_type() const override {return "StartupWizard";}
 
+  virtual void SaveSplitterSettings();
+
   iPanelOfStartupWizard(taiSigLink* dl_);
   ~iPanelOfStartupWizard();
 

@@ -70,6 +70,7 @@ public:
   taVector2f            rootview_pos;   // #NO_SHOW position for the root viewer
   taVector2f            rootview_size;   // #NO_SHOW size for the root viewer
   String                rootview_splits; // #NO_SHOW splitter config in root viewer
+  String                startupwiz_splits; // #NO_SHOW splitter config in startup wizard
   char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
   taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
 

@@ -149,16 +149,29 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   lay_op->addStretch();
 
   sw_split->addWidget(opfrm);
+
+  if(tabMisc::root->startupwiz_splits.nonempty()) {
+    QByteArray ba =
+      QByteArray::fromBase64(QByteArray(tabMisc::root->startupwiz_splits.chars()));
+    sw_split->restoreState(ba);
+  }
 }
 
 iPanelOfStartupWizard::~iPanelOfStartupWizard() {
+  SaveSplitterSettings();
   delete new_proj_chs_dlg;
   delete new_proj_chs;
   delete rec_proj_chs_dlg;
   delete rec_proj_chs;
 }
 
+void iPanelOfStartupWizard::SaveSplitterSettings() {
+  if(!tabMisc::root) return;
+  tabMisc::root->startupwiz_splits = String(sw_split->saveState().toBase64().constData());
+}
+
 void iPanelOfStartupWizard::NewProjSelected() {
+  SaveSplitterSettings();
   new_proj_tmplt = (ProjTemplateEl*)new_proj_chs_dlg->selObj();
   if(new_proj_tmplt) {
     tabMisc::root->projects.NewFromTemplate(new_proj_tmplt);
@@ -166,6 +179,7 @@ void iPanelOfStartupWizard::NewProjSelected() {
 }
 
 void iPanelOfStartupWizard::RecProjSelected() {
+  SaveSplitterSettings();
   rec_proj_nm = (String*)rec_proj_chs_dlg->selObj();
   if(rec_proj_nm) {
     for (int i = 0; i < tabMisc::root->viewers.size; ++i) {
@@ -180,6 +194,7 @@ void iPanelOfStartupWizard::RecProjSelected() {
   }
 }
 void iPanelOfStartupWizard::OpenProject() {
+  SaveSplitterSettings();
   for (int i = 0; i < tabMisc::root->viewers.size; ++i) {
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(tabMisc::root->viewers.FastEl(i));
     if (!(vwr && vwr->isRoot())) continue;
@@ -200,6 +215,7 @@ void iPanelOfStartupWizard::SigLinkDestroying(taSigLink* dl) {
 }
 
 void iPanelOfStartupWizard::UpdatePanel_impl() {
+  SaveSplitterSettings();
   inherited::UpdatePanel_impl();
 }
 

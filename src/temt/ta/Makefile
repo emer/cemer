@@ -5,5 +5,4 @@ default_target: all
 
 # Forward all make requests to build_dbg/Makefile
 %:
-
 	$(MAKE) -C ../../../build_dbg $@
