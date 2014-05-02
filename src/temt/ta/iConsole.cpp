@@ -139,7 +139,7 @@ void iConsole::clear() {
   contPager = false;
   waiting_for_key = false;
   key_response = 0;
-  setAcceptRichText(false);     // just plain
+  setAcceptRichText(true);     // just plain
   setReadOnly(false);           // this determines if links are clickable
   setOpenExternalLinks(false);
   setOpenLinks(false);          // we do it ourselves b/c it doesn't seem to work otherwise
@@ -300,6 +300,11 @@ bool iConsole::scrolledToEnd() {
 
 void iConsole::outputLine(QString line, bool err) {
   bool scrolled_to_end = scrolledToEnd();
+
+  // reset any residual formatting -- otherwise links carry over..
+  QTextCharFormat nf;
+  setCurrentCharFormat(nf);
+
   if(err) {
     setTextColor(errColor);
   }

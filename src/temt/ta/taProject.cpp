@@ -437,12 +437,16 @@ void taProject::ProjDirToCurrent() {
 bool taProject::SetFileName(const String& val) {
   if (GetFileName() == val) return true;
   inherited::SetFileName(val);
-  QFileInfo fi(val);
-  proj_dir = fi.absolutePath();
   MainWindowViewer* vwr = GetDefaultProjectBrowser();
   if(vwr) {
     vwr->SetWinName();
   }
+  if(val.empty()) {
+    proj_dir = taMisc::GetHomePath();
+    return true;
+  }
+  QFileInfo fi(val);
+  proj_dir = fi.absolutePath();
   // note: too dangerous to save root, since we are still saving project...
   // BUT changes should get saved when we close the filer anyway
   if(taMisc::gui_active) {

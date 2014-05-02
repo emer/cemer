@@ -56,6 +56,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
 
   pin_act = new iAction("&pin", QKeySequence(), "pin");
   pin_act->setIcon(*pinned);
+  pin_act->setToolTip("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)");
 
   connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
 
