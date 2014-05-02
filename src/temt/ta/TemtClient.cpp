@@ -290,10 +290,17 @@ void TemtClient::cmdSetData() {
     DataTable* tab = GetAssertTable(tnm);
     if (!tab) return;
     
-    int row = 0;
-    if (!name_params.GetVal("row_from").isNull()) {
-      row = name_params.GetVal("row_from").toInt();
+    if (tableData.empty()) {
+      SendError("Missing parameter - 'data'", TemtClient::MISSING_PARAM);
+      return;
     }
+    
+    int row_from, rows;
+    int row_to = 0;
+    bool valid = CalcRowParams("Set", tab, row_from, rows, row_to); // get start row and number of rows to get, remove, etc.
+    if (!valid)
+      return;
+    
     int cell = 0;
     if (!name_params.GetVal("cell").isNull()) {
       cell = name_params.GetVal("cell").toInt();
@@ -303,18 +310,18 @@ void TemtClient::cmdSetData() {
       create = name_params.GetVal("create").toBool();
     }
     
-    if (!ValidateColumnsMember(tableData)) {  // first check columns existence
+    if (!ValidateJSON_HasMember(tableData, "columns")) {  // first check columns existence
       SendError("Columns member not found in data", TemtClient::RUNTIME);
       return;
     }
 
     if (create == false) {  // check that columns exist
-      if (!ValidateColumnNames(tab, tableData)) {
-        return;  // send error done by validator
+      if (!ValidateJSON_ColumnNames(tab, tableData)) {
+        return;
       }
     }
     
-    bool result = tab->SetDataFromJSON(tableData, row, cell);  // row -1 for append
+    bool result = tab->SetDataFromJSON(tableData, row_from, cell);  // row -1 for append
     if (result) {
       SendOk();
     }
@@ -527,11 +534,11 @@ void TemtClient::cmdAppendData() {
   // note: ok if running
   if (msgFormat == TemtClient::JSON) {
     bool result = false;
-    if (!ValidateColumnsMember(tableData)) {  // first check columns existence
+    if (!ValidateJSON_HasMember(tableData, "columns")) {  // first check columns existence
       SendError("Columns member not found in data", TemtClient::RUNTIME);
       return;
     }
-    if (!ValidateColumnNames(tab, tableData)) {  // next check column names
+    if (!ValidateJSON_ColumnNames(tab, tableData)) {  // next check column names
       return;  // send error done by validator
     }
   
@@ -1436,7 +1443,31 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
   return true;
 }
 
-bool TemtClient::ValidateColumnsMember(const JSONNode& n) { // // row -1 means append, anything else overwrites starting at row
+bool TemtClient::ValidateJSON_HasMember(const JSONNode& n, const String& member_name) {
+  bool rval = true;
+  bool has_member = false;
+  JSONNode::const_iterator i = n.begin();
+  while (i != n.end()){
+    // recursively call ourselves to dig deeper into the tree
+    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
+      if (i->name() == member_name.chars()) {
+        has_member = true;
+        break;
+      }
+      rval = ValidateJSON_HasMember(*i, member_name);
+      if (rval == false) {
+        return false;
+      }
+    }
+    ++i;
+  }
+  
+  if (!has_member)
+    return false;
+  return rval;
+}
+
+bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const JSONNode& n) { // check for unknown column names
   bool rval = true;
   bool has_column_node = false;
   JSONNode::const_iterator i = n.begin();
@@ -1447,7 +1478,7 @@ bool TemtClient::ValidateColumnsMember(const JSONNode& n) { // // row -1 means a
         has_column_node = true;
         break;
       }
-      rval = ValidateColumnsMember(*i);
+      rval = ValidateJSON_ColumnNames(dt, *i);
       if (rval == false) {
         return rval;
       }
@@ -1455,38 +1486,20 @@ bool TemtClient::ValidateColumnsMember(const JSONNode& n) { // // row -1 means a
     ++i;
   }
   
-  if (!has_column_node)
-    return false;
-  return rval;
-}
-
-bool TemtClient::ValidateColumnNames(DataTable* dt, const JSONNode& n) { // see if there are any columns in the data that are not existing in the data table
-  bool rval = true;
-  JSONNode::const_iterator i = n.begin();
-  while (i != n.end()){
-    // recursively call ourselves to dig deeper into the tree
-    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
-      if (i->name() == "columns") {
+  if (has_column_node) {
+    JSONNode::const_iterator columns = i->begin();
+    while (columns != i->end() && rval == true) {
+      const JSONNode aCol = *columns;
+      rval = ValidateJSON_ColumnName(dt, aCol);
+      if (!rval)
         break;
-      }
-      rval = ValidateColumnNames(dt, *i);
-      if (rval == false) {
-        return rval;
-      }
+      columns++;
     }
-    ++i;
-  }
-  
-  JSONNode::const_iterator columns = i->begin();
-  while (columns != i->end() && rval == true) {
-    const JSONNode aCol = *columns;
-    rval = ValidateColumnName(dt, aCol);
-    columns++;
   }
   return rval;
 }
 
-bool TemtClient::ValidateColumnName(DataTable* dt, const JSONNode& aCol) {
+bool TemtClient::ValidateJSON_ColumnName(DataTable* dt, const JSONNode& aCol) {
   String columnName("");
 
   JSONNode::const_iterator columnData = aCol.begin();
@@ -1498,8 +1511,13 @@ bool TemtClient::ValidateColumnName(DataTable* dt, const JSONNode& aCol) {
     }
     columnData++;
   }
+  
+  if (columnName.empty()) {
+    SendError("Column member 'name' not found", TemtClient::RUNTIME);
+    return false;
+  }
+  
   if (dt) { // should have been checked by now
-    if (columnName.nonempty()) {
       DataCol* dc = dt->data.FindName(columnName);
       if (dc) {
         return true;
@@ -1508,9 +1526,6 @@ bool TemtClient::ValidateColumnName(DataTable* dt, const JSONNode& aCol) {
         SendError("Column name '" + columnName + "' not found in data table '" + dt->name + "'", TemtClient::RUNTIME);
         return false;
       }
-    }
-    else
-      return false;
   }
   return true;
 }

@@ -188,10 +188,9 @@ protected:
   void          ParseCommandNATIVE(const String& cl);
   void          ParseCommandJSON(const String& cl);
   
-  bool          ValidateColumnsMember(const JSONNode& n);
-  bool          ValidateColumnName(DataTable* dt, const JSONNode& n);  // validate name of a particular column
-  bool          ValidateColumnNames(DataTable* dt, const JSONNode& n); // validate all column names
-  bool          ValidateMemberNames(const JSONNode& n);
+  bool          ValidateJSON_HasMember(const JSONNode& n, const String& member_name); // check for member name in json string
+  bool          ValidateJSON_ColumnName(DataTable* dt, const JSONNode& n);  // validate name of a particular column
+  bool          ValidateJSON_ColumnNames(DataTable* dt, const JSONNode& n); // validate all column names
   
 private:
   void	Copy_(const TemtClient& cp);
