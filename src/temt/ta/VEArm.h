@@ -194,8 +194,8 @@ public:
   virtual void ComputeRMatrix(float alpha, float beta, float gamma, float delta);
   // #IGNORE compute the magic R rotation matrix from angles (R is stored on Arm object)
 
-  virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z);
-  // #BUTTON place the hand at the specified target. This method can crash if the arm hasn't been set to its initial position. Returns true if a move is made (even if the target is not reachable).
+  virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder=true);
+  // #BUTTON place the hand at the target whose coordinates are the first 3 arguments. This method can crash if the arm hasn't been set to its initial position with ConfigArm. Returns true if a move is made (even if the target is not reachable). The fourth argument indicates whether the coordinates are wrt the shoulder.
 
   virtual bool TargetLengths(float trg_x, float trg_y, float trg_z);
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
