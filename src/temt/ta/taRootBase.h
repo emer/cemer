@@ -192,8 +192,9 @@ public:
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(taRootBase)
-protected:
-  enum StartupMilestones { // #BIT successively marked, so we can shutdown cleanly
+
+public:
+  enum StartupMilestones { // #IGNORE #BIT successively marked, so we can shutdown cleanly
     SM_MPI_INIT         = 0x002,
     SM_QAPP_OBJ         = 0x004,
     SM_SOQT_INIT        = 0x008,
@@ -203,10 +204,12 @@ protected:
     SM_REG_SIG          = 0x100
   };
 
-  static int            milestone; // StartupMilestones
+  static int            milestone; // #IGNORE StartupMilestones
+  static ContextFlag    in_init; // #IGNORE suppresses spurious Saves
+
+protected:
   static int            console_type; // #IGNORE taMisc::ConsoleType
   static int            console_options; //#IGNORE taMisc::ConsoleOptions
-  static ContextFlag    in_init; // suppresses spurious Saves
 
   static bool           Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins
   static bool           Startup_InitTA_InitUserAppDir();  // #IGNORE once found

@@ -113,8 +113,8 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 
   lay_rp->addWidget(rec_proj_chs_dlg->body);
   rec_proj_chs_dlg->Activate(rec_proj_chs);
-  rec_proj_chs_dlg->items->setSortingEnabled(true);
-  rec_proj_chs_dlg->items->sortByColumn(0, Qt::AscendingOrder);
+  // rec_proj_chs_dlg->items->setSortingEnabled(true);
+  // rec_proj_chs_dlg->items->sortByColumn(0, Qt::AscendingOrder);
   connect(rec_proj_chs_dlg, SIGNAL(accepted()), this, SLOT(RecProjSelected()) );
   sw_split->addWidget(rpfrm);
 
@@ -122,33 +122,35 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   ///////////////////////////////////////////
   //  open project chooser
 
-  QFrame* opfrm = new QFrame(this);
-  opfrm->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
+  // probably we don't need this one..
 
-  QVBoxLayout* lay_op = new QVBoxLayout(opfrm);
-  lay_op->setMargin(0); lay_op->setSpacing(2);
+  // QFrame* opfrm = new QFrame(this);
+  // opfrm->setFrameStyle(QFrame::Panel); //  | QFrame::Sunken);
 
-  hb = new QHBoxLayout;
-  hb->setMargin(0);
-  lbl = new QLabel("<b>Open Any Project</b>");
-  lbl->setToolTip("Click here to pull up a file dialog to choose a project to open anywhere in the file system");
-  hb->addStretch();
-  hb->addWidget(lbl);
-  hb->addStretch();
-  lay_op->addLayout(hb);
+  // QVBoxLayout* lay_op = new QVBoxLayout(opfrm);
+  // lay_op->setMargin(0); lay_op->setSpacing(2);
 
-  QToolBar* op_tb = new QToolBar(opfrm);
-  lay_op->addWidget(op_tb);
+  // hb = new QHBoxLayout;
+  // hb->setMargin(0);
+  // lbl = new QLabel("<b>Open Any Project</b>");
+  // lbl->setToolTip("Click here to pull up a file dialog to choose a project to open anywhere in the file system");
+  // hb->addStretch();
+  // hb->addWidget(lbl);
+  // hb->addStretch();
+  // lay_op->addLayout(hb);
 
-  iAction* op_act  = new iAction("&Open Project...", QKeySequence(), "projOpenAction");
-  op_act->setIcon(QIcon(QPixmap(":/images/fileopen.png")));
+  // QToolBar* op_tb = new QToolBar(opfrm);
+  // lay_op->addWidget(op_tb);
 
-  connect(op_act, SIGNAL(Action()), this, SLOT(OpenProject()));
+  // iAction* op_act  = new iAction("&Open Project...", QKeySequence(), "projOpenAction");
+  // op_act->setIcon(QIcon(QPixmap(":/images/fileopen.png")));
 
-  op_tb->addAction(op_act);
-  lay_op->addStretch();
+  // connect(op_act, SIGNAL(Action()), this, SLOT(OpenProject()));
 
-  sw_split->addWidget(opfrm);
+  // op_tb->addAction(op_act);
+  // lay_op->addStretch();
+
+  // sw_split->addWidget(opfrm);
 
   if(tabMisc::root->startupwiz_splits.nonempty()) {
     QByteArray ba =

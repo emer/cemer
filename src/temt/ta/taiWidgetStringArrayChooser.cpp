@@ -62,8 +62,9 @@ int taiWidgetStringArrayChooser::BuildChooser_0(iDialogItemChooser* ic) {
     if(filter_start_txt.nonempty()) {
       if(!st->startsWith(filter_start_txt)) continue;
     }
-    QTreeWidgetItem* item = ic->AddItem(taMisc::LeadingZeros(i,2), NULL, st); 
-    item->setText(1, *st);
+    // QTreeWidgetItem* item = ic->AddItem(taMisc::LeadingZeros(i,2), NULL, st); 
+    // item->setText(1, *st);
+    QTreeWidgetItem* item = ic->AddItem(*st, NULL, st); 
     ++rval;
   }
   return rval;
@@ -71,7 +72,7 @@ int taiWidgetStringArrayChooser::BuildChooser_0(iDialogItemChooser* ic) {
 
 int taiWidgetStringArrayChooser::columnCount(int view) const {
   switch (view) {
-  case 0: return 2;
+  case 0: return 1;
   default: return 0; // not supposed to happen
   }
 }
@@ -79,8 +80,8 @@ int taiWidgetStringArrayChooser::columnCount(int view) const {
 const String taiWidgetStringArrayChooser::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "No."; 
-    case 1: return "String"; 
+    // case 0: return "No."; 
+    case 0: return "String"; 
     } break; 
   default: break; // compiler food
   }
