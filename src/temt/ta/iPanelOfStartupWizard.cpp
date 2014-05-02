@@ -158,7 +158,6 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 }
 
 iPanelOfStartupWizard::~iPanelOfStartupWizard() {
-  SaveSplitterSettings();
   delete new_proj_chs_dlg;
   delete new_proj_chs;
   delete rec_proj_chs_dlg;

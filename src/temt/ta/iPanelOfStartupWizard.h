@@ -52,11 +52,11 @@ public:
   ~iPanelOfStartupWizard();
 
 public slots:
-  void         NewProjSelected();
+  virtual void  NewProjSelected();
   // a new project choice has been selected
-  void         RecProjSelected();
+  virtual void  RecProjSelected();
   // a recent project choice has been selected
-  void         OpenProject();
+  virtual void  OpenProject();
   // open a project file chooser..
 
 public: // ISigLinkClient interface

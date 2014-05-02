@@ -33,6 +33,7 @@
 #include <taGuiDialog>
 #include <BrowseViewer>
 #include <iBrowseViewer>
+#include <cssConsoleWindow>
 #include <iPanelBase>
 #include <taFiler>
 #include <PanelViewer>
@@ -303,13 +304,11 @@ bool iMainWindowViewer::AlignCssConsole() {
   taProject* prj = curProject();
   if(!prj) return false;
   if(!taMisc::console_win) return false;
-  if(!(taMisc::console_options & taMisc::CO_GUI_TRACKING)) return false;
   QRect r = frameGeometry();
   int nw_top = r.bottom() + 1;
   int nw_ht = taiM->scrn_s.h - nw_top - 64; // leave a fixed amount of space at bottom.
   if(nw_ht < 40) nw_ht = 40;
-  taMisc::console_win->resize(r.width(), nw_ht);
-  taMisc::console_win->move(r.left(), nw_top);
+  taMisc::console_win->LockedNewGeom(r.left(), nw_top, r.width(), nw_ht);
   return true;
 }
 

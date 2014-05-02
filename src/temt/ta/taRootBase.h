@@ -71,6 +71,8 @@ public:
   taVector2f            rootview_size;   // #NO_SHOW size for the root viewer
   String                rootview_splits; // #NO_SHOW splitter config in root viewer
   String                startupwiz_splits; // #NO_SHOW splitter config in startup wizard
+  taVector2f            console_pos;    // #NO_SHOW position for the css console window
+  taVector2f            console_size;   // #NO_SHOW size for the the css console window
   char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
   taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
 

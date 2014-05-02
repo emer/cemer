@@ -851,6 +851,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iDiffTextView.h
   iThumbWheel.h
   iConsole.h
+  cssConsoleWindow.h
   iColorScaleBar.h
   iHColorScaleBar.h
   iVColorScaleBar.h
@@ -1954,6 +1955,7 @@ set(ta_SRCS_NOMAKETA
   iDiffTextView.cpp
   iThumbWheel.cpp
   iConsole.cpp
+  cssConsoleWindow.cpp
   iColorScaleBar.cpp
   iHColorScaleBar.cpp
   iVColorScaleBar.cpp

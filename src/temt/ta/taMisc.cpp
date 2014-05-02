@@ -59,7 +59,7 @@ taTypeDef_Of(EnumDef);
 #include <QFile>
 #include <QDir>
 #include <QPointer>
-#include <QMainWindow>
+#include <cssConsoleWindow>
 #include <QDateTime>
 #include <QNetworkInterface>
 #include <QNetworkAddressEntry>
@@ -203,7 +203,7 @@ String  taMisc::t3d_text_color = "black";
 
 // parameters that differ between win and unix
 taMisc::ConsoleType taMisc::console_type = CT_GUI;
-taMisc::ConsoleOptions taMisc::console_options = CO_GUI_TRACKING;
+taMisc::ConsoleOptions taMisc::console_options = CO_0;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int     taMisc::display_width = 120;
@@ -427,7 +427,7 @@ UserDataItem_List* taMisc::deferred_schema_items;
 #endif
 
 #ifdef TA_GUI
-QPointer<QMainWindow> taMisc::console_win = NULL;
+QPointer<cssConsoleWindow> taMisc::console_win = NULL;
 #endif
 
 void (*taMisc::WaitProc)() = NULL;

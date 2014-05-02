@@ -52,7 +52,7 @@ class UserDataItem_List; //
 class taProject; //
 
 #ifndef NO_TA_BASE
-class QMainWindow;
+class cssConsoleWindow;
 #endif
 
 typedef  void (*init_proc_t)() ;        // initialization proc
@@ -128,8 +128,7 @@ public:
 
   enum ConsoleOptions { // #BITS options that can be used with the console
     CO_0 = 0, // #NO_BIT #IGNORE dummy item, and to clear
-    CO_GUI_TRACKING     = 0x0001, // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project -- this only operates if DockRoot is not checked
-    CO_GUI_DOCK         = 0x0002, // #LABEL_Gui_DockRoot in GUI mode, dock the console in the root window -- if this checked, then tracking is not done
+    CO_GUI_DOCK         = 0x0001, // #LABEL_Gui_DockRoot in GUI mode, dock the console in the root window -- it can be dragged out as well -- otherwise the default console floats below the current project, and can be toggled with a button to float or not
   };
 
   enum ColorHints { // #BITS what types of color hinting to use in the application
@@ -490,7 +489,7 @@ public:
   static String         console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
 
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
-  static QPointer<QMainWindow>  console_win;    // #IGNORE the console window
+  static QPointer<cssConsoleWindow>  console_win;    // #IGNORE the console window
 #endif
 
   static void   (*WaitProc)();

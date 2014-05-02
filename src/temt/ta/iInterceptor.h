@@ -16,7 +16,6 @@
 #ifndef iInterceptor_h
 #define iInterceptor_h 1
 
-#include "config.h"
 #include "ta_def.h"
 #include <qobject.h>
 

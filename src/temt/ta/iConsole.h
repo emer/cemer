@@ -16,7 +16,6 @@
 #ifndef iConsole_h
 #define iConsole_h 1
 
-#include "config.h"
 #include "ta_def.h"
 
 #ifndef TA_OS_WIN
@@ -99,16 +98,18 @@ protected:
 
 protected:
   // Redefined virtual methods
-  void keyPressEvent(QKeyEvent* e);
-  void resizeEvent(QResizeEvent* e);
-  void paste();
-  void mousePressEvent(QMouseEvent *e);
-  void mouseMoveEvent(QMouseEvent *e);
-  void mouseReleaseEvent(QMouseEvent *e);
-  void contextMenuEvent(QContextMenuEvent* e);
+  void keyPressEvent(QKeyEvent* e) override;
+  void resizeEvent(QResizeEvent* e) override;
+  void paste()  override;
+  void mousePressEvent(QMouseEvent *e) override;
+  void mouseMoveEvent(QMouseEvent *e) override;
+  void mouseReleaseEvent(QMouseEvent *e) override;
+  void contextMenuEvent(QContextMenuEvent* e) override;
 
   virtual void getDisplayGeom();
 
+
+public:
   virtual void displayPrompt(bool force = false);
   // displays the prompt, force = definitely do so
   virtual void  gotoPrompt(QTextCursor& cursor, bool select=false);

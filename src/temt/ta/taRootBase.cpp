@@ -29,6 +29,7 @@
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
 #include <ConsoleDockViewer>
+#include <cssConsoleWindow>
 #include <iNetworkAccessManager>
 #include <taGenDoc>
 #include <taCodeUtils>
@@ -1668,15 +1669,14 @@ bool taRootBase::Startup_Console() {
     //note: nothing else to do here for gui_dockable
     QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
 
-    QObject::connect(con, SIGNAL(receivedNewStdin(int)), root_adapter, SLOT(ConsoleNewStdin(int)));
+    QObject::connect(con, SIGNAL(receivedNewStdin(int)), root_adapter,
+                     SLOT(ConsoleNewStdin(int)));
     // get notified
 
     if(!(console_options & taMisc::CO_GUI_DOCK)) {
-      QMainWindow* cwin = new QMainWindow();
-      cwin->setWindowTitle("css Console");
-      cwin->setCentralWidget((QWidget*)con);
-      cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
-      cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));
+      cssConsoleWindow* cwin = new cssConsoleWindow();
+      cwin->LockedNewGeom((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h),
+                          (int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
       cwin->show();
       taMisc::console_win = cwin; // note: uses a guarded QPointer
 

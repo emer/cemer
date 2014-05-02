@@ -23,7 +23,7 @@
 
 #include <QWidget>
 #include <QCoreApplication>
-#include <QMainWindow>
+#include <cssConsoleWindow>
 
 TA_BASEFUNS_CTORS_DEFN(TopLevelViewer);
 
@@ -77,19 +77,6 @@ void TopLevelViewer::SetWinState_impl() {
   if (taMisc::console_win) {
     if (ht > 0.8f) ht = 0.8f;
   }
-
-/*
-  // make sure to limit on mac, due to wacky menubar and dock
-  //TODO: maybe this should be used for all? ex. windows or kde taskbar etc.
-#ifdef TA_OS_MAC
-  if (taiM) { // guard for instance creation before sys init
-    lft = MAX(lft, (taiM->scrn_s.w > 0) ?
-      (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f);
-    top = MAX(top, (taiM->scrn_s.h > 0) ?
-      (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f);
-  }
-//TODO: prob should limit wd and ht too, because of dock, and inability to size if grip is offscreen
-#endif */
 
   QWidget* widget = this->widget(); // cache
 
