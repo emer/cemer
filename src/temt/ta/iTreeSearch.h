@@ -26,6 +26,7 @@
 #ifndef __MAKETA__
 #include <QList>
 #endif
+#include <taBase_RefList>
 
 // declare all other types mentioned but not required to include:
 class iLineEdit; //
@@ -50,6 +51,8 @@ public:
   QAction*              srch_clear;
   QAction*              srch_prev;
   QAction*              srch_next;
+
+  taBase_RefList        found_items; // full list of items found
 #ifndef __MAKETA__
   QList<iTreeViewItem*> srch_found; // list of items found
 #endif

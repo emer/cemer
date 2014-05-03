@@ -34,9 +34,10 @@ public:
 protected:
   String        El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
 
-  void*         El_Ref_(void* it)       { taBase::Ref((taBase*)it); return it; }
-  void*         El_unRef_(void* it)     { taBase::unRef((taBase*)it); return it; }
-  void          El_Done_(void* it)      { taBase::Done((taBase*)it); }
+  // PtrList is not supposed to do any ref counting!!!
+  // void*         El_Ref_(void* it)       { taBase::Ref((taBase*)it); return it; }
+  // void*         El_unRef_(void* it)     { taBase::unRef((taBase*)it); return it; }
+  // void          El_Done_(void* it)      { taBase::Done((taBase*)it); }
 };
 
 #endif // taBase_PtrList_h

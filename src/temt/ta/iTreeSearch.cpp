@@ -20,6 +20,7 @@
 #include <iTreeViewItem>
 #include <taBase_PtrList>
 #include <taiSigLink>
+#include <String_Array>
 
 #include <taMisc>
 #include <taiMisc>
@@ -42,7 +43,7 @@ void iTreeSearch::Constr() {
 
   srch_label = new QLabel("Find:");
   srch_label->setFont(taiM->nameFont(currentSizeSpec));
-  srch_label->setToolTip("Find text within the above browser");
+  srch_label->setToolTip("Find text within the above browser: if multiple words entered, then searches for conjunction of all of them -- searches very broadly and in a case insensitive manner (multiple terms help narrow things down)");
   srch_bar->addWidget(srch_label);
 
   srch_text = new iLineEdit();
@@ -84,46 +85,57 @@ iTreeSearch::~iTreeSearch() {
 void iTreeSearch::search() {
   unHighlightFound();
   srch_found.clear();
+  found_items.Reset();
   if(!tree_view) return;
   String ftxt = srch_text->text();
+  String_Array srch;
+  srch.Split(ftxt, " ");
+
   QTreeWidgetItemIterator it(tree_view, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item_;
   taBase_PtrList sub_srch;
-  taBase_PtrList sub_srch_own;
   while ( (item_ = *it) ) {
     iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
-    if (item) {
-      int cols = item->columnCount();
-      for(int i=0;i<cols;i++) {
-        String str = item->text(i);
-        if(str.contains_ci(ftxt)) {
-          srch_found.append(item);
-          break;                // out of for -- all done
-        }
+    if(!item) { ++it; continue; }
+    taiSigLink* dl = item->link();
+    if(!dl || !dl->isBase()) { ++it; continue; }
+    taBase* tab = (taBase*)dl->data();
+    MemberDef* md = item->md();
+    if(md) {
+      if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")
+         || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) {
+        ++it; continue;
       }
-      if(!tree_view->isItemExpanded(item)) {
-        taiSigLink* dl = item->link();
-        if(dl->isBase()) {
-          taBase* tab = (taBase*)dl->data();
-	  // int ss = sub_srch.size;
-          tab->Search(ftxt, sub_srch, &sub_srch_own); // go with defaults for now
-	  // if(sub_srch.size > ss) {
-	  //   taMisc::Info("found in:", tab->GetPathNames());
-	  // }
-        }
+    }
+    if(!tree_view->isItemExpanded(item)) {
+      // do full recursive search if not already expanded
+      sub_srch.Reset();
+      tab->Search(ftxt, sub_srch); // go with defaults for now
+      for(int k=0; k<sub_srch.size; k++) { // transfer to our ref list
+        taBase* fnd = sub_srch.FastEl(k);
+        found_items.Add(fnd);
       }
+      sub_srch.Reset();
+    }
+    else if(tab->SearchTestItem_impl(srch)) {
+      // otherwise just test this one item
+      srch_found.append(item);
+      found_items.Add(tab);
     }
     ++it;
   }
 
-  // expand afterward because otherwise it messes up iterator
-  for(int i=0;i<sub_srch.size; i++) {
-    taBase* fnd = sub_srch.FastEl(i);
-    taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
-    if(!lnk) continue;
-    iTreeViewItem* fitm = tree_view->AssertItem(lnk);
-    if(fitm) {
-      srch_found.append(fitm);
+  // only highlight for small number of hits
+  if(found_items.size < 25 && found_items.size > srch_found.count()) {
+    for(int i=0;i<found_items.size; i++) {
+      taBase* fnd = found_items.FastEl(i);
+      taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
+      if(!lnk) continue;
+      iTreeViewItem* fitm = tree_view->AssertItem(lnk);
+      if(!fitm) continue;
+      if(srch_found.indexOf(fitm) < 0) {
+        srch_found.append(fitm);
+      }
     }
   }
 
@@ -133,7 +145,7 @@ void iTreeSearch::search() {
 }
 
 void iTreeSearch::highlightFound() {
-  srch_nfound->setText(String((int)srch_found.count()));
+  srch_nfound->setText(String((int)found_items.size));
   for(int i=0; i< srch_found.count(); i++) {
     iTreeViewItem* itm = srch_found.at(i);
     itm->setBackgroundColor(Qt::yellow);
@@ -149,13 +161,26 @@ void iTreeSearch::unHighlightFound() {
 
 void iTreeSearch::selectCurrent() {
   if(!tree_view) return;
-  if(cur_item < 0 || cur_item >= srch_found.count())
+  if(cur_item < 0 || cur_item >= found_items.size)
     return;
-  iTreeViewItem* itm = srch_found.at(cur_item);
+
+  srch_nfound->setText(String((int)found_items.size));
+
+  taBase* fnd = found_items.FastEl(cur_item);
+  if(!fnd) return;
+  taMisc::Info("find item:", String(cur_item+1), "path:", fnd->GetPathNames());
+  taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
+  if(!lnk) return;
+  iTreeViewItem* fitm = tree_view->AssertItem(lnk);
+  if(!fitm) return;             // todo: do something more sensible?
+  if(srch_found.indexOf(fitm) < 0) {
+    srch_found.append(fitm);
+  }
+  fitm->setBackgroundColor(Qt::yellow);
   tree_view->setFocus();
   tree_view->clearExtSelection();
-  tree_view->scrollTo(itm);
-  tree_view->setCurrentItem(itm, 0, QItemSelectionModel::ClearAndSelect);
+  tree_view->scrollTo(fitm);
+  tree_view->setCurrentItem(fitm, 0, QItemSelectionModel::ClearAndSelect);
 }
 
 void iTreeSearch::srch_text_entered() {
@@ -166,20 +191,21 @@ void iTreeSearch::srch_clear_clicked() {
   unHighlightFound();
   srch_nfound->setText("0");
   srch_found.clear();
+  found_items.Reset();
   srch_text->setText("");
 }
 
 void iTreeSearch::treeview_to_updt() {
-  unHighlightFound();
-  srch_nfound->setText("0");
-  srch_found.clear();
+  // unHighlightFound();
+  // srch_nfound->setText("0");
+  srch_found.clear();           // keep found items, just clear the tree view guys
   //  srch_text->setText(""); -- keep this in case people want to re-search
 }
 
 void iTreeSearch::srch_next_clicked() {
   cur_item++;
-  if(cur_item >= srch_found.count())
-    cur_item = srch_found.count()-1;
+  if(cur_item >= found_items.size)
+    cur_item = found_items.size-1;
   selectCurrent();
 }
 

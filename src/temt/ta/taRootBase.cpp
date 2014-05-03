@@ -317,6 +317,10 @@ int taRootBase::Save() {
       float top = vwr->GetUserDataDef("view_win_top", 0.0f).toFloat();
       float wd = vwr->GetUserDataDef("view_win_wd", 1.0f).toFloat();
       float ht = vwr->GetUserDataDef("view_win_ht", 1.0f).toFloat();
+      // these frame vals will not be in place when
+      // window is first shown, so do it here..
+      wd -= ((float)taiM->frame_s.w / (float)taiM->scrn_s.w);
+      ht -= ((float)taiM->frame_s.h / (float)taiM->scrn_s.h);
       rootview_pos.SetXY(lft, top);
       rootview_size.SetXY(wd, ht);
       rootview_splits = vwr->GetUserDataAsString("view_splitter_state");

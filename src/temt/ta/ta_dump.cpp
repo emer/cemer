@@ -1228,7 +1228,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
 
   for (int i=0; i<dumpMisc::update_after.size; i++) {
     taBase* tmp = dumpMisc::update_after.FastEl(i);
-    if(taBase::GetRefn(tmp) <= 1) {
+    if(taBase::GetRefn(tmp) == 0) {
       taMisc::Warning("Object: of type:",
 		      tmp->GetTypeDef()->name,"named:",tmp->GetName(),"is unowned!");
       taBase::Ref(tmp);

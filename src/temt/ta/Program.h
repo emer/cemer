@@ -99,7 +99,7 @@ public:
     SEARCH_LIBS,                // search through the libraries (for loading)
   };
 
-  static ProgLib*       prog_lib; // #NO_SHOW_TREE #NO_SAVE library of available programs
+  static ProgLib*       prog_lib; // #NO_SHOW_TREE #NO_SAVE #NO_FIND library of available programs
 
   Program_Group*        prog_gp;
   // #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER our owning program group -- needed for control panel stuff

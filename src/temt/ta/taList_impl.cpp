@@ -1382,29 +1382,28 @@ int taList_impl::AddToControlPanelSearch(const String& memb_contains, ControlPan
   return nfound;
 }
 
-void taList_impl::Search_impl(const String& srch, taBase_PtrList& items,
-                         taBase_PtrList* owners,
-                         bool contains, bool case_sensitive,
-                         bool obj_name, bool obj_type,
-                         bool obj_desc, bool obj_val,
-                         bool mbr_name, bool type_desc) {
+void taList_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
+                                taBase_PtrList* owners,
+                                bool contains, bool case_sensitive,
+                                bool obj_name, bool obj_type,
+                                bool obj_desc, bool obj_val,
+                                bool mbr_name, bool type_desc) {
   int st_sz = items.size;
-  taOBase::Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
-                       obj_desc, obj_val, mbr_name, type_desc);
+  taOBase::SearchIn_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+                         obj_desc, obj_val, mbr_name, type_desc);
   bool already_added_me = false;
   if(items.size > st_sz)
     already_added_me = true;
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(!itm) continue;
-    if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
-      if(SearchTestItem_impl(itm, srch, contains, case_sensitive, obj_name, obj_type,
-                             obj_desc, obj_val, mbr_name, type_desc)) {
-        items.Link(itm);
-      }
-      itm->Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
-                       obj_desc, obj_val, mbr_name, type_desc);
+    if(itm->GetOwner() != this) continue; // for guys we own (not links; prevents loops)
+    if(itm->SearchTestItem_impl(srch, contains, case_sensitive, obj_name, obj_type,
+                                obj_desc, obj_val, mbr_name, type_desc)) {
+      items.Link(itm);
     }
+    itm->SearchIn_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+                       obj_desc, obj_val, mbr_name, type_desc);
   }
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
     owners->Link(this);

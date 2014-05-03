@@ -51,6 +51,7 @@ class ISigLinkClient; //
 class QVariant; // #IGNORE
 class iColor; //
 class MainWindowViewer; //
+class String_Array; //
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1306,26 +1307,27 @@ public:
                                bool obj_name = true, bool obj_type = true,
                                bool obj_desc = true, bool obj_val = true,
                                bool mbr_name = true, bool type_desc = false);
-  // #CAT_ObjectMgmt search for objects using srch string, from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items).  contains = use "contains" for all matches instead of exact match, rest are values to search in (obj_desc includes DisplayName as well as any explicit description), obj_val is only for value members and inline members
+  // #CAT_ObjectMgmt search for objects using srch string (which is split by whitespace into separate terms if applicable -- all terms must match), from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items).  contains = use "contains" for all matches instead of exact match, rest are values to search in (obj_desc includes DisplayName as well as any explicit description), obj_val is only for value members and inline members
 
-  virtual void          Search_impl(const String& srch, taBase_PtrList& items,
-                                    taBase_PtrList* owners = NULL,
-                                    bool contains = true, bool case_sensitive = false,
-                                    bool obj_name = true, bool obj_type = true,
-                                    bool obj_desc = true, bool obj_val = true,
-                                    bool mbr_name = true, bool type_desc = false);
-  // #IGNORE implementation -- only first Search() is externally called
+  virtual void          SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
+                                      taBase_PtrList* owners = NULL,
+                                      bool contains = true, bool case_sensitive = false,
+                                      bool obj_name = true, bool obj_type = true,
+                                      bool obj_desc = true, bool obj_val = true,
+                                      bool mbr_name = true, bool type_desc = false);
+  // #IGNORE search under this object -- does not check this obj itself
 
-  virtual bool          SearchTestStr_impl(const String& srch,  String tst,
+  static bool           SearchTestStr_impl(const String& srch,  String tst,
                                            bool contains, bool case_sensitive);
   // #IGNORE Search test string according to searching criteria
 
-  virtual bool          SearchTestItem_impl(taBase* obj, const String& srch,
-                                            bool contains, bool case_sensitive,
-                                            bool obj_name, bool obj_type,
-                                            bool obj_desc, bool obj_val,
-                                            bool mbr_name, bool type_desc);
-  // #IGNORE Search test for just this one taBase item according to criteria
+  virtual bool          SearchTestItem_impl(const String_Array& srch,
+                                    bool contains = true, bool case_sensitive = false,
+                                    bool obj_name = true, bool obj_type = true,
+                                    bool obj_desc = true, bool obj_val = true,
+                                    bool mbr_name = true, bool type_desc = false,
+                                            MemberDef* md = NULL);
+  // #IGNORE Search test for just this one taBase item (no recursion) according to criteria
 
   virtual void          CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
                            voidptr_PArray& trg_bases, voidptr_PArray& src_bases,

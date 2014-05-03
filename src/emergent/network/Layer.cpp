@@ -74,23 +74,27 @@ void Layer::Initialize() {
 
 void Layer::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(unit_spec, this);
-  taBase::Own(units, this);
-  taBase::Own(projections, this);
-  taBase::Own(send_prjns, this);
   taBase::Own(pos, this);
+  taBase::Own(pos2d, this);
   taBase::Own(un_geom, this);
   taBase::Own(gp_geom, this);
   taBase::Own(gp_spc, this);
   taBase::Own(flat_geom, this);
   taBase::Own(disp_geom, this);
   taBase::Own(scaled_disp_geom, this);
+  taBase::Own(projections, this);
+  taBase::Own(send_prjns, this);
+  taBase::Own(units, this);
+  taBase::Own(unit_spec, this);
+  taBase::Own(dist, this);
+  taBase::Own(gp_output_names, this);
   taBase::Own(prerr, this);
+  taBase::Own(unit_names, this);
+
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_share_units, this);
 #endif
-  taBase::Own(gp_output_names, this);
-  taBase::Own(unit_names, this);
+
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
     SetDefaultPos();

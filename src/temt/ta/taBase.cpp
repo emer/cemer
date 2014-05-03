@@ -2408,11 +2408,22 @@ void taBase::Search(const String& srch, taBase_PtrList& items,
                     bool obj_name, bool obj_type,
                     bool obj_desc, bool obj_val,
                     bool mbr_name, bool type_desc) {
+  if(TestError(srch.empty(), "Search",
+               "search string is empty!")) {
+    return;
+  }
   String srch_act = srch;
   if(!case_sensitive)
     srch_act.downcase();
-  Search_impl(srch_act, items, owners, contains, case_sensitive, obj_name, obj_type,
-              obj_desc, obj_val, mbr_name, type_desc);
+  String_Array str_ary;
+  str_ary.Split(srch, " ");
+
+  if(SearchTestItem_impl(str_ary, contains, case_sensitive, obj_name, obj_type,
+                         obj_desc, obj_val, mbr_name, type_desc)) {
+    items.Link(this);
+  }
+  SearchIn_impl(str_ary, items, owners, contains, case_sensitive, obj_name, obj_type,
+                obj_desc, obj_val, mbr_name, type_desc);
 }
 
 
@@ -2428,86 +2439,108 @@ bool taBase::SearchTestStr_impl(const String& srch, String tst,
   return false;
 }
 
-bool taBase::SearchTestItem_impl(taBase* obj, const String& srch,
+bool taBase::SearchTestItem_impl(const String_Array& srch,
                                  bool contains, bool case_sensitive,
                                  bool obj_name, bool obj_type,
                                  bool obj_desc, bool obj_val,
-                                 bool mbr_name, bool type_desc) {
-  if(!obj) return false;
-  if(obj_name) {
-    if(SearchTestStr_impl(srch, obj->GetName(), contains, case_sensitive)) return true;
-  }
-  if(obj_type) {
-    if(SearchTestStr_impl(srch, obj->GetTypeDef()->name, contains, case_sensitive)) return true;
-    if(type_desc) {
-      if(SearchTestStr_impl(srch, obj->GetTypeDef()->desc, contains, case_sensitive)) return true;
-    }
-  }
-  if(obj_desc) {
-    if(SearchTestStr_impl(srch, obj->GetDesc(), contains, case_sensitive)) return true;
-  }
-  if(obj_val) {
-    if(SearchTestStr_impl(srch, obj->GetDisplayName(), contains, case_sensitive)) return true;
-    String strval = GetTypeDef()->GetValStr(obj, NULL, NULL, TypeDef::SC_DEFAULT, true);
-    // true = force_inline
-    if(SearchTestStr_impl(srch, strval, contains, case_sensitive)) return true;
-  }
+                                 bool mbr_name, bool type_desc,
+                                 MemberDef* md) {
+  if(srch.size == 0) return false;
 
-  if(mbr_name) {
-    TypeDef* td = obj->GetTypeDef();
-    for(int m=0;m<td->members.size;m++) {
-      MemberDef* md = td->members[m];
-      if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) return true;
-      if(type_desc) {
-        if(SearchTestStr_impl(srch, md->desc, contains, case_sensitive)) return true;
+  bool all_matched = true;    // reset on fail
+  for(int s=0; s<srch.size; s++) {
+    String sstr = srch[s];
+    bool cur_matched = false;
+    if(md && mbr_name) {
+      cur_matched = SearchTestStr_impl(sstr, md->name, contains, case_sensitive);
+      if(!cur_matched && type_desc) {
+        cur_matched = SearchTestStr_impl(sstr, md->desc, contains, case_sensitive);
       }
     }
+    if(!cur_matched && obj_name) {
+      cur_matched = SearchTestStr_impl(sstr, GetName(), contains, case_sensitive);
+    }
+    if(!cur_matched && obj_type) {
+      cur_matched = SearchTestStr_impl(sstr, GetTypeDef()->name, contains,
+                                       case_sensitive);
+    }
+    if(!cur_matched && type_desc) {
+      cur_matched = SearchTestStr_impl(sstr, GetTypeDef()->desc, contains,
+                                       case_sensitive);
+    }
+    if(!cur_matched && obj_desc) {
+      cur_matched = SearchTestStr_impl(sstr, GetDesc(), contains, case_sensitive);
+    }
+    if(!cur_matched && obj_val) {
+      String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
+                                              TypeDef::SC_DEFAULT, true);
+      // true = force_inline
+      cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+    }
+    if(!cur_matched && mbr_name) {
+      TypeDef* td = GetTypeDef();
+      for(int m=0;m<td->members.size;m++) {
+        MemberDef* md = td->members[m];
+        if(SearchTestStr_impl(sstr, md->name, contains, case_sensitive)) {
+          cur_matched = true;
+          break;
+        }
+        if(type_desc) {
+          if(SearchTestStr_impl(sstr, md->desc, contains, case_sensitive)) {
+            cur_matched = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if(!cur_matched) {
+      all_matched = false;      // conjunctive across search terms
+      break;
+    }
   }
-  return false;
+
+  if(all_matched && InheritsFromName("ProgLibEl")) {
+    taMisc::Info("got prog lib el");
+  }
+
+  return all_matched;
 }
 
-void taBase::Search_impl(const String& srch, taBase_PtrList& items,
-                         taBase_PtrList* owners,
-                         bool contains, bool case_sensitive,
-                         bool obj_name, bool obj_type,
-                         bool obj_desc, bool obj_val,
-                         bool mbr_name, bool type_desc) {
+void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
+                           taBase_PtrList* owners,
+                           bool contains, bool case_sensitive,
+                           bool obj_name, bool obj_type,
+                           bool obj_desc, bool obj_val,
+                           bool mbr_name, bool type_desc) {
+  if(srch.size == 0) return;
   TypeDef* td = GetTypeDef();
   int st_sz = items.size;
   // first pass: just look at our guys
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")) continue;
-    if(md->type->IsActualTaBase()) {
-      taBase* obj = (taBase*)md->GetOff(this);
-      if(mbr_name) {
-	if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) {
-	  items.Link(obj);
-	  continue;
-	}
-	else if(type_desc) {
-	  if(SearchTestStr_impl(srch, md->desc, contains, case_sensitive)) {
-	    items.Link(obj);
-	    continue;
-	  }
-	}
-      }
-      if(SearchTestItem_impl(obj, srch, contains, case_sensitive, obj_name, obj_type,
-			     obj_desc, obj_val, mbr_name, type_desc)) {
-	items.Link(obj);
-      }
+    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")
+       || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) continue;
+    if(!md->type->IsActualTaBase()) continue;
+    taBase* obj = (taBase*)md->GetOff(this);
+    if(!obj) continue;
+    if(obj->SearchTestItem_impl(srch, contains, case_sensitive, obj_name, obj_type,
+                                obj_desc, obj_val, mbr_name, type_desc, md)) {
+      items.Link(obj);
     }
   }
+
   // second pass: recurse
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")) continue;
-    if(md->type->IsActualTaBase()) {
-      taBase* obj = (taBase*)md->GetOff(this);
-      obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
+    if(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN")
+       || md->HasOption("NO_FIND") || md->is_static || md->HasOption("EXPERT")) continue;
+    if(!md->type->IsActualTaBase()) continue;
+    taBase* obj = (taBase*)md->GetOff(this);
+    obj->SearchIn_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
                        obj_desc, obj_val, mbr_name, type_desc);
-    }
   }
+
   if(owners && (items.size > st_sz)) { // we added somebody somewhere..
     owners->Link(this);
   }

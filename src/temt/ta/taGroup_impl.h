@@ -262,18 +262,18 @@ public:
   int  Dump_Save_PathR_impl(std::ostream& strm, taBase* par=NULL, int indent=0) override;
 #endif
 
-  void Search_impl(const String& srch, taBase_PtrList& items,
-                            taBase_PtrList* owners = NULL,
-                            bool contains = true, bool case_sensitive = false,
-                            bool obj_name = true, bool obj_type = true,
-                            bool obj_desc = true, bool obj_val = true,
-                            bool mbr_name = true, bool type_desc = false) override;
+  void SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
+                     taBase_PtrList* owners = NULL,
+                     bool contains = true, bool case_sensitive = false,
+                     bool obj_name = true, bool obj_type = true,
+                     bool obj_desc = true, bool obj_val = true,
+                     bool mbr_name = true, bool type_desc = false) override;
   void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                           voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                           taBase* cp_base,
-                           int show_forbidden=TypeItem::NO_HIDDEN,
-                           int show_allowed=TypeItem::SHOW_CHECK_MASK, 
-                           bool no_ptrs = true) override;
+                        voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                        taBase* cp_base,
+                        int show_forbidden=TypeItem::NO_HIDDEN,
+                        int show_allowed=TypeItem::SHOW_CHECK_MASK, 
+                        bool no_ptrs = true) override;
   int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
   int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
