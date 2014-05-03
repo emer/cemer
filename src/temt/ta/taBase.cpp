@@ -2500,10 +2500,6 @@ bool taBase::SearchTestItem_impl(const String_Array& srch,
     }
   }
 
-  if(all_matched && InheritsFromName("ProgLibEl")) {
-    taMisc::Info("got prog lib el");
-  }
-
   return all_matched;
 }
 
