@@ -29,6 +29,7 @@
 #include <QIcon>
 #include <iClipData>
 
+#include <taMisc>
 
 cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   : inherited(parent) {
@@ -192,5 +193,15 @@ void cssConsoleWindow::moveEvent(QMoveEvent* e) {
   else {
     lock_to_proj = false;
     UpdateFmLock();
+  }
+}
+
+void cssConsoleWindow::closeEvent(QCloseEvent* e) {
+  if(taMisc::quitting == taMisc::QF_RUNNING) {
+    e->ignore();  // do NOT close the window!
+    showMinimized();
+  }
+  else {
+    inherited::closeEvent(e);
   }
 }

@@ -62,7 +62,7 @@ protected:
 
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* e) override;
-
+  void         closeEvent(QCloseEvent* e) override;
 };
 
 #endif // cssConsoleWindow_h

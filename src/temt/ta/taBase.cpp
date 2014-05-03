@@ -672,7 +672,7 @@ bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims
     if(TestError(cmat->dims() != 1, "IndexModeValidate::IDX_COORD",
                  "index matrix does not have dims = 1"))
       return false;
-    if(TestError(cmat->dim(0) < cont_dims, "IndexModeValidate::IDX_COORD",
+    if(TestError(cmat->dim(0) != cont_dims, "IndexModeValidate::IDX_COORD",
                  "index matrix dim(0):", String(cmat->dim(0)),
                  "is not size of container coordinates:", String(cont_dims)))
       return false;
@@ -693,12 +693,17 @@ bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims
       // if(TestError(cmat->size == 0, "IndexModeValidate::IDX_COORDS",
       //                   "index matrix is empty -- no coordinates"))
       //        return false;
+      if(TestError(cmat->dim(0) != cont_dims, "IndexModeValidate::IDX_COORDS",
+                   "index matrix dim(0):", String(cmat->dim(0)),
+                   "is not size of container coordinates:", String(cont_dims)))
+        return false;
+
     }
     else {
       if(TestError(cmat->dims() != 2, "IndexModeValidate::IDX_COORDS",
                    "index matrix does not have dims = 2"))
         return false;
-      if(TestError(cmat->dim(0) < cont_dims, "IndexModeValidate::IDX_COORDS",
+      if(TestError(cmat->dim(0) != cont_dims, "IndexModeValidate::IDX_COORDS",
                    "index matrix dim(0):", String(cmat->dim(0)),
                    "is not size of container coordinates:", String(cont_dims)))
         return false;
