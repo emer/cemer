@@ -36,7 +36,7 @@ SMARTREF_OF_CPP(LeabraLayerSpec);
 eTypeDef_Of(MarkerConSpec);
 
 void LeabraInhibSpec::Initialize() {
-  type = KWTA_AVG_INHIB;
+  type = FF_FB_INHIB;
   gi = 2.0f;
   ff = 1.0f;
   ff0 = 0.1f;

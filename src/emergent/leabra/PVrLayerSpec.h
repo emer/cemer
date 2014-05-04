@@ -67,7 +67,7 @@ public:
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
-  TA_BASEFUNS_NOCOPY(PVrLayerSpec);
+  TA_SIMPLE_BASEFUNS(PVrLayerSpec);
 protected:
   SPEC_DEFAULTS;
 private:

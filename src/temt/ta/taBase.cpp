@@ -1538,7 +1538,8 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
     flr->Open();
   }
   if(flr->istrm && getset_file_name) {
-    SetFileName(taMisc::CompressFilePath(flr->FileName(), proj));
+    //    SetFileName(taMisc::CompressFilePath(flr->FileName(), proj));
+    SetFileName(flr->FileName()); // now that compress working, not a good idea..
   }
   return flr;
 }
@@ -1664,7 +1665,8 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   }
 
   if (flr->ostrm && getset_file_name) {
-    SetFileName(taMisc::CompressFilePath(flr->FileName(), proj));
+    //    SetFileName(taMisc::CompressFilePath(flr->FileName(), proj));
+    SetFileName(flr->FileName()); // now that compress working, not a good idea..
     // don't notify! very dangerous in middle of save, and also marks Dirty
    // SigEmitUpdated();
   }
@@ -1694,7 +1696,8 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
   }
 
   if(flr->ostrm && getset_file_name) {
-    SetFileName(taMisc::CompressFilePath(flr->FileName()));
+    //    SetFileName(taMisc::CompressFilePath(flr->FileName()));
+    SetFileName(flr->FileName()); // now that compress working, not a good idea..
   }
   return flr;
 }

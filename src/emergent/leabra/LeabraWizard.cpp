@@ -134,10 +134,16 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "StdLayerSpecs", "network is NULL and could not make a new one -- aborting!")) return false;
   }
-  LeabraLayerSpec* hid = (LeabraLayerSpec*)net->FindMakeSpec("", &TA_LeabraLayerSpec);
-  hid->name = "HiddenLayer";
+  LeabraLayerSpec* hid = (LeabraLayerSpec*)net->specs.FindType(&TA_LeabraLayerSpec);
+  if(!hid) {
+    hid = (LeabraLayerSpec*)net->FindMakeSpec("HiddenLayer", &TA_LeabraLayerSpec);
+  }
+  else {
+    hid->name = "HiddenLayer";
+  }
   LeabraLayerSpec* inout;
-  inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
+  inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output",
+                                                       &TA_LeabraLayerSpec);
   // hid->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   // hid->inhib.kwta_pt = .6f;
   inout->SetUnique("inhib", true);

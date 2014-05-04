@@ -39,21 +39,21 @@ class E_API LeabraInhibSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   enum InhibType {		// how to compute the inhibition
+    FF_FB_INHIB,                // simulated interneuron-like feedforward (proportional to avg netin) and feedback (proportional to avg act) inhibition
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)
     KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)
-    FF_FB_INHIB,                // simulated feedforward and feedback inhibitory interneuron inhibition, with supra-linear gain on the feedback inhibition to prevent runaway positive feedback, and to produce pop-out effects potentially
     UNIT_INHIB,			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0.2;0.5 [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] 
-  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- typically between 1-2
-  float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput
+  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB [1.5-2.3 typical, can go much lower or higher as needed] overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- FF_FB does NOT use kwta.pct parameter to set inhibition, so you must adjust it here
+  float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput (i.e., synaptic drive into layer)
   float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- computed from average activation
-  float		self_fb;	// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- important for producing proportional activation behavior
-  float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values 
-  bool          up_immed;       // #CONDSHOW_ON_type:FF_FB_INHIB inhibition rises immediately, and dt only applies to decay -- this is important for spiking units
-  float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases.
+  float		self_fb;	// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not good for typical hidden layers (use .02 max)
+  float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid .7 typically works, but may need to go lower if oscillations are a problem
+  bool          up_immed;       // #CONDSHOW_ON_type:FF_FB_INHIB inhibition rises immediately, and dt only applies to decay -- this is important for spiking units, but should otherwise generally be off for rate-coded units
+  float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB match kwta dynamics more closely), but if FF inhib is not strong enough, you may need to lower it
   float		min_i;		// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
 
   inline float    FFInhib(const float netin) {

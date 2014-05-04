@@ -30,6 +30,7 @@ void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
   prior_gain = 1.0f;
   er_reset_prior = true;
+  pos_y_dot_only = false;
 
   if(taMisc::is_loading) {
     taVersion v636(6, 3, 6);
