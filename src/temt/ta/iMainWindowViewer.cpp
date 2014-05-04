@@ -1199,7 +1199,8 @@ void iMainWindowViewer::Replace(taiSigLink* root, ISelectable_PtrList& sel_items
 }
 
 void iMainWindowViewer::editUndo() {
-  taProject* proj = curProject();
+//  taProject* proj = curProject();
+  taProject* proj = myProject();
   if (!proj) return;
   proj->undo_mgr.Undo();
 }
@@ -1838,19 +1839,27 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
     win_id = frag_str.after("winid_").toInt(); // 0 if empty or not an int
     top_win = taiMisc::active_wins.FindMainWindowById(win_id);
   }
-
+  
   if(top_win == NULL) {         // fallback
     top_win = taiMisc::active_wins.Peek_MainWindow();
     if (top_win)
       win_id = top_win->uniqueId();
   }
-
+  
   // get the project -- should be able to get from any viewer/browser
   taProject* proj = NULL;
   if (top_win) {
     proj = top_win->myProject();
   }
-
+  if (!proj) {
+    // not the top window so locate the project (works unless 2 projects with same name)
+    if(path.startsWith(".projects")) {
+      String prj_name = path.after("[\"");
+      prj_name = prj_name.before("\"]");
+      proj = taRootBase::instance()->projects.FindName(prj_name);
+    }
+  }
+  
   // for uniformity and simplicity, we look up the canonical windows
   // and corresponding viewers for the tree/panels and panels/t3 frames
   // note that these are the same for 2-pane
@@ -1864,9 +1873,9 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
   if (proj_brow)
     iproj_brow = proj_brow->widget();
   /*nn  iMainWindowViewer* iproj_view = NULL;
-    if (proj_view)
-    iproj_view = proj_view->widget(); */
-
+   if (proj_view)
+   iproj_view = proj_view->widget(); */
+  
   // IMPORTANT NOTE: You *must* check ALL objects for NULL in the following
   // cascades, because there are conditions under which it is possible for
   // something not to have a value
@@ -2431,7 +2440,7 @@ void iMainWindowViewer::UpdateUi() {
 
   editUnlinkAction->setVisible(ea & iClipData::EA_UNLINK);
 
-  taProject* proj = myProject();
+  taProject* proj = curProject();
   if(proj) {
     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
