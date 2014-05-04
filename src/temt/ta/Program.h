@@ -294,7 +294,7 @@ public:
   // #CAT_Variables get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
   bool                  HasVar(const String& var_nm);
   // EXPERT #CAT_Variables true if has a var/arg called var_nm (only top-level variables in vars or args) -- can be called from within a running program
-  static bool           IsForbiddenName(const String& chk_nm, bool warn=true);
+  static bool           IsForbiddenName(taBase* itm, const String& chk_nm, bool warn=true);
   // #CAT_Code check given name against list of forbidden names -- variables and other objects should check and if forbidden, add an extra character or something
   virtual void          AddVarTo(taNBase* src);
   // #DROPN add a variable in the global vars list to the given object

@@ -21,7 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(DynEnumItem);
 
 void DynEnumItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(Program::IsForbiddenName(name)) {
+  if(Program::IsForbiddenName(this, name)) {
     name = "My" + name;
   }
   DynEnumType* typ = GET_MY_OWNER(DynEnumType);
@@ -35,7 +35,7 @@ void DynEnumItem::UpdateAfterEdit_impl() {
 
 void DynEnumItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+  CheckError(Program::IsForbiddenName(this, name, false), quiet, rval,
 	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
 }
 

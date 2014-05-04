@@ -117,16 +117,18 @@ bool LeabraWizard::StdNetwork() {
   if(proj->networks.size == 0) {        // make a new one for starters always
     LeabraNetwork* net = (LeabraNetwork*)proj->networks.New(1);
     if(net)
-      StdLayerSpecs(net);
+      StdLeabraSpecs(net);
   }
   if(!std_net_dlg) {
     taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
   }
   bool rval = std_net_dlg->DoDialog();
+  if(std_net_dlg && std_net_dlg->network)
+    StdLeabraSpecs((LeabraNetwork*)std_net_dlg->network.ptr()); // re-run to organize things better now that stuff has happened
   return rval;
 }
 
-bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
+bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -136,8 +138,8 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   hid->name = "HiddenLayer";
   LeabraLayerSpec* inout;
   inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
-  hid->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  hid->inhib.kwta_pt = .6f;
+  // hid->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  // hid->inhib.kwta_pt = .6f;
   inout->SetUnique("inhib", true);
   inout->SetUnique("kwta", true);
   inout->inhib.type = LeabraInhibSpec::KWTA_INHIB;
@@ -155,6 +157,13 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
       ps->children.Transfer(bs);
     }
   }
+
+  LeabraConSpec* ps = (LeabraConSpec*)net->specs.FindType(&TA_LeabraConSpec);
+  if(ps) {
+    FMChild(LeabraConSpec, td, ps, "TopDownCons");
+    td->desc = "Leabra (particularly the XCAL learning rule) requires top-down connections to be weaker than bottom-up ones -- this spec achieves that by setting wt_scale.rel = .2 -- set this for any connections coming from higher-level TARGET layers";
+  }
+
   return true;
 }
 

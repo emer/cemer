@@ -183,7 +183,7 @@ bool ProgVar::CheckUndefType(const String& function_context) const {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
-  if(Program::IsForbiddenName(name)) {
+  if(Program::IsForbiddenName(this, name)) {
     name = "My" + name;
   }
   CheckUndefType("UpdateAfterEdit");
@@ -255,7 +255,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
-  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+  CheckError(Program::IsForbiddenName(this, name, false), quiet, rval,
 	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
   CheckError(var_type == T_UnDef, quiet, rval,
 	     "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold");

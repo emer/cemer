@@ -38,8 +38,8 @@ public:
   bool StdNetwork() override;
   bool	UpdateInputDataFmNet(Network* net, DataTable* data_table) override;
 
-  virtual bool	StdLayerSpecs(LeabraNetwork* net);
-  // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)
+  virtual bool	StdLeabraSpecs(LeabraNetwork* net);
+  // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (FFFB inhib for hiddens, KWTA PAT_K for input/output), and TopDownCons con spec for connections from higher layers
 
   virtual bool	LeabraTI(LeabraNetwork* net);
   // #MENU_BUTTON configure temporal integration (LeabraTI) specs and layers

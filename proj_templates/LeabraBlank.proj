@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7059
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7102
 LeabraProject .projects["LeabraBlank"] { 
  Doc_Group @.docs = [0] {
  };
@@ -11,7 +11,14 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
 
- ControlPanel_Group @.ctrl_panels = [1] {
+ ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @["ControlPanel"] { 
+   EditMbrItem_Group @.mbrs = [0] {
+   };
+
+   EditMthItem_Group @.mths = [0] {
+   };
+  };
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -355,6 +362,23 @@ LeabraProject .projects["LeabraBlank"] {
   name="SelectEdit_Group_0";
   el_typ=ControlPanel;
   el_def=0;
+  ControlPanel @["ControlPanel"] {
+   name="ControlPanel";
+   auto_edit=1;
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="EditMbrItem_Group_4";
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name="EditMthItem_Group_4";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+  };
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
    auto_edit=1;

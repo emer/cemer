@@ -83,7 +83,7 @@ void Function::UpdateAfterEdit_impl() {
   // without making a SetName call.  Make the call here so it can do its
   // validation.
   SetName(name); 
-  if(Program::IsForbiddenName(name)) {
+  if(Program::IsForbiddenName(this, name)) {
     SetName("My" + name);
   }
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
@@ -102,7 +102,7 @@ void Function::UpdateAfterCopy(const ProgEl& cp) {
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(name.empty(), quiet, rval, "name is empty -- functions must be named");
-  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+  CheckError(Program::IsForbiddenName(this, name, false), quiet, rval,
 	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
   Function_List* flo = GET_MY_OWNER(Function_List);
   CheckError(!flo, quiet, rval, "Function must only be in .functions -- cannot be in .prog_code or .init_code -- this is the DEFINITION of the function, not calling the function (which is FunctionCall)");

@@ -11657,7 +11657,7 @@ LeabraProject .projects["vis_test"] {
      keygen 4 0=0;
      row_indexes {
       name=;
-     [1] 0;     };
+     [0]      };
     };
    };
    types {
@@ -18352,7 +18352,7 @@ LeabraProject .projects["vis_test"] {
      var_type=T_Real;
      real_val=0.15;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -18372,7 +18372,7 @@ LeabraProject .projects["vis_test"] {
      var_type=T_Real;
      real_val=0;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
      reference=0;
      desc="angle of background lines";
      init_from=NULL;
@@ -19843,7 +19843,7 @@ LeabraProject .projects["vis_test"] {
 	   required=1;
 	   def_val=;
 	   expr {
-	    expr="cur_angle";
+	    expr="cur_angle + cur_jitter";
 	   };
 	  };
 	  ProgArg @[4] {
@@ -25858,7 +25858,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -26112,7 +26112,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -26366,7 +26366,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -26620,7 +26620,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
