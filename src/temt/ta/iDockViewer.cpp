@@ -51,9 +51,13 @@ void iDockViewer::Init() {
 
 void iDockViewer::closeEvent(QCloseEvent* e) {
    // always closing if force-quitting, docked or we no longer have our mummy
+  bool is_closable = false;
+  if(viewer() && viewer()->dock_flags & DockViewer::DV_CLOSABLE)
+    is_closable = true;
+  
   CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) ||
     !isFloating() || (!m_viewer)) ?
-    CO_NOT_CANCELLABLE : CO_PROCEED;
+    CO_NOT_CANCELLABLE : (is_closable ? CO_PROCEED : CO_CANCEL);
   closeEvent_Handler(e, cancel_op);
 }
 
