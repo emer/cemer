@@ -24,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 
 inline Unit* BaseCons::Un(int idx, Network* net) const {
+  if(!InRange(idx)) return NULL;
   return net->UnFmIdx(unit_idxs[idx]);
 }
 
@@ -38,7 +39,8 @@ inline BaseCons* BaseCons::UnCons(int idx, Network* net) const
   return Un(idx, net)->recv.FastEl(other_idx); }
 
 inline BaseCons* BaseCons::SafeUnCons(int idx, Network* net) const
-{ if(IsRecv()) return Un(idx, net)->send.SafeEl(other_idx);
+{ if(!InRange(idx)) return NULL;
+  if(IsRecv()) return Un(idx, net)->send.SafeEl(other_idx);
   return Un(idx, net)->recv.SafeEl(other_idx); }
 
 #endif // BaseCons_inlines_h

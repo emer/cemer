@@ -311,6 +311,9 @@ int BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
         RemoveConIdx(size-1, our_un, net);   // remove last guy!  otherwise it is a dangler
       }
     }
+    if(con >= 0 && set_init_wt) {
+      SafeFastCn(con, WT, net) = init_wt;
+    }
   }
   else {
     con = oth_cons->ConnectUnOwnCn(our_un, ignore_alloc_errs);
@@ -320,9 +323,9 @@ int BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
         oth_cons->RemoveConIdx(size-1, oth_un, net); // remove last guy!  otherwise it is a dangler
       }
     }
-  }
-  if(con >= 0 && set_init_wt) {
-    SafeFastCn(con, WT, net) = init_wt;
+    if(con >= 0 && set_init_wt) {
+      SafeFastCn(size-1, WT, net) = init_wt; // our connection is last one: size-1
+    }
   }
   return con;
 }
