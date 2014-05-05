@@ -239,7 +239,7 @@ int DataCol::GetSpecialState() const {
   return 0;
 }
 
-void DataCol::ChangeColType(ValType new_type) {
+void DataCol::ChangeColType_gui(ValType new_type) {
   if (valType() == new_type) return;
   DataTable* own = dataTable();
   if(!own) return;
@@ -249,7 +249,30 @@ void DataCol::ChangeColType(ValType new_type) {
   tabMisc::DelayedFunCall_nogui(own, "ChangeColType_impl");
 }
 
+void DataCol::ChangeColType(ValType new_type) {
+  if (valType() == new_type) return;
+  DataTable* own = dataTable();
+  if(!own) return;
+  RemoveHashTable();
+  own->change_col = this;
+  own->change_col_type = new_type;
+  own->ChangeColType_impl();
+}
+
 void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
+  if ((!is_matrix && (new_geom.dims() == 0)) ||
+      cell_geom.Equal(new_geom)) {
+    return;
+  }
+  DataTable* own = dataTable();
+  if(!own) return;
+  RemoveHashTable();
+  own->change_col = this;
+  own->change_col_geom = new_geom;
+  own->ChangeColCellGeom_impl();
+}
+
+void DataCol::ChangeColCellGeom_gui(const MatrixGeom& new_geom) {
   if ((!is_matrix && (new_geom.dims() == 0)) ||
       cell_geom.Equal(new_geom)) {
     return;
@@ -270,6 +293,15 @@ void DataCol::ChangeColCellGeomNs(int dims, int d0, int d1, int d2, int d3,
 }
 
 void DataCol::ChangeColMatToScalar() {
+  if (!is_matrix) return;
+  DataTable* own = dataTable();
+  if(!own) return;
+  RemoveHashTable();
+  own->change_col = this;
+  own->ChangeColMatToScalar_impl();
+}
+
+void DataCol::ChangeColMatToScalar_gui() {
   if (!is_matrix) return;
   DataTable* own = dataTable();
   if(!own) return;
