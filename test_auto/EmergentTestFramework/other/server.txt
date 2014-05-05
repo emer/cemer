@@ -155,9 +155,10 @@ SetVar Missing Value Error
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit"}
     Status Error Match         ${output}             5         var_value missing
 
-GetVar Has Value Error
-    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
-    Status Error Match         ${output}             3         Unknown parameter: var_value
+# This test can be restored when there is more checking for superfluous parameters
+#GetVar Has Value Error
+#    ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
+#    Status Error Match         ${output}             3         Unknown parameter: var_value
 
 #
 # Reading data tables - normal operation 
@@ -230,7 +231,7 @@ GetData Cell
 
 GetDataMatrixCell
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
-    Status OK Match Result     ${output}             1
+    Status OK Equal Result     ${output}             1
     # Used to be "value"
     # Json Value Should Equal    ${output}           /value			1
 
@@ -301,8 +302,8 @@ SetData Matrix Cell
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 1, "rows": 1, "column": "Output", "cell": 12}
     # change next 2 lines if "value" is changed to "result"
-    Status OK No Result          ${output}
-    Json Value Should Equal      ${output}           /value			0
+    Status OK Equal Result       ${output}             0
+#    Json Value Should Equal      ${output}           /value			0
 
 # Data Table error tests
 
@@ -350,6 +351,20 @@ SetData Invalid Row Error
     ${output} =                Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
     Status Error Match         ${output}             7                  row out of range
 
+SetData Too Many Rows With One Row Error
+    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] } ] } }
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8, 9] } ] } }
+    Status Error Match           ${output}             7                SetData: cell range error
+
+SetData Too Many Rows With No Rows Error
+    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
+    Status OK No Result          ${output}
+    ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] } ] } }
+    Status Error Match           ${output}             7                SetData: cell range error
+
 # Column not found
 
 GetData Column Not Found Error
@@ -394,7 +409,7 @@ AppendData Bad Data Format (columns)
 
 AppendData Bad Data Format (name)
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             2                  Invalid data table format
+    Status Error Match         ${output}             7                  Column member 'name' not found
 
 SetData Bad Data Format (data)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "dater": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
@@ -406,16 +421,17 @@ SetData Bad Data Format (columns)
 
 SetData Bad Data Format (name)
     ${output} =                Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "gname": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
-    Status Error Match         ${output}             2                  Invalid data table format
+    Status Error Match         ${output}             7                  Column member 'name' not found
 
 # RemoveData Errors
 
-RemoveData Specify Column Error 
-    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "column": "trial"}
-    Status Error Match           ${output}             5                Invalid parameter: column
-    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
-    Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/result/0   7    # From very last AppendData under normal operation
+# This test can be restored when there is more checking for superfluous parameters
+#RemoveData Specify Column Error 
+#    ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "column": "trial"}
+#    Status Error Match           ${output}             5                Invalid parameter: column
+#    ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
+#    Status OK Has Result         ${output}
+#    Json Value Should Equal      ${output}             /result/columns/0/result/0   7    # From very last AppendData under normal operation
 
 *** Keywords ***
 
