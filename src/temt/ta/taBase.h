@@ -1154,7 +1154,7 @@ public:
   virtual bool          Edit();
   // #CAT_Display Edit this object using the gui -- this will be an edit dialog or an edit panel depending on ...???
   virtual bool          EditDialog(bool modal = false);
-  // #MENU #ARGC_0 #MENU_ON_Object #MENU_SEP_BEFORE #MENU_CONTEXT #NO_SCRIPT #EDIT_READ_ONLY #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_SEP_BEFORE #MENU_CONTEXT #NO_SCRIPT #EDIT_READ_ONLY #NO_SAVE_UNDO #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
   virtual bool          EditPanel(bool new_tab = false, bool pin_tab = false);
   // #MENU #ARGC_0 #MENU_ON_Object #NO_SCRIPT #EDIT_READ_ONLY #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
   virtual MainWindowViewer* GetMyBrowser();

@@ -109,7 +109,7 @@ bool taiWidgetMethod::CallFun_impl() {
   if (typ->IsActualTaBase()) {
     taBase* tab = (taBase*)base;
     taProject* proj = (taProject*)tab->GetOwner(&TA_taProject);
-    if(proj) {
+    if(proj && !meth->HasOption("NO_SAVE_UNDO")) {
       proj->undo_mgr.SaveUndo(tab, "Call Method: " + meth_name, NULL, true);
       // true = force project-level save
     }

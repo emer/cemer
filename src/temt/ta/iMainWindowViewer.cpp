@@ -376,7 +376,9 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   dataMenu = menu->AddSubMenu("&Data");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
-  helpMenu = menu->AddSubMenu("&Help");;
+  helpMenu = menu->AddSubMenu("&Help");
+  connect(editMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(editMenu_aboutToShow()));
+
 }
 
 void iMainWindowViewer::Constr_Menu_impl()
@@ -1199,14 +1201,13 @@ void iMainWindowViewer::Replace(taiSigLink* root, ISelectable_PtrList& sel_items
 }
 
 void iMainWindowViewer::editUndo() {
-//  taProject* proj = curProject();
   taProject* proj = myProject();
   if (!proj) return;
   proj->undo_mgr.Undo();
 }
 
 void iMainWindowViewer::editRedo() {
-  taProject* proj = curProject();
+  taProject* proj = myProject();
   if (!proj) return;
   proj->undo_mgr.Redo();
 }
@@ -2003,6 +2004,16 @@ void iMainWindowViewer::viewSaveView() {
   viewer()->GetWinState();
 }
 
+// undo/redo were not always visually updated so this ensures they are
+// makes me wonder about the other menu items
+void iMainWindowViewer::editMenu_aboutToShow() {
+  taProject* proj = myProject();
+  if(proj) {
+    editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
+    editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
+  }
+}
+
 void iMainWindowViewer::windowMenu_aboutToShow() {
   // Clear and rebuild submenu.
   windowMenu->Reset();
@@ -2440,7 +2451,7 @@ void iMainWindowViewer::UpdateUi() {
 
   editUnlinkAction->setVisible(ea & iClipData::EA_UNLINK);
 
-  taProject* proj = curProject();
+  taProject* proj = myProject();
   if(proj) {
     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
