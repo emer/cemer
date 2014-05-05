@@ -68,6 +68,7 @@ public:
     ERR_VEL,                    // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
   };
 
+  DataTableRef  arm_state;      // this points to the data table that contains a record of all the arm state information over time, used to implement delays
   ArmSide       arm_side;       // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
   VEBodyRef     torso;          // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
   UpAxis        up_axis;        // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
@@ -289,6 +290,7 @@ public:
 
   TA_SIMPLE_BASEFUNS(VEArm);
 protected:
+  void  UpdateAfterEdit_impl() override;
   //  CheckConfig_impl() override; // todo
 
   virtual bool Bender(taVector3f &p3, taVector3f a, taVector3f c, taVector3f p1, taVector3f p2);

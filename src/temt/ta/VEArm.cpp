@@ -108,6 +108,14 @@ void VEArm::Initialize() {
   // DO NOT put anythying other than direct literal member inits in here -- no creating objects etc
 }
 
+void VEArm::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(TestError(!(bool)arm_state, "VEArm", "arm_state is null -- you must set this to a data table!"))
+    {
+      // todo: if null, actually auto-create for user.
+    }
+}
+
 bool VEArm::UpdateIPs() {
   // We update the muscles' past lengths before setting new IPs
   for(int i=0; i<n_musc; i++) {
@@ -601,9 +609,9 @@ void VEArm::InitMuscles() {
 
   // Initializing the spans vector
   spans.SetGeom(1,n_musc);
-  for(int i=0; i<n_musc; i++) 
-    spans.Set(1/(max_lens.FastEl1d(i)-min_lens.FastEl1d(i)),i);
-
+  for(int i=0; i<n_musc; i++) {
+    spans.Set(1.0f/(max_lens.FastEl1d(i)-min_lens.FastEl1d(i)),i);
+  }
 }
 
 
@@ -1935,7 +1943,7 @@ bool VEArm::InitDelayedInputsToTable_v2(DataTable* table) {
     // start with no data...
     for(int n=1; n<pro_delay; n++) {
       for(int i=0; i<n_musc; i++) {
-        dc_l->SetMatrixVal(rest_lens.SafeEl(i),-1,0,0,0,i);
+        dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
         dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
         dc_n->SetMatrixVal(0.0f,-1,0,0,0,i);
         dc_i->SetMatrixVal(0.0f,-1,0,0,0,i);
