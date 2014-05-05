@@ -44,6 +44,7 @@ public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
     LOCALIST,			// each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units
+    AVG_ACT,                    // value is the average activation of the rest of the units, rescaled into desired overall range -- most appropriate for FF_FB inhibition with sufficient self feedback inhibition to ensure proportional activation levels with reasonable range of variability -- can have as few as 1 value-coding unitsa
   };
 
   RepType	rep;		// type of representation of scalar value to use
@@ -126,12 +127,13 @@ private:
 eTypeDef_Of(ScalarValLayerSpec);
 
 class E_API ScalarValLayerSpec : public LeabraLayerSpec {
-  // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value.
+  // represents a scalar value using a coarse-coded distributed code over units.  first unit represents scalar value for readout and clamping input, and does not otherwise participate in network interactions
 INHERITED(LeabraLayerSpec)
 public:
   ScalarValSpec	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
   MinMaxRange	 unit_range;	// range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.
   ScalarValBias	 bias_val;	// specifies bias for given value (as gaussian bump) 
+  MinMaxRange    avg_act_range; // #CONDSHOW_ON_scalar.rep:AVG_ACT range of variability of the average layer activity, used for AVG_ACT type to renormalize acts.avg before projecting it into the unit_range of values
   MinMaxRange	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
   virtual void	Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
@@ -204,9 +206,6 @@ public:
 				Layer::AccessMode acc_md, int gpidx,
 				LeabraInhib* thr, LeabraNetwork* net) override;
     // #IGNORE
-
-  virtual void	ReConfig(Network* net, int n_units = -1);
-  // #BUTTON #CAT_ScalarVal reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

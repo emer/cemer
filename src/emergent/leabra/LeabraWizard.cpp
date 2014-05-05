@@ -802,15 +802,12 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   // default scalar val for all types
   laysp->scalar.rep = ScalarValSpec::LOCALIST;
-  laysp->bias_val.wt = ScalarValBias::NO_WT;
-  laysp->bias_val.val = 0.5f;
-  laysp->scalar.min_sum_act = .2f;
-  laysp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB; laysp->inhib.kwta_pt = 0.9f;
-  laysp->kwta.k_from = KWTASpec::USE_K;    laysp->kwta.k = 1;
-  laysp->gp_kwta.k_from = KWTASpec::USE_K; laysp->gp_kwta.k = 1;
   laysp->unit_range.min = 0.0f;  laysp->unit_range.max = 1.0f;
   laysp->unit_range.UpdateAfterEdit();
-  laysp->val_range = laysp->unit_range;
+  laysp->Defaults();
+  laysp->bias_val.wt = ScalarValBias::NO_WT;
+  laysp->bias_val.val = 0.5f;
+  laysp->bias_val.un = ScalarValBias::GC;
 
   nvsp->SetUnique("bias_val", true);
   nvsp->bias_val.un = ScalarValBias::GC;
@@ -818,23 +815,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   nvsp->bias_val.val = 1.0f;
 
   lv_units->SetUnique("maxda", false);
-  pv_units->SetUnique("act", true);
-  pv_units->SetUnique("act_fun", true);
-  pv_units->SetUnique("dt", true);
-  pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
-  pv_units->act.gelin = false;
-  pv_units->act.thr = .17f;
-  pv_units->act.gain = 220.0f;
-  pv_units->act.nvar = .01f;
-  pv_units->v_m_init.mean = 0.15f;
-  pv_units->e_rev.l = 0.15f;
-  pv_units->e_rev.i = 0.15f;
-  pv_units->g_bar.l = .1f;
-  pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
-  pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
-  pv_units->SetUnique("maxda", true);
-  pv_units->maxda.val = MaxDaSpec::NO_MAX_DA;
-  pv_units->act.avg_dt = 0.0f;
+  pv_units->Defaults();
 
   da_units->SetUnique("act_range", true);
   da_units->act_range.max = 2.0f;

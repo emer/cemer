@@ -105,23 +105,21 @@ void ScalarValBias::Initialize() {
 }
 
 void ScalarValLayerSpec::Initialize() {
+  unit_range.min = -0.5f;   unit_range.max = 1.5f;
+  unit_range.UpdateAfterEdit_NoGui();
+  avg_act_range.min = 0.1f; avg_act_range.max = 0.9f;
+  avg_act_range.UpdateAfterEdit_NoGui();
   Defaults_init();
 }
 
 void ScalarValLayerSpec::Defaults_init() {
-  SetUnique("kwta", true);
-  SetUnique("gp_kwta", true);
-  SetUnique("inhib", true);
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
     kwta.k_from = KWTASpec::USE_K;
     kwta.k = 3;
     gp_kwta.k_from = KWTASpec::USE_K;
     gp_kwta.k = 3;
-    inhib.type = LeabraInhibSpec::KWTA_INHIB;
-    inhib.kwta_pt = 0.25f;
+    inhib.gi = 2.2f;
 
-    unit_range.min = -0.5f;   unit_range.max = 1.5f;
-    unit_range.UpdateAfterEdit_NoGui();
     scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
     val_range.min = unit_range.min + (.5f * scalar.un_width_eff);
     val_range.max = unit_range.max - (.5f * scalar.un_width_eff);
@@ -131,15 +129,18 @@ void ScalarValLayerSpec::Defaults_init() {
     kwta.k = 1;
     gp_kwta.k_from = KWTASpec::USE_K;
     gp_kwta.k = 1;
-    inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-    inhib.kwta_pt = .9f;
+    inhib.gi = 2.2f;
 
-    unit_range.min = 0.0f;  unit_range.max = 1.0f;
-    unit_range.UpdateAfterEdit_NoGui();
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;
 
     scalar.min_sum_act = .2f;
+  }
+  else if(scalar.rep == ScalarValSpec::AVG_ACT) {
+    scalar.min_sum_act = 0.0f;
+
+    val_range.min = unit_range.min;
+    val_range.max = unit_range.max;
   }
   val_range.UpdateAfterEdit_NoGui();
 }
@@ -156,6 +157,9 @@ void ScalarValLayerSpec::UpdateAfterEdit_impl() {
   else {
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;
+    if(scalar.rep == ScalarValSpec::AVG_ACT) {
+      scalar.min_sum_act = 0.0f;
+    }
   }
   val_range.UpdateAfterEdit_NoGui();
 }
@@ -171,6 +175,8 @@ void ScalarValLayerSpec::HelpConfig() {
  representation in the rest of the units).  This first unit is only viewable as act_eq,\
  not act, because it must not send activation to other units.\n\
  \nScalarValLayerSpec Configuration:\n\
+ - Default UnitSpec and LayerSpec params with FF_FB_INHIB, gi = 2.2 generally works well\n\
+ - For 0-1 range, GAUSSIAN: 12 or 22 units works well, LOCALIST: 4 units\n\
  - The bias_val settings allow you to specify a default initial and ongoing bias value\
  through a constant excitatory current (GC) or bias weights (BWT) to the unit, and initial\
  weight values.  These establish a distributed representation that represents the given .val\n\
@@ -184,21 +190,23 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
-  if(lay->CheckError(lay->un_geom.n < 3, quiet, rval,
-                "coarse-coded scalar representation requires at least 3 units, I just set un_geom.n")) {
-    if(scalar.rep == ScalarValSpec::LOCALIST) {
-      lay->un_geom.n = 4;
-      lay->un_geom.x = 4;
+  if(scalar.rep != ScalarValSpec::AVG_ACT) {
+    if(lay->CheckError(lay->un_geom.n < 3, quiet, rval,
+                       "coarse-coded scalar representation requires at least 3 units, I just set un_geom.n")) {
+      if(scalar.rep == ScalarValSpec::LOCALIST) {
+        lay->un_geom.n = 4;
+        lay->un_geom.x = 4;
+      }
+      else if(scalar.rep == ScalarValSpec::GAUSSIAN) {
+        lay->un_geom.n = 12;
+        lay->un_geom.x = 12;
+      }
     }
-    else if(scalar.rep == ScalarValSpec::GAUSSIAN) {
-      lay->un_geom.n = 12;
-      lay->un_geom.x = 12;
-    }
-  }
 
-  if(scalar.rep == ScalarValSpec::LOCALIST) {
-    kwta.k = 1;         // localist means 1 unit active!!
-    gp_kwta.k = 1;
+    if(scalar.rep == ScalarValSpec::LOCALIST) {
+      kwta.k = 1;         // localist means 1 unit active!!
+      gp_kwta.k = 1;
+    }
   }
 
   if(bias_val.un == ScalarValBias::GC) {
@@ -243,79 +251,6 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
   return rval;
-}
-
-void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, net->layers) {
-    if(lay->spec.SPtr() != this) continue;
-
-    if(n_units > 0) {
-      lay->un_geom.n = n_units;
-      lay->un_geom.x = n_units;
-    }
-
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-    LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);    // taking 1st unit as representative
-
-    if(scalar.rep == ScalarValSpec::LOCALIST) {
-      scalar.min_sum_act = .2f;
-      kwta.k = 1;
-      inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-      inhib.kwta_pt = 0.9f;
-      us->g_bar.h = .03f; us->g_bar.a = .09f;
-      us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
-      us->act.thr = .17f;
-      us->act.gain = 220.0f;
-      us->act.nvar = .01f;
-      us->dt.vm = .05f;
-      bias_val.un = ScalarValBias::GC;
-      bias_val.wt = ScalarValBias::NO_WT;
-      unit_range.min = 0.0f; unit_range.max = 1.0f;
-
-      for(int g=0; g<u->recv.size; g++) {
-        LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-        if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
-        LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-        if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-           cs->InheritsFrom(TA_MarkerConSpec)) {
-          continue;
-        }
-        cs->lmix.err_sb = false; // false: this is critical for linear mapping of vals..
-        cs->rnd.mean = 0.1f;
-        cs->rnd.var = 0.0f;
-        cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
-      }
-    }
-    else if(scalar.rep == ScalarValSpec::GAUSSIAN) {
-      inhib.type = LeabraInhibSpec::KWTA_INHIB;
-      inhib.kwta_pt = 0.25f;
-      us->g_bar.h = .015f; us->g_bar.a = .045f;
-      us->act_fun = LeabraUnitSpec::NOISY_XX1;
-      us->act.thr = .25f;
-      us->act.gain = 600.0f;
-      us->act.nvar = .005f;
-      us->dt.vm = .2f;
-      bias_val.un = ScalarValBias::GC;
-      bias_val.wt = ScalarValBias::NO_WT;
-      unit_range.min = -.5f; unit_range.max = 1.5f;
-
-      for(int g=0; g<u->recv.size; g++) {
-        LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-        if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
-        LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-        if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-           cs->InheritsFrom(TA_MarkerConSpec)) {
-          continue;
-        }
-        cs->lmix.err_sb = true;
-        cs->rnd.mean = 0.1f;
-        cs->rnd.var = 0.0f;
-        cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
-      }
-    }
-    us->UpdateAfterEdit();
-  }
-  UpdateAfterEdit();
 }
 
 // todo: deal with lesion flag in lots of special purpose code like this!!!
@@ -454,10 +389,22 @@ void ScalarValLayerSpec::ClampValue_ugp(LeabraLayer* lay,
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
+
+  float avg_act = 0.0f;
+  if(scalar.rep == ScalarValSpec::AVG_ACT) {
+    avg_act = avg_act_range.Project(unit_range.Normalize(val));
+  }
+
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    float act = rescale * scalar.GetUnitAct(i);
+    float act;
+    if(scalar.rep == ScalarValSpec::AVG_ACT) {
+      act = avg_act;
+    }
+    else {
+      act = rescale * scalar.GetUnitAct(i);
+    }
     if(act < us->opt_thresh.send)
       act = 0.0f;
     u->SetExtFlag(Unit::EXT);
@@ -498,8 +445,15 @@ float ScalarValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_
     sum_act += act_val;
   }
   sum_act = MAX(sum_act, scalar.min_sum_act);
-  if(sum_act > 0.0f)
-    avg /= sum_act;
+  if(scalar.rep == ScalarValSpec::AVG_ACT) {
+    if(nunits > 1)
+      sum_act /= (float)(nunits-1);
+    avg = val_range.Project(avg_act_range.Normalize(sum_act));
+  }
+  else {
+    if(sum_act > 0.0f)
+      avg /= sum_act;
+  }
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   u->act_eq = u->act_nd = avg;

@@ -38,13 +38,6 @@ eTypeDef_Of(MarkerConSpec);
 void LeabraInhibSpec::Initialize() {
   type = FF_FB_INHIB;
   gi = 2.0f;
-  ff = 1.0f;
-  ff0 = 0.1f;
-  fb = 0.5f;
-  self_fb = 0.0f;
-  dt = 0.7f;
-  up_immed = false;
-  min_i = 0.0f;
   Defaults_init();
 }
 
@@ -59,6 +52,14 @@ void LeabraInhibSpec::Defaults_init() {
   default:
     break;
   }
+  type = FF_FB_INHIB;
+  min_i = 0.0f;
+  ff = 1.0f;
+  ff0 = 0.1f;
+  fb = 0.5f;
+  self_fb = 0.0f;
+  dt = 0.7f;
+  up_immed = false;
 }
 
 void KWTASpec::Initialize() {

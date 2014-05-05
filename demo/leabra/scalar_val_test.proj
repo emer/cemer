@@ -14,7 +14,7 @@ LeabraProject .projects["scalar_val_test"] {
 
  ControlPanel_Group @.ctrl_panels = [2] {
   ControlPanel @["ControlPanel"] { 
-   EditMbrItem_Group @.mbrs = [23] {
+   EditMbrItem_Group @.mbrs = [20] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
     EditMbrItem @[2] { };
@@ -35,9 +35,6 @@ LeabraProject .projects["scalar_val_test"] {
     EditMbrItem @[17] { };
     EditMbrItem @[18] { };
     EditMbrItem @[19] { };
-    EditMbrItem @[20] { };
-    EditMbrItem @[21] { };
-    EditMbrItem @[22] { };
    };
 
    EditMthItem_Group @.mths = [8] {
@@ -1587,7 +1584,7 @@ LeabraProject .projects["scalar_val_test"] {
        BaseSpec_Group @.children = [0] {
        };
       };
-      LeabraLayerSpec @["SV3"] { 
+      ScalarValLayerSpec @["SV3"] { 
        BaseSpec_Group @.children = [0] {
        };
       };
@@ -1745,12 +1742,12 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20140401T185136Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"ScalarValLayerSpec\",\"wgTitle\":\"ScalarValLayerSpec\",\"wgCurRevisionId\":10587,\"wgRevisionId\":10587,\"wgArticleId\":372,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"ScalarValLayerSpec\",\"wgUserId\":3,\"wgUserEditCount\":2095,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"ScalarValLayerSpec\",\"wgTitle\":\"ScalarValLayerSpec\",\"wgCurRevisionId\":10589,\"wgRevisionId\":10589,\"wgArticleId\":372,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"ScalarValLayerSpec\",\"wgUserId\":3,\"wgUserEditCount\":2097,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":
 0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"a699ba10601add078c76a1fd57da094f+\\\\\",\"patrolToken\":\"32189d03ead984beb272cdf28f95afb3+\\\\\",\"watchToken\":\"7d837740c49a47d6351647f597597a44+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:0580b59d534d298227b49effa239a305 */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"bdfb5d4440ea909c9533ae76cab0693c+\\\\\",\"patrolToken\":\"d56ff3267eba79f4e632ef6fd70fa109+\\\\\",\"watchToken\":\"44ebecc39d4441869f111edd2e49ec03+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:37ad454c15152470df1b26de91cecdc8 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
@@ -1798,6 +1795,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 </p>
 <h2><span class=\"mw-headline\" id=\"Generally_Good_Parameters\">Generally Good Parameters</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=edit&amp;section=2\" title=\"Edit section: Generally Good Parameters\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
 <p>The following are sets of parameters that have been tested and found to work well at learning a scalar value representation based on probabilistic binary inputs and continuous-valued inputs.
+</p><p>As of v.7.0.0, <b>The default <a href=\"/emergent/index.php/LeabraUnitSpec\" title=\"LeabraUnitSpec\">LeabraUnitSpec</a> and <a href=\"/emergent/index.php/LeabraLayerSpec\" title=\"LeabraLayerSpec\">LeabraLayerSpec</a> parameters are recommended</b> for both LOCALIST and GAUSSIAN types -- previously special params were used for LOCALIST, but new defaults work better overall (for PVLV learning at least). A <b>gi=2.2</b> value seems to work best for FF_FB_INHIB.
 </p>
 <h3><span class=\"mw-headline\" id=\"Gaussian_Bump.2C_12_Units_for_0-1_Value_Rep\">Gaussian Bump, 12 Units for 0-1 Value Rep</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=edit&amp;section=3\" title=\"Edit section: Gaussian Bump, 12 Units for 0-1 Value Rep\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h3>
 <ul>
@@ -1816,20 +1814,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 </dd>
 </dl>
 <ul>
-<li> LeabraLayerSpec:
-</li>
-</ul>
-<dl>
-<dd><ul>
-<li> FF_FB g_i = 2.2 (rest default)
-</li>
-<li> KWTA_AVG_INHIB, k = 3, pt = .6 <i>--or--</i> KWTA_INHIB, pt = .25
-</li>
-</ul>
-</dd>
-</dl>
-<ul>
-<li> Std Unit Spec
+<li> LeabraLayerSpec: k = 3
 </li>
 <li> ConSpec: for probabilistic encoding, using wt_sig = 1, 1 instead of 6, 1.25 is key; also err_sb off is more fidelitous.
 </li>
@@ -1846,20 +1831,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 </li>
 </ul>
 </li>
-<li> LeabraLayerSpec:
-</li>
-</ul>
-<dl>
-<dd><ul>
-<li> FF_FB g_i = 2.2 (rest default)
-</li>
-<li> KWTA_AVG_INHIB, k = 3, pt = .6 <i>--or--</i> KWTA_INHIB, pt = .25
-</li>
-</ul>
-</dd>
-</dl>
-<ul>
-<li> Std Unit Spec
+<li> LeabraLayerSpec: k = 3
 </li>
 <li> ConSpec: for probabilistic encoding, using wt_sig = 1, 1 instead of 6, 1.25 is key; also err_sb off is more fidelitous.
 </li>
@@ -1876,15 +1848,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 </li>
 </ul>
 </li>
-<li> LeabraLayerSpec: k = 1, KWTA_AVG_INHIB, pt = .9
-</li>
-<li> UnitSpec:
-<ul>
-<li> act.thr = .17, gain = 220, nvar = 0.01 (softer gain overall)
-</li>
-<li> act_fun = NOISY_LINEAR (linear response!)
-</li>
-</ul>
+<li> LeabraLayerSpec: k = 1
 </li>
 </ul>
 <h2><span class=\"mw-headline\" id=\"Special_Setup_for_ScalarValLayers\">Special Setup for ScalarValLayers</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=edit&amp;section=6\" title=\"Edit section: Special Setup for ScalarValLayers\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
@@ -1911,8 +1875,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.040 seconds
-Real time usage: 0.046 seconds
+CPU time usage: 0.060 seconds
+Real time usage: 0.065 seconds
 Preprocessor visited node count: 40/1000000
 Preprocessor generated node count: 74/1000000
 Post?expand include size: 113/2097152 bytes
@@ -1921,10 +1885,10 @@ Highest expansion depth: 3/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:372-0!*!0!!en!*!* and timestamp 20140504060325
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:372-0!*!0!!en!*!* and timestamp 20140505071959
  -->
 </div>								<div class=\"printfooter\">
-				Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10587\">http://grey.colorado.edu/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10587</a>\"				</div>
+				Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10589\">http://grey.colorado.edu/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10589</a>\"				</div>
 												<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>												<div class=\"visualClear\"></div>
 							</div>
 		</div>
@@ -1961,7 +1925,7 @@ Expensive parser function count: 0/100
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/ScalarValLayerSpec\">Read</a></span></li>
 					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
 					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=unwatch&amp;token=16a3158c7733a60345c09dcf30363417%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=unwatch&amp;token=e0bc7dc163c4268c27acd5452a854044%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -2008,7 +1972,7 @@ Expensive parser function count: 0/100
 			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/ScalarValLayerSpec\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
 			<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li>
 			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
-			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10587\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;oldid=10589\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;action=info\">Page information</a></li>
 			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/ScalarValLayerSpec\" rel=\"smw-browse\">Browse properties</a></li>
 		</ul>
@@ -2019,7 +1983,7 @@ Expensive parser function count: 0/100
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=ScalarValLayerSpec\">Create a book</a></li>
-			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=ScalarValLayerSpec&amp;oldid=10587&amp;writer=rl\">Download as PDF</a></li>
+			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=ScalarValLayerSpec&amp;oldid=10589&amp;writer=rl\">Download as PDF</a></li>
 			<li id=\"t-print\"><a href=\"/emergent/index.php?title=ScalarValLayerSpec&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
@@ -2028,8 +1992,8 @@ Expensive parser function count: 0/100
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 4 May 2014, at 00:01.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 1,544 times.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 5 May 2014, at 00:57.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 1,554 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2052,7 +2016,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 <script>if(window.mw){
 mw.loader.state({\"user.groups\":\"ready\"});
 }</script>
-<!-- Served in 0.473 secs. -->
+<!-- Served in 0.484 secs. -->
 	
 
 </body></html>";
@@ -2091,13 +2055,13 @@ mw.loader.state({\"user.groups\":\"ready\"});
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
-     label="bias_lrate";
-     desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     label="sv1_scalar";
+     desc=" specifies how values are represented in terms of distributed patterns of activation across the layer<br>  rep:  type of representation of scalar value to use<br>   * GAUSSIAN:  gaussian bump, with value = weighted average of tuned unit values<br>   * LOCALIST:  each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units<br>   * AVG ACT:  value is the average activation of the rest of the units, rescaled into desired overall range -- most appropriate for FF_FB inhibition with sufficient self feedback inhibition to ensure proportional activation levels with reasonable range of variability -- can have as few as 1 value-coding unitsa<br>  un width:  sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)<br>  norm width:  un_width is specified in normalized 0-1 proportion of unit range<br>  clamp pat: [Default: false]  if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)<br>  min sum act: [Default: 0.2]  minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by<br>  clip val:  ensure that value remains within specified range<br>  send thr:  use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)<br>  init nms:  initialize unit names when weights are initialized";
      cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$;
-     mbr=LeabraConSpec::lrate;
-     is_numeric=1;
-     is_single=1;
+     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV1"]$$;
+     mbr=ScalarValLayerSpec::scalar;
+     is_numeric=0;
+     is_single=0;
      param_search {
       srch=NO;
       min_val=0;
@@ -2107,11 +2071,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
     };
     EditMbrItem @[1] {
-     label="sv1_kwta";
-     desc=" desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)<br>  k from:  how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q<br>   * USE K:  use the k specified directly<br>   * USE PCT:  use the percentage pct to compute the k as a function of layer size<br>   * USE PAT K:  use the activity level of the current event pattern (k = of units > pat_q)<br>  k:  desired number of active units in the layer<br>  pct:  desired proportion of activity (used to compute a k value based on layer size, .25 std)<br>  pat q: [Default: 0.2;0.5]  threshold for pat_k based activity level: add to k if ext > pat_q<br>  avg dt: [Default: 0.005]  time constant for integrating time-average values at the layer level -- e.g., acts_m_avg, which is useful for providing an estimate of actual expected activity levels in a layer, to compare against pct<br>  diff act pct: [Default: false]  if true, use different actual percent activity for expected overall layer activation -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default. Read the Leabra NetinScaling section of the online wiki docs for full details<br>  act pct:  actual percent activity to put in kwta.pct field of layer -- see diff_act_pct for implications for netinput scaling, and read the Leabra NetinScaling section of the online wiki docs for full details";
+     label="sv2_scalar";
+     desc=" specifies how values are represented in terms of distributed patterns of activation across the layer<br>  rep:  type of representation of scalar value to use<br>   * GAUSSIAN:  gaussian bump, with value = weighted average of tuned unit values<br>   * LOCALIST:  each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units<br>   * AVG ACT:  value is the average activation of the rest of the units, rescaled into desired overall range -- most appropriate for FF_FB inhibition with sufficient self feedback inhibition to ensure proportional activation levels with reasonable range of variability -- can have as few as 1 value-coding unitsa<br>  un width:  sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)<br>  norm width:  un_width is specified in normalized 0-1 proportion of unit range<br>  clamp pat: [Default: false]  if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)<br>  min sum act: [Default: 0.2]  minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by<br>  clip val:  ensure that value remains within specified range<br>  send thr:  use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)<br>  init nms:  initialize unit names when weights are initialized";
      cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV1"]$$;
-     mbr=LeabraLayerSpec::kwta;
+     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV2"]$$;
+     mbr=ScalarValLayerSpec::scalar;
      is_numeric=0;
      is_single=0;
      param_search {
@@ -2123,11 +2087,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
     };
     EditMbrItem @[2] {
-     label="sv2_kwta";
-     desc=" desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)<br>  k from:  how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q<br>   * USE K:  use the k specified directly<br>   * USE PCT:  use the percentage pct to compute the k as a function of layer size<br>   * USE PAT K:  use the activity level of the current event pattern (k = of units > pat_q)<br>  k:  desired number of active units in the layer<br>  pct:  desired proportion of activity (used to compute a k value based on layer size, .25 std)<br>  pat q: [Default: 0.2;0.5]  threshold for pat_k based activity level: add to k if ext > pat_q<br>  avg dt: [Default: 0.005]  time constant for integrating time-average values at the layer level -- e.g., acts_m_avg, which is useful for providing an estimate of actual expected activity levels in a layer, to compare against pct<br>  diff act pct: [Default: false]  if true, use different actual percent activity for expected overall layer activation -- the expected layer activation contributes to the normalization of net input scaling -- lower activity = stronger connections and vice-versa, so that different inputs with different activity levels are equated in their relative contribution to net input, by default. Read the Leabra NetinScaling section of the online wiki docs for full details<br>  act pct:  actual percent activity to put in kwta.pct field of layer -- see diff_act_pct for implications for netinput scaling, and read the Leabra NetinScaling section of the online wiki docs for full details";
+     label="sv3_scalar";
+     desc=" specifies how values are represented in terms of distributed patterns of activation across the layer<br>  rep:  type of representation of scalar value to use<br>   * GAUSSIAN:  gaussian bump, with value = weighted average of tuned unit values<br>   * LOCALIST:  each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units<br>   * AVG ACT:  value is the average activation of the rest of the units, rescaled into desired overall range -- most appropriate for FF_FB inhibition with sufficient self feedback inhibition to ensure proportional activation levels with reasonable range of variability -- can have as few as 1 value-coding unitsa<br>  un width:  sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)<br>  norm width:  un_width is specified in normalized 0-1 proportion of unit range<br>  clamp pat: [Default: false]  if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)<br>  min sum act: [Default: 0.2]  minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by<br>  clip val:  ensure that value remains within specified range<br>  send thr:  use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)<br>  init nms:  initialize unit names when weights are initialized";
      cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV2"]$$;
-     mbr=LeabraLayerSpec::kwta;
+     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$$;
+     mbr=ScalarValLayerSpec::scalar;
      is_numeric=0;
      is_single=0;
      param_search {
@@ -2174,7 +2138,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      label="sv3_inhib";
      desc=" how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer<br>  type:  how to compute inhibition (g_i)<br>   * FF FB INHIB:  simulated interneuron-like feedforward (proportional to avg netin) and feedback (proportional to avg act) inhibition<br>   * KWTA INHIB:  between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)<br>   * KWTA AVG INHIB:  average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)<br>   * UNIT INHIB:  unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)<br>  kwta pt: [Default: 0.2;0.5]  [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] <br>  gi:  [1.5-2.3 typical, can go much lower or higher as needed] overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- FF_FB does NOT use kwta.pct parameter to set inhibition, so you must adjust it here<br>  ff: [Default: 1]  overall inhibitory contribution from feedforward inhibition -- computed from average netinput (i.e., synaptic drive into layer)<br>  fb: [Default: 0.5;1]  overall inhibitory contribution from feedback inhibition -- computed from average activation<br>  self fb: [Default: 0.5;0.02;0;1]  individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not good for typical hidden layers (use .02 max)<br>  dt: [Default: 0.7]  time constant for integrating inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid .7 typically works, but may need to go lower if oscillations are a problem<br>  up immed:  inhibition rises immediately, and dt only applies to decay -- this is important for spiking units, but should otherwise generally be off for rate-coded units<br>  ff0: [Default: 0.1]  feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB match kwta dynamics more closely), but if FF inhib is not strong enough, you may need to lower it<br>  min i: [Default: 0]  minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation";
      cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$$;
+     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$;
      mbr=LeabraLayerSpec::inhib;
      is_numeric=0;
      is_single=0;
@@ -2183,42 +2147,10 @@ mw.loader.state({\"user.groups\":\"ready\"});
       min_val=0;
       max_val=1;
       next_val=0;
-      incr=0.1;
+      incr=0.1000000014901161;
      };
     };
     EditMbrItem @[6] {
-     label="sv1_scalar";
-     desc=" specifies how values are represented in terms of distributed patterns of activation across the layer<br>  rep:  type of representation of scalar value to use<br>   * GAUSSIAN:  gaussian bump, with value = weighted average of tuned unit values<br>   * LOCALIST:  each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units<br>  un width:  sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)<br>  norm width:  un_width is specified in normalized 0-1 proportion of unit range<br>  clamp pat: [Default: false]  if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)<br>  min sum act: [Default: 0.2]  minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by<br>  clip val:  ensure that value remains within specified range<br>  send thr:  use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)<br>  init nms:  initialize unit names when weights are initialized";
-     cust_desc=0;
-     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV1"]$;
-     mbr=ScalarValLayerSpec::scalar;
-     is_numeric=0;
-     is_single=0;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[7] {
-     label="sv2_scalar";
-     desc=" specifies how values are represented in terms of distributed patterns of activation across the layer<br>  rep:  type of representation of scalar value to use<br>   * GAUSSIAN:  gaussian bump, with value = weighted average of tuned unit values<br>   * LOCALIST:  each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units<br>  un width:  sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)<br>  norm width:  un_width is specified in normalized 0-1 proportion of unit range<br>  clamp pat: [Default: false]  if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)<br>  min sum act: [Default: 0.2]  minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by<br>  clip val:  ensure that value remains within specified range<br>  send thr:  use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)<br>  init nms:  initialize unit names when weights are initialized";
-     cust_desc=0;
-     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV2"]$;
-     mbr=ScalarValLayerSpec::scalar;
-     is_numeric=0;
-     is_single=0;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[8] {
      label="sv1_unit_range";
      desc=" range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.<br>  min:  minimum value<br>  max:  maximum value";
      cust_desc=0;
@@ -2234,7 +2166,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[9] {
+    EditMbrItem @[7] {
      label="sv2_unit_range";
      desc=" range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.<br>  min:  minimum value<br>  max:  maximum value";
      cust_desc=0;
@@ -2250,7 +2182,23 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[10] {
+    EditMbrItem @[8] {
+     label="sv3_unit_range";
+     desc=" range of values represented across the units; for GAUSSIAN, add extra values above and below true useful range to prevent edge effects.<br>  min:  minimum value<br>  max:  maximum value";
+     cust_desc=0;
+     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$;
+     mbr=ScalarValLayerSpec::unit_range;
+     is_numeric=0;
+     is_single=0;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
+    EditMbrItem @[9] {
      label="sv1_bias_val";
      desc=" specifies bias for given value (as gaussian bump) <br>  un:  bias on individual units<br>   * NO UN:  no unit bias<br>   * GC:  bias value enters as a conductance in gc.h or gc.a<br>   * BWT:  bias value enters as a bias.wt<br>  un shp:  shape of unit bias<br>   * VAL:  bias as a particular value representation<br>   * NEG SLP:  bias as an increasingly negative slope (gc.a or -bwt) as unit values increase<br>   * POS SLP:  bias as an increasingly positive slope (gc.h or +bwt) as unit values increase<br>  un gain: [Default: 1]  gain multiplier (strength) of bias to apply for units. WT = .03 as basic weight multiplier<br>  wt:  bias on weights: always uses a val-shaped bias<br>   * NO WT:  no weight bias<br>   * WT:  input weights<br>  wt gain: [Default: 1]  gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)<br>  val:  value location (center of gaussian bump)";
      cust_desc=0;
@@ -2266,7 +2214,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[11] {
+    EditMbrItem @[10] {
      label="sv2_bias_val";
      desc=" specifies bias for given value (as gaussian bump) <br>  un:  bias on individual units<br>   * NO UN:  no unit bias<br>   * GC:  bias value enters as a conductance in gc.h or gc.a<br>   * BWT:  bias value enters as a bias.wt<br>  un shp:  shape of unit bias<br>   * VAL:  bias as a particular value representation<br>   * NEG SLP:  bias as an increasingly negative slope (gc.a or -bwt) as unit values increase<br>   * POS SLP:  bias as an increasingly positive slope (gc.h or +bwt) as unit values increase<br>  un gain: [Default: 1]  gain multiplier (strength) of bias to apply for units. WT = .03 as basic weight multiplier<br>  wt:  bias on weights: always uses a val-shaped bias<br>   * NO WT:  no weight bias<br>   * WT:  input weights<br>  wt gain: [Default: 1]  gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)<br>  val:  value location (center of gaussian bump)";
      cust_desc=0;
@@ -2282,87 +2230,23 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
+    EditMbrItem @[11] {
+     label="sv3_bias_val";
+     desc=" specifies bias for given value (as gaussian bump) <br>  un:  bias on individual units<br>   * NO UN:  no unit bias<br>   * GC:  bias value enters as a conductance in gc.h or gc.a<br>   * BWT:  bias value enters as a bias.wt<br>  un shp:  shape of unit bias<br>   * VAL:  bias as a particular value representation<br>   * NEG SLP:  bias as an increasingly negative slope (gc.a or -bwt) as unit values increase<br>   * POS SLP:  bias as an increasingly positive slope (gc.h or +bwt) as unit values increase<br>  un gain: [Default: 1]  gain multiplier (strength) of bias to apply for units. WT = .03 as basic weight multiplier<br>  wt:  bias on weights: always uses a val-shaped bias<br>   * NO WT:  no weight bias<br>   * WT:  input weights<br>  wt gain: [Default: 1]  gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)<br>  val:  value location (center of gaussian bump)";
+     cust_desc=0;
+     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$;
+     mbr=ScalarValLayerSpec::bias_val;
+     is_numeric=0;
+     is_single=0;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
     EditMbrItem @[12] {
-     label="sv1_act_fun";
-     desc=" activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing<br> * NOISY XX1:  x over x plus 1 convolved with Gaussian noise (noise is nvar)<br> * SPIKE:  discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model<br> * NOISY LINEAR:  simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)<br> * XX1:  x over x plus 1, hard threshold, no noise convolution<br> * LINEAR:  simple linear output function (still thesholded)";
-     cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV1"]$$;
-     mbr=LeabraUnitSpec::act_fun;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[13] {
-     label="sv2_act_fun";
-     desc=" activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing<br> * NOISY XX1:  x over x plus 1 convolved with Gaussian noise (noise is nvar)<br> * SPIKE:  discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model<br> * NOISY LINEAR:  simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)<br> * XX1:  x over x plus 1, hard threshold, no noise convolution<br> * LINEAR:  simple linear output function (still thesholded)";
-     cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV2"]$$;
-     mbr=LeabraUnitSpec::act_fun;
-     is_numeric=0;
-     is_single=1;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[14] {
-     label="sv1_act";
-     desc=" activation function parameters -- very important for determining the shape of the selected act_fun<br>  gelin: [Default: true]  IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match. Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value. other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr). the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero<br>  thr: [Default: 0.5]  threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)<br>  gain: [Default: 100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network<br>  nvar: [Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function<br>  avg dt: [Default: 0.005]  time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes<br>  avg init: [Default: 0.15]  initial activation average value<br>  i thr:  [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation<br>   * STD:  include all currents (except bias weights) in inhibitory threshold computation<br>   * NO A:  exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place<br>   * NO H:  exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation<br>   * NO AH:  exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation<br>   * ALL:  include all currents INCLUDING bias weights";
-     cust_desc=0;
-     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV1"]$;
-     mbr=LeabraUnitSpec::act;
-     is_numeric=0;
-     is_single=0;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[15] {
-     label="sv2_act";
-     desc=" activation function parameters -- very important for determining the shape of the selected act_fun<br>  gelin: [Default: true]  IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match. Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value. other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr). the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero<br>  thr: [Default: 0.5]  threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)<br>  gain: [Default: 100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network<br>  nvar: [Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function<br>  avg dt: [Default: 0.005]  time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes<br>  avg init: [Default: 0.15]  initial activation average value<br>  i thr:  [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation<br>   * STD:  include all currents (except bias weights) in inhibitory threshold computation<br>   * NO A:  exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place<br>   * NO H:  exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation<br>   * NO AH:  exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation<br>   * ALL:  include all currents INCLUDING bias weights";
-     cust_desc=0;
-     base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV2"]$;
-     mbr=LeabraUnitSpec::act;
-     is_numeric=0;
-     is_single=0;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[16] {
-     label="sv3_act";
-     desc=" activation function parameters -- very important for determining the shape of the selected act_fun<br>  gelin: [Default: true]  IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match. Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value. other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr). the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero<br>  thr: [Default: 0.5]  threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)<br>  gain: [Default: 100;40]  gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network<br>  nvar: [Default: 0.005;0.01]  variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function<br>  avg dt: [Default: 0.005]  time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes<br>  avg init: [Default: 0.15]  initial activation average value<br>  i thr:  [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation<br>   * STD:  include all currents (except bias weights) in inhibitory threshold computation<br>   * NO A:  exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place<br>   * NO H:  exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation<br>   * NO AH:  exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation<br>   * ALL:  include all currents INCLUDING bias weights";
-     cust_desc=0;
-     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV3"]$$;
-     mbr=LeabraUnitSpec::act;
-     is_numeric=0;
-     is_single=0;
-     param_search {
-      srch=NO;
-      min_val=0;
-      max_val=1;
-      next_val=0;
-      incr=0.1000000014901161;
-     };
-    };
-    EditMbrItem @[17] {
      label="sv1_rnd";
      desc=" Weight randomization specification. Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc<br>  type:  type of random variable to generate<br>   * UNIFORM:  uniform with var = range on either side of the mean<br>   * BINOMIAL:  binomial with var = p, par = n<br>   * POISSON:  poisson with lambda = var<br>   * GAMMA:  gamma with var and par = stages<br>   * GAUSSIAN:  normal with var<br>   * NONE:  just the mean<br>  mean:  mean of random distribution<br>  var:  'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)<br>  par:  extra parameter for distribution (depends on each one)";
      cust_desc=0;
@@ -2378,7 +2262,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[18] {
+    EditMbrItem @[13] {
      label="sv2_rnd";
      desc=" Weight randomization specification. Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc<br>  type:  type of random variable to generate<br>   * UNIFORM:  uniform with var = range on either side of the mean<br>   * BINOMIAL:  binomial with var = p, par = n<br>   * POISSON:  poisson with lambda = var<br>   * GAMMA:  gamma with var and par = stages<br>   * GAUSSIAN:  normal with var<br>   * NONE:  just the mean<br>  mean:  mean of random distribution<br>  var:  'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)<br>  par:  extra parameter for distribution (depends on each one)";
      cust_desc=0;
@@ -2394,7 +2278,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[19] {
+    EditMbrItem @[14] {
      label="sv1_wt_sig";
      desc=" sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative<br>  gain: [Default: 1;6]  gain (contrast, sharpness) of the weight contrast function (1 = linear)<br>  off: [Default: 1:1.25]  offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL<br>  dwt norm: [Default: false]  normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection";
      cust_desc=0;
@@ -2410,7 +2294,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[20] {
+    EditMbrItem @[15] {
      label="sv2_wt_sig";
      desc=" sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative<br>  gain: [Default: 1;6]  gain (contrast, sharpness) of the weight contrast function (1 = linear)<br>  off: [Default: 1:1.25]  offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL<br>  dwt norm: [Default: false]  normalize weight changes -- this adds a significant amount of computational cost, and generally makes learning more robust, but a well-tuned network should not require it, and it causes some interference with prior learning that may not be very biologically plausible or desirable -- dwt -= (act_p / sum act_p) (sum dwt) over receiving projection";
      cust_desc=0;
@@ -2426,7 +2310,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[21] {
+    EditMbrItem @[16] {
      label="sv1_lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
      cust_desc=0;
@@ -2442,11 +2326,43 @@ mw.loader.state({\"user.groups\":\"ready\"});
       incr=0.1000000014901161;
      };
     };
-    EditMbrItem @[22] {
+    EditMbrItem @[17] {
      label="sv2_lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
      cust_desc=0;
      base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["SV2Cons"]$;
+     mbr=LeabraConSpec::lrate;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
+    EditMbrItem @[18] {
+     label="sv3_lrate";
+     desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
+     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["SV3Cons"]$$;
+     mbr=LeabraConSpec::lrate;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
+    EditMbrItem @[19] {
+     label="bias_lrate";
+     desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
+     base=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$;
      mbr=LeabraConSpec::lrate;
      is_numeric=1;
      is_single=1;
@@ -2511,14 +2427,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
      desc=" reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value";
      cust_desc=0;
      base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV1"]$;
-     mth=ScalarValLayerSpec::ReConfig;
+     mth=NULL;
     };
     EditMthItem @[7] {
      label="sv2_ReConfig";
      desc=" reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value";
      cust_desc=0;
      base=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV2"]$;
-     mth=ScalarValLayerSpec::ReConfig;
+     mth=NULL;
     };
    };
   };
@@ -4250,7 +4166,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
      float_Data @["SV3"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_69";
+       name="UserDataItem_List_63";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4262,7 +4178,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       name="SV3";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
-      cell_geom{ 4;1;      };
+      cell_geom{ 1;1;      };
       calc_expr {
        expr=;
       };
@@ -4272,7 +4188,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [4 1 2] 1;1;1;1;0;0;0;0;      };
+      [1 1 2] 1;0;      };
      };
      float_Data @["frequency"] {
       UserDataItem_List @*(.user_data_) {
@@ -4298,7 +4214,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=97;
       ar {
        name=;
-      [2] 0.33833563;0.66166437;      };
+      [2] 0.5157181;0.4842819;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4318,7 +4234,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      el_def=0;
      String_Data @["Name"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_108";
+       name="UserDataItem_List_57";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4343,9 +4259,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
       [100] "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
-"1.1";"1.1";"1.1";"1.1";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
@@ -4354,7 +4270,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
      float_Data @["Input"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_109";
+       name="UserDataItem_List_58";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4540,7 +4456,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
      float_Data @["SV1"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_110";
+       name="UserDataItem_List_59";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4565,9 +4481,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
       [1 1 100] 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -4576,7 +4492,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
      float_Data @["SV2"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_111";
+       name="UserDataItem_List_60";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4601,9 +4517,9 @@ mw.loader.state({\"user.groups\":\"ready\"});
       [1 1 100] 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -4612,7 +4528,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
      float_Data @["SV3"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_112";
+       name="UserDataItem_List_61";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4624,7 +4540,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       name="SV3";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
-      cell_geom{ 4;1;      };
+      cell_geom{ 1;1;      };
       calc_expr {
        expr=;
       };
@@ -4634,42 +4550,12 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [4 1 100] 1;1;1;1;1;1;1;1;1;1;
+      [1 1 100] 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+1;1;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
@@ -4678,7 +4564,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      };
      float_Data @["frequency"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_113";
+       name="UserDataItem_List_62";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["view_panel_wd"] {
@@ -4700,16 +4586,16 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [100] 0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;
-0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;
-0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;0.33833563;
-0.33833563;0.33833563;0.33833563;0.33833563;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
-0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
-0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
-0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
-0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
-0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
-0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;0.66166437;
+      [100] 0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;
+0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;
+0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;
+0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;
+0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;0.5157181;
+0.5157181;0.5157181;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;
+0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;
+0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;
+0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;
+0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;0.4842819;
       };
      };
     };
@@ -4845,7 +4731,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_110";
+       name="UserDataItem_List_59";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -4867,12 +4753,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;      };
+      [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_111";
+       name="UserDataItem_List_60";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -4894,12 +4779,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 87;87;87;87;87;87;87;87;87;87;
-87;87;87;87;87;87;      };
+      [0]       };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_112";
+       name="UserDataItem_List_61";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -4921,8 +4805,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;      };
+      [0]       };
      };
      String_Data @["trial_name"] {
       name="trial_name";
@@ -4938,8 +4821,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.1";"1.1";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.1";"1.0";      };
+      [0]       };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -4955,12 +4837,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] ;;;;;;;;;;
-;;;;;;      };
+      [0]       };
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_113";
+       name="UserDataItem_List_62";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -4982,8 +4863,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 2;2;2;2;2;2;2;2;2;2;
-2;2;2;2;2;2;      };
+      [0]       };
      };
      float_Data @["minus_cycles"] {
       name="minus_cycles";
@@ -4999,8 +4879,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;      };
+      [0]       };
      };
      float_Data @["sse"] {
       name="sse";
@@ -5016,8 +4895,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0;0;0;0;0;0;2.7840991;2.614399;0;0;
-0;0;0;0;2.8742051;0;      };
+      [0]       };
      };
      float_Data @["ext_rew"] {
       name="ext_rew";
@@ -5033,8 +4911,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;      };
+      [0]       };
      };
      float_Data @["sv1"] {
       name="sv1";
@@ -5050,8 +4927,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0.36102009;0.35928208;0.35755405;0.35583618;0.3541286;0.35243028;0.35074708;0.35423753;0.35771132;0.35599229;
-0.3542836;0.3525843;0.35089982;0.3492302;0.34757021;0.35106435;      };
+      [0]       };
      };
      float_Data @["sv2"] {
       name="sv2";
@@ -5067,8 +4943,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0.35227472;0.32788777;0.29806027;0.27690339;0.2617636;0.24207379;0.22641572;0.27381137;0.3266215;0.29683131;
-0.27589655;0.26042002;0.24131736;0.2257477;0.211509;0.26012707;      };
+      [0]       };
      };
      float_Data @["sv3"] {
       name="sv3";
@@ -5084,8 +4959,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0.38729423;0.37768385;0.36852762;0.35980523;0.35148802;0.34352607;0.3358959;0.35384992;0.37189969;0.36301818;
-0.35455275;0.34647027;0.3387087;0.33129206;0.32420003;0.34204426;      };
+      [0]       };
      };
      double_Data @["prob1"] {
       name="prob1";
@@ -5101,8 +4975,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;
-0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;      };
+      [0]       };
      };
      double_Data @["prob2"] {
       name="prob2";
@@ -5118,8 +4991,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [16] 0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;
-0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;      };
+      [0]       };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -5128,8 +5000,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
     keygen 4 0=0;
     row_indexes {
      name=;
-    [16] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;    };
+    [0]     };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -5140,7 +5011,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_112";
+       name="UserDataItem_List_61";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -5162,19 +5033,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;      };
+      [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_113";
+       name="UserDataItem_List_62";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -5196,15 +5059,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;21;22;23;24;25;26;27;28;29;
-30;31;32;33;34;35;36;37;38;39;
-40;41;42;43;44;45;46;47;48;49;
-50;51;52;53;54;55;56;57;58;59;
-60;61;62;63;64;65;66;67;68;69;
-70;71;72;73;74;75;76;77;78;79;
-80;81;82;83;84;85;86;      };
+      [0]       };
      };
      float_Data @["avg_sse"] {
       name="avg_sse";
@@ -5220,15 +5075,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 1.0023102;0.90069664;0.8940534;0.87450927;0.90132123;0.94468153;0.91399938;0.82888824;0.88091332;0.93346101;
-0.93348902;0.89757019;0.90781701;0.91379172;0.92896891;0.89412796;0.90821463;0.88763297;0.90293157;0.91650665;
-0.86552042;0.77947539;0.93622124;0.84529829;0.85588694;0.80694962;0.83524376;0.83987093;0.86243981;0.8606199;
-0.52828217;0.45507637;0.45910263;0.479532;0.45846832;0.49972075;0.48864529;0.48571914;0.4910906;0.49333641;
-1.1978366;0.96339309;0.88818878;0.94168735;0.89608353;0.87710297;0.90811229;0.90429896;0.85635459;0.89655191;
-0.86751437;0.91802573;0.77545983;0.91344804;0.83830017;0.94957733;0.90316284;0.85217255;0.89230758;0.9030081;
-0.92786413;0.9233591;0.91611397;0.91664088;0.92144281;0.91413707;0.91839957;0.8913334;0.98446631;0.95257795;
-0.72032392;0.74357414;0.78195119;0.75060701;0.799748;0.79181707;0.7455464;0.77025622;0.81040514;0.78778273;
-0.85079122;0.89312601;0.83549166;0.86238688;0.85095733;0.78424227;0.90192801;      };
+      [0]       };
      };
      float_Data @["cnt_err"] {
       name="cnt_err";
@@ -5244,15 +5091,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 70;64;64;67;65;64;66;77;64;58;
-94;60;70;56;63;68;63;52;67;63;
-79;46;49;49;45;41;51;44;48;48;
-45;11;11;11;11;11;11;11;11;11;
-49;53;55;50;48;52;48;46;60;49;
-36;37;46;38;40;36;41;39;36;37;
-60;78;71;74;68;71;68;68;79;72;
-32;25;25;25;25;25;25;25;25;25;
-39;34;35;34;35;42;34;      };
+      [0]       };
      };
      float_Data @["avg_ext_rew"] {
       name="avg_ext_rew";
@@ -5268,15 +5107,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;      };
+      [0]       };
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
@@ -5292,15 +5123,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;50;50;50;
-50;50;50;50;50;50;50;      };
+      [0]       };
      };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
@@ -5316,15 +5139,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.86000001;0.81;0.81;0.80000001;0.80000001;0.80000001;0.80000001;0.81;0.80000001;0.81;
-0.81999999;0.80000001;0.81999999;0.80000001;0.80000001;0.80000001;0.81;0.81;0.91000003;0.81;
-0.80000001;0.81;0.81;0.80000001;0.81;0.80000001;0.80000001;0.80000001;0.81999999;0.80000001;
-0.80000001;0.81;0.81;0.80000001;0.80000001;0.81;0.80000001;0.81999999;0.80000001;0.80000001;
-0.81;0.80000001;0.81999999;0.80000001;0.80000001;0.81;0.80000001;0.80000001;0.80000001;0.81999999;
-0.79000002;0.81999999;0.81;0.89999998;0.83999997;0.80000001;0.82999998;0.99000001;0.81;0.81999999;
-0.81999999;0.89999998;0.82999998;0.91000003;0.82999998;0.89999998;0.80000001;0.81999999;0.81999999;0.81;
-0.81999999;0.81999999;0.81;0.81;0.81999999;0.86000001;0.83999997;0.87;0.81999999;0.89999998;
-0.81;0.81999999;0.81;0.80000001;0.80000001;0.81999999;0.82999998;      };
+      [0]       };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -5340,15 +5155,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.83999997;0.79000002;0.77999997;0.76999998;0.76999998;0.75999999;0.75999999;0.77999997;0.75999999;0.77999997;
-0.79000002;0.77999997;0.80000001;0.76999998;0.76999998;0.77999997;0.77999997;0.76999998;0.87;0.77999997;
-0.76999998;0.77999997;0.77999997;0.76999998;0.77999997;0.76999998;0.75999999;0.76999998;0.77999997;0.75999999;
-0.77999997;0.76999998;0.77999997;0.76999998;0.76999998;0.76999998;0.75999999;0.77999997;0.76999998;0.76999998;
-0.77999997;0.76999998;0.79000002;0.76999998;0.76999998;0.76999998;0.76999998;0.75999999;0.76999998;0.79000002;
-0.76999998;0.79000002;0.77999997;0.85000002;0.80000001;0.76999998;0.79000002;1;0.77999997;0.79000002;
-0.79000002;0.86000001;0.79000002;0.88;0.80000001;0.87;0.76999998;0.77999997;0.77999997;0.77999997;
-0.77999997;0.77999997;0.77999997;0.77999997;0.79000002;0.82999998;0.81;0.81999999;0.79000002;0.87;
-0.77999997;0.77999997;0.77999997;0.77999997;0.76999998;0.76999998;0.80000001;      };
+      [0]       };
      };
      float_Data @["avg_sv1"] {
       name="avg_sv1";
@@ -5364,15 +5171,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.49386656;0.48145947;0.47756615;0.47985068;0.46891734;0.46472901;0.46896338;0.48318064;0.4747124;0.45763293;
-0.48559079;0.51560885;0.51848143;0.53321844;0.54569578;0.53480601;0.53867555;0.54433519;0.53398782;0.53936696;
-0.50479537;0.47801614;0.42987755;0.43535787;0.41931275;0.42252198;0.42554677;0.42112419;0.41372555;0.41734219;
-0.51946878;0.66217214;0.74257815;0.78645051;0.80489975;0.83620942;0.84090918;0.84520531;0.85359144;0.86381811;
-0.7964679;0.70317388;0.628878;0.60915893;0.58590478;0.57873064;0.57560593;0.58204436;0.55778497;0.56449407;
-0.58076215;0.60870969;0.59594399;0.60963762;0.60672116;0.62855685;0.62781459;0.61568868;0.61801594;0.62348258;
-0.59499937;0.53905177;0.52962011;0.51861459;0.51547599;0.51105136;0.50960505;0.50762498;0.51501858;0.50088686;
-0.45245045;0.37644446;0.33267692;0.31963351;0.30488506;0.28934911;0.3037166;0.29839608;0.28164622;0.28024319;
-0.31946933;0.32797948;0.34460944;0.34808448;0.35609433;0.37801987;0.35482749;      };
+      [0]       };
      };
      float_Data @["avg_sv2"] {
       name="avg_sv2";
@@ -5388,15 +5187,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.35001397;0.39743346;0.42224383;0.45828098;0.43820235;0.41095844;0.44311851;0.47698864;0.444388;0.40880316;
-0.56922334;0.5570392;0.53606105;0.58139467;0.56852889;0.53400779;0.55328596;0.58132017;0.52517039;0.55135149;
-0.41922772;0.41821259;0.35617411;0.39670867;0.38632038;0.40289566;0.4049432;0.39202699;0.39879304;0.38235348;
-0.82144606;0.90551496;0.89571935;0.91022521;0.89308304;0.92967951;0.90935409;0.9043805;0.90645337;0.90641373;
-0.65474182;0.5853622;0.55799925;0.6001296;0.58117491;0.56535327;0.59299195;0.60276055;0.53860199;0.57986295;
-0.64836603;0.67326301;0.58455443;0.66095042;0.63545334;0.67370737;0.64882833;0.62352282;0.64646888;0.65112823;
-0.5455296;0.46210033;0.52321875;0.49825448;0.51952249;0.51093322;0.51056713;0.5033499;0.51578212;0.49032271;
-0.28363031;0.24364907;0.22676972;0.25467953;0.21157923;0.23480505;0.25959179;0.24286669;0.22099802;0.23833458;
-0.34558925;0.31841251;0.33952057;0.32618591;0.33146042;0.36500275;0.30545196;      };
+      [0]       };
      };
      float_Data @["avg_sv3"] {
       name="avg_sv3";
@@ -5412,15 +5203,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.48097187;0.4711569;0.48121646;0.49639034;0.47870183;0.46661866;0.48107097;0.50867814;0.4765929;0.45183143;
-0.5499748;0.55986905;0.53646016;0.57111186;0.56851161;0.53893572;0.55295503;0.57671744;0.53351855;0.55659652;
-0.46175754;0.45639411;0.3925764;0.44055542;0.41863522;0.43795836;0.44107878;0.42822766;0.42608339;0.42511463;
-0.7280646;0.83886069;0.8298068;0.84472907;0.82886589;0.86678803;0.8431046;0.84069735;0.84417129;0.84437048;
-0.65238291;0.58387023;0.5628978;0.59741026;0.57948446;0.57423002;0.59134179;0.60301375;0.54193318;0.58398652;
-0.62868649;0.65580797;0.58417559;0.6425212;0.62218362;0.66057456;0.6374473;0.61524653;0.63414341;0.64000422;
-0.56204367;0.48554507;0.53199935;0.51534146;0.52977115;0.5238297;0.52047461;0.52088451;0.52999365;0.50415605;
-0.36898994;0.30240995;0.28802821;0.30890551;0.2789726;0.28543586;0.31579959;0.30096111;0.28305066;0.2904332;
-0.37877038;0.35727155;0.37993658;0.36665574;0.37530324;0.41020453;0.34638715;      };
+      [0]       };
      };
      double_Data @["prob1"] {
       name="prob1";
@@ -5436,15 +5219,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;0.4571594068996648;
-0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;0.5478348607436834;
-0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;0.4015835962897407;
-0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;0.8925903373180815;
-0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;0.5793655012186678;
-0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;0.6373776155485593;
-0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;0.5073459871033993;
-0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;0.2533316047665368;
-0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;0.338335619840052;      };
+      [0]       };
      };
      double_Data @["prob2"] {
       name="prob2";
@@ -5460,15 +5235,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name=;
-      [87] 0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;0.5428405931003352;
-0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;0.4521651392563166;
-0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;0.5984164037102593;
-0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;0.1074096626819185;
-0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;0.4206344987813322;
-0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;0.3626223844514407;
-0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;0.4926540128966007;
-0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;0.7466683952334632;
-0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;0.661664380159948;      };
+      [0]       };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -5477,15 +5244,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
     keygen 4 0=0;
     row_indexes {
      name=;
-    [87] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;17;18;19;
-20;21;22;23;24;25;26;27;28;29;
-30;31;32;33;34;35;36;37;38;39;
-40;41;42;43;44;45;46;47;48;49;
-50;51;52;53;54;55;56;57;58;59;
-60;61;62;63;64;65;66;67;68;69;
-70;71;72;73;74;75;76;77;78;79;
-80;81;82;83;84;85;86;    };
+    [0]     };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -6066,7 +5825,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=87;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6841,7 +6600,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=16;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6873,7 +6632,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=16;
+      int_val=5;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7652,7 +7411,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=42;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8852,7 +8611,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv1"] {
       name="sv1";
       var_type=T_Real;
-      real_val=0.3510643541812897;
+      real_val=0.4769371449947357;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8862,7 +8621,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv2"] {
       name="sv2";
       var_type=T_Real;
-      real_val=0.260127067565918;
+      real_val=0.4202506244182587;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8872,7 +8631,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv3"] {
       name="sv3";
       var_type=T_Real;
-      real_val=0.3420442640781403;
+      real_val=0.5343544483184814;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9028,7 +8787,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       orig_prog_code=;
       result_var=.projects["scalar_val_test"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"].vars["sv3"]$$;
       expr {
-       expr="network.layers.SV3.acts_m.avg";
+       expr="network.layers.SV3.units[0].act_m";
       };
      };
      DataVarProg @[5] {
@@ -10215,7 +9974,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["prob1"] {
       name="prob1";
       var_type=T_Real;
-      real_val=0.338335619840052;
+      real_val=0.5157181148091212;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10225,7 +9984,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["prob2"] {
       name="prob2";
       var_type=T_Real;
-      real_val=0.661664380159948;
+      real_val=0.4842818851908788;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10463,7 +10222,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.02663825266063213;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -10906,7 +10665,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=86: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -10934,7 +10693,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=86: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -11011,7 +10770,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0.2802432: fix_max=0: max=0.8638181: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -11030,7 +10789,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0.2115792: fix_max=0: max=0.9296795: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -11049,7 +10808,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0.2789726: fix_max=0: max=0.866788: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -12033,7 +11792,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraUnitSpec @["SV3"] {
        name="SV3";
        desc=;
-       unique{ dt;       };
+       unique{        };
        children {
 	name=;
 	el_typ=LeabraUnitSpec;
@@ -12065,7 +11824,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        vm_range {min=0: max=2: range=2: scale=0.5: };
        v_m_init {name="": type=NONE: mean=0.300000011920929: var=0: par=1: };
        act_init {name="": type=NONE: mean=0: var=0: par=1: };
-       dt {integ=1: vm=0.2: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=5: net_time=1.428571: };
+       dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
        act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
        g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
        e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
@@ -12165,7 +11924,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       ScalarValLayerSpec @["SV1"] {
        name="SV1";
        desc=;
-       unique{ compute_i;i_kwta_pt;scalar;unit_range;bias_val;cos_diff_lrate;inhib;       };
+       unique{ compute_i;i_kwta_pt;scalar;unit_range;bias_val;inhib;       };
        children {
 	name=;
 	el_typ=ScalarValLayerSpec;
@@ -12190,7 +11949,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
-       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
        ct_inhib_mod {
 	manual_sravg=0;
 	sravg_delay=0;
@@ -12211,12 +11970,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: clip_val=1: send_thr=0: init_nms=1: };
        unit_range {min=0: max=1: range=1: scale=1: };
        bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
+       avg_act_range {min=0.1: max=0.9: range=0.8: scale=1.25: };
        val_range {min=0: max=1: range=1: scale=1: };
       };
       ScalarValLayerSpec @["SV2"] {
        name="SV2";
        desc=;
-       unique{ kwta;compute_i;i_kwta_pt;scalar;unit_range;cos_diff_lrate;       };
+       unique{ kwta;compute_i;i_kwta_pt;scalar;unit_range;       };
        children {
 	name=;
 	el_typ=ScalarValLayerSpec;
@@ -12241,7 +12001,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
-       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
        ct_inhib_mod {
 	manual_sravg=0;
 	sravg_delay=0;
@@ -12261,15 +12021,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        scalar {rep=GAUSSIAN: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: clip_val=1: send_thr=0: init_nms=1: };
        unit_range {min=-0.5: max=1.5: range=2: scale=0.5: };
-       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
+       bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
+       avg_act_range {min=0.1: max=0.9: range=0.8: scale=1.25: };
        val_range {min=-0.35: max=1.35: range=1.7: scale=0.5882353: };
       };
-      LeabraLayerSpec @["SV3"] {
+      ScalarValLayerSpec @["SV3"] {
        name="SV3";
        desc=;
-       unique{ inhib;cos_diff_lrate;       };
+       unique{ inhib;scalar;unit_range;avg_act_range;bias_val;       };
        children {
-	name="BaseSpec_Group_171";
+	name="BaseSpec_Group_184";
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
@@ -12292,7 +12053,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
        decay {event=1: phase=0: phase2=0: };
-       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
        ct_inhib_mod {
 	manual_sravg=0;
 	sravg_delay=0;
@@ -12310,6 +12071,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	tol=0.1;
 	abs_lrate=0.2;
        };
+       scalar {rep=AVG_ACT: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0: clip_val=1: send_thr=0: init_nms=0: };
+       unit_range {min=0: max=1: range=1: scale=1: };
+       bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
+       avg_act_range {min=0: max=1: range=1: scale=1: };
+       val_range {min=0: max=1: range=1: scale=1: };
       };
      };
      inhib_group=ENTIRE_LAYER;
@@ -12331,7 +12097,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
      decay {event=1: phase=0: phase2=0: };
-     cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+     cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
      ct_inhib_mod {
       manual_sravg=0;
       sravg_delay=0;
@@ -12407,7 +12173,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraConSpec @["SV1Cons"] {
        name="SV1Cons";
        desc=;
-       unique{ lmix;       };
+       unique{ lmix;lrate;       };
        children {
 	name=;
 	el_typ=LeabraConSpec;
@@ -12422,8 +12188,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.002;
-       cur_lrate=0.002;
+       lrate=0.01;
+       cur_lrate=0.01;
        lrs_value=NO_LRS;
        lrate_sched {
 	name=;
@@ -12452,7 +12218,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       LeabraConSpec @["SV2Cons"] {
        name="SV2Cons";
        desc=;
-       unique{ lmix;       };
+       unique{ lmix;lrate;       };
        children {
 	name=;
 	el_typ=LeabraConSpec;
@@ -12467,8 +12233,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.002;
-       cur_lrate=0.002;
+       lrate=0.01;
+       cur_lrate=0.01;
        lrs_value=NO_LRS;
        lrate_sched {
 	name=;
@@ -12512,8 +12278,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.02;
-       cur_lrate=0.02;
+       lrate=0.01;
+       cur_lrate=0.01;
        lrs_value=NO_LRS;
        lrate_sched {
 	name=;
@@ -12549,7 +12315,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      wt_scale_p {abs=1: rel=1: sem_extra=2: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
-     lrate=0.002;
+     lrate=0.01;
      cur_lrate=0.005;
      lrs_value=NO_LRS;
      lrate_sched {
@@ -12700,7 +12466,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV1"]$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV1"]$$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -12765,7 +12531,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV2"]$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV2"]$$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -12807,7 +12573,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["SV3Cons"]$$: };
+       con_spec {type=LeabraConSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraConSpec_0"].children["SV3Cons"]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -12830,7 +12596,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV3"]$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraUnitSpec_0"].children["SV3"]$$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -12840,7 +12606,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     spec {type=LeabraLayerSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$: };
+     spec {type=ScalarValLayerSpec: spec=$.projects["scalar_val_test"].networks["ScalarValTestNet"].specs["LeabraLayerSpec_0"].children["SV3"]$: };
     };
    };
    weights {
@@ -12874,7 +12640,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=36;
-   n_cons=288;
+   n_cons=272;
    max_prjns=1;
    max_disp_size {x=12: y=4: z=2: };
    max_disp_size2d {x=12: y=13: };
