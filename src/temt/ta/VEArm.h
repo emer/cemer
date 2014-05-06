@@ -165,10 +165,9 @@ public:
   float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
 
-  int           delay;  // general sensory delay period for all inputs expressed as a number of time steps (1 time step = 5 ms) -- used by one-delay version of cereb_arm (v1) -- set to 1 for no delay
-  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be > pro_delay -- set both to 1 for no delay
-  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- used by two- and three-delay versions of cereb_arm (v2 & v3) -- constrained to be < vis_delay -- set to 1 for no delay
-  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- used by three-delay version of cereb_arm (v3) -- set to 1 for no delay
+  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be > pro_delay -- set both to 1 for no delay
+  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be < vis_delay -- set to 1 for no delay
+  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
 
 
 
@@ -247,34 +246,24 @@ public:
   virtual bool ComputeStim_EV(); // ERR_VEL version of compute stim
   virtual bool ComputeStim_PID(); // PID version of compute stim
 
-  virtual bool InitDelayedInputsToTable(DataTable* table);
-  // Pad the input table with resting/zero values (except target muscle lengths) for the first (delay - 1) rows, then add one row of current/actual values.  This simulates sensory input delay by only allowing the network to read inputs (delay) rows from the bottom of the input table.
-  virtual bool InitDelayedInputsToTable_v2(DataTable* table);
-  // Pad the input table with resting/zero values (except target muscle lengths): affects the first (vis_delay - 1) rows of hand coordinates, and the first (pro_delay - 1) rows of muscle length inputs.  This simulates dual sensory input delay -- use only with two-delay version of cereb_arm!
-  virtual bool NormLengthsToTable(DataTable* table);
-  // Write the normalized muscle lengths into a datatable, in column named "lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormLengthsToTable_v2(DataTable* table);
+  virtual bool InitDelayedInputsToTable();
+  // Pad the arm_state table with resting/zero values (except target muscle lengths & error inputs): affects the first (vis_delay - 1) rows of hand coordinates, and the first (pro_delay - 1) rows of muscle length inputs, simulating dual sensory input delay
+  virtual bool NormLengthsToTable();
   // Write the normalized muscle lengths into a datatable, in column named "lengths", in the row corresponding to pro_delay, formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormTargLengthsToTable(DataTable* table);
+  virtual bool NormTargLengthsToTable();
   // Write the normalized target muscle lengths into a datatable, in column named "targ_lengths", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormSpeedsToTable(DataTable* table);
-  // Write the normalized muscle contraction speeds into a datatable, in column named "speeds", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormSpeedsToTable_v2(DataTable* table);
+  virtual bool NormSpeedsToTable();
   // Write the normalized muscle contraction speeds into a datatable, in column named "speeds", in the row corresponding to pro_delay, formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormHandCoordsToTable(DataTable* table);
+  virtual bool NormHandCoordsToTable();
   // Write the normalized XYZ shoulder-centered coordinates of the hand into a datatable, in a column named "hand_coords", formated in a 4 dimensional 1x1 by 1x3 geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x3 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormErrDraToTable(DataTable* table);
-  // Write the norm_err_dra (normalized error derivative running average) in column named "norm_err_dra", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool NormErrDraToTable_v2(DataTable* table);
-  // Write the norm_err_dra (normalized error derivative running average) in column named "norm_err_dra", in the row corresponding to pro_delay, formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool IOErrToTable(DataTable* table);
-  // Write the io_err (inferior olive error values) in column named "io_err", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool IOErrToTable_v2(DataTable* table);
-  // Write the io_err (inferior olive error values) in column named "io_err", in the row corresponding to pro_delay, formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
-  virtual bool ArmStateToTable(DataTable* table);
+  virtual bool NormErrDraToTable();
+  // Write the norm_err_dra (normalized error derivative running average) in column named "norm_err_dra", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row. If pro_delay > 1, this error is calculated based on delayed input values within GetNormVals.
+  virtual bool IOErrToTable();
+  // Write the io_err (inferior olive error values) in column named "io_err", formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row. If pro_delay > 1, this error is calculated based on delayed input values within GetNormVals.
+  virtual bool ArmStateToTable();
   // Write normalized lengths, speeds, and target lengths to a datatable -- calls above functions -- all are formatted with in a 4 dimensional 1x1 by 1 x n_musc (typically 12) geometry appropriate for writing to ScalarValLayerSpec layer, with unit groups arranged in a 1x12 group geometry, where the first unit of each unit group (1x1 inner dimension unit geometry) contains the scalar value that we write to. Always writes to the last row in the table, and ensures that there is at least one row
 
-  virtual bool SetTargetLengthsFmTable(DataTable* table);
+  virtual bool SetTargetLengthsFmTable();
   // Update the unnormalized target lengths (targ_lens) using normalized values from a DataTable. The received DataTable must contain a float column named "lengths" with 4 dimensional cell geometry n x 1 by 1 x n_musc. n_musc is the number of muscles, and n is an integer equal or greater than 1.
 
   virtual void FormatLogData(DataTable& dt);

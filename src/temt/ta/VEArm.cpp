@@ -98,7 +98,6 @@ void VEArm::Initialize() {
   musc_gains_mag = 0.0f;
   io_err_mag = 0.0f;
 
-  delay = 7;
   vis_delay = 30;
   pro_delay = 7;
   eff_delay = 1;
@@ -994,8 +993,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
   
   if(shoulder) { // coordinates are wrt a reference frame with origin at the shoulder
 	  trg_x = trg_x + should_loc.x;
-  	  trg_y = trg_y + should_loc.y;
-  	  trg_z = trg_z + should_loc.z;
+	  trg_y = trg_y + should_loc.y;
+	  trg_z = trg_z + should_loc.z;
   }
   
   SetTarget_impl(trg_x, trg_y, trg_z);
@@ -1852,57 +1851,59 @@ void VEArm::LogArmData(DataTable& dt) {
   dt.WriteClose();
 }
 
-bool VEArm::InitDelayedInputsToTable(DataTable* table) { // argument is the input table
-  // create a char array for each of the column names from the input table:
+bool VEArm::InitDelayedInputsToTable() {
   const char col_name_0[] = "lengths";
   const char col_name_1[] = "targ_lengths";
   const char col_name_2[] = "norm_err_dra";
   const char col_name_3[] = "io_err";
   const char col_name_4[] = "speeds";
   const char col_name_5[] = "hand_coords";
-  
-  // create pointer variables to each column of the data table, defining its cell geometry:
-  DataCol* dc_l = table->FindMakeColMatrix(col_name_0, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_t = table->FindMakeColMatrix(col_name_1, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_n = table->FindMakeColMatrix(col_name_2, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_i = table->FindMakeColMatrix(col_name_3, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_s = table->FindMakeColMatrix(col_name_4, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_h = table->FindMakeColMatrix(col_name_5, VT_FLOAT, 4, 1,1,1,3);
-  
-  // these two variables are used to calculate the hand coordinates:
+
+  DataCol* dc_l = arm_state->FindMakeColMatrix(col_name_0, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc_t = arm_state->FindMakeColMatrix(col_name_1, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc_n = arm_state->FindMakeColMatrix(col_name_2, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc_i = arm_state->FindMakeColMatrix(col_name_3, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc_s = arm_state->FindMakeColMatrix(col_name_4, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc_h = arm_state->FindMakeColMatrix(col_name_5, VT_FLOAT, 4, 1,1,1,3);
+
   VEBody* hand = bodies[HAND];
   float maxl = La+Lf;
 
-  // if the table is empty, create one row:
-  if(table->rows == 0)
-    table->EnforceRows(1);
-  
-  // and now for the complicated stuff:
-  if(table->rows == 1) { // if there is only one row in the table...
-    for(int n=1; n<delay; n++) { // iterate through this loop (delay - 1) times...
-      for(int i=1; i<n_musc; i++) { // for each muscle...
-        // set all values in the last cell of each column to resting/zero values (except target muscle lengths):
-        dc_l->SetMatrixVal(rest_lens.SafeEl(i),-1,0,0,0,i);
-        dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-        dc_n->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_i->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_s->SetMatrixVal(0.0f,-1,0,0,0,i);
+  if(arm_state->rows == 0)
+    arm_state->EnforceRows(1);
+
+  if(arm_state->rows == 1) {
+    int n = 1;
+    // start with one row & no data
+    for(n; n<pro_delay; n++) {
+      for(int i=0; i<n_musc; i++) {
+        dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i); // these will correspond to resting muscle lengths, since this method is called before the reach begins
+        dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i); // these are currently constant (will change once we have a moving target)
+        dc_n->SetMatrixVal(norm_err_dra.SafeEl(i),-1,0,0,0,i); // these are calculated using the delayed inputs from this table
+        dc_i->SetMatrixVal(io_err.SafeEl(i),-1,0,0,0,i); // these are calculated using delayed inputs
+        dc_s->SetMatrixVal(0.0f,-1,0,0,0,i); // the hand is at rest, so the muscle speeds should all be zero
       }
-      // set hand coordinates to the initial position:
-      dc_h->SetMatrixVal(hand->init_pos.x,-1, 0,0,0,0);
-      dc_h->SetMatrixVal(hand->init_pos.y,-1, 0,0,0,1);
-      dc_h->SetMatrixVal(hand->init_pos.z,-1, 0,0,0,2);
-      // add a blank row to the data table:
-      table->AddBlankRow();
+      if(up_axis == Y) { // these correspond to a hand at rest, since this table is populated before the start of a reach
+        dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
+        dc_h->SetMatrixVal(0.5f+(hand->cur_pos.y-should_loc.y)/(1.9f*maxl),-1, 0,0,0,1);
+        dc_h->SetMatrixVal(0.1f+(hand->cur_pos.z-should_loc.z)/(maxl),-1, 0,0,0,2);
+      }
+      else { // up_axis == Z
+        dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
+        dc_h->SetMatrixVal(0.1f+(hand->cur_pos.y-should_loc.y)/(maxl),-1, 0,0,0,1);
+        dc_h->SetMatrixVal(0.5f+(hand->cur_pos.z-should_loc.z)/(1.9f*maxl),-1, 0,0,0,2);
+      }
+      arm_state->AddBlankRow();
     }
-    // the following code operates on the (delay)th row:
-    for(int i=1; i<n_musc; i++) { // for each muscle...
-      // set all values in the last cell of each column to their current/actual values:
-      dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
-      dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-      dc_n->SetMatrixVal(norm_err_dra.SafeEl(i),-1,0,0,0,i);
-      dc_i->SetMatrixVal(io_err.SafeEl(i),-1,0,0,0,i);
-      dc_s->SetMatrixVal(norm_vels.SafeEl(i),-1,0,0,0,i);
+    // now we should have (pro_delay - 1) rows of data, one blank row, and index n = pro_delay
+    for(n; n<vis_delay; n++) {
+      for(int i=0; i<n_musc; i++) {
+        dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
+        dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
+        dc_n->SetMatrixVal(norm_err_dra.SafeEl(i),-1,0,0,0,i);
+        dc_i->SetMatrixVal(io_err.SafeEl(i),-1,0,0,0,i);
+        dc_s->SetMatrixVal(norm_vels.SafeEl(i),-1,0,0,0,i); // this is the only change -- start giving the system current muscle velocities at the (pro_delay) row
+      }
       if(up_axis == Y) {
         dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
         dc_h->SetMatrixVal(0.5f+(hand->cur_pos.y-should_loc.y)/(1.9f*maxl),-1, 0,0,0,1);
@@ -1912,130 +1913,34 @@ bool VEArm::InitDelayedInputsToTable(DataTable* table) { // argument is the inpu
         dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
         dc_h->SetMatrixVal(0.1f+(hand->cur_pos.y-should_loc.y)/(maxl),-1, 0,0,0,1);
         dc_h->SetMatrixVal(0.5f+(hand->cur_pos.z-should_loc.z)/(1.9f*maxl),-1, 0,0,0,2);
-      } // the resulting table should contain (delay - 1) rows of resting/zero values
-    }   // (except the target muscle lengths, those are constant), and one last row of
-  }     // current/actual values
-  return true;  // indicates the method ran without error
-}
-
-bool VEArm::InitDelayedInputsToTable_v2(DataTable* table) {
-  const char col_name_0[] = "lengths";
-  const char col_name_1[] = "targ_lengths";
-  const char col_name_2[] = "norm_err_dra";
-  const char col_name_3[] = "io_err";
-  const char col_name_4[] = "speeds";
-  const char col_name_5[] = "hand_coords";
-
-  DataCol* dc_l = table->FindMakeColMatrix(col_name_0, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_t = table->FindMakeColMatrix(col_name_1, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_n = table->FindMakeColMatrix(col_name_2, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_i = table->FindMakeColMatrix(col_name_3, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_s = table->FindMakeColMatrix(col_name_4, VT_FLOAT, 4, 1,1,1,n_musc);
-  DataCol* dc_h = table->FindMakeColMatrix(col_name_5, VT_FLOAT, 4, 1,1,1,3);
-
-  VEBody* hand = bodies[HAND];
-  float maxl = La+Lf;
-
-  if(table->rows == 0)
-    table->EnforceRows(1);
-
-  if(table->rows == 1) {
-    // start with no data...
-    for(int n=1; n<pro_delay; n++) {
-      for(int i=0; i<n_musc; i++) {
-        dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
-        dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-        dc_n->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_i->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_s->SetMatrixVal(0.0f,-1,0,0,0,i);
       }
-      dc_h->SetMatrixVal(hand->init_pos.x,-1, 0,0,0,0);
-      dc_h->SetMatrixVal(hand->init_pos.y,-1, 0,0,0,1);
-      dc_h->SetMatrixVal(hand->init_pos.z,-1, 0,0,0,2);
-
-      table->AddBlankRow();
+      arm_state->AddBlankRow();
     }
-    // now we should have (pro_delay - 1) rows of data...
-    for(int i=0; i<n_musc; i++) {
-      dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
-      dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-      dc_n->SetMatrixVal(norm_err_dra.SafeEl(i),-1,0,0,0,i);
-      dc_i->SetMatrixVal(io_err.SafeEl(i),-1,0,0,0,i);
-      dc_s->SetMatrixVal(norm_vels.SafeEl(i),-1,0,0,0,i);
-    }
-    dc_h->SetMatrixVal(hand->init_pos.x,-1, 0,0,0,0);
-    dc_h->SetMatrixVal(hand->init_pos.y,-1, 0,0,0,1);
-    dc_h->SetMatrixVal(hand->init_pos.z,-1, 0,0,0,2);
-    table->AddBlankRow();
-    // now we should have (pro_delay) rows of data...
-    for(int n=1; n<(vis_delay - pro_delay); n++) {
-      for(int i=0; i<n_musc; i++) {
-        dc_l->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-        dc_n->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_i->SetMatrixVal(0.0f,-1,0,0,0,i);
-        dc_s->SetMatrixVal(0.0f,-1,0,0,0,i);
-      }
-      dc_h->SetMatrixVal(hand->init_pos.x,-1, 0,0,0,0);
-      dc_h->SetMatrixVal(hand->init_pos.y,-1, 0,0,0,1);
-      dc_h->SetMatrixVal(hand->init_pos.z,-1, 0,0,0,2);
-      table->AddBlankRow();
-    }
-    // now we should have (vis_delay - 1) rows of data...
-    for(int i = 0; i < n_musc; i++) {
-      dc_l->SetMatrixVal(0.0f,-1,0,0,0,i);
-      dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-      dc_n->SetMatrixVal(0.0f,-1,0,0,0,i);
-      dc_i->SetMatrixVal(0.0f,-1,0,0,0,i);
-      dc_s->SetMatrixVal(0.0f,-1,0,0,0,i);
-    }
-    if(up_axis == Y) {
-      dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
-      dc_h->SetMatrixVal(0.5f+(hand->cur_pos.y-should_loc.y)/(1.9f*maxl),-1, 0,0,0,1);
-      dc_h->SetMatrixVal(0.1f+(hand->cur_pos.z-should_loc.z)/(maxl),-1, 0,0,0,2);
-    }
-    else {
-      dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
-      dc_h->SetMatrixVal(0.1f+(hand->cur_pos.y-should_loc.y)/(maxl),-1, 0,0,0,1);
-      dc_h->SetMatrixVal(0.5f+(hand->cur_pos.z-should_loc.z)/(1.9f*maxl),-1, 0,0,0,2);
-    }
-    // now we should have (vis_delay) rows of data!
-  }
+    // now we should have (vis_delay - 1) rows of data and one blank row!
+  } // if pro_delay = vis_delay = 1, we should have just one blank row
   return true;
 }
 
-bool VEArm::NormLengthsToTable(DataTable* table) {
-  const char col_name[] = "lengths"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
-  for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_lens.SafeEl(i),-1, // -1 = last row
-                     0,0,0,i);
-  }
-  return true;
-}
-
-bool VEArm::NormLengthsToTable_v2(DataTable* table) {
+bool VEArm::NormLengthsToTable() {
   const char col_name[] = "lengths";
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   int d_row = vis_delay - pro_delay + 1;
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
+  if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
+    arm_state->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_lens.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
-                     0,0,0,i);
     dc->SetMatrixVal(0.0f,-1, // -1 = last row (most recent)
                      0,0,0,i);
-  }
+    dc->SetMatrixVal(norm_lens.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
+                     0,0,0,i);                   // if pro_delay = vis_delay = 1, this will simply
+  }                                              // overwrite the last row of arm_state w/ current vals
   return true;
 }
 
-bool VEArm::NormTargLengthsToTable(DataTable* table) {
+bool VEArm::NormTargLengthsToTable() {
   const char col_name[] = "targ_lengths"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
+  DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
+    arm_state->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(norm_targ_lens.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
@@ -2043,40 +1948,27 @@ bool VEArm::NormTargLengthsToTable(DataTable* table) {
   return true;
 }
 
-bool VEArm::NormSpeedsToTable(DataTable* table) {
+bool VEArm::NormSpeedsToTable() {
   const char col_name[] = "speeds"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
-  
-  for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_vels.SafeEl(i),-1, // -1 = last row
-                     0,0,0,i);
-  }
-  return true;
-}
-
-bool VEArm::NormSpeedsToTable_v2(DataTable* table) {
-  const char col_name[] = "speeds"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
   int d_row = vis_delay - pro_delay + 1;
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
+  if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
+    arm_state->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_vels.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
-                     0,0,0,i);
     dc->SetMatrixVal(0.0f,-1, // -1 = last row
                      0,0,0,i);
-  }
+    dc->SetMatrixVal(norm_vels.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
+                     0,0,0,i);                   // if pro_delay = vis_delay = 1, this will simply
+  }                                              // overwrite the last row of arm_state w/ current vals
   return true;
 }
 
-bool VEArm::NormHandCoordsToTable(DataTable* table) {
+bool VEArm::NormHandCoordsToTable() {
   const char col_name[] = "hand_coords"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,3);
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
+  DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,3);
+  if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
+    arm_state->EnforceRows(1);
   
   VEBody* hand = bodies[HAND];
   float maxl = La+Lf;
@@ -2095,11 +1987,11 @@ bool VEArm::NormHandCoordsToTable(DataTable* table) {
   return true;
 }
 
-bool VEArm::NormErrDraToTable(DataTable* table) {
+bool VEArm::NormErrDraToTable() {
   const char col_name[] = "norm_err_dra"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
+  DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
+    arm_state->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(norm_err_dra.SafeEl(i),-1, // -1 = last row
@@ -2108,27 +2000,11 @@ bool VEArm::NormErrDraToTable(DataTable* table) {
   return true;
 }
 
-bool VEArm::NormErrDraToTable_v2(DataTable* table) {
-  const char col_name[] = "norm_err_dra";
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  int d_row = vis_delay - pro_delay + 1;
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
-  
-  for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_err_dra.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
-                     0,0,0,i);
-    dc->SetMatrixVal(0.0f,-1, // -1 = last row
-                     0,0,0,i);
-  }
-  return true;
-}
-
-bool VEArm::IOErrToTable(DataTable* table) {
+bool VEArm::IOErrToTable() {
   const char col_name[] = "io_err"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
+  DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
+  if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
+    arm_state->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(io_err.SafeEl(i),-1, // -1 = last row
@@ -2137,32 +2013,16 @@ bool VEArm::IOErrToTable(DataTable* table) {
   return true;
 }
 
-bool VEArm::IOErrToTable_v2(DataTable* table) {
-  const char col_name[] = "io_err"; 
-  DataCol* dc = table->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  int d_row = vis_delay - pro_delay + 1;
-  if(table->rows == 0)       // empty table, make sure we have at least 1 row
-    table->EnforceRows(1);
-  
-  for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(io_err.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
-                     0,0,0,i);
-    dc->SetMatrixVal(0.0f,-1, // -1 = last row
-                     0,0,0,i);
-  }
+bool VEArm::ArmStateToTable() {
+  NormLengthsToTable();
+  NormTargLengthsToTable();
+  NormSpeedsToTable();
   return true;
 }
 
-bool VEArm::ArmStateToTable(DataTable* table) {
-  NormLengthsToTable(table);
-  NormTargLengthsToTable(table);
-  NormSpeedsToTable(table);
-  return true;
-}
-
-bool VEArm::SetTargetLengthsFmTable(DataTable* table) {
+bool VEArm::SetTargetLengthsFmTable() {
   const char col_name[] = "lengths";
-  DataCol* dc = table->FindColName(col_name, true); // find the "lengths" column, error msg if not found
+  DataCol* dc = arm_state->FindColName(col_name, true); // find the "lengths" column, error msg if not found
   MatrixGeom std_geom1(4,12,1,1,n_musc);
   MatrixGeom std_geom2(4,22,1,1,n_musc);
 
@@ -2197,6 +2057,7 @@ void VEArm::CurFromODE(bool updt_disp) {
 }
 
 bool VEArm::GetNormVals() {
+  // make sure all inputs are (n_musc)-element arrays:
   norm_lens.SetGeom(1,n_musc);
   norm_targ_lens.SetGeom(1,n_musc);
   norm_vels.SetGeom(1,n_musc);
@@ -2206,9 +2067,21 @@ bool VEArm::GetNormVals() {
   norm_err_prv.SetGeom(1,n_musc);
   io_err.SetGeom(1,n_musc);
 
+  // hand is a pointer to the VEBody object HAND in VEWorld
   VEBody* hand = bodies[HAND];
-  hand_loc_abs = hand->cur_pos;
-  hand_loc_rel = hand_loc_abs - should_loc;
+
+  // TODO: feed the delayed hand coords into this hand_loc_abs variable --
+  // this will automatically calculate the hand_vra input based on delayed info
+  if(isNewReach) {
+    hand_loc_abs = hand->cur_pos;
+    hand_loc_rel = hand_loc_abs - should_loc;
+  }
+  else {
+    taMatrixPtr mat(arm_state->GetValAsMatrix("hand_coords", -(vis_delay)));
+    hand_loc_rel.FromMatrix(*mat);
+    // arm_state already stores the hand coords relative to the shoulder
+  }
+
   loc_err = targ_loc_rel - hand_loc_rel;
   loc_err_mag = loc_err.Mag();
 
@@ -2217,10 +2090,20 @@ bool VEArm::GetNormVals() {
   hand_vra = (1.0f - hand_vra_dt) * hand_vra + hand_vra_dt * hand_vel_mag;
   hand_loc_prv = hand_loc_rel;
 
+  // this is where the current lengths/speeds come from... since they are already delayed
+  // by NormLengthsToTable and NormSpeedsToTable, no need to change either one
   Lengths(norm_lens, true); // true = normalize
   Speeds(norm_vels, true); // true = normalize
 
-  norm_err = norm_targ_lens - norm_lens;
+  // TODO: feed the delayed muscle lengths from arm_state into the norm_err calculation below
+  if(isNewReach) {
+    norm_err = norm_targ_lens - norm_lens;
+  }
+  else {
+    taMatrixPtr mat(arm_state->GetValAsMatrix("lengths", -(vis_delay)));
+    norm_err = norm_targ_lens - *mat;
+  }
+  
   if(arm_time > 2.0f * world_step) {
     norm_err_deriv = norm_err - norm_err_prv;
     norm_err_deriv /= world_step;
@@ -2234,8 +2117,8 @@ bool VEArm::GetNormVals() {
         io = 1.0f;
       else
         io = 0.0f;
-    }
-  }
+    } // TODO: figure out how io_err is calculated, and feed it delayed values
+  }   // io_err is 0 by default, set to 1 if norm_err_dra > io_err_thr (currently 0.001)
 
   io_err_mag = taMath_float::vec_norm(&io_err);
 
