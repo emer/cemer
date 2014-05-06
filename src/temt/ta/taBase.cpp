@@ -2475,10 +2475,21 @@ bool taBase::SearchTestItem_impl(const String_Array& srch,
       cur_matched = SearchTestStr_impl(sstr, GetDesc(), contains, case_sensitive);
     }
     if(!cur_matched && obj_val) {
-      String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
-                                              TypeDef::SC_DEFAULT, true);
-      // true = force_inline
-      cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+      if(InheritsFrom(&TA_taMatrix)) {
+        taMatrix* mat = (taMatrix*)this;
+        if(mat->size < 1000) {  // prevent long delays from ginormous tables
+          String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
+                                                  TypeDef::SC_DEFAULT, true);
+          // true = force_inline
+          cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+        }
+      }
+      else {
+        String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
+                                                TypeDef::SC_DEFAULT, true);
+        // true = force_inline
+        cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+      }
     }
     if(!cur_matched && mbr_name) {
       TypeDef* td = GetTypeDef();

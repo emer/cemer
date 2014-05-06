@@ -1082,12 +1082,14 @@ void taMatrix::Sort(bool descending) {
 String taMatrix::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
                               bool force_inline) const {
   // always inline effectively
-  String rval = geom.GetValStr(par, memb_def, sc, force_inline);
-  rval += " {";
+  String gval = geom.GetValStr(par, memb_def, sc, force_inline);
+  String rval(size*4,0,0);      // allocate buffer
+  rval.cat(gval);
+  rval << " {";
   for(int i=0;i<size;i++) {
-    rval += " " + FastElAsStr_Flat(i) + ",";
+    rval << " " << FastElAsStr_Flat(i) << ",";
   }
-  rval += "}";
+  rval << "}";
   return rval;
 }
 

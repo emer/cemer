@@ -43,7 +43,7 @@ void iTreeSearch::Constr() {
 
   srch_label = new QLabel("Find:");
   srch_label->setFont(taiM->nameFont(currentSizeSpec));
-  srch_label->setToolTip("Find text within the above browser: if multiple words entered, then searches for conjunction of all of them -- searches very broadly and in a case insensitive manner (multiple terms help narrow things down)");
+  srch_label->setToolTip("Find text within the above browser: case sensitive if uppercase entered -- if multiple words entered, then searches for conjunction of all of them -- searches very broadly and in a case insensitive manner (multiple terms help narrow things down)");
   srch_bar->addWidget(srch_label);
 
   srch_text = new iLineEdit();
@@ -88,6 +88,16 @@ void iTreeSearch::search() {
   found_items.Reset();
   if(!tree_view) return;
   String ftxt = srch_text->text();
+  bool case_sens = false;
+  for(int i=0;i<ftxt.length();i++) {
+    if(isupper(ftxt[i])) {
+      case_sens = true;
+      break;
+    }
+  }
+  if(!case_sens) {
+    ftxt.downcase();
+  }
   String_Array srch;
   srch.Split(ftxt, " ");
 
@@ -110,14 +120,14 @@ void iTreeSearch::search() {
     if(!tree_view->isItemExpanded(item)) {
       // do full recursive search if not already expanded
       sub_srch.Reset();
-      tab->Search(ftxt, sub_srch); // go with defaults for now
+      tab->Search(ftxt, sub_srch, NULL, true, case_sens); // go with defaults for now
       for(int k=0; k<sub_srch.size; k++) { // transfer to our ref list
         taBase* fnd = sub_srch.FastEl(k);
         found_items.Add(fnd);
       }
       sub_srch.Reset();
     }
-    else if(tab->SearchTestItem_impl(srch)) {
+    else if(tab->SearchTestItem_impl(srch, true, case_sens)) {
       // otherwise just test this one item
       srch_found.append(item);
       found_items.Add(tab);
