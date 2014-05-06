@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7069
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7115
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { };
@@ -2735,12 +2735,12 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20140401T185136Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgUserId\":3,\"wgUserEditCount\":2072,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgUserId\":3,\"wgUserEditCount\":2097,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":
 0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"7791a96363f5e0f73fd20aabf56f7e3b+\\\\\",\"patrolToken\":\"5ef8a4e698fd448e5991c092fbcf5289+\\\\\",\"watchToken\":\"b4486f04a795dafe4518d7ea758833bf+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:f00c42c0b4681b950e996ef38e29d781 */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"588e95e7e8c58475cbaa93d807b79edf+\\\\\",\"patrolToken\":\"953ca4d4c6a52523ef9467f7cdab8835+\\\\\",\"watchToken\":\"0529133967be266858ea55ceeabce90a+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:f517bd3d76f8b326627fb4a784db9c8a */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
@@ -2828,8 +2828,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.028 seconds
-Real time usage: 0.032 seconds
+CPU time usage: 0.032 seconds
+Real time usage: 0.035 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2838,7 +2838,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140501054316
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140505160539
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"				</div>
@@ -2877,8 +2877,8 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
 					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 16.11453538657551px;\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=0716253a0bed12503c809636ddf803de%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 13.467575339715111px;\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=b84b2a667bafe8331f7576a1316cc433%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -2946,7 +2946,7 @@ Expensive parser function count: 0/100
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 10,702 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 10,750 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2969,7 +2969,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 <script>if(window.mw){
 mw.loader.state({\"user.groups\":\"ready\"});
 }</script>
-<!-- Served in 0.396 secs. -->
+<!-- Served in 0.424 secs. -->
 	
 
 </body></html>";
@@ -8851,12 +8851,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name=;
 	[0] 	};
 	width=0;
-	ar {
-	 name=;
-	[6] 5;3;1;0;4;2;	};
        };
       };
-      data_flags=SAVE_ROWS|AUTO_CALC;
+      data_flags=AUTO_CALC;
       auto_load=NO_AUTO_LOAD;
       auto_load_file=;
       keygen 4 0=0;
@@ -14786,7 +14783,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.0005327650578692555;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -15236,7 +15233,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  negative_draw=0;
 	  negative_draw_z=1;
 	  line_width=2;
-	  point_size=MEDIUM;
+	  point_size=0.01;
 	  point_spacing=1;
 	  bar_space=0.2;
 	  bar_depth=0.01;
@@ -15357,7 +15354,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
@@ -15433,7 +15430,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
-	    point_style=MINUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
@@ -15509,7 +15506,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=TRIANGLE;
+	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
 	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
@@ -15585,7 +15582,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=DOT;
-	    point_style=MINUS;
+	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
 	  };
