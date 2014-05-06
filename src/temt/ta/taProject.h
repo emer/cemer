@@ -35,7 +35,7 @@
 #include <Wizard_Group>
 #include <ControlPanel_Group>
 #include <DataTable_Group>
-#include <Program_Group>
+#include <Program_TopGroup>
 #include <taViewer_List>
 #include <taUndoMgr>
 #include <TimeUsed>
@@ -84,7 +84,7 @@ String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for th
   ControlPanel_Group    ctrl_panels;  // #AKA_edits special edit dialogs for selected elements
   DataTable_Group       data;   // data, such as patterns for network input
   taBase_Group          data_proc; // #HIDDEN_TREE objects that perform data processing operations (functions collected on objects for different kinds of operations)
-  Program_Group         programs; // Gui-based programs to run simulations and other processing
+  Program_TopGroup      programs; // Gui-based programs to run simulations and other processing
   taViewer_List         viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
   taViewer_List         viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr             undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager

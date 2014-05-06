@@ -28,33 +28,30 @@ void ProgBrkPt::Initialize() {
 }
 
 void ProgBrkPt::InitLinks() {
-  taBase::Own(prog_el, this);
   inherited::InitLinks();
+  taBase::Own(prog_el, this);
 }
 
 void ProgBrkPt::CutLinks() {
-  if (prog_el) {
-    Program* prog = GET_MY_OWNER(Program);
-    if (prog) {
-      // start the clear the progline - not from the program
-      int code_line = prog->script_list.FindMainLine(prog_el);
-      ProgLine* pl = prog->script_list.SafeEl(code_line);
-      prog_el->ClearBreakpoint();
-      if (pl) {
-        pl->ClearBreakpoint();
-      }
+  if(program && prog_el) {
+    // start the clear the progline - not from the program
+    int code_line = program->script_list.FindMainLine(prog_el);
+    ProgLine* pl = program->script_list.SafeEl(code_line);
+    prog_el->ClearBreakpoint();
+    if (pl) {
+      pl->ClearBreakpoint();
     }
-    prog_el.CutLinks();
   }
+  prog_el.CutLinks();
+  program.CutLinks();
   inherited::CutLinks();
 }
 
 void ProgBrkPt::Enable() {
   enabled = true;
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    int code_line = prog->script_list.FindMainLine(prog_el);
-    ProgLine* pl = prog->script_list.SafeEl(code_line);
+  if(program) {
+    int code_line = program->script_list.FindMainLine(prog_el);
+    ProgLine* pl = program->script_list.SafeEl(code_line);
     pl->SetBreakpoint();
   }
   SigEmitUpdated();
@@ -62,10 +59,9 @@ void ProgBrkPt::Enable() {
 
 void ProgBrkPt::Disable() {
   enabled = false;
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    int code_line = prog->script_list.FindMainLine(prog_el);
-    ProgLine* pl = prog->script_list.SafeEl(code_line);
+  if (program) {
+    int code_line = program->script_list.FindMainLine(prog_el);
+    ProgLine* pl = program->script_list.SafeEl(code_line);
     pl->DisableBreakpoint();
   }
   SigEmitUpdated();
@@ -86,7 +82,7 @@ String ProgBrkPt::GetStateDecoKey() const {
     if(!enabled)
       return "NotEnabled";
   }
-return rval;
+  return rval;
 }
 
 String ProgBrkPt::GetDisplayName() const {

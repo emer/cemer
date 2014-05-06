@@ -33,8 +33,9 @@ ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, String codeline) {
   ProgBrkPt* bp = FindBrkPt(prog_el);
   if (bp == NULL) {
     ProgBrkPt* bp = (ProgBrkPt*)New(1);
+    bp->program = GET_OWNER(prog_el, Program);
     bp->prog_el = prog_el;
-    bp->desc = codeline.elidedTo(-1);
+    bp->desc = bp->program->name + " " + codeline.elidedTo(-1);
     bp->Enable();
     SigEmitUpdated();
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
@@ -65,9 +66,5 @@ ProgBrkPt* ProgBrkPt_List::FindBrkPt(ProgEl* prog_el) const {
 }
 
 bool ProgBrkPt_List::BrowserExpandAll() {
-  Program* prog = GET_MY_OWNER(Program);
-  if(!prog) return false;
-  return prog->BrowserExpandAll_ProgItem(this);
+  return inherited::BrowserExpandAll();
 }
-
-

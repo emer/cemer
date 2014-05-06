@@ -21,7 +21,6 @@
 
 // member includes:
 #include <ProgVarRef>
-#include <taGuiDialog>
 
 // declare all other types mentioned but not required to include:
 class Program; // 

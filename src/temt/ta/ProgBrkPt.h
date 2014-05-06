@@ -21,6 +21,7 @@
 
 // member includes:
 #include <ProgEl>
+#include <ProgramRef>
 
 // declare all other types mentioned but not required to include:
 class taSigLink; //
@@ -28,15 +29,17 @@ class taSigLink; //
 taTypeDef_Of(ProgBrkPt);
 
 class TA_API ProgBrkPt : public taNBase {
-  // This class tracks program breakpoints and is the data for the breakpoint UI
+  // represents a break point in a Program -- program will stop at this point if enabled
 INHERITED(taNBase)
 public:
+  bool          enabled;
+  // #SHOW is this break point enabled?  using this flag makes it easy to toggle breakpoints on and off as needed, without having to find the line of code again
+  ProgramRef    program;
+  // the program where the break point is set
   ProgElRef     prog_el;
   // #HIDDEN #SHOW_TREE the program element on which the break is set
-  bool          enabled;
-  // #SHOW breakpoints can persist and be enabled or disabled
   String        desc;
-  // #READ_ONLY #SHOW
+  // #READ_ONLY #SHOW describes the line of code where the breakpoint is set
 
   void          Enable();
   // #MENU #DYN1 #GHOST_OFF_enabled enable existing disabled breakpoint

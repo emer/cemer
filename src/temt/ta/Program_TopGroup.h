@@ -13,38 +13,31 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ProgBrkPt_List_h
-#define ProgBrkPt_List_h 1
+#ifndef Program_TopGroup_h
+#define Program_TopGroup_h 1
 
 // parent includes:
-#include <taList>
+#include <Program_Group>
 
 // member includes:
+#include <ProgBrkPt_List>
 
 // declare all other types mentioned but not required to include:
-class ProgBrkPt; //
-class ProgEl; //
 
-taTypeDef_Of(ProgBrkPt_List);
+taTypeDef_Of(Program_TopGroup);
 
-class TA_API ProgBrkPt_List : public taList<ProgBrkPt> {
-  // #NO_DEFAULT_CHILD A list of breakpoints for an individual program to support viewing and enabling
-INHERITED(taList<ProgBrkPt> )
+class TA_API Program_TopGroup : public Program_Group {
+  // top-level program group -- this one lives in the project -- has all the breakpoints
+INHERITED(Program_Group)
 public:
-#ifdef __MAKETA__ // dummy to supress New
-  taBase*         New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
-#endif
-  
-  ProgBrkPt*      AddBrkPt(ProgEl* prog_el, String codeline);
-  void            DeleteBrkPt(ProgEl* prog_el);
-  ProgBrkPt*      FindBrkPt(ProgEl* prog_el) const;
+  ProgBrkPt_List        break_points;
+  // #NO_SAVE a list of breakpoints each associated with a Program and ProgLine where the program will be stopped if the breakpoint is enabled
 
-  bool            BrowserExpandAll();
-
-  TA_SIMPLE_BASEFUNS(ProgBrkPt_List);
+ void  InitLinks();
+  TA_BASEFUNS_NOCOPY(Program_TopGroup);
 private:
   void Initialize();
   void Destroy()     { };
 };
 
-#endif // ProgBrkPt_List_h
+#endif // Program_TopGroup_h

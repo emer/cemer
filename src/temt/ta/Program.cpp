@@ -14,7 +14,8 @@
 //   Lesser General Public License for more details.
 
 #include "Program.h"
-#include <Program_Group>
+#include <Program_TopGroup>
+#include <ProgBrkPt>
 #include <taProject>
 #include <ControlPanel>
 #include <ProgramCallBase>
@@ -94,7 +95,6 @@ void Program::InitLinks() {
   taBase::Own(sub_progs_step, this);
   taBase::Own(step_prog, this);
   taBase::Own(script_list, this);
-  taBase::Own(brk_pts, this);
   
   taBase::Own(load_code, this); // todo: obsolete, remove
   
@@ -131,7 +131,6 @@ void Program::CutLinks() {
   args.CutLinks();
   types.CutLinks();
   objs.CutLinks();
-  brk_pts.CutLinks();
   prog_gp = NULL;
   inherited::CutLinks();
 }
@@ -152,7 +151,6 @@ void Program::Reset() {
   args.Reset();
   types.Reset();
   objs.Reset();
-  brk_pts.Reset();
 }
 
 void Program::Copy_(const Program& cp) {
@@ -179,7 +177,6 @@ void Program::Copy_(const Program& cp) {
   sub_progs_step.RemoveAll();
   sub_progs_all.RemoveAll();
   sub_progs_dir.RemoveAll();
-  brk_pts.RemoveAll();  // don't copy breakpoints
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
@@ -735,12 +732,13 @@ void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& progn
                             const String& topnm, const String& src_ln) {
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   String fh;
-  fh << "Program: " << name << " Stopped on breakpoint number: " << bpno
+  fh << "Program: " << GetPathNames() << "\nStopped on breakpoint number: " << bpno
   << " at css source line: " << src_ln_no << " in prog: "
   << prognm << " pc: " << pc << " css top: " << topnm << "\n"
   << src_ln;
+  taMisc::Info(fh);
   if(taMisc::gui_active) {
-    iDialogChoice::ConfirmDialog(NULL, fh);
+    // iDialogChoice::ConfirmDialog(NULL, fh);
     ViewProgEditor(src_ln_no);
   }
 }
@@ -1014,15 +1012,19 @@ String Program::GetProgCodeInfo(int line_no, const String& code_str) {
   return _nilString;
 }
 
+ProgBrkPt_List* Program::GetBrkPts() {
+  Program_TopGroup* ptop = GET_MY_OWNER(Program_TopGroup);
+  if(!ptop) return NULL;
+  return &(ptop->break_points);
+}
+
 void Program::ClearAllBreakpoints() {
   if(!script)
     return;
   script_list.ClearAllBreakpoints();
   script->DelAllBreaks();
-  brk_pts.Reset();
 }
 
-// TODO - add brk_pt class code
 void Program::SetAllBreakpoints() {
   if(!script) return;
   int nbp = 0;
@@ -1065,10 +1067,13 @@ void Program::EnableBreakpoint(ProgEl* pel) {
   ProgLine* pl = script_list.FastEl(start_ln);
   CmdShell();                 // should be using cmd shell if setting breakpoints
   script->SetBreak(start_ln);
-  ProgBrkPt* bp = brk_pts.FindBrkPt(pel);
-  if (bp) {
-    bp->enabled = true;
-    SigEmit(SLS_ITEM_UPDATED_ND);
+  ProgBrkPt_List* bpl = GetBrkPts();
+  if(bpl) {
+    ProgBrkPt* bp = bpl->FindBrkPt(pel);
+    if (bp) {
+      bp->enabled = true;
+      bp->SigEmitUpdated();
+    }
   }
 }
 
@@ -1077,10 +1082,13 @@ void Program::DisableBreakpoint(ProgEl* pel) {
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   script->DelBreak(start_ln);
-  ProgBrkPt* bp = brk_pts.FindBrkPt(pel);
-  if (bp) {
-    bp->enabled = false;
-    SigEmit(SLS_ITEM_UPDATED_ND);
+  ProgBrkPt_List* bpl = GetBrkPts();
+  if(bpl) {
+    ProgBrkPt* bp = bpl->FindBrkPt(pel);
+    if (bp) {
+      bp->enabled = false;
+      bp->SigEmitUpdated();
+    }
   }
 }
 
@@ -1089,13 +1097,20 @@ void Program::SetBreakpoint_impl(ProgEl* pel) {
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   ProgLine* pl = script_list.FastEl(start_ln);
-  ProgBrkPt* bp = brk_pts.AddBrkPt(pel, pl->code);  // add a brk_pt object to the list of breakpoints - used for display/enable/disable gui
+  ProgBrkPt_List* bpl = GetBrkPts();
+  if(bpl) {
+    ProgBrkPt* bp = bpl->AddBrkPt(pel, pl->code);
+    // add a brk_pt object to the list of breakpoints - used for display/enable/disable gui
+  }
   EnableBreakpoint(pel);
 }
 
 void Program::ClearBreakpoint_impl(ProgEl* pel) {
   DisableBreakpoint(pel);
-  brk_pts.DeleteBrkPt(pel);
+  ProgBrkPt_List* bpl = GetBrkPts();
+  if(bpl) {
+    bpl->DeleteBrkPt(pel);
+  }
 }
 
 bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {

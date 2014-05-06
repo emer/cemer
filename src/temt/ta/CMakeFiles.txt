@@ -298,6 +298,7 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgLibEl_List.h
   ProgLib.h
   Program_Group.h
+  Program_TopGroup.h
   ProgramToolBar.h
 
   ProgramCallBase.h
@@ -1404,6 +1405,7 @@ set(ta_SRCS_MAKETA
   ProgLibEl_List.cpp
   ProgLib.cpp
   Program_Group.cpp
+  Program_TopGroup.cpp
   ProgramToolBar.cpp
 
   ProgramCallBase.cpp

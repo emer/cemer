@@ -3569,7 +3569,7 @@ bool cssProg::SetBreak(int srcln) {
     }
     return false;
   }
-  breaks.Add(srcdx);
+  breaks.AddUnique(srcdx);      // key to do unique so it isn't duplicated!!
   return true;
 }
 
@@ -3598,13 +3598,20 @@ bool cssProg::DelBreak(int srcln) {
     for(i=0; i < size; i++) {
       cssEl* tmp = insts[i]->inst.El();
       if(tmp->GetType() == cssEl::T_CodeBlock) {
-        if(tmp->GetSubProg()->DelBreak(srcln))
+        if(tmp->GetSubProg()->DelBreak(srcln)) {
+          // taMisc::DebugInfo("removed from sub:", tmp->GetSubProg()->name);
           return true;
+        }
       }
     }
     return false;
   }
-  return breaks.RemoveEl(srcdx);
+  bool rval = breaks.RemoveEl(srcdx);
+  // if(rval) {
+  //   taMisc::DebugInfo("removed", String(srcdx), "from me", name, "remaining:",
+  //                     String(breaks.size));
+  // }
+  return rval;
 }
 
 bool cssProg::DelBreakIdx(int idx) {
@@ -5208,6 +5215,8 @@ bool cssProgSpace::SetBreak(int srcln) {
     return false;
   }
 
+  // taMisc::DebugInfo("Setting breakpoint in:", name, "line:", String(srcln));
+
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {
@@ -5258,6 +5267,9 @@ bool cssProgSpace::DelBreak(int srcln) {
     cssMisc::Warning(Prog(), "Breakpoint larger than max line number");
     return false;
   }
+
+  // taMisc::DebugInfo("Deleting breakpoint in:", name, "line:", String(srcln));
+
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {

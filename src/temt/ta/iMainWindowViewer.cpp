@@ -1764,7 +1764,7 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiSigLink* link) {
     itv = GetMainTreeView();
     rval = itv->AssertItem(link);
     if (rval) {
-      itv->CollapseAllUnder(rval);
+      itv->ExpandAllUnder(rval);
     }
   }
   // make sure our operations are finished

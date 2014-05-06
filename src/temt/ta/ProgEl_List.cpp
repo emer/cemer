@@ -15,6 +15,8 @@
 
 #include "ProgEl_List.h"
 #include <Program>
+#include <ProgBrkPt_List>
+
 taTypeDef_Of(ProgCode);
 
 #include <taMisc>
@@ -114,7 +116,10 @@ bool ProgEl_List::RemoveIdx(int idx) {
   ProgEl* pel = FastEl(idx);
   Program* prog = GET_MY_OWNER(Program);
   if (prog) {
-    prog->brk_pts.DeleteBrkPt(pel);
+    ProgBrkPt_List* brk_pts = prog->GetBrkPts();
+    if(brk_pts) {
+      brk_pts->DeleteBrkPt(pel);
+    }
   }
   return inherited::RemoveIdx(idx);
 }

@@ -33,7 +33,6 @@
 #include <ProgEl_List>
 #include <Program_List>
 #include <ProgLine_List>
-#include <ProgBrkPt_List>
 #include <String_Array>
 
 // declare all other types mentioned but not required to include:
@@ -47,6 +46,7 @@ class ProgVar; //
 class ProgramCallBase; //
 class iPanelOfProgram; //
 class iPanelSet; //
+class ProgBrkPt_List; //
 
 
 taTypeDef_Of(Program);
@@ -147,8 +147,6 @@ public:
   // global variables that are parameters (arguments) for callers
   ProgVar_List          vars;
   // global variables accessible outside and inside script
-  ProgBrkPt_List        brk_pts;
-    // a list of breakpoints each associated with a ProgLine where the program will be stopped if the ProgBrkPt is enabled
   Function_List         functions;
   // function code (for defining subroutines): goes at top of script and can be called from init or prog code
   ProgEl_List           init_code;
@@ -184,6 +182,8 @@ public:
   ProgLine_List         script_list;
   // #HIDDEN #NO_SAVE list of the script lines with important meta-data etc -- this is official source of script listing
   ProgEl_List           load_code;
+  // #HIDDEN #NO_SAVE #OBSOLETE obsolete and will be removed later -- only here to elminate load warnings
+  taBase_List           brk_pts;
   // #HIDDEN #NO_SAVE #OBSOLETE obsolete and will be removed later -- only here to elminate load warnings
 
   inline void           SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
@@ -402,6 +402,7 @@ public: // XxxGui versions provide feedback to the user
   // #IGNORE decrement the indent level, returning new level
   virtual void          AddDescString(taBase* prog_el, const String& dsc);
   // #IGNORE add an appropriately formatted version of the description string to code -- for a full line desc comment at start
+  virtual ProgBrkPt_List* GetBrkPts();
   virtual bool          ToggleBreakpoint(ProgEl* pel);
   // #IGNORE toggle breakpoint for given program element -- handles updating -- returns false if not able to complete
     void                SetBreakpoint_impl(ProgEl* pel);
