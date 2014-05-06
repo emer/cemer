@@ -1800,11 +1800,11 @@ void VEArm::LogArmData(DataTable& dt) {
   dc->SetVal(targ_loc_rel.z, -1);
 
   dc = dt.FindMakeCol("hand_x", VT_FLOAT);
-  dc->SetVal(hand_loc_rel.x, -1);
+  dc->SetVal(hand_loc_actual.x, -1);
   dc = dt.FindMakeCol("hand_y", VT_FLOAT);
-  dc->SetVal(hand_loc_rel.y, -1);
+  dc->SetVal(hand_loc_actual.y, -1);
   dc = dt.FindMakeCol("hand_z", VT_FLOAT);
-  dc->SetVal(hand_loc_rel.z, -1);
+  dc->SetVal(hand_loc_actual.z, -1);
 
   dc = dt.FindMakeCol("hand_vra", VT_FLOAT);
   dc->SetVal(hand_vra, -1);
@@ -2075,11 +2075,13 @@ bool VEArm::GetNormVals() {
   if(isNewReach) {
     hand_loc_abs = hand->cur_pos;
     hand_loc_rel = hand_loc_abs - should_loc;
+    hand_loc_actual = hand_loc_rel;
   }
   else {
     taMatrixPtr mat(arm_state->GetValAsMatrix("hand_coords", -(vis_delay)));
     hand_loc_rel.FromMatrix(*mat);
-    // arm_state already stores the hand coords relative to the shoulder
+    hand_loc_abs = hand->cur_pos;
+    hand_loc_actual = hand_loc_abs - should_loc;
   }
 
   loc_err = targ_loc_rel - hand_loc_rel;

@@ -108,7 +108,8 @@ public:
   taVector3f    hand_loc_abs;  // #READ_ONLY #SHOW #EXPERT current hand coordinates, in absolute world coordinates
   taVector3f    targ_loc_rel;  // #READ_ONLY #SHOW #EXPERT current target coordinates, in shoulder-relative coordinates
   float         targ_rel_d;    // #READ_ONLY #SHOW #EXPERT distance to target (mag of targ_loc_rel)
-  taVector3f    hand_loc_rel;  // #READ_ONLY #SHOW #EXPERT current hand coordinates, in shoulder-relative coordinates
+  taVector3f    hand_loc_rel;  // #READ_ONLY #SHOW #EXPERT delayed hand coordinates, in shoulder-relative coordinates
+  taVector3f    hand_loc_actual; // #READ_ONLY #SHOW #EXPERT current hand coordinates, in shoulder-relative coordinates
   taVector3f    hand_loc_prv;  // #READ_ONLY #SHOW #EXPERT previous hand coordinates
   taVector3f    hand_vel;       // #READ_ONLY #SHOW #EXPERT hand velocity
   float         hand_vel_mag;   // #READ_ONLY #SHOW #EXPERT hand velocity
