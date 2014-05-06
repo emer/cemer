@@ -5210,6 +5210,9 @@ String& cssProgSpace::Info_Generic(String& fh) {
 //////////////////////////////////////////////////
 
 bool cssProgSpace::SetBreak(int srcln) {
+  if(!taMisc::interactive)      // no breakpoints in non-interactive code!
+    return false;
+
   if(srcln > src_ln) {
     cssMisc::Warning(Prog(), "Breakpoint larger than max line number");
     return false;
@@ -5237,7 +5240,7 @@ bool cssProgSpace::SetBreak(int srcln) {
   }
   if(Prog(0)->SetBreak(srcln))
     return true;
-  cssMisc::Warning(Prog(), "Source line not found");
+  cssMisc::Warning(Prog(), "Set Breakpoint: source line not found:", String(srcln));
   return false;
 }
 
@@ -5263,6 +5266,9 @@ String& cssProgSpace::PrintBreaks(String& fh) {
 }
 
 bool cssProgSpace::DelBreak(int srcln) {
+  if(!taMisc::interactive)      // no breakpoints in non-interactive code!
+    return false;
+
   if(srcln > src_ln) {
     cssMisc::Warning(Prog(), "Breakpoint larger than max line number");
     return false;
