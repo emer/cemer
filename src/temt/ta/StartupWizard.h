@@ -30,7 +30,7 @@ class TA_API StartupWizard : public taWizard {
   // object that triggers the startup wizard in root -- really just a trigger for it
 INHERITED(taWizard)
 public:
-  String_ArrayRef    rec_files_ref;   // reference to recent files array
+  String_ArrayRef    rec_files_ref;   // #IGNORE reference to recent files array
 
   void          SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                  int sls, void* op1_, void* op2_) override;

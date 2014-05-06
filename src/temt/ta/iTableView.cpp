@@ -72,7 +72,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
     return true;
   }
-  else if(!(ctrl_pressed && (e->key() == Qt::Key_A || e->key() == Qt::Key_E))) {
+  else {
     if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
       return true;
     if((bool)m_window) {

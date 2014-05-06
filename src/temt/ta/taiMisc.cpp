@@ -831,12 +831,13 @@ bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
   case Qt::Key_N:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
     return true;                // we absorb this event
-  case Qt::Key_A:
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
-    return true;                // we absorb this event
-  case Qt::Key_E:
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
-    return true;                // we absorb this event
+    // note: A and E are doing weird things wherever they are used -- not good
+  // case Qt::Key_A:
+  //   app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
+  //   return true;                // we absorb this event
+  // case Qt::Key_E:
+  //   app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
+  //   return true;                // we absorb this event
   case Qt::Key_F:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
     return true;                // we absorb this event
