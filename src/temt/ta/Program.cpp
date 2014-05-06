@@ -264,6 +264,7 @@ int Program::Call(Program* caller) {
 }
 
 int Program::CallInit(Program* caller) {
+  SetAllBreakpoints();          // reinstate all active breakpoints -- always do this b/c the explicit compile made by parent will have erased them..
   if(last_init_timestamp == global_init_timestamp)
     return ret_val;		// already done it!
   last_init_timestamp = global_init_timestamp;
@@ -272,7 +273,6 @@ int Program::CallInit(Program* caller) {
 
 int Program::CallInit_impl(Program* caller) {
   run_state = INIT;    // this is redundant if called from an existing INIT but otherwise needed
-  SetAllBreakpoints();          // reinstate all active breakpoints
   Run_impl();
   CheckConfig(false);   // check after running!  see below
   script->Restart();    // for init, always restart script at beginning if run again
@@ -361,6 +361,10 @@ bool Program::PreCompileScript_impl() {
   // resetting the script, it will get all messed up.  vars on this space are referred
   // to by a pointer to the space and an index off of it, which is important for autos
   // but actually not for these guys (but they are/were that way anyway).
+
+  if(script_compiled && (bool)script && (last_init_timestamp == global_init_timestamp))
+    return false;               // don't recompile if already compiled!
+
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
   script_list.ClearAllErrors(); // start fresh
   objs.GetVarsForObjs();
