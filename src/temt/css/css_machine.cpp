@@ -5290,7 +5290,8 @@ bool cssProgSpace::DelBreak(int srcln) {
   }
   if(Prog(0)->DelBreak(srcln))
     return true;
-  cssMisc::Warning(Prog(), "Breakpoint not found");
+  cssMisc::Warning(Prog(), "Delete Breakpoint: Breakpoint not found for source line:",
+                   String(srcln));
   return false;
 }
 

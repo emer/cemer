@@ -793,7 +793,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvi_cons->lrate = .01f;
   pvr_cons->lrate = .1f;
   nv_cons->lrate = .0005f;
-  lve_cons->lrate = .05f;
+  lve_cons->lrate = .01f;
   lvi_cons->lrate = .001f;
 
   pv_units->SetUnique("g_bar", true);

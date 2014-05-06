@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7102
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7115
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -427,7 +427,7 @@ LeabraProject .projects["test"] {
   };
  };
 
- Program_Group @.programs = [0] {
+ Program_TopGroup @.programs = [0] {
   Program_Group @.gp["LeabraAll_Std"] = [10] { 
    Program @["LeabraBatch"] { 
     ProgObjList @.objs = [0] {
@@ -445,9 +445,6 @@ LeabraProject .projects["test"] {
      ProgVar @["batch"] { };
      ProgVar @["init_batch"] { };
      ProgVar @["max_batch"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -545,9 +542,6 @@ LeabraProject .projects["test"] {
      ProgVar @["rnd_seeds"] { };
      ProgVar @["train_timer"] { };
      ProgVar @["rnd_seed"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [1] {
@@ -729,9 +723,6 @@ LeabraProject .projects["test"] {
      ProgVar @["stable_wt_update_interval"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -837,9 +828,6 @@ LeabraProject .projects["test"] {
      ProgVar @["compute_rel_netin"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -912,9 +900,6 @@ LeabraProject .projects["test"] {
      ProgVar @["cycle"] { };
      ProgVar @["min_cycles"] { };
      ProgVar @["update_net_view"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -996,9 +981,6 @@ LeabraProject .projects["test"] {
      ProgVar @["update_net_view"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1034,9 +1016,6 @@ LeabraProject .projects["test"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["LayerWriter_0"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1101,9 +1080,6 @@ LeabraProject .projects["test"] {
     ProgVar_List @.vars = [2] {
      ProgVar @["trial_mon_data"] { };
      ProgVar @["trial_netmon"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1176,9 +1152,6 @@ LeabraProject .projects["test"] {
      ProgVar @["epoch_mon_data"] { };
      ProgVar @["epoch_netmon"] { };
      ProgVar @["epoch_timer"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1255,9 +1228,6 @@ LeabraProject .projects["test"] {
      ProgVar @["epoch_str"] { };
      ProgVar @["batch_str"] { };
      ProgVar @["final_tag"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -3153,28 +3123,28 @@ LeabraProject .projects["test"] {
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegPV"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["PosBodyState"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegBodyState"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3187,7 +3157,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3202,7 +3172,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegLV_BLA"] { 
@@ -3215,7 +3185,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3229,7 +3199,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["VSPatchIndir_Pos"] { 
@@ -3241,7 +3211,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["VSMatrixDirect_Pos"] { 
@@ -3249,7 +3219,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_BLA"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["VSMatrixIndir_Neg"] { 
@@ -3257,7 +3227,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegLV_BLA"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3267,7 +3237,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_CeM"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
      LeabraLayer @["LHbRMTg"] { 
@@ -3280,7 +3250,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegPV"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
      LeabraLayer @["VTA"] { 
@@ -3291,7 +3261,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_VSPatchIndir_Pos"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
      LeabraLayer @["DRN"] { 
@@ -3300,7 +3270,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosPV"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1] {
       };
      };
     };
@@ -3313,7 +3283,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegBodyState"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
      LeabraLayer @["NegLV_OFC"] { 
@@ -3323,7 +3293,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_ACCActPlans"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3334,7 +3304,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_NegLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4] {
       };
      };
     };
@@ -3345,7 +3315,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Ctxt_Fm_V1"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3200] {
       };
      };
      LeabraLayer @["V4"] { 
@@ -3356,7 +3326,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_Object"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [576] {
       };
      };
      LeabraLayer @["Object"] { 
@@ -3364,7 +3334,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [32] {
       };
      };
      LeabraLayer @["Target"] { 
@@ -3372,7 +3342,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_PosLV_OFC"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [32] {
       };
      };
      LeabraLayer @["Match"] { 
@@ -3380,7 +3350,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_MatchHidden"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [2] {
       };
      };
      LeabraLayer @["MatchHidden"] { 
@@ -3390,7 +3360,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_Match"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [25] {
       };
      };
     };
@@ -3399,14 +3369,14 @@ LeabraProject .projects["test"] {
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [144] {
       };
      };
      LeabraLayer @["RatOrient"] { 
       Projection_Group @.projections = [0] {
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [9] {
       };
      };
     };
@@ -3417,7 +3387,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_dlPFC_Hid"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3] {
       };
      };
     };
@@ -3427,7 +3397,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Fm_ACCActPlans"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3] {
       };
      };
      LeabraLayer @["dlPFC_Hid"] { 
@@ -3442,7 +3412,7 @@ LeabraProject .projects["test"] {
        LeabraPrjn @["Ctxt_Fm_dlPFC_Hid"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [49] {
       };
      };
     };
@@ -6494,11 +6464,6 @@ LeabraProject .projects["test"] {
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -7032,11 +6997,6 @@ LeabraProject .projects["test"] {
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -7607,7 +7567,7 @@ LeabraProject .projects["test"] {
      };
      If @[10] {
       desc=;
-      flags=0;
+      flags=BREAKPOINT_ENABLED;
       orig_prog_code=;
       cond {
        expr="save_final_wts";
@@ -7798,11 +7758,6 @@ LeabraProject .projects["test"] {
       desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -8002,7 +7957,7 @@ LeabraProject .projects["test"] {
        el_def=0;
        MethodCall @[0] {
 	desc=;
-	flags=NEW_EL|CAN_REVERT_TO_CODE;
+	flags=NEW_EL|CAN_REVERT_TO_CODE|BREAKPOINT_ENABLED;
 	orig_prog_code="network.Compute_StableWeights()";
 	result_var=NULL;
 	obj=$.projects["test"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
@@ -8219,11 +8174,6 @@ LeabraProject .projects["test"] {
       desc="call ComputeAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -8513,11 +8463,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="if true, will update network views at end of settling";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -8822,11 +8767,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -8966,11 +8906,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -9481,11 +9416,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -10001,11 +9931,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -10378,11 +10303,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
       desc="batch + epoch";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -11029,7 +10949,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -11074,7 +10994,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -11096,7 +11016,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=4.964895: fix_max=0: max=6.249776: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -11115,7 +11035,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=6: fix_max=0: max=6: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -12129,7 +12049,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=2: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=BAR;
@@ -12196,7 +12116,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=3.163963: fix_max=0: max=4.672672: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -14939,7 +14859,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	  };
 	  state_valid=1;
-	  brain_data_name="/Users/oreilly/emergent/data/standard/MNI152_T1_1mm_brain.nii";
+	  brain_data_name="/usr/local/share/Emergent/data/standard/MNI152_T1_1mm_brain.nii";
 	  brain_dimensions {x=182: y=218: z=182: };
 	  view_plane=SAGITTAL;
 	  slice_start=1;

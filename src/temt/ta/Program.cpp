@@ -1030,6 +1030,7 @@ void Program::SetAllBreakpoints() {
   int nbp = 0;
   script->DelAllBreaks();       // start with clean slate
   ProgEl* last_pel_set = NULL;
+  ProgBrkPt_List* bpl = GetBrkPts();
   for(int i=1; i<script_list.size; i++) {
     ProgLine* pl = script_list.FastEl(i);
     if(pl->HasPLineFlag(ProgLine::COMMENT)) continue; // never mark comments..
@@ -1038,6 +1039,12 @@ void Program::SetAllBreakpoints() {
       pel = (ProgEl*)pl->prog_el.ptr();
     if(pl->HasPLineFlag(ProgLine::BREAKPOINT) ||
        (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT_ENABLED))) {
+      if(bpl) {
+        ProgBrkPt* bp = bpl->FindBrkPt(pel);
+        if(!bp) {               // this can happen e.g., during re-loading
+          bpl->AddBrkPt(pel, pl->code);
+        }
+      }
       last_pel_set = pel;                     // don't repeat
       pl->SetPLineFlag(ProgLine::BREAKPOINT); // make sure
       script->SetBreak(i);    // set it

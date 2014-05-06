@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7069
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7115
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -305,7 +305,7 @@ LeabraProject .projects["LeabraStd"] {
   };
  };
 
- Program_Group @.programs = [0] {
+ Program_TopGroup @.programs = [0] {
   Program_Group @.gp["LeabraAll_Std"] = [10] { 
    Program @["LeabraBatch"] { 
     ProgObjList @.objs = [0] {
@@ -323,9 +323,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["batch"] { };
      ProgVar @["init_batch"] { };
      ProgVar @["max_batch"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -423,9 +420,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["rnd_seeds"] { };
      ProgVar @["train_timer"] { };
      ProgVar @["rnd_seed"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [1] {
@@ -597,9 +591,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["stable_wt_update_interval"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -705,9 +696,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["compute_rel_netin"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -780,9 +768,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["cycle"] { };
      ProgVar @["min_cycles"] { };
      ProgVar @["update_net_view"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -864,9 +849,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["update_net_view"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -902,9 +884,6 @@ LeabraProject .projects["LeabraStd"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["LayerWriter_0"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -969,9 +948,6 @@ LeabraProject .projects["LeabraStd"] {
     ProgVar_List @.vars = [2] {
      ProgVar @["trial_mon_data"] { };
      ProgVar @["trial_netmon"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1044,9 +1020,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["epoch_mon_data"] { };
      ProgVar @["epoch_netmon"] { };
      ProgVar @["epoch_timer"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -1123,9 +1096,6 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["epoch_str"] { };
      ProgVar @["batch_str"] { };
      ProgVar @["final_tag"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -3264,7 +3234,7 @@ LeabraProject .projects["LeabraStd"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_55";
+       name="UserDataItem_List_47";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3290,7 +3260,7 @@ LeabraProject .projects["LeabraStd"] {
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_56";
+       name="UserDataItem_List_48";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3316,7 +3286,7 @@ LeabraProject .projects["LeabraStd"] {
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_57";
+       name="UserDataItem_List_49";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3374,7 +3344,7 @@ LeabraProject .projects["LeabraStd"] {
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_58";
+       name="UserDataItem_List_50";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3464,7 +3434,7 @@ LeabraProject .projects["LeabraStd"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_57";
+       name="UserDataItem_List_49";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3490,7 +3460,7 @@ LeabraProject .projects["LeabraStd"] {
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_58";
+       name="UserDataItem_List_50";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -3773,11 +3743,6 @@ LeabraProject .projects["LeabraStd"] {
       desc="maximum number of batch runs to perform";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -4312,11 +4277,6 @@ LeabraProject .projects["LeabraStd"] {
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -5033,11 +4993,6 @@ LeabraProject .projects["LeabraStd"] {
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -5454,11 +5409,6 @@ LeabraProject .projects["LeabraStd"] {
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -5747,11 +5697,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="if true, will update network views at end of settling";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -6056,11 +6001,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -6200,11 +6140,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -6715,11 +6650,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -7235,11 +7165,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       init_from=NULL;
      };
     };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name=;
      el_typ=Function;
@@ -7612,11 +7537,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
       desc="batch + epoch";
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name=;
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name=;
@@ -8199,7 +8119,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  negative_draw=0;
 	  negative_draw_z=1;
 	  line_width=2;
-	  point_size=1008981770;
+	  point_size=1.00898e+9;
 	  point_spacing=1;
 	  bar_space=0.2;
 	  bar_depth=0.01;
@@ -8258,7 +8178,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8277,7 +8197,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
