@@ -55,7 +55,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   hb = new QHBoxLayout;
   hb->setMargin(0);
   lbl = new QLabel("<b>Create New Project -- Choose Starting Template</b>");
-  lbl->setToolTip("Select from one of the following templates as a starting point for creating a new project");
+  lbl->setToolTip("Select from one of the following templates as a starting point for creating a new project -- you can also save your own custom templates");
   hb->addStretch();
   hb->addWidget(lbl);
   hb->addStretch();
@@ -166,6 +166,20 @@ iPanelOfStartupWizard::~iPanelOfStartupWizard() {
   delete rec_proj_chs;
 }
 
+void iPanelOfStartupWizard::UpdateRecents() {
+  int nrf = tabMisc::root->recent_files.size;
+  recent_files.SetSize(nrf);
+  for(int i=0; i<nrf; i++) {
+    recent_files[i] = taMisc::CompressFilePath(tabMisc::root->recent_files[i]);
+  }
+  // todo: i can't seem to force this thing to redraw if number of items doesn't change!
+  // rec_proj_chs_dlg->items->clear();
+  // taMisc::RunPending();
+  rec_proj_chs_dlg->Activate(rec_proj_chs);
+  // rec_proj_chs_dlg->items->repaint();
+  new_proj_chs_dlg->Activate(new_proj_chs);
+}
+
 void iPanelOfStartupWizard::SaveSplitterSettings() {
   if(!tabMisc::root) return;
   tabMisc::root->startupwiz_splits = String(sw_split->saveState().toBase64().constData());
@@ -217,6 +231,7 @@ void iPanelOfStartupWizard::SigLinkDestroying(taSigLink* dl) {
 
 void iPanelOfStartupWizard::UpdatePanel_impl() {
   SaveSplitterSettings();
+  UpdateRecents();
   inherited::UpdatePanel_impl();
 }
 

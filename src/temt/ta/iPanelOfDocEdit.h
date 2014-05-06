@@ -35,11 +35,11 @@ INHERITED(iPanel)
 public:
   taiEditorOfDoc*      de; // the doc editor
 
-  taDoc*                doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
+  taDoc*       doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
   String       panel_type() const override {return "Doc Source";}
 
   bool         HasChanged() override; // 'true' if user has unsaved changes
-  void                  FillList();
+  void         FillList();
 
   QWidget*     firstTabFocusWidget() override;
 

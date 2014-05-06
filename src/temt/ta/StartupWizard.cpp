@@ -14,10 +14,28 @@
 //   Lesser General Public License for more details.
 
 #include "StartupWizard.h"
+#include <taRootBase>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(StartupWizard);
 
 void StartupWizard::Initialize() {
   auto_open = true;
   name = "StartupWizard";
+}
+
+void StartupWizard::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(rec_files_ref, this);
+  taRootBase* root = GET_MY_OWNER(taRootBase);
+  if(root) {
+    rec_files_ref = &(root->recent_files);
+  }
+}
+
+void StartupWizard::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+                                     int sls, void* op1_, void* op2_) override {
+  if(!taMisc::gui_active) return;
+  SigEmitUpdated();             // just update us
 }
