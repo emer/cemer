@@ -352,42 +352,35 @@ ClusterManager::saveProject()
 bool ClusterManager::HasBasicData(bool err) {
   if(m_proj->file_name.empty()) {
     if(err) {
-      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+      taMisc::Error("Cluster Manager:",m_cluster_run.name,
                     "project file name is empty -- must be specified to setup files -- try saving the project");
     }
     return false;
   }
   if(m_cluster_run.cluster.empty()) {
     if(err) {
-      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+      taMisc::Error("Cluster Manager:",m_cluster_run.name,
                     "cluster name is empty -- must be specified to setup files");
     }
     return false;
   }
   if(m_cluster_run.svn_repo.empty()) {
     if(err) {
-      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
-                    "svn repository name is empty -- must be specified to setup files");
-    }
-    return false;
-  }
-  if(m_cluster_run.svn_repo.empty()) {
-    if(err) {
-      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
-                    "svn repository name is empty -- must be specified to setup files");
+      taMisc::Error("Cluster Manager:",m_cluster_run.name,
+                    "svn repository name is empty -- must be specified -- go to ClusterRun 'Properties' panel");
     }
     return false;
   }
   if(m_cluster_run.repo_url.empty()) {
     if(err) {
-      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+      taMisc::Error("Cluster Manager:",m_cluster_run.name,
                     "repository url is empty -- must be specified to setup files");
     }
     return false;
   }
   if(m_username.empty() && getUsername().empty()) {
     if(err) {
-      taMisc::Error("Cluster Manager for:",m_cluster_run.name,
+      taMisc::Error("Cluster Manager:",m_cluster_run.name,
                     "username is empty -- this is derived from svn repository data");
     }
     return false;
