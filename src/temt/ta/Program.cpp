@@ -261,10 +261,10 @@ int Program::Call(Program* caller) {
 }
 
 int Program::CallInit(Program* caller) {
-  SetAllBreakpoints();          // reinstate all active breakpoints -- always do this b/c the explicit compile made by parent will have erased them..
   if(last_init_timestamp == global_init_timestamp)
     return ret_val;		// already done it!
   last_init_timestamp = global_init_timestamp;
+  SetAllBreakpoints();          // reinstate all active breakpoints -- always do this b/c the explicit compile made by parent will have erased them..
   return CallInit_impl(caller);
 }
 
@@ -732,11 +732,17 @@ void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& progn
                             const String& topnm, const String& src_ln) {
   last_stop_prog = this;
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
+  ProgLine* pl = script_list.SafeEl(src_ln_no);
   String fh;
-  fh << "Program: " << GetPathNames() << "\nStopped on breakpoint number: " << bpno
-  << " at css source line: " << src_ln_no << " in prog: "
-  << prognm << " pc: " << pc << " css top: " << topnm << "\n"
-  << src_ln;
+  fh << "Program: " << name << " at: ";
+  if(pl && pl->prog_el)
+    fh << pl->prog_el->GetPathNames();
+  else
+    fh << GetPathNames();
+  fh << "\nStopped on breakpoint number: " << bpno
+     << " at css source line: " << src_ln_no << " in prog: "
+     << prognm << " pc: " << pc << " css top: " << topnm << "\n"
+     << src_ln;
   taMisc::Info(fh);
   if(taMisc::gui_active) {
     // iDialogChoice::ConfirmDialog(NULL, fh);
@@ -758,6 +764,7 @@ void Program::taWarning(int src_ln_no, bool running, const String& err_msg) {
 
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
+  SetAllBreakpoints();          // always set breakpoints after a rebuild!
   script_list.ClearAllErrors(); // start fresh -- check if this doesn't work for actual errs..
   script_compiled = true;
   ret_val = 0;
@@ -1068,6 +1075,20 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   return true;
 }
 
+bool Program::ToggleBreakEnable(ProgEl* pel) {
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return false;
+  ProgLine* pl = script_list.FastEl(start_ln);
+  if(pel->HasProgFlag(ProgEl::BREAKPOINT_ENABLED)) {
+    pl->DisableBreakpoint();	// calls impl below
+  }
+  else {
+    pl->SetBreakpoint();	// calls impl below
+  }
+  return true;
+}
+
 void Program::EnableBreakpoint(ProgEl* pel) {
   int start_ln, end_ln;
   if(!ScriptLinesEl(pel, start_ln, end_ln))
@@ -1185,6 +1206,9 @@ const String Program::scriptString() {
   // outside of the stale mechanism.  When the user presses Init, they get the
   // current fresh code regardless!  note that it doesn't do this obligatory
   // recompiles all the time -- that is only done at init too.
+  
+  // taMisc::DebugInfo("recompiling:", name);
+
   script_list.Reset();
   AddLine(this, "// blank 0 line to align with css", ProgLine::COMMENT);
   cur_indent = 0;
@@ -1612,10 +1636,12 @@ void Program::ViewScript_Editor() {
 
 void Program::ViewScriptUpdate() {
   view_script.truncate(0);
-  if(script_list.size <= 1)
+  if(script_list.size <= 1) {
     view_script = "// Program must be Compiled (e.g., hit Init button) before css Script is available.<P>\n";
-  else
+  }
+  else {
     script_list.FullListingHTML(view_script);
+  }
 }
 
 void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {
@@ -1786,6 +1812,9 @@ iPanelSet* Program::FindMyPanelSet() {
   if(!taMisc::gui_active) return NULL;
   taSigLink* link = sig_link();
   if(!link) return NULL;
+
+  FindMyProgramPanel();         // gotta have that first
+
   taSigLinkItr itr;
   iPanelSet* el;
   FOR_DLC_EL_OF_TYPE(iPanelSet, el, link, itr) {

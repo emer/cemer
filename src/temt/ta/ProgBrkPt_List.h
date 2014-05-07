@@ -43,9 +43,9 @@ public:
   bool            BrowserExpandAll() override;
 
   virtual void    EnableAll();
-  // #MENU #MENU_ON_BreakPoints #CAT_Code enable all breakpoints 
+  // #MENU #MENU_CONTEXT #MENU_ON_BreakPoints #CAT_Code enable all breakpoints 
   virtual void    DisableAll();
-  // #MENU #MENU_ON_BreakPoints #CAT_Code disable all breakpoints 
+  // #MENU #MENU_CONTEXT #MENU_ON_BreakPoints #CAT_Code disable all breakpoints 
 
   TA_SIMPLE_BASEFUNS(ProgBrkPt_List);
 private:

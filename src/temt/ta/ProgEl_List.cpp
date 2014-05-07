@@ -114,11 +114,13 @@ bool ProgEl_List::BrowserCollapseAll() {
 
 bool ProgEl_List::RemoveIdx(int idx) {
   ProgEl* pel = FastEl(idx);
-  Program* prog = GET_MY_OWNER(Program);
-  if (prog) {
-    ProgBrkPt_List* brk_pts = prog->GetBrkPts();
-    if(brk_pts) {
-      brk_pts->DeleteBrkPt(pel);
+  if(pel->owner == this) {
+    Program* prog = GET_MY_OWNER(Program);
+    if (prog) {
+      ProgBrkPt_List* brk_pts = prog->GetBrkPts();
+      if(brk_pts) {
+        brk_pts->DeleteBrkPt(pel);
+      }
     }
   }
   return inherited::RemoveIdx(idx);

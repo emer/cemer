@@ -129,6 +129,8 @@ void iNumberedTextView::textChanged( int pos, int removed, int added ) {
     tc.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, hl_n);
     view->setTextCursor(tc);
   }
+  
+  numbers->update();            // trigger update..
 
   in_text_changed = false;
 }

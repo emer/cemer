@@ -1744,6 +1744,9 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
       activateWindow();
       itv->setFocus();
       itv->clearExtSelection();
+      // select the top guy first: select does NOT show the middle panel viewer 
+      // work if it is already selected!!!
+      itv->setCurrentItem(itv->topLevelItem(0), 0, QItemSelectionModel::ClearAndSelect);
       itv->scrollTo(rval);
       itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
     }
@@ -1755,6 +1758,9 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
     if (rval) {
       activateWindow();
       itv->setFocus();
+      // select the top guy first: select does NOT show the middle panel viewer 
+      // work if it is already selected!!!
+      itv->setCurrentItem(itv->topLevelItem(0), 0, QItemSelectionModel::ClearAndSelect);
       itv->scrollTo(rval);
       itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
     }

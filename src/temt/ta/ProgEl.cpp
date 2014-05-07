@@ -521,6 +521,12 @@ void ProgEl::ToggleBreakpoint() {
   prg->ToggleBreakpoint(this);
 }
 
+void ProgEl::ToggleBreakEnable() {
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return;
+  prg->ToggleBreakEnable(this);
+}
+
 void ProgEl::EnableBreakpoint() {
   this->SetProgFlag(BREAKPOINT_ENABLED);
   this->ClearProgFlag(BREAKPOINT_DISABLED); // clear, it might be enabled

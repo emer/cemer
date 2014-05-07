@@ -407,6 +407,8 @@ public: // XxxGui versions provide feedback to the user
   virtual ProgBrkPt_List* GetBrkPts();
   virtual bool          ToggleBreakpoint(ProgEl* pel);
   // #IGNORE toggle breakpoint for given program element -- handles updating -- returns false if not able to complete
+  virtual bool          ToggleBreakEnable(ProgEl* pel);
+  // #IGNORE toggle breakpoint for given program element -- handles updating -- returns false if not able to complete
     void                SetBreakpoint_impl(ProgEl* pel);
     // #IGNORE actually clear the breakpoint in css for this el
     void                ClearBreakpoint_impl(ProgEl* pel);

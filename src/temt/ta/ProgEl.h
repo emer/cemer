@@ -133,7 +133,9 @@ public:
   void                  ToggleVerboseFlag();
   // #MENU #MENU_ON_Object #DYN1 toggle verbose flag to opposite of current state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
   void                  ToggleBreakpoint();
-  // #MENU #MENU_ON_Object #DYN1 add or remove a breakpoint: a breakpoint will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #DYN1 add or remove a breakpoint: a breakpoint will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
+  void                  ToggleBreakEnable();
+  // #MENU #MENU_ON_Object #DYN1 toggle whether a breakpoint is enabled or not -- if no breakpoint is set, then it will set a breakpoint in the first place, otherwise it will toggle the enabled status of that breakpoint -- see ToggleBreakpoint for more info
   virtual bool          RevertToCode();
   // #BUTTON #GHOST_OFF_flags:CAN_REVERT_TO_CODE revert this program element back to a ProgCode element -- use this if the conversion did not proceed as expected
 
@@ -161,7 +163,7 @@ public:
   // #IGNORE get description (comment) from the code string -- returns code without the comment
 
   virtual  bool         IsCtrlProgEl()  { return false; }
-  // set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
+  // #IGNORE set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
 
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
@@ -175,13 +177,18 @@ public:
   const String GetToolTip(const KeyString& key) const override;
   String       GetColText(const KeyString& key, int itm_idx = -1) const override;
   bool         IsVerbose() const { return HasProgFlag(VERBOSE); }
+
   void         EnableBreakpoint();
+  // #IGNORE just sets the flags
   void         DisableBreakpoint();
+  // #IGNORE just sets the flags
   void         SetBreakpoint();
+  // #IGNORE just sets the flags
   void         ClearBreakpoint();
+  // #IGNORE just sets the flags
 
   virtual String        GetToolbarName() const;
-  // name of the program element as represented in the programming toolbar
+  // #IGNORE name of the program element as represented in the programming toolbar
 
   TA_BASEFUNS(ProgEl);
 

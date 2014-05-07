@@ -93,6 +93,7 @@ void iNumberBar::centerOnLine(int lineno) {
 void iNumberBar::setLineFlags(int lineno, int flags) {
   if(lineno < 1 || lineno >= line_flags.size()) return;
   line_flags.replace(lineno, flags);
+  update();
 }
 
 int iNumberBar::lineFlags( int lineno ) const {
@@ -104,6 +105,7 @@ void iNumberBar::clearAllLineFlags() {
   for(int i=0; i<line_flags.size(); i++) {
     line_flags[i] = LF_NONE;
   }
+  update();
 }
 
 void iNumberBar::setTextEdit( iTextEdit *edit ) {

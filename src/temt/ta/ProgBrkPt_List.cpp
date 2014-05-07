@@ -82,7 +82,7 @@ void ProgBrkPt_List::EnableAll() {
 void ProgBrkPt_List::DisableAll() {
   for(int i = 0; i < size; i++) {
     ProgBrkPt* bp = FastEl(i);
-    bp->Enable();
+    bp->Disable();
   }
 }
 

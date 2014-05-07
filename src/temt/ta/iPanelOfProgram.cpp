@@ -95,9 +95,6 @@ iPanelOfProgram* Program::FindMyProgramPanel() {
   iPanelOfProgram* el;
   FOR_DLC_EL_OF_TYPE(iPanelOfProgram, el, link, itr) {
     if (el->prog() == this) {
-      // bad: this is what causes all the movement -- can't select program b/c that will do that
-      // in the program tree browser -- need to direct this to the other guy somehow and
-      // prevent program itself from selecting in prog editor!
       BrowserSelectMe();        // select my program
       iPanelSet* dps = el->data_panel_set();
       if(dps) {
@@ -122,6 +119,9 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(iti) {
     itv->setFocus();
     itv->clearExtSelection();
+    // select the top guy first: makes sure that the select of actual item is 
+    // novel and triggers whatever we want it to trigger!
+    itv->setCurrentItem(itv->topLevelItem(0), 0, QItemSelectionModel::ClearAndSelect);
     itv->scrollTo(iti);
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
     // make sure our operations are finished
