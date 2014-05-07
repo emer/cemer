@@ -21,7 +21,7 @@
 #include <QPointer>
 #include <QKeyEvent>
 
-#ifdef TA_OS_MAC
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
 // defined in mac_objc_code.mm objective C file:
 // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
 extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
@@ -48,7 +48,7 @@ int iDialog::exec()
 
 void iDialog::keyPressEvent(QKeyEvent *e)
 {
-#ifdef TA_OS_MAC
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
   // needs to be after window is fully up and running..
   TurnOffTouchEventsForWindow(windowHandle());
 #endif

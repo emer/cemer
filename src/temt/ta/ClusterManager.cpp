@@ -367,7 +367,9 @@ bool ClusterManager::HasBasicData(bool err) {
   if(m_cluster_run.svn_repo.empty()) {
     if(err) {
       taMisc::Error("Cluster Manager:",m_cluster_run.name,
-                    "svn repository name is empty -- must be specified -- go to ClusterRun 'Properties' panel");
+                    "svn repository name is empty -- must be specified -- setting to the first one listed in Preferences -- go to ClusterRun 'Properties' panel to edit");
+      m_cluster_run.svn_repo = taMisc::svn_repo1_url.name;
+      m_cluster_run.UpdateAfterEdit();
     }
     return false;
   }

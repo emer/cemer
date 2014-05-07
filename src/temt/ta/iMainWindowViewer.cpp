@@ -105,7 +105,7 @@ iMainWindowViewer::~iMainWindowViewer() {
   menu = NULL;
 }
 
-#ifdef TA_OS_MAC
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
 // defined in mac_objc_code.mm objective C file:
 // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
 extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
@@ -114,7 +114,7 @@ extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
 
 void iMainWindowViewer::Init() {
   setAttribute(Qt::WA_DeleteOnClose);
-  setAttribute(Qt::WA_AcceptTouchEvents, false);
+  setAttribute(Qt::WA_AcceptTouchEvents, false); // this doesn't work like it should
 
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   brow_hist = new iBrowseHistory(this);
@@ -336,7 +336,7 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   setFocus();
 #endif
 // doesn't work here: https://bugreports.qt-project.org/browse/QTBUG-38815
-// #ifdef TA_OS_MAC
+// #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
 //   TurnOffTouchEventsForWindow(windowHandle());
 // #endif
 }
@@ -2413,7 +2413,7 @@ void iMainWindowViewer::this_SaveView(iAction* me) {
 }
 
 void iMainWindowViewer::UpdateUi() {
-#ifdef TA_OS_MAC
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
   // this is the only place it seems to work..
   TurnOffTouchEventsForWindow(windowHandle());
 #endif
