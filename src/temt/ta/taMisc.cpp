@@ -1118,7 +1118,11 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
 bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
   if(!taMisc::interactive) pager = false;
   int pageln = 0;
-  String rmdr = PathsToLinks(str);
+  String rmdr;
+  if(taMisc::gui_active)
+    rmdr = PathsToLinks(str);
+  else
+    rmdr = str;
 
   const int min_dw = taMisc::display_width / 2;
 
