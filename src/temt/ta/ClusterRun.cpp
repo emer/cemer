@@ -416,7 +416,8 @@ void ClusterRun::Probe() {
   jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
   // Commit the table.
   m_cm->CommitJobSubmissionTable();
-  AutoUpdateMe();
+  // this is not worth the risks if things are not configured properly:
+  //  AutoUpdateMe();
 }
 
 void ClusterRun::ListJobFiles(bool include_data) {
