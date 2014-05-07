@@ -48,7 +48,7 @@ public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
   bool                  auto_edit; // automatically activate control panel upon loading
-  bool                  running_updt; // update the select edit while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
+  bool                  running_updt; // update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
   EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the control panel
   EditMthItem_Group     mths; // #TREE_EXPERT the mthods of the control panel
@@ -75,7 +75,7 @@ public: // public API
   virtual int   SearchMembers(taNBase* obj, const String& memb_contains);
   // #MENU #MENU_ON_ControlPanel search given object for member names that contain given string, and add them to this editor
   virtual int   CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
-  // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this select edit; no_ptrs = ignore pointer fields
+  // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this control panel; no_ptrs = ignore pointer fields
   virtual bool  SelectMember(taBase* base, MemberDef* md,
                      const String& xtra_lbl = _nilString, const String& desc = _nilString,
                      const String& sub_gp_nm = _nilString);

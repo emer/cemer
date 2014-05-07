@@ -204,7 +204,7 @@ void taiEditorOfControlPanelFast::GetImage_Item(int row) {
     (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
   if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) return;
   if(!item->base->InheritsFrom((TypeDef*)item->mbr->owner->owner)) {
-    taMisc::Warning("type mismatch in select edit", item->label, "-- should be removed asap",
+    taMisc::Warning("type mismatch in control panel", item->label, "-- should be removed asap",
                     ((TypeDef*)item->mbr->owner->owner)->name, "!=",
                     item->base->GetTypeDef()->name);
     return;

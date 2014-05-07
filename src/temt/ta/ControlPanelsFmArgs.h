@@ -35,7 +35,7 @@ public:
   ProgVarRef		ctrl_panel_var;	// #ITEM_FILTER_ObjProgVarFilter #AKA_sel_edit_var program variable pointing to control panel that contains the items to access with startup arguments
 
   virtual ControlPanel* 	GetControlPanel() const;
-  // get actual select edit from variable
+  // get actual control panel from variable
 
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgVar"; }

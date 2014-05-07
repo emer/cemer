@@ -42,7 +42,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   if (!rbase || !md) return;
 //obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
 //    return;
-  // get list of select edits
+  // get list of control panels
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
   if (!proj || proj->ctrl_panels.leaves == 0) return;
 
@@ -285,7 +285,7 @@ void taiEditorWidgets::ReConstr_Body() {
   rebuild_body = true;
   ++updating;                   // prevents spurious changed flags from coming in
   Constr_Body();
-  {             // this is key for selectedit rebuilding on bool toggles, for example
+  {             // this is key for controlpanel rebuilding on bool toggles, for example
     taMisc::RunPending();
     taMisc::RunPending();
     taMisc::RunPending();

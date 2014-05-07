@@ -28,7 +28,7 @@
 taTypeDef_Of(ControlPanelConfig);
 
 class TA_API ControlPanelConfig : public taBase {
-  // #EDIT_INLINE ##NO_TOKENS ##CAT_Display #OBSOLETE special parameters for controlling the select edit display
+  // #EDIT_INLINE ##NO_TOKENS ##CAT_Display #OBSOLETE special parameters for controlling the control panel display
   INHERITED(taBase)
 public:
   bool          auto_edit;      // automatically bring up edit dialog upon loading

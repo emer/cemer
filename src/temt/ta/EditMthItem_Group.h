@@ -30,7 +30,7 @@ class TypeDef; //
 taTypeDef_Of(EditMthItem_Group);
 
 class TA_API EditMthItem_Group : public taGroup<EditMthItem> {
-  // ##CAT_Display group of select edit dialog objects
+  // ##CAT_Display group of control panel dialog objects
 INHERITED(taGroup<EditMthItem>)
 public:
   enum MthGroupType {

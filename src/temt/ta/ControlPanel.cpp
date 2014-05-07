@@ -247,7 +247,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
 
   taGuiDialog dlg;
   dlg.Reset();
-  dlg.prompt = "Enter label for select edit item -- will be converted to a valid C name automatically";
+  dlg.prompt = "Enter label for control panel item -- will be converted to a valid C name automatically";
   dlg.win_title = "Enter ControlPanel label";
   dlg.AddWidget("main", "", "");
   dlg.AddVBoxLayout("mainv","","main","");

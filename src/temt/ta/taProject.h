@@ -146,7 +146,7 @@ String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for th
   // #CAT_Data find existing data processing object of given type, or else make one and give it nm
   virtual ControlPanel*   FindMakeControlPanel(const String& seledit_name,
 					   TypeDef* type = &TA_ControlPanel);
-  // #CAT_Edit get select edit object of given name, or make one if not found
+  // #CAT_Edit get control panel object of given name, or make one if not found
   virtual taDoc*        FindMakeDoc(const String& doc_name, const String& wiki_nm = "",
                                     const String& web_url = "");
   // #CAT_Doc get doc document object of given name, or make one if not found -- also set the wiki name and web url if specified

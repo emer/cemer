@@ -28,7 +28,7 @@
 taTypeDef_Of(EditMbrItem);
 
 class TA_API EditMbrItem: public ControlPanelItem {
-  // a member select edit item -- allows editing of just one member from a class
+  // a member control panel item -- allows editing of just one member from a class
   INHERITED(ControlPanelItem)
 public:
   MemberDef*            mbr; // #READ_ONLY #SHOW the mbr type

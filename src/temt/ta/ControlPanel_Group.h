@@ -28,7 +28,7 @@ taTypeDef_Of(ControlPanel);
 taTypeDef_Of(ControlPanel_Group);
 
 class TA_API ControlPanel_Group : public taGroup<ControlPanel> {
-  // #AKA_SelectEdit_Group  ##CAT_Display ##EXPAND_DEF_1 group of select edit dialog objects
+  // #AKA_SelectEdit_Group  ##CAT_Display ##EXPAND_DEF_1 group of control panel dialog objects
 INHERITED(taGroup<ControlPanel>)
 public:
   virtual void  AutoEdit();

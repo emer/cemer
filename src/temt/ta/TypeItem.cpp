@@ -204,7 +204,7 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     }
 
     if (!md || !mbr_base) {
-      // this can happen in valid cases (selectedit), and the msg is annoying
+      // this can happen in valid cases (controlpanel), and the msg is annoying
       //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
       return false;
     }

@@ -32,7 +32,7 @@ class DataTable; //
 taTypeDef_Of(EditMbrItem_Group);
 
 class TA_API EditMbrItem_Group : public taGroup<EditMbrItem> {
-  // ##CAT_Display group of select edit dialog objects
+  // ##CAT_Display group of control panel dialog objects
 INHERITED(taGroup<EditMbrItem>)
 public:
   taBase*               GetBase_Flat(int idx) const;
