@@ -134,14 +134,11 @@ void iPanelViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   if (!cur_item) goto end; // no selected item, so no change
   if (m_curTabView) {
     taiSigLink* link = cur_item->effLink();
-/*
     if (link->taData()->GetTypeDef()->DerivesFrom(&TA_ProgEl)) {
       ProgEl* prgEl = (ProgEl*)link->taData();
       prgEl->EditProgramEl();
     }
     else if (link) {
- */
-    if (link) {
       new_pn = m_curTabView->GetDataPanel(link);
       m_curTabView->ShowPanel(new_pn);
     }
