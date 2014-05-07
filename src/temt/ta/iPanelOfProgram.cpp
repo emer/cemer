@@ -89,13 +89,15 @@ void iPanelOfProgram::OnWindowBind_impl(iPanelViewer* itv) {
 
 iPanelOfProgram* Program::FindMyProgramPanel() {
   if(!taMisc::gui_active) return NULL;
+
+  BrowserSelectMe();        // select my program
+
   taSigLink* link = sig_link();
   if(!link) return NULL;
   taSigLinkItr itr;
   iPanelOfProgram* el;
   FOR_DLC_EL_OF_TYPE(iPanelOfProgram, el, link, itr) {
     if (el->prog() == this) {
-      BrowserSelectMe();        // select my program
       iPanelSet* dps = el->data_panel_set();
       if(dps) {
         dps->setCurrentPanelId(1); // this is the editor
@@ -108,6 +110,9 @@ iPanelOfProgram* Program::FindMyProgramPanel() {
 
 bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!taMisc::gui_active) return false;
+
+  BrowserSelectMe();        // select my program
+
   taiSigLink* link = (taiSigLink*)itm->GetSigLink();
   if(!link) return false;
 
