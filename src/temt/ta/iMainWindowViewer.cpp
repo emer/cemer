@@ -716,14 +716,19 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlContAction = AddAction(new iAction("Cont", QKeySequence(), "ctrlContAction"));
   ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
   ctrlContAction->setToolTip("Continue: continue running the last program that was run, from wherever it was last stopped");
+  
+  progStatusAction = AddAction(new iAction("Program Status", QKeySequence(), "progStatusAction"));
+  progStatusAction->setToolTip("Current Program status -- click button to see the current Global Backtrace of programs run");
 
   // Build menu items.
   ctrlMenu->AddAction(ctrlStopAction);
   ctrlMenu->AddAction(ctrlContAction);
+  ctrlMenu->AddAction(progStatusAction);
 
   // Make connections.
   connect(ctrlStopAction, SIGNAL(Action()), this, SLOT(ctrlStop()));
   connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
+  connect(progStatusAction, SIGNAL(Action()), this, SLOT(progStatus()));
 }
 
 void iMainWindowViewer::Constr_DataMenu() {
@@ -1483,6 +1488,15 @@ void iMainWindowViewer::ctrlCont() {
   }
   taMisc::Info("Continue: running program:", Program::last_run_prog->name);
   Program::last_run_prog->Run_Gui();
+}
+
+void iMainWindowViewer::progStatus() {
+  if(Program::last_run_prog) {
+    Program::last_run_prog->GlobalTrace();
+  }
+  else {
+    taMisc::Info("No global trace available -- no last run program");
+  }
 }
 
 void iMainWindowViewer::DataProcLauncher(QString method_name) {
@@ -2460,6 +2474,8 @@ void iMainWindowViewer::UpdateUi() {
   bool css_running = (Program::global_run_state == Program::RUN);
   ctrlStopAction->setEnabled(css_running);
   ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
+
+  progStatusAction->setText(Program::GlobalStatus());
 
   if (tabMisc::root) {
     fileSaveAllAction->setEnabled(!tabMisc::root->projects.IsEmpty());

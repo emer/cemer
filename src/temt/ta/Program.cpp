@@ -730,6 +730,7 @@ void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
 
 void Program::CssBreakpoint(int src_ln_no, int bpno, int pc, const String& prognm,
                             const String& topnm, const String& src_ln) {
+  last_stop_prog = this;
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   String fh;
   fh << "Program: " << GetPathNames() << "\nStopped on breakpoint number: " << bpno
@@ -1022,7 +1023,7 @@ void Program::ClearAllBreakpoints() {
   if(!script)
     return;
   script_list.ClearAllBreakpoints();
-  script->DelAllBreaks();
+  script->DelAllBreaks();       // double redundancy
 }
 
 void Program::SetAllBreakpoints() {
@@ -1042,7 +1043,7 @@ void Program::SetAllBreakpoints() {
       if(bpl) {
         ProgBrkPt* bp = bpl->FindBrkPt(pel);
         if(!bp) {               // this can happen e.g., during re-loading
-          bpl->AddBrkPt(pel, pl->code);
+          bpl->AddBrkPt(pel, pl);
         }
       }
       last_pel_set = pel;                     // don't repeat
@@ -1106,14 +1107,14 @@ void Program::SetBreakpoint_impl(ProgEl* pel) {
   ProgLine* pl = script_list.FastEl(start_ln);
   ProgBrkPt_List* bpl = GetBrkPts();
   if(bpl) {
-    ProgBrkPt* bp = bpl->AddBrkPt(pel, pl->code);
+    ProgBrkPt* bp = bpl->AddBrkPt(pel, pl);
     // add a brk_pt object to the list of breakpoints - used for display/enable/disable gui
   }
   EnableBreakpoint(pel);
 }
 
 void Program::ClearBreakpoint_impl(ProgEl* pel) {
-  DisableBreakpoint(pel);
+  // DisableBreakpoint(pel);
   ProgBrkPt_List* bpl = GetBrkPts();
   if(bpl) {
     bpl->DeleteBrkPt(pel);
@@ -1493,8 +1494,14 @@ String Program::RenderGlobalTrace(bool html) {
     rval << "<table border=0 cellpadding=2> <tr><th>Level</th><th>Program</th><th>Code</th></tr>\n";
   }
   int cnt = 0;
-  for(int i = cssMisc::top_stack.stack_size-1; i >= 0; i--, cnt++) {
-    cssProgSpace* sp = cssMisc::top_stack.stack[i];
+  for(int i = cssMisc::top_stack.stack_size; i > 0; i--, cnt++) {
+    cssProgSpace* sp;
+    if(i == cssMisc::top_stack.stack_size) {
+      sp = cssMisc::cur_top;
+    }
+    else {
+      sp = cssMisc::top_stack.stack[i];
+    }
     int ln = sp->CurRunSrcLn();
     if(html) rval << "<tr><td>";
     rval << cnt << "\t";
@@ -1519,6 +1526,60 @@ String Program::RenderGlobalTrace(bool html) {
       rval << "</td></tr>\n";
   }
   if(html) rval << "</table>";
+  return rval;
+}
+
+String Program::GlobalStatus() {
+  String rval;
+  if(global_run_state == RUN) {
+    rval = "Run: ";
+    if(last_run_prog) {
+      rval += " " + last_run_prog->name; // could use short..
+    }
+  }
+  else if(global_run_state == STOP) {
+    switch(stop_reason) {
+    case SR_NONE:
+      rval = "Stop?: ";
+      break;
+    case SR_USER_STOP:
+      rval = "Stop: ";
+      break;
+    case SR_USER_ABORT:
+      rval = "Abort: ";
+      break;
+    case SR_USER_INTR:
+      rval = "C^c: ";
+      break;
+    case SR_STEP_POINT:
+      rval = "Step: ";
+      break;
+    case SR_BREAKPOINT:
+      rval = "Break: ";
+      break;
+    case SR_ERROR:
+      rval = "Break: ";
+      break;
+    }
+    if(last_stop_prog) {
+      rval += last_stop_prog->name;
+    }
+  }
+  else if(global_run_state == INIT) {
+    rval = "Init: ";
+    if(last_run_prog) {
+      rval += " " + last_run_prog->name; // could use short..
+    }
+  }
+  else if(global_run_state == DONE) {
+    rval = "Done: ";
+    if(last_run_prog) {
+      rval += " " + last_run_prog->name; // could use short..
+    }
+  }
+  else if(global_run_state == NOT_INIT) {
+    rval = "No Program Initialized";
+  }
   return rval;
 }
 

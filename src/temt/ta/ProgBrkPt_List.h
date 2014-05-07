@@ -24,6 +24,7 @@
 // declare all other types mentioned but not required to include:
 class ProgBrkPt; //
 class ProgEl; //
+class ProgLine; //
 
 taTypeDef_Of(ProgBrkPt_List);
 
@@ -35,11 +36,16 @@ public:
   taBase*         New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
 #endif
   
-  ProgBrkPt*      AddBrkPt(ProgEl* prog_el, String codeline);
+  ProgBrkPt*      AddBrkPt(ProgEl* prog_el, ProgLine* codeline);
   void            DeleteBrkPt(ProgEl* prog_el);
   ProgBrkPt*      FindBrkPt(ProgEl* prog_el) const;
 
-  bool            BrowserExpandAll();
+  bool            BrowserExpandAll() override;
+
+  virtual void    EnableAll();
+  // #MENU #MENU_ON_BreakPoints #CAT_Code enable all breakpoints 
+  virtual void    DisableAll();
+  // #MENU #MENU_ON_BreakPoints #CAT_Code disable all breakpoints 
 
   TA_SIMPLE_BASEFUNS(ProgBrkPt_List);
 private:

@@ -188,6 +188,7 @@ public:
 
   iAction*            ctrlStopAction;
   iAction*            ctrlContAction;
+  iAction*            progStatusAction; // program run status and button
 
   iAction*            helpHelpAction;
   iAction*            helpAboutAction;
@@ -347,6 +348,7 @@ public slots:
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();
+  virtual void  progStatus();
   
   virtual void  windowMenu_aboutToShow();
   void          windowActivate(int win); // activate the indicated win

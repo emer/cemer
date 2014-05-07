@@ -100,7 +100,7 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   String dc = code;
   dc.downcase();
   // look for container
-  if (dc.startsWith("local_") || dc.startsWith("localv") || dc.startsWith("loc_")) {
+  if (dc.startsWith("local_") || dc.startsWith("localv") || dc.startsWith("loc_var")) {
     return true;
   }
   // no? look for data type
@@ -115,8 +115,9 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 bool LocalVars::CvtFmCode(const String& code) {
   String dc = code;
   dc.downcase();
-  if (dc.startsWith("local_") || dc.startsWith("localv") || dc.startsWith("loc_")) {
-        return true;
+  if (dc.startsWith("local_") || dc.startsWith("localv") || dc.startsWith("loc_var")) {
+    // we generally try to make sure that the toolbox name works..
+    return true;
   }
 
   String vartyp = trim(code.before(' '));

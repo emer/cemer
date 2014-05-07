@@ -1875,7 +1875,7 @@ bool VEArm::InitDelayedInputsToTable() {
   if(arm_state->rows == 1) {
     int n = 1;
     // start with one row & no data
-    for(n; n<pro_delay; n++) {
+    for(n=1; n<pro_delay; n++) {
       for(int i=0; i<n_musc; i++) {
         dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i); // these will correspond to resting muscle lengths, since this method is called before the reach begins
         dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i); // these are currently constant (will change once we have a moving target)
@@ -1896,7 +1896,7 @@ bool VEArm::InitDelayedInputsToTable() {
       arm_state->AddBlankRow();
     }
     // now we should have (pro_delay - 1) rows of data, one blank row, and index n = pro_delay
-    for(n; n<vis_delay; n++) {
+    for(; n<vis_delay; n++) {
       for(int i=0; i<n_musc; i++) {
         dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
         dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);

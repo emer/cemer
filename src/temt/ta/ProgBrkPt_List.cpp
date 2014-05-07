@@ -20,6 +20,8 @@
 #include <tabMisc>
 #include <Program>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(ProgBrkPt_List);
 
 void ProgBrkPt_List::Initialize() {
@@ -27,7 +29,7 @@ void ProgBrkPt_List::Initialize() {
   setUseStale(true);
 }
 
-ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, String codeline) {
+ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, ProgLine* pl) {
   if (!prog_el)
     return NULL;
   ProgBrkPt* bp = FindBrkPt(prog_el);
@@ -35,7 +37,8 @@ ProgBrkPt* ProgBrkPt_List::AddBrkPt(ProgEl* prog_el, String codeline) {
     ProgBrkPt* bp = (ProgBrkPt*)New(1);
     bp->program = GET_OWNER(prog_el, Program);
     bp->prog_el = prog_el;
-    bp->desc = bp->program->name + " " + codeline.elidedTo(-1);
+    bp->desc = bp->program->name + ":" + taMisc::LeadingZeros(pl->line_no, 3)
+      + " " + pl->code.elidedTo(-1);
     bp->Enable();
     SigEmitUpdated();
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
@@ -68,3 +71,18 @@ ProgBrkPt* ProgBrkPt_List::FindBrkPt(ProgEl* prog_el) const {
 bool ProgBrkPt_List::BrowserExpandAll() {
   return inherited::BrowserExpandAll();
 }
+
+void ProgBrkPt_List::EnableAll() {
+  for(int i = 0; i < size; i++) {
+    ProgBrkPt* bp = FastEl(i);
+    bp->Enable();
+  }
+}
+
+void ProgBrkPt_List::DisableAll() {
+  for(int i = 0; i < size; i++) {
+    ProgBrkPt* bp = FastEl(i);
+    bp->Enable();
+  }
+}
+

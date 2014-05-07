@@ -259,7 +259,9 @@ public:
   virtual void  GlobalTrace();
   // #BUTTON #CAT_Code display trace of all the programs called up to the point of the last stop (e.g., due to error or user stop/step)
     static String  RenderGlobalTrace(bool html = true);
-    // #CAT_Code #EXPERT render a string representation of the global trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
+    // #CAT_Code #IGNORE render a string representation of the global trace -- if html then render to html format that is useful for gui dialog with clickable program href links -- else plain text
+    static String  GlobalStatus();
+    // #CAT_Code #IGNORE get a global status string for display in status bar
 
   virtual void  LocalTrace();
   // #BUTTON #GHOST_OFF_run_state:STOP #CAT_Code display trace of program flow within this program up to the point of the last stop (e.g., due to error or user stop/step)
