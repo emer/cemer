@@ -1,6 +1,6 @@
 #if defined(__APPLE__) 
 
-#include <QGuiApplication>
+#include <QWidget>
 
 #if (QT_VERSION >= 0x050200)
 
@@ -9,6 +9,7 @@
 // here's my bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
 
 #include <Cocoa/Cocoa.h>
+#include <QGuiApplication>
 #if (QT_VERSION == 0x050200)
 #include <QtGui/5.2.0/QtGui/qpa/qplatformnativeinterface.h>
 #endif
