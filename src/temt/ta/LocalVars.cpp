@@ -97,6 +97,13 @@ ProgVar* LocalVars::AddVarMatrix() {
 }
 
 bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;
+  dc.downcase();
+  // look for container
+  if (dc.startsWith("local_") || dc.startsWith("localv")) {
+    return true;
+  }
+  // no? look for data type
   if(!code.contains(' ')) return false; // must have at least one space
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
@@ -106,6 +113,12 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool LocalVars::CvtFmCode(const String& code) {
+  String dc = code;
+  dc.downcase();
+  if (dc.startsWith("local_") || dc.startsWith("localv")) {
+        return true;
+  }
+
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
   String varnm = trim(code.after(' '));
