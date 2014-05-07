@@ -935,7 +935,10 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 #ifdef TA_OS_MAC
   // this is an essential fix for having an OpenGL widget along with other widgets
   // https://bugreports.qt-project.org/browse/QTBUG-28816
-  QCoreApplication::instance()->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+  QCoreApplication::instance()->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
+  // does this fix the touchy trackpad problem?? probably!
+  QCoreApplication::instance()->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents,
+                                             false);
 #endif
   // probably as good a place as any to init ODE
   dInitODE();
