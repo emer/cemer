@@ -191,9 +191,9 @@ public:
   // count the number of jobs in given table with given status value 
 
   virtual void  RunCommand(String& cmd, String& params, bool use_cur_vals = false);
-  // get the run command and params based on the currently selected search args in this select edit, and other parameters -- if use_cur_vals, then it passes the current values of the items, otherwise it uses the next_val setting, which should be set by the search algorithm prior to calling this function
+  // get the run command and params based on the currently selected search args in this control panel, and other parameters -- if use_cur_vals, then it passes the current values of the items, otherwise it uses the next_val setting, which should be set by the search algorithm prior to calling this function
   virtual void  CreateCurJob(int cmd_id = 0);
-  // AddJobRow for the current parameter values as listed in the select edit, optionally with given command id number
+  // AddJobRow for the current parameter values as listed in the control panel, optionally with given command id number
 
   // MISC impl
 

@@ -37,7 +37,7 @@ public:
 
   bool         HasChanged() override; // 'true' if user has unsaved changes
 
-  String       panel_type() const override {return "Select Edit";}
+  String       panel_type() const override {return "Control Panel";}
 
   iPanelOfControlPanel(taiSigLink* dl_);
   ~iPanelOfControlPanel();
