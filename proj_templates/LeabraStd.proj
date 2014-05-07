@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7115
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7129
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -305,7 +305,158 @@ LeabraProject .projects["LeabraStd"] {
   };
  };
 
- Program_TopGroup @.programs = [0] {
+ Program_TopGroup @.programs = [1] {
+  Program @["LeabraStartup"] { 
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [2] {
+    ProgVar @["network"] { };
+    ProgVar @["input_data"] { };
+   };
+
+   ProgVar_List @.vars = [12] {
+    ProgVar @["train"] { };
+    ProgVar @["batch"] { };
+    ProgVar @["batches"] { };
+    ProgVar @["epochs"] { };
+    ProgVar @["tag"] { };
+    ProgVar @["batch_str"] { };
+    ProgVar @["log_dir"] { };
+    ProgVar @["log_file_nm"] { };
+    ProgVar @["batch_start"] { };
+    ProgVar @["EpochOutputData"] { };
+    ProgVar @["TrialOutputData"] { };
+    ProgVar @["MyClusterRun"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [30] {
+    IfReturn @[0] { };
+    RegisterArgs @[1] { };
+    PrintExpr @[2] { };
+    Comment @[3] { };
+    ProgVarFmArg @[4] { };
+    ProgVarFmArg @[5] { };
+    ProgVarFmArg @[6] { };
+    ProgVarFmArg @[7] { };
+    ProgVarFmArg @[8] { };
+    ProgVarFmArg @[9] { };
+    ProgVarFmArg @[10] { };
+    ProgVarFmArg @[11] { };
+    ProgVarFmArg @[12] { };
+    ControlPanelsFmArgs @[13] { };
+    Comment @[14] { };
+    Comment @[15] { };
+    If @[16] { 
+     ProgEl_List @.true_code = [5] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      ProgVarFmArg @[1] { };
+      MiscCall @[2] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      VarIncr @[3] { };
+      If @[4] { 
+       ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [4] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	 };
+	};
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[17] { 
+     ProgEl_List @.else_code = [2] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
+      MiscCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    MiscCall @[18] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    Comment @[19] { };
+    MethodCall @[20] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MethodCall @[21] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[22] { };
+    Comment @[23] { };
+    MethodCall @[24] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MethodCall @[25] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[26] { };
+    OtherProgramVar @[27] { };
+    PrintExpr @[28] { };
+    ProgramCall @[29] { 
+     ProgArg_List @.prog_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+   };
+  };
   Program_Group @.gp["LeabraAll_Std"] = [10] { 
    Program @["LeabraBatch"] { 
     ProgObjList @.objs = [0] {
@@ -3660,6 +3811,890 @@ LeabraProject .projects["LeabraStd"] {
   el_def=0;
   tags=;
   desc=;
+  Program @["LeabraStartup"] {
+   name="LeabraStartup";
+   short_nm="Startup";
+   tags="Leabra, Startup, Parallel Batch";
+   desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
+   flags=STARTUP_RUN;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["network"] {
+     name="network";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     object_val=.projects["LeabraStd"].networks["Network_0"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="network to operate on -- updates batch counter on network and passes it to train program";
+     init_from=NULL;
+    };
+    ProgVar @["input_data"] {
+     name="input_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="datatable with training patterns -- not used by this program, but passed to train program";
+     init_from=NULL;
+    };
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["train"] {
+     name="train";
+     var_type=T_Object;
+     object_type=Program;
+     object_val=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc="set this to point to your train process";
+     init_from=NULL;
+    };
+    ProgVar @["batch"] {
+     name="batch";
+     var_type=T_Object;
+     object_type=Program;
+     object_val=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="set this to point to your batch process";
+     init_from=NULL;
+    };
+    ProgVar @["batches"] {
+     name="batches";
+     var_type=T_Int;
+     int_val=100;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
+     init_from=NULL;
+    };
+    ProgVar @["epochs"] {
+     name="epochs";
+     var_type=T_Int;
+     int_val=10000;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
+     init_from=NULL;
+    };
+    ProgVar @["tag"] {
+     name="tag";
+     var_type=T_String;
+     string_val="_gui";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["batch_str"] {
+     name="batch_str";
+     var_type=T_String;
+     string_val="00";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="batch number as a string (leading zeros)";
+     init_from=NULL;
+    };
+    ProgVar @["log_dir"] {
+     name="log_dir";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="log file directory";
+     init_from=NULL;
+    };
+    ProgVar @["log_file_nm"] {
+     name="log_file_nm";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="name of log file";
+     init_from=NULL;
+    };
+    ProgVar @["batch_start"] {
+     name="batch_start";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="batch starting number";
+     init_from=NULL;
+    };
+    ProgVar @["EpochOutputData"] {
+     name="EpochOutputData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["TrialOutputData"] {
+     name="TrialOutputData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["LeabraStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["MyClusterRun"] {
+     name="MyClusterRun";
+     var_type=T_Object;
+     object_type=ClusterRun;
+     object_val=.projects["LeabraStd"].ctrl_panels["ClusterRun"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    IfReturn @[0] {
+     desc="don't run if running in the gui!";
+     flags=0;
+     orig_prog_code=;
+     cond {
+      expr="taMisc::gui_active";
+     };
+    };
+    RegisterArgs @[1] {
+     desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
+     flags=0;
+     orig_prog_code=;
+    };
+    PrintExpr @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"Loaded project: \" << .projects[0].file_name";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    Comment @[3] {
+     desc="= Std variables in startup program itself =";
+     flags=0;
+     orig_prog_code=;
+    };
+    ProgVarFmArg @[4] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=.projects["LeabraStd"].programs["LeabraStartup"]$$;
+     var_name="tag";
+     arg_name="tag";
+    };
+    ProgVarFmArg @[5] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs["LeabraStartup"]$;
+     var_name="log_dir";
+     arg_name="log_dir";
+    };
+    ProgVarFmArg @[6] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     var_name="max_epoch";
+     arg_name="epochs";
+    };
+    ProgVarFmArg @[7] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     var_name="rnd_init";
+     arg_name="rnd_init";
+    };
+    ProgVarFmArg @[8] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
+     var_name="max_batch";
+     arg_name="batches";
+    };
+    ProgVarFmArg @[9] {
+     desc="b_end is parallel-batch mode of operation (see b_start)";
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
+     var_name="max_batch";
+     arg_name="b_end";
+    };
+    ProgVarFmArg @[10] {
+     desc="b_start is parallel-batch mode of operation (see also b_end)";
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
+     var_name="batch";
+     arg_name="b_start";
+    };
+    ProgVarFmArg @[11] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     var_name="save_wts_interval";
+     arg_name="save_wts_interval";
+    };
+    ProgVarFmArg @[12] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     var_name="save_final_wts";
+     arg_name="save_final_wts";
+    };
+    ControlPanelsFmArgs @[13] {
+     desc="sets any arg listed in the control panel";
+     flags=NEW_EL;
+     orig_prog_code=;
+     ctrl_panel_var=.projects["LeabraStd"].programs["LeabraStartup"].vars["MyClusterRun"]$$;
+    };
+    Comment @[14] {
+     desc="= Add your own variables here =";
+     flags=0;
+     orig_prog_code=;
+    };
+    Comment @[15] {
+     desc="= Below saves log files of standard data tables =";
+     flags=0;
+     orig_prog_code=;
+    };
+    If @[16] {
+     desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
+     flags=0;
+     orig_prog_code=;
+     cond {
+      expr="taMisc::CheckArgByName(\"b_start\")";
+     };
+     true_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc="directly set variable on batch program";
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       obj=.projects["LeabraStd"].programs["LeabraStartup"].vars["batch"]$$;
+       method=Program::SetVar;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="var_nm";
+	 required=1;
+	 def_val="\"\"";
+	 expr {
+	  expr="\"init_batch\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="value";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+      ProgVarFmArg @[1] {
+       desc="read in the arg to us too, so we can set file names based on it";
+       flags=0;
+       orig_prog_code=;
+       prog=$.projects["LeabraStd"].programs["LeabraStartup"]$;
+       var_name="batch_start";
+       arg_name="b_start";
+      };
+      MiscCall @[2] {
+       desc="string version with leading zeros";
+       flags=0;
+       orig_prog_code=;
+       result_var=.projects["LeabraStd"].programs["LeabraStartup"].vars["batch_str"]$$;
+       object_type=taMisc;
+       method=taMisc::LeadingZeros;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="num";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="batch_start";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="len";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="2";
+	 };
+	};
+       };
+      };
+      VarIncr @[3] {
+       desc="add to tag for setting log file names";
+       flags=0;
+       orig_prog_code=;
+       var=.projects["LeabraStd"].programs["LeabraStartup"].vars["tag"]$$;
+       expr {
+	expr="\".\" + batch_str";
+       };
+      };
+      If @[4] {
+       desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
+       flags=0;
+       orig_prog_code=;
+       cond {
+	expr="batch_start == 0";
+       };
+       true_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc="save args to file: last arg is to include dmem proc number";
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=.projects["LeabraStd"].programs["LeabraStartup"].vars["log_file_nm"]$$;
+	 obj=.projects["LeabraStd"].programs["LeabraStartup"].vars["EpochOutputData"]$$;
+	 method=taBase::GetFileNameFmProject;
+	 meth_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="ext";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\".args\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="tag";
+	   required=0;
+	   def_val="\"\"";
+	   expr {
+	    expr="tag.before(\".00\",-1)";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="subdir";
+	   required=0;
+	   def_val="\"\"";
+	   expr {
+	    expr="log_dir";
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=bool;
+	   type="bool";
+	   name="dmem_proc_no";
+	   required=0;
+	   def_val="false";
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+	MiscCall @[1] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::FullArgStringToFile;
+	 meth_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="fname";
+	   required=1;
+	   def_val="\"\"";
+	   expr {
+	    expr="log_file_nm";
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[17] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     else_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc="save args to file: last arg is to include dmem proc number";
+       flags=0;
+       orig_prog_code=;
+       result_var=$.projects["LeabraStd"].programs["LeabraStartup"].vars["log_file_nm"]$;
+       obj=$.projects["LeabraStd"].programs["LeabraStartup"].vars["EpochOutputData"]$;
+       method=taBase::GetFileNameFmProject;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="ext";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\".args\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="tag";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="tag";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="subdir";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="log_dir";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="dmem_proc_no";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+      MiscCall @[1] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::FullArgStringToFile;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=1;
+	 def_val="\"\"";
+	 expr {
+	  expr="log_file_nm";
+	 };
+	};
+       };
+      };
+     };
+    };
+    MiscCall @[18] {
+     desc="report any args that didn't get used!";
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     orig_prog_code="taMisc::ReportUnusedArgs()";
+     result_var=NULL;
+     object_type=taMisc;
+     method=taMisc::ReportUnusedArgs;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="err";
+       required=0;
+       def_val="true";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    Comment @[19] {
+     desc="== Save epoch log -- on by default ==";
+     flags=0;
+     orig_prog_code=;
+    };
+    MethodCall @[20] {
+     desc="last arg is to include dmem proc number";
+     flags=0;
+     orig_prog_code=;
+     result_var=$.projects["LeabraStd"].programs["LeabraStartup"].vars["log_file_nm"]$;
+     obj=$.projects["LeabraStd"].programs["LeabraStartup"].vars["EpochOutputData"]$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".epc.dat\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    MethodCall @[21] {
+     desc="last arg is to restrict log to dmem_proc = 0";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["LeabraStd"].programs["LeabraStartup"].vars["EpochOutputData"]$;
+     method=DataTable::SaveDataLog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="append";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_0";
+       required=0;
+       def_val="true";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    PrintVar @[22] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message="Saving epoch log data to:";
+     print_var=$.projects["LeabraStd"].programs["LeabraStartup"].vars["log_file_nm"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    Comment @[23] {
+     desc="== Save trial log -- OFF by default ==";
+     flags=0;
+     orig_prog_code=;
+    };
+    MethodCall @[24] {
+     desc="last arg is to include dmem proc number";
+     flags=OFF;
+     orig_prog_code=;
+     result_var=$.projects["LeabraStd"].programs["LeabraStartup"].vars["log_file_nm"]$;
+     obj=.projects["LeabraStd"].programs["LeabraStartup"].vars["TrialOutputData"]$$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".trl.dat\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MethodCall @[25] {
+     desc="last arg is to restrict log to dmem_proc = 0";
+     flags=OFF;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["LeabraStd"].programs["LeabraStartup"].vars["TrialOutputData"]$;
+     method=DataTable::SaveDataLog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="append";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_0";
+       required=0;
+       def_val="true";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    PrintVar @[26] {
+     desc=;
+     flags=OFF;
+     orig_prog_code=;
+     message="Saving trial log data to:";
+     print_var=$.projects["LeabraStd"].programs["LeabraStartup"].vars["log_file_nm"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    OtherProgramVar @[27] {
+     desc="propagate the tag";
+     flags=0;
+     orig_prog_code=;
+     other_prog=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"]$$;
+     set_other=1;
+     var_1=$.projects["LeabraStd"].programs["LeabraStartup"].vars["tag"]$;
+     var_2=NULL;
+     var_3=NULL;
+     var_4=NULL;
+    };
+    PrintExpr @[28] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"Running: \" << batch.name";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    ProgramCall @[29] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=LeabraNetwork;
+       type="LeabraNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="input_data";
+       };
+      };
+     };
+     target=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
+     targ_ld_init="*LeabraBatch*";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
   Program_Group @.gp["LeabraAll_Std"] {
    name="LeabraAll_Std";
    el_typ=Program;
@@ -3690,7 +4725,7 @@ LeabraProject .projects["LeabraStd"] {
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=.projects["LeabraStd"].networks["Network_0"]$$;
+      object_val=$.projects["LeabraStd"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -3701,7 +4736,7 @@ LeabraProject .projects["LeabraStd"] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$$;
+      object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4787,7 +5822,7 @@ LeabraProject .projects["LeabraStd"] {
 	      };
 	     };
 	    };
-	    target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"]$$;
+	    target=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["SaveWeights"]$;
 	    targ_ld_init="*SaveWeights*";
 	   };
 	  };
@@ -4924,7 +5959,7 @@ LeabraProject .projects["LeabraStd"] {
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["LeabraStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+      object_val=$.projects["LeabraStd"].data.gp["OutputData"]["TrialOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7102,7 +8137,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
       network=$.projects["LeabraStd"].networks["Network_0"]$;
-      data=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+      data=$.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"]$;
       rmv_orphan_cols=1;
      };
     };

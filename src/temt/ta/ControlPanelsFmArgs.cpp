@@ -33,14 +33,14 @@ void ControlPanelsFmArgs::UpdateAfterEdit_impl() {
 
 void ControlPanelsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(CheckError(!sel_edit_var, quiet, rval, "sel_edit_var is NULL")) return; // fatal
-  CheckError(!sel_edit_var->object_type ||
-	     !sel_edit_var->object_type->InheritsFrom(&TA_ControlPanel), quiet, rval,
-             "sel_edit_var variable does not point to a ControlPanel object");
+  if(CheckError(!ctrl_panel_var, quiet, rval, "ctrl_panel_var is NULL")) return; // fatal
+  CheckError(!ctrl_panel_var->object_type ||
+	     !ctrl_panel_var->object_type->InheritsFrom(&TA_ControlPanel), quiet, rval,
+             "ctrl_panel_var variable does not point to a ControlPanel object");
 }
 
 String ControlPanelsFmArgs::GetDisplayName() const {
-  String rval = "Select Edits Fm Args: ";
+  String rval = "CtrlPanel Fm Args: ";
   ControlPanel* se = GetControlPanel();
   if(se) {
     rval += "var = " + se->name + " ";
@@ -56,7 +56,8 @@ bool ControlPanelsFmArgs::CanCvtFmCode(const String& code, ProgEl* scope_el) con
   String tbn = GetToolbarName(); tbn.downcase();
   String tn = GetTypeDef()->name; tn.downcase();
   if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
-  if(dc.startsWith("selectedit") || dc.startsWith("select edit") || dc.startsWith("sele=")) return true;
+  if(dc.startsWith("ctrlpan") || dc.startsWith("ctrl pan") || dc.startsWith("ctrl="))
+    return true;
   return false;
 }
 
@@ -73,8 +74,8 @@ bool ControlPanelsFmArgs::CvtFmCode(const String& code) {
     name.downcase();
     String value = nv_pairs.FastEl(i).value.toString();
     
-    if (name.startsWith("var") || name.startsWith("sel_edit")) {
-      sel_edit_var = FindVarNameInScope(value, false); // don't make
+    if (name.startsWith("var") || name.startsWith("ctrl_pan")) {
+      ctrl_panel_var = FindVarNameInScope(value, false); // don't make
     }
   }
   
@@ -83,16 +84,16 @@ bool ControlPanelsFmArgs::CvtFmCode(const String& code) {
 }
 
 ControlPanel* ControlPanelsFmArgs::GetControlPanel() const {
-  if(!sel_edit_var) return NULL;
-  if(!sel_edit_var->object_type ||
-     !sel_edit_var->object_type->InheritsFrom(&TA_ControlPanel)) return NULL;
-  return (ControlPanel*)sel_edit_var->object_val.ptr();
+  if(!ctrl_panel_var) return NULL;
+  if(!ctrl_panel_var->object_type ||
+     !ctrl_panel_var->object_type->InheritsFrom(&TA_ControlPanel)) return NULL;
+  return (ControlPanel*)ctrl_panel_var->object_val.ptr();
 }
 
 void ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
   ControlPanel* se = GetControlPanel();
   if(!se) {
-    prog->AddLine(this, "// ControlPanelsFmArgs: sel_edit_var not set!", ProgLine::MAIN_LINE);
+    prog->AddLine(this, "// ControlPanelsFmArgs: ctrl_panel_var not set!", ProgLine::MAIN_LINE);
     return;
   }
 
@@ -100,16 +101,16 @@ void ControlPanelsFmArgs::GenCssBody_impl(Program* prog) {
   prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, "String sefma_lbl, sefma_argval;");
-  prog->AddLine(this, "for(int j=0;j<" + sel_edit_var->name + ".mbrs.leaves;j++) {");
+  prog->AddLine(this, "for(int j=0;j<" + ctrl_panel_var->name + ".mbrs.leaves;j++) {");
   prog->IncIndent();
-  prog->AddLine(this, "EditMbrItem* sei = " + sel_edit_var->name + ".mbrs.Leaf(j);");
+  prog->AddLine(this, "EditMbrItem* sei = " + ctrl_panel_var->name + ".mbrs.Leaf(j);");
   prog->AddLine(this, "if(!sei->is_single) continue;");
   prog->AddLine(this, "sefma_lbl = sei->label;");
   prog->AddLine(this, "sefma_argval = taMisc::FindArgByName(sefma_lbl);");
   prog->AddLine(this, "if(sefma_argval.empty()) continue;");
   prog->AddLine(this, "sei->PSearchCurVal_Set(sefma_argval);");
   if(taMisc::dmem_proc == 0) {
-    prog->AddLine(this, String("taMisc::Info(\"Set select edit item: \",sefma_lbl,\" in select edit: \",\"") +
+    prog->AddLine(this, String("taMisc::Info(\"Set ctrl panel item: \",sefma_lbl,\" in ctrl panel: \",\"") +
                   se->name + "\",\"to val:\",sefma_argval);");
   }
   prog->DecIndent();
@@ -126,7 +127,7 @@ void ControlPanelsFmArgs::GenRegArgs(Program* prog) {
       if(!sei->is_numeric) continue;
       prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + sei->label + "\");");
       prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + sei->label
-                    + "\", \"ControlPanelsFmArgs: sel_edit = " + se->name + "\");");
+                    + "\", \"ControlPanelsFmArgs: ctrl_panel = " + se->name + "\");");
     }
   }
 }

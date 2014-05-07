@@ -29,17 +29,17 @@ class ControlPanel; //
 taTypeDef_Of(ControlPanelsFmArgs);
 
 class TA_API ControlPanelsFmArgs: public ProgEl { 
-  // sets ControlPanel value(s) based on startup arguments of the name of the select edit item -- items must be single value numeric items
+  // #AKA_SelectEditsFmArgs sets ControlPanel value(s) based on startup arguments of the name of the select edit item -- items must be single value numeric items
 INHERITED(ProgEl)
 public:
-  ProgVarRef		sel_edit_var;	// #ITEM_FILTER_ObjProgVarFilter program variable pointing to select edit that contains the items to access with startup arguments
+  ProgVarRef		ctrl_panel_var;	// #ITEM_FILTER_ObjProgVarFilter #AKA_sel_edit_var program variable pointing to control panel that contains the items to access with startup arguments
 
   virtual ControlPanel* 	GetControlPanel() const;
   // get actual select edit from variable
 
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "sele=args"; }
+  String	GetToolbarName() const override { return "ctrl=args"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool    CvtFmCode(const String& code) override;
 

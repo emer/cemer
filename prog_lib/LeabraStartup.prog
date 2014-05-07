@@ -1,156 +1,154 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6178
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7129
 Program .projects[0].programs[0] { 
-  ProgObjList @.objs = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.args = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-  };
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  ProgVar_List @.vars = [12] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-    ProgVar @[3] { };
-    ProgVar @[4] { };
-    ProgVar @[5] { };
-    ProgVar @[6] { };
-    ProgVar @[7] { };
-    ProgVar @[8] { };
-    ProgVar @[9] { };
-    ProgVar @[10] { };
-    ProgVar @[11] { };
-  };
+ ProgVar_List @.vars = [12] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+  ProgVar @[5] { };
+  ProgVar @[6] { };
+  ProgVar @[7] { };
+  ProgVar @[8] { };
+  ProgVar @[9] { };
+  ProgVar @[10] { };
+  ProgVar @[11] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.init_code = [0] {
-  };
+ ProgEl_List @.init_code = [0] {
+ };
 
-  ProgEl_List @.prog_code = [29] {
-    IfReturn @[0] { };
-    RegisterArgs @[1] { };
-    PrintExpr @[2] { };
-    Comment @[3] { };
-    ProgVarFmArg @[4] { };
-    ProgVarFmArg @[5] { };
-    ProgVarFmArg @[6] { };
-    ProgVarFmArg @[7] { };
-    ProgVarFmArg @[8] { };
-    ProgVarFmArg @[9] { };
-    ProgVarFmArg @[10] { };
-    ProgVarFmArg @[11] { };
-    ProgVarFmArg @[12] { };
-    Comment @[13] { };
-    SelectEditsFmArgs @[14] { };
-    Comment @[15] { };
-    IfElse @[16] { 
-      ProgEl_List @.true_code = [5] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	ProgVarFmArg @[1] { };
-	MiscCall @[2] { 
-	  ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	VarIncr @[3] { };
-	IfElse @[4] { 
-	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [4] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-		ProgArg @[2] { };
-		ProgArg @[3] { };
-	      };
-	    };
-	    MiscCall @[1] { 
-	      ProgArg_List @.meth_args = [1] {
-		ProgArg @[0] { };
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-      };
-
-      ProgEl_List @.false_code = [2] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [4] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	    ProgArg @[2] { };
-	    ProgArg @[3] { };
-	  };
-	};
-	MiscCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-      };
+ ProgEl_List @.prog_code = [30] {
+  IfReturn @[0] { };
+  RegisterArgs @[1] { };
+  PrintExpr @[2] { };
+  Comment @[3] { };
+  ProgVarFmArg @[4] { };
+  ProgVarFmArg @[5] { };
+  ProgVarFmArg @[6] { };
+  ProgVarFmArg @[7] { };
+  ProgVarFmArg @[8] { };
+  ProgVarFmArg @[9] { };
+  ProgVarFmArg @[10] { };
+  ProgVarFmArg @[11] { };
+  ProgVarFmArg @[12] { };
+  ControlPanelsFmArgs @[13] { };
+  Comment @[14] { };
+  Comment @[15] { };
+  If @[16] { 
+   ProgEl_List @.true_code = [5] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
     };
-    MiscCall @[17] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
+    ProgVarFmArg @[1] { };
+    MiscCall @[2] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
     };
-    Comment @[18] { };
-    MethodCall @[19] { 
-      ProgArg_List @.meth_args = [4] {
+    VarIncr @[3] { };
+    If @[4] { 
+     ProgEl_List @.true_code = [2] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
 	ProgArg @[3] { };
+       };
       };
-    };
-    MethodCall @[20] { 
-      ProgArg_List @.meth_args = [3] {
+      MiscCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
+       };
       };
+     };
     };
-    PrintVar @[21] { };
-    Comment @[22] { };
-    MethodCall @[23] { 
-      ProgArg_List @.meth_args = [4] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
-      };
-    };
-    MethodCall @[24] { 
-      ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-      };
-    };
-    PrintVar @[25] { };
-    OtherProgramVar @[26] { };
-    PrintExpr @[27] { };
-    ProgramCall @[28] { 
-      ProgArg_List @.prog_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
+   };
   };
+  Else @[17] { 
+   ProgEl_List @.else_code = [2] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MiscCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+   };
+  };
+  MiscCall @[18] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+  Comment @[19] { };
+  MethodCall @[20] { 
+   ProgArg_List @.meth_args = [4] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+    ProgArg @[3] { };
+   };
+  };
+  MethodCall @[21] { 
+   ProgArg_List @.meth_args = [3] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+   };
+  };
+  PrintVar @[22] { };
+  Comment @[23] { };
+  MethodCall @[24] { 
+   ProgArg_List @.meth_args = [4] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+    ProgArg @[3] { };
+   };
+  };
+  MethodCall @[25] { 
+   ProgArg_List @.meth_args = [3] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+    ProgArg @[2] { };
+   };
+  };
+  PrintVar @[26] { };
+  OtherProgramVar @[27] { };
+  PrintExpr @[28] { };
+  ProgramCall @[29] { 
+   ProgArg_List @.prog_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+ };
 };
 Program .projects[0].programs[0] {
  name="LeabraStartup";
@@ -165,7 +163,7 @@ Program .projects[0].programs[0] {
  };
  types {
   name=;
-  el_typ=ProgType;
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
@@ -187,7 +185,7 @@ Program .projects[0].programs[0] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,SimpleLines5x5>;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -317,7 +315,7 @@ Program .projects[0].programs[0] {
    name="MyClusterRun";
    var_type=T_Object;
    object_type=ClusterRun;
-   object_val=.projects[0].edits[0]$$<ClusterRun,ClusterRun>;
+   object_val=.projects[0].ctrl_panels[1]$$<ClusterRun,ClusterRun>;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -439,30 +437,29 @@ Program .projects[0].programs[0] {
    var_name="save_final_wts";
    arg_name="save_final_wts";
   };
-  Comment @[13] {
+  ControlPanelsFmArgs @[13] {
+   desc="sets any arg listed in the control panel";
+   flags=NEW_EL;
+   orig_prog_code=;
+   ctrl_panel_var=.projects[0].programs[0].vars[11]$$;
+  };
+  Comment @[14] {
    desc="= Add your own variables here =";
    flags=0;
    orig_prog_code=;
-  };
-  SelectEditsFmArgs @[14] {
-   desc=;
-   flags=NEW_EL;
-   orig_prog_code=;
-   sel_edit_var=.projects[0].programs[0].vars[11]$$;
   };
   Comment @[15] {
    desc="= Below saves log files of standard data tables =";
    flags=0;
    orig_prog_code=;
   };
-  IfElse @[16] {
+  If @[16] {
    desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
    flags=0;
    orig_prog_code=;
    cond {
     expr="taMisc::CheckArgByName(\"b_start\")";
    };
-   show_false_code=1;
    true_code {
     name=;
     el_typ=ProgCode;
@@ -550,14 +547,13 @@ Program .projects[0].programs[0] {
       expr="\".\" + batch_str";
      };
     };
-    IfElse @[4] {
+    If @[4] {
      desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
      flags=0;
      orig_prog_code=;
      cond {
       expr="batch_start == 0";
      };
-     show_false_code=0;
      true_code {
       name=;
       el_typ=ProgCode;
@@ -639,14 +635,14 @@ Program .projects[0].programs[0] {
        };
       };
      };
-     false_code {
-      name=;
-      el_typ=ProgCode;
-      el_def=0;
-     };
     };
    };
-   false_code {
+  };
+  Else @[17] {
+   desc=;
+   flags=0;
+   orig_prog_code=;
+   else_code {
     name=;
     el_typ=ProgCode;
     el_def=0;
@@ -728,7 +724,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MiscCall @[17] {
+  MiscCall @[18] {
    desc="report any args that didn't get used!";
    flags=NEW_EL|CAN_REVERT_TO_CODE;
    orig_prog_code="taMisc::ReportUnusedArgs()";
@@ -751,12 +747,12 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  Comment @[18] {
+  Comment @[19] {
    desc="== Save epoch log -- on by default ==";
    flags=0;
    orig_prog_code=;
   };
-  MethodCall @[19] {
+  MethodCall @[20] {
    desc="last arg is to include dmem proc number";
    flags=0;
    orig_prog_code=;
@@ -809,7 +805,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[20] {
+  MethodCall @[21] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=0;
    orig_prog_code=;
@@ -852,7 +848,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  PrintVar @[21] {
+  PrintVar @[22] {
    desc=;
    flags=0;
    orig_prog_code=;
@@ -866,12 +862,12 @@ Program .projects[0].programs[0] {
    my_mask=NULL;
    debug_level=NULL;
   };
-  Comment @[22] {
+  Comment @[23] {
    desc="== Save trial log -- OFF by default ==";
    flags=0;
    orig_prog_code=;
   };
-  MethodCall @[23] {
+  MethodCall @[24] {
    desc="last arg is to include dmem proc number";
    flags=OFF;
    orig_prog_code=;
@@ -924,7 +920,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[24] {
+  MethodCall @[25] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=OFF;
    orig_prog_code=;
@@ -967,7 +963,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  PrintVar @[25] {
+  PrintVar @[26] {
    desc=;
    flags=OFF;
    orig_prog_code=;
@@ -981,7 +977,7 @@ Program .projects[0].programs[0] {
    my_mask=NULL;
    debug_level=NULL;
   };
-  OtherProgramVar @[26] {
+  OtherProgramVar @[27] {
    desc="propagate the tag";
    flags=0;
    orig_prog_code=;
@@ -992,7 +988,7 @@ Program .projects[0].programs[0] {
    var_3=NULL;
    var_4=NULL;
   };
-  PrintExpr @[27] {
+  PrintExpr @[28] {
    desc=;
    flags=0;
    orig_prog_code=;
@@ -1002,7 +998,7 @@ Program .projects[0].programs[0] {
    my_mask=NULL;
    debug_level=NULL;
   };
-  ProgramCall @[28] {
+  ProgramCall @[29] {
    desc=;
    flags=0;
    orig_prog_code=;
