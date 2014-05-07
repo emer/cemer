@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7112
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7143
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [3] {
   taDoc @["DataTables"] { };
@@ -295,7 +295,7 @@ LeabraProject .projects["program_examples"] {
   };
  };
 
- Program_Group @.programs = [0] {
+ Program_TopGroup @.programs = [0] {
   Program_Group @.gp["Control"] = [4] { 
    Program @["For"] { 
     ProgObjList @.objs = [0] {
@@ -311,9 +311,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar @["start_idx"] { };
      ProgVar @["max_idx"] { };
      ProgVar @["increment"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -348,9 +345,6 @@ LeabraProject .projects["program_examples"] {
     ProgVar_List @.vars = [0] {
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -379,9 +373,6 @@ LeabraProject .projects["program_examples"] {
 
     ProgVar_List @.vars = [1] {
      ProgVar @["sw_int_var"] { };
-    };
-
-    ProgBrkPt_List @.brk_pts = [0] {
     };
 
     Function_List @.functions = [0] {
@@ -446,9 +437,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar @["value"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -499,9 +487,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar @["str"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -549,9 +534,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["data_loop_order"] { };
       ProgVar @["data_loop_index"] { };
       ProgVar @["DemoData"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -609,9 +591,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["the_row"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -662,9 +641,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["Name"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -705,9 +681,6 @@ LeabraProject .projects["program_examples"] {
 
      ProgVar_List @.vars = [1] {
       ProgVar @["SomeTable"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -795,9 +768,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["data_loop_index"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -877,9 +847,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["data_loop_index"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -919,9 +886,6 @@ LeabraProject .projects["program_examples"] {
      };
 
      ProgVar_List @.vars = [0] {
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [1] {
@@ -1065,9 +1029,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["DemoData"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -1130,23 +1091,22 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["DemoData"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
      ProgEl_List @.init_code = [0] {
      };
 
-     ProgEl_List @.prog_code = [2] {
+     ProgEl_List @.prog_code = [4] {
       LocalVars @[0] { 
        ProgVar_List @.local_vars = [2] {
 	ProgVar @["Name"] { };
 	ProgVar @["Value"] { };
        };
       };
-      DataLoop @[1] { 
+      Comment @[1] { };
+      Comment @[2] { };
+      DataLoop @[3] { 
        ProgEl_List @.loop_code = [3] {
 	MethodCall @[0] { 
 	 ProgArg_List @.meth_args = [2] {
@@ -1208,9 +1168,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar_List @.vars = [2] {
       ProgVar @["TableTwo"] { };
       ProgVar @["TableOne"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -1338,9 +1295,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["CategGroup"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -1416,9 +1370,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["min_value"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -1491,9 +1442,6 @@ LeabraProject .projects["program_examples"] {
       ProgVar @["SortedRows"] { };
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
@@ -1539,9 +1487,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar @["row"] { };
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [0] {
     };
 
@@ -1574,8 +1519,8 @@ LeabraProject .projects["program_examples"] {
     };
    };
   };
-  Program_Group @.gp["ProgramsAndFunctions"] = [1] { 
-   Program @["CallFunction"] { 
+  Program_Group @.gp["ProgramsAndFunctions"] = [2] { 
+   Program @["CallFunctionReturnValue"] { 
     ProgObjList @.objs = [0] {
     };
 
@@ -1588,23 +1533,75 @@ LeabraProject .projects["program_examples"] {
     ProgVar_List @.vars = [0] {
     };
 
-    ProgBrkPt_List @.brk_pts = [0] {
-    };
-
     Function_List @.functions = [1] {
      Function @["Square"] { 
       ProgVar_List @.args = [1] {
        ProgVar @["value"] { };
       };
 
-      ProgEl_List @.fun_code = [3] {
-       LocalVars @[0] { 
+      ProgEl_List @.fun_code = [5] {
+       Comment @[0] { };
+       LocalVars @[1] { 
 	ProgVar_List @.local_vars = [1] {
 	 ProgVar @["sq_value"] { };
 	};
        };
-       AssignExpr @[1] { };
-       ReturnExpr @[2] { };
+       AssignExpr @[2] { };
+       Comment @[3] { };
+       ReturnExpr @[4] { };
+      };
+     };
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [4] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["result"] { };
+      };
+     };
+     Comment @[1] { };
+     AssignExpr @[2] { };
+     PrintVar @[3] { };
+    };
+   };
+   Program @["CallFunctionNoReturn"] { 
+    ProgObjList @.objs = [1] {
+     taDateTime @["dateObject"] { };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["dateObject"] { };
+     ProgVar @["current_year"] { };
+    };
+
+    Function_List @.functions = [1] {
+     Function @["PrintDate"] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [4] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       MethodCall @[1] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       MethodCall @[2] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       PrintVar @[3] { };
       };
      };
     };
@@ -1614,12 +1611,14 @@ LeabraProject .projects["program_examples"] {
 
     ProgEl_List @.prog_code = [3] {
      LocalVars @[0] { 
-      ProgVar_List @.local_vars = [1] {
-       ProgVar @["result"] { };
+      ProgVar_List @.local_vars = [0] {
       };
      };
-     AssignExpr @[1] { };
-     PrintVar @[2] { };
+     Comment @[1] { };
+     FunctionCall @[2] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+     };
     };
    };
    Program_Group @.gp["CallAnotherProgram"] = [2] { 
@@ -1634,9 +1633,6 @@ LeabraProject .projects["program_examples"] {
      };
 
      ProgVar_List @.vars = [0] {
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -1670,21 +1666,19 @@ LeabraProject .projects["program_examples"] {
      ProgVar_List @.vars = [0] {
      };
 
-     ProgBrkPt_List @.brk_pts = [0] {
-     };
-
      Function_List @.functions = [0] {
      };
 
      ProgEl_List @.init_code = [0] {
      };
 
-     ProgEl_List @.prog_code = [2] {
-      LocalVars @[0] { 
+     ProgEl_List @.prog_code = [3] {
+      Comment @[0] { };
+      LocalVars @[1] { 
        ProgVar_List @.local_vars = [0] {
        };
       };
-      PrintExpr @[1] { };
+      PrintExpr @[2] { };
      };
     };
    };
@@ -1702,9 +1696,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar_List @.vars = [2] {
       ProgVar @["user_name"] { };
       ProgVar @["location"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -1737,9 +1728,6 @@ LeabraProject .projects["program_examples"] {
      ProgVar_List @.vars = [2] {
       ProgVar @["user_name"] { };
       ProgVar @["location"] { };
-     };
-
-     ProgBrkPt_List @.brk_pts = [0] {
      };
 
      Function_List @.functions = [0] {
@@ -5931,11 +5919,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
       init_from=NULL;
      };
     };
-    brk_pts {
-     name="ProgBrkPt_List_3";
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name="Function_List_3";
      el_typ=Function;
@@ -6033,11 +6016,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
      el_typ=ProgVar;
      el_def=0;
     };
-    brk_pts {
-     name="ProgBrkPt_List_14";
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name="Function_List_14";
      el_typ=Function;
@@ -6127,11 +6105,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name="ProgBrkPt_List_6";
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name="Function_List_6";
@@ -6360,11 +6333,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
       init_from=NULL;
      };
     };
-    brk_pts {
-     name="ProgBrkPt_List_19";
-     el_typ=ProgBrkPt;
-     el_def=0;
-    };
     functions {
      name="Function_List_19";
      el_typ=Function;
@@ -6534,11 +6502,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name="ProgBrkPt_List_10";
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name="Function_List_10";
@@ -6742,11 +6705,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
        desc="a variable that points to the data table";
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name=;
@@ -6982,11 +6940,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -7202,11 +7155,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -7362,11 +7310,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
        desc=;
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name=;
@@ -7784,11 +7727,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
        init_from=NULL;
       };
      };
-     brk_pts {
-      name="ProgBrkPt_List_54";
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name="Function_List_54";
       el_typ=Function;
@@ -8170,11 +8108,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -8301,11 +8234,6 @@ mw.loader.state({\"user.groups\":\"ready\"});
      vars {
       name="ProgVar_List_0";
       el_typ=ProgVar;
-      el_def=0;
-     };
-     brk_pts {
-      name="ProgBrkPt_List_7";
-      el_typ=ProgBrkPt;
       el_def=0;
      };
      functions {
@@ -9146,11 +9074,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name="ProgBrkPt_List_8";
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name="Function_List_8";
       el_typ=Function;
@@ -9329,7 +9252,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      name="DataLoop";
      short_nm="DLp";
      tags=;
-     desc=;
+     desc="A data loop is a loop that goes through the rows of a data table";
      flags=0;
      objs {
       name="ProgObjList_4";
@@ -9429,7 +9352,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc="these are auto-created by data loop";
+       desc="order can also be PERMUTED or RANDOM";
        init_from=NULL;
       };
       ProgVar @["data_loop_index"] {
@@ -9439,7 +9362,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        objs_ptr=0;
        flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
        reference=0;
-       desc=;
+       desc="the index variable is created for you when you add a DataLoop to your program";
        init_from=NULL;
       };
       ProgVar @["DemoData"] {
@@ -9453,11 +9376,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        desc=;
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name="ProgBrkPt_List_4";
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name="Function_List_4";
@@ -9503,7 +9421,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	};
        };
       };
-      DataLoop @[1] {
+      Comment @[1] {
+       desc="You can access each row sequenially or in a permuted order and you can also choose rows randomly (with replacement)";
+       flags=0;
+       orig_prog_code=;
+      };
+      Comment @[2] {
+       desc="Here we are accessing rows sequenially to get data from 2 columns";
+       flags=0;
+       orig_prog_code=;
+      };
+      DataLoop @[3] {
        desc=;
        flags=0;
        orig_prog_code="DataTable Loop (SEQUENTIAL over: DemoData index: data_loop_index)";
@@ -9614,7 +9542,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      name="DataCalcLoop";
      short_nm="DClc";
      tags=;
-     desc=;
+     desc="Calculate a new value for every row and paste that value into a new column of the same or a different datatable";
      flags=0;
      objs {
       name="ProgObjList_9";
@@ -9782,11 +9710,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        desc=;
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name="ProgBrkPt_List_9";
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name="Function_List_9";
@@ -10289,11 +10212,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name="ProgBrkPt_List_11";
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name="Function_List_11";
       el_typ=Function;
@@ -10612,11 +10530,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -10933,11 +10846,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -11084,11 +10992,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       desc=;
       init_from=NULL;
      };
-    };
-    brk_pts {
-     name="ProgBrkPt_List_20";
-     el_typ=ProgBrkPt;
-     el_def=0;
     };
     functions {
      name="Function_List_20";
@@ -11253,9 +11156,9 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    el_typ=Program;
    el_def=0;
    tags=;
-   desc="Call another program to do some work";
-   Program @["CallFunction"] {
-    name="CallFunction";
+   desc=;
+   Program @["CallFunctionReturnValue"] {
+    name="CallFunctionReturnValue";
     short_nm="ClFnct";
     tags=;
     desc="Functions can return a value (programs can't)";
@@ -11278,11 +11181,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     vars {
      name="ProgVar_List_0";
      el_typ=ProgVar;
-     el_def=0;
-    };
-    brk_pts {
-     name="ProgBrkPt_List_23";
-     el_typ=ProgBrkPt;
      el_def=0;
     };
     functions {
@@ -11315,7 +11213,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        name="ProgEl_List_156";
        el_typ=ProgCode;
        el_def=0;
-       LocalVars @[0] {
+       Comment @[0] {
+	desc="This function returns a value but not all do";
+	flags=0;
+	orig_prog_code=;
+       };
+       LocalVars @[1] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
@@ -11335,16 +11238,21 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	};
        };
-       AssignExpr @[1] {
+       AssignExpr @[2] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	orig_prog_code="sq_value = value * value";
-	result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunction"].functions["Square"].fun_code[0].local_vars["sq_value"]$$;
+	result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionReturnValue"].functions["Square"].fun_code[1].local_vars["sq_value"]$$;
 	expr {
 	 expr="value * value";
 	};
        };
-       ReturnExpr @[2] {
+       Comment @[3] {
+	desc="To return a value to the calling program use a return statement";
+	flags=0;
+	orig_prog_code=;
+       };
+       ReturnExpr @[4] {
 	desc=;
 	flags=CAN_REVERT_TO_CODE;
 	orig_prog_code="return sq_value";
@@ -11384,21 +11292,26 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        };
       };
      };
-     AssignExpr @[1] {
+     Comment @[1] {
+      desc="Call the function Square()";
+      flags=0;
+      orig_prog_code=;
+     };
+     AssignExpr @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="result = FunCall Square(25.5)";
-      result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunction"].prog_code[0].local_vars["result"]$$;
+      result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionReturnValue"].prog_code[0].local_vars["result"]$$;
       expr {
        expr="Square(25.5)";
       };
      };
-     PrintVar @[2] {
+     PrintVar @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print result";
       message=;
-      print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunction"].prog_code[0].local_vars["result"]$;
+      print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionReturnValue"].prog_code[0].local_vars["result"]$;
       print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
@@ -11411,17 +11324,181 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     step_prog=NULL;
     step_n=1;
    };
+   Program @["CallFunctionNoReturn"] {
+    name="CallFunctionNoReturn";
+    short_nm="ClFncN";
+    tags=;
+    desc="Calling a function that does some work but doesn't return a value";
+    flags=NO_STOP_STEP;
+    objs {
+     name=;
+     el_typ=taDateTime;
+     el_def=0;
+     taDateTime @["dateObject"] {
+      name="dateObject";
+      secs_1jan_1970=1399499576;
+     };
+    };
+    types {
+     name=;
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["dateObject"] {
+      name="dateObject";
+      var_type=T_Object;
+      object_type=taDateTime;
+      object_val=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].objs["dateObject"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="a variable pointing to the dateObject";
+      init_from=NULL;
+     };
+     ProgVar @["current_year"] {
+      name="current_year";
+      var_type=T_String;
+      string_val="1969";
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="this string variable will be used to hold the current year value";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+     Function @["PrintDate"] {
+      desc="print the year by calling a method on taDateObject";
+      flags=0;
+      orig_prog_code=;
+      name="PrintDate";
+      return_type=T_Object;
+      object_type=taOBase;
+      args {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name=;
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	local_vars {
+	 name=;
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       MethodCall @[1] {
+	desc="initialize the dateObject with the current date and time";
+	flags=0;
+	orig_prog_code=;
+	result_var=NULL;
+	obj=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["dateObject"]$$;
+	method=taDateTime::currentDateTime;
+	meth_args {
+	 name="ProgArg_List_0";
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+       MethodCall @[2] {
+	desc="get the current year";
+	flags=0;
+	orig_prog_code=;
+	result_var=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["current_year"]$$;
+	obj=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["dateObject"]$;
+	method=taDateTime::year;
+	meth_args {
+	 name="ProgArg_List_0";
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+       PrintVar @[3] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="print day_of_week";
+	message=;
+	print_var=$.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].vars["current_year"]$;
+	print_var2=NULL;
+	print_var3=NULL;
+	print_var4=NULL;
+	print_var5=NULL;
+	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+       };
+      };
+     };
+    };
+    init_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name=;
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     Comment @[1] {
+      desc="You still need parentheses even if you aren't passing anything to the function";
+      flags=0;
+      orig_prog_code=;
+     };
+     FunctionCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="func printDate()";
+      result_var=NULL;
+      fun=.projects["program_examples"].programs.gp["ProgramsAndFunctions"]["CallFunctionNoReturn"].functions["PrintDate"]$$;
+      fun_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
    Program_Group @.gp["CallAnotherProgram"] {
     name="CallAnotherProgram";
     el_typ=Program;
     el_def=0;
     tags=;
-    desc=;
+    desc="You can call another program but unlike a function it can't return a value (also see AccessVariablesInAnotherProgram)";
     Program @["CallingProgram"] {
      name="CallingProgram";
      short_nm="CllPrg";
      tags=;
-     desc=;
+     desc="This program calls Program_B which in this case simply prints some text so we know it is working";
      flags=NO_STOP_STEP;
      objs {
       name="ProgObjList_21";
@@ -11441,11 +11518,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      vars {
       name="ProgVar_List_0";
       el_typ=ProgVar;
-      el_def=0;
-     };
-     brk_pts {
-      name="ProgBrkPt_List_21";
-      el_typ=ProgBrkPt;
       el_def=0;
      };
      functions {
@@ -11497,7 +11569,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      name="Program_B";
      short_nm="CllPrg";
      tags=;
-     desc=;
+     desc="The called program can't return a value but it can set some variable values that the calling program can copy";
      flags=NO_STOP_STEP;
      objs {
       name=;
@@ -11519,11 +11591,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       el_typ=ProgVar;
       el_def=0;
      };
-     brk_pts {
-      name=;
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name=;
       el_typ=Function;
@@ -11538,7 +11605,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       name=;
       el_typ=ProgCode;
       el_def=0;
-      LocalVars @[0] {
+      Comment @[0] {
+       desc="This code gets run when Program_B is called from another program";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="// Run another program - perhaps one generates data and the second analyzes";
+      };
+      LocalVars @[1] {
        desc=;
        flags=0;
        orig_prog_code=;
@@ -11548,7 +11620,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	el_def=0;
        };
       };
-      PrintExpr @[1] {
+      PrintExpr @[2] {
        desc=;
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="print \"I've been called\"";
@@ -11568,7 +11640,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_typ=Program;
     el_def=0;
     tags=;
-    desc="Demonstrate by running the ProgramSeekingValue program";
+    desc="Programs can't return values like functions but you can access variables of other programs - Run the ProgramSeekingValue program to see this work";
     Program @["ProgramSeekingValue"] {
      name="ProgramSeekingValue";
      short_nm="PrgSkn";
@@ -11614,11 +11686,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        desc=;
        init_from=NULL;
       };
-     };
-     brk_pts {
-      name="ProgBrkPt_List_24";
-      el_typ=ProgBrkPt;
-      el_def=0;
      };
      functions {
       name="Function_List_24";
@@ -11729,11 +11796,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        init_from=NULL;
       };
      };
-     brk_pts {
-      name="ProgBrkPt_List_25";
-      el_typ=ProgBrkPt;
-      el_def=0;
-     };
      functions {
       name="Function_List_25";
       el_typ=Function;
@@ -11786,12 +11848,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9930362105369568;
+     value 6 0=0.9929577708244324;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7984054684638977;
+     value 6 0=0.798307478427887;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -12975,17 +13037,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.01252847351133823;
+       value 6 0=0.007757404819130898;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.07381615787744522;
+       value 6 0=0.03364632278680801;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.712984025478363;
+       value 6 0=0.7454161047935486;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
