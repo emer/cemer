@@ -123,6 +123,8 @@ public:
     // add a TREEFILT_xxx expression to exclude members and/or types; note: not dynamic, must be added before items created
   iTreeViewItem*        AssertItem(taiSigLink* link, bool super = true);
     // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be assertedtaMisc::
+  iTreeViewItem*        PrevItem(iTreeViewItem* itm);
+  // return the previous item just before given item on the tree
   bool                  HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list
 

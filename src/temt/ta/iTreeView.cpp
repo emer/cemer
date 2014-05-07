@@ -189,6 +189,20 @@ iTreeViewItem* iTreeView::AssertItem(taiSigLink* link, bool super) {
   return AssertItem(link, false);
 }
 
+iTreeViewItem* iTreeView::PrevItem(iTreeViewItem* itm) {
+  QTreeWidgetItemIterator it(this);
+  QTreeWidgetItem* item_;
+  iTreeViewItem* rval = NULL;
+  while ( (item_ = *it) ) {
+    iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
+    if(item == itm) {
+      return rval;
+    }
+    rval = item;
+  }
+  return NULL;
+}
+
 void iTreeView::CollapseAll() {
   for (int i = topLevelItemCount() - 1; i >= 0; --i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
@@ -478,7 +492,7 @@ void iTreeView::GetSelectedItems(ISelectable_PtrList& lst) {
   QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::Selected);
   QTreeWidgetItem* item;
   while ( (item = *it) ) {
-  ISelectable* si = dynamic_cast<ISelectable*>(item);
+    ISelectable* si = dynamic_cast<ISelectable*>(item);
     if (si)
       lst.Add(si);
     ++it;

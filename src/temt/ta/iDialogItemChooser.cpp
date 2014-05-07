@@ -34,6 +34,11 @@
 #include <QKeyEvent>
 #include <QFrame>
 
+#ifdef TA_OS_MAC
+// defined in mac_objc_code.mm objective C file:
+// per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
+extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
+#endif
 
 const String iDialogItemChooser::cat_none("(none)");
 int iDialogItemChooser::filt_delay = 500;
@@ -556,6 +561,10 @@ void iDialogItemChooser::showEvent(QShowEvent* event) {
 }
 
 void iDialogItemChooser::show_timeout() {
+#ifdef TA_OS_MAC
+  // needs to be after window is fully up and running..
+  TurnOffTouchEventsForWindow(windowHandle());
+#endif
   if(m_selItem) {
     items->scrollToItem(m_selItem);
   }

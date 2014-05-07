@@ -105,8 +105,17 @@ iMainWindowViewer::~iMainWindowViewer() {
   menu = NULL;
 }
 
+#ifdef TA_OS_MAC
+// defined in mac_objc_code.mm objective C file:
+// per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
+extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
+#endif
+
+
 void iMainWindowViewer::Init() {
   setAttribute(Qt::WA_DeleteOnClose);
+  setAttribute(Qt::WA_AcceptTouchEvents, false);
+
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   brow_hist = new iBrowseHistory(this);
   cur_main_focus = LEFT_BROWSER;
@@ -326,6 +335,10 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   setFocus();
 #endif
+// doesn't work here: https://bugreports.qt-project.org/browse/QTBUG-38815
+// #ifdef TA_OS_MAC
+//   TurnOffTouchEventsForWindow(windowHandle());
+// #endif
 }
 
 void iMainWindowViewer::hideEvent(QHideEvent* e) {
@@ -1744,9 +1757,9 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
       activateWindow();
       itv->setFocus();
       itv->clearExtSelection();
-      // select the top guy first: select does NOT show the middle panel viewer 
+      // clear the selection first: select does NOT show the middle panel viewer 
       // work if it is already selected!!!
-      itv->setCurrentItem(itv->topLevelItem(0), 0, QItemSelectionModel::ClearAndSelect);
+      itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
       itv->scrollTo(rval);
       itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
     }
@@ -1758,9 +1771,9 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
     if (rval) {
       activateWindow();
       itv->setFocus();
-      // select the top guy first: select does NOT show the middle panel viewer 
+      // clear the selection first: select does NOT show the middle panel viewer 
       // work if it is already selected!!!
-      itv->setCurrentItem(itv->topLevelItem(0), 0, QItemSelectionModel::ClearAndSelect);
+      itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
       itv->scrollTo(rval);
       itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
     }
@@ -2400,6 +2413,10 @@ void iMainWindowViewer::this_SaveView(iAction* me) {
 }
 
 void iMainWindowViewer::UpdateUi() {
+#ifdef TA_OS_MAC
+  // this is the only place it seems to work..
+  TurnOffTouchEventsForWindow(windowHandle());
+#endif
   int ea = GetEditActions();
   // some actions we always show, others we only show if available
   // editCutAction->setEnabled(ea & iClipData::EA_CUT);

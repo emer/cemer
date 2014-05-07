@@ -2195,9 +2195,15 @@ set(ta_SRCS_UI
   passworddialog.ui
 )
 
+# extra objc file for mac platform
+if (APPLE)
+  set(ta_SRCS_mac  mac_objc_code.mm)
+endif (APPLE)
+
 set(ta_SRCS
   ${ta_SRCS_MAKETA}
   ${ta_SRCS_NOMAKETA}
+  ${ta_SRCS_mac}
   ta_qrc.cpp
 )
 

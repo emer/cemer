@@ -37,6 +37,12 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 }
 
 void iLineEdit::init() {
+  setAttribute(Qt::WA_AcceptTouchEvents, false);
+  ungrabGesture(Qt::TapGesture);
+  ungrabGesture(Qt::TapAndHoldGesture);
+  ungrabGesture(Qt::PanGesture);
+  ungrabGesture(Qt::PinchGesture);
+  ungrabGesture(Qt::SwipeGesture);
   init_start_pos = 0;
   mmin_char_width = 0;
   mchar_width = 0;

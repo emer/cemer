@@ -21,6 +21,12 @@
 #include <QPointer>
 #include <QKeyEvent>
 
+#ifdef TA_OS_MAC
+// defined in mac_objc_code.mm objective C file:
+// per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
+extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
+#endif
+
 iDialog::iDialog(QWidget* parent, Qt::WindowFlags f)
   : QDialog(parent, f)
 {
@@ -42,6 +48,11 @@ int iDialog::exec()
 
 void iDialog::keyPressEvent(QKeyEvent *e)
 {
+#ifdef TA_OS_MAC
+  // needs to be after window is fully up and running..
+  TurnOffTouchEventsForWindow(windowHandle());
+#endif
+
   // support Ctrl-Return/Enter as Accept
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;

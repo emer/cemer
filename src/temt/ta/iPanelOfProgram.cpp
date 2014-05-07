@@ -124,9 +124,9 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(iti) {
     itv->setFocus();
     itv->clearExtSelection();
-    // select the top guy first: makes sure that the select of actual item is 
+    // clear the selection first: makes sure that the select of actual item is 
     // novel and triggers whatever we want it to trigger!
-    itv->setCurrentItem(itv->topLevelItem(0), 0, QItemSelectionModel::ClearAndSelect);
+    itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
     itv->scrollTo(iti);
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
     // make sure our operations are finished

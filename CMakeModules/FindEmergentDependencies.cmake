@@ -78,6 +78,7 @@ if (NOT WIN32)
   find_package(Readline REQUIRED)
   if (APPLE)  
     FIND_LIBRARY(CARBON_LIBRARY Carbon)
+    FIND_LIBRARY(OBJC_LIBRARY objc)
   else (APPLE)
     find_package(Termcap)
   endif (APPLE)
@@ -136,7 +137,7 @@ if (NOT WIN32)
 
   if (APPLE)  # Termcap on Fedora Core
     set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
-      ${CARBON_LIBRARY}
+      ${CARBON_LIBRARY} ${OBJC_LIBRARY}
       )
   else (APPLE)
     set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
