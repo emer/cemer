@@ -937,8 +937,9 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   // https://bugreports.qt-project.org/browse/QTBUG-28816
   QCoreApplication::instance()->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
   // does this fix the touchy trackpad problem?? probably!
-  QCoreApplication::instance()->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents,
-                                             false);
+#if (QT_VERSION >= 0x050000)
+  QCoreApplication::instance()->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, false);
+#endif
 #endif
   // probably as good a place as any to init ODE
   dInitODE();
