@@ -892,7 +892,7 @@ bool VEArm::ConfigArm(const String& name_prefix,
   return true;
 }
 
-void VEArm::SetTarget_impl(float trg_x, float trg_y, float trg_z, 
+void VEArm::SetTarget(float trg_x, float trg_y, float trg_z, 
                            bool add_gamma_noise) {
   targ_loc_abs.SetXYZ(trg_x, trg_y, trg_z);
   targ_loc_rel = targ_loc_abs - should_loc;
@@ -932,8 +932,7 @@ void VEArm::SetTarget_impl(float trg_x, float trg_y, float trg_z,
     }      
   }
 
-  // From coordinates to angles as in (44)
-  
+  // From coordinates to angles as in (44)  
   float dsq = targ_rel_d * targ_rel_d;
   float lalf2 = 2.0f * La * Lf;
   float dla2 = 2.0f * targ_rel_d * La;
@@ -964,10 +963,10 @@ void VEArm::SetTarget_impl(float trg_x, float trg_y, float trg_z,
     gamma += Random::UniformMinMax(-3.14*.8, 3.14*.5);
   }
 
-  ComputeRMatrix(alpha, beta, gamma, delta);
+  ComputeRMatrix(alpha, beta, gamma);
 }
 
-void VEArm::ComputeRMatrix(float alp, float bet, float gam, float delt) {
+void VEArm::ComputeRMatrix(float alp, float bet, float gam) {
   // Now we'll rotate the insertion points by the Euler angles in reverse order
   // This magic R matrix (from (42)) does it all in one step
   float sa = sin(alp); float ca = cos(alp);
@@ -997,7 +996,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 	  trg_z = trg_z + should_loc.z;
   }
   
-  SetTarget_impl(trg_x, trg_y, trg_z);
+  SetTarget(trg_x, trg_y, trg_z);
   
   VEBody* humerus = bodies[HUMERUS];
   VEBody* ulna = bodies[ULNA];
@@ -1081,7 +1080,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 
     //------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
-    /*elbow->axis.x = -cos(alpha);
+    elbow->axis.x = -cos(alpha);
     elbow->axis.y = -sin(alpha);
     elbow->axis.z = 0.0f;
     elbow->axis2.x = -sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
@@ -1089,18 +1088,20 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     elbow->axis2.z = -cos(beta+delta);
     elbow->pos = delta;
     // I set in ODE here directly to avoid confusion
-    dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z+0.2);
-    dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0), should_loc.y+elbow_loc.FastEl1d(1), should_loc.z+elbow_loc.FastEl1d(2));*/
+    dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
+    dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0), should_loc.y+elbow_loc.FastEl1d(1), should_loc.z+elbow_loc.FastEl1d(2));
   } // up_axis == Z
   else { // up_axis == Y
     humerus->RotateEuler(beta,gamma,taMath_float::pi + alpha,false);
 	//  humerus->RotateEuler(taMath_float::pi + alpha,beta,gamma,false);
 	  
     float HumCM_f[] = {0.0f,(-La+(elbow_gap/2))/2,0.0f};  // humerus' geometrical center at rest
-    //float Elbow_f[] = {0.0f,-La,0.0f};  // elbow coordinates at rest
-
+    float elbow_loc_f[] = {0.0f,-La+(elbow_gap/2.0f),0.0f};  // elbow joint's anchor at rest
+    
     float_Matrix HumCM(2,1,3);
     HumCM.InitFromFloats(HumCM_f);
+    float_Matrix elbow_loc(2,1,3);
+    elbow_loc.InitFromFloats(elbow_loc_f);
 
     float_Matrix RotHumCM(2,1,3);
     taMath_float::mat_mult(&RotHumCM, &R, &HumCM);  // rotating geometrical center
@@ -1109,6 +1110,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
                        RotHumCM.FastEl1d(2),false);
     //humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(humerus->length/2),
     //                       RotHumCM.FastEl1d(2),false);
+    taMath_float::mat_mult(&elbow_loc, &R, &elbow_loc);
  
     float UlnaCM_f[] = {0,-(ulna->length/2 + elbow_gap/2),0};  // Ulna 'CM' with origin at elbow
     float elbow_rot_f[] = {1 , 0, 0,
@@ -1166,6 +1168,9 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     elbow->axis2.z = cos(alpha)*sin(beta+delta);
     elbow->axis2.y = -cos(beta+delta);
     elbow->pos = delta;
+    // I set in ODE here directly to avoid confusion
+    dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
+    dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0), should_loc.y+elbow_loc.FastEl1d(1), should_loc.z+elbow_loc.FastEl1d(2));
   } // up_axis == Y
 
   //------ setting the current values as init and sending to ODE -------
@@ -1310,8 +1315,8 @@ void VEArm::GetRandomTarget(float& trg_x, float& trg_y, float& trg_z,
 bool VEArm::TargetLengths(float trg_x, float trg_y, float trg_z) {
   if(!CheckArm()) return false;
 
-  SetTarget_impl(trg_x, trg_y, trg_z);
-  bool rval = TargetLengths_impl(targ_lens);
+  SetTarget(trg_x, trg_y, trg_z);
+  bool rval = AngToLengths(targ_lens,alpha,beta,gamma,delta);
   norm_targ_lens = targ_lens;
   norm_targ_lens -= min_lens;
   norm_targ_lens *= spans;
@@ -1321,22 +1326,22 @@ bool VEArm::TargetLengths(float trg_x, float trg_y, float trg_z) {
 bool VEArm::NoisyTargetLengths(float trg_x, float trg_y, float trg_z) {
   if(!CheckArm()) return false;
 
-  SetTarget_impl(trg_x, trg_y, trg_z, true); // noisy
-  bool rval = TargetLengths_impl(targ_lens);
+  SetTarget(trg_x, trg_y, trg_z, true); // noisy
+  bool rval = AngToLengths(targ_lens,alpha,beta,gamma,delta);
   norm_targ_lens = targ_lens;
   norm_targ_lens -= min_lens;
   norm_targ_lens *= spans;
   return rval;
 }
 
-bool VEArm::TargetLengths_impl(float_Matrix& tlens) {
+bool VEArm::AngToLengths(float_Matrix &tlens, float alpha, float beta, float gamma, float delta) {
   tlens.SetGeom(1,n_musc);     // always set to be more robust
-
-  // assumes SetTarget_impl already called!
-
+  if(!CheckArm()) return false;
+  
+  ComputeRMatrix(alpha,beta,gamma);
   float_Matrix RT(2,3,3); // the transpose of R
   taMath_float::mat_transpose(&RT, &R);
-
+  
   // rotating the humerus' insertion points
   float_Matrix RotArmIP;
   taMath_float::mat_mult(&RotArmIP, &ArmIP, &RT);
@@ -1350,9 +1355,9 @@ bool VEArm::TargetLengths_impl(float_Matrix& tlens) {
     float UlnaShift_f[] = {0, 0, -La,
                            0, 0, -La,
                            0, 0, -La}; // should have one row per forearm IP
-    float T_elbowRot_f[] = {1 , 0, 0,
-                    0, cos(delta),  sin(delta),
-                    0, -sin(delta), cos(delta)};
+    float T_elbowRot_f[] = {1 , 0, 0
+                          0, cos(delta),  sin(delta),
+                          0, -sin(delta), cos(delta)};
     // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation
     */
     UlnaShift_f[2] = UlnaShift_f[5] = UlnaShift_f[8] = -La;
@@ -1366,9 +1371,9 @@ bool VEArm::TargetLengths_impl(float_Matrix& tlens) {
     float UlnaShift_f[] = {0, -La, 0,
                            0, -La, 0,
                            0, -La, 0}; // should have one row per forearm IP
-    float T_elbowRot_f[] = {1 , 0, 0,
-                    0, cos(delta), -sin(delta),
-                    0, sin(delta), cos(delta)};
+    float T_elbowRot_f[] = {1 , 0, 0,                     
+                      0, cos(delta), -sin(delta),
+                      0, sin(delta), cos(delta)};
     // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation after the ct bilateral multiplication
     */
     UlnaShift_f[1] = UlnaShift_f[4] = UlnaShift_f[7] = -La;
@@ -1440,13 +1445,6 @@ bool VEArm::TargetLengths_impl(float_Matrix& tlens) {
   }
 
   return true;
-}
-
-bool VEArm::AngToLengths(float_Matrix &tlens, float alpha, float beta, float gamma, float delta) {
-  tlens.SetGeom(1,n_musc);     // always set to be more robust
-  if(!CheckArm()) return false;
-  ComputeRMatrix(alpha, beta, gamma, delta); // computes R
-  return TargetLengths_impl(tlens); // uses R
 }
 
 bool VEArm::Lengths(float_Matrix& len, bool normalize) {

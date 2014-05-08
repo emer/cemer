@@ -189,10 +189,10 @@ public:
   virtual void  InitDynamicState();
   // initialize all the dynamic state variables used for computing muscle stimulation over time (i.e., the integ and deriv values in the PID controller), including resetting all the muscle gains back to 1.0
 
-  virtual void SetTarget_impl(float trg_x, float trg_y, float trg_z,
+  virtual void SetTarget(float trg_x, float trg_y, float trg_z,
                               bool add_gamma_noise = false);
   // #IGNORE impl sets up target info based on target coords -- computes R matrix and alpha.. angles in addition to all the targ_loc* values -- optionally add noise to gamma parameter
-  virtual void ComputeRMatrix(float alpha, float beta, float gamma, float delta);
+  virtual void ComputeRMatrix(float alpha, float beta, float gamma);
   // #IGNORE compute the magic R rotation matrix from angles (R is stored on Arm object)
 
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder=true);
@@ -202,8 +202,6 @@ public:
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
   virtual bool NoisyTargetLengths(float trg_x, float trg_y, float trg_z);
   // Like TargetLengths, but noise is applied to the arm rotation (gamma angle). Useful to generate sensible muscle lengths for training purposes.
-  virtual bool TargetLengths_impl(float_Matrix& tlens);
-  // #IGNORE Obtain the muscle lengths which position the hand at the coordinates set by SetTarget_impl, and place them in the given matrix, which will have a length equal to the number of muscles. Returns false if failed.
   virtual bool AngToLengths(float_Matrix &tlens, float alpha, float beta, float gamma, float delta);
   // #IGNORE Given the four angles describing arm position, calculate the muscle lengths at that position
 
