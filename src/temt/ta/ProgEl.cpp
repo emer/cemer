@@ -606,6 +606,10 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
   if(!prg) return NULL;
 
   ProgVar* rval = FindVarNameInScope_impl(var_nm);
+  
+  if (!rval && this->GetTypeDef()->DerivesFromName("PrintExpr")) {
+    return false;
+  }
   if(!rval && else_make) {
     ProgElChoiceDlg dlg;
     taBase::Ref(dlg);
