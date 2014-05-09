@@ -40,7 +40,7 @@ void iLineEdit::init() {
   // none of these did anything for the mac trackpad hypersensitivity:
   // see iMainWindowViewer for soln involving turning off touch events
   // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
-  // setAttribute(Qt::WA_AcceptTouchEvents, false);
+  setAttribute(Qt::WA_AcceptTouchEvents, false);
   // ungrabGesture(Qt::TapGesture);
   // ungrabGesture(Qt::TapAndHoldGesture);
   // ungrabGesture(Qt::PanGesture);

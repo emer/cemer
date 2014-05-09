@@ -1,77 +1,55 @@
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QApplication>
-#include <QGLWidget>
-#include <QLineEdit>
 #include <QMainWindow>
 #include <QWindow>
 
-extern void TurnOnTouchEventsForWindow(QWindow* qtWindow);
+// this demo shows touch events affecting focus of delegate editor
+// for tree view -- your palms wresting near the trackpad will start
+// to create touch -> focus events that move away from the delegate editor
+// seems to happen most quickly if you just start typing to trigger editing
 
 int
 main(int argc, char ** argv)
 {
   QApplication app(argc, argv);
 
-#if 1
-  app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
-  app.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, true);
+#if 0
+  // this has no effect..
+  app.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, false);
 #endif
 
-  for(int w=0; w<2; w++) {
-    QMainWindow* win = new QMainWindow(NULL, Qt::Window
-                                       | Qt:: WindowSystemMenuHint
-                                       | Qt::WindowMinMaxButtonsHint
-                                       | Qt::WindowCloseButtonHint);
-    win->setAttribute(Qt::WA_DeleteOnClose);
-    win->setAttribute(Qt::WA_AcceptTouchEvents, true);
-    QWidget* body = new QWidget(win);
-    win->setCentralWidget(body);
-    QHBoxLayout* lay = new QHBoxLayout(body);
-    QTreeWidget* tree = new QTreeWidget(body);
-    lay->addWidget(tree);
+  QMainWindow* win = new QMainWindow();
+  // this should work but does not:
+  win->setAttribute(Qt::WA_AcceptTouchEvents, false);
 
-    tree->setSelectionMode(QAbstractItemView::SingleSelection); 
-    tree->setColumnCount(1);
-    tree->setDragEnabled(true);
-    tree->setAcceptDrops(true);
-    tree->setDropIndicatorShown(true);
-    tree->setDragDropMode(QAbstractItemView::InternalMove);
-    tree->setAutoScroll(false);
-    tree->setAutoScrollMargin(16);
+  QWidget* body = new QWidget(win);
+  win->setCentralWidget(body);
+  QHBoxLayout* lay = new QHBoxLayout(body);
+  QTreeWidget* tree = new QTreeWidget(body);
+  lay->addWidget(tree);
 
-    for(int i=0;i<50;i++) {
-      QTreeWidgetItem* ait = new QTreeWidgetItem();
-      ait->setText(0, "loop item " + QString::number(i));
-      ait->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled |
-                    Qt::ItemIsDropEnabled);
-      tree->addTopLevelItem(ait);
-    }
-  
-    for(int j=0;j<10;j++) {
-      QWidget* sub = new QWidget(body);
-      lay->addWidget(sub);
-      QVBoxLayout* vlay = new QVBoxLayout(sub);
-      for(int i=0; i<10; i++) {
-        QLineEdit* le = new QLineEdit(sub);
-        vlay->addWidget(le);
-      }
-    }
+  tree->setSelectionMode(QAbstractItemView::SingleSelection); 
+  tree->setColumnCount(1);
+  // these triggers are not critical for getting the bug, but make it easier to 
+  // start editing to see it -- seems to happen more quickly if you just
+  // start typing to trigger the editing
+  tree->setEditTriggers(QAbstractItemView::DoubleClicked |
+                        QAbstractItemView::SelectedClicked |
+                        QAbstractItemView::EditKeyPressed |
+                        QAbstractItemView::AnyKeyPressed
+                        );
 
-#if 1
-    // including this gl widget causes selection to fail 
-    // on the items in the tree -- often causes a crash
-    // in full-scale app
-    QGLWidget* gl = new QGLWidget(body);
-    lay->addWidget(gl);
-    gl->setMinimumSize(200,200);
-#endif
-
-    win->show();
-    TurnOnTouchEventsForWindow(win->windowHandle());
+  for(int i=0;i<50;i++) {
+    QTreeWidgetItem* ait = new QTreeWidgetItem();
+    ait->setText(0, "loop item " + QString::number(i));
+    ait->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled |
+                  Qt::ItemIsDropEnabled | Qt::ItemIsEditable); // key is editable
+    tree->addTopLevelItem(ait);
   }
+
+  win->show();
 
   app.exec();
   return 0;

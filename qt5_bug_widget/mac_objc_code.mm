@@ -25,6 +25,14 @@ void TurnOnTouchEventsForWindow(QWindow* qtWindow) {
 //   [qtView setWantsRestingTouches:NO];
 }
 
+void TurnOffTouchEventsForWindow(QWindow* qtWindow) {
+  if(!qtWindow) return;
+  NSView *qtView = (NSView *)QGuiApplication::platformNativeInterface()->
+      nativeResourceForWindow("nsview", qtWindow);
+  [qtView setAcceptsTouchEvents:NO];
+//   [qtView setWantsRestingTouches:NO];
+}
+
 #endif
 
 #endif
