@@ -608,7 +608,7 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
   ProgVar* rval = FindVarNameInScope_impl(var_nm);
   
   if (!rval && this->GetTypeDef()->DerivesFromName("PrintExpr")) {
-    return false;
+    return NULL;
   }
   if(!rval && else_make) {
     ProgElChoiceDlg dlg;

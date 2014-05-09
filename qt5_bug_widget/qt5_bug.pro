@@ -5,6 +5,8 @@
 
 CONFIG += qt debug
 QT += opengl
-SOURCES += qt5_bug.cpp 
+SOURCES += qt5_bug.cpp
+OBJECTIVE_SOURCES += mac_objc_code.mm
 HEADERS += qt5_bug.h
+LIBS += -lobjc
 

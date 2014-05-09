@@ -2011,6 +2011,20 @@ bool iMainWindowViewer::event(QEvent* ev) {
 
 bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
   if (event->type() != QEvent::KeyPress) {
+    // the following can be useful for event debugging 
+    // #if DEBUG
+    // if((event->type() != QEvent::Paint) && (event->type() != QEvent::ChildRemoved)
+    //    && (event->type() != QEvent::ChildAdded) && (event->type() != QEvent::UpdateLater)
+    //    && (event->type() != QEvent::Show) && (event->type() != QEvent::LayoutRequest)
+    //    && (event->type() != QEvent::Timer)&& (event->type() != QEvent::Move)
+    //    && (event->type() != QEvent::Resize) && (event->type() != QEvent::InputMethodQuery)
+    //    ) {
+    //   std::cerr << event->type() << std::endl;
+    //   if(event->type() == QEvent::FocusIn) {
+    //     std::cerr << "focus!" << std::endl;
+    //   }
+    // }
+    // #endif 
     return inherited::eventFilter(obj, event);
   }
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
