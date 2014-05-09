@@ -1,53 +1,26 @@
-#include "qt5_bug.h"
-
+#include <QHBoxLayout>
+#include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QApplication>
 #include <QGLWidget>
-#include <QCursor>
-#include <QTimer>
-#include <QBitmap>
+#include <QLineEdit>
+#include <QMainWindow>
 
-// Wait Cursor, 16x16
+int
+main(int argc, char ** argv)
+{
+  QApplication app(argc, argv);
 
-#define wait_cursor_width 16
-#define wait_cursor_height 16
-#define wait_cursor_x_hot 7
-#define wait_cursor_y_hot 8
-static uchar wait_cursor_bits[] = {
-   0xfc, 0x3f, 0x00, 0x00, 0xfc, 0x3f, 0x08, 0x10, 0xd0, 0x0b, 0xe0, 0x07,
-   0xc0, 0x03, 0x80, 0x01, 0x80, 0x01, 0x40, 0x02, 0x20, 0x05, 0xd0, 0x0b,
-   0xf8, 0x1f, 0xfc, 0x3f, 0x00, 0x00, 0xfc, 0x3f};
+#if 1
+  app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+  app.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, false);
+#endif
 
-static uchar wait_mask_bits[] = {
-   0xfe, 0x7f, 0xfe, 0x7f, 0xfe, 0x7f, 0xfc, 0x3f, 0xfc, 0x3f, 0xf8, 0x1f,
-   0xf8, 0x1f, 0xf0, 0x0f, 0xf0, 0x0f, 0xf8, 0x1f, 0xf8, 0x1f, 0xfc, 0x3f,
-   0xfc, 0x3f, 0xfe, 0x7f, 0xfe, 0x7f, 0xfe, 0x7f};
-
-
-WaitProc::WaitProc(QWidget* parent) : QWidget(parent) {
-  iteration = 0;
-  lay = new QHBoxLayout(this);
-  tree = NULL;
-  //  busy = new QCursor(Qt::WaitCursor);
-
-  QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
-                                     wait_cursor_bits, QImage::Format_MonoLSB);
-  QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
-                                       wait_mask_bits, QImage::Format_MonoLSB);
-  busy = new QCursor(waiter, waiter_m, wait_cursor_x_hot, wait_cursor_y_hot);
-}
-
-WaitProc::~WaitProc() {
-  delete busy;
-  delete tree;
-}
-
-void WaitProc::BuildTree() {
-  if(tree) {
-    lay->removeWidget(tree);
-    delete tree;
-  }
-  tree = new QTreeWidget(this);
+  QMainWindow* win = new QMainWindow();
+  QWidget* body = new QWidget(win);
+  win->setCentralWidget(body);
+  QHBoxLayout* lay = new QHBoxLayout(body);
+  QTreeWidget* tree = new QTreeWidget(body);
   lay->addWidget(tree);
 
   tree->setSelectionMode(QAbstractItemView::SingleSelection); 
@@ -65,64 +38,21 @@ void WaitProc::BuildTree() {
     ait->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
     tree->addTopLevelItem(ait);
   }
-}
 
-void WaitProc::timer_timeout() {
-  if(iteration % 2 == 0) {
-    ((QApplication*)QApplication::instance())->setOverrideCursor(*busy);
-  }
-
-  QApplication::processEvents();
-
-  BuildTree();
-
-  QApplication::processEvents();
-
-  QTreeWidgetItemIterator it(tree);
-  int cnt = 0;
-  while (*it) {
-    (*it)->setText(0, "iter " + QString::number(iteration) + " no: " + QString::number(cnt));
-    ++cnt;
-    ++it;
-  }
-  if(iteration % 2 == 1) {
-    ((QApplication*)QApplication::instance())->restoreOverrideCursor();
-  }
-
-  QApplication::processEvents();
-
-  ++iteration;
-}
-
-int
-main(int argc, char ** argv)
-{
-  QApplication app(argc, argv);
+  QLineEdit* le = new QLineEdit(body);
+  lay->addWidget(le);
 
 #if 1
-  app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
-#endif
-
-  WaitProc* wait_proc = new WaitProc;
-
-  QTimer* timer = new QTimer();
-  WaitProc::connect(timer, SIGNAL(timeout()), wait_proc, SLOT(timer_timeout()));
-  timer->start(2000);
-
-#if 0
   // including this gl widget causes selection to fail 
   // on the items in the tree -- often causes a crash
   // in full-scale app
-  QGLWidget* gl = new QGLWidget(wait_proc);
-  wait_proc->lay->addWidget(gl);
+  QGLWidget* gl = new QGLWidget(body);
+  lay->addWidget(gl);
   gl->setMinimumSize(200,200);
 #endif
 
-  wait_proc->BuildTree();
-
-  wait_proc->show();
+  win->show();
 
   app.exec();
-  delete wait_proc;
   return 0;
 }
