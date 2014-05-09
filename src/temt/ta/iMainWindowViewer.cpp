@@ -114,7 +114,9 @@ extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
 
 void iMainWindowViewer::Init() {
   setAttribute(Qt::WA_DeleteOnClose);
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
   setAttribute(Qt::WA_AcceptTouchEvents, false); // this doesn't work like it should
+#endif
 
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   brow_hist = new iBrowseHistory(this);
