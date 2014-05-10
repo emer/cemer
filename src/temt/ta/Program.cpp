@@ -1111,6 +1111,7 @@ void Program::DisableBreakpoint(ProgEl* pel) {
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   script->DelBreak(start_ln);
+  
   ProgBrkPt_List* bpl = GetBrkPts();
   if(bpl) {
     ProgBrkPt* bp = bpl->FindBrkPt(pel);
@@ -1126,6 +1127,7 @@ void Program::SetBreakpoint_impl(ProgEl* pel) {
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return;
   ProgLine* pl = script_list.FastEl(start_ln);
+  
   ProgBrkPt_List* bpl = GetBrkPts();
   if(bpl) {
     ProgBrkPt* bp = bpl->AddBrkPt(pel, pl);
@@ -1136,6 +1138,12 @@ void Program::SetBreakpoint_impl(ProgEl* pel) {
 
 void Program::ClearBreakpoint_impl(ProgEl* pel) {
   // DisableBreakpoint(pel);
+  
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return;
+  script->DelBreak(start_ln);
+
   ProgBrkPt_List* bpl = GetBrkPts();
   if(bpl) {
     bpl->DeleteBrkPt(pel);
