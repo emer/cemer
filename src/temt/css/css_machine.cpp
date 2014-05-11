@@ -3569,7 +3569,12 @@ bool cssProg::SetBreak(int srcln) {
     }
     return false;
   }
-  breaks.AddUnique(srcdx);      // key to do unique so it isn't duplicated!!
+  bool added = breaks.AddUnique(srcdx);      // key to do unique so it isn't duplicated!!
+  // don't advertise the adds -- just the failure to add
+  // if(added) {
+  //   taMisc::Info("Set break point number:", String(breaks.size-1), "from:", top->name,
+  //                "at source line:", top->GetFullSrcLn(srcln));
+  // }
   return true;
 }
 
@@ -3599,7 +3604,6 @@ bool cssProg::DelBreak(int srcln) {
       cssEl* tmp = insts[i]->inst.El();
       if(tmp->GetType() == cssEl::T_CodeBlock) {
         if(tmp->GetSubProg()->DelBreak(srcln)) {
-          // taMisc::DebugInfo("removed from sub:", tmp->GetSubProg()->name);
           return true;
         }
       }
@@ -3607,10 +3611,10 @@ bool cssProg::DelBreak(int srcln) {
     return false;
   }
   bool rval = breaks.RemoveEl(srcdx);
-  // if(rval) {
-  //   taMisc::DebugInfo("removed", String(srcdx), "from me", name, "remaining:",
-  //                     String(breaks.size));
-  // }
+  if(rval) {
+    taMisc::Info("Removed break point number:", String(srcdx), "from:", top->name,
+                 "at source line:", top->GetFullSrcLn(srcln));
+  }
   return rval;
 }
 
@@ -5296,8 +5300,9 @@ bool cssProgSpace::DelBreak(int srcln) {
   }
   if(Prog(0)->DelBreak(srcln))
     return true;
-  cssMisc::Warning(Prog(), "Delete Breakpoint: Breakpoint not found for source line:",
-                   String(srcln));
+  // don't put up message for failure -- now put one up for success!
+  // cssMisc::Warning(Prog(), "Delete Breakpoint: Breakpoint not found for source line:",
+  //                  String(srcln));
   return false;
 }
 
