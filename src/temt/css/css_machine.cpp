@@ -1691,7 +1691,13 @@ cssEl::RunStat cssCodeBlock::Do(cssProg* prg) {
   prog = prg;
   if(action == IF_TRUE) {
     cssEl* cond = prg->Stack()->Peek(); // don't consume that stack guy; pop at end (others may need to refer)
-    if(!(bool)*cond) return cssEl::Running;     // do not run!
+    bool condval = (bool)*cond;
+    cssConstBool* fixval = new cssConstBool(condval); // evaluate once, at start, and fix
+    // this value so that even if user changes it later, it won't update and cause
+    // else to run -- BugID 1919
+    prg->Stack()->DelPop();     // get rid of result cond
+    prg->Stack()->Push(fixval);
+    if(!condval) return cssEl::Running;     // do not run!
   }
   else if(action == ELSE) {
     cssEl* cond = prg->Stack()->Peek(); // don't consume that stack guy; pop at end (others may need to refer)
