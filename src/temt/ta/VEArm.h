@@ -82,6 +82,9 @@ public:
   float         p_gain;         // #CONDSHOW_ON_ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
   float         i_gain;         // #CONDSHOW_ON_ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
   float         d_gain;         // #CONDSHOW_ON_ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
+  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be > pro_delay -- set both to 1 for no delay
+  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be < vis_delay -- set to 1 for no delay
+  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
   float         pid_dra_dt;     // #CONDSHOW_ON_ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
   float         damping;        // angular damping factor
   float         damping_thr;    // angular damping threshold 
@@ -165,10 +168,6 @@ public:
   float         io_err_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors 
   float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
-
-  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be > pro_delay -- set both to 1 for no delay
-  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be < vis_delay -- set to 1 for no delay
-  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
 
 
 
