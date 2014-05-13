@@ -370,7 +370,10 @@ bool ProgExprBase::ParseExpr() {
 }
 
 String ProgExprBase::GetFullExpr() const {
-  if(vars.size == 0) return var_expr;
+  if(vars.size == 0) {
+    if(var_expr.empty()) return expr; // haven't been parsed yet -- allows display name to still show something for OFF guys
+    return var_expr;                  // have, its ok.
+  }
   String rval = var_expr;
   for(int i=0;i<vars.size;i++) {
     ProgVarRef* vrf = vars.FastEl(i);
