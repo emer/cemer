@@ -46,6 +46,7 @@ void ProgCode::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
 				const String& code_str) {
+  if(td == &TA_CssExpr) return; // we already did this guy -- want it first
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
     if(obj->CanCvtFmCode(code_str, this)) {
@@ -115,15 +116,17 @@ bool ProgCode::CvtCodeToVar(String& code) {
 ProgEl* ProgCode::CvtCodeToProgEl() {
   ProgEl_List candidates;
   String code_mod = code.expr;
-  if(code_mod.endsWith(';')) {
-    // if we use a ; at the end, it is a guarantee of doing the css expr so
-    // we can avoid alternative matches etc.
-    candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
-  }
-  else if(code_mod.startsWith("//") || code_mod.startsWith("/*")) {
+  bool has_final_semi = false;
+  if(code_mod.startsWith("//") || code_mod.startsWith("/*")) {
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_Comment));
   }
   else {
+    if(code_mod.endsWith(';')) {
+      // just make CssExpr the first choice, but sometimes you don't want it but just
+      // type the ; by accident..
+      has_final_semi = true;
+      candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
+    }
     bool had_var = CvtCodeToVar(code_mod);
     if(had_var) {
       code.expr = code_mod;     // code was truncated..
@@ -163,6 +166,9 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
 	 );
 	if(chs == 0) return NULL;
 	cvt = candidates[chs-1];
+        if(has_final_semi && cvt != tabMisc::root->GetTemplateInstance(&TA_CssExpr)) {
+          code.expr = code.expr.before(';',-1); // chop it off if not using css expr
+        }
       }
     }
   }

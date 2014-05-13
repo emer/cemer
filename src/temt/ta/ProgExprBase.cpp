@@ -570,6 +570,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         else if(st_var->var_type == ProgVar::T_String) {
           lookup_td = &TA_taString;
         }
+        else if(st_var->var_type == ProgVar::T_DynEnum) {
+          lookup_td = &TA_DynEnum;
+        }
       }
       else {
         taMisc::Info("Var lookup: cannot find variable:", path_var,

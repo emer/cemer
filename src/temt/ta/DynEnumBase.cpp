@@ -16,6 +16,10 @@
 #include "DynEnumBase.h"
 #include <Program>
 #include <taProject>
+#include <int_Array>
+#include <String_Array>
+#include <int_Matrix>
+#include <String_Matrix>
 
 #include <SigLinkSignal>
 
@@ -134,3 +138,91 @@ bool DynEnumBase::BrowserCollapseAll() {
   if(!prog) return false;
   return prog->BrowserCollapseAll_ProgItem(this);
 }
+
+String DynEnumBase::NumberToName(int val) const {
+  String rval;
+  if(bits) {
+    String rval;
+    for(int i=0;i<enums.size;i++) {
+      DynEnumItem* it = enums.FastEl(i);
+      if(val & it->value) {
+        if(!rval.empty()) rval += "|";
+        rval += it->name;
+      }
+    }
+  }
+  else {
+    for(int i=0;i<enums.size;i++) {
+      DynEnumItem* it = enums.FastEl(i);
+      if(val == it->value) {
+        return it->name;
+      }
+    }
+  }
+  return rval;
+}
+
+int    DynEnumBase::NameToNumber(const String& nm) const {
+  int rval = 0;
+  if(bits) {
+    String strval = nm;
+    while(strval.nonempty()) {
+      String curstr = strval;
+      if(strval.contains('|')) {
+        curstr = strval.before('|');
+        strval = strval.after('|');
+      }
+      else {
+        strval = _nilString;
+      }
+      DynEnumItem* it = enums.FindName(curstr);
+      if(!TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!")) {
+        rval |= it->value;
+      }
+    }
+  }
+  else {
+    DynEnumItem* it = enums.FindName(nm);
+    if(!TestError(!it, "SetNameVal", "value label:", nm, "not found!")) {
+      rval = it->value;
+    }
+  }
+  return rval;
+}
+
+void  DynEnumBase::NumberToName_Array(String_Array& names, const int_Array& vals) const {
+  if(names.size < vals.size) {
+    names.SetSize(vals.size);
+  }
+  for(int i=0;i<vals.size; i++) {
+    names.FastEl(i) = NumberToName(vals.FastEl(i));
+  }
+}
+
+void  DynEnumBase::NameToNumber_Array(int_Array& vals, const String_Array& names) const {
+  if(vals.size < names.size) {
+    vals.SetSize(names.size);
+  }
+  for(int i=0;i<names.size; i++) {
+    vals.FastEl(i) = NameToNumber(names.FastEl(i));
+  }
+}
+
+void  DynEnumBase::NumberToName_Matrix(String_Matrix& names, const int_Matrix& vals) const {
+  if(names.size < vals.size) {
+    names.SetGeom(1,vals.size);
+  }
+  for(int i=0;i<vals.size; i++) {
+    names.FastEl_Flat(i) = NumberToName(vals.FastEl_Flat(i));
+  }
+}
+
+void  DynEnumBase::NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names) const {
+  if(vals.size < names.size) {
+    vals.SetGeom(1,names.size);
+  }
+  for(int i=0;i<names.size; i++) {
+    vals.FastEl_Flat(i) = NameToNumber(names.FastEl_Flat(i));
+  }
+}
+

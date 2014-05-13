@@ -32,7 +32,7 @@
 taTypeDef_Of(DynEnum);
 
 class TA_API DynEnum : public taOBase {
-  // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
+  // ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
   DynEnumBaseRef        enum_type; // enum type information (list of enum labels)
@@ -43,13 +43,28 @@ public:
 
   inline int   NumVal() const { return value; }
   // current numerical (integer) value of enum (-1 = no value set)
-  virtual const String NameVal() const;
+  virtual String NameVal() const;
   // current name (string) value of enum ("" = no value set)
 
   inline void  SetNumVal(int val)  { value = val; }
   // set current enum value by numerical value
   bool  SetNameVal(const String& nm);
   // set current enum value by name -- for bits this clears any existing bits (use css |= to set bits without clearing)
+
+  virtual String NumberToName(int val) const;
+  // #CAT_DynEnum translate an enum number to corresponding enum name
+  virtual int    NameToNumber(const String& nm) const;
+  // #CAT_DynEnum translate an enum name string to corresponding enum number
+
+  virtual void  NumberToName_Array(String_Array& names, const int_Array& vals) const;
+  // #CAT_DynEnum translate an array of enum values into corresponding enum names in array -- if the names array does not have enough room to hold all the vals, SetSize is called on it to set it to size of vals
+  virtual void  NameToNumber_Array(int_Array& vals, const String_Array& names) const;
+  // #CAT_DynEnum translate an array of enum names into corresponding enum numbers in array -- if the vals array does not have enough room to hold all the names, SetSize is called on it to set it to size of names
+
+  virtual void  NumberToName_Matrix(String_Matrix& names, const int_Matrix& vals) const;
+  // #CAT_DynEnum translate an matrix of enum values into corresponding enum names in matrix -- if the names matrix does not have enough room to hold all the vals, SetSize is called on it to set it to size of vals
+  virtual void  NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names) const;
+  // #CAT_DynEnum translate an matrix of enum names into corresponding enum numbers in matrix -- if the vals matrix does not have enough room to hold all the names, SetSize is called on it to set it to size of names
 
   String       GetDisplayName() const override;
 

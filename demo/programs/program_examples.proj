@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7143
+// ta_Dump File v3.0 -- code v6.3.8.0 rev7159
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -492,7 +492,7 @@ LeabraProject .projects["program_examples"] {
     };
    };
   };
-  Program_Group @.gp["Variables"] = [2] { 
+  Program_Group @.gp["Variables"] = [4] { 
    Program @["Strings"] { 
     ProgObjList @.objs = [0] {
     };
@@ -513,14 +513,363 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [4] {
+    ProgEl_List @.prog_code = [30] {
      LocalVars @[0] { 
-      ProgVar_List @.local_vars = [0] {
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["mypi"] { };
       };
      };
      AssignExpr @[1] { };
      PrintVar @[2] { };
-     PrintExpr @[3] { };
+     Comment @[3] { };
+     PrintExpr @[4] { };
+     PrintExpr @[5] { };
+     PrintExpr @[6] { };
+     PrintExpr @[7] { };
+     PrintExpr @[8] { };
+     Comment @[9] { };
+     PrintExpr @[10] { };
+     PrintExpr @[11] { };
+     PrintExpr @[12] { };
+     Comment @[13] { };
+     MethodCall @[14] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintExpr @[15] { };
+     MethodCall @[16] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintExpr @[17] { };
+     MethodCall @[18] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintExpr @[19] { };
+     MethodCall @[20] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     PrintExpr @[21] { };
+     Comment @[22] { };
+     AssignExpr @[23] { };
+     PrintExpr @[24] { };
+     PrintExpr @[25] { };
+     CssExpr @[26] { };
+     CssExpr @[27] { };
+     PrintExpr @[28] { };
+     Comment @[29] { };
+    };
+   };
+   Program @["DynEnum"] { 
+    ProgObjList @.objs = [3] {
+     DataTable @["InputData"] { 
+      DataTableCols @.data = [2] {
+       String_Data @["Name"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["Input"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+     DataTable @["TestOrders"] { 
+      DataTableCols @.data = [2] {
+       String_Data @["EnumNames"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       int_Data @["EnumVals"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["NARROW"] { };
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+     DataTable @["Configurations"] { 
+      DataTableCols @.data = [3] {
+       String_Data @["config_id"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["param_1"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["param_2"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+      };
+     };
+    };
+
+    ProgType_List @.types = [3] {
+     DynEnumType @["ProgCmd"] { 
+      DynEnumItem_List @.enums = [3] {
+       DynEnumItem @["RUN"] { };
+       DynEnumItem @["TEST"] { };
+       DynEnumItem @["HELP"] { };
+      };
+     };
+     DynEnumType @["UnitNames"] { 
+      DynEnumItem_List @.enums = [4] {
+       DynEnumItem @["STORE"] { };
+       DynEnumItem @["IGNORE"] { };
+       DynEnumItem @["RECALL"] { };
+       DynEnumItem @["N_UnitNames"] { };
+      };
+     };
+     DynEnumTableCol @["Configs"] { 
+      DynEnumItem_List @.enums = [3] {
+       DynEnumItem @["basic_config"] { };
+       DynEnumItem @["special_config"] { };
+       DynEnumItem @["new_config"] { };
+      };
+     };
+    };
+
+    ProgVar_List @.args = [1] {
+     ProgVar @["cmd"] { };
+    };
+
+    ProgVar_List @.vars = [8] {
+     ProgVar @["cur_config"] { };
+     ProgVar @["unit_val"] { };
+     ProgVar @["name_var"] { };
+     ProgVar @["InputData"] { };
+     ProgVar @["TestOrders"] { };
+     ProgVar @["Configurations"] { };
+     ProgVar @["param_1"] { };
+     ProgVar @["param_2"] { };
+    };
+
+    Function_List @.functions = [1] {
+     Function @["SetConfigParams"] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [4] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [0] {
+	};
+       };
+       AssignExpr @[1] { };
+       AssignExpr @[2] { };
+       PrintVar @[3] { };
+      };
+     };
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [3] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [2] {
+       ProgVar @["row"] { };
+       ProgVar @["i"] { };
+      };
+     };
+     FunctionCall @[1] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+     };
+     Switch @[2] { 
+      ProgEl_List @.cases = [3] {
+       CaseBlock @[0] { 
+	ProgEl_List @.prog_code = [6] {
+	 PrintExpr @[0] { };
+	 RandomCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 MemberMethodCall @[3] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 CssExpr @[4] { };
+	 CssExpr @[5] { };
+	};
+       };
+       CaseBlock @[1] { 
+	ProgEl_List @.prog_code = [9] {
+	 PrintExpr @[0] { };
+	 Comment @[1] { };
+	 Comment @[2] { };
+	 MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [2] {
+	   ProgArg @[0] { };
+	   ProgArg @[1] { };
+	  };
+	 };
+	 Comment @[4] { };
+	 RandomCall @[5] { 
+	  ProgArg_List @.meth_args = [1] {
+	   ProgArg @[0] { };
+	  };
+	 };
+	 PrintVar @[6] { };
+	 MethodCall @[7] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	 };
+	 ForeachLoop @[8] { 
+	  ProgEl_List @.loop_code = [5] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	   CssExpr @[1] { };
+	   CssExpr @[2] { };
+	   PrintExpr @[3] { };
+	   MethodCall @[4] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+       CaseBlock @[2] { 
+	ProgEl_List @.prog_code = [3] {
+	 PrintExpr @[0] { };
+	 PrintExpr @[1] { };
+	 PrintExpr @[2] { };
+	};
+       };
+      };
+     };
+    };
+   };
+   Program @["Matrix"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserData_DocLink @["DocLink"] { };
+    };
+
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    Function_List @.functions = [1] {
+     Function @["softmax"] { 
+      ProgVar_List @.args = [2] {
+       ProgVar @["v"] { };
+       ProgVar @["temp"] { };
+      };
+
+      ProgEl_List @.fun_code = [3] {
+       LocalVars @[0] { 
+	ProgVar_List @.local_vars = [1] {
+	 ProgVar @["tmp_v"] { };
+	};
+       };
+       AssignExpr @[1] { };
+       AssignExpr @[2] { };
+      };
+     };
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [58] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [3] {
+       ProgVar @["a"] { };
+       ProgVar @["b"] { };
+       ProgVar @["smax"] { };
+      };
+     };
+     Comment @[1] { };
+     Comment @[2] { };
+     Comment @[3] { };
+     Comment @[4] { };
+     CssExpr @[5] { };
+     PrintExpr @[6] { };
+     Comment @[7] { };
+     CssExpr @[8] { };
+     PrintExpr @[9] { };
+     PrintExpr @[10] { };
+     Comment @[11] { };
+     PrintExpr @[12] { };
+     PrintExpr @[13] { };
+     Comment @[14] { };
+     PrintExpr @[15] { };
+     Comment @[16] { };
+     CssExpr @[17] { };
+     CssExpr @[18] { };
+     PrintExpr @[19] { };
+     CssExpr @[20] { };
+     PrintExpr @[21] { };
+     CssExpr @[22] { };
+     PrintExpr @[23] { };
+     Comment @[24] { };
+     PrintExpr @[25] { };
+     Comment @[26] { };
+     PrintExpr @[27] { };
+     CssExpr @[28] { };
+     PrintExpr @[29] { };
+     PrintExpr @[30] { };
+     PrintExpr @[31] { };
+     PrintExpr @[32] { };
+     PrintExpr @[33] { };
+     PrintExpr @[34] { };
+     Comment @[35] { };
+     PrintExpr @[36] { };
+     PrintExpr @[37] { };
+     PrintExpr @[38] { };
+     PrintExpr @[39] { };
+     PrintExpr @[40] { };
+     PrintExpr @[41] { };
+     Comment @[42] { };
+     PrintExpr @[43] { };
+     PrintExpr @[44] { };
+     PrintExpr @[45] { };
+     PrintExpr @[46] { };
+     PrintExpr @[47] { };
+     PrintExpr @[48] { };
+     PrintExpr @[49] { };
+     Comment @[50] { };
+     CssExpr @[51] { };
+     FunctionCall @[52] { 
+      ProgArg_List @.fun_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     PrintExpr @[53] { };
+     Comment @[54] { };
+     Comment @[55] { };
+     Comment @[56] { };
+     PrintExpr @[57] { };
     };
    };
    Program @["Global_vs_Local"] { 
@@ -924,118 +1273,7 @@ LeabraProject .projects["program_examples"] {
      };
     };
    };
-   Program_Group @.gp["DataAccessUsingCss"] = [3] { 
-    Program @["Matrix_css"] { 
-     UserDataItem_List @*(.user_data_) {
-      UserData_DocLink @["DocLink"] { };
-     };
-
-     ProgObjList @.objs = [0] {
-     };
-
-     ProgType_List @.types = [0] {
-     };
-
-     ProgVar_List @.args = [0] {
-     };
-
-     ProgVar_List @.vars = [0] {
-     };
-
-     Function_List @.functions = [1] {
-      Function @["softmax"] { 
-       ProgVar_List @.args = [2] {
-	ProgVar @["v"] { };
-	ProgVar @["temp"] { };
-       };
-
-       ProgEl_List @.fun_code = [3] {
-	LocalVars @[0] { 
-	 ProgVar_List @.local_vars = [1] {
-	  ProgVar @["tmp_v"] { };
-	 };
-	};
-	AssignExpr @[1] { };
-	AssignExpr @[2] { };
-       };
-      };
-     };
-
-     ProgEl_List @.init_code = [0] {
-     };
-
-     ProgEl_List @.prog_code = [58] {
-      LocalVars @[0] { 
-       ProgVar_List @.local_vars = [3] {
-	ProgVar @["a"] { };
-	ProgVar @["b"] { };
-	ProgVar @["smax"] { };
-       };
-      };
-      Comment @[1] { };
-      Comment @[2] { };
-      Comment @[3] { };
-      Comment @[4] { };
-      CssExpr @[5] { };
-      PrintExpr @[6] { };
-      Comment @[7] { };
-      CssExpr @[8] { };
-      PrintExpr @[9] { };
-      PrintExpr @[10] { };
-      Comment @[11] { };
-      PrintExpr @[12] { };
-      PrintExpr @[13] { };
-      Comment @[14] { };
-      PrintExpr @[15] { };
-      Comment @[16] { };
-      CssExpr @[17] { };
-      CssExpr @[18] { };
-      PrintExpr @[19] { };
-      CssExpr @[20] { };
-      PrintExpr @[21] { };
-      CssExpr @[22] { };
-      PrintExpr @[23] { };
-      Comment @[24] { };
-      PrintExpr @[25] { };
-      Comment @[26] { };
-      PrintExpr @[27] { };
-      CssExpr @[28] { };
-      PrintExpr @[29] { };
-      PrintExpr @[30] { };
-      PrintExpr @[31] { };
-      PrintExpr @[32] { };
-      PrintExpr @[33] { };
-      PrintExpr @[34] { };
-      Comment @[35] { };
-      PrintExpr @[36] { };
-      PrintExpr @[37] { };
-      PrintExpr @[38] { };
-      PrintExpr @[39] { };
-      PrintExpr @[40] { };
-      PrintExpr @[41] { };
-      Comment @[42] { };
-      PrintExpr @[43] { };
-      PrintExpr @[44] { };
-      PrintExpr @[45] { };
-      PrintExpr @[46] { };
-      PrintExpr @[47] { };
-      PrintExpr @[48] { };
-      PrintExpr @[49] { };
-      Comment @[50] { };
-      CssExpr @[51] { };
-      FunctionCall @[52] { 
-       ProgArg_List @.fun_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-       };
-      };
-      PrintExpr @[53] { };
-      Comment @[54] { };
-      Comment @[55] { };
-      Comment @[56] { };
-      PrintExpr @[57] { };
-     };
-    };
+   Program_Group @.gp["DataAccessUsingCss"] = [2] { 
     Program @["UseLocalVarWhenAccessingMatrices"] { 
      ProgObjList @.objs = [1] {
       DataTable @["DemoData"] { 
@@ -1596,7 +1834,7 @@ LeabraProject .projects["program_examples"] {
     };
    };
   };
-  Program_Group @.gp["Math"] = [1] { 
+  Program_Group @.gp["Math"] = [3] { 
    Program @["RandomInteger"] { 
     ProgObjList @.objs = [1] {
      DataTable @["DemoData"] { 
@@ -1650,6 +1888,141 @@ LeabraProject .projects["program_examples"] {
       };
      };
      PrintVar @[9] { };
+    };
+   };
+   Program @["RandomFloats"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [0] {
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [9] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [2] {
+       ProgVar @["rnd_val"] { };
+       ProgVar @["int_val"] { };
+      };
+     };
+     RandomCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     PrintVar @[2] { };
+     RandomCall @[3] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     PrintVar @[4] { };
+     RandomCall @[5] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     PrintVar @[6] { };
+     RandomCall @[7] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     PrintVar @[8] { };
+    };
+   };
+   Program @["MiscMath"] { 
+    ProgObjList @.objs = [1] {
+     float_Matrix @["float_mat_data"] { };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["float_mat_data"] { };
+     ProgVar @["data_n"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [13] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [3] {
+       ProgVar @["rval"] { };
+       ProgVar @["f"] { };
+       ProgVar @["i"] { };
+      };
+     };
+     MathCall @[1] { 
+      ProgArg_List @.meth_args = [4] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+       ProgArg @[3] { };
+      };
+     };
+     PrintVar @[2] { };
+     MathCall @[3] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     PrintVar @[4] { };
+     Comment @[5] { };
+     MethodCall @[6] { 
+      ProgArg_List @.meth_args = [8] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+       ProgArg @[3] { };
+       ProgArg @[4] { };
+       ProgArg @[5] { };
+       ProgArg @[6] { };
+       ProgArg @[7] { };
+      };
+     };
+     ForLoop @[7] { 
+      ProgEl_List @.loop_code = [1] {
+       CssExpr @[0] { };
+      };
+     };
+     MathCall @[8] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     PrintVar @[9] { };
+     MathCall @[10] { 
+      ProgArg_List @.meth_args = [4] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+       ProgArg @[3] { };
+      };
+     };
+     PrintVar @[11] { };
+     Comment @[12] { };
     };
    };
   };
@@ -6030,7 +6403,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="For";
     tags=;
     desc="Illustrates the for loop";
-    flags=0;
+    flags=NO_STOP_STEP;
     objs {
      name="ProgObjList_3";
      el_typ=taNBase;
@@ -6157,7 +6530,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="Foreac";
     tags=;
     desc="multiple examples of using the foreach looping construct, which is very powerful";
-    flags=0;
+    flags=NO_STOP_STEP;
     objs {
      name="ProgObjList_14";
      el_typ=taNBase;
@@ -6237,7 +6610,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="Switch";
     tags=;
     desc="illustrates the switch statement";
-    flags=0;
+    flags=NO_STOP_STEP;
     objs {
      name="objs";
      el_typ=taNBase;
@@ -6634,7 +7007,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     short_nm="String";
     tags=;
     desc="examples for all the fancy things you can do with string variable types";
-    flags=0;
+    flags=NO_STOP_STEP;
     objs {
      name="ProgObjList_10";
      el_typ=taNBase;
@@ -6657,7 +7030,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      ProgVar @["str"] {
       name="str";
       var_type=T_String;
-      string_val="abcdefg";
+      string_val="true";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6687,10 +7060,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        name="ProgVar_List_0";
        el_typ=ProgVar;
        el_def=0;
+       ProgVar @["mypi"] {
+	name="mypi";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
       };
      };
      AssignExpr @[1] {
-      desc=;
+      desc="always use double-quotes for any string literal in the program";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str1 = \"abcdefg\"";
       result_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$$;
@@ -6712,12 +7095,1866 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[3] {
-      desc=;
+     Comment @[3] {
+      desc="accessing substrings";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// accessing substrings";
+     };
+     PrintExpr @[4] {
+      desc="access elements using standard array-like index operator";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str[1]: \" str[1]";
       expr {
        expr="\"str[1]: \" << str[1]";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[5] {
+      desc="very easy to extract substrings using after, from, through..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.after('c'): \" << str.after(\"c\") << endl;";
+      expr {
+       expr="\"str.after('c'): \" << str.after(\"c\")";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[6] {
+      desc="before..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
+      expr {
+       expr="\"str.before('f'): \" << str.before(\"f\")";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[7] {
+      desc="can specifiy optional starting position, -1 means start from back";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"abba.before('b',-1): \" << \"abba\".before('b',-1)";
+      expr {
+       expr="\"abba.before('b',-1): \" << \"abba\".before(\"b\",-1)";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[8] {
+      desc="between..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
+      expr {
+       expr="\"str.between('c', 'f'): \" << str.between(\"c\", \"f\")";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[9] {
+      desc="finding strings";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// finding strings";
+     };
+     PrintExpr @[10] {
+      desc="test what the string starts with";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
+      expr {
+       expr="\"str.startsWith('ab'): \" << str.startsWith(\"ab\")";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[11] {
+      desc="and what it ends with";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
+      expr {
+       expr="\"str.endsWith('ab'): \" << str.endsWith(\"ab\")";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[12] {
+      desc="what does it contain?";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
+      expr {
+       expr="\"str.contains('de'): \" << str.contains(\"de\")";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[13] {
+      desc="modifying the string";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// modifying the string";
+     };
+     MethodCall @[14] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str.upcase()";
+      result_var=NULL;
+      obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      method=taString::upcase;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     PrintExpr @[15] {
+      desc="this string is upcase'd";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.upcase(): \" << str";
+      expr {
+       expr="\"str.upcase(): \" << str";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     MethodCall @[16] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str.upcase()";
+      result_var=NULL;
+      obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      method=taString::downcase;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     PrintExpr @[17] {
+      desc="this string is back downcase'd";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.upcase(): \" << str";
+      expr {
+       expr="\"str.downcase(): \" << str";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     MethodCall @[18] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str.capitalize()";
+      result_var=NULL;
+      obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      method=taString::capitalize;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     PrintExpr @[19] {
+      desc="this string is capitalize'd";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.upcase(): \" << str";
+      expr {
+       expr="\"str.capitalize(): \" << str";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     MethodCall @[20] {
+      desc="search-and-replace";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str.capitalize()";
+      result_var=NULL;
+      obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      method=taString::gsub;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="pat";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\"d\"";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="repl";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\"delicious\"";
+	};
+       };
+      };
+     };
+     PrintExpr @[21] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.upcase(): \" << str";
+      expr {
+       expr="\"str.gdub('d', 'delicious')): \" << str";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[22] {
+      desc="converting strings to other things";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// converting strings to other things";
+     };
+     AssignExpr @[23] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str = 3.14159";
+      result_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      expr {
+       expr="3.14159";
+      };
+     };
+     PrintExpr @[24] {
+      desc="str ate some pi..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str = 3.14159\" << str";
+      expr {
+       expr="\"str = 3.14159: \" << str";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[25] {
+      desc="and spit it back out again";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"str.toFloat(): \" << str.toFloat()";
+      expr {
+       expr="\"str.toFloat(): \" << str.toFloat()";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     CssExpr @[26] {
+      desc="the conversion is implied automatically as well";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="mypi = str;";
+      expr {
+       expr="mypi = str;";
+      };
+     };
+     CssExpr @[27] {
+      desc="bools are represented as 'true' and 'false' in string form";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str = true;";
+      expr {
+       expr="str = true;";
+      };
+     };
+     PrintExpr @[28] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"(bool)str: \" << (bool)str";
+      expr {
+       expr="\"(bool)str: \" << (bool)str";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[29] {
+      desc="see DynEnum program examples for how to convert between strings and enumerated types";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// see DynEnum program examples for how to convert between strings and enumerated types";
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["DynEnum"] {
+    name="DynEnum";
+    short_nm="DyEnum";
+    tags=;
+    desc="dynamic enumerated types -- these allow you to establish a mapping between names and corresponding values -- very handy for many situations";
+    flags=NO_STOP_STEP;
+    objs {
+     name="ProgObjList_30";
+     el_typ=DataTable;
+     el_def=0;
+     DataTable @["InputData"] {
+      name="InputData";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["Name"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_108";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Name";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[5] "IGNORE";"STORE";"IGNORE";"RECALL";"RECALL";	};
+       };
+       float_Data @["Input"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_109";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="Input";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=1;
+	cell_geom{ 5;1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[2] ;;	};
+	width=0;
+	ar {
+	 name=;
+	[5 1 5] 0;1;0;0;0;1;0;0;0;0;
+0;1;0;0;0;0;0;1;0;0;
+0;0;1;0;0;	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [5] 0;1;2;3;4;      };
+     };
+     DataTable @["TestOrders"] {
+      name="TestOrders";
+      desc="Specified orders of test inputs: we'll use the NameToNumber_Matrix function on the enum object to convert the names to the vals (in Test mode)";
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["EnumNames"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_111";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="EnumNames";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=1;
+	cell_geom{ 5;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[1] ;	};
+	width=0;
+	ar {
+	 name=;
+	[5 2] "RECALL";"RECALL";"STORE";"STORE";"IGNORE";"IGNORE";"STORE";"IGNORE";"RECALL";"RECALL";
+	};
+       };
+       int_Data @["EnumVals"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_110";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["NARROW"] {
+	  name="NARROW";
+	  value 1 0=1;
+	  val_type_fixed=0;
+	 };
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="EnumVals";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=1;
+	cell_geom{ 5;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[1] ;	};
+	width=0;
+	ar {
+	 name=;
+	[5 2] 2;2;0;0;1;1;0;1;2;2;
+	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [2] 0;1;      };
+     };
+     DataTable @["Configurations"] {
+      name="Configurations";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       String_Data @["config_id"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_112";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="config_id";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[3] "basic_config";"special_config";"new_config";	};
+       };
+       float_Data @["param_1"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_113";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="param_1";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[3] 0.0099999998;0.1;0.02;	};
+       };
+       float_Data @["param_2"] {
+	UserDataItem_List @*(.user_data_) {
+	 name="UserDataItem_List_114";
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1084598675370216;
+	  val_type_fixed=0;
+	 };
+	};
+	name="param_2";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name=;
+	[0] 	};
+	width=0;
+	ar {
+	 name=;
+	[3] 0.1;0.050000001;0.2;	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name=;
+      [3] 0;1;2;      };
+     };
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+     DynEnumType @["ProgCmd"] {
+      name="ProgCmd";
+      desc="these are the options for what our program can do when called -- other programs can call us with the string name of one of these enums";
+      enums {
+       name="DynEnumItem_List_0";
+       el_typ=DynEnumItem;
+       el_def=0;
+       DynEnumItem @["RUN"] {
+	name="RUN";
+	value=0;
+	desc="run the program normally";
+       };
+       DynEnumItem @["TEST"] {
+	name="TEST";
+	value=1;
+	desc="run special tests";
+       };
+       DynEnumItem @["HELP"] {
+	name="HELP";
+	value=2;
+	desc="provide some help";
+       };
+      };
+      bits=0;
+     };
+     DynEnumType @["UnitNames"] {
+      name="UnitNames";
+      desc="handy to assign units to names using an enumerated type";
+      enums {
+       name="DynEnumItem_List_0";
+       el_typ=DynEnumItem;
+       el_def=0;
+       DynEnumItem @["STORE"] {
+	name="STORE";
+	value=0;
+	desc=;
+       };
+       DynEnumItem @["IGNORE"] {
+	name="IGNORE";
+	value=1;
+	desc=;
+       };
+       DynEnumItem @["RECALL"] {
+	name="RECALL";
+	value=2;
+	desc=;
+       };
+       DynEnumItem @["N_UnitNames"] {
+	name="N_UnitNames";
+	value=3;
+	desc="make the last enum an N_ guy -- convenient for random generation using Random::IntZeroN";
+       };
+      };
+      bits=0;
+     };
+     DynEnumTableCol @["Configs"] {
+      name="Configs";
+      desc="this is a special kind of DynEnum that gets its values automatically from a column in a data table -- very handy for selecting configurations etc";
+      enums {
+       name="DynEnumItem_List_0";
+       el_typ=DynEnumItem;
+       el_def=0;
+       DynEnumItem @["basic_config"] {
+	name="basic_config";
+	value=0;
+	desc=;
+       };
+       DynEnumItem @["special_config"] {
+	name="special_config";
+	value=1;
+	desc=;
+       };
+       DynEnumItem @["new_config"] {
+	name="new_config";
+	value=2;
+	desc=;
+       };
+      };
+      bits=0;
+      src_table=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].objs["Configurations"]$$;
+      src_column="config_id";
+     };
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["cmd"] {
+      name="cmd";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["ProgCmd"]$$;
+       value=2;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="call this program with a string of any of the options (\"RUN\", \"TEST\", \"HELP\")";
+      init_from=NULL;
+     };
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["cur_config"] {
+      name="cur_config";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["Configs"]$$;
+       value=1;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="selects which configuration to use";
+      init_from=NULL;
+     };
+     ProgVar @["unit_val"] {
+      name="unit_val";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["UnitNames"]$$;
+       value=1;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["name_var"] {
+      name="name_var";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["UnitNames"]$;
+       value=0;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="need this for the NameToNumber_Matrix function -- has to be in global (vars), not a local";
+      init_from=NULL;
+     };
+     ProgVar @["InputData"] {
+      name="InputData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].objs["InputData"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["TestOrders"] {
+      name="TestOrders";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].objs["TestOrders"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["Configurations"] {
+      name="Configurations";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].objs["Configurations"]$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["param_1"] {
+      name="param_1";
+      var_type=T_Real;
+      real_val=0.1000000014901161;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["param_2"] {
+      name="param_2";
+      var_type=T_Real;
+      real_val=0.05000000074505806;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="Function_List_30";
+     el_typ=Function;
+     el_def=0;
+     Function @["SetConfigParams"] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      name="SetConfigParams";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name="ProgEl_List_185";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	local_vars {
+	 name="ProgVar_List_0";
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       AssignExpr @[1] {
+	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="param_1 = Configurations[\"param_1\"][cur_config]";
+	result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_1"]$$;
+	expr {
+	 expr="Configurations[\"param_1\"][cur_config]";
+	};
+       };
+       AssignExpr @[2] {
+	desc="because cur_config is an enum, we can use it to access rows of table directly as an index";
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="param_1 = Configurations[\"param_1\"][cur_config]";
+	result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_2"]$$;
+	expr {
+	 expr="Configurations[\"param_2\"][cur_config]";
+	};
+       };
+       PrintVar @[3] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="print \"current configuration parameters\" cur_config param_1 param_2";
+	message="current configuration parameters";
+	print_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["cur_config"]$$;
+	print_var2=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_1"]$;
+	print_var3=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["param_2"]$;
+	print_var4=NULL;
+	print_var5=NULL;
+	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+       };
+      };
+     };
+    };
+    init_code {
+     name="ProgEl_List_176";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_177";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["row"] {
+	name="row";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     FunctionCall @[1] {
+      desc="always set the current parameters..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="SetConfigParams()";
+      result_var=NULL;
+      fun=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].functions["SetConfigParams"]$$;
+      fun_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     Switch @[2] {
+      desc="switch statements are very frequently used with enum's -- very handy -- hit the Cases Fm Enum button to automatically get all the cases";
+      flags=0;
+      orig_prog_code="switch(cmd)";
+      switch_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].args["cmd"]$$;
+      cases {
+       name="ProgEl_List_181";
+       el_typ=CaseBlock;
+       el_def=0;
+       CaseBlock @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	prog_code {
+	 name="ProgEl_List_181";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 PrintExpr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="print \"we are now in run mode\"";
+	  expr {
+	   expr="\"we are now in run mode\"";
+	  };
+	  my_mask=NULL;
+	  debug_level=NULL;
+	 };
+	 RandomCall @[1] {
+	  desc="randomly select one of the unit names";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="unit_val = Random::IntZeroN(N_UnitNames)";
+	  result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["unit_val"]$$;
+	  object_type=Random;
+	  method=Random::IntZeroN;
+	  meth_args {
+	   name="ProgArg_List_0";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=int;
+	    type="int";
+	    name="n";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="N_UnitNames";
+	    };
+	   };
+	  };
+	 };
+	 MethodCall @[2] {
+	  desc="make sure we've got a row";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="InputData.EnforceRows(1)";
+	  result_var=NULL;
+	  obj=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$$;
+	  method=DataTable::EnforceRows;
+	  meth_args {
+	   name="ProgArg_List_0";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=int;
+	    type="int";
+	    name="n_rows";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="1";
+	    };
+	   };
+	  };
+	 };
+	 MemberMethodCall @[3] {
+	  desc="initialize the values so we can write to them";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="InputData.Input.InitVals()";
+	  obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
+	  path="Input";
+	  result_var=NULL;
+	  method=DataCol::InitVals;
+	  meth_args {
+	   name="ProgArg_List_0";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=const_Variant_ref;
+	    type="Variant&";
+	    name="init_val";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="0.0";
+	    };
+	   };
+	  };
+	 };
+	 CssExpr @[4] {
+	  desc="key advantage of enum: you can use them as a number (here as an index)";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="InputData[\"Input\"][unit_val,0,-1] = 1.0;";
+	  expr {
+	   expr="InputData[\"Input\"][unit_val,0,-1] = 1.0;";
+	  };
+	 };
+	 CssExpr @[5] {
+	  desc="but *also* as a string -- here we tell it to use the name (string) form";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="InputData[\"Name\"][-1] = \"CurInput\";";
+	  expr {
+	   expr="InputData[\"Name\"][-1] = (String)unit_val;";
+	  };
+	 };
+	};
+	case_val {
+	 expr="RUN";
+	};
+       };
+       CaseBlock @[1] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	prog_code {
+	 name="ProgEl_List_182";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 PrintExpr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="print \"we are now in test mode\"";
+	  expr {
+	   expr="\"we are now in test mode\"";
+	  };
+	  my_mask=NULL;
+	  debug_level=NULL;
+	 };
+	 Comment @[1] {
+	  desc="here we use one function to convert enum names into numbers -- these numbers can then be used directly in rest of code to access units, etc";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="// here we use one function to convert enum names into numbers -- these numbers can then be used directly in rest of code to access units, etc";
+	 };
+	 Comment @[2] {
+	  desc="this is convenient if you want to setup particular orders of events, using easy-to-read string names";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="// this is convenient if you want to setup particular orders of events, using easy-to-read string names";
+	 };
+	 MethodCall @[3] {
+	  desc="the .ar gives access to the underlying matrix array of data for whole column";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="name_var.NameToNumber_Matrix()";
+	  result_var=NULL;
+	  obj=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["name_var"]$$;
+	  method=DynEnum::NameToNumber_Matrix;
+	  meth_args {
+	   name="ProgArg_List_0";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=int_Matrix_ref;
+	    type="int_Matrix&";
+	    name="vals";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="TestOrders[\"EnumVals\"].ar";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=const_String_Matrix_ref;
+	    type="String_Matrix&";
+	    name="names";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="TestOrders[\"EnumNames\"].ar";
+	    };
+	   };
+	  };
+	 };
+	 Comment @[4] {
+	  desc="we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="// we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
+	 };
+	 RandomCall @[5] {
+	  desc="randomly select a row to read from the table";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="row = Random::IntZeroN(ListOfEnums.rows)";
+	  result_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].prog_code[0].local_vars["row"]$$;
+	  object_type=Random;
+	  method=Random::IntZeroN;
+	  meth_args {
+	   name="ProgArg_List_0";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=int;
+	    type="int";
+	    name="n";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="TestOrders.rows";
+	    };
+	   };
+	  };
+	 };
+	 PrintVar @[6] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="print \"testing row number: \" row";
+	  message="testing row number:";
+	  print_var=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].prog_code[0].local_vars["row"]$;
+	  print_var2=NULL;
+	  print_var3=NULL;
+	  print_var4=NULL;
+	  print_var5=NULL;
+	  print_var6=NULL;
+	  my_mask=NULL;
+	  debug_level=NULL;
+	 };
+	 MethodCall @[7] {
+	  desc="clear out any existing rows";
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="InputData.ResetData()";
+	  result_var=NULL;
+	  obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
+	  method=DataTable::ResetData;
+	  meth_args {
+	   name="ProgArg_List_0";
+	   el_typ=ProgArg;
+	   el_def=0;
+	  };
+	 };
+	 ForeachLoop @[8] {
+	  desc="iterate over all the items listed in the cell";
+	  flags=0;
+	  orig_prog_code="foreach(i in ListOfEnums[\"EnumVals\"][:,row))";
+	  loop_code {
+	   name="ProgEl_List_185";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc="add a new row";
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="InputData.AddBlankRow()";
+	    result_var=NULL;
+	    obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
+	    method=DataTable::AddBlankRow;
+	    meth_args {
+	     name="ProgArg_List_0";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	   };
+	   CssExpr @[1] {
+	    desc="see RUN case above -- note we need ; at end when doing [ ] expressions on left-hand-side of =";
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="InputData[\"Input\"][i,0,-1] = 1.0;";
+	    expr {
+	     expr="InputData[\"Input\"][i,0,-1] = 1.0;";
+	    };
+	   };
+	   CssExpr @[2] {
+	    desc="this is a fancy double-cast of the integer i first into the enum, and then into the string, to get the name";
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="InputData[\"Name\"][-1] = (String)(UnitNames)i;";
+	    expr {
+	     expr="InputData[\"Name\"][-1] = (String)(UnitNames)i;";
+	    };
+	   };
+	   PrintExpr @[3] {
+	    desc="we could also use this method on the DynEnum variable itself";
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="print \"generated input: \" name_var.NumberToName(i)";
+	    expr {
+	     expr="\"generated input: \" << name_var.NumberToName(i)";
+	    };
+	    my_mask=NULL;
+	    debug_level=NULL;
+	   };
+	   MethodCall @[4] {
+	    desc="tells the gui etc that you're done writing to this row";
+	    flags=CAN_REVERT_TO_CODE;
+	    orig_prog_code="InputData.WriteClose()";
+	    result_var=NULL;
+	    obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
+	    method=DataBlock::WriteClose;
+	    meth_args {
+	     name="ProgArg_List_0";
+	     el_typ=ProgArg;
+	     el_def=0;
+	    };
+	   };
+	  };
+	  el_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].prog_code[0].local_vars["i"]$$;
+	  in {
+	   expr="TestOrders[\"EnumVals\"][:,row]";
+	  };
+	 };
+	};
+	case_val {
+	 expr="TEST";
+	};
+       };
+       CaseBlock @[2] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	prog_code {
+	 name="ProgEl_List_183";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 PrintExpr @[0] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="print \"we are now in help mode\"";
+	  expr {
+	   expr="\"we are now in help mode\"";
+	  };
+	  my_mask=NULL;
+	  debug_level=NULL;
+	 };
+	 PrintExpr @[1] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="print \"select the 'RUN' cmd to generate a single random input in InputData (look at table in left browser)\"";
+	  expr {
+	   expr="\"select the 'RUN' cmd to generate a single random input in InputData (look at table in left browser)\"";
+	  };
+	  my_mask=NULL;
+	  debug_level=NULL;
+	 };
+	 PrintExpr @[2] {
+	  desc=;
+	  flags=CAN_REVERT_TO_CODE;
+	  orig_prog_code="print \"select the 'TEST' cmd to generate a sequence of InputData inputs according to a row in TestOrders";
+	  expr {
+	   expr="\"select the 'TEST' cmd to generate a sequence of InputData inputs according to a row in TestOrders\"";
+	  };
+	  my_mask=NULL;
+	  debug_level=NULL;
+	 };
+	};
+	case_val {
+	 expr="HELP";
+	};
+       };
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["Matrix"] {
+    UserDataItem_List @*(.user_data_) {
+     name="UserDataItem_List_61";
+     el_typ=UserData_DocLink;
+     el_def=0;
+     UserData_DocLink @["DocLink"] {
+      name="DocLink";
+      doc=.projects["program_examples"].docs["Matrix_css"]$$;
+     };
+    };
+    name="Matrix";
+    short_nm="MtrCss";
+    tags=;
+    desc="examples of all the matrix code you can use to manipulate matricies -- many require ; as they are css specific expressions not parsed by program elements";
+    flags=NO_STOP_STEP;
+    objs {
+     name="ProgObjList_7";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_7";
+     el_typ=Function;
+     el_def=0;
+     Function @["softmax"] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      name="softmax";
+      return_type=T_Real;
+      object_type=taMath_double;
+      args {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["v"] {
+	name="v";
+	var_type=T_Object;
+	object_type=double_Matrix;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["temp"] {
+	name="temp";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+      fun_code {
+       name="ProgEl_List_75";
+       el_typ=ProgCode;
+       el_def=0;
+       LocalVars @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	local_vars {
+	 name="ProgVar_List_0";
+	 el_typ=ProgVar;
+	 el_def=0;
+	 ProgVar @["tmp_v"] {
+	  name="tmp_v";
+	  var_type=T_Object;
+	  object_type=double_Matrix;
+	  object_val=NULL;
+	  objs_ptr=0;
+	  flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	  reference=0;
+	  desc=;
+	  init_from=NULL;
+	 };
+	};
+       };
+       AssignExpr @[1] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="tmp_v = exp(v) / temp";
+	result_var=.projects["program_examples"].programs.gp["Variables"]["Matrix"].functions["softmax"].fun_code[0].local_vars["tmp_v"]$$;
+	expr {
+	 expr="exp(v) / temp";
+	};
+       };
+       AssignExpr @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="rval = tmp_v / taMath_float::vec_sum(tmp_v)";
+	result_var=.projects["program_examples"].programs.gp["Variables"]["Matrix"].functions["softmax"].args["v"]$$;
+	expr {
+	 expr="tmp_v / vec_sum(tmp_v)";
+	};
+       };
+      };
+     };
+    };
+    init_code {
+     name="ProgEl_List_67";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_68";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["a"] {
+	name="a";
+	var_type=T_Object;
+	object_type=float_Matrix;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["b"] {
+	name="b";
+	var_type=T_Object;
+	object_type=float_Matrix;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["smax"] {
+	name="smax";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     Comment @[1] {
+      desc="note: look at the css console for output from this program";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// note: look at the css console for output from this program";
+     };
+     Comment @[2] {
+      desc="see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
+     };
+     Comment @[3] {
+      desc="(this page is linked in the Doc button above)";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// (this page is linked in the Doc button above)";
+     };
+     Comment @[4] {
+      desc="== initializing matricies ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == initializing matricies ==";
+     };
+     CssExpr @[5] {
+      desc="you can initialize a matrix from a list of values.  the ; in the middle indicates a dimension break, making this a 2d matrix";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="a = [1., 2., 3.; 4., 5., 6.];";
+      expr {
+       expr="a = [1., 2., 3.; 4., 5., 6.];";
+      };
+     };
+     PrintExpr @[6] {
+      desc="matricies have a pretty-print output (or pretty enough anyway)";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a:\\n\", a, \"\\n\\n\"";
+      expr {
+       expr="\"a:\\n\" << a";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[7] {
+      desc="== figuring out their dimensions ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == figuring out their dimensions ==";
+     };
+     CssExpr @[8] {
+      desc="b now has the dimension structure of a";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = shape(a);";
+      expr {
+       expr="b = shape(a);";
+      };
+     };
+     PrintExpr @[9] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"b = shape(a)\\n\" << b";
+      expr {
+       expr="\"b = shape(a)\\n\" << b << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[10] {
+      desc="number of dimensions";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"ndims(a):\\n\" << ndims(a) << endl";
+      expr {
+       expr="\"ndims(a):\\n\" << ndims(a) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[11] {
+      desc="== accessing cells in the matrix ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == accessing cells in the matrix ==";
+     };
+     PrintExpr @[12] {
+      desc="access a specific cell in a -- first idx is always inner-most dim (col)";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a[1,0]:\\n\" << a[1,0] << endl";
+      expr {
+       expr="\"a[1,0]:\\n\" << a[1,0] << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[13] {
+      desc="if you put a : in for a dimension, you get the whole thing";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a[:,0]:\\n\" << a[:,0] << endl";
+      expr {
+       expr="\"a[:,0]:\\n\" << a[:,0] << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[14] {
+      desc="note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
+     };
+     PrintExpr @[15] {
+      desc=": is actually a subset of full start:end:increment syntax for specifying a range";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
+      expr {
+       expr="\"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[16] {
+      desc="== assignment -- setting values ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == assignment -- setting values ==";
+     };
+     CssExpr @[17] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = [1., 2., 3.; 4., 5., 6.];";
+      expr {
+       expr="b = [1., 2., 3.; 4., 5., 6.];";
+      };
+     };
+     CssExpr @[18] {
+      desc="copy subsets of cells between matricies";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b[:,0] = a[:,1];";
+      expr {
+       expr="b[:,0] = a[:,1];";
+      };
+     };
+     PrintExpr @[19] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"b[:,0] = a[:,1]:\\n\" << b";
+      expr {
+       expr="\"b[:,0] = a[:,1]:\\n\" << b";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     CssExpr @[20] {
+      desc="sets all cells to same value";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = 3;
+printf(\"b=3:\\n\", b, \"\\n\\n\");";
+      expr {
+       expr="b = 3;";
+      };
+     };
+     PrintExpr @[21] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print  \"b=3:\\n\" << b << endl";
+      expr {
+       expr="\"b=3:\\n\" << b << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     CssExpr @[22] {
+      desc="assigning to a different matrix completely overwrites any existing values";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = [10,20,30];";
+      expr {
+       expr="b = [10,20,30];";
+      };
+     };
+     PrintExpr @[23] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"b = [10,20,30]:\\n\" << b << endl";
+      expr {
+       expr="\"b = [10,20,30]:\\n\" << b << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[24] {
+      desc="== making matricies out of matricies ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == making matricies out of matricies ==";
+     };
+     PrintExpr @[25] {
+      desc="this is now a 4D matrix";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
+      expr {
+       expr="\"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[26] {
+      desc="== matrix math ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == matrix math ==";
+     };
+     PrintExpr @[27] {
+      desc="all your favorites are here.. * and / are element wise!!";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a+a:\\n\" << a+a << endl";
+      expr {
+       expr="\"a+a:\\n\" << a+a << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     CssExpr @[28] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = [1., 2.; 3., 4.; 5., 6.];";
+      expr {
+       expr="b = [1., 2.; 3., 4.; 5., 6.];";
+      };
+     };
+     PrintExpr @[29] {
+      desc="this is how you do full matrix multiplication";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
+      expr {
+       expr="\"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[30] {
+      desc="yes, min is avail too";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print << \"max(a):\\n\" << max(a) << endl";
+      expr {
+       expr="\"max(a):\\n\" << max(a) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[31] {
+      desc="this is now an element-wise operator with the scalar";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"max(a,2):\\n\" << max(a,2) << endl";
+      expr {
+       expr="\"max(a,2):\\n\" << max(a,2) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[32] {
+      desc="sin, etc all here";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"cos(a):\\n\" << cos(a) << endl";
+      expr {
+       expr="\"cos(a):\\n\" << cos(a) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[33] {
+      desc="element-wise to the 3rd power";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"pow(a,3):\\n\" << pow(a,3) << endl";
+      expr {
+       expr="\"pow(a,3):\\n\" << pow(a,3) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[34] {
+      desc="a shorter form";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a^3:\\n\" << a^3 << endl";
+      expr {
+       expr="\"a^3:\\n\" << (a^3) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[35] {
+      desc="== boolean operators etc ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == boolean operators etc ==";
+     };
+     PrintExpr @[36] {
+      desc="element-wise true or false";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a>3:\\n\" << a>3 << endl";
+      expr {
+       expr="\"a>3:\\n\" << (a>3) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[37] {
+      desc="if a single element indexed, just a normal bool op";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a>3:\\n\" << a>3 << endl";
+      expr {
+       expr="\"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[38] {
+      desc="use the bools as a filter on the original matrix, returning only the 1's";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a[a>3]:\\n\" << a[a>3] << endl";
+      expr {
+       expr="\"a[a>3]:\\n\" << a[a>3] << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[39] {
+      desc="get the indexes of the cells that pass the test";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"find(a>3):\\n\" << find(a>3) << endl";
+      expr {
+       expr="\"find(a>3):\\n\" << find(a>3) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[40] {
+      desc="get the values -- this is a different filter on a matrix, so the output is different from a[a>3] but otherwise behaves the same";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
+      expr {
+       expr="\"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[41] {
+      desc="use flatten to turn a subset of a matrix into its own proper whole matrix -- always 1D due to arbitrary list-like nature of elements";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
+      expr {
+       expr="\"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[42] {
+      desc="== handy initializers ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == handy initializers ==";
+     };
+     PrintExpr @[43] {
+      desc="make a new empty matrix of given dimensionality";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
+      expr {
+       expr="\"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[44] {
+      desc="identity square matrix (1's along the diagonal, 0's elsewhere)";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print << \"eye(3):\\n\" << eye(3) << endl";
+      expr {
+       expr="\"eye(3):\\n\" << eye(3) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[45] {
+      desc="put the elements from given matrix along diagonal of new square matrix";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"diag(a,0):\\n\" << diag(a,0) << endl";
+      expr {
+       expr="\"diag(a,0):\\n\" << diag(a,0) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[46] {
+      desc="get them back out!";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
+      expr {
+       expr="\"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[47] {
+      desc="uniform random 0-1 elements";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"rand([4,3]):\\n\" << rand([4,3]) << endl";
+      expr {
+       expr="\"rand([4,3]):\\n\" << rand([4,3]) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[48] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
+      expr {
+       expr="\"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     PrintExpr @[49] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print << \"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
+      expr {
+       expr="\"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[50] {
+      desc="== function calling ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == function calling ==";
+     };
+     CssExpr @[51] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="b = [1.0, 2.0, 3.0];";
+      expr {
+       expr="b = [1.0, 2.0, 3.0];";
+      };
+     };
+     FunctionCall @[52] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="smax = softmax([1.0, 2.0, 3.0], 1.0)";
+      result_var=.projects["program_examples"].programs.gp["Variables"]["Matrix"].prog_code[0].local_vars["smax"]$$;
+      fun=.projects["program_examples"].programs.gp["Variables"]["Matrix"].functions["softmax"]$$;
+      fun_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=double_Matrix;
+	type="double_Matrix*";
+	name="v";
+	required=1;
+	def_val=;
+	expr {
+	 expr="b";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=double;
+	type="double";
+	name="temp";
+	required=1;
+	def_val=;
+	expr {
+	 expr="2.0";
+	};
+       };
+      };
+     };
+     PrintExpr @[53] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"softmax of b:\\n\" << b << endl";
+      expr {
+       expr="\"softmax of b = [1,2,3]:\\n\" << b << endl";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[54] {
+      desc="== more math functions ==";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == more math functions ==";
+     };
+     Comment @[55] {
+      desc="many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
+     };
+     Comment @[56] {
+      desc="either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
+     };
+     PrintExpr @[57] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="Print: \"vec_sum(a):\\n\" << vec_sum(a) << endl";
+      expr {
+       expr="\"vec_sum(a):\\n\" << vec_sum(a) << endl";
       };
       my_mask=NULL;
       debug_level=NULL;
@@ -8502,676 +10739,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
     tags=;
     desc=;
-    Program @["Matrix_css"] {
-     UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_61";
-      el_typ=UserData_DocLink;
-      el_def=0;
-      UserData_DocLink @["DocLink"] {
-       name="DocLink";
-       doc=.projects["program_examples"].docs["Matrix_css"]$$;
-      };
-     };
-     name="Matrix_css";
-     short_nm="MtrCss";
-     tags=;
-     desc="examples of all the matrix code you can use to manipulate matricies -- many require ; as they are css specific expressions not parsed by program elements";
-     flags=0;
-     objs {
-      name="ProgObjList_7";
-      el_typ=taNBase;
-      el_def=0;
-     };
-     types {
-      name="ProgType_List_0";
-      el_typ=DynEnumType;
-      el_def=0;
-     };
-     args {
-      name="ProgVar_List_0";
-      el_typ=ProgVar;
-      el_def=0;
-     };
-     vars {
-      name="ProgVar_List_0";
-      el_typ=ProgVar;
-      el_def=0;
-     };
-     functions {
-      name="Function_List_7";
-      el_typ=Function;
-      el_def=0;
-      Function @["softmax"] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       name="softmax";
-       return_type=T_Real;
-       object_type=taMath_double;
-       args {
-	name="ProgVar_List_0";
-	el_typ=ProgVar;
-	el_def=0;
-	ProgVar @["v"] {
-	 name="v";
-	 var_type=T_Object;
-	 object_type=double_Matrix;
-	 object_val=NULL;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-	ProgVar @["temp"] {
-	 name="temp";
-	 var_type=T_Real;
-	 real_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-       };
-       fun_code {
-	name="ProgEl_List_75";
-	el_typ=ProgCode;
-	el_def=0;
-	LocalVars @[0] {
-	 desc=;
-	 flags=0;
-	 orig_prog_code=;
-	 local_vars {
-	  name="ProgVar_List_0";
-	  el_typ=ProgVar;
-	  el_def=0;
-	  ProgVar @["tmp_v"] {
-	   name="tmp_v";
-	   var_type=T_Object;
-	   object_type=double_Matrix;
-	   object_val=NULL;
-	   objs_ptr=0;
-	   flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	   reference=0;
-	   desc=;
-	   init_from=NULL;
-	  };
-	 };
-	};
-	AssignExpr @[1] {
-	 desc=;
-	 flags=CAN_REVERT_TO_CODE;
-	 orig_prog_code="tmp_v = exp(v) / temp";
-	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["Matrix_css"].functions["softmax"].fun_code[0].local_vars["tmp_v"]$$;
-	 expr {
-	  expr="exp(v) / temp";
-	 };
-	};
-	AssignExpr @[2] {
-	 desc=;
-	 flags=CAN_REVERT_TO_CODE;
-	 orig_prog_code="rval = tmp_v / taMath_float::vec_sum(tmp_v)";
-	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["Matrix_css"].functions["softmax"].args["v"]$$;
-	 expr {
-	  expr="tmp_v / vec_sum(tmp_v)";
-	 };
-	};
-       };
-      };
-     };
-     init_code {
-      name="ProgEl_List_67";
-      el_typ=ProgCode;
-      el_def=0;
-     };
-     prog_code {
-      name="ProgEl_List_68";
-      el_typ=ProgCode;
-      el_def=0;
-      LocalVars @[0] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       local_vars {
-	name="ProgVar_List_0";
-	el_typ=ProgVar;
-	el_def=0;
-	ProgVar @["a"] {
-	 name="a";
-	 var_type=T_Object;
-	 object_type=float_Matrix;
-	 object_val=NULL;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-	ProgVar @["b"] {
-	 name="b";
-	 var_type=T_Object;
-	 object_type=float_Matrix;
-	 object_val=NULL;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-	ProgVar @["smax"] {
-	 name="smax";
-	 var_type=T_Real;
-	 real_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-       };
-      };
-      Comment @[1] {
-       desc="note: look at the css console for output from this program";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// note: look at the css console for output from this program";
-      };
-      Comment @[2] {
-       desc="see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// see http://grey.colorado.edu/emergent/index.php/Matrix_css for full comparison with matlab and numpy";
-      };
-      Comment @[3] {
-       desc="(this page is linked in the Doc button above)";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// (this page is linked in the Doc button above)";
-      };
-      Comment @[4] {
-       desc="== initializing matricies ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == initializing matricies ==";
-      };
-      CssExpr @[5] {
-       desc="you can initialize a matrix from a list of values.  the ; in the middle indicates a dimension break, making this a 2d matrix";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="a = [1., 2., 3.; 4., 5., 6.];";
-       expr {
-	expr="a = [1., 2., 3.; 4., 5., 6.];";
-       };
-      };
-      PrintExpr @[6] {
-       desc="matricies have a pretty-print output (or pretty enough anyway)";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a:\\n\", a, \"\\n\\n\"";
-       expr {
-	expr="\"a:\\n\" << a";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[7] {
-       desc="== figuring out their dimensions ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == figuring out their dimensions ==";
-      };
-      CssExpr @[8] {
-       desc="b now has the dimension structure of a";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b = shape(a);";
-       expr {
-	expr="b = shape(a);";
-       };
-      };
-      PrintExpr @[9] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"b = shape(a)\\n\" << b";
-       expr {
-	expr="\"b = shape(a)\\n\" << b << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[10] {
-       desc="number of dimensions";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"ndims(a):\\n\" << ndims(a) << endl";
-       expr {
-	expr="\"ndims(a):\\n\" << ndims(a) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[11] {
-       desc="== accessing cells in the matrix ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == accessing cells in the matrix ==";
-      };
-      PrintExpr @[12] {
-       desc="access a specific cell in a -- first idx is always inner-most dim (col)";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a[1,0]:\\n\" << a[1,0] << endl";
-       expr {
-	expr="\"a[1,0]:\\n\" << a[1,0] << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[13] {
-       desc="if you put a : in for a dimension, you get the whole thing";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a[:,0]:\\n\" << a[:,0] << endl";
-       expr {
-	expr="\"a[:,0]:\\n\" << a[:,0] << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[14] {
-       desc="note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
-      };
-      PrintExpr @[15] {
-       desc=": is actually a subset of full start:end:increment syntax for specifying a range";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
-       expr {
-	expr="\"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[16] {
-       desc="== assignment -- setting values ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == assignment -- setting values ==";
-      };
-      CssExpr @[17] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b = [1., 2., 3.; 4., 5., 6.];";
-       expr {
-	expr="b = [1., 2., 3.; 4., 5., 6.];";
-       };
-      };
-      CssExpr @[18] {
-       desc="copy subsets of cells between matricies";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b[:,0] = a[:,1];";
-       expr {
-	expr="b[:,0] = a[:,1];";
-       };
-      };
-      PrintExpr @[19] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"b[:,0] = a[:,1]:\\n\" << b";
-       expr {
-	expr="\"b[:,0] = a[:,1]:\\n\" << b";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      CssExpr @[20] {
-       desc="sets all cells to same value";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b = 3;
-printf(\"b=3:\\n\", b, \"\\n\\n\");";
-       expr {
-	expr="b = 3;";
-       };
-      };
-      PrintExpr @[21] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print  \"b=3:\\n\" << b << endl";
-       expr {
-	expr="\"b=3:\\n\" << b << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      CssExpr @[22] {
-       desc="assigning to a different matrix completely overwrites any existing values";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b = [10,20,30];";
-       expr {
-	expr="b = [10,20,30];";
-       };
-      };
-      PrintExpr @[23] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"b = [10,20,30]:\\n\" << b << endl";
-       expr {
-	expr="\"b = [10,20,30]:\\n\" << b << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[24] {
-       desc="== making matricies out of matricies ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == making matricies out of matricies ==";
-      };
-      PrintExpr @[25] {
-       desc="this is now a 4D matrix";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
-       expr {
-	expr="\"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[26] {
-       desc="== matrix math ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == matrix math ==";
-      };
-      PrintExpr @[27] {
-       desc="all your favorites are here.. * and / are element wise!!";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a+a:\\n\" << a+a << endl";
-       expr {
-	expr="\"a+a:\\n\" << a+a << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      CssExpr @[28] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b = [1., 2.; 3., 4.; 5., 6.];";
-       expr {
-	expr="b = [1., 2.; 3., 4.; 5., 6.];";
-       };
-      };
-      PrintExpr @[29] {
-       desc="this is how you do full matrix multiplication";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
-       expr {
-	expr="\"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[30] {
-       desc="yes, min is avail too";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print << \"max(a):\\n\" << max(a) << endl";
-       expr {
-	expr="\"max(a):\\n\" << max(a) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[31] {
-       desc="this is now an element-wise operator with the scalar";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"max(a,2):\\n\" << max(a,2) << endl";
-       expr {
-	expr="\"max(a,2):\\n\" << max(a,2) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[32] {
-       desc="sin, etc all here";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"cos(a):\\n\" << cos(a) << endl";
-       expr {
-	expr="\"cos(a):\\n\" << cos(a) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[33] {
-       desc="element-wise to the 3rd power";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"pow(a,3):\\n\" << pow(a,3) << endl";
-       expr {
-	expr="\"pow(a,3):\\n\" << pow(a,3) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[34] {
-       desc="a shorter form";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a^3:\\n\" << a^3 << endl";
-       expr {
-	expr="\"a^3:\\n\" << (a^3) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[35] {
-       desc="== boolean operators etc ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == boolean operators etc ==";
-      };
-      PrintExpr @[36] {
-       desc="element-wise true or false";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a>3:\\n\" << a>3 << endl";
-       expr {
-	expr="\"a>3:\\n\" << (a>3) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[37] {
-       desc="if a single element indexed, just a normal bool op";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a>3:\\n\" << a>3 << endl";
-       expr {
-	expr="\"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[38] {
-       desc="use the bools as a filter on the original matrix, returning only the 1's";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a[a>3]:\\n\" << a[a>3] << endl";
-       expr {
-	expr="\"a[a>3]:\\n\" << a[a>3] << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[39] {
-       desc="get the indexes of the cells that pass the test";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"find(a>3):\\n\" << find(a>3) << endl";
-       expr {
-	expr="\"find(a>3):\\n\" << find(a>3) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[40] {
-       desc="get the values -- this is a different filter on a matrix, so the output is different from a[a>3] but otherwise behaves the same";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
-       expr {
-	expr="\"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[41] {
-       desc="use flatten to turn a subset of a matrix into its own proper whole matrix -- always 1D due to arbitrary list-like nature of elements";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
-       expr {
-	expr="\"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[42] {
-       desc="== handy initializers ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == handy initializers ==";
-      };
-      PrintExpr @[43] {
-       desc="make a new empty matrix of given dimensionality";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
-       expr {
-	expr="\"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[44] {
-       desc="identity square matrix (1's along the diagonal, 0's elsewhere)";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print << \"eye(3):\\n\" << eye(3) << endl";
-       expr {
-	expr="\"eye(3):\\n\" << eye(3) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[45] {
-       desc="put the elements from given matrix along diagonal of new square matrix";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"diag(a,0):\\n\" << diag(a,0) << endl";
-       expr {
-	expr="\"diag(a,0):\\n\" << diag(a,0) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[46] {
-       desc="get them back out!";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
-       expr {
-	expr="\"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[47] {
-       desc="uniform random 0-1 elements";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"rand([4,3]):\\n\" << rand([4,3]) << endl";
-       expr {
-	expr="\"rand([4,3]):\\n\" << rand([4,3]) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[48] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
-       expr {
-	expr="\"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      PrintExpr @[49] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print << \"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
-       expr {
-	expr="\"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[50] {
-       desc="== function calling ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == function calling ==";
-      };
-      CssExpr @[51] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="b = [1.0, 2.0, 3.0];";
-       expr {
-	expr="b = [1.0, 2.0, 3.0];";
-       };
-      };
-      FunctionCall @[52] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="smax = softmax([1.0, 2.0, 3.0], 1.0)";
-       result_var=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["Matrix_css"].prog_code[0].local_vars["smax"]$$;
-       fun=.projects["program_examples"].programs.gp["Data"].gp["DataAccessUsingCss"]["Matrix_css"].functions["softmax"]$$;
-       fun_args {
-	name="ProgArg_List_0";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=double_Matrix;
-	 type="double_Matrix*";
-	 name="v";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="b";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=double;
-	 type="double";
-	 name="temp";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="2.0";
-	 };
-	};
-       };
-      };
-      PrintExpr @[53] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="print \"softmax of b:\\n\" << b << endl";
-       expr {
-	expr="\"softmax of b = [1,2,3]:\\n\" << b << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-      Comment @[54] {
-       desc="== more math functions ==";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// == more math functions ==";
-      };
-      Comment @[55] {
-       desc="many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// many of the functions in taMath_double are available directly, e.g., vec_sum, vec_mean, etc";
-      };
-      Comment @[56] {
-       desc="either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// either type in taMath_double into help browser, or just start typing taMath_double::vec_ followed by ctrl+L to choose";
-      };
-      PrintExpr @[57] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="Print: \"vec_sum(a):\\n\" << vec_sum(a) << endl";
-       expr {
-	expr="\"vec_sum(a):\\n\" << vec_sum(a) << endl";
-       };
-       my_mask=NULL;
-       debug_level=NULL;
-      };
-     };
-     step_prog=NULL;
-     step_n=1;
-    };
     Program @["UseLocalVarWhenAccessingMatrices"] {
      name="UseLocalVarWhenAccessingMatrices";
      short_nm="DtcCss";
@@ -9547,7 +11114,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      short_nm="DTblcs";
      tags=;
      desc="demonstrates how to access data table information using css matrix-based syntax -- i.e., the [ ] square brackets";
-     flags=0;
+     flags=NO_STOP_STEP;
      objs {
       name="ProgObjList_8";
       el_typ=taNBase;
@@ -9915,7 +11482,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      short_nm="DLp";
      tags=;
      desc="A data loop is a loop that goes through the rows of a data table";
-     flags=0;
+     flags=NO_STOP_STEP;
      objs {
       name="ProgObjList_4";
       el_typ=taNBase;
@@ -10205,7 +11772,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      short_nm="DClc";
      tags=;
      desc="Calculate a new value for every row and paste that value into a new column of the same or a different datatable";
-     flags=0;
+     flags=NO_STOP_STEP;
      objs {
       name="ProgObjList_9";
       el_typ=taNBase;
@@ -10609,7 +12176,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      short_nm="DtSlct";
      tags=;
      desc="Filter your data by selecting only those rows that meet a specification";
-     flags=0;
+     flags=NO_STOP_STEP;
      objs {
       name=;
       el_typ=taNBase;
@@ -10937,7 +12504,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      short_nm="DtGrp";
      tags=;
      desc="The grouping operation allows you to do calculations on all data of a particular group so you can compare groups";
-     flags=0;
+     flags=NO_STOP_STEP;
      objs {
       name="ProgObjList_11";
       el_typ=taNBase;
@@ -11255,7 +12822,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      short_nm="DSrt";
      tags=;
      desc="Sorting data - You can put the sorted data in a new table or do on the existing table";
-     flags=0;
+     flags=NO_STOP_STEP;
      objs {
       name=;
       el_typ=taNBase;
@@ -11656,7 +13223,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      ProgVar @["row"] {
       name="row";
       var_type=T_Int;
-      int_val=2;
+      int_val=3;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -11816,6 +13383,695 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var6=NULL;
       my_mask=NULL;
       debug_level=NULL;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["RandomFloats"] {
+    name="RandomFloats";
+    short_nm="RndFlt";
+    tags=;
+    desc=;
+    flags=NO_STOP_STEP;
+    objs {
+     name="ProgObjList_31";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    functions {
+     name="Function_List_31";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_186";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_187";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["rnd_val"] {
+	name="rnd_val";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["int_val"] {
+	name="int_val";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     RandomCall @[1] {
+      desc="this is the simplest, most commonly-used random number";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rnd_val = Random::ZeroOne()";
+      result_var=.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$$;
+      object_type=Random;
+      method=Random::ZeroOne;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     PrintVar @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"ZeroOne(): \" rnd_val";
+      message="ZeroOne():";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      print_var2=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     RandomCall @[3] {
+      desc="can also specify any range";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rnd_val = Random::ZeroOne()";
+      result_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      object_type=Random;
+      method=Random::UniformMinMax;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=double;
+	type="double";
+	name="min";
+	required=1;
+	def_val=;
+	expr {
+	 expr="-1.0";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=double;
+	type="double";
+	name="max";
+	required=1;
+	def_val=;
+	expr {
+	 expr="1.0";
+	};
+       };
+      };
+     };
+     PrintVar @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"ZeroOne(): \" rnd_val";
+      message="UniformMinMax():";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     RandomCall @[5] {
+      desc="gaussian is also very handy";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rnd_val=Random::GaussDen()";
+      result_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      object_type=Random;
+      method=Random::Gauss;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=double;
+	type="double";
+	name="stdev";
+	required=1;
+	def_val=;
+	expr {
+	 expr="1.0";
+	};
+       };
+      };
+     };
+     PrintVar @[6] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"ZeroOne(): \" rnd_val";
+      message="Gauss(1):";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     RandomCall @[7] {
+      desc="binomial is very convenient for saying how many events will happen out of a sample of n, given probability p";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rnd_val = Random::ZeroOne()";
+      result_var=.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["int_val"]$$;
+      object_type=Random;
+      method=Random::Binom;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="n";
+	required=1;
+	def_val=;
+	expr {
+	 expr="10";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=double;
+	type="double";
+	name="p";
+	required=1;
+	def_val=;
+	expr {
+	 expr=".5";
+	};
+       };
+      };
+     };
+     PrintVar @[8] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"ZeroOne(): \" rnd_val";
+      message="Binom(10,.5)";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["int_val"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["MiscMath"] {
+    name="MiscMath";
+    short_nm="MsMth";
+    tags=;
+    desc="there are a LOT of different math functions you can call!";
+    flags=NO_STOP_STEP;
+    objs {
+     name="ProgObjList_32";
+     el_typ=float_Matrix;
+     el_def=0;
+     float_Matrix @["float_mat_data"] {
+      name="float_mat_data";
+     [10] 0.30672255;0.70759809;0.49682745;1.4929799;1.5999862;0.39580837;-0.80858213;-0.91259706;-0.82331991;-1.8313906;
+     };
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["float_mat_data"] {
+      name="float_mat_data";
+      var_type=T_Object;
+      object_type=float_Matrix;
+      object_val=.projects["program_examples"].programs.gp["Math"]["MiscMath"].objs["float_mat_data"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["data_n"] {
+      name="data_n";
+      var_type=T_Int;
+      int_val=10;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="how much data to make";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="Function_List_32";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_190";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_191";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["rval"] {
+	name="rval";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["f"] {
+	name="f";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["i"] {
+	name="i";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     MathCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="taMath_float::euc_dist()";
+      result_var=.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$$;
+      object_type=taMath_float;
+      method=taMath_float::euc_dist;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=float;
+	type="float";
+	name="x1";
+	required=1;
+	def_val=;
+	expr {
+	 expr=".5";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=float;
+	type="float";
+	name="y1";
+	required=1;
+	def_val=;
+	expr {
+	 expr=".2";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=float;
+	type="float";
+	name="x2";
+	required=1;
+	def_val=;
+	expr {
+	 expr="2.5";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=float;
+	type="float";
+	name="y2";
+	required=1;
+	def_val=;
+	expr {
+	 expr="3.0";
+	};
+       };
+      };
+     };
+     PrintVar @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"euc_dist between .5,.2 and 2.5, 3.0: \", rval";
+      message="euc_dist between .5,.2 and 2.5, 3.0:";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     MathCall @[3] {
+      desc="this is also available as just plain atan2 -- but using taMath_float makes it easier to find them, and you can get some help too!";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rval = taMath_float::atan2()";
+      result_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      object_type=taMath_float;
+      method=taMath_float::atan2;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=float;
+	type="float";
+	name="Y";
+	required=1;
+	def_val=;
+	expr {
+	 expr="1.0";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=float;
+	type="float";
+	name="X";
+	required=1;
+	def_val=;
+	expr {
+	 expr="1.0";
+	};
+       };
+      };
+     };
+     PrintVar @[4] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"atan2(1,1): \", rval";
+      message="atan2(1,1):";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[5] {
+      desc="vector math -- lots of this -- let's make some data first";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// vector math -- lots of this -- let's make some data first";
+     };
+     MethodCall @[6] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="float_mat_data.SetGeom(1,10)";
+      result_var=NULL;
+      obj=.projects["program_examples"].programs.gp["Math"]["MiscMath"].vars["float_mat_data"]$$;
+      method=taMatrix::SetGeom;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="size";
+	required=1;
+	def_val=;
+	expr {
+	 expr="1";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="d0";
+	required=1;
+	def_val=;
+	expr {
+	 expr="data_n";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="d1";
+	required=0;
+	def_val="0";
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[3] {
+	arg_type=int;
+	type="int";
+	name="d2";
+	required=0;
+	def_val="0";
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[4] {
+	arg_type=int;
+	type="int";
+	name="d3";
+	required=0;
+	def_val="0";
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[5] {
+	arg_type=int;
+	type="int";
+	name="d4";
+	required=0;
+	def_val="0";
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[6] {
+	arg_type=int;
+	type="int";
+	name="d5";
+	required=0;
+	def_val="0";
+	expr {
+	 expr=;
+	};
+       };
+       ProgArg @[7] {
+	arg_type=int;
+	type="int";
+	name="d6";
+	required=0;
+	def_val="0";
+	expr {
+	 expr=;
+	};
+       };
+      };
+     };
+     ForLoop @[7] {
+      desc="just make some random data";
+      flags=0;
+      orig_prog_code="for(int i=0;i<data_n; i++)";
+      loop_code {
+       name="ProgEl_List_195";
+       el_typ=ProgCode;
+       el_def=0;
+       CssExpr @[0] {
+	desc="should be 0 mean, stdev 1 -- is it??";
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="float_mat_data[i] = Random::Gauss(1.0);";
+	expr {
+	 expr="float_mat_data[i] = Random::Gauss(1.0);";
+	};
+       };
+      };
+      init {
+       expr="int i=0";
+      };
+      test {
+       expr="i<data_n";
+      };
+      iter {
+       expr=" i++";
+      };
+     };
+     MathCall @[8] {
+      desc="get the mean of all the numbers";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rval = taMath_float::vec_mean(float_mat_data)";
+      result_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      object_type=taMath_float;
+      method=taMath_float::vec_mean;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_float_Matrix_ptr;
+	type="float_Matrix*";
+	name="vec";
+	required=1;
+	def_val=;
+	expr {
+	 expr="float_mat_data";
+	};
+       };
+      };
+     };
+     PrintVar @[9] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"mean of our gaussian (normal) random data: \", rval";
+      message="mean of our gaussian (normal) random data:";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     MathCall @[10] {
+      desc="we make it faster by using the existing mean -- hardly matters but wth";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="rval = taMath_float::vec_std_dev(float_mat_data)";
+      result_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      object_type=taMath_float;
+      method=taMath_float::vec_std_dev;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_float_Matrix_ptr;
+	type="float_Matrix*";
+	name="vec";
+	required=1;
+	def_val=;
+	expr {
+	 expr="float_mat_data";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=float;
+	type="float";
+	name="mean";
+	required=0;
+	def_val="0";
+	expr {
+	 expr="rval";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=bool;
+	type="bool";
+	name="use_mean";
+	required=0;
+	def_val="false";
+	expr {
+	 expr="true";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="use_est";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
+	};
+       };
+      };
+     };
+     PrintVar @[11] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"standard deviation: \" rval";
+      message="standard deviation:";
+      print_var=$.projects["program_examples"].programs.gp["Math"]["MiscMath"].prog_code[0].local_vars["rval"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[12] {
+      desc="see Matrix program for lots of Matrix math..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// see Matrix program for lots of Matrix math..";
      };
     };
     step_prog=NULL;
@@ -12509,22 +14765,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.001564945210702717;
+     value 6 0=0.003196590347215533;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.04301833733916283;
+     value 6 0=0.02631578966975212;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9929577708244324;
+     value 6 0=0.9925413131713867;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.798307478427887;
+     value 6 0=0.7979626655578613;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -13708,17 +15964,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007757404819130898;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.03208137676119804;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7454161047935486;
+       value 6 0=0.7342954277992249;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

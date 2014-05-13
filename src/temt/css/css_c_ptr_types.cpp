@@ -1604,3 +1604,29 @@ void cssCPtr_DynEnum::operator|=(cssEl& t)	{
   de.SetNumVal(de.NumVal() | (Int)t);
   if(class_parent)	class_parent->UpdateAfterEdit();
 }
+
+int cssCPtr_DynEnum::GetMethodNo(const String& memb) const {
+  return GetMethodNo_impl(&TA_DynEnum, memb);
+}
+
+cssEl* cssCPtr_DynEnum::GetMethodFmName(const String& memb) const {
+  void* sp = GetNonNullVoidPtr("->()");
+  if(!sp) return &cssMisc::Void;
+  DynEnum& val = *((DynEnum*)sp);
+  return GetMethodFmName_impl(&TA_DynEnum, (void*)&val, memb);
+}
+
+cssEl* cssCPtr_DynEnum::GetMethodFmNo(int memb) const {
+  void* sp = GetNonNullVoidPtr("->()");
+  if(!sp) return &cssMisc::Void;
+  DynEnum& val = *((DynEnum*)sp);
+  return GetMethodFmNo_impl(&TA_DynEnum, (void*)&val, memb);
+}
+
+cssEl* cssCPtr_DynEnum::GetScoped(const String& memb) const {
+  void* sp = GetNonNullVoidPtr("::");
+  if(!sp) return &cssMisc::Void;
+  DynEnum& val = *((DynEnum*)sp);
+  return GetScoped_impl(&TA_DynEnum, (void*)&val, memb);
+}
+

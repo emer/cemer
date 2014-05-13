@@ -76,7 +76,7 @@ void PrintVar::GenCssBody_impl(Program* prog) {
 String PrintVar::GetDisplayName() const {
   String rval = "Print:";
   if(message.nonempty())
-    rval += " " + message;
+    rval += " \"" + message + "\"";
   if(print_var)
     rval += " " + print_var->name;
   if((bool)print_var2)
@@ -143,6 +143,9 @@ bool PrintVar::CvtFmCode(const String& code) {
   int idx = 0;
   ProgVarRef* refs[6] = {&print_var, &print_var2, &print_var3, &print_var4, &print_var5,
                          &print_var6};
+  for(int i=0;i<6;i++) {        // reset all before setting -- otherwise never get reset
+    *(refs[i]) = NULL;
+  }
   do {
     String varnm = varnms;
     if (varnms.contains(',')) {

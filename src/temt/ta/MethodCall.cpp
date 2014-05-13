@@ -44,7 +44,8 @@ void MethodCall::UpdateAfterEdit_impl() {
     }
     meth_sig = method->prototype();
     meth_desc = method->desc;
-  } else {
+  }
+  else {
     meth_sig = _nilString;
     meth_desc = _nilString;
   }

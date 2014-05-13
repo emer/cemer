@@ -872,6 +872,11 @@ public:
   void operator&=(cssEl& t);
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
+
+  int	 GetMethodNo(const String&) const;
+  cssEl* GetMethodFmName(const String& memb) const;
+  cssEl* GetMethodFmNo(int memb) const;
+  cssEl* GetScoped(const String& nm) const;
 };
 
 #endif // css_ptr_i_h

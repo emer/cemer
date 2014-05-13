@@ -38,56 +38,43 @@ void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
              "enum_type is not set for this dynamic enum value");
 }
 
-const String DynEnum::NameVal() const {
-  if(!enum_type) return _nilString;
-  if(enum_type->bits) {
-    String rval;
-    for(int i=0;i<enum_type->enums.size;i++) {
-      DynEnumItem* it = enum_type->enums.FastEl(i);
-      if(value & it->value) {
-        if(!rval.empty()) rval += "|";
-        rval += it->name;
-      }
-    }
-    return rval;
-  }
-  else {
-    for(int i=0;i<enum_type->enums.size;i++) {
-      DynEnumItem* it = enum_type->enums.FastEl(i);
-      if(value == it->value) {
-        return it->name;
-      }
-    }
-  }
-  return _nilString;
+String DynEnum::NameVal() const {
+  return NumberToName(value);
 }
 
 bool DynEnum::SetNameVal(const String& nm) {
   if(!enum_type) return false;
-  if(enum_type->bits) {
-    String strval = nm;
-    int bits = 0;
-    while(strval.nonempty()) {
-      String curstr = strval;
-      if(strval.contains('|')) {
-        curstr = strval.before('|');
-        strval = strval.after('|');
-      }
-      else
-        strval = _nilString;
-      DynEnumItem* it = enum_type->enums.FindName(curstr);
-      if(!TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!")) {
-        bits |= it->value;
-      }
-    }
-    value = bits;
-  }
-  else {
-    DynEnumItem* it = enum_type->enums.FindName(nm);
-    if(TestError(!it, "SetNameVal", "value label:", nm, "not found!"))
-      return false;
-    value = it->value;
-  }
+  value = NameToNumber(nm);
   return true;
+}
+
+String DynEnum::NumberToName(int val) const {
+  if(!enum_type) return _nilString;
+  return enum_type->NumberToName(val);
+}
+
+int    DynEnum::NameToNumber(const String& nm) const {
+  if(!enum_type) return 0;
+  return enum_type->NameToNumber(nm);
+}
+
+void  DynEnum::NumberToName_Array(String_Array& names, const int_Array& vals) const {
+  if(!enum_type) return;
+  enum_type->NumberToName_Array(names, vals);
+}
+
+void  DynEnum::NameToNumber_Array(int_Array& vals, const String_Array& names) const {
+  if(!enum_type) return;
+  enum_type->NameToNumber_Array(vals, names);
+}
+
+void  DynEnum::NumberToName_Matrix(String_Matrix& names, const int_Matrix& vals) const {
+  if(!enum_type) return;
+  enum_type->NumberToName_Matrix(names, vals);
+}
+
+void  DynEnum::NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names) const {
+  if(!enum_type) return;
+  enum_type->NameToNumber_Matrix(vals, names);
 }
 
