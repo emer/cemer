@@ -17,6 +17,8 @@
 
 #include <SigLinkSignal>
 #include <iLineEdit>
+#include <ProgEl>
+#include <ProgExprBase>
 
 #include <taMisc>
 
@@ -82,6 +84,9 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
   taBase* tab = tadata();
   if(!tab) return;
 
+  int cur_pos = le->cursorPosition();
+  int new_pos = -1;
+
   TypeDef* td = tab->GetTypeDef();
   for(int i=0; i<td->members.size; i++) {
     MemberDef* md = td->members[i];
@@ -89,10 +94,8 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
     if(!md->type->IsTaBase()) {
       taMisc::Warning("Programmer error in taiTreeNodeTaBase::lookupKeyPressed -- #BROWSER_EDIT_LOOKUP on member:", md->name, "type must be a taBase");
       return;
-    }      
+    }
     taBase* bel = (taBase*)md->GetOff(tab);
-    int cur_pos = le->cursorPosition();
-    int new_pos = -1;
     String rval = bel->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
@@ -106,5 +109,21 @@ void taiTreeNodeTaBase::lookupKeyPressed(iLineEdit* le, int column) {
       else
         le->setCursorPosition(cur_pos); // go back to orig pos
     }
+    return;                     // if we get it, bail
+  }
+
+  // didn't find any -- call the one on the guy itself!
+  String rval = tab->StringFieldLookupFun(le->text(), cur_pos, "", new_pos);
+#ifdef TA_OS_MAC
+  // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
+  le->window()->setFocus();
+  le->setFocus();
+#endif
+  if(rval.nonempty()) {
+    le->setText(rval);
+    if(new_pos >= 0)
+      le->setCursorPosition(new_pos); // go back to orig pos
+    else
+      le->setCursorPosition(cur_pos); // go back to orig pos
   }
 }

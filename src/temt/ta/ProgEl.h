@@ -190,6 +190,9 @@ public:
   virtual String        GetToolbarName() const;
   // #IGNORE name of the program element as represented in the programming toolbar
 
+  String StringFieldLookupFun(const String& cur_txt, int cur_pos,
+                              const String& mbr_name, int& new_pos) override;
+
   TA_BASEFUNS(ProgEl);
 
 protected:

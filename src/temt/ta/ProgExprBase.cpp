@@ -40,7 +40,7 @@ TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 cssProgSpace* ProgExprBase::parse_prog = NULL;
 cssSpace* ProgExprBase::parse_tmp = NULL;
 
-static ProgExprBase* expr_lookup_cur_base = NULL;
+static ProgEl* expr_lookup_cur_base = NULL;
 
 void ProgExprBase::Initialize() {
   flags = PE_NONE;
@@ -387,8 +387,6 @@ String ProgExprBase::GetFullExpr() const {
   return rval;
 }
 
-// StringFieldLookupFun is in ta_program_qt.cpp
-
 bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
   if(!base_) return true;
   Program* prog = dynamic_cast<Program*>(static_cast<taBase*>(base_));
@@ -406,7 +404,7 @@ bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
 
 String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_pos,
                                    taBase*& path_own_obj, TypeDef*& path_own_typ,
-                                   MemberDef*& path_md, ProgExprBase* expr_base,
+                                   MemberDef*& path_md, ProgEl* own_pel,
                                    Program* own_prg, Function* own_fun,
                                    taBase* path_base, TypeDef* path_base_typ) {
   path_own_obj = NULL;
@@ -498,17 +496,14 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
     varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
-    if(expr_base) {
-      ProgEl* pel = GET_OWNER(expr_base, ProgEl);
-      if(pel) {
-        LocalVars* pvs = pel->FindLocalVarList();
-        if(pvs) {
-          varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
-        }
+    if(own_pel) {
+      LocalVars* pvs = own_pel->FindLocalVarList();
+      if(pvs) {
+        varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
       }
     }
     varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
-    expr_lookup_cur_base = expr_base;
+    expr_lookup_cur_base = own_pel;
     varlkup->type_list.Link(&TA_ProgVar);
     varlkup->type_list.Link(&TA_DynEnumItem);
     varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
@@ -717,15 +712,17 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                           const String& mbr_name, int& new_pos) {
 
-  Program* own_prg = GET_MY_OWNER(Program);
+  ProgEl* own_pel = GET_MY_OWNER(ProgEl);
+  if(!own_pel) return _nilString;
+  Program* own_prg = GET_OWNER(own_pel, Program);
   if(!own_prg) return _nilString;
-  Function* own_fun = GET_MY_OWNER(Function);
+  Function* own_fun = GET_OWNER(own_pel, Function);
   taBase* path_own_obj = NULL;
   TypeDef* path_own_typ = NULL;
   MemberDef* path_md = NULL;
   return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
-                                     this, own_prg, own_fun);
+                                     own_pel, own_prg, own_fun);
 }
 
 String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
@@ -750,7 +747,7 @@ String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   MemberDef* path_md = NULL;
   rval = ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
-                                     NULL, own_prg, own_fun, path_base, path_base_typ);
+                                     this, own_prg, own_fun, path_base, path_base_typ);
 
   if(path_own_typ) {
     obj_type = path_own_typ;

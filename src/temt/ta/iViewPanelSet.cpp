@@ -40,11 +40,13 @@ void iViewPanelSet::AddSubPanel(iViewPanel* pn) {
   pn->m_dps = this;
   panels.Add(pn);
   wsSubPanels->addWidget(pn);
-  tbSubPanels->addTab(pn->TabText());
+  int idx = tbSubPanels->addTab(pn->TabText());
 
   pn->AddedToPanelSet();
   iPanelViewer* itv = tabViewerWin();
   if (itv) pn->OnWindowBind(itv);
+  // doesn't do anything:
+  //  tbSubPanels->setTabText(idx, pn->TabText()); // try to refresh it right away
 }
 
 void iViewPanelSet::PanelDestroying(iViewPanel* pn) {
