@@ -47,6 +47,8 @@ if (WIN32)
   # Has to be lowercase "emergent", not "Emergent" to match what's in
   # CPACK_PACKAGE_EXECUTABLES.
   SET(CPACK_CREATE_DESKTOP_LINKS emergent${EMERGENT_SUFFIX})
+
+  # Set the registry values that tell Windows to automatically open files in emergent
   SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
     WriteRegStr HKCR '.proj' '' 'Emergent.proj'
     WriteRegStr HKCR 'Emergent.proj' '' 'Emergent Project File'
@@ -106,7 +108,10 @@ if (WIN32)
   # Normally these are all derived from the CPACK_PACKAGE_NAME, but
   # it looks funny when the version number gets appended after the
   # architecture, so instead set everything explicitly.
-  SET(EMER_FULL_NAME "Emergent${EMERGENT_SUFFIX} ${EMERGENT_VERSION} (${EMER_ARCH_BITS}-bit)")
+  # Also remove spaces from installation name, otherwise future plugins
+  # won't compile. (i.e. default dir should not be "C:\Program Files")
+  SET(CPACK_NSIS_INSTALL_ROOT "C:")
+  SET(EMER_FULL_NAME "Emergent${EMERGENT_SUFFIX}-${EMERGENT_VERSION}-${EMER_ARCH_BITS}bit")
   SET(CPACK_NSIS_DISPLAY_NAME "${EMER_FULL_NAME}")
   SET(CPACK_NSIS_PACKAGE_NAME "${EMER_FULL_NAME}")
   SET(CPACK_PACKAGE_EXECUTABLES "emergent${EMERGENT_SUFFIX};${EMER_FULL_NAME}")
