@@ -20,6 +20,7 @@
 #include <taRootBase>
 #include <taProject>
 #include <ProgElChoiceDlg>
+#include <iDialogChoice>
 
 TA_BASEFUNS_CTORS_DEFN(ProgCode);
 
@@ -155,15 +156,16 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
     if(ctrl_n != 1) {		// still need to pick -- ctrl_n should never be > 1 but who knows
       cvt = candidates[0];
       if(candidates.size > 1) {
-	int chs = taMisc::Choice("Multiple program elements match code string:\n"
-                                 + code_mod + "\nPlease choose correct one.",
-	 "Cancel",
-	 candidates[0]->GetToolbarName(),
-	 candidates[1]->GetToolbarName(),
-	 (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
-	 (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
-	 (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
-	 );
+        String delimiter = iDialogChoice::delimiter;
+        String sep_but = candidates[0]->GetToolbarName();
+        for(int i=1;i<candidates.size;i++) {
+          sep_but += delimiter + candidates[i]->GetToolbarName();
+        }
+	int chs = iDialogChoice::ChoiceDialogSepBut
+          (NULL, "Multiple program elements match code string:\n"
+           + code_mod + "\nPlease choose correct one.",
+           sep_but,
+           "Cancel" + delimiter);
 	if(chs == 0) return NULL;
 	cvt = candidates[chs-1];
         if(has_final_semi && cvt != tabMisc::root->GetTemplateInstance(&TA_CssExpr)) {
