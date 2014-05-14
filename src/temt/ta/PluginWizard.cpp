@@ -267,7 +267,11 @@ bool PluginWizard::Create() {
     if(ok) {
       // copy permissions!
       QFile::Permissions sp = QFile::permissions(src_file);
+      if(files[i] == "configure") {
+        sp |= QFile::ExeOwner | QFile::ExeGroup | QFile::ExeOther;
+      }
       QFile::setPermissions(dst_file, sp);
+      taMisc::Info("set permissions on:",dst_file,"to:",String(sp, "%x"));
     }
   }
 
