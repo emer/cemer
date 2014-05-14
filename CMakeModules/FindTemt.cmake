@@ -7,9 +7,9 @@
 # IMPORTANT: the EMERGENT_SUFFIX must be set by SetBuildSuffix.cmake module prior to this!
 
 if (WIN32)
-  if (NOT EXISTS "${EMERGENTDIR}/include/ta_type.h")
+  if (NOT EXISTS "${EMERGENTDIR}/include/ta_stdef.h")
     message(FATAL_ERROR "EMERGENTDIR environment variable must point to Emergent install directory!")
-  endif (NOT EXISTS "${EMERGENTDIR}/include/ta_type.h")
+  endif (NOT EXISTS "${EMERGENTDIR}/include/ta_stdef.h")
   set(TEMT_INCLUDE_DIR "${EMERGENTDIR}/include")
 else (WIN32)
   FIND_PATH(TEMT_INCLUDE_DIR taBase.h
