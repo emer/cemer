@@ -370,109 +370,131 @@ QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const 
 
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-
+  
   QTreeWidgetItem* cur_item = currentItem();
-
+  
+  if (e->modifiers() & Qt::ShiftModifier) {
+    QTreeWidgetItem* prev_or_next_item = NULL;
+    if (e->key() == Qt::Key_Up) {
+      prev_or_next_item = getPrevItem(currentItem(), 1);
+      
+    }
+    else if (e->key() == Qt::Key_Down) {
+      prev_or_next_item = getNextItem(currentItem(), 1);
+    }
+    if (prev_or_next_item) {
+      if (prev_or_next_item->isSelected() == false) {
+        prev_or_next_item->setSelected(true);
+        setCurrentItem(prev_or_next_item);
+      }
+      else {
+        setCurrentItem(prev_or_next_item);            }
+    }
+    
+    e->accept();
+    return;
+  }
+  
   if(ctrl_pressed) {
     QPersistentModelIndex newCurrent = currentIndex();
     switch (e->key()) {
-    case Qt::Key_S:		// s works too
-    case Qt::Key_Space:
-      clearSelection();
-      // select this guy
-      selectionModel()->setCurrentIndex(currentIndex(),
-                                        QItemSelectionModel::ClearAndSelect);
-      // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+      case Qt::Key_S:		// s works too
+      case Qt::Key_Space:
+        clearSelection();
+        // select this guy
+        selectionModel()->setCurrentIndex(currentIndex(),
+                                          QItemSelectionModel::ClearAndSelect);
+        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         // editItem(cur_item);     // todo: get column
-      // }
-      // else {
+        // }
+        // else {
         ext_select_on = true;
-      // }
-      e->accept();
-      return;			// don't continue
-    case Qt::Key_G:
-      clearExtSelection();
-      e->accept();
-      break;
-    case Qt::Key_N:
-      newCurrent = moveCursor(MoveDown, e->modifiers());
-      e->accept();
-      break;
-    case Qt::Key_P:
-      newCurrent = moveCursor(MoveUp, e->modifiers());
-      e->accept();
-      break;
-    case Qt::Key_U:
-    case Qt::Key_Up:
-      newCurrent = moveCursor(MovePageUp, e->modifiers());
-      e->accept();
-      break;
-    case Qt::Key_Down:
-      newCurrent = moveCursor(MovePageDown, e->modifiers());
-      e->accept();
-      break;
-    case Qt::Key_V:
-      if(taMisc::emacs_mode) {
-	newCurrent = moveCursor(MovePageDown, e->modifiers());
-	e->accept();
-      }
-      else {
-	e->ignore();		// save for paste elsewhere
-      }
-      break;
-    case Qt::Key_F:
-      // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-      //   editItem(cur_item);     // todo: get column
-      // }
-      // else {
+        // }
+        e->accept();
+        return;			// don't continue
+      case Qt::Key_G:
+        clearExtSelection();
+        e->accept();
+        break;
+      case Qt::Key_N:
+        newCurrent = moveCursor(MoveDown, e->modifiers());
+        e->accept();
+        break;
+      case Qt::Key_P:
+        newCurrent = moveCursor(MoveUp, e->modifiers());
+        e->accept();
+        break;
+      case Qt::Key_U:
+      case Qt::Key_Up:
+        newCurrent = moveCursor(MovePageUp, e->modifiers());
+        e->accept();
+        break;
+      case Qt::Key_Down:
+        newCurrent = moveCursor(MovePageDown, e->modifiers());
+        e->accept();
+        break;
+      case Qt::Key_V:
+        if(taMisc::emacs_mode) {
+          newCurrent = moveCursor(MovePageDown, e->modifiers());
+          e->accept();
+        }
+        else {
+          e->ignore();		// save for paste elsewhere
+        }
+        break;
+      case Qt::Key_F:
+        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        //   editItem(cur_item);     // todo: get column
+        // }
+        // else {
         newCurrent = moveCursor(MoveRight, e->modifiers());
-      // }
-      e->accept();
-      break;
-    case Qt::Key_B:
-      newCurrent = moveCursor(MoveLeft, e->modifiers());
-      e->accept();
-      break;
-    case Qt::Key_Enter:
-    case Qt::Key_Return:
-      e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
-      return;
-    case Qt::Key_A:
-      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-        edit_start_pos = 0;
-        editItem(cur_item);     // todo: get column
-      }
-      e->accept();
-      break;
-    case Qt::Key_E:
-      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-        edit_start_pos = -1;
-        editItem(cur_item);     // todo: get column
-      }
-      e->accept();
-      break;
+        // }
+        e->accept();
+        break;
+      case Qt::Key_B:
+        newCurrent = moveCursor(MoveLeft, e->modifiers());
+        e->accept();
+        break;
+      case Qt::Key_Enter:
+      case Qt::Key_Return:
+        e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
+        return;
+      case Qt::Key_A:
+        if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+          edit_start_pos = 0;
+          editItem(cur_item);     // todo: get column
+        }
+        e->accept();
+        break;
+      case Qt::Key_E:
+        if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+          edit_start_pos = -1;
+          editItem(cur_item);     // todo: get column
+        }
+        e->accept();
+        break;
     }
-
+    
     // from qabstractitemview.cpp
     QPersistentModelIndex oldCurrent = currentIndex();
     if(newCurrent.isValid() && newCurrent != oldCurrent) {
       QItemSelectionModel::SelectionFlags command;
       if(ext_select_on) {
-	// the following logic prevents selecting items at different levels!
-	QModelIndexList sels = selectionModel()->selectedIndexes();
-	if(m_sibling_sel && sels.count() > 0) {
-	  QModelIndex firstpar = sels[0].parent();
-	  if(newCurrent.parent() == firstpar) // only select at same level!
-	    command = QItemSelectionModel::Select;
-	  else
-	    command = QItemSelectionModel::Current;
-	}
-	else {
-	  command = QItemSelectionModel::Select;
-	}
+        // the following logic prevents selecting items at different levels!
+        QModelIndexList sels = selectionModel()->selectedIndexes();
+        if(m_sibling_sel && sels.count() > 0) {
+          QModelIndex firstpar = sels[0].parent();
+          if(newCurrent.parent() == firstpar) // only select at same level!
+            command = QItemSelectionModel::Select;
+          else
+            command = QItemSelectionModel::Current;
+        }
+        else {
+          command = QItemSelectionModel::Select;
+        }
       }
       else {
-	command = QItemSelectionModel::ClearAndSelect;
+        command = QItemSelectionModel::ClearAndSelect;
       }
       selectionModel()->setCurrentIndex(newCurrent, command);
       return;
@@ -489,12 +511,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   //     break;
   //   }
   // }
-
+  
   // esc interferes with dialog cancel and other such things
-//   if(event->key() == Qt::Key_Escape) {
-//     clearExtSelection();
-//     return;
-//   }
+  //   if(event->key() == Qt::Key_Escape) {
+  //     clearExtSelection();
+  //     return;
+  //   }
   inherited::keyPressEvent( e );
 }
 
