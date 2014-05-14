@@ -529,7 +529,13 @@ iTreeViewItem* iTreeView::item(int i) const {
 }
 
 void iTreeView::ItemDestroyingCb(iTreeViewItem* item) {
-  RemoveSelectedItem((ISelectable*)item, false); // not forced, because it is gui
+  if(selItems().FindEl((ISelectable*)item) >= 0) {
+    // if we are selected, select next guy..
+    QTreeWidgetItem* nxt = getNextItem(item);
+    if(nxt)
+      selectItem(nxt);
+    RemoveSelectedItem((ISelectable*)item, false); // not forced, because it is gui
+  }
 }
 
 QMimeData* iTreeView::mimeData(const QList<QTreeWidgetItem*> items) const {

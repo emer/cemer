@@ -39,6 +39,8 @@ public:
   iMethodButtonMgr*     meth_but_mgr;
   DataTableView*        lv() {return (DataTableView*)m_dv;}
 
+  String       TabText() const override;
+
   iViewPanelOfDataTable(DataTableView* lv);
   ~iViewPanelOfDataTable();
 

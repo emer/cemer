@@ -47,3 +47,21 @@ iViewPanelOfDataTable::iViewPanelOfDataTable(DataTableView* lv)
 
 iViewPanelOfDataTable::~iViewPanelOfDataTable() {
 }
+
+String iViewPanelOfDataTable::TabText() const {
+  if (m_dv) {
+    String rval = m_dv->GetLabel();
+    if(((DataTableView*)m_dv)->dataTable()) {
+      String dtname = ((DataTableView*)m_dv)->dataTable()->name;
+      if(rval.startsWith("Graph"))
+        rval = dtname + " Graph";
+      else if(rval.startsWith("Grid"))
+        rval = dtname + " Grid";
+    }
+    return rval;
+  }
+  else {
+    return inherited::TabText();
+  }
+}
+
