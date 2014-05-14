@@ -661,15 +661,15 @@ public:
   // #EXPERT #CAT_Access get data of scalar type, in Variant form, for given column, row
   bool                  SetValAsVar(const Variant& val, const Variant& col, int row);
   // #EXPERT #CAT_Modify set data of scalar type, in Variant form, for given column, row; returns 'true' if valid access and set is successful
-  double                GetValAsDouble(const Variant& col, int row);
+  double                GetValAsDouble(const Variant& col, int row) const;
   // #EXPERT #CAT_Access get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
   bool                  SetValAsDouble(double val, const Variant& col, int row);
   // #EXPERT #CAT_Modify set data of scalar type, in double form, for given column, row; does nothing if no cell' 'true' if set
-  float                 GetValAsFloat(const Variant& col, int row);
+  float                 GetValAsFloat(const Variant& col, int row) const;
   // #EXPERT #CAT_Access get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
   bool                  SetValAsFloat(float val, const Variant& col, int row);
   // #EXPERT #CAT_Modify set data of scalar type, in float form, for given column, row; does nothing if no cell' 'true' if set
-  int                   GetValAsInt(const Variant& col, int row);
+  int                   GetValAsInt(const Variant& col, int row) const;
   // #EXPERT #CAT_Access get data of scalar type, in int form, for given col, row; if data is NULL, then 0 is returned
   bool                  SetValAsInt(int val, const Variant& col, int row);
   // #EXPERT #CAT_Modify set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set
@@ -685,15 +685,15 @@ public:
   // #EXPERT #CAT_Access get data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix
   bool                  SetValAsVarM(const Variant& val, const Variant& col, int row, int cell);
   // #EXPERT #CAT_Modify set data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix; returns 'true' if valid access and set is successful
-  double                GetValAsDoubleM(const Variant& col, int row, int cell);
+  double                GetValAsDoubleM(const Variant& col, int row, int cell) const;
   // #EXPERT #CAT_Access get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool                  SetValAsDoubleM(double val, const Variant& col, int row, int cell);
   // #EXPERT #CAT_Modify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  float                 GetValAsFloatM(const Variant& col, int row, int cell);
+  float                 GetValAsFloatM(const Variant& col, int row, int cell) const;
   // #EXPERT #CAT_Access get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool                  SetValAsFloatM(float val, const Variant& col, int row, int cell);
   // #EXPERT #CAT_Modify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  int                   GetValAsIntM(const Variant& col, int row, int cell);
+  int                   GetValAsIntM(const Variant& col, int row, int cell) const;
   // #EXPERT #CAT_Access get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool                  SetValAsIntM(int val, const Variant& col, int row, int cell);
   // #EXPERT #CAT_Modify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
@@ -713,40 +713,51 @@ public:
                                          int d0, int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Modify set data of matrix type, in Variant form, for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
-  double                GetValAsDoubleMDims(const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  double                GetValAsDoubleMDims(const Variant& col, int row, int d0,
+                                            int d1=0, int d2=0, int d3=0) const;
   // #EXPERT #CAT_Access get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool                  SetValAsDoubleMDims(double val, const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool                  SetValAsDoubleMDims(double val, const Variant& col, int row,
+                                            int d0, int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Modify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  float                 GetValAsFloatMDims(const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  float                 GetValAsFloatMDims(const Variant& col, int row, int d0,
+                                           int d1=0, int d2=0, int d3=0) const;
   // #EXPERT #CAT_Access get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool                  SetValAsFloatMDims(float val, const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool                  SetValAsFloatMDims(float val, const Variant& col, int row,
+                                           int d0, int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Modify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  int                   GetValAsIntMDims(const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  int                   GetValAsIntMDims(const Variant& col, int row, int d0,
+                                         int d1=0, int d2=0, int d3=0) const;
   // #EXPERT #CAT_Access get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
-  bool                  SetValAsIntMDims(int val, const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool                  SetValAsIntMDims(int val, const Variant& col, int row, int d0,
+                                         int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Modify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
-  const String          GetValAsStringMDims(const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0,
+  const String          GetValAsStringMDims(const Variant& col, int row, int d0,
+                                            int d1=0, int d2=0, int d3=0,
                                             bool na = true) const;
   // #EXPERT #CAT_Access get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
-  bool                  SetValAsStringMDims(const String& val, const Variant& col, int row, int d0, int d1=0, int d2=0, int d3=0);
+  bool                  SetValAsStringMDims(const String& val, const Variant& col,
+                                            int row, int d0, int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Modify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
 
   //////////////////////
   //    Entire Matrix
 
-  taMatrix*             GetValAsMatrix(const Variant& col, int row);
+  taMatrix*             GetValAsMatrix(const Variant& col, int row) const;
   // #CAT_Access get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed
-  taMatrix*             GetValAsMatrixColName(const String& col_name, int row, bool quiet = false);
+  taMatrix*             GetValAsMatrixColName(const String& col_name, int row,
+                                              bool quiet = false) const;
   // #CAT_Access get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed
   taMatrix*             GetValAsMatrixColRowName(const String& col_name,
-                                                 const String& row_col_name, const Variant& row_value, bool quiet = false);
+                                                 const String& row_col_name,
+                                                 const Variant& row_value,
+                                                 bool quiet = false) const;
   // #EXPERT #CAT_Access get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed
   bool                  SetValAsMatrix(const taMatrix* val, const Variant& col, int row);
   // #CAT_Modify set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)
   bool                  SetValAsMatrixColName(const taMatrix* val, const String& col_name,
                                               int row, bool quiet = false);
   // #CAT_Modify set a matrix cell to values in given matrix val -- checks that the matrix has the proper geometry as the column's cells -- val can be of a different type than the data table column (it will just be a bit slower than if the type matches)
-  taMatrix*             GetRangeAsMatrix(const Variant& col, int st_row, int n_rows);
+  taMatrix*             GetRangeAsMatrix(const Variant& col, int st_row, int n_rows) const;
   // #EXPERT #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
 
   ///////////////////////////////////////
