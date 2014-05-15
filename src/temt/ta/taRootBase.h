@@ -137,8 +137,6 @@ public:
   // #IGNORE initialize default view colors
   static bool   Startup_InitViewBackgrounds();
   // #IGNORE initialize default view backgrounds - brushes
-  static bool   Startup_ConsoleType();
-  // #IGNORE arbitrate type of console, based on user options, and app context
   static bool   Startup_MakeWizards();
   // #IGNORE make the global wizards
   static bool   Startup_InitPlugins();
@@ -208,7 +206,6 @@ public:
   static ContextFlag    in_init; // #IGNORE suppresses spurious Saves
 
 protected:
-  static int            console_type; // #IGNORE taMisc::ConsoleType
   static int            console_options; //#IGNORE taMisc::ConsoleOptions
 
   static bool           Startup_InitTA_AppFolders();  // #IGNORE Share, Plugins

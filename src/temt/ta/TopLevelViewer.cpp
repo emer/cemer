@@ -148,6 +148,8 @@ void TopLevelViewer::ViewWindow() {
     Render();
   }
   Show();
+  if(widget())
+    widget()->setFocus();
 }
 
 void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {

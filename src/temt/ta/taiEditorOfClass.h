@@ -64,12 +64,7 @@ public:
   taiWidgetActions*     cur_menu;       // current menu to add to (if not otherwise spec'd)
   taiWidgetActions*     cur_menu_but; // current menu button to add to (if not otherwise spec'd)
 
-#ifdef TA_OS_MAC
-  // See bug 1518.
   taiWidgetActions*     menu; // menu bar
-#else
-  taiWidgetMenuBar*     menu; // menu bar
-#endif
 
   taiMemberWidgets_List membs;
   QButtonGroup*         bgrp; // group used for set checkboxes

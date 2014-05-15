@@ -681,27 +681,24 @@ void taiEditorOfClass::SetCurMenu(MethodDef* md) {
 
 void taiEditorOfClass::SetCurMenu_Name(String men_nm) {
   if (!menu) {
-#ifdef TA_OS_MAC
-    // This shouldn't be necessary but Mac still glitches occasionally.
-    // See bug 1518.
+    // always use the toolbar -- it fixes the menu actions to be InstantPopup!
     menu = new taiWidgetToolBar(widget(), taiMisc::fonSmall, NULL);
     vblDialog->insertWidget(0, menu->GetRep());
     vblDialog->insertSpacing(1, 2);
-#else
-    menu = new taiWidgetMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
-    QMenuBar *qmb = menu->rep_bar();
-    vblDialog->setMenuBar(qmb);
+// #else
+//     menu = new taiWidgetMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
+//     QMenuBar *qmb = menu->rep_bar();
+//     vblDialog->setMenuBar(qmb);
 
-    // This menubar should never be used as a native menubar.  Without
-    // the following line, emergent doesn't work correctly on the Mac
-    // or on Ubuntu with the Unity desktop, which both have a global
-    // menubar.  Specifically, there is no way to access the normal
-    // menubar (File, Edit, View) because this one (Object, ControlPanel)
-    // is taking its place.
-#if (QT_VERSION >= 0x040600)
-    qmb->setNativeMenuBar(false);
-#endif
-#endif
+//     // This menubar should never be used as a native menubar.  Without
+//     // the following line, emergent doesn't work correctly on the Mac
+//     // or on Ubuntu with the Unity desktop, which both have a global
+//     // menubar.  Specifically, there is no way to access the normal
+//     // menubar (File, Edit, View) because this one (Object, ControlPanel)
+//     // is taking its place.
+// #if (QT_VERSION >= 0x040600)
+//     qmb->setNativeMenuBar(false);
+// #endif
   }
 
   if (men_nm.nonempty()) {

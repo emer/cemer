@@ -271,7 +271,7 @@ bool PluginWizard::Create() {
         sp |= QFile::ExeOwner | QFile::ExeGroup | QFile::ExeOther;
       }
       QFile::setPermissions(dst_file, sp);
-      taMisc::Info("set permissions on:",dst_file,"to:",String(sp, "%x"));
+      // taMisc::Info("set permissions on:",dst_file,"to:",String(sp, "%x"));
     }
   }
 

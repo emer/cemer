@@ -202,8 +202,7 @@ String  taMisc::t3d_bg_color = "white"; // was: grey80 -- white is brighter :)
 String  taMisc::t3d_text_color = "black";
 
 // parameters that differ between win and unix
-taMisc::ConsoleType taMisc::console_type = CT_GUI;
-taMisc::ConsoleOptions taMisc::console_options = CO_0;
+taMisc::ConsoleOptions taMisc::console_options = CO_PAGER;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int     taMisc::display_width = 120;
@@ -1086,7 +1085,7 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
     else
       cout << oneln << endl;
   }
-  if(pager) {
+  if(pager && (taMisc::console_options & taMisc::CO_PAGER)) {
     pageln++;
     if(pageln >= taMisc::display_height) {
       int resp = 0;

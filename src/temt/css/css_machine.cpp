@@ -5438,7 +5438,6 @@ QPointer<QcssConsole> qcss_console;
 
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
-  console_type = taMisc::CT_NONE;
 
   external_exit = false;
   pager_waiting = false;
@@ -5523,9 +5522,7 @@ void cssCmdShell::PopAllSrcProg() {
   while(PopSrcProg());
 }
 
-void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, int cons_typ) {
-  console_type = cons_typ;
-
+void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
   fin = &fhi;
   fout = &fho;
 
@@ -5549,17 +5546,11 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho, int cons_typ) {
 
   String prmpt = cssMisc::prompt + "> "; // default initial prompt
 
-  switch (console_type) {
-  case taMisc::CT_OS_SHELL:
-    cssMisc::TopShell->Shell_OS_Console(prmpt);
-    break;
-  case taMisc::CT_GUI:
+  if(taMisc::gui_active) {
     cssMisc::TopShell->Shell_Gui_Console(prmpt);
-    break;
-  case taMisc::CT_NONE:
+  }
+  else if(taMisc::interactive) {
     cssMisc::TopShell->Shell_No_Console(prmpt);
-    break;
-  // all cases handled
   }
 }
 
@@ -5626,14 +5617,11 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
     act_prompt = String(cmd_prog->parse_depth) + " " + prompt + pt + " ";
   else
     act_prompt = prompt + pt + " ";
-  switch (console_type) {
-  case taMisc::CT_NONE: break; // TODO: nothing???
-  case taMisc::CT_OS_SHELL:
+  if(taMisc::gui_active && qcss_console) {
+    qcss_console->setPrompt(act_prompt, disp_prompt);
+  }
+  else if(taMisc::interactive && qand_console) {
     qand_console->setPrompt(act_prompt);
-    break;
-  case taMisc::CT_GUI:
-    qcss_console->setPrompt(act_prompt, disp_prompt);   // do not display new prompt
-    break;
   }
 }
 
@@ -5641,7 +5629,6 @@ void cssCmdShell::Shell_OS_Console(const String& prmpt) {
   if(!qand_console)
     qand_console = cssConsole::Get_SysConsole();
 
-  console_type = taMisc::CT_OS_SHELL;
   SetPrompt(prmpt);
   external_exit = false;
 
@@ -5662,7 +5649,6 @@ void cssCmdShell::Shell_Gui_Console(const String& prmpt) {
     return;
   }
 
-  console_type = taMisc::CT_GUI;
   qcss_console->setPrompt(prmpt);
   external_exit = false;
 
@@ -5672,7 +5658,6 @@ void cssCmdShell::Shell_Gui_Console(const String& prmpt) {
 
 void cssCmdShell::Shell_No_Console(const String& prmpt) {
   rl_done = false;
-  console_type = taMisc::CT_NONE;
   SetPrompt(prmpt);
   external_exit = false;
 
@@ -5701,19 +5686,15 @@ void cssCmdShell::Shell_NoConsole_Run() {
 }
 
 void cssCmdShell::FlushConsole() {
-  if(console_type == taMisc::CT_GUI) {
-    if((bool)qcss_console) {
-      qcss_console->flushOutput();
-    }
+  if(taMisc::gui_active && (bool)qcss_console) {
+    qcss_console->flushOutput();
   }
 }
 
 void cssCmdShell::OutputLine(const String& oneln, bool err) {
-  if(console_type == taMisc::CT_GUI) {
-    if((bool)qcss_console) {
-      qcss_console->outputLine(oneln, err);
-      return;
-    }
+  if(taMisc::gui_active && (bool)qcss_console) {
+    qcss_console->outputLine(oneln, err);
+    return;
   }
   if(err) {
     *ferr << oneln << endl;
@@ -5724,11 +5705,9 @@ void cssCmdShell::OutputLine(const String& oneln, bool err) {
 }
 
 int cssCmdShell::QueryForKeyResponse(const String& query) {
-  if(console_type == taMisc::CT_GUI) {
-    if((bool)qcss_console) {
-      int rval = qcss_console->queryForKeyResponse(query);
-      return rval;
-    }
+  if(taMisc::gui_active && (bool)qcss_console) {
+    int rval = qcss_console->queryForKeyResponse(query);
+    return rval;
   }
   // todo: this is not working properly for os shell 
   // triggers an infinite loop from cssCmdShell::AcceptNewLine_Qt
@@ -5741,17 +5720,10 @@ int cssCmdShell::QueryForKeyResponse(const String& query) {
 }
 
 void cssCmdShell::Exit() {
-//TODO: first get working with uncancellable, then see where we can allow cancel
+  //TODO: first get working with uncancellable, then see where we can allow cancel
   external_exit = true;
-  switch (console_type) {
-  case taMisc::CT_OS_SHELL:
-    break;
-  case taMisc::CT_GUI:
-    if((bool)qcss_console)
-      qcss_console->exit();
-    break;
-  case taMisc::CT_NONE:
-    break;
+  if(taMisc::gui_active && (bool)qcss_console) {
+    qcss_console->exit();
   }
   taiMiscCore::Quit();
 }

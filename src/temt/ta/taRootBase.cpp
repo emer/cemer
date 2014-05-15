@@ -85,7 +85,6 @@ using namespace std;
 
 int taRootBase::milestone;
 TypeDef* taRootBase::root_type;
-int taRootBase::console_type;
 int taRootBase::console_options;
 ContextFlag taRootBase::in_init;
 bool taRootBase::openProject;
@@ -112,7 +111,6 @@ void taRootBase::Initialize() {
   version = taMisc::version;
   projects.SetName("projects");
   plugin_deps.SetBaseType(&TA_taPluginDep);
-  console_type = taMisc::console_type;
   console_options = taMisc::console_options;
   openProject = false;
   rootview_pos.SetXY(0.0f, 0.0f);
@@ -1337,7 +1335,6 @@ bool taRootBase::Startup_InitTA() {
 
   taMisc::Init_Defaults_PostLoadConfig();
 
-  console_type = taMisc::console_type;
   console_options = taMisc::console_options;
 
   taMisc::default_scope = &TA_taProject; // this is general default
@@ -1562,41 +1559,6 @@ bool taRootBase::Startup_InitViewBackgrounds() {
  return true;
 }
 
-bool taRootBase::Startup_ConsoleType() {
-  // arbitrate console options
-  // first, make sure requested console_type is a legal value for this platform
-
-  // note: is_batch could be extended to include "headless" cmd line invocation
-  //   it would also include contexts such as piping or other stdin/out redirects
-  bool is_batch = !taMisc::interactive;
-#ifdef DMEM_COMPILE
-  if(taMisc::gui_active) {
-    if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0)) // non-first procs batch
-      is_batch = true;
-  }
-  else {
-    if(taMisc::dmem_nprocs > 1) // nogui dmem is *ALWAYS* batch for all procs
-      is_batch = true;
-  }
-#endif
-
-  if (is_batch) {
-    console_type = taMisc::CT_NONE;
-  }
-  else if (taMisc::gui_active) {
-    if (!((console_type == taMisc::CT_OS_SHELL) ||
-         (console_type == taMisc::CT_GUI) ||
-         (console_type == taMisc::CT_NONE)))
-      console_type = taMisc::CT_GUI;
-  }
-  else { // not a gui context, can only use a non-gui console
-    if (!((console_type == taMisc::CT_OS_SHELL) ||
-         (console_type == taMisc::CT_NONE)))
-      console_type = taMisc::CT_OS_SHELL;
-  }
-  return true; // always works
-}
-
 bool taRootBase::Startup_MakeWizards() {
   tabMisc::root->MakeWizards();
   return true;
@@ -1626,7 +1588,7 @@ bool taRootBase::Startup_MakeMainWin() {
     vwr->SetUserData("view_win_wd", tabMisc::root->rootview_size.x);
     vwr->SetUserData("view_win_ht", tabMisc::root->rootview_size.y);
     vwr->SetUserData("view_splitter_state", tabMisc::root->rootview_splits);
-    if((console_type == taMisc::CT_GUI) && (console_options & taMisc::CO_GUI_DOCK)) {
+    if(console_options & taMisc::CO_GUI_DOCK) {
       ConsoleDockViewer* cdv = new ConsoleDockViewer;
       vwr->docks.Add(cdv);
     }
@@ -1649,6 +1611,8 @@ bool taRootBase::Startup_MakeMainWin() {
   tabMisc::root->docs.AutoEdit();
   tabMisc::root->wizards.AutoEdit();
 
+  bw->setFocus();
+
   //TODO: following prob not necessary
   //  if (taMisc::gui_active) taiMisc::OpenWindows();
 #endif // TA_GUI
@@ -1665,7 +1629,27 @@ void taRootBase::WindowShowHook() {
     if (vwr) {
       vwr->SelectPanelTabNo(1);
       taiMiscCore::ProcessEvents();
+      vwr->widget()->setFocus();
     }
+
+    qApp->setActiveWindow(vwr->widget());
+
+#ifdef TA_OS_MAC
+    // select this window, even if run from command line
+    String cmd = "osascript -e 'tell application \"System Events\" ";
+    cmd << "to keystroke tab using {command down}'"; // go to next item
+    system(cmd);
+    // do it twice -- go to other, come back to us
+    system(cmd);
+
+    // this cannot find the window name -- not sure how else to do it
+    // or index 0 or 1 don't work..
+    // vwr->SetWinName();                 // get our name now
+    // String cmd = "osascript -e 'tell application \"System Events\" to tell process \"";
+    // cmd << taMisc::exe_cmd << "\" to perform action \"AXRaise\" of window 0'";
+    // taMisc::Info(cmd);
+    // system(cmd);
+#endif
   }
 //why is this needed? see bugID:723
 //  if(docs.size > 0)
@@ -1673,7 +1657,7 @@ void taRootBase::WindowShowHook() {
 }
 
 bool taRootBase::Startup_Console() {
-  if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {
+  if(taMisc::gui_active) {
     //note: nothing else to do here for gui_dockable
     QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
 
@@ -1692,16 +1676,18 @@ bool taRootBase::Startup_Console() {
         taMisc::ProcessEvents();
         MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
         db->ViewWindow();               // make sure root guy is on top
+        qApp->setActiveWindow(db->widget());
+        // todo: add focus events here!!
       }
     }
   }
-  cssMisc::TopShell->StartupShellInit(cin, cout, console_type);
+  cssMisc::TopShell->StartupShellInit(cin, cout);
 
   return true;
 }
 
 void taRootBase::ConsoleNewStdin(int n_lines) {
-  if(!taMisc::gui_active || (console_type != taMisc::CT_GUI)) return;
+  if(!taMisc::gui_active) return;
   if(taMisc::console_win) {
     QApplication::alert(taMisc::console_win);
   }
@@ -1917,7 +1903,6 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], TypeDef* root_typ) 
   if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration
   if(!Startup_InitCss()) goto startup_failed;
   if(!Startup_InitGui()) goto startup_failed; // note: does the taiType bidding
-  if(!Startup_ConsoleType()) goto startup_failed;
   Startup_MakeWizards(); // supposedly can't fail...
   if(!Startup_InitPlugins()) goto startup_failed; // state, wizards, etc.
   if(!Startup_MakeMainWin()) goto startup_failed;
@@ -1995,11 +1980,8 @@ bool taRootBase::Startup_Run() {
   // first thing to do upon entering event loop:
   QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
 
-  if (taMisc::gui_active || taMisc::interactive) {
-    // next thing is to start the console if interactive
-    if (console_type == taMisc::CT_NONE) {
-      QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
-    }
+  if(!taMisc::gui_active && taMisc::interactive) {
+    QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
   }
 
   // Give the root window focus.
@@ -2052,7 +2034,7 @@ void taRootBase::Cleanup_Main() {
 
 #ifndef TA_OS_WIN
   // only if using readline-based console, reset tty state
-  if((console_type == taMisc::CT_NONE) && (taMisc::gui_active || taMisc::interactive)) {
+  if(!taMisc::gui_active && taMisc::interactive) {
     rl_free_line_state();
     rl_cleanup_after_signal();
   }

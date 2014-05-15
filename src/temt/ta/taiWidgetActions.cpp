@@ -18,6 +18,8 @@
 #include <taiWidgetMenuButton>
 #include <iActionSubMenuEl>
 #include <iMenuAction>
+#include <QToolBar>
+#include <QToolButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -226,10 +228,23 @@ taiWidgetMenu* taiWidgetActions::AddSubMenu(const String& val, TypeDef* typ_) {
     }
   }
 
-  taiWidgetMenu* rval = new taiWidgetMenu(sel_type, font_spec, typ_, host, this, gui_parent, mflags, this);
+  taiWidgetMenu* rval = new taiWidgetMenu(sel_type, font_spec, typ_, host, this,
+                                          gui_parent, mflags, this);
   iActionSubMenuEl* sme = new iActionSubMenuEl(val, rval);
   rval->par_menu_el = sme;
   AddAction(sme);
+  QToolBar* tb = qobject_cast<QToolBar*>(actionsRep());
+  if(tb) {
+    tb->setIconSize(QSize(4,4)); // keep the arrows small
+    // if we went in a toolbar, change from default MenuButtonPopup to InstantPopup!
+    if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(sme))) {
+      //      but->setPopupMode(QToolButton::MenuButtonPopup); 
+      // need to move the damn arrow to the RHS to be consistent, but wtf this will work
+      but->setPopupMode(QToolButton::InstantPopup); 
+      but->setArrowType(Qt::DownArrow);
+      but->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    }
+  }
   return rval;
 }
 

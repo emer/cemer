@@ -30,6 +30,8 @@ class TA_API TopLevelViewer : public taViewer {
   // #NO_TOKENS #VIRT_BASE stuff that is common to anything that can be a top-level window
 INHERITED(taViewer)
 public:
+  String       win_name;
+
     // can be provided to put msg up on closing
   bool                  deleteOnWinClose() const override;
   bool                  openOnLoad() const {return false;}
@@ -52,7 +54,6 @@ public:
   void  CutLinks();
   TA_DATAVIEWFUNS(TopLevelViewer, taViewer) //
 protected:
-  String       win_name;
 
   void         GetWinState_impl() override;
   void         SetWinState_impl() override;

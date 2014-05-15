@@ -120,15 +120,10 @@ public:
     QF_FORCE_QUIT       // too late to turn back now...
   };
 
-  enum ConsoleType { // the type of console window and how to show it; ignored in non-gui mode (either uses OS shell, or no console, depending on startup mode)
-    CT_OS_SHELL = 0, // #LABEL_OS_Shell use the operating system's shell or console (with readline library on unix)
-    CT_GUI = 1, // #LABEL_Gui uses a gui-based console, either docked in the main app window, or floating (see console_options)
-    CT_NONE = 4 // #NO_SHOW no console, usually only used internally, such as for batch or dmem operation
-  };
-
   enum ConsoleOptions { // #BITS options that can be used with the console
     CO_0 = 0, // #NO_BIT #IGNORE dummy item, and to clear
     CO_GUI_DOCK         = 0x0001, // #LABEL_Gui_DockRoot in GUI mode, dock the console in the root window -- it can be dragged out as well -- otherwise the default console floats below the current project, and can be toggled with a button to float or not
+    CO_PAGER            = 0x0002, // #LABEL_Pager contiguous chunks of output to console are displayed one page at a time, with a keypress option, like the 'more' utility in unix (otherwise everything is just output in full, and you have to scroll back to see it)
   };
 
   enum ColorHints { // #BITS what types of color hinting to use in the application
@@ -236,7 +231,6 @@ public:
   static String         t3d_bg_color;   // #SAVE #CAT_GUI default background color for 3d view -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_text_color; // #SAVE #CAT_GUI default text color for 3d view  -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_font_name;  // #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
-  static ConsoleType    console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
   static ConsoleOptions console_options; // #SAVE #CAT_GUI options for the console **REQUIRES APP RESTART
   static String         console_font_name; // #SAVE #CAT_GUI font name for the css console
   static int            console_font_size; // #SAVE #CAT_GUI font size for the css console

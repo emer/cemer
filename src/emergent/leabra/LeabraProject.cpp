@@ -53,7 +53,7 @@ InitProcRegistrar mod_init_leabra(leabra_module_init);
 
 
 void LeabraProject::Initialize() {
-  networks.SetBaseType(&TA_LeabraNetwork);
-  wizards.SetBaseType(&TA_LeabraWizard);
+  networks.el_typ = &TA_LeabraNetwork;
+  wizards.el_typ = &TA_LeabraWizard;
 }
 

@@ -860,14 +860,12 @@ void taProject::SaveRecoverFile() {
 
   // now try to save console
   if(saved) {
-   if(cssMisc::TopShell->console_type == taMisc::CT_GUI) {
-      String cfnm = fnm;
-      cfnm.gsub("_recover", "_console");
-      cfnm.gsub((const char*)ftype_ext, ".txt");
-      QcssConsole* qcons = QcssConsole::getInstance();
-      if(qcons)
-        qcons->saveContents(cfnm);
-    }
+    String cfnm = fnm;
+    cfnm.gsub("_recover", "_console");
+    cfnm.gsub((const char*)ftype_ext, ".txt");
+    QcssConsole* qcons = QcssConsole::getInstance();
+    if(qcons)
+      qcons->saveContents(cfnm);
   }
 }
 

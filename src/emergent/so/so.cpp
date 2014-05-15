@@ -376,8 +376,8 @@ void SoNetwork::Trial_Run() {
 //////////////////////////
 
 void SoProject::Initialize() {
-  wizards.SetBaseType(&TA_SoWizard);
-  networks.SetBaseType(&TA_SoNetwork);
+  wizards.el_typ = &TA_SoWizard;
+  networks.el_typ = &TA_SoNetwork;
 }
 
 void SoWizard::Initialize() {

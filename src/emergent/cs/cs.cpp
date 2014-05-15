@@ -1209,8 +1209,8 @@ void CsNetwork::Compute_EpochStats() {
 //////////////////////////
 
 void CsProject::Initialize() {
-  wizards.SetBaseType(&TA_CsWizard);
-  networks.SetBaseType(&TA_CsNetwork);
+  wizards.el_typ = &TA_CsWizard;
+  networks.el_typ = &TA_CsNetwork;
 }
 
 

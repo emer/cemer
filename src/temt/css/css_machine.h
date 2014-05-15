@@ -1883,7 +1883,6 @@ public:
   String 	name;
   String	prompt;
   String	act_prompt;		// the actual prompt
-  int           console_type; 	// what kind of console are we running? taMisc::ConsoleType
 
   std::istream*	fin;			// input file (current)
   std::ostream*	fout;			// output file
@@ -1907,8 +1906,8 @@ public:
   cssProgSpace* PopSrcProg(cssProgSpace* ps = NULL); // pop current src prog, if ps is non-NULL, then only if src_prog == ps
   void		PopAllSrcProg(); // pop off all of the src progs
 
-  void		StartupShellInit(std::istream& fhi, std::ostream& fho, int cons_typ);
-  // do all the initialization stuff for a shell, but don't actually start a specific shell -- cons_typ is taMisc::ConsoleType = taMisc::CT_NONE
+  void		StartupShellInit(std::istream& fhi, std::ostream& fho);
+  // do all the initialization stuff for a shell, but don't actually start a specific shell
 
   bool		RunStartupScript();
   // run any startup scripts that might have been specified by startup args

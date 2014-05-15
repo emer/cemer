@@ -718,6 +718,6 @@ void BpNetwork::Trial_Run() {
 //////////////////////////
 
 void BpProject::Initialize() {
-  networks.SetBaseType(&TA_BpNetwork);
-  wizards.SetBaseType(&TA_BpWizard);
+  networks.el_typ = &TA_BpNetwork;
+  wizards.el_typ = &TA_BpWizard;
 }
