@@ -100,7 +100,7 @@ protected:
   // Redefined virtual methods
   void keyPressEvent(QKeyEvent* e) override;
   void resizeEvent(QResizeEvent* e) override;
-  void paste()  override;
+  void paste();
   void mousePressEvent(QMouseEvent *e) override;
   void mouseMoveEvent(QMouseEvent *e) override;
   void mouseReleaseEvent(QMouseEvent *e) override;

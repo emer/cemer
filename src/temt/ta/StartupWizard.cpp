@@ -35,7 +35,7 @@ void StartupWizard::InitLinks() {
 }
 
 void StartupWizard::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                     int sls, void* op1_, void* op2_) override {
+                                     int sls, void* op1_, void* op2_) {
   if(!taMisc::gui_active) return;
   SigEmitUpdated();             // just update us
 }
