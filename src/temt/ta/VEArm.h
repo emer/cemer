@@ -28,11 +28,45 @@
 // declare all other types mentioned but not required to include:
 // class DataTable;
 
+taTypeDef_Of(VEArmDelays);
+
+class TA_API VEArmDelays : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm
+INHERITED(taOBase)
+public:
+  int           vis_delay;      // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be > pro_delay -- set both to 1 for no delay
+  int           pro_delay;      // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be < vis_delay -- set to 1 for no delay
+  int           eff_delay;      // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
+  
+  void  Initialize();
+  void  Destroy() { };
+  TA_SIMPLE_BASEFUNS(VEArmDelays);
+};
+
+taTypeDef_Of(VEArmGains);
+
+class TA_API VEArmGains : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
+INHERITED(taOBase)
+public:
+  float_Matrix  musc_gains;     // #READ_ONLY #SHOW #EXPERT muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
+  float         musc_gains_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of musc_gains
+  float         ev_gain;        // #AKA_gain #CONDSHOW_ON_ctrl_type:ERR_VEL gain factor for ERR_VEL control
+  float         p_gain;         // #CONDSHOW_ON_ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
+  float         i_gain;         // #CONDSHOW_ON_ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
+  float         d_gain;         // #CONDSHOW_ON_ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
+  float         stim_gain;      // gain factor in translating control signals into stimuli -- just an overall gain multiplier so that the other gains don't have to be quite so big
+  float         vel_norm_gain;  // speed normalization gain factor for a sigmoidal compression function
+
+  void  Initialize();
+  void  Destroy() { };
+  TA_SIMPLE_BASEFUNS(VEArmGains);
+};
 
 taTypeDef_Of(VEArm);
 
 class TA_API VEArm : public VEObject {
-  // a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
+  // #STEM_BASE a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
 INHERITED(VEObject)
 public:
   enum ArmBodies {              // indices of bodies for arm
@@ -76,19 +110,12 @@ public:
   MuscType      musc_type;      // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998) -- should correspond with actual type of muscle objects used
   float         hill_mu;        // #CONDSHOW_ON_musc_type:HILL #DEF_0.06 mu parameter for the Hill-type muscle -- dependence of muscle's threshold length on velocity
   ControlType   ctrl_type;      // type of controller to use to drive muscles in response to the difference between target lengths and current lengths
-  float         stim_gain;      // gain factor in translating control signals into stimuli -- just an overall gain multiplier so that the other gains don't have to be quite so big
+  VEArmDelays   delay_params;   // object containing delay parameters
+  VEArmGains    gain_params;    // object containing gain parameters
   float         max_err;        // maximum error value -- prevents extreme forces while still allowing for high gains -- if 0 or lower then not used
-  float         ev_gain;        // #AKA_gain #CONDSHOW_ON_ctrl_type:ERR_VEL gain factor for ERR_VEL control
-  float         p_gain;         // #CONDSHOW_ON_ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
-  float         i_gain;         // #CONDSHOW_ON_ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
-  float         d_gain;         // #CONDSHOW_ON_ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
-  int           vis_delay; // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be > pro_delay -- set both to 1 for no delay
-  int           pro_delay; // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be < vis_delay -- set to 1 for no delay
-  int           eff_delay; // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
   float         pid_dra_dt;     // #CONDSHOW_ON_ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
   float         damping;        // angular damping factor
-  float         damping_thr;    // angular damping threshold 
-  float         vel_norm_gain;  // speed normalization gain factor for a sigmoidal compression function
+  float         damping_thr;    // angular damping threshold
   float         norm_err_dra_dt; // time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
   float         io_err_thr;      // threshold on norm_err_dra values for driving an Inferior Olivary error signal for training cerebellum
   float         hand_vra_dt;     // hand velocity running average time constant
@@ -156,8 +183,7 @@ public:
   float_Matrix  spans;      // #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
 
   // overall state variables for the arm
-  float_Matrix  musc_gains;     // #READ_ONLY #SHOW #EXPERT muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
-  float         musc_gains_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of musc_gains
+  float_Matrix  delayedStims;   // #READ_ONLY #SHOW #EXPERT buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
   float_Matrix  norm_lens;      // #READ_ONLY #SHOW #EXPERT normalized current muscle lengths
   float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW #EXPERT normalized target muscle lengths
   float_Matrix  norm_vels;      // #READ_ONLY #SHOW #EXPERT normalized muscle velocities
@@ -168,8 +194,6 @@ public:
   float         io_err_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors 
   float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
   VEMuscle_List muscles; // pointers to the muscles attached to the arm
-
-
 
   virtual bool  CheckArm(bool quiet = false);
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
@@ -287,11 +311,10 @@ protected:
   // the point of intersection with the muscle in the vector p3.
 
 private:
-  void  Initialize();
-  void  Destroy();
-
-  float_Matrix delayedStims; // buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
   bool isNewReach; // flag used to tell whether it's the start of a new reach or not (since VEArm doesn't have direct access to network.cycle)
+
+  void  Initialize();
+  void  Destroy();  
 };
 
 #endif // VEArm_h
