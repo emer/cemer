@@ -459,7 +459,7 @@ void iConsole::keyPressEvent(QKeyEvent* e)
       }
     }
   }
-  else if((e->key() == Qt::Key_L) && ctrl_pressed) {
+    else if((e->key() == '.') && ctrl_pressed) {
     e->accept();
     clear();
   }
