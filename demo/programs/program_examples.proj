@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7159
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7159
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -513,10 +513,12 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [30] {
+    ProgEl_List @.prog_code = [36] {
      LocalVars @[0] { 
-      ProgVar_List @.local_vars = [1] {
+      ProgVar_List @.local_vars = [3] {
        ProgVar @["mypi"] { };
+       ProgVar @["chr"] { };
+       ProgVar @["sary"] { };
       };
      };
      AssignExpr @[1] { };
@@ -555,13 +557,31 @@ LeabraProject .projects["program_examples"] {
      };
      PrintExpr @[21] { };
      Comment @[22] { };
-     AssignExpr @[23] { };
-     PrintExpr @[24] { };
-     PrintExpr @[25] { };
-     CssExpr @[26] { };
-     CssExpr @[27] { };
-     PrintExpr @[28] { };
-     Comment @[29] { };
+     ForeachLoop @[23] { 
+      ProgEl_List @.loop_code = [1] {
+       PrintVar @[0] { };
+      };
+     };
+     MethodCall @[24] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     PrintVar @[25] { };
+     MethodCall @[26] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     PrintVar @[27] { };
+     Comment @[28] { };
+     AssignExpr @[29] { };
+     PrintExpr @[30] { };
+     PrintExpr @[31] { };
+     CssExpr @[32] { };
+     CssExpr @[33] { };
+     PrintExpr @[34] { };
+     Comment @[35] { };
     };
    };
    Program @["DynEnum"] { 
@@ -7070,6 +7090,27 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	desc=;
 	init_from=NULL;
        };
+       ProgVar @["chr"] {
+	name="chr";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["sary"] {
+	name="sary";
+	var_type=T_Object;
+	object_type=String_Array;
+	object_val=NULL;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
       };
      };
      AssignExpr @[1] {
@@ -7303,11 +7344,118 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       debug_level=NULL;
      };
      Comment @[22] {
+      desc="looping, splitting, joining";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// looping over strings using foreach";
+     };
+     ForeachLoop @[23] {
+      desc="foreach is the most efficient way to iterate over the string elements";
+      flags=0;
+      orig_prog_code="foreach(chr in str)";
+      loop_code {
+       name="ProgEl_List_196";
+       el_typ=ProgCode;
+       el_def=0;
+       PrintVar @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="print chr";
+	message=;
+	print_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["chr"]$$;
+	print_var2=NULL;
+	print_var3=NULL;
+	print_var4=NULL;
+	print_var5=NULL;
+	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+       };
+      };
+      el_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["chr"]$;
+      in {
+       expr="str";
+      };
+     };
+     MethodCall @[24] {
+      desc="split breaks the string into an array of strings - esp handy for delimited strings";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="sary = str.split()";
+      result_var=.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["sary"]$$;
+      obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      method=taString::split;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="delim";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="\"\"";
+	};
+       };
+      };
+     };
+     PrintVar @[25] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print sary";
+      message="split into array:";
+      print_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["sary"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     MethodCall @[26] {
+      desc="join it back, with spaces now..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="str = sary.join()";
+      result_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      obj=$.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["sary"]$;
+      method=String_Array::Join;
+      meth_args {
+       name="ProgArg_List_0";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="delim";
+	required=0;
+	def_val="\"\"";
+	expr {
+	 expr="\" \"";
+	};
+       };
+      };
+     };
+     PrintVar @[27] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print str";
+      message="joined with spaces:";
+      print_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].vars["str"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     Comment @[28] {
       desc="converting strings to other things";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// converting strings to other things";
      };
-     AssignExpr @[23] {
+     AssignExpr @[29] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str = 3.14159";
@@ -7316,7 +7464,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="3.14159";
       };
      };
-     PrintExpr @[24] {
+     PrintExpr @[30] {
       desc="str ate some pi..";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str = 3.14159\" << str";
@@ -7326,7 +7474,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[25] {
+     PrintExpr @[31] {
       desc="and spit it back out again";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.toFloat(): \" << str.toFloat()";
@@ -7336,7 +7484,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     CssExpr @[26] {
+     CssExpr @[32] {
       desc="the conversion is implied automatically as well";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="mypi = str;";
@@ -7344,7 +7492,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="mypi = str;";
       };
      };
-     CssExpr @[27] {
+     CssExpr @[33] {
       desc="bools are represented as 'true' and 'false' in string form";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str = true;";
@@ -7352,7 +7500,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="str = true;";
       };
      };
-     PrintExpr @[28] {
+     PrintExpr @[34] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"(bool)str: \" << (bool)str";
@@ -7362,7 +7510,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[29] {
+     Comment @[35] {
       desc="see DynEnum program examples for how to convert between strings and enumerated types";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// see DynEnum program examples for how to convert between strings and enumerated types";
@@ -14765,7 +14913,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.003196590347215533;
+     value 6 0=0.00319488812237978;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -14775,7 +14923,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9925413131713867;
+     value 6 0=0.9920127987861633;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -14797,6 +14945,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    name="Browser2";
    m_data=.projects["program_examples"]$$;
    visible=1;
+   win_name=".projects[\"program_examples\"] - program_examples.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -15969,7 +16118,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.04046858474612236;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -15991,6 +16140,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
