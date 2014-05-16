@@ -16,7 +16,7 @@ class TA_API DataVarWrite : public DataVarSimple {
 INHERITED(DataVarSimple)
 public:
   String	GetDisplayName() const override;
-  String  GetToolbarName() const override { return "write to \n data table"; }
+  String  GetToolbarName() const override { return "write to\ndata table"; }
   bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
 
   PROGEL_SIMPLE_BASEFUNS(DataVarWrite);

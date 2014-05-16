@@ -43,7 +43,7 @@ public:
   
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "Function"; }
-  String	GetToolbarName() const override { return "set units var"; }
+  String	GetToolbarName() const override { return "set units\nvar"; }
 
   PROGEL_SIMPLE_BASEFUNS(SetUnitsVar);
 protected:

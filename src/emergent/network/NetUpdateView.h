@@ -35,7 +35,7 @@ public:
   
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "Function"; }
-  String	GetToolbarName() const override { return "net updt view"; }
+  String	GetToolbarName() const override { return "net updt\nview"; }
 
   PROGEL_SIMPLE_BASEFUNS(NetUpdateView);
 protected:

@@ -114,6 +114,7 @@ IViewerWidget* ProgramToolBar::ConstrWidget_impl(QWidget* gui_parent) {
 void iProgramToolBar::Constr_post() {
 //  iMainWindowViewer* win = viewerWindow(); //cache
 //TODO: add the appropriate global actions
+//  int icon_sz = (int)(1.1f * (float)taiM_->label_height(taiMisc::sizMedium));
   int icon_sz = taiM_->label_height(taiMisc::sizMedium);
   this->setIconSize(QSize(icon_sz, icon_sz));
 }

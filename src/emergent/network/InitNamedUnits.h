@@ -55,7 +55,7 @@ public:
   
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
-  String	GetToolbarName() const override { return "init nm units"; }
+  String	GetToolbarName() const override { return "init nm\nunits"; }
 
   PROGEL_SIMPLE_BASEFUNS(InitNamedUnits);
 protected:
