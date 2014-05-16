@@ -655,7 +655,7 @@ taBase* taGroup_impl::NewEl_(int no, TypeDef* typ) {
 
 taGroup_impl* taGroup_impl::NewGp_(int no, TypeDef* typ, const String& name_) {
   if (typ == NULL)
-    typ = GetTypeDef(); // always create one of yourself..
+    typ = gp.el_typ;            // use default type on group!
 
   // note: following will spit it out if it isn't a taGroup_impl of right type
   taGroup_impl* rval = (taGroup_impl*)gp.New(no, typ, name_);

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6893
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
   ProgObjList @.objs = [0] {
@@ -18,9 +18,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[2] { };
   };
 
-  ProgBrkPt_List @.brk_pts = [0] {
-  };
-
   Function_List @.functions = [0] {
   };
 
@@ -28,17 +25,18 @@ Program_Group .projects[0].programs.gp[0] {
    NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [2] {
-   IfElse @[0] { 
+  ProgEl_List @.prog_code = [3] {
+   If @[0] { 
     ProgEl_List @.true_code = [1] {
      NetCounterInit @[0] { };
     };
-
-    ProgEl_List @.false_code = [1] {
+   };
+   Else @[1] { 
+    ProgEl_List @.else_code = [1] {
      MemberAssign @[0] { };
     };
    };
-   WhileLoop @[1] { 
+   WhileLoop @[2] { 
     ProgEl_List @.loop_code = [2] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [3] {
@@ -115,9 +113,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[9] { };
    ProgVar @[10] { };
    ProgVar @[11] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [1] {
@@ -205,7 +200,7 @@ Program_Group .projects[0].programs.gp[0] {
     ProgArg_List @.fun_args = [0] {
     };
    };
-   IfElse @[5] { 
+   If @[5] { 
     ProgEl_List @.true_code = [2] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
@@ -213,13 +208,10 @@ Program_Group .projects[0].programs.gp[0] {
      };
      PrintExpr @[1] { };
     };
-
-    ProgEl_List @.false_code = [0] {
-    };
    };
    AssignExpr @[6] { };
    WhileLoop @[7] { 
-    ProgEl_List @.loop_code = [4] {
+    ProgEl_List @.loop_code = [5] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
@@ -227,19 +219,20 @@ Program_Group .projects[0].programs.gp[0] {
       };
      };
      NetCounterIncr @[1] { };
-     IfElse @[2] { 
+     If @[2] { 
       ProgEl_List @.true_code = [2] {
        VarIncr @[0] { };
        IfBreak @[1] { };
       };
-
-      ProgEl_List @.false_code = [1] {
+     };
+     Else @[3] { 
+      ProgEl_List @.else_code = [1] {
        AssignExpr @[0] { };
       };
      };
-     IfElse @[3] { 
+     If @[4] { 
       ProgEl_List @.true_code = [1] {
-       IfElse @[0] { 
+       If @[0] { 
 	ProgEl_List @.true_code = [1] {
 	 ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [1] {
@@ -247,27 +240,18 @@ Program_Group .projects[0].programs.gp[0] {
 	  };
 	 };
 	};
-
-	ProgEl_List @.false_code = [0] {
-	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
     };
    };
-   IfElse @[8] { 
+   If @[8] { 
     ProgEl_List @.true_code = [1] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-    };
-
-    ProgEl_List @.false_code = [0] {
     };
    };
    MethodCall @[9] { 
@@ -300,9 +284,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[8] { };
   };
 
-  ProgBrkPt_List @.brk_pts = [0] {
-  };
-
   Function_List @.functions = [0] {
   };
 
@@ -331,49 +312,40 @@ Program_Group .projects[0].programs.gp[0] {
        ProgArg @[1] { };
       };
      };
-     IfElse @[1] { 
+     If @[1] { 
       ProgEl_List @.true_code = [1] {
        StopStepPoint @[0] { };
       };
-
-      ProgEl_List @.false_code = [0] {
-      };
      };
     };
    };
-   IfElse @[5] { 
+   If @[5] { 
     ProgEl_List @.true_code = [1] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
     };
-
-    ProgEl_List @.false_code = [0] {
-    };
    };
-   IfElse @[6] { 
+   If @[6] { 
     ProgEl_List @.true_code = [1] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-    };
-
-    ProgEl_List @.false_code = [0] {
     };
    };
    MethodCall @[7] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   IfElse @[8] { 
+   If @[8] { 
     ProgEl_List @.true_code = [2] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     IfElse @[1] { 
+     If @[1] { 
       ProgEl_List @.true_code = [2] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -384,13 +356,7 @@ Program_Group .projects[0].programs.gp[0] {
 	};
        };
       };
-
-      ProgEl_List @.false_code = [0] {
-      };
      };
-    };
-
-    ProgEl_List @.false_code = [0] {
     };
    };
    MethodCall @[9] { 
@@ -421,9 +387,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[1] { };
    ProgVar @[2] { };
    ProgVar @[3] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [0] {
@@ -458,26 +421,20 @@ Program_Group .projects[0].programs.gp[0] {
     ProgArg_List @.meth_args = [0] {
     };
    };
-   IfElse @[4] { 
+   If @[4] { 
     ProgEl_List @.true_code = [1] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-    };
-
-    ProgEl_List @.false_code = [0] {
     };
    };
-   IfElse @[5] { 
+   If @[5] { 
     ProgEl_List @.true_code = [1] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-    };
-
-    ProgEl_List @.false_code = [0] {
     };
    };
    ProgramCall @[6] { 
@@ -506,9 +463,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[2] { };
   };
 
-  ProgBrkPt_List @.brk_pts = [0] {
-  };
-
   Function_List @.functions = [0] {
   };
 
@@ -516,7 +470,7 @@ Program_Group .projects[0].programs.gp[0] {
    NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [10] {
+  ProgEl_List @.prog_code = [11] {
    NetCounterInit @[0] { };
    MethodCall @[1] { 
     ProgArg_List @.meth_args = [0] {
@@ -532,16 +486,17 @@ Program_Group .projects[0].programs.gp[0] {
     ProgArg_List @.meth_args = [0] {
     };
    };
-   IfElse @[4] { 
+   If @[4] { 
     ProgEl_List @.true_code = [1] {
      AssignExpr @[0] { };
     };
-
-    ProgEl_List @.false_code = [1] {
+   };
+   Else @[5] { 
+    ProgEl_List @.else_code = [1] {
      AssignExpr @[0] { };
     };
    };
-   WhileLoop @[5] { 
+   WhileLoop @[6] { 
     ProgEl_List @.loop_code = [4] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [1] {
@@ -553,26 +508,23 @@ Program_Group .projects[0].programs.gp[0] {
      IfBreak @[3] { };
     };
    };
-   MethodCall @[6] { 
-    ProgArg_List @.meth_args = [0] {
-    };
-   };
    MethodCall @[7] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   IfElse @[8] { 
+   MethodCall @[8] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   If @[9] { 
     ProgEl_List @.true_code = [1] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
     };
-
-    ProgEl_List @.false_code = [0] {
-    };
    };
-   NetUpdateView @[9] { };
+   NetUpdateView @[10] { };
   };
  };
  Program @[5] { 
@@ -588,9 +540,6 @@ Program_Group .projects[0].programs.gp[0] {
 
   ProgVar_List @.vars = [1] {
    ProgVar @[0] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [0] {
@@ -628,9 +577,6 @@ Program_Group .projects[0].programs.gp[0] {
 
   ProgVar_List @.vars = [1] {
    ProgVar @[0] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [0] {
@@ -695,9 +641,6 @@ Program_Group .projects[0].programs.gp[0] {
   ProgVar_List @.vars = [2] {
    ProgVar @[0] { };
    ProgVar @[1] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [0] {
@@ -770,9 +713,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[0] { };
    ProgVar @[1] { };
    ProgVar @[2] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [0] {
@@ -849,9 +789,6 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[3] { };
    ProgVar @[4] { };
    ProgVar @[5] { };
-  };
-
-  ProgBrkPt_List @.brk_pts = [0] {
   };
 
   Function_List @.functions = [0] {
@@ -976,11 +913,6 @@ Program_Group .projects[0].programs.gp[0] {
     init_from=NULL;
    };
   };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
-  };
   functions {
    name=;
    el_typ=Function;
@@ -1004,14 +936,13 @@ Program_Group .projects[0].programs.gp[0] {
    name=;
    el_typ=ProgCode;
    el_def=0;
-   IfElse @[0] {
+   If @[0] {
     desc=;
     flags=0;
     orig_prog_code=;
     cond {
      expr="init_batch";
     };
-    show_false_code=1;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -1026,7 +957,12 @@ Program_Group .projects[0].programs.gp[0] {
       update_after=0;
      };
     };
-    false_code {
+   };
+   Else @[1] {
+    desc=;
+    flags=0;
+    orig_prog_code=;
+    else_code {
      name=;
      el_typ=ProgCode;
      el_def=0;
@@ -1043,7 +979,7 @@ Program_Group .projects[0].programs.gp[0] {
      };
     };
    };
-   WhileLoop @[1] {
+   WhileLoop @[2] {
     desc="the main loop over training runs";
     flags=0;
     orig_prog_code=;
@@ -1511,11 +1447,6 @@ Program_Group .projects[0].programs.gp[0] {
     init_from=NULL;
    };
   };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
-  };
   functions {
    name=;
    el_typ=Function;
@@ -1841,14 +1772,13 @@ Program_Group .projects[0].programs.gp[0] {
      el_def=0;
     };
    };
-   IfElse @[5] {
+   If @[5] {
     desc=;
     flags=0;
     orig_prog_code=;
     cond {
      expr="no_prompts";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -1876,11 +1806,6 @@ Program_Group .projects[0].programs.gp[0] {
       my_mask=NULL;
       debug_level=NULL;
      };
-    };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
     };
    };
    AssignExpr @[6] {
@@ -1941,14 +1866,13 @@ Program_Group .projects[0].programs.gp[0] {
       counter=Network::epoch;
       update_after=0;
      };
-     IfElse @[2] {
+     If @[2] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="network.cnt_err <= err_stopcrit";
       };
-      show_false_code=1;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -1971,7 +1895,12 @@ Program_Group .projects[0].programs.gp[0] {
 	};
        };
       };
-      false_code {
+     };
+     Else @[3] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      else_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
@@ -1986,26 +1915,24 @@ Program_Group .projects[0].programs.gp[0] {
        };
       };
      };
-     IfElse @[3] {
+     If @[4] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="save_wts_interval >= 1";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
-       IfElse @[0] {
+       If @[0] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="epoch % save_wts_interval == 0";
 	};
-	show_false_code=0;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
@@ -2033,17 +1960,7 @@ Program_Group .projects[0].programs.gp[0] {
 	  targ_ld_init="*SaveWeights*";
 	 };
 	};
-	false_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	};
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
     };
@@ -2051,14 +1968,13 @@ Program_Group .projects[0].programs.gp[0] {
      expr="epoch < max_epoch";
     };
    };
-   IfElse @[8] {
+   If @[8] {
     desc=;
     flags=0;
     orig_prog_code=;
     cond {
      expr="save_final_wts";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -2085,11 +2001,6 @@ Program_Group .projects[0].programs.gp[0] {
       target=$.projects[0].programs.gp[0][9]$;
       targ_ld_init="*SaveWeights*";
      };
-    };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
     };
    };
    MethodCall @[9] {
@@ -2251,11 +2162,6 @@ Program_Group .projects[0].programs.gp[0] {
     init_from=NULL;
    };
   };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
-  };
   functions {
    name=;
    el_typ=Function;
@@ -2382,14 +2288,13 @@ Program_Group .projects[0].programs.gp[0] {
       target=.projects[0].programs.gp[0][3]$$;
       targ_ld_init="*LeabraTrial*";
      };
-     IfElse @[1] {
+     If @[1] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="step_on_err && network.sse > 0.0";
       };
-      show_false_code=0;
       true_code {
        name="ProgEl_List_100";
        el_typ=ProgCode;
@@ -2399,11 +2304,6 @@ Program_Group .projects[0].programs.gp[0] {
 	flags=0;
 	orig_prog_code=;
        };
-      };
-      false_code {
-       name="ProgEl_List_101";
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
     };
@@ -2421,14 +2321,13 @@ Program_Group .projects[0].programs.gp[0] {
     group_order=PERMUTED;
     group_idx_list{     };
    };
-   IfElse @[5] {
+   If @[5] {
     desc="if full batch mode, update only at end of epoch";
     flags=0;
     orig_prog_code=;
     cond {
      expr="network.wt_update == Network::BATCH";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -2447,20 +2346,14 @@ Program_Group .projects[0].programs.gp[0] {
       };
      };
     };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
-    };
    };
-   IfElse @[6] {
+   If @[6] {
     desc=;
     flags=NEW_EL;
     orig_prog_code="if(network.epoch % stable_wt_update_interval == 0)";
     cond {
      expr="network.epoch % stable_wt_update_interval == 0";
     };
-    show_false_code=0;
     true_code {
      name="ProgEl_List_124";
      el_typ=ProgCode;
@@ -2479,11 +2372,6 @@ Program_Group .projects[0].programs.gp[0] {
       };
      };
     };
-    false_code {
-     name="ProgEl_List_125";
-     el_typ=ProgCode;
-     el_def=0;
-    };
    };
    MethodCall @[7] {
     desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
@@ -2498,14 +2386,13 @@ Program_Group .projects[0].programs.gp[0] {
      el_def=0;
     };
    };
-   IfElse @[8] {
+   If @[8] {
     desc=;
     flags=0;
     orig_prog_code=;
     cond {
      expr="compute_rel_netin";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -2523,14 +2410,13 @@ Program_Group .projects[0].programs.gp[0] {
        el_def=0;
       };
      };
-     IfElse @[1] {
+     If @[1] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="adapt_rel_abs_netin";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -2562,17 +2448,7 @@ Program_Group .projects[0].programs.gp[0] {
 	};
        };
       };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-      };
      };
-    };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
     };
    };
    MethodCall @[9] {
@@ -2702,11 +2578,6 @@ Program_Group .projects[0].programs.gp[0] {
     init_from=NULL;
    };
   };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
-  };
   functions {
    name=;
    el_typ=Function;
@@ -2832,14 +2703,13 @@ Program_Group .projects[0].programs.gp[0] {
      el_def=0;
     };
    };
-   IfElse @[4] {
+   If @[4] {
     desc=;
     flags=NEW_EL;
     orig_prog_code=;
     cond {
      expr="compute_rel_netin";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -2858,20 +2728,14 @@ Program_Group .projects[0].programs.gp[0] {
       };
      };
     };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
-    };
    };
-   IfElse @[5] {
+   If @[5] {
     desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
     flags=0;
     orig_prog_code=;
     cond {
      expr="network.Compute_Weights_Test(network.trial+1)";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -2889,11 +2753,6 @@ Program_Group .projects[0].programs.gp[0] {
        el_def=0;
       };
      };
-    };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
     };
    };
    ProgramCall @[6] {
@@ -3008,11 +2867,6 @@ sets the minimum number of cycles to settle for, regardless of network state cha
     init_from=NULL;
    };
   };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
-  };
   functions {
    name=;
    el_typ=Function;
@@ -3104,14 +2958,13 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
     };
    };
-   IfElse @[4] {
+   If @[4] {
     desc="get appropriate min_cycles value depending on which phase we're in";
     flags=0;
     orig_prog_code=;
     cond {
      expr="network.phase_no <= 1";
     };
-    show_false_code=1;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -3126,7 +2979,12 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
-    false_code {
+   };
+   Else @[5] {
+    desc=;
+    flags=0;
+    orig_prog_code=;
+    else_code {
      name=;
      el_typ=ProgCode;
      el_def=0;
@@ -3141,7 +2999,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
    };
-   WhileLoop @[5] {
+   WhileLoop @[6] {
     desc="the main loop over cycles of updating";
     flags=0;
     orig_prog_code=;
@@ -3202,7 +3060,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      expr="cycle < network.cycle_max";
     };
    };
-   MethodCall @[6] {
+   MethodCall @[7] {
     desc="perform final operations at end of settling (storing final activations, etc)";
     flags=0;
     orig_prog_code=;
@@ -3215,7 +3073,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
     };
    };
-   MethodCall @[7] {
+   MethodCall @[8] {
     desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
     flags=0;
     orig_prog_code=;
@@ -3228,14 +3086,13 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
     };
    };
-   IfElse @[8] {
+   If @[9] {
     desc="this stat must be called in plus phase when reward information is avail";
     flags=0;
     orig_prog_code=;
     cond {
      expr="network.phase_no == 1";
     };
-    show_false_code=0;
     true_code {
      name=;
      el_typ=ProgCode;
@@ -3254,13 +3111,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
-    false_code {
-     name=;
-     el_typ=ProgCode;
-     el_def=0;
-    };
    };
-   NetUpdateView @[9] {
+   NetUpdateView @[10] {
     desc="update network views, if update_net_view == true";
     flags=0;
     orig_prog_code=;
@@ -3317,11 +3169,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
     init_from=NULL;
    };
-  };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
   };
   functions {
    name=;
@@ -3462,11 +3309,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
     init_from=NULL;
    };
-  };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
   };
   functions {
    name=;
@@ -3648,6 +3490,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3680,6 +3523,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3712,6 +3556,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3744,6 +3589,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3776,6 +3622,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3808,6 +3655,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3840,6 +3688,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3872,6 +3721,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3904,6 +3754,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -3968,11 +3819,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
     init_from=NULL;
    };
-  };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
   };
   functions {
    name=;
@@ -4180,6 +4026,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4212,6 +4059,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4244,6 +4092,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4276,6 +4125,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4308,6 +4158,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4340,6 +4191,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4372,6 +4224,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4404,6 +4257,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       select_rows=0;
       select_spec {
        col_name=;
+       name=;
        on=1;
        rel=EQUAL;
        use_var=0;
@@ -4479,11 +4333,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
     init_from=NULL;
    };
-  };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
   };
   functions {
    name=;
@@ -4857,11 +4706,6 @@ and the testing data is updated.  The first epoch monitor should have all the it
     desc="batch + epoch";
     init_from=NULL;
    };
-  };
-  brk_pts {
-   name=;
-   el_typ=ProgBrkPt;
-   el_def=0;
   };
   functions {
    name=;

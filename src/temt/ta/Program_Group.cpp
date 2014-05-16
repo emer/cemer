@@ -15,7 +15,9 @@
 
 #include <Program>
 #include "Program_Group.h"
+
 #include <taMisc>
+#include <tabMisc>
 
 #include <QFileInfo>
 
@@ -118,4 +120,11 @@ bool Program_Group::RunStartupProgs() {
     }
   }
   return any_run;
+}
+
+void Program_Group::BrowserSelectFirstEl() {
+  if(!taMisc::gui_active) return;
+  if(leaves == 0) return;
+  Program* first_guy = Leaf(0);
+  tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
 }

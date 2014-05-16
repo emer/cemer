@@ -45,9 +45,7 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
   if(is_group) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
     LoadProgramGroup(pg);
-    Program* first_guy = pg->Leaf(0);
-    if(taMisc::gui_active && first_guy)
-      tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(pg, "BrowserSelectFirstEl");
     return pg;
   }
 
@@ -83,10 +81,10 @@ bool ProgLibEl::LoadProgramGroup(Program_Group* prog_gp) {
     return false;
   }
   prog_gp->Load(path);
-  prog_gp->UpdateAfterEdit();
+  prog_gp->UpdateAfterEdit_NoGui();
   for(int i=0;i<prog_gp->leaves;i++) {
     Program* prog = prog_gp->Leaf(i);
-    prog->UpdateAfterEdit();    // make sure
+    prog->UpdateAfterEdit_NoGui();    // make sure
     prog->RunLoadInitCode();
   }
   return true;

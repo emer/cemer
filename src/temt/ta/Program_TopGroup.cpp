@@ -19,6 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(Program_TopGroup);
 
 void Program_TopGroup::Initialize() {
   gp.SetBaseType(&TA_Program_Group);
+  gp.el_typ = &TA_Program_Group;
   break_points.name = "break_points";
 }
 
@@ -26,5 +27,12 @@ void Program_TopGroup::InitLinks() {
   inherited::InitLinks();
   taBase::Own(break_points, this);
   gp.SetBaseType(&TA_Program_Group); // don't make us, make regular groups..
+  gp.el_typ = &TA_Program_Group;
   break_points.name = "break_points";
 }
+
+void Program_TopGroup::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  gp.SetBaseType(&TA_Program_Group); // don't make us, make regular groups..
+  gp.el_typ = &TA_Program_Group;
+}  

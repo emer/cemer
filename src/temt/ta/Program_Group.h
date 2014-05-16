@@ -67,6 +67,9 @@ public:
   virtual bool  RunStartupProgs();
   // run programs marked as STARTUP_RUN -- typically only done by system at startup -- returns true if any run
 
+  virtual void  BrowserSelectFirstEl();
+  // #EXPERT callback to select first element in the group
+
   void          SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
   String       GetTypeDecoKey() const override { return "Program"; }

@@ -108,6 +108,15 @@ void taProject::InitLinks_impl() {
   taBase::Own(viewers_tmp, this);
   taBase::Own(undo_mgr, this);
 
+  docs.name = "docs";
+  wizards.name = "wizards";
+  ctrl_panels.name = "ctrl_panels";
+  data.name = "data";
+  data_proc.name = "data_proc";
+  programs.name = "programs";
+  viewers.name= "viewers";
+  viewers_tmp.name = "viewers_tmp";
+
   ctrl_panels.el_typ = &TA_ControlPanel; // set this as default type
 
   // note: any derived programs should install additional guys..
@@ -175,6 +184,15 @@ void taProject::UpdateAfterEdit() {
   if(taMisc::is_loading) {	// make sure we have one of these for old projects
     FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
     ctrl_panels.el_typ = &TA_ControlPanel; // set this as default type
+
+    docs.name = "docs";
+    wizards.name = "wizards";
+    ctrl_panels.name = "ctrl_panels";
+    data.name = "data";
+    data_proc.name = "data_proc";
+    programs.name = "programs";
+    viewers.name= "viewers";
+    viewers_tmp.name = "viewers_tmp";
   }
   UpdateUi();
 }

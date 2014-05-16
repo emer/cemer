@@ -267,6 +267,7 @@ void taBase::InitLinks_taAuto(TypeDef* td) {
     if(md->type->IsActualTaBase()) {
       taBase* mb = (taBase*)md->GetOff(this);
       taBase::Own(*mb, this);
+      mb->SetName(md->name);    // always set the names of members to their member name!
     }
     else if(md->type->InheritsFrom(TA_taSmartRef)) {
       taSmartRef* sr = (taSmartRef*)md->GetOff(this);

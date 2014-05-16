@@ -35,6 +35,8 @@ void ProjectBase::InitLinks_impl() {
   inherited::InitLinks_impl();
   taBase::Own(networks, this);
 
+  networks.name = "networks";
+
   // make default groups for different types of data
   data.FindMakeGpName("InputData");
   data.FindMakeGpName("OutputData");
@@ -65,6 +67,8 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
 
 void ProjectBase::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+
+  networks.name = "networks";
 }
 
 void ProjectBase::UpdateAfterEdit_impl() {
