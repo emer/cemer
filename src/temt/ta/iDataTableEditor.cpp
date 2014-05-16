@@ -71,9 +71,13 @@ void iDataTableEditor::ConfigView() {
   bool show_cell = (bool)m_cell; // if we have a cell, show it..
 
   tvCell->setVisible(show_cell);
-  // make sure orphan cell viewer goes away...
-  if (dt->rows == 0) {
+  // make sure orphan cell viewer goes away, and selection is cleared
+  if (dt->rows == 0 || (m_cell && dt->rows == 1 && dt->data.size == 1))  {
+    // this prevents the bug with a single matrix cell, which then cannot be re-selected
+    // to drive an update in the view
     setCellMat(NULL, QModelIndex());
+    tvCell->setVisible(false);
+    tvTable->setCurrentIndex(QModelIndex());
   }
   // jar 8/30/13 - don't clear the selection!!!!!!!!
 //  tvTable->setCurrentIndex(QModelIndex());
@@ -219,7 +223,7 @@ void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
 }
 
 void iDataTableEditor::UpdateSelectedItems_impl() {
-  taMisc::Info("updt sel itms");
+  // taMisc::Info("updt sel itms");
 }
 
 

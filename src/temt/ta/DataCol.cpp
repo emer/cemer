@@ -98,6 +98,7 @@ void DataCol::Copy_Common_(const DataCol& cp) {
   cell_geom = cp.cell_geom;
   calc_expr = cp.calc_expr;
   dim_names = cp.dim_names;
+  width = cp.width;
 }
 
 void DataCol::Copy_(const DataCol& cp) {

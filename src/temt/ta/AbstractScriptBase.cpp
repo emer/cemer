@@ -16,6 +16,7 @@
 #include "AbstractScriptBase.h"
 #include <css_machine.h>
 #include <css_ta.h>
+#include <css_qtconsole.h>
 
 #include <taMisc>
 
@@ -110,9 +111,17 @@ void AbstractScriptBase::StopScript() {
 void AbstractScriptBase::CmdShellScript() {
   if(!script || !cssMisc::TopShell) return;
   cssMisc::TopShell->PushSrcProg(script);
+  if(taMisc::gui_active) {
+    QcssConsole* con = QcssConsole::getInstance();
+    con->displayPrompt(true);   // force
+  }
 }
 
 void AbstractScriptBase::ExitShellScript() {
   if(!script || !cssMisc::TopShell) return;
   cssMisc::TopShell->PopSrcProg(script);
+  if(taMisc::gui_active) {
+    QcssConsole* con = QcssConsole::getInstance();
+    con->displayPrompt(true);   // force
+  }
 }
