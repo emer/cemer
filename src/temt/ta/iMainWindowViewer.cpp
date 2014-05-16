@@ -1966,7 +1966,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
         taMisc::Warning("ta: URL",path,"could not find project browser to select item");
         return;
       }
-      Program* prg = (Program*)tab->GetThisOrOwner(&TA_Program);
+      Program* prg = (Program*)tab->GetOwner(&TA_Program);
       if(prg) {
         prg->BrowserSelectMe();
         taMisc::RunPending();
