@@ -289,6 +289,12 @@ void iTreeWidget::clearExtSelection() {
 }
 
 void iTreeWidget::keyboardSearch(const QString& search) {
+  // don't do keyboard search if doing edit key pressed
+  // for some reason this is always activating even when this is not a trigger
+  // and thus preventing it from working
+  // if(editTriggers() & QAbstractItemView::EditKeyPressed)
+  //   return;
+
   // this makes it go directly to single selection mode for keyboard search --
   // perhaps not as powerful as extended select under keyboard ctrl but a LOT
   // more intuitive, esp on mac where you don't even get the ghosty outline of
@@ -367,6 +373,26 @@ QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const 
     return NULL;
   return itemFromIndex(pi);
 }
+
+// could not get this to dynamically switch between modes..
+// bool iTreeWidget::event(QEvent* ev) {
+//   QTreeWidgetItem* cur_item = currentItem();
+//   if(cur_item && cur_item->text(0).isEmpty()) {
+//     EditTriggers etrig = editTriggers();
+//     if(!(etrig & QAbstractItemView::EditKeyPressed)) {
+//       etrig |= QAbstractItemView::EditKeyPressed;
+//       setEditTriggers(etrig);
+//     }
+//   }
+//   else {
+//     EditTriggers etrig = editTriggers();
+//     if(etrig & QAbstractItemView::EditKeyPressed) {
+//       etrig &= ~QAbstractItemView::EditKeyPressed;
+//       setEditTriggers(etrig);
+//     }
+//   }
+//   return inherited::event(ev);
+// }
 
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);

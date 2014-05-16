@@ -108,6 +108,7 @@ protected:
   virtual  void dragScroll();
 
   void 	        keyPressEvent(QKeyEvent* e) override;
+  // bool          event(QEvent* ev) override;
 
 protected slots:
   void		this_itemExpanded(QTreeWidgetItem* item);

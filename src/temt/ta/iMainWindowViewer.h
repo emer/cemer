@@ -424,7 +424,7 @@ protected:
 
   void         closeEvent(QCloseEvent* ev) override;
 //nn  void             customEvent(QEvent* ev) override;
-  bool                  event(QEvent* ev);
+  bool         event(QEvent* ev) override;
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* ev) override;
   void         showEvent(QShowEvent* ev) override;
