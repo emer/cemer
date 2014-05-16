@@ -89,13 +89,14 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Ctrl+right! & Move cursor one word forward. \\
 \verb!Ctrl+left! & Move cursor one word backwards. \\
 \verb!Ctrl+shift+right! & Highlight one word forward. \\
-\verb!Ctrl+shift+left! & Highlight one word backwards.
+\verb!Ctrl+shift+left! & Highlight one word backwards.\\
+\verb!On Mac Opt+! & Use option instead of control.
 \end{tabular}
 
 \section{Global project}
 \begin{tabular}{@{}ll@{}}
 \verb!Standard!    & Tab \\
-\verb!Ctrl+S!    & Save project. \\
+\verb!Ctrl+S!    & Save project (Mac Cmd+S). \\
 \verb!Ctrl+left! & Backwards in navigation history \\
 \verb!Ctrl+right! & Forwards in navigation history \\
 \verb!F5!  & Refresh GUI. \\
@@ -119,6 +120,14 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Init,Run,Step,Stop,Abort!    & F8,F9,F10,F11,F12
 \end{tabular}
 
+\section{Help Browser}
+\begin{tabular}{@{}ll@{}}
+\verb!Standard!  & Tab,Page,Ctrl+F/B/N/P/A/E/X/W/C/V/Y. \\
+\verb!F1!  & Help Browser. \\
+\verb!Ctrl+S!  & Toggle Search/Find focus.
+\end{tabular}
+
+
 \section{Project tree and program tree}
 \settowidth{\MyLen}{\texttt{multicol}}
 \begin{tabular}{@{}ll@{}}
@@ -132,14 +141,13 @@ and Cmd+V is paste while Ctrl+V is Page Down. \\
 \verb!Ctrl+M!  & Duplicate element(s).
 \end{tabular}
 
-\subsection{New elements in project tree}
-Click on any group or navigate to group by typing first 1-3 chars, then Ctrl+I.\\
-Examples.\\
+\subsection{Project tree}
+Navigate - type the first 1-3 characters.\\
+Create new object by typing Ctrl+I. A chooser will appear. \\
+Examples:\\
 \begin{tabular}{@{}ll@{}}
 \verb!da Ctrl+I!    & New DataTable \\
-\verb!la Ctrl+I!    & New Layer \\
 \verb!pr Ctrl+I!    & New Program \\
-\verb!sp Ctrl+I!    & New Spec
 \end{tabular}
 \\
 New elements can also be created by pressing Return (Enter). No chooser dialog will appear. Works for all project elements.
@@ -173,7 +181,8 @@ fields of edit panels.
 \verb!Standard!    & Tab  \\
 \verb!Up/Down arrow!    & (numeric field) Increase/decrease value. \\
 \verb!Up/Down arrow!    & (dropdown) Move up/down. \\
-\verb!ESC!    & Revert changes. \\
+\verb!First Character!    & (dropdown) Selects item. \\
+\verb!ESC!    & Revert text field changes. \\
 \verb!Ctrl+Enter!    & Apply changes. \\
 \verb!Space!    & Open token chooser and Check/uncheck flag.\\
 \verb!Ctrl+L!    & (expression fields) Lookup information.
@@ -184,7 +193,7 @@ fields of edit panels.
 \begin{tabular}{@{}ll@{}}
 \verb!Standard!  & Page,Ctrl+F/B/N/P/A/E/C/V/D/G/Y. \\
 \verb!Ctrl+T!    & Switch between table and matrix focus. \\
-\verb!Ctrl+I!    & Insert new row. \\
+\verb!Ctrl+I!    & Insert new row before selected row. \\
 \verb!Ctrl+M!    & Duplicate row. \\
 \verb!Ctrl+Space!    & Start editing cell.
 \end{tabular}
@@ -203,27 +212,11 @@ fields of edit panels.
 \verb!+ or =! & Zoom-In.
 \end{tabular}
 
-\newpage
-
-\section{Help Browser}
-\includegraphics[width=240px]{helpbrowser.png}
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Tab,Page,Ctrl+F/B/N/P/A/E/X/W/C/V/Y. \\
-\verb!F1!  & Help Browser. \\
-\verb!Ctrl+S!  & Toggle Search/Find focus.
-\end{tabular}
-
-\section{Docs}
-\includegraphics[width=186px]{doc.png} \\
-\begin{tabular}{@{}ll@{}}
-\verb!Standard!  & Tab,Space,Ctrl+F/B/N/P/A/E/D/X/W/C/V/Y.
-\end{tabular}
 
 \subsection{css console}
-\includegraphics[width=209.5px]{console.png} \\
 \begin{tabular}{@{}ll@{}}
-\verb!Ctrl+L!    & Clear console buffer history. \\
-\verb!Ctrl+L!    & Delete highlighted text.
+\verb!Ctrl+.!    & Clear console buffer history. \\
+
 \end{tabular}
 
 \end{multicols}
