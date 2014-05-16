@@ -183,6 +183,11 @@ void Program::Copy_(const Program& cp) {
 
 void Program::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(taMisc::is_loading) {
+    last_name = name;           // grab it!
+  }
+
   //WARNING: the running css prog calls this on any changes to our vars,
   // such as ret_val -- therefore, DO NOT do things here that are incompatible
   // with the runtime, in particular, do NOT invalidate the following state flags:
@@ -207,7 +212,7 @@ void Program::UpdateAfterEdit_impl() {
       step_prog = sub_progs_step.Peek(); // set to last guy on list..
   }
   
-  if(short_nm.empty()) {
+  if(short_nm.empty() || (name != last_name)) {
     String use_nm = name;
     // todo: this is hacky and emergent-dependent...
     if(use_nm.startsWith("Leabra")) use_nm = use_nm.after("Leabra");
@@ -218,6 +223,8 @@ void Program::UpdateAfterEdit_impl() {
       use_nm = taMisc::RemoveVowels(use_nm);
     short_nm = taMisc::ShortName(use_nm);
   }
+
+  last_name = name;
 }
 
 bool Program::CheckConfig_impl(bool quiet) {

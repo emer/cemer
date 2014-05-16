@@ -44,14 +44,11 @@ public:
   
   void	Dump_Load_post() override;
 
-  void	UpdateAfterEdit();
   void 	InitLinks_impl(); // special, for this class only
   void 	InitLinks_post(); // special, for this class only
   void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)
   void	Copy_(const ProjectBase& cp);
   TA_BASEFUNS(ProjectBase);
-protected:
-  void UpdateAfterEdit_impl() override;
 private:
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }

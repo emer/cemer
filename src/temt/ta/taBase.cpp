@@ -292,6 +292,18 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
   }
 }
 
+void taBase::AutoNameMyMembers() {
+  TypeDef* td = GetTypeDef();
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members.FastEl(i);
+    if(md->type->IsAnyPtr()) continue;
+    if(md->type->IsActualTaBase()) {
+      taBase* mb = (taBase*)md->GetOff(this);
+      mb->SetName(md->name);
+    }
+  }
+}
+
 void taBase::Register() {
   if(!taMisc::not_constr)
     GetTypeDef()->RegisterFinal((void*)this);

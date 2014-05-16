@@ -611,6 +611,8 @@ public:
   // #IGNORE automatic TA-based initlinks: calls inherited and goes through only my members & owns them
   virtual void          CutLinks_taAuto(TypeDef* td);
   // #IGNORE automatic TA-based cutlinks: goes through only my members & calls cutlinks and calls inherited
+  virtual void          AutoNameMyMembers();
+  // #IGNORE automatically name all of my taBase member objects to their member names -- this is done automatically in InitLinks_taAuto and in the taNBase UpdateAfterEdit_impl during loading (to ensure that loaded projects are all up-to-date)
 
   void                  Register();
   // #IGNORE non-virtual, called in constructors to register token in token list
@@ -1004,9 +1006,9 @@ public:
   // #CAT_ObjectMgmt set the stale flag indicating a change in object values; gets forwarded up ("true" is implied, only the impl obj defines when it is cleared)
 
 protected:  // Impl
-  virtual void          UpdateAfterEdit_impl() {}
+  virtual void          UpdateAfterEdit_impl() { };
   // this is the preferred place to put all UAE actions, so they all take place before the notify
-  virtual void          UpdateAfterMove_impl(taBase* old_owner) {}
+  virtual void          UpdateAfterMove_impl(taBase* old_owner) { };
   // for actions that should be performed after object has been moved from one location to another in the structure hierarchy
 
   ///////////////////////////////////////////////////////////////////////////

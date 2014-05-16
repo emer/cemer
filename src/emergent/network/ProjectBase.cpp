@@ -35,8 +35,6 @@ void ProjectBase::InitLinks_impl() {
   inherited::InitLinks_impl();
   taBase::Own(networks, this);
 
-  networks.name = "networks";
-
   // make default groups for different types of data
   data.FindMakeGpName("InputData");
   data.FindMakeGpName("OutputData");
@@ -63,16 +61,6 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
   networks = cp.networks;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers!
-}
-
-void ProjectBase::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-
-  networks.name = "networks";
-}
-
-void ProjectBase::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
 }
 
 void ProjectBase::Dump_Load_post() {

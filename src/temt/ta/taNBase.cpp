@@ -31,6 +31,10 @@ void taNBase::UpdateAfterEdit_impl() {
   // without making a SetName call.  Make the call here so it can do its
   // validation.
   SetName(name);
+  if(taMisc::is_loading) {
+    // make sure my members are named with their member names!
+    AutoNameMyMembers();
+  }
 }
 
 void taNBase::MakeNameUnique() {

@@ -453,6 +453,7 @@ protected:
   int                   cur_indent;
   // current indent level -- used in adding code
   int64_t               last_init_timestamp;
+  String                last_name; // last-used program name -- detect changes and update short_nm accordingly
 
   void         UpdateAfterEdit_impl() override;
   bool         CheckConfig_impl(bool quiet) override;
