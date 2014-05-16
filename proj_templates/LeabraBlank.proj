@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7102
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
 LeabraProject .projects["LeabraBlank"] { 
  Doc_Group @.docs = [0] {
  };
@@ -243,7 +243,7 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
 
- Program_Group @.programs = [0] {
+ Program_TopGroup @.programs = [0] {
  };
 
  taViewer_List @.viewers = [1] {
@@ -2112,6 +2112,7 @@ LeabraProject .projects["LeabraBlank"] {
    name="Browser2";
    m_data=.projects["LeabraBlank"]$$;
    visible=1;
+   win_name=".projects[\"LeabraBlank\"] - LeabraBlank.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -2188,7 +2189,7 @@ LeabraProject .projects["LeabraBlank"] {
 	 el_def=0;
 	};
        };
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
@@ -2314,6 +2315,7 @@ LeabraProject .projects["LeabraBlank"] {
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };

@@ -1,8 +1,5 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6570
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
 BpProject .projects["BpStd"] { 
- taBase_Group @.templates = [0] {
- };
-
  Doc_Group @.docs = [0] {
  };
 
@@ -14,7 +11,20 @@ BpProject .projects["BpStd"] {
   };
  };
 
- SelectEdit_Group @.edits = [1] {
+ ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @["ControlPanel"] { 
+   EditMbrItem_Group @.mbrs = [2] {
+    EditMbrItem @[0] { };
+    EditMbrItem @[1] { };
+   };
+
+   EditMthItem_Group @.mths = [4] {
+    EditMthItem @[0] { };
+    EditMthItem @[1] { };
+    EditMthItem @[2] { };
+    EditMthItem @[3] { };
+   };
+  };
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -213,19 +223,81 @@ BpProject .projects["BpStd"] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["StdInputData"] { 
     DataTableCols @.data = [3] {
-     String_Data @["Name"] { };
-     float_Data @["Input"] { };
-     float_Data @["Output"] { };
+     String_Data @["Name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Input"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
    };
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [0] {
+    DataTableCols @.data = [6] {
+     int_Data @["batch"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+      };
+     };
+     int_Data @["epoch"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+      };
+     };
+     int_Data @["trial"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+      };
+     };
+     String_Data @["trial_name"] { };
+     String_Data @["group_name"] { };
+     float_Data @["sse"] { };
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [0] {
+    DataTableCols @.data = [6] {
+     int_Data @["batch"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     int_Data @["epoch"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["avg_sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["cnt_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["epoch_time_tot"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["epoch_time_usr"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
    };
   };
@@ -256,7 +328,158 @@ BpProject .projects["BpStd"] {
   };
  };
 
- Program_Group @.programs = [0] {
+ Program_TopGroup @.programs = [1] {
+  Program @["BpStartup"] { 
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [2] {
+    ProgVar @["network"] { };
+    ProgVar @["input_data"] { };
+   };
+
+   ProgVar_List @.vars = [12] {
+    ProgVar @["train"] { };
+    ProgVar @["batch"] { };
+    ProgVar @["batches"] { };
+    ProgVar @["epochs"] { };
+    ProgVar @["tag"] { };
+    ProgVar @["batch_str"] { };
+    ProgVar @["log_dir"] { };
+    ProgVar @["log_file_nm"] { };
+    ProgVar @["batch_start"] { };
+    ProgVar @["EpochOutputData"] { };
+    ProgVar @["TrialOutputData"] { };
+    ProgVar @["MyClusterRun"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [30] {
+    IfReturn @[0] { };
+    RegisterArgs @[1] { };
+    PrintExpr @[2] { };
+    Comment @[3] { };
+    ProgVarFmArg @[4] { };
+    ProgVarFmArg @[5] { };
+    ProgVarFmArg @[6] { };
+    ProgVarFmArg @[7] { };
+    ProgVarFmArg @[8] { };
+    ProgVarFmArg @[9] { };
+    ProgVarFmArg @[10] { };
+    ProgVarFmArg @[11] { };
+    ProgVarFmArg @[12] { };
+    ControlPanelsFmArgs @[13] { };
+    Comment @[14] { };
+    Comment @[15] { };
+    If @[16] { 
+     ProgEl_List @.true_code = [5] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      ProgVarFmArg @[1] { };
+      MiscCall @[2] { 
+       ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+       };
+      };
+      VarIncr @[3] { };
+      If @[4] { 
+       ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [4] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	 };
+	};
+	MiscCall @[1] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[17] { 
+     ProgEl_List @.else_code = [2] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
+      MiscCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+     };
+    };
+    MiscCall @[18] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    Comment @[19] { };
+    MethodCall @[20] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MethodCall @[21] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[22] { };
+    Comment @[23] { };
+    MethodCall @[24] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MethodCall @[25] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[26] { };
+    OtherProgramVar @[27] { };
+    PrintExpr @[28] { };
+    ProgramCall @[29] { 
+     ProgArg_List @.prog_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+   };
+  };
   Program_Group @.gp["BpAll_Std"] = [8] { 
    Program @["BpBatch"] { 
     ProgObjList @.objs = [0] {
@@ -283,17 +506,18 @@ BpProject .projects["BpStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [2] {
-     IfElse @[0] { 
+    ProgEl_List @.prog_code = [3] {
+     If @[0] { 
       ProgEl_List @.true_code = [1] {
        NetCounterInit @[0] { };
       };
-
-      ProgEl_List @.false_code = [1] {
+     };
+     Else @[1] { 
+      ProgEl_List @.else_code = [1] {
        MemberAssign @[0] { };
       };
      };
-     WhileLoop @[1] { 
+     WhileLoop @[2] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [3] {
@@ -453,7 +677,7 @@ BpProject .projects["BpStd"] {
       ProgArg_List @.fun_args = [0] {
       };
      };
-     IfElse @[5] { 
+     If @[5] { 
       ProgEl_List @.true_code = [2] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -461,13 +685,10 @@ BpProject .projects["BpStd"] {
        };
        PrintExpr @[1] { };
       };
-
-      ProgEl_List @.false_code = [0] {
-      };
      };
      AssignExpr @[6] { };
      WhileLoop @[7] { 
-      ProgEl_List @.loop_code = [4] {
+      ProgEl_List @.loop_code = [5] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
 	 ProgArg @[0] { };
@@ -475,19 +696,20 @@ BpProject .projects["BpStd"] {
 	};
        };
        NetCounterIncr @[1] { };
-       IfElse @[2] { 
+       If @[2] { 
 	ProgEl_List @.true_code = [2] {
 	 VarIncr @[0] { };
 	 IfBreak @[1] { };
 	};
-
-	ProgEl_List @.false_code = [1] {
+       };
+       Else @[3] { 
+	ProgEl_List @.else_code = [1] {
 	 AssignExpr @[0] { };
 	};
        };
-       IfElse @[3] { 
+       If @[4] { 
 	ProgEl_List @.true_code = [1] {
-	 IfElse @[0] { 
+	 If @[0] { 
 	  ProgEl_List @.true_code = [1] {
 	   ProgramCall @[0] { 
 	    ProgArg_List @.prog_args = [1] {
@@ -495,27 +717,18 @@ BpProject .projects["BpStd"] {
 	    };
 	   };
 	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
 	 };
-	};
-
-	ProgEl_List @.false_code = [0] {
 	};
        };
       };
      };
-     IfElse @[8] { 
+     If @[8] { 
       ProgEl_List @.true_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
 	 ProgArg @[0] { };
 	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
      MethodCall @[9] { 
@@ -572,28 +785,22 @@ BpProject .projects["BpStd"] {
 	 ProgArg @[1] { };
 	};
        };
-       IfElse @[1] { 
+       If @[1] { 
 	ProgEl_List @.true_code = [1] {
 	 MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	 };
 	};
-
-	ProgEl_List @.false_code = [0] {
-	};
        };
       };
      };
-     IfElse @[5] { 
+     If @[5] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
-      };
-
-      ProgEl_List @.false_code = [0] {
       };
      };
      MethodCall @[6] { 
@@ -956,7 +1163,7 @@ BpProject .projects["BpStd"] {
       UserDataItem @["view_panel_selected"] { };
      };
 
-     T3Panel_List @.panels = [1] {
+     T3Panel_List @.panels = [2] {
       T3Panel @["Network_0"] { 
        T3DataView_List @.root_view.children = [1] {
 	NetView @["Network_0_View"] { 
@@ -968,6 +1175,77 @@ BpProject .projects["BpStd"] {
 
 	 ScaleRange_List @.scale_ranges = [1] {
 	  ScaleRange @[0] { };
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["EpochOutputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GraphTableView @["EpochOutputData_Graph"] { 
+	 T3DataView_List @.children = [6] {
+	  GraphColView @["batch"] { };
+	  GraphColView @["epoch"] { };
+	  GraphColView @["avg_sse"] { };
+	  GraphColView @["cnt_err"] { };
+	  GraphColView @["epoch_time_tot"] { };
+	  GraphColView @["epoch_time_usr"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [16] {
+	  GraphPlotView @["EpochOutputData_Graph_plot_1"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_2"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_3"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_4"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_5"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_6"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_7"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_8"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_9"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_10"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_11"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_12"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_13"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_14"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_15"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_16"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [16] {
+	  GraphPlotView @["EpochOutputData_Graph_err_1"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_2"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_3"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_4"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_5"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_6"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_7"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_8"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_9"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_10"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_11"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_12"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_13"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_14"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_15"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_16"] { };
 	 };
 	};
        };
@@ -1063,6 +1341,9 @@ BpProject .projects["BpStd"] {
      };
     };
    };
+
+   Weights_List @.weights = [0] {
+   };
   };
  };
 };
@@ -1086,11 +1367,6 @@ BpProject .projects["BpStd"] {
   sync=0;
   wiki=;
   url=;
- };
- templates {
-  name="taBase_Group_0";
-  el_typ=taBase;
-  el_def=0;
  };
  docs {
   name="Doc_Group_1";
@@ -1116,10 +1392,87 @@ BpProject .projects["BpStd"] {
    auto_open=1;
   };
  };
- edits {
+ ctrl_panels {
   name="SelectEdit_Group_0";
-  el_typ=ClusterRun;
+  el_typ=ControlPanel;
   el_def=0;
+  ControlPanel @["ControlPanel"] {
+   name="ControlPanel";
+   auto_edit=1;
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="EditMbrItem_Group_4";
+    el_typ=EditMbrItem;
+    el_def=0;
+    EditMbrItem @[0] {
+     label="BpConSpec_0_lrate";
+     desc=" learning rate";
+     cust_desc=0;
+     base=.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$$;
+     mbr=BpConSpec::lrate;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
+    EditMbrItem @[1] {
+     label="BpUnitSpec_0_err_tol";
+     desc=" error tolerance: no error signal for a unit if |targ-act| < err_tol) (i.e., as if act == targ exactly) -- often useful to set to .05 or so to prevent over-learning with binary training signals -- big weights often needed to get very high or low activations";
+     cust_desc=0;
+     base=.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"]$$;
+     mbr=BpUnitSpec::err_tol;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
+   };
+   mths {
+    name="EditMthItem_Group_4";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+    EditMthItem @[0] {
+     label="Train_Init";
+     desc=" set the program state back to the beginning";
+     cust_desc=0;
+     base=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$$;
+     mth=Program::Init;
+    };
+    EditMthItem @[1] {
+     label="Train_Run";
+     desc=" run the program -- if not yet Init, will run Init first";
+     cust_desc=0;
+     base=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     mth=Program::Run_Gui;
+    };
+    EditMthItem @[2] {
+     label="Train_Step";
+     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
+     cust_desc=0;
+     base=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     mth=Program::Step_Gui;
+    };
+    EditMthItem @[3] {
+     label="Train_Stop";
+     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     cust_desc=0;
+     base=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     mth=Program::Stop;
+    };
+   };
+  };
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
    auto_edit=1;
@@ -2916,10 +3269,12 @@ BpProject .projects["BpStd"] {
   name="DataTable_Group_0";
   el_typ=DataTable;
   el_def=0;
+  save_tables=1;
   DataTable_Group @.gp["InputData"] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
    DataTable @["StdInputData"] {
     name="StdInputData";
     desc=;
@@ -2928,7 +3283,141 @@ BpProject .projects["BpStd"] {
      el_typ=String_Data;
      el_def=0;
      String_Data @["Name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_50";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
       name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [5] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";      };
+     };
+     float_Data @["Input"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_51";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="Input";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 5;5;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [2] ;;      };
+      width=0;
+      ar {
+       name=;
+      [5 5 5] 1;0;0;0;1;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+1;0;0;0;1;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;0;
+1;0;0;0;0;0;1;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;0;0;0;1;      };
+     };
+     float_Data @["Output"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_52";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="Output";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 5;5;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [2] ;;      };
+      width=0;
+      ar {
+       name=;
+      [5 5 5] 1;0;0;0;1;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+1;0;0;0;1;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;0;
+1;0;0;0;0;0;1;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;0;0;0;1;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [5] 0;1;2;3;4;    };
+   };
+  };
+  DataTable_Group @.gp["OutputData"] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+   DataTable @["TrialOutputData"] {
+    name="TrialOutputData";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @["batch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_54";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="batch";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2943,59 +3432,106 @@ BpProject .projects["BpStd"] {
        name=;
       [0]       };
      };
-     float_Data @["Input"] {
-      name="Input";
+     int_Data @["epoch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_55";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="epoch";
       col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
        name=;
-      [2] ;;      };
+      [0]       };
       width=0;
       ar {
        name=;
-      [5 5 0]       };
+      [0]       };
      };
-     float_Data @["Output"] {
-      name="Output";
+     int_Data @["trial"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_56";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="trial";
       col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
        name=;
-      [2] ;;      };
+      [0]       };
       width=0;
       ar {
        name=;
-      [5 5 0]       };
+      [0]       };
      };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-    row_indexes {
-     name=;
-    [0]     };
-   };
-  };
-  DataTable_Group @.gp["OutputData"] {
-   name="OutputData";
-   el_typ=DataTable;
-   el_def=0;
-   DataTable @["TrialOutputData"] {
-    name="TrialOutputData";
-    desc=;
-    data {
-     name="data";
-     el_typ=DataColT;
-     el_def=0;
+     String_Data @["trial_name"] {
+      name="trial_name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     String_Data @["group_name"] {
+      name="group_name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     float_Data @["sse"] {
+      name="sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
@@ -3010,8 +3546,174 @@ BpProject .projects["BpStd"] {
     desc=;
     data {
      name="data";
-     el_typ=DataColT;
+     el_typ=int_Data;
      el_def=0;
+     int_Data @["batch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_51";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="batch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     int_Data @["epoch"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_52";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="epoch";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     float_Data @["avg_sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_53";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="avg_sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     float_Data @["cnt_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_54";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="cnt_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     float_Data @["epoch_time_tot"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_55";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="epoch_time_tot";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
+     float_Data @["epoch_time_usr"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_56";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.1572327017784119;
+	val_type_fixed=0;
+       };
+      };
+      name="epoch_time_usr";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [0]       };
+     };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
@@ -3026,6 +3728,7 @@ BpProject .projects["BpStd"] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
  };
  data_proc {
@@ -3091,6 +3794,890 @@ BpProject .projects["BpStd"] {
   el_def=0;
   tags=;
   desc=;
+  Program @["BpStartup"] {
+   name="BpStartup";
+   short_nm="Startup";
+   tags="Bp, Startup, Parallel Batch";
+   desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
+   flags=STARTUP_RUN;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["network"] {
+     name="network";
+     var_type=T_Object;
+     object_type=BpNetwork;
+     object_val=.projects["BpStd"].networks["Network_0"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="network to operate on -- updates batch counter on network and passes it to train program";
+     init_from=NULL;
+    };
+    ProgVar @["input_data"] {
+     name="input_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["BpStd"].data.gp["InputData"]["StdInputData"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="datatable with training patterns -- not used by this program, but passed to train program";
+     init_from=NULL;
+    };
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["train"] {
+     name="train";
+     var_type=T_Object;
+     object_type=Program;
+     object_val=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc="set this to point to your train process";
+     init_from=NULL;
+    };
+    ProgVar @["batch"] {
+     name="batch";
+     var_type=T_Object;
+     object_type=Program;
+     object_val=.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="set this to point to your batch process";
+     init_from=NULL;
+    };
+    ProgVar @["batches"] {
+     name="batches";
+     var_type=T_Int;
+     int_val=100;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
+     init_from=NULL;
+    };
+    ProgVar @["epochs"] {
+     name="epochs";
+     var_type=T_Int;
+     int_val=10000;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc="this is a \"dummy\" var for ClusterRun to set the startup arg";
+     init_from=NULL;
+    };
+    ProgVar @["tag"] {
+     name="tag";
+     var_type=T_String;
+     string_val="_gui";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["batch_str"] {
+     name="batch_str";
+     var_type=T_String;
+     string_val="00";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="batch number as a string (leading zeros)";
+     init_from=NULL;
+    };
+    ProgVar @["log_dir"] {
+     name="log_dir";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="log file directory";
+     init_from=NULL;
+    };
+    ProgVar @["log_file_nm"] {
+     name="log_file_nm";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="name of log file";
+     init_from=NULL;
+    };
+    ProgVar @["batch_start"] {
+     name="batch_start";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="batch starting number";
+     init_from=NULL;
+    };
+    ProgVar @["EpochOutputData"] {
+     name="EpochOutputData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["TrialOutputData"] {
+     name="TrialOutputData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["BpStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["MyClusterRun"] {
+     name="MyClusterRun";
+     var_type=T_Object;
+     object_type=ClusterRun;
+     object_val=.projects["BpStd"].ctrl_panels["ClusterRun"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    IfReturn @[0] {
+     desc="don't run if running in the gui!";
+     flags=0;
+     orig_prog_code=;
+     cond {
+      expr="taMisc::gui_active";
+     };
+    };
+    RegisterArgs @[1] {
+     desc="This is KEY!!! actually processes all args, including those from ProgVarFmArg guys below";
+     flags=0;
+     orig_prog_code=;
+    };
+    PrintExpr @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"Loaded project: \" << .projects[0].file_name";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    Comment @[3] {
+     desc="= Std variables in startup program itself =";
+     flags=0;
+     orig_prog_code=;
+    };
+    ProgVarFmArg @[4] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=.projects["BpStd"].programs["BpStartup"]$$;
+     var_name="tag";
+     arg_name="tag";
+    };
+    ProgVarFmArg @[5] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs["BpStartup"]$;
+     var_name="log_dir";
+     arg_name="log_dir";
+    };
+    ProgVarFmArg @[6] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     var_name="max_epoch";
+     arg_name="epochs";
+    };
+    ProgVarFmArg @[7] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     var_name="rnd_init";
+     arg_name="rnd_init";
+    };
+    ProgVarFmArg @[8] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
+     var_name="max_batch";
+     arg_name="batches";
+    };
+    ProgVarFmArg @[9] {
+     desc="b_end is parallel-batch mode of operation (see b_start)";
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
+     var_name="max_batch";
+     arg_name="b_end";
+    };
+    ProgVarFmArg @[10] {
+     desc="b_start is parallel-batch mode of operation (see also b_end)";
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
+     var_name="batch";
+     arg_name="b_start";
+    };
+    ProgVarFmArg @[11] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     var_name="save_wts_interval";
+     arg_name="save_wts_interval";
+    };
+    ProgVarFmArg @[12] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
+     var_name="save_final_wts";
+     arg_name="save_final_wts";
+    };
+    ControlPanelsFmArgs @[13] {
+     desc="sets any arg listed in the control panel";
+     flags=NEW_EL;
+     orig_prog_code=;
+     ctrl_panel_var=.projects["BpStd"].programs["BpStartup"].vars["MyClusterRun"]$$;
+    };
+    Comment @[14] {
+     desc="= Add your own variables here =";
+     flags=0;
+     orig_prog_code=;
+    };
+    Comment @[15] {
+     desc="= Below saves log files of standard data tables =";
+     flags=0;
+     orig_prog_code=;
+    };
+    If @[16] {
+     desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
+     flags=0;
+     orig_prog_code=;
+     cond {
+      expr="taMisc::CheckArgByName(\"b_start\")";
+     };
+     true_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc="directly set variable on batch program";
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       obj=.projects["BpStd"].programs["BpStartup"].vars["batch"]$$;
+       method=Program::SetVar;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="var_nm";
+	 required=1;
+	 def_val="\"\"";
+	 expr {
+	  expr="\"init_batch\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_Variant_ref;
+	 type="Variant&";
+	 name="value";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+      ProgVarFmArg @[1] {
+       desc="read in the arg to us too, so we can set file names based on it";
+       flags=0;
+       orig_prog_code=;
+       prog=$.projects["BpStd"].programs["BpStartup"]$;
+       var_name="batch_start";
+       arg_name="b_start";
+      };
+      MiscCall @[2] {
+       desc="string version with leading zeros";
+       flags=0;
+       orig_prog_code=;
+       result_var=.projects["BpStd"].programs["BpStartup"].vars["batch_str"]$$;
+       object_type=taMisc;
+       method=taMisc::LeadingZeros;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="num";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="batch_start";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=int;
+	 type="int";
+	 name="len";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="2";
+	 };
+	};
+       };
+      };
+      VarIncr @[3] {
+       desc="add to tag for setting log file names";
+       flags=0;
+       orig_prog_code=;
+       var=.projects["BpStd"].programs["BpStartup"].vars["tag"]$$;
+       expr {
+	expr="\".\" + batch_str";
+       };
+      };
+      If @[4] {
+       desc="save startup args: only for first job in parallel batch mode, or this should be 0 otherwise in any case";
+       flags=0;
+       orig_prog_code=;
+       cond {
+	expr="batch_start == 0";
+       };
+       true_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc="save args to file: last arg is to include dmem proc number";
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$$;
+	 obj=.projects["BpStd"].programs["BpStartup"].vars["EpochOutputData"]$$;
+	 method=taBase::GetFileNameFmProject;
+	 meth_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="ext";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\".args\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="tag";
+	   required=0;
+	   def_val="\"\"";
+	   expr {
+	    expr="tag.before(\".00\",-1)";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="subdir";
+	   required=0;
+	   def_val="\"\"";
+	   expr {
+	    expr="log_dir";
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=bool;
+	   type="bool";
+	   name="dmem_proc_no";
+	   required=0;
+	   def_val="false";
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	};
+	MiscCall @[1] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=NULL;
+	 object_type=taMisc;
+	 method=taMisc::FullArgStringToFile;
+	 meth_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_taString_ref;
+	   type="taString&";
+	   name="fname";
+	   required=1;
+	   def_val="\"\"";
+	   expr {
+	    expr="log_file_nm";
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
+    Else @[17] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     else_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc="save args to file: last arg is to include dmem proc number";
+       flags=0;
+       orig_prog_code=;
+       result_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
+       obj=$.projects["BpStd"].programs["BpStartup"].vars["EpochOutputData"]$;
+       method=taBase::GetFileNameFmProject;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="ext";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\".args\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="tag";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="tag";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="subdir";
+	 required=0;
+	 def_val="\"\"";
+	 expr {
+	  expr="log_dir";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="dmem_proc_no";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+      MiscCall @[1] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       result_var=NULL;
+       object_type=taMisc;
+       method=taMisc::FullArgStringToFile;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=1;
+	 def_val="\"\"";
+	 expr {
+	  expr="log_file_nm";
+	 };
+	};
+       };
+      };
+     };
+    };
+    MiscCall @[18] {
+     desc="report any args that didn't get used!";
+     flags=NEW_EL|CAN_REVERT_TO_CODE;
+     orig_prog_code="taMisc::ReportUnusedArgs()";
+     result_var=NULL;
+     object_type=taMisc;
+     method=taMisc::ReportUnusedArgs;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="err";
+       required=0;
+       def_val="true";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    Comment @[19] {
+     desc="== Save epoch log -- on by default ==";
+     flags=0;
+     orig_prog_code=;
+    };
+    MethodCall @[20] {
+     desc="last arg is to include dmem proc number";
+     flags=0;
+     orig_prog_code=;
+     result_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
+     obj=$.projects["BpStd"].programs["BpStartup"].vars["EpochOutputData"]$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".epc.dat\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    MethodCall @[21] {
+     desc="last arg is to restrict log to dmem_proc = 0";
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["BpStd"].programs["BpStartup"].vars["EpochOutputData"]$;
+     method=DataTable::SaveDataLog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="append";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_0";
+       required=0;
+       def_val="true";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    PrintVar @[22] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message="Saving epoch log data to:";
+     print_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    Comment @[23] {
+     desc="== Save trial log -- OFF by default ==";
+     flags=0;
+     orig_prog_code=;
+    };
+    MethodCall @[24] {
+     desc="last arg is to include dmem proc number";
+     flags=OFF;
+     orig_prog_code=;
+     result_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
+     obj=.projects["BpStd"].programs["BpStartup"].vars["TrialOutputData"]$$;
+     method=taBase::GetFileNameFmProject;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="ext";
+       required=1;
+       def_val=;
+       expr {
+	expr="\".trl.dat\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="tag";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="tag";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="subdir";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_dir";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_no";
+       required=0;
+       def_val="false";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MethodCall @[25] {
+     desc="last arg is to restrict log to dmem_proc = 0";
+     flags=OFF;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=$.projects["BpStd"].programs["BpStartup"].vars["TrialOutputData"]$;
+     method=DataTable::SaveDataLog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="fname";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="log_file_nm";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="append";
+       required=0;
+       def_val="false";
+       expr {
+	expr="false";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="dmem_proc_0";
+       required=0;
+       def_val="true";
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+    PrintVar @[26] {
+     desc=;
+     flags=OFF;
+     orig_prog_code=;
+     message="Saving trial log data to:";
+     print_var=$.projects["BpStd"].programs["BpStartup"].vars["log_file_nm"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    OtherProgramVar @[27] {
+     desc="propagate the tag";
+     flags=0;
+     orig_prog_code=;
+     other_prog=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"]$$;
+     set_other=1;
+     var_1=$.projects["BpStd"].programs["BpStartup"].vars["tag"]$;
+     var_2=NULL;
+     var_3=NULL;
+     var_4=NULL;
+    };
+    PrintExpr @[28] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     expr {
+      expr="\"Running: \" << batch.name";
+     };
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+    ProgramCall @[29] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=BpNetwork;
+       type="BpNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="input_data";
+       };
+      };
+     };
+     target=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpBatch"]$;
+     targ_ld_init="*BpBatch*";
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
   Program_Group @.gp["BpAll_Std"] {
    name="BpAll_Std";
    el_typ=Program;
@@ -3121,7 +4708,7 @@ BpProject .projects["BpStd"] {
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=.projects["BpStd"].networks["Network_0"]$$;
+      object_val=$.projects["BpStd"].networks["Network_0"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -3132,7 +4719,7 @@ BpProject .projects["BpStd"] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["BpStd"].data.gp["InputData"]["StdInputData"]$$;
+      object_val=$.projects["BpStd"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -3198,14 +4785,13 @@ BpProject .projects["BpStd"] {
      name=;
      el_typ=ProgCode;
      el_def=0;
-     IfElse @[0] {
+     If @[0] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="init_batch";
       };
-      show_false_code=1;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -3220,7 +4806,12 @@ BpProject .projects["BpStd"] {
 	update_after=0;
        };
       };
-      false_code {
+     };
+     Else @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      else_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
@@ -3237,7 +4828,7 @@ BpProject .projects["BpStd"] {
        };
       };
      };
-     WhileLoop @[1] {
+     WhileLoop @[2] {
       desc="the main loop over training runs";
       flags=0;
       orig_prog_code=;
@@ -3284,7 +4875,7 @@ BpProject .projects["BpStd"] {
 	  };
 	 };
 	};
-	target=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$$;
+	target=$.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrain"]$;
 	targ_ld_init="*BpTrain*";
        };
        NetCounterIncr @[1] {
@@ -4017,14 +5608,13 @@ BpProject .projects["BpStd"] {
        el_def=0;
       };
      };
-     IfElse @[5] {
+     If @[5] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="no_prompts";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -4052,11 +5642,6 @@ BpProject .projects["BpStd"] {
 	my_mask=NULL;
 	debug_level=NULL;
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      AssignExpr @[6] {
@@ -4117,14 +5702,13 @@ BpProject .projects["BpStd"] {
 	counter=Network::epoch;
 	update_after=0;
        };
-       IfElse @[2] {
+       If @[2] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="network.avg_sse <= err_stopcrit";
 	};
-	show_false_code=1;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
@@ -4147,7 +5731,12 @@ BpProject .projects["BpStd"] {
 	  };
 	 };
 	};
-	false_code {
+       };
+       Else @[3] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	else_code {
 	 name=;
 	 el_typ=ProgCode;
 	 el_def=0;
@@ -4162,26 +5751,24 @@ BpProject .projects["BpStd"] {
 	 };
 	};
        };
-       IfElse @[3] {
+       If @[4] {
 	desc=;
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="save_wts_interval >= 1";
 	};
-	show_false_code=0;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
 	 el_def=0;
-	 IfElse @[0] {
+	 If @[0] {
 	  desc=;
 	  flags=0;
 	  orig_prog_code=;
 	  cond {
 	   expr="epoch % save_wts_interval == 0";
 	  };
-	  show_false_code=0;
 	  true_code {
 	   name=;
 	   el_typ=ProgCode;
@@ -4205,21 +5792,11 @@ BpProject .projects["BpStd"] {
 	      };
 	     };
 	    };
-	    target=.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"]$$;
+	    target=$.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"]$;
 	    targ_ld_init="*SaveWeights*";
 	   };
 	  };
-	  false_code {
-	   name=;
-	   el_typ=ProgCode;
-	   el_def=0;
-	  };
 	 };
-	};
-	false_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
 	};
        };
       };
@@ -4227,14 +5804,13 @@ BpProject .projects["BpStd"] {
        expr="epoch < max_epoch";
       };
      };
-     IfElse @[8] {
+     If @[8] {
       desc=;
       flags=0;
       orig_prog_code=;
       cond {
        expr="save_final_wts";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -4261,11 +5837,6 @@ BpProject .projects["BpStd"] {
 	target=$.projects["BpStd"].programs.gp["BpAll_Std"]["SaveWeights"]$;
 	targ_ld_init="*SaveWeights*";
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      MethodCall @[9] {
@@ -4358,7 +5929,7 @@ BpProject .projects["BpStd"] {
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects["BpStd"].data.gp["OutputData"]["TrialOutputData"]$$;
+      object_val=$.projects["BpStd"].data.gp["OutputData"]["TrialOutputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4379,7 +5950,7 @@ BpProject .projects["BpStd"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=3;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4513,14 +6084,13 @@ BpProject .projects["BpStd"] {
 	target=.projects["BpStd"].programs.gp["BpAll_Std"]["BpTrial"]$$;
 	targ_ld_init="*BpTrial*";
        };
-       IfElse @[1] {
+       If @[1] {
 	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
 	flags=0;
 	orig_prog_code=;
 	cond {
 	 expr="network.Compute_Weights_Test(trial+1)";
 	};
-	show_false_code=0;
 	true_code {
 	 name=;
 	 el_typ=ProgCode;
@@ -4539,11 +6109,6 @@ BpProject .projects["BpStd"] {
 	  };
 	 };
 	};
-	false_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	};
        };
       };
       data_var=.projects["BpStd"].programs.gp["BpAll_Std"]["BpEpoch"].args["input_data"]$$;
@@ -4560,14 +6125,13 @@ BpProject .projects["BpStd"] {
       group_order=PERMUTED;
       group_idx_list{       };
      };
-     IfElse @[5] {
+     If @[5] {
       desc="if full batch mode, update only at end of epoch";
       flags=0;
       orig_prog_code=;
       cond {
        expr="network.wt_update == Network::BATCH";
       };
-      show_false_code=0;
       true_code {
        name=;
        el_typ=ProgCode;
@@ -4585,11 +6149,6 @@ BpProject .projects["BpStd"] {
 	 el_def=0;
 	};
        };
-      };
-      false_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
       };
      };
      MethodCall @[6] {
@@ -4847,7 +6406,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=0;
+	ext_flags=EXT;
 	noise {name="RandomSpec_4": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
@@ -4858,7 +6417,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=0;
+	ext_flags=TARG;
 	noise {name="RandomSpec_5": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
@@ -4944,8 +6503,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	arg_type=DataBlock_ptr;
-	type="DataBlock*";
+	arg_type=DataTable_ptr;
+	type="DataTable*";
 	name="db";
 	required=1;
 	def_val=;
@@ -5028,8 +6587,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	arg_type=DataBlock_ptr;
-	type="DataBlock*";
+	arg_type=DataTable_ptr;
+	type="DataTable*";
 	name="db";
 	required=1;
 	def_val=;
@@ -5103,6 +6662,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5135,6 +6695,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5167,6 +6728,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5199,6 +6761,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5231,6 +6794,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5263,6 +6827,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5534,6 +7099,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5566,6 +7132,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5598,6 +7165,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5630,6 +7198,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5662,6 +7231,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5694,6 +7264,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5707,7 +7278,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        };
       };
       network=$.projects["BpStd"].networks["Network_0"]$;
-      data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"]$$;
+      data=$.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"]$;
       rmv_orphan_cols=1;
      };
     };
@@ -6337,7 +7908,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9994666576385498;
+     value 6 0=0.9989344477653503;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -6352,13 +7923,14 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
    name="Browser2";
    m_data=.projects["BpStd"]$$;
    visible=1;
+   win_name=".projects[\"BpStd\"] - BpStd.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -6523,7 +8095,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 };
 	};
        };
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
@@ -6537,6 +8109,894 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 pos {x=0.5: y=0.8981581: z=2.296463: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=2.500879;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3Panel @["EpochOutputData"] {
+       name="EpochOutputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @["EpochOutputData_Graph"] {
+	  name="EpochOutputData_Graph";
+	  m_data=$.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["batch"] {
+	    name="batch";
+	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch"] {
+	    name="epoch";
+	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_sse"] {
+	    name="avg_sse";
+	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["cnt_err"] {
+	    name="cnt_err";
+	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_tot"] {
+	    name="epoch_time_tot";
+	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_usr"] {
+	    name="epoch_time_usr";
+	    m_data=.projects["BpStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="T3Annotation_List_9";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="T3DataView_List_0";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=0.01;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   name="GraphAxisView_5";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   name="GraphAxisView_6";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="batch";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  tot_plots=16;
+	  plots {
+	   name="GraphPlotView_List_0";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
+	    name="EpochOutputData_Graph_plot_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="avg_sse";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_2"] {
+	    name="EpochOutputData_Graph_plot_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_3"] {
+	    name="EpochOutputData_Graph_plot_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_4"] {
+	    name="EpochOutputData_Graph_plot_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
+	    name="EpochOutputData_Graph_plot_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
+	    name="EpochOutputData_Graph_plot_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
+	    name="EpochOutputData_Graph_plot_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
+	    name="EpochOutputData_Graph_plot_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
+	    name="EpochOutputData_Graph_plot_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_10"] {
+	    name="EpochOutputData_Graph_plot_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_11"] {
+	    name="EpochOutputData_Graph_plot_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_12"] {
+	    name="EpochOutputData_Graph_plot_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
+	    name="EpochOutputData_Graph_plot_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
+	    name="EpochOutputData_Graph_plot_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
+	    name="EpochOutputData_Graph_plot_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
+	    name="EpochOutputData_Graph_plot_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	  };
+	  errbars {
+	   name="GraphPlotView_List_0";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
+	    name="EpochOutputData_Graph_err_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_2"] {
+	    name="EpochOutputData_Graph_err_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_3"] {
+	    name="EpochOutputData_Graph_err_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_4"] {
+	    name="EpochOutputData_Graph_err_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_5"] {
+	    name="EpochOutputData_Graph_err_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_6"] {
+	    name="EpochOutputData_Graph_err_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_7"] {
+	    name="EpochOutputData_Graph_err_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_8"] {
+	    name="EpochOutputData_Graph_err_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_9"] {
+	    name="EpochOutputData_Graph_err_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_10"] {
+	    name="EpochOutputData_Graph_err_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_11"] {
+	    name="EpochOutputData_Graph_err_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_12"] {
+	    name="EpochOutputData_Graph_err_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_13"] {
+	    name="EpochOutputData_Graph_err_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_14"] {
+	    name="EpochOutputData_Graph_err_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_15"] {
+	    name="EpochOutputData_Graph_err_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_16"] {
+	    name="EpochOutputData_Graph_err_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   name="GraphAxisView_7";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   name="GraphAxisView_8";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_4";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=1.457625: y=0.5255: z=1.545217: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.055217;
 	};
 	T3SavedView @["Vw_1"] {
 	 name="Vw_1";
@@ -6622,17 +9082,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007640067953616381;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04053333401679993;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7376909852027893;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -6649,6 +9109,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
@@ -6741,7 +9202,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=BpCon;
-     bias_spec {type=BpConSpec: spec=.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$$: };
+     bias_spec {type=BpConSpec: spec=$.projects["BpStd"].networks["Network_0"].specs["BpConSpec_0"]$: };
      sse_tol=0;
      sig {off=0: gain=1: };
      err_tol=0;
@@ -6830,7 +9291,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       pos {x=0: y=0: z=0: };
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"]$$: };
+     unit_spec {type=BpUnitSpec: spec=$.projects["BpStd"].networks["Network_0"].specs["BpUnitSpec_0"]$: };
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -6878,6 +9339,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
      send_prjns {
@@ -6941,6 +9403,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        send_n=1;
        projected=1;
        direction=DIR_UNKNOWN;
+       prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
      send_prjns {
@@ -6966,6 +9429,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      brain_area=;
      voxel_fill_pct=1;
     };
+   };
+   weights {
+    name=;
+    el_typ=Weights;
+    el_def=0;
    };
    flags=0;
    auto_build=AUTO_BUILD;

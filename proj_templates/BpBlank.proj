@@ -1,8 +1,5 @@
-// ta_Dump File v3.0 -- code v6.3.3.0 rev6570
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
 BpProject .projects["BpBlank"] { 
- taBase_Group @.templates = [0] {
- };
-
  Doc_Group @.docs = [0] {
  };
 
@@ -14,7 +11,14 @@ BpProject .projects["BpBlank"] {
   };
  };
 
- SelectEdit_Group @.edits = [1] {
+ ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @["ControlPanel"] { 
+   EditMbrItem_Group @.mbrs = [0] {
+   };
+
+   EditMthItem_Group @.mths = [0] {
+   };
+  };
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -241,7 +245,7 @@ BpProject .projects["BpBlank"] {
   };
  };
 
- Program_Group @.programs = [0] {
+ Program_TopGroup @.programs = [0] {
  };
 
  taViewer_List @.viewers = [1] {
@@ -332,11 +336,6 @@ BpProject .projects["BpBlank"] {
   wiki=;
   url=;
  };
- templates {
-  name="taBase_Group_0";
-  el_typ=taBase;
-  el_def=0;
- };
  docs {
   name="Doc_Group_1";
   el_typ=taDoc;
@@ -361,10 +360,27 @@ BpProject .projects["BpBlank"] {
    auto_open=1;
   };
  };
- edits {
+ ctrl_panels {
   name="SelectEdit_Group_0";
-  el_typ=ClusterRun;
+  el_typ=ControlPanel;
   el_def=0;
+  ControlPanel @["ControlPanel"] {
+   name="ControlPanel";
+   auto_edit=1;
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="EditMbrItem_Group_4";
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name="EditMthItem_Group_4";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+  };
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
    auto_edit=1;
@@ -2161,20 +2177,24 @@ BpProject .projects["BpBlank"] {
   name="DataTable_Group_0";
   el_typ=DataTable;
   el_def=0;
+  save_tables=1;
   DataTable_Group @.gp["InputData"] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["OutputData"] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["AnalysisData"] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
  };
  data_proc {
@@ -2262,7 +2282,7 @@ BpProject .projects["BpBlank"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9994666576385498;
+     value 6 0=0.9989344477653503;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -2277,13 +2297,14 @@ BpProject .projects["BpBlank"] {
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
    name="Browser2";
    m_data=.projects["BpBlank"]$$;
    visible=1;
+   win_name=".projects[\"BpBlank\"] - BpBlank.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -2360,7 +2381,7 @@ BpProject .projects["BpBlank"] {
 	 el_def=0;
 	};
        };
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
@@ -2459,17 +2480,17 @@ BpProject .projects["BpBlank"] {
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007640067953616381;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04053333401679993;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7376909852027893;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -2486,6 +2507,7 @@ BpProject .projects["BpBlank"] {
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.8.0 rev7129
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -8805,6 +8805,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
    name="Browser2";
    m_data=.projects["LeabraStd"]$$;
    visible=1;
+   win_name=".projects[\"LeabraStd\"] - LeabraStd.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -8969,7 +8970,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	 };
 	};
        };
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
@@ -9873,7 +9874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 };
 	};
        };
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       bg_color {r=1: g=1: b=1: a=1: };
        text_color {r=0: g=0: b=0: a=1: };
        headlight_on=1;
        stereo_view=STEREO_NONE;
@@ -9884,9 +9885,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	T3SavedView @["Vw_0"] {
 	 name="Vw_0";
 	 view_saved=1;
-	 pos {x=1.465: y=0.4449999: z=1.452551: };
+	 pos {x=1.465: y=0.5129999: z=1.637373: };
 	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=1.962551;
+	 focal_dist=2.147373;
 	};
 	T3SavedView @["Vw_1"] {
 	 name="Vw_1";
@@ -9999,6 +10000,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
