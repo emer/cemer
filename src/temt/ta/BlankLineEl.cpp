@@ -24,7 +24,7 @@ void BlankLineEl::Initialize() {
 }
 
 void BlankLineEl::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "    ", ProgLine::MAIN_LINE);
+  prog->AddLine(this, "// ", ProgLine::MAIN_LINE);
 }
 
 String BlankLineEl::GetDisplayName() const {
