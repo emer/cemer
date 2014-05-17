@@ -399,6 +399,18 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   
   QTreeWidgetItem* cur_item = currentItem();
   
+  if(cur_item && !cur_item->text(0).isEmpty()) {
+    EditTriggers etrig = editTriggers();
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    inherited::keyPressEvent( e );
+  }
+  else {
+    if (cur_item) {
+      EditTriggers etrig = editTriggers();
+      setEditTriggers(QAbstractItemView::AnyKeyPressed);
+    }
+  }
+  
   if (e->modifiers() & Qt::ShiftModifier) {
     QTreeWidgetItem* prev_or_next_item = NULL;
     if (e->key() == Qt::Key_Up) {
