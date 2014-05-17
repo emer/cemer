@@ -32,7 +32,7 @@ class TA_API ColorScaleSpec : public taNBase {
   // ##CAT_Display Color Spectrum Data #SCOPE_taRootBase
 INHERITED(taNBase)
 public:
-  RGBA          background;     // background color
+  RGBA          background;     // #NO_AUTO_NAME background color
   RGBA_List     clr;            // #SHOW_TREE group of colors
 
   virtual void  GenRanges(ColorScaleColor_List* cl, int chunks);
@@ -45,8 +45,6 @@ public:
   static const KeyString key_clr4; // #IGNORE
   String GetColText(const KeyString& key, int itm_idx) const override;  // #IGNORE
 
-  void  AutoNameMyMembers() override { }; // don't!
-  
   void  InitLinks() override;
   TA_BASEFUNS(ColorScaleSpec);
 private:
