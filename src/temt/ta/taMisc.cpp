@@ -966,17 +966,22 @@ void taMisc::SetLogFile(const String& log_fn) {
   taMisc::log_stream.clear();
   taMisc::log_stream.open(log_fn, ios::out);
   if(taMisc::log_stream.bad()) {
-    String bkup_fn = user_log_dir + "/default_project_log.plog";
+    SetLogFileToDefault();
     taMisc::Error("taMisc::SetLogFile -- Could not open log stream as:", log_fn,
-                  "reverting to default:", bkup_fn);
-    taMisc::log_stream.close();
-    taMisc::log_stream.clear();
-    taMisc::log_stream.open(bkup_fn, ios::out);
-    taMisc::log_fname = bkup_fn;
+                  "reverting to default:", log_fname);
   }
   else {
     taMisc::LogEvent("taMisc::SetLogFile -- Log file opened for writing.");
   }
+}
+
+void taMisc::SetLogFileToDefault() {
+  String bkup_fn = user_log_dir + "/default_project_log.plog";
+  if(taMisc::log_fname == bkup_fn) return;
+  taMisc::log_stream.close();
+  taMisc::log_stream.clear();
+  taMisc::log_stream.open(bkup_fn, ios::out);
+  taMisc::log_fname = bkup_fn;
 }
 
 void taMisc::EditFile(const String& filename) {

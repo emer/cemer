@@ -423,9 +423,9 @@ public:
   ////////////////////////////////////////////////////////
   //    Global State, Flags Etc
 
-  static TypeSpace      types;          // #READ_ONLY #NO_SAVE #EXPERT list of all the active types
-  static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #EXPERT list of types that have AKA for other types that are no longer supported
-  static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #EXPERT registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
+  static TypeSpace      types;          // #READ_ONLY #NO_SAVE #NO_SHOW list of all the active types
+  static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE #NO_SHOW list of types that have AKA for other types that are no longer supported
+  static TypeSpace      reg_funs;       // #READ_ONLY #NO_SAVE #NO_SHOW registered global functions that have been marked with the REG_FUN directive -- contains links to corresponding types TypeDef entries with a static MethodDef that points to the function -- just a call-out list for easy searching of only these functions
   static TypeDef*       default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization
@@ -575,6 +575,8 @@ public:
   // #CAT_Log record data to current log stream file -- log all significant data using this (errors and warnings above are logged for example)
   static void   SetLogFile(const String& log_fname);
   // #CAT_Log set log file to given file name -- always overwrites any existing log file
+  static void   SetLogFileToDefault();
+  // #CAT_Log set log file to default log file that is not associated with any project (user_log_dir/default_project_log.plog)
 
   static void   EditFile(const String& filename);
   // #CAT_Dialog edit the file in the external editor

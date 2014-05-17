@@ -133,6 +133,7 @@ void taProject::InitLinks_post() {
 }
 
 void taProject::CutLinks() {
+  taMisc::SetLogFileToDefault(); // don't log to us anymore
   CutLinks_impl();
   inherited::CutLinks();
 }
@@ -670,6 +671,9 @@ void taProject::ViewProjLog() {
     // args are: read_only, modal, parent, line_nos
     host_->Constr("Project Log for Project: " + name);
     host_->Edit(false);
+  }
+  else {
+    taMisc::Warning("could not open project log file:", fnm);
   }
 }
 

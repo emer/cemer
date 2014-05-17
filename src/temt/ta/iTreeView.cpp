@@ -299,7 +299,7 @@ void iTreeView::InsertDefaultEl(bool after) {
       MemberDef* md = sb->FindMember(mbr);
       if(md) {   // should always be true
         sbo = (taList_impl*)md->GetOff(sb);
-        if(sbo->size > 0) {     // only select def child if nothing in it yet -- otherwise you should be inside list to add
+        if(sbo->size > 0 || sbo->HasOption("FIXED_SIZE")) {     // only select def child if nothing in it yet -- otherwise you should be inside list to add
           sbo = GET_OWNER(sb, taList_impl);
         }
       }

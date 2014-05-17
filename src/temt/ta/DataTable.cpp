@@ -1686,7 +1686,7 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
   new_col->width = src->width;
 
   data.ReplaceIdx(old_idx, new_col); // atomic replace is clean..
-  tabMisc::DelayedFunCall_gui(new_col, "BrowserSelectMe");
+  // tabMisc::DelayedFunCall_gui(new_col, "BrowserSelectMe");
 }
 
 void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,

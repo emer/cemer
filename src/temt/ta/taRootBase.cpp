@@ -1405,8 +1405,7 @@ bool taRootBase::Startup_InitTA() {
 
   // start recording stuff at this point -- only with gui active
   if(taMisc::use_gui) {
-    String bkup_fn = taMisc::user_log_dir + "/default_project_log.plog";
-    taMisc::SetLogFile(bkup_fn);
+    taMisc::SetLogFileToDefault();
   }
   return true;
 }
