@@ -374,40 +374,24 @@ QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const 
   return itemFromIndex(pi);
 }
 
-// could not get this to dynamically switch between modes..
-// bool iTreeWidget::event(QEvent* ev) {
-//   QTreeWidgetItem* cur_item = currentItem();
-//   if(cur_item && cur_item->text(0).isEmpty()) {
-//     EditTriggers etrig = editTriggers();
-//     if(!(etrig & QAbstractItemView::EditKeyPressed)) {
-//       etrig |= QAbstractItemView::EditKeyPressed;
-//       setEditTriggers(etrig);
-//     }
-//   }
-//   else {
-//     EditTriggers etrig = editTriggers();
-//     if(etrig & QAbstractItemView::EditKeyPressed) {
-//       etrig &= ~QAbstractItemView::EditKeyPressed;
-//       setEditTriggers(etrig);
-//     }
-//   }
-//   return inherited::event(ev);
-// }
-
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   
   QTreeWidgetItem* cur_item = currentItem();
   
-  if(cur_item && !cur_item->text(0).isEmpty()) {
+  if(cur_item) {
     EditTriggers etrig = editTriggers();
-    setEditTriggers(QAbstractItemView::NoEditTriggers);
-    inherited::keyPressEvent( e );
-  }
-  else {
-    if (cur_item) {
-      EditTriggers etrig = editTriggers();
-      setEditTriggers(QAbstractItemView::AnyKeyPressed);
+    if(cur_item->text(0).isEmpty()) {
+      if(!(etrig & QAbstractItemView::AnyKeyPressed)) {
+        etrig |= QAbstractItemView::AnyKeyPressed;
+        setEditTriggers(etrig);
+      }
+    }
+    else {
+      if(etrig & QAbstractItemView::AnyKeyPressed) {
+        etrig &= ~QAbstractItemView::AnyKeyPressed;
+        setEditTriggers(etrig);
+      }
     }
   }
   

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7182
 CsProject .projects["CsStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1515,12 +1515,12 @@ CsProject .projects["CsStd"] {
   url=;
  };
  docs {
-  name="Doc_Group_1";
+  name="docs";
   el_typ=taDoc;
   el_def=0;
  };
  wizards {
-  name="Wizard_Group_1";
+  name="wizards";
   el_typ=CsWizard;
   el_def=0;
   CsWizard @["CsWizard_0"] {
@@ -1539,7 +1539,7 @@ CsProject .projects["CsStd"] {
   };
  };
  ctrl_panels {
-  name="SelectEdit_Group_0";
+  name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
   ControlPanel @["ControlPanel"] {
@@ -1548,7 +1548,7 @@ CsProject .projects["CsStd"] {
    running_updt=0;
    desc=;
    mbrs {
-    name="EditMbrItem_Group_4";
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
@@ -1585,7 +1585,7 @@ CsProject .projects["CsStd"] {
     };
    };
    mths {
-    name="EditMthItem_Group_4";
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -1625,12 +1625,12 @@ CsProject .projects["CsStd"] {
    running_updt=0;
    desc=;
    mbrs {
-    name=;
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name=;
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -1652,11 +1652,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["notes"] {
@@ -1669,11 +1669,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["params"] {
@@ -1686,11 +1686,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status"] {
@@ -1703,11 +1703,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status_info"] {
@@ -1720,11 +1720,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_time"] {
@@ -1737,11 +1737,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["start_time"] {
@@ -1754,11 +1754,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["end_time"] {
@@ -1771,11 +1771,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_no"] {
@@ -1788,11 +1788,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out"] {
@@ -1805,11 +1805,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out_file"] {
@@ -1822,11 +1822,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["dat_files"] {
@@ -1839,11 +1839,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["other_files"] {
@@ -1856,11 +1856,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["command_id"] {
@@ -1883,11 +1883,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["command"] {
@@ -1900,11 +1900,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["repo_url"] {
@@ -1917,11 +1917,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["cluster"] {
@@ -1934,11 +1934,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["queue"] {
@@ -1951,11 +1951,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["run_time"] {
@@ -1968,11 +1968,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["ram_gb"] {
@@ -1995,11 +1995,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["n_threads"] {
@@ -2022,11 +2022,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["mpi_nodes"] {
@@ -2049,11 +2049,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_batches"] {
@@ -2076,11 +2076,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_nodes"] {
@@ -2103,11 +2103,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_svn"] {
@@ -2120,11 +2120,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_job"] {
@@ -2137,11 +2137,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["model_svn"] {
@@ -2154,11 +2154,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -2167,7 +2167,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -2187,11 +2187,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["notes"] {
@@ -2204,11 +2204,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["params"] {
@@ -2221,11 +2221,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status"] {
@@ -2238,11 +2238,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status_info"] {
@@ -2255,11 +2255,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_time"] {
@@ -2272,11 +2272,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["start_time"] {
@@ -2289,11 +2289,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["end_time"] {
@@ -2306,11 +2306,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_no"] {
@@ -2323,11 +2323,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out"] {
@@ -2340,11 +2340,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out_file"] {
@@ -2357,11 +2357,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["dat_files"] {
@@ -2374,11 +2374,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["other_files"] {
@@ -2391,11 +2391,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["command_id"] {
@@ -2418,11 +2418,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["command"] {
@@ -2435,11 +2435,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["repo_url"] {
@@ -2452,11 +2452,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["cluster"] {
@@ -2469,11 +2469,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["queue"] {
@@ -2486,11 +2486,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["run_time"] {
@@ -2503,11 +2503,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["ram_gb"] {
@@ -2530,11 +2530,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["n_threads"] {
@@ -2557,11 +2557,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["mpi_nodes"] {
@@ -2584,11 +2584,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_batches"] {
@@ -2611,11 +2611,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_nodes"] {
@@ -2638,11 +2638,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_svn"] {
@@ -2655,11 +2655,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_job"] {
@@ -2672,11 +2672,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["model_svn"] {
@@ -2689,11 +2689,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -2702,7 +2702,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -2722,7 +2722,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2736,7 +2736,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2750,7 +2750,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2764,7 +2764,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2778,7 +2778,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2792,7 +2792,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2806,7 +2806,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2820,7 +2820,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2834,7 +2834,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2848,7 +2848,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2862,7 +2862,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2876,7 +2876,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2890,7 +2890,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2914,7 +2914,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2928,7 +2928,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2942,7 +2942,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2956,7 +2956,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2970,7 +2970,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2984,7 +2984,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3008,7 +3008,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3032,7 +3032,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3056,7 +3056,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3080,7 +3080,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3104,7 +3104,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3118,7 +3118,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3132,7 +3132,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3142,7 +3142,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -3162,7 +3162,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3176,7 +3176,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3190,7 +3190,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3204,7 +3204,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3218,7 +3218,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3232,7 +3232,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3246,7 +3246,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3260,7 +3260,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3274,7 +3274,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3284,7 +3284,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -3304,7 +3304,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3318,7 +3318,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3332,7 +3332,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3346,7 +3346,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3360,7 +3360,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3374,7 +3374,7 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3384,11 +3384,11 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
-    name=;
+    name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
@@ -3412,7 +3412,7 @@ CsProject .projects["CsStd"] {
   };
  };
  data {
-  name="DataTable_Group_0";
+  name="data";
   el_typ=DataTable;
   el_def=0;
   save_tables=1;
@@ -3447,11 +3447,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";      };
      };
      float_Data @["Input"] {
@@ -3473,11 +3473,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 5] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
 1;0;0;0;1;0;0;1;0;0;
@@ -3511,11 +3511,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 5] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
 1;0;0;0;1;0;0;1;0;0;
@@ -3536,7 +3536,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [5] 0;1;2;3;4;    };
    };
   };
@@ -3571,11 +3571,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3597,11 +3597,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -3623,11 +3623,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -3639,11 +3639,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -3655,11 +3655,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["phase_no"] {
@@ -3681,11 +3681,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["minus_cycles"] {
@@ -3697,11 +3697,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -3713,11 +3713,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Input_ext_rew"] {
@@ -3729,11 +3729,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
      float_Data @["Hidden_ext_rew"] {
@@ -3745,11 +3745,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
      float_Data @["Output_ext_rew"] {
@@ -3761,11 +3761,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
     };
@@ -3774,7 +3774,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    DataTable @["EpochOutputData"] {
@@ -3808,11 +3808,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3839,11 +3839,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_sse"] {
@@ -3865,11 +3865,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cnt_err"] {
@@ -3891,11 +3891,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Input_avg_ext_rew"] {
@@ -3917,11 +3917,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
      float_Data @["Hidden_avg_ext_rew"] {
@@ -3943,11 +3943,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
      float_Data @["Output_avg_ext_rew"] {
@@ -3969,11 +3969,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
      float_Data @["avg_cycles"] {
@@ -3995,11 +3995,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
@@ -4021,11 +4021,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
@@ -4047,11 +4047,11 @@ CsProject .projects["CsStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -4060,7 +4060,7 @@ CsProject .projects["CsStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
   };
@@ -4072,7 +4072,7 @@ CsProject .projects["CsStd"] {
   };
  };
  data_proc {
-  name="taBase_Group_0";
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
   taDataProc @["data_base"] {
@@ -4129,7 +4129,7 @@ CsProject .projects["CsStd"] {
   };
  };
  programs {
-  name="Program_Group_0";
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
@@ -4141,17 +4141,17 @@ CsProject .projects["CsStd"] {
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
    flags=STARTUP_RUN;
    objs {
-    name=;
+    name="objs";
     el_typ=taNBase;
     el_def=0;
    };
    types {
-    name=;
+    name="types";
     el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["network"] {
@@ -4178,7 +4178,7 @@ CsProject .projects["CsStd"] {
     };
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["train"] {
@@ -4308,17 +4308,17 @@ CsProject .projects["CsStd"] {
     };
    };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name=;
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     IfReturn @[0] {
@@ -5031,17 +5031,17 @@ CsProject .projects["CsStd"] {
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -5068,7 +5068,7 @@ CsProject .projects["CsStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["batch"] {
@@ -5103,12 +5103,12 @@ CsProject .projects["CsStd"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -5122,7 +5122,7 @@ CsProject .projects["CsStd"] {
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      If @[0] {
@@ -5243,13 +5243,13 @@ CsProject .projects["CsStd"] {
     desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=RndSeed;
      el_def=0;
      RndSeed_List @["rnd_seeds"] {
       name="rnd_seeds";
       seeds {
-       name=;
+       name="seeds";
        el_typ=RndSeed;
        el_def=0;
        RndSeed @["RndSeed_1"] {
@@ -5438,7 +5438,7 @@ CsProject .projects["CsStd"] {
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
      DynEnumType @["RndInitType"] {
@@ -5468,7 +5468,7 @@ CsProject .projects["CsStd"] {
      };
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -5505,7 +5505,7 @@ CsProject .projects["CsStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["max_epoch"] {
@@ -5637,7 +5637,7 @@ CsProject .projects["CsStd"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
      Function @["GetRandomSeed"] {
@@ -5769,7 +5769,7 @@ CsProject .projects["CsStd"] {
      };
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -5881,7 +5881,7 @@ CsProject .projects["CsStd"] {
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -6203,17 +6203,17 @@ CsProject .projects["CsStd"] {
     desc="iterates over all of the items in a data table and calls Trial process on them";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -6240,7 +6240,7 @@ CsProject .projects["CsStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["data_loop_order"] {
@@ -6299,12 +6299,12 @@ CsProject .projects["CsStd"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -6327,7 +6327,7 @@ CsProject .projects["CsStd"] {
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -6550,17 +6550,17 @@ CsProject .projects["CsStd"] {
     desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -6587,7 +6587,7 @@ CsProject .projects["CsStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["phase_no"] {
@@ -6612,12 +6612,12 @@ CsProject .projects["CsStd"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -6631,7 +6631,7 @@ CsProject .projects["CsStd"] {
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -6776,17 +6776,17 @@ CsProject .projects["CsStd"] {
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -6813,7 +6813,7 @@ CsProject .projects["CsStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["cycle"] {
@@ -6848,12 +6848,12 @@ CsProject .projects["CsStd"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -6867,7 +6867,7 @@ CsProject .projects["CsStd"] {
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -7078,17 +7078,17 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="runs one cycle of CS processing (updating net inputs and activations)";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -7104,7 +7104,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["update_net_view"] {
@@ -7119,17 +7119,17 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -7163,7 +7163,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="apply the current input data to the network as external input and target values";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=LayerWriter;
      el_def=0;
      LayerWriter @["LayerWriter_0"] {
@@ -7171,7 +7171,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       data=$.projects["CsStd"].data.gp["InputData"]["StdInputData"]$;
       network=$.projects["CsStd"].networks["Network_0"]$;
       layer_data {
-       name=;
+       name="layer_data";
        el_typ=LayerWriterEl;
        el_def=0;
        LayerWriterEl @[0] {
@@ -7183,7 +7183,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=EXT;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -7194,7 +7194,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=TARG;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -7205,18 +7205,18 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -7243,7 +7243,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["LayerWriter_0"] {
@@ -7259,12 +7259,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -7325,7 +7325,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -7352,13 +7352,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=NetMonitor;
      el_def=0;
      NetMonitor @["trial_netmon"] {
       name="trial_netmon";
       items {
-       name=;
+       name="items";
        el_typ=NetMonItem;
        el_def=0;
        NetMonItem @["batch"] {
@@ -7376,13 +7376,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7390,9 +7390,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch"] {
 	name="epoch";
@@ -7409,13 +7409,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7423,9 +7423,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial"] {
 	name="trial";
@@ -7442,13 +7442,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7456,9 +7456,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
@@ -7475,13 +7475,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7489,9 +7489,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["group_name"] {
 	name="group_name";
@@ -7508,13 +7508,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7522,9 +7522,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["phase_no"] {
 	name="phase_no";
@@ -7541,13 +7541,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7555,9 +7555,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["minus_cycles"] {
 	name="minus_cycles";
@@ -7574,13 +7574,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7588,9 +7588,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["sse"] {
 	name="sse";
@@ -7607,13 +7607,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7621,9 +7621,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["ext_rew"] {
 	name="ext_rew";
@@ -7640,13 +7640,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7654,9 +7654,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.projects["CsStd"].networks["Network_0"]$;
@@ -7665,12 +7665,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -7686,7 +7686,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["trial_mon_data"] {
@@ -7713,12 +7713,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -7802,7 +7802,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -7888,13 +7888,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=NetMonitor;
      el_def=0;
      NetMonitor @["epoch_netmon"] {
       name="epoch_netmon";
       items {
-       name=;
+       name="items";
        el_typ=NetMonItem;
        el_def=0;
        NetMonItem @["batch"] {
@@ -7912,13 +7912,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7926,9 +7926,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch"] {
 	name="epoch";
@@ -7945,13 +7945,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7959,9 +7959,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
@@ -7978,13 +7978,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7992,9 +7992,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
@@ -8011,13 +8011,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -8025,9 +8025,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_ext_rew"] {
 	name="avg_ext_rew";
@@ -8044,13 +8044,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -8058,9 +8058,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_cycles"] {
 	name="avg_cycles";
@@ -8077,13 +8077,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -8091,9 +8091,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
@@ -8110,13 +8110,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -8124,9 +8124,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
@@ -8143,13 +8143,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -8157,9 +8157,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.projects["CsStd"].networks["Network_0"]$;
@@ -8168,12 +8168,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -8189,7 +8189,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["epoch_mon_data"] {
@@ -8227,12 +8227,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -8325,7 +8325,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -8493,17 +8493,17 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -8519,7 +8519,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["tag"] {
@@ -8584,17 +8584,17 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      IfReturn @[0] {
@@ -8773,7 +8773,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   };
  };
  viewers {
-  name="DataViewer_List_0";
+  name="viewers";
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
@@ -8821,7 +8821,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name="ToolBar_List_1";
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
@@ -8844,7 +8844,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     };
    };
    frames {
-    name="FrameViewer_List_0";
+    name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
     BrowseViewerTaBase @["Tree"] {
@@ -8875,7 +8875,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      m_data=NULL;
      visible=1;
      panels {
-      name="T3DataViewFrame_List_0";
+      name="panels";
       el_typ=T3Panel;
       el_def=0;
       T3Panel @["Network_0"] {
@@ -8883,11 +8883,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=NetView;
 	 el_def=0;
 	 NetView @["Network_0_View"] {
@@ -8896,12 +8896,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
-	   name=;
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name=;
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -8956,7 +8956,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
 	  scale {
-	   name="ColorScale_0";
+	   name="scale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -8966,7 +8966,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   auto_scale=0;
 	  };
 	  scale_ranges {
-	   name="ScaleRange_List_0";
+	   name="scale_ranges";
 	   el_typ=ScaleRange;
 	   el_def=0;
 	   ScaleRange @[0] {
@@ -8985,7 +8985,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_0";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -9065,11 +9065,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
@@ -9077,7 +9077,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  m_data=$.projects["CsStd"].data.gp["OutputData"]["EpochOutputData"]$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_0";
+	   name="children";
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @["batch"] {
@@ -9163,12 +9163,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  annotations {
-	   name="T3Annotation_List_9";
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name="T3DataView_List_0";
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -9191,7 +9191,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
-	   name="GraphAxisView_5";
+	   name="x_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -9208,7 +9208,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=1;
 	  };
 	  z_axis {
-	   name="GraphAxisView_6";
+	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -9226,7 +9226,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  tot_plots=16;
 	  plots {
-	   name="GraphPlotView_List_0";
+	   name="plots";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
@@ -9535,7 +9535,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  errbars {
-	   name="GraphPlotView_List_0";
+	   name="errbars";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
@@ -9847,7 +9847,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
-	   name="GraphAxisView_7";
+	   name="color_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -9864,7 +9864,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  colorscale {
-	   name="ColorScale_0";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -9874,7 +9874,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   auto_scale=0;
 	  };
 	  raster_axis {
-	   name="GraphAxisView_8";
+	   name="raster_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -9905,7 +9905,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_4";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -9984,7 +9984,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    docks {
-    name="DockViewer_List_0";
+    name="docks";
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
@@ -10038,7 +10038,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  auto_name=1;
  last_change_desc=;
  networks {
-  name="Network_Group_0";
+  name="networks";
   el_typ=CsNetwork;
   el_def=0;
   CsNetwork @["Network_0"] {
@@ -10130,7 +10130,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    name="Network_0";
    desc=;
    specs {
-    name="BaseSpec_Group_0";
+    name="specs";
     el_typ=CsUnitSpec;
     el_def=0;
     CsUnitSpec @["CsUnitSpec_0"] {
@@ -10138,7 +10138,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_1";
+      name="children";
       el_typ=CsUnitSpec;
       el_def=0;
      };
@@ -10147,17 +10147,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=CsConSpec: spec=$.projects["CsStd"].networks["Network_0"].specs["CsConSpec_0"]$: };
      sse_tol=0;
      real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
-     noise {name="RandomSpec_0": type=NONE: mean=0: var=0.1000000014901161: par=1: };
+     noise {name="noise": type=NONE: mean=0: var=0.1000000014901161: par=1: };
      step=0.05;
      sqrt_step=0.2236068;
      gain=1;
      clamp_type=HARD_FAST_CLAMP;
      clamp_gain=5;
-     initial_act {name="RandomSpec_1": type=NONE: mean=0: var=1: par=1: };
+     initial_act {name="initial_act": type=NONE: mean=0: var=1: par=1: };
      state_decay=0.5;
      use_annealing=0;
      noise_sched {
-      name="Schedule_0";
+      name="noise_sched";
       el_typ=SchedItem;
       el_def=0;
       default_val=1;
@@ -10165,7 +10165,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      use_sharp=0;
      gain_sched {
-      name="Schedule_1";
+      name="gain_sched";
       el_typ=SchedItem;
       el_def=0;
       default_val=1;
@@ -10177,11 +10177,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_2";
+      name="children";
       el_typ=CsConSpec;
       el_def=0;
      };
-     rnd {name="RandomSpec_2": type=UNIFORM: mean=0: var=0.5: par=1: };
+     rnd {name="rnd": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=NONE: min=-1: max=1: sym=1: };
      lrate=0.01;
      momentum=0;
@@ -10194,7 +10194,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_3";
+      name="children";
       el_typ=FullPrjnSpec;
       el_def=0;
      };
@@ -10205,7 +10205,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    layers {
-    name="Layer_Group_0";
+    name="layers";
     el_typ=CsLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
@@ -10229,18 +10229,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_0";
+      name="projections";
       el_typ=Projection;
       el_def=0;
      };
      send_prjns {
-      name="Projection_Group_1";
+      name="send_prjns";
       el_typ=Projection;
       el_def=0;
       Projection_Group @. = [0] = Projection .projects["CsStd"].networks["Network_0"].layers["Hidden"].projections["Fm_Input"];
      };
      units {
-      name="Unit_Group_0";
+      name="units";
       el_typ=CsUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -10274,7 +10274,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_2";
+      name="projections";
       el_typ=Projection;
       el_def=0;
       Projection @["Fm_Input"] {
@@ -10317,13 +10317,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      send_prjns {
-      name="Projection_Group_3";
+      name="send_prjns";
       el_typ=Projection;
       el_def=0;
       Projection_Group @. = [0] = Projection .projects["CsStd"].networks["Network_0"].layers["Output"].projections["Fm_Hidden"];
      };
      units {
-      name="Unit_Group_1";
+      name="units";
       el_typ=CsUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -10357,7 +10357,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_4";
+      name="projections";
       el_typ=Projection;
       el_def=0;
       Projection @["Fm_Hidden"] {
@@ -10381,13 +10381,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      send_prjns {
-      name="Projection_Group_5";
+      name="send_prjns";
       el_typ=Projection;
       el_def=0;
       Projection_Group @. = [0] = Projection .projects["CsStd"].networks["Network_0"].layers["Hidden"].projections["Fm_Output"];
      };
      units {
-      name="Unit_Group_2";
+      name="units";
       el_typ=CsUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -10406,7 +10406,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    weights {
-    name=;
+    name="weights";
     el_typ=Weights;
     el_def=0;
    };

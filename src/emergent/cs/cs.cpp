@@ -151,6 +151,8 @@ void CsUnitSpec::InitLinks() {
   children.el_typ = GetTypeDef(); // but make the default to be me!
 
   taBase::Own(real_range, this);
+  taBase::Own(noise, this);
+  taBase::Own(initial_act, this);
   taBase::Own(noise_sched, this);
   taBase::Own(gain_sched, this);
 }

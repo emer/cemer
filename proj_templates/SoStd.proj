@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7182
 SoProject .projects["SoStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1337,12 +1337,12 @@ SoProject .projects["SoStd"] {
   url=;
  };
  docs {
-  name="Doc_Group_1";
+  name="docs";
   el_typ=taDoc;
   el_def=0;
  };
  wizards {
-  name="Wizard_Group_1";
+  name="wizards";
   el_typ=SoWizard;
   el_def=0;
   SoWizard @["SoWizard_0"] {
@@ -1361,7 +1361,7 @@ SoProject .projects["SoStd"] {
   };
  };
  ctrl_panels {
-  name="SelectEdit_Group_0";
+  name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
   ControlPanel @["ControlPanel"] {
@@ -1370,7 +1370,7 @@ SoProject .projects["SoStd"] {
    running_updt=0;
    desc=;
    mbrs {
-    name="EditMbrItem_Group_4";
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
     EditMbrItem @[0] {
@@ -1391,7 +1391,7 @@ SoProject .projects["SoStd"] {
     };
    };
    mths {
-    name="EditMthItem_Group_4";
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -1431,12 +1431,12 @@ SoProject .projects["SoStd"] {
    running_updt=0;
    desc=;
    mbrs {
-    name=;
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name=;
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -1458,11 +1458,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["notes"] {
@@ -1475,11 +1475,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["params"] {
@@ -1492,11 +1492,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status"] {
@@ -1509,11 +1509,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status_info"] {
@@ -1526,11 +1526,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_time"] {
@@ -1543,11 +1543,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["start_time"] {
@@ -1560,11 +1560,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["end_time"] {
@@ -1577,11 +1577,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_no"] {
@@ -1594,11 +1594,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out"] {
@@ -1611,11 +1611,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out_file"] {
@@ -1628,11 +1628,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["dat_files"] {
@@ -1645,11 +1645,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["other_files"] {
@@ -1662,11 +1662,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["command_id"] {
@@ -1689,11 +1689,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["command"] {
@@ -1706,11 +1706,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["repo_url"] {
@@ -1723,11 +1723,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["cluster"] {
@@ -1740,11 +1740,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["queue"] {
@@ -1757,11 +1757,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["run_time"] {
@@ -1774,11 +1774,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["ram_gb"] {
@@ -1801,11 +1801,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["n_threads"] {
@@ -1828,11 +1828,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["mpi_nodes"] {
@@ -1855,11 +1855,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_batches"] {
@@ -1882,11 +1882,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_nodes"] {
@@ -1909,11 +1909,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_svn"] {
@@ -1926,11 +1926,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_job"] {
@@ -1943,11 +1943,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["model_svn"] {
@@ -1960,11 +1960,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -1973,7 +1973,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -1993,11 +1993,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["notes"] {
@@ -2010,11 +2010,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["params"] {
@@ -2027,11 +2027,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status"] {
@@ -2044,11 +2044,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["status_info"] {
@@ -2061,11 +2061,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_time"] {
@@ -2078,11 +2078,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["start_time"] {
@@ -2095,11 +2095,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["end_time"] {
@@ -2112,11 +2112,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_no"] {
@@ -2129,11 +2129,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out"] {
@@ -2146,11 +2146,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["job_out_file"] {
@@ -2163,11 +2163,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["dat_files"] {
@@ -2180,11 +2180,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["other_files"] {
@@ -2197,11 +2197,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["command_id"] {
@@ -2224,11 +2224,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["command"] {
@@ -2241,11 +2241,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["repo_url"] {
@@ -2258,11 +2258,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["cluster"] {
@@ -2275,11 +2275,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["queue"] {
@@ -2292,11 +2292,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["run_time"] {
@@ -2309,11 +2309,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["ram_gb"] {
@@ -2336,11 +2336,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["n_threads"] {
@@ -2363,11 +2363,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["mpi_nodes"] {
@@ -2390,11 +2390,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_batches"] {
@@ -2417,11 +2417,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["pb_nodes"] {
@@ -2444,11 +2444,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_svn"] {
@@ -2461,11 +2461,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["submit_job"] {
@@ -2478,11 +2478,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["model_svn"] {
@@ -2495,11 +2495,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -2508,7 +2508,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -2528,7 +2528,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2542,7 +2542,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2556,7 +2556,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2570,7 +2570,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2584,7 +2584,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2598,7 +2598,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2612,7 +2612,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2626,7 +2626,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2640,7 +2640,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2654,7 +2654,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2668,7 +2668,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2682,7 +2682,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2696,7 +2696,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2720,7 +2720,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2734,7 +2734,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2748,7 +2748,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2762,7 +2762,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2776,7 +2776,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2790,7 +2790,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2814,7 +2814,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2838,7 +2838,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2862,7 +2862,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2886,7 +2886,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2910,7 +2910,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2924,7 +2924,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2938,7 +2938,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2948,7 +2948,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -2968,7 +2968,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2982,7 +2982,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2996,7 +2996,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3010,7 +3010,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3024,7 +3024,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3038,7 +3038,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3052,7 +3052,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3066,7 +3066,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3080,7 +3080,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3090,7 +3090,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -3110,7 +3110,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3124,7 +3124,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3138,7 +3138,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3152,7 +3152,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3166,7 +3166,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3180,7 +3180,7 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3190,11 +3190,11 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
-    name=;
+    name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
@@ -3218,7 +3218,7 @@ SoProject .projects["SoStd"] {
   };
  };
  data {
-  name="DataTable_Group_0";
+  name="data";
   el_typ=DataTable;
   el_def=0;
   save_tables=1;
@@ -3253,11 +3253,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Input"] {
@@ -3279,11 +3279,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
     };
@@ -3292,7 +3292,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
   };
@@ -3327,11 +3327,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3353,11 +3353,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -3379,11 +3379,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -3395,11 +3395,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -3411,11 +3411,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -3427,11 +3427,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -3440,7 +3440,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    DataTable @["EpochOutputData"] {
@@ -3474,11 +3474,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3505,11 +3505,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_sse"] {
@@ -3531,11 +3531,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cnt_err"] {
@@ -3557,11 +3557,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
@@ -3583,11 +3583,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
@@ -3609,11 +3609,11 @@ SoProject .projects["SoStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -3622,7 +3622,7 @@ SoProject .projects["SoStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
   };
@@ -3634,7 +3634,7 @@ SoProject .projects["SoStd"] {
   };
  };
  data_proc {
-  name="taBase_Group_0";
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
   taDataProc @["data_base"] {
@@ -3691,7 +3691,7 @@ SoProject .projects["SoStd"] {
   };
  };
  programs {
-  name="Program_Group_0";
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
@@ -3703,17 +3703,17 @@ SoProject .projects["SoStd"] {
    desc="run project in the background command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx] | [b_start=xxx] [b_end=xxx] for parallel-batch mode";
    flags=NO_STOP_STEP|STARTUP_RUN;
    objs {
-    name=;
+    name="objs";
     el_typ=taNBase;
     el_def=0;
    };
    types {
-    name=;
+    name="types";
     el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["network"] {
@@ -3740,7 +3740,7 @@ SoProject .projects["SoStd"] {
     };
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["train"] {
@@ -3839,17 +3839,17 @@ SoProject .projects["SoStd"] {
     };
    };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name=;
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     IfReturn @[0] {
@@ -4517,17 +4517,17 @@ SoProject .projects["SoStd"] {
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -4554,7 +4554,7 @@ SoProject .projects["SoStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["batch"] {
@@ -4589,12 +4589,12 @@ SoProject .projects["SoStd"] {
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -4608,7 +4608,7 @@ SoProject .projects["SoStd"] {
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      If @[0] {
@@ -4729,13 +4729,13 @@ SoProject .projects["SoStd"] {
     desc="A complete training run of a self organizing network: iterating over epochs until the network has learned the task";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=RndSeed;
      el_def=0;
      RndSeed_List @["rnd_seeds"] {
       name="rnd_seeds";
       seeds {
-       name=;
+       name="seeds";
        el_typ=RndSeed;
        el_def=0;
        RndSeed @["RndSeed_1"] {
@@ -4924,7 +4924,7 @@ SoProject .projects["SoStd"] {
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
      DynEnumType @["RndInitType"] {
@@ -4954,7 +4954,7 @@ SoProject .projects["SoStd"] {
      };
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -4991,7 +4991,7 @@ SoProject .projects["SoStd"] {
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["max_epoch"] {
@@ -5124,7 +5124,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
      Function @["GetRandomSeed"] {
@@ -5256,7 +5256,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -5368,7 +5368,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -5690,17 +5690,17 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     desc="iterates over all of the items in a data table and calls SoTrial process on them";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -5727,7 +5727,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["data_loop_order"] {
@@ -5786,12 +5786,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -5814,7 +5814,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      NetCounterInit @[0] {
@@ -6037,17 +6037,17 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     desc="Self-organizing processing of a single input/output event or external information";
     flags=0;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -6074,7 +6074,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["update_net_view"] {
@@ -6089,17 +6089,17 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -6214,7 +6214,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="apply the current input data to the network as external input and target values";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=LayerWriter;
      el_def=0;
      LayerWriter @["LayerWriter_0"] {
@@ -6222,7 +6222,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       data=$.projects["SoStd"].data.gp["InputData"]["StdInputData"]$;
       network=$.projects["SoStd"].networks["Network_0"]$;
       layer_data {
-       name=;
+       name="layer_data";
        el_typ=LayerWriterEl;
        el_def=0;
        LayerWriterEl @[0] {
@@ -6234,7 +6234,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
 	chan_name="Name";
@@ -6245,18 +6245,18 @@ this program can be extended to do arbitrary things to generate data and apply i
 	quiet=0;
 	na_by_range=0;
 	ext_flags=0;
-	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
       };
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -6283,7 +6283,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["LayerWriter_0"] {
@@ -6299,12 +6299,12 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -6365,7 +6365,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -6392,13 +6392,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=NetMonitor;
      el_def=0;
      NetMonitor @["trial_netmon"] {
       name="trial_netmon";
       items {
-       name=;
+       name="items";
        el_typ=NetMonItem;
        el_def=0;
        NetMonItem @["batch"] {
@@ -6416,13 +6416,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6430,9 +6430,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch"] {
 	name="epoch";
@@ -6449,13 +6449,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6463,9 +6463,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial"] {
 	name="trial";
@@ -6482,13 +6482,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6496,9 +6496,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
@@ -6515,13 +6515,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6529,9 +6529,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["group_name"] {
 	name="group_name";
@@ -6548,13 +6548,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6562,9 +6562,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["sse"] {
 	name="sse";
@@ -6581,13 +6581,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6595,9 +6595,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.projects["SoStd"].networks["Network_0"]$;
@@ -6606,12 +6606,12 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -6627,7 +6627,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["trial_mon_data"] {
@@ -6654,12 +6654,12 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -6743,7 +6743,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -6829,13 +6829,13 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=NetMonitor;
      el_def=0;
      NetMonitor @["epoch_netmon"] {
       name="epoch_netmon";
       items {
-       name=;
+       name="items";
        el_typ=NetMonItem;
        el_def=0;
        NetMonItem @["batch"] {
@@ -6853,13 +6853,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6867,9 +6867,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch"] {
 	name="epoch";
@@ -6886,13 +6886,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6900,9 +6900,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
@@ -6919,13 +6919,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6933,9 +6933,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
@@ -6952,13 +6952,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6966,9 +6966,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
@@ -6985,13 +6985,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6999,9 +6999,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
@@ -7018,13 +7018,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name=;
+	 col_name="agg_col";
 	};
-	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name=;
-	 name=;
+	 col_name="select_spec";
+	 name="select_spec";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7032,9 +7032,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.projects["SoStd"].networks["Network_0"]$;
@@ -7043,12 +7043,12 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -7064,7 +7064,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["epoch_mon_data"] {
@@ -7102,12 +7102,12 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -7200,7 +7200,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      MethodCall @[0] {
@@ -7368,17 +7368,17 @@ this program can be extended to do arbitrary things to generate data and apply i
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["network"] {
@@ -7394,7 +7394,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["tag"] {
@@ -7459,17 +7459,17 @@ this program can be extended to do arbitrary things to generate data and apply i
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      IfReturn @[0] {
@@ -7648,7 +7648,7 @@ this program can be extended to do arbitrary things to generate data and apply i
   };
  };
  viewers {
-  name="DataViewer_List_0";
+  name="viewers";
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
@@ -7696,7 +7696,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name="ToolBar_List_1";
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
@@ -7719,7 +7719,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
    frames {
-    name="FrameViewer_List_0";
+    name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
     BrowseViewerTaBase @["Tree"] {
@@ -7750,7 +7750,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      m_data=NULL;
      visible=1;
      panels {
-      name="T3DataViewFrame_List_0";
+      name="panels";
       el_typ=T3Panel;
       el_def=0;
       T3Panel @["Network_0"] {
@@ -7758,11 +7758,11 @@ this program can be extended to do arbitrary things to generate data and apply i
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=NetView;
 	 el_def=0;
 	 NetView @["Network_0_View"] {
@@ -7771,12 +7771,12 @@ this program can be extended to do arbitrary things to generate data and apply i
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
-	   name=;
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name=;
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -7831,7 +7831,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
 	  scale {
-	   name="ColorScale_0";
+	   name="scale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -7841,7 +7841,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   auto_scale=0;
 	  };
 	  scale_ranges {
-	   name="ScaleRange_List_0";
+	   name="scale_ranges";
 	   el_typ=ScaleRange;
 	   el_def=0;
 	   ScaleRange @[0] {
@@ -7860,7 +7860,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_0";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -7940,11 +7940,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
@@ -7952,7 +7952,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  m_data=$.projects["SoStd"].data.gp["OutputData"]["EpochOutputData"]$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_0";
+	   name="children";
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @["batch"] {
@@ -8006,12 +8006,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  annotations {
-	   name="T3Annotation_List_9";
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name="T3DataView_List_0";
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -8034,7 +8034,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
-	   name="GraphAxisView_5";
+	   name="x_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -8051,7 +8051,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  z_axis {
-	   name="GraphAxisView_6";
+	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8069,7 +8069,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  tot_plots=16;
 	  plots {
-	   name="GraphPlotView_List_0";
+	   name="plots";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
@@ -8378,7 +8378,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  errbars {
-	   name="GraphPlotView_List_0";
+	   name="errbars";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
@@ -8690,7 +8690,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
-	   name="GraphAxisView_7";
+	   name="color_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8707,7 +8707,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  colorscale {
-	   name="ColorScale_0";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -8717,7 +8717,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   auto_scale=0;
 	  };
 	  raster_axis {
-	   name="GraphAxisView_8";
+	   name="raster_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8748,7 +8748,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_4";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -8827,7 +8827,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    docks {
-    name="DockViewer_List_0";
+    name="docks";
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
@@ -8881,7 +8881,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  auto_name=1;
  last_change_desc=;
  networks {
-  name="Network_Group_0";
+  name="networks";
   el_typ=SoNetwork;
   el_def=0;
   SoNetwork @["Network_0"] {
@@ -8948,7 +8948,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    name="Network_0";
    desc=;
    specs {
-    name="BaseSpec_Group_0";
+    name="specs";
     el_typ=SoUnitSpec;
     el_def=0;
     SoUnitSpec @["SoUnitSpec_0"] {
@@ -8956,7 +8956,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_1";
+      name="children";
       el_typ=SoUnitSpec;
       el_def=0;
      };
@@ -8970,11 +8970,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_2";
+      name="children";
       el_typ=ConSpec;
       el_def=0;
      };
-     rnd {name="RandomSpec_0": type=UNIFORM: mean=0: var=0.5: par=1: };
+     rnd {name="rnd": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=NONE: min=-1: max=1: sym=0: };
     };
     SoLayerSpec @["SoLayerSpec_0"] {
@@ -8982,7 +8982,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_3";
+      name="children";
       el_typ=SoLayerSpec;
       el_def=0;
      };
@@ -8993,7 +8993,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_4";
+      name="children";
       el_typ=FullPrjnSpec;
       el_def=0;
      };
@@ -9007,18 +9007,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_5";
+      name="children";
       el_typ=HebbConSpec;
       el_def=0;
      };
-     rnd {name="RandomSpec_1": type=UNIFORM: mean=0.5: var=0.5: par=1: };
+     rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.5: par=1: };
      wt_limits {type=MIN_MAX: min=-1: max=1: sym=0: };
      lrate=0.1;
      avg_act_source=LAYER_AVG_ACT;
     };
    };
    layers {
-    name="Layer_Group_0";
+    name="layers";
     el_typ=SoLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
@@ -9042,18 +9042,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_0";
+      name="projections";
       el_typ=Projection;
       el_def=0;
      };
      send_prjns {
-      name="Projection_Group_1";
+      name="send_prjns";
       el_typ=Projection;
       el_def=0;
       Projection_Group @. = [0] = Projection .projects["SoStd"].networks["Network_0"].layers["Hidden"].projections["Fm_Input"];
      };
      units {
-      name="Unit_Group_0";
+      name="units";
       el_typ=SoUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -9090,7 +9090,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_2";
+      name="projections";
       el_typ=Projection;
       el_def=0;
       Projection @["Fm_Input"] {
@@ -9114,12 +9114,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      send_prjns {
-      name="Projection_Group_3";
+      name="send_prjns";
       el_typ=Projection;
       el_def=0;
      };
      units {
-      name="Unit_Group_1";
+      name="units";
       el_typ=SoUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -9141,7 +9141,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    weights {
-    name=;
+    name="weights";
     el_typ=Weights;
     el_def=0;
    };

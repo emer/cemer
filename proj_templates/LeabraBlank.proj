@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7174
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7182
 LeabraProject .projects["LeabraBlank"] { 
  Doc_Group @.docs = [0] {
  };
@@ -335,12 +335,12 @@ LeabraProject .projects["LeabraBlank"] {
   url=;
  };
  docs {
-  name="Doc_Group_1";
+  name="docs";
   el_typ=taDoc;
   el_def=0;
  };
  wizards {
-  name="Wizard_Group_1";
+  name="wizards";
   el_typ=LeabraWizard;
   el_def=0;
   LeabraWizard @["LeabraWizard_0"] {
@@ -359,7 +359,7 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
  ctrl_panels {
-  name="SelectEdit_Group_0";
+  name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
   ControlPanel @["ControlPanel"] {
@@ -368,12 +368,12 @@ LeabraProject .projects["LeabraBlank"] {
    running_updt=0;
    desc=;
    mbrs {
-    name="EditMbrItem_Group_4";
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name="EditMthItem_Group_4";
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -385,12 +385,12 @@ LeabraProject .projects["LeabraBlank"] {
    running_updt=0;
    desc=;
    mbrs {
-    name=;
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name=;
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -412,7 +412,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -426,7 +426,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -440,7 +440,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -454,7 +454,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -468,7 +468,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -482,7 +482,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -496,7 +496,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -510,7 +510,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -524,7 +524,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -538,7 +538,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -552,7 +552,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -566,7 +566,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -580,7 +580,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -604,7 +604,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -618,7 +618,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -632,7 +632,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -646,7 +646,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -660,7 +660,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -674,7 +674,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -698,7 +698,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -722,7 +722,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -746,7 +746,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -770,7 +770,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -794,7 +794,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -808,7 +808,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -822,7 +822,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -832,7 +832,7 @@ LeabraProject .projects["LeabraBlank"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -852,7 +852,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -866,7 +866,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -880,7 +880,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -894,7 +894,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -908,7 +908,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -922,7 +922,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -936,7 +936,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -950,7 +950,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -964,7 +964,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -978,7 +978,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -992,7 +992,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1006,7 +1006,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1020,7 +1020,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1044,7 +1044,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1058,7 +1058,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1072,7 +1072,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1086,7 +1086,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1100,7 +1100,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1114,7 +1114,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1138,7 +1138,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1162,7 +1162,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1186,7 +1186,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1210,7 +1210,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1234,7 +1234,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1248,7 +1248,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1262,7 +1262,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1272,7 +1272,7 @@ LeabraProject .projects["LeabraBlank"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -1292,7 +1292,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1306,7 +1306,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1320,7 +1320,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1334,7 +1334,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1348,7 +1348,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1362,7 +1362,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1376,7 +1376,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1390,7 +1390,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1404,7 +1404,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1418,7 +1418,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1432,7 +1432,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1446,7 +1446,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1460,7 +1460,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1484,7 +1484,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1498,7 +1498,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1512,7 +1512,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1526,7 +1526,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1540,7 +1540,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1554,7 +1554,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1578,7 +1578,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1602,7 +1602,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1626,7 +1626,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1650,7 +1650,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1674,7 +1674,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1688,7 +1688,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1702,7 +1702,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1712,7 +1712,7 @@ LeabraProject .projects["LeabraBlank"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -1732,7 +1732,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1746,7 +1746,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1760,7 +1760,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1774,7 +1774,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1788,7 +1788,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1802,7 +1802,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1816,7 +1816,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1830,7 +1830,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1844,7 +1844,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1854,7 +1854,7 @@ LeabraProject .projects["LeabraBlank"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -1874,7 +1874,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1888,7 +1888,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1902,7 +1902,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1916,7 +1916,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1930,7 +1930,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1944,7 +1944,7 @@ LeabraProject .projects["LeabraBlank"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1954,11 +1954,11 @@ LeabraProject .projects["LeabraBlank"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
-    name=;
+    name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
@@ -1982,7 +1982,7 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
  data {
-  name="DataTable_Group_0";
+  name="data";
   el_typ=DataTable;
   el_def=0;
   save_tables=1;
@@ -2006,7 +2006,7 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
  data_proc {
-  name="taBase_Group_0";
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
   taDataProc @["data_base"] {
@@ -2063,14 +2063,14 @@ LeabraProject .projects["LeabraBlank"] {
   };
  };
  programs {
-  name="Program_Group_0";
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
   desc=;
  };
  viewers {
-  name="DataViewer_List_0";
+  name="viewers";
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
@@ -2118,7 +2118,7 @@ LeabraProject .projects["LeabraBlank"] {
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name="ToolBar_List_1";
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
@@ -2141,7 +2141,7 @@ LeabraProject .projects["LeabraBlank"] {
     };
    };
    frames {
-    name="FrameViewer_List_0";
+    name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
     BrowseViewerTaBase @["Tree"] {
@@ -2172,7 +2172,7 @@ LeabraProject .projects["LeabraBlank"] {
      m_data=NULL;
      visible=1;
      panels {
-      name="T3DataViewFrame_List_0";
+      name="panels";
       el_typ=T3Panel;
       el_def=0;
       T3Panel @["Frame1"] {
@@ -2180,11 +2180,11 @@ LeabraProject .projects["LeabraBlank"] {
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	};
@@ -2194,7 +2194,7 @@ LeabraProject .projects["LeabraBlank"] {
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_0";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -2273,7 +2273,7 @@ LeabraProject .projects["LeabraBlank"] {
     };
    };
    docks {
-    name="DockViewer_List_0";
+    name="docks";
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
@@ -2327,7 +2327,7 @@ LeabraProject .projects["LeabraBlank"] {
  auto_name=1;
  last_change_desc=;
  networks {
-  name="Network_Group_0";
+  name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
  };
