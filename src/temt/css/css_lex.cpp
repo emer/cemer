@@ -357,13 +357,22 @@ int yylex()
     }
 
     if(c == '\'') {
-      int iv;
-
+      int iv = 0;
+      int cnt = 0;
       while(((c=cssMisc::cur_top->Getc()) != EOF) && (c != '\'')) {
-	if(c == '\\')
-	  iv = ctrl_char(c=cssMisc::cur_top->Getc());
-	else
-	  iv = c;
+        if(cnt == 0) {
+          if(c == '\\')
+            iv = ctrl_char(c=cssMisc::cur_top->Getc());
+          else
+            iv = c;
+        }
+        cnt++;
+      }
+      if(cnt == 0) {
+        cssMisc::Warning(NULL, "character expression using single quotes ' was empty -- please specify a single character");
+      }
+      if(cnt > 1) {
+        cssMisc::Warning(NULL, "character expression using single quotes ' is more than a single character in length -- only first char is used -- use double-quotes \" for strings");
       }
       yylval.el = cssMisc::cur_top->AddLiteral(new cssInt(iv));
       return CSS_NUMBER;

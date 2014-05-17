@@ -168,6 +168,8 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   if(ps) {
     FMChild(LeabraConSpec, td, ps, "TopDownCons");
     td->desc = "Leabra (particularly the XCAL learning rule) requires top-down connections to be weaker than bottom-up ones -- this spec achieves that by setting wt_scale.rel = .2 -- set this for any connections coming from higher-level TARGET layers";
+    td->SetUnique("wt_scale", true);
+    td->wt_scale.rel = 0.2f;
   }
 
   return true;
