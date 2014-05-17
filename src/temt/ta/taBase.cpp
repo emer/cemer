@@ -298,8 +298,10 @@ void taBase::AutoNameMyMembers() {
     MemberDef* md = td->members.FastEl(i);
     if(md->type->IsAnyPtr()) continue;
     if(md->type->IsActualTaBase()) {
-      taBase* mb = (taBase*)md->GetOff(this);
-      mb->SetName(md->name);
+      if(!md->HasOption("NO_AUTO_NAME")) {
+        taBase* mb = (taBase*)md->GetOff(this);
+        mb->SetName(md->name);
+      }
     }
   }
 }

@@ -37,8 +37,8 @@ public:
     INNER,			// only matching rows from both tables are included
   };
 
-  DataOpEl	col_a;		// column from first (a) source datatable to join on (values match those in col_b)
-  DataOpEl	col_b;		// column from second (b) source datatable to join on (values match those in col_a)
+  DataOpEl	col_a;		// #NO_AUTO_NAME column from first (a) source datatable to join on (values match those in col_b)
+  DataOpEl	col_b;		// #NO_AUTO_NAME column from second (b) source datatable to join on (values match those in col_a)
   JoinType	type;		// type of join to perfrom (determines what to do with nonmatches -- matches are always included)
   bool		nomatch_warn;	// #CONDEDIT_ON_type:INNER for INNER join, issue a warning for row values in A that do not have a matching value in B
 

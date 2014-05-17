@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7159
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7182
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -1450,7 +1450,7 @@ LeabraProject .projects["program_examples"] {
      };
     };
    };
-   Program_Group @.gp["DataOperations"] = [5] { 
+   Program_Group @.gp["DataOperations"] = [6] { 
     Program @["DataLoop"] { 
      ProgObjList @.objs = [1] {
       DataTable @["DemoData"] { 
@@ -1850,6 +1850,103 @@ LeabraProject .projects["program_examples"] {
 	DataSortEl @["Name up"] { };
        };
       };
+     };
+    };
+    Program @["DataJoin"] { 
+     ProgObjList @.objs = [3] {
+      DataTable @["DemoData"] { 
+       DataTableCols @.data = [3] {
+	String_Data @["Categ"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["Name"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["Value"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+      };
+      DataTable @["FruitData"] { 
+       DataTableCols @.data = [3] {
+	String_Data @["Name"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["Season"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["Weight"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+      };
+      DataTable @["JoinedData"] { 
+       DataTableCols @.data = [5] {
+	String_Data @["Categ"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["Name"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["Value"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["Season"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["Weight"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+      };
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [3] {
+      ProgVar @["DemoData"] { };
+      ProgVar @["JoinedData"] { };
+      ProgVar @["FruitData"] { };
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [2] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      DataJoinProg @[1] { };
      };
     };
    };
@@ -2538,7 +2635,7 @@ LeabraProject .projects["program_examples"] {
   url=;
  };
  docs {
-  name="Doc_Group_1";
+  name="docs";
   el_typ=taDoc;
   el_def=0;
   taDoc @["DataTables"] {
@@ -4149,7 +4246,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   };
  };
  wizards {
-  name="Wizard_Group_1";
+  name="wizards";
   el_typ=LeabraWizard;
   el_def=0;
   LeabraWizard @["LeabraWizard_0"] {
@@ -4168,7 +4265,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   };
  };
  ctrl_panels {
-  name="SelectEdit_Group_0";
+  name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
   ClusterRun @["ClusterRun"] {
@@ -4177,12 +4274,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    running_updt=0;
    desc=;
    mbrs {
-    name=;
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name=;
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -4204,7 +4301,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4218,7 +4315,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4232,7 +4329,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4246,7 +4343,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4260,7 +4357,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4274,7 +4371,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4288,7 +4385,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4302,7 +4399,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4316,7 +4413,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4330,7 +4427,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4344,7 +4441,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4358,7 +4455,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4372,7 +4469,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4396,7 +4493,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4410,7 +4507,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4424,7 +4521,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4438,7 +4535,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4452,7 +4549,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4466,7 +4563,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4490,7 +4587,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4514,7 +4611,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4538,7 +4635,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4562,7 +4659,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4586,7 +4683,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4600,7 +4697,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4614,7 +4711,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4624,7 +4721,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -4644,7 +4741,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4658,7 +4755,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4672,7 +4769,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4686,7 +4783,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4700,7 +4797,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4714,7 +4811,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4728,7 +4825,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4742,7 +4839,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4756,7 +4853,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4770,7 +4867,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4784,7 +4881,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4798,7 +4895,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4812,7 +4909,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4836,7 +4933,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4850,7 +4947,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4864,7 +4961,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4878,7 +4975,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4892,7 +4989,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4906,7 +5003,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4930,7 +5027,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4954,7 +5051,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -4978,7 +5075,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5002,7 +5099,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5026,7 +5123,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5040,7 +5137,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5054,7 +5151,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5064,7 +5161,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -5084,7 +5181,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5098,7 +5195,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5112,7 +5209,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5126,7 +5223,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5140,7 +5237,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5154,7 +5251,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5168,7 +5265,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5182,7 +5279,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5196,7 +5293,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5210,7 +5307,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5224,7 +5321,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5238,7 +5335,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5252,7 +5349,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5276,7 +5373,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5290,7 +5387,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5304,7 +5401,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5318,7 +5415,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5332,7 +5429,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5346,7 +5443,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5370,7 +5467,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5394,7 +5491,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5418,7 +5515,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5442,7 +5539,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5466,7 +5563,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5480,7 +5577,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5494,7 +5591,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5504,7 +5601,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -5524,7 +5621,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5538,7 +5635,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5552,7 +5649,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5566,7 +5663,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5580,7 +5677,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5594,7 +5691,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5608,7 +5705,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5622,7 +5719,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5636,7 +5733,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5646,7 +5743,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -5666,7 +5763,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5680,7 +5777,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5694,7 +5791,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5708,7 +5805,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5722,7 +5819,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5736,7 +5833,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5746,11 +5843,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
-    name=;
+    name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
@@ -5774,7 +5871,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   };
  };
  data {
-  name="DataTable_Group_0";
+  name="data";
   el_typ=DataTable;
   el_def=0;
   save_tables=1;
@@ -5799,11 +5896,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      float_Data @["Input"] {
@@ -5815,11 +5912,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 6] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
 1;0;0;0;1;0;0;1;0;0;
@@ -5846,11 +5943,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 6] 1;0;0;0;1;0;0;0;0;0;
 0;0;1;0;0;0;0;0;0;0;
 1;0;0;0;1;0;0;1;0;0;
@@ -5874,7 +5971,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [6] 0;1;2;3;4;5;    };
    };
   };
@@ -5909,11 +6006,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -5935,11 +6032,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -5961,11 +6058,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -5977,11 +6074,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -5993,11 +6090,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["phase_no"] {
@@ -6019,11 +6116,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["minus_cycles"] {
@@ -6035,11 +6132,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -6051,11 +6148,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["ext_rew"] {
@@ -6067,11 +6164,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -6080,7 +6177,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    DataTable @["EpochOutputData"] {
@@ -6109,11 +6206,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -6135,11 +6232,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_sse"] {
@@ -6151,11 +6248,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cnt_err"] {
@@ -6167,11 +6264,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_ext_rew"] {
@@ -6183,11 +6280,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_cycles"] {
@@ -6199,11 +6296,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
@@ -6215,11 +6312,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
@@ -6231,11 +6328,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -6244,7 +6341,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
   };
@@ -6279,11 +6376,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [2] "Fruit";"Veggie";      };
      };
      float_Data @["Value_mean"] {
@@ -6305,11 +6402,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [2] 30.6;12.7;      };
      };
      float_Data @["Value_sem"] {
@@ -6331,11 +6428,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [2] 6.1881604;2.7448943;      };
      };
     };
@@ -6344,13 +6441,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [2] 0;1;    };
    };
   };
  };
  data_proc {
-  name="taBase_Group_0";
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
   taDataProc @["data_base"] {
@@ -6407,7 +6504,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   };
  };
  programs {
-  name="Program_Group_0";
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
@@ -6425,22 +6522,22 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="Illustrates the for loop";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_3";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["start_idx"] {
@@ -6475,17 +6572,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     functions {
-     name="Function_List_3";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_42";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_43";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -6552,37 +6649,37 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="multiple examples of using the foreach looping construct, which is very powerful";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_14";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
     };
     functions {
-     name="Function_List_14";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_98";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_99";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -6637,17 +6734,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["sw_int_var"] {
@@ -6662,17 +6759,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     functions {
-     name="Function_List_6";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_57";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_58";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -6859,22 +6956,22 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="Example of if elseif and else conditional logic";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_19";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["value"] {
@@ -6889,17 +6986,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     functions {
-     name="Function_List_19";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_124";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_125";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -7029,22 +7126,22 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="examples for all the fancy things you can do with string variable types";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_10";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["str"] {
@@ -7059,17 +7156,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     functions {
-     name="Function_List_10";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_82";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_83";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -7526,7 +7623,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="dynamic enumerated types -- these allow you to establish a mapping between names and corresponding values -- very handy for many situations";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_30";
+     name="objs";
      el_typ=DataTable;
      el_def=0;
      DataTable @["InputData"] {
@@ -7555,11 +7652,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[0] 	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[5] "IGNORE";"STORE";"IGNORE";"RECALL";"RECALL";	};
        };
        float_Data @["Input"] {
@@ -7581,11 +7678,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[2] ;;	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[5 1 5] 0;1;0;0;0;1;0;0;0;0;
 0;1;0;0;0;0;0;1;0;0;
 0;0;1;0;0;	};
@@ -7596,7 +7693,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       auto_load_file=;
       keygen 4 0=0;
       row_indexes {
-       name=;
+       name="row_indexes";
       [5] 0;1;2;3;4;      };
      };
      DataTable @["TestOrders"] {
@@ -7625,11 +7722,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[1] ;	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[5 2] "RECALL";"RECALL";"STORE";"STORE";"IGNORE";"IGNORE";"STORE";"IGNORE";"RECALL";"RECALL";
 	};
        };
@@ -7657,11 +7754,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[1] ;	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[5 2] 2;2;0;0;1;1;0;1;2;2;
 	};
        };
@@ -7671,7 +7768,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       auto_load_file=;
       keygen 4 0=0;
       row_indexes {
-       name=;
+       name="row_indexes";
       [2] 0;1;      };
      };
      DataTable @["Configurations"] {
@@ -7700,11 +7797,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[0] 	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[3] "basic_config";"special_config";"new_config";	};
        };
        float_Data @["param_1"] {
@@ -7726,11 +7823,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[0] 	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[3] 0.0099999998;0.1;0.02;	};
        };
        float_Data @["param_2"] {
@@ -7752,11 +7849,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[0] 	};
 	width=0;
 	ar {
-	 name=;
+	 name="ar";
 	[3] 0.1;0.050000001;0.2;	};
        };
       };
@@ -7765,12 +7862,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       auto_load_file=;
       keygen 4 0=0;
       row_indexes {
-       name=;
+       name="row_indexes";
       [3] 0;1;2;      };
      };
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
      DynEnumType @["ProgCmd"] {
@@ -7832,7 +7929,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="Configs";
       desc="this is a special kind of DynEnum that gets its values automatically from a column in a data table -- very handy for selecting configurations etc";
       enums {
-       name="DynEnumItem_List_0";
+       name="enums";
        el_typ=DynEnumItem;
        el_def=0;
        DynEnumItem @["basic_config"] {
@@ -7857,7 +7954,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["cmd"] {
@@ -7875,7 +7972,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["cur_config"] {
@@ -7972,7 +8069,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     functions {
-     name="Function_List_30";
+     name="functions";
      el_typ=Function;
      el_def=0;
      Function @["SetConfigParams"] {
@@ -8037,12 +8134,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     init_code {
-     name="ProgEl_List_176";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_177";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -8457,27 +8554,27 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="examples of all the matrix code you can use to manipulate matricies -- many require ; as they are css specific expressions not parsed by program elements";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_7";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
     };
     functions {
-     name="Function_List_7";
+     name="functions";
      el_typ=Function;
      el_def=0;
      Function @["softmax"] {
@@ -8560,12 +8657,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     init_code {
-     name="ProgEl_List_67";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_68";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -9118,22 +9215,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     desc="Program variables (vars) keep their value whereas local variables (LocalVars) are reset each time the program is run";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_28";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["aGlobalVar"] {
@@ -9148,12 +9245,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     functions {
-     name="Function_List_28";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_167";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
      AssignExpr @[0] {
@@ -9167,7 +9264,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     prog_code {
-     name="ProgEl_List_168";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -9270,7 +9367,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Loop through a data table and print the values for every row";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -9299,11 +9396,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -9326,11 +9423,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -9340,23 +9437,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["data_loop_order"] {
@@ -9393,17 +9490,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -9515,7 +9612,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Get the data for a single row of a data table when you know the row number";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -9544,11 +9641,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=237;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -9571,11 +9668,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=237;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -9585,23 +9682,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -9627,17 +9724,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -9730,7 +9827,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Get the data for a single row and column of a data table using a known row value for another column";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -9759,11 +9856,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=237;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -9786,11 +9883,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=237;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -9800,23 +9897,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -9842,17 +9939,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -9928,7 +10025,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Add (append) 5 rows to a table and store a value for each row";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["SomeTable"] {
@@ -9957,7 +10054,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=528;
 	};
@@ -9967,22 +10064,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [0]        };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["SomeTable"] {
@@ -9998,12 +10095,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
       ResetDataRows @[0] {
@@ -10014,7 +10111,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -10130,7 +10227,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="To get or set many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_54";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["MoreDemoData"] {
@@ -10159,11 +10256,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=70;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] 0;1;2;	 };
 	};
 	int_Data @["B"] {
@@ -10185,11 +10282,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=70;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] 0;10;20;	 };
 	};
 	String_Data @["a"] {
@@ -10211,11 +10308,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=70;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "a";"aa";"aaa";	 };
 	};
 	String_Data @["b"] {
@@ -10237,11 +10334,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=70;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "b";"bb";"bbb";	 };
 	};
 	String_Data @["user_name"] {
@@ -10263,11 +10360,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=70;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "joe";"sally";"logan";	 };
 	};
 	String_Data @["value"] {
@@ -10289,11 +10386,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=70;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "red";"blue";"green";	 };
 	};
        };
@@ -10302,22 +10399,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [3] 0;1;2;       };
       };
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["MoreDemoData"] {
@@ -10414,17 +10511,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_54";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_395";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_396";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -10511,7 +10608,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="To get or set many columns at once use a DataVarProg (drag the 'data=vars' element from the programming toolbar)";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["MoreDemoData"] {
@@ -10540,11 +10637,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] 0;1;2;	 };
 	};
 	int_Data @["B"] {
@@ -10566,11 +10663,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] 0;10;20;	 };
 	};
 	String_Data @["a"] {
@@ -10592,11 +10689,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "a";"aa";"aaa";	 };
 	};
 	String_Data @["b"] {
@@ -10618,11 +10715,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "b";"bb";"bbb";	 };
 	};
 	String_Data @["user_name"] {
@@ -10644,11 +10741,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "joe";"sally";"logan";	 };
 	};
 	String_Data @["value"] {
@@ -10670,11 +10767,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3] "red";"blue";"green";	 };
 	};
        };
@@ -10683,22 +10780,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [3] 0;1;2;       };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["MoreDemoData"] {
@@ -10795,17 +10892,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -10894,7 +10991,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="use a LocalVars local variable, which automatically manages the memory allocation and deallocation properly";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_29";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -10923,11 +11020,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=101;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -10950,11 +11047,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [2] ;;	 };
 	 width=155;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3 2 10] 0.65103406;0.2984685;0.0033719481;15.315091;0.54984123;0.26603499;0.65103406;0.2984685;0.0033719481;8.3150911;
 0.54984123;0.26603499;0.65103406;12.298469;0.0033719481;0.31509149;0.54984123;0.26603499;0.65103406;0.2984685;
 0.0033719481;0.31509149;0.54984123;0.26603499;0.65103406;0.2984685;0;0.31509149;0.54984123;0.26603499;
@@ -10982,11 +11079,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 2.847306966781616;1.68064022064209;2.347306966781616;0.3473070561885834;0.3467450439929962;0.3473070561885834;4.513411998748779;5.802967548370361;3.239000082015991;0.3473070561885834;
 	 };
 	};
@@ -10996,23 +11093,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
       };
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -11038,17 +11135,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_29";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_171";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_172";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -11264,7 +11361,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="demonstrates how to access data table information using css matrix-based syntax -- i.e., the [ ] square brackets";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_8";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -11293,11 +11390,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=101;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -11320,11 +11417,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=101;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -11347,11 +11444,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=155;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -11374,11 +11471,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=155;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 40;60;30;110;10;50;90;120;14;88;
 	 };
 	};
@@ -11401,11 +11498,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [2] ;;	 };
 	 width=155;
 	 ar {
-	  name=;
+	  name="ar";
 	 [3 2 10] 0.65103406;0.2984685;0.0033719481;0.31509149;0.54984123;0.26603499;0.65103406;0.2984685;0.0033719481;0.31509149;
 0.54984123;0.26603499;0.65103406;0.2984685;0.0033719481;0.31509149;0.54984123;0.26603499;0.65103406;0.2984685;
 0.0033719481;0.31509149;0.54984123;0.26603499;0.65103406;0.2984685;0.0033719481;0.31509149;0.54984123;0.26603499;
@@ -11420,23 +11517,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
       };
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -11452,17 +11549,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_8";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_71";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_72";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -11632,7 +11729,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="A data loop is a loop that goes through the rows of a data table";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_4";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -11661,11 +11758,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=101;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -11688,11 +11785,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=101;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -11702,23 +11799,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
       };
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["data_loop_order"] {
@@ -11755,17 +11852,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_4";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_47";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_48";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -11922,7 +12019,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Calculate a new value for every row and paste that value into a new column of the same or a different datatable";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_9";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["TableTwo"] {
@@ -11956,11 +12053,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=125;
 	 ar {
-	  name=;
+	  name="ar";
 	 [6] 0;2;4;6;8;10;	 };
 	};
        };
@@ -11969,7 +12066,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [6] 0;1;2;3;4;5;       };
       };
       DataTable @["TableOne"] {
@@ -12003,11 +12100,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=125;
 	 ar {
-	  name=;
+	  name="ar";
 	 [6] 0;1;2;3;4;5;	 };
 	};
 	int_Data @["ColumnC"] {
@@ -12034,11 +12131,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=125;
 	 ar {
-	  name=;
+	  name="ar";
 	 [6] 0;2;4;6;8;10;	 };
 	};
        };
@@ -12047,22 +12144,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [6] 0;1;2;3;4;5;       };
       };
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["TableTwo"] {
@@ -12089,17 +12186,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_9";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_76";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_77";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -12326,7 +12423,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Filter your data by selecting only those rows that meet a specification";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -12355,11 +12452,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
 "Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
 	 };
@@ -12383,11 +12480,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 "Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
 	 };
@@ -12411,11 +12508,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 20;30;15;55;5;25;45;60;7;44;
 22;7;17;3;1;25;22;15;10;5;
 	 };
@@ -12426,7 +12523,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
@@ -12457,11 +12554,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=221;
 	 ar {
-	  name=;
+	  name="ar";
 	 [8] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";	 };
 	};
 	String_Data @["Name"] {
@@ -12483,11 +12580,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=221;
 	 ar {
-	  name=;
+	  name="ar";
 	 [8] "Jam";"Huckleberry";"Grapes";"Fruit";"Dragon Fruit";"Cherry";"Banana";"Apple";	 };
 	};
 	float_Data @["Value"] {
@@ -12509,11 +12606,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=221;
 	 ar {
-	  name=;
+	  name="ar";
 	 [8] 44;60;45;25;55;15;30;20;	 };
 	};
        };
@@ -12522,22 +12619,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [8] 7;6;5;4;3;2;1;0;       };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -12574,17 +12671,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -12616,7 +12713,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        select_spec {
 	name="select_spec";
 	ops {
-	 name="DataOpList_24";
+	 name="ops";
 	 el_typ=DataSelectEl;
 	 el_def=0;
 	 DataSelectEl @["Categ  Fruit"] {
@@ -12654,7 +12751,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="The grouping operation allows you to do calculations on all data of a particular group so you can compare groups";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_11";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -12683,11 +12780,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
 "Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
 	 };
@@ -12711,11 +12808,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 "Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
 	 };
@@ -12739,11 +12836,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 20;30;15;55;5;25;45;60;7;44;
 22;7;17;3;1;25;22;15;10;5;
 	 };
@@ -12754,7 +12851,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
@@ -12785,11 +12882,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [2] "Fruit";"Veggie";	 };
 	};
 	float_Data @["Value_mean"] {
@@ -12811,11 +12908,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [2] 30.6;12.7;	 };
 	};
 	float_Data @["Value_median"] {
@@ -12837,11 +12934,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [2] 30;15;	 };
 	};
        };
@@ -12850,22 +12947,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [2] 0;1;       };
       };
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -12892,17 +12989,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_11";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_86";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_87";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -12939,7 +13036,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        group_spec {
 	name="group_spec";
 	ops {
-	 name="DataOpList_30";
+	 name="ops";
 	 el_typ=DataGroupEl;
 	 el_def=0;
 	 DataGroupEl @["Category GROUP"] {
@@ -12955,7 +13052,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 DataGroupEl @["Value MEDIAN"] {
 	  col_name="Value";
 	  name="Value MEDIAN";
-	  agg {name="AggregateSpec_5": op=MEDIAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	  agg {name="AggregateSpec_5": op=MEDIAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	 };
 	};
 	append_agg_name=1;
@@ -12972,7 +13069,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Sorting data - You can put the sorted data in a new table or do on the existing table";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -13001,11 +13098,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
 "Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
 	 };
@@ -13029,11 +13126,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 "Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
 	 };
@@ -13057,11 +13154,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 20;30;15;55;5;25;45;60;7;44;
 22;7;17;3;1;25;22;15;10;5;
 	 };
@@ -13072,7 +13169,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
@@ -13103,11 +13200,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
 "Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
 	 };
@@ -13131,11 +13228,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 "Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
 	 };
@@ -13159,11 +13256,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 20;30;15;55;5;25;45;60;7;44;
 22;7;17;3;1;25;22;15;10;5;
 	 };
@@ -13174,24 +13271,24 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [20] 0;1;12;13;19;14;2;3;16;4;
 5;6;17;7;8;9;11;18;15;10;
        };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -13218,17 +13315,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -13265,7 +13362,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        sort_spec {
 	name="sort_spec";
 	ops {
-	 name="DataOpList_25";
+	 name="ops";
 	 el_typ=DataSortEl;
 	 el_def=0;
 	 DataSortEl @["Name up"] {
@@ -13274,6 +13371,474 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  order=ASCENDING;
 	 };
 	};
+       };
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
+    Program @["DataJoin"] {
+     name="DataJoin";
+     short_nm="DJn";
+     tags=;
+     desc="Joining data - combine two different data tables according to a common key value";
+     flags=NO_STOP_STEP;
+     objs {
+      name=;
+      el_typ=taNBase;
+      el_def=0;
+      DataTable @["DemoData"] {
+       name="DemoData";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Categ"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Categ";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
+"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
+	 };
+	};
+	String_Data @["Name"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+"Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
+	 };
+	};
+	float_Data @["Value"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Value";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] 20;30;15;55;5;25;45;60;7;44;
+22;7;17;3;1;25;22;15;10;5;
+	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name=;
+       [20] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+       };
+      };
+      DataTable @["FruitData"] {
+       name="FruitData";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Name"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+"Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
+	 };
+	};
+	String_Data @["Season"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Season";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [20] "Fall";"All";"Spring";"Tropical";"Summer";"Huh";"Fall";"Summer";"Summer";"All";
+"Summer";"All";"Summer";"Summer";"Summer";"Summer";"Summer";"Fall";"Fall";"Summer";
+	 };
+	};
+	float_Data @["Weight"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Weight";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [20] 50;20;2;40;5;25;2;2;50;25;
+22;1;75;75;75;20;50;3;1;35;
+	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name="row_indexes";
+       [20] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+       };
+      };
+      DataTable @["JoinedData"] {
+       name="JoinedData";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Categ"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_121";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Categ";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] "Fruit";"Fruit";"Veggie";"Veggie";"Veggie";"Veggie";"Fruit";"Fruit";"Veggie";"Fruit";
+"Fruit";"Fruit";"Veggie";"Fruit";"Fruit";"Fruit";"Veggie";"Veggie";"Veggie";"Veggie";
+	 };
+	};
+	String_Data @["Name"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_122";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] "Apple";"Banana";"Broccoli";"Cabbage";"Carrots";"Cauliflower";"Cherry";"Dragon Fruit";"Eggplant";"Elderberry";
+"Fruit";"Grapes";"Green Beans";"Huckleberry";"Imo";"Jam";"Lettuce";"Peas";"Peppers";"Zuccini";
+	 };
+	};
+	float_Data @["Value"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_123";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Value";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] 20;30;17;3;5;1;15;55;22;5;
+25;45;15;60;7;44;7;10;25;22;
+	 };
+	};
+	String_Data @["Season"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_124";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Season";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] "Fall";"All";"Summer";"Summer";"Summer";"Summer";"Spring";"Tropical";"Summer";"Summer";
+"Huh";"Fall";"Fall";"Summer";"Summer";"All";"All";"Fall";"Summer";"Summer";
+	 };
+	};
+	float_Data @["Weight"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_125";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1919739693403244;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Weight";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name=;
+	 [20] 50;20;75;75;35;75;2;40;50;5;
+25;2;3;2;50;25;1;1;20;22;
+	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name=;
+       [20] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+       };
+      };
+     };
+     types {
+      name=;
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["DemoData"] {
+       name="DemoData";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].objs["DemoData"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["JoinedData"] {
+       name="JoinedData";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].objs["JoinedData"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["FruitData"] {
+       name="FruitData";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].objs["FruitData"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     functions {
+      name=;
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name="local_vars";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      DataJoinProg @[1] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       src_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].vars["DemoData"]$$;
+       dest_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].vars["JoinedData"]$$;
+       src_b_data_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataJoin"].vars["FruitData"]$$;
+       join_spec {
+	name="join_spec";
+	col_a {
+	 col_name="Name";
+	};
+	col_b {
+	 col_name="Name";
+	};
+	type=INNER;
+	nomatch_warn=1;
        };
       };
      };
@@ -13295,7 +13860,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     desc=;
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_20";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
      DataTable @["DemoData"] {
@@ -13324,11 +13889,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 expr=;
 	};
 	dim_names {
-	 name=;
+	 name="dim_names";
 	[0] 	};
 	width=154;
 	ar {
-	 name=;
+	 name="ar";
 	[10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	};
        };
@@ -13338,23 +13903,23 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       auto_load_file=;
       keygen 4 0=0;
       row_indexes {
-       name=;
+       name="row_indexes";
       [10] 0;1;2;3;4;5;6;7;8;9;
       };
      };
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["DemoData"] {
@@ -13380,17 +13945,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     functions {
-     name="Function_List_20";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_132";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_133";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -13543,37 +14108,37 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     desc=;
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_31";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
     };
     functions {
-     name="Function_List_31";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_186";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_187";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -13775,7 +14340,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     desc="there are a LOT of different math functions you can call!";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_32";
+     name="objs";
      el_typ=float_Matrix;
      el_def=0;
      float_Matrix @["float_mat_data"] {
@@ -13784,17 +14349,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["float_mat_data"] {
@@ -13820,17 +14385,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     functions {
-     name="Function_List_32";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_190";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_191";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -14239,27 +14804,27 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     desc="Functions can return a value (programs can't)";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_23";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
     };
     functions {
-     name="Function_List_23";
+     name="functions";
      el_typ=Function;
      el_def=0;
      Function @["Square"] {
@@ -14339,12 +14904,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     init_code {
-     name="ProgEl_List_144";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_145";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -14406,7 +14971,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     desc="Calling a function that does some work but doesn't return a value";
     flags=NO_STOP_STEP;
     objs {
-     name=;
+     name="objs";
      el_typ=taDateTime;
      el_def=0;
      taDateTime @["dateObject"] {
@@ -14415,17 +14980,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     types {
-     name=;
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
     };
     args {
-     name=;
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name=;
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["dateObject"] {
@@ -14451,7 +15016,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     functions {
-     name=;
+     name="functions";
      el_typ=Function;
      el_def=0;
      Function @["PrintDate"] {
@@ -14524,12 +15089,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      };
     };
     init_code {
-     name=;
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name=;
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -14576,37 +15141,37 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="This program calls Program_B which in this case simply prints some text so we know it is working";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_21";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
      };
      functions {
-      name="Function_List_21";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_136";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_137";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -14647,37 +15212,37 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="The called program can't return a value but it can set some variable values that the calling program can copy";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       Comment @[0] {
@@ -14723,22 +15288,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Copy a variable value from another program";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_24";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["user_name"] {
@@ -14763,17 +15328,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_24";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_149";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_150";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -14832,22 +15397,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="This program has a variable value that another program needs -- it will copy from us";
      flags=NO_STOP_STEP;
      objs {
-      name="ProgObjList_25";
+      name="objs";
       el_typ=taNBase;
       el_def=0;
      };
      types {
-      name="ProgType_List_0";
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name="ProgVar_List_0";
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name="ProgVar_List_0";
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["user_name"] {
@@ -14872,17 +15437,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name="Function_List_25";
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name="ProgEl_List_153";
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name="ProgEl_List_154";
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -14903,7 +15468,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
   };
  };
  viewers {
-  name="DataViewer_List_0";
+  name="viewers";
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
@@ -14913,7 +15478,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.00319488812237978;
+     value 6 0=0.002663825172930956;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -14923,7 +15488,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9920127987861633;
+     value 6 0=0.9920085072517395;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -14951,7 +15516,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name="ToolBar_List_1";
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
@@ -14974,7 +15539,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
    };
    frames {
-    name="FrameViewer_List_0";
+    name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
     BrowseViewerTaBase @["Tree"] {
@@ -15005,7 +15570,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      m_data=NULL;
      visible=0;
      panels {
-      name="T3DataViewFrame_List_0";
+      name="panels";
       el_typ=T3Panel;
       el_def=0;
       T3Panel @["Network_0"] {
@@ -15013,11 +15578,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=NetView;
 	 el_def=0;
 	 NetView @["Network_0_View"] {
@@ -15026,12 +15591,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
-	   name=;
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name=;
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -15086,7 +15651,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
 	  scale {
-	   name="ColorScale_0";
+	   name="scale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -15096,7 +15661,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   auto_scale=0;
 	  };
 	  scale_ranges {
-	   name="ScaleRange_List_0";
+	   name="scale_ranges";
 	   el_typ=ScaleRange;
 	   el_def=0;
 	   ScaleRange @[0] {
@@ -15115,7 +15680,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_0";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -15195,11 +15760,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
+	 name="children";
 	 el_typ=GraphTableView;
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
@@ -15207,7 +15772,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  m_data=.projects["program_examples"].data.gp["OutputData"]["EpochOutputData"]$$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_0";
+	   name="children";
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @["batch"] {
@@ -15277,12 +15842,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  annotations {
-	   name=;
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name=;
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -15305,7 +15870,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
-	   name="GraphAxisView_0";
+	   name="x_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -15322,7 +15887,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  z_axis {
-	   name="GraphAxisView_1";
+	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -15340,7 +15905,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  tot_plots=16;
 	  plots {
-	   name=;
+	   name="plots";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
@@ -15649,7 +16214,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  errbars {
-	   name=;
+	   name="errbars";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
@@ -15961,7 +16526,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
-	   name="GraphAxisView_2";
+	   name="color_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -15978,7 +16543,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  colorscale {
-	   name="ColorScale_0";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -15988,7 +16553,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   auto_scale=0;
 	  };
 	  raster_axis {
-	   name="GraphAxisView_3";
+	   name="raster_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -16019,7 +16584,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_2";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -16098,7 +16663,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    docks {
-    name="DockViewer_List_0";
+    name="docks";
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
@@ -16118,7 +16683,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04046858474612236;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -16152,7 +16717,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  auto_name=1;
  last_change_desc=;
  networks {
-  name="Network_Group_0";
+  name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
   LeabraNetwork @["Network_0"] {
@@ -16269,7 +16834,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    name="Network_0";
    desc=;
    specs {
-    name="BaseSpec_Group_0";
+    name="specs";
     el_typ=LeabraLayerSpec;
     el_def=0;
     LeabraLayerSpec @["HiddenLayer"] {
@@ -16277,7 +16842,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_1";
+      name="children";
       el_typ=LeabraLayerSpec;
       el_def=0;
       LeabraLayerSpec @["Input_Output"] {
@@ -16285,7 +16850,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        desc=;
        unique{ inhib;kwta;       };
        children {
-	name="BaseSpec_Group_2";
+	name="children";
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
@@ -16371,7 +16936,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_3";
+      name="children";
       el_typ=LeabraUnitSpec;
       el_def=0;
      };
@@ -16399,8 +16964,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
-     v_m_init {name="RandomSpec_0": type=UNIFORM: mean=0.3: var=0: par=1: };
-     act_init {name="": type=NONE: mean=0: var=0: par=1: };
+     v_m_init {name="v_m_init": type=UNIFORM: mean=0.3: var=0: par=1: };
+     act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
      act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
@@ -16422,10 +16987,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
      noise_type=NO_NOISE;
-     noise {name="RandomSpec_1": type=GAUSSIAN: mean=0: var=0.001: par=1: };
+     noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
-      name="Schedule_0";
+      name="noise_sched";
       el_typ=SchedItem;
       el_def=0;
       default_val=1;
@@ -16437,7 +17002,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_6";
+      name="children";
       el_typ=LeabraConSpec;
       el_def=0;
       LeabraBiasSpec @["LeabraBiasSpec_0"] {
@@ -16445,11 +17010,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        desc=;
        unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
        children {
-	name="BaseSpec_Group_4";
+	name="children";
 	el_typ=LeabraBiasSpec;
 	el_def=0;
        };
-       rnd {name="RandomSpec_2": type=UNIFORM: mean=0: var=0: par=1: };
+       rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        learn_rule=CTLEABRA_XCAL;
        inhib=0;
@@ -16462,7 +17027,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        cur_lrate=0.02;
        lrs_value=EPOCH;
        lrate_sched {
-	name="Schedule_1";
+	name="lrate_sched";
 	el_typ=SchedItem;
 	el_def=0;
 	default_val=1;
@@ -16487,7 +17052,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        dwt_thresh=0.1;
       };
      };
-     rnd {name="RandomSpec_6": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=CTLEABRA_XCAL;
      inhib=0;
@@ -16500,7 +17065,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      cur_lrate=0.02;
      lrs_value=EPOCH;
      lrate_sched {
-      name="Schedule_2";
+      name="lrate_sched";
       el_typ=SchedItem;
       el_def=0;
       default_val=1;
@@ -16528,7 +17093,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_5";
+      name="children";
       el_typ=FullPrjnSpec;
       el_def=0;
      };
@@ -16539,7 +17104,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    layers {
-    name="Layer_Group_0";
+    name="layers";
     el_typ=LeabraLayer;
     el_def=0;
     pos {x=0: y=0: z=0: };
@@ -16563,18 +17128,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_0";
+      name="projections";
       el_typ=LeabraPrjn;
       el_def=0;
      };
      send_prjns {
-      name="Projection_Group_1";
+      name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
       Projection_Group @. = [0] = LeabraPrjn .projects["program_examples"].networks["Network_0"].layers["Hidden"].projections["Fm_Input"];
      };
      units {
-      name="Unit_Group_0";
+      name="units";
       el_typ=LeabraUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -16609,7 +17174,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_2";
+      name="projections";
       el_typ=LeabraPrjn;
       el_def=0;
       LeabraPrjn @["Fm_Input"] {
@@ -16654,13 +17219,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      send_prjns {
-      name="Projection_Group_3";
+      name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
       Projection_Group @. = [0] = LeabraPrjn .projects["program_examples"].networks["Network_0"].layers["Output"].projections["Fm_Hidden"];
      };
      units {
-      name="Unit_Group_1";
+      name="units";
       el_typ=LeabraUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -16695,7 +17260,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
      projections {
-      name="Projection_Group_4";
+      name="projections";
       el_typ=LeabraPrjn;
       el_def=0;
       LeabraPrjn @["Fm_Hidden"] {
@@ -16720,13 +17285,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      send_prjns {
-      name="Projection_Group_5";
+      name="send_prjns";
       el_typ=LeabraPrjn;
       el_def=0;
       Projection_Group @. = [0] = LeabraPrjn .projects["program_examples"].networks["Network_0"].layers["Hidden"].projections["Fm_Output"];
      };
      units {
-      name="Unit_Group_2";
+      name="units";
       el_typ=LeabraUnit;
       el_def=0;
       pos {x=0: y=0: z=0: };
@@ -16746,7 +17311,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    weights {
-    name=;
+    name="weights";
     el_typ=Weights;
     el_def=0;
    };

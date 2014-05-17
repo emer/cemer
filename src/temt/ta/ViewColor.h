@@ -32,9 +32,9 @@ class TA_API ViewColor : public taNBase {
 INHERITED(taNBase)
 public:
   bool          use_fg;                 // use a special foreground color
-  RGBA          fg_color;               // #CONDEDIT_ON_use_fg:true foreground color
+  RGBA          fg_color;               // #NO_AUTO_NAME #CONDEDIT_ON_use_fg:true foreground color
   bool          use_bg;                 // use a special background color
-  RGBA          bg_color;               // #CONDEDIT_ON_use_fg:true background color
+  RGBA          bg_color;               // #NO_AUTO_NAME #CONDEDIT_ON_use_fg:true background color
   String        desc;                   // description of this view color item
 
   String       GetDesc() const override { return desc; }

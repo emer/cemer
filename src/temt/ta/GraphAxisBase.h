@@ -50,7 +50,7 @@ public:
   int                   matrix_cell;    // #CONDSHOW_ON_is_matrix if column is a matrix, this is the cell within that matrix to plot -- specify -1 for all lines (only valid for data lines, not X or Z axes)
   FixedMinMax           fixed_range;    // fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
-  RGBA                  color;          // color of the line and points
+  RGBA                  color;          // #NO_AUTO_NAME color of the line and points
 
   MinMax                data_range;     // #READ_ONLY #NO_SAVE actual min and max of data (including fixed range)
   MinMax                range;          // #READ_ONLY #NO_SAVE actual display range of the axis data
