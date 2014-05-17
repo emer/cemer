@@ -68,6 +68,7 @@ taTypeDef_Of(OtherProgramVar);
 taTypeDef_Of(PrintExpr);
 taTypeDef_Of(PrintVar);
 taTypeDef_Of(Comment);
+taTypeDef_Of(BlankLineEl);
 
 taTypeDef_Of(ProgVarFmArg);
 taTypeDef_Of(MemberFmArg);
@@ -205,6 +206,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintExpr);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_PrintVar);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_Comment);
+  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_BlankLineEl);
 
   tb->AddSeparator(sec);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);

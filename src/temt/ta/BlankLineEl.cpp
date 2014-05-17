@@ -13,29 +13,25 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "Comment.h"
+#include "BlankLineEl.h"
+
+TA_BASEFUNS_CTORS_DEFN(BlankLineEl);
+
 #include <Program>
 #include <tabMisc>
 
-TA_BASEFUNS_CTORS_DEFN(Comment);
-
-void Comment::Initialize() {
-  static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
-  desc = _def_comment;
+void BlankLineEl::Initialize() {
 }
 
-void Comment::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "/*******************************************************************",
-                ProgLine::MAIN_LINE);
-  prog->AddDescString(this, desc);
-  prog->AddLine(this, "*******************************************************************/");
+void BlankLineEl::GenCssBody_impl(Program* prog) {
+  prog->AddLine(this, "    ", ProgLine::MAIN_LINE);
 }
 
-String Comment::GetDisplayName() const {
-  return "// " + desc;
+String BlankLineEl::GetDisplayName() const {
+  return " ";
 }
 
-String Comment::GetColText(const KeyString& key, int itm_idx) const {
+String BlankLineEl::GetColText(const KeyString& key, int itm_idx) const {
   if (key == key_disp_name) {
     String rval = GetDisplayName();
     return rval;
@@ -43,7 +39,7 @@ String Comment::GetColText(const KeyString& key, int itm_idx) const {
   return inherited::GetColText(key, itm_idx);
 }
 
-bool Comment::BrowserEditSet(const String& code, int move_after) {
+bool BlankLineEl::BrowserEditSet(const String& code, int move_after) {
   edit_move_after = 0;
   String cd = code; // CodeGetDesc(code);
   if(CanCvtFmCode(cd, NULL)) {
@@ -58,15 +54,12 @@ bool Comment::BrowserEditSet(const String& code, int move_after) {
 }
 
 
-bool Comment::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.startsWith("//") || code.startsWith("/*")) return true;
+bool BlankLineEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.empty()) return true;
   return false;
 }
 
-bool Comment::CvtFmCode(const String& code) {
-  if(code.startsWith("//")) desc = trim(code.after("//"));
-  else if(code.startsWith("/*")) trim(desc = code.after("/*"));
-  if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
+bool BlankLineEl::CvtFmCode(const String& code) {
   return true;
 }
 

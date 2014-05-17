@@ -343,6 +343,7 @@ set(ta_HEADS_MAKETA_NOMOC
   PrintVar.h
   PrintExpr.h
   Comment.h
+  BlankLineEl.h
   StopStepPoint.h
   ReturnExpr.h
   OtherProgramVar.h
@@ -1450,6 +1451,7 @@ set(ta_SRCS_MAKETA
   PrintVar.cpp
   PrintExpr.cpp
   Comment.cpp
+  BlankLineEl.cpp
   StopStepPoint.cpp
   ReturnExpr.cpp
   OtherProgramVar.cpp

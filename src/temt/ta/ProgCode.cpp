@@ -198,7 +198,7 @@ void ProgCode::ConvertToProgEl() {
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return;
   code.expr = trim(code.expr);
-  if(code.expr.empty()) return;
+  // if(code.expr.empty()) return;
   ProgEl* cvt = CvtCodeToProgEl();
   if(!cvt) return;
   taProject* proj = GET_OWNER(own, taProject);
