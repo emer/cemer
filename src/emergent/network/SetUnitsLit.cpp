@@ -44,11 +44,11 @@ void SetUnitsLit::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String SetUnitsLit::GetDisplayName() const {
-  String rval = "Set Units: ";
-  if(unit_1.IsSet()) rval += unit_1.NameVal() + " ";
-  if(unit_2.IsSet()) rval += unit_2.NameVal() + " ";
-  if(unit_3.IsSet()) rval += unit_3.NameVal() + " ";
-  if(unit_4.IsSet()) rval += unit_4.NameVal();
+  String rval = "set units lit: ";
+  rval += String("unit_1=") + (unit_1.IsSet() ? unit_1.NameVal() : "?") + " ";
+  rval += String("unit_2=") + (unit_2.IsSet() ? unit_2.NameVal() : "?") + " ";
+  rval += String("unit_3=") + (unit_3.IsSet() ? unit_3.NameVal() : "?") + " ";
+  rval += String("unit_4=") + (unit_4.IsSet() ? unit_4.NameVal() : "?") + " ";
   return rval;
 }
 
@@ -117,5 +117,44 @@ void SetUnitsLit::GenCssBody_impl(Program* prog) {
   GenCss_OneUnit(prog, unit_2, idnm, idat);
   GenCss_OneUnit(prog, unit_3, idnm, idat);
   GenCss_OneUnit(prog, unit_4, idnm, idat);
+}
+
+bool SetUnitsLit::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase(); tbn.gsub("\n", " ");
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  return false;
+}
+
+bool SetUnitsLit::CvtFmCode(const String& code) {
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+    
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+    
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    // taMisc::DebugInfo(name, value);
+        
+    if (name.startsWith("unit_1") && unit_1.IsSet()) {
+      unit_1.SetNameVal(value);
+    }
+    else if (name.startsWith("unit_2") && unit_2.IsSet()) {
+      unit_2.SetNameVal(value);
+    }
+    else if (name.startsWith("unit_3") && unit_3.IsSet()) {
+      unit_3.SetNameVal(value);
+    }
+    else if (name.startsWith("unit_4") && unit_4.IsSet()) {
+      unit_4.SetNameVal(value);
+    }
+  }
+    
+  SigEmitUpdated();
+  return true;
 }
 

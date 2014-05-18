@@ -56,6 +56,8 @@ public:
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   String	GetToolbarName() const override { return "init nm\nunits"; }
+  bool      CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool      CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(InitNamedUnits);
 protected:

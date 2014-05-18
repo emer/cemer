@@ -181,6 +181,7 @@ bool InitNamedUnits::InitDynEnums() {
     if(!det) {
       det = (DynEnumType*)my_prog->types.New(1, &TA_DynEnumType);
       det->name = ndc->name;
+      det->SigEmitUpdated();
     }
     String prefix = ndc->name.before(n_lay_name_chars);
     InitDynEnumFmUnitNames(det, ndc, prefix);
@@ -253,3 +254,15 @@ bool InitNamedUnits::ViewDataLegend() {
   return true;
 }
 
+bool InitNamedUnits::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase(); tbn.gsub("\n", " ");
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  return false;
+}
+
+bool InitNamedUnits::CvtFmCode(const String& code) {
+  // nothing to do
+  return true;
+}

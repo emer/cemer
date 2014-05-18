@@ -103,12 +103,16 @@ String ElseIf::GetDisplayName() const {
 
 bool ElseIf::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
-  if(code.startsWith("else if")) return true;
+  if(code.startsWith("else if") || code.startsWith("elseif")) return true;
   return false;
 }
 
 bool ElseIf::CvtFmCode(const String& code) {
-  String cd = trim(code.after("else if"));
+  String cd;
+  if(code.startsWith("else if"))
+    cd = trim(code.after("else if"));
+  else
+    cd = trim(code.after("elseif"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');
     if(cd.endsWith(')'))

@@ -59,11 +59,11 @@ void SetUnitsVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String SetUnitsVar::GetDisplayName() const {
-  String rval = "Set Units Vars: ";
-  if(unit_1) rval += unit_1->name + " ";
-  if(unit_2) rval += unit_2->name + " ";
-  if(unit_3) rval += unit_3->name + " ";
-  if(unit_4) rval += unit_4->name + " ";
+  String rval = "set units var: ";
+  rval += String("unit_1=") + (unit_1 ? unit_1->name : "?") + " ";
+  rval += String("unit_2=") + (unit_2 ? unit_2->name : "?") + " ";
+  rval += String("unit_3=") + (unit_3 ? unit_3->name : "?") + " ";
+  rval += String("unit_4=") + (unit_4 ? unit_4->name : "?") + " ";
   return rval;
 }
 
@@ -141,5 +141,44 @@ void SetUnitsVar::GenCssBody_impl(Program* prog) {
   GenCss_OneUnit(prog, unit_2, idnm, idat);
   GenCss_OneUnit(prog, unit_3, idnm, idat);
   GenCss_OneUnit(prog, unit_4, idnm, idat);
+}
+
+bool SetUnitsVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase(); tbn.gsub("\n", " ");
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  return false;
+}
+
+bool SetUnitsVar::CvtFmCode(const String& code) {
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+    
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+    
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    // taMisc::DebugInfo(name, value);
+        
+    if (name.startsWith("unit_1")) {
+      unit_1 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("unit_2")) {
+      unit_2 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("unit_3")) {
+      unit_3 = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("unit_4")) {
+      unit_4 = FindVarNameInScope(value, false); // don't make
+    }
+  }
+    
+  SigEmitUpdated();
+  return true;
 }
 
