@@ -1,221 +1,470 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
-LeabraProject .projects[0] { 
-  taBase_Group @.templates = [0] {
-  };
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
+LeabraProject .projects["data_calc_loop"] { 
+ Doc_Group @.docs = [1] {
+  taDoc @["DataCalcLoopDocs"] { };
+ };
 
-  Doc_Group @.docs = [1] {
-    taDoc @[0] { };
-  };
-
-  Wizard_Group @.wizards = [1] {
-    LeabraWizard @[0] { 
+ Wizard_Group @.wizards = [1] {
+  LeabraWizard @["LeabraWizard_0"] { 
    UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+ };
+
+ ControlPanel_Group @.ctrl_panels = [1] {
+  ClusterRun @["ClusterRun"] { 
+   EditMbrItem_Group @.mbrs = [0] {
    };
 
-      LayerWizElList @.layer_cfg = [3] {
-	LayerWizEl @[0] { };
-	LayerWizEl @[1] { };
-	LayerWizEl @[2] { };
-      };
-    };
-  };
-
-  SelectEdit_Group @.edits = [0] {
-  };
-
-  DataTable_Group @.data = [0] {
-    DataTable_Group @.gp[0] { 
-    };
-    DataTable_Group @.gp[1] = [1] { 
-      DataTable @[0] { 
-	DataTableCols @.data = [4] {
-	  String_Data @[0] { };
-	  float_Data @[1] { };
-	  float_Data @[2] { };
-	  float_Data @[3] { };
-	};
-      };
-    };
-    DataTable_Group @.gp[2] = [1] { 
-      DataTable @[0] { 
-	DataTableCols @.data = [5] {
-	  String_Data @[0] { };
-	  float_Data @[1] { };
-	  float_Data @[2] { };
-	  float_Data @[3] { };
-	  float_Data @[4] { };
-	};
-      };
-    };
-  };
-
-  taBase_Group @.data_proc = [4] {
-    taDataProc @[0] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
+   EditMthItem_Group @.mths = [0] {
    };
-};
-    taDataAnal @[1] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
-};
-    taDataGen @[2] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
-};
-    taImageProc @[3] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
-};
-  };
 
-  Program_Group @.programs = [1] {
-    Program @[0] { 
-      ProgObjList @.objs = [0] {
-      };
-
-      ProgType_List @.types = [0] {
-      };
-
-      ProgVar_List @.args = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      ProgVar_List @.vars = [0] {
-      };
-
-      Function_List @.functions = [0] {
-      };
-
-      ProgEl_List @.load_code = [0] {
-      };
-
-      ProgEl_List @.init_code = [0] {
-      };
-
-      ProgEl_List @.prog_code = [5] {
-	Comment @[0] { };
-	DataCalcLoop @[1] { 
-	  DataOpList @.src_cols = [4] {
-	    DataOpEl @[0] { };
-	    DataOpEl @[1] { };
-	    DataOpEl @[2] { };
-	    DataOpEl @[3] { };
-	  };
-
-	  DataOpList @.dest_cols = [0] {
-	  };
-
-	  ProgEl_List @.loop_code = [2] {
-	    AssignExpr @[0] { };
-	    DataCalcSetSrcRow @[1] { };
-	  };
-
-	  ProgVar_List @.src_col_vars = [4] {
-	    ProgVar @[0] { };
-	    ProgVar @[1] { };
-	    ProgVar @[2] { };
-	    ProgVar @[3] { };
-	  };
-
-	  ProgVar_List @.dest_col_vars = [0] {
-	  };
-	};
-	Comment @[2] { };
-	ResetDataRows @[3] { };
-	DataCalcLoop @[4] { 
-	  DataOpList @.src_cols = [4] {
-	    DataOpEl @[0] { };
-	    DataOpEl @[1] { };
-	    DataOpEl @[2] { };
-	    DataOpEl @[3] { };
-	  };
-
-	  DataOpList @.dest_cols = [1] {
-	    DataOpEl @[0] { };
-	  };
-
-	  ProgEl_List @.loop_code = [1] {
-	    IfElse @[0] { 
-	      ProgEl_List @.true_code = [4] {
-		DataCalcAddDestRow @[0] { };
-		DataCalcCopyCommonCols @[1] { };
-		AssignExpr @[2] { };
-		DataCalcSetDestRow @[3] { };
-	      };
-
-	      ProgEl_List @.false_code = [0] {
-	      };
-	    };
-	  };
-
-	  ProgVar_List @.src_col_vars = [4] {
-	    ProgVar @[0] { };
-	    ProgVar @[1] { };
-	    ProgVar @[2] { };
-	    ProgVar @[3] { };
-	  };
-
-	  ProgVar_List @.dest_col_vars = [1] {
-	    ProgVar @[0] { };
-	  };
-	};
-      };
+   DataTableCols @.jobs_running.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
     };
-  };
-
-  DataViewer_List @.viewers = [1] {
-    MainWindowViewer @[0] { 
-      ToolBar_List @.toolbars = [1] {
-	ToolBar @[0] { };
-      };
-
-      FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @[0] { };
-	PanelViewer @[1] { };
-	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @[0] { 
-	      T3DataView_List @.children = [1] {
-		GraphTableView @[0] { 
-		  T3DataView_List @.children = [4] {
-		    GraphColView @[0] { };
-		    GraphColView @[1] { };
-		    GraphColView @[2] { };
-		    GraphColView @[3] { };
-		  };
-		};
-	      };
-
-	      T3SavedView_List @.saved_views = [6] {
-		T3SavedView @[0] { };
-		T3SavedView @[1] { };
-		T3SavedView @[2] { };
-		T3SavedView @[3] { };
-		T3SavedView @[4] { };
-		T3SavedView @[5] { };
-	      };
-	    };
-	  };
-	};
-      };
-
-      DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @[0] { };
-      };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
     };
-  };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
 
-  Network_Group @.networks = [0] {
+   DataTableCols @.jobs_done.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
+
+   DataTableCols @.jobs_archive.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
+
+   DataTableCols @.file_list.data = [9] {
+    String_Data @["file_name"] { };
+    String_Data @["tag"] { };
+    String_Data @["size"] { };
+    String_Data @["kind"] { };
+    String_Data @["date_modified"] { };
+    String_Data @["date_created"] { };
+    String_Data @["svn_file_path"] { };
+    String_Data @["proj_file_path"] { };
+    String_Data @["file_path"] { };
+   };
+
+   DataTableCols @.cluster_info.data = [6] {
+    String_Data @["queue"] { };
+    String_Data @["job_no"] { };
+    String_Data @["user"] { };
+    String_Data @["state"] { };
+    String_Data @["procs"] { };
+    String_Data @["start_time"] { };
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
   };
+ };
+
+ DataTable_Group @.data = [0] {
+  DataTable_Group @.gp["InputData"] { 
+  };
+  DataTable_Group @.gp["OutputData"] = [1] { 
+   DataTable @["SomeData"] { 
+    DataTableCols @.data = [4] {
+     String_Data @["Name"] { };
+     float_Data @["Value1"] { };
+     float_Data @["Value2"] { };
+     float_Data @["AvgValue"] { };
+    };
+   };
+  };
+  DataTable_Group @.gp["AnalysisData"] = [1] { 
+   DataTable @["TrainData"] { 
+    DataTableCols @.data = [5] {
+     String_Data @["Name"] { };
+     float_Data @["Value1"] { };
+     float_Data @["Value2"] { };
+     float_Data @["AvgValue"] { };
+     float_Data @["MaxValue"] { };
+    };
+   };
+  };
+ };
+
+ taBase_Group @.data_proc = [4] {
+  taDataProc @["data_base"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+  taDataAnal @["data_anal"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+  taDataGen @["data_gen"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+  taImageProc @["image_proc"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+ };
+
+ Program_TopGroup @.programs = [1] {
+  Program @["DataCalcLoopDemo"] { 
+   ProgObjList @.objs = [0] {
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [2] {
+    ProgVar @["SomeData"] { };
+    ProgVar @["TrainData"] { };
+   };
+
+   ProgVar_List @.vars = [0] {
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [5] {
+    Comment @[0] { };
+    DataCalcLoop @[1] { 
+     DataOpList @.src_cols = [4] {
+      DataOpEl @["Name"] { };
+      DataOpEl @["Value1"] { };
+      DataOpEl @["Value2"] { };
+      DataOpEl @["AvgValue"] { };
+     };
+
+     DataOpList @.dest_cols = [0] {
+     };
+
+     ProgEl_List @.loop_code = [2] {
+      AssignExpr @[0] { };
+      DataCalcSetSrcRow @[1] { };
+     };
+
+     ProgVar_List @.src_col_vars = [4] {
+      ProgVar @["s_Name"] { };
+      ProgVar @["s_Value1"] { };
+      ProgVar @["s_Value2"] { };
+      ProgVar @["s_AvgValue"] { };
+     };
+
+     ProgVar_List @.dest_col_vars = [0] {
+     };
+    };
+    Comment @[2] { };
+    ResetDataRows @[3] { };
+    DataCalcLoop @[4] { 
+     DataOpList @.src_cols = [4] {
+      DataOpEl @["Name"] { };
+      DataOpEl @["Value1"] { };
+      DataOpEl @["Value2"] { };
+      DataOpEl @["AvgValue"] { };
+     };
+
+     DataOpList @.dest_cols = [1] {
+      DataOpEl @["MaxValue"] { };
+     };
+
+     ProgEl_List @.loop_code = [1] {
+      If @[0] { 
+       ProgEl_List @.true_code = [4] {
+	DataCalcAddDestRow @[0] { };
+	DataCalcCopyCommonCols @[1] { };
+	AssignExpr @[2] { };
+	DataCalcSetDestRow @[3] { };
+       };
+      };
+     };
+
+     ProgVar_List @.src_col_vars = [4] {
+      ProgVar @["s_Name"] { };
+      ProgVar @["s_Value1"] { };
+      ProgVar @["s_Value2"] { };
+      ProgVar @["s_AvgValue"] { };
+     };
+
+     ProgVar_List @.dest_col_vars = [1] {
+      ProgVar @["d_MaxValue"] { };
+     };
+    };
+   };
+  };
+ };
+
+ taViewer_List @.viewers = [1] {
+  MainWindowViewer @["Browser"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["view_win_lft"] { };
+    UserDataItem @["view_win_top"] { };
+    UserDataItem @["view_win_wd"] { };
+    UserDataItem @["view_win_ht"] { };
+    UserDataItem @["view_win_iconified"] { };
+    UserDataItem @["view_splitter_state"] { };
+   };
+
+   ToolBar_List @.toolbars = [1] {
+    ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_visible"] { };
+     };
+    };
+   };
+
+   FrameViewer_List @.frames = [3] {
+    BrowseViewerTaBase @["Tree"] { };
+    PanelViewer @["Panels"] { };
+    T3PanelViewer @["T3Frames"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
+     T3Panel_List @.panels = [1] {
+      T3Panel @["SomeData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GraphTableView @["SomeData_Graph"] { 
+	 T3DataView_List @.children = [4] {
+	  GraphColView @["Name"] { };
+	  GraphColView @["Value1"] { };
+	  GraphColView @["Value2"] { };
+	  GraphColView @["AvgValue"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [16] {
+	  GraphPlotView @["SomeData_Graph_plot_1"] { };
+	  GraphPlotView @["SomeData_Graph_plot_2"] { };
+	  GraphPlotView @["SomeData_Graph_plot_3"] { };
+	  GraphPlotView @["SomeData_Graph_plot_4"] { };
+	  GraphPlotView @["SomeData_Graph_plot_5"] { };
+	  GraphPlotView @["SomeData_Graph_plot_6"] { };
+	  GraphPlotView @["SomeData_Graph_plot_7"] { };
+	  GraphPlotView @["SomeData_Graph_plot_8"] { };
+	  GraphPlotView @["SomeData_Graph_plot_9"] { };
+	  GraphPlotView @["SomeData_Graph_plot_10"] { };
+	  GraphPlotView @["SomeData_Graph_plot_11"] { };
+	  GraphPlotView @["SomeData_Graph_plot_12"] { };
+	  GraphPlotView @["SomeData_Graph_plot_13"] { };
+	  GraphPlotView @["SomeData_Graph_plot_14"] { };
+	  GraphPlotView @["SomeData_Graph_plot_15"] { };
+	  GraphPlotView @["SomeData_Graph_plot_16"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [16] {
+	  GraphPlotView @["SomeData_Graph_err_1"] { };
+	  GraphPlotView @["SomeData_Graph_err_2"] { };
+	  GraphPlotView @["SomeData_Graph_err_3"] { };
+	  GraphPlotView @["SomeData_Graph_err_4"] { };
+	  GraphPlotView @["SomeData_Graph_err_5"] { };
+	  GraphPlotView @["SomeData_Graph_err_6"] { };
+	  GraphPlotView @["SomeData_Graph_err_7"] { };
+	  GraphPlotView @["SomeData_Graph_err_8"] { };
+	  GraphPlotView @["SomeData_Graph_err_9"] { };
+	  GraphPlotView @["SomeData_Graph_err_10"] { };
+	  GraphPlotView @["SomeData_Graph_err_11"] { };
+	  GraphPlotView @["SomeData_Graph_err_12"] { };
+	  GraphPlotView @["SomeData_Graph_err_13"] { };
+	  GraphPlotView @["SomeData_Graph_err_14"] { };
+	  GraphPlotView @["SomeData_Graph_err_15"] { };
+	  GraphPlotView @["SomeData_Graph_err_16"] { };
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+     };
+    };
+   };
+
+   DockViewer_List @.docks = [1] {
+    ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_lft"] { };
+      UserDataItem @["view_win_top"] { };
+      UserDataItem @["view_win_wd"] { };
+      UserDataItem @["view_win_ht"] { };
+      UserDataItem @["view_win_iconified"] { };
+      UserDataItem @["view_visible"] { };
+     };
+    };
+   };
+  };
+ };
+
+ Network_Group @.networks = [0] {
+ };
 };
-LeabraProject .projects[0] {
- name="Project_0";
+LeabraProject .projects["data_calc_loop"] {
+ name="data_calc_loop";
  desc=;
  tags=;
  version {
@@ -223,21 +472,23 @@ LeabraProject .projects[0] {
   minor=0;
   step=0;
  };
+ license {
+  owner="Regents of the University of Colorado";
+  license=NO_LIC;
+  org="CCNLab at the University of Colorado Boulder";
+  year="2014";
+  custom=;
+ };
  wiki_url {
   sync=0;
   wiki=;
   url=;
  };
- templates {
-  name=;
-  el_typ=taBase;
-  el_def=0;
- };
  docs {
-  name=;
+  name="docs";
   el_typ=taDoc;
   el_def=0;
-  taDoc @[0] {
+  taDoc @["DataCalcLoopDocs"] {
    name="DataCalcLoopDocs";
    desc=;
    auto_open=1;
@@ -262,7 +513,8 @@ The program should be well enough documented to follow along in the Edit Program
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
+   html_text="<html><head></head>
+<body>
 <h2> Data Calc Loop Demo Project </h2>
 <p>
 This project shows how to use the DataCalcLoop system to iteratively process rows of a datatable.
@@ -279,15 +531,15 @@ The program should be well enough documented to follow along in the Edit Program
   };
  };
  wizards {
-  name=;
+  name="wizards";
   el_typ=LeabraWizard;
   el_def=0;
-  LeabraWizard @[0] {
+  LeabraWizard @["LeabraWizard_0"] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItemBase;
     el_def=0;
-    UserDataItem @[0] {
+    UserDataItem @["NO_CLIP"] {
      name="NO_CLIP";
      value 1 0=1;
      val_type_fixed=0;
@@ -295,57 +547,1638 @@ The program should be well enough documented to follow along in the Edit Program
    };
    name="LeabraWizard_0";
    auto_open=1;
-   n_layers=3;
-   layer_cfg {
-    name=;
-    el_typ=LayerWizEl;
-    el_def=0;
-    LayerWizEl @[0] {
-     name="Input";
-     n_units=25;
-     io_type=INPUT;
-    };
-    LayerWizEl @[1] {
-     name="Hidden";
-     n_units=25;
-     io_type=HIDDEN;
-    };
-    LayerWizEl @[2] {
-     name="Output";
-     n_units=25;
-     io_type=OUTPUT;
-    };
-   };
-   connectivity=BIDIRECTIONAL;
-   default_net_type=LeabraNetwork;
   };
  };
- edits {
-  name=;
-  el_typ=SelectEdit;
+ ctrl_panels {
+  name="ctrl_panels";
+  el_typ=ControlPanel;
   el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=0;
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name="mths";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   jobs_archive {
+    name="jobs_archive";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   file_list {
+    name="file_list";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["file_name"] {
+      name="file_name";
+      desc="name of file -- does not include any path information";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="job tag associated with this file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["size"] {
+      name="size";
+      desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["kind"] {
+      name="kind";
+      desc="type of file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_modified"] {
+      name="date_modified";
+      desc="timestamp for when the file was last modified";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_created"] {
+      name="date_created";
+      desc="timestamp for when the file was first created";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["svn_file_path"] {
+      name="svn_file_path";
+      desc="path to file in SVN repository, relative to root of svn_repo repository";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["proj_file_path"] {
+      name="proj_file_path";
+      desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_path"] {
+      name="file_path";
+      desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   cluster_info {
+    name="cluster_info";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["queue"] {
+      name="queue";
+      desc="queue that this info relates to";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number or total number of actve jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["state"] {
+      name="state";
+      desc="current scheduler state -- or description of global state info";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["procs"] {
+      name="procs";
+      desc="number of processors for this job or for global state info";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="timestamp for when the job was submitted or started running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   search_algos {
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   last_submit_time=;
+   notes=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=0;
+   n_threads=1;
+   use_mpi=0;
+   mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
+   nowin_x=0;
+  };
  };
  data {
-  name=;
+  name="data";
   el_typ=DataTable;
   el_def=0;
-  DataTable_Group @.gp[0] {
+  save_tables=1;
+  DataTable_Group @.gp["InputData"] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
-  DataTable_Group @.gp[1] {
+  DataTable_Group @.gp["OutputData"] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
-   DataTable @[0] {
+   save_tables=1;
+   DataTable @["SomeData"] {
     name="SomeData";
     desc=;
     data {
      name="data";
      el_typ=String_Data;
      el_def=0;
-     String_Data @[0] {
+     String_Data @["Name"] {
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -354,14 +2187,15 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [10] "train_a";"train_b";"train_c";"train_d";"train_e";"test_a";"test_b";"test_c";"test_d";"test_e";
+       name="ar";
+      [10] "train_a";"train_b";"train_c";"train_d";"train_e";"test_a";"test_b";"test_c";"test_d";"test_e";
       };
      };
-     float_Data @[1] {
+     float_Data @["Value1"] {
       name="Value1";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -370,14 +2204,15 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [10] 0.40000001;0.5;0.2;0.69999999;0.30000001;0.5;0.69999999;0.40000001;0.80000001;0.40000001;
+       name="ar";
+      [10] 0.40000001;0.5;0.2;0.69999999;0.30000001;0.5;0.69999999;0.40000001;0.80000001;0.40000001;
       };
      };
-     float_Data @[2] {
+     float_Data @["Value2"] {
       name="Value2";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -386,14 +2221,15 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [10] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;0.30000001;0.80000001;0.5;0.89999998;0.30000001;
+       name="ar";
+      [10] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;0.30000001;0.80000001;0.5;0.89999998;0.30000001;
       };
      };
-     float_Data @[3] {
+     float_Data @["AvgValue"] {
       name="AvgValue";
       desc="this value is computed in the data calc loop!";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -403,11 +2239,12 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [10] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;0.40000001;0.75;0.44999999;0.85000002;0.35000002;
+       name="ar";
+      [10] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;0.40000001;0.75;0.44999999;0.85000002;0.35000002;
       };
      };
     };
@@ -415,20 +2252,25 @@ The program should be well enough documented to follow along in the Edit Program
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [10] 0;1;2;3;4;5;6;7;8;9;
+    };
    };
   };
-  DataTable_Group @.gp[2] {
+  DataTable_Group @.gp["AnalysisData"] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
-   DataTable @[0] {
+   save_tables=1;
+   DataTable @["TrainData"] {
     name="TrainData";
     desc=;
     data {
      name="data";
      el_typ=String_Data;
      el_def=0;
-     String_Data @[0] {
+     String_Data @["Name"] {
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -437,13 +2279,14 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [5] "train_a";"train_b";"train_c";"train_d";"train_e";      };
+       name="ar";
+      [5] "train_a";"train_b";"train_c";"train_d";"train_e";      };
      };
-     float_Data @[1] {
+     float_Data @["Value1"] {
       name="Value1";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -452,13 +2295,14 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [5] 0.40000001;0.5;0.2;0.69999999;0.30000001;      };
+       name="ar";
+      [5] 0.40000001;0.5;0.2;0.69999999;0.30000001;      };
      };
-     float_Data @[2] {
+     float_Data @["Value2"] {
       name="Value2";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -467,13 +2311,14 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [5] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;      };
+       name="ar";
+      [5] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;      };
      };
-     float_Data @[3] {
+     float_Data @["AvgValue"] {
       name="AvgValue";
       desc="this value is computed in the data calc loop!";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -483,13 +2328,14 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [5] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;      };
+       name="ar";
+      [5] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;      };
      };
-     float_Data @[4] {
+     float_Data @["MaxValue"] {
       name="MaxValue";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -498,30 +2344,34 @@ The program should be well enough documented to follow along in the Edit Program
        expr=;
       };
       dim_names {
-       name=;
-	    [0]       };
+       name="dim_names";
+      [0]       };
+      width=0;
       ar {
-       name=;
-	    [5] 0.40000001;0.60000002;0.30000001;0.69999999;0.40000001;      };
+       name="ar";
+      [5] 0.40000001;0.60000002;0.30000001;0.69999999;0.40000001;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
     auto_load=NO_AUTO_LOAD;
     auto_load_file=;
     keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [5] 0;1;2;3;4;    };
    };
   };
  };
  data_proc {
-  name=;
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
-  taDataProc @[0] {
+  taDataProc @["data_base"] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItemBase;
     el_def=0;
-    UserDataItem @[0] {
+    UserDataItem @["NO_CLIP"] {
      name="NO_CLIP";
      value 1 0=1;
      val_type_fixed=0;
@@ -529,12 +2379,12 @@ The program should be well enough documented to follow along in the Edit Program
    };
    name="data_base";
   };
-  taDataAnal @[1] {
+  taDataAnal @["data_anal"] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItemBase;
     el_def=0;
-    UserDataItem @[0] {
+    UserDataItem @["NO_CLIP"] {
      name="NO_CLIP";
      value 1 0=1;
      val_type_fixed=0;
@@ -542,12 +2392,12 @@ The program should be well enough documented to follow along in the Edit Program
    };
    name="data_anal";
   };
-  taDataGen @[2] {
+  taDataGen @["data_gen"] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItemBase;
     el_def=0;
-    UserDataItem @[0] {
+    UserDataItem @["NO_CLIP"] {
      name="NO_CLIP";
      value 1 0=1;
      val_type_fixed=0;
@@ -555,12 +2405,12 @@ The program should be well enough documented to follow along in the Edit Program
    };
    name="data_gen";
   };
-  taImageProc @[3] {
+  taImageProc @["image_proc"] {
    UserDataItem_List @*(.user_data_) {
     name=;
     el_typ=UserDataItemBase;
     el_def=0;
-    UserDataItem @[0] {
+    UserDataItem @["NO_CLIP"] {
      name="NO_CLIP";
      value 1 0=1;
      val_type_fixed=0;
@@ -570,101 +2420,98 @@ The program should be well enough documented to follow along in the Edit Program
   };
  };
  programs {
-  name=;
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
   desc=;
-  Program @[0] {
+  Program @["DataCalcLoopDemo"] {
    name="DataCalcLoopDemo";
    short_nm="Demo";
    tags=;
    desc=;
-   flags=;
+   flags=0;
    objs {
-    name=;
+    name="objs";
     el_typ=taNBase;
     el_def=0;
    };
    types {
-    name=;
-    el_typ=ProgType;
+    name="types";
+    el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
-    ProgVar @[0] {
+    ProgVar @["SomeData"] {
      name="SomeData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][0]$$;
+     object_val=.projects["data_calc_loop"].data.gp["OutputData"]["SomeData"]$$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
     };
-    ProgVar @[1] {
+    ProgVar @["TrainData"] {
      name="TrainData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[2][0]$$;
+     object_val=.projects["data_calc_loop"].data.gp["AnalysisData"]["TrainData"]$$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
     };
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
    };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
    init_code {
-    name=;
-    el_typ=ProgEl;
+    name="init_code";
+    el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
-    el_typ=ProgEl;
+    name="prog_code";
+    el_typ=ProgCode;
     el_def=0;
     Comment @[0] {
      desc="First example just does computations on the source data table itself (AvgValue)";
-     flags=;
+     flags=0;
+     orig_prog_code=;
     };
     DataCalcLoop @[1] {
      desc=;
-     flags=;
-     src_data_var=.projects[0].programs[0].args[0]$$;
+     flags=WARNING;
+     orig_prog_code=;
+     src_data_var=.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["SomeData"]$$;
      dest_data_var=NULL;
      src_cols {
       name="src_cols";
       el_typ=DataOpEl;
       el_def=0;
-      DataOpEl @[0] {
+      DataOpEl @["Name"] {
        col_name="Name";
       };
-      DataOpEl @[1] {
+      DataOpEl @["Value1"] {
        col_name="Value1";
       };
-      DataOpEl @[2] {
+      DataOpEl @["Value2"] {
        col_name="Value2";
       };
-      DataOpEl @[3] {
+      DataOpEl @["AvgValue"] {
        col_name="AvgValue";
       };
      };
@@ -675,20 +2522,22 @@ The program should be well enough documented to follow along in the Edit Program
      };
      loop_code {
       name=;
-      el_typ=ProgEl;
+      el_typ=ProgCode;
       el_def=0;
       AssignExpr @[0] {
        desc="use AssignExpr to compute columns from other s_values";
-       flags=;
-       result_var=.projects[0].programs[0].prog_code[1].src_col_vars[3]$$;
+       flags=0;
+       orig_prog_code=;
+       result_var=.projects["data_calc_loop"].programs["DataCalcLoopDemo"].prog_code[1].src_col_vars["s_AvgValue"]$$;
        expr {
 	expr=".5 * (s_Value1 +  s_Value2)";
        };
       };
       DataCalcSetSrcRow @[1] {
        desc="apply any source column computations back to source data table";
-       flags=;
-       src_data_var=$.projects[0].programs[0].args[0]$;
+       flags=0;
+       orig_prog_code=;
+       src_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["SomeData"]$;
        dest_data_var=NULL;
       };
      };
@@ -697,42 +2546,42 @@ The program should be well enough documented to follow along in the Edit Program
       name=;
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @[0] {
+      ProgVar @["s_Name"] {
        name="s_Name";
        var_type=T_String;
        string_val=;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[1] {
+      ProgVar @["s_Value1"] {
        name="s_Value1";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR|USED;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[2] {
+      ProgVar @["s_Value2"] {
        name="s_Value2";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR|USED;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[3] {
+      ProgVar @["s_AvgValue"] {
        name="s_AvgValue";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR|USED;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -746,32 +2595,35 @@ The program should be well enough documented to follow along in the Edit Program
     };
     Comment @[2] {
      desc="Next, we do some filtering and calculation from source into a new dest data table (TrainData)";
-     flags=;
+     flags=0;
+     orig_prog_code=;
     };
     ResetDataRows @[3] {
      desc="reset train data so its ready";
-     flags=;
-     data_var=.projects[0].programs[0].args[1]$$;
+     flags=0;
+     orig_prog_code=;
+     data_var=.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["TrainData"]$$;
     };
     DataCalcLoop @[4] {
      desc="IMPORTANT: only add the dest_cols you are actually going to compute values for -- use CopyCommonCols to copy any other values that just need to be copied";
-     flags=;
-     src_data_var=$.projects[0].programs[0].args[0]$;
-     dest_data_var=$.projects[0].programs[0].args[1]$;
+     flags=WARNING;
+     orig_prog_code=;
+     src_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["SomeData"]$;
+     dest_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["TrainData"]$;
      src_cols {
       name="src_cols";
       el_typ=DataOpEl;
       el_def=0;
-      DataOpEl @[0] {
+      DataOpEl @["Name"] {
        col_name="Name";
       };
-      DataOpEl @[1] {
+      DataOpEl @["Value1"] {
        col_name="Value1";
       };
-      DataOpEl @[2] {
+      DataOpEl @["Value2"] {
        col_name="Value2";
       };
-      DataOpEl @[3] {
+      DataOpEl @["AvgValue"] {
        col_name="AvgValue";
       };
      };
@@ -779,56 +2631,56 @@ The program should be well enough documented to follow along in the Edit Program
       name="dest_cols";
       el_typ=DataOpEl;
       el_def=0;
-      DataOpEl @[0] {
+      DataOpEl @["MaxValue"] {
        col_name="MaxValue";
       };
      };
      loop_code {
       name=;
-      el_typ=ProgEl;
+      el_typ=ProgCode;
       el_def=0;
-      IfElse @[0] {
+      If @[0] {
        desc="select train data based on Name column";
-       flags=;
+       flags=0;
+       orig_prog_code=;
        cond {
 	expr="s_Name.contains(\"train_\")";
        };
        true_code {
 	name=;
-	el_typ=ProgEl;
+	el_typ=ProgCode;
 	el_def=0;
 	DataCalcAddDestRow @[0] {
 	 desc="add a new row";
-	 flags=;
-	 src_data_var=$.projects[0].programs[0].args[0]$;
-	 dest_data_var=$.projects[0].programs[0].args[1]$;
+	 flags=0;
+	 orig_prog_code=;
+	 src_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["SomeData"]$;
+	 dest_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["TrainData"]$;
 	};
 	DataCalcCopyCommonCols @[1] {
 	 desc="first, copy over everything in common between two tables";
-	 flags=;
-	 src_data_var=$.projects[0].programs[0].args[0]$;
-	 dest_data_var=$.projects[0].programs[0].args[1]$;
+	 flags=0;
+	 orig_prog_code=;
+	 src_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["SomeData"]$;
+	 dest_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["TrainData"]$;
 	 only_named_cols=0;
 	};
 	AssignExpr @[2] {
 	 desc="compute new destination column value";
-	 flags=;
-	 result_var=.projects[0].programs[0].prog_code[4].dest_col_vars[0]$$;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=.projects["data_calc_loop"].programs["DataCalcLoopDemo"].prog_code[4].dest_col_vars["d_MaxValue"]$$;
 	 expr {
 	  expr="MAX(s_Value1, s_Value2)";
 	 };
 	};
 	DataCalcSetDestRow @[3] {
 	 desc="last step is to write d_ variables into the actual data table";
-	 flags=;
-	 src_data_var=$.projects[0].programs[0].args[0]$;
-	 dest_data_var=$.projects[0].programs[0].args[1]$;
+	 flags=0;
+	 orig_prog_code=;
+	 src_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["SomeData"]$;
+	 dest_data_var=$.projects["data_calc_loop"].programs["DataCalcLoopDemo"].args["TrainData"]$;
 	};
-       };
-       false_code {
-	name=;
-	el_typ=ProgEl;
-	el_def=0;
        };
       };
      };
@@ -837,42 +2689,42 @@ The program should be well enough documented to follow along in the Edit Program
       name=;
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @[0] {
+      ProgVar @["s_Name"] {
        name="s_Name";
        var_type=T_String;
        string_val=;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[1] {
+      ProgVar @["s_Value1"] {
        name="s_Value1";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[2] {
+      ProgVar @["s_Value2"] {
        name="s_Value2";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
       };
-      ProgVar @[3] {
+      ProgVar @["s_AvgValue"] {
        name="s_AvgValue";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -882,12 +2734,12 @@ The program should be well enough documented to follow along in the Edit Program
       name=;
       el_typ=ProgVar;
       el_def=0;
-      ProgVar @[0] {
+      ProgVar @["d_MaxValue"] {
        name="d_MaxValue";
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR|USED;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
        reference=0;
        desc=;
        init_from=NULL;
@@ -900,22 +2752,68 @@ The program should be well enough documented to follow along in the Edit Program
   };
  };
  viewers {
-  name=;
-  el_typ=TopLevelViewer;
+  name="viewers";
+  el_typ=MainWindowViewer;
   el_def=0;
-  MainWindowViewer @[0] {
+  MainWindowViewer @["Browser"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_40";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     name="view_win_lft";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     name="view_win_top";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     name="view_win_wd";
+     value 6 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     name="view_win_ht";
+     value 6 0=0.7996604442596436;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQA=";
+     val_type_fixed=0;
+    };
+   };
    name="Browser";
-   m_data=.projects[0]$$;
+   m_data=.projects["data_calc_loop"]$$;
    visible=1;
+   win_name=".projects[\"data_calc_loop\"] - data_calc_loop.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name=;
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
-    ToolBar @[0] {
+    ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_41";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Application";
      m_data=NULL;
      visible=0;
@@ -925,77 +2823,87 @@ The program should be well enough documented to follow along in the Edit Program
     };
    };
    frames {
-    name=;
-    el_typ=FrameViewer;
+    name="frames";
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @[0] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects[0]$;
+     m_root=$.projects["data_calc_loop"]$;
     };
-    PanelViewer @[1] {
+    PanelViewer @["Panels"] {
      name="Panels";
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @[2] {
+    T3PanelViewer @["T3Frames"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_42";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
-      name=;
-      el_typ=T3DataViewFrame;
+     panels {
+      name="panels";
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @[0] {
+      T3Panel @["SomeData"] {
        name="SomeData";
        m_data=NULL;
        visible=1;
        root_view {
-	name=;
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name=;
-	 el_typ=T3DataView;
+	 name="children";
+	 el_typ=GraphTableView;
 	 el_def=0;
-	 GraphTableView @[0] {
-	  name=;
-	  m_data=$.projects[0].data.gp[1][0]$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	 GraphTableView @["SomeData_Graph"] {
+	  name="SomeData_Graph";
+	  m_data=$.projects["data_calc_loop"].data.gp["OutputData"]["SomeData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name=;
+	   name="children";
 	   el_typ=GraphColView;
 	   el_def=0;
-	   GraphColView @[0] {
+	   GraphColView @["Name"] {
 	    name="Name";
-	    m_data=.projects[0].data.gp[1][0].data[0]$$;
+	    m_data=.projects["data_calc_loop"].data.gp["OutputData"]["SomeData"].data["Name"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=-1: fix_max=1: max=10: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[1] {
+	   GraphColView @["Value1"] {
 	    name="Value1";
-	    m_data=.projects[0].data.gp[1][0].data[1]$$;
+	    m_data=.projects["data_calc_loop"].data.gp["OutputData"]["SomeData"].data["Value1"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.2: fix_max=0: max=0.8: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[2] {
+	   GraphColView @["Value2"] {
 	    name="Value2";
-	    m_data=.projects[0].data.gp[1][0].data[2]$$;
+	    m_data=.projects["data_calc_loop"].data.gp["OutputData"]["SomeData"].data["Value2"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.9: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[3] {
+	   GraphColView @["AvgValue"] {
 	    name="AvgValue";
-	    m_data=.projects[0].data.gp[1][0].data[3]$$;
+	    m_data=.projects["data_calc_loop"].data.gp["OutputData"]["SomeData"].data["AvgValue"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -1003,6 +2911,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
 	  view_rows=10000;
 	  view_range {min=0: max=9: };
 	  display_on=1;
@@ -1012,360 +2930,711 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  negative_draw=0;
 	  negative_draw_z=1;
 	  line_width=2;
-	  point_size=MEDIUM;
+	  point_size=0.01;
 	  point_spacing=1;
 	  bar_space=0.2;
+	  bar_depth=0.01;
 	  label_spacing=-1;
 	  width=1;
 	  depth=1;
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
-	   name=;
+	   name="x_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
 	   col_name="Name";
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
 	   fixed_range {fix_min=1: min=-1: fix_max=1: max=10: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=-1: max=10: };
-	   range {min=-1: max=10: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=1;
 	  };
 	  z_axis {
-	   name=;
+	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Z;
 	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
 	  };
-	  plot_1 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="Value1";
-	   fixed_range {fix_min=0: min=0.2: fix_max=0: max=0.8: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0.2: max=0.9: };
-	   range {min=0.2: max=0.9: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
+	  tot_plots=16;
+	  plots {
+	   name="plots";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["SomeData_Graph_plot_1"] {
+	    name="SomeData_Graph_plot_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="Value1";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0.2: fix_max=0: max=0.8: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_2"] {
+	    name="SomeData_Graph_plot_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="Value2";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.9: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_3"] {
+	    name="SomeData_Graph_plot_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="AvgValue";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0.25: fix_max=0: max=0.85: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_4"] {
+	    name="SomeData_Graph_plot_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_5"] {
+	    name="SomeData_Graph_plot_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_6"] {
+	    name="SomeData_Graph_plot_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_7"] {
+	    name="SomeData_Graph_plot_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_8"] {
+	    name="SomeData_Graph_plot_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_9"] {
+	    name="SomeData_Graph_plot_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_10"] {
+	    name="SomeData_Graph_plot_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_11"] {
+	    name="SomeData_Graph_plot_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_12"] {
+	    name="SomeData_Graph_plot_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_13"] {
+	    name="SomeData_Graph_plot_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_14"] {
+	    name="SomeData_Graph_plot_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_15"] {
+	    name="SomeData_Graph_plot_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_plot_16"] {
+	    name="SomeData_Graph_plot_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
 	  };
-	  plot_2 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="Value2";
-	   fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.9: };
-	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
-	   data_range {min=0.3: max=0.9: };
-	   range {min=0.3: max=0.9: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=SQUARE;
-	   alt_y=0;
-	  };
-	  plot_3 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=1;
-	   axis=Y;
-	   col_name="AvgValue";
-	   fixed_range {fix_min=0: min=0.25: fix_max=0: max=0.85: };
-	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
-	   data_range {min=0.25: max=0.85: };
-	   range {min=0.25: max=0.85: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=DIAMOND;
-	   alt_y=0;
-	  };
-	  plot_4 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
-	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
-	   data_range {min=0: max=1: };
-	   range {min=0: max=1: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=TRIANGLE;
-	   alt_y=0;
-	  };
-	  plot_5 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
-	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
-	   data_range {min=0: max=1: };
-	   range {min=0: max=1: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=PLUS;
-	   alt_y=0;
-	  };
-	  plot_6 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CROSS;
-	   alt_y=0;
-	  };
-	  plot_7 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=STAR;
-	   alt_y=0;
-	  };
-	  plot_8 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=MINUS;
-	   alt_y=0;
-	  };
-	  alt_y_1=0;
-	  alt_y_2=0;
-	  alt_y_3=0;
-	  alt_y_4=0;
-	  alt_y_5=0;
-	  err_1 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_2 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_3 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_4 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_5 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_6 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_7 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
-	  };
-	  err_8 {
-	   name=;
-	   m_data=NULL;
-	   m_transform=NULL;
-	   on=0;
-	   axis=Y;
-	   col_name=;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
-	   n_ticks=10;
-	   axis_length=1;
-	   line_style=SOLID;
-	   point_style=CIRCLE;
-	   alt_y=0;
+	  errbars {
+	   name="errbars";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["SomeData_Graph_err_1"] {
+	    name="SomeData_Graph_err_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_2"] {
+	    name="SomeData_Graph_err_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_3"] {
+	    name="SomeData_Graph_err_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_4"] {
+	    name="SomeData_Graph_err_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_5"] {
+	    name="SomeData_Graph_err_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_6"] {
+	    name="SomeData_Graph_err_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_7"] {
+	    name="SomeData_Graph_err_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_8"] {
+	    name="SomeData_Graph_err_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_9"] {
+	    name="SomeData_Graph_err_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=1;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_10"] {
+	    name="SomeData_Graph_err_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_11"] {
+	    name="SomeData_Graph_err_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_12"] {
+	    name="SomeData_Graph_err_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_13"] {
+	    name="SomeData_Graph_err_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_14"] {
+	    name="SomeData_Graph_err_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_15"] {
+	    name="SomeData_Graph_err_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["SomeData_Graph_err_16"] {
+	    name="SomeData_Graph_err_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
-	   name=;
+	   name="color_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
 	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
 	  };
 	  colorscale {
-	   name="ColorScale";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  raster_axis {
-	   name=;
+	   name="raster_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
 	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=0: max=0: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -1385,46 +3654,74 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name=;
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
-	T3SavedView @[0] {
-	 name="View 0";
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
 	 view_saved=1;
 	 pos {x=1.4275: y=0.445: z=1.624621: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=1.637121;
 	};
-	T3SavedView @[1] {
-	 name="View 1";
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @[2] {
-	 name="View 2";
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @[3] {
-	 name="View 3";
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @[4] {
-	 name="View 4";
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @[5] {
-	 name="View 5";
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
@@ -1436,22 +3733,61 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     };
    };
    docks {
-    name=;
-    el_typ=DockViewer;
+    name="docks";
+    el_typ=ToolBoxDockViewer;
     el_def=0;
-    ToolBoxDockViewer @[0] {
+    ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_43";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       name="view_win_lft";
+       value 6 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       name="view_win_top";
+       value 6 0=0.009337861090898514;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       name="view_win_wd";
+       value 6 0=0.04049014300107956;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       name="view_win_ht";
+       value 6 0=0.7359932065010071;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
    };
   };
  };
+ save_view=1;
+ save_as_only=0;
+ auto_name=1;
  last_change_desc=;
  networks {
-  name=;
+  name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
  };

@@ -1,395 +1,618 @@
-// ta_Dump File v3.0 -- code v5.3.4.0 rev5335
-LeabraProject .projects["Project_0"] { 
-  taBase_Group @.templates = [0] {
-  };
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
+LeabraProject .projects["fft_image_xform"] { 
+ Doc_Group @.docs = [0] {
+ };
 
-  Doc_Group @.docs = [0] {
-  };
-
-  Wizard_Group @.wizards = [1] {
-    LeabraWizard @["LeabraWizard_0"] { 
+ Wizard_Group @.wizards = [1] {
+  LeabraWizard @["LeabraWizard_0"] { 
    UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
+    UserDataItem @["NO_CLIP"] { };
    };
-};
   };
+ };
 
-  SelectEdit_Group @.edits = [0] {
-  };
+ ControlPanel_Group @.ctrl_panels = [1] {
+  ClusterRun @["ClusterRun"] { 
+   EditMbrItem_Group @.mbrs = [0] {
+   };
 
-  DataTable_Group @.data = [0] {
-    DataTable_Group @.gp["InputData"] { 
+   EditMthItem_Group @.mths = [0] {
+   };
+
+   DataTableCols @.jobs_running.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
     };
-    DataTable_Group @.gp["OutputData"] { 
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
     };
-    DataTable_Group @.gp["AnalysisData"] { 
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
     };
-  };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
 
-  taBase_Group @.data_proc = [4] {
-    taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
+   DataTableCols @.jobs_done.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
    };
-};
-    taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-    taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-    taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @["NO_CLIP"] { };
-   };
-};
-  };
 
-  Program_Group @.programs = [1] {
-    Program @["FFTest"] { 
-      ProgObjList @.objs = [3] {
-	taImage @["taImage_orig"] { };
-	taImage @["taImage_recon"] { };
-	DataTable @["Images"] { 
-	  DataTableCols @.data = [3] {
-	    String_Data @["Manip"] { };
-	    float_Data @["Orig"] { 
+   DataTableCols @.jobs_archive.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
+
+   DataTableCols @.file_list.data = [9] {
+    String_Data @["file_name"] { };
+    String_Data @["tag"] { };
+    String_Data @["size"] { };
+    String_Data @["kind"] { };
+    String_Data @["date_modified"] { };
+    String_Data @["date_created"] { };
+    String_Data @["svn_file_path"] { };
+    String_Data @["proj_file_path"] { };
+    String_Data @["file_path"] { };
+   };
+
+   DataTableCols @.cluster_info.data = [6] {
+    String_Data @["queue"] { };
+    String_Data @["job_no"] { };
+    String_Data @["user"] { };
+    String_Data @["state"] { };
+    String_Data @["procs"] { };
+    String_Data @["start_time"] { };
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+ };
+
+ DataTable_Group @.data = [0] {
+  DataTable_Group @.gp["InputData"] { 
+  };
+  DataTable_Group @.gp["OutputData"] { 
+  };
+  DataTable_Group @.gp["AnalysisData"] { 
+  };
+ };
+
+ taBase_Group @.data_proc = [4] {
+  taDataProc @["data_base"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+  taDataAnal @["data_anal"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+  taDataGen @["data_gen"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+  taImageProc @["image_proc"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+ };
+
+ Program_TopGroup @.programs = [1] {
+  Program @["FFTest"] { 
+   ProgObjList @.objs = [3] {
+    taImage @["taImage_orig"] { };
+    taImage @["taImage_recon"] { };
+    DataTable @["Images"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["Manip"] { };
+      float_Data @["Orig"] { 
        UserDataItem_List @*(.user_data_) {
-		UserDataItem @["IMAGE"] { };
+	UserDataItem @["IMAGE"] { };
        };
-};
-	    float_Data @["Recon"] { 
+      };
+      float_Data @["Recon"] { 
        UserDataItem_List @*(.user_data_) {
-		UserDataItem @["IMAGE"] { };
+	UserDataItem @["IMAGE"] { };
        };
-};
-	  };
-	};
       };
+     };
+    };
+   };
 
-      ProgType_List @.types = [1] {
-	DynEnumType @["ManipType"] { 
-	  DynEnumItem_List @.enums = [4] {
-	    DynEnumItem @["ROTATE_FFT"] { };
-	    DynEnumItem @["SET_FFT_INDEXES"] { };
-	    DynEnumItem @["LOW_PASS_FILTER"] { };
-	    DynEnumItem @["HI_PASS_FILTER"] { };
-	  };
-	};
-      };
+   ProgType_List @.types = [1] {
+    DynEnumType @["ManipType"] { 
+     DynEnumItem_List @.enums = [4] {
+      DynEnumItem @["ROTATE_FFT"] { };
+      DynEnumItem @["SET_FFT_INDEXES"] { };
+      DynEnumItem @["LOW_PASS_FILTER"] { };
+      DynEnumItem @["HI_PASS_FILTER"] { };
+     };
+    };
+   };
 
-      ProgVar_List @.args = [0] {
-      };
+   ProgVar_List @.args = [0] {
+   };
 
-      ProgVar_List @.vars = [14] {
-	ProgVar @["image_size"] { };
-	ProgVar @["manip_type"] { };
-	ProgVar @["taImage_orig"] { };
-	ProgVar @["taImage_recon"] { };
-	ProgVar @["Images"] { };
-	ProgVar @["rotate_angle"] { };
-	ProgVar @["start_angle"] { };
-	ProgVar @["end_angle"] { };
-	ProgVar @["angle_inc"] { };
-	ProgVar @["fft_start_index"] { };
-	ProgVar @["fft_end_index"] { };
-	ProgVar @["fft_real_val"] { };
-	ProgVar @["fft_imag_val"] { };
-	ProgVar @["fft_index"] { };
-      };
+   ProgVar_List @.vars = [14] {
+    ProgVar @["image_size"] { };
+    ProgVar @["manip_type"] { };
+    ProgVar @["taImage_orig"] { };
+    ProgVar @["taImage_recon"] { };
+    ProgVar @["Images"] { };
+    ProgVar @["rotate_angle"] { };
+    ProgVar @["start_angle"] { };
+    ProgVar @["end_angle"] { };
+    ProgVar @["angle_inc"] { };
+    ProgVar @["fft_start_index"] { };
+    ProgVar @["fft_end_index"] { };
+    ProgVar @["fft_real_val"] { };
+    ProgVar @["fft_imag_val"] { };
+    ProgVar @["fft_index"] { };
+   };
 
-      Function_List @.functions = [0] {
-      };
+   Function_List @.functions = [0] {
+   };
 
-      ProgEl_List @.init_code = [0] {
-      };
+   ProgEl_List @.init_code = [0] {
+   };
 
-      ProgEl_List @.prog_code = [9] {
-	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [7] {
-	    ProgVar @["flt_img"] { };
-	    ProgVar @["img_recon"] { };
-	    ProgVar @["img_fft"] { };
-	    ProgVar @["fft_xform"] { };
-	    ProgVar @["recon_fft"] { };
-	    ProgVar @["im_x"] { };
-	    ProgVar @["im_y"] { };
-	  };
-	};
-	MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
+   ProgEl_List @.prog_code = [9] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [7] {
+      ProgVar @["flt_img"] { };
+      ProgVar @["img_recon"] { };
+      ProgVar @["img_fft"] { };
+      ProgVar @["fft_xform"] { };
+      ProgVar @["recon_fft"] { };
+      ProgVar @["im_x"] { };
+      ProgVar @["im_y"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    MethodCall @[3] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[5] { };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    MethodCall @[7] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+    Switch @[8] { 
+     ProgEl_List @.cases = [4] {
+      CaseBlock @[0] { 
+       ProgEl_List @.prog_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [9] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
+	   };
 	  };
-	};
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [2] {
+	  AssignExpr @[1] { };
+	  AssignExpr @[2] { };
+	  MethodCall @[3] { 
+	   ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
-	    ProgArg @[1] { };
+	   };
 	  };
-	};
-	MethodCall @[3] { 
-	  ProgArg_List @.meth_args = [3] {
+	  MethodCall @[4] { 
+	   ProgArg_List @.meth_args = [0] {
+	   };
+	  };
+	  MethodCall @[5] { 
+	   ProgArg_List @.meth_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	    ProgArg @[2] { };
+	   };
 	  };
-	};
-	MethodCall @[4] { 
-	  ProgArg_List @.meth_args = [1] {
+	  MethodCall @[6] { 
+	   ProgArg_List @.meth_args = [3] {
 	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
 	  };
-	};
-	AssignExpr @[5] { };
-	MethodCall @[6] { 
-	  ProgArg_List @.meth_args = [1] {
+	  UserScript @[7] { };
+	  MemberMethodCall @[8] { 
+	   ProgArg_List @.meth_args = [2] {
 	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	   };
 	  };
+	 };
 	};
-	MethodCall @[7] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	Switch @[8] { 
-	  ProgEl_List @.cases = [4] {
-	    CaseBlock @[0] { 
-	      ProgEl_List @.prog_code = [1] {
-		ForLoop @[0] { 
-		  ProgEl_List @.loop_code = [9] {
-		    MethodCall @[0] { 
-		      ProgArg_List @.meth_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		    AssignExpr @[1] { };
-		    AssignExpr @[2] { };
-		    MethodCall @[3] { 
-		      ProgArg_List @.meth_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		    MethodCall @[4] { 
-		      ProgArg_List @.meth_args = [0] {
-		      };
-		    };
-		    MethodCall @[5] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    MethodCall @[6] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    UserScript @[7] { };
-		    MemberMethodCall @[8] { 
-		      ProgArg_List @.meth_args = [2] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-		      };
-		    };
-		  };
-		};
-	      };
-	    };
-	    CaseBlock @[1] { 
-	      ProgEl_List @.prog_code = [1] {
-		ForLoop @[0] { 
-		  ProgEl_List @.loop_code = [11] {
-		    AssignExpr @[0] { };
-		    UserScript @[1] { };
-		    UserScript @[2] { };
-		    MethodCall @[3] { 
-		      ProgArg_List @.meth_args = [8] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-			ProgArg @[3] { };
-			ProgArg @[4] { };
-			ProgArg @[5] { };
-			ProgArg @[6] { };
-			ProgArg @[7] { };
-		      };
-		    };
-		    AssignExpr @[4] { };
-		    MethodCall @[5] { 
-		      ProgArg_List @.meth_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		    MethodCall @[6] { 
-		      ProgArg_List @.meth_args = [0] {
-		      };
-		    };
-		    MethodCall @[7] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    MethodCall @[8] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    UserScript @[9] { };
-		    MemberMethodCall @[10] { 
-		      ProgArg_List @.meth_args = [2] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-		      };
-		    };
-		  };
-		};
-	      };
-	    };
-	    CaseBlock @[2] { 
-	      ProgEl_List @.prog_code = [1] {
-		ForLoop @[0] { 
-		  ProgEl_List @.loop_code = [10] {
-		    AssignExpr @[0] { };
-		    UserScript @[1] { };
-		    UserScript @[2] { };
-		    AssignExpr @[3] { };
-		    MethodCall @[4] { 
-		      ProgArg_List @.meth_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		    MethodCall @[5] { 
-		      ProgArg_List @.meth_args = [0] {
-		      };
-		    };
-		    MethodCall @[6] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    MethodCall @[7] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    UserScript @[8] { };
-		    MemberMethodCall @[9] { 
-		      ProgArg_List @.meth_args = [2] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-		      };
-		    };
-		  };
-		};
-	      };
-	    };
-	    CaseBlock @[3] { 
-	      ProgEl_List @.prog_code = [1] {
-		ForLoop @[0] { 
-		  ProgEl_List @.loop_code = [10] {
-		    AssignExpr @[0] { };
-		    UserScript @[1] { };
-		    UserScript @[2] { };
-		    AssignExpr @[3] { };
-		    MethodCall @[4] { 
-		      ProgArg_List @.meth_args = [1] {
-			ProgArg @[0] { };
-		      };
-		    };
-		    MethodCall @[5] { 
-		      ProgArg_List @.meth_args = [0] {
-		      };
-		    };
-		    MethodCall @[6] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    MethodCall @[7] { 
-		      ProgArg_List @.meth_args = [3] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-			ProgArg @[2] { };
-		      };
-		    };
-		    UserScript @[8] { };
-		    MemberMethodCall @[9] { 
-		      ProgArg_List @.meth_args = [2] {
-			ProgArg @[0] { };
-			ProgArg @[1] { };
-		      };
-		    };
-		  };
-		};
-	      };
-	    };
-	  };
-	};
+       };
       };
+      CaseBlock @[1] { 
+       ProgEl_List @.prog_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [11] {
+	  AssignExpr @[0] { };
+	  UserScript @[1] { };
+	  UserScript @[2] { };
+	  MethodCall @[3] { 
+	   ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	   };
+	  };
+	  AssignExpr @[4] { };
+	  MethodCall @[5] { 
+	   ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	   };
+	  };
+	  MethodCall @[6] { 
+	   ProgArg_List @.meth_args = [0] {
+	   };
+	  };
+	  MethodCall @[7] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	  MethodCall @[8] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	  UserScript @[9] { };
+	  MemberMethodCall @[10] { 
+	   ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      CaseBlock @[2] { 
+       ProgEl_List @.prog_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [10] {
+	  AssignExpr @[0] { };
+	  UserScript @[1] { };
+	  UserScript @[2] { };
+	  AssignExpr @[3] { };
+	  MethodCall @[4] { 
+	   ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	   };
+	  };
+	  MethodCall @[5] { 
+	   ProgArg_List @.meth_args = [0] {
+	   };
+	  };
+	  MethodCall @[6] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	  MethodCall @[7] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	  UserScript @[8] { };
+	  MemberMethodCall @[9] { 
+	   ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      CaseBlock @[3] { 
+       ProgEl_List @.prog_code = [1] {
+	ForLoop @[0] { 
+	 ProgEl_List @.loop_code = [10] {
+	  AssignExpr @[0] { };
+	  UserScript @[1] { };
+	  UserScript @[2] { };
+	  AssignExpr @[3] { };
+	  MethodCall @[4] { 
+	   ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	   };
+	  };
+	  MethodCall @[5] { 
+	   ProgArg_List @.meth_args = [0] {
+	   };
+	  };
+	  MethodCall @[6] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	  MethodCall @[7] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	  UserScript @[8] { };
+	  MemberMethodCall @[9] { 
+	   ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
     };
+   };
   };
+ };
 
-  DataViewer_List @.viewers = [1] {
-    MainWindowViewer @["Browser2"] { 
-      ToolBar_List @.toolbars = [1] {
-	ToolBar @["Application"] { };
-      };
+ taViewer_List @.viewers = [1] {
+  MainWindowViewer @["Browser2"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["view_win_lft"] { };
+    UserDataItem @["view_win_top"] { };
+    UserDataItem @["view_win_wd"] { };
+    UserDataItem @["view_win_ht"] { };
+    UserDataItem @["view_win_iconified"] { };
+    UserDataItem @["view_splitter_state"] { };
+   };
 
-      FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @["Tree"] { };
-	PanelViewer @["Panels"] { };
-	T3DataViewer @["T3Frames"] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @["Frame1"] { 
-	      T3DataView_List @.children = [1] {
-		GridTableView @["Images_Grid"] { 
-		  T3DataView_List @.children = [3] {
-		    GridColView @["Manip"] { };
-		    GridColView @["Orig"] { };
-		    GridColView @["Recon"] { };
-		  };
-		};
-	      };
-
-	      T3SavedView_List @.saved_views = [6] {
-		T3SavedView @["View_0"] { };
-		T3SavedView @["Recon_Zoom"] { };
-		T3SavedView @["View_2"] { };
-		T3SavedView @["View_3"] { };
-		T3SavedView @["View_4"] { };
-		T3SavedView @["View_5"] { };
-	      };
-	    };
-	  };
-	};
-      };
-
-      DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @["Tools"] { };
-      };
+   ToolBar_List @.toolbars = [1] {
+    ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_visible"] { };
+     };
     };
-  };
+   };
 
-  Network_Group @.networks = [0] {
+   FrameViewer_List @.frames = [3] {
+    BrowseViewerTaBase @["Tree"] { };
+    PanelViewer @["Panels"] { };
+    T3PanelViewer @["T3Frames"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
+     T3Panel_List @.panels = [1] {
+      T3Panel @["Frame1"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GridTableView @["Images_Grid"] { 
+	 T3DataView_List @.children = [3] {
+	  GridColView @["Manip"] { };
+	  GridColView @["Orig"] { };
+	  GridColView @["Recon"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Recon_Zoom"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+     };
+    };
+   };
+
+   DockViewer_List @.docks = [1] {
+    ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_lft"] { };
+      UserDataItem @["view_win_top"] { };
+      UserDataItem @["view_win_wd"] { };
+      UserDataItem @["view_win_ht"] { };
+      UserDataItem @["view_win_iconified"] { };
+      UserDataItem @["view_visible"] { };
+     };
+    };
+   };
   };
+ };
+
+ Network_Group @.networks = [0] {
+ };
 };
-LeabraProject .projects["Project_0"] {
- name="Project_0";
+LeabraProject .projects["fft_image_xform"] {
+ name="fft_image_xform";
  desc=;
  tags=;
  version {
@@ -409,18 +632,13 @@ LeabraProject .projects["Project_0"] {
   wiki=;
   url=;
  };
- templates {
-  name="taBase_Group_0";
-  el_typ=taBase;
-  el_def=0;
- };
  docs {
-  name="Doc_Group_1";
+  name="docs";
   el_typ=taDoc;
   el_def=0;
  };
  wizards {
-  name="Wizard_Group_1";
+  name="wizards";
   el_typ=LeabraWizard;
   el_def=0;
   LeabraWizard @["LeabraWizard_0"] {
@@ -438,33 +656,1638 @@ LeabraProject .projects["Project_0"] {
    auto_open=1;
   };
  };
- edits {
-  name="SelectEdit_Group_0";
-  el_typ=SelectEdit;
+ ctrl_panels {
+  name="ctrl_panels";
+  el_typ=ControlPanel;
   el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   auto_edit=0;
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name="mths";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+   };
+   jobs_archive {
+    name="jobs_archive";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+   };
+   file_list {
+    name="file_list";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["file_name"] {
+      name="file_name";
+      desc="name of file -- does not include any path information";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="job tag associated with this file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["size"] {
+      name="size";
+      desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["kind"] {
+      name="kind";
+      desc="type of file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_modified"] {
+      name="date_modified";
+      desc="timestamp for when the file was last modified";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_created"] {
+      name="date_created";
+      desc="timestamp for when the file was first created";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["svn_file_path"] {
+      name="svn_file_path";
+      desc="path to file in SVN repository, relative to root of svn_repo repository";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["proj_file_path"] {
+      name="proj_file_path";
+      desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_path"] {
+      name="file_path";
+      desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+   };
+   cluster_info {
+    name="cluster_info";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["queue"] {
+      name="queue";
+      desc="queue that this info relates to";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number or total number of actve jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["state"] {
+      name="state";
+      desc="current scheduler state -- or description of global state info";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["procs"] {
+      name="procs";
+      desc="number of processors for this job or for global state info";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="timestamp for when the job was submitted or started running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [0]     };
+   };
+   search_algos {
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   last_submit_time=;
+   notes=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=0;
+   n_threads=1;
+   use_mpi=0;
+   mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
+   nowin_x=0;
+  };
  };
  data {
-  name="DataTable_Group_0";
+  name="data";
   el_typ=DataTable;
   el_def=0;
+  save_tables=1;
   DataTable_Group @.gp["InputData"] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["OutputData"] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
   DataTable_Group @.gp["AnalysisData"] {
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+   save_tables=1;
   };
  };
  data_proc {
-  name="taBase_Group_0";
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
   taDataProc @["data_base"] {
@@ -521,7 +2344,7 @@ LeabraProject .projects["Project_0"] {
   };
  };
  programs {
-  name="Program_Group_0";
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
@@ -533,7 +2356,7 @@ LeabraProject .projects["Project_0"] {
    desc=;
    flags=0;
    objs {
-    name="ProgObjList_18";
+    name="objs";
     el_typ=taImage;
     el_def=0;
     taImage @["taImage_orig"] {
@@ -558,8 +2381,9 @@ LeabraProject .projects["Project_0"] {
 	expr=;
        };
        dim_names {
-	name=;
-	      [0]        };
+	name="dim_names";
+       [0]        };
+       width=0;
       };
       float_Data @["Orig"] {
        UserDataItem_List @*(.user_data_) {
@@ -580,8 +2404,9 @@ LeabraProject .projects["Project_0"] {
 	expr=;
        };
        dim_names {
-	name=;
-	      [2] ;;       };
+	name="dim_names";
+       [2] ;;       };
+       width=0;
       };
       float_Data @["Recon"] {
        UserDataItem_List @*(.user_data_) {
@@ -602,18 +2427,24 @@ LeabraProject .projects["Project_0"] {
 	expr=;
        };
        dim_names {
-	name=;
-	      [2] ;;       };
+	name="dim_names";
+       [2] ;;       };
+       width=0;
       };
      };
      data_flags=AUTO_CALC;
      auto_load=NO_AUTO_LOAD;
      auto_load_file=;
      keygen 4 0=0;
+     row_indexes {
+      name="row_indexes";
+     [21] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;     };
     };
    };
    types {
-    name="ProgType_List_0";
+    name="types";
     el_typ=DynEnumType;
     el_def=0;
     DynEnumType @["ManipType"] {
@@ -648,12 +2479,12 @@ LeabraProject .projects["Project_0"] {
     };
    };
    args {
-    name="ProgVar_List_0";
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name="ProgVar_List_0";
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["image_size"] {
@@ -670,7 +2501,7 @@ LeabraProject .projects["Project_0"] {
      name="manip_type";
      var_type=T_DynEnum;
      dyn_enum_val {
-      enum_type=.projects["Project_0"].programs["FFTest"].types["ManipType"]$$;
+      enum_type=.projects["fft_image_xform"].programs["FFTest"].types["ManipType"]$$;
       value=2;
      };
      objs_ptr=0;
@@ -683,7 +2514,7 @@ LeabraProject .projects["Project_0"] {
      name="taImage_orig";
      var_type=T_Object;
      object_type=taImage;
-     object_val=.projects["Project_0"].programs["FFTest"].objs["taImage_orig"]$$;
+     object_val=.projects["fft_image_xform"].programs["FFTest"].objs["taImage_orig"]$$;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -694,7 +2525,7 @@ LeabraProject .projects["Project_0"] {
      name="taImage_recon";
      var_type=T_Object;
      object_type=taImage;
-     object_val=.projects["Project_0"].programs["FFTest"].objs["taImage_recon"]$$;
+     object_val=.projects["fft_image_xform"].programs["FFTest"].objs["taImage_recon"]$$;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -705,7 +2536,7 @@ LeabraProject .projects["Project_0"] {
      name="Images";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects["Project_0"].programs["FFTest"].objs["Images"]$$;
+     object_val=.projects["fft_image_xform"].programs["FFTest"].objs["Images"]$$;
      objs_ptr=1;
      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -804,22 +2635,23 @@ LeabraProject .projects["Project_0"] {
     };
    };
    functions {
-    name="Function_List_18";
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name="ProgEl_List_134";
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name="ProgEl_List_135";
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     LocalVars @[0] {
      desc=;
      flags=0;
+     orig_prog_code=;
      local_vars {
       name="ProgVar_List_0";
       el_typ=ProgVar;
@@ -904,8 +2736,9 @@ LeabraProject .projects["Project_0"] {
     MethodCall @[1] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
-     obj=.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$$;
+     obj=.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$$;
      method=taImage::LoadImage;
      meth_args {
       name=;
@@ -913,7 +2746,7 @@ LeabraProject .projects["Project_0"] {
       el_def=0;
       ProgArg @[0] {
        arg_type=const_taString_ref;
-       type="const taString&";
+       type="taString&";
        name="fname";
        required=1;
        def_val=;
@@ -926,8 +2759,9 @@ LeabraProject .projects["Project_0"] {
     MethodCall @[2] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
-     obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+     obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
      method=taImage::GetImageSize;
      meth_args {
       name="ProgArg_List_0";
@@ -958,8 +2792,9 @@ LeabraProject .projects["Project_0"] {
     MethodCall @[3] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
-     obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+     obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
      method=taImage::ScaleImage;
      meth_args {
       name="ProgArg_List_0";
@@ -1000,8 +2835,9 @@ LeabraProject .projects["Project_0"] {
     MethodCall @[4] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
-     obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+     obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
      method=taImage::ImageToMatrix_grey;
      meth_args {
       name=;
@@ -1022,7 +2858,8 @@ LeabraProject .projects["Project_0"] {
     AssignExpr @[5] {
      desc=;
      flags=0;
-     result_var=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_fft"]$$;
+     orig_prog_code=;
+     result_var=.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["img_fft"]$$;
      expr {
       expr="fft2(flt_img)";
      };
@@ -1030,8 +2867,9 @@ LeabraProject .projects["Project_0"] {
     MethodCall @[6] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
-     obj=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["fft_xform"]$$;
+     obj=.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["fft_xform"]$$;
      method=taMatrix::SetGeomN;
      meth_args {
       name=;
@@ -1039,7 +2877,7 @@ LeabraProject .projects["Project_0"] {
       el_def=0;
       ProgArg @[0] {
        arg_type=const_MatrixGeom_ref;
-       type="const MatrixGeom&";
+       type="MatrixGeom&";
        name="geom_";
        required=1;
        def_val=;
@@ -1052,8 +2890,9 @@ LeabraProject .projects["Project_0"] {
     MethodCall @[7] {
      desc=;
      flags=0;
+     orig_prog_code=;
      result_var=NULL;
-     obj=.projects["Project_0"].programs["FFTest"].vars["Images"]$$;
+     obj=.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$$;
      method=DataTable::ResetData;
      meth_args {
       name="ProgArg_List_0";
@@ -1064,7 +2903,8 @@ LeabraProject .projects["Project_0"] {
     Switch @[8] {
      desc=;
      flags=0;
-     switch_var=.projects["Project_0"].programs["FFTest"].vars["manip_type"]$$;
+     orig_prog_code=;
+     switch_var=.projects["fft_image_xform"].programs["FFTest"].vars["manip_type"]$$;
      cases {
       name="ProgEl_List_139";
       el_typ=CaseBlock;
@@ -1072,6 +2912,7 @@ LeabraProject .projects["Project_0"] {
       CaseBlock @[0] {
        desc=;
        flags=0;
+       orig_prog_code=;
        prog_code {
 	name="ProgEl_List_139";
 	el_typ=ProgCode;
@@ -1079,6 +2920,7 @@ LeabraProject .projects["Project_0"] {
 	ForLoop @[0] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 loop_code {
 	  name="ProgEl_List_142";
 	  el_typ=ProgCode;
@@ -1086,8 +2928,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[0] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["fft_xform"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["fft_xform"]$;
 	   method=complex_Matrix::ExpiAll;
 	   meth_args {
 	    name=;
@@ -1108,7 +2951,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[1] {
 	   desc=;
 	   flags=0;
-	   result_var=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$$;
+	   orig_prog_code=;
+	   result_var=.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$$;
 	   expr {
 	    expr="img_fft * fft_xform";
 	   };
@@ -1116,7 +2960,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[2] {
 	   desc=;
 	   flags=0;
-	   result_var=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$$;
+	   orig_prog_code=;
+	   result_var=.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$$;
 	   expr {
 	    expr="real(ffti2(recon_fft))";
 	   };
@@ -1124,8 +2969,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[3] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$$;
+	   obj=.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$$;
 	   method=taImage::ImageFromMatrix_grey;
 	   meth_args {
 	    name=;
@@ -1133,7 +2979,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_float_Matrix_ref;
-	     type="const float_Matrix&";
+	     type="float_Matrix&";
 	     name="grey_data";
 	     required=1;
 	     def_val=;
@@ -1146,8 +2992,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[4] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   method=DataTable::AddBlankRow;
 	   meth_args {
 	    name="ProgArg_List_0";
@@ -1158,8 +3005,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[5] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name="ProgArg_List_0";
@@ -1177,7 +3025,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1200,8 +3048,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[6] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1219,7 +3068,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1242,6 +3091,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[7] {
 	   desc=;
 	   flags=OFF|PROG_ERROR;
+	   orig_prog_code=;
 	   script {
 	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
 	   };
@@ -1249,7 +3099,8 @@ LeabraProject .projects["Project_0"] {
 	  MemberMethodCall @[8] {
 	   desc=;
 	   flags=0;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   orig_prog_code=;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   path="[\"Manip\"]";
 	   result_var=NULL;
 	   method=DataCol::SetVal;
@@ -1259,7 +3110,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="val";
 	     required=1;
 	     def_val=;
@@ -1298,6 +3149,7 @@ LeabraProject .projects["Project_0"] {
       CaseBlock @[1] {
        desc=;
        flags=0;
+       orig_prog_code=;
        prog_code {
 	name="ProgEl_List_140";
 	el_typ=ProgCode;
@@ -1305,6 +3157,7 @@ LeabraProject .projects["Project_0"] {
 	ForLoop @[0] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 loop_code {
 	  name="ProgEl_List_142";
 	  el_typ=ProgCode;
@@ -1312,7 +3165,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[0] {
 	   desc=;
 	   flags=0;
-	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   orig_prog_code=;
+	   result_var=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
 	   expr {
 	    expr="img_fft";
 	   };
@@ -1320,6 +3174,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[1] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   script {
 	    expr="recon_fft[0,fft_index:fft_index+1,fft_index:fft_index+1] = fft_real_val;";
 	   };
@@ -1327,6 +3182,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[2] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   script {
 	    expr="recon_fft[1,fft_index:fft_index+1,fft_index:fft_index+1] = fft_imag_val;";
 	   };
@@ -1334,16 +3190,17 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[3] {
 	   desc=;
 	   flags=OFF;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
 	   method=taMatrixT_double_::Set;
 	   meth_args {
 	    name="ProgArg_List_0";
 	    el_typ=ProgArg;
 	    el_def=0;
 	    ProgArg @[0] {
-	     arg_type=taMatrixT_double_::const_double_ref;
-	     type="const double&";
+	     arg_type=const_double_ref;
+	     type="double&";
 	     name="item";
 	     required=1;
 	     def_val=;
@@ -1426,7 +3283,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[4] {
 	   desc=;
 	   flags=0;
-	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
+	   orig_prog_code=;
+	   result_var=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
 	   expr {
 	    expr="real(ffti2(recon_fft))";
 	   };
@@ -1434,8 +3292,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[5] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageFromMatrix_grey;
 	   meth_args {
 	    name=;
@@ -1443,7 +3302,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_float_Matrix_ref;
-	     type="const float_Matrix&";
+	     type="float_Matrix&";
 	     name="grey_data";
 	     required=1;
 	     def_val=;
@@ -1456,8 +3315,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[6] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   method=DataTable::AddBlankRow;
 	   meth_args {
 	    name=;
@@ -1468,8 +3328,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[7] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1487,7 +3348,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1510,8 +3371,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[8] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1529,7 +3391,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1552,6 +3414,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[9] {
 	   desc=;
 	   flags=OFF|PROG_ERROR;
+	   orig_prog_code=;
 	   script {
 	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
 	   };
@@ -1559,7 +3422,8 @@ LeabraProject .projects["Project_0"] {
 	  MemberMethodCall @[10] {
 	   desc=;
 	   flags=0;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   orig_prog_code=;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   path="[\"Manip\"]";
 	   result_var=NULL;
 	   method=DataCol::SetVal;
@@ -1569,7 +3433,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="val";
 	     required=1;
 	     def_val=;
@@ -1608,6 +3472,7 @@ LeabraProject .projects["Project_0"] {
       CaseBlock @[2] {
        desc=;
        flags=0;
+       orig_prog_code=;
        prog_code {
 	name="ProgEl_List_29";
 	el_typ=ProgCode;
@@ -1615,6 +3480,7 @@ LeabraProject .projects["Project_0"] {
 	ForLoop @[0] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 loop_code {
 	  name="ProgEl_List_30";
 	  el_typ=ProgCode;
@@ -1622,7 +3488,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[0] {
 	   desc=;
 	   flags=0;
-	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   orig_prog_code=;
+	   result_var=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
 	   expr {
 	    expr="img_fft";
 	   };
@@ -1630,6 +3497,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[1] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   script {
 	    expr="recon_fft[0,fft_index:,fft_index:] = fft_real_val;";
 	   };
@@ -1637,6 +3505,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[2] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   script {
 	    expr="recon_fft[1,fft_index:,fft_index:] = fft_imag_val;";
 	   };
@@ -1644,7 +3513,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[3] {
 	   desc=;
 	   flags=0;
-	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
+	   orig_prog_code=;
+	   result_var=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
 	   expr {
 	    expr="real(ffti2(recon_fft))";
 	   };
@@ -1652,8 +3522,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[4] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageFromMatrix_grey;
 	   meth_args {
 	    name=;
@@ -1661,7 +3532,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_float_Matrix_ref;
-	     type="const float_Matrix&";
+	     type="float_Matrix&";
 	     name="grey_data";
 	     required=1;
 	     def_val=;
@@ -1674,8 +3545,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[5] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   method=DataTable::AddBlankRow;
 	   meth_args {
 	    name=;
@@ -1686,8 +3558,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[6] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1705,7 +3578,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1728,8 +3601,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[7] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1747,7 +3621,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1770,6 +3644,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[8] {
 	   desc=;
 	   flags=OFF|PROG_ERROR;
+	   orig_prog_code=;
 	   script {
 	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
 	   };
@@ -1777,7 +3652,8 @@ LeabraProject .projects["Project_0"] {
 	  MemberMethodCall @[9] {
 	   desc=;
 	   flags=0;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   orig_prog_code=;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   path="[\"Manip\"]";
 	   result_var=NULL;
 	   method=DataCol::SetVal;
@@ -1787,7 +3663,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="val";
 	     required=1;
 	     def_val=;
@@ -1826,6 +3702,7 @@ LeabraProject .projects["Project_0"] {
       CaseBlock @[3] {
        desc=;
        flags=0;
+       orig_prog_code=;
        prog_code {
 	name=;
 	el_typ=ProgCode;
@@ -1833,6 +3710,7 @@ LeabraProject .projects["Project_0"] {
 	ForLoop @[0] {
 	 desc=;
 	 flags=0;
+	 orig_prog_code=;
 	 loop_code {
 	  name=;
 	  el_typ=ProgCode;
@@ -1840,7 +3718,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[0] {
 	   desc=;
 	   flags=0;
-	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   orig_prog_code=;
+	   result_var=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
 	   expr {
 	    expr="img_fft";
 	   };
@@ -1848,6 +3727,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[1] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   script {
 	    expr="recon_fft[0,:fft_index+1,:fft_index+1] = fft_real_val;";
 	   };
@@ -1855,6 +3735,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[2] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   script {
 	    expr="recon_fft[1,:fft_index+1,:fft_index+1] = fft_imag_val;";
 	   };
@@ -1862,7 +3743,8 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[3] {
 	   desc=;
 	   flags=0;
-	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
+	   orig_prog_code=;
+	   result_var=$.projects["fft_image_xform"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
 	   expr {
 	    expr="real(ffti2(recon_fft))";
 	   };
@@ -1870,8 +3752,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[4] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageFromMatrix_grey;
 	   meth_args {
 	    name=;
@@ -1879,7 +3762,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_float_Matrix_ref;
-	     type="const float_Matrix&";
+	     type="float_Matrix&";
 	     name="grey_data";
 	     required=1;
 	     def_val=;
@@ -1892,8 +3775,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[5] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   method=DataTable::AddBlankRow;
 	   meth_args {
 	    name=;
@@ -1904,8 +3788,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[6] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_orig"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1923,7 +3808,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1946,8 +3831,9 @@ LeabraProject .projects["Project_0"] {
 	  MethodCall @[7] {
 	   desc=;
 	   flags=0;
+	   orig_prog_code=;
 	   result_var=NULL;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["taImage_recon"]$;
 	   method=taImage::ImageToDataCell;
 	   meth_args {
 	    name=;
@@ -1965,7 +3851,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 	    ProgArg @[1] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="col";
 	     required=1;
 	     def_val=;
@@ -1988,6 +3874,7 @@ LeabraProject .projects["Project_0"] {
 	  UserScript @[8] {
 	   desc=;
 	   flags=OFF|PROG_ERROR;
+	   orig_prog_code=;
 	   script {
 	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
 	   };
@@ -1995,7 +3882,8 @@ LeabraProject .projects["Project_0"] {
 	  MemberMethodCall @[9] {
 	   desc=;
 	   flags=0;
-	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   orig_prog_code=;
+	   obj=$.projects["fft_image_xform"].programs["FFTest"].vars["Images"]$;
 	   path="[\"Manip\"]";
 	   result_var=NULL;
 	   method=DataCol::SetVal;
@@ -2005,7 +3893,7 @@ LeabraProject .projects["Project_0"] {
 	    el_def=0;
 	    ProgArg @[0] {
 	     arg_type=const_Variant_ref;
-	     type="const Variant&";
+	     type="Variant&";
 	     name="val";
 	     required=1;
 	     def_val=;
@@ -2049,22 +3937,68 @@ LeabraProject .projects["Project_0"] {
   };
  };
  viewers {
-  name="DataViewer_List_0";
-  el_typ=TopLevelViewer;
+  name="viewers";
+  el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_42";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     name="view_win_lft";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     name="view_win_top";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     name="view_win_wd";
+     value 6 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     name="view_win_ht";
+     value 6 0=0.7996604442596436;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQA=";
+     val_type_fixed=0;
+    };
+   };
    name="Browser2";
-   m_data=.projects["Project_0"]$$;
+   m_data=.projects["fft_image_xform"]$$;
    visible=1;
+   win_name=".projects[\"Project_0\"] - fft_image_xform.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name="ToolBar_List_1";
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_43";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Application";
      m_data=NULL;
      visible=0;
@@ -2074,53 +4008,63 @@ LeabraProject .projects["Project_0"] {
     };
    };
    frames {
-    name="FrameViewer_List_0";
-    el_typ=FrameViewer;
+    name="frames";
+    el_typ=BrowseViewerTaBase;
     el_def=0;
-    tabBrowseViewer @["Tree"] {
+    BrowseViewerTaBase @["Tree"] {
      name="Tree";
      m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$.projects["Project_0"]$;
+     m_root=$.projects["fft_image_xform"]$;
     };
     PanelViewer @["Panels"] {
      name="Panels";
      m_data=NULL;
      visible=1;
     };
-    T3DataViewer @["T3Frames"] {
+    T3PanelViewer @["T3Frames"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_44";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="T3Frames";
      m_data=NULL;
      visible=1;
-     frames {
-      name="T3DataViewFrame_List_0";
-      el_typ=T3DataViewFrame;
+     panels {
+      name="panels";
+      el_typ=T3Panel;
       el_def=0;
-      T3DataViewFrame @["Frame1"] {
+      T3Panel @["Frame1"] {
        name="Frame1";
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_0";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_0";
-	 el_typ=T3DataViewMain;
+	 name="children";
+	 el_typ=GridTableView;
 	 el_def=0;
 	 GridTableView @["Images_Grid"] {
 	  name="Images_Grid";
-	  m_data=$.projects["Project_0"].programs["FFTest"].objs["Images"]$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  m_data=$.projects["fft_image_xform"].programs["FFTest"].objs["Images"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_0";
+	   name="children";
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @["Manip"] {
 	    name="Manip";
-	    m_data=.projects["Project_0"].programs["FFTest"].objs["Images"].data["Manip"]$$;
+	    m_data=.projects["fft_image_xform"].programs["FFTest"].objs["Images"].data["Manip"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
@@ -2131,7 +4075,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	   GridColView @["Orig"] {
 	    name="Orig";
-	    m_data=.projects["Project_0"].programs["FFTest"].objs["Images"].data["Orig"]$$;
+	    m_data=.projects["fft_image_xform"].programs["FFTest"].objs["Images"].data["Orig"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=320;
@@ -2142,7 +4086,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	   GridColView @["Recon"] {
 	    name="Recon";
-	    m_data=.projects["Project_0"].programs["FFTest"].objs["Images"].data["Recon"]$$;
+	    m_data=.projects["fft_image_xform"].programs["FFTest"].objs["Images"].data["Recon"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=320;
@@ -2153,6 +4097,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="annotations";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="annote_children";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
 	  view_rows=5;
 	  view_range {min=0: max=4: };
 	  display_on=1;
@@ -2167,7 +4121,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  two_d_font_scale=350;
 	  mat_val_text=0;
 	  colorscale {
-	   name="ColorScale_0";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -2196,11 +4150,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_0";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
-	T3SavedView @["View_0"] {
-	 name="View_0";
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
 	 view_saved=1;
 	 pos {x=1.5325: y=0.5174999: z=1.443747: };
 	 orient {x=0: y=0: z=1: rot=0: };
@@ -2213,29 +4167,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0.438737;
 	};
-	T3SavedView @["View_2"] {
-	 name="View_2";
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_3"] {
-	 name="View_3";
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_4"] {
-	 name="View_4";
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=0;
 	};
-	T3SavedView @["View_5"] {
-	 name="View_5";
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
 	 orient {x=0: y=0: z=1: rot=0: };
@@ -2247,22 +4229,61 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     };
    };
    docks {
-    name="DockViewer_List_0";
-    el_typ=DockViewer;
+    name="docks";
+    el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_45";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       name="view_win_lft";
+       value 6 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       name="view_win_top";
+       value 6 0=0.009337861090898514;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       name="view_win_wd";
+       value 6 0=0.04049014300107956;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       name="view_win_ht";
+       value 6 0=0.7359932065010071;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
    };
   };
  };
+ save_view=1;
+ save_as_only=0;
+ auto_name=1;
  last_change_desc=;
  networks {
-  name="Network_Group_0";
+  name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
  };

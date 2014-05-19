@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v6.3.6.0 rev6874
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
 LeabraProject .projects["matrix_demo"] { 
  Doc_Group @.docs = [0] {
  };
@@ -11,7 +11,7 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
 
- SelectEdit_Group @.edits = [1] {
+ ControlPanel_Group @.ctrl_panels = [1] {
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -236,7 +236,7 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
 
- Program_Group @.programs = [1] {
+ Program_TopGroup @.programs = [1] {
   Program @["MatrixMathDemo"] { 
    ProgObjList @.objs = [2] {
     Random @["Random_0"] { };
@@ -260,9 +260,6 @@ LeabraProject .projects["matrix_demo"] {
     ProgVar @["mean"] { };
     ProgVar @["std_dev"] { };
     ProgVar @["Results"] { };
-   };
-
-   ProgBrkPt_List @.brk_pts = [0] {
    };
 
    Function_List @.functions = [0] {
@@ -463,12 +460,12 @@ LeabraProject .projects["matrix_demo"] {
   url=;
  };
  docs {
-  name=;
+  name="docs";
   el_typ=taDoc;
   el_def=0;
  };
  wizards {
-  name=;
+  name="wizards";
   el_typ=LeabraWizard;
   el_def=0;
   LeabraWizard @["LeabraWizard_0"] {
@@ -486,22 +483,22 @@ LeabraProject .projects["matrix_demo"] {
    auto_open=0;
   };
  };
- edits {
-  name=;
-  el_typ=ClusterRun;
+ ctrl_panels {
+  name="ctrl_panels";
+  el_typ=ControlPanel;
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   auto_edit=1;
+   auto_edit=0;
    running_updt=0;
    desc=;
    mbrs {
-    name=;
+    name="mbrs";
     el_typ=EditMbrItem;
     el_def=0;
    };
    mths {
-    name=;
+    name="mths";
     el_typ=EditMthItem;
     el_def=0;
     group_type=GT_BUTTONS;
@@ -523,7 +520,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -537,7 +534,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -551,7 +548,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -565,7 +562,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -579,7 +576,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -593,7 +590,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -607,7 +604,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -621,7 +618,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -635,7 +632,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -649,7 +646,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -663,7 +660,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -677,7 +674,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -691,7 +688,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -715,7 +712,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -729,7 +726,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -743,7 +740,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -757,7 +754,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -771,7 +768,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -785,7 +782,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -809,7 +806,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -833,7 +830,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -857,7 +854,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -881,7 +878,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -905,7 +902,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -919,7 +916,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -933,7 +930,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -943,7 +940,7 @@ LeabraProject .projects["matrix_demo"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -963,7 +960,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -977,7 +974,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -991,7 +988,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1005,7 +1002,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1019,7 +1016,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1033,7 +1030,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1047,7 +1044,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1061,7 +1058,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1075,7 +1072,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1089,7 +1086,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1103,7 +1100,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1117,7 +1114,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1131,7 +1128,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1155,7 +1152,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1169,7 +1166,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1183,7 +1180,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1197,7 +1194,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1211,7 +1208,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1225,7 +1222,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1249,7 +1246,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1273,7 +1270,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1297,7 +1294,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1321,7 +1318,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1345,7 +1342,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1359,7 +1356,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1373,7 +1370,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1383,7 +1380,7 @@ LeabraProject .projects["matrix_demo"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -1403,7 +1400,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1417,7 +1414,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1431,7 +1428,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1445,7 +1442,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1459,7 +1456,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1473,7 +1470,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1487,7 +1484,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1501,7 +1498,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1515,7 +1512,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1529,7 +1526,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1543,7 +1540,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1557,7 +1554,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1571,7 +1568,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1595,7 +1592,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1609,7 +1606,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1623,7 +1620,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1637,7 +1634,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1651,7 +1648,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1665,7 +1662,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1689,7 +1686,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1713,7 +1710,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1737,7 +1734,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1761,7 +1758,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1785,7 +1782,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1799,7 +1796,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1813,7 +1810,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1823,7 +1820,7 @@ LeabraProject .projects["matrix_demo"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -1843,7 +1840,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1857,7 +1854,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1871,7 +1868,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1885,7 +1882,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1899,7 +1896,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1913,7 +1910,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1927,7 +1924,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1941,7 +1938,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1955,7 +1952,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1965,7 +1962,7 @@ LeabraProject .projects["matrix_demo"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -1985,7 +1982,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1999,7 +1996,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2013,7 +2010,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2027,7 +2024,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2041,7 +2038,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2055,7 +2052,7 @@ LeabraProject .projects["matrix_demo"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2065,11 +2062,11 @@ LeabraProject .projects["matrix_demo"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
-    name=;
+    name="search_algos";
     el_typ=ParamSearchAlgo;
     el_def=0;
    };
@@ -2093,7 +2090,7 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
  data {
-  name=;
+  name="data";
   el_typ=DataTable;
   el_def=0;
   save_tables=1;
@@ -2117,7 +2114,7 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
  data_proc {
-  name=;
+  name="data_proc";
   el_typ=taDataProc;
   el_def=0;
   taDataProc @["data_base"] {
@@ -2174,7 +2171,7 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
  programs {
-  name=;
+  name="programs";
   el_typ=Program;
   el_def=0;
   tags=;
@@ -2186,7 +2183,7 @@ LeabraProject .projects["matrix_demo"] {
    desc="demonstration for how to create and manipulate matrix objects";
    flags=0;
    objs {
-    name=;
+    name="objs";
     el_typ=Random;
     el_def=0;
     Random @["Random_0"] {name="Random_0": type=GAUSSIAN: mean=0.3: var=1: par=1: };
@@ -2206,14 +2203,14 @@ LeabraProject .projects["matrix_demo"] {
 	expr=;
        };
        dim_names {
-	name=;
+	name="dim_names";
        [2] ;;       };
        width=0;
        ar {
-	name=;
-       [5 5 1] -0.65747863;1.1657765;0.16908914;-0.86431569;0.36847979;-0.84010607;0.48914921;0.62007117;-1.0341833;2.1220217;
-0.91735911;0.89552021;-0.58935863;0.38524359;0.53241247;-0.92785257;-0.40762869;-0.98348808;-0.30642441;-0.24010463;
--1.1326231;0.86381936;-0.15309967;-0.028758455;1.4808578;       };
+	name="ar";
+       [5 5 1] 0.52951348;0.74498385;-0.45747808;-0.73006713;0.57894838;0.27123624;2.6703207;-1.0323464;0.014729861;-0.0097444206;
+1.2632595;-1.0445784;-1.9117873;0.45174086;-1.4417158;1.285895;0.91082537;0.083340168;-0.98665011;0.33168331;
+-0.48249656;-0.27132002;-1.0674992;-0.14642008;0.44052213;       };
       };
       float_Data @["eigen_vectors"] {
        name="eigen_vectors";
@@ -2224,14 +2221,14 @@ LeabraProject .projects["matrix_demo"] {
 	expr=;
        };
        dim_names {
-	name=;
+	name="dim_names";
        [2] ;;       };
        width=0;
        ar {
-	name=;
-       [5 5 1] -0.42765522;-0.72446132;0.3016876;-0.28914207;-0.34299898;0.44495109;-0.39590266;0.48180413;0.080002733;0.63776481;
--0.062348064;0.52639443;0.59286606;-0.60624164;-0.0015703647;0.087374255;-0.17081167;-0.5703997;-0.71603137;0.3537406;
-0.77949214;-0.1102232;0.0018490333;-0.17252989;-0.59200746;       };
+	name="ar";
+       [5 5 1] 0.18418285;-0.350593;-0.69620144;0.38006854;0.46261504;0.93418771;0.17123882;0.2061965;0.21077438;-0.10501309;
+-0.12312119;0.87639248;-0.41332415;0.20113146;-0.074071817;0.26400885;0.13416605;-0.26930809;-0.86517245;0.30207387;
+-0.092252307;0.24838977;0.47898105;0.14881152;0.82354379;       };
       };
       float_Data @["eigen_values"] {
        name="eigen_values";
@@ -2242,12 +2239,12 @@ LeabraProject .projects["matrix_demo"] {
 	expr=;
        };
        dim_names {
-	name=;
+	name="dim_names";
        [1] ;       };
        width=0;
        ar {
-	name=;
-       [5 1] 2.6043615;-2.1742227;1.5509552;-1.4751762;-0.089172266;       };
+	name="ar";
+       [5 1] 3.1456671;-2.9110391;2.0285282;-1.7676276;0.24639027;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2255,22 +2252,22 @@ LeabraProject .projects["matrix_demo"] {
      auto_load_file=;
      keygen 4 0=0;
      row_indexes {
-      name=;
+      name="row_indexes";
      [1] 0;     };
     };
    };
    types {
-    name=;
+    name="types";
     el_typ=DynEnumType;
     el_def=0;
    };
    args {
-    name=;
+    name="args";
     el_typ=ProgVar;
     el_def=0;
    };
    vars {
-    name=;
+    name="vars";
     el_typ=ProgVar;
     el_def=0;
     ProgVar @["Random_0"] {
@@ -2287,7 +2284,7 @@ LeabraProject .projects["matrix_demo"] {
     ProgVar @["mean"] {
      name="mean";
      var_type=T_Real;
-     real_val=0.07377514243125916;
+     real_val=-0.0002041935949819162;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2297,7 +2294,7 @@ LeabraProject .projects["matrix_demo"] {
     ProgVar @["std_dev"] {
      name="std_dev";
      var_type=T_Real;
-     real_val=0.8551844358444214;
+     real_val=0.9806657433509827;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -2316,23 +2313,18 @@ LeabraProject .projects["matrix_demo"] {
      init_from=NULL;
     };
    };
-   brk_pts {
-    name=;
-    el_typ=ProgBrkPt;
-    el_def=0;
-   };
    functions {
-    name=;
+    name="functions";
     el_typ=Function;
     el_def=0;
    };
    init_code {
-    name=;
+    name="init_code";
     el_typ=ProgCode;
     el_def=0;
    };
    prog_code {
-    name=;
+    name="prog_code";
     el_typ=ProgCode;
     el_def=0;
     CodeBlock @[0] {
@@ -2888,7 +2880,7 @@ LeabraProject .projects["matrix_demo"] {
   };
  };
  viewers {
-  name=;
+  name="viewers";
   el_typ=MainWindowViewer;
   el_def=0;
   MainWindowViewer @["Browser2"] {
@@ -2913,7 +2905,7 @@ LeabraProject .projects["matrix_demo"] {
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7994012236595154;
+     value 6 0=0.7988115549087524;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -2930,12 +2922,13 @@ LeabraProject .projects["matrix_demo"] {
    name="Browser2";
    m_data=.projects["matrix_demo"]$$;
    visible=1;
+   win_name=".projects[\"matrix_demo\"] - matrix_demo.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
-    name=;
+    name="toolbars";
     el_typ=ToolBar;
     el_def=0;
     ToolBar @["Application"] {
@@ -2958,7 +2951,7 @@ LeabraProject .projects["matrix_demo"] {
     };
    };
    frames {
-    name=;
+    name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
     BrowseViewerTaBase @["Tree"] {
@@ -2989,7 +2982,7 @@ LeabraProject .projects["matrix_demo"] {
      m_data=NULL;
      visible=1;
      panels {
-      name=;
+      name="panels";
       el_typ=T3Panel;
       el_def=0;
       T3Panel @["Results"] {
@@ -2997,11 +2990,11 @@ LeabraProject .projects["matrix_demo"] {
        m_data=NULL;
        visible=1;
        root_view {
-	name=;
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name=;
+	 name="children";
 	 el_typ=GridTableView;
 	 el_def=0;
 	 GridTableView @["projects_Project_0_viewers_Browser2_frames_T3Frames_panels_Results_root_view_children_0"] {
@@ -3009,7 +3002,7 @@ LeabraProject .projects["matrix_demo"] {
 	  m_data=$.projects["matrix_demo"].programs["MatrixMathDemo"].objs["Results"]$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name=;
+	   name="children";
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @["noise_data"] {
@@ -3048,12 +3041,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  annotations {
-	   name=;
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name=;
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -3071,7 +3064,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  two_d_font_scale=350;
 	  mat_val_text=0;
 	  colorscale {
-	   name="ColorScale_0";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -3100,7 +3093,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name=;
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -3179,7 +3172,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
    };
    docks {
-    name=;
+    name="docks";
     el_typ=ToolBoxDockViewer;
     el_def=0;
     ToolBoxDockViewer @["Tools"] {
@@ -3194,17 +3187,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.0109780440106988;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.06168831139802933;
+       value 6 0=0.04049014300107956;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7245509028434753;
+       value 6 0=0.735144317150116;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -3221,6 +3214,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Tools";
      m_data=NULL;
      visible=1;
+     win_name=;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
     };
@@ -3232,7 +3226,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
  auto_name=1;
  last_change_desc=;
  networks {
-  name=;
+  name="networks";
   el_typ=LeabraNetwork;
   el_def=0;
  };

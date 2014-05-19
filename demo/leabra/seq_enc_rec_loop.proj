@@ -42371,7 +42371,7 @@ To run the model, click on the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTra
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=2;
+      int_val=7;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -42412,7 +42412,7 @@ To run the model, click on the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTra
      ProgVar @["group_index"] {
       name="group_index";
       var_type=T_Int;
-      int_val=1;
+      int_val=5;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -43493,7 +43493,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=TARG;
+	ext_flags=COMP;
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
@@ -43504,7 +43504,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=COMP;
+	ext_flags=TARG;
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
@@ -43615,7 +43615,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["rew_targ"] {
       name="rew_targ";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -43625,7 +43625,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["trial_name"] {
       name="trial_name";
       var_type=T_String;
-      string_val="e_t:1_s:7";
+      string_val="r_t:1_s:-1";
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -43655,7 +43655,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["last_gp"] {
       name="last_gp";
       var_type=T_String;
-      string_val="170";
+      string_val="750";
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -45392,7 +45392,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["group_name"] {
       name="group_name";
       var_type=T_String;
-      string_val="c";
+      string_val="r";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -57792,7 +57792,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    name="Browser3";
    m_data=.projects["seq_enc_rec_loop"]$$;
    visible=1;
-   win_name=".projects[\"lp3_v42_wiz\"] - seq_enc_rec_loop.proj [*]";
+   win_name=".projects[\"seq_enc_rec_loop\"] - seq_enc_rec_loop.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -64456,7 +64456,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Input";
      desc=;
      flags=NO_ADD_COMP_SSE;
-     layer_type=TARGET;
+     layer_type=OUTPUT;
      pos {x=0: y=0: z=1: };
      pos2d {x=0: y=12: };
      disp_scale=1;
@@ -64530,7 +64530,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Output";
      desc=;
      flags=NO_ADD_COMP_SSE;
-     layer_type=OUTPUT;
+     layer_type=TARGET;
      pos {x=0: y=8: z=1: };
      pos2d {x=0: y=15: };
      disp_scale=1;
