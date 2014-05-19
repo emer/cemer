@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7193
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
 LeabraProject .projects["seq_enc_rec_loop"] { 
  Doc_Group @.docs = [2] {
   taDoc @["ProjectDocs"] { };
@@ -5270,38 +5270,39 @@ To run the model, click on the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTra
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>ChangeLog
-
+   html_text="<html>
+<head>ChangeLog</head>
+<body>
 <h1>ChangeLog</h1>
 <ul>
-<p>
-</p><li>Sun May  3 00:49:26 2009 0.0.1. oreilly <code>lp3_ogt_patch.proj</code><br>
+<P>
+<li>Sun May  3 00:49:26 2009 0.0.1. oreilly <code>lp3_ogt_patch.proj</code><br>
   Set to current best params:
 <ul><li> patch + SNc
-</li><li> MatrixCons use XCAL mvl_mix = 0.002, wt_sig = 1,1 maint lr .05, out lr .1
-</li><li> Matrix Unit noise: NETIN_NOISE, maint var = 5e-5, out = .005; trial fixed, maint adapt mode PVLV_LVE, patch_noise = true, out = PVLV_PVI, nogo_gain = 0
-</li><li> Matrix layer spec nogo_p = 0.1
-</li><li> PViLayer: min_pvi = .4
-</li><li> LVeLayer: min_lvi = .1
-</li><li> DALayer: da_gain= 0.2
-</li><li> PFC_out out_gate = graded_go, projects to PFC_mnt to drive learning there -- wt_scale = 1, out_gate_learn_mod NOT working
-</li><li> SNrThal net_off = 0, unit gain = 20 (NOTE: nonstandard)
-</li></ul>
-</li><li>Sat May 10 22:15:25 2008 oreilly <code>lp3_lvd_nv_ogt_12_07_netoff05_oerg5_out_mnt.proj</code><br>
-  PFC output -&gt; maint prjn and graded go -- get some da modulation back to train pfc maint
-<p>
-</p><p>
-</p></li><li>Mon Dec 17 00:14:46 2007 oreilly <code>lp3_lvd_nv_ogt_12_07.proj</code><br>
+<li> MatrixCons use XCAL mvl_mix = 0.002, wt_sig = 1,1 maint lr .05, out lr .1
+<li> Matrix Unit noise: NETIN_NOISE, maint var = 5e-5, out = .005; trial fixed, maint adapt mode PVLV_LVE, patch_noise = true, out = PVLV_PVI, nogo_gain = 0
+<li> Matrix layer spec nogo_p = 0.1
+<li> PViLayer: min_pvi = .4
+<li> LVeLayer: min_lvi = .1
+<li> DALayer: da_gain= 0.2
+<li> PFC_out out_gate = graded_go, projects to PFC_mnt to drive learning there -- wt_scale = 1, out_gate_learn_mod NOT working
+<li> SNrThal net_off = 0, unit gain = 20 (NOTE: nonstandard)
+</ul>
+<li>Sat May 10 22:15:25 2008 oreilly <code>lp3_lvd_nv_ogt_12_07_netoff05_oerg5_out_mnt.proj</code><br>
+  PFC output -> maint prjn and graded go -- get some da modulation back to train pfc maint
+<P>
+<P>
+<li>Mon Dec 17 00:14:46 2007 oreilly <code>lp3_lvd_nv_ogt_12_07.proj</code><br>
   12/07 parameters:
 <ul><li> snrthal net_off  = .2 (key!)
-</li><li> act.gain = 600 (not 20) (also very important, esp with net_off = .2)
-</li><li> err_rnd_go gain = 0 for both maint &amp; out (maint is minor diff, ergo = 0 for output seems pretty important)
-</li><li> snrthal kwta = 25% (1 stripe) (not a huge deal but better &amp; makes sense)
-</li></ul>
-</li></ul>
-
-
-</body></html>";
+<li> act.gain = 600 (not 20) (also very important, esp with net_off = .2)
+<li> err_rnd_go gain = 0 for both maint & out (maint is minor diff, ergo = 0 for output seems pretty important)
+<li> snrthal kwta = 25% (1 stripe) (not a huge deal but better & makes sense)
+</ul>
+</ul>
+</body>
+</html>
+";
   };
  };
  wizards {
@@ -42370,7 +42371,7 @@ To run the model, click on the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTra
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=8;
+      int_val=2;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -42411,7 +42412,7 @@ To run the model, click on the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTra
      ProgVar @["group_index"] {
       name="group_index";
       var_type=T_Int;
-      int_val=11;
+      int_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -43492,7 +43493,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=COMP;
+	ext_flags=TARG;
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
@@ -43503,7 +43504,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	quiet=0;
 	na_by_range=0;
-	ext_flags=TARG;
+	ext_flags=COMP;
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
@@ -43614,7 +43615,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["rew_targ"] {
       name="rew_targ";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -43624,7 +43625,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["trial_name"] {
       name="trial_name";
       var_type=T_String;
-      string_val="r_t:2_s:-1";
+      string_val="e_t:1_s:7";
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -43654,7 +43655,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["last_gp"] {
       name="last_gp";
       var_type=T_String;
-      string_val="556";
+      string_val="170";
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -44326,13 +44327,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44359,13 +44360,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44392,13 +44393,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44425,13 +44426,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44458,13 +44459,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44491,13 +44492,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44524,13 +44525,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44557,13 +44558,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_103": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44590,13 +44591,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_100": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44623,13 +44624,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_99": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44656,13 +44657,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_101": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44689,13 +44690,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44722,13 +44723,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_102": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec  0";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44755,13 +44756,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44788,13 +44789,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44821,13 +44822,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44854,13 +44855,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44887,13 +44888,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44920,13 +44921,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44953,13 +44954,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -44986,13 +44987,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45019,13 +45020,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45052,13 +45053,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45085,13 +45086,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45118,13 +45119,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45151,13 +45152,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45184,13 +45185,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45217,13 +45218,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45250,13 +45251,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45283,13 +45284,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45316,13 +45317,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -45391,7 +45392,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["group_name"] {
       name="group_name";
       var_type=T_String;
-      string_val="r";
+      string_val="c";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -46140,13 +46141,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46173,13 +46174,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46206,13 +46207,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46239,13 +46240,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46272,13 +46273,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46305,13 +46306,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46338,13 +46339,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46371,13 +46372,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46404,13 +46405,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46437,13 +46438,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_93": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46470,13 +46471,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].data.gp["OutputData"]["TrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="no_out_gate";
 	};
 	agg {name="agg": op=SUM: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46503,13 +46504,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="sse";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46536,13 +46537,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="sse";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=1;
@@ -46569,13 +46570,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="sse";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46602,13 +46603,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="DA";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46635,13 +46636,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="DA";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=1;
@@ -46668,13 +46669,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="DA";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46701,13 +46702,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="n_gated_mnt";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46734,13 +46735,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="n_gated_mnt";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=1;
@@ -46767,13 +46768,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="n_gated_mnt";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46800,13 +46801,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="n_gated_out";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46833,13 +46834,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="n_gated_out";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=1;
@@ -46866,13 +46867,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="n_gated_out";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46899,13 +46900,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMAvgDaData"]$$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="absDA_mean";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name="  ";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46932,13 +46933,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMAvgDaData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="absDA_max";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -46965,13 +46966,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="PVr";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -46998,13 +46999,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="PVr";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=1;
@@ -47031,13 +47032,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].programs.gp["LeabraAll_Std"]["LeabraEpochMonitorPBWM"].objs["PBWMGpTrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="PVr";
 	};
 	agg {name="agg": op=FIRST: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=1;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=1;
@@ -47064,13 +47065,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].data.gp["OutputData"]["TrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="max_mnt_count";
 	};
 	agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=0;
@@ -47097,13 +47098,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=1;
 	data_src=$.projects["seq_enc_rec_loop"].data.gp["OutputData"]["TrialOutputData"]$;
 	agg_col {
-	 col_name="agg_col";
+	 col_name="min_mnt_count";
 	};
 	agg {name="agg": op=MIN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name="group_name";
+	 name=;
 	 on=1;
 	 rel=CONTAINS;
 	 use_var=0;
@@ -47130,13 +47131,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_216": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -47163,13 +47164,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	data_agg=0;
 	data_src=NULL;
 	agg_col {
-	 col_name="agg_col";
+	 col_name=;
 	};
 	agg {name="agg": op=NONE: rel={name="Relation_217": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	select_rows=0;
 	select_spec {
-	 col_name="select_spec";
-	 name="select_spec";
+	 col_name=;
+	 name=;
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -64455,7 +64456,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Input";
      desc=;
      flags=NO_ADD_COMP_SSE;
-     layer_type=OUTPUT;
+     layer_type=TARGET;
      pos {x=0: y=0: z=1: };
      pos2d {x=0: y=12: };
      disp_scale=1;
@@ -64529,7 +64530,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      name="Output";
      desc=;
      flags=NO_ADD_COMP_SSE;
-     layer_type=TARGET;
+     layer_type=OUTPUT;
      pos {x=0: y=8: z=1: };
      pos2d {x=0: y=15: };
      disp_scale=1;
