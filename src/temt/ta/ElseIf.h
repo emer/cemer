@@ -28,11 +28,9 @@ class ProgVar; //
 taTypeDef_Of(ElseIf);
 
 class TA_API ElseIf: public CondBase {
-  // ##DEF_CHILD_true_code a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
+  //  a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
 INHERITED(CondBase)
 public:
-  ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
-
   int 		ProgElChildrenCount() const override
   { return true_code.size; }
 

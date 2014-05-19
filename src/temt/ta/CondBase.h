@@ -28,11 +28,11 @@
 taTypeDef_Of(CondBase);
 
 class TA_API CondBase : public ProgEl {
-  // #VIRT_BASE base class for If and ElseIf which have both a conditional expression and code to execute when the conditional is true (the true_code)
+  // #VIRT_BASE ##DEF_CHILD_true_code base class for If and ElseIf which have both a conditional expression and code to execute when the conditional is true (the true_code)
   INHERITED(ProgEl)
 public:
   ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
-//  ProgEl_List	  the_code; 	// #AKA_true_code #SHOW_TREE items to execute if condition true
+  ProgEl_List	  true_code; 	// #SHOW_TREE items to execute if condition true
   
 //  int 		ProgElChildrenCount() const override
 //  { return true_code.size; }
