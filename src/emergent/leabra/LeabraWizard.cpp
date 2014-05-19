@@ -2352,10 +2352,31 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
         net->FindMakePrjn(pfc_out, ol, fullprjn, topfcfmout_cons);
       }
       if(mnt_stripes > 0) {
-	if(!(out_stripes > 0)) {
+	if(out_stripes == 0) {
 	  net->FindMakePrjn(ol, pfc_mnt, fullprjn, fmpfc_out);
+          if(pfc_mnt_d) {
+            net->FindMakePrjn(ol, pfc_mnt_d, fullprjn, fmpfc_out);
+          }
 	}
         net->FindMakePrjn(pfc_mnt, ol, fullprjn, topfcfmout_cons);
+      }
+    }
+  }
+
+  for(i=0;i<hidden_lays.size;i++) {
+    Layer* hl = (Layer*)hidden_lays[i];
+
+    if(pfc_new) {
+      if(out_stripes > 0) {
+	net->FindMakePrjn(hl, pfc_out, fullprjn, fmpfc_out);
+      }
+      if(mnt_stripes > 0) {
+	if(out_stripes == 0) {
+	  net->FindMakePrjn(hl, pfc_mnt, fullprjn, fmpfc_out);
+          if(pfc_mnt_d) {
+            net->FindMakePrjn(hl, pfc_mnt_d, fullprjn, fmpfc_out);
+          }
+	}
       }
     }
   }
