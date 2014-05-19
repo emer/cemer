@@ -62,7 +62,7 @@ public:
   // stops the running script
   virtual void          CmdShellScript();
   // #MENU #LABEL_CmdShell #MENU_ON_Actions set the css command shell to operate on this script, so that you can interact with (run, debug, etc) this script
-  virtual void          ExitShellScript();
+  virtual void          ExitShellScript(bool updt_prompt = true);
   // #MENU #LABEL_ExitShell #MENU_ON_Actions if this script is currently being operated on by the command shell (via CmdShell function), exit from that shell (shell returns to previous script it was operating on)
 
   virtual TypeDef* GetThisTypeDef() const = 0;

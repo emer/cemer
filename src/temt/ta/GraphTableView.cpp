@@ -462,20 +462,20 @@ void GraphTableView::UpdateAfterEdit_impl(){
   // other axes
 
   if(!x_axis.on) {
-    if(!no_cols) {
+    if(!no_cols && !x_axis.row_num) {
       taMisc::Warning("GraphTableView -- X axis is not on -- perhaps no valid col_name found for x_axis -- switching to row_num!");
       x_axis.row_num = true;
-      x_axis.on = true;
     }
+    x_axis.on = true;
   }
   else {
-    if(x_axis.isString()) {
+    if(!no_cols && x_axis.isString() && !x_axis.row_num) {
       taMisc::Warning("GraphTableView -- X axis is a String -- switching to row_num!");
       x_axis.row_num = true;    // must be row num!
     }
   }
 
-  if(z_axis.isString()) {
+  if(!no_cols && z_axis.isString() && !z_axis.row_num) {
     taMisc::Warning("GraphTableView -- Z axis is a String -- switching to row_num!");
     z_axis.row_num = true;      // must be row num!
   }
@@ -838,12 +838,14 @@ void GraphTableView::FindDefaultXZAxes() {
     if(da->HasUserData("X_AXIS")) {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
+      x_axis.row_num = false;
       set_x = true;
     }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
       z_axis.on = true;
       z_axis.InitFromUserData();
+      z_axis.row_num = false;
     }
   }
   if(set_x) return;
@@ -991,9 +993,9 @@ void GraphTableView::InitFromUserData() {
 
 void GraphTableView::UpdateFromDataTable_this(bool first) {
   inherited::UpdateFromDataTable_this(first);
+  FindDefaultXZAxes();
   UpdateAfterEdit_impl();
   if(!first) return;
-
   InitFromUserData();
 }
 

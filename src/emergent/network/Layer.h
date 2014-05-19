@@ -463,10 +463,6 @@ public:
   // #MENU #MENU_ON_State #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
   inline void   SetDispScale(float disp_sc)     { disp_scale = disp_sc; UpdateAfterEdit(); }
   // #MENU #MENU_ON_State #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
-  virtual void  Lesion();
-  // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
-  virtual void  UnLesion();
-  // #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing
 
   virtual bool  Iconified() const       { return HasLayerFlag(ICONIFIED); }
   // convenience function for checking iconified flag
@@ -498,6 +494,11 @@ public:
   // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.
   virtual Unit* MostActiveUnit(int& idx);
   // #CAT_Statistic Return the unit with the highest activation (act) value -- index of unit is returned in idx
+
+  virtual void  Lesion();
+  // #BUTTON #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
+  virtual void  UnLesion();
+  // #BUTTON #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing
 
   virtual int   ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp

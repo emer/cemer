@@ -42,8 +42,8 @@ AbstractScriptBase::AbstractScriptBase() {
 AbstractScriptBase::~AbstractScriptBase() {
   ths = NULL;
   if (script) {
-    ExitShellScript();
-    delete script;		// todo: just added 2/16/07: might cause crashing!
+    ExitShellScript(false);     // no update prompt
+    delete script;
     script = NULL;
   }
 }
@@ -117,10 +117,10 @@ void AbstractScriptBase::CmdShellScript() {
   }
 }
 
-void AbstractScriptBase::ExitShellScript() {
+void AbstractScriptBase::ExitShellScript(bool updt_prompt) {
   if(!script || !cssMisc::TopShell) return;
   cssMisc::TopShell->PopSrcProg(script);
-  if(taMisc::gui_active) {
+  if(updt_prompt && taMisc::gui_active) {
     QcssConsole* con = QcssConsole::getInstance();
     con->displayPrompt(true);   // force
   }
