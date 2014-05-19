@@ -30,8 +30,6 @@
 #include <MemberDef>
 #include <iTreeViewItem>
 #include <CondBase>
-#include <If>
-#include <ElseIf>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -558,25 +556,13 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   String condition;
   ProgEl_List children;
   // save the progexpr and the children
-//  if (itm->InheritsFromName("CondBase") && new_type->InheritsFromName("CondBase")) {
-    if ((itm->InheritsFromName("ElseIf") || itm->InheritsFromName("If")) &&
-        (new_type->InheritsFromName("ElseIf") || new_type->InheritsFromName("If"))) {
-//    CondBase* temp = dynamic_cast<CondBase*>(itm);
-//      condition = temp->cond.expr;
-//      children.Copy(temp->true_code);
-      if (itm->InheritsFromName("If")) {
-        If* temp = dynamic_cast<If*>(itm);
-        condition = temp->cond.expr;
-        children.Copy(temp->true_code);
-      }
-      else {
-        ElseIf* temp = dynamic_cast<ElseIf*>(itm);
-        condition = temp->cond.expr;
-        children.Copy(temp->true_code);
-      }
+  if (itm->InheritsFromName("CondBase") && new_type->InheritsFromName("CondBase")) {
+    CondBase* temp = dynamic_cast<CondBase*>(itm);
+    condition = temp->cond.expr;
+    children.Copy(temp->true_code);
     do_conditional_copy = true;
   }
-    
+  
   if(!new_type->InheritsFrom(itd) && !itm->InheritsFrom(new_type)) {
     // do they have a common parent? if so, convert to that first, then back to new_type
     if(itd->parents.size >= 1) {
@@ -618,19 +604,9 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
     itm->CloseLater();
     // set the condition and code from the old item
     if (do_conditional_copy && (rval->InheritsFromName("If") || rval->InheritsFromName("ElseIf"))) {
-      //      CondBase* new_obj = dynamic_cast<CondBase*>(rval);
-      //      new_obj->cond.expr = condition;
-      //      new_obj->true_code.Copy(children);
-      if (rval->InheritsFromName("If")) {
-        If* new_obj = dynamic_cast<If*>(rval);
-        new_obj->cond.expr = condition;
-        new_obj->true_code.Copy(children);
-      }
-      else {
-        ElseIf* new_obj = dynamic_cast<ElseIf*>(rval);
-        new_obj->cond.expr = condition;
-        new_obj->true_code.Copy(children);
-      }
+      CondBase* new_obj = dynamic_cast<CondBase*>(rval);
+      new_obj->cond.expr = condition;
+      new_obj->true_code.Copy(children);
     }
   }
   --taMisc::is_changing_type;
@@ -638,23 +614,23 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
 }
 
 bool taList_impl::ChangeType(taBase* itm, TypeDef* new_type) {
-  int idx = FindEl(itm);
-  if(idx >= 0)
-    return ChangeType(idx, new_type);
-  TestWarning(true,"ChangeType","item not found");
-  return false;
-}
-
-void taList_impl::Close() {
-  if (size > 0) {
-    RemoveAll();
+    int idx = FindEl(itm);
+    if(idx >= 0)
+      return ChangeType(idx, new_type);
+    TestWarning(true,"ChangeType","item not found");
+    return false;
   }
-  inherited_taBase::Close();
-}
-
-bool taList_impl::Close_Child(taBase* obj) {
-  return RemoveEl(obj);
-}
+  
+  void taList_impl::Close() {
+    if (size > 0) {
+      RemoveAll();
+    }
+    inherited_taBase::Close();
+  }
+  
+  bool taList_impl::Close_Child(taBase* obj) {
+    return RemoveEl(obj);
+  }
 
 bool taList_impl::CloseLater_Child(taBase* obj) {
   if (obj->refn <= 0) {

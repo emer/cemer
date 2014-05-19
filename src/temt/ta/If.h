@@ -32,13 +32,9 @@ INHERITED(CondBase)
 public:
   ProgEl_List	    false_code; // #HIDDEN #NO_SAVE #OBSOLETE items to execute if condition false (now moved to a separate Else code)
 
-  int 		ProgElChildrenCount() const override
-  { return true_code.size; }
-
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
 
-  taList_impl*	children_() override { return &true_code; }
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   ProgVar*	FindVarName(const String& var_nm) const override;

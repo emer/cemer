@@ -34,11 +34,11 @@ public:
   ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
   ProgEl_List	  true_code; 	// #SHOW_TREE items to execute if condition true
   
-//  int 		ProgElChildrenCount() const override
-//  { return true_code.size; }
+  int 		ProgElChildrenCount() const override
+  { return true_code.size; }
 
   bool		IsCtrlProgEl() 	override { return true; }
-//  taList_impl*	children_() override { return &true_code; }
+  taList_impl*	children_() override { return &true_code; }
 
 PROGEL_SIMPLE_BASEFUNS(CondBase);
 protected:

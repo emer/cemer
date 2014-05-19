@@ -31,16 +31,12 @@ class TA_API ElseIf: public CondBase {
   //  a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
 INHERITED(CondBase)
 public:
-  int 		ProgElChildrenCount() const override
-  { return true_code.size; }
-
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
 
   virtual bool  CheckAfterIf();
   // check if comes after if or else if
 
-  taList_impl*	children_() override { return &true_code; }	
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   ProgVar*	FindVarName(const String& var_nm) const override;
