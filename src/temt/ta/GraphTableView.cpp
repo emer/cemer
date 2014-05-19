@@ -470,11 +470,13 @@ void GraphTableView::UpdateAfterEdit_impl(){
   }
   else {
     if(x_axis.isString()) {
+      taMisc::Warning("GraphTableView -- X axis is a String -- switching to row_num!");
       x_axis.row_num = true;    // must be row num!
     }
   }
 
   if(z_axis.isString()) {
+    taMisc::Warning("GraphTableView -- Z axis is a String -- switching to row_num!");
     z_axis.row_num = true;      // must be row num!
   }
 

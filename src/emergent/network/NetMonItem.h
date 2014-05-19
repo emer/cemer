@@ -72,7 +72,7 @@ public:
 
   bool			data_agg; 	// #CONDSHOW_ON_computed compute value automatically from a column of data in another data table
   DataTableRef		data_src;	// #CONDSHOW_ON_data_agg source data for data aggregation operation
-  DataOpEl		agg_col;	// #CONDSHOW_ON_data_agg column name in data_src data table to get data to aggregate from
+  DataOpEl		agg_col;	// #CONDSHOW_ON_data_agg #NO_AUTO_NAME column name in data_src data table to get data to aggregate from
   
   AggregateSpec		agg;		// #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
 
