@@ -31,16 +31,49 @@
 taTypeDef_Of(VEArmDelays);
 
 class TA_API VEArmDelays : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm
+  // #STEM_BASE #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm -- each is expressed as a number of time steps (1 step = 5 ms), where the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
 INHERITED(taOBase)
 public:
-  int           vis_delay;      // visual delay period for hand coordinate inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be > pro_delay -- set both to 1 for no delay
-  int           pro_delay;      // proprioceptive delay period for muscle length inputs expressed as a number of time steps (1 step = 5 ms) -- constrained to be < vis_delay -- set to 1 for no delay
-  int           eff_delay;      // effector delay period for motor command outputs to VEArm, expressed as a number of time steps (1 time step = 5 ms) -- set to 1 for no delay
+  int           pro;             // proprioceptive delay period for muscle length inputs -- constrained to be less than delays.vis [Default: 7]
+  int           vis;             // visual delay period for hand coordinate inputs -- constrained to be greater than delays.pro [Default: 30]
+  int           eff;             // effector delay period for motor command outputs -- this should correspond to total reaction time [Default: 62]
   
   void  Initialize();
   void  Destroy() { };
   TA_SIMPLE_BASEFUNS(VEArmDelays);
+};
+
+taTypeDef_Of(VEArmErrors);
+
+class TA_API VEArmErrors : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
+INHERITED(taOBase)
+public:
+  float         max;             // maximum error value -- prevents extreme forces while still allowing for high gains -- if 0 or lower then not used
+  float         norm_dra_dt;     // time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
+  float         pid_dra_dt;      // #CONDSHOW_ON_owner.ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
+  taVector3f    loc;             // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location
+  float         loc_mag;         // #READ_ONLY #SHOW #EXPERT total distance away from target location
+  float_Matrix  len;             // #EXPERT #NO_SAVE current errors (targ_lens - lens), computed by ComputeStim
+  float         len_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err computed
+  float_Matrix  len_norm;        // #READ_ONLY #SHOW #EXPERT normalized muscle errors
+  float_Matrix  len_norm_dt;     // #READ_ONLY #SHOW #EXPERT normalized muscle error derivatives
+  float_Matrix  len_norm_dra;    // #READ_ONLY #SHOW #EXPERT running average of norm_err_deriv using norm_err_dra_dt time constant -- these values can be useful for computing cerebellar control 
+  float_Matrix  len_prv;         // #EXPERT #NO_SAVE previous error values in PID
+  float_Matrix  len_norm_prv;    // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
+  float_Matrix  itg;             // #EXPERT #NO_SAVE integrated error over time (I in PID)
+  float         itg_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err_int computed
+  float_Matrix  drv;             // #EXPERT #NO_SAVE derivative of error over time (D in PID)
+  float_Matrix  drv_dra;         // #EXPERT #NO_SAVE running-average of err_deriv -- uses pid_dra_dt parameter -- this is what is actually used in PID controller, so set pid_dra_dt to 1 if you want literal std D factor
+  float         drv_dra_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of running-average of err_deriv -- uses pid_dra_dt parameter
+  float_Matrix  io;              // #READ_ONLY #SHOW #EXPERT Inferior Olivary like error signal -- 1.0 if norm_err_dra[i] > io_err_thr else 0.0
+  float         io_mag;          // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors
+  float         io_thr;          // threshold on norm_err_dra values for driving an Inferior Olivary error signal for training cerebellum
+
+  
+  void  Initialize();
+  void  Destroy() { };
+  TA_SIMPLE_BASEFUNS(VEArmErrors);
 };
 
 taTypeDef_Of(VEArmGains);
@@ -49,18 +82,32 @@ class TA_API VEArmGains : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
 INHERITED(taOBase)
 public:
-  float_Matrix  musc_gains;     // #READ_ONLY #SHOW #EXPERT muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
-  float         musc_gains_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of musc_gains
-  float         ev_gain;        // #AKA_gain #CONDSHOW_ON_ctrl_type:ERR_VEL gain factor for ERR_VEL control
-  float         p_gain;         // #CONDSHOW_ON_ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
-  float         i_gain;         // #CONDSHOW_ON_ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
-  float         d_gain;         // #CONDSHOW_ON_ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
-  float         stim_gain;      // gain factor in translating control signals into stimuli -- just an overall gain multiplier so that the other gains don't have to be quite so big
-  float         vel_norm_gain;  // speed normalization gain factor for a sigmoidal compression function
+  float         stim;            // gain factor in translating control signals into stimuli -- just an overall gain multiplier so that the other gains don't have to be quite so big
+  float         vel_norm;        // speed normalization gain factor for a sigmoidal compression function
+  float         ev;              // #CONDSHOW_ON_owner.ctrl_type:ERR_VEL gain factor for ERR_VEL control
+  float         p;               // #CONDSHOW_ON_owner.ctrl_type:PID P gain factor for proportional portion of PID control -- amount of stimulus in direct proportion to error between target and current length
+  float         i;               // #CONDSHOW_ON_owner.ctrl_type:PID I gain factor for integral portion of PID control -- if overshoot is a problem, then reduce this gain
+  float         d;               // #CONDSHOW_ON_owner.ctrl_type:PID D gain factor for derivative portion of PID control -- this is the most risky so typicaly set to be lower than p and i gains -- can be zero
+  float_Matrix  musc;            // #READ_ONLY #SHOW #EXPERT muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
+  float         musc_mag;        // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of gains.musc
 
   void  Initialize();
   void  Destroy() { };
   TA_SIMPLE_BASEFUNS(VEArmGains);
+};
+
+taTypeDef_Of(VEArmDamping);
+
+class TA_API VEArmDamping : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP damping parameters -- used to reduce oscillations in arm movements
+INHERITED(taOBase)
+public:
+  float         fac;             // angular damping factor
+  float         thr;             // angular damping threshold
+
+  void  Initialize();
+  void  Destroy() { };
+  TA_SIMPLE_BASEFUNS(VEArmDamping);
 };
 
 taTypeDef_Of(VEArm);
@@ -69,131 +116,115 @@ class TA_API VEArm : public VEObject {
   // #STEM_BASE a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
 INHERITED(VEObject)
 public:
-  enum ArmBodies {              // indices of bodies for arm
+  enum ArmBodies {               // indices of bodies for arm
     HUMERUS,
     ULNA,
     HAND,
     N_ARM_BODIES,
   };
-  enum ArmJoints {              // indices of joints for arm
+  enum ArmJoints {               // indices of joints for arm
     SHOULDER,
     ELBOW,
     WRIST,
     N_ARM_JOINTS,
   };
-  enum ArmSide {                // which arm are we simulating here?
+  enum ArmSide {                 // which arm are we simulating here?
     RIGHT_ARM,
     LEFT_ARM,
   };
-  enum UpAxis {                 // which axis points upwards?
+  enum UpAxis {                  // which axis points upwards?
     Y,
     Z,
   };
   enum MuscGeo {                 // type of muscle geometry 
-    OLD_GEO,         //  <-- 11 muscles
-    NEW_GEO,         //  <-- 12 muscles
+    OLD_GEO,                     //  <-- 11 muscles
+    NEW_GEO,                     //  <-- 12 muscles
   };
   enum MuscType {                // muscle model used
     LINEAR,                      // simple linear case where output force is proportional to stimulus
     HILL,                        // more complex Hill-type muscle used in Gribble et al, 1998
   };
-  enum ControlType {            // type of controller to use
-    PID,                        // proportional, integral, derivative controller -- separate gain terms for reach of these factors
-    ERR_VEL,                    // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
+  enum ControlType {             // type of controller to use
+    PID,                         // proportional, integral, derivative controller -- separate gain terms for reach of these factors
+    ERR_VEL,                     // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
   };
 
-  DataTableRef  arm_state;      // this points to the data table that contains a record of all the arm state information over time, used to implement delays
-  ArmSide       arm_side;       // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
-  VEBodyRef     torso;          // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
-  UpAxis        up_axis;        // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
-  MuscGeo       musc_geo;       // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
-  MuscType      musc_type;      // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998) -- should correspond with actual type of muscle objects used
-  float         hill_mu;        // #CONDSHOW_ON_musc_type:HILL #DEF_0.06 mu parameter for the Hill-type muscle -- dependence of muscle's threshold length on velocity
-  ControlType   ctrl_type;      // type of controller to use to drive muscles in response to the difference between target lengths and current lengths
-  VEArmDelays   delay_params;   // object containing delay parameters
-  VEArmGains    gain_params;    // object containing gain parameters
-  float         max_err;        // maximum error value -- prevents extreme forces while still allowing for high gains -- if 0 or lower then not used
-  float         pid_dra_dt;     // #CONDSHOW_ON_ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
-  float         damping;        // angular damping factor
-  float         damping_thr;    // angular damping threshold
-  float         norm_err_dra_dt; // time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
-  float         io_err_thr;      // threshold on norm_err_dra values for driving an Inferior Olivary error signal for training cerebellum
+  VEBodyRef     torso;           // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
+  DataTableRef  arm_state;       // this points to the data table that contains a record of all the arm state information over time, used to implement delays
+  ArmSide       arm_side;        // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
+  UpAxis        up_axis;         // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
+  MuscGeo       musc_geo;        // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
+  MuscType      musc_type;       // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998) -- should correspond with actual type of muscle objects used
+  float         hill_mu;         // #CONDSHOW_ON_musc_type:HILL #DEF_0.06 mu parameter for the Hill-type muscle -- dependence of muscle's threshold length on velocity
+  ControlType   ctrl_type;       // type of controller to use to drive muscles in response to the difference between target lengths and current lengths
+  
+  VEArmDelays   delays;          // Delay Parameters -- used to delay inputs/outputs to VEArm -- each is expressed as a discrete time step (1 step = 5 ms), where the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
+  VEArmErrors   errors;          // Error Parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
+  VEArmGains    gains;           // Gain Parameters -- used to scale forces applied to the muscle insertion points in the arm
+  VEArmDamping  damping;         // Damping Parameters -- used to reduce oscillations in arm movements
+
   float         hand_vra_dt;     // hand velocity running average time constant
 
-  float 	La;     // #READ_ONLY #SHOW the length of the humerus
-  float 	Lf;     // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
-  float		elbow_gap;  // #READ_ONLY #SHOW the distance between ulna and humerus
-  float 	wrist_gap;  // #READ_ONLY #SHOW the distance between hand and ulna
-  float 	world_step; // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
-  float_Matrix  ShouldIP; // #EXPERT shoulder insertion points at rest
-  float_Matrix  ArmIP;    // #EXPERT humerus insertion points at rest
-  float_Matrix  FarmIP;   // #EXPERT ulna insertion points at rest
-  float_Matrix  p1;       // #EXPERT first end points for bending lines
-  float_Matrix  p2;       // #EXPERT second end points for bending lines
-  float_Matrix  ct;       // #EXPERT An autoinverse rotation matrix which transforms coordinates from one system (Y axis upwards) to another (Z axis upwards).
-  taVector3f    should_loc; // #READ_ONLY #SHOW the location of the shoulder in World coordinates
-  int           n_musc;  // #READ_ONLY the total number of muscles, as implied by the IP matrices
+  float 	      La;              // #READ_ONLY #SHOW the length of the humerus
+  float 	      Lf;              // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
+  float		      elbow_gap;       // #READ_ONLY #SHOW the distance between ulna and humerus
+  float 	      wrist_gap;       // #READ_ONLY #SHOW the distance between hand and ulna
+  float 	      world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
+  float_Matrix  ShouldIP;        // #EXPERT shoulder insertion points at rest
+  float_Matrix  ArmIP;           // #EXPERT humerus insertion points at rest
+  float_Matrix  FarmIP;          // #EXPERT ulna insertion points at rest
+  float_Matrix  p1;              // #EXPERT first end points for bending lines
+  float_Matrix  p2;              // #EXPERT second end points for bending lines
+  float_Matrix  ct;              // #EXPERT An autoinverse rotation matrix which transforms coordinates from one system (Y axis upwards) to another (Z axis upwards).
+  taVector3f    should_loc;      // #READ_ONLY #SHOW the location of the shoulder in World coordinates
+  int           n_musc;          // #READ_ONLY the total number of muscles, as implied by the IP matrices
 
-  taVector3f    targ_loc_abs;  // #READ_ONLY #SHOW #EXPERT current target coordinates, in absolute world coordinates
-  taVector3f    hand_loc_abs;  // #READ_ONLY #SHOW #EXPERT current hand coordinates, in absolute world coordinates
-  taVector3f    targ_loc_rel;  // #READ_ONLY #SHOW #EXPERT current target coordinates, in shoulder-relative coordinates
-  float         targ_rel_d;    // #READ_ONLY #SHOW #EXPERT distance to target (mag of targ_loc_rel)
-  taVector3f    hand_loc_rel;  // #READ_ONLY #SHOW #EXPERT delayed hand coordinates, in shoulder-relative coordinates
+  taVector3f    targ_loc_abs;    // #READ_ONLY #SHOW #EXPERT current target coordinates, in absolute world coordinates
+  taVector3f    hand_loc_abs;    // #READ_ONLY #SHOW #EXPERT current hand coordinates, in absolute world coordinates
+  taVector3f    targ_loc_rel;    // #READ_ONLY #SHOW #EXPERT current target coordinates, in shoulder-relative coordinates
+  float         targ_rel_d;      // #READ_ONLY #SHOW #EXPERT distance to target (mag of targ_loc_rel)
+  taVector3f    hand_loc_rel;    // #READ_ONLY #SHOW #EXPERT delayed hand coordinates, in shoulder-relative coordinates
   taVector3f    hand_loc_actual; // #READ_ONLY #SHOW #EXPERT current hand coordinates, in shoulder-relative coordinates
-  taVector3f    hand_loc_prv;  // #READ_ONLY #SHOW #EXPERT previous hand coordinates
-  taVector3f    hand_vel;       // #READ_ONLY #SHOW #EXPERT hand velocity
-  float         hand_vel_mag;   // #READ_ONLY #SHOW #EXPERT hand velocity
-  float         hand_vra;       // #READ_ONLY #SHOW #EXPERT temporal running average of hand_vel_mag using hand_vra_dt -- good measure of whether the reach has stopped
-  taVector3f    loc_err;     // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location
-  float         loc_err_mag;  // #READ_ONLY #SHOW #EXPERT total distance away from target location
-  float_Matrix  targ_lens;  // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
-  float         targ_lens_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
-  float_Matrix  R;          // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
-  float         alpha;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
-  float         beta;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
-  float         gamma;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
-  float         delta;      // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  taVector3f    hand_loc_prv;    // #READ_ONLY #SHOW #EXPERT previous hand coordinates
+  taVector3f    hand_vel;        // #READ_ONLY #SHOW #EXPERT hand velocity
+  float         hand_vel_mag;    // #READ_ONLY #SHOW #EXPERT hand velocity
+  float         hand_vra;        // #READ_ONLY #SHOW #EXPERT temporal running average of hand_vel_mag using hand_vra_dt -- good measure of whether the reach has stopped
+  float_Matrix  targ_lens;       // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
+  float         targ_lens_mag;   // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
+  float_Matrix  R;               // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
+  float         alpha;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         beta;            // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         gamma;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         delta;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
 
-  float         arm_time;   // #GUI_READ_ONLY #SHOW #NO_SAVE time counter for arm integration
-  float_Matrix  lens;       // #EXPERT #NO_SAVE current lengths, computed by ComputeStim
-  float         lens_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of lens
-  float_Matrix  vels;       // #EXPERT #NO_SAVE current velocities, computed by ComputeStim
-  float         vels_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of vels
-  float_Matrix  err;        // #EXPERT #NO_SAVE current errors (targ_lens - lens), computed by ComputeStim
-  float         err_mag;    // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err computed
-  float_Matrix  err_int;    // #EXPERT #NO_SAVE integrated error over time (I in PID)
-  float         err_int_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err_int computed
-  float_Matrix  err_deriv;  // #EXPERT #NO_SAVE derivative of error over time (D in PID)
-  float_Matrix  err_dra;    // #EXPERT #NO_SAVE running-average of err_deriv -- uses pid_dra_dt parameter -- this is what is actually used in PID controller, so set pid_dra_dt to 1 if you want literal std D factor
-  float         err_dra_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of running-average of err_deriv -- uses pid_dra_dt parameter
-  float_Matrix  err_prv;    // #EXPERT #NO_SAVE previous error values in PID
-  float_Matrix  stims_p;    // #EXPERT #NO_SAVE PID p-driven stimulation values, computed by ComputeStim
-  float         stims_p_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_p computed
-  float_Matrix  stims_i;    // #EXPERT #NO_SAVE PID i-driven stimulation values, computed by ComputeStim
-  float         stims_i_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_i computed
-  float_Matrix  stims_d;    // #EXPERT #NO_SAVE PID d-driven stimulation values, computed by ComputeStim
-  float         stims_d_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_d computed
-  float_Matrix  stims;      // #EXPERT #NO_SAVE stimulation values, computed by ComputeStim
-  float         stims_mag;  // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of stims computed
-  float_Matrix  forces;     // #EXPERT #NO_SAVE forces, computed by ComputeStim
+  bool          reach_start;     // #READ_ONLY #HIDDEN flag used to tell whether it's the start of a reach or not (since VEArm doesn't have direct access to network.cycle)
 
-  float_Matrix  max_lens;   // #EXPERT maximum muscle lengths, initialized by ConfigArm, used to normalize lengths
-  float_Matrix  min_lens;   // #EXPERT minimum muscle lengths, initialized by ConfigArm 
-  float_Matrix  rest_lens;  // #EXPERT resting muscle lengths, initialized by ConfigArm 
-  float_Matrix  spans;      // #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
+  float         arm_time;        // #GUI_READ_ONLY #SHOW #NO_SAVE time counter for arm integration
+  float_Matrix  lens;            // #EXPERT #NO_SAVE current lengths, computed by ComputeStim
+  float         lens_mag;        // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of lens
+  float_Matrix  vels;            // #EXPERT #NO_SAVE current velocities, computed by ComputeStim
+  float         vels_mag;        // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of vels
+  float_Matrix  stims_p;         // #EXPERT #NO_SAVE PID p-driven stimulation values, computed by ComputeStim
+  float         stims_p_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_p computed
+  float_Matrix  stims_i;         // #EXPERT #NO_SAVE PID i-driven stimulation values, computed by ComputeStim
+  float         stims_i_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_i computed
+  float_Matrix  stims_d;         // #EXPERT #NO_SAVE PID d-driven stimulation values, computed by ComputeStim
+  float         stims_d_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_d computed
+  float_Matrix  stims;           // #EXPERT #NO_SAVE stimulation values, computed by ComputeStim
+  float_Matrix  stims_delay;     // #READ_ONLY #SHOW #EXPERT buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
+  float         stims_mag;       // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of stims computed
+  float_Matrix  forces;          // #EXPERT #NO_SAVE forces, computed by ComputeStim
+
+  float_Matrix  max_lens;        // #EXPERT maximum muscle lengths, initialized by ConfigArm, used to normalize lengths
+  float_Matrix  min_lens;        // #EXPERT minimum muscle lengths, initialized by ConfigArm 
+  float_Matrix  rest_lens;       // #EXPERT resting muscle lengths, initialized by ConfigArm 
+  float_Matrix  spans;           // #HIDDEN 1/(max_lens-min_lens). Used to speed up the calculation of norm_lengths.
 
   // overall state variables for the arm
-  float_Matrix  delayedStims;   // #READ_ONLY #SHOW #EXPERT buffer table used by the ApplyStims method to delay muscle output when eff_delay is greater than 1
-  float_Matrix  norm_lens;      // #READ_ONLY #SHOW #EXPERT normalized current muscle lengths
-  float_Matrix  norm_targ_lens; // #READ_ONLY #SHOW #EXPERT normalized target muscle lengths
-  float_Matrix  norm_vels;      // #READ_ONLY #SHOW #EXPERT normalized muscle velocities
-  float_Matrix  norm_err;       // #READ_ONLY #SHOW #EXPERT normalized muscle errors
-  float_Matrix  norm_err_deriv; // #READ_ONLY #SHOW #EXPERT normalized muscle error derivatives
-  float_Matrix  norm_err_dra;   // #READ_ONLY #SHOW #EXPERT running average of norm_err_deriv using norm_err_dra_dt time constant -- these values can be useful for computing cerebellar control
-  float_Matrix  io_err;         // #READ_ONLY #SHOW #EXPERT Inferior Olivary like error signal -- 1.0 if norm_err_dra[i] > io_err_thr else 0.0
-  float         io_err_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors 
-  float_Matrix  norm_err_prv;   // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
-  VEMuscle_List muscles; // pointers to the muscles attached to the arm
+  float_Matrix  norm_lens;       // #READ_ONLY #SHOW #EXPERT normalized current muscle lengths
+  float_Matrix  norm_targ_lens;  // #READ_ONLY #SHOW #EXPERT normalized target muscle lengths
+  float_Matrix  norm_vels;       // #READ_ONLY #SHOW #EXPERT normalized muscle velocities
+  VEMuscle_List muscles;         // pointers to the muscles attached to the arm
 
   virtual bool  CheckArm(bool quiet = false);
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
@@ -241,18 +272,18 @@ public:
   virtual bool GetNormVals();
   // get all the normalized values -- norm_lens, vels, etc -- based on current state -- called automatically during processing (in UpdateIPs)
 
-  virtual bool Lengths(float_Matrix& len, bool normalize);
+  virtual bool Lengths(float_Matrix& norm_len, bool normalize);
   // Put the current lengths of all muscles in the given matrix (if normalize is true, return normalized 0..1) -- sets len geom to 1,n_musc
   virtual bool Speeds(float_Matrix& vel, bool normalize);
   // Put the muscle contraction speeds of the last time step in the given matrix (if normalize is true, return normalized 0..1) -- sets vel geom to 1,n_musc
 
-  virtual void SetNewReachFlag(bool flag);
-  // Sets the private isNewReach bool variable to true or false, telling the methods of VEArm whether it's the start of a new reach or not -- designed to be used only when network.cycle = 0
+  virtual void SetReachStartFlag(bool flag);
+  // Sets the hidden reach_start bool variable to true or false, telling the methods of VEArm whether it's the start of a new reach or not -- designed to be used only when network.cycle = 0
   virtual bool ApplyStim(const float_Matrix& stms, float_Matrix &fs,
                          bool flip_sign = true);
   // Apply a stimulus to the arm muscles. The first argument is a vector matrix with the stimuli. The second argument is a vector matrix where the resulting contraction forces will be stored; it should have 3 rows and Nmusc columns. if flip_sign, then the stimuli signs are flipped -- this is how the math works out for ComputeStim -- perhaps because these are contractions or something
 
-  virtual bool SetMuscGains(const float_Matrix& gains);
+  virtual bool SetMuscGains(const float_Matrix& new_gains);
   // set the per-muscle gains to given values -- gains should be n_musc in length -- accessed in flat coordinates
   virtual bool SetAllMuscGains(float all_gain = 1.0f);
   // set all the per-muscle gains to given value
@@ -311,8 +342,6 @@ protected:
   // the point of intersection with the muscle in the vector p3.
 
 private:
-  bool isNewReach; // flag used to tell whether it's the start of a new reach or not (since VEArm doesn't have direct access to network.cycle)
-
   void  Initialize();
   void  Destroy();  
 };

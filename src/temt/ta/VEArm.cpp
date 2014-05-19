@@ -27,24 +27,45 @@
 
 TA_BASEFUNS_CTORS_DEFN(VEArmDelays);
 
+TA_BASEFUNS_CTORS_DEFN(VEArmErrors);
+
 TA_BASEFUNS_CTORS_DEFN(VEArmGains);
+
+TA_BASEFUNS_CTORS_DEFN(VEArmDamping);
 
 TA_BASEFUNS_CTORS_DEFN(VEArm);
 
 void VEArmDelays::Initialize() {
-  vis_delay = 30;
-  pro_delay = 7;
-  eff_delay = 1;
+  vis = 30;
+  pro = 7;
+  eff = 1;
+}
+
+void VEArmErrors::Initialize() {
+  max = 0.05f;
+  norm_dra_dt = 0.3f;
+  pid_dra_dt = 1.0f;
+  loc_mag = 0.0f;
+  len_mag = 0.0f;
+  itg_mag = 0.0f;
+  drv_dra_mag = 0.0f;
+  io_mag = 0.0f;
+  io_thr = 0.001f;
 }
 
 void VEArmGains::Initialize() {
-  musc_gains_mag = 0.0f;
-  ev_gain = 2.0f;
-  p_gain = 40.0f;
-  i_gain = 5.0f;
-  d_gain = 5.0f;
-  stim_gain = 200.0f;
-  vel_norm_gain = 15.0f;
+  stim = 200.0f;
+  vel_norm = 15.0f;
+  ev = 2.0f;
+  p = 40.0f;
+  i = 5.0f;
+  d = 5.0f;
+  musc_mag = 0.0f;
+}
+
+void VEArmDamping::Initialize() {
+  fac = 0.0f;
+  thr = 0.05f;
 }
 
 void VEArm::Initialize() {
@@ -55,21 +76,13 @@ void VEArm::Initialize() {
   musc_type = LINEAR;
   hill_mu = 0.06f;
   ctrl_type = PID;
+  
   // note: torso ref is self initializing
   La = 0.3f;
   Lf = 0.33f;
   elbow_gap = 0.03f; // space left between bodies so joint can rotate
   wrist_gap = 0.03f;
   world_step = 0.01f;
-
-  max_err = 0.05f;
-  pid_dra_dt = 1.0f;
-
-  damping = 0.0f;
-  damping_thr = 0.05f;
-  norm_err_dra_dt = 0.3f;
-  io_err_thr = 0.001f;
-  hand_vra_dt = 0.1f;
 
   float CT_f[] = {-1.0f, 0,    0,
                       0, 0,    1.0f,
@@ -96,20 +109,16 @@ void VEArm::Initialize() {
   targ_rel_d = 0.0f;
   hand_vel_mag = 0.0f;
   hand_vra = 0.0f;
-  loc_err_mag = 0.0f;
+  hand_vra_dt = 0.1f;
   targ_lens_mag = 0.0f;
   lens_mag = 0.0f;
   vels_mag = 0.0f;
-  err_mag = 0.0f;
-  err_int_mag = 0.0f;
-  err_dra_mag = 0.0f;
   stims_p_mag = 0.0f;
   stims_i_mag = 0.0f;
   stims_d_mag = 0.0f;
   stims_mag = 0.0f;
-  io_err_mag = 0.0f;
 
-  isNewReach = true;
+  reach_start = true;
 
   // DO NOT put anythying other than direct literal member inits in here -- no creating objects etc
 }
@@ -522,7 +531,7 @@ void VEArm::InitMuscles() {
   // the number of muscles is 1/2 the sum of points in ShoulderIP+ArmIP+FarmIP
   n_musc = (int)((FarmIP.count() + ArmIP.count() + ShouldIP.count())/6);
 
-  delayedStims.SetGeom(2, n_musc, delay_params.eff_delay - 1); // buffer table of muscle stimuli -- used by ApplyStim method when eff_delay > 1
+  stims_delay.SetGeom(2, n_musc, delays.eff - 1); // buffer table of muscle stimuli -- used by ApplyStim method when delays.eff > 1
 
   muscles.Reset();
 
@@ -542,7 +551,7 @@ void VEArm::InitMuscles() {
   max_lens.SetGeom(1,n_musc);
   min_lens.SetGeom(1,n_musc);
   rest_lens.SetGeom(1,n_musc);
-  gain_params.musc_gains.SetGeom(1,n_musc);
+  gains.musc.SetGeom(1,n_musc);
   SetAllMuscGains(1.0f);
   const float pi  = taMath_float::pi;
 
@@ -865,7 +874,7 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
   InitMuscles();  // Initializes insertion point matrices and the VEMuscle_List
  
-  gain_params.musc_gains.SetGeom(1,n_musc); 
+  gains.musc.SetGeom(1,n_musc); 
   SetAllMuscGains(1.0f);
 
   UpdateIPs(); // attaching muscles to their corresponding insertion points
@@ -876,10 +885,10 @@ bool VEArm::ConfigArm(const String& name_prefix,
 
 
   //----------- Setting damping --------------
-  humerus->SetAngularDamping(damping);
-  humerus->SetAngularDampingThreshold(damping_thr);
-  ulna->SetAngularDamping(damping);
-  ulna->SetAngularDampingThreshold(damping_thr);
+  humerus->SetAngularDamping(damping.fac);
+  humerus->SetAngularDampingThreshold(damping.thr);
+  ulna->SetAngularDamping(damping.fac);
+  ulna->SetAngularDampingThreshold(damping.thr);
 
   //---------- Init all created objects and update ODE -----------
   // NO: you can't count on ODE being initialized at this point -- that should happen later
@@ -1472,29 +1481,29 @@ bool VEArm::Speeds(float_Matrix& vel, bool normalize) {
   for(int i=0; i<n_musc; i++) {
     vel.Set(muscles[i]->Speed(),i);
     if(normalize) {
-      vel.FastEl1d(i) = 1.0f / (1.0f + expf(-(gain_params.vel_norm_gain) * vel.FastEl1d(i)));
+      vel.FastEl1d(i) = 1.0f / (1.0f + expf(-(gains.vel_norm) * vel.FastEl1d(i)));
     }
   }
   return true;
 }
 
-void VEArm::SetNewReachFlag(bool flag) {
-  isNewReach = flag; // true if network.cycle = 0, else false
+void VEArm::SetReachStartFlag(bool flag) {
+  reach_start = flag; // true if network.cycle = 0, else false
 }
 
 bool VEArm::ApplyStim(const float_Matrix& stm, float_Matrix &fs, bool flip_sign) {
-  if(delay_params.eff_delay > 1) {
-    if(isNewReach) { // start of a new reach, need to reset the buffer table
-      delayedStims.Clear(); // sets all values to zero
-      delayedStims.SetGeom(2, n_musc, delay_params.eff_delay - 1); // default geometry -- eff_delay-1 rows, n_musc columns
+  if(delays.eff > 1) {
+    if(reach_start) { // start of a new reach, need to reset the buffer table
+      stims_delay.Clear(); // sets all values to zero
+      stims_delay.SetGeom(2, n_musc, delays.eff - 1); // default geometry -- delays.eff-1 rows, n_musc columns
     }
     
-    delayedStims.AddFrame(); // since it's 2-dimensional, adds one blank row
-    int last_row = delayedStims.Frames() - 1; // this is the row where the current stims are stored (last row)
-    int delay_row = delayedStims.Frames() - delay_params.eff_delay; // this is the row where the delayed stims are stored (eff_delay rows up)
+    stims_delay.AddFrame(); // since it's 2-dimensional, adds one blank row
+    int last_row = stims_delay.Frames() - 1; // this is the row where the current stims are stored (last row)
+    int delay_row = stims_delay.Frames() - delays.eff; // this is the row where the delayed stims are stored (delays.eff rows up)
 
-    delayedStims.CopyFrame(stm, last_row); // copy the current stims into the last row
-    float_Matrix* stmD = delayedStims.GetFrameSlice(delay_row); // get the delayed stims as a matrix with the same geometry as stm
+    stims_delay.CopyFrame(stm, last_row); // copy the current stims into the last row
+    float_Matrix* stmD = stims_delay.GetFrameSlice(delay_row); // get the delayed stims as a matrix with the same geometry as stm
 
     // now we run the usual ApplyStim code, replacing 'stm' with 'stmD':
     if(TestWarning(stmD->count() != n_musc, "","The delayed stimulus matrix doesn't match the number of muscles \n"))
@@ -1510,10 +1519,10 @@ bool VEArm::ApplyStim(const float_Matrix& stm, float_Matrix &fs, bool flip_sign)
     taVector3f daforce(0.0f, 0.0f, 0.0f);
     for(int i=0; i<n_musc; i++) {
       if(flip_sign) {
-        daforce = muscles[i]->Contract(-(gain_params.stim_gain) * stmD->FastElAsFloat(i));
+        daforce = muscles[i]->Contract(-(gains.stim) * stmD->FastElAsFloat(i));
       }
       else {
-        daforce = muscles[i]->Contract(gain_params.stim_gain * stmD->FastElAsFloat(i));
+        daforce = muscles[i]->Contract(gains.stim * stmD->FastElAsFloat(i));
       }
       fs.Set(daforce.x, 0, i);
       fs.Set(daforce.y, 1, i);
@@ -1553,10 +1562,10 @@ bool VEArm::ApplyStim(const float_Matrix& stm, float_Matrix &fs, bool flip_sign)
     taVector3f daforce(0.0f, 0.0f, 0.0f);
     for(int i=0; i<n_musc; i++) {
       if(flip_sign) {
-        daforce = muscles[i]->Contract(-(gain_params.stim_gain) * stm.FastElAsFloat(i));
+        daforce = muscles[i]->Contract(-(gains.stim) * stm.FastElAsFloat(i));
       }
       else {
-        daforce = muscles[i]->Contract(gain_params.stim_gain * stm.FastElAsFloat(i));
+        daforce = muscles[i]->Contract(gains.stim * stm.FastElAsFloat(i));
       }
       fs.Set(daforce.x, 0, i);
       fs.Set(daforce.y, 1, i);
@@ -1585,45 +1594,45 @@ bool VEArm::ApplyStim(const float_Matrix& stm, float_Matrix &fs, bool flip_sign)
   return true;
 }
 
-bool VEArm::SetMuscGains(const float_Matrix& gains) {
-  gain_params.musc_gains.SetGeom(1,n_musc); // should be but justin
-  int mx = MIN(gain_params.musc_gains.size, gains.size);
+bool VEArm::SetMuscGains(const float_Matrix& new_gains) {
+  gains.musc.SetGeom(1,n_musc); // should be but justin
+  int mx = MIN(gains.musc.size, new_gains.size);
   for(int i=0; i<mx; i++) {
-    gain_params.musc_gains.FastEl_Flat(i) = gains.FastEl_Flat(i);
+    gains.musc.FastEl_Flat(i) = new_gains.FastEl_Flat(i);
   }
   return true;
 }
 
 bool VEArm::SetAllMuscGains(float all_gain) {
-  gain_params.musc_gains.SetGeom(1,n_musc); // should be but justin
+  gains.musc.SetGeom(1,n_musc); // should be but justin
   for(int i=0; i<n_musc; i++) {
-    gain_params.musc_gains.FastEl_Flat(i) = all_gain;
+    gains.musc.FastEl_Flat(i) = all_gain;
   }
   return true;
 }
 
 float VEArm::SetMuscGain(int musc_no, float gn) {
-  gain_params.musc_gains.SetGeom(1,n_musc); // should be but justin
+  gains.musc.SetGeom(1,n_musc); // should be but justin
   if(musc_no < n_musc) {
-    gain_params.musc_gains.FastEl_Flat(musc_no) = gn;
-    return gain_params.musc_gains.FastEl_Flat(musc_no);
+    gains.musc.FastEl_Flat(musc_no) = gn;
+    return gains.musc.FastEl_Flat(musc_no);
   }
   return 0.0f;
 }
 
 float VEArm::IncrMuscGain(int musc_no, float gn_inc) {
-  gain_params.musc_gains.SetGeom(1,n_musc); // should be but justin
+  gains.musc.SetGeom(1,n_musc); // should be but justin
   if(musc_no < n_musc) {
-    gain_params.musc_gains.FastEl_Flat(musc_no) += gn_inc;
-    return gain_params.musc_gains.FastEl_Flat(musc_no);
+    gains.musc.FastEl_Flat(musc_no) += gn_inc;
+    return gains.musc.FastEl_Flat(musc_no);
   }
   return 0.0f;
 }
 
 float VEArm::DecayMuscGain(int musc_no, float decay) {
-  gain_params.musc_gains.SetGeom(1,n_musc); // should be but justin
+  gains.musc.SetGeom(1,n_musc); // should be but justin
   if(musc_no < n_musc) {
-    float& mg = gain_params.musc_gains.FastEl_Flat(musc_no);
+    float& mg = gains.musc.FastEl_Flat(musc_no);
     mg += decay * (1.0f - mg);
     return mg;
   }
@@ -1653,12 +1662,12 @@ bool VEArm::ComputeStim() {
     }
   }
 
-  err.SetGeom(1,n_musc);
-  err = targ_lens - lens;       // most need this anyway
-  err_int.SetGeom(1,n_musc);
-  err_deriv.SetGeom(1,n_musc);
-  err_dra.SetGeom(1,n_musc);
-  err_prv.SetGeom(1,n_musc);
+  errors.len.SetGeom(1,n_musc);
+  errors.len = targ_lens - lens;       // most need this anyway
+  errors.itg.SetGeom(1,n_musc);
+  errors.drv.SetGeom(1,n_musc);
+  errors.drv_dra.SetGeom(1,n_musc);
+  errors.len_prv.SetGeom(1,n_musc);
   stims.SetGeom(1,n_musc);
   stims_p.SetGeom(1,n_musc);
   stims_i.SetGeom(1,n_musc);
@@ -1678,44 +1687,44 @@ bool VEArm::ComputeStim() {
   targ_lens_mag = taMath_float::vec_norm(&targ_lens);
   lens_mag = taMath_float::vec_norm(&lens);
   vels_mag = taMath_float::vec_norm(&vels);
-  err_mag = taMath_float::vec_norm(&err);
+  errors.len_mag = taMath_float::vec_norm(&(errors.len));
   stims_mag = taMath_float::vec_norm(&stims);
-  gain_params.musc_gains_mag = taMath_float::vec_norm(&(gain_params.musc_gains));
+  gains.musc_mag = taMath_float::vec_norm(&(gains.musc));
 
   return rval;
 }
 
 bool VEArm::ComputeStim_PID() {
-  err_int += err * world_step;
+  errors.itg += errors.len * world_step;
   if(arm_time > 2.0f * world_step) {
-    err_deriv = err - err_prv;
-    err_deriv /= world_step;
+    errors.drv = errors.len - errors.len_prv;
+    errors.drv /= world_step;
   }
-  const float dtc = (1.0f - pid_dra_dt);
-  err_dra *= dtc;
-  err_dra += err_deriv * pid_dra_dt;
-  if(max_err > 0.0f) {
+  const float dtc = (1.0f - errors.pid_dra_dt);
+  errors.drv_dra *= dtc;
+  errors.drv_dra += errors.drv * errors.pid_dra_dt;
+  if(errors.max > 0.0f) {
     for(int i=0; i<n_musc; i++) {
-      float er = err.FastEl1d(i);
-      if(er > max_err) er = max_err;
-      else if(er < -max_err) er = -max_err;
-      stims_p.FastEl1d(i) = er * gain_params.p_gain;
+      float er = errors.len.FastEl1d(i);
+      if(er > errors.max) er = errors.max;
+      else if(er < -(errors.max)) er = -(errors.max);
+      stims_p.FastEl1d(i) = er * gains.p;
     }
   }
   else {
-    stims_p = err * gain_params.p_gain;
+    stims_p = errors.len * gains.p;
   }
-  stims_i = err_int * gain_params.i_gain;
-  stims_d = err_dra * gain_params.d_gain;
+  stims_i = errors.itg * gains.i;
+  stims_d = errors.drv_dra * gains.d;
   stims = stims_p; stims += stims_i; stims += stims_d;
-  err_prv = err;
+  errors.len_prv = errors.len;
 
-  if(gain_params.musc_gains.size == n_musc)
-    stims *= gain_params.musc_gains;  // muscle specific gain on final stimulation
+  if(gains.musc.size == n_musc)
+    stims *= gains.musc;  // muscle specific gain on final stimulation
   ApplyStim(stims, forces);
 
-  err_int_mag = taMath_float::vec_norm(&err_int);
-  err_dra_mag = taMath_float::vec_norm(&err_dra);
+  errors.itg_mag = taMath_float::vec_norm(&(errors.itg));
+  errors.drv_dra_mag = taMath_float::vec_norm(&(errors.drv_dra));
   stims_p_mag = taMath_float::vec_norm(&stims_p);
   stims_i_mag = taMath_float::vec_norm(&stims_i);
   stims_d_mag = taMath_float::vec_norm(&stims_d);
@@ -1724,14 +1733,14 @@ bool VEArm::ComputeStim_PID() {
 }
 
 bool VEArm::ComputeStim_EV() {
-  err *= gain_params.ev_gain;
-  stims = err - vels;
-  stims *= gain_params.ev_gain;
+  errors.len *= gains.ev;
+  stims = errors.len - vels;
+  stims *= gains.ev;
   if(musc_type == HILL) {
     stims += vels * hill_mu;
   }
-  if(gain_params.musc_gains.size == n_musc)
-    stims *= gain_params.musc_gains;  // muscle specific gain on final stimulation
+  if(gains.musc.size == n_musc)
+    stims *= gains.musc;  // muscle specific gain on final stimulation
   ApplyStim(stims, forces, true); // flip sign
   return true;
 }
@@ -1815,7 +1824,7 @@ void VEArm::LogArmData(DataTable& dt) {
   dc->SetVal(hand_vra, -1);
 
   dc = dt.FindMakeCol("loc_err_mag", VT_FLOAT);
-  dc->SetVal(loc_err_mag, -1);
+  dc->SetVal(errors.loc_mag, -1);
 
   dc = dt.FindMakeCol("lens_mag", VT_FLOAT);
   dc->SetVal(lens_mag, -1);
@@ -1824,13 +1833,13 @@ void VEArm::LogArmData(DataTable& dt) {
   dc->SetVal(vels_mag, -1);
 
   dc = dt.FindMakeCol("err_mag", VT_FLOAT);
-  dc->SetVal(err_mag, -1);
+  dc->SetVal(errors.len_mag, -1);
 
   dc = dt.FindMakeCol("err_int_mag", VT_FLOAT);
-  dc->SetVal(err_int_mag, -1);
+  dc->SetVal(errors.itg_mag, -1);
 
   dc = dt.FindMakeCol("err_dra_mag", VT_FLOAT);
-  dc->SetVal(err_dra_mag, -1);
+  dc->SetVal(errors.drv_dra_mag, -1);
 
   dc = dt.FindMakeCol("stims_mag", VT_FLOAT);
   dc->SetVal(stims_mag, -1);
@@ -1845,10 +1854,10 @@ void VEArm::LogArmData(DataTable& dt) {
   dc->SetVal(stims_d_mag, -1);
 
   dc = dt.FindMakeCol("musc_gains_mag", VT_FLOAT);
-  dc->SetVal(gain_params.musc_gains_mag, -1);
+  dc->SetVal(gains.musc_mag, -1);
 
   dc = dt.FindMakeCol("io_err_mag", VT_FLOAT);
-  dc->SetVal(io_err_mag, -1);
+  dc->SetVal(errors.io_mag, -1);
 
   // dc = dt.FindMakeCol("", VT_FLOAT);
   //  dc->SetVal(, -1);
@@ -1880,12 +1889,12 @@ bool VEArm::InitDelayedInputsToTable() {
   if(arm_state->rows == 1) {
     int n = 1;
     // start with one row & no data
-    for(n=1; n < delay_params.pro_delay; n++) {
+    for(n=1; n < delays.pro; n++) {
       for(int i=0; i<n_musc; i++) {
         dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i); // these will correspond to resting muscle lengths, since this method is called before the reach begins
         dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i); // these are currently constant (will change once we have a moving target)
-        dc_n->SetMatrixVal(norm_err_dra.SafeEl(i),-1,0,0,0,i); // these are calculated using the delayed inputs from this table
-        dc_i->SetMatrixVal(io_err.SafeEl(i),-1,0,0,0,i); // these are calculated using delayed inputs
+        dc_n->SetMatrixVal(errors.len_norm_dra.SafeEl(i),-1,0,0,0,i); // these are calculated using the delayed inputs from this table
+        dc_i->SetMatrixVal(errors.io.SafeEl(i),-1,0,0,0,i); // these are calculated using delayed inputs
         dc_s->SetMatrixVal(0.0f,-1,0,0,0,i); // the hand is at rest, so the muscle speeds should all be zero
       }
       if(up_axis == Y) { // these correspond to a hand at rest, since this table is populated before the start of a reach
@@ -1900,14 +1909,14 @@ bool VEArm::InitDelayedInputsToTable() {
       }
       arm_state->AddBlankRow();
     }
-    // now we should have (pro_delay - 1) rows of data, one blank row, and index n = pro_delay
-    for(; n < delay_params.vis_delay; n++) {
+    // now we should have (delays.pro - 1) rows of data, one blank row, and index n = delays.pro
+    for(; n < delays.vis; n++) {
       for(int i=0; i<n_musc; i++) {
         dc_l->SetMatrixVal(norm_lens.SafeEl(i),-1,0,0,0,i);
         dc_t->SetMatrixVal(norm_targ_lens.SafeEl(i),-1,0,0,0,i);
-        dc_n->SetMatrixVal(norm_err_dra.SafeEl(i),-1,0,0,0,i);
-        dc_i->SetMatrixVal(io_err.SafeEl(i),-1,0,0,0,i);
-        dc_s->SetMatrixVal(norm_vels.SafeEl(i),-1,0,0,0,i); // this is the only change -- start giving the system current muscle velocities at the (pro_delay) row
+        dc_n->SetMatrixVal(errors.len_norm_dra.SafeEl(i),-1,0,0,0,i);
+        dc_i->SetMatrixVal(errors.io.SafeEl(i),-1,0,0,0,i);
+        dc_s->SetMatrixVal(norm_vels.SafeEl(i),-1,0,0,0,i); // this is the only change -- start giving the system current muscle velocities at the (delays.pro) row
       }
       if(up_axis == Y) {
         dc_h->SetMatrixVal(0.5f+(hand->cur_pos.x-should_loc.x)/(1.9f*maxl),-1, 0,0,0,0);
@@ -1921,22 +1930,22 @@ bool VEArm::InitDelayedInputsToTable() {
       }
       arm_state->AddBlankRow();
     }
-    // now we should have (vis_delay - 1) rows of data and one blank row!
-  } // if pro_delay = vis_delay = 1, we should have just one blank row
+    // now we should have (delays.vis - 1) rows of data and one blank row!
+  } // if delays.pro = delays.vis = 1, we should have just one blank row
   return true;
 }
 
 bool VEArm::NormLengthsToTable() {
   const char col_name[] = "lengths";
   DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  int d_row = delay_params.vis_delay - delay_params.pro_delay + 1;
+  int d_row = delays.vis - delays.pro + 1;
   if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
     arm_state->EnforceRows(1);
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(0.0f,-1, // -1 = last row (most recent)
                      0,0,0,i);
-    dc->SetMatrixVal(norm_lens.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
-                     0,0,0,i);                   // if pro_delay = vis_delay = 1, this will simply
+    dc->SetMatrixVal(norm_lens.SafeEl(i),-d_row, // -d_row = row corresponding to delays.pro
+                     0,0,0,i);                   // if delays.pro = delays.vis = 1, this will simply
   }                                              // overwrite the last row of arm_state w/ current vals
   return true;
 }
@@ -1956,15 +1965,15 @@ bool VEArm::NormTargLengthsToTable() {
 bool VEArm::NormSpeedsToTable() {
   const char col_name[] = "speeds"; 
   DataCol* dc = arm_state->FindMakeColMatrix(col_name, VT_FLOAT, 4, 1,1,1,n_musc);
-  int d_row = delay_params.vis_delay - delay_params.pro_delay + 1;
+  int d_row = delays.vis - delays.pro + 1;
   if(arm_state->rows == 0)       // empty table, make sure we have at least 1 row
     arm_state->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
     dc->SetMatrixVal(0.0f,-1, // -1 = last row
                      0,0,0,i);
-    dc->SetMatrixVal(norm_vels.SafeEl(i),-d_row, // -d_row = row corresponding to pro_delay
-                     0,0,0,i);                   // if pro_delay = vis_delay = 1, this will simply
+    dc->SetMatrixVal(norm_vels.SafeEl(i),-d_row, // -d_row = row corresponding to delays.pro
+                     0,0,0,i);                   // if delays.pro = delays.vis = 1, this will simply
   }                                              // overwrite the last row of arm_state w/ current vals
   return true;
 }
@@ -1999,7 +2008,7 @@ bool VEArm::NormErrDraToTable() {
     arm_state->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(norm_err_dra.SafeEl(i),-1, // -1 = last row
+    dc->SetMatrixVal(errors.len_norm_dra.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
   }
   return true;
@@ -2012,7 +2021,7 @@ bool VEArm::IOErrToTable() {
     arm_state->EnforceRows(1);
   
   for(int i=0; i<n_musc; i++) {
-    dc->SetMatrixVal(io_err.SafeEl(i),-1, // -1 = last row
+    dc->SetMatrixVal(errors.io.SafeEl(i),-1, // -1 = last row
                      0,0,0,i);
   }
   return true;
@@ -2062,74 +2071,67 @@ void VEArm::CurFromODE(bool updt_disp) {
 }
 
 bool VEArm::GetNormVals() {
-  // make sure all inputs are (n_musc)-element arrays:
   norm_lens.SetGeom(1,n_musc);
   norm_targ_lens.SetGeom(1,n_musc);
   norm_vels.SetGeom(1,n_musc);
-  norm_err.SetGeom(1,n_musc);
-  norm_err_deriv.SetGeom(1,n_musc);
-  norm_err_dra.SetGeom(1,n_musc);
-  norm_err_prv.SetGeom(1,n_musc);
-  io_err.SetGeom(1,n_musc);
+  errors.len_norm.SetGeom(1,n_musc);
+  errors.len_norm_dt.SetGeom(1,n_musc);
+  errors.len_norm_dra.SetGeom(1,n_musc);
+  errors.len_norm_prv.SetGeom(1,n_musc);
+  errors.io.SetGeom(1,n_musc);
 
-  // hand is a pointer to the VEBody object HAND in VEWorld
   VEBody* hand = bodies[HAND];
 
-  // TODO: feed the delayed hand coords into this hand_loc_abs variable --
-  // this will automatically calculate the hand_vra input based on delayed info
-  if(isNewReach) {
+  if(reach_start) {
     hand_loc_abs = hand->cur_pos;
     hand_loc_rel = hand_loc_abs - should_loc;
     hand_loc_actual = hand_loc_rel;
   }
   else {
-    taMatrixPtr mat(arm_state->GetValAsMatrix("hand_coords", -(delay_params.vis_delay)));
+    taMatrixPtr mat(arm_state->GetValAsMatrix("hand_coords", -(delays.vis)));
     hand_loc_rel.FromMatrix(*mat);
     hand_loc_abs = hand->cur_pos;
     hand_loc_actual = hand_loc_abs - should_loc;
   }
 
-  loc_err = targ_loc_rel - hand_loc_rel;
-  loc_err_mag = loc_err.Mag();
+  errors.loc = targ_loc_rel - hand_loc_rel;
+  errors.loc_mag = errors.loc.Mag();
 
   hand_vel = hand_loc_rel - hand_loc_prv;
   hand_vel_mag = hand_vel.Mag();
   hand_vra = (1.0f - hand_vra_dt) * hand_vra + hand_vra_dt * hand_vel_mag;
   hand_loc_prv = hand_loc_rel;
 
-  // this is where the current lengths/speeds come from... since they are already delayed
-  // by NormLengthsToTable and NormSpeedsToTable, no need to change either one
   Lengths(norm_lens, true); // true = normalize
   Speeds(norm_vels, true); // true = normalize
 
-  // TODO: feed the delayed muscle lengths from arm_state into the norm_err calculation below
-  if(isNewReach) {
-    norm_err = norm_targ_lens - norm_lens;
+  if(reach_start) {
+    errors.len_norm = norm_targ_lens - norm_lens;
   }
   else {
-    taMatrixPtr mat(arm_state->GetValAsMatrix("lengths", -(delay_params.vis_delay)));
-    norm_err = norm_targ_lens - *mat;
+    taMatrixPtr mat(arm_state->GetValAsMatrix("lengths", -(delays.vis)));
+    errors.len_norm = norm_targ_lens - *mat;
   }
   
   if(arm_time > 2.0f * world_step) {
-    norm_err_deriv = norm_err - norm_err_prv;
-    norm_err_deriv /= world_step;
-    const float dtc = (1.0f - norm_err_dra_dt);
-    norm_err_dra *= dtc;
-    norm_err_dra += (norm_err_deriv * norm_err_dra_dt);
+    errors.len_norm_dt = errors.len_norm - errors.len_norm_prv;
+    errors.len_norm_dt /= world_step;
+    const float dtc = (1.0f - errors.norm_dra_dt);
+    errors.len_norm_dra *= dtc;
+    errors.len_norm_dra += (errors.len_norm_dt * errors.norm_dra_dt);
     for(int i=0; i<n_musc; i++) {
-      float ne = norm_err_dra.FastEl1d(i);
-      float& io = io_err.FastEl1d(i);
-      if(ne > io_err_thr)
+      float ne = errors.len_norm_dra.FastEl1d(i);
+      float& io = errors.io.FastEl1d(i);
+      if(ne > errors.io_thr)
         io = 1.0f;
       else
         io = 0.0f;
-    } // TODO: figure out how io_err is calculated, and feed it delayed values
-  }   // io_err is 0 by default, set to 1 if norm_err_dra > io_err_thr (currently 0.001)
+    }
+  }
 
-  io_err_mag = taMath_float::vec_norm(&io_err);
+  errors.io_mag = taMath_float::vec_norm(&(errors.io));
 
-  norm_err_prv = norm_err;
+  errors.len_norm_prv = errors.len_norm;
 
   return true;
 }
@@ -2147,33 +2149,33 @@ void VEArm::InitDynamicState() {
   norm_lens.SetGeom(1,n_musc);
   norm_targ_lens.SetGeom(1,n_musc);
   norm_vels.SetGeom(1,n_musc);
-  norm_err.SetGeom(1,n_musc);
-  norm_err_deriv.SetGeom(1,n_musc);
-  norm_err_dra.SetGeom(1,n_musc);
-  norm_err_prv.SetGeom(1,n_musc);
-  io_err.SetGeom(1,n_musc);
+  errors.len_norm.SetGeom(1,n_musc);
+  errors.len_norm_dt.SetGeom(1,n_musc);
+  errors.len_norm_dra.SetGeom(1,n_musc);
+  errors.len_norm_prv.SetGeom(1,n_musc);
+  errors.io.SetGeom(1,n_musc);
 
-  err.SetGeom(1,n_musc);
-  err_int.SetGeom(1,n_musc);
-  err_deriv.SetGeom(1,n_musc);
-  err_dra.SetGeom(1,n_musc);
-  err_prv.SetGeom(1,n_musc);
+  errors.len.SetGeom(1,n_musc);
+  errors.itg.SetGeom(1,n_musc);
+  errors.drv.SetGeom(1,n_musc);
+  errors.drv_dra.SetGeom(1,n_musc);
+  errors.len_prv.SetGeom(1,n_musc);
   stims.SetGeom(1,n_musc);
   forces.SetGeom(2, 3, n_musc);
 
-  err.InitVals(0.0f);
-  err_int.InitVals(0.0f);
-  err_deriv.InitVals(0.0f);
-  err_dra.InitVals(0.0f);
-  err_prv.InitVals(0.0f);
+  errors.len.InitVals(0.0f);
+  errors.itg.InitVals(0.0f);
+  errors.drv.InitVals(0.0f);
+  errors.drv_dra.InitVals(0.0f);
+  errors.len_prv.InitVals(0.0f);
   stims.InitVals(0.0f);
   forces.InitVals(0.0f);
 
-  norm_err.InitVals(0.0f);
-  norm_err_deriv.InitVals(0.0f);
-  norm_err_dra.InitVals(0.0f);
-  norm_err_prv.InitVals(0.0f);
-  io_err.InitVals(0.0f);
+  errors.len_norm.InitVals(0.0f);
+  errors.len_norm_dt.InitVals(0.0f);
+  errors.len_norm_dra.InitVals(0.0f);
+  errors.len_norm_prv.InitVals(0.0f);
+  errors.io.InitVals(0.0f);
 }
 
 void VEArm::Init() {
