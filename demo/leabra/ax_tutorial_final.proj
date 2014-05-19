@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7191
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7193
 LeabraProject .projects["ax_tutorial_final"] { 
  Doc_Group @.docs = [8] {
   taDoc @["ProjectDocs"] { };
@@ -19,7 +19,19 @@ LeabraProject .projects["ax_tutorial_final"] {
   };
  };
 
- ControlPanel_Group @.ctrl_panels = [1] {
+ ControlPanel_Group @.ctrl_panels = [2] {
+  ControlPanel @["ControlPanel"] { 
+   EditMbrItem_Group @.mbrs = [1] {
+    EditMbrItem @[0] { };
+   };
+
+   EditMthItem_Group @.mths = [4] {
+    EditMthItem @[0] { };
+    EditMthItem @[1] { };
+    EditMthItem @[2] { };
+    EditMthItem @[3] { };
+   };
+  };
   ClusterRun @["ClusterRun"] { 
    EditMbrItem_Group @.mbrs = [0] {
    };
@@ -252,67 +264,31 @@ LeabraProject .projects["ax_tutorial_final"] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
-       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["epoch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
-       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["trial"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
-       UserDataItem @["view_panel_wd"] { };
       };
      };
-     String_Data @["trial_name"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     String_Data @["group_name"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     String_Data @["trial_name"] { };
+     String_Data @["group_name"] { };
      int_Data @["phase_no"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
-       UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["minus_cycles"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["sse"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["ext_rew"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["Input_act_m"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["Hidden_act_m"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["Output_act_m"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     float_Data @["minus_cycles"] { };
+     float_Data @["sse"] { };
+     float_Data @["ext_rew"] { };
+     float_Data @["Input_act_m"] { };
+     float_Data @["Hidden_act_m"] { };
+     float_Data @["Output_act_m"] { };
     };
    };
    DataTable @["EpochOutputData"] { 
@@ -320,45 +296,19 @@ LeabraProject .projects["ax_tutorial_final"] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
-       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["epoch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
-       UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["avg_sse"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["cnt_err"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["avg_ext_rew"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["avg_cycles"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["epoch_time_tot"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["epoch_time_usr"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
+     float_Data @["avg_sse"] { };
+     float_Data @["cnt_err"] { };
+     float_Data @["avg_ext_rew"] { };
+     float_Data @["avg_cycles"] { };
+     float_Data @["epoch_time_tot"] { };
+     float_Data @["epoch_time_usr"] { };
     };
    };
   };
@@ -1831,20 +1781,34 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:b7dcca057a83834e869a8643e6708ead */
 div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(http://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:9122836d3502d9eae103e0f9152a1636 */</style><style>
+.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(http://grey.colorado.edu/emergent/resources/mediawiki.action/images/green-checkmark.png?2014-04-01T18:51:40Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:21890987e6d941185010b52ef3d48157 */
+#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */
 .ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute;left:-99999999px}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:after{content:\".\";display:block;height:0;clear:both;visibility:hidden}.ui-helper-clearfix{display:inline-block} * html .ui-helper-clearfix{height:1%}.ui-helper-clearfix{display:block} .ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:sans-serif;font-size:0.8em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:sans-serif;font-size:1em}.ui-widget-content{border:1px solid #cccccc;background:#f2f5f7 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAKElEQVQYV2P6+ev3fyYGIBiGxH8w6/9/GAsshuD+Byv5D2dhKh6eBAAABBSmkTpaYQAAAABJRU5ErkJggg==) 50% top repeat-x;background:#f2f5f7 url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_100_f2f5f7_1x100.png?2014-04-01T18:51:40Z) 50% top repeat-x!ie;color:#362b36}.ui-widget-content a{color:#362b36}.ui-widget-header{border-bottom:1px solid #bbbbbb;line-height:1em;background:#ffffff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAF0lEQVQYV2P49+/ff4ZhQPwHglGCKAIAdlSOCIOoOV0AAAAASUVORK5CYII=) 50% 50% repeat-x;background:#ffffff url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_ffffff_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #aed0ea;background:#d7ebf9 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAL0lEQVQY02N69eXPfyYGIBhexH+G/0DiP5gFJP79RxAwiX9giX//kZUgdDAMXwIA/14cgwH0gmgAAAAASUVORK5CYII=) 50% 50% repeat-x;background:#d7ebf9 url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_80_d7ebf9_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;font-weight:normal;color:#2779aa}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#2779aa;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #74b2e2;background:#e4f1fb url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAMUlEQVQYV2P68vPvfyYGIBhCxP//cBacYAAKInGRlIBYaBJQHWAWXBuqoVBZmNhwIgBlYh6Ywkr41gAAAABJRU5ErkJggg==) 50% 50% repeat-x;background:#e4f1fb url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_e4f1fb_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;font-weight:normal;color:#0070a3}.ui-state-hover a,.ui-state-hover a:hover{color:#0070a3;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #cccccc;background:#f0f0f0 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAIElEQVQYV2P68OHDfyYGIBiuBCMjIzILGxdNDI017AgARXMEsCkUdugAAAAASUVORK5CYII=) 50% 50% repeat-x;url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_inset-hard_100_f0f0f0_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;font-weight:normal;color:#000000}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#000000;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #f9dd34;background:#ffef8f url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAAEwK2r2AAAAX0lEQVQYV2P+/3HBf+aGyoAGTMK3gbm+3B1IVLgCuRUe2AlsBtRX+oG0eYEMcAOpcyNeLx4CbKgP3GRPEAtssjse95HkcOoQUO/7obrZG+rwBrjrGyo8oa6vJ88L5BEAeRC4pmqV01IAAAAASUVORK5CYII=) 50% top repeat-x;url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_25_ffef8f_1x100.png?2014-04-01T18:51:40Z) 50% top repeat-x!ie;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#cd0a0a url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkAQMAAADOquA5AAAAA1BMVEXNCgokNzldAAAAD0lEQVQoFWNgGAWjgPoAAAJYAAEDeXiTAAAAAElFTkSuQmCC) 50% 50% repeat-x;url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_flat_15_cd0a0a_40x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;color:#ffffff}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#ffffff}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#ffffff}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px}.ui-icon,.ui-widget-content .ui-icon,.ui-widget-header .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEV0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psyPQTyXAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAM6klEQVR4XuybAYrjMAxFrRzw3f84C2F2g+ex34Q0NKV6sCzNl2xLVpy47own0DRNUV8ePw/PAHU5xChSUJMx9cYKBGAy0ATBL7VA6kGBOpD/ZAz1vgoEQHPkBHgGrdrdHdhYLrfg8ccQgl5ABe/QuoFSj/cC5QBdAblCPMOxAsIAVAFvwUNUfCIYFCzSC6U14DueAr6FdmOqX4Sapmmapmm+4k2wHvUi5t0OVAiIHZSv/H1A+EKoUBO34gEoATaYzScD5avcHBU3j2riBjz+POIgF1AhXzGfBtj/3Y0r+KDSiMvmDrhSPmUeKuBNFHd+H+A7xGtAPwW+gqZpmqZpGq55A1xqn/cGMIB4weJJONe/E4o+WI8esX0GNpndsZY60ACkrvvP8SBZutQQgbvjl4jEWEFywGLuP26XcQKCzE6OILnHAThAdmYDZnN21P+JFOUShlV+HTHZ3QM418OJ8KzaAHQh60Ng/1zQoUPLvpRVxkV4qH9+TDZN0zRN01z/WSpcHkDcL2aNnRHIasG5AYQOZBUjyAOYj5WoScpQaQONj/chbjCX/ctdAUjLAwCYDxahJi1WEFRMQKm7dZnFDECMH4m6YncOkSlFjFBB3g47wfgKYz0ApKoBjVD+0uVvGTUwQoBKgBK0ToAGIHsZrGWI++dhd98CoYuRboGCOnMLuMbdP2ERwwEIT5kk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);background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_72a7cf_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-default .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_3d80b3_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEUkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwOSETqAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAM6klEQVR4XuybAYrjMAxFrRzw3f84C2F2g+ex34Q0NKV6sCzNl2xLVpy47own0DRNUV8ePw/PAHU5xChSUJMx9cYKBGAy0ATBL7VA6kGBOpD/ZAz1vgoEQHPkBHgGrdrdHdhYLrfg8ccQgl5ABe/QuoFSj/cC5QBdAblCPMOxAsIAVAFvwUNUfCIYFCzSC6U14DueAr6FdmOqX4Sapmmapmm+4k2wHvUi5t0OVAiIHZSv/H1A+EKoUBO34gEoATaYzScD5avcHBU3j2riBjz+POIgF1AhXzGfBtj/3Y0r+KDSiMvmDrhSPmUeKuBNFHd+H+A7xGtAPwW+gqZpmqZpGq55A1xqn/cGMIB4weJJONe/E4o+WI8esX0GNpndsZY60ACkrvvP8SBZutQQgbvjl4jEWEFywGLuP26XcQKCzE6OILnHAThAdmYDZnN21P+JFOUShlV+HTHZ3QM418OJ8KzaAHQh60Ng/1zQoUPLvpRVxkV4qH9+TDZN0zRN01z/WSpcHkDcL2aNnRHIasG5AYQOZBUjyAOYj5WoScpQaQONj/chbjCX/ctdAUjLAwCYDxahJi1WEFRMQKm7dZnFDECMH4m6YncOkSlFjFBB3g47wfgKYz0ApKoBjVD+0uVvGTUwQoBKgBK0ToAGIHsZrGWI++dhd98CoYuRboGCOnMLuMbdP2ERwwEIT5kk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);background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_2694e8_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-active .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_666666_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-highlight .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_2e83ff_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_ffffff_256x240.png?2014-04-01T18:51:40Z)!ie} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-tl{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0}.ui-corner-tr{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bl{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-br{-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-top{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bottom{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-right{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-left{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-all{-moz-border-radius:0;-webkit-border-radius:0} .ui-widget-overlay{background:#000000;opacity:.75;filter:Alpha(Opacity=75)}.ui-widget-shadow{margin:-7px 0 0 -7px;padding:7px;background:#000000 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkAQMAAADOquA5AAAAA1BMVEUAAACnej3aAAAAD0lEQVQoFWNgGAWjgPoAAAJYAAEDeXiTAAAAAElFTkSuQmCC) 50% 50% repeat-x;background:#000000 url(http://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_flat_70_000000_40x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;opacity:.20;filter:Alpha(Opacity=20);-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:66f90a278bd1fe23211b17f5f85a17f0 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:66f90a278bd1fe23211b17f5f85a17f0 */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */
+.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:09e43d1292df09b412447d2a1c11b776 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a{text-decoration:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:7eff986bfd76653022a4188143e1a40c */</style>
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20140401T185136Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":10614,\"wgRevisionId\":10614,\"wgArticleId\":232,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgUserId\":3,\"wgUserEditCount\":2165,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":10614,\"wgRevisionId\":10614,\"wgArticleId\":232,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgUserId\":3,\"wgUserEditCount\":2193,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":
 0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"01de351e364a1e489629dd8febe308bf+\\\\\",\"patrolToken\":\"1aec6aa4c6b8343c68beb44be8a25871+\\\\\",\"watchToken\":\"e680434738f1a818906d249254ad13d8+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:4304387483eef80f29b30b77224a36a2 */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"4e155363c95a362d8d68c31f60204a8f+\\\\\",\"patrolToken\":\"93786a35cce12a322179d0447dc7787c+\\\\\",\"watchToken\":\"947cb27e42e0ce48c25680be9f36362d+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:8b9d168c7b4d9642b51f9005be74deb3 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
@@ -1938,7 +1902,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 <!-- 
 NewPP limit report
 CPU time usage: 0.040 seconds
-Real time usage: 0.047 seconds
+Real time usage: 0.045 seconds
 Preprocessor visited node count: 32/1000000
 Preprocessor generated node count: 58/1000000
 Post?expand include size: 48/2097152 bytes
@@ -1947,7 +1911,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:232-0!*!0!!en!*!* and timestamp 20140518065432
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:232-0!*!0!!en!*!* and timestamp 20140519072844
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=AX_Tutorial&amp;oldid=10614\">http://grey.colorado.edu/emergent/index.php?title=AX_Tutorial&amp;oldid=10614</a>\"				</div>
@@ -1960,14 +1924,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=AX+Tutorial\" title=\"Log out\">Log out</a></li>	</ul>
+<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [ctrl-alt-.]\" accesskey=\".\">Oreilly</a></li><li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [ctrl-alt-n]\" accesskey=\"n\">Talk</a></li><li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">Preferences</a></li><li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"A list of pages you are monitoring for changes [ctrl-alt-l]\" accesskey=\"l\">Watchlist</a></li><li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"A list of your contributions [ctrl-alt-y]\" accesskey=\"y\">Contributions</a></li><li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=AX+Tutorial\" title=\"Log out\">Log out</a></li>	<li><a href=\"/emergent/index.php/Using_emergent\">Docs</a></li><li><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li><li><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">emergent-users mailing list</a></li><li><a href=\"/emergent/index.php/Special:RecentChanges\">Recent Changes</a></li><li><a href=\"/emergent/index.php/Special:Upload\">Upload File</a></li><li><a href=\"/emergent/index.php/Special:SpecialPages\">Special Pages</a></li><li><a href=\"/emergent/index.php/Main_Page\">Main Page</a></li></ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:AX_Tutorial&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:AX_Tutorial&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -1985,18 +1949,18 @@ Expensive parser function count: 0/100
 	<h3 id=\"p-views-label\">Views</h3>
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\">Read</a></span></li>
-					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=cef1a71d1b56ae8c249a4c4b70c97c90%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
+					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=38629adacbc437344bced3f52fdf88bb%2B%5C\" title=\"Remove this page from your watchlist [ctrl-alt-w]\" accesskey=\"w\">Unwatch</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
 	<h3 id=\"p-cactions-label\" tabindex=\"0\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
 	<div class=\"menu\">
 		<ul>
-							<li id=\"ca-delete\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=delete\" title=\"Delete this page [d]\" accesskey=\"d\">Delete</a></li>
-							<li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/AX_Tutorial\" title=\"Move this page [m]\" accesskey=\"m\">Move</a></li>
-							<li id=\"ca-protect\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=protect\" title=\"Protect this page [=]\" accesskey=\"=\">Protect</a></li>
+							<li id=\"ca-delete\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=delete\" title=\"Delete this page [ctrl-alt-d]\" accesskey=\"d\">Delete</a></li>
+							<li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/AX_Tutorial\" title=\"Move this page [ctrl-alt-m]\" accesskey=\"m\">Move</a></li>
+							<li id=\"ca-protect\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=protect\" title=\"Protect this page [ctrl-alt-=]\" accesskey=\"=\">Protect</a></li>
 							<li id=\"ca-purge\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=purge\">Refresh</a></li>
 					</ul>
 	</div>
@@ -2005,20 +1969,20 @@ Expensive parser function count: 0/100
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/emergent/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
 				</div>
 			</div>
-			<div id=\"mw-panel\">
+			<div id=\"mw-panel\" class=\"collapsible-nav\">
 					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+				<div class=\"portal first persistent\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
 			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
 			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
 			<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
@@ -2026,27 +1990,27 @@ Expensive parser function count: 0/100
 		</ul>
 	</div>
 </div>
-<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\">Tools</h3>
-	<div class=\"body\">
+<div class=\"portal expanded\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
+	<div class=\"body\" style=\"display: block;\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/AX_Tutorial\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/AX_Tutorial\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [u]\" accesskey=\"u\">Upload file</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/AX_Tutorial\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/AX_Tutorial\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
+			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;oldid=10614\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=info\">Page information</a></li>
 			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/AX_Tutorial\" rel=\"smw-browse\">Browse properties</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+<div class=\"portal collapsed\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\" tabindex=\"3\"><a href=\"#\">Print/export</a></h3>
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=AX+Tutorial\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=AX+Tutorial&amp;oldid=10614&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/emergent/index.php?title=AX_Tutorial&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -2055,7 +2019,7 @@ Expensive parser function count: 0/100
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 16 May 2014, at 02:19.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 17,351 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 17,359 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2074,11 +2038,11 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"loadi
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"mediawiki.page.watch.ajax\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
-<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
+<script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script><div class=\"suggestions\" style=\"display: none; font-size: 12px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div>
 <script>if(window.mw){
 mw.loader.state({\"user.groups\":\"ready\"});
 }</script>
-<!-- Served in 0.407 secs. -->
+<!-- Served in 0.527 secs. -->
 	
 
 </body></html>";
@@ -4276,6 +4240,67 @@ mw.loader.state({\"user.groups\":\"ready\"});
   name="ctrl_panels";
   el_typ=ControlPanel;
   el_def=0;
+  ControlPanel @["ControlPanel"] {
+   name="ControlPanel";
+   auto_edit=1;
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=EditMbrItem;
+    el_def=0;
+    EditMbrItem @[0] {
+     label="LeabraConSpec_1_lrate";
+     desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
+     cust_desc=0;
+     base=.projects["ax_tutorial_final"].networks["Network_1"].specs["LeabraConSpec_1"]$$;
+     mbr=LeabraConSpec::lrate;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+    };
+   };
+   mths {
+    name="mths";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+    EditMthItem @[0] {
+     label="Train_Init";
+     desc=" set the program state back to the beginning";
+     cust_desc=0;
+     base=.projects["ax_tutorial_final"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$$;
+     mth=Program::Init;
+    };
+    EditMthItem @[1] {
+     label="Train_Run";
+     desc=" run the program -- if not yet Init, will run Init first";
+     cust_desc=0;
+     base=$.projects["ax_tutorial_final"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     mth=Program::Run_Gui;
+    };
+    EditMthItem @[2] {
+     label="Train_Step";
+     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
+     cust_desc=0;
+     base=$.projects["ax_tutorial_final"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     mth=Program::Step_Gui;
+    };
+    EditMthItem @[3] {
+     label="Train_Stop";
+     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
+     cust_desc=0;
+     base=$.projects["ax_tutorial_final"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
+     mth=Program::Stop;
+    };
+   };
+  };
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
    auto_edit=0;
@@ -6069,17 +6094,12 @@ mw.loader.state({\"user.groups\":\"ready\"});
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_60";
+       name="UserDataItem_List_64";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
-	val_type_fixed=0;
-       };
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
 	val_type_fixed=0;
        };
       };
@@ -6091,26 +6111,21 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_61";
+       name="UserDataItem_List_65";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
-	val_type_fixed=0;
-       };
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
 	val_type_fixed=0;
        };
       };
@@ -6122,26 +6137,21 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_62";
+       name="UserDataItem_List_66";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
-	val_type_fixed=0;
-       };
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
 	val_type_fixed=0;
        };
       };
@@ -6153,24 +6163,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      String_Data @["trial_name"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_64";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="trial_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6179,24 +6179,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      String_Data @["group_name"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_65";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="group_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6205,26 +6195,21 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_63";
+       name="UserDataItem_List_67";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
-	val_type_fixed=0;
-       };
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
 	val_type_fixed=0;
        };
       };
@@ -6236,24 +6221,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["minus_cycles"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_66";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="minus_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6262,24 +6237,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["sse"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_67";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6288,24 +6253,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["ext_rew"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_68";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="ext_rew";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6314,24 +6269,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["Input_act_m"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_69";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="Input_act_m";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -6340,24 +6285,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [2] ;;      };
       width=0;
       ar {
-       name="ar";
+       name=;
       [3 2 0]       };
      };
      float_Data @["Hidden_act_m"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_70";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="Hidden_act_m";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -6366,24 +6301,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [2] ;;      };
       width=0;
       ar {
-       name="ar";
+       name=;
       [4 4 0]       };
      };
      float_Data @["Output_act_m"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_71";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="Output_act_m";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
@@ -6392,11 +6317,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [2] ;;      };
       width=0;
       ar {
-       name="ar";
+       name=;
       [2 1 0]       };
      };
     };
@@ -6417,17 +6342,12 @@ mw.loader.state({\"user.groups\":\"ready\"});
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_56";
+       name="UserDataItem_List_60";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
-	val_type_fixed=0;
-       };
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
 	val_type_fixed=0;
        };
       };
@@ -6439,26 +6359,21 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_57";
+       name="UserDataItem_List_61";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
 	name="NARROW";
 	value 1 0=1;
-	val_type_fixed=0;
-       };
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
 	val_type_fixed=0;
        };
       };
@@ -6470,24 +6385,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["avg_sse"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_58";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="avg_sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6496,24 +6401,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["cnt_err"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_59";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="cnt_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6522,24 +6417,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["avg_ext_rew"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_60";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="avg_ext_rew";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6548,24 +6433,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["avg_cycles"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_61";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="avg_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6574,24 +6449,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_62";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="epoch_time_tot";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6600,24 +6465,14 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
-      UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_63";
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1569858640432358;
-	val_type_fixed=0;
-       };
-      };
       name="epoch_time_usr";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -6626,11 +6481,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name="dim_names";
+       name=;
       [0]       };
       width=0;
       ar {
-       name="ar";
+       name=;
       [0]       };
      };
     };
@@ -7429,7 +7284,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
 	  };
 	 };
 	};
-	target=.projects["ax_tutorial_final"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$$;
+	target=$.projects["ax_tutorial_final"].programs.gp["LeabraAll_Std"]["LeabraTrain"]$;
 	targ_ld_init="*LeabraTrain*";
        };
        NetCounterIncr @[1] {
@@ -15204,7 +15059,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects["ax_tutorial_final"].networks["Network_1"].specs["LeabraConSpec_1"]$$: };
+       con_spec {type=LeabraConSpec: spec=$.projects["ax_tutorial_final"].networks["Network_1"].specs["LeabraConSpec_1"]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
