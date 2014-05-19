@@ -17,11 +17,9 @@
 #define ElseIf_h 1
 
 // parent includes:
-#include <ProgEl>
+#include <CondBase>
 
 // member includes:
-#include <ProgExpr>
-#include <ProgEl_List>
 
 // declare all other types mentioned but not required to include:
 class ProgVar; // 
@@ -29,11 +27,10 @@ class ProgVar; //
 
 taTypeDef_Of(ElseIf);
 
-class TA_API ElseIf: public ProgEl { 
+class TA_API ElseIf: public CondBase {
   // ##DEF_CHILD_true_code a conditional test element: if(condition) then run true_code -- comes after a previous If or ElseIf and only runs if that previous test was false -- can be followed in turn by an Else or ElseElseIf to run if condition is false
-INHERITED(ProgEl)
+INHERITED(CondBase)
 public:
-  ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
 
   int 		ProgElChildrenCount() const override
@@ -41,7 +38,6 @@ public:
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
 
   virtual bool  CheckAfterIf();
   // check if comes after if or else if
@@ -61,7 +57,7 @@ protected:
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssBody_impl(Program* prog) override; //replaces ElseIf
   void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) override;
+  const   String	GenListing_children(int indent_level) override;
 
 private:
   void	Initialize();

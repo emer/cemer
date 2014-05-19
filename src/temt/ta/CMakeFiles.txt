@@ -318,6 +318,7 @@ set(ta_HEADS_MAKETA_NOMOC
   ForLoop.h
   ForeachLoop.h
 
+  CondBase.h
   If.h
   Else.h
   ElseIf.h
@@ -756,6 +757,7 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgElChoiceDlg.h
   ProgBrkPt.h
   ProgBrkPt_List.h
+  CondBase.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -1426,6 +1428,7 @@ set(ta_SRCS_MAKETA
   ForLoop.cpp
   ForeachLoop.cpp
 
+  CondBase.cpp
   If.cpp
   Else.cpp
   ElseIf.cpp
@@ -1925,6 +1928,7 @@ set(ta_SRCS_MAKETA
   ViewBackground.cpp
   ViewBackground_List.cpp
   iDialogColorChooser.cpp
+  CondBase.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

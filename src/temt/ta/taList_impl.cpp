@@ -29,6 +29,9 @@
 #include <dumpMisc>
 #include <MemberDef>
 #include <iTreeViewItem>
+#include <CondBase>>
+#include <If>>
+#include <ElseIf>>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -550,6 +553,30 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   taBase* itm = (taBase*)el[idx];
   if(TestError(!itm, "ChangeType", "item is null")) return false;
   TypeDef* itd = itm->GetTypeDef();
+  
+  bool do_conditional_copy = false;
+  String condition;
+  ProgEl_List children;
+  // save the progexpr and the children
+//  if (itm->InheritsFromName("CondBase") && new_type->InheritsFromName("CondBase")) {
+    if ((itm->InheritsFromName("ElseIf") || itm->InheritsFromName("If")) &&
+        (new_type->InheritsFromName("ElseIf") || new_type->InheritsFromName("If"))) {
+//    CondBase* temp = dynamic_cast<CondBase*>(itm);
+//      condition = temp->cond.expr;
+//      children.Copy(temp->true_code);
+      if (itm->InheritsFromName("If")) {
+        If* temp = dynamic_cast<If*>(itm);
+        condition = temp->cond.expr;
+        children.Copy(temp->true_code);
+      }
+      else {
+        ElseIf* temp = dynamic_cast<ElseIf*>(itm);
+        condition = temp->cond.expr;
+        children.Copy(temp->true_code);
+      }
+    do_conditional_copy = true;
+  }
+    
   if(!new_type->InheritsFrom(itd) && !itm->InheritsFrom(new_type)) {
     // do they have a common parent? if so, convert to that first, then back to new_type
     if(itd->parents.size >= 1) {
@@ -589,6 +616,22 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
     itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
     // then do a delayed remove of this object (in case called by itself!)
     itm->CloseLater();
+    // set the condition and code from the old item
+    if (do_conditional_copy && (rval->InheritsFromName("If") || rval->InheritsFromName("ElseIf"))) {
+      //      CondBase* new_obj = dynamic_cast<CondBase*>(rval);
+      //      new_obj->cond.expr = condition;
+      //      new_obj->true_code.Copy(children);
+      if (rval->InheritsFromName("If")) {
+        If* new_obj = dynamic_cast<If*>(rval);
+        new_obj->cond.expr = condition;
+        new_obj->true_code.Copy(children);
+      }
+      else {
+        ElseIf* new_obj = dynamic_cast<ElseIf*>(rval);
+        new_obj->cond.expr = condition;
+        new_obj->true_code.Copy(children);
+      }
+    }
   }
   --taMisc::is_changing_type;
   return true;

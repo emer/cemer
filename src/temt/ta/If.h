@@ -17,25 +17,20 @@
 #define If_h 1
 
 // parent includes:
-#include <ProgEl>
+#include <CondBase>
 
 // member includes:
-#include <ProgExpr>
-#include <ProgEl_List>
-
+//
 // declare all other types mentioned but not required to include:
 class ProgVar; // 
 
-
 taTypeDef_Of(If);
 
-class TA_API If: public ProgEl { 
+class TA_API If: public CondBase {
   // #AKA_IfElse ##DEF_CHILD_true_code a conditional test element: if(condition) then run true_code -- can be followed by an Else or ElseIf to run if condition is false
-INHERITED(ProgEl)
+INHERITED(CondBase)
 public:
-  ProgExpr	    cond; 	// #BROWSER_EDIT_LOOKUP condition expression to test for true or false
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
-
   ProgEl_List	    false_code; // #HIDDEN #NO_SAVE #OBSOLETE items to execute if condition false (now moved to a separate Else code)
 
   int 		ProgElChildrenCount() const override
@@ -43,9 +38,8 @@ public:
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
-  bool		IsCtrlProgEl() 	override { return true; }
 
-  taList_impl*	children_() override { return &true_code; }	
+  taList_impl*	children_() override { return &true_code; }
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   ProgVar*	FindVarName(const String& var_nm) const override;
@@ -59,10 +53,10 @@ protected:
   void		PreGenChildren_impl(int& item_id) override;
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssBody_impl(Program* prog) override; //replaces If
-  void		GenCssPost_impl(Program* prog) override; 
-  const String	GenListing_children(int indent_level) override;
+  void		GenCssPost_impl(Program* prog) override;
+  const   String	GenListing_children(int indent_level) override;
 
-  void          ConvertFromIfElse(); // #IGNORE
+  void    ConvertFromIfElse(); // #IGNORE
 
 private:
   void	Initialize();
