@@ -46,6 +46,7 @@ void GraphAxisBase::Initialize() {
   on = true;
   axis = Y;
   col_lookup = NULL;
+  is_string = false;
   is_matrix = false;
   n_cells = 1;
   matrix_cell = 0;

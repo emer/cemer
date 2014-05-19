@@ -112,7 +112,7 @@ void Program::InitLinks() {
 
 void Program::CutLinks() {
   if(script) {                  // clear first, before trashing anything!
-    ExitShellScript();
+    ExitShellScript(false);
     script_list.Reset();
     script->ClearAll();
     script->prog_vars.Reset();

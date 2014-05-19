@@ -830,7 +830,7 @@ void GraphTableView::RemoveGraph(){
 
 void GraphTableView::FindDefaultXZAxes() {
   // first, look for explicit flags
-  bool set_x = false;
+  bool set_x = x_axis.on;
   z_axis.on = false;            // assume we're not going to find it
   for(int i=children.size-1;i>=0;i--) {
     GraphColView* cvs = (GraphColView*)colView(i);
