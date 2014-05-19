@@ -145,7 +145,9 @@ void NetMonitor::SetNetwork(Network* net) {
 //   if(network.ptr() == net) return;
   network = net;
   UpdateNetworkPtrs();
-  ResetDataTableCols();         // this calls updatedatatable(false) too -- always make a clean update
+  // we shouldn't be doing anything with data table in here!!
+  // ResetDataTableCols();         // this calls updatedatatable(false) too -- always make a 
+  //  clean update
 //   UpdateDataTable(false);    // re-cache pointers after network setting
 }
 
@@ -179,14 +181,18 @@ void NetMonitor::UpdateDataTable(bool reset_first) {
     if (!nmi->off)
       nmi->ScanObject();
   }
+  UpdateDataCols();
   if (rmv_orphan_cols)
     data->RemoveOrphanCols(); // note: will remove 'off' items
+  data->StructUpdate(false);
+}
+
+void NetMonitor::UpdateDataCols() {
+  if (!data) return;
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    if (!nmi->off)
-      nmi->val_specs.UpdateDataBlockSchema(data);
+    nmi->UpdateDataCols(data);
   }
-  data->StructUpdate(false);
 }
 
 void NetMonitor::ResetDataTableCols() {

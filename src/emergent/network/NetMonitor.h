@@ -97,6 +97,9 @@ protected:
   void	UpdateAfterEdit_impl();
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   void	CheckChildConfig_impl(bool quiet, bool& rval) override;
+
+  void  UpdateDataCols();
+
 private:
   void		Initialize();
   void		Destroy() {CutLinks();}

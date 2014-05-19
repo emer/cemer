@@ -86,6 +86,7 @@ public:
   virtual void          RowFwdPg();
   virtual void          RowFwdAll();
 
+  void         SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
   void         SigDestroying() override;
   void         BuildAll() override;
 

@@ -1019,6 +1019,19 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   return true;
 }
 
+void NetMonItem::UpdateDataCols(DataTable* db) {
+  if ((!db) || variable.empty() || off)  return;
+  val_specs.UpdateDataBlockSchema(db);
+  for (int ch = 0; ch < val_specs.size; ++ch) {
+    ChannelSpec* cs = val_specs.FastEl(ch);
+    DataCol* dc = db->data.SafeEl(cs->chan_num);
+    if (dc) {
+      // taMisc::DebugInfo("marked col:", dc->name);
+      dc->SetColFlag(DataCol::PIN);
+    }
+  }
+}
+
 void NetMonItem::GetMonVals(DataTable* db) {
   if ((!db) || variable.empty())  return;
   if(computed) {
@@ -1049,7 +1062,8 @@ void NetMonItem::GetMonVals(DataTable* db) {
         }
         taBase::UnRef(mat);
       }
-    } else { // scalar
+    }
+    else { // scalar
       GetMonVal(mon++, mbval);
       db->SetData(mbval, cs->chan_num);
     }

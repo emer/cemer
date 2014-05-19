@@ -180,6 +180,11 @@ void DataTableView::DoActionChildren_impl(DataViewAction acts) {
   inherited::DoActionChildren_impl(acts);
 }
 
+void DataTableView::SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) {
+  // skip the reset that is built into the struct update begin call in 
+  // T3DataView
+  taDataView::SigLinkRecv(dl, sls, op1, op2);
+}
 
 void DataTableView::SigDestroying() {
   Unbind(); //unlinks everyone
@@ -234,24 +239,33 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
   "view_index" in the spec, so user can reorder)
 */
 //  delete orphans (except sticky guys)
+  // taMisc::DebugInfo("updating children for table:", dataTable()->name, "view cols:",
+  //                   String(colViewCount()));
   for (i = colViewCount() - 1; i >= 0; --i) {
     dcs = colView(i);
     // first, see if it is bound to our table, if so, just update it (name may have changed, etc.
     int old_colno = cols->FindEl(dcs->dataCol());
     if (old_colno >= 0) {
-      if(old_colno != i)
+      if(old_colno != i) {
+        // taMisc::DebugInfo("updaing col:", dcs->dataCol()->name,"new index:", String(i),
+        //                   "old was:", String(old_colno));
         dcs->UpdateFromDataCol(true); // first = get options
-      else
+      }
+      else {
+        // taMisc::DebugInfo("updaing col:", dcs->dataCol()->name,"same index:", String(i));
         dcs->UpdateFromDataCol(false); // no options
+      }
       continue;
     }
     // if not bound, try to find it by name
     dc = cols->FindName(dcs->GetName());
     if (dc) {
       // make sure it is this col bound to the guy!
+      // taMisc::DebugInfo("updaing stray col:", dc->name);
       dcs->setDataCol(dc);
     }
     else { // no target found in table
+      // taMisc::DebugInfo("removing orphan col:", dcs->GetName(), "at index:", String(i));
       children.RemoveIdx(i);
     }
   }
@@ -262,10 +276,15 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     int fm = children.FindNameIdx(dc->GetName());
     if (fm >= 0) {
       dcs = (DataColView*)children.FastEl(fm);
-      if (fm != i) children.MoveIdx(fm, i);
+      if (fm != i) {
+        // taMisc::DebugInfo("moving new col:", dcs->GetName(), "fm index:", String(fm),
+        //                   "to index:", String(i));
+        children.MoveIdx(fm, i);
+      }
     }
     else {
       first = true;
+      // taMisc::DebugInfo("making new view guy for:", dc->GetName());
       dcs = (DataColView*)taBase::MakeToken(children.el_typ); // of correct type for this
       children.Insert(dcs, i);
     }

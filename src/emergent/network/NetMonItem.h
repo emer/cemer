@@ -110,6 +110,10 @@ public:
   static const KeyString key_obj_var; // #IGNORE
   String GetColText(const KeyString& key, int itm_idx = -1) const;
 
+
+  void           UpdateDataCols(DataTable* db);
+  // #IGNORE update the channel numbers and mark all the data columns as used based on current channel specs from scanning
+
   int		GetEnabled() const {return (off) ? 0 : 1;}
   void		SetEnabled(bool value) {off = !value;}
   void  InitLinks();

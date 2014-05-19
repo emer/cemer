@@ -1315,6 +1315,7 @@ void DataTable::MarkCols() {
   for(int i=0;i<data.size;i++) {
     DataCol* da = data.FastEl(i);
     da->SetColFlag(DataCol::MARK);
+    da->ClearColFlag(DataCol::PIN);
   }
 }
 
@@ -1897,6 +1898,8 @@ void DataTable::RemoveOrphanCols() {
       da->Close();
       cls_cnt++;
     }
+    da->ClearColFlag(DataCol::MARK);
+    da->ClearColFlag(DataCol::PIN);
   }
   if (cls_cnt)  {
     StructUpdate(false);
