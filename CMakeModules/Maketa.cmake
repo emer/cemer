@@ -98,13 +98,7 @@ macro(CREATE_MAKETA_COMMAND infile outfile)
     OUTPUT ${outfile}
     COMMAND ${MAKETA_CMD} ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
     DEPENDS ${infile}
-#    DEPENDS ${infile} maketa
   )
-  # NOTE: added maketa as a dependency here -- touching most core files, especially
-  # taBase.h, will trigger a rebuild of maketa, which then will ensure that all 
-  # ta files are up-to-date -- only really important for multiple-inheritance files
-  # but this at least ensures that you never have to force maketa or make clean
-  
   # IMPORTANT: setting these props triggers a full rebuild of the source whenever
   # the list of files changes -- so we cannot do this -- now with distributed maketa
   # this is not such a big deal, so we let it go..
@@ -133,4 +127,66 @@ macro(MAKETA_WRAP_H outfiles)
   )
 
 endmacro (MAKETA_WRAP_H)
+
+# this version has an extra dependency for files with multiple inheritance (MI)
+macro(CREATE_MAKETA_COMMAND_MI infile outfile extradep)
+  MAKETA_GET_INC_DIRS(maketa_includes)
+
+  set(exdeplist ${extradep})
+
+  # we're just going to have to assume it is 2 dependencies!
+  list(GET exdeplist 0 dep0)
+  list(GET exdeplist 1 dep1)
+
+  # foreach(dep ${exdeplist})
+  #   message(STATUS "dep: ${dep}")
+  #   set(deps "${deps} ${dep}")
+  # endforeach()
+
+  add_custom_command(
+    OUTPUT ${outfile}
+    COMMAND ${MAKETA_CMD} ${MAKETA_FLAGS} ${maketa_includes} -o ${outfile} ${infile}
+    DEPENDS ${infile} ${dep0} ${dep1}
+  )
+endmacro (CREATE_MAKETA_COMMAND_MI)
+
+macro(MAKETA_WRAP_H_MI rval outstr depstr)
+  # this is key for turning the string args back into lists!!
+  set(outfiles ${outstr})
+  set(extradeps ${depstr})
+
+  list(LENGTH outfiles len1)
+  list(LENGTH extradeps lend)
+  math(EXPR len2 "${len1} - 1")
+
+  math(EXPR dper "${lend} / ${len1}")
+  math(EXPR dperm1 "${dper} - 1")
+
+  set(didx 0)
+  foreach(val RANGE ${len2})
+    list(GET outfiles ${val} it)
+
+    set(deps "")
+
+    foreach(dper RANGE ${dperm1})
+      list(GET extradeps ${didx} edep)
+      set(deps ${deps} ${edep})
+      math(EXPR didx "${didx} + 1")
+    endforeach()
+
+    message(STATUS "${val} file: ${it}\ndepends on: ${deps}")
+
+    get_filename_component(it ${it} ABSOLUTE)
+    
+    MAKETA_MAKE_OUTPUT_FILE(${it} TA_ cxx outfile)
+    CREATE_MAKETA_COMMAND_MI(${it} ${outfile} "${deps}")
+    set(${rval} ${${rval}} ${outfile})
+  endforeach()
+
+  # list(GET ${outfiles} 0 firstfile)
+  # get_filename_component(outpath ${firstfile} PATH)
+  # add_custom_target(clean_ta_${mta_options}
+  #   COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/CMakeModules/maketa_clean.cmake WORKING_DIRECTORY ${outpath})
+
+endmacro (MAKETA_WRAP_H_MI)
 

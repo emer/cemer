@@ -88,6 +88,10 @@ void taiWidgetBitBox::Initialize(QWidget* gui_parent_) {
 }
 
 void taiWidgetBitBox::bitCheck_clicked(iBitCheckBox* sender, bool on) {
+  if(sender->isReadOnly()) {    // don't allow it to be updated!
+    sender->setChecked(m_val & sender->val);
+    return;
+  }
   if (on) m_val |= sender->val;
   else    m_val &= ~(sender->val);
   if (sender->auto_apply)
@@ -118,10 +122,9 @@ void taiWidgetBitBox::AddBoolItem(bool auto_apply, String name, int val,
   lay->addWidget(bcb);
   if (readOnly() || bit_ro) {
     bcb->setReadOnly(true);
-  } else {
-    QObject::connect(bcb, SIGNAL(clickedEx(iBitCheckBox*, bool)),
-      this, SLOT(bitCheck_clicked(iBitCheckBox*, bool) ) );
   }
+  QObject::connect(bcb, SIGNAL(clickedEx(iBitCheckBox*, bool)),
+                   this, SLOT(bitCheck_clicked(iBitCheckBox*, bool) ) );
 }
 
 void taiWidgetBitBox::GetImage(int val) {

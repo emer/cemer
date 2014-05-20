@@ -38,6 +38,13 @@ SET_TA_PROPS(leabra ${PROJECT_SOURCE_DIR}/src/emergent/leabra)
 
 MAKETA_WRAP_H(emergent_leabra_SRCS_MAKETA ${emergent_leabra_HEADS_MAKETA} OPTIONS leabra)
 
+ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA_MI ${mypath}/leabra "${leabra_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(emergent_leabra_HEADS_MAKETA_MI_DEPS ${mypath}/leabra "${leabra_HEADS_MAKETA_MI_DEPS}")
+
+# using MI1 because only 1 guy
+MAKETA_WRAP_H_MI(emergent_leabra_SRCS_MAKETA_MI "${emergent_leabra_HEADS_MAKETA_MI}"
+  "${emergent_leabra_HEADS_MAKETA_MI_DEPS}")
+
 # cs
 include(${PROJECT_SOURCE_DIR}/src/emergent/cs/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_cs_SRCS ${mypath}/cs "${cs_SRCS}")
@@ -76,7 +83,7 @@ set(emergentlib_SRCS
   ${emergent_network_SRCS} ${emergent_network_SRCS_MOC}
   ${emergent_network_SRCS_MAKETA}
   ${emergent_bp_SRCS} ${emergent_bp_SRCS_MAKETA}
-  ${emergent_leabra_SRCS} ${emergent_leabra_SRCS_MAKETA}
+  ${emergent_leabra_SRCS} ${emergent_leabra_SRCS_MAKETA} ${emergent_leabra_SRCS_MAKETA_MI}
   ${emergent_cs_SRCS} ${emergent_cs_SRCS_MAKETA}
   ${emergent_so_SRCS} ${emergent_so_SRCS_MAKETA}
   ${emergent_actr_SRCS} ${emergent_actr_SRCS_MAKETA}

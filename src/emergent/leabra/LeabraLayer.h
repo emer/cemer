@@ -31,6 +31,9 @@
 #include <KwtaSortBuff_List>
 #include <DMemAggVars>
 
+// NOTE: this is a multiple-inheritence class -- if Layer is ever affected
+// in a way that affects maketa options, then you need to edit this class
+// to cause it to get maketa run on it too
 
 // declare all other types mentioned but not required to include:
 class LeabraUnGpData; // 

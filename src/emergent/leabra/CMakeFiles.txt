@@ -33,7 +33,6 @@ set(leabra_HEADS_MAKETA
   KwtaSortBuff.h
   KwtaSortBuff_List.h
   LeabraLayerSpec.h
-  LeabraLayer.h
 
   LeabraNetwork.h
   LeabraProject.h
@@ -148,6 +147,17 @@ set(leabra_HEADS_MAKETA
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   ClampDaLayerSpec.h
+)
+
+# multiple inheritence -- in correspondence with deps below
+set(leabra_HEADS_MAKETA_MI
+  LeabraLayer.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(leabra_HEADS_MAKETA_MI_DEPS
+  "../../temt/ta/taBase.h;../network/Layer.h"
 )
 
 set(leabra_HEADS_NOMAKETA

@@ -90,7 +90,6 @@ set(ta_HEADS_MAKETA_NOMOC
   taSmartPtrT.h
   taSmartRefT.h
 
-  taList_impl.h
   taList.h
   taBase_List.h
   taBase_PtrList.h
@@ -102,7 +101,6 @@ set(ta_HEADS_MAKETA_NOMOC
   taGroup.h
   taBase_Group.h
 
-  taArray_base.h
   taArray.h
   int_Array.h
   float_Array.h
@@ -241,7 +239,6 @@ set(ta_HEADS_MAKETA_NOMOC
   ISelectable_PtrList.h
   IObjectSelectable.h
 
-  taDataView.h
   DataView_List.h
 
   taViewer.h
@@ -292,7 +289,6 @@ set(ta_HEADS_MAKETA_NOMOC
   Function_List.h
   ProgObjList.h
   Program_List.h
-  Program.h
 
   ProgLibEl.h
   ProgLibEl_List.h
@@ -452,7 +448,6 @@ set(ta_HEADS_MAKETA_NOMOC
   EditMbrItem_Group.h
   EditMthItem_Group.h
   ControlPanelConfig.h
-  ControlPanel.h
   ControlPanel_Group.h
 
   ParamSearchAlgo.h
@@ -661,7 +656,6 @@ set(ta_HEADS_MAKETA_NOMOC
 
   taSvg.h
 
-  T3DataView.h
   T3DataView_List.h
   T3DataViewPar.h
   T3DataViewMain.h
@@ -753,6 +747,27 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgBrkPt.h
   ProgBrkPt_List.h
   CondBase.h
+)
+
+# multiple inheritence -- in correspondence with deps below
+set(ta_HEADS_MAKETA_MI
+  taArray_base.h
+  taList_impl.h
+  ControlPanel.h
+  Program.h
+  taDataView.h
+  T3DataView.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(ta_HEADS_MAKETA_MI_DEPS
+  "taBase.h;taArray_impl.h"
+  "taBase.h;taPtrList_impl.h"
+  "taBase.h;taNBase.h"
+  "taBase.h;taNBase.h"
+  "taBase.h;taNBase.h"
+  "taDataView.h;taBase.h"
 )
 
 # need both maketa and moc -- relatively rare

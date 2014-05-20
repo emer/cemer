@@ -311,6 +311,12 @@ void taiEditorOfClass::Constr_Methods_impl() {
     MethodDef* md = typ->methods.FastEl(i);
     if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
       continue;
+    bool watch_me = false;
+    if(typ->InheritsFromName("Layer")) {
+      if(md->name == "Lesion") {
+        watch_me = true;
+      }
+    }
     if (!md->ShowMethod()) continue;
     taiMethod* im = md->im;
 //    taiWidgetMethod* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
@@ -325,12 +331,18 @@ void taiEditorOfClass::Constr_Methods_impl() {
       meth_el.Add(mth_rep);
     }
     if (md->HasOption("MENU")) {
+      if(watch_me) {
+        taMisc::DebugInfo("got menu on:", md->name, md->opts.AsString());
+      }
       SetCurMenu(md);
       mth_rep = im->GetMenuMethodRep(root, this, NULL, NULL/*frmMethButtons*/);
       mth_rep->AddToMenu(cur_menu);
       meth_el.Add(mth_rep);
     }
     if (md->HasOption("BUTTON")) {
+      if(watch_me) {
+        taMisc::DebugInfo("got button on:", md->name);
+      }
       mth_rep = im->GetButtonMethodRep(root, this, NULL, frmMethButtons);
       AddMethButton(mth_rep);
       meth_el.Add(mth_rep);

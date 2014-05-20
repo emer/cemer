@@ -20,6 +20,10 @@ ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA ${mypath}/ta "${ta_HEADS_MAKETA}")
 ADD_PATH_TO_FILES(temt_ta_HEADS ${mypath}/ta "${ta_HEADS}")
 ADD_PATH_TO_FILES(temt_ta_SRCS_UI ${mypath}/ta "${ta_SRCS_UI}")
 
+ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA_MI ${mypath}/ta "${ta_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA_MI_DEPS ${mypath}/ta "${ta_HEADS_MAKETA_MI_DEPS}")
+
+
 # css
 include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_css_SRCS ${mypath}/css "${css_SRCS}")
@@ -32,6 +36,8 @@ ADD_PATH_TO_FILES(temt_json_SRCS ${mypath}/json "${json_SRCS}")
 ADD_PATH_TO_FILES(temt_json_HEADS ${mypath}/json "${json_HEADS}")
 
 MAKETA_WRAP_H(temt_ta_SRCS_MAKETA ${temt_ta_HEADS_MAKETA} OPTIONS ta)
+
+MAKETA_WRAP_H_MI(temt_ta_SRCS_MAKETA_MI "${temt_ta_HEADS_MAKETA_MI}" "${temt_ta_HEADS_MAKETA_MI_DEPS}")
 
 if (QT_USE_5)
   qt5_wrap_ui(temt_ta_SRCS_UIC ${temt_ta_SRCS_UI})
@@ -47,7 +53,7 @@ endif (QT_USE_5)
 # just list whole set of files here -- and also include the headers for IDE's
 set(temtlib_SRCS
   ${temt_ta_SRCS}
-  ${temt_ta_SRCS_MAKETA}
+  ${temt_ta_SRCS_MAKETA} ${temt_ta_SRCS_MAKETA_MI}
   ${temt_ta_SRCS_MOC}
   ${temt_ta_SRCS_UIC}
   ${temt_css_SRCS}
