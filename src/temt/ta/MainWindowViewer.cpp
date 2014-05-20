@@ -512,8 +512,10 @@ void MainWindowViewer::MakeWinName_impl() {
   // The [*] indicates where Qt should put the asterisk indicating the
   // file has not been saved.  On the Mac, Qt puts a dot in the close
   // button instead.
-  if (fname.empty()) fname = name.empty() ? "(Untitled)" : name;
-  String nw_name = pathnm + " - " + fname + " [*]"; // prog_nm ;
+  if (fname.empty())
+    fname = name.empty() ? "(Untitled)" : name;
+//  String nw_name = pathnm + " - " + fname + " [*]"; // prog_nm ;
+  String nw_name = pathnm + " - " + fname; // prog_nm ;
   win_name = nw_name;
   if(m_is_root) {
     win_name = taMisc::app_name + " v" + taMisc::version + " (svn: " + taMisc::svn_rev + ")";

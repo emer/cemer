@@ -351,7 +351,7 @@ public slots:
   virtual void  progStatus();
   
   virtual void  windowMenu_aboutToShow();
-  void          windowActivate(int win); // activate the indicated win
+  void          windowActivateByName(const Variant& title);
   virtual void  WindowMinimize();
   virtual void  WindowZoom();
   virtual void  helpHelp();

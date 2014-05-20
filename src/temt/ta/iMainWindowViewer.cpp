@@ -1321,6 +1321,7 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
   for (int i = 0; i < tabMisc::root->projects.size; ++i) {
     proj = tabMisc::root->projects.FastEl(i);
     if (proj->file_name == fname) {
+      taMisc::DebugInfo("fileOpenFile", proj->file_name, fname);
       int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
           "Ok", "Cancel");
       switch (chs) {
@@ -2066,11 +2067,10 @@ void iMainWindowViewer::editMenu_aboutToShow() {
 void iMainWindowViewer::windowMenu_aboutToShow() {
   // Clear and rebuild submenu.
   windowMenu->Reset();
-
   windowMenu->AddAction(windowMinimizeAction);
   windowMenu->AddAction(windowZoomAction);
   windowMenu->AddSep();
-
+  
   // Populate with current windows.
   iWidget_List wl;
   taiMisc::GetWindowList(wl);
@@ -2078,27 +2078,31 @@ void iMainWindowViewer::windowMenu_aboutToShow() {
     QWidget* wid = wl.FastEl(i);
     if (wid->isWindow()) {
       String title = wid->windowTitle();
-
-      // Indicate whether the file has unsaved changes
-      // (see MainWindowViewer::MakeWinName_impl())
-      title.gsub("[*]", wid->isWindowModified() ? "*" : "");
-
-      //iAction* item =
-      windowMenu->AddItemWithNumericAccel(
-          title,
-          iAction::int_act,
-          this, SLOT(windowActivate(int)),
-          i);
+      String label = title;
+      if (wid->isWindowModified()) {
+        label = label + "*";
+      }
+      windowMenu->AddItem(label, iAction::var_act,
+                          this, SLOT(windowActivateByName(const Variant&)), title);
     }
   }
 }
 
-void iMainWindowViewer::windowActivate(int win) {
-  // populate with current windows -- should correspond to the ones enumerated
+void iMainWindowViewer::windowActivateByName(const Variant& title_) {
   iWidget_List wl;
   taiMisc::GetWindowList(wl);
-  QWidget* wid = wl.PosSafeEl(win);
-  if (!wid) return;
+  String title = title_.toString();
+  QWidget* wid;
+  for (int i = 0; i < wl.size; ++i) {
+    wid = wl.FastEl(i);
+    if (wid->isWindow()) {
+      String wid_title = wid->windowTitle();
+      if (title == wid_title)
+        break;
+    }
+  }
+  if (!wid)
+    return;
   if (wid->isMinimized()) {
     wid->showMaximized();
   }
@@ -2114,7 +2118,6 @@ void iMainWindowViewer::WindowMinimize() {
     }
   }
 }
-
 
 void iMainWindowViewer::WindowZoom()  {
   foreach (QWidget *widget, QApplication::topLevelWidgets()) {
