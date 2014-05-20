@@ -51,6 +51,7 @@
 #include <MethodSpace>
 #include <TypeSpace>
 #include <MethodDef>
+#include <iDialogChoice>
 
 #include <taMisc>
 #include <taiMisc>
@@ -1323,12 +1324,7 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
     for (int i = 0; i < tabMisc::root->projects.size; ++i) {
       proj = tabMisc::root->projects.FastEl(i);
       if (proj && proj->file_name == fname) {
-        int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
-                                 "Ok", "Cancel");
-        switch (chs) {
-          case 0: break; // break out of switch -- we'll also break out of the loop
-          case 1: return;
-        }
+        iDialogChoice::ConfirmDialog(NULL, "Project already open -- will come to front", "", false);
         break; // break out of loop
       }
       proj = NULL; // in case we fall out of loop
